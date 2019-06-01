@@ -1,38 +1,40 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 04 Jun 2019 15:43:28 +0000
-Subject: Re: [PATCH][next] blktrace: remove redundant assignment to ret
-Message-Id: <f834f32d-ab6e-c429-1a3e-13512583ee08@kernel.dk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Jun 2019 03:57:09 +0000
+Subject: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
+Message-Id: <20190601035709.85379-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190604142744.15330-1-colin.king@canonical.com>
-In-Reply-To: <20190604142744.15330-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, u.kleine-koenig@pengutronix.de, andriy.shevchenko@linux.intel.com, thesven73@gmail.com
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 6/4/19 8:27 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret is being assigned a value that is never read, hence
-> the assignment is redundant and can be removed.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-This doesn't look correct to me, here's the full code:
+drivers/pwm/pwm-pca9685.c: In function 'pca9685_pwm_gpio_free':
+drivers/pwm/pwm-pca9685.c:173:21: warning:
+ variable 'pwm' set but not used [-Wunused-but-set-variable]
 
-	ret = -ENOENT;
+It's not used since commit e926b12c611c ("pwm: Clear chip_data in pwm_put()")
 
-	dir = debugfs_lookup(buts->name, blk_debugfs_root);
-	if (!dir)
-		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
-	if (!dir)
-		goto err;
-	[...]
-err:
-	[...]
-	return ret;
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pwm/pwm-pca9685.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-The main issue here, to me, looks like we're not dealing with ERR_PTR
-returns from debugfs_create_dir(), just checking for NULL.
-
--- 
-Jens Axboe
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index 567f5e2771c4..d16215c276bd 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -170,12 +170,10 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
+ static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
+ {
+ 	struct pca9685 *pca = gpiochip_get_data(gpio);
+-	struct pwm_device *pwm;
+ 
+ 	pca9685_pwm_gpio_set(gpio, offset, 0);
+ 	pm_runtime_put(pca->chip.dev);
+ 	mutex_lock(&pca->lock);
+-	pwm = &pca->chip.pwms[offset];
+ 	mutex_unlock(&pca->lock);
+ }
