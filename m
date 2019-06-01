@@ -1,30 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 15 Jun 2019 07:09:35 +0000
-Subject: Re: [PATCH net] net: phy: sfp: clean up a condition
-Message-Id: <20190615070935.GM1893@kadam>
+From: Ganapathi Bhat <gbhat@marvell.com>
+Date: Sat, 01 Jun 2019 17:29:26 +0000
+Subject: RE: [EXT] Re: [PATCH] mwifiex: check for null return from skb_copy
+Message-Id: <MN2PR18MB2637DAA4852542EDA2BBC01DA01A0@MN2PR18MB2637.namprd18.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190613065102.GA16334@mwanda>
- <20190614.192148.1227986231677887217.davem@davemloft.net>
-In-Reply-To: <20190614.192148.1227986231677887217.davem@davemloft.net>
+References: <20190413161438.6376-1-colin.king@canonical.com>
+ <20190413192729.GL6095@kadam>
+In-Reply-To: <20190413192729.GL6095@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: linux@armlinux.org.uk, ruslan@babayev.com, andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Colin King <colin.king@canonical.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Xinming Hu <huxinming820@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 14, 2019 at 07:21:48PM -0700, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Thu, 13 Jun 2019 09:51:02 +0300
+Hi Dan,
+
+> >  	if (is_multicast_ether_addr(ra)) {
+> >  		skb_uap = skb_copy(skb, GFP_ATOMIC);
+> > +		if (!skb_uap)
+> > +			return -ENOMEM;
 > 
-> > The acpi_node_get_property_reference() doesn't return ACPI error codes,
-> > it just returns regular negative kernel error codes.  This patch doesn't
-> > affect run time, it's just a clean up.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Applied to net-next.
+> I think we would want to free dev_kfree_skb_any(skb) before returning.
+I think if the pointer is NULL, no need to free it; 
 
-I meant to say net-next but I made a typo.  :/
-
-regards,
-dan carpenter
+Regards,
+Ganapathi
