@@ -1,15 +1,38 @@
-From: Herr David Williams <admin@qf-corp.com>
-Date: Mon, 17 Jun 2019 01:29:29 +0000
-Subject: dringender Kredit
-Message-Id: <0f7f0273c22267aa3906501afc644ba7@qf-corp.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 01 Jun 2019 07:22:08 +0000
+Subject: [PATCH -next] drm/amd/display: Use kmemdup in dc_copy_stream()
+Message-Id: <20190601072208.193673-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: harry.wentland@amd.com, sunpeng.li@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, hanghong.ma@amd.com, Jun.Lei@amd.com, Wenjing.Liu@amd.com, Krunoslav.Kovac@amd.com, nicholas.kazlauskas@amd.com, David.Francis@amd.com, Bhawanpreet.Lakha@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Use kmemdup rather than duplicating its implementation.
 
+Detected by coccinelle.
 
--- 
-Benötigen Sie dringend einen Kredit? Wenn ja, antworten Sie für weitere 
-Details
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_stream.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+index a002e690814f..b166c732b532 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+@@ -167,12 +167,11 @@ struct dc_stream_state *dc_copy_stream(const struct dc_stream_state *stream)
+ {
+ 	struct dc_stream_state *new_stream;
+ 
+-	new_stream = kzalloc(sizeof(struct dc_stream_state), GFP_KERNEL);
++	new_stream = kmemdup(stream, sizeof(struct dc_stream_state),
++			     GFP_KERNEL);
+ 	if (!new_stream)
+ 		return NULL;
+ 
+-	memcpy(new_stream, stream, sizeof(struct dc_stream_state));
+-
+ 	if (new_stream->sink)
+ 		dc_sink_retain(new_stream->sink);
