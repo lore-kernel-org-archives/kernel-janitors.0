@@ -1,49 +1,41 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 27 Jun 2019 07:53:50 +0000
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'psp_enabled'
-Message-Id: <20190627075350.86800-1-yuehaibing@huawei.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 03 Jun 2019 08:12:04 +0000
+Subject: Re: [PATCH] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
+Message-Id: <20190603081204.GG4797@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+References: <20190515093141.GA3409@mwanda>
+In-Reply-To: <20190515093141.GA3409@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, harry.wentland@amd.com, tianci.yin@amd.com, tao.zhou1@amd.com, leo.liu@amd.com, ray.huang@amd.com, Jack.Xiao@amd.com, Hawking.Zhang@amd.com, kenneth.feng@amd.com
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amelie Delaunay <amelie.delaunay@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Wed, 15 May 2019, Dan Carpenter wrote:
 
-drivers/gpu/drm/amd/amdgpu/nv.c: In function 'nv_common_early_init':
-drivers/gpu/drm/amd/amdgpu/nv.c:471:7: warning:
- variable 'psp_enabled' set but not used [-Wunused-but-set-variable]
+> The problem is that on 64bit systems then we don't clear the higher
+> bits of the "pending" variable.  So when we do:
+> 
+> 	ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
+> 	if (ack) {
+> 
+> the if (ack) condition relies on uninitialized data.  The fix it that
+> I've changed "pending" from an unsigned long to a u32.  I changed "n" as
+> well, because that's a number in the 0-10 range and it fits easily
+> inside an int.  We do need to add a cast to "pending" when we use it in
+> the for_each_set_bit() loop, but that doesn't cause a proble, it's
+> fine.
+> 
+> Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/mfd/stmfx.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-It's not used since inroduction in
-commit c6b6a42175f5 ("drm/amdgpu: add navi10 common ip block (v3)")
+Could do with an author's Ack here.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/nv.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/nv.c b/drivers/gpu/drm/amd/amdgpu/nv.c
-index af20ffb55c54..8b9fa3db8daa 100644
---- a/drivers/gpu/drm/amd/amdgpu/nv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/nv.c
-@@ -468,7 +468,6 @@ static const struct amdgpu_asic_funcs nv_asic_funcs  
- static int nv_common_early_init(void *handle)
- {
--	bool psp_enabled = false;
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
- 
- 	adev->smc_rreg = NULL;
-@@ -485,10 +484,6 @@ static int nv_common_early_init(void *handle)
- 
- 	adev->asic_funcs = &nv_asic_funcs;
- 
--	if (amdgpu_device_ip_get_ip_block(adev, AMD_IP_BLOCK_TYPE_PSP) &&
--	    (amdgpu_ip_block_mask & (1 << AMD_IP_BLOCK_TYPE_PSP)))
--		psp_enabled = true;
--
- 	adev->rev_id = nv_get_rev_id(adev);
- 	adev->external_rev_id = 0xff;
- 	switch (adev->asic_type) {
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
