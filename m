@@ -1,41 +1,50 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 03 Jun 2019 08:12:04 +0000
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Date: Mon, 03 Jun 2019 09:20:01 +0000
 Subject: Re: [PATCH] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
-Message-Id: <20190603081204.GG4797@dell>
+Message-Id: <ccefbd0b-3397-a26e-95e7-059fcced9154@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190515093141.GA3409@mwanda>
 In-Reply-To: <20190515093141.GA3409@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amelie Delaunay <amelie.delaunay@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Wed, 15 May 2019, Dan Carpenter wrote:
-
-> The problem is that on 64bit systems then we don't clear the higher
-> bits of the "pending" variable.  So when we do:
-> 
-> 	ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
-> 	if (ack) {
-> 
-> the if (ack) condition relies on uninitialized data.  The fix it that
-> I've changed "pending" from an unsigned long to a u32.  I changed "n" as
-> well, because that's a number in the 0-10 range and it fits easily
-> inside an int.  We do need to add a cast to "pending" when we use it in
-> the for_each_set_bit() loop, but that doesn't cause a proble, it's
-> fine.
-> 
-> Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/mfd/stmfx.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-
-Could do with an author's Ack here.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+SGkgRGFuLA0KDQpUaGFua3MgZm9yIHlvdXIgcGF0Y2guIE9uZSBtaW5vciBjb21tZW50Og0KDQpP
+biA1LzE1LzE5IDExOjMxIEFNLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0KPiBUaGUgcHJvYmxlbSBp
+cyB0aGF0IG9uIDY0Yml0IHN5c3RlbXMgdGhlbiB3ZSBkb24ndCBjbGVhciB0aGUgaGlnaGVyDQo+
+IGJpdHMgb2YgdGhlICJwZW5kaW5nIiB2YXJpYWJsZS4gIFNvIHdoZW4gd2UgZG86DQo+IA0KPiAJ
+YWNrID0gcGVuZGluZyAmIH5CSVQoU1RNRlhfUkVHX0lSUV9TUkNfRU5fR1BJTyk7DQo+IAlpZiAo
+YWNrKSB7DQo+IA0KPiB0aGUgaWYgKGFjaykgY29uZGl0aW9uIHJlbGllcyBvbiB1bmluaXRpYWxp
+emVkIGRhdGEuICBUaGUgZml4IGl0IHRoYXQNCj4gSSd2ZSBjaGFuZ2VkICJwZW5kaW5nIiBmcm9t
+IGFuIHVuc2lnbmVkIGxvbmcgdG8gYSB1MzIuICBJIGNoYW5nZWQgIm4iIGFzDQo+IHdlbGwsIGJl
+Y2F1c2UgdGhhdCdzIGEgbnVtYmVyIGluIHRoZSAwLTEwIHJhbmdlIGFuZCBpdCBmaXRzIGVhc2ls
+eQ0KPiBpbnNpZGUgYW4gaW50LiAgV2UgZG8gbmVlZCB0byBhZGQgYSBjYXN0IHRvICJwZW5kaW5n
+IiB3aGVuIHdlIHVzZSBpdCBpbg0KPiB0aGUgZm9yX2VhY2hfc2V0X2JpdCgpIGxvb3AsIGJ1dCB0
+aGF0IGRvZXNuJ3QgY2F1c2UgYSBwcm9ibGUsIGl0J3MNCj4gZmluZS4NCj4gDQo+IEZpeGVzOiAw
+NjI1MmFkZTkxNTYgKCJtZmQ6IEFkZCBTVCBNdWx0aS1GdW5jdGlvbiBlWHBhbmRlciAoU1RNRlgp
+IGNvcmUgZHJpdmVyIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBl
+bnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL21mZC9zdG1meC5jIHwgOCArKysr
+LS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvc3RtZnguYyBiL2RyaXZlcnMvbWZkL3N0
+bWZ4LmMNCj4gaW5kZXggZmU4ZWZiYTJkNDVmLi5mZWU3NWI1ZDA5OGUgMTAwNjQ0DQo+IC0tLSBh
+L2RyaXZlcnMvbWZkL3N0bWZ4LmMNCj4gKysrIGIvZHJpdmVycy9tZmQvc3RtZnguYw0KPiBAQCAt
+MjA0LDEyICsyMDQsMTIgQEAgc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBzdG1meF9pcnFfY2hpcCA9
+IHsNCj4gICBzdGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hhbmRsZXIoaW50IGlycSwgdm9p
+ZCAqZGF0YSkNCj4gICB7DQo+ICAgCXN0cnVjdCBzdG1meCAqc3RtZnggPSBkYXRhOw0KPiAtCXVu
+c2lnbmVkIGxvbmcgbiwgcGVuZGluZzsNCj4gKwl1MzIgcGVuZGluZzsNCj4gICAJdTMyIGFjazsN
+Cj4gKwlpbnQgbjsNCj4gICAJaW50IHJldDsNCg0KQ291bGQgeW91IGdyb3VwOg0KDQp1MzIgcGVu
+ZGluZywgYWNrOw0KaW50IG4sIHJldDsNCg0KPiAgIA0KPiAtCXJldCA9IHJlZ21hcF9yZWFkKHN0
+bWZ4LT5tYXAsIFNUTUZYX1JFR19JUlFfUEVORElORywNCj4gLQkJCSAgKHUzMiAqKSZwZW5kaW5n
+KTsNCj4gKwlyZXQgPSByZWdtYXBfcmVhZChzdG1meC0+bWFwLCBTVE1GWF9SRUdfSVJRX1BFTkRJ
+TkcsICZwZW5kaW5nKTsNCj4gICAJaWYgKHJldCkNCj4gICAJCXJldHVybiBJUlFfTk9ORTsNCj4g
+ICANCj4gQEAgLTIyNCw3ICsyMjQsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hh
+bmRsZXIoaW50IGlycSwgdm9pZCAqZGF0YSkNCj4gICAJCQlyZXR1cm4gSVJRX05PTkU7DQo+ICAg
+CX0NCj4gICANCj4gLQlmb3JfZWFjaF9zZXRfYml0KG4sICZwZW5kaW5nLCBTVE1GWF9SRUdfSVJR
+X1NSQ19NQVgpDQo+ICsJZm9yX2VhY2hfc2V0X2JpdChuLCAodW5zaWduZWQgbG9uZyAqKSZwZW5k
+aW5nLCBTVE1GWF9SRUdfSVJRX1NSQ19NQVgpDQo+ICAgCQloYW5kbGVfbmVzdGVkX2lycShpcnFf
+ZmluZF9tYXBwaW5nKHN0bWZ4LT5pcnFfZG9tYWluLCBuKSk7DQo+ICAgDQo+ICAgCXJldHVybiBJ
+UlFfSEFORExFRDsNCj4gDQoNCkkndmUgdGVzdGVkIGl0IG9uIHN0bTMybXAxNTdjLWV2MSwgc28g
+eW91IGNhbiBhZGQgbXkNClRlc3RlZC1ieTogQW1lbGllIERlbGF1bmF5IDxhbWVsaWUuZGVsYXVu
+YXlAc3QuY29tPg0KDQpSZWdhcmRzLA0KQW1lbGll
