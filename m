@@ -1,44 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Wed, 12 Jun 2019 09:37:06 +0000
-Subject: Re: [PATCH v2] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
-Message-Id: <20190612093706.GF4797@dell>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 03 Jun 2019 13:48:27 +0000
+Subject: Re: [PATCH] mmc: sdhci-pci: remove redundant check of slots == 0
+Message-Id: <CAPDyKFpo6EqOp0mqVj7yHdttoh957QSZ8sFzHMs+QFz-cHETew@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ccefbd0b-3397-a26e-95e7-059fcced9154@st.com>
- <20190606124127.GA17082@mwanda>
-In-Reply-To: <20190606124127.GA17082@mwanda>
+References: <20190531113223.27474-1-colin.king@canonical.com>
+In-Reply-To: <20190531113223.27474-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amelie DELAUNAY <amelie.delaunay@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, 06 Jun 2019, Dan Carpenter wrote:
+On Fri, 31 May 2019 at 13:32, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The calculation of slots results in a value in the range 1..8
+> and so slots can never be zero.  The check for slots = 0 is
+> always going to be false, hence it is redundant and can be
+> removed.
+>
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> The problem is that on 64bit systems then we don't clear the higher
-> bits of the "pending" variable.  So when we do:
-> 
->         ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
->         if (ack) {
-> 
-> the if (ack) condition relies on uninitialized data.  The fix it that
-> I've changed "pending" from an unsigned long to a u32.  I changed "n" as
-> well, because that's a number in the 0-10 range and it fits easily
-> inside an int.  We do need to add a cast to "pending" when we use it in
-> the for_each_set_bit() loop, but that doesn't cause a proble, it's
-> fine.
-> 
-> Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
-> v2: white space changes
-> 
->  drivers/mfd/stmfx.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>  drivers/mmc/host/sdhci-pci-core.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index ab9e2b901094..f70436261746 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -2044,8 +2044,6 @@ static int sdhci_pci_probe(struct pci_dev *pdev,
+>
+>         slots = PCI_SLOT_INFO_SLOTS(slots) + 1;
+>         dev_dbg(&pdev->dev, "found %d slot(s)\n", slots);
+> -       if (slots = 0)
+> -               return -ENODEV;
+>
+>         BUG_ON(slots > MAX_SLOTS);
+>
+> --
+> 2.20.1
+>
