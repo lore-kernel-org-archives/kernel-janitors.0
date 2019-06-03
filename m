@@ -1,32 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jun 2019 06:02:50 +0000
-Subject: Re: [PATCH] NTB: test: remove a duplicate check
-Message-Id: <20190619060250.GH18776@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 03 Jun 2019 13:36:53 +0000
+Subject: [PATCH][next] bpf: hbm: fix spelling mistake "notifcations" -> "notificiations"
+Message-Id: <20190603133653.18185-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619053205.GA10452@mwanda>
- <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
-In-Reply-To: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-It's not a huge deal obviously but your commit was a6bed7a54165 ("NTB:
-Introduce NTB MSI Test Client") but you know that if I had sent a patch
-called ("NTB: remove a duplicate check") people would have correctly
-complained because the patch prefix is too vague.
+From: Colin Ian King <colin.king@canonical.com>
 
-What I'm saying is we do this all the time:
+There is a spelling mistake in the help information, fix this.
 
-[PATCH] NTB: add a new foobazle driver
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ samples/bpf/hbm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But it should be:
-
-[PATCH] NTB: foobazle: add a new foobazle driver
-
-Then I can just copy and paste your patch prefix instead of trying
-invent one.
-
-regards,
-dan carpenter
+diff --git a/samples/bpf/hbm.c b/samples/bpf/hbm.c
+index 480b7ad6a1f2..bdfce592207a 100644
+--- a/samples/bpf/hbm.c
++++ b/samples/bpf/hbm.c
+@@ -411,7 +411,7 @@ static void Usage(void)
+ 	       "    -l         also limit flows using loopback\n"
+ 	       "    -n <#>     to create cgroup \"/hbm#\" and attach prog\n"
+ 	       "               Default is /hbm1\n"
+-	       "    --no_cn    disable CN notifcations\n"
++	       "    --no_cn    disable CN notifications\n"
+ 	       "    -r <rate>  Rate in Mbps\n"
+ 	       "    -s         Update HBM stats\n"
+ 	       "    -t <time>  Exit after specified seconds (default is 0)\n"
+-- 
+2.20.1
