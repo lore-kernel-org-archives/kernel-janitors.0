@@ -1,83 +1,55 @@
-From: Sven Van Asbroeck <thesven73@gmail.com>
-Date: Sun, 02 Jun 2019 14:18:15 +0000
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Date: Mon, 03 Jun 2019 11:40:29 +0000
 Subject: Re: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
-Message-Id: <CAGngYiUfGGF+PwaT4SE2ZJkrCidc7-QWeuRsPTDwrLL1onm88w@mail.gmail.com>
+Message-Id: <20190603114029.GC2781@lahna.fi.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190601035709.85379-1-yuehaibing@huawei.com> <CAGngYiXZM0QUdKE_zDK763J9iDuiKSbmFeTVA1PJ_4WvjntjQQ@mail.gmail.com>
+References: <20190601035709.85379-1-yuehaibing@huawei.com>
+ <CAGngYiXZM0QUdKE_zDK763J9iDuiKSbmFeTVA1PJ_4WvjntjQQ@mail.gmail.com>
  <20190601160459.baedo5pp5hsrltzs@pengutronix.de>
-In-Reply-To: <20190601160459.baedo5pp5hsrltzs@pengutronix.de>
+ <CAGngYiUfGGF+PwaT4SE2ZJkrCidc7-QWeuRsPTDwrLL1onm88w@mail.gmail.com>
+In-Reply-To: <CAGngYiUfGGF+PwaT4SE2ZJkrCidc7-QWeuRsPTDwrLL1onm88w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Sven Van Asbroeck <thesven73@gmail.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, YueHaibing <yuehaibing@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Sat, Jun 1, 2019 at 12:05 PM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> I didn't look into the driver to try to understand that, but the
-> definitely needs a comment to explain for the next person to think they
-> can do a cleanup here.
+On Sun, Jun 02, 2019 at 10:18:15AM -0400, Sven Van Asbroeck wrote:
+> On Sat, Jun 1, 2019 at 12:05 PM Uwe Kleine-K=F6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+> >
+> > I didn't look into the driver to try to understand that, but the
+> > definitely needs a comment to explain for the next person to think they
+> > can do a cleanup here.
+>=20
+> Certainly.
 
-Certainly.
+I agree.
 
-But if we do restore the old behaviour, there may still be problems.
-I'm unsure if the old synchronization was working correctly.
-See the example at the end of this email.
+> But if we do restore the old behaviour, there may still be problems.
+> I'm unsure if the old synchronization was working correctly.
+> See the example at the end of this email.
 
-An intuitive way forward would be to use a simple bitfield in
-struct pca9685 to track if a specific pwm is in use by either
-pwm or gpio. Protected by a mutex.
+I think you are right. pca9685_pwm_request() should take the mutex as
+long as it is requesting PWM.
 
-But it could be that the old behaviour is 'good enough' for
-the driver's users (I am no longer one of them).
+> An intuitive way forward would be to use a simple bitfield in
+> struct pca9685 to track if a specific pwm is in use by either
+> pwm or gpio. Protected by a mutex.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+A flag would probably be easier to understand than the magic we have
+now. Or then wrap it inside function with an explanation comment:
 
-Let's take the example of two threads, racing to grab a pwm and gpio,
-respectively. Assume the gpio is backed by the pwm, so they conflict.
+static inline void pca9685_pwm_set_as_gpio(struct pwm_device *pwm)
+{
+	/*
+	 * We use ->chip_data to convoy the fact that the PWM channel is
+	 * being used as GPIO instead of PWM.
+	 */
+	pwm_set_chip_data(pwm, (void *)1)
+}
 
-[Thread 1]
-drivers/pwm/core.c:
-
-    if (pwm->chip->ops->request) {
-        err =3D pwm->chip->ops->request(pwm->chip, pwm);
-            [this calls pca9685_pwm_request()]
-            [which calls pca9685_pwm_is_gpio()]
-            [checks pwm chip_data, is NULL, pwm is free]
-            [returns 0 - pwm request ok]
-        if (err) {
-            module_put(pwm->chip->ops->owner);
-            return err;
-        }
-    }
-
-        [CONTEXT SWITCH to Thread 2]
-        static int pca9685_pwm_gpio_request(struct gpio_chip *gpio,
-unsigned int offset)
-        {
-            struct pca9685 *pca =3D gpiochip_get_data(gpio);
-            struct pwm_device *pwm;
-
-            mutex_lock(&pca->lock);
-
-            pwm =3D &pca->chip.pwms[offset];
-
-            [pwm->flags do not (yet) have PWMF_REQUESTED]
-            if (pwm->flags & (PWMF_REQUESTED | PWMF_EXPORTED)) {
-                mutex_unlock(&pca->lock);
-                return -EBUSY;
-            }
-
-            pwm_set_chip_data(pwm, (void *)1);
-
-            mutex_unlock(&pca->lock);
-            pm_runtime_get_sync(pca->chip.dev);
-            return 0;
-        }
-
-[CONTEXT SWITCH back to Thread 1, still in pwm/core.c]
-
-    set_bit(PWMF_REQUESTED, &pwm->flags);
-    pwm->label =3D label;
+static inline void pca9685_pwm_set_as_pwm(struct pwm_device *pwm)
+{
+	pwm_set_chip_data(pwm, NULL);
+}
