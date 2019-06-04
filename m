@@ -1,19 +1,17 @@
-From: Jesper Dangaard Brouer <brouer@redhat.com>
-Date: Tue, 04 Jun 2019 11:58:57 +0000
+From: Daniel Borkmann <daniel@iogearbox.net>
+Date: Tue, 04 Jun 2019 15:04:37 +0000
 Subject: Re: [PATCH][next][V2] bpf: remove redundant assignment to err
-Message-Id: <20190604135857.3f0e6cdc@carbon>
+Message-Id: <4e971d2b-1143-dd1a-6d2a-a2b75dec815b@iogearbox.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190604082146.2049-1-colin.king@canonical.com>
 In-Reply-To: <20190604082146.2049-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, brouer@redhat.com
+To: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue,  4 Jun 2019 09:21:46 +0100
-Colin King <colin.king@canonical.com> wrote:
-
+On 06/04/2019 10:21 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The variable err is assigned with the value -EINVAL that is never
@@ -22,18 +20,5 @@ Colin King <colin.king@canonical.com> wrote:
 > 
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> ---
-> 
-> V2: reorder variables as recommended by Jakub Kicinski to keep in
->     the networking code style.
 
-Thank you for following the networking coding style.
-
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Applied, thanks!
