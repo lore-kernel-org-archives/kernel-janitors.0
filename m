@@ -1,65 +1,60 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 22 Jun 2019 08:43:26 +0000
-Subject: Re: [PATCH] iio: sca3000: Potential endian bug in sca3000_read_event_value()
-Message-Id: <20190622094326.742d3e7e@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Jun 2019 08:21:46 +0000
+Subject: [PATCH][next][V2] bpf: remove redundant assignment to err
+Message-Id: <20190604082146.2049-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190621091828.GA1878@mwanda>
-In-Reply-To: <20190621091828.GA1878@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 12:18:28 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The problem is that "ret" is an int but we're casting it as
-> "(unsigned long *)&ret" when we do the for_each_set_bit() loop.  This
-> will not work on big endian 64 bit systems.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Hi Dan,
+The variable err is assigned with the value -EINVAL that is never
+read and it is re-assigned a new value later on.  The assignment is
+redundant and can be removed.
 
-Great catch,  I've applied this to the togreg branch of iio.git (rather
-than fixes) given the point in the cycle and limited chance anyone is
-actually running this obsolete part on a be64 machine.  I would love
-to be proved wrong though and would be happy to push this for stable
-if we do get any reports!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks,
+---
 
-Jonathan
-> ---
->  drivers/iio/accel/sca3000.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-> index 4964561595f5..9e9f4347a325 100644
-> --- a/drivers/iio/accel/sca3000.c
-> +++ b/drivers/iio/accel/sca3000.c
-> @@ -872,8 +872,9 @@ static int sca3000_read_event_value(struct iio_dev *indio_dev,
->  				    enum iio_event_info info,
->  				    int *val, int *val2)
->  {
-> -	int ret, i;
->  	struct sca3000_state *st = iio_priv(indio_dev);
-> +	long ret;
-> +	int i;
->  
->  	switch (info) {
->  	case IIO_EV_INFO_VALUE:
-> @@ -885,11 +886,11 @@ static int sca3000_read_event_value(struct iio_dev *indio_dev,
->  			return ret;
->  		*val = 0;
->  		if (chan->channel2 = IIO_MOD_Y)
-> -			for_each_set_bit(i, (unsigned long *)&ret,
-> +			for_each_set_bit(i, &ret,
->  					 ARRAY_SIZE(st->info->mot_det_mult_y))
->  				*val += st->info->mot_det_mult_y[i];
->  		else
-> -			for_each_set_bit(i, (unsigned long *)&ret,
-> +			for_each_set_bit(i, &ret,
->  					 ARRAY_SIZE(st->info->mot_det_mult_xz))
->  				*val += st->info->mot_det_mult_xz[i];
->  
+V2: reorder variables as recommended by Jakub Kicinski to keep in
+    the networking code style.
+
+---
+ kernel/bpf/devmap.c | 2 +-
+ kernel/bpf/xskmap.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 5ae7cce5ef16..b58a33ca8a27 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -88,8 +88,8 @@ static u64 dev_map_bitmap_size(const union bpf_attr *attr)
+ static struct bpf_map *dev_map_alloc(union bpf_attr *attr)
+ {
+ 	struct bpf_dtab *dtab;
+-	int err = -EINVAL;
+ 	u64 cost;
++	int err;
+ 
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return ERR_PTR(-EPERM);
+diff --git a/kernel/bpf/xskmap.c b/kernel/bpf/xskmap.c
+index 22066c28ba61..413d75f4fc72 100644
+--- a/kernel/bpf/xskmap.c
++++ b/kernel/bpf/xskmap.c
+@@ -17,8 +17,8 @@ struct xsk_map {
+ 
+ static struct bpf_map *xsk_map_alloc(union bpf_attr *attr)
+ {
+-	int cpu, err = -EINVAL;
+ 	struct xsk_map *m;
++	int cpu, err;
+ 	u64 cost;
+ 
+ 	if (!capable(CAP_NET_ADMIN))
+-- 
+2.20.1
