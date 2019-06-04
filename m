@@ -1,57 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Jun 2019 13:55:34 +0000
-Subject: [PATCH] drm/amd/pp: fix a dereference of a pointer before it is null checked
-Message-Id: <20190629135534.15116-1-colin.king@canonical.com>
+Date: Tue, 04 Jun 2019 14:55:15 +0000
+Subject: [PATCH] media: vivid: fix incorrect assignment operation when setting video mode
+Message-Id: <20190604145515.20669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer hwmgr is dereferenced when initializing pointer adev however
-it is a little later hwmgr is null checked, implying it could potentially
-be null hence the assignment of adev may cause a null pointer dereference.
-Fix this by moving the assignment after the null check. Note that I did
-think of removing adev as it is only used once, however, hwmgr->adev is
-a void * pointer, so using adev avoids some ugly casting so it makes sense
-to still use it.
+The assigment of FB_VMODE_NONINTERLACE to var->vmode should be a
+bit-wise or of FB_VMODE_NONINTERLACE instead of an assignment,
+otherwise the previous clearing of the FB_VMODE_MASK bits of
+var->vmode makes no sense and is redundant.
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: 59156faf810e ("drm/amd/pp: Remove the cgs wrapper for notify smu version on APU")
+Addresses-Coverity: ("Unused value")
+Fixes: ad4e02d5081d ("[media] vivid: add a simple framebuffer device for overlay testing")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/vivid/vivid-osd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-index 8189fe402c6d..12815b3830e4 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-@@ -722,13 +722,11 @@ static int smu8_request_smu_load_fw(struct pp_hwmgr *hwmgr)
+diff --git a/drivers/media/platform/vivid/vivid-osd.c b/drivers/media/platform/vivid/vivid-osd.c
+index 1a89593b0c86..f2e789bdf4a6 100644
+--- a/drivers/media/platform/vivid/vivid-osd.c
++++ b/drivers/media/platform/vivid/vivid-osd.c
+@@ -155,7 +155,7 @@ static int _vivid_fb_check_var(struct fb_var_screeninfo *var, struct vivid_dev *
+ 	var->nonstd = 0;
  
- static int smu8_start_smu(struct pp_hwmgr *hwmgr)
- {
--	struct amdgpu_device *adev = hwmgr->adev;
--
-+	struct amdgpu_device *adev;
- 	uint32_t index = SMN_MP1_SRAM_START_ADDR +
- 			 SMU8_FIRMWARE_HEADER_LOCATION +
- 			 offsetof(struct SMU8_Firmware_Header, Version);
+ 	var->vmode &= ~FB_VMODE_MASK;
+-	var->vmode = FB_VMODE_NONINTERLACED;
++	var->vmode |= FB_VMODE_NONINTERLACED;
  
--
- 	if (hwmgr = NULL || hwmgr->device = NULL)
- 		return -EINVAL;
- 
-@@ -738,6 +736,7 @@ static int smu8_start_smu(struct pp_hwmgr *hwmgr)
- 		((hwmgr->smu_version >> 16) & 0xFF),
- 		((hwmgr->smu_version >> 8) & 0xFF),
- 		(hwmgr->smu_version & 0xFF));
-+	adev = hwmgr->adev;
- 	adev->pm.fw_version = hwmgr->smu_version >> 8;
- 
- 	return smu8_request_smu_load_fw(hwmgr);
+ 	/* Dummy values */
+ 	var->hsync_len = 24;
 -- 
 2.20.1
