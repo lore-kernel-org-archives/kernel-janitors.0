@@ -1,37 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Jun 2019 14:27:44 +0000
-Subject: [PATCH][next] blktrace: remove redundant assignment to ret
-Message-Id: <20190604142744.15330-1-colin.king@canonical.com>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Tue, 04 Jun 2019 15:43:28 +0000
+Subject: Re: [PATCH][next] blktrace: remove redundant assignment to ret
+Message-Id: <f834f32d-ab6e-c429-1a3e-13512583ee08@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190604142744.15330-1-colin.king@canonical.com>
+In-Reply-To: <20190604142744.15330-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 6/4/19 8:27 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable ret is being assigned a value that is never read, hence
+> the assignment is redundant and can be removed.
 
-Variable ret is being assigned a value that is never read, hence
-the assignment is redundant and can be removed.
+This doesn't look correct to me, here's the full code:
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/trace/blktrace.c | 2 --
- 1 file changed, 2 deletions(-)
+	ret = -ENOENT;
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 2d6e93ab0478..ae7c63d6782c 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -507,8 +507,6 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 	if (!bt->msg_data)
- 		goto err;
- 
--	ret = -ENOENT;
--
- 	dir = debugfs_lookup(buts->name, blk_debugfs_root);
- 	if (!dir)
- 		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+	if (!dir)
+		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+	if (!dir)
+		goto err;
+	[...]
+err:
+	[...]
+	return ret;
+
+The main issue here, to me, looks like we're not dealing with ERR_PTR
+returns from debugfs_create_dir(), just checking for NULL.
+
 -- 
-2.20.1
+Jens Axboe
