@@ -1,24 +1,19 @@
-From: info@homeoforigin.co.nz
-Date: Thu, 27 Jun 2019 19:37:02 +0000
-Subject: Contact Us Form Submission
-Message-Id: <20190627193702.CC1EA818B8@sapphire.zyber.co.nz>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 05 Jun 2019 02:23:05 +0000
+Subject: Re: [PATCH] scsi: smartpqi: unlock on error in pqi_submit_raid_request_synchronous()
+Message-Id: <yq1v9xkrcs6.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We have successfully received your Contact Us message on our website.
 
-The following information was provided:
+Dan,
 
-Name: IsmaelrenDA
+> We need to drop the "ctrl_info->sync_request_sem" lock before returning.
 
-Email Address: kernel-janitors@vger.kernel.org
+Applied to 5.2/scsi-fixes, thanks!
 
-Phone: 81344636116
-
-Message: Cannabis investoi Lontooseen: https://chogoon.com/srt/4svr8
-
-
-Thank you very much for your submission.
+-- 
+Martin K. Petersen	Oracle Linux Engineering
