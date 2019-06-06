@@ -1,48 +1,35 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 25 Jun 2019 06:29:45 +0000
-Subject: Re: [PATCH] cifs: fix typo in debug message with struct field ia_valid
-Message-Id: <CAH2r5mvSOS3khpwQ5bZ4OrTcuMXmxB_oaUuVLqaivD1w5g9n9Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Jun 2019 08:40:39 +0000
+Subject: [PATCH][next] ipv6: fix spelling mistake: "wtih" -> "with"
+Message-Id: <20190606084039.6265-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624163943.6721-1-colin.king@canonical.com>
-In-Reply-To: <20190624163943.6721-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Jun 24, 2019 at 3:25 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Field ia_valid is being debugged with the field name iavalid, fix this.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> index d7cc62252634..06a4892e9973 100644
-> --- a/fs/cifs/inode.c
-> +++ b/fs/cifs/inode.c
-> @@ -2415,7 +2415,7 @@ cifs_setattr_nounix(struct dentry *direntry, struct iattr *attrs)
->
->         xid = get_xid();
->
-> -       cifs_dbg(FYI, "setattr on file %pd attrs->iavalid 0x%x\n",
-> +       cifs_dbg(FYI, "setattr on file %pd attrs->ia_valid 0x%x\n",
->                  direntry, attrs->ia_valid);
->
->         if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_PERM)
-> --
-> 2.20.1
->
+There is a spelling mistake in a NL_SET_ERR_MSG message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/route.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index fbaa7e9e0d9c..641a31d42ef9 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -3342,7 +3342,7 @@ static struct fib6_info *ip6_route_info_create(struct fib6_config *cfg,
+ 			goto out;
+ 		}
+ 		if (rt->fib6_src.plen) {
+-			NL_SET_ERR_MSG(extack, "Nexthops can not be used wtih source routing");
++			NL_SET_ERR_MSG(extack, "Nexthops can not be used with source routing");
+ 			goto out;
+ 		}
+ 		rt->nh = nh;
 -- 
-Thanks,
-
-Steve
+2.20.1
