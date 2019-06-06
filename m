@@ -1,113 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 20 Jun 2019 18:48:23 +0000
-Subject: Re: [PATCH] Coccinelle: Add a SmPL script for the reconsideration of redundant dev_err() calls
-Message-Id: <alpine.DEB.2.21.1906202046550.3087@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1240475580-1561056503=:3087"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Jun 2019 13:10:53 +0000
+Subject: [PATCH][next] ixgbe: fix potential u32 overflow on shift
+Message-Id: <20190606131053.25103-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
-In-Reply-To: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Ding Xiang <dingxiang@cmss.chinamobile.com>, Coccinelle <cocci@systeme.lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jacob Keller <jacob.e.keller@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-1240475580-1561056503=:3087
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+The u32 variable rem is being shifted using u32 arithmetic however
+it is being passed to div_u64 that expects the expression to be a u64.
+The 32 bit shift may potentially overflow, so cast rem to a u64 before
+shifting to avoid this.
 
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: cd4583206990 ("ixgbe: implement support for SDP/PPS output on X550 hardware")
+Fixes: 68d9676fc04e ("ixgbe: fix PTP SDP pin setup on X540 hardware")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-On Thu, 20 Jun 2019, Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Jun 2019 19:12:53 +0200
->
-> The function “devm_ioremap_resource” contains appropriate error reporting.
-> Thus it can be questionable to present another error message
-> at other places.
->
-> Provide design options for the adjustment of affected source code
-> by the means of the semantic patch language (Coccinelle software).
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  .../coccinelle/misc/redundant_dev_err.cocci   | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 scripts/coccinelle/misc/redundant_dev_err.cocci
->
-> diff --git a/scripts/coccinelle/misc/redundant_dev_err.cocci b/scripts/coccinelle/misc/redundant_dev_err.cocci
-> new file mode 100644
-> index 000000000000..aeb228280276
-> --- /dev/null
-> +++ b/scripts/coccinelle/misc/redundant_dev_err.cocci
-> @@ -0,0 +1,53 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/// Reconsider a function call for redundant error reporting.
-> +//
-> +// Keywords: dev_err redundant device error messages
-> +// Confidence: Medium
-> +
-> +virtual patch
-> +virtual context
-> +virtual org
-> +virtual report
-> +
-> +@display depends on context@
-> +expression e;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> + {
-> +*   dev_err(...);
-> +    return (...);
-> + }
-
-Why do you assume that there is exactly one dev_err and one return after
-the test?
-
-> +
-> +@deletion depends on patch@
-> +expression e;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> +-{
-> +-   dev_err(...);
-> +    return (...);
-> +-}
-> +
-> +@or depends on org || report@
-> +expression e;
-> +position p;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> + {
-> +    dev_err@p(...);
-> +    return (...);
-> + }
-> +
-> +@script:python to_do depends on org@
-> +p << or.p;
-> +@@
-> +coccilib.org.print_todo(p[0],
-> +                        "WARNING: An error message is probably not needed here because the previously called function contains appropriate error reporting.")
-
-"the previously called function" would be better as
-"devm_ioremap_resource".
-
-julia
-
-> +
-> +@script:python reporting depends on report@
-> +p << or.p;
-> +@@
-> +coccilib.report.print_report(p[0],
-> +                             "WARNING: An error message is probably not needed here because the previously called function contains appropriate error reporting.")
-> --
-> 2.22.0
->
->
---8323329-1240475580-1561056503=:3087--
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+index 2c4d327fcc2e..ff229d0e9146 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+@@ -209,7 +209,7 @@ static void ixgbe_ptp_setup_sdp_X540(struct ixgbe_adapter *adapter)
+ 	 * assumes that the cycle counter shift is small enough to avoid
+ 	 * overflowing when shifting the remainder.
+ 	 */
+-	clock_edge += div_u64((rem << cc->shift), cc->mult);
++	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
+ 	trgttiml = (u32)clock_edge;
+ 	trgttimh = (u32)(clock_edge >> 32);
+ 
+@@ -295,7 +295,7 @@ static void ixgbe_ptp_setup_sdp_X550(struct ixgbe_adapter *adapter)
+ 	 * assumes that the cycle counter shift is small enough to avoid
+ 	 * overflowing when shifting the remainder.
+ 	 */
+-	clock_edge += div_u64((rem << cc->shift), cc->mult);
++	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
+ 
+ 	/* X550 hardware stores the time in 32bits of 'billions of cycles' and
+ 	 * 32bits of 'cycles'. There's no guarantee that cycles represents
+-- 
+2.20.1
