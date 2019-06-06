@@ -1,45 +1,44 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 26 Jun 2019 14:56:42 +0000
-Subject: Re: [PATCH] orangefs: remove redundant assignment to variable buffer_index
-Message-Id: <712efbc2-1c10-8e6e-7517-16fa57cb8709@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Jun 2019 12:27:07 +0000
+Subject: [PATCH] hwmon: nct7904: fix error check on register read
+Message-Id: <20190606122707.16107-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190511132700.4862-1-colin.king@canonical.com>
- <CAOg9mSQt42NQu-3nwZOCGOPx45y7G8aaiDaVe4SwotGnD9iY1A@mail.gmail.com>
- <20190521150311.GL31203@kadam>
- <CAOg9mSQmV=BDMpTNLJvb4QBr=f96qg4Hr9qu=bB6xZubB+1LZQ@mail.gmail.com>
- <20190626061801.GA18776@kadam>
-In-Reply-To: <20190626061801.GA18776@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mike Marshall <hubcap@omnibond.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "amy . shih" <amy.shih@advantech.com.tw>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 26/06/2019 07:18, Dan Carpenter wrote:
-> On Tue, Jun 25, 2019 at 02:55:11PM -0400, Mike Marshall wrote:
->>>> You often send these patches before they hit linux-next so I had skipped
->>>> reviewing this one when you sent it.
->>
->> I know Linus is likely to refuse pull requests for stuff that
->> has not been through linux-next, so I make sure stuff has been
->> there at least a few days before asking for it to be pulled.
->> "A few days" is long enough for robots to see it, perhaps not
->> long enough for humans. I especially appreciate the human review. One of
->> the good things about Orangefs is that it is easy to install and configure,
->> especially for testing. Documentation/filesystems/orangefs.txt has
->> instructions for dnf installing orangefs on Fedora, and also how to download
->> a source tarball and install from that.
-> 
-> No, no, that comment was to Colin.  It's good that he's sending patches
-> for all the trees as soon as possible like the zero day bot does.  But
-> it does make it hard to review at times.
-> 
-> regards,
-> dan carpenter
-> 
-Indeed, I normally work against the latest code landing in linux-next,
-so apologies for any confusion.  Anyhow, by the look of it these minor
-nitpicks still need addressing (really low priority), so shall I leave
-that with you Mike to sort out?
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin
+Currently the return from the call to nct7904_read is being masked
+and so and negative error returns are being stripped off and the
+error check is always false.  Fix this by checking on err first and
+then masking the return value in ret.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: af55ab0b0792 ("hwmon: (nct7904) Add extra sysfs support for fan, voltage and temperature.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwmon/nct7904.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+index dd450dd29ac7..5fa69898674c 100644
+--- a/drivers/hwmon/nct7904.c
++++ b/drivers/hwmon/nct7904.c
+@@ -928,10 +928,10 @@ static int nct7904_probe(struct i2c_client *client,
+ 
+ 	/* Check DTS enable status */
+ 	if (data->enable_dts) {
+-		ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL0_REG) & 0xF;
++		ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL0_REG);
+ 		if (ret < 0)
+ 			return ret;
+-		data->has_dts = ret;
++		data->has_dts = ret & 0xF;
+ 		if (data->enable_dts & ENABLE_TSI) {
+ 			ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL1_REG);
+ 			if (ret < 0)
+-- 
+2.20.1
