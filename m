@@ -1,94 +1,57 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 13 Jun 2019 08:21:47 +0000
-Subject: Re: [RESEND PATCH V3] drm/drm_vblank: Change EINVAL by the correct errno
-Message-Id: <20190613082147.GG23020@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Jun 2019 10:30:55 +0000
+Subject: Re: [PATCH][next] drm/amd/display: remove redundant assignment to status
+Message-Id: <20190606103055.GJ31203@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
-In-Reply-To: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
+References: <20190530161219.2507-1-colin.king@canonical.com>
+ <a190bcd5-cda8-84c6-093a-98438a605032@amd.com>
+In-Reply-To: <a190bcd5-cda8-84c6-093a-98438a605032-5C7GfCeVMHo@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Harry Wentland <hwentlan-5C7GfCeVMHo@public.gmane.org>
+Cc: "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "Li,
+ Sun peng (Leo)" <Sunpeng.Li-5C7GfCeVMHo@public.gmane.org>, "Wentland,
+ Harry" <Harry.Wentland-5C7GfCeVMHo@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Deucher,
+ Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Koo, Anthony" <Anthony.Koo-5C7GfCeVMHo@public.gmane.org>, "Koenig,
+ Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>
 
-On Wed, Jun 12, 2019 at 11:10:54PM -0300, Rodrigo Siqueira wrote:
-> For historical reason, the function drm_wait_vblank_ioctl always return
-> -EINVAL if something gets wrong. This scenario limits the flexibility
-> for the userspace make detailed verification of the problem and take
-> some action. In particular, the validation of “if (!dev->irq_enabled)”
-> in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> support vblank or not. If the driver does not support VBlank, the
-> function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> Additionally, some operations are unsupported by this function, and
-> returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> libdrm, which is used by many compositors; because of this, it is
-> important to check if this change breaks any compositor. In this sense,
-> the following projects were examined:
+On Fri, May 31, 2019 at 08:19:03PM +0000, Harry Wentland wrote:
+> On 2019-05-30 12:12 p.m., Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The variable status is initialized with a value that is never read
+> > and status is reassigned several statements later. This initialization
+> > is redundant and can be removed.
+> > 
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> > index 65d6caedbd82..cf6166a1be53 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+> > @@ -2367,7 +2367,7 @@ static bool retrieve_link_cap(struct dc_link *link)
+> >  	union down_stream_port_count down_strm_port_count;
+> >  	union edp_configuration_cap edp_config_cap;
+> >  	union dp_downstream_port_present ds_port = { 0 };
+> > -	enum dc_status status = DC_ERROR_UNEXPECTED;
+> > +	enum dc_status status;
 > 
-> * Drm-hwcomposer
-> * Kwin
-> * Sway
-> * Wlroots
-> * Wayland-core
-> * Weston
-> * Xorg (67 different drivers)
+> Not sure this improves the situation.
 > 
-> For each repository the verification happened in three steps:
-> 
-> * Update the main branch
-> * Look for any occurrence "drmWaitVBlank" with the command:
->   git grep -n "drmWaitVBlank"
-> * Look in the git history of the project with the command:
->   git log -SdrmWaitVBlank
-> 
-> Finally, none of the above projects validate the use of EINVAL which
-> make safe, at least for these projects, to change the return values.
-> 
-> Change since V2:
->  Daniel Vetter and Chris Wilson
->  - Replace ENOTTY by EOPNOTSUPP
->  - Return EINVAL if the parameters are wrong
-> 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> ---
-> Update:
->   Now IGT has a way to validate if a driver has vblank support or not.
->   See: https://gitlab.freedesktop.org/drm/igt-gpu-tools/commit/2d244aed69165753f3adbbd6468db073dc1acf9A
-> 
->  drivers/gpu/drm/drm_vblank.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> index 0d704bddb1a6..d76a783a7d4b 100644
-> --- a/drivers/gpu/drm/drm_vblank.c
-> +++ b/drivers/gpu/drm/drm_vblank.c
-> @@ -1578,10 +1578,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
->  	unsigned int flags, pipe, high_pipe;
->  
->  	if (!dev->irq_enabled)
-> -		return -EINVAL;
-> +		return -EOPNOTSUPP;
->  
->  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> -		return -EINVAL;
-> +		return -EOPNOTSUPP;
+> I'd prefer to have a default here in case someone changes the code below
+> and forgets to set the status.
 
-Not sure we want EINVAL here, that's kinda a "parameters are wrong"
-version too. With that changed:
+The dead code confuses human readers, because people naturally assume it
+is not dead.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+GCC has a feature to warn about uninitialized variables and we're
+randomly initializing status to a bogus value to disable static
+analysis...
 
->  
->  	if (vblwait->request.type &
->  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> -- 
-> 2.21.0
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+regards,
+dan carpenter
