@@ -1,64 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Jun 2019 12:41:27 +0000
-Subject: [PATCH v2] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
-Message-Id: <20190606124127.GA17082@mwanda>
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Date: Thu, 06 Jun 2019 12:56:38 +0000
+Subject: Re: [PATCH v2] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
+Message-Id: <b1374627-7af2-77cd-c7f2-40166fce5a04@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <ccefbd0b-3397-a26e-95e7-059fcced9154@st.com>
+References: <20190606124127.GA17082@mwanda>
+In-Reply-To: <20190606124127.GA17082@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The problem is that on 64bit systems then we don't clear the higher
-bits of the "pending" variable.  So when we do:
-
-        ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
-        if (ack) {
-
-the if (ack) condition relies on uninitialized data.  The fix it that
-I've changed "pending" from an unsigned long to a u32.  I changed "n" as
-well, because that's a number in the 0-10 range and it fits easily
-inside an int.  We do need to add a cast to "pending" when we use it in
-the for_each_set_bit() loop, but that doesn't cause a proble, it's
-fine.
-
-Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: white space changes
-
- drivers/mfd/stmfx.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
-index fe8efba2d45f..7c419c078688 100644
---- a/drivers/mfd/stmfx.c
-+++ b/drivers/mfd/stmfx.c
-@@ -204,12 +204,10 @@ static struct irq_chip stmfx_irq_chip = {
- static irqreturn_t stmfx_irq_handler(int irq, void *data)
- {
- 	struct stmfx *stmfx = data;
--	unsigned long n, pending;
--	u32 ack;
--	int ret;
-+	u32 pending, ack;
-+	int n, ret;
- 
--	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING,
--			  (u32 *)&pending);
-+	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING, &pending);
- 	if (ret)
- 		return IRQ_NONE;
- 
-@@ -224,7 +222,7 @@ static irqreturn_t stmfx_irq_handler(int irq, void *data)
- 			return IRQ_NONE;
- 	}
- 
--	for_each_set_bit(n, &pending, STMFX_REG_IRQ_SRC_MAX)
-+	for_each_set_bit(n, (unsigned long *)&pending, STMFX_REG_IRQ_SRC_MAX)
- 		handle_nested_irq(irq_find_mapping(stmfx->irq_domain, n));
- 
- 	return IRQ_HANDLED;
--- 
-2.20.1
+T24gNi82LzE5IDI6NDEgUE0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRoZSBwcm9ibGVtIGlz
+IHRoYXQgb24gNjRiaXQgc3lzdGVtcyB0aGVuIHdlIGRvbid0IGNsZWFyIHRoZSBoaWdoZXINCj4g
+Yml0cyBvZiB0aGUgInBlbmRpbmciIHZhcmlhYmxlLiAgU28gd2hlbiB3ZSBkbzoNCj4gDQo+ICAg
+ICAgICAgIGFjayA9IHBlbmRpbmcgJiB+QklUKFNUTUZYX1JFR19JUlFfU1JDX0VOX0dQSU8pOw0K
+PiAgICAgICAgICBpZiAoYWNrKSB7DQo+IA0KPiB0aGUgaWYgKGFjaykgY29uZGl0aW9uIHJlbGll
+cyBvbiB1bmluaXRpYWxpemVkIGRhdGEuICBUaGUgZml4IGl0IHRoYXQNCj4gSSd2ZSBjaGFuZ2Vk
+ICJwZW5kaW5nIiBmcm9tIGFuIHVuc2lnbmVkIGxvbmcgdG8gYSB1MzIuICBJIGNoYW5nZWQgIm4i
+IGFzDQo+IHdlbGwsIGJlY2F1c2UgdGhhdCdzIGEgbnVtYmVyIGluIHRoZSAwLTEwIHJhbmdlIGFu
+ZCBpdCBmaXRzIGVhc2lseQ0KPiBpbnNpZGUgYW4gaW50LiAgV2UgZG8gbmVlZCB0byBhZGQgYSBj
+YXN0IHRvICJwZW5kaW5nIiB3aGVuIHdlIHVzZSBpdCBpbg0KPiB0aGUgZm9yX2VhY2hfc2V0X2Jp
+dCgpIGxvb3AsIGJ1dCB0aGF0IGRvZXNuJ3QgY2F1c2UgYSBwcm9ibGUsIGl0J3MNCj4gZmluZS4N
+Cj4gDQo+IEZpeGVzOiAwNjI1MmFkZTkxNTYgKCJtZmQ6IEFkZCBTVCBNdWx0aS1GdW5jdGlvbiBl
+WHBhbmRlciAoU1RNRlgpIGNvcmUgZHJpdmVyIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBl
+bnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KDQpBY2tlZC1ieTogQW1lbGllIERlbGF1
+bmF5IDxhbWVsaWUuZGVsYXVuYXlAc3QuY29tPg0KDQo+IC0tLQ0KPiB2Mjogd2hpdGUgc3BhY2Ug
+Y2hhbmdlcw0KPiANCj4gICBkcml2ZXJzL21mZC9zdG1meC5jIHwgMTAgKysrKy0tLS0tLQ0KPiAg
+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvc3RtZnguYyBiL2RyaXZlcnMvbWZkL3N0bWZ4LmMNCj4g
+aW5kZXggZmU4ZWZiYTJkNDVmLi43YzQxOWMwNzg2ODggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
+bWZkL3N0bWZ4LmMNCj4gKysrIGIvZHJpdmVycy9tZmQvc3RtZnguYw0KPiBAQCAtMjA0LDEyICsy
+MDQsMTAgQEAgc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBzdG1meF9pcnFfY2hpcCA9IHsNCj4gICBz
+dGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hhbmRsZXIoaW50IGlycSwgdm9pZCAqZGF0YSkN
+Cj4gICB7DQo+ICAgCXN0cnVjdCBzdG1meCAqc3RtZnggPSBkYXRhOw0KPiAtCXVuc2lnbmVkIGxv
+bmcgbiwgcGVuZGluZzsNCj4gLQl1MzIgYWNrOw0KPiAtCWludCByZXQ7DQo+ICsJdTMyIHBlbmRp
+bmcsIGFjazsNCj4gKwlpbnQgbiwgcmV0Ow0KPiAgIA0KPiAtCXJldCA9IHJlZ21hcF9yZWFkKHN0
+bWZ4LT5tYXAsIFNUTUZYX1JFR19JUlFfUEVORElORywNCj4gLQkJCSAgKHUzMiAqKSZwZW5kaW5n
+KTsNCj4gKwlyZXQgPSByZWdtYXBfcmVhZChzdG1meC0+bWFwLCBTVE1GWF9SRUdfSVJRX1BFTkRJ
+TkcsICZwZW5kaW5nKTsNCj4gICAJaWYgKHJldCkNCj4gICAJCXJldHVybiBJUlFfTk9ORTsNCj4g
+ICANCj4gQEAgLTIyNCw3ICsyMjIsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hh
+bmRsZXIoaW50IGlycSwgdm9pZCAqZGF0YSkNCj4gICAJCQlyZXR1cm4gSVJRX05PTkU7DQo+ICAg
+CX0NCj4gICANCj4gLQlmb3JfZWFjaF9zZXRfYml0KG4sICZwZW5kaW5nLCBTVE1GWF9SRUdfSVJR
+X1NSQ19NQVgpDQo+ICsJZm9yX2VhY2hfc2V0X2JpdChuLCAodW5zaWduZWQgbG9uZyAqKSZwZW5k
+aW5nLCBTVE1GWF9SRUdfSVJRX1NSQ19NQVgpDQo+ICAgCQloYW5kbGVfbmVzdGVkX2lycShpcnFf
+ZmluZF9tYXBwaW5nKHN0bWZ4LT5pcnFfZG9tYWluLCBuKSk7DQo+ICAgDQo+ICAgCXJldHVybiBJ
+UlFfSEFORExFRDsNCj4g
