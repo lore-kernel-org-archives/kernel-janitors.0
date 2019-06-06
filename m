@@ -1,47 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Jun 2019 14:45:17 +0000
-Subject: [PATCH] drm/amd/powerplay: fix incorrect assignments to mclk_mask and soc_mask
-Message-Id: <20190628144517.7747-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 06 Jun 2019 09:27:46 +0000
+Subject: [PATCH -next] phy: tegra: xusb: Remove set but not used variable 'priv'
+Message-Id: <20190606092746.80310-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Wang <kevin1.wang@amd.com>, Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-There are null pointer checks on mlck_mask and soc_mask however the
-sclk_mask is being used in assignments in what looks to be a cut-n-paste
-coding error. Fix this by using the correct pointers in the assignments.
+drivers/phy/tegra/xusb-tegra210.c: In function 'tegra210_hsic_phy_power_on':
+drivers/phy/tegra/xusb-tegra210.c:1236:31: warning:
+ variable 'priv' set but not used [-Wunused-but-set-variable]
 
-Addresses-Coverity: ("Dereference after null check")
-Fixes: 2d9fb9b06643 ("drm/amd/powerplay: add function get_profiling_clk_mask for navi10")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It's never used, so can be removed
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/tegra/xusb-tegra210.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-index 27e5c80..ac151da 100644
---- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-@@ -1134,14 +1134,14 @@ static int navi10_get_profiling_clk_mask(struct smu_context *smu,
- 			ret = smu_get_dpm_level_count(smu, SMU_MCLK, &level_count);
- 			if (ret)
- 				return ret;
--			*sclk_mask = level_count - 1;
-+			*mclk_mask = level_count - 1;
- 		}
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index eb754baa8d71..4076b22c4087 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -1233,13 +1233,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
+ 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
+ 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+-	struct tegra210_xusb_padctl *priv;
+ 	unsigned int index = lane->index;
+ 	u32 value;
+ 	int err;
  
- 		if(soc_mask) {
- 			ret = smu_get_dpm_level_count(smu, SMU_SOCCLK, &level_count);
- 			if (ret)
- 				return ret;
--			*sclk_mask = level_count - 1;
-+			*soc_mask = level_count - 1;
- 		}
- 	}
- 
--- 
-2.7.4
+-	priv = to_tegra210_xusb_padctl(padctl);
+-
+ 	err = regulator_enable(pad->supply);
+ 	if (err)
+ 		return err;
