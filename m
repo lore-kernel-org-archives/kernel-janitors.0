@@ -1,68 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 24 Jun 2019 16:32:14 +0000
-Subject: Applied "ASoC: SOF: Intel: hda: remove duplicated include from hda.c" to the asoc tree
-Message-Id: <20190624163214.33351440055@finisterre.sirena.org.uk>
+From: Martins Henry <rws@aero.iitb.ac.in>
+Date: Fri, 07 Jun 2019 06:43:09 +0000
+Subject: Thanks and I wait for your answer
+Message-Id: <412557711.60336.1559889069980.JavaMail.zimbra@aero.iitb.ac.in>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190620145709.122498-1-yuehaibing@huawei.com>
-In-Reply-To: <20190620145709.122498-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Hello,
 
-   ASoC: SOF: Intel: hda: remove duplicated include from hda.c
+I am Martin Henry, An American Citizen; I am the personal secretary to
+Mr. Donald Railton, the controller of a Lottery Company. Please I am
+having big problem now, I have a 6yrs old daughter who has leukemia, a
+disease of the blood, and she needs a bone marrow transplant or she
+will die.
 
-has been applied to the asoc tree at
+Please I am only asking for your help and you will benefit from it
+also. As an insider with Lottery Firm, working as the personal
+secretary to the controller, I want you to send me your name to play,
+I have some numbers that are going to win, stored in his secret data
+system in the office. The Lottery is an online entry with credit card
+anywhere with a name and address. All I want you to do is to send your
+name to play it and I will send confirmation to you.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+I will play with my card on your name and the Prize will be shared
+equally between us. Immediately the results are released they will
+contact you for payment as the oversea winner. The lotto can be played
+with 9.00 dollars, or 50 dollars but the prize will be Millions.
+Remember that I am playing on your name with my card; I just want to
+front you for this, because I need this money to save the life of my
+little daughter.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a2438253ba73ae51d9521c90ad8d3989bcdda74e Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Jun 2019 14:57:09 +0000
-Subject: [PATCH] ASoC: SOF: Intel: hda: remove duplicated include from hda.c
-
-Remove duplicated include.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sof/intel/hda.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index 8754dfe75000..136f98bf5d7e 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -19,7 +19,6 @@
- #include <sound/hda_register.h>
- 
- #include <linux/module.h>
--#include <sound/hdaudio_ext.h>
- #include <sound/sof.h>
- #include <sound/sof/xtensa.h>
- #include "../ops.h"
--- 
-2.20.1
+Thanks and I wait for your answer
+Martin Henry.
