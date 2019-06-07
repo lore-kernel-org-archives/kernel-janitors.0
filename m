@@ -1,51 +1,42 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 03 Jun 2019 13:48:27 +0000
-Subject: Re: [PATCH] mmc: sdhci-pci: remove redundant check of slots == 0
-Message-Id: <CAPDyKFpo6EqOp0mqVj7yHdttoh957QSZ8sFzHMs+QFz-cHETew@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Jun 2019 10:45:33 +0000
+Subject: [PATCH][next] clk: bcm2835: fix memork leak on unfree'd pll struct
+Message-Id: <20190607104533.14700-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190531113223.27474-1-colin.king@canonical.com>
-In-Reply-To: <20190531113223.27474-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 31 May 2019 at 13:32, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The calculation of slots results in a value in the range 1..8
-> and so slots can never be zero.  The check for slots = 0 is
-> always going to be false, hence it is redundant and can be
-> removed.
->
-> Addresses-Coverity: ("Logically dead code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for next, thanks!
+The pll struct is being allocated but not kfree'd on an error return
+path when devm_clk_hw_register fails.  Fix this with a kfree on pll
+if an error occurs.
 
-Kind regards
-Uffe
+Addresses-Coverity: ("Resource leak")
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-> ---
->  drivers/mmc/host/sdhci-pci-core.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> index ab9e2b901094..f70436261746 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -2044,8 +2044,6 @@ static int sdhci_pci_probe(struct pci_dev *pdev,
->
->         slots = PCI_SLOT_INFO_SLOTS(slots) + 1;
->         dev_dbg(&pdev->dev, "found %d slot(s)\n", slots);
-> -       if (slots = 0)
-> -               return -ENODEV;
->
->         BUG_ON(slots > MAX_SLOTS);
->
-> --
-> 2.20.1
->
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 770bb01f523e..90584deaf416 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1310,8 +1310,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+ 	pll->hw.init = &init;
+ 
+ 	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
+-	if (ret)
++	if (ret) {
++		kfree(pll);
+ 		return NULL;
++	}
+ 	return &pll->hw;
+ }
+ 
+-- 
+2.20.1
