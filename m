@@ -1,38 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Jun 2019 14:08:01 +0000
-Subject: [PATCH][next] drm/amdgpu: fix off-by-one comparison on a WARN_ON message
-Message-Id: <20190628140801.31937-1-colin.king@canonical.com>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Fri, 07 Jun 2019 17:57:29 +0000
+Subject: Re: [PATCH 2/2][next] RDMA/hns: fix inverted logic of readl read and shift
+Message-Id: <20190607175729.GA25014@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190531092101.28772-1-colin.king@canonical.com>
+ <20190531092101.28772-2-colin.king@canonical.com>
+In-Reply-To: <20190531092101.28772-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hawking Zhang <Hawking.Zhang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, May 31, 2019 at 10:21:01AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> A previous change incorrectly changed the inverted logic and logically
+> negated the readl rather than the shifted readl result. Fix this by
+> adding in missing parentheses around the expression that needs to be
+> logically negated.
+> 
+> Addresses-Coverity: ("Logically dead code")
+> Fixes: 669cefb654cb ("RDMA/hns: Remove jiffies operation in disable interrupt context")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The WARN_ON is currently throwing a warning when i is 65 or higher which
-is off by one. It should be 64 or higher (64 queues from 0..63 inclusive),
-so fix this off-by-one comparison.
+Applied to for-next, thanks
 
-Fixes: 849aca9f9c03 ("drm/amdgpu: Move common code to amdgpu_gfx.c")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-index 74066e1466f7..c8d106c59e27 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-@@ -501,7 +501,7 @@ int amdgpu_gfx_enable_kcq(struct amdgpu_device *adev)
- 		/* This situation may be hit in the future if a new HW
- 		 * generation exposes more than 64 queues. If so, the
- 		 * definition of queue_mask needs updating */
--		if (WARN_ON(i > (sizeof(queue_mask)*8))) {
-+		if (WARN_ON(i >= (sizeof(queue_mask)*8))) {
- 			DRM_ERROR("Invalid KCQ enabled: %d\n", i);
- 			break;
- 		}
--- 
-2.20.1
+Jason
