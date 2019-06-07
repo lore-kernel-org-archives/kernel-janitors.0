@@ -1,40 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Jun 2019 13:31:14 +0000
-Subject: [PATCH] drm/amdkfd: fix potential null pointer dereference on pointer peer_dev
-Message-Id: <20190629133114.14271-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jun 2019 13:56:36 +0000
+Subject: [PATCH next] nexthop: off by one in nexthop_mpath_select()
+Message-Id: <20190607135636.GB16718@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Ahern <dsahern@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The nhg->nh_entries[] array is allocated in nexthop_grp_alloc() and it
+has nhg->num_nh elements so this check should be >= instead of >.
 
-The call to kfd_topology_device_by_proximity_domain can return a NULL
-pointer so add a null pointer check on peer_dev to the existing null
-pointer check on peer_dev->gpu to avoid any potential null pointer
-dereferences.
-
-Addresses-Coverity: ("Dereference on null return value")
-Fixes: ae9a25aea7f3 ("drm/amdkfd: Generate xGMI direct iolink")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f88d8ea67fbd ("ipv6: Plumb support for nexthop object in a fib6_info")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 2 +-
+ include/net/nexthop.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-index 4e3fc284f6ac..cb6b46cfa6c2 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-@@ -1293,7 +1293,7 @@ static int kfd_create_vcrat_image_gpu(void *pcrat_image,
- 	if (kdev->hive_id) {
- 		for (nid = 0; nid < proximity_domain; ++nid) {
- 			peer_dev = kfd_topology_device_by_proximity_domain(nid);
--			if (!peer_dev->gpu)
-+			if (!peer_dev || !peer_dev->gpu)
- 				continue;
- 			if (peer_dev->gpu->hive_id != kdev->hive_id)
- 				continue;
+diff --git a/include/net/nexthop.h b/include/net/nexthop.h
+index aff7b2410057..e019ed9b3dc3 100644
+--- a/include/net/nexthop.h
++++ b/include/net/nexthop.h
+@@ -160,7 +160,7 @@ struct nexthop *nexthop_mpath_select(const struct nexthop *nh, int nhsel)
+ 	/* for_nexthops macros in fib_semantics.c grabs a pointer to
+ 	 * the nexthop before checking nhsel
+ 	 */
+-	if (nhsel > nhg->num_nh)
++	if (nhsel >= nhg->num_nh)
+ 		return NULL;
+ 
+ 	return nhg->nh_entries[nhsel].nh;
 -- 
 2.20.1
