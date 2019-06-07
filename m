@@ -1,41 +1,64 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Fri, 21 Jun 2019 03:38:17 +0000
-Subject: Re: [PATCH -next] ASoC: SOF: Intel: hda: remove duplicated include from hda.c
-Message-Id: <4a40d713-72a6-769a-1245-8768fac2411c@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Jun 2019 18:19:20 +0000
+Subject: [PATCH][next][V2] ixgbe: fix potential u32 overflow on shift
+Message-Id: <20190607181920.23339-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190620145709.122498-1-yuehaibing@huawei.com>
-In-Reply-To: <20190620145709.122498-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bard Liao <yung-chuan.liao@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacob Keller <jacob.e.keller@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 6/20/19 4:57 PM, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+The u32 variable rem is being shifted using u32 arithmetic however
+it is being passed to div_u64 that expects the expression to be a u64.
+The 32 bit shift may potentially overflow, so cast rem to a u64 before
+shifting to avoid this.  Also remove comment about overflow.
 
-> ---
->   sound/soc/sof/intel/hda.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-> index 51c1c1787de7..7f665392618f 100644
-> --- a/sound/soc/sof/intel/hda.c
-> +++ b/sound/soc/sof/intel/hda.c
-> @@ -19,7 +19,6 @@
->   #include <sound/hda_register.h>
->   
->   #include <linux/module.h>
-> -#include <sound/hdaudio_ext.h>
->   #include <sound/sof.h>
->   #include <sound/sof/xtensa.h>
->   #include "../ops.h"
-> 
-> 
-> 
-> 
-> 
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: cd4583206990 ("ixgbe: implement support for SDP/PPS output on X550 hardware")
+Fixes: 68d9676fc04e ("ixgbe: fix PTP SDP pin setup on X540 hardware")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: update comment
+
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+index 2c4d327fcc2e..0be13a90ff79 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+@@ -205,11 +205,8 @@ static void ixgbe_ptp_setup_sdp_X540(struct ixgbe_adapter *adapter)
+ 	 */
+ 	rem = (NS_PER_SEC - rem);
+ 
+-	/* Adjust the clock edge to align with the next full second. This
+-	 * assumes that the cycle counter shift is small enough to avoid
+-	 * overflowing when shifting the remainder.
+-	 */
+-	clock_edge += div_u64((rem << cc->shift), cc->mult);
++	/* Adjust the clock edge to align with the next full second. */
++	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
+ 	trgttiml = (u32)clock_edge;
+ 	trgttimh = (u32)(clock_edge >> 32);
+ 
+@@ -291,11 +288,8 @@ static void ixgbe_ptp_setup_sdp_X550(struct ixgbe_adapter *adapter)
+ 	 */
+ 	rem = (NS_PER_SEC - rem);
+ 
+-	/* Adjust the clock edge to align with the next full second. This
+-	 * assumes that the cycle counter shift is small enough to avoid
+-	 * overflowing when shifting the remainder.
+-	 */
+-	clock_edge += div_u64((rem << cc->shift), cc->mult);
++	/* Adjust the clock edge to align with the next full second. */
++	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
+ 
+ 	/* X550 hardware stores the time in 32bits of 'billions of cycles' and
+ 	 * 32bits of 'cycles'. There's no guarantee that cycles represents
+-- 
+2.20.1
