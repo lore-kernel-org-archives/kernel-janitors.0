@@ -1,31 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 19 Jun 2019 01:01:25 +0000
-Subject: Re: [PATCH][V2] net: lio_core: fix potential sign-extension overflow on large shift
-Message-Id: <20190618.210125.383827657449306914.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jun 2019 13:56:09 +0000
+Subject: [PATCH] media: rockchip/vpu: remove an unnecessary NULL check
+Message-Id: <20190607135609.GA16718@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190617161249.28846-1-colin.king@canonical.com>
-In-Reply-To: <20190617161249.28846-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 17 Jun 2019 17:12:49 +0100
+Thus the address of "&ctx->dev->variant->codec_ops[codec_mode]"
+can't possibly be NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Left shifting the signed int value 1 by 31 bits has undefined behaviour
-> and the shift amount oq_no can be as much as 63.  Fix this by using
-> BIT_ULL(oq_no) instead.
-> 
-> Addresses-Coverity: ("Bad shift operation")
-> Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: Use BIT_ULL(oq_no) instead of 1ULL << oq_no. Thanks to Dan Carpenter for
->     noting this is more appropriate.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/media/rockchip/vpu/rockchip_vpu_v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/staging/media/rockchip/vpu/rockchip_vpu_v4l2.c b/drivers/staging/media/rockchip/vpu/rockchip_vpu_v4l2.c
+index 1b80a45df8fe..42f4eb0abc8a 100644
+--- a/drivers/staging/media/rockchip/vpu/rockchip_vpu_v4l2.c
++++ b/drivers/staging/media/rockchip/vpu/rockchip_vpu_v4l2.c
+@@ -619,7 +619,7 @@ static int rockchip_vpu_start_streaming(struct vb2_queue *q,
+ 
+ 		vpu_debug(4, "Codec mode = %d\n", codec_mode);
+ 		ctx->codec_ops = &ctx->dev->variant->codec_ops[codec_mode];
+-		if (ctx->codec_ops && ctx->codec_ops->init)
++		if (ctx->codec_ops->init)
+ 			ret = ctx->codec_ops->init(ctx);
+ 	}
+ 
+-- 
+2.20.1
