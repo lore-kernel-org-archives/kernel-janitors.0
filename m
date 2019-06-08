@@ -1,47 +1,38 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Sat, 22 Jun 2019 02:56:31 +0000
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variables 'ret'
-Message-Id: <20190622030314.169640-1-maowenan@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Jun 2019 10:58:00 +0000
+Subject: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to rtstatus
+Message-Id: <20190608105800.26571-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com
-Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
-  int ret = 0;
-      ^
+Variable rtstatus is being initialized with a value that is never read
+as rtstatus is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
-It is never used since introduction in 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
-
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-index 0e6dba9..0bf4dd9 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-@@ -246,12 +246,10 @@ static int init_pmu_by_type(struct amdgpu_device *adev,
- /* init amdgpu_pmu */
- int amdgpu_pmu_init(struct amdgpu_device *adev)
- {
--	int ret = 0;
--
- 	switch (adev->asic_type) {
- 	case CHIP_VEGA20:
- 		/* init df */
--		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
-+		init_pmu_by_type(adev, df_v3_6_attr_groups,
- 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
- 				       DF_V3_6_MAX_COUNTERS);
- 
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
+index 454bab38b165..f92e95f5494f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
+@@ -1039,7 +1039,7 @@ int rtl88ee_hw_init(struct ieee80211_hw *hw)
+ 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
+ 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+-	bool rtstatus = true;
++	bool rtstatus;
+ 	int err = 0;
+ 	u8 tmp_u1b, u1byte;
+ 	unsigned long flags;
 -- 
-2.7.4
+2.20.1
