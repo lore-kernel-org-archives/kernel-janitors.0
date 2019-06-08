@@ -1,101 +1,26 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Thu, 27 Jun 2019 07:22:26 +0000
-Subject: Re: [PATCH][next][V2] media: vivid: fix potential integer overflow on left shift
-Message-Id: <8ccbbf10-7af1-b7e3-69ba-a24fe0cda86d@xs4all.nl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 08 Jun 2019 15:24:05 +0000
+Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
+Message-Id: <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190626144746.27607-1-colin.king@canonical.com>
-In-Reply-To: <20190626144746.27607-1-colin.king@canonical.com>
+References: <20190406061112.31620-1-himanshujha199640@gmail.com>
+In-Reply-To: <20190406061112.31620-1-himanshujha199640@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Himanshu Jha <himanshujha199640@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
 
-On 6/26/19 4:47 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a potential integer overflow when int 2 is left shifted
-> as this is evaluated using 32 bit arithmetic but is being used in
-> a context that expects an expression of type s64.  Fix this by
-> shifting 2ULL to avoid a 32 bit overflow.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 8a99e9faa131 ("media: vivid: add HDMI (dis)connect RX emulation")
-> Fixes: 79a792dafac6 ("media: vivid: add HDMI (dis)connect TX emulation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> V2: use intermediate variables for the shifted expression to make code
->     a bit more readable.
-> ---
->  drivers/media/platform/vivid/vivid-ctrls.c | 24 +++++++++++-----------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vivid/vivid-ctrls.c b/drivers/media/platform/vivid/vivid-ctrls.c
-> index 3e916c8befb7..df1598e81c7a 100644
-> --- a/drivers/media/platform/vivid/vivid-ctrls.c
-> +++ b/drivers/media/platform/vivid/vivid-ctrls.c
-> @@ -1613,6 +1613,8 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
->  	}
->  
->  	if (dev->num_hdmi_inputs) {
-> +		s64 hdmi_input = (2ULL << (dev->num_hdmi_inputs - 1)) - 1;
+> +- e1 = devm_ioremap_resource(arg4, id);
+> ++ e1 = devm_platform_ioremap_resource(arg1, arg3);
 
-Please call this hdmi_input_mask, ditto for the hdmi_output. This is a bitmask,
-not an HDMI input index.
+Can the following specification variant matter for the shown SmPL
+change approach?
 
-We should also use the GENMASK macro here:
++ e1 +-     devm_ioremap_resource(arg4, id
+++     devm_platform_ioremap_resource(arg1, arg3
++                           );
 
-	s64 hdmi_input_mask = GENMASK(dev->num_hdmi_inputs - 1, 0);
-
-This is a lot easier to understand.
 
 Regards,
-
-	Hans
-
-> +
->  		dev->ctrl_dv_timings_signal_mode = v4l2_ctrl_new_custom(hdl_vid_cap,
->  					&vivid_ctrl_dv_timings_signal_mode, NULL);
->  
-> @@ -1633,12 +1635,13 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
->  			V4L2_CID_DV_RX_RGB_RANGE, V4L2_DV_RGB_RANGE_FULL,
->  			0, V4L2_DV_RGB_RANGE_AUTO);
->  		dev->ctrl_rx_power_present = v4l2_ctrl_new_std(hdl_vid_cap,
-> -			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0,
-> -			(2 << (dev->num_hdmi_inputs - 1)) - 1, 0,
-> -			(2 << (dev->num_hdmi_inputs - 1)) - 1);
-> +			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0, hdmi_input,
-> +			0, hdmi_input);
->  
->  	}
->  	if (dev->num_hdmi_outputs) {
-> +		s64 hdmi_output = (2ULL << (dev->num_hdmi_outputs - 1)) - 1;
-> +
->  		/*
->  		 * We aren't doing anything with this at the moment, but
->  		 * HDMI outputs typically have this controls.
-> @@ -1652,17 +1655,14 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
->  		dev->ctrl_display_present = v4l2_ctrl_new_custom(hdl_vid_out,
->  			&vivid_ctrl_display_present, NULL);
->  		dev->ctrl_tx_hotplug = v4l2_ctrl_new_std(hdl_vid_out,
-> -			NULL, V4L2_CID_DV_TX_HOTPLUG, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1);
-> +			NULL, V4L2_CID_DV_TX_HOTPLUG, 0, hdmi_output,
-> +			0, hdmi_output);
->  		dev->ctrl_tx_rxsense = v4l2_ctrl_new_std(hdl_vid_out,
-> -			NULL, V4L2_CID_DV_TX_RXSENSE, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1);
-> +			NULL, V4L2_CID_DV_TX_RXSENSE, 0, hdmi_output,
-> +			0, hdmi_output);
->  		dev->ctrl_tx_edid_present = v4l2_ctrl_new_std(hdl_vid_out,
-> -			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
-> -			(2 << (dev->num_hdmi_outputs - 1)) - 1);
-> +			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0, hdmi_output,
-> +			0, hdmi_output);
->  	}
->  	if ((dev->has_vid_cap && dev->has_vid_out) ||
->  	    (dev->has_vbi_cap && dev->has_vbi_out))
-> 
+Markus
