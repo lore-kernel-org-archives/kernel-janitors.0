@@ -1,47 +1,49 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Date: Fri, 07 Jun 2019 13:15:14 +0000
-Subject: Re: [PATCH][next] drm/bridge: sii902x: fix comparision of u32 with less than zero
-Message-Id: <4454a547-d8f9-2df8-d3fa-2026860a14a9@samsung.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sun, 09 Jun 2019 07:11:26 +0000
+Subject: [PATCH -next] ocelot: remove unused variable 'rc' in vcap_cmd()
+Message-Id: <20190609071126.183505-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190603142108epcas2p4625777c1aaea18257804ca86bcb64454@epcas2p4.samsung.com>
-        <20190603142102.27191-1-colin.king@canonical.com>
-In-Reply-To: <20190603142102.27191-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jyri Sarha <jsarha@ti.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: davem@davemloft.net
+Cc: alexandre.belloni@bootlin.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On 03.06.2019 16:21, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The less than check for the variable num_lanes is always going to be
-> false because the variable is a u32.  Fix this by making num_lanes an
-> int and also make loop index i an int too.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: ff5781634c41 ("drm/bridge: sii902x: Implement HDMI audio support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/bridge/sii902x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index d6f98d388ac2..21a947603c88 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -719,7 +719,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
->  		.max_i2s_channels = 0,
->  	};
->  	u8 lanes[4];
-> -	u32 num_lanes, i;
-> +	int num_lanes, i;
->  
->  	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
->  		dev_dbg(dev, "%s: No \"#sound-dai-cells\", no audio\n",
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Queued to drm-misc-next.
+drivers/net/ethernet/mscc/ocelot_ace.c: In function ‘vcap_cmd’:
+drivers/net/ethernet/mscc/ocelot_ace.c:108:6: warning: variable ‘rc’ set
+but not used [-Wunused-but-set-variable]
+  int rc;
+      ^
+It's never used since introduction in commit b596229448dd ("net: mscc:
+ocelot: Add support for tcam")
 
---
-Regards
-Andrzej
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/mscc/ocelot_ace.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mscc/ocelot_ace.c b/drivers/net/ethernet/mscc/ocelot_ace.c
+index f74b98f7d8d1..39aca1ab4687 100644
+--- a/drivers/net/ethernet/mscc/ocelot_ace.c
++++ b/drivers/net/ethernet/mscc/ocelot_ace.c
+@@ -105,7 +105,6 @@ static void vcap_cmd(struct ocelot *oc, u16 ix, int cmd, int sel)
+ 	u32 value = (S2_CORE_UPDATE_CTRL_UPDATE_CMD(cmd) |
+ 		     S2_CORE_UPDATE_CTRL_UPDATE_ADDR(ix) |
+ 		     S2_CORE_UPDATE_CTRL_UPDATE_SHOT);
+-	int rc;
+ 
+ 	if ((sel & VCAP_SEL_ENTRY) && ix >= vcap_is2.entry_count)
+ 		return;
+@@ -120,7 +119,7 @@ static void vcap_cmd(struct ocelot *oc, u16 ix, int cmd, int sel)
+ 		value |= S2_CORE_UPDATE_CTRL_UPDATE_CNT_DIS;
+ 
+ 	ocelot_write(oc, value, S2_CORE_UPDATE_CTRL);
+-	rc = readx_poll_timeout(vcap_s2_read_update_ctrl, oc, value,
++	readx_poll_timeout(vcap_s2_read_update_ctrl, oc, value,
+ 				(value & S2_CORE_UPDATE_CTRL_UPDATE_SHOT) = 0,
+ 				10, 100000);
+ }
+-- 
+2.20.1
