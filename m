@@ -1,37 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 08 Jun 2019 09:22:31 +0000
-Subject: [PATCH] IB/mlx4: prevent undefined shift in set_user_sq_size()
-Message-Id: <20190608092231.GA28890@mwanda>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Mon, 10 Jun 2019 13:28:49 +0000
+Subject: Re: [PATCH] IB/mlx4: prevent undefined shift in set_user_sq_size()
+Message-Id: <20190610132849.GD18468@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190608092231.GA28890@mwanda>
+In-Reply-To: <20190608092231.GA28890@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yishai Hadas <yishaih@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Yishai Hadas <yishaih@mellanox.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The ucmd->log_sq_bb_count is a u8 that comes from the user.  If it's
-larger than the number of bits in an int then that's undefined behavior.
-It turns out this doesn't really cause an issue at runtime but it's
-still nice to clean it up.
+On Sat, Jun 08, 2019 at 12:22:31PM +0300, Dan Carpenter wrote:
+> The ucmd->log_sq_bb_count is a u8 that comes from the user.  If it's
+> larger than the number of bits in an int then that's undefined behavior.
+> It turns out this doesn't really cause an issue at runtime but it's
+> still nice to clean it up.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/infiniband/hw/mlx4/qp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+> index 5221c0794d1d..9f6eb23e8044 100644
+> --- a/drivers/infiniband/hw/mlx4/qp.c
+> +++ b/drivers/infiniband/hw/mlx4/qp.c
+> @@ -439,7 +439,8 @@ static int set_user_sq_size(struct mlx4_ib_dev *dev,
+>  			    struct mlx4_ib_create_qp *ucmd)
+>  {
+>  	/* Sanity check SQ size before proceeding */
+> -	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
+> +	if (ucmd->log_sq_bb_count > 31					 ||
+> +	    (1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/infiniband/hw/mlx4/qp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Surely this should use check_shl_overflow() ?
 
-diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-index 5221c0794d1d..9f6eb23e8044 100644
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -439,7 +439,8 @@ static int set_user_sq_size(struct mlx4_ib_dev *dev,
- 			    struct mlx4_ib_create_qp *ucmd)
- {
- 	/* Sanity check SQ size before proceeding */
--	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
-+	if (ucmd->log_sq_bb_count > 31					 ||
-+	    (1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
- 	    ucmd->log_sq_stride >
- 		ilog2(roundup_pow_of_two(dev->dev->caps.max_sq_desc_sz)) ||
- 	    ucmd->log_sq_stride < MLX4_IB_MIN_SQ_STRIDE)
--- 
-2.20.1
+Jason
