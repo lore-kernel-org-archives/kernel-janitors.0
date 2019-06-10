@@ -1,50 +1,54 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Mon, 03 Jun 2019 09:20:01 +0000
-Subject: Re: [PATCH] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
-Message-Id: <ccefbd0b-3397-a26e-95e7-059fcced9154@st.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 10 Jun 2019 11:58:31 +0000
+Subject: [PATCH -next] packet: remove unused variable 'status' in __packet_lookup_frame_in_block
+Message-Id: <20190610115831.175710-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190515093141.GA3409@mwanda>
-In-Reply-To: <20190515093141.GA3409@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-SGkgRGFuLA0KDQpUaGFua3MgZm9yIHlvdXIgcGF0Y2guIE9uZSBtaW5vciBjb21tZW50Og0KDQpP
-biA1LzE1LzE5IDExOjMxIEFNLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0KPiBUaGUgcHJvYmxlbSBp
-cyB0aGF0IG9uIDY0Yml0IHN5c3RlbXMgdGhlbiB3ZSBkb24ndCBjbGVhciB0aGUgaGlnaGVyDQo+
-IGJpdHMgb2YgdGhlICJwZW5kaW5nIiB2YXJpYWJsZS4gIFNvIHdoZW4gd2UgZG86DQo+IA0KPiAJ
-YWNrID0gcGVuZGluZyAmIH5CSVQoU1RNRlhfUkVHX0lSUV9TUkNfRU5fR1BJTyk7DQo+IAlpZiAo
-YWNrKSB7DQo+IA0KPiB0aGUgaWYgKGFjaykgY29uZGl0aW9uIHJlbGllcyBvbiB1bmluaXRpYWxp
-emVkIGRhdGEuICBUaGUgZml4IGl0IHRoYXQNCj4gSSd2ZSBjaGFuZ2VkICJwZW5kaW5nIiBmcm9t
-IGFuIHVuc2lnbmVkIGxvbmcgdG8gYSB1MzIuICBJIGNoYW5nZWQgIm4iIGFzDQo+IHdlbGwsIGJl
-Y2F1c2UgdGhhdCdzIGEgbnVtYmVyIGluIHRoZSAwLTEwIHJhbmdlIGFuZCBpdCBmaXRzIGVhc2ls
-eQ0KPiBpbnNpZGUgYW4gaW50LiAgV2UgZG8gbmVlZCB0byBhZGQgYSBjYXN0IHRvICJwZW5kaW5n
-IiB3aGVuIHdlIHVzZSBpdCBpbg0KPiB0aGUgZm9yX2VhY2hfc2V0X2JpdCgpIGxvb3AsIGJ1dCB0
-aGF0IGRvZXNuJ3QgY2F1c2UgYSBwcm9ibGUsIGl0J3MNCj4gZmluZS4NCj4gDQo+IEZpeGVzOiAw
-NjI1MmFkZTkxNTYgKCJtZmQ6IEFkZCBTVCBNdWx0aS1GdW5jdGlvbiBlWHBhbmRlciAoU1RNRlgp
-IGNvcmUgZHJpdmVyIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBl
-bnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL21mZC9zdG1meC5jIHwgOCArKysr
-LS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
-DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvc3RtZnguYyBiL2RyaXZlcnMvbWZkL3N0
-bWZ4LmMNCj4gaW5kZXggZmU4ZWZiYTJkNDVmLi5mZWU3NWI1ZDA5OGUgMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvbWZkL3N0bWZ4LmMNCj4gKysrIGIvZHJpdmVycy9tZmQvc3RtZnguYw0KPiBAQCAt
-MjA0LDEyICsyMDQsMTIgQEAgc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBzdG1meF9pcnFfY2hpcCA9
-IHsNCj4gICBzdGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hhbmRsZXIoaW50IGlycSwgdm9p
-ZCAqZGF0YSkNCj4gICB7DQo+ICAgCXN0cnVjdCBzdG1meCAqc3RtZnggPSBkYXRhOw0KPiAtCXVu
-c2lnbmVkIGxvbmcgbiwgcGVuZGluZzsNCj4gKwl1MzIgcGVuZGluZzsNCj4gICAJdTMyIGFjazsN
-Cj4gKwlpbnQgbjsNCj4gICAJaW50IHJldDsNCg0KQ291bGQgeW91IGdyb3VwOg0KDQp1MzIgcGVu
-ZGluZywgYWNrOw0KaW50IG4sIHJldDsNCg0KPiAgIA0KPiAtCXJldCA9IHJlZ21hcF9yZWFkKHN0
-bWZ4LT5tYXAsIFNUTUZYX1JFR19JUlFfUEVORElORywNCj4gLQkJCSAgKHUzMiAqKSZwZW5kaW5n
-KTsNCj4gKwlyZXQgPSByZWdtYXBfcmVhZChzdG1meC0+bWFwLCBTVE1GWF9SRUdfSVJRX1BFTkRJ
-TkcsICZwZW5kaW5nKTsNCj4gICAJaWYgKHJldCkNCj4gICAJCXJldHVybiBJUlFfTk9ORTsNCj4g
-ICANCj4gQEAgLTIyNCw3ICsyMjQsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3Qgc3RtZnhfaXJxX2hh
-bmRsZXIoaW50IGlycSwgdm9pZCAqZGF0YSkNCj4gICAJCQlyZXR1cm4gSVJRX05PTkU7DQo+ICAg
-CX0NCj4gICANCj4gLQlmb3JfZWFjaF9zZXRfYml0KG4sICZwZW5kaW5nLCBTVE1GWF9SRUdfSVJR
-X1NSQ19NQVgpDQo+ICsJZm9yX2VhY2hfc2V0X2JpdChuLCAodW5zaWduZWQgbG9uZyAqKSZwZW5k
-aW5nLCBTVE1GWF9SRUdfSVJRX1NSQ19NQVgpDQo+ICAgCQloYW5kbGVfbmVzdGVkX2lycShpcnFf
-ZmluZF9tYXBwaW5nKHN0bWZ4LT5pcnFfZG9tYWluLCBuKSk7DQo+ICAgDQo+ICAgCXJldHVybiBJ
-UlFfSEFORExFRDsNCj4gDQoNCkkndmUgdGVzdGVkIGl0IG9uIHN0bTMybXAxNTdjLWV2MSwgc28g
-eW91IGNhbiBhZGQgbXkNClRlc3RlZC1ieTogQW1lbGllIERlbGF1bmF5IDxhbWVsaWUuZGVsYXVu
-YXlAc3QuY29tPg0KDQpSZWdhcmRzLA0KQW1lbGll
+The variable 'status' in  __packet_lookup_frame_in_block() is never used since
+introduction in commit f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer
+implementation."), we can remove it.
+And when __packet_lookup_frame_in_block() calls prb_retire_current_block(), 
+it can pass macro TP_STATUS_KERNEL instead of 0.
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ net/packet/af_packet.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index a29d66d..fb1a79c 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1003,7 +1003,6 @@ static void prb_fill_curr_block(char *curr,
+ /* Assumes caller has the sk->rx_queue.lock */
+ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
+ 					    struct sk_buff *skb,
+-						int status,
+ 					    unsigned int len
+ 					    )
+ {
+@@ -1046,7 +1045,7 @@ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
+ 	}
+ 
+ 	/* Ok, close the current block */
+-	prb_retire_current_block(pkc, po, 0);
++	prb_retire_current_block(pkc, po, TP_STATUS_KERNEL);
+ 
+ 	/* Now, try to dispatch the next block */
+ 	curr = (char *)prb_dispatch_next_block(pkc, po);
+@@ -1075,7 +1074,7 @@ static void *packet_current_rx_frame(struct packet_sock *po,
+ 					po->rx_ring.head, status);
+ 		return curr;
+ 	case TPACKET_V3:
+-		return __packet_lookup_frame_in_block(po, skb, status, len);
++		return __packet_lookup_frame_in_block(po, skb, len);
+ 	default:
+ 		WARN(1, "TPACKET version not supported\n");
+ 		BUG();
+-- 
+2.7.4
