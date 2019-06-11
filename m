@@ -1,32 +1,48 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Tue, 25 Jun 2019 13:19:15 +0000
-Subject: Re: [PATCH][next] RDMA/hns: fix potential integer overflow on left shift
-Message-Id: <20190625131911.GA10878@mellanox.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 11 Jun 2019 01:32:13 +0000
+Subject: [PATCH -next v2] packet: remove unused variable 'status' in __packet_lookup_frame_in_block
+Message-Id: <20190611013213.142745-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624214608.11765-1-colin.king@canonical.com>
-In-Reply-To: <20190624214608.11765-1-colin.king@canonical.com>
+References: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
+In-Reply-To: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: davem@davemloft.net
+Cc: willemdebruijn.kernel@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Mon, Jun 24, 2019 at 10:46:08PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a potential integer overflow when int i is left shifted
-> as this is evaluated using 32 bit arithmetic but is being used in
-> a context that expects an expression of type dma_addr_t.  Fix this
-> by casting integer i to dma_addr_t before shifting to avoid the
-> overflow.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 2ac0bc5e725e ("RDMA/hns: Add a group interfaces for optimizing buffers getting flow")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The variable 'status' in  __packet_lookup_frame_in_block() is never used since
+introduction in commit f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer
+implementation."), we can remove it.
 
-Applied to for-next, thanks
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: don't change parameter from 0 to TP_STATUS_KERNEL when calls 
+ prb_retire_current_block(). 
+---
+ net/packet/af_packet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Jason
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index a29d66da7394..7fa847dcea30 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1003,7 +1003,6 @@ static void prb_fill_curr_block(char *curr,
+ /* Assumes caller has the sk->rx_queue.lock */
+ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
+ 					    struct sk_buff *skb,
+-						int status,
+ 					    unsigned int len
+ 					    )
+ {
+@@ -1075,7 +1074,7 @@ static void *packet_current_rx_frame(struct packet_sock *po,
+ 					po->rx_ring.head, status);
+ 		return curr;
+ 	case TPACKET_V3:
+-		return __packet_lookup_frame_in_block(po, skb, status, len);
++		return __packet_lookup_frame_in_block(po, skb, len);
+ 	default:
+ 		WARN(1, "TPACKET version not supported\n");
+ 		BUG();
+-- 
+2.20.1
