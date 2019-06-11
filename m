@@ -1,54 +1,38 @@
-From: Varun Prakash <varun@chelsio.com>
-Date: Fri, 14 Jun 2019 13:53:44 +0000
-Subject: Re: [PATCH -next] cxgbit: remove set but not used variable 'ppmax'
-Message-Id: <20190614134143.GA1630@chelsio.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jun 2019 17:09:13 +0000
+Subject: [PATCH][next] video: fbdev: atmel_lcdfb: remove redundant initialization to variable ret
+Message-Id: <20190611170913.20913-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190614024413.110449-1-yuehaibing@huawei.com>
-In-Reply-To: <20190614024413.110449-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, "David S. Miller" <davem@davemloft.net>, Mike Christie <mchristi@redhat.com>, Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, varun@chelsio.com
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 02:44:13AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/target/iscsi/cxgbit/cxgbit_ddp.c: In function 'cxgbit_ddp_init':
-> drivers/target/iscsi/cxgbit/cxgbit_ddp.c:303:15: warning:
->  variable 'ppmax' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
-> enable eDRAM page pods for iSCSI")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/target/iscsi/cxgbit/cxgbit_ddp.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> index 1443ef045a5f..fe1be5feaf21 100644
-> --- a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> +++ b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> @@ -300,7 +300,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
->  	struct cxgb4_lld_info *lldi = &cdev->lldi;
->  	struct net_device *ndev = cdev->lldi.ports[0];
->  	struct cxgbi_tag_format tformat;
-> -	unsigned int ppmax;
->  	int ret, i;
->  
->  	if (!lldi->vr->iscsi.size) {
-> @@ -308,8 +307,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
->  		return -EACCES;
->  	}
->  
-> -	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
-> -
->  	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
->  	for (i = 0; i < 4; i++)
->  		tformat.pgsz_order[i] = (lldi->iscsi_pgsz_order >> (i << 3))
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Varun Prakash <varun@chelsio.com>
+Currently variable ret is being initialized with -ENOENT however that
+value is never read and ret is being re-assigned later on. Hence this
+assignment is redundant and can be removed.
 
-This patch is for net-next tree.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/atmel_lcdfb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index fb117ccbeab3..930cc3f92e01 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -950,7 +950,7 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	struct fb_videomode fb_vm;
+ 	struct gpio_desc *gpiod;
+ 	struct videomode vm;
+-	int ret = -ENOENT;
++	int ret;
+ 	int i;
+ 
+ 	sinfo->config = (struct atmel_lcdfb_config*)
+-- 
+2.20.1
