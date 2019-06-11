@@ -1,7 +1,7 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 10 Jun 2019 14:08:58 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Jun 2019 10:07:24 +0000
 Subject: Re: [PATCH] IB/mlx4: prevent undefined shift in set_user_sq_size()
-Message-Id: <20190610140858.GA6369@mtr-leonro.mtl.com>
+Message-Id: <20190611100724.GB1915@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190608092231.GA28890@mwanda>
  <20190610132849.GD18468@ziepe.ca>
@@ -10,7 +10,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Yishai Hadas <yishaih@mellanox.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Yishai Hadas <yishaih@mellanox.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 On Mon, Jun 10, 2019 at 10:28:49AM -0300, Jason Gunthorpe wrote:
 > On Sat, Jun 08, 2019 at 12:22:31PM +0300, Dan Carpenter wrote:
@@ -18,12 +18,12 @@ On Mon, Jun 10, 2019 at 10:28:49AM -0300, Jason Gunthorpe wrote:
 > > larger than the number of bits in an int then that's undefined behavior.
 > > It turns out this doesn't really cause an issue at runtime but it's
 > > still nice to clean it up.
-> >
+> > 
 > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > ---
 > >  drivers/infiniband/hw/mlx4/qp.c | 3 ++-
 > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
+> > 
 > > diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
 > > index 5221c0794d1d..9f6eb23e8044 100644
 > > --- a/drivers/infiniband/hw/mlx4/qp.c
@@ -35,10 +35,11 @@ On Mon, Jun 10, 2019 at 10:28:49AM -0300, Jason Gunthorpe wrote:
 > > -	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
 > > +	if (ucmd->log_sq_bb_count > 31					 ||
 > > +	    (1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
->
+> 
 > Surely this should use check_shl_overflow() ?
+> 
 
-Yes
+Same for the other one I sent.  I'll resend in a couple days.  No rush.
 
->
-> Jason
+regards,
+dan carpenter
