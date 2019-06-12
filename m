@@ -1,57 +1,38 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 12 Jun 2019 15:18:40 +0000
-Subject: Re: [PATCH][next] leds: lm36274: remove redundant initialization of variable ret
-Message-Id: <5D0117D0.501@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 12 Jun 2019 14:42:18 +0000
+Subject: [PATCH][next] staging: media: meson: remove redundant initialization of mpeg12
+Message-Id: <20190612144218.26149-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190612145659.26514-1-colin.king@canonical.com>
-In-Reply-To: <20190612145659.26514-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Maxime Jourdan <mjourdan@baylibre.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, linux-media@lists.freedesktop.org, linux-amlogic@lists.infradead.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The pointer mpeg12 is being initialized however that value is never
+read and mpeg12 is being re-assigned almost immediately afterwards.
+Remove the redundant initialization.
 
-Am 12.06.2019 16:56, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never
-> read, hence it is redundant and can be removed.  Also move the
-> declaration of ret to the for loop scope.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/leds/leds-lm36274.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
-> index ed9dc857ec8f..b55bd238c074 100644
-> --- a/drivers/leds/leds-lm36274.c
-> +++ b/drivers/leds/leds-lm36274.c
-> @@ -74,7 +74,6 @@ static int lm36274_parse_dt(struct lm36274 *lm36274_data)
->  	struct device *dev = &lm36274_data->pdev->dev;
->  	const char *name;
->  	int child_cnt;
-> -	int ret = -EINVAL;
->  
->  	/* There should only be 1 node */
->  	child_cnt = device_get_child_node_count(dev);
-> @@ -82,6 +81,8 @@ static int lm36274_parse_dt(struct lm36274 *lm36274_data)
->  		return -EINVAL;
->  
->  	device_for_each_child_node(dev, child) {
-> +		int ret;
-> +
->  		ret = fwnode_property_read_string(child, "label", &name);
->  		if (ret)
->  			snprintf(label, sizeof(label),
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/meson/vdec/codec_mpeg12.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-this looks odd,
-i would leave ret in place or move char *name also.
-
-just my 2 cents,
-
-re,
- wh
+diff --git a/drivers/staging/media/meson/vdec/codec_mpeg12.c b/drivers/staging/media/meson/vdec/codec_mpeg12.c
+index 5398fbf7ce20..48869cc3d973 100644
+--- a/drivers/staging/media/meson/vdec/codec_mpeg12.c
++++ b/drivers/staging/media/meson/vdec/codec_mpeg12.c
+@@ -63,7 +63,7 @@ static void codec_mpeg12_recycle(struct amvdec_core *core, u32 buf_idx)
+ static int codec_mpeg12_start(struct amvdec_session *sess)
+ {
+ 	struct amvdec_core *core = sess->core;
+-	struct codec_mpeg12 *mpeg12 = sess->priv;
++	struct codec_mpeg12 *mpeg12;
+ 	int ret;
+ 
+ 	mpeg12 = kzalloc(sizeof(*mpeg12), GFP_KERNEL);
+-- 
+2.20.1
