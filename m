@@ -1,62 +1,38 @@
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Mon, 10 Jun 2019 14:34:03 +0000
-Subject: Re: [PATCH -next] packet: remove unused variable 'status' in __packet_lookup_frame_in_block
-Message-Id: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 12 Jun 2019 10:36:24 +0000
+Subject: [PATCH][next] xfrm: fix missing break on AF_INET6 case
+Message-Id: <20190612103624.27246-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190610115831.175710-1-maowenan@huawei.com> <CAF=yD-JOCZHt6q3ArCqY5PMW1vP5ZmNkYMKUB14TrgU-X30cSQ@mail.gmail.com>
- <caf8d25f-60e2-a0c0-dc21-956ea32ee59a@huawei.com>
-In-Reply-To: <caf8d25f-60e2-a0c0-dc21-956ea32ee59a@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan <maowenan@huawei.com>
-Cc: David Miller <davem@davemloft.net>, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Florian Westphal <fw@strlen.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 10:03 AM maowenan <maowenan@huawei.com> wrote:
->
->
->
-> On 2019/6/10 21:05, Willem de Bruijn wrote:
-> > On Mon, Jun 10, 2019 at 8:17 AM Mao Wenan <maowenan@huawei.com> wrote:
-> >>
-> >> The variable 'status' in  __packet_lookup_frame_in_block() is never used since
-> >> introduction in commit f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer
-> >> implementation."), we can remove it.
-> >> And when __packet_lookup_frame_in_block() calls prb_retire_current_block(),
-> >> it can pass macro TP_STATUS_KERNEL instead of 0.
-> >>
-> >> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> >> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-> >>         /* Ok, close the current block */
-> >> -       prb_retire_current_block(pkc, po, 0);
-> >> +       prb_retire_current_block(pkc, po, TP_STATUS_KERNEL);
-> >
-> > I don't think that 0 is intended to mean TP_STATUS_KERNEL here.
-> >
-> > prb_retire_current_block calls prb_close_block which sets status to
-> >
-> >   TP_STATUS_USER | stat
-> >
-> > where stat is 0 or TP_STATUS_BLK_TMO.
->
->
-> #define TP_STATUS_KERNEL                      0
-> #define TP_STATUS_BLK_TMO               (1 << 5)
->
-> Actually, packet_current_rx_frame calls __packet_lookup_frame_in_block with status=TP_STATUS_KERNEL
-> in original code.
->
-> __packet_lookup_frame_in_block in this function, first is to check whether the currently active block
-> has enough space for the packet, which means status of block should be TP_STATUS_KERNEL, then it calls
-> prb_retire_current_block to retire this block.
+It appears that there is a missing break statement for the AF_INET6 case
+that falls through to the default WARN_ONCE case. I don't think that is
+intentional. Fix this by adding in the missing break.
 
-I know. I mean that the status here is what is passed to userspace on
-block retire.
+Addresses-Coverity: ("Missing break in switch")
+Fixes: 4c203b0454b5 ("xfrm: remove eth_proto value from xfrm_state_afinfo")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/xfrm/xfrm_input.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It is not intended to be TP_STATUS_USER | TP_STATUS_KERNEL. That makes no sense.
-
-> Since there needs some discussion about means of status, I can send v2 only removing the parameter status of
-> __packet_lookup_frame_in_block?
-
-Sounds good.
+diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+index 8a00cc94c32c..6088bc2dc11e 100644
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -376,6 +376,7 @@ static int xfrm_prepare_input(struct xfrm_state *x, struct sk_buff *skb)
+ 		break;
+ 	case AF_INET6:
+ 		skb->protocol = htons(ETH_P_IPV6);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		break;
+-- 
+2.20.1
