@@ -1,9 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 12 Jun 2019 05:28:48 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 12 Jun 2019 06:24:12 +0000
 Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
-Message-Id: <alpine.DEB.2.21.1906120727300.2535@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-133965833-1560317328=:2535"
+Message-Id: <f6fe6400-8fdd-cb53-f7e1-ac6188c9e785@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190406061112.31620-1-himanshujha199640@gmail.com>
  <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
@@ -11,39 +9,14 @@ References: <20190406061112.31620-1-himanshujha199640@gmail.com>
  <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
  <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
 In-Reply-To: <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Markus Elfring <Markus.Elfring@web.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-133965833-1560317328=:2535
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+To: Enrico Weigelt <lkml@metux.net>
+Cc: Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
 
-
-
-On Tue, 11 Jun 2019, Enrico Weigelt, metux IT consult wrote:
-
-> On 09.06.19 10:55, Markus Elfring wrote:
->
-> <snip>
->
-> >> But there is not usually any interesting formatting on the left side of an
-> >> assignment (ie typically no newlines or comments).
-> >
-> > Is there any need to trigger additional source code reformatting?
-> >
-> >> I can see no purpose to factorizing the right parenthesis.
-> >
-> > These characters at the end of such a function call should be kept unchanged.
->
-> Agreed. OTOH, we all know that spatch results still need to be carefully
-> checked. I suspect trying to teach it all the formatting rules of the
-> kernel isn't an easy task.
->
-> > The flag “IORESOURCE_MEM” is passed as the second parameter for the call
-> > of the function “platform_get_resource” in this refactoring.
+>> The flag “IORESOURCE_MEM” is passed as the second parameter for the call
+>> of the function “platform_get_resource” in this refactoring.
 >
 > In that particular case, we maybe should consider separate inline
 > helpers instead of passing this is a parameter.
@@ -52,8 +25,8 @@ On Tue, 11 Jun 2019, Enrico Weigelt, metux IT consult wrote:
 > versions of devm_platform_ioremap_resource(), so we don't even have
 > to pass that parameter on stack.
 
-I'm lost as to why this discussion suddenly appeared.  What problem is
-actually being discussed?
+Would you like to add another function which should be called instead of
+the combination of the functions “platform_get_resource” and “devm_ioremap_resource”?
 
-julia
---8323329-133965833-1560317328=:2535--
+Regards,
+Markus
