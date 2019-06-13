@@ -1,65 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 24 Jun 2019 16:13:34 +0000
-Subject: Re: [PATCH] drm/vmwgfx: fix memory leak when too many retries have occurred
-Message-Id: <82a6382b-6c9d-5c7f-b411-243cb31b2c16@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jun 2019 07:02:01 +0000
+Subject: [PATCH] soc: ixp4xx: npe: Fix an IS_ERR() vs NULL check in probe
+Message-Id: <20190613070201.GH16334@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190621223534.14283-1-colin.king@canonical.com>
- <7b8430b3809eff2341d3e82c398038c1a9a0cc06.camel@vmware.com>
-In-Reply-To: <7b8430b3809eff2341d3e82c398038c1a9a0cc06.camel@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Deepak Singh Rawat <drawat@vmware.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Krzysztof Halasa <khalasa@piap.pl>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 24/06/2019 17:10, Deepak Singh Rawat wrote:
-> Hi Colin,
-> 
-> Thanks for doing this.
-> 
-> Reviewed-by: Deepak Rawat <drawat@vmware.com>
-> 
-> Do you want me to include this in vmwgfx-next or will you submit this
-> via drm-mics?
+The devm_ioremap_resource() function doesn't return NULL, it returns
+error pointers.
 
-Can you include it into vmwgfx-next?
+Fixes: 0b458d7b10f8 ("soc: ixp4xx: npe: Pass addresses as resources")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soc/ixp4xx/ixp4xx-npe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks
-
-Colin
-
-> 
-> On Fri, 2019-06-21 at 23:35 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently when too many retries have occurred there is a memory
->> leak on the allocation for reply on the error return path. Fix
->> this by kfree'ing reply before returning.
->>
->> Addresses-Coverity: ("Resource leak")
->> Fixes: a9cd9c044aa9 ("drm/vmwgfx: Add a check to handle host message
->> failure")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
->> b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
->> index 8b9270f31409..8b61f16f50cf 100644
->> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
->> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
->> @@ -301,8 +301,10 @@ static int vmw_recv_msg(struct rpc_channel
->> *channel, void **msg,
->>  		break;
->>  	}
->>  
->> -	if (retries = RETRIES)
->> +	if (retries = RETRIES) {
->> +		kfree(reply);
->>  		return -EINVAL;
->> +	}
->>  
->>  	*msg_len = reply_len;
->>  	*msg     = reply;
-> 
+diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
+index bc10e3194809..ec90b44fa0cd 100644
+--- a/drivers/soc/ixp4xx/ixp4xx-npe.c
++++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
+@@ -695,8 +695,8 @@ static int ixp4xx_npe_probe(struct platform_device *pdev)
+ 			continue; /* NPE already disabled or not present */
+ 		}
+ 		npe->regs = devm_ioremap_resource(dev, res);
+-		if (!npe->regs)
+-			return -ENOMEM;
++		if (IS_ERR(npe->regs))
++			return PTR_ERR(npe->regs);
+ 
+ 		if (npe_reset(npe)) {
+ 			dev_info(dev, "NPE%d at 0x%08x-0x%08x does not reset\n",
+-- 
+2.20.1
