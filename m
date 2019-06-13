@@ -1,24 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 19 Jun 2019 02:30:23 +0000
-Subject: Re: [PATCH][next] net/mlx5: add missing void argument to function mlx5_devlink_alloc
-Message-Id: <20190618.223023.244389297657538568.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jun 2019 06:51:02 +0000
+Subject: [PATCH net] net: phy: sfp: clean up a condition
+Message-Id: <20190613065102.GA16334@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618151510.18672-1-colin.king@canonical.com>
-In-Reply-To: <20190618151510.18672-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Ruslan Babayev <ruslan@babayev.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Jun 2019 16:15:10 +0100
+The acpi_node_get_property_reference() doesn't return ACPI error codes,
+it just returns regular negative kernel error codes.  This patch doesn't
+affect run time, it's just a clean up.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Function mlx5_devlink_alloc is missing a void argument, add it
-> to clean up the non-ANSI function declaration.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/phy/sfp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+index a991c80e6567..8a99307c1c39 100644
+--- a/drivers/net/phy/sfp.c
++++ b/drivers/net/phy/sfp.c
+@@ -1848,7 +1848,7 @@ static int sfp_probe(struct platform_device *pdev)
+ 		int ret;
+ 
+ 		ret = acpi_node_get_property_reference(fw, "i2c-bus", 0, &args);
+-		if (ACPI_FAILURE(ret) || !is_acpi_device_node(args.fwnode)) {
++		if (ret || !is_acpi_device_node(args.fwnode)) {
+ 			dev_err(&pdev->dev, "missing 'i2c-bus' property\n");
+ 			return -ENODEV;
+ 		}
+-- 
+2.20.1
