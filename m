@@ -1,35 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Jun 2019 16:14:19 +0000
-Subject: [PATCH][next] gpio: bd70528: fix spelling misstake "debouce" -> "debounce"
-Message-Id: <20190628161419.26439-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 13 Jun 2019 09:58:01 +0000
+Subject: Re: [PATCH] drm/mcde: Fix an uninitialized variable
+Message-Id: <CACRpkdZj=TPB_mDib6sQnDPLUJUtwhmrFqWSwcRMozJYFeuAaw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190529113458.GG19119@mwanda>
+In-Reply-To: <20190529113458.GG19119@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 29, 2019 at 4:25 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-There is a spelling mistake in a dev_err message. Fix it.
+> We never set "vblank" to "false".
+>
+> Current versions of GCC will initialize it to zero automatically at
+> certain optimization levels so that's probably why this didn't show up
+> in testing.
+>
+> Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpio/gpio-bd70528.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied.
 
-diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
-index fd85605d2dab..633422b430b4 100644
---- a/drivers/gpio/gpio-bd70528.c
-+++ b/drivers/gpio/gpio-bd70528.c
-@@ -36,7 +36,7 @@ static int bd70528_set_debounce(struct bd70528_gpio *bdgpio,
- 		break;
- 	default:
- 		dev_err(bdgpio->chip.dev,
--			"Invalid debouce value %u\n", debounce);
-+			"Invalid debounce value %u\n", debounce);
- 		return -EINVAL;
- 	}
- 	return regmap_update_bits(bdgpio->chip.regmap, GPIO_IN_REG(offset),
--- 
-2.20.1
+Yours,
+Linus Walleij
