@@ -1,25 +1,38 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Thu, 20 Jun 2019 15:18:03 +0000
-Subject: Re: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
-Message-Id: <f0ff1e54-c1b9-4a08-c7ff-2ff545e398c3@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jun 2019 06:56:37 +0000
+Subject: [PATCH] mm/slab: restore IRQs in kfree()
+Message-Id: <20190613065637.GE16334@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAHk-=wgTL5sYCGxX8+xQqyBRWRUE05GAdL58+UTG8bYwjFxMkw@mail.gmail.com>
- <20190617190605.GA21332@mwanda> <20190618081645.GM16364@dell>
- <CAHk-=wghW+AKvRGevUiVWwTqWObygSZSdq6Dz2ad81H73VeuRQ@mail.gmail.com>
- <20190619055816.GF18371@dell>
-In-Reply-To: <20190619055816.GF18371@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexandre TORGUE <alexandre.torgue@st.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Christoph Lameter <cl@linux.com>, Kees Cook <keescook@chromium.org>
+Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-T24gNi8xOS8xOSA3OjU4IEFNLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9uIFR1ZSwgMTggSnVuIDIw
-MTksIExpbnVzIFRvcnZhbGRzIHdyb3RlOg0KPiANCj4+IE9uIFR1ZSwgSnVuIDE4LCAyMDE5IGF0
-IDE6MTYgQU0gTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4gd3JvdGU6DQo+Pj4NCj4+
-Pj4gUmVwb3J0ZWQtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9u
-Lm9yZz4NCj4+Pg0KPj4+IElkZWFsbHkgd2UgY2FuIGdldCBhIHJldmlldyB0b28uDQo+Pg0KPj4g
-TG9va3MgZmluZSB0byBtZSwgYnV0IG9idmlvdXNseSBzb21lYm9keSBzaG91bGQgYWN0dWFsbHkg
-X3Rlc3RfIGl0IHRvby4NCj4gDQo+IEFtZWxpZSwgd291bGQgeW91IGJlIHNvIGtpbmQ/DQo+IA0K
-DQpUZXN0ZWQgb24gc3RtMzJtcDE1N2MtZXYxLg0KDQpUZXN0ZWQtYnk6IEFtZWxpZSBEZWxhdW5h
-eSA8YW1lbGllLmRlbGF1bmF5QHN0LmNvbT4
+We added a new return here but we need to restore the IRQs before
+we leave.
+
+Fixes: 4f5d94fd4ed5 ("mm/slab: sanity-check page type when looking up cache")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ mm/slab.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/slab.c b/mm/slab.c
+index 9e3eee5568b6..db01e9aae31b 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3745,8 +3745,10 @@ void kfree(const void *objp)
+ 	local_irq_save(flags);
+ 	kfree_debugcheck(objp);
+ 	c = virt_to_cache(objp);
+-	if (!c)
++	if (!c) {
++		local_irq_restore(flags);
+ 		return;
++	}
+ 	debug_check_no_locks_freed(objp, c->object_size);
+ 
+ 	debug_check_no_obj_freed(objp, c->object_size);
+-- 
+2.20.1
