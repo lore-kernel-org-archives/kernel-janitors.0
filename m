@@ -1,45 +1,47 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Date: Fri, 07 Jun 2019 13:15:42 +0000
-Subject: Re: [PATCH 1/2] drm/bridge: sii902x: re-order conditions to prevent out of bounds read
-Message-Id: <08cc5236-0741-3b08-d133-9d354ad20d1d@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 14 Jun 2019 16:50:27 +0000
+Subject: [PATCH] drivers: Adjust scope for CONFIG_HAS_IOMEM before devm_platform_ioremap_resource()
+Message-Id: <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190607072733epcas1p34d1a3afb68cb189947c794b1fc8c73a0@epcas1p3.samsung.com>
- <20190607072704.GA25229@mwanda>
-In-Reply-To: <20190607072704.GA25229@mwanda>
+References: <20190221162627.3476-1-brgl@bgdev.pl>
+In-Reply-To: <20190221162627.3476-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jyri Sarha <jsarha@ti.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07.06.2019 09:27, Dan Carpenter wrote:
-> This should check that "i" is within bounds before checking reading from
-> the array.
->
-> Fixes: ff5781634c41 ("drm/bridge: sii902x: Implement HDMI audio support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/bridge/sii902x.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index d6f98d388ac2..6b03616d6bc3 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -589,8 +589,8 @@ static int sii902x_audio_hw_params(struct device *dev, void *data,
->  	if (ret)
->  		goto out;
->  
-> -	for (i = 0; sii902x->audio.i2s_fifo_sequence[i] &&
-> -		     i < ARRAY_SIZE(sii902x->audio.i2s_fifo_sequence); i++)
-> +	for (i = 0; i < ARRAY_SIZE(sii902x->audio.i2s_fifo_sequence) &&
-> +		    sii902x->audio.i2s_fifo_sequence[i]; i++)
->  		regmap_write(sii902x->regmap,
->  			     SII902X_TPI_I2S_ENABLE_MAPPING_REG,
->  			     sii902x->audio.i2s_fifo_sequence[i]);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Jun 2019 17:45:13 +0200
 
-Queued to drm-misc-next.
+Move the preprocessor statement “#ifdef CONFIG_HAS_IOMEM” so that
+the corresponding scope for conditional compilation includes also comments
+for this function implementation.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/base/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d1729853d1a..a5f40974a6ef 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -78,6 +78,7 @@ struct resource *platform_get_resource(struct platform_device *dev,
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(platform_get_resource);
++#ifdef CONFIG_HAS_IOMEM
+
+ /**
+  * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
+@@ -87,7 +88,6 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
+  *        resource management
+  * @index: resource index
+  */
+-#ifdef CONFIG_HAS_IOMEM
+ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+ 					     unsigned int index)
+ {
 --
-Regards
-Andrzej
+2.22.0
