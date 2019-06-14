@@ -1,7 +1,7 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Thu, 13 Jun 2019 18:55:40 +0000
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Date: Fri, 14 Jun 2019 17:20:22 +0000
 Subject: Re: Drop use of DRM_WAIT_ON() [Was: drm/drm_vblank: Change EINVAL by the correct errno]
-Message-Id: <CADKXj+7X2ukpM16OHxenTCNtBPHUaj7Z8eBz3ZpyDYpZ2vGC9g@mail.gmail.com>
+Message-Id: <20190614172022.GE5942@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
  <20190613050403.GA21502@ravnborg.org>
@@ -10,19 +10,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, Intel GFX ML <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
 
-Hi Sam,
-
-I tested it by using VKMS and kms_flip, and tests related to “vblank”
-fails (e.g., basic-flip-vs-wf_vblank, blocking-absolute-wf_vblank,
-flip-vs-absolute-wf_vblank, etc). I tried to dig into this issue, and
-you can see my comments inline:
-
-On Thu, Jun 13, 2019 at 2:04 AM Sam Ravnborg <sam@ravnborg.org> wrote:
->
+On Thu, Jun 13, 2019 at 07:04:03AM +0200, Sam Ravnborg wrote:
 > Hi Rodrigo.
->
+> 
 > On Wed, Jun 12, 2019 at 11:10:54PM -0300, Rodrigo Siqueira wrote:
 > > For historical reason, the function drm_wait_vblank_ioctl always return
 > > -EINVAL if something gets wrong. This scenario limits the flexibility
@@ -38,7 +30,7 @@ On Thu, Jun 13, 2019 at 2:04 AM Sam Ravnborg <sam@ravnborg.org> wrote:
 > > libdrm, which is used by many compositors; because of this, it is
 > > important to check if this change breaks any compositor. In this sense,
 > > the following projects were examined:
-> >
+> > 
 > > * Drm-hwcomposer
 > > * Kwin
 > > * Sway
@@ -46,162 +38,59 @@ On Thu, Jun 13, 2019 at 2:04 AM Sam Ravnborg <sam@ravnborg.org> wrote:
 > > * Wayland-core
 > > * Weston
 > > * Xorg (67 different drivers)
-> >
+> > 
 > > For each repository the verification happened in three steps:
-> >
+> > 
 > > * Update the main branch
 > > * Look for any occurrence "drmWaitVBlank" with the command:
 > >   git grep -n "drmWaitVBlank"
 > > * Look in the git history of the project with the command:
 > >   git log -SdrmWaitVBlank
-> >
+> > 
 > > Finally, none of the above projects validate the use of EINVAL which
 > > make safe, at least for these projects, to change the return values.
-> >
+> > 
 > > Change since V2:
 > >  Daniel Vetter and Chris Wilson
 > >  - Replace ENOTTY by EOPNOTSUPP
 > >  - Return EINVAL if the parameters are wrong
-> >
+> > 
 > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 > > ---
 > > Update:
 > >   Now IGT has a way to validate if a driver has vblank support or not.
 > >   See: https://gitlab.freedesktop.org/drm/igt-gpu-tools/commit/2d244aed69165753f3adbbd6468db073dc1acf9A
-> >
+> > 
 > >  drivers/gpu/drm/drm_vblank.c | 4 ++--
 > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
+> > 
 > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
 > > index 0d704bddb1a6..d76a783a7d4b 100644
 > > --- a/drivers/gpu/drm/drm_vblank.c
 > > +++ b/drivers/gpu/drm/drm_vblank.c
 > > @@ -1578,10 +1578,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> >       unsigned int flags, pipe, high_pipe;
-> >
-> >       if (!dev->irq_enabled)
-> > -             return -EINVAL;
-> > +             return -EOPNOTSUPP;
-> >
-> >       if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > -             return -EINVAL;
-> > +             return -EOPNOTSUPP;
-> >
-> >       if (vblwait->request.type &
-> >           ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
->
+> >  	unsigned int flags, pipe, high_pipe;
+> >  
+> >  	if (!dev->irq_enabled)
+> > -		return -EINVAL;
+> > +		return -EOPNOTSUPP;
+> >  
+> >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> > -		return -EINVAL;
+> > +		return -EOPNOTSUPP;
+> >  
+> >  	if (vblwait->request.type &
+> >  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+> 
 > When touching this function, could I ask you to take a look at
 > eliminating the use of DRM_WAIT_ON()?
 > It comes from the deprecated drm_os_linux.h header, and it is only of
 > the few remaining users of DRM_WAIT_ON().
->
-> Below you can find my untested first try - where I did an attempt not to
-> change behaviour.
->
->         Sam
->
-> commit 17b119b02467356198b57bca9949b146082bcaa1
-> Author: Sam Ravnborg <sam@ravnborg.org>
-> Date:   Thu May 30 09:38:47 2019 +0200
->
->     drm/vblank: drop use of DRM_WAIT_ON()
->
->     DRM_WAIT_ON() is from the deprecated drm_os_linux header and
->     the modern replacement is the wait_event_*.
->
->     The return values differ, so a conversion is needed to
->     keep the original interface towards userspace.
->     Introduced a switch/case to make code obvious and to allow
->     different debug prints depending on the result.
->
->     The timeout value of 3 * HZ was translated to 30 msec
->
->     Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
->     Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->     Cc: Maxime Ripard <maxime.ripard@bootlin.com>
->     Cc: Sean Paul <sean@poorly.run>
->     Cc: David Airlie <airlied@linux.ie>
->     Cc: Daniel Vetter <daniel@ffwll.ch>
->
-> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> index 0d704bddb1a6..51fc6b106333 100644
-> --- a/drivers/gpu/drm/drm_vblank.c
-> +++ b/drivers/gpu/drm/drm_vblank.c
-> @@ -31,7 +31,6 @@
->  #include <drm/drm_drv.h>
->  #include <drm/drm_framebuffer.h>
->  #include <drm/drm_print.h>
-> -#include <drm/drm_os_linux.h>
->  #include <drm/drm_vblank.h>
->
->  #include "drm_internal.h"
-> @@ -1668,18 +1667,27 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
->         if (req_seq != seq) {
->                 DRM_DEBUG("waiting on vblank count %llu, crtc %u\n",
->                           req_seq, pipe);
-> -               DRM_WAIT_ON(ret, vblank->queue, 3 * HZ,
-> -                           vblank_passed(drm_vblank_count(dev, pipe),
-> -                                         req_seq) ||
-> -                           !READ_ONCE(vblank->enabled));
-> +               ret = wait_event_interruptible_timeout(vblank->queue,
-> +                       vblank_passed(drm_vblank_count(dev, pipe), req_seq) ||
-> +                                     !READ_ONCE(vblank->enabled),
-> +                       msecs_to_jiffies(30));
 
-Maybe I’m wrong, but msecs_to_jiffies(30) is much smaller than 3 * HZ. Right?
-
->         }
->
-> -       if (ret != -EINTR) {
-> +       switch (ret) {
-> +       case 1:
-> +               ret = 0;
->                 drm_wait_vblank_reply(dev, pipe, &vblwait->reply);
-> -
->                 DRM_DEBUG("crtc %d returning %u to client\n",
->                           pipe, vblwait->reply.sequence);
-> -       } else {
-> +               break;
-> +       case 0:
-> +               ret = -EBUSY;
-
-After applying your patch, I noticed that drm_wait_vblank_ioctl()
-consistently returns EBUSY, which is the cause of the errors in the
-userspace. After that, I decided to take a look at DRM_WAIT_ON; See
-below the code and my comments:
-
-#define DRM_WAIT_ON( ret, queue, timeout, condition )        \
-do {                                \
-    DECLARE_WAITQUEUE(entry, current);            \
-    unsigned long end = jiffies + (timeout);        \
-    add_wait_queue(&(queue), &entry);            \
-                                \
-    for (;;) {                        \
-        __set_current_state(TASK_INTERRUPTIBLE);    \
-        if (condition)                    \
-            break;                    \
-        if (time_after_eq(jiffies, end)) {        \
-            ret = -EBUSY;                \
-            break;                    \
-        }                        \
-
-I think that your code does not handle this condition for EBUSY in the
-same way of DRM_WAIT_ON(), or did I miss something?
-
-Best regards
-
-> +               drm_wait_vblank_reply(dev, pipe, &vblwait->reply);
-> +               DRM_DEBUG("timeout waiting for vblank. crtc %d returning %u to client\n",
-> +                         pipe, vblwait->reply.sequence);
-> +               break;
-> +       default:
-> +               ret = -EINTR;
->                 DRM_DEBUG("crtc %d vblank wait interrupted by signal\n", pipe);
->         }
->
-
+IIRC all previous attempts at removing that ended up with
+regressions. I think there are some dragons lurking inside that
+macro.
 
 -- 
-
-Rodrigo Siqueira
-https://siqueira.tech
+Ville Syrjälä
+Intel
