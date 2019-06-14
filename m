@@ -1,21 +1,46 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Mon, 24 Jun 2019 14:59:43 +0000
-Subject: Re: [PATCH][next] libbpf: fix spelling mistake "conflictling" -> "conflicting"
-Message-Id: <fb192b66-9fa9-b1ac-cc11-d621865e83b3@iogearbox.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 14 Jun 2019 02:44:13 +0000
+Subject: [PATCH -next] cxgbit: remove set but not used variable 'ppmax'
+Message-Id: <20190614024413.110449-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619162742.985-1-colin.king@canonical.com>
-In-Reply-To: <20190619162742.985-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, "David S. Miller" <davem@davemloft.net>, Mike Christie <mchristi@redhat.com>, Bart Van Assche <bvanassche@acm.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/19/2019 06:27 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are several spelling mistakes in pr_warning messages. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied, thanks!
+drivers/target/iscsi/cxgbit/cxgbit_ddp.c: In function 'cxgbit_ddp_init':
+drivers/target/iscsi/cxgbit/cxgbit_ddp.c:303:15: warning:
+ variable 'ppmax' set but not used [-Wunused-but-set-variable]
+
+It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
+enable eDRAM page pods for iSCSI")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/target/iscsi/cxgbit/cxgbit_ddp.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
+index 1443ef045a5f..fe1be5feaf21 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
+@@ -300,7 +300,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
+ 	struct cxgb4_lld_info *lldi = &cdev->lldi;
+ 	struct net_device *ndev = cdev->lldi.ports[0];
+ 	struct cxgbi_tag_format tformat;
+-	unsigned int ppmax;
+ 	int ret, i;
+ 
+ 	if (!lldi->vr->iscsi.size) {
+@@ -308,8 +307,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
+ 		return -EACCES;
+ 	}
+ 
+-	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
+-
+ 	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
+ 	for (i = 0; i < 4; i++)
+ 		tformat.pgsz_order[i] = (lldi->iscsi_pgsz_order >> (i << 3))
