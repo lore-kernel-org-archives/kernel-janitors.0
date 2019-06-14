@@ -1,60 +1,45 @@
-From: <alex.bou9@gmail.com>
-Date: Fri, 21 Jun 2019 01:08:43 +0000
-Subject: RE: [PATCH] rapidio/mport_cdev: NUL terminate some strings
-Message-Id: <001101d527cd$e03b0180$a0b10480$@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 14 Jun 2019 02:48:56 +0000
+Subject: [PATCH -next] scsi: cxgb4i: remove set but not used variable 'ppmax'
+Message-Id: <20190614024856.115652-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190529110601.GB19119@mwanda>
-In-Reply-To: <20190529110601.GB19119@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>, 'Andrew Morton' <akpm@linux-foundation.org>
-Cc: 'Ira Weiny' <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Matt Porter' <mporter@kernel.crashing.org>
+To: Karen Xie <kxie@chelsio.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Varun Prakash <varun@chelsio.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Alexandre Bounine <alex.bou9@gmail.com>  
+Fixes gcc '-Wunused-but-set-variable' warning:
 
------Original Message-----
-From: Dan Carpenter <dan.carpenter@oracle.com> 
-Sent: Wednesday, May 29, 2019 7:06 AM
-To: Matt Porter <mporter@kernel.crashing.org>
-Cc: Alexandre Bounine <alex.bou9@gmail.com>; Andrew Morton
-<akpm@linux-foundation.org>; Ira Weiny <ira.weiny@intel.com>;
-linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [PATCH] rapidio/mport_cdev: NUL terminate some strings
+drivers/scsi/cxgbi/cxgb4i/cxgb4i.c: In function 'cxgb4i_ddp_init':
+drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2072:15: warning:
+ variable 'ppmax' set but not used [-Wunused-but-set-variable]
 
-The dev_info.name[] array has space for RIO_MAX_DEVNAME_SZ + 1
-characters.  But the problem here is that we don't ensure that the user
-put a NUL terminator on the end of the string.  It could lead to an out
-of bounds read.
+It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
+enable eDRAM page pods for iSCSI")
 
-Fixes: e8de370188d0 ("rapidio: add mport char device driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/rapidio/devices/rio_mport_cdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/cxgbi/cxgb4i/cxgb4i.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c
-b/drivers/rapidio/devices/rio_mport_cdev.c
-index 4a4a75fa26d5..3440b3e8e578 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -1690,6 +1690,7 @@ static int rio_mport_add_riodev(struct mport_cdev_priv
-*priv,
+diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+index 66d6e1f4b3c3..0fbb4edc4161 100644
+--- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
++++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
+@@ -2069,7 +2069,6 @@ static int cxgb4i_ddp_init(struct cxgbi_device *cdev)
+ 	struct cxgb4_lld_info *lldi = cxgbi_cdev_priv(cdev);
+ 	struct net_device *ndev = cdev->ports[0];
+ 	struct cxgbi_tag_format tformat;
+-	unsigned int ppmax;
+ 	int i, err;
  
- 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
- 		return -EFAULT;
-+	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
+ 	if (!lldi->vr->iscsi.size) {
+@@ -2078,7 +2077,6 @@ static int cxgb4i_ddp_init(struct cxgbi_device *cdev)
+ 	}
  
- 	rmcd_debug(RDEV, "name:%s ct:0x%x did:0x%x hc:0x%x", dev_info.name,
- 		   dev_info.comptag, dev_info.destid, dev_info.hopcount);
-@@ -1821,6 +1822,7 @@ static int rio_mport_del_riodev(struct mport_cdev_priv
-*priv, void __user *arg)
+ 	cdev->flags |= CXGBI_FLAG_USE_PPOD_OFLDQ;
+-	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
  
- 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
- 		return -EFAULT;
-+	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
- 
- 	mport = priv->md->mport;
- 
--- 
-2.20.1
+ 	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
+ 	for (i = 0; i < 4; i++)
