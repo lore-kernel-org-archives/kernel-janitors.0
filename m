@@ -1,23 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 06 Jun 2019 17:37:46 +0000
-Subject: Re: [PATCH][next] ipv6: fix spelling mistake: "wtih" -> "with"
-Message-Id: <20190606.103746.997228853760442672.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Jun 2019 14:39:11 +0000
+Subject: [PATCH][next] drm/mgag200: add in missing { } around if block
+Message-Id: <20190614143911.21806-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190606084039.6265-1-colin.king@canonical.com>
-In-Reply-To: <20190606084039.6265-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Zimmermann <tzimmermann@suse.de>, Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  6 Jun 2019 09:40:39 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a NL_SET_ERR_MSG message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is an if block that is missing the { } curly brackets. Add
+these in.
 
-Applied.
+Addresses-Coverity: ("Structurally dead code")
+Fixes: 94dc57b10399 ("drm/mgag200: Rewrite cursor handling")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/mgag200/mgag200_cursor.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/mgag200/mgag200_cursor.c b/drivers/gpu/drm/mgag200/mgag200_cursor.c
+index f0c61a92351c..117eaedec7aa 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_cursor.c
++++ b/drivers/gpu/drm/mgag200/mgag200_cursor.c
+@@ -99,10 +99,11 @@ int mga_crtc_cursor_set(struct drm_crtc *crtc,
+ 
+ 	/* Pin and map up-coming buffer to write colour indices */
+ 	ret = drm_gem_vram_pin(pixels_next, 0);
+-	if (ret)
++	if (ret) {
+ 		dev_err(&dev->pdev->dev,
+ 			"failed to pin cursor buffer: %d\n", ret);
+ 		goto err_drm_gem_vram_kunmap_src;
++	}
+ 	dst = drm_gem_vram_kmap(pixels_next, true, NULL);
+ 	if (IS_ERR(dst)) {
+ 		ret = PTR_ERR(dst);
+-- 
+2.20.1
