@@ -1,64 +1,60 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 28 Jun 2019 08:46:59 +0000
-Subject: Re: [PATCH] ALSA: xen-front: fix unintention integer overflow on left shifts
-Message-Id: <s5hv9wq6qrg.wl-tiwai@suse.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 14 Jun 2019 13:26:25 +0000
+Subject: [PATCH] drivers: Provide devm_platform_ioremap_resource_byname()
+Message-Id: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190627165853.21864-1-colin.king@canonical.com>
-In-Reply-To: <20190627165853.21864-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, xen-devel@lists.xenproject.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Enrico Weigelt <lkml@metux.net>, Himanshu Jha <himanshujha199640@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, 27 Jun 2019 18:58:53 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting the integer value 1 is evaluated using 32-bit
-> arithmetic and then used in an expression that expects a 64-bit
-> value, so there is potentially an integer overflow. Fix this
-> by using the BIT_ULL macro to perform the shift.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Jun 2019 15:15:14 +0200
 
-The fix is correct, but luckily we didn't hit the integer overflow, as
-all passed values are less than 32bit.
+The functions “platform_get_resource_byname” and “devm_ioremap_resource”
+are called together in 181 source files.
+This implementation detail can be determined also with the help
+of the semantic patch language (Coccinelle software).
 
-In anyway, applied now.  Thanks.
+Wrap these two calls into another helper function.
+Thus a local variable does not need to be declared for a resource
+structure pointer before and a redundant argument can be omitted
+for the resource type.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/base/platform.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Takashi
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d1729853d1a..c1f19a479dd7 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -97,6 +97,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+ 	return devm_ioremap_resource(&pdev->dev, res);
+ }
+ EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
++
++/**
++ * devm_platform_ioremap_resource_byname
++ * Call devm_ioremap_resource() for a platform device
++ *
++ * @pdev: platform device to use both for memory resource lookup as well as
++ *        resource management
++ * @name: resource name
++ */
++void __iomem *devm_platform_ioremap_resource_byname(struct platform_device *pdev,
++						    const char *name)
++{
++	struct resource *res;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
++	return devm_ioremap_resource(&pdev->dev, res);
++}
++EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+ #endif /* CONFIG_HAS_IOMEM */
 
-> ---
->  sound/xen/xen_snd_front_alsa.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
-> index b14ab512c2ce..e01631959ed8 100644
-> --- a/sound/xen/xen_snd_front_alsa.c
-> +++ b/sound/xen/xen_snd_front_alsa.c
-> @@ -196,7 +196,7 @@ static u64 to_sndif_formats_mask(u64 alsa_formats)
->  	mask = 0;
->  	for (i = 0; i < ARRAY_SIZE(ALSA_SNDIF_FORMATS); i++)
->  		if (pcm_format_to_bits(ALSA_SNDIF_FORMATS[i].alsa) & alsa_formats)
-> -			mask |= 1 << ALSA_SNDIF_FORMATS[i].sndif;
-> +			mask |= BIT_ULL(ALSA_SNDIF_FORMATS[i].sndif);
->  
->  	return mask;
->  }
-> @@ -208,7 +208,7 @@ static u64 to_alsa_formats_mask(u64 sndif_formats)
->  
->  	mask = 0;
->  	for (i = 0; i < ARRAY_SIZE(ALSA_SNDIF_FORMATS); i++)
-> -		if (1 << ALSA_SNDIF_FORMATS[i].sndif & sndif_formats)
-> +		if (BIT_ULL(ALSA_SNDIF_FORMATS[i].sndif) & sndif_formats)
->  			mask |= pcm_format_to_bits(ALSA_SNDIF_FORMATS[i].alsa);
->  
->  	return mask;
-> -- 
-> 2.20.1
-> 
-> 
+ /**
+--
+2.22.0
