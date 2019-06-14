@@ -1,22 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Jun 2019 14:51:06 +0000
-Subject: Re: [PATCH] crypto: qat - Endian bug in interrupt handler
-Message-Id: <20190624145105.GX28859@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Jun 2019 09:43:11 +0000
+Subject: [PATCH][next] lkdtm: remove redundant initialization of ret
+Message-Id: <20190614094311.24024-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624134839.GB1754@mwanda>
-In-Reply-To: <20190624134839.GB1754@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Never mind.  Please ignore this patch.
+The variable ret is being initialized with the value -EINVAL however
+this value is never read and ret is being re-assigned later on. Hence
+the initialization is redundant and can be removed.
 
-This is Intel hardware so it's little endian.  There are a bunch of
-other test_bit() casts which would be problematic so this wouldn't
-really fix anything anyway.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/lkdtm/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index bba093224813..92df35fdeab0 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -390,7 +390,7 @@ static int __init lkdtm_module_init(void)
+ {
+ 	struct crashpoint *crashpoint = NULL;
+ 	const struct crashtype *crashtype = NULL;
+-	int ret = -EINVAL;
++	int ret;
+ 	int i;
+ 
+ 	/* Neither or both of these need to be set */
+-- 
+2.20.1
