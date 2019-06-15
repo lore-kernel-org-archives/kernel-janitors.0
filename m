@@ -1,54 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Jun 2019 07:59:59 +0000
-Subject: Re: [PATCH][V2] x86/apic: fix integer overflow on 10 bit left shift of cpu_khz
-Message-Id: <20190620075959.GQ28859@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 15 Jun 2019 11:00:17 +0000
+Subject: Re: drivers: Inline code in devm_platform_ioremap_resource() from two functions
+Message-Id: <4b4b2d76-7af5-5466-16ea-aad0825578a0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619181446.13635-1-colin.king@canonical.com>
-In-Reply-To: <20190619181446.13635-1-colin.king@canonical.com>
+References: <20190406061112.31620-1-himanshujha199640@gmail.com>
+ <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
+ <alpine.DEB.2.21.1906081925090.2543@hadrien>
+ <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
+ <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
+ <032e347f-e575-c89c-fa62-473d52232735@web.de>
+ <alpine.DEB.2.20.1906141127030.9068@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1906141127030.9068@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
 
-On Wed, Jun 19, 2019 at 07:14:46PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The left shift of unsigned int cpu_khz will overflow for large values
-> of cpu_khz, so cast it to a long long before shifting it to avoid
-> overvlow.  For example, this can happen when cpu_khz is 4194305 (just
-> less than 4.2 GHz).  Also wrap line to avoid checkpatch wide line
-> warning.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kernel/apic/apic.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-> index 8956072f677d..31426126e5e0 100644
-> --- a/arch/x86/kernel/apic/apic.c
-> +++ b/arch/x86/kernel/apic/apic.c
-> @@ -1464,7 +1464,8 @@ static void apic_pending_intr_clear(void)
->  		if (queued) {
->  			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
->  				ntsc = rdtsc();
-> -				max_loops = (cpu_khz << 10) - (ntsc - tsc);
-> +				max_loops = ((long long)cpu_khz << 10) -
-> +					    (ntsc - tsc);
->  			} else {
->  				max_loops--;
->  			}
-> -- 
-> 
-> V2: replace right with left in commit subject and message. Doh.
-> 
+>> Two function calls were combined in this function implementation.
+>> Inline corresponding code so that extra error checks can be avoided here.
+>
+> I don't see any point to this at all.
 
-Uh, why are you putting the v2 explanation here instead of between the
---- cut off and the diffstat/
+Would you like to take another look at corresponding design options?
+
+How do you think about to check run time characteristics any more?
 
 
-regards,
-dan carpenter
+> By inlining the code, you have created a clone,
+> which will introduce extra work to maintain in the future.
+
+Would you find the shown software transformation acceptable
+if a C compiler will be able to generate a similar code structure?
+
+Regards,
+Markus
