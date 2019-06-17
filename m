@@ -1,29 +1,40 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 24 Jun 2019 08:13:48 +0000
-Subject: Re: [PATCH] staging: bcm2835-camera: Avoid apotential sleep while holding a spin_lock
-Message-Id: <c8e5abba-7441-b201-1618-c92dfdfc7b1c@i2se.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jun 2019 12:47:26 +0000
+Subject: [PATCH] staging: rtl8723bs: remove redundant assignment to rtStatus
+Message-Id: <20190617124726.27961-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624053351.5217-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190624053351.5217-1-christophe.jaillet@wanadoo.fr>
+References: <20170413141346.9791-1-colin.king@canonical.com>
+In-Reply-To: <20170413141346.9791-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, eric@anholt.net, gregkh@linuxfoundation.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, tuomas.tynkkynen@iki.fi, inf.braun@fau.de, tobias.buettner@fau.de, hofrat@osadl.org
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Christophe,
+From: Colin Ian King <colin.king@canonical.com>
 
-Am 24.06.2019 um 07:33 schrieb Christophe JAILLET:
-> Do not allocate memory with GFP_KERNEL when holding a spin_lock, it may
-> sleep. Use GFP_NOWAIT instead.
->
-> Fixes: 950fd867c635 ("staging: bcm2835-camera: Replace open-coded idr with a struct idr.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Variable rtStatus is initialized with a value that is never read
+and later it is reassigned a new value.  Hence the initialization
+is redundant and can be removed.
 
-there has been a fix for this, which isn't upstreamed yet. The preferred 
-solution is to replace the spin_lock with a mutex. Since i'm currently 
-working on this i would take care of this.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry about this.
-
-Stefan
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index 21f2365fa627..bda19769c37f 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -352,7 +352,7 @@ void rtl8723b_FirmwareSelfReset(struct adapter *padapter)
+ /*  */
+ s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
+ {
+-	s32 rtStatus = _SUCCESS;
++	s32 rtStatus;
+ 	u8 write_fw = 0;
+ 	unsigned long fwdl_start_time;
+ 	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+-- 
+2.20.1
