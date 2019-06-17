@@ -1,37 +1,47 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 07 Jun 2019 17:57:49 +0000
-Subject: Re: [PATCH 1/2][next] RDMA/hns: fix comparison of unsigned long variable 'end' with less than zero
-Message-Id: <20190607175749.GB25014@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Jun 2019 19:06:05 +0000
+Subject: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
+Message-Id: <20190617190605.GA21332@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190531092101.28772-1-colin.king@canonical.com>
-In-Reply-To: <20190531092101.28772-1-colin.king@canonical.com>
+In-Reply-To: <CAHk-=wgTL5sYCGxX8+xQqyBRWRUE05GAdL58+UTG8bYwjFxMkw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amelie Delaunay <amelie.delaunay@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-On Fri, May 31, 2019 at 10:21:00AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the comparison of end with less than zero is always false
-> because end is an unsigned long.  Also, replace checks of end with
-> non-zero with end > 0 as it is possible that the #defined decrement
-> may be changed in the future causing end to step over zero and go
-> negative.
-> 
-> The initialization of end with 0 is also redundant as this value is
-> never read and is later set to HW_SYNC_TIMEOUT_MSECS, so fix this by
-> initializing it with this value to begin with.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 669cefb654cb ("RDMA/hns: Remove jiffies operation in disable interrupt context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hem.c   |  4 ++--
->  drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 12 ++++++------
->  2 files changed, 8 insertions(+), 8 deletions(-)
+It's not okay to cast a "u32 *" to "unsigned long *" when you are
+doing a for_each_set_bit() loop because that will break on big
+endian systems.
 
-hns team: Can you please comment on this patch
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 386145601b82 ("mfd: stmfx: Uninitialized variable in stmfx_irq_handler()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mfd/stmfx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
+index 7c419c078688..857991cb3cbb 100644
+--- a/drivers/mfd/stmfx.c
++++ b/drivers/mfd/stmfx.c
+@@ -204,6 +204,7 @@ static struct irq_chip stmfx_irq_chip = {
+ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ {
+ 	struct stmfx *stmfx = data;
++	unsigned long bits;
+ 	u32 pending, ack;
+ 	int n, ret;
+ 
+@@ -222,7 +223,8 @@ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ 			return IRQ_NONE;
+ 	}
+ 
+-	for_each_set_bit(n, (unsigned long *)&pending, STMFX_REG_IRQ_SRC_MAX)
++	bits = pending;
++	for_each_set_bit(n, &bits, STMFX_REG_IRQ_SRC_MAX)
+ 		handle_nested_irq(irq_find_mapping(stmfx->irq_domain, n));
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.20.1
