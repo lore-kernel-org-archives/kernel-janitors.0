@@ -1,50 +1,45 @@
-From: Nick Crews <ncrews@chromium.org>
-Date: Wed, 19 Jun 2019 15:44:50 +0000
-Subject: Re: [PATCH][next] platform/chrome: wilco_ec: fix null pointer dereference on failed kzalloc
-Message-Id: <CAHX4x85id5dwXrBSVHTZaRV43JGAxZwMkvnDN6yH5_Mg4UxRPg@mail.gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 17 Jun 2019 13:08:06 +0000
+Subject: Re: [PATCH] staging: rtl8723bs: remove redundant assignment to rtStatus
+Message-Id: <c145610a-b5c7-9bfd-eb06-e51eb324dae0@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618153924.19491-1-colin.king@canonical.com> <20190619053012.GM28859@kadam>
-In-Reply-To: <20190619053012.GM28859@kadam>
+References: <20190617124726.27961-1-colin.king@canonical.com>
+In-Reply-To: <20190617124726.27961-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Benson Leung <bleung@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dtor@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 11:30 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Tue, Jun 18, 2019 at 04:39:24PM +0100, Colin King wrote:
-> > diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-> > index c975b76e6255..e251a989b152 100644
-> > --- a/drivers/platform/chrome/wilco_ec/event.c
-> > +++ b/drivers/platform/chrome/wilco_ec/event.c
-> > @@ -112,8 +112,11 @@ module_param(queue_size, int, 0644);
-> >  static struct ec_event_queue *event_queue_new(int capacity)
-> >  {
-> >       size_t entries_size = sizeof(struct ec_event *) * capacity;
-> > -     struct ec_event_queue *q = kzalloc(sizeof(*q) + entries_size,
-> > -                                        GFP_KERNEL);
-> > +     struct ec_event_queue *q;
-> > +
-> > +     q = kzalloc(sizeof(*q) + entries_size, GFP_KERNEL);
-> > +     if (!q)
-> > +             return NULL;
->
-> We have a new struct_size() macro designed for these allocations.
->
->         q = kzalloc(struct_size(q, entries, capacity), GFP_KERNEL);
->
-> The advantage is that it checks for integer overflows.
->
-> regards,
-> dan carpenter
->
+On 17/06/2019 13:47, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable rtStatus is initialized with a value that is never read
+> and later it is reassigned a new value.  Hence the initialization
+> is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+> index 21f2365fa627..bda19769c37f 100644
+> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+> @@ -352,7 +352,7 @@ void rtl8723b_FirmwareSelfReset(struct adapter *padapter)
+>  /*  */
+>  s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
+>  {
+> -	s32 rtStatus = _SUCCESS;
+> +	s32 rtStatus;
+>  	u8 write_fw = 0;
+>  	unsigned long fwdl_start_time;
+>  	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+> 
 
-Thanks Dan, I like that.
+Actually, ignore this, the driver has lots more of these that need
+cleaning up, I'll send a V2 with all the fixups later.
 
-Dmitry Torokhov also had some thoughts on this patch at
-https://crrev.com/c/1661053, I'll send a patch that adds this and
-fixes his concerns in a bit.
-
-Cheers,
-Nick
+Colin
