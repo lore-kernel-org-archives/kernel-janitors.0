@@ -1,40 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 08 Jun 2019 09:23:57 +0000
-Subject: [PATCH] drm/amdgpu: Fix bounds checking in amdgpu_ras_is_supported()
-Message-Id: <20190608092357.GB28890@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 17 Jun 2019 12:10:10 +0000
+Subject: [PATCH] drm/amd/display: Delete a redundant memory setting in amdgpu_dm_irq_register_interrupt()
+Message-Id: <3900e9c8-4905-1704-686d-90ccf3b00a88@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, xinhui pan <xinhui.pan-5C7GfCeVMHo@public.gmane.org>
-Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, James Zhu <James.Zhu-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, David Francis <David.Francis@amd.com>, "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Mario Kleiner <mario.kleiner.de@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The "block" variable can be set by the user through debugfs, so it can
-be quite large which leads to shift wrapping here.  This means we report
-a "block" as supported when it's not, and that leads to array overflows
-later on.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Jun 2019 13:56:39 +0200
 
-This bug is not really a security issue in real life, because debugfs is
-generally root only.
+The memory was set to zero already by a call of the function “kzalloc”.
+Thus remove an extra call of the function “memset” for this purpose.
 
-Fixes: 36ea1bd2d084 ("drm/amdgpu: add debugfs ctrl node")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-index c6b34fbd695f..94c652f5265a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
-@@ -173,6 +173,8 @@ static inline int amdgpu_ras_is_supported(struct amdgpu_device *adev,
- {
- 	struct amdgpu_ras *ras = amdgpu_ras_get_context(adev);
- 
-+	if (block >= AMDGPU_RAS_BLOCK_COUNT)
-+		return 0;
- 	return ras && (ras->supported & (1 << block));
- }
- 
--- 
-2.20.1
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+index 1b59d3d42f7b..fa5d503d379c 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+@@ -277,8 +277,6 @@ void *amdgpu_dm_irq_register_interrupt(struct amdgpu_device *adev,
+ 		return DAL_INVALID_IRQ_HANDLER_IDX;
+ 	}
+
+-	memset(handler_data, 0, sizeof(*handler_data));
+-
+ 	init_handler_common_data(handler_data, ih, handler_args, &adev->dm);
+
+ 	irq_source = int_params->irq_source;
+--
+2.22.0
