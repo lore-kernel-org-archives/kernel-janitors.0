@@ -1,45 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 19 Jun 2019 18:15:03 +0000
-Subject: Re: [PATCH] x86/apic: fix integer overflow on 10 bit right shift of cpu_khz
-Message-Id: <00bb0b52-7a3c-24f6-50d2-9d10cfe80895@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jun 2019 15:53:25 +0000
+Subject: [PATCH] net: lio_core: fix potential sign-extension overflow on large shift
+Message-Id: <20190617155325.27017-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619181325.13574-1-colin.king@canonical.com>
-In-Reply-To: <20190619181325.13574-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+To: Derek Chickles <dchickles@marvell.com>, Satanand Burla <sburla@marvell.com>, Felix Manlunas <fmanlunas@marvell.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 19/06/2019 19:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The right shift of unsigned int cpu_khz will overflow for large values
-> of cpu_khz, so cast it to a long long before shifting it to avoid
-> overvlow.  For example, this can happen when cpu_khz is 4194305 (just
-> less than 4.2 GHz).  Also wrap line to avoid checkpatch wide line
-> warning.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kernel/apic/apic.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-> index 8956072f677d..31426126e5e0 100644
-> --- a/arch/x86/kernel/apic/apic.c
-> +++ b/arch/x86/kernel/apic/apic.c
-> @@ -1464,7 +1464,8 @@ static void apic_pending_intr_clear(void)
->  		if (queued) {
->  			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
->  				ntsc = rdtsc();
-> -				max_loops = (cpu_khz << 10) - (ntsc - tsc);
-> +				max_loops = ((long long)cpu_khz << 10) -
-> +					    (ntsc - tsc);
->  			} else {
->  				max_loops--;
->  			}
-> 
-Nack. V2 coming next.
+From: Colin Ian King <colin.king@canonical.com>
+
+Left shifting the signed int value 1 by 31 bits has undefined behaviour
+and the shift amount oq_no can be as much as 63.  Fix this by widening
+the int 1 to 1ULL.
+
+Addresses-Coverity: ("Bad shift operation")
+Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+index 1c50c10b5a16..e78bdcee200f 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+@@ -964,7 +964,7 @@ static void liquidio_schedule_droq_pkt_handlers(struct octeon_device *oct)
+ 
+ 			if (droq->ops.poll_mode) {
+ 				droq->ops.napi_fn(droq);
+-				oct_priv->napi_mask |= (1 << oq_no);
++				oct_priv->napi_mask |= (1ULL << oq_no);
+ 			} else {
+ 				tasklet_schedule(&oct_priv->droq_tasklet);
+ 			}
+-- 
+2.20.1
