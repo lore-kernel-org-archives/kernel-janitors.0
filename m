@@ -1,58 +1,56 @@
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Date: Thu, 27 Jun 2019 10:36:14 +0000
-Subject: Re: [bug report] lib/vdso: Provide generic VDSO implementation
-Message-Id: <657f28ef-91c8-d627-1903-142af38eebe5@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jun 2019 16:58:36 +0000
+Subject: [PATCH] net: stmmac: add sanity check to device_property_read_u32_array call
+Message-Id: <20190617165836.4673-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190627071521.GA22903@mwanda>
-In-Reply-To: <20190627071521.GA22903@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 6/27/19 11:33 AM, Dan Carpenter wrote:
-> On Thu, Jun 27, 2019 at 12:26:06PM +0200, walter harms wrote:
->>
->>
->> Am 27.06.2019 11:09, schrieb Vincenzo Frascino:
->>> Hi Dan,
->>>
->>> On 6/27/19 10:07 AM, Dan Carpenter wrote:
->>>> On Thu, Jun 27, 2019 at 09:58:18AM +0100, Vincenzo Frascino wrote:
->>>>>>    119	fallback:
->>>>>>    120		return clock_gettime_fallback(clock, (struct __kernel_timespec *)res);
->>>>>>                                                                                  ^^^
->>>>>> On x86 this "res" always gets dereferenced.
->>>>>>
->>>>>>    121	}
->>>>>>
->>>>>
->>>>> I am not sure I understand the details of this bug report. As far as I can see
->>>>> "res" is never dereferenced in the vDSO library in this case, but it is passed
->>>>> to the system call unchanged.
->>>>>
->>>>
->>>> Oh yeah.  Sorry.  My bad.  False positive.  clock_gettime_fallback()
->>>> doesn't necessarily dereference "res".
->>>>
->>>
->>> No problem, better a false positive than an ignored negative :-)
->>>
->>
->> maybe it would be clever to add a comment here indicating that this
->> is intended and no problem ?
->>
-> 
-> No.  The correct response is to fix Smatch.  I will do it.
->
+Currently the call to device_property_read_u32_array is not error checked
+leading to potential garbage values in the delays array that are then used
+in msleep delays.  Add a sanity check to the property fetching.
 
-Agreed. Smatch should not report legitimate usages.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-> regards,
-> dan carpenter
-> 
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index da310de06bf6..5b7923c0698c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -242,6 +242,7 @@ int stmmac_mdio_reset(struct mii_bus *bus)
+ 	if (priv->device->of_node) {
+ 		struct gpio_desc *reset_gpio;
+ 		u32 delays[3];
++		int ret;
+ 
+ 		reset_gpio = devm_gpiod_get_optional(priv->device,
+ 						     "snps,reset",
+@@ -249,9 +250,15 @@ int stmmac_mdio_reset(struct mii_bus *bus)
+ 		if (IS_ERR(reset_gpio))
+ 			return PTR_ERR(reset_gpio);
+ 
+-		device_property_read_u32_array(priv->device,
+-					       "snps,reset-delays-us",
+-					       delays, ARRAY_SIZE(delays));
++		ret = device_property_read_u32_array(priv->device,
++						     "snps,reset-delays-us",
++						     delays,
++						     ARRAY_SIZE(delays));
++		if (ret) {
++			dev_err(ndev->dev.parent,
++				"invalid property snps,reset-delays-us\n");
++			return -EINVAL;
++		}
+ 
+ 		if (delays[0])
+ 			msleep(DIV_ROUND_UP(delays[0], 1000));
 -- 
-Regards,
-Vincenzo
+2.20.1
