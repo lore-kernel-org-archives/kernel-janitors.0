@@ -1,36 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 08 Jun 2019 09:25:14 +0000
-Subject: [PATCH] RDMA/hns: prevent undefined behavior in hns_roce_set_user_sq_size()
-Message-Id: <20190608092514.GC28890@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 17 Jun 2019 09:22:53 +0000
+Subject: [PATCH -next v2] coresight: replicator: Add terminate entry for acpi_device_id tables
+Message-Id: <20190617092253.167231-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190615104440.94149-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190615104440.94149-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The "ucmd->log_sq_bb_count" variable is a user controlled variable in
-the 0-255 range.  If we shift more than then number of bits in an int
-then it's undefined behavior (it shift wraps).  It turns out this
-doesn't cause any real issues at runtime, but it's good to check anyway.
+Make sure acpi_device_id tables have terminate entry.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: fe446287ec9f ("coresight: acpi: Support for platform devices")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_qp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hwtracing/coresight/coresight-replicator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-index 8db2817a249e..006b3e7f4ed5 100644
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -342,7 +342,8 @@ static int hns_roce_set_user_sq_size(struct hns_roce_dev *hr_dev,
- 	u32 max_cnt;
- 
- 	/* Sanity check SQ size before proceeding */
--	if ((u32)(1 << ucmd->log_sq_bb_count) > hr_dev->caps.max_wqes ||
-+	if (ucmd->log_sq_bb_count > 31 ||
-+	    (u32)(1 << ucmd->log_sq_bb_count) > hr_dev->caps.max_wqes ||
- 	     ucmd->log_sq_stride > max_sq_stride ||
- 	     ucmd->log_sq_stride < HNS_ROCE_IB_MIN_SQ_STRIDE) {
- 		dev_err(hr_dev->dev, "check SQ size error!\n");
--- 
-2.20.1
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index 542952759941..b7d6d59d56db 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -300,6 +300,7 @@ static const struct of_device_id static_replicator_match[] = {
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id static_replicator_acpi_ids[] = {
+ 	{"ARMHC985", 0}, /* ARM CoreSight Static Replicator */
++	{}
+ };
+ #endif
