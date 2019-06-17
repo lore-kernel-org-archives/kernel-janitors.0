@@ -1,31 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Jun 2019 15:29:51 +0000
-Subject: Re: [PATCH next] nexthop: off by one in nexthop_mpath_select()
-Message-Id: <20190607152951.GR31203@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jun 2019 11:42:14 +0000
+Subject: [PATCH][next] net: hns3: fix dereference of ae_dev before it is null checked
+Message-Id: <20190617114214.25276-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190607135636.GB16718@mwanda>
- <0e02a744-f28e-e206-032b-a0ffac9f7311@gmail.com>
-In-Reply-To: <0e02a744-f28e-e206-032b-a0ffac9f7311@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Ahern <dsahern@gmail.com>
-Cc: David Ahern <dsahern@kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 08:54:33AM -0600, David Ahern wrote:
-> On 6/7/19 7:56 AM, Dan Carpenter wrote:
-> > The nhg->nh_entries[] array is allocated in nexthop_grp_alloc() and it
-> > has nhg->num_nh elements so this check should be >= instead of >.
-> > 
-> > Fixes: f88d8ea67fbd ("ipv6: Plumb support for nexthop object in a fib6_info")
-> 
-> Wrong fixes. The helper was added by 430a049190de so it should be
-> 
-> Fixes: 430a049190de ("nexthop: Add support for nexthop groups")
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, my eyes must have gone squiffy.  I don't even know how I got that
-wrong.  Let me resend.
+Pointer ae_dev is null checked however, prior to that it is dereferenced
+when assigned pointer ops. Fix this by assigning pointer ops after ae_dev
+has been null checked.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Dereference before null check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 951a8125ea0c..58633cdcdcfd 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1940,13 +1940,14 @@ static pci_ers_result_t hns3_error_detected(struct pci_dev *pdev,
+ static pci_ers_result_t hns3_slot_reset(struct pci_dev *pdev)
+ {
+ 	struct hnae3_ae_dev *ae_dev = pci_get_drvdata(pdev);
+-	const struct hnae3_ae_ops *ops = ae_dev->ops;
++	const struct hnae3_ae_ops *ops;
+ 	enum hnae3_reset_type reset_type;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	if (!ae_dev || !ae_dev->ops)
+ 		return PCI_ERS_RESULT_NONE;
+ 
++	ops = ae_dev->ops;
+ 	/* request the reset */
+ 	if (ops->reset_event) {
+ 		if (!ae_dev->override_pci_need_reset) {
+-- 
+2.20.1
