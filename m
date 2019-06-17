@@ -1,39 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Jun 2019 15:28:04 +0000
-Subject: [PATCH][next] drm/amd/powerplay: remove a less than zero uint32_t check
-Message-Id: <20190628152804.16954-1-colin.king@canonical.com>
+From: "Mark Maths" <trade1@nejknio.cf>
+Date: Mon, 17 Jun 2019 07:08:59 +0000
+Subject: PRODUCT INQUIRY FOR EXPORT SHIPMENT
+Message-Id: <0.0.1.666.1D524DB7E07EA22.0@slot0.nejknio.cf>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The check to see if the uint32_t variable 'size' is less than zero
-is redundant as it is unsigned and can never be less than zero.
-Remove this redundant check.
-
-Addresses-Coverity: ("Unsigned compared to zero")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-index ac151da..6ea48d6 100644
---- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-@@ -1043,9 +1043,6 @@ static int navi10_set_power_profile_mode(struct smu_context *smu, long *input, u
- 	}
+Dear Sales team,
  
- 	if (smu->power_profile_mode = PP_SMC_POWER_PROFILE_CUSTOM) {
--		if (size < 0)
--			return -EINVAL;
--
- 		ret = smu_update_table(smu,
- 				       SMU_TABLE_ACTIVITY_MONITOR_COEFF | WORKLOAD_PPLIB_CUSTOM_BIT << 16,
- 				       (void *)(&activity_monitor), false);
--- 
-2.7.4
+In furtherance to our market research, we have reviewed all your products types and we have finally interested in your product for our market here in 
+
+United State for your production. We introduce ourselves as Emilxa Tram SRL, A general group of company located in the United State. 
+
+We are sourcing for new suppliers from your location 
+
+Kindly advice us if you accept new purchase orders, I will forward our PO for urgent order.
+
+Waiting for your response to send order. Reply to ( purchase_m.maths@aol.com)
+
+Best regards.
+Mark Maths
+Company Address:
+Emilxa Tram SRL Company Limited
+P.O. Box 978
+Road Town
+Tortola
+British Virgin Islands
+Contact information:
+Tel: +1 (284) 493 7235
+Email: purchase_m.maths@aol.com
+https://meridianbvi.com/contact-us/
