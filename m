@@ -1,32 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 12 Jun 2019 06:24:12 +0000
-Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
-Message-Id: <f6fe6400-8fdd-cb53-f7e1-ac6188c9e785@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jun 2019 15:15:10 +0000
+Subject: [PATCH][next] net/mlx5: add missing void argument to function mlx5_devlink_alloc
+Message-Id: <20190618151510.18672-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190406061112.31620-1-himanshujha199640@gmail.com>
- <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
- <alpine.DEB.2.21.1906081925090.2543@hadrien>
- <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
- <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
-In-Reply-To: <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Enrico Weigelt <lkml@metux.net>
-Cc: Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> The flag “IORESOURCE_MEM” is passed as the second parameter for the call
->> of the function “platform_get_resource” in this refactoring.
->
-> In that particular case, we maybe should consider separate inline
-> helpers instead of passing this is a parameter.
->
-> Maybe it would even be more efficient to have completely separate
-> versions of devm_platform_ioremap_resource(), so we don't even have
-> to pass that parameter on stack.
+From: Colin Ian King <colin.king@canonical.com>
 
-Would you like to add another function which should be called instead of
-the combination of the functions “platform_get_resource” and “devm_ioremap_resource”?
+Function mlx5_devlink_alloc is missing a void argument, add it
+to clean up the non-ANSI function declaration.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/devlink.c b/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
+index ed4202e883f0..1533c657220b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
+@@ -37,7 +37,7 @@ static const struct devlink_ops mlx5_devlink_ops = {
+ 	.flash_update = mlx5_devlink_flash_update,
+ };
+ 
+-struct devlink *mlx5_devlink_alloc()
++struct devlink *mlx5_devlink_alloc(void)
+ {
+ 	return devlink_alloc(&mlx5_devlink_ops, sizeof(struct mlx5_core_dev));
+ }
+-- 
+2.20.1
