@@ -1,56 +1,57 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 17 Jun 2019 13:43:47 +0000
-Subject: Re: [PATCH] tracing: remove redundant assignment to pointer 'event'
-Message-Id: <72356d9c-503b-d5e9-bc0b-2f31e3c49806@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jun 2019 15:39:24 +0000
+Subject: [PATCH][next] platform/chrome: wilco_ec: fix null pointer dereference on failed kzalloc
+Message-Id: <20190618153924.19491-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190617123722.27376-1-colin.king@canonical.com>
- <20190617094244.14562920@gandalf.local.home>
-In-Reply-To: <20190617094244.14562920@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benson Leung <bleung@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Nick Crews <ncrews@chromium.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/06/2019 14:42, Steven Rostedt wrote:
-> On Mon, 17 Jun 2019 13:37:22 +0100
-> Colin King <colin.king@canonical.com> wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The value assigned to pointer 'event' is never read and hence it
->> is redundant and can be removed.
->>
->> Addresses-Coverity: ("Unused value")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  kernel/trace/trace_events_hist.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
->> index ca6b0dff60c5..0013b43d8b4d 100644
->> --- a/kernel/trace/trace_events_hist.c
->> +++ b/kernel/trace/trace_events_hist.c
->> @@ -1294,7 +1294,6 @@ static int __create_synth_event(int argc, const char *name, const char **argv)
->>  	event = alloc_synth_event(name, n_fields, fields);
->>  	if (IS_ERR(event)) {
->>  		ret = PTR_ERR(event);
->> -		event = NULL;
-> 
-> This is one of those cases where I rather not touch it.
-> 
-> Yeah, it may not be read, but assigning event to NULL isn't dangerous
-> here. And if we change the code to expect event to be NULL or something
-> real, it is better to keep this.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, makes sense.
+If the kzalloc of the entries queue q fails a null pointer dereference
+occurs when accessing q->capacity and q->lock.  Add a kzalloc failure
+check and handle the null return case in the calling function
+event_device_add.
 
-> 
-> -- Steve
-> 
-> 
-> 
->>  		goto err;
->>  	}
->>  	ret = register_synth_event(event);
-> 
+Addresses-Coverity: ("Dereference null return")
+Fixes: 75589e37d1dc ("platform/chrome: wilco_ec: Add circular buffer as event queue")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/chrome/wilco_ec/event.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index c975b76e6255..e251a989b152 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -112,8 +112,11 @@ module_param(queue_size, int, 0644);
+ static struct ec_event_queue *event_queue_new(int capacity)
+ {
+ 	size_t entries_size = sizeof(struct ec_event *) * capacity;
+-	struct ec_event_queue *q = kzalloc(sizeof(*q) + entries_size,
+-					   GFP_KERNEL);
++	struct ec_event_queue *q;
++
++	q = kzalloc(sizeof(*q) + entries_size, GFP_KERNEL);
++	if (!q)
++		return NULL;
+ 
+ 	q->capacity = capacity;
+ 	spin_lock_init(&q->lock);
+@@ -474,6 +477,11 @@ static int event_device_add(struct acpi_device *adev)
+ 	/* Initialize the device data. */
+ 	adev->driver_data = dev_data;
+ 	dev_data->events = event_queue_new(queue_size);
++	if (!dev_data->events) {
++		kfree(dev_data);
++		error = -ENOMEM;
++		goto free_minor;
++	}
+ 	init_waitqueue_head(&dev_data->wq);
+ 	dev_data->exist = true;
+ 	atomic_set(&dev_data->available, 1);
+-- 
+2.20.1
