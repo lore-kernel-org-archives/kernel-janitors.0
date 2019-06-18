@@ -1,24 +1,59 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Tue, 04 Jun 2019 15:04:37 +0000
-Subject: Re: [PATCH][next][V2] bpf: remove redundant assignment to err
-Message-Id: <4e971d2b-1143-dd1a-6d2a-a2b75dec815b@iogearbox.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jun 2019 13:18:43 +0000
+Subject: [PATCH v2] drm: return -EFAULT if copy_to_user() fails
+Message-Id: <20190618131843.GA29463@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190604082146.2049-1-colin.king@canonical.com>
-In-Reply-To: <20190604082146.2049-1-colin.king@canonical.com>
+References: <20190618125623.GA24896@mwanda>
+In-Reply-To: <20190618125623.GA24896@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
 
-On 06/04/2019 10:21 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is assigned with the value -EINVAL that is never
-> read and it is re-assigned a new value later on.  The assignment is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The copy_from_user() function returns the number of bytes remaining
+to be copied but we want to return a negative error code.  Otherwise
+the callers treat it as a successful copy.
 
-Applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: The first version was missing a chunk
+
+ drivers/gpu/drm/drm_bufs.c  | 5 ++++-
+ drivers/gpu/drm/drm_ioc32.c | 5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index 68dacf8422c6..8ce9d73fab4f 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -1351,7 +1351,10 @@ static int copy_one_buf(void *data, int count, struct drm_buf_entry *from)
+ 				 .size = from->buf_size,
+ 				 .low_mark = from->low_mark,
+ 				 .high_mark = from->high_mark};
+-	return copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags));
++
++	if (copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ int drm_legacy_infobufs(struct drm_device *dev, void *data,
+diff --git a/drivers/gpu/drm/drm_ioc32.c b/drivers/gpu/drm/drm_ioc32.c
+index 586aa28024c5..a16b6dc2fa47 100644
+--- a/drivers/gpu/drm/drm_ioc32.c
++++ b/drivers/gpu/drm/drm_ioc32.c
+@@ -378,7 +378,10 @@ static int copy_one_buf32(void *data, int count, struct drm_buf_entry *from)
+ 			      .size = from->buf_size,
+ 			      .low_mark = from->low_mark,
+ 			      .high_mark = from->high_mark};
+-	return copy_to_user(to + count, &v, offsetof(drm_buf_desc32_t, flags));
++
++	if (copy_to_user(to + count, &v, offsetof(drm_buf_desc32_t, flags)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ static int drm_legacy_infobufs32(struct drm_device *dev, void *data,
+-- 
+2.20.1
