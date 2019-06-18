@@ -1,65 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 18 Jun 2019 11:44:11 +0000
-Subject: Re: drivers: Inline code in devm_platform_ioremap_resource() from two functions
-Message-Id: <8ae16eae-7bb9-3a82-000f-52e16aa1eee0@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jun 2019 12:56:23 +0000
+Subject: [PATCH] drm: return -EFAULT if copy_one_buf() fails
+Message-Id: <20190618125623.GA24896@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190406061112.31620-1-himanshujha199640@gmail.com>
- <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
- <alpine.DEB.2.21.1906081925090.2543@hadrien>
- <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
- <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
- <032e347f-e575-c89c-fa62-473d52232735@web.de>
- <910a5806-9a08-adf4-4fba-d5ec2f5807ff@metux.net>
- <efc38197-f846-142d-fbaf-93327c2669c9@web.de>
- <714a38fe-a733-7264-bb06-d94bd58a245a@metux.net>
-In-Reply-To: <714a38fe-a733-7264-bb06-d94bd58a245a@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Enrico Weigelt <lkml@metux.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
 
->> Would you like to check the software circumstances once more
->> for the generation of a similar code structure by a C compiler
->> (or optimiser)?
->
-> As said: unfortunately, I don't have the time to do that
+The copy_to_user() function returns the number of bytes remaining to be
+copied, but we want to return -EFAULT.  This function is called from
+__drm_legacy_infobufs() which expects negative error codes.
 
-I became curious if you would like to adjust your software development
-attention a bit more also in this area.
+Fixes: 5c7640ab6258 ("switch compat_drm_infobufs() to drm_ioctl_kernel()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This goes through Al's tree and not through drm.  Presumably this patch
+will just get folded into the original.
 
+ drivers/gpu/drm/drm_bufs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> - you'd have to tell us, what exactly you've got in mind.
-
-I try to point possibilities out to improve the combination of
-two functions.
-
-
-> If it's just about some error checks which happen to be redundant in a
-> particular case, you'll have to show that this case is a *really* hot
-> path (eg. irq, syscall, scheduling, etc) - but I don't see that here.
-
-1. May the check “resource_type(res) == IORESOURCE_MEM” be performed
-   in a local loop?
-
-2. How hot do you find the null pointer check for the device
-   input parameter of the function “devm_ioremap_resource”?
-
-
-> Any actual measurements on how your patch improves that ?
-
-Not yet. - Which benchmarks would you trust here?
-
-
-> Look, I understand that you'd like to squeeze out maximum performance,
-
-I hope so.
-
-
-> but this has to be practically maintainable.
-
-This can be achieved if more contributors would find proposed
-adjustments helpful for another software transformation.
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index 68dacf8422c6..8ce9d73fab4f 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -1351,7 +1351,10 @@ static int copy_one_buf(void *data, int count, struct drm_buf_entry *from)
+ 				 .size = from->buf_size,
+ 				 .low_mark = from->low_mark,
+ 				 .high_mark = from->high_mark};
+-	return copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags));
++
++	if (copy_to_user(to, &v, offsetof(struct drm_buf_desc, flags)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ int drm_legacy_infobufs(struct drm_device *dev, void *data,
+-- 
+2.20.1
