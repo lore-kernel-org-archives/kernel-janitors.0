@@ -1,23 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Jun 2019 12:43:52 +0000
-Subject: [PATCH] mm: idle-page: fix oops because end_pfn is larger than max_pfn
-Message-Id: <20190618124352.28307-1-colin.king@canonical.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 18 Jun 2019 19:45:02 +0000
+Subject: Re: [PATCH] mm: idle-page: fix oops because end_pfn is larger than max_pfn
+Message-Id: <20190618124502.7b9c32a00a54f0c618a12ca4@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190618124352.28307-1-colin.king@canonical.com>
+In-Reply-To: <20190618124352.28307-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Mel Gorman <mgorman@techsingularity.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrey Ryabinin <aryabinin@virtuozzo.com>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Mel Gorman <mgorman@techsingularity.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrey Ryabinin <aryabinin@virtuozzo.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>
+
+On Tue, 18 Jun 2019 13:43:52 +0100 Colin King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the calcuation of end_pfn can round up the pfn number to
+> more than the actual maximum number of pfns, causing an Oops. Fix
+> this by ensuring end_pfn is never more than max_pfn.
+> 
+> This can be easily triggered when on systems where the end_pfn gets
+> rounded up to more than max_pfn using the idle-page stress-ng
+> stress test:
+> 
+
+cc Vladimir.  This seems rather obvious - I'm wondering if the code was
+that way for some subtle reason?
+
+(I'll add a cc:stable to this)
 
 From: Colin Ian King <colin.king@canonical.com>
+Subject: mm/page_idle.c: fix oops because end_pfn is larger than max_pfn
 
-Currently the calcuation of end_pfn can round up the pfn number to
-more than the actual maximum number of pfns, causing an Oops. Fix
-this by ensuring end_pfn is never more than max_pfn.
+Currently the calcuation of end_pfn can round up the pfn number to more
+than the actual maximum number of pfns, causing an Oops.  Fix this by
+ensuring end_pfn is never more than max_pfn.
 
 This can be easily triggered when on systems where the end_pfn gets
-rounded up to more than max_pfn using the idle-page stress-ng
-stress test:
+rounded up to more than max_pfn using the idle-page stress-ng stress test:
 
 sudo stress-ng --idle-page 0
 
@@ -49,17 +69,9 @@ sudo stress-ng --idle-page 0
 [ 3812.255446] do_syscall_64+0x5a/0x110
 [ 3812.256254] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Fixes: 33c3fc71c8cf ("mm: introduce idle page tracking")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/page_idle.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 0b39ec0c945c..295512465065 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -136,7 +136,7 @@ static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
+--- a/mm/page_idle.c~mm-idle-page-fix-oops-because-end_pfn-is-larger-than-max_pfn
++++ a/mm/page_idle.c
+@@ -136,7 +136,7 @@ static ssize_t page_idle_bitmap_read(str
  
  	end_pfn = pfn + count * BITS_PER_BYTE;
  	if (end_pfn > max_pfn)
@@ -68,7 +80,7 @@ index 0b39ec0c945c..295512465065 100644
  
  	for (; pfn < end_pfn; pfn++) {
  		bit = pfn % BITMAP_CHUNK_BITS;
-@@ -181,7 +181,7 @@ static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
+@@ -181,7 +181,7 @@ static ssize_t page_idle_bitmap_write(st
  
  	end_pfn = pfn + count * BITS_PER_BYTE;
  	if (end_pfn > max_pfn)
@@ -77,5 +89,4 @@ index 0b39ec0c945c..295512465065 100644
  
  	for (; pfn < end_pfn; pfn++) {
  		bit = pfn % BITMAP_CHUNK_BITS;
--- 
-2.20.1
+_
