@@ -1,31 +1,39 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Thu, 13 Jun 2019 13:26:39 +0000
-Subject: Re: [PATCH] NTB: amd: Silence shift wrapping warning in amd_ntb_db_vector_mask()
-Message-Id: <20190613132638.GD1572@kudzu.us>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jun 2019 14:13:19 +0000
+Subject: [PATCH][next] netfilter: synproxy: ensure zero is returned on non-error return path
+Message-Id: <20190618141319.14961-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325092326.GE16023@kadam>
-In-Reply-To: <20190325092326.GE16023@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 26, 2019 at 05:46:44AM +0000, S-k, Shyam-sundar wrote:
-> On 3/25/2019 2:53 PM, Dan Carpenter wrote:
-> > This code triggers a Smatch warning:
-> >
-> >     drivers/ntb/hw/amd/ntb_hw_amd.c:336 amd_ntb_db_vector_mask()
-> >     warn: should '(1 << db_vector)' be a 64 bit type?
-> >
-> > I don't think "db_vector" can be higher than 16 so this doesn't affect
-> > runtime, but it's nice to silence the static checker warning and we
-> > might increase "ndev->db_count" in the future.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry for the delay.  The patch is now in the ntb branch.  We've
-missed window for 5.2, but it will be in the 5.3 pull request.
+Currently function nf_synproxy_ipv6_init returns an uninitialized
+garbage value in variable ret on a successful return.  Fix this by
+returning zero on success.
 
-Thanks,
-Jon
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: d7f9b2f18eae ("netfilter: synproxy: extract SYNPROXY infrastructure from {ipt, ip6t}_SYNPROXY")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_synproxy_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_synproxy_core.c b/net/netfilter/nf_synproxy_core.c
+index 50677285f82e..701f880d01e6 100644
+--- a/net/netfilter/nf_synproxy_core.c
++++ b/net/netfilter/nf_synproxy_core.c
+@@ -1223,7 +1223,7 @@ nf_synproxy_ipv6_init(struct synproxy_net *snet, struct net *net)
+ 	}
+ 
+ 	snet->hook_ref6++;
+-	return err;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(nf_synproxy_ipv6_init);
+ 
+-- 
+2.20.1
