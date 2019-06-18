@@ -1,65 +1,63 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Jun 2019 14:30:44 +0000
-Subject: [PATCH][net-next] iavf: fix dereference of null rx_buffer pointer
-Message-Id: <20190619143044.10259-1-colin.king@canonical.com>
+Date: Tue, 18 Jun 2019 10:15:54 +0000
+Subject: [PATCH] staging: kpc2000: fix integer overflow with left shifts
+Message-Id: <20190618101554.31723-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-A recent commit efa14c3985828d ("iavf: allow null RX descriptors") added
-a null pointer sanity check on rx_buffer, however, rx_buffer is being
-dereferenced before that check, which implies a null pointer dereference
-bug can potentially occur.  Fix this by only dereferencing rx_buffer
-until after the null pointer check.
+Currently there are several left shifts that are assigned to 64 bit
+unsigned longs where a signed int 1 is being shifted, resulting in
+an integer overflow.  Fix this bit using the BIT_ULL macro to perform
+a 64 bit shift.  Also clean up an overly long statement.
 
-Addresses-Coverity: ("Dereference before null check")
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/iavf/iavf_txrx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/staging/kpc2000/kpc2000/cell_probe.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/iavf/iavf_txrx.c b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-index 1cde1601bc32..0cca1b589b56 100644
---- a/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-+++ b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-@@ -1296,7 +1296,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
- 					  struct iavf_rx_buffer *rx_buffer,
- 					  unsigned int size)
+diff --git a/drivers/staging/kpc2000/kpc2000/cell_probe.c b/drivers/staging/kpc2000/kpc2000/cell_probe.c
+index 138d16bcf6e1..c124a836db27 100644
+--- a/drivers/staging/kpc2000/kpc2000/cell_probe.c
++++ b/drivers/staging/kpc2000/kpc2000/cell_probe.c
+@@ -238,7 +238,7 @@ int  kp2000_check_uio_irq(struct kp2000_device *pcard, u32 irq_num)
  {
--	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
-+	void *va;
- #if (PAGE_SIZE < 8192)
- 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
- #else
-@@ -1308,6 +1308,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
- 	if (!rx_buffer)
- 		return NULL;
- 	/* prefetch first cache line of first page */
-+	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
- 	prefetch(va);
- #if L1_CACHE_BYTES < 128
- 	prefetch(va + L1_CACHE_BYTES);
-@@ -1362,7 +1363,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
- 				      struct iavf_rx_buffer *rx_buffer,
- 				      unsigned int size)
- {
--	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
-+	void *va;
- #if (PAGE_SIZE < 8192)
- 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
- #else
-@@ -1374,6 +1375,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
- 	if (!rx_buffer)
- 		return NULL;
- 	/* prefetch first cache line of first page */
-+	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
- 	prefetch(va);
- #if L1_CACHE_BYTES < 128
- 	prefetch(va + L1_CACHE_BYTES);
+ 	u64 interrupt_active   =  readq(pcard->sysinfo_regs_base + REG_INTERRUPT_ACTIVE);
+ 	u64 interrupt_mask_inv = ~readq(pcard->sysinfo_regs_base + REG_INTERRUPT_MASK);
+-	u64 irq_check_mask = (1 << irq_num);
++	u64 irq_check_mask = BIT_ULL(irq_num);
+ 
+ 	if (interrupt_active & irq_check_mask) { // if it's active (interrupt pending)
+ 		if (interrupt_mask_inv & irq_check_mask) {    // and if it's not masked off
+@@ -257,7 +257,9 @@ irqreturn_t  kuio_handler(int irq, struct uio_info *uioinfo)
+ 		return IRQ_NONE;
+ 
+ 	if (kp2000_check_uio_irq(kudev->pcard, kudev->cte.irq_base_num)) {
+-		writeq((1 << kudev->cte.irq_base_num), kudev->pcard->sysinfo_regs_base + REG_INTERRUPT_ACTIVE); // Clear the active flag
++		/* Clear the active flag */
++		writeq(BIT_ULL(kudev->cte.irq_base_num),
++		       kudev->pcard->sysinfo_regs_base + REG_INTERRUPT_ACTIVE);
+ 		return IRQ_HANDLED;
+ 	}
+ 	return IRQ_NONE;
+@@ -273,9 +275,9 @@ int kuio_irqcontrol(struct uio_info *uioinfo, s32 irq_on)
+ 	mutex_lock(&pcard->sem);
+ 	mask = readq(pcard->sysinfo_regs_base + REG_INTERRUPT_MASK);
+ 	if (irq_on)
+-		mask &= ~(1 << (kudev->cte.irq_base_num));
++		mask &= ~(BIT_ULL(kudev->cte.irq_base_num));
+ 	else
+-		mask |= (1 << (kudev->cte.irq_base_num));
++		mask |= BIT_ULL(kudev->cte.irq_base_num);
+ 	writeq(mask, pcard->sysinfo_regs_base + REG_INTERRUPT_MASK);
+ 	mutex_unlock(&pcard->sem);
+ 
 -- 
 2.20.1
