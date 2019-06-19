@@ -1,38 +1,65 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 24 Jun 2019 22:37:24 +0000
-Subject: [PATCH] fbmem: remove redundant assignment to err
-Message-Id: <20190624223724.13629-1-colin.king@canonical.com>
+Date: Wed, 19 Jun 2019 14:30:44 +0000
+Subject: [PATCH][net-next] iavf: fix dereference of null rx_buffer pointer
+Message-Id: <20190619143044.10259-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable err is initialized to a value that is never read and it
-is re-assigned later.  The initialization is redundant and can
-be removed.
+A recent commit efa14c3985828d ("iavf: allow null RX descriptors") added
+a null pointer sanity check on rx_buffer, however, rx_buffer is being
+dereferenced before that check, which implies a null pointer dereference
+bug can potentially occur.  Fix this by only dereferencing rx_buffer
+until after the null pointer check.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Dereference before null check")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/core/fbmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/iavf/iavf_txrx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index dd1a708df1a7..ae044a1325ca 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1987,7 +1987,7 @@ int fb_new_modelist(struct fb_info *info)
- 	struct list_head *pos, *n;
- 	struct fb_modelist *modelist;
- 	struct fb_videomode *m, mode;
--	int err = 1;
-+	int err;
- 
- 	list_for_each_safe(pos, n, &info->modelist) {
- 		modelist = list_entry(pos, struct fb_modelist, list);
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_txrx.c b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
+index 1cde1601bc32..0cca1b589b56 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_txrx.c
++++ b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
+@@ -1296,7 +1296,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
+ 					  struct iavf_rx_buffer *rx_buffer,
+ 					  unsigned int size)
+ {
+-	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
++	void *va;
+ #if (PAGE_SIZE < 8192)
+ 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
+ #else
+@@ -1308,6 +1308,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
+ 	if (!rx_buffer)
+ 		return NULL;
+ 	/* prefetch first cache line of first page */
++	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
+ 	prefetch(va);
+ #if L1_CACHE_BYTES < 128
+ 	prefetch(va + L1_CACHE_BYTES);
+@@ -1362,7 +1363,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
+ 				      struct iavf_rx_buffer *rx_buffer,
+ 				      unsigned int size)
+ {
+-	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
++	void *va;
+ #if (PAGE_SIZE < 8192)
+ 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
+ #else
+@@ -1374,6 +1375,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
+ 	if (!rx_buffer)
+ 		return NULL;
+ 	/* prefetch first cache line of first page */
++	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
+ 	prefetch(va);
+ #if L1_CACHE_BYTES < 128
+ 	prefetch(va + L1_CACHE_BYTES);
 -- 
 2.20.1
