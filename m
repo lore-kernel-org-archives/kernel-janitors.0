@@ -1,35 +1,32 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 19 Jun 2019 05:39:44 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Jun 2019 06:02:50 +0000
 Subject: Re: [PATCH] NTB: test: remove a duplicate check
-Message-Id: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
+Message-Id: <20190619060250.GH18776@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190619053205.GA10452@mwanda>
-In-Reply-To: <20190619053205.GA10452@mwanda>
+ <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
+In-Reply-To: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jon Mason <jdmason@kudzu.us>
-Cc: Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-,,
+It's not a huge deal obviously but your commit was a6bed7a54165 ("NTB:
+Introduce NTB MSI Test Client") but you know that if I had sent a patch
+called ("NTB: remove a duplicate check") people would have correctly
+complained because the patch prefix is too vague.
 
-On 2019-06-18 11:32 p.m., Dan Carpenter wrote:
-> We already verified that the "nm->isr_ctx" allocation succeeded so there
-> is no need to check again here.
-> 
-> Fixes: a6bed7a54165 ("NTB: Introduce NTB MSI Test Client")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+What I'm saying is we do this all the time:
 
-Hmm, yup, not sure how that slipped through, must have been a bad rebase
-or something. Thanks Dan!
+[PATCH] NTB: add a new foobazle driver
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+But it should be:
 
-> ---
-> Hey Logan, can pick a patch prefix when you're introducing a new module?
-> "[PATCH] NTB/test: Introduce NTB MSI Test Client" or whatever.
+[PATCH] NTB: foobazle: add a new foobazle driver
 
-I don't quite follow you there. NTB doesn't really have a good standard
-for prefixes. NTB/test might have made sense.
+Then I can just copy and paste your patch prefix instead of trying
+invent one.
 
-Logan
+regards,
+dan carpenter
