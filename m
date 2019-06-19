@@ -1,39 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 17 Jun 2019 12:10:10 +0000
-Subject: [PATCH] drm/amd/display: Delete a redundant memory setting in amdgpu_dm_irq_register_interrupt()
-Message-Id: <3900e9c8-4905-1704-686d-90ccf3b00a88@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jun 2019 16:50:27 +0000
+Subject: [PATCH] staging: rtl8723bs: os_dep: fix indentation on break statement
+Message-Id: <20190619165027.6860-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, David Francis <David.Francis@amd.com>, "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Mario Kleiner <mario.kleiner.de@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Jun 2019 13:56:39 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The memory was set to zero already by a call of the function “kzalloc”.
-Thus remove an extra call of the function “memset” for this purpose.
+The break statement is indented one level too deep, fix this.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-index 1b59d3d42f7b..fa5d503d379c 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-@@ -277,8 +277,6 @@ void *amdgpu_dm_irq_register_interrupt(struct amdgpu_device *adev,
- 		return DAL_INVALID_IRQ_HANDLER_IDX;
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index ea50ec424e50..6ca896128b73 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -1181,7 +1181,7 @@ static int rtw_wx_set_wap(struct net_device *dev,
+ 				spin_unlock_bh(&queue->lock);
+ 				goto exit;
+ 			}
+-				break;
++			break;
+ 		}
+ 
  	}
-
--	memset(handler_data, 0, sizeof(*handler_data));
--
- 	init_handler_common_data(handler_data, ih, handler_args, &adev->dm);
-
- 	irq_source = int_params->irq_source;
---
-2.22.0
+-- 
+2.20.1
