@@ -1,33 +1,62 @@
-From: Ganapathi Bhat <gbhat@marvell.com>
-Date: Sun, 02 Jun 2019 01:56:44 +0000
-Subject: RE: [EXT] Re: [PATCH] mwifiex: check for null return from skb_copy
-Message-Id: <BYAPR18MB26301A09FB55C44949AD8E30A01B0@BYAPR18MB2630.namprd18.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jun 2019 16:27:42 +0000
+Subject: [PATCH][next] libbpf: fix spelling mistake "conflictling" -> "conflicting"
+Message-Id: <20190619162742.985-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190413161438.6376-1-colin.king@canonical.com>
- <20190413192729.GL6095@kadam>
- <MN2PR18MB2637DAA4852542EDA2BBC01DA01A0@MN2PR18MB2637.namprd18.prod.outlook.com>
- <20190601210858.GG31203@kadam>
-In-Reply-To: <20190601210858.GG31203@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Xinming Hu <huxinming820@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-> > > >  	if (is_multicast_ether_addr(ra)) {
-> > > >  		skb_uap = skb_copy(skb, GFP_ATOMIC);
-> > > > +		if (!skb_uap)
-> > > > +			return -ENOMEM;
-> > >
-> > > I think we would want to free dev_kfree_skb_any(skb) before returning.
-> > I think if the pointer is NULL, no need to free it;
-> 
-> You're misreading skb vs skb_uap.  "skb_uap" is NULL but "skb" is non-NULL
-> and I'm pretty sure we should free it.
+There are several spelling mistakes in pr_warning messages. Fix these.
 
-Oh, right. I missed it; Yes you are correct.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/lib/bpf/libbpf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Ganapathi
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 4259c9f0cfe7..68f45a96769f 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1169,7 +1169,7 @@ static int bpf_object__init_user_btf_map(struct bpf_object *obj,
+ 			pr_debug("map '%s': found key_size = %u.\n",
+ 				 map_name, sz);
+ 			if (map->def.key_size && map->def.key_size != sz) {
+-				pr_warning("map '%s': conflictling key size %u != %u.\n",
++				pr_warning("map '%s': conflicting key size %u != %u.\n",
+ 					   map_name, map->def.key_size, sz);
+ 				return -EINVAL;
+ 			}
+@@ -1197,7 +1197,7 @@ static int bpf_object__init_user_btf_map(struct bpf_object *obj,
+ 			pr_debug("map '%s': found key [%u], sz = %lld.\n",
+ 				 map_name, t->type, sz);
+ 			if (map->def.key_size && map->def.key_size != sz) {
+-				pr_warning("map '%s': conflictling key size %u != %lld.\n",
++				pr_warning("map '%s': conflicting key size %u != %lld.\n",
+ 					   map_name, map->def.key_size, sz);
+ 				return -EINVAL;
+ 			}
+@@ -1212,7 +1212,7 @@ static int bpf_object__init_user_btf_map(struct bpf_object *obj,
+ 			pr_debug("map '%s': found value_size = %u.\n",
+ 				 map_name, sz);
+ 			if (map->def.value_size && map->def.value_size != sz) {
+-				pr_warning("map '%s': conflictling value size %u != %u.\n",
++				pr_warning("map '%s': conflicting value size %u != %u.\n",
+ 					   map_name, map->def.value_size, sz);
+ 				return -EINVAL;
+ 			}
+@@ -1240,7 +1240,7 @@ static int bpf_object__init_user_btf_map(struct bpf_object *obj,
+ 			pr_debug("map '%s': found value [%u], sz = %lld.\n",
+ 				 map_name, t->type, sz);
+ 			if (map->def.value_size && map->def.value_size != sz) {
+-				pr_warning("map '%s': conflictling value size %u != %lld.\n",
++				pr_warning("map '%s': conflicting value size %u != %lld.\n",
+ 					   map_name, map->def.value_size, sz);
+ 				return -EINVAL;
+ 			}
+-- 
+2.20.1
