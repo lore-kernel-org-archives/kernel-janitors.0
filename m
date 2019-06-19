@@ -1,39 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jun 2019 05:32:05 +0000
-Subject: [PATCH] NTB: test: remove a duplicate check
-Message-Id: <20190619053205.GA10452@mwanda>
+From: Logan Gunthorpe <logang@deltatee.com>
+Date: Wed, 19 Jun 2019 05:39:44 +0000
+Subject: Re: [PATCH] NTB: test: remove a duplicate check
+Message-Id: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190619053205.GA10452@mwanda>
+In-Reply-To: <20190619053205.GA10452@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Mason <jdmason@kudzu.us>, Logan Gunthorpe <logang@deltatee.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jon Mason <jdmason@kudzu.us>
 Cc: Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We already verified that the "nm->isr_ctx" allocation succeeded so there
-is no need to check again here.
+,,
 
-Fixes: a6bed7a54165 ("NTB: Introduce NTB MSI Test Client")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Hey Logan, can pick a patch prefix when you're introducing a new module?
-"[PATCH] NTB/test: Introduce NTB MSI Test Client" or whatever.
+On 2019-06-18 11:32 p.m., Dan Carpenter wrote:
+> We already verified that the "nm->isr_ctx" allocation succeeded so there
+> is no need to check again here.
+> 
+> Fixes: a6bed7a54165 ("NTB: Introduce NTB MSI Test Client")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- drivers/ntb/test/ntb_msi_test.c | 3 ---
- 1 file changed, 3 deletions(-)
+Hmm, yup, not sure how that slipped through, must have been a bad rebase
+or something. Thanks Dan!
 
-diff --git a/drivers/ntb/test/ntb_msi_test.c b/drivers/ntb/test/ntb_msi_test.c
-index 99d826ed9c34..9ba3c3162cd0 100644
---- a/drivers/ntb/test/ntb_msi_test.c
-+++ b/drivers/ntb/test/ntb_msi_test.c
-@@ -372,9 +372,6 @@ static int ntb_msit_probe(struct ntb_client *client, struct ntb_dev *ntb)
- 	if (ret)
- 		goto remove_dbgfs;
- 
--	if (!nm->isr_ctx)
--		goto remove_dbgfs;
--
- 	ntb_link_enable(ntb, NTB_SPEED_AUTO, NTB_WIDTH_AUTO);
- 
- 	return 0;
--- 
-2.20.1
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+
+> ---
+> Hey Logan, can pick a patch prefix when you're introducing a new module?
+> "[PATCH] NTB/test: Introduce NTB MSI Test Client" or whatever.
+
+I don't quite follow you there. NTB doesn't really have a good standard
+for prefixes. NTB/test might have made sense.
+
+Logan
