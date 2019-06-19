@@ -1,28 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 13 Jun 2019 09:58:01 +0000
-Subject: Re: [PATCH] drm/mcde: Fix an uninitialized variable
-Message-Id: <CACRpkdZj=TPB_mDib6sQnDPLUJUtwhmrFqWSwcRMozJYFeuAaw@mail.gmail.com>
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Wed, 19 Jun 2019 23:13:15 +0000
+Subject: RE: [Intel-wired-lan] [PATCH][next][V2] ixgbe: fix potential u32 overflow on shift
+Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3F8D26@ORSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190529113458.GG19119@mwanda>
-In-Reply-To: <20190529113458.GG19119@mwanda>
+References: <20190607181920.23339-1-colin.king@canonical.com>
+In-Reply-To: <20190607181920.23339-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, May 29, 2019 at 4:25 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Colin King
+> Sent: Friday, June 7, 2019 11:19 AM
+> To: Keller, Jacob E <jacob.e.keller@intel.com>; Kirsher, Jeffrey T
+> <jeffrey.t.kirsher@intel.com>; David S . Miller <davem@davemloft.net>;
+> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH][next][V2] ixgbe: fix potential u32
+> overflow on shift
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u32 variable rem is being shifted using u32 arithmetic however it is being
+> passed to div_u64 that expects the expression to be a u64.
+> The 32 bit shift may potentially overflow, so cast rem to a u64 before shifting
+> to avoid this.  Also remove comment about overflow.
+> 
+> Addresses-Coverity: ("Unintentional integer overflow")
+> Fixes: cd4583206990 ("ixgbe: implement support for SDP/PPS output on X550
+> hardware")
+> Fixes: 68d9676fc04e ("ixgbe: fix PTP SDP pin setup on X540 hardware")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: update comment
+> 
+> ---
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
 
-> We never set "vblank" to "false".
->
-> Current versions of GCC will initialize it to zero automatically at
-> certain optimization levels so that's probably why this didn't show up
-> in testing.
->
-> Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
