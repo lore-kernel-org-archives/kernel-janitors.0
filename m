@@ -1,33 +1,24 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Tue, 18 Jun 2019 19:02:54 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 19 Jun 2019 02:30:23 +0000
 Subject: Re: [PATCH][next] net/mlx5: add missing void argument to function mlx5_devlink_alloc
-Message-Id: <cbf35c6557791aae0aec2eb3cb1b66cc5030ec9f.camel@mellanox.com>
+Message-Id: <20190618.223023.244389297657538568.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190618151510.18672-1-colin.king@canonical.com>
 In-Reply-To: <20190618151510.18672-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: colin.king@canonical.com
+Cc: saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA2LTE4IGF0IDE2OjE1ICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gRnVu
-Y3Rpb24gbWx4NV9kZXZsaW5rX2FsbG9jIGlzIG1pc3NpbmcgYSB2b2lkIGFyZ3VtZW50LCBhZGQg
-aXQNCj4gdG8gY2xlYW4gdXAgdGhlIG5vbi1BTlNJIGZ1bmN0aW9uIGRlY2xhcmF0aW9uLg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNv
-bT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZGV2
-bGluay5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
-aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
-bWx4NS9jb3JlL2RldmxpbmsuYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21s
-eDUvY29yZS9kZXZsaW5rLmMNCj4gaW5kZXggZWQ0MjAyZTg4M2YwLi4xNTMzYzY1NzIyMGIgMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9kZXZs
-aW5rLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Rl
-dmxpbmsuYw0KPiBAQCAtMzcsNyArMzcsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldmxpbmtf
-b3BzIG1seDVfZGV2bGlua19vcHMgPQ0KPiB7DQo+ICAJLmZsYXNoX3VwZGF0ZSA9IG1seDVfZGV2
-bGlua19mbGFzaF91cGRhdGUsDQo+ICB9Ow0KPiAgDQo+IC1zdHJ1Y3QgZGV2bGluayAqbWx4NV9k
-ZXZsaW5rX2FsbG9jKCkNCj4gK3N0cnVjdCBkZXZsaW5rICptbHg1X2RldmxpbmtfYWxsb2Modm9p
-ZCkNCj4gIHsNCj4gIAlyZXR1cm4gZGV2bGlua19hbGxvYygmbWx4NV9kZXZsaW5rX29wcywgc2l6
-ZW9mKHN0cnVjdA0KPiBtbHg1X2NvcmVfZGV2KSk7DQo+ICB9DQoNCkFja2VkLWJ5OiBTYWVlZCBN
-YWhhbWVlZCA8c2FlZWRtQG1lbGxhbm94LmNvbT4NCg0KRGF2ZSwgdGhpcyBvbmUgY2FuIGdvIHRv
-IG5ldC1uZXh0Lg0KDQpUaGFua3MsDQpTYWVlZC4NCg=
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jun 2019 16:15:10 +0100
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Function mlx5_devlink_alloc is missing a void argument, add it
+> to clean up the non-ANSI function declaration.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied.
