@@ -1,44 +1,35 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Thu, 13 Jun 2019 13:25:53 +0000
-Subject: Re: [PATCH] ntb_hw_switchtec: potential shift wrapping bug in switchtec_ntb_init_sndev()
-Message-Id: <20190613132553.GC1572@kudzu.us>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jun 2019 16:54:05 +0000
+Subject: [PATCH] staging: vt6656: fix indentation on break statement
+Message-Id: <20190619165405.7784-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325091726.GD16023@kadam>
- <e2bc8cf0-8e3e-9335-e21b-4a9697e9c0ef@deltatee.com>
-In-Reply-To: <e2bc8cf0-8e3e-9335-e21b-4a9697e9c0ef@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Kelvin Cao <kelvin.cao@microsemi.com>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, kernel-janitors@vger.kernel.org
+To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quentin Deslandes <quentin.deslandes@itdev.co.uk>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 09:49:31AM -0600, Logan Gunthorpe wrote:
-> Thanks!
-> 
-> On 2019-03-25 3:17 a.m., Dan Carpenter wrote:
-> > This code triggers a Smatch warning:
-> > 
-> >     drivers/ntb/hw/mscc/ntb_hw_switchtec.c:884 switchtec_ntb_init_sndev()
-> >     warn: should '(1 << sndev->peer_partition)' be a 64 bit type?
-> > 
-> > The "part_map" and "tpart_vec" variables are u64 type so this seems like
-> > a valid warning.
-> > 
-> > Fixes: 3df54c870f52 ("ntb_hw_switchtec: Allow using Switchtec NTB in multi-partition setups")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry for the delay.  The patch is now in the ntb branch.  We've
-missed window for 5.2, but it will be in the 5.3 pull request.
+The break statement is indented one level too deep, fix this.
 
-Thanks,
-Jon
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vt6656/card.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
-> To post to this group, send email to linux-ntb@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/e2bc8cf0-8e3e-9335-e21b-4a9697e9c0ef%40deltatee.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
+index 08fc03d8740e..56cd77fd9ea0 100644
+--- a/drivers/staging/vt6656/card.c
++++ b/drivers/staging/vt6656/card.c
+@@ -166,7 +166,7 @@ static void vnt_calculate_ofdm_rate(u16 rate, u8 bb_type,
+ 			*tx_rate = 0x8b;
+ 			*rsv_time = 30;
+ 		}
+-			break;
++		break;
+ 	case RATE_9M:
+ 		if (bb_type = BB_TYPE_11A) {
+ 			*tx_rate = 0x9f;
+-- 
+2.20.1
