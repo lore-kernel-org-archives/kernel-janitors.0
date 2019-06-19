@@ -1,40 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 17 Jun 2019 12:47:26 +0000
-Subject: [PATCH] staging: rtl8723bs: remove redundant assignment to rtStatus
-Message-Id: <20190617124726.27961-1-colin.king@canonical.com>
+Date: Wed, 19 Jun 2019 18:13:25 +0000
+Subject: [PATCH] x86/apic: fix integer overflow on 10 bit right shift of cpu_khz
+Message-Id: <20190619181325.13574-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413141346.9791-1-colin.king@canonical.com>
-In-Reply-To: <20170413141346.9791-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable rtStatus is initialized with a value that is never read
-and later it is reassigned a new value.  Hence the initialization
-is redundant and can be removed.
+The right shift of unsigned int cpu_khz will overflow for large values
+of cpu_khz, so cast it to a long long before shifting it to avoid
+overvlow.  For example, this can happen when cpu_khz is 4194305 (just
+less than 4.2 GHz).  Also wrap line to avoid checkpatch wide line
+warning.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/apic.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 21f2365fa627..bda19769c37f 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -352,7 +352,7 @@ void rtl8723b_FirmwareSelfReset(struct adapter *padapter)
- /*  */
- s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
- {
--	s32 rtStatus = _SUCCESS;
-+	s32 rtStatus;
- 	u8 write_fw = 0;
- 	unsigned long fwdl_start_time;
- 	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 8956072f677d..31426126e5e0 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1464,7 +1464,8 @@ static void apic_pending_intr_clear(void)
+ 		if (queued) {
+ 			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+ 				ntsc = rdtsc();
+-				max_loops = (cpu_khz << 10) - (ntsc - tsc);
++				max_loops = ((long long)cpu_khz << 10) -
++					    (ntsc - tsc);
+ 			} else {
+ 				max_loops--;
+ 			}
 -- 
 2.20.1
