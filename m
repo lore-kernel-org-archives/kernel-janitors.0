@@ -1,26 +1,45 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Tue, 25 Jun 2019 19:34:31 +0000
-Subject: Re: [PATCH][next] RDMA/hns: fix spelling mistake "attatch" -> "attach"
-Message-Id: <20190625193427.GA13242@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Jun 2019 10:01:41 +0000
+Subject: [PATCH] drm: self_refresh: Fix a reversed condition in drm_self_refresh_helper_cleanup()
+Message-Id: <20190619100141.GA28596@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624121649.3281-1-colin.king@canonical.com>
-In-Reply-To: <20190624121649.3281-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul <seanpaul@chromium.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Mon, Jun 24, 2019 at 01:16:49PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in an dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_qp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This test is flipped around so it either leads to a memory leak or a
+NULL dereference.
 
-Applied to for-next, thanks
+Fixes: 1452c25b0e60 ("drm: Add helpers to kick off self refresh mode in drivers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not totally sure what the prefered patch prefix for this code.  One
+thing that would help is when we're adding new files we should specify
+the prefix that they're going to use:
 
-Jason
+- drm: Add helpers to kick off self refresh mode in drivers
++ drm: refresh mode: Add helpers to kick off self refresh mode in drivers
+
+It's a small thing and email always sounds whiny but I'm sending this
+suggestion to everyone today so...
+
+ drivers/gpu/drm/drm_self_refresh_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
+index 2b3daaf77841..e0d2ad1f070c 100644
+--- a/drivers/gpu/drm/drm_self_refresh_helper.c
++++ b/drivers/gpu/drm/drm_self_refresh_helper.c
+@@ -205,7 +205,7 @@ void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc)
+ 	struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
+ 
+ 	/* Helper is already uninitialized */
+-	if (sr_data)
++	if (!sr_data)
+ 		return;
+ 
+ 	crtc->self_refresh_data = NULL;
+-- 
+2.20.1
