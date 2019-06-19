@@ -1,87 +1,73 @@
-From: Sven Van Asbroeck <thesven73@gmail.com>
-Date: Thu, 06 Jun 2019 15:11:11 +0000
-Subject: Re: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
-Message-Id: <20190606151111.14237-1-TheSven73@gmail.com>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Date: Wed, 19 Jun 2019 02:07:50 +0000
+Subject: [PATCH V4] drm/drm_vblank: Change EINVAL by the correct errno
+Message-Id: <20190619020750.swzerehjbvx6sbk2@smtp.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAGngYiVDCCjo6VKt660Uz5mbEGOBOZpcUWeRHWx_L=TapZgv_w@mail.gmail.com>
-In-Reply-To: <CAGngYiVDCCjo6VKt660Uz5mbEGOBOZpcUWeRHWx_L=TapZgv_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, YueHaibing <yuehaibing@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-I was able to test the patch [1] exclusion mechanism without access to actual
-hardware - by giving it a dummy regmap. See patch below.
+For historical reason, the function drm_wait_vblank_ioctl always return
+-EINVAL if something gets wrong. This scenario limits the flexibility
+for the userspace make detailed verification of the problem and take
+some action. In particular, the validation of “if (!dev->irq_enabled)”
+in the drm_wait_vblank_ioctl is responsible for checking if the driver
+support vblank or not. If the driver does not support VBlank, the
+function drm_wait_vblank_ioctl returns EINVAL which does not represent
+the real issue; this patch changes this behavior by return EOPNOTSUPP.
+Additionally, some operations are unsupported by this function, and
+returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+libdrm, which is used by many compositors; because of this, it is
+important to check if this change breaks any compositor. In this sense,
+the following projects were examined:
 
-Test cases (all via sysfs):
-1. verify requested pwm cannot be requested as gpio
-2. verify requested gpio cannot be requested as pwm
-3. verify pwm "all LEDs" cannot be used if pwms/gpios in use
-4. verify pwms/gpios cannot be requested if pwm "all LEDs" in use
+* Drm-hwcomposer
+* Kwin
+* Sway
+* Wlroots
+* Wayland-core
+* Weston
+* Xorg (67 different drivers)
 
-All test cases ok.
- Obviously, I could not test multi-threaded correctness.
+For each repository the verification happened in three steps:
 
-[1] https://lkml.org/lkml/2019/6/4/1039
+* Update the main branch
+* Look for any occurrence "drmWaitVBlank" with the command:
+  git grep -n "drmWaitVBlank"
+* Look in the git history of the project with the command:
+  git log -SdrmWaitVBlank
 
+Finally, none of the above projects validate the use of EINVAL which
+make safe, at least for these projects, to change the return values.
+
+Change since V3:
+ - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
+
+Change since V2:
+ Daniel Vetter and Chris Wilson
+ - Replace ENOTTY by EOPNOTSUPP
+ - Return EINVAL if the parameters are wrong
+
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/pwm/pwm-pca9685.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_vblank.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
-index 259fd58812ae..c059da5f86f4 100644
---- a/drivers/pwm/pwm-pca9685.c
-+++ b/drivers/pwm/pwm-pca9685.c
-@@ -83,6 +83,7 @@ struct pca9685 {
- 	struct regmap *regmap;
- 	int duty_ns;
- 	int period_ns;
-+	u8 regs[PCA9685_NUMREGS];
- #if IS_ENABLED(CONFIG_GPIOLIB)
- 	struct mutex lock;
- 	struct gpio_chip gpio;
-@@ -446,11 +447,31 @@ static const struct pwm_ops pca9685_pwm_ops = {
- 	.owner = THIS_MODULE,
- };
+diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+index 603ab105125d..bed233361614 100644
+--- a/drivers/gpu/drm/drm_vblank.c
++++ b/drivers/gpu/drm/drm_vblank.c
+@@ -1582,7 +1582,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+ 	unsigned int flags, pipe, high_pipe;
  
-+static int read_reg_dummy(void *context, unsigned int reg,
-+			unsigned int *val)
-+{
-+	struct pca9685 *pca = context;
-+
-+	*val = pca->regs[reg];
-+	return 0;
-+}
-+
-+static int write_reg_dummy(void *context, unsigned int reg,
-+			 unsigned int val)
-+{
-+	struct pca9685 *pca = context;
-+
-+	pca->regs[reg] = val;
-+	return 0;
-+}
-+
- static const struct regmap_config pca9685_regmap_i2c_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = PCA9685_NUMREGS,
- 	.cache_type = REGCACHE_NONE,
-+	.reg_read = read_reg_dummy,
-+	.reg_write = write_reg_dummy,
- };
+ 	if (!dev->irq_enabled)
+-		return -EINVAL;
++		return -EOPNOTSUPP;
  
- static int pca9685_pwm_probe(struct i2c_client *client,
-@@ -464,7 +485,8 @@ static int pca9685_pwm_probe(struct i2c_client *client,
- 	if (!pca)
- 		return -ENOMEM;
- 
--	pca->regmap = devm_regmap_init_i2c(client, &pca9685_regmap_i2c_config);
-+	pca->regmap = devm_regmap_init(&client->dev, NULL, pca,
-+					&pca9685_regmap_i2c_config);
- 	if (IS_ERR(pca->regmap)) {
- 		ret = PTR_ERR(pca->regmap);
- 		dev_err(&client->dev, "Failed to initialize register map: %d\n",
+ 	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+ 		return -EINVAL;
 -- 
-2.17.1
+2.21.0
