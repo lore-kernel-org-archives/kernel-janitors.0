@@ -1,29 +1,30 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 28 Jun 2019 10:04:18 +0000
-Subject: Re: [PATCH] ALSA: seq: fix incorrect order of dest_client/dest_ports arguments
-Message-Id: <s5h8stm6n6l.wl-tiwai@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 20 Jun 2019 14:57:09 +0000
+Subject: [PATCH -next] ASoC: SOF: Intel: hda: remove duplicated include from hda.c
+Message-Id: <20190620145709.122498-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190628095429.13369-1-colin.king@canonical.com>
-In-Reply-To: <20190628095429.13369-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bard Liao <yung-chuan.liao@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 28 Jun 2019 11:54:29 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two occurrances of a call to snd_seq_oss_fill_addr where
-> the dest_client and dest_port arguments are in the wrong order. Fix
-> this by swapping them around.
-> 
-> Addresses-Coverity: ("Arguments in wrong order")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Remove duplicated include.
 
-Applied, thanks.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/sof/intel/hda.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-Takashi
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index 51c1c1787de7..7f665392618f 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -19,7 +19,6 @@
+ #include <sound/hda_register.h>
+ 
+ #include <linux/module.h>
+-#include <sound/hdaudio_ext.h>
+ #include <sound/sof.h>
+ #include <sound/sof/xtensa.h>
+ #include "../ops.h"
