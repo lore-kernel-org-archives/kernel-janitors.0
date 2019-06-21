@@ -1,45 +1,33 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 27 Jun 2019 16:01:58 +0000
-Subject: Re: [PATCH][next[ drm/amd/display: fix a couple of spelling mistakes
-Message-Id: <CADnq5_O9oA4PxnqxwTurRbgQ=M2PceiqUpZiCncdaiYmbJsiQA@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 21 Jun 2019 13:59:07 +0000
+Subject: [PATCH -next] platform/chrome: wilco_ec: Use kmemdup in enqueue_events()
+Message-Id: <20190621135907.112232-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190626132427.12615-1-colin.king@canonical.com>
- <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com> <2bd65b8f-f278-1000-d9a2-6476fc3a497f@canonical.com>
-In-Reply-To: <2bd65b8f-f278-1000-d9a2-6476fc3a497f@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Daniel Stone <daniel@fooishbar.org>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Wenjing Liu <Wenjing.Liu@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, Nikola Cornij <nikola.cornij@amd.com>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Benson Leung <bleung@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Nick Crews <ncrews@chromium.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 9:32 AM Colin Ian King <colin.king@canonical.com> wrote:
->
-> On 26/06/2019 14:25, Daniel Stone wrote:
-> > Hi Colin,
-> >
-> > On Wed, 26 Jun 2019 at 14:24, Colin King <colin.king@canonical.com> wrote:
-> >> There are a couple of spelling mistakes in dm_error messages and
-> >> a comment. Fix these.
-> >
-> > Whilst there, you might fix the '[next[' typo in the commit message.
->
-> Ugh, fickle fingers. Maybe the upstream devs will fix that before
-> applying...
+Use kmemdup rather than duplicating its implementation
 
-Fixed up and applied.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/platform/chrome/wilco_ec/event.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-
-Alex
-
->
->
-> >
-> > Cheers,
-> > Daniel
-> >
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index c975b76e6255..70156e75047e 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -248,10 +248,9 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
+ 		offset += event_size;
+ 
+ 		/* Copy event into the queue */
+-		queue_event = kzalloc(event_size, GFP_KERNEL);
++		queue_event = kmemdup(event, event_size, GFP_KERNEL);
+ 		if (!queue_event)
+ 			return -ENOMEM;
+-		memcpy(queue_event, event, event_size);
+ 		event_queue_push(dev_data->events, queue_event);
+ 	}
