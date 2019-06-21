@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 20 Jun 2019 19:34:52 +0000
+Date: Fri, 21 Jun 2019 09:15:37 +0000
 Subject: Re: Coccinelle: Add a SmPL script for the reconsideration of redundant dev_err() calls
-Message-Id: <2cae7d27-c032-20bf-4ecc-66a4a85a77cc@web.de>
+Message-Id: <13890878-9e5f-f297-7f7c-bcc1212d83b7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
  <alpine.DEB.2.21.1906202046550.3087@hadrien>
@@ -14,8 +14,6 @@ Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org
 Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Ding Xiang <dingxiang@cmss.chinamobile.com>, Coccinelle <cocci@systeme.lip6.fr>
 
->> Would you prefer to clarify a more advanced approach?
->
 > I think that something like
 >
 > if (IS_ERR(e))
@@ -25,28 +23,31 @@ Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr
 > ...+>
 > }
 >
-> would be more appropriate.
+> would be more appropriate.  Whether there is a return or not doesn't
+> really matter.
 
-This SmPL construct can be more powerful.
-
-
-> Whether there is a return or not doesn't really matter.
-
-Such an adjustment can be helpful for a few operation modes.
-
-But the number of statements in the if branch will influence the possibility
-for the deletion of curly braces together with redundant dev_err() calls
-by the SmPL patch mode.
+Do you find the following SmPL change specification useful and acceptable?
 
 
->> Would you like to get the relevant function name dynamically determined?
->
-> I have no idea what you consider "the relevant function name" to be.
-> If it is always devm_ioremap_resource then it would seem that it does not
-> need to be dynamically determined.
+@deletion depends on patch@
+expression e;
+@@
+ e = devm_ioremap_resource(...);
+ if (IS_ERR(e))
+(
+-{
+-   dev_err(...);
+    return (...);
+-}
+|{
+ <+...
+-   dev_err(...);
+ ...+>
+ }
+)
 
-Do other functions share the same error reporting strategy so that any more
-collateral software evolution can happen?
+
+Would this approach need a version check for the Coccinelle software?
 
 Regards,
 Markus
