@@ -1,39 +1,43 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 17 Jun 2019 11:00:28 +0000
-Subject: [PATCH] megaraid_sas: Delete a redundant memory setting in megasas_alloc_cmds()
-Message-Id: <3921d044-72d6-d092-e792-01c896ae222b@web.de>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Fri, 21 Jun 2019 09:42:34 +0000
+Subject: Re: [PATCH -next] drm/sti: Remove duplicated include from sti_drv.c
+Message-Id: <CA+M3ks69T+Eh0Hd_OgCfT_VP=S_ouUwU+dawueJw9fzWO=LzmA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190620150306.124839-1-yuehaibing@huawei.com>
+In-Reply-To: <20190620150306.124839-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, "James E. J. Bottomley" <jejb@linux.ibm.com>, Kashyap Desai <kashyap.desai@broadcom.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Jun 2019 12:42:15 +0200
+Le jeu. 20 juin 2019 à 16:56, YueHaibing <yuehaibing@huawei.com> a écrit :
+>
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-The memory was set to zero already by a call of the function “kcalloc”.
-Thus remove an extra call of the function “memset” for this purpose.
+Applied on drm-misc-next,
+Thanks for the patch.
 
-This issue was detected by using the Coccinelle software.
+Benjamin
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 176b59a34a79..047990d3cffd 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -4239,8 +4239,6 @@ int megasas_alloc_cmds(struct megasas_instance *instance)
- 		return -ENOMEM;
- 	}
-
--	memset(instance->cmd_list, 0, sizeof(struct megasas_cmd *) *max_cmd);
--
- 	for (i = 0; i < max_cmd; i++) {
- 		instance->cmd_list[i] = kmalloc(sizeof(struct megasas_cmd),
- 						GFP_KERNEL);
---
-2.22.0
+> ---
+>  drivers/gpu/drm/sti/sti_drv.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
+> index bb6ae6dd66c9..2edd666fb44a 100644
+> --- a/drivers/gpu/drm/sti/sti_drv.c
+> +++ b/drivers/gpu/drm/sti/sti_drv.c
+> @@ -23,7 +23,6 @@
+>
+>  #include "sti_crtc.h"
+>  #include "sti_drv.h"
+> -#include "sti_drv.h"
+>  #include "sti_plane.h"
+>
+>  #define DRIVER_NAME    "sti"
+>
+>
+>
