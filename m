@@ -1,27 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 23 Jun 2019 18:08:35 +0000
-Subject: Re: [PATCH][net-next] hinic: fix dereference of pointer hwdev before it is null checked
-Message-Id: <20190623.110835.523516058927476452.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 22 Jun 2019 12:58:49 +0000
+Subject: [PATCH -next v2] drm/amdgpu: return 'ret' in amdgpu_pmu_init
+Message-Id: <20190622130527.182022-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190620132751.26438-1-colin.king@canonical.com>
-In-Reply-To: <20190620132751.26438-1-colin.king@canonical.com>
+References: <20190622104318.GT28859@kadam>
+In-Reply-To: <20190622104318.GT28859@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: xuechaojing@huawei.com, aviad.krawczyk@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
+Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 20 Jun 2019 14:27:51 +0100
+There is one warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
+which will use the return value. So it returns 'ret' for caller.
+amdgpu_device_init()
+	r = amdgpu_pmu_init(adev);
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer hwdev is dereferenced when assigning hwif before
-> hwdev is null checked.  Fix this by only derefencing hwdev after the
-> null check.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 4fdc51bb4e92 ("hinic: add support for rss parameters with ethtool")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
 
-Applied.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+ amdgpu_pmu_init().
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9..145e720 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 	case CHIP_VEGA20:
+ 		/* init df */
+ 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+-				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+-				       DF_V3_6_MAX_COUNTERS);
++							   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
++							   DF_V3_6_MAX_COUNTERS);
+ 
+ 		/* other pmu types go here*/
+ 		break;
+@@ -261,7 +261,7 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 		return 0;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ 
+-- 
+2.7.4
