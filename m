@@ -1,100 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 28 Jun 2019 16:56:27 +0000
-Subject: Applied "ASoC: topology: fix memory leaks on sm, se and sbe" to the asoc tree
-Message-Id: <20190628165627.CAB93440049@finisterre.sirena.org.uk>
+From: "Miss.Fatima Yusuf" <fatimayusuf20001@gmail.com>
+Date: Sat, 22 Jun 2019 13:42:24 +0000
+Subject: From:Miss: Fatima Yusuf.
+Message-Id: <CAMYDnHBFov=1p9UdOm+gEapaeZm4iSk7h7OZ_xWe1Hzq70xFLA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190627133208.9550-1-colin.king@canonical.com>
-In-Reply-To: <20190627133208.9550-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
+To: keyrings@vger.kernel.org
 
-The patch
+From:Miss: Fatima Yusuf.
 
-   ASoC: topology: fix memory leaks on sm, se and sbe
+For sure this mail would definitely come to you as a surprise, but do
+take your good time to go through it, My name is Ms. Fatima Yusuf,i am
+from Ivory Coast.
 
-has been applied to the asoc tree at
+I lost my parents a year and couple of months ago. My father was a
+serving director of the Agro-exporting board until his death. He was
+assassinated by his business partners.Before his death, he made a
+deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for
+the purchase of cocoa processing machine and development of another
+factory before his untimely death.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+Being that this part of the world experiences political and crises
+time without number, there is no guarantee of lives and properties. I
+cannot invest this money here any long, despite the fact it had been
+my late father's industrial plans.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+I want you to do me a favor to receive this funds into your country or
+any safer place as the beneficiary, I have plans to invest this money
+in continuation with the investment vision of my late father, but not
+in this place again rather in your country. I have the vision of going
+into real estate and industrial production or any profitable business
+venture.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I will be ready to compensate you with 20% of the total Amount, now
+all my hope is banked on you and i really wants to invest this money
+in your country, where there is stability of Government, political and
+economic welfare.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+My greatest worry now is how to move out of this country because my
+uncle is threatening to kill me as he killed my father,Please do not
+let anybody hear about this, it is between me and you alone because of
+my security reason.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1ad741d0e8e8ecccc16aa9ccb8362575197d91bf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 27 Jun 2019 14:32:08 +0100
-Subject: [PATCH] ASoC: topology: fix memory leaks on sm, se and sbe
-
-Currently when a kstrdup fails the error exit paths don't free
-the allocations for sm, se and sbe.  This can be fixed by assigning
-kc[i].private_value to these before doing the ksrtdup so that the error
-exit path will be able to free these objects.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: 9f90af3a9952 ("ASoC: topology: Consolidate and fix asoc_tplg_dapm_widget_*_create flow")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-topology.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index fc1f1d6f9e92..dc463f1a9e24 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1326,10 +1326,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 		dev_dbg(tplg->dev, " adding DAPM widget mixer control %s at %d\n",
- 			mc->hdr.name, i);
- 
-+		kc[i].private_value = (long)sm;
- 		kc[i].name = kstrdup(mc->hdr.name, GFP_KERNEL);
- 		if (kc[i].name = NULL)
- 			goto err_sm;
--		kc[i].private_value = (long)sm;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = mc->hdr.access;
- 
-@@ -1412,10 +1412,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
- 			ec->hdr.name);
- 
-+		kc[i].private_value = (long)se;
- 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
- 		if (kc[i].name = NULL)
- 			goto err_se;
--		kc[i].private_value = (long)se;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = ec->hdr.access;
- 
-@@ -1524,10 +1524,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
- 			"ASoC: adding bytes kcontrol %s with access 0x%x\n",
- 			be->hdr.name, be->hdr.access);
- 
-+		kc[i].private_value = (long)sbe;
- 		kc[i].name = kstrdup(be->hdr.name, GFP_KERNEL);
- 		if (kc[i].name = NULL)
- 			goto err_sbe;
--		kc[i].private_value = (long)sbe;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = be->hdr.access;
- 
--- 
-2.20.1
+I am waiting to hear from you.
+Yours Sincerely,
+Miss.Fatima Yusuf.
