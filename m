@@ -1,45 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Jun 2019 10:07:24 +0000
-Subject: Re: [PATCH] IB/mlx4: prevent undefined shift in set_user_sq_size()
-Message-Id: <20190611100724.GB1915@kadam>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 22 Jun 2019 06:02:16 +0000
+Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variables 'ret'
+Message-Id: <alpine.DEB.2.21.1906220801210.3253@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-406165930-1561183337=:3253"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190608092231.GA28890@mwanda>
- <20190610132849.GD18468@ziepe.ca>
-In-Reply-To: <20190610132849.GD18468@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Yishai Hadas <yishaih@mellanox.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190622030314.169640-1-maowenan@huawei.com>
+In-Reply-To: <20190622030314.169640-1-maowenan@huawei.com>
+To: Mao Wenan <maowenan@huawei.com>
+Cc: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 10:28:49AM -0300, Jason Gunthorpe wrote:
-> On Sat, Jun 08, 2019 at 12:22:31PM +0300, Dan Carpenter wrote:
-> > The ucmd->log_sq_bb_count is a u8 that comes from the user.  If it's
-> > larger than the number of bits in an int then that's undefined behavior.
-> > It turns out this doesn't really cause an issue at runtime but it's
-> > still nice to clean it up.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/infiniband/hw/mlx4/qp.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-> > index 5221c0794d1d..9f6eb23e8044 100644
-> > --- a/drivers/infiniband/hw/mlx4/qp.c
-> > +++ b/drivers/infiniband/hw/mlx4/qp.c
-> > @@ -439,7 +439,8 @@ static int set_user_sq_size(struct mlx4_ib_dev *dev,
-> >  			    struct mlx4_ib_create_qp *ucmd)
-> >  {
-> >  	/* Sanity check SQ size before proceeding */
-> > -	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
-> > +	if (ucmd->log_sq_bb_count > 31					 ||
-> > +	    (1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
-> 
-> Surely this should use check_shl_overflow() ?
-> 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Same for the other one I sent.  I'll resend in a couple days.  No rush.
+--8323329-406165930-1561183337=:3253
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-regards,
-dan carpenter
+
+
+On Sat, 22 Jun 2019, Mao Wenan wrote:
+
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+>   int ret = 0;
+>       ^
+>
+> It is never used since introduction in 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+>
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> index 0e6dba9..0bf4dd9 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> @@ -246,12 +246,10 @@ static int init_pmu_by_type(struct amdgpu_device *adev,
+>  /* init amdgpu_pmu */
+>  int amdgpu_pmu_init(struct amdgpu_device *adev)
+>  {
+> -	int ret = 0;
+> -
+>  	switch (adev->asic_type) {
+>  	case CHIP_VEGA20:
+>  		/* init df */
+> -		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+> +		init_pmu_by_type(adev, df_v3_6_attr_groups,
+>  				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+>  				       DF_V3_6_MAX_COUNTERS);
+
+Maybe it would be better to use ret?
+
+If knowing whether the call has failed is really useless, then maybe the
+return type should be void?
+
+julia
+
+
+>
+> --
+> 2.7.4
+>
+>
+--8323329-406165930-1561183337=:3253--
