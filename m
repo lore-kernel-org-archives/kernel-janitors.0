@@ -1,23 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 10 Jun 2019 03:12:09 +0000
-Subject: Re: [PATCH -next] ocelot: remove unused variable 'rc' in vcap_cmd()
-Message-Id: <20190609.201209.1140880047511507398.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 22 Jun 2019 02:56:31 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variables 'ret'
+Message-Id: <20190622030314.169640-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190609071126.183505-1-maowenan@huawei.com>
-In-Reply-To: <20190609071126.183505-1-maowenan@huawei.com>
+References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: alexandre.belloni@bootlin.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com
+Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-RnJvbTogTWFvIFdlbmFuIDxtYW93ZW5hbkBodWF3ZWkuY29tPg0KRGF0ZTogU3VuLCA5IEp1biAy
-MDE5IDE1OjExOjI2ICswODAwDQoNCj4gRml4ZXMgZ2NjICctV3VudXNlZC1idXQtc2V0LXZhcmlh
-YmxlJyB3YXJuaW5nOg0KPiANCj4gZHJpdmVycy9uZXQvZXRoZXJuZXQvbXNjYy9vY2Vsb3RfYWNl
-LmM6IEluIGZ1bmN0aW9uIKF2Y2FwX2NtZKI6DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21zY2Mv
-b2NlbG90X2FjZS5jOjEwODo2OiB3YXJuaW5nOiB2YXJpYWJsZSChcmOiIHNldA0KPiBidXQgbm90
-IHVzZWQgWy1XdW51c2VkLWJ1dC1zZXQtdmFyaWFibGVdDQo+ICAgaW50IHJjOw0KPiAgICAgICBe
-DQo+IEl0J3MgbmV2ZXIgdXNlZCBzaW5jZSBpbnRyb2R1Y3Rpb24gaW4gY29tbWl0IGI1OTYyMjk0
-NDhkZCAoIm5ldDogbXNjYzoNCj4gb2NlbG90OiBBZGQgc3VwcG9ydCBmb3IgdGNhbSIpDQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBNYW8gV2VuYW4gPG1hb3dlbmFuQGh1YXdlaS5jb20+DQoNCkFwcGxp
-ZWQuDQo
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+
+It is never used since introduction in 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9..0bf4dd9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -246,12 +246,10 @@ static int init_pmu_by_type(struct amdgpu_device *adev,
+ /* init amdgpu_pmu */
+ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ {
+-	int ret = 0;
+-
+ 	switch (adev->asic_type) {
+ 	case CHIP_VEGA20:
+ 		/* init df */
+-		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
++		init_pmu_by_type(adev, df_v3_6_attr_groups,
+ 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+ 				       DF_V3_6_MAX_COUNTERS);
+ 
+-- 
+2.7.4
