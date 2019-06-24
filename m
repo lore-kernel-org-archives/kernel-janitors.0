@@ -1,74 +1,36 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Wed, 19 Jun 2019 15:34:56 +0000
-Subject: Re: [PATCH] drm: self_refresh: Fix a reversed condition in drm_self_refresh_helper_cleanup()
-Message-Id: <877e9hlhb3.fsf@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Jun 2019 14:47:57 +0000
+Subject: [PATCH][next] 6lowpan: fix off-by-one comparison of index id with LOWPAN_IPHC_CTX_TABLE_SIZE
+Message-Id: <20190624144757.1285-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190619100141.GA28596@mwanda>
- <20190619150339.GF25413@art_vandelay>
-In-Reply-To: <20190619150339.GF25413@art_vandelay>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sean Paul <sean@poorly.run>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org
+To: Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, "David S . Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019, Sean Paul <sean@poorly.run> wrote:
-> On Wed, Jun 19, 2019 at 01:01:41PM +0300, Dan Carpenter wrote:
->> This test is flipped around so it either leads to a memory leak or a
->> NULL dereference.
->> 
->> Fixes: 1452c25b0e60 ("drm: Add helpers to kick off self refresh mode in drivers")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Thanks for the patch and your bug report! I've applied this to -misc-next and
-> will dig into the bug report shortly.
->
->> ---
->> I'm not totally sure what the prefered patch prefix for this code.  One
->> thing that would help is when we're adding new files we should specify
->> the prefix that they're going to use:
->> 
->> - drm: Add helpers to kick off self refresh mode in drivers
->> + drm: refresh mode: Add helpers to kick off self refresh mode in drivers
->> 
->> It's a small thing and email always sounds whiny but I'm sending this
->> suggestion to everyone today so...
->
-> There's no hard rule. For drivers we use drm/<driver>, and for core people
-> use drm or drm/<file>.
+From: Colin Ian King <colin.king@canonical.com>
 
-checkpatch.pl should have a git log popularity contest based check for
-the prefix. For new files, first come first served. ;)
+The WARN_ON_ONCE check on id is off-by-one, it should be greater or equal
+to LOWPAN_IPHC_CTX_TABLE_SIZE and not greater than. Fix this.
 
-BR,
-Jani.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/6lowpan/debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
->
->> 
->>  drivers/gpu/drm/drm_self_refresh_helper.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
->> index 2b3daaf77841..e0d2ad1f070c 100644
->> --- a/drivers/gpu/drm/drm_self_refresh_helper.c
->> +++ b/drivers/gpu/drm/drm_self_refresh_helper.c
->> @@ -205,7 +205,7 @@ void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc)
->>  	struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
->>  
->>  	/* Helper is already uninitialized */
->> -	if (sr_data)
->> +	if (!sr_data)
->>  		return;
->>  
->>  	crtc->self_refresh_data = NULL;
->> -- 
->> 2.20.1
->> 
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/net/6lowpan/debugfs.c b/net/6lowpan/debugfs.c
+index 1c140af06d52..a510bed8165b 100644
+--- a/net/6lowpan/debugfs.c
++++ b/net/6lowpan/debugfs.c
+@@ -170,7 +170,7 @@ static void lowpan_dev_debugfs_ctx_init(struct net_device *dev,
+ 	struct dentry *root;
+ 	char buf[32];
+ 
+-	WARN_ON_ONCE(id > LOWPAN_IPHC_CTX_TABLE_SIZE);
++	WARN_ON_ONCE(id >= LOWPAN_IPHC_CTX_TABLE_SIZE);
+ 
+ 	sprintf(buf, "%d", id);
+ 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.20.1
