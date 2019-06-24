@@ -1,42 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 21 Jun 2019 22:35:34 +0000
-Subject: [PATCH] drm/vmwgfx: fix memory leak when too many retries have occurred
-Message-Id: <20190621223534.14283-1-colin.king@canonical.com>
+From: Deepak Singh Rawat <drawat@vmware.com>
+Date: Mon, 24 Jun 2019 16:10:49 +0000
+Subject: Re: [PATCH] drm/vmwgfx: fix memory leak when too many retries have occurred
+Message-Id: <7b8430b3809eff2341d3e82c398038c1a9a0cc06.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190621223534.14283-1-colin.king@canonical.com>
+In-Reply-To: <20190621223534.14283-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently when too many retries have occurred there is a memory
-leak on the allocation for reply on the error return path. Fix
-this by kfree'ing reply before returning.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: a9cd9c044aa9 ("drm/vmwgfx: Add a check to handle host message failure")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-index 8b9270f31409..8b61f16f50cf 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -301,8 +301,10 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 		break;
- 	}
- 
--	if (retries = RETRIES)
-+	if (retries = RETRIES) {
-+		kfree(reply);
- 		return -EINVAL;
-+	}
- 
- 	*msg_len = reply_len;
- 	*msg     = reply;
--- 
-2.20.1
+SGkgQ29saW4sDQoNClRoYW5rcyBmb3IgZG9pbmcgdGhpcy4NCg0KUmV2aWV3ZWQtYnk6IERlZXBh
+ayBSYXdhdCA8ZHJhd2F0QHZtd2FyZS5jb20+DQoNCkRvIHlvdSB3YW50IG1lIHRvIGluY2x1ZGUg
+dGhpcyBpbiB2bXdnZngtbmV4dCBvciB3aWxsIHlvdSBzdWJtaXQgdGhpcw0KdmlhIGRybS1taWNz
+Pw0KDQpPbiBGcmksIDIwMTktMDYtMjEgYXQgMjM6MzUgKzAxMDAsIENvbGluIEtpbmcgd3JvdGU6
+DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0K
+PiBDdXJyZW50bHkgd2hlbiB0b28gbWFueSByZXRyaWVzIGhhdmUgb2NjdXJyZWQgdGhlcmUgaXMg
+YSBtZW1vcnkNCj4gbGVhayBvbiB0aGUgYWxsb2NhdGlvbiBmb3IgcmVwbHkgb24gdGhlIGVycm9y
+IHJldHVybiBwYXRoLiBGaXgNCj4gdGhpcyBieSBrZnJlZSdpbmcgcmVwbHkgYmVmb3JlIHJldHVy
+bmluZy4NCj4gDQo+IEFkZHJlc3Nlcy1Db3Zlcml0eTogKCJSZXNvdXJjZSBsZWFrIikNCj4gRml4
+ZXM6IGE5Y2Q5YzA0NGFhOSAoImRybS92bXdnZng6IEFkZCBhIGNoZWNrIHRvIGhhbmRsZSBob3N0
+IG1lc3NhZ2UNCj4gZmFpbHVyZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxj
+b2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfbXNnLmMgfCA0ICsrKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
+KyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdm13
+Z2Z4L3Ztd2dmeF9tc2cuYw0KPiBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X21zZy5j
+DQo+IGluZGV4IDhiOTI3MGYzMTQwOS4uOGI2MWYxNmY1MGNmIDEwMDY0NA0KPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9tc2cuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dm13Z2Z4L3Ztd2dmeF9tc2cuYw0KPiBAQCAtMzAxLDggKzMwMSwxMCBAQCBzdGF0aWMgaW50IHZt
+d19yZWN2X21zZyhzdHJ1Y3QgcnBjX2NoYW5uZWwNCj4gKmNoYW5uZWwsIHZvaWQgKiptc2csDQo+
+ICAJCWJyZWFrOw0KPiAgCX0NCj4gIA0KPiAtCWlmIChyZXRyaWVzID09IFJFVFJJRVMpDQo+ICsJ
+aWYgKHJldHJpZXMgPT0gUkVUUklFUykgew0KPiArCQlrZnJlZShyZXBseSk7DQo+ICAJCXJldHVy
+biAtRUlOVkFMOw0KPiArCX0NCj4gIA0KPiAgCSptc2dfbGVuID0gcmVwbHlfbGVuOw0KPiAgCSpt
+c2cgICAgID0gcmVwbHk7DQoNCg=
