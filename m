@@ -1,93 +1,53 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Jun 2019 09:55:28 +0000
-Subject: Re: [PATCH] drivers: Provide devm_platform_ioremap_resource_byname()
-Message-Id: <CAJZ5v0iBSq+DHqkevbLS0kYbaKGM0zYjg0KAzNhqYjCXvrQ-RQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Jun 2019 13:47:17 +0000
+Subject: [PATCH] EDAC/altera: Silence an endian warning
+Message-Id: <20190624134717.GA1754@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de> <20190614133840.GN9224@smile.fi.intel.com>
- <20190614141004.GC7234@kroah.com>
-In-Reply-To: <20190614141004.GC7234@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Markus Elfring <Markus.Elfring@web.de>, Jack Ping CHNG <jack.ping.chng@linux.intel.com>, kernel-janitors@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Enrico Weigelt <lkml@metux.net>, Himanshu Jha <himanshujha199640@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 4:10 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Jun 14, 2019 at 04:38:40PM +0300, Andy Shevchenko wrote:
-> > +Cc: Jack Ping, who did internally the same
-> >
-> > On Fri, Jun 14, 2019 at 03:26:25PM +0200, Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Fri, 14 Jun 2019 15:15:14 +0200
-> > >
-> > > The functions “platform_get_resource_byname” and “devm_ioremap_resource”
-> > > are called together in 181 source files.
-> > > This implementation detail can be determined also with the help
-> > > of the semantic patch language (Coccinelle software).
-> > >
-> > > Wrap these two calls into another helper function.
-> > > Thus a local variable does not need to be declared for a resource
-> > > structure pointer before and a redundant argument can be omitted
-> > > for the resource type.
-> >
-> > This one makes sense.
-> > Though I'm not sure Greg will see your message.
->
-> Nope, didn't see it, don't want to see it, it will only cause more work
-> in the longrun...
->
-> > Rafael, maybe you can apply this one?
->
-> Um, don't go around maintainers please, that's rude.
+Smatch complains that we're casting a u32 pointer to unsigned long.
 
-Totally agreed.
+    drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+    warn: passing casted pointer '&irq_status' to 'find_first_bit()'
 
-And there would be no reason for me to even consider applying it, really.
+This code wouldn't work on a 64 bit big endian system because we would
+read past the end of &irq_status.
 
-> There is a reason this specific developer is in my blacklist, and perhaps they should be
-> in yours as well :)
->
-> > FWIW,
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > >
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > ---
-> > >  drivers/base/platform.c | 18 ++++++++++++++++++
-> > >  1 file changed, 18 insertions(+)
-> > >
-> > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > > index 4d1729853d1a..c1f19a479dd7 100644
-> > > --- a/drivers/base/platform.c
-> > > +++ b/drivers/base/platform.c
-> > > @@ -97,6 +97,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-> > >     return devm_ioremap_resource(&pdev->dev, res);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
-> > > +
-> > > +/**
-> > > + * devm_platform_ioremap_resource_byname
-> > > + * Call devm_ioremap_resource() for a platform device
-> > > + *
-> > > + * @pdev: platform device to use both for memory resource lookup as well as
-> > > + *        resource management
-> > > + * @name: resource name
-> > > + */
-> > > +void __iomem *devm_platform_ioremap_resource_byname(struct platform_device *pdev,
-> > > +                                               const char *name)
-> > > +{
-> > > +   struct resource *res;
-> > > +
-> > > +   res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
-> > > +   return devm_ioremap_resource(&pdev->dev, res);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
-> > >  #endif /* CONFIG_HAS_IOMEM */
->
-> I don't like adding new apis with no user.
+Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis obviously and I don't know this subsystem at all.
+Probably we're never going to run this on a 64 bit big endian system...
+Feel free to ignore this if you want.
 
-I agree with that too.
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Cheers!
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index c2e693e34d43..bf024ec0116c 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1866,6 +1866,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int irq = irq_desc_get_irq(desc);
++	unsigned long bits;
+ 
+ 	dberr = (irq = edac->db_irq) ? 1 : 0;
+ 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+@@ -1875,7 +1876,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 
+ 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
+ 
+-	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
++	bits = irq_status;
++	for_each_set_bit(bit, &bits, 32) {
+ 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+ 		if (irq)
+ 			generic_handle_irq(irq);
+-- 
+2.20.1
