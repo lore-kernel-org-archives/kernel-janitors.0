@@ -1,23 +1,34 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date: Tue, 11 Jun 2019 08:02:34 +0000
-Subject: Re: [PATCH] usb/hcd: Fix a NULL vs IS_ERR() bug in usb_hcd_setup_local_mem()
-Message-Id: <20190611080233.goirgth76ftqpfyf@linutronix.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 24 Jun 2019 11:00:39 +0000
+Subject: Re: drivers: Adjust scope for CONFIG_HAS_IOMEM before devm_platform_ioremap_resource()
+Message-Id: <258fa411-43a7-14dc-95c2-6a3b336b3871@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190607135709.GC16718@mwanda>
-In-Reply-To: <20190607135709.GC16718@mwanda>
+References: <20190221162627.3476-1-brgl@bgdev.pl>
+ <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
+ <CAMpxmJX-wXQ-ff1RWkPmJBWSsP_v2MjZrA3fhj3HQX0_zM0eZA@mail.gmail.com>
+ <39ae399a-c606-c6de-f84d-35e39d0410c0@metux.net>
+ <CAMRc=McepqowJNi6ay6x9KKoHOC8aCxP_ob12SgbsnJU_sKQng@mail.gmail.com>
+In-Reply-To: <CAMRc=McepqowJNi6ay6x9KKoHOC8aCxP_ob12SgbsnJU_sKQng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Alan Stern <stern@rowland.harvard.edu>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Dmitry Torokhov <dtor@chromium.org>, Suwan Kim <suwan.kim027@gmail.com>, Raul E Rangel <rrangel@chromium.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>, kernel-janitors@vger.kernel.org
+Cc: Enrico Weigelt <lkml@metux.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On 2019-06-07 16:57:09 [+0300], Dan Carpenter wrote:
-> The devm_memremap() function doesn't return NULL, it returns error
-> pointers.
-> 
-> Fixes: b0310c2f09bb ("USB: use genalloc for USB HCs with local memory")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> In its current form it makes the code even less readable.
 
-Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+This can be your development opinion.
 
-Sebastian
+
+> The #ifdef should actually be one line lower
+
+I suggested that the conditional compilation can contain also a blank line
+together with a comment block.
+
+
+> and touch the comment instead of the EXPORT_SYMBOL() related to a different function.
+
+I find that this macro call was kept unchanged.
+
+Regards,
+Markus
