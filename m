@@ -1,26 +1,35 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Tue, 25 Jun 2019 23:17:29 +0000
-Subject: Re: [PATCH] drm: return -EFAULT if copy_one_buf() fails
-Message-Id: <20190625231729.GK17978@ZenIV.linux.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Jun 2019 16:39:43 +0000
+Subject: [PATCH] cifs: fix typo in debug message with struct field ia_valid
+Message-Id: <20190624163943.6721-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618125623.GA24896@mwanda>
-In-Reply-To: <20190618125623.GA24896@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 03:56:23PM +0300, Dan Carpenter wrote:
-> The copy_to_user() function returns the number of bytes remaining to be
-> copied, but we want to return -EFAULT.  This function is called from
-> __drm_legacy_infobufs() which expects negative error codes.
-> 
-> Fixes: 5c7640ab6258 ("switch compat_drm_infobufs() to drm_ioctl_kernel()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This goes through Al's tree and not through drm.  Presumably this patch
-> will just get folded into the original.
+From: Colin Ian King <colin.king@canonical.com>
 
-Wha..?  The original has been in mainline since v4.13, so it's a bit too
-late to fold anything into it...
+Field ia_valid is being debugged with the field name iavalid, fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+index d7cc62252634..06a4892e9973 100644
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -2415,7 +2415,7 @@ cifs_setattr_nounix(struct dentry *direntry, struct iattr *attrs)
+ 
+ 	xid = get_xid();
+ 
+-	cifs_dbg(FYI, "setattr on file %pd attrs->iavalid 0x%x\n",
++	cifs_dbg(FYI, "setattr on file %pd attrs->ia_valid 0x%x\n",
+ 		 direntry, attrs->ia_valid);
+ 
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_PERM)
+-- 
+2.20.1
