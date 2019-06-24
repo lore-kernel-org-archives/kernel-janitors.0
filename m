@@ -1,48 +1,50 @@
-From: Maxime Jourdan <mjourdan@baylibre.com>
-Date: Thu, 13 Jun 2019 09:20:07 +0000
-Subject: Re: [PATCH][next] staging: media: meson: remove redundant initialization of mpeg12
-Message-Id: <CAMO6naxDNmsqUVgAJ2uMBsQPUjsYK6zLhgubNfeEB-GEdD7sOw@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 24 Jun 2019 11:23:18 +0000
+Subject: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
+Message-Id: <20190624112318.149299-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190612144218.26149-1-colin.king@canonical.com>
-In-Reply-To: <20190612144218.26149-1-colin.king@canonical.com>
+References: <20190624094850.GQ18776@kadam>
+In-Reply-To: <20190624094850.GQ18776@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media@lists.freedesktop.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
+Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, jonathan.kim@amd.com, Mao Wenan <maowenan@huawei.com>
 
-Hi Colin,
-On Wed, Jun 12, 2019 at 4:42 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer mpeg12 is being initialized however that value is never
-> read and mpeg12 is being re-assigned almost immediately afterwards.
-> Remove the redundant initialization.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/media/meson/vdec/codec_mpeg12.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/media/meson/vdec/codec_mpeg12.c b/drivers/staging/media/meson/vdec/codec_mpeg12.c
-> index 5398fbf7ce20..48869cc3d973 100644
-> --- a/drivers/staging/media/meson/vdec/codec_mpeg12.c
-> +++ b/drivers/staging/media/meson/vdec/codec_mpeg12.c
-> @@ -63,7 +63,7 @@ static void codec_mpeg12_recycle(struct amvdec_core *core, u32 buf_idx)
->  static int codec_mpeg12_start(struct amvdec_session *sess)
->  {
->         struct amvdec_core *core = sess->core;
-> -       struct codec_mpeg12 *mpeg12 = sess->priv;
-> +       struct codec_mpeg12 *mpeg12;
->         int ret;
->
->         mpeg12 = kzalloc(sizeof(*mpeg12), GFP_KERNEL);
-> --
-> 2.20.1
->
+There is one warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
+which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
+amdgpu_device_init()
+	r = amdgpu_pmu_init(adev);
 
-Thank you for the patch.
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
 
-Acked-by: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+ amdgpu_pmu_init().
+ v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
+ v3->v4: delete the indenting for init_pmu_by_type() arguments. The original indenting is correct.
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9f60f0..c98cf77a37f3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -254,6 +254,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+ 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+ 				       DF_V3_6_MAX_COUNTERS);
++		if (ret)
++			return ret;
+ 
+ 		/* other pmu types go here*/
+ 		break;
+-- 
+2.20.1
