@@ -1,50 +1,58 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Mon, 24 Jun 2019 11:23:18 +0000
-Subject: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
-Message-Id: <20190624112318.149299-1-maowenan@huawei.com>
+From: "Kim, Jonathan" <Jonathan.Kim@amd.com>
+Date: Mon, 24 Jun 2019 17:42:46 +0000
+Subject: RE: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
+Message-Id: <CH2PR12MB3831BE36FF61D74FC529F64F85E00@CH2PR12MB3831.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190624094850.GQ18776@kadam>
-In-Reply-To: <20190624094850.GQ18776@kadam>
+ <20190624112318.149299-1-maowenan@huawei.com>
+In-Reply-To: <20190624112318.149299-1-maowenan-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, jonathan.kim@amd.com, Mao Wenan <maowenan@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mao Wenan <maowenan-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "daniel-/w4YWyX8dFk@public.gmane.org" <daniel-/w4YWyX8dFk@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org" <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "julia.lawall-L2FTfq7BK8M@public.gmane.org" <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 
-There is one warning:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
-  int ret = 0;
-      ^
-amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
-which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
-amdgpu_device_init()
-	r = amdgpu_pmu_init(adev);
-
-Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
-
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
- amdgpu_pmu_init().
- v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
- v3->v4: delete the indenting for init_pmu_by_type() arguments. The original indenting is correct.
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-index 0e6dba9f60f0..c98cf77a37f3 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-@@ -254,6 +254,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
- 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
- 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
- 				       DF_V3_6_MAX_COUNTERS);
-+		if (ret)
-+			return ret;
- 
- 		/* other pmu types go here*/
- 		break;
--- 
-2.20.1
+SW1tZWRpYXRlIHJldHVybiBzaG91bGQgYmUgb2sgc2luY2UgcGVyZiByZWdpc3RyYXRpb24gaXNu
+J3QgZGVwZW5kZW50IG9uIGdwdSBody4NCg0KUmV2aWV3ZWQtYnk6IEpvbmF0aGFuIEtpbSA8Sm9u
+YXRoYW4uS2ltQGFtZC5jb20+DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBN
+YW8gV2VuYW4gPG1hb3dlbmFuQGh1YXdlaS5jb20+IA0KU2VudDogTW9uZGF5LCBKdW5lIDI0LCAy
+MDE5IDc6MjMgQU0NClRvOiBhaXJsaWVkQGxpbnV4LmllOyBkYW5pZWxAZmZ3bGwuY2g7IERldWNo
+ZXIsIEFsZXhhbmRlciA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47IEtvZW5pZywgQ2hyaXN0
+aWFuIDxDaHJpc3RpYW4uS29lbmlnQGFtZC5jb20+OyBaaG91LCBEYXZpZChDaHVuTWluZykgPERh
+dmlkMS5aaG91QGFtZC5jb20+OyBkYW4uY2FycGVudGVyQG9yYWNsZS5jb207IGp1bGlhLmxhd2Fs
+bEBsaXA2LmZyDQpDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgYW1kLWdmeEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEtpbSwg
+Sm9uYXRoYW4gPEpvbmF0aGFuLktpbUBhbWQuY29tPjsgTWFvIFdlbmFuIDxtYW93ZW5hbkBodWF3
+ZWkuY29tPg0KU3ViamVjdDogW1BBVENIIC1uZXh0IHY0XSBkcm0vYW1kZ3B1OiByZXR1cm4gJ3Jl
+dCcgaW1tZWRpYXRlbHkgaWYgZmFpbGVkIGluIGFtZGdwdV9wbXVfaW5pdA0KDQpbQ0FVVElPTjog
+RXh0ZXJuYWwgRW1haWxdDQoNClRoZXJlIGlzIG9uZSB3YXJuaW5nOg0KZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvYW1kZ3B1X3BtdS5jOiBJbiBmdW5jdGlvbiDigJhhbWRncHVfcG11X2luaXTi
+gJk6DQpkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmM6MjQ5OjY6IHdhcm5p
+bmc6IHZhcmlhYmxlIOKAmHJldOKAmSBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0
+LXZhcmlhYmxlXQ0KICBpbnQgcmV0ID0gMDsNCiAgICAgIF4NCmFtZGdwdV9wbXVfaW5pdCgpIGlz
+IGNhbGxlZCBieSBhbWRncHVfZGV2aWNlX2luaXQoKSBpbiBkcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfZGV2aWNlLmMsDQp3aGljaCB3aWxsIHVzZSB0aGUgcmV0dXJuIHZhbHVlLiBT
+byBpdCBzaG91bGQgcmV0dXJuICdyZXQnIGltbWVkaWF0ZWx5IGlmIGluaXRfcG11X2J5X3R5cGUo
+KSBmYWlsZWQuDQphbWRncHVfZGV2aWNlX2luaXQoKQ0KICAgICAgICByID0gYW1kZ3B1X3BtdV9p
+bml0KGFkZXYpOw0KDQpGaXhlczogOWM3Yzg1ZjdlYTFmICgiZHJtL2FtZGdwdTogYWRkIHBtdSBj
+b3VudGVycyIpDQoNClNpZ25lZC1vZmYtYnk6IE1hbyBXZW5hbiA8bWFvd2VuYW5AaHVhd2VpLmNv
+bT4NCi0tLQ0KIHYxLT52MjogY2hhbmdlIHRoZSBzdWJqZWN0IGZvciB0aGlzIHBhdGNoOyBjaGFu
+Z2UgdGhlIGluZGVudGluZyB3aGVuIGl0IGNhbGxzIGluaXRfcG11X2J5X3R5cGU7IHVzZSB0aGUg
+dmFsdWUgJ3JldCcgaW4gIGFtZGdwdV9wbXVfaW5pdCgpLg0KIHYyLT52MzogY2hhbmdlIHRoZSBz
+dWJqZWN0IGZvciB0aGlzIHBhdGNoOyByZXR1cm4gJ3JldCcgaW1tZWRpYXRlbHkgaWYgZmFpbGVk
+IHRvIGNhbGwgaW5pdF9wbXVfYnlfdHlwZSgpLg0KIHYzLT52NDogZGVsZXRlIHRoZSBpbmRlbnRp
+bmcgZm9yIGluaXRfcG11X2J5X3R5cGUoKSBhcmd1bWVudHMuIFRoZSBvcmlnaW5hbCBpbmRlbnRp
+bmcgaXMgY29ycmVjdC4NCg0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9wbXUu
+YyB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMgYi9kcml2ZXJzL2dwdS9k
+cm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMNCmluZGV4IDBlNmRiYTlmNjBmMC4uYzk4Y2Y3N2Ez
+N2YzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3BtdS5j
+DQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMNCkBAIC0yNTQs
+NiArMjU0LDggQEAgaW50IGFtZGdwdV9wbXVfaW5pdChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRl
+dikNCiAgICAgICAgICAgICAgICByZXQgPSBpbml0X3BtdV9ieV90eXBlKGFkZXYsIGRmX3YzXzZf
+YXR0cl9ncm91cHMsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiREYi
+LCAiYW1kZ3B1X2RmIiwgUEVSRl9UWVBFX0FNREdQVV9ERiwNCiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIERGX1YzXzZfTUFYX0NPVU5URVJTKTsNCisgICAgICAgICAgICAg
+ICBpZiAocmV0KQ0KKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCg0KICAgICAg
+ICAgICAgICAgIC8qIG90aGVyIHBtdSB0eXBlcyBnbyBoZXJlKi8NCiAgICAgICAgICAgICAgICBi
+cmVhazsNCi0tDQoyLjIwLjENCg0K
