@@ -1,26 +1,56 @@
-From: Chao Yu <yuchao0@huawei.com>
-Date: Thu, 20 Jun 2019 08:54:06 +0000
-Subject: Re: [PATCH] staging: erofs: clean up initialization of pointer de
-Message-Id: <63acf133-b0b5-aafa-6880-bb9517ef6be9@huawei.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 24 Jun 2019 03:45:32 +0000
+Subject: [PATCH -next v3] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
+Message-Id: <20190624034532.135201-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190617125529.28327-1-colin.king@canonical.com>
-In-Reply-To: <20190617125529.28327-1-colin.king@canonical.com>
+References: <alpine.DEB.2.21.1906230809400.4961@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1906230809400.4961@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Gao Xiang <gaoxiang25@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
+Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, jonathan.kim@amd.com, Mao Wenan <maowenan@huawei.com>
 
-On 2019/6/17 20:55, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer de is being initialized with a value that is
-> never read and a few statements later de is being re-assigned. Clean
-> this up by ininitialzing de and removing the re-assignment.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is one warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
+which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
+amdgpu_device_init()
+	r = amdgpu_pmu_init(adev);
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+This patch is also to update the indenting on the arguments so they line up with the '('.
 
-Thanks,
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+ amdgpu_pmu_init().
+ v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9..b702322 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -252,8 +252,11 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 	case CHIP_VEGA20:
+ 		/* init df */
+ 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+-				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+-				       DF_V3_6_MAX_COUNTERS);
++							   "DF", "amdgpu_df",
++							   PERF_TYPE_AMDGPU_DF,
++							   DF_V3_6_MAX_COUNTERS);
++		if (ret)
++			return ret;
+ 
+ 		/* other pmu types go here*/
+ 		break;
+-- 
+2.7.4
