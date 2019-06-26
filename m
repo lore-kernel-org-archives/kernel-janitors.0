@@ -1,46 +1,39 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Date: Thu, 06 Jun 2019 14:24:53 +0000
-Subject: Re: [PATCH][next] drivers: thermal: tsens: remove redundant u32 comparison with less than zero
-Message-Id: <20190606142450.GA7846@localhost.localdomain>
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Wed, 26 Jun 2019 22:26:11 +0000
+Subject: RE: [Intel-wired-lan] [PATCH][net-next] iavf: fix dereference of null rx_buffer pointer
+Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3FB501@ORSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190531105708.15312-1-colin.king@canonical.com>
-In-Reply-To: <20190531105708.15312-1-colin.king@canonical.com>
+References: <20190619143044.10259-1-colin.king@canonical.com>
+In-Reply-To: <20190619143044.10259-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-hey Colin,
-
-On Fri, May 31, 2019 at 11:57:08AM +0100, Colin King wrote:
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Colin King
+> Sent: Wednesday, June 19, 2019 7:31 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
+> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
+> netdev@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH][net-next] iavf: fix dereference of null
+> rx_buffer pointer
+> 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The u32 variable hw_id is unsigned and cannot be less than zero so
-> the comparison with less than zero is always false and hence is redundant
-> and can be removed.
+> A recent commit efa14c3985828d ("iavf: allow null RX descriptors") added a
+> null pointer sanity check on rx_buffer, however, rx_buffer is being
+> dereferenced before that check, which implies a null pointer dereference
+> bug can potentially occur.  Fix this by only dereferencing rx_buffer until after
+> the null pointer check.
 > 
-> Addresses-Coverity: ("Unsigned compared against 0")
+> Addresses-Coverity: ("Dereference before null check")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks for the patch but the commit that introduced this has been
-reverted. I pushed an update on my -next branch to silence this in the
-linux-next tree too.
-
 > ---
->  drivers/thermal/qcom/tsens-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index 928e8e81ba69..f4419f45025d 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -69,7 +69,7 @@ bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id)
->  	u32 val;
->  	int ret;
->  
-> -	if ((hw_id > (priv->num_sensors - 1)) || (hw_id < 0))
-> +	if (hw_id > (priv->num_sensors - 1))
->  		return -EINVAL;
->  	ret = regmap_field_read(priv->rf[SENSOR_EN], &val);
->  	if (ret)
+>  drivers/net/ethernet/intel/iavf/iavf_txrx.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
