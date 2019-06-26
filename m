@@ -1,26 +1,42 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Tue, 25 Jun 2019 23:18:54 +0000
-Subject: Re: [PATCH v2] drm: return -EFAULT if copy_to_user() fails
-Message-Id: <20190625231854.GL17978@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Jun 2019 09:42:51 +0000
+Subject: [PATCH] md/raid1: Fix a warning message in remove_wb()
+Message-Id: <20190626094251.GA3242@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618125623.GA24896@mwanda>
- <20190618131843.GA29463@mwanda>
- <20190618171629.GB25413@art_vandelay>
-In-Reply-To: <20190618171629.GB25413@art_vandelay>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sean Paul <sean@poorly.run>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 01:16:29PM -0400, Sean Paul wrote:
-> On Tue, Jun 18, 2019 at 04:18:43PM +0300, Dan Carpenter wrote:
-> > The copy_from_user() function returns the number of bytes remaining
-> > to be copied but we want to return a negative error code.  Otherwise
-> > the callers treat it as a successful copy.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks Dan, I've applied this to drm-misc-fixes.
+The WARN_ON() macro doesn't take an error message, it just takes a
+condition.  I've changed this to use WARN(1, "...") instead.
 
-FWIW, Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 3e148a320979 ("md/raid1: fix potential data inconsistency issue with write behind device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I also considered changing it to:
+
+	WARN(!found, "...");
+
+but I decided this way was more clear.  It's to have the error path
+indented an extra tab.
+
+---
+ drivers/md/raid1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 3d44da663797..34e26834ad28 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -96,7 +96,7 @@ static void remove_wb(struct md_rdev *rdev, sector_t lo, sector_t hi)
+ 		}
+ 
+ 	if (!found)
+-		WARN_ON("The write behind IO is not recorded\n");
++		WARN(1, "The write behind IO is not recorded\n");
+ 	spin_unlock_irqrestore(&rdev->wb_list_lock, flags);
+ 	wake_up(&rdev->wb_io_wait);
+ }
+-- 
+2.20.1
