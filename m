@@ -1,25 +1,34 @@
-From: Stefan Haberland <sth@linux.ibm.com>
-Date: Thu, 27 Jun 2019 14:14:54 +0000
-Subject: Re: [PATCH] s390/dasd: Fix a precision vs width bug in dasd_feature_list()
-Message-Id: <7b33439f-6f70-74de-0861-91081e6e048d@linux.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Jun 2019 10:12:43 +0000
+Subject: [PATCH] scsi: mpt3sas: clean up a sizeof()
+Message-Id: <20190626101243.GF3242@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190626100658.GB3242@mwanda>
-In-Reply-To: <20190626100658.GB3242@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jan Hoeppner <hoeppner@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 26.06.19 12:06, Dan Carpenter wrote:
-> The "len" variable is the length of the option up to the next option or
-> to the end of the string which ever first.  We want to print the invalid
-> option so we want precision "%.*s" but the format is width "%*s" so it
-> prints up to the end of the string.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
+This patch is just a cleanup and doesn't change run time because both
+sizeof EVENT and SCSI are 84 bytes.  But this is clearly a cut and paste
+error and the SCSI struct was intended.
 
-Thanks for the patch. I tested it and it works as expected.
-Will integrate it through the s390 tree.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index d4ecfbbe738c..06a901ed743c 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -3280,7 +3280,7 @@ diag_trigger_scsi_store(struct device *cdev,
+ 	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
+ 	sz = min(sizeof(struct SL_WH_SCSI_TRIGGERS_T), count);
+ 	memset(&ioc->diag_trigger_scsi, 0,
+-	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
++	    sizeof(struct SL_WH_SCSI_TRIGGERS_T));
+ 	memcpy(&ioc->diag_trigger_scsi, buf, sz);
+ 	if (ioc->diag_trigger_scsi.ValidEntries > NUM_VALID_ENTRIES)
+ 		ioc->diag_trigger_scsi.ValidEntries = NUM_VALID_ENTRIES;
+-- 
+2.20.1
