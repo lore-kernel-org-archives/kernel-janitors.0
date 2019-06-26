@@ -1,37 +1,48 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Jun 2019 10:58:59 +0000
-Subject: [PATCH][next] mtd: rawnand: gpmi: remove double assignment to block_size
-Message-Id: <20190604105859.16627-1-colin.king@canonical.com>
+Date: Wed, 26 Jun 2019 12:43:23 +0000
+Subject: [PATCH][next] nvme-trace: fix spelling mistake "spcecific" -> "specific"
+Message-Id: <20190626124323.5925-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sascha Hauer <s.hauer@pengutronix.de>, Han Xu <han.xu@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable block_size is being assigned to itself and to
-geo->ecc_chunk_size.  Clean up the double assignment by removing
-the assignment to itself.
+There are two spelling mistakes in trace_seq_printf messages, fix these.
 
-Addresses-Coverity: ("Evaluation order violation")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/trace.c   | 2 +-
+ drivers/nvme/target/trace.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-index 5db84178edff..334fe3130285 100644
---- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-+++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-@@ -1428,7 +1428,7 @@ static void gpmi_bch_layout_std(struct gpmi_nand_data *this)
- 	struct bch_geometry *geo = &this->bch_geometry;
- 	unsigned int ecc_strength = geo->ecc_strength >> 1;
- 	unsigned int gf_len = geo->gf_len;
--	unsigned int block_size = block_size = geo->ecc_chunk_size;
-+	unsigned int block_size = geo->ecc_chunk_size;
+diff --git a/drivers/nvme/host/trace.c b/drivers/nvme/host/trace.c
+index f01ad0fd60bb..6980ab827233 100644
+--- a/drivers/nvme/host/trace.c
++++ b/drivers/nvme/host/trace.c
+@@ -178,7 +178,7 @@ static const char *nvme_trace_fabrics_common(struct trace_seq *p, u8 *spc)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
  
- 	this->bch_flashlayout0  		BF_BCH_FLASH0LAYOUT0_NBLOCKS(geo->ecc_chunk_count - 1) |
+-	trace_seq_printf(p, "spcecific=%*ph", 24, spc);
++	trace_seq_printf(p, "specific=%*ph", 24, spc);
+ 	trace_seq_putc(p, 0);
+ 	return ret;
+ }
+diff --git a/drivers/nvme/target/trace.c b/drivers/nvme/target/trace.c
+index cdcdd14c6408..6af11d493271 100644
+--- a/drivers/nvme/target/trace.c
++++ b/drivers/nvme/target/trace.c
+@@ -146,7 +146,7 @@ static const char *nvmet_trace_fabrics_common(struct trace_seq *p, u8 *spc)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+ 
+-	trace_seq_printf(p, "spcecific=%*ph", 24, spc);
++	trace_seq_printf(p, "specific=%*ph", 24, spc);
+ 	trace_seq_putc(p, 0);
+ 	return ret;
+ }
 -- 
 2.20.1
