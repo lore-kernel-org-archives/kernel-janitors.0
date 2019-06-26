@@ -1,50 +1,77 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Mon, 17 Jun 2019 13:19:16 +0000
-Subject: Re: [PATCH][next] staging: comedi: usbdux: remove redundant initialization of fx2delay
-Message-Id: <fe0881ce-90aa-0689-7563-0d94aeebb461@mev.co.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 26 Jun 2019 13:24:27 +0000
+Subject: [PATCH][next[ drm/amd/display: fix a couple of spelling mistakes
+Message-Id: <20190626132427.12615-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190617130358.28749-1-colin.king@canonical.com>
-In-Reply-To: <20190617130358.28749-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Nikola Cornij <nikola.cornij@amd.com>, Wenjing Liu <Wenjing.Liu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/06/2019 14:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable fx2delay is being initialized to a value that is never read
-> and is being re-assigned a few statements later. The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/usbdux.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-> index b8f54b7fb34a..0350f303d557 100644
-> --- a/drivers/staging/comedi/drivers/usbdux.c
-> +++ b/drivers/staging/comedi/drivers/usbdux.c
-> @@ -1226,7 +1226,7 @@ static int usbdux_pwm_period(struct comedi_device *dev,
->   			     unsigned int period)
->   {
->   	struct usbdux_private *devpriv = dev->private;
-> -	int fx2delay = 255;
-> +	int fx2delay;
->   
->   	if (period < MIN_PWM_PERIOD)
->   		return -EAGAIN;
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good, thanks!
+There are a couple of spelling mistakes in dm_error messages and
+a comment. Fix these.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dsc.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c      | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dsc.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dsc.c
+index be49fc7f4abe..ffd0014ec3b5 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dsc.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dsc.c
+@@ -126,7 +126,7 @@ static void dsc2_get_enc_caps(struct dsc_enc_caps *dsc_enc_caps, int pixel_clock
+ 
+ 	/* Maximum total throughput with all the slices combined. This is different from how DP spec specifies it.
+ 	 * Our decoder's total throughput in Pix/s is equal to DISPCLK. This is then shared between slices.
+-	 * The value below is the absolute maximum value. The actual througput may be lower, but it'll always
++	 * The value below is the absolute maximum value. The actual throughput may be lower, but it'll always
+ 	 * be sufficient to process the input pixel rate fed into a single DSC engine.
+ 	 */
+ 	dsc_enc_caps->max_total_throughput_mps = DCN20_MAX_DISPLAY_CLOCK_Mhz;
+diff --git a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+index 77e7a0f8a527..ef5f84a144c3 100644
+--- a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
++++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+@@ -47,7 +47,7 @@ static bool dsc_buff_block_size_from_dpcd(int dpcd_buff_block_size, int *buff_bl
+ 		*buff_block_size = 64 * 1024;
+ 		break;
+ 	default: {
+-			dm_error("%s: DPCD DSC buffer size not recoginzed.\n", __func__);
++			dm_error("%s: DPCD DSC buffer size not recognized.\n", __func__);
+ 			return false;
+ 		}
+ 	}
+@@ -63,7 +63,7 @@ static bool dsc_line_buff_depth_from_dpcd(int dpcd_line_buff_bit_depth, int *lin
+ 	else if (dpcd_line_buff_bit_depth = 8)
+ 		*line_buff_bit_depth = 8;
+ 	else {
+-		dm_error("%s: DPCD DSC buffer depth not recoginzed.\n", __func__);
++		dm_error("%s: DPCD DSC buffer depth not recognized.\n", __func__);
+ 		return false;
+ 	}
+ 
+@@ -123,7 +123,7 @@ static bool dsc_throughput_from_dpcd(int dpcd_throughput, int *throughput)
+ 		*throughput = 1000;
+ 		break;
+ 	default: {
+-			dm_error("%s: DPCD DSC througput mode not recoginzed.\n", __func__);
++			dm_error("%s: DPCD DSC throughput mode not recognized.\n", __func__);
+ 			return false;
+ 		}
+ 	}
+@@ -152,7 +152,7 @@ static bool dsc_bpp_increment_div_from_dpcd(int bpp_increment_dpcd, uint32_t *bp
+ 		*bpp_increment_div = 1;
+ 		break;
+ 	default: {
+-		dm_error("%s: DPCD DSC bits-per-pixel increment not recoginzed.\n", __func__);
++		dm_error("%s: DPCD DSC bits-per-pixel increment not recognized.\n", __func__);
+ 		return false;
+ 	}
+ 	}
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+2.20.1
