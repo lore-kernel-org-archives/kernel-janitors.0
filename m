@@ -1,34 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Jun 2019 10:12:43 +0000
-Subject: [PATCH] scsi: mpt3sas: clean up a sizeof()
-Message-Id: <20190626101243.GF3242@mwanda>
+From: James Bottomley <jejb@linux.ibm.com>
+Date: Wed, 26 Jun 2019 14:22:30 +0000
+Subject: Re: [PATCH] scsi: mpt3sas: clean up a sizeof()
+Message-Id: <1561558950.3435.2.camel@linux.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190626101243.GF3242@mwanda>
+In-Reply-To: <20190626101243.GF3242@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch is just a cleanup and doesn't change run time because both
-sizeof EVENT and SCSI are 84 bytes.  But this is clearly a cut and paste
-error and the SCSI struct was intended.
+On Wed, 2019-06-26 at 13:12 +0300, Dan Carpenter wrote:
+> This patch is just a cleanup and doesn't change run time because both
+> sizeof EVENT and SCSI are 84 bytes.  But this is clearly a cut and
+> paste
+> error and the SCSI struct was intended.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/scsi/mpt3sas/mpt3sas_ctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> index d4ecfbbe738c..06a901ed743c 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> @@ -3280,7 +3280,7 @@ diag_trigger_scsi_store(struct device *cdev,
+>  	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
+>  	sz = min(sizeof(struct SL_WH_SCSI_TRIGGERS_T), count);
+>  	memset(&ioc->diag_trigger_scsi, 0,
+> -	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
+> +	    sizeof(struct SL_WH_SCSI_TRIGGERS_T));
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please can we make this the correct pattern of
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index d4ecfbbe738c..06a901ed743c 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -3280,7 +3280,7 @@ diag_trigger_scsi_store(struct device *cdev,
- 	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
- 	sz = min(sizeof(struct SL_WH_SCSI_TRIGGERS_T), count);
- 	memset(&ioc->diag_trigger_scsi, 0,
--	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
-+	    sizeof(struct SL_WH_SCSI_TRIGGERS_T));
- 	memcpy(&ioc->diag_trigger_scsi, buf, sz);
- 	if (ioc->diag_trigger_scsi.ValidEntries > NUM_VALID_ENTRIES)
- 		ioc->diag_trigger_scsi.ValidEntries = NUM_VALID_ENTRIES;
--- 
-2.20.1
+sizeof(ioc->diag_trigger_scsi)
+
+James
