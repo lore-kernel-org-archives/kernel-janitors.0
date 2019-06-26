@@ -1,38 +1,38 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 01 Jun 2019 07:22:08 +0000
-Subject: [PATCH -next] drm/amd/display: Use kmemdup in dc_copy_stream()
-Message-Id: <20190601072208.193673-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 26 Jun 2019 16:44:11 +0000
+Subject: [PATCH] net/mlx5: remove redundant assignment to ret
+Message-Id: <20190626164411.20403-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: harry.wentland@amd.com, sunpeng.li@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, hanghong.ma@amd.com, Jun.Lei@amd.com, Wenjing.Liu@amd.com, Krunoslav.Kovac@amd.com, nicholas.kazlauskas@amd.com, David.Francis@amd.com, Bhawanpreet.Lakha@amd.com
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation.
+From: Colin Ian King <colin.king@canonical.com>
 
-Detected by coccinelle.
+Variable ret is being initialized with a value that is never read and
+ret is being re-assigned later on.  The initialization is redundant
+and can be removed.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_stream.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-index a002e690814f..b166c732b532 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
-@@ -167,12 +167,11 @@ struct dc_stream_state *dc_copy_stream(const struct dc_stream_state *stream)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 072b56fda27e..dd47c6d03dad 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1477,7 +1477,7 @@ static const struct pci_error_handlers mlx5_err_handler = {
+ static int mlx5_try_fast_unload(struct mlx5_core_dev *dev)
  {
- 	struct dc_stream_state *new_stream;
+ 	bool fast_teardown = false, force_teardown = false;
+-	int ret = 1;
++	int ret;
  
--	new_stream = kzalloc(sizeof(struct dc_stream_state), GFP_KERNEL);
-+	new_stream = kmemdup(stream, sizeof(struct dc_stream_state),
-+			     GFP_KERNEL);
- 	if (!new_stream)
- 		return NULL;
- 
--	memcpy(new_stream, stream, sizeof(struct dc_stream_state));
--
- 	if (new_stream->sink)
- 		dc_sink_retain(new_stream->sink);
+ 	fast_teardown = MLX5_CAP_GEN(dev, fast_teardown);
+ 	force_teardown = MLX5_CAP_GEN(dev, force_teardown);
+-- 
+2.20.1
