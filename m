@@ -1,23 +1,31 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 26 Jun 2019 13:25:34 +0000
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 26 Jun 2019 13:32:26 +0000
 Subject: Re: [PATCH][next[ drm/amd/display: fix a couple of spelling mistakes
-Message-Id: <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com>
+Message-Id: <2bd65b8f-f278-1000-d9a2-6476fc3a497f@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190626132427.12615-1-colin.king@canonical.com>
-In-Reply-To: <20190626132427.12615-1-colin.king@canonical.com>
+ <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com>
+In-Reply-To: <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Nikola Cornij <nikola.cornij@amd.com>, Wenjing Liu <Wenjing.Liu@amd.com>, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Wenjing Liu <Wenjing.Liu@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, Nikola Cornij <nikola.cornij@amd.com>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 
-Hi Colin,
+On 26/06/2019 14:25, Daniel Stone wrote:
+> Hi Colin,
+> 
+> On Wed, 26 Jun 2019 at 14:24, Colin King <colin.king@canonical.com> wrote:
+>> There are a couple of spelling mistakes in dm_error messages and
+>> a comment. Fix these.
+> 
+> Whilst there, you might fix the '[next[' typo in the commit message.
 
-On Wed, 26 Jun 2019 at 14:24, Colin King <colin.king@canonical.com> wrote:
-> There are a couple of spelling mistakes in dm_error messages and
-> a comment. Fix these.
+Ugh, fickle fingers. Maybe the upstream devs will fix that before
+applying...
 
-Whilst there, you might fix the '[next[' typo in the commit message.
 
-Cheers,
-Daniel
+> 
+> Cheers,
+> Daniel
+> 
