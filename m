@@ -1,144 +1,172 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Wed, 26 Jun 2019 13:37:11 +0000
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Wed, 26 Jun 2019 14:26:52 +0000
 Subject: Re: [Intel-gfx] [PATCH V4] drm/drm_vblank: Change EINVAL by the correct errno
-Message-Id: <CADKXj+5+QHr1a0aiVZ1cSiPbtZhUAjmqiTmoQHGyEhodbcA2WQ@mail.gmail.com>
+Message-Id: <20190626142652.GL12905@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190619020750.swzerehjbvx6sbk2@smtp.gmail.com>
- <20190619074856.GJ12905@phenom.ffwll.local> <20190619075059.GK12905@phenom.ffwll.local>
- <20190626020005.vb5gmqcvkyzgcjee@smtp.gmail.com> <CAKMK7uEd71XTeuZeu1Km8Vq1K1VJJbgANyaZNWm4v18Qh-OqVw@mail.gmail.com>
-In-Reply-To: <CAKMK7uEd71XTeuZeu1Km8Vq1K1VJJbgANyaZNWm4v18Qh-OqVw@mail.gmail.com>
+ <20190619074856.GJ12905@phenom.ffwll.local>
+ <20190619075059.GK12905@phenom.ffwll.local>
+ <20190626020005.vb5gmqcvkyzgcjee@smtp.gmail.com>
+ <CAKMK7uEd71XTeuZeu1Km8Vq1K1VJJbgANyaZNWm4v18Qh-OqVw@mail.gmail.com>
+ <CADKXj+5+QHr1a0aiVZ1cSiPbtZhUAjmqiTmoQHGyEhodbcA2WQ@mail.gmail.com>
+In-Reply-To: <CADKXj+5+QHr1a0aiVZ1cSiPbtZhUAjmqiTmoQHGyEhodbcA2WQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, intel-gfx <intel-gfx@lists.freedesktop.org>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, intel-gfx <intel-gfx@lists.freedesktop.org>
 
-On Wed, Jun 26, 2019 at 4:53 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Wed, Jun 26, 2019 at 4:00 AM Rodrigo Siqueira
-> <rodrigosiqueiramelo@gmail.com> wrote:
+On Wed, Jun 26, 2019 at 10:37:11AM -0300, Rodrigo Siqueira wrote:
+> On Wed, Jun 26, 2019 at 4:53 AM Daniel Vetter <daniel@ffwll.ch> wrote:
 > >
-> > On 06/19, Daniel Vetter wrote:
-> > > On Wed, Jun 19, 2019 at 09:48:56AM +0200, Daniel Vetter wrote:
-> > > > On Tue, Jun 18, 2019 at 11:07:50PM -0300, Rodrigo Siqueira wrote:
-> > > > > For historical reason, the function drm_wait_vblank_ioctl always return
-> > > > > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > > > > for the userspace make detailed verification of the problem and take
-> > > > > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > > > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > > > > support vblank or not. If the driver does not support VBlank, the
-> > > > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > > > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > > > > Additionally, some operations are unsupported by this function, and
-> > > > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > > > > libdrm, which is used by many compositors; because of this, it is
-> > > > > important to check if this change breaks any compositor. In this sense,
-> > > > > the following projects were examined:
-> > > > >
-> > > > > * Drm-hwcomposer
-> > > > > * Kwin
-> > > > > * Sway
-> > > > > * Wlroots
-> > > > > * Wayland-core
-> > > > > * Weston
-> > > > > * Xorg (67 different drivers)
-> > > > >
-> > > > > For each repository the verification happened in three steps:
-> > > > >
-> > > > > * Update the main branch
-> > > > > * Look for any occurrence "drmWaitVBlank" with the command:
-> > > > >   git grep -n "drmWaitVBlank"
-> > > > > * Look in the git history of the project with the command:
-> > > > >   git log -SdrmWaitVBlank
-> > > > >
-> > > > > Finally, none of the above projects validate the use of EINVAL which
-> > > > > make safe, at least for these projects, to change the return values.
-> > > > >
-> > > > > Change since V3:
-> > > > >  - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
-> > > > >
-> > > > > Change since V2:
-> > > > >  Daniel Vetter and Chris Wilson
-> > > > >  - Replace ENOTTY by EOPNOTSUPP
-> > > > >  - Return EINVAL if the parameters are wrong
-> > > > >
-> > > >
-> > > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > >
-> > > > Apologies for the confusion on the last time around. btw if someone tells
-> > > > you "r-b (or a-b) with these changes", then just apply the r-b/a-b tag
-> > > > next time around. Otherwise people will re-review the same thing over and
-> > > > over again.
+> > On Wed, Jun 26, 2019 at 4:00 AM Rodrigo Siqueira
+> > <rodrigosiqueiramelo@gmail.com> wrote:
 > > >
-> > > btw when resending patches it's good practice to add anyone who commented
-> > > on it (or who commented on the igt test for the same patch and other way
-> > > round) onto the explicit Cc: list of the patch. That way it's easier for
-> > > them to follow the patch evolution and do a quick r-b once they're happy.
-> >
-> > Thanks for these valuable tips.
-> > Do you think that is a good idea to resend this patch CC's everybody? Or
-> > is it ok if I just apply it?
->
-> Hm I thought I answered that on irc ... but just today I realized that
-> we missed 2 ioctls. There's also drm_crtc_get_sequence_ioctl and
-> drm_crtc_queue_sequence_ioctl which have the same dev->irq_enabled
-> check and I think should be treated the same.
-
-Hi,
-
-I reexamined all the composers described in the commit message (latest
-versions) to check if any project use and validate the return value
-from  drm_crtc_get_sequence_ioctl and drm_crtc_queue_sequence_ioctl. I
-noticed that mesa and xserver use them. FWIU replace EINVAL by
-EOPNOTSUPP is harmless for mesa project, however it is not the same
-for xserver.
-
-Take a look at line 189 and 238 of hw/xfree86/drivers/modesetting/vblank.c
-
-* https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L238
-* https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L189
-
-A little bit below the above lines, you can see a validation like that:
-
-  if (ret != -1 || (errno != ENOTTY && errno != EINVAL))
-
-In other words, if we change the EINVAL by EOPNOTSUPP
-drm_crtc_[get|queue]_sequence_ioctl we could break xserver. I noticed
-that Keith Packard introduced these ioctls to the kernel and also to
-the xserver, I will prepare a new version and CC Keith. Should I do
-another thing to notify xserver developers?
-
-Thanks
-
-> Can you pls resend with those addressed too? Then you can also resend
-> with the cc's all added.
-> -Daniel
->
-> >
-> > > If you don't do that then much bigger chances your patch gets ignored.
-> > > -Daniel
+> > > On 06/19, Daniel Vetter wrote:
+> > > > On Wed, Jun 19, 2019 at 09:48:56AM +0200, Daniel Vetter wrote:
+> > > > > On Tue, Jun 18, 2019 at 11:07:50PM -0300, Rodrigo Siqueira wrote:
+> > > > > > For historical reason, the function drm_wait_vblank_ioctl always return
+> > > > > > -EINVAL if something gets wrong. This scenario limits the flexibility
+> > > > > > for the userspace make detailed verification of the problem and take
+> > > > > > some action. In particular, the validation of “if (!dev->irq_enabled)”
+> > > > > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> > > > > > support vblank or not. If the driver does not support VBlank, the
+> > > > > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
+> > > > > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> > > > > > Additionally, some operations are unsupported by this function, and
+> > > > > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+> > > > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+> > > > > > libdrm, which is used by many compositors; because of this, it is
+> > > > > > important to check if this change breaks any compositor. In this sense,
+> > > > > > the following projects were examined:
+> > > > > >
+> > > > > > * Drm-hwcomposer
+> > > > > > * Kwin
+> > > > > > * Sway
+> > > > > > * Wlroots
+> > > > > > * Wayland-core
+> > > > > > * Weston
+> > > > > > * Xorg (67 different drivers)
+> > > > > >
+> > > > > > For each repository the verification happened in three steps:
+> > > > > >
+> > > > > > * Update the main branch
+> > > > > > * Look for any occurrence "drmWaitVBlank" with the command:
+> > > > > >   git grep -n "drmWaitVBlank"
+> > > > > > * Look in the git history of the project with the command:
+> > > > > >   git log -SdrmWaitVBlank
+> > > > > >
+> > > > > > Finally, none of the above projects validate the use of EINVAL which
+> > > > > > make safe, at least for these projects, to change the return values.
+> > > > > >
+> > > > > > Change since V3:
+> > > > > >  - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
+> > > > > >
+> > > > > > Change since V2:
+> > > > > >  Daniel Vetter and Chris Wilson
+> > > > > >  - Replace ENOTTY by EOPNOTSUPP
+> > > > > >  - Return EINVAL if the parameters are wrong
+> > > > > >
+> > > > >
+> > > > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > > >
+> > > > > Apologies for the confusion on the last time around. btw if someone tells
+> > > > > you "r-b (or a-b) with these changes", then just apply the r-b/a-b tag
+> > > > > next time around. Otherwise people will re-review the same thing over and
+> > > > > over again.
 > > > >
-> > > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/drm_vblank.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > btw when resending patches it's good practice to add anyone who commented
+> > > > on it (or who commented on the igt test for the same patch and other way
+> > > > round) onto the explicit Cc: list of the patch. That way it's easier for
+> > > > them to follow the patch evolution and do a quick r-b once they're happy.
+> > >
+> > > Thanks for these valuable tips.
+> > > Do you think that is a good idea to resend this patch CC's everybody? Or
+> > > is it ok if I just apply it?
+> >
+> > Hm I thought I answered that on irc ... but just today I realized that
+> > we missed 2 ioctls. There's also drm_crtc_get_sequence_ioctl and
+> > drm_crtc_queue_sequence_ioctl which have the same dev->irq_enabled
+> > check and I think should be treated the same.
+> 
+> Hi,
+> 
+> I reexamined all the composers described in the commit message (latest
+> versions) to check if any project use and validate the return value
+> from  drm_crtc_get_sequence_ioctl and drm_crtc_queue_sequence_ioctl. I
+> noticed that mesa and xserver use them. FWIU replace EINVAL by
+> EOPNOTSUPP is harmless for mesa project, however it is not the same
+> for xserver.
+> 
+> Take a look at line 189 and 238 of hw/xfree86/drivers/modesetting/vblank.c
+> 
+> * https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L238
+> * https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L189
+> 
+> A little bit below the above lines, you can see a validation like that:
+> 
+>   if (ret != -1 || (errno != ENOTTY && errno != EINVAL))
+> 
+> In other words, if we change the EINVAL by EOPNOTSUPP
+> drm_crtc_[get|queue]_sequence_ioctl we could break xserver. I noticed
+> that Keith Packard introduced these ioctls to the kernel and also to
+> the xserver, I will prepare a new version and CC Keith. Should I do
+> another thing to notify xserver developers?
+
+If you want cc: xorg-devel or so, but I think they all moved to gitlab and
+the m-l is pretty dead. Cc'ing Keith should be enough.
+
+I looked at the code and I think we're fine. Better than fine actually,
+because if dev->irq_enabled = false then we really shouldn't use vblank
+ioctl, no matter whether the new or old version.
+
+So for drivers without vblank support, all that will happen is that we
+leave ->has_queue_sequence as false and then fail a bit later on with the
+legacy ioctl. Should be all harmless.
+
+Note that the idea behind filtering out EINVAL is that if you do a
+QueueSequence on a crtc that's currently off, then it'll fail with EINVAL.
+But the ioctl still works, hence why we want to accept that. Setting
+has_queue_sequence = TRUE for the case where there's actually no vblank
+might trigger a bug somewhere later on.
+-Daniel
+
+> 
+> Thanks
+> 
+> > Can you pls resend with those addressed too? Then you can also resend
+> > with the cc's all added.
+> > -Daniel
+> >
+> > >
+> > > > If you don't do that then much bigger chances your patch gets ignored.
+> > > > -Daniel
 > > > > >
-> > > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > > > > index 603ab105125d..bed233361614 100644
-> > > > > --- a/drivers/gpu/drm/drm_vblank.c
-> > > > > +++ b/drivers/gpu/drm/drm_vblank.c
-> > > > > @@ -1582,7 +1582,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > > > >   unsigned int flags, pipe, high_pipe;
+> > > > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/gpu/drm/drm_vblank.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> > > > > > index 603ab105125d..bed233361614 100644
+> > > > > > --- a/drivers/gpu/drm/drm_vblank.c
+> > > > > > +++ b/drivers/gpu/drm/drm_vblank.c
+> > > > > > @@ -1582,7 +1582,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+> > > > > >   unsigned int flags, pipe, high_pipe;
+> > > > > >
+> > > > > >   if (!dev->irq_enabled)
+> > > > > > -         return -EINVAL;
+> > > > > > +         return -EOPNOTSUPP;
+> > > > > >
+> > > > > >   if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> > > > > >           return -EINVAL;
+> > > > > > --
+> > > > > > 2.21.0
 > > > > >
-> > > > >   if (!dev->irq_enabled)
-> > > > > -         return -EINVAL;
-> > > > > +         return -EOPNOTSUPP;
-> > > > >
-> > > > >   if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > > > >           return -EINVAL;
 > > > > > --
-> > > > > 2.21.0
+> > > > > Daniel Vetter
+> > > > > Software Engineer, Intel Corporation
+> > > > > http://blog.ffwll.ch
 > > > >
 > > > > --
 > > > > Daniel Vetter
@@ -146,28 +174,28 @@ Thanks
 > > > > http://blog.ffwll.ch
 > > >
 > > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > http://blog.ffwll.ch
+> > > Rodrigo Siqueira
+> > > https://siqueira.tech
+> > > _______________________________________________
+> > > Intel-gfx mailing list
+> > > Intel-gfx@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+> >
+> >
 > >
 > > --
-> > Rodrigo Siqueira
-> > https://siqueira.tech
-> > _______________________________________________
-> > Intel-gfx mailing list
-> > Intel-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/intel-gfx
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-
-
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> 
+> 
+> 
+> -- 
+> 
+> Rodrigo Siqueira
+> https://siqueira.tech
 
 -- 
-
-Rodrigo Siqueira
-https://siqueira.tech
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
