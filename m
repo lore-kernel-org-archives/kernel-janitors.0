@@ -1,43 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 18 Jun 2019 14:15:03 +0000
-Subject: Re: [PATCH][next] netfilter: synproxy: ensure zero is returned on non-error return path
-Message-Id: <19114a71-d0e7-b1bb-3aae-9bb6c5a819e5@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Jun 2019 10:10:41 +0000
+Subject: [PATCH] intel-ish-hid: Fix a use after free in load_fw_from_host()
+Message-Id: <20190626101041.GE3242@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618141319.14961-1-colin.king@canonical.com>
-In-Reply-To: <20190618141319.14961-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 18/06/2019 15:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently function nf_synproxy_ipv6_init returns an uninitialized
-> garbage value in variable ret on a successful return.  Fix this by
-> returning zero on success.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: d7f9b2f18eae ("netfilter: synproxy: extract SYNPROXY infrastructure from {ipt, ip6t}_SYNPROXY")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/netfilter/nf_synproxy_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/nf_synproxy_core.c b/net/netfilter/nf_synproxy_core.c
-> index 50677285f82e..701f880d01e6 100644
-> --- a/net/netfilter/nf_synproxy_core.c
-> +++ b/net/netfilter/nf_synproxy_core.c
-> @@ -1223,7 +1223,7 @@ nf_synproxy_ipv6_init(struct synproxy_net *snet, struct net *net)
->  	}
->  
->  	snet->hook_ref6++;
-> -	return err;
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(nf_synproxy_ipv6_init);
->  
-> 
-Scratch that, I've noticed the same issue in the ipv4 code too. I'll
-send a V2.
+We have to print the filename first before we can kfree it.
+
+Fixes: 91b228107da3 ("HID: intel-ish-hid: ISH firmware loader client driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hid/intel-ish-hid/ishtp-fw-loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
+index 22ba21457035..aa2dbed30fc3 100644
+--- a/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
++++ b/drivers/hid/intel-ish-hid/ishtp-fw-loader.c
+@@ -816,9 +816,9 @@ static int load_fw_from_host(struct ishtp_cl_data *client_data)
+ 		goto end_err_fw_release;
+ 
+ 	release_firmware(fw);
+-	kfree(filename);
+ 	dev_info(cl_data_to_dev(client_data), "ISH firmware %s loaded\n",
+ 		 filename);
++	kfree(filename);
+ 	return 0;
+ 
+ end_err_fw_release:
+-- 
+2.20.1
