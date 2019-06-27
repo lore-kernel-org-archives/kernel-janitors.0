@@ -1,21 +1,50 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 19 Jun 2019 10:51:22 +0000
-Subject: Re: [PATCH][V2][next] netfilter: synproxy: ensure zero is returned on non-error return path
-Message-Id: <20190619105122.envwm53ew7isp4m2@salvia>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 27 Jun 2019 07:15:21 +0000
+Subject: [bug report] lib/vdso: Provide generic VDSO implementation
+Message-Id: <20190627071521.GA22903@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190618142244.16463-1-colin.king@canonical.com>
-In-Reply-To: <20190618142244.16463-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 03:22:44PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently functions nf_synproxy_{ipc4|ipv6}_init return an uninitialized
-> garbage value in variable ret on a successful return.  Fix this by
-> returning zero on success.
+Hello Vincenzo Frascino,
 
-Applied, thanks Colin.
+This is a semi-automatic email about new static checker warnings.
+
+The patch 00b26474c2f1: "lib/vdso: Provide generic VDSO
+implementation" from Jun 21, 2019, leads to the following Smatch
+complaint:
+
+    arch/x86/entry/vdso/vdso32/../../../../../lib/vdso/gettimeofday.c:120 __cvdso_clock_gettime32()
+    error: we previously assumed 'res' could be null (see line 107)
+
+lib/vdso/gettimeofday.c
+   101  static __maybe_unused int
+   102  __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+   103  {
+   104          struct __kernel_timespec ts;
+   105          int ret;
+   106	
+   107		if (res = NULL)
+                    ^^^^^^^^^^^
+   108			goto fallback;
+   109	
+   110		ret = __cvdso_clock_gettime(clock, &ts);
+   111	
+   112		if (ret = 0) {
+   113			res->tv_sec = ts.tv_sec;
+   114			res->tv_nsec = ts.tv_nsec;
+   115		}
+   116	
+   117		return ret;
+   118	
+   119	fallback:
+   120		return clock_gettime_fallback(clock, (struct __kernel_timespec *)res);
+                                                                                 ^^^
+On x86 this "res" always gets dereferenced.
+
+   121	}
+
+regards,
+dan carpenter
