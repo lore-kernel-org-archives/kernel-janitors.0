@@ -1,54 +1,49 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 23 Jun 2019 06:10:21 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variables 'ret'
-Message-Id: <alpine.DEB.2.21.1906230809400.4961@hadrien>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 27 Jun 2019 07:53:50 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'psp_enabled'
+Message-Id: <20190627075350.86800-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190622030314.169640-1-maowenan@huawei.com> <20190622104318.GT28859@kadam> <20190623060027.GU28859@kadam>
-In-Reply-To: <20190623060027.GU28859@kadam>
+References: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1537971334-130152-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mao Wenan <maowenan@huawei.com>, airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, harry.wentland@amd.com, tianci.yin@amd.com, tao.zhou1@amd.com, leo.liu@amd.com, ray.huang@amd.com, Jack.Xiao@amd.com, Hawking.Zhang@amd.com, kenneth.feng@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+drivers/gpu/drm/amd/amdgpu/nv.c: In function 'nv_common_early_init':
+drivers/gpu/drm/amd/amdgpu/nv.c:471:7: warning:
+ variable 'psp_enabled' set but not used [-Wunused-but-set-variable]
 
-On Sun, 23 Jun 2019, Dan Carpenter wrote:
+It's not used since inroduction in
+commit c6b6a42175f5 ("drm/amdgpu: add navi10 common ip block (v3)")
 
-> On Sat, Jun 22, 2019 at 01:43:19PM +0300, Dan Carpenter wrote:
-> > On Sat, Jun 22, 2019 at 11:03:14AM +0800, Mao Wenan wrote:
-> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> > > index 0e6dba9..0bf4dd9 100644
-> > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> > > @@ -246,12 +246,10 @@ static int init_pmu_by_type(struct amdgpu_device *adev,
-> > >  /* init amdgpu_pmu */
-> > >  int amdgpu_pmu_init(struct amdgpu_device *adev)
-> > >  {
-> > > -	int ret = 0;
-> > > -
-> > >  	switch (adev->asic_type) {
-> > >  	case CHIP_VEGA20:
-> > >  		/* init df */
-> > > -		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
-> > > +		init_pmu_by_type(adev, df_v3_6_attr_groups,
-> > >  				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
-> > >  				       DF_V3_6_MAX_COUNTERS);
-> >
-> >
-> > You're resending this for other reasons, but don't forget to update the
-> > indenting on the arguments so they still line up with the '('.
-> >
->
-> Sorry, I was unclear.  If you pull the init_pmu_by_type( back 6
-> characters then you also need to pull the "DF" back 6 characters.
->
-> 		init_pmu_by_type(adev, df_v3_6_attr_groups, "DF", "amdgpu_df",
-> 				 PERF_TYPE_AMDGPU_DF, DF_V3_6_MAX_COUNTERS);
->
-> You can actually fit it into two lines afterwards.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/nv.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-My suggestion was to keep the ret = instead of discarding the indication
-of failure, so I think that this is not relevant.
-
-julia
+diff --git a/drivers/gpu/drm/amd/amdgpu/nv.c b/drivers/gpu/drm/amd/amdgpu/nv.c
+index af20ffb55c54..8b9fa3db8daa 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nv.c
++++ b/drivers/gpu/drm/amd/amdgpu/nv.c
+@@ -468,7 +468,6 @@ static const struct amdgpu_asic_funcs nv_asic_funcs  
+ static int nv_common_early_init(void *handle)
+ {
+-	bool psp_enabled = false;
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+ 	adev->smc_rreg = NULL;
+@@ -485,10 +484,6 @@ static int nv_common_early_init(void *handle)
+ 
+ 	adev->asic_funcs = &nv_asic_funcs;
+ 
+-	if (amdgpu_device_ip_get_ip_block(adev, AMD_IP_BLOCK_TYPE_PSP) &&
+-	    (amdgpu_ip_block_mask & (1 << AMD_IP_BLOCK_TYPE_PSP)))
+-		psp_enabled = true;
+-
+ 	adev->rev_id = nv_get_rev_id(adev);
+ 	adev->external_rev_id = 0xff;
+ 	switch (adev->asic_type) {
