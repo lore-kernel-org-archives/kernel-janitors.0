@@ -1,78 +1,90 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 08 Jun 2019 11:27:25 +0000
-Subject: [PATCH] staging: davinci: fix memory leaks and check for allocation failure
-Message-Id: <20190608112725.27658-1-colin.king@canonical.com>
+Date: Thu, 27 Jun 2019 08:05:41 +0000
+Subject: [PATCH][next][V3] media: vivid: fix potential integer overflow on left shift
+Message-Id: <20190627080541.11122-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are three error return paths that don't kfree params causing a
-memory leak.  Fix this by adding an error return path that kfree's
-params before returning.  Also add a check to see params failed to
-be allocated.
+There is a potential integer overflow when int 2 is left shifted
+as this is evaluated using 32 bit arithmetic but is being used in
+a context that expects an expression of type s64.  Fix this by
+generating a mask using GENMASK to avoid a 32 bit overflow.
 
-Addresses-Coverity: ("Resource leak")
-Fixes: da43b6ccadcf ("[media] davinci: vpfe: dm365: add IPIPE support for media controller driver")
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8a99e9faa131 ("media: vivid: add HDMI (dis)connect RX emulation")
+Fixes: 79a792dafac6 ("media: vivid: add HDMI (dis)connect TX emulation")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+V2: use intermediate variables for the shifted expression to make code
+    a bit more readable.
+V3: use GENMASK rather than shifting logic, rename variables adding
+    _mask suffix.
+---
 
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-index 08c26f3c5282..52397ad0e3e2 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-@@ -1251,10 +1251,10 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
- 	struct vpfe_ipipe_device *ipipe = v4l2_get_subdevdata(sd);
- 	unsigned int i;
- 	int rval = 0;
-+	struct ipipe_module_params *params;
- 
- 	for (i = 0; i < ARRAY_SIZE(ipipe_modules); i++) {
- 		const struct ipipe_module_if *module_if;
--		struct ipipe_module_params *params;
- 		void *from, *to;
- 		size_t size;
- 
-@@ -1265,25 +1265,30 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
- 		from = *(void **)((void *)cfg + module_if->config_offset);
- 
- 		params = kmalloc(sizeof(*params), GFP_KERNEL);
-+		if (!params)
-+			return -ENOMEM;
- 		to = (void *)params + module_if->param_offset;
- 		size = module_if->param_size;
- 
- 		if (to && from && size) {
- 			if (copy_from_user(to, (void __user *)from, size)) {
- 				rval = -EFAULT;
--				break;
-+				goto error_free;
- 			}
- 			rval = module_if->set(ipipe, to);
- 			if (rval)
--				goto error;
-+				goto error_free;
- 		} else if (to && !from && size) {
- 			rval = module_if->set(ipipe, NULL);
- 			if (rval)
--				goto error;
-+				goto error_free;
- 		}
- 		kfree(params);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/vivid/vivid-ctrls.c | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/media/platform/vivid/vivid-ctrls.c b/drivers/media/platform/vivid/vivid-ctrls.c
+index 3e916c8befb7..b04997569228 100644
+--- a/drivers/media/platform/vivid/vivid-ctrls.c
++++ b/drivers/media/platform/vivid/vivid-ctrls.c
+@@ -1613,6 +1613,8 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
  	}
--error:
-+	return rval;
-+
-+error_free:
-+	kfree(params);
- 	return rval;
- }
  
+ 	if (dev->num_hdmi_inputs) {
++		s64 hdmi_input_mask = GENMASK(dev->num_hdmi_inputs - 1, 0);
++
+ 		dev->ctrl_dv_timings_signal_mode = v4l2_ctrl_new_custom(hdl_vid_cap,
+ 					&vivid_ctrl_dv_timings_signal_mode, NULL);
+ 
+@@ -1633,12 +1635,13 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 			V4L2_CID_DV_RX_RGB_RANGE, V4L2_DV_RGB_RANGE_FULL,
+ 			0, V4L2_DV_RGB_RANGE_AUTO);
+ 		dev->ctrl_rx_power_present = v4l2_ctrl_new_std(hdl_vid_cap,
+-			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1);
++			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0, hdmi_input_mask,
++			0, hdmi_input_mask);
+ 
+ 	}
+ 	if (dev->num_hdmi_outputs) {
++		s64 hdmi_output_mask = GENMASK(dev->num_hdmi_outputs - 1, 0);
++
+ 		/*
+ 		 * We aren't doing anything with this at the moment, but
+ 		 * HDMI outputs typically have this controls.
+@@ -1652,17 +1655,14 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 		dev->ctrl_display_present = v4l2_ctrl_new_custom(hdl_vid_out,
+ 			&vivid_ctrl_display_present, NULL);
+ 		dev->ctrl_tx_hotplug = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_HOTPLUG, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_HOTPLUG, 0, hdmi_output_mask,
++			0, hdmi_output_mask);
+ 		dev->ctrl_tx_rxsense = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_RXSENSE, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_RXSENSE, 0, hdmi_output_mask,
++			0, hdmi_output_mask);
+ 		dev->ctrl_tx_edid_present = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0, hdmi_output_mask,
++			0, hdmi_output_mask);
+ 	}
+ 	if ((dev->has_vid_cap && dev->has_vid_out) ||
+ 	    (dev->has_vbi_cap && dev->has_vbi_out))
 -- 
 2.20.1
