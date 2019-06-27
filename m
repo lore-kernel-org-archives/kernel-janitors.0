@@ -1,21 +1,38 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Fri, 14 Jun 2019 23:20:27 +0000
-Subject: Re: [PATCH] selftests/bpf: signedness bug in enable_all_controllers()
-Message-Id: <e81023df-a17a-57ae-854a-5b6e11ffef15@iogearbox.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 27 Jun 2019 13:16:39 +0000
+Subject: [PATCH][next] regulator: lp87565: fix missing break in switch statement
+Message-Id: <20190627131639.6394-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190613070021.GG16334@mwanda>
-In-Reply-To: <20190613070021.GG16334@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Shuah Khan <shuah@kernel.org>, Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/13/2019 09:00 AM, Dan Carpenter wrote:
-> The "len" variable needs to be signed for the error handling to work
-> properly.
-> 
-> Fixes: 596092ef8bea ("selftests/bpf: enable all available cgroup v2 controllers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
+break statement, causing it to fall through to a dev_err message.
+Fix this by adding in the missing break statement.
+
+Addresses-Coverity: ("Missing break in switch")
+Fixes: 7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/regulator/lp87565-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
+index 993c11702083..5d067f7c2116 100644
+--- a/drivers/regulator/lp87565-regulator.c
++++ b/drivers/regulator/lp87565-regulator.c
+@@ -180,6 +180,7 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+ 	case LP87565_DEVICE_TYPE_LP87561_Q1:
+ 		min_idx = LP87565_BUCK_3210;
+ 		max_idx = LP87565_BUCK_3210;
++		break;
+ 	default:
+ 		dev_err(lp87565->dev, "Invalid lp config %d\n",
+ 			lp87565->dev_type);
+-- 
+2.20.1
