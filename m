@@ -1,19 +1,17 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 27 Jun 2019 07:15:52 +0000
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Thu, 27 Jun 2019 07:22:26 +0000
 Subject: Re: [PATCH][next][V2] media: vivid: fix potential integer overflow on left shift
-Message-Id: <5D146D28.90204@bfs.de>
+Message-Id: <8ccbbf10-7af1-b7e3-69ba-a24fe0cda86d@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190626144746.27607-1-colin.king@canonical.com>
 In-Reply-To: <20190626144746.27607-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-Am 26.06.2019 16:47, schrieb Colin King:
+On 6/26/19 4:47 PM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > There is a potential integer overflow when int 2 is left shifted
@@ -25,11 +23,6 @@ Am 26.06.2019 16:47, schrieb Colin King:
 > Fixes: 8a99e9faa131 ("media: vivid: add HDMI (dis)connect RX emulation")
 > Fixes: 79a792dafac6 ("media: vivid: add HDMI (dis)connect TX emulation")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: wharms <wharms@bfs.de>
- looks less confusing now, thx
-
-
 > ---
 > V2: use intermediate variables for the shifted expression to make code
 >     a bit more readable.
@@ -46,6 +39,20 @@ Reviewed-by: wharms <wharms@bfs.de>
 >  
 >  	if (dev->num_hdmi_inputs) {
 > +		s64 hdmi_input = (2ULL << (dev->num_hdmi_inputs - 1)) - 1;
+
+Please call this hdmi_input_mask, ditto for the hdmi_output. This is a bitmask,
+not an HDMI input index.
+
+We should also use the GENMASK macro here:
+
+	s64 hdmi_input_mask = GENMASK(dev->num_hdmi_inputs - 1, 0);
+
+This is a lot easier to understand.
+
+Regards,
+
+	Hans
+
 > +
 >  		dev->ctrl_dv_timings_signal_mode = v4l2_ctrl_new_custom(hdl_vid_cap,
 >  					&vivid_ctrl_dv_timings_signal_mode, NULL);
@@ -91,3 +98,4 @@ Reviewed-by: wharms <wharms@bfs.de>
 >  	}
 >  	if ((dev->has_vid_cap && dev->has_vid_out) ||
 >  	    (dev->has_vbi_cap && dev->has_vbi_out))
+> 
