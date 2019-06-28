@@ -1,96 +1,52 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Date: Fri, 14 Jun 2019 17:20:22 +0000
-Subject: Re: Drop use of DRM_WAIT_ON() [Was: drm/drm_vblank: Change EINVAL by the correct errno]
-Message-Id: <20190614172022.GE5942@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Jun 2019 09:54:29 +0000
+Subject: [PATCH] ALSA: seq: fix incorrect order of dest_client/dest_ports arguments
+Message-Id: <20190628095429.13369-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
- <20190613050403.GA21502@ravnborg.org>
-In-Reply-To: <20190613050403.GA21502@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 07:04:03AM +0200, Sam Ravnborg wrote:
-> Hi Rodrigo.
-> 
-> On Wed, Jun 12, 2019 at 11:10:54PM -0300, Rodrigo Siqueira wrote:
-> > For historical reason, the function drm_wait_vblank_ioctl always return
-> > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > for the userspace make detailed verification of the problem and take
-> > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > support vblank or not. If the driver does not support VBlank, the
-> > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > Additionally, some operations are unsupported by this function, and
-> > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > libdrm, which is used by many compositors; because of this, it is
-> > important to check if this change breaks any compositor. In this sense,
-> > the following projects were examined:
-> > 
-> > * Drm-hwcomposer
-> > * Kwin
-> > * Sway
-> > * Wlroots
-> > * Wayland-core
-> > * Weston
-> > * Xorg (67 different drivers)
-> > 
-> > For each repository the verification happened in three steps:
-> > 
-> > * Update the main branch
-> > * Look for any occurrence "drmWaitVBlank" with the command:
-> >   git grep -n "drmWaitVBlank"
-> > * Look in the git history of the project with the command:
-> >   git log -SdrmWaitVBlank
-> > 
-> > Finally, none of the above projects validate the use of EINVAL which
-> > make safe, at least for these projects, to change the return values.
-> > 
-> > Change since V2:
-> >  Daniel Vetter and Chris Wilson
-> >  - Replace ENOTTY by EOPNOTSUPP
-> >  - Return EINVAL if the parameters are wrong
-> > 
-> > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > ---
-> > Update:
-> >   Now IGT has a way to validate if a driver has vblank support or not.
-> >   See: https://gitlab.freedesktop.org/drm/igt-gpu-tools/commit/2d244aed69165753f3adbbd6468db073dc1acf9A
-> > 
-> >  drivers/gpu/drm/drm_vblank.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > index 0d704bddb1a6..d76a783a7d4b 100644
-> > --- a/drivers/gpu/drm/drm_vblank.c
-> > +++ b/drivers/gpu/drm/drm_vblank.c
-> > @@ -1578,10 +1578,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> >  	unsigned int flags, pipe, high_pipe;
-> >  
-> >  	if (!dev->irq_enabled)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> >  
-> >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> >  
-> >  	if (vblwait->request.type &
-> >  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
-> 
-> When touching this function, could I ask you to take a look at
-> eliminating the use of DRM_WAIT_ON()?
-> It comes from the deprecated drm_os_linux.h header, and it is only of
-> the few remaining users of DRM_WAIT_ON().
+From: Colin Ian King <colin.king@canonical.com>
 
-IIRC all previous attempts at removing that ended up with
-regressions. I think there are some dragons lurking inside that
-macro.
+There are two occurrances of a call to snd_seq_oss_fill_addr where
+the dest_client and dest_port arguments are in the wrong order. Fix
+this by swapping them around.
 
+Addresses-Coverity: ("Arguments in wrong order")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/seq/oss/seq_oss_ioctl.c | 2 +-
+ sound/core/seq/oss/seq_oss_rw.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/core/seq/oss/seq_oss_ioctl.c b/sound/core/seq/oss/seq_oss_ioctl.c
+index 96ad01fb668c..ccf682689ec9 100644
+--- a/sound/core/seq/oss/seq_oss_ioctl.c
++++ b/sound/core/seq/oss/seq_oss_ioctl.c
+@@ -49,7 +49,7 @@ static int snd_seq_oss_oob_user(struct seq_oss_devinfo *dp, void __user *arg)
+ 	if (copy_from_user(ev, arg, 8))
+ 		return -EFAULT;
+ 	memset(&tmpev, 0, sizeof(tmpev));
+-	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.port, dp->addr.client);
++	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.client, dp->addr.port);
+ 	tmpev.time.tick = 0;
+ 	if (! snd_seq_oss_process_event(dp, (union evrec *)ev, &tmpev)) {
+ 		snd_seq_oss_dispatch(dp, &tmpev, 0, 0);
+diff --git a/sound/core/seq/oss/seq_oss_rw.c b/sound/core/seq/oss/seq_oss_rw.c
+index 79ef430e56e1..537d5f423e20 100644
+--- a/sound/core/seq/oss/seq_oss_rw.c
++++ b/sound/core/seq/oss/seq_oss_rw.c
+@@ -161,7 +161,7 @@ insert_queue(struct seq_oss_devinfo *dp, union evrec *rec, struct file *opt)
+ 	memset(&event, 0, sizeof(event));
+ 	/* set dummy -- to be sure */
+ 	event.type = SNDRV_SEQ_EVENT_NOTEOFF;
+-	snd_seq_oss_fill_addr(dp, &event, dp->addr.port, dp->addr.client);
++	snd_seq_oss_fill_addr(dp, &event, dp->addr.client, dp->addr.port);
+ 
+ 	if (snd_seq_oss_process_event(dp, rec, &event))
+ 		return 0; /* invalid event - no need to insert queue */
 -- 
-Ville Syrjälä
-Intel
+2.20.1
