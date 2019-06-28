@@ -1,45 +1,39 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Wed, 19 Jun 2019 23:13:15 +0000
-Subject: RE: [Intel-wired-lan] [PATCH][next][V2] ixgbe: fix potential u32 overflow on shift
-Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3F8D26@ORSMSX104.amr.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Jun 2019 15:13:54 +0000
+Subject: [PATCH][next] drm/amd/powerplay: fix out of memory check on od8_settings
+Message-Id: <20190628151354.14107-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190607181920.23339-1-colin.king@canonical.com>
-In-Reply-To: <20190607181920.23339-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kevin Wang <kevin1.wang@amd.com>, Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Colin King
-> Sent: Friday, June 7, 2019 11:19 AM
-> To: Keller, Jacob E <jacob.e.keller@intel.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; David S . Miller <davem@davemloft.net>;
-> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH][next][V2] ixgbe: fix potential u32
-> overflow on shift
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The u32 variable rem is being shifted using u32 arithmetic however it is being
-> passed to div_u64 that expects the expression to be a u64.
-> The 32 bit shift may potentially overflow, so cast rem to a u64 before shifting
-> to avoid this.  Also remove comment about overflow.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: cd4583206990 ("ixgbe: implement support for SDP/PPS output on X550
-> hardware")
-> Fixes: 68d9676fc04e ("ixgbe: fix PTP SDP pin setup on X540 hardware")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: update comment
-> 
-> ---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+The null pointer check on od8_settings is currently the opposite of what
+it is intended to do. Fix this by adding in the missing ! operator.
+
+Addressed-Coverity: ("Resource leak")
+Fixes: 0c83d32c565c ("drm/amd/powerplay: simplified od_settings for each asic")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/vega20_ppt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
+index 0f14fe14ecd8..eb9e6b3a5265 100644
+--- a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
+@@ -1501,8 +1501,7 @@ static int vega20_set_default_od8_setttings(struct smu_context *smu)
+ 		return -EINVAL;
+ 
+ 	od8_settings = kzalloc(sizeof(struct vega20_od8_settings), GFP_KERNEL);
+-
+-	if (od8_settings)
++	if (!od8_settings)
+ 		return -ENOMEM;
+ 
+ 	smu->od_settings = (void *)od8_settings;
+-- 
+2.20.1
