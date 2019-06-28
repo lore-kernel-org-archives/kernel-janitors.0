@@ -1,38 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Jun 2019 12:37:23 +0000
-Subject: [PATCH][next] drm/amd/amdgpu: remove redundant assignment to variable res
-Message-Id: <20190629123723.12752-1-colin.king@canonical.com>
+Date: Fri, 28 Jun 2019 14:33:20 +0000
+Subject: [PATCH] drm/amdgpu: fix a missing break in a switch statement
+Message-Id: <20190628143320.5182-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Hawking Zhang <Hawking.Zhang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable res is being initialized with a value that is never read
-and res is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+Currently for the AMDGPU_IRQ_STATE_DISABLE there is a missing break
+causing the code to fall through to the AMDGPU_IRQ_STATE_ENABLE case.
+Fix this by adding in the missing break statement.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Missing break in switch")
+Fixes: a644d85a5cd4 ("drm/amdgpu: add gfx v10 implementation (v10)")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index df08ea172595..9b1bd8726fc2 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4527,7 +4527,7 @@ static int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
- {
- 	uint32_t formats[32];
- 	int num_formats;
--	int res = -EPERM;
-+	int res;
- 
- 	num_formats = get_plane_formats(plane, plane_cap, formats,
- 					ARRAY_SIZE(formats));
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+index 2932ade7dbd0..c165200361b2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+@@ -4608,6 +4608,7 @@ gfx_v10_0_set_gfx_eop_interrupt_state(struct amdgpu_device *adev,
+ 		cp_int_cntl = REG_SET_FIELD(cp_int_cntl, CP_INT_CNTL_RING0,
+ 					    TIME_STAMP_INT_ENABLE, 0);
+ 		WREG32(cp_int_cntl_reg, cp_int_cntl);
++		break;
+ 	case AMDGPU_IRQ_STATE_ENABLE:
+ 		cp_int_cntl = RREG32(cp_int_cntl_reg);
+ 		cp_int_cntl = REG_SET_FIELD(cp_int_cntl, CP_INT_CNTL_RING0,
 -- 
 2.20.1
