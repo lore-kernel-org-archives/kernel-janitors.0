@@ -1,37 +1,39 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Jun 2019 14:54:43 +0000
-Subject: [PATCH][next] drm/amdkfd: fix a missing break in a switch statement
-Message-Id: <20190628145443.9754-1-colin.king@canonical.com>
+Date: Fri, 28 Jun 2019 15:28:04 +0000
+Subject: [PATCH][next] drm/amd/powerplay: remove a less than zero uint32_t check
+Message-Id: <20190628152804.16954-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philip Cox <Philip.Cox@amd.com>, Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently for the CHIP_RAVEN case there is a missing break
-causing the code to fall through to the new CHIP_NAVI10 case.
-Fix this by adding in the missing break statement.
+The check to see if the uint32_t variable 'size' is less than zero
+is redundant as it is unsigned and can never be less than zero.
+Remove this redundant check.
 
-Fixes: 14328aa58ce5 ("drm/amdkfd: Add navi10 support to amdkfd. (v3)")
+Addresses-Coverity: ("Unsigned compared to zero")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-index 792371442195..4e3fc284f6ac 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-@@ -668,6 +668,7 @@ static int kfd_fill_gpu_cache_info(struct kfd_dev *kdev,
- 	case CHIP_RAVEN:
- 		pcache_info = raven_cache_info;
- 		num_of_cache_types = ARRAY_SIZE(raven_cache_info);
-+		break;
- 	case CHIP_NAVI10:
- 		pcache_info = navi10_cache_info;
- 		num_of_cache_types = ARRAY_SIZE(navi10_cache_info);
+diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+index ac151da..6ea48d6 100644
+--- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+@@ -1043,9 +1043,6 @@ static int navi10_set_power_profile_mode(struct smu_context *smu, long *input, u
+ 	}
+ 
+ 	if (smu->power_profile_mode = PP_SMC_POWER_PROFILE_CUSTOM) {
+-		if (size < 0)
+-			return -EINVAL;
+-
+ 		ret = smu_update_table(smu,
+ 				       SMU_TABLE_ACTIVITY_MONITOR_COEFF | WORKLOAD_PPLIB_CUSTOM_BIT << 16,
+ 				       (void *)(&activity_monitor), false);
 -- 
-2.20.1
+2.7.4
