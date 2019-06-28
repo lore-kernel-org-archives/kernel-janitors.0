@@ -1,32 +1,38 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 07 Jun 2019 17:57:29 +0000
-Subject: Re: [PATCH 2/2][next] RDMA/hns: fix inverted logic of readl read and shift
-Message-Id: <20190607175729.GA25014@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Jun 2019 14:24:02 +0000
+Subject: [PATCH] drm/amd/powerplay: fix off-by-one array bounds check
+Message-Id: <20190628142402.2771-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190531092101.28772-1-colin.king@canonical.com>
- <20190531092101.28772-2-colin.king@canonical.com>
-In-Reply-To: <20190531092101.28772-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:21:01AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A previous change incorrectly changed the inverted logic and logically
-> negated the readl rather than the shifted readl result. Fix this by
-> adding in missing parentheses around the expression that needs to be
-> logically negated.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: 669cefb654cb ("RDMA/hns: Remove jiffies operation in disable interrupt context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+The array bounds check for index is currently off-by-one and should
+be using >= rather than > on the upper bound. Fix this.
 
-Jason
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: b3490673f905 ("drm/amd/powerplay: introduce the navi10 pptable implementation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+index 27e5c80..f678700 100644
+--- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+@@ -210,7 +210,7 @@ static int navi10_workload_map[] = {
+ static int navi10_get_smu_msg_index(struct smu_context *smc, uint32_t index)
+ {
+ 	int val;
+-	if (index > SMU_MSG_MAX_COUNT)
++	if (index >= SMU_MSG_MAX_COUNT)
+ 		return -EINVAL;
+ 
+ 	val = navi10_message_map[index];
+-- 
+2.7.4
