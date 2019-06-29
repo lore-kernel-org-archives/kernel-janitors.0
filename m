@@ -1,44 +1,40 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Date: Tue, 18 Jun 2019 08:38:41 +0000
-Subject: Re: [PATCH 1/2] platform/chrome: wilco_ec: Fix unreleased lock in event_read()
-Message-Id: <f77eda75-70f4-e276-21f7-cb64a65d121f@collabora.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 29 Jun 2019 13:31:14 +0000
+Subject: [PATCH] drm/amdkfd: fix potential null pointer dereference on pointer peer_dev
+Message-Id: <20190629133114.14271-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190614205631.90222-1-ncrews@chromium.org>
-In-Reply-To: <20190614205631.90222-1-ncrews@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nick Crews <ncrews@chromium.org>, bleung@chromium.org
-Cc: linux-kernel@vger.kernel.org, dlaurie@chromium.org, djkurtz@chromium.org, dtor@google.com, sjg@chromium.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+To: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The call to kfd_topology_device_by_proximity_domain can return a NULL
+pointer so add a null pointer check on peer_dev to the existing null
+pointer check on peer_dev->gpu to avoid any potential null pointer
+dereferences.
 
-On 14/6/19 22:56, Nick Crews wrote:
-> When copying an event to userspace failed, the event queue
-> lock was never released. This fixes that.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Nick Crews <ncrews@chromium.org>
-> ---
->  drivers/platform/chrome/wilco_ec/event.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-> index 4d2776f77dbd..1eed55681598 100644
-> --- a/drivers/platform/chrome/wilco_ec/event.c
-> +++ b/drivers/platform/chrome/wilco_ec/event.c
-> @@ -342,7 +342,7 @@ static ssize_t event_read(struct file *filp, char __user *buf, size_t count,
->  				 struct ec_event_entry, list);
->  	n_bytes_written = entry->size;
->  	if (copy_to_user(buf, &entry->event, n_bytes_written))
-> -		return -EFAULT;
-> +		n_bytes_written = -EFAULT;
->  	list_del(&entry->list);
->  	kfree(entry);
->  	dev_data->num_events--;
-> 
+Addresses-Coverity: ("Dereference on null return value")
+Fixes: ae9a25aea7f3 ("drm/amdkfd: Generate xGMI direct iolink")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied for chrome-platform-5.3
-
-Thanks,
-~ Enric
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
+index 4e3fc284f6ac..cb6b46cfa6c2 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
+@@ -1293,7 +1293,7 @@ static int kfd_create_vcrat_image_gpu(void *pcrat_image,
+ 	if (kdev->hive_id) {
+ 		for (nid = 0; nid < proximity_domain; ++nid) {
+ 			peer_dev = kfd_topology_device_by_proximity_domain(nid);
+-			if (!peer_dev->gpu)
++			if (!peer_dev || !peer_dev->gpu)
+ 				continue;
+ 			if (peer_dev->gpu->hive_id != kdev->hive_id)
+ 				continue;
+-- 
+2.20.1
