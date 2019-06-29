@@ -1,60 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 27 Jun 2019 13:09:04 +0000
-Subject: [PATCH] apparmor: fix unsigned len comparison with less than zero
-Message-Id: <20190627130904.4775-1-colin.king@canonical.com>
+Date: Sat, 29 Jun 2019 12:37:23 +0000
+Subject: [PATCH][next] drm/amd/amdgpu: remove redundant assignment to variable res
+Message-Id: <20190629123723.12752-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The sanity check in macro update_for_len checks to see if len
-is less than zero, however, len is a size_t so it can never be
-less than zero, so this sanity check is a no-op.  Fix this by
-making len a ssize_t so the comparison will work and add ulen
-that is a size_t copy of len so that the min() macro won't
-throw warnings about comparing different types.
+Variable res is being initialized with a value that is never read
+and res is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
-Addresses-Coverity: ("Macro compares unsigned to 0")
-Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- security/apparmor/label.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index 59f1cc2557a7..42e849ccb4b5 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -1458,11 +1458,13 @@ static inline bool use_label_hname(struct aa_ns *ns, struct aa_label *label,
- /* helper macro for snprint routines */
- #define update_for_len(total, len, size, str)	\
- do {					\
-+	size_t ulen = len;		\
-+					\
- 	AA_BUG(len < 0);		\
--	total += len;			\
--	len = min(len, size);		\
--	size -= len;			\
--	str += len;			\
-+	total += ulen;			\
-+	len = min(ulen, size);		\
-+	size -= ulen;			\
-+	str += ulen;			\
- } while (0)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index df08ea172595..9b1bd8726fc2 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4527,7 +4527,7 @@ static int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
+ {
+ 	uint32_t formats[32];
+ 	int num_formats;
+-	int res = -EPERM;
++	int res;
  
- /**
-@@ -1597,7 +1599,7 @@ int aa_label_snxprint(char *str, size_t size, struct aa_ns *ns,
- 	struct aa_ns *prev_ns = NULL;
- 	struct label_it i;
- 	int count = 0, total = 0;
--	size_t len;
-+	ssize_t len;
- 
- 	AA_BUG(!str && size != 0);
- 	AA_BUG(!label);
+ 	num_formats = get_plane_formats(plane, plane_cap, formats,
+ 					ARRAY_SIZE(formats));
 -- 
 2.20.1
