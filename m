@@ -1,38 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 26 Jun 2019 16:44:11 +0000
-Subject: [PATCH] net/mlx5: remove redundant assignment to ret
-Message-Id: <20190626164411.20403-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 29 Jun 2019 02:43:33 +0000
+Subject: [PATCH -next] ASoC: madera: Remove duplicated include from cs47l35.c
+Message-Id: <20190629024333.177027-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Remove duplicated include.
 
-Variable ret is being initialized with a value that is never read and
-ret is being re-assigned later on.  The initialization is redundant
-and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/cs47l35.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index 072b56fda27e..dd47c6d03dad 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1477,7 +1477,7 @@ static const struct pci_error_handlers mlx5_err_handler = {
- static int mlx5_try_fast_unload(struct mlx5_core_dev *dev)
- {
- 	bool fast_teardown = false, force_teardown = false;
--	int ret = 1;
-+	int ret;
+diff --git a/sound/soc/codecs/cs47l35.c b/sound/soc/codecs/cs47l35.c
+index 511d0d6fa962..e3585c1dab3d 100644
+--- a/sound/soc/codecs/cs47l35.c
++++ b/sound/soc/codecs/cs47l35.c
+@@ -19,7 +19,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/tlv.h>
+-#include <sound/tlv.h>
  
- 	fast_teardown = MLX5_CAP_GEN(dev, fast_teardown);
- 	force_teardown = MLX5_CAP_GEN(dev, force_teardown);
--- 
-2.20.1
+ #include <linux/irqchip/irq-madera.h>
+ #include <linux/mfd/madera/core.h>
