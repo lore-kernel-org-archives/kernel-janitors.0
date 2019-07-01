@@ -1,38 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 02 Jul 2019 09:56:47 +0000
-Subject: [PATCH] staging: rtl8192e: remove redundant initialization of rtstatus
-Message-Id: <20190702095647.26378-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 12:40:43 +0000
+Subject: Re: [v2] Coccinelle: Suppression of warnings?
+Message-Id: <eb95005d-e685-0a8f-416c-1a30ad3fbaa0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+ <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+ <0b48a5c5-0814-6414-39ba-beb1b8b5253a@metux.net>
+In-Reply-To: <0b48a5c5-0814-6414-39ba-beb1b8b5253a@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gabriela Bittencourt <gabrielabittencourt00@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Enrico Weigelt <lkml@metux.net>, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Ding Xiang <dingxiang@cmss.chinamobile.com>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+> By the way: do we have any mechanism for explicitly suppressing
+> individual warnings (some kind of annotation),
 
-Variable rtstatus is being initialized with a value that is never
-read as it is being overwritten inside a do-while loop. Clean up
-the code by removing the redundant initialization.
+I do not know such an accepted specification interface
+(for the handling together with SmPL scripts) so far.
+How would you identify possibly unwanted messages in a safe way?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-index 5215a0b5fd45..7d78f16efc1d 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-@@ -1427,7 +1427,7 @@ static bool _rtl92e_set_rf_power_state(struct net_device *dev,
- 				 "_rtl92e_set_rf_power_state() eRfOn!\n");
- 			if ((priv->rtllib->eRFPowerState = eRfOff) &&
- 			     RT_IN_PS_LEVEL(pPSC, RT_RF_OFF_LEVL_HALT_NIC)) {
--				bool rtstatus = true;
-+				bool rtstatus;
- 				u32 InitilizeCount = 3;
- 
- 				do {
--- 
-2.20.1
+> when the maintainer is sure that some particular case is a false-positive ?
+
+Do you know any specific source code places already where you would get
+concerned about the confidence and relevance of the provided information?
+
+Regards,
+Markus
