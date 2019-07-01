@@ -1,38 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 22:11:52 +0000
-Subject: [PATCH] scsi: bfa: remove redundant assignment to variable error
-Message-Id: <20190731221152.15304-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 15:28:13 +0000
+Subject: [PATCH] md/raid: Replace a seq_printf() call by seq_putc() in three functions
+Message-Id: <50f0f51c-16c6-8d31-b265-8a007e6f7251@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 17:10:13 +0200
 
-Variable error is being initialized with a value that is never read
-and error is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+A single character (depending on a condition check) should be put
+into a sequence. Thus use the corresponding function “seq_putc”.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/bfa/bfad_im.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid1.c  | 4 ++--
+ drivers/md/raid10.c | 3 ++-
+ drivers/md/raid5.c  | 3 ++-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index b2014cb96f58..22f06be2606f 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -536,7 +536,7 @@ bfad_im_scsi_host_alloc(struct bfad_s *bfad, struct bfad_im_port_s *im_port,
- 			struct device *dev)
- {
- 	struct bfad_im_port_pointer *im_portp;
--	int error = 1;
-+	int error;
- 
- 	mutex_lock(&bfad_mutex);
- 	error = idr_alloc(&bfad_im_port_index, im_port, 0, 0, GFP_KERNEL);
--- 
-2.20.1
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 34e26834ad28..769d79a1d2cf 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1597,7 +1597,7 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+ 	rcu_read_lock();
+ 	for (i = 0; i < conf->raid_disks; i++) {
+ 		struct md_rdev *rdev = rcu_dereference(conf->mirrors[i].rdev);
+-		seq_printf(seq, "%s",
+-			   rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
++		seq_putc(seq,
++			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
+ 	}
+ 	rcu_read_unlock();
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 8a1354a08a1a..4e7da5dcbf86 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1572,6 +1572,7 @@ static void raid10_status(struct seq_file *seq, struct mddev *mddev)
+ 	rcu_read_lock();
+ 	for (i = 0; i < conf->geo.raid_disks; i++) {
+ 		struct md_rdev *rdev = rcu_dereference(conf->mirrors[i].rdev);
+-		seq_printf(seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
++		seq_putc(seq,
++			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
+ 	}
+ 	rcu_read_unlock();
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 3de4e13bde98..4b0e93869801 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7510,6 +7510,7 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
+ 	rcu_read_lock();
+ 	for (i = 0; i < conf->raid_disks; i++) {
+ 		struct md_rdev *rdev = rcu_dereference(conf->disks[i].rdev);
+-		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
++		seq_putc(seq,
++			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
+ 	}
+ 	rcu_read_unlock();
+--
+2.22.0
