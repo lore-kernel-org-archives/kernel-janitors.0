@@ -1,56 +1,51 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 27 Jul 2019 20:00:56 +0000
-Subject: Re: [PATCH] iio: magnetometer: mmc35240: Fix a typo in the name of a constant
-Message-Id: <20190727210056.63e7e9d2@archlinux>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 20:24:37 +0000
+Subject: [PATCH] clk: Use seq_puts() in possible_parent_show()
+Message-Id: <5961554a-6416-48ea-44e2-d8e3c7576af0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, tglx@linutronix.de, alexios.zavras@intel.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 21 Jul 2019 23:35:33 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 22:20:40 +0200
 
-> Everything is about mmc35240_ except MMC53240_WAIT_SET_RESET (3 and 5
-> switched).
-> 
-> This is likely a typo. Define and use MMC35240_WAIT_SET_RESET instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
 
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to see what we missed.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Jonathan
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index efa593ecbfa9..140afebeb238 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3013,15 +3013,15 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 	 */
+ 	parent = clk_core_get_parent_by_index(core, i);
+ 	if (parent)
+-		seq_printf(s, "%s", parent->name);
++		seq_puts(s, parent->name);
+ 	else if (core->parents[i].name)
+-		seq_printf(s, "%s", core->parents[i].name);
++		seq_puts(s, core->parents[i].name);
+ 	else if (core->parents[i].fw_name)
+ 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+ 	else if (core->parents[i].index >= 0)
+-		seq_printf(s, "%s",
+-			   of_clk_get_parent_name(core->of_node,
+-						  core->parents[i].index));
++		seq_puts(s,
++			 of_clk_get_parent_name(core->of_node,
++						core->parents[i].index));
+ 	else
+ 		seq_puts(s, "(missing)");
 
-> ---
->  drivers/iio/magnetometer/mmc35240.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
-> index 7de10281ad9e..425cdd07b4e5 100644
-> --- a/drivers/iio/magnetometer/mmc35240.c
-> +++ b/drivers/iio/magnetometer/mmc35240.c
-> @@ -53,7 +53,7 @@
->  #define MMC35240_CTRL1_BW_SHIFT		0
->  
->  #define MMC35240_WAIT_CHARGE_PUMP	50000	/* us */
-> -#define MMC53240_WAIT_SET_RESET		1000	/* us */
-> +#define MMC35240_WAIT_SET_RESET		1000	/* us */
->  
->  /*
->   * Memsic OTP process code piece is put here for reference:
-> @@ -225,7 +225,7 @@ static int mmc35240_init(struct mmc35240_data *data)
->  	ret = mmc35240_hw_set(data, true);
->  	if (ret < 0)
->  		return ret;
-> -	usleep_range(MMC53240_WAIT_SET_RESET, MMC53240_WAIT_SET_RESET + 1);
-> +	usleep_range(MMC35240_WAIT_SET_RESET, MMC35240_WAIT_SET_RESET + 1);
->  
->  	ret = mmc35240_hw_set(data, false);
->  	if (ret < 0)
+--
+2.22.0
