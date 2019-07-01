@@ -1,34 +1,39 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Date: Thu, 04 Jul 2019 01:23:15 +0000
-Subject: Re: [PATCH -next] integrity: Remove set but not used variable 'acl'
-Message-Id: <be6aaeb1-13ab-50bc-81a6-c461d3748820@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 01 Jul 2019 16:26:57 +0000
+Subject: [PATCH][next] iwlwifi: mvm: fix comparison of u32 variable with less than zero
+Message-Id: <20190701162657.15174-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190703025518.6379-1-yuehaibing@huawei.com>
- <15691.1562162261@warthog.procyon.org.uk>
-In-Reply-To: <15691.1562162261@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Kairui Song <kasong@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Mimi Zohar <zohar@linux.ibm.com>, Thiago Jung Bauermann <bauerman@linux.ibm.com>, Nayna Jain <nayna@linux.ibm.com>, Eric Biggers <ebiggers@google.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Haim Dreyfuss <haim.dreyfuss@intel.com>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.or, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019/7/3 21:57, David Howells wrote:
-> YueHaibing <yuehaibing@huawei.com> wrote:
-> 
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> security/integrity/digsig.c: In function 'integrity_init_keyring':
->> security/integrity/digsig.c:99:18: warning:
->>  variable 'acl' set but not used [-Wunused-but-set-variable]
->>
->> It seems 'acl' is needed in __integrity_init_keyring
-> 
-> I've folded this fix in, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, also I write a wrong patch title.
+The comparison of the u32 variable wgds_tbl_idx with less than zero is
+always going to be false because it is unsigned.  Fix this by making
+wgds_tbl_idx a plain signed int.
 
-> 
-> David
-> 
-> .
-> 
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 4fd445a2c855 ("iwlwifi: mvm: Add log information about SAR status")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+index 719f793b3487..a9bb43a2f27b 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+@@ -620,7 +620,7 @@ void iwl_mvm_rx_chub_update_mcc(struct iwl_mvm *mvm,
+ 	enum iwl_mcc_source src;
+ 	char mcc[3];
+ 	struct ieee80211_regdomain *regd;
+-	u32 wgds_tbl_idx;
++	int wgds_tbl_idx;
+ 
+ 	lockdep_assert_held(&mvm->mutex);
+ 
+-- 
+2.20.1
