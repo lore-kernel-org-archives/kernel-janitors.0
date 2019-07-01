@@ -1,48 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Jul 2019 18:30:05 +0000
-Subject: Re: [PATCH net-next] net: socionext: remove set but not used variable 'pkts'
-Message-Id: <20190703.113005.69711790321030429.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 11:16:42 +0000
+Subject: [PATCH] md-multipath: Replace a seq_printf() call by seq_putc() in multipath_status()
+Message-Id: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190703024213.191191-1-yuehaibing@huawei.com>
-In-Reply-To: <20190703024213.191191-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jaswinder.singh@linaro.org, ast@kernel.org, ilias.apalodimas@linaro.org, daniel@iogearbox.net, jakub.kicinski@netronome.com, hawk@kernel.org, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 3 Jul 2019 02:42:13 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 13:07:55 +0200
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/socionext/netsec.c: In function 'netsec_clean_tx_dring':
-> drivers/net/ethernet/socionext/netsec.c:637:15: warning:
->  variable 'pkts' set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit ba2b232108d3 ("net: netsec: add XDP support")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/socionext/netsec.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/socionext/netsec.c b/drivers/net/ethernet/socionext/netsec.c
-> index 5544a722543f..015d1ec5436a 100644
-> --- a/drivers/net/ethernet/socionext/netsec.c
-> +++ b/drivers/net/ethernet/socionext/netsec.c
-> @@ -634,7 +634,7 @@ static void netsec_set_rx_de(struct netsec_priv *priv,
->  static bool netsec_clean_tx_dring(struct netsec_priv *priv)
->  {
->  	struct netsec_desc_ring *dring = &priv->desc_ring[NETSEC_RING_TX];
-> -	unsigned int pkts, bytes;
-> +	unsigned int bytes;
->  	struct netsec_de *entry;
->  	int tail = dring->tail;
->  	int cnt = 0;
+A single character (depending on a condition check) should be put
+into a sequence. Thus use the corresponding function “seq_putc”.
 
-This breaks the reverse christmas-tree ordering of the local variables in this
-function.  Please move the 'bytes' declaration down by two lines when you make
-this change.
+This issue was detected by using the Coccinelle software.
 
-Thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/md-multipath.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
+index 6780938d2991..3bf6f97ea264 100644
+--- a/drivers/md/md-multipath.c
++++ b/drivers/md/md-multipath.c
+@@ -146,7 +146,8 @@ static void multipath_status(struct seq_file *seq, struct mddev *mddev)
+ 	rcu_read_lock();
+ 	for (i = 0; i < conf->raid_disks; i++) {
+ 		struct md_rdev *rdev = rcu_dereference(conf->multipaths[i].rdev);
+-		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
++		seq_putc(seq,
++			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
+ 	}
+ 	rcu_read_unlock();
+ 	seq_putc(seq, ']');
+--
+2.22.0
