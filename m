@@ -1,108 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 01 Jul 2019 08:10:52 +0000
-Subject: [PATCH v2] Coccinelle: Add a SmPL script for the reconsideration of redundant dev_err() calls
-Message-Id: <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Date: Mon, 01 Jul 2019 10:48:30 +0000
+Subject: Re: [PATCH v2] Coccinelle: Add a SmPL script for the reconsideration of redundant dev_err() calls
+Message-Id: <0b48a5c5-0814-6414-39ba-beb1b8b5253a@metux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
-In-Reply-To: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+ <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+In-Reply-To: <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
 Cc: Ding Xiang <dingxiang@cmss.chinamobile.com>, Coccinelle <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jul 2019 10:00:39 +0200
+On 01.07.19 10:10, Markus Elfring wrote:
 
-The function “devm_ioremap_resource” contains appropriate error reporting.
-Thus it can be questionable to present another error message
-at other places.
+Hi folks,
 
-Provide design options for the adjustment of affected source code
-by the means of the semantic patch language (Coccinelle software).
+> +@script:python to_do depends on org@
+> +p << or.p;
+> +@@
+> +coccilib.org.print_todo(p[0],
+> +                        "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
+> +
+> +@script:python reporting depends on report@
+> +p << or.p;
+> +@@
+> +coccilib.report.print_report(p[0],
+> +                             "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
+> --
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+By the way: do we have any mechanism for explicitly suppressing
+individual warnings (some kind of annotation), when the maintainer is
+sure that some particular case is a false-positive ?
+(I'm thinking of something similar to certain #praga directives for
+explicitly ignoring invididual warnings in specific lines of code)
 
-v2:
-Suggestions from Julia Lawall were integrated.
+I believe such a feature, so we don't get spammed with the same false
+positives again and again.
 
-* Application of the SmPL construct “<+... … ...+>”
-* Replacement of a return specification by a statement metavariable.
-* Different coding style for a branch of a SmPL disjunction.
-* Usage of a specific function name in two messages.
 
- .../coccinelle/misc/redundant_dev_err.cocci   | 62 +++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 scripts/coccinelle/misc/redundant_dev_err.cocci
+--mtx
 
-diff --git a/scripts/coccinelle/misc/redundant_dev_err.cocci b/scripts/coccinelle/misc/redundant_dev_err.cocci
-new file mode 100644
-index 000000000000..7998defb04f3
---- /dev/null
-+++ b/scripts/coccinelle/misc/redundant_dev_err.cocci
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Reconsider a function call for redundant error reporting.
-+//
-+// Keywords: dev_err redundant device error messages
-+// Confidence: Medium
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@display depends on context@
-+expression e;
-+@@
-+ e = devm_ioremap_resource(...);
-+ if (IS_ERR(e))
-+ {
-+ <+...
-+*   dev_err(...);
-+ ...+>
-+ }
-+
-+@deletion depends on patch@
-+expression e;
-+statement s;
-+@@
-+ e = devm_ioremap_resource(...);
-+ if (IS_ERR(e))
-+(
-+-{
-+-   dev_err(...);
-+    s
-+-}
-+|
-+ {
-+ <+...
-+-   dev_err(...);
-+ ...+>
-+ }
-+)
-+
-+@or depends on org || report@
-+expression e;
-+position p;
-+@@
-+ e = devm_ioremap_resource(...);
-+ if (IS_ERR(e))
-+ {
-+ <+... dev_err@p(...); ...+>
-+ }
-+
-+@script:python to_do depends on org@
-+p << or.p;
-+@@
-+coccilib.org.print_todo(p[0],
-+                        "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
-+
-+@script:python reporting depends on report@
-+p << or.p;
-+@@
-+coccilib.report.print_report(p[0],
-+                             "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
---
-2.22.0
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
