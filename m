@@ -1,13 +1,15 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 01 Jul 2019 16:26:57 +0000
+Date: Mon, 01 Jul 2019 16:27:59 +0000
 Subject: [PATCH][next] iwlwifi: mvm: fix comparison of u32 variable with less than zero
-Message-Id: <20190701162657.15174-1-colin.king@canonical.com>
+Message-Id: <20190701162759.15418-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190701162657.15174-1-colin.king@canonical.com>
+In-Reply-To: <20190701162657.15174-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Haim Dreyfuss <haim.dreyfuss@intel.com>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.or, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Haim Dreyfuss <haim.dreyfuss@intel.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
