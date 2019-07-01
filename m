@@ -1,27 +1,35 @@
-From: silistra@iara.government.bg
-Date: Sat, 13 Jul 2019 01:50:39 +0000
-Subject: =?utf-8?b?RndkOiBSZTog4oKsIDIsMDAwLDAwMC4wMCBFdXJv?=
-Message-Id: <20190713015055.B104B2EB071@iara.government.bg>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 01 Jul 2019 13:08:14 +0000
+Subject: [PATCH][next] crypto: ccree - fix spelling mistake "configration" -> "configuration"
+Message-Id: <20190701130814.14251-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190712234550.E9CBC2EA6D5@iara.government.bg>
-In-Reply-To: <20190712234550.E9CBC2EA6D5@iara.government.bg>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gilad Ben-Yossef <gilad@benyossef.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Lieber Freund,
+From: Colin Ian King <colin.king@canonical.com>
 
-Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jackpot spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt. Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwillig dazu entschieden, Ihnen den Betrag von € 2.000.000,00 zu spenden eine der ausgewählten 5, um meine Gewinne zu überprüfen, finden Sie auf meiner You Tube Seite unten.
+There is a spelling mistake in a dev_err message. Fix it.
 
-UHR MICH HIER: https://www.youtube.com/watch?v=tne02ExNDrw
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccree/cc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Das ist dein Spendencode: [DF00430342018]
-
-Antworten Sie mit dem Spendencode auf diese E-Mail: liezlnatashavanessa@gmail.com
-
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
-
-Grüße
-
-Herr Richard Wahl
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index 980aa04b655b..eeb803f40623 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -421,7 +421,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			}
+ 			break;
+ 		default:
+-			dev_err(dev, "Unsupported engines configration.\n");
++			dev_err(dev, "Unsupported engines configuration.\n");
+ 			rc = -EINVAL;
+ 			goto post_clk_err;
+ 		}
+-- 
+2.20.1
