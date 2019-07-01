@@ -1,86 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 31 Jul 2019 11:29:45 +0000
-Subject: Applied "ASoC: cs4271: Fix a typo in the CS4171_NR_RATIOS" to the asoc tree
-Message-Id: <20190731112945.A62C72742CDE@ypsilon.sirena.org.uk>
+From: Deepak Singh Rawat <drawat@vmware.com>
+Date: Mon, 01 Jul 2019 21:13:30 +0000
+Subject: Re: [PATCH][next] drm/vmwgfx: remove redundant assignment to sub_res
+Message-Id: <4fbbedfdb26eee7f21d8d681ce9d56a881f41c92.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190724060023.31302-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190724060023.31302-1-christophe.jaillet@wanadoo.fr>
+References: <20190624224444.14099-1-colin.king@canonical.com>
+In-Reply-To: <20190624224444.14099-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: alsa-devel@alsa-project.org, brian.austin@cirrus.com, broonie@kernel.org, kernel-janitors@vger.kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.orgMarkBrownbroonie@kernel.org, Paul.Handrigan@cirrus.com, perex@perex.cz, tiwai@suse.com
+To: Colin King <colin.king@canonical.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: cs4271: Fix a typo in the CS4171_NR_RATIOS
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0c03e37af47efcb8600f95f399783c082fcf2f93 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 24 Jul 2019 08:00:23 +0200
-Subject: [PATCH] ASoC: cs4271: Fix a typo in the CS4171_NR_RATIOS
-
-This should be CS4271_NR_RATIOS.
-Fix it and use it.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20190724060023.31302-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cs4271.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 1d03a1348162..04b86a51e055 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -334,7 +334,7 @@ static struct cs4271_clk_cfg cs4271_clk_tab[] = {
- 	{0, CS4271_MODE1_MODE_4X, 256,  CS4271_MODE1_DIV_2},
- };
- 
--#define CS4171_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
-+#define CS4271_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
- 
- static int cs4271_hw_params(struct snd_pcm_substream *substream,
- 			    struct snd_pcm_hw_params *params,
-@@ -383,13 +383,13 @@ static int cs4271_hw_params(struct snd_pcm_substream *substream,
- 		val = CS4271_MODE1_MODE_4X;
- 
- 	ratio = cs4271->mclk / cs4271->rate;
--	for (i = 0; i < CS4171_NR_RATIOS; i++)
-+	for (i = 0; i < CS4271_NR_RATIOS; i++)
- 		if ((cs4271_clk_tab[i].master = cs4271->master) &&
- 		    (cs4271_clk_tab[i].speed_mode = val) &&
- 		    (cs4271_clk_tab[i].ratio = ratio))
- 			break;
- 
--	if (i = CS4171_NR_RATIOS) {
-+	if (i = CS4271_NR_RATIOS) {
- 		dev_err(component->dev, "Invalid sample rate\n");
- 		return -EINVAL;
- 	}
--- 
-2.20.1
+SGkgQ29saW4sDQoNClJldmlld2VkLWJ5OiBEZWVwYWsgUmF3YXQgPGRyYXdhdEB2bXdhcmUuY29t
+Pg0KDQpUaGFua3MsDQpEZWVwYWsNCg0KDQpPbiBNb24sIDIwMTktMDYtMjQgYXQgMjM6NDQgKzAx
+MDAsIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5n
+QGNhbm9uaWNhbC5jb20+DQo+IA0KPiBWYXJpYWJsZSBzdWJfcmVzIGlzIGluaXRpYWxpemVkIHRv
+IGEgdmFsdWUgdGhhdCBpcyBuZXZlciByZWFkIGFuZCBpdA0KPiBpcyByZS1hc3NpZ25lZCBsYXRl
+ciBpbiBhIGZvci1sb29wLiAgVGhlIGluaXRpYWxpemF0aW9uIGlzIHJlZHVuZGFudA0KPiBhbmQg
+Y2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiVW51c2VkIHZhbHVl
+IikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2Fs
+LmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMg
+fCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNl
+LmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdXJmYWNlLmMNCj4gaW5kZXgg
+ODYyY2E0NDY4MGNhLi4zMjU3YmE2ODlkOTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS92bXdnZngvdm13Z2Z4X3N1cmZhY2UuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4
+L3Ztd2dmeF9zdXJmYWNlLmMNCj4gQEAgLTE5MTQsNyArMTkxNCw3IEBAIHN0YXRpYyB2b2lkDQo+
+IHZtd19zdXJmYWNlX3RleF9kaXJ0eV9yYW5nZV9hZGQoc3RydWN0IHZtd19yZXNvdXJjZSAqcmVz
+LA0KPiAgCX0gZWxzZSB7DQo+ICAJCS8qIERpcnR5IHJhbmdlIGNvdmVycyBtdWx0aXBsZSBzdWIt
+cmVzb3VyY2VzICovDQo+ICAJCXN0cnVjdCBzdmdhM2RzdXJmYWNlX2xvYyBsb2NfbWluLCBsb2Nf
+bWF4Ow0KPiAtCQl1MzIgc3ViX3JlcyA9IGxvYzEuc3ViX3Jlc291cmNlOw0KPiArCQl1MzIgc3Vi
+X3JlczsNCj4gIA0KPiAgCQlzdmdhM2RzdXJmYWNlX21heF9sb2MoY2FjaGUsIGxvYzEuc3ViX3Jl
+c291cmNlLA0KPiAmbG9jX21heCk7DQo+ICAJCXZtd19zdWJyZXNfZGlydHlfYWRkKGRpcnR5LCAm
+bG9jMSwgJmxvY19tYXgpOw0KDQo
