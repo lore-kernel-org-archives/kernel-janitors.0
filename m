@@ -1,26 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 24 Jul 2019 02:16:24 +0000
-Subject: Re: [PATCH] scsi: fcoe: fix a typo
-Message-Id: <yq1o91kqirr.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 01 Jul 2019 17:52:46 +0000
+Subject: [PATCH] mmc: alcor: remove a redundant greater or equal to zero comparison
+Message-Id: <20190701175246.32270-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721125039.13268-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721125039.13268-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Sun, 21 Jul 2019 14:50:39 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: hare@suse.de, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Daniel Drake <drake@endlessm.com>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Christophe,
+A greater or equal comparison on the unsigned int variable tmp_diff
+is always true as unsigned ints are never negative.  Hence the
+comparison is redundant and can be removed.
 
-> #define relative to FCOE CTLR start with FCOE_CTLR, except
-> FCOE_CTRL_SOL_TOV.
->
-> This is likely a typo and CTRL should be CTLR here as well.
+Addresses-Coverity: ("Unsigned compared against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/alcor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 5.3/scsi-fixes, thanks!
-
+diff --git a/drivers/mmc/host/alcor.c b/drivers/mmc/host/alcor.c
+index e481535cba2b..1aee485d56d4 100644
+--- a/drivers/mmc/host/alcor.c
++++ b/drivers/mmc/host/alcor.c
+@@ -672,7 +672,7 @@ static void alcor_set_clock(struct alcor_sdmmc_host *host, unsigned int clock)
+ 		tmp_clock = DIV_ROUND_UP(cfg->clk_src_freq, tmp_div);
+ 		tmp_diff = abs(clock - tmp_clock);
+ 
+-		if (tmp_diff >= 0 && tmp_diff < diff) {
++		if (tmp_diff < diff) {
+ 			diff = tmp_diff;
+ 			clk_src = cfg->clk_src_reg;
+ 			clk_div = tmp_div;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
