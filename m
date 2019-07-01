@@ -1,28 +1,29 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 14 Jul 2019 14:42:11 +0000
-Subject: Re: [v3] staging: most: remove redundant print statement when kfifo_alloc fails
-Message-Id: <27df9bec-dbd5-8267-8df2-4948ca14e6d4@web.de>
+Date: Mon, 01 Jul 2019 20:00:21 +0000
+Subject: Re: blk-mq: Use seq_puts() in __blk_mq_debugfs_rq_show()
+Message-Id: <5a8b6e93-72fb-1900-3338-662db7b8975d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190711175055.25157-1-iamkeyur96@gmail.com>
-In-Reply-To: <20190711175055.25157-1-iamkeyur96@gmail.com>
+References: <81847ca5-fac5-710c-29d5-f70b58f6437d@web.de>
+ <e2a06dfd-4a03-2f56-59e6-abce261653d6@acm.org>
+In-Reply-To: <e2a06dfd-4a03-2f56-59e6-abce261653d6@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Keyur Patel <iamkeyur96@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
-Cc: Christian Gromm <christian.gromm@microchip.com>, Suresh Udipi <sudipi@jp.adit-jv.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
+To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> This print statement is redundant as kfifo_alloc just calls kmalloc_array
-> and without the __GFP_NOWARN flag, already does a dump_stack().
+>> A string which did not contain a data format specification should be put
+>> into a sequence. Thus use the corresponding function “seq_puts”.
+>
+> Why should this be done?
 
-I suggest to omit the word “and” from this sentence.
-Will any further wording adjustments become helpful for commit descriptions?
+Do you prefer an other wording for the desired data output?
 
 
-> Changes in v3:
-> - fix checkpatch warrning
-> ---
+> Or in other words, what is wrong with the current code
+> other than that it is slightly verbose and slightly slower than seq_puts()?
 
-Please move such version information below the triple dashes without a typo.
+I suggest to improve such implementation details also at this place.
 
 Regards,
 Markus
