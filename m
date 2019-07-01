@@ -1,44 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 25 Jul 2019 18:38:56 +0000
-Subject: [PATCH] Staging: fbtft: Fix some typo. pdc8544 --> pcd8544
-Message-Id: <20190725183856.17616-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 19:50:31 +0000
+Subject: [PATCH] PM / Domains: Use seq_puts() in genpd_summary_one()
+Message-Id: <7a79ee59-884a-b769-5e07-37db57687f83@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, nishadkamdar@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The driver is related to 'pcd8544'.
-However, 2 strings are about pdc8544 (c and d switched)
-Fix it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 21:42:31 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This patch is only theorical. It is based on the fact that a part of the
-filename (i.e. pcd8544) looks misspelled in the file itself.
-I don't know the implication of FBTFT_REGISTER_DRIVER and MODULE_ALIAS and
-if additional adjustments are needed.
----
- drivers/staging/fbtft/fb_pcd8544.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/power/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fb_pcd8544.c b/drivers/staging/fbtft/fb_pcd8544.c
-index ad49973ad594..08f8a4bb8772 100644
---- a/drivers/staging/fbtft/fb_pcd8544.c
-+++ b/drivers/staging/fbtft/fb_pcd8544.c
-@@ -157,10 +157,10 @@ static struct fbtft_display display = {
- 	.backlight = 1,
- };
- 
--FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pdc8544", &display);
-+FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pcd8544", &display);
- 
- MODULE_ALIAS("spi:" DRVNAME);
--MODULE_ALIAS("spi:pdc8544");
-+MODULE_ALIAS("spi:pcd8544");
- 
- MODULE_DESCRIPTION("FB driver for the PCD8544 LCD Controller");
- MODULE_AUTHOR("Noralf Tronnes");
--- 
-2.20.1
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 33c30c1e6a30..7dd433fab7ec 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2796,7 +2796,7 @@ static int genpd_summary_one(struct seq_file *s,
+ 	 * Also genpd->name is immutable.
+ 	 */
+ 	list_for_each_entry(link, &genpd->master_links, master_node) {
+-		seq_printf(s, "%s", link->slave->name);
++		seq_puts(s, link->slave->name);
+ 		if (!list_is_last(&link->master_node, &genpd->master_links))
+ 			seq_puts(s, ", ");
+ 	}
+--
+2.22.0
