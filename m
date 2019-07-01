@@ -1,30 +1,39 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Mon, 22 Jul 2019 18:36:08 +0000
-Subject: Re: [PATCH -next] infiniband: siw: remove set but not used variables 'rv'
-Message-Id: <20190722183608.GA23553@ziepe.ca>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jul 2019 19:27:25 +0000
+Subject: [PATCH] blk-mq: Use seq_puts() in __blk_mq_debugfs_rq_show()
+Message-Id: <81847ca5-fac5-710c-29d5-f70b58f6437d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190719012938.100628-1-maowenan@huawei.com>
-In-Reply-To: <20190719012938.100628-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: bmt@zurich.ibm.com, dledford@redhat.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 09:29:38AM +0800, Mao Wenan wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/sw/siw/siw_cm.c: In function siw_cep_set_inuse:
-> drivers/infiniband/sw/siw/siw_cm.c:223:6: warning: variable rv set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit 6c52fdc244b5("rdma/siw: connection management")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/infiniband/sw/siw/siw_cm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 21:21:04 +0200
 
-Applied to for-rc
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
 
-Thanks,
-Jason
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/blk-mq-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index 748164f4e8b1..bc1b70aeb2ca 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -331,7 +331,7 @@ int __blk_mq_debugfs_rq_show(struct seq_file *m, struct request *rq)
+ 	if (strcmp(op_str, "UNKNOWN") == 0)
+ 		seq_printf(m, "%u", op);
+ 	else
+-		seq_printf(m, "%s", op_str);
++		seq_puts(m, op_str);
+ 	seq_puts(m, ", .cmd_flags=");
+ 	blk_flags_show(m, rq->cmd_flags & ~REQ_OP_MASK, cmd_flag_name,
+ 		       ARRAY_SIZE(cmd_flag_name));
+--
+2.22.0
