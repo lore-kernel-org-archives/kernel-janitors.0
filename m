@@ -1,36 +1,48 @@
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Date: Tue, 23 Jul 2019 12:29:32 +0000
-Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to n_den
-Message-Id: <e7bb11ba-c79d-3c2c-aebe-67796d518e63@topic.nl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jul 2019 19:00:33 +0000
+Subject: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in ima_show_template_data_ascii()
+Message-Id: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190701165020.19840-1-colin.king@canonical.com>
- <20190722212414.6EF8D21900@mail.kernel.org>
-In-Reply-To: <20190722212414.6EF8D21900@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <sboyd@kernel.org>, Colin King <colin.king@canonical.com>, Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-R29vZCBjYXRjaCwgdGhhbmtzLiBZb3UgaGF2ZSBteQ0KDQpBY2tlZC1ieTogTWlrZSBMb29pam1h
-bnMgPG1pa2UubG9vaWptYW5zQHRvcGljLm5sPg0KDQoNCk9uIDIyLTA3LTE5IDIzOjI0LCBTdGVw
-aGVuIEJveWQgd3JvdGU6DQo+IFBsZWFzZSBDYyBhdXRob3JzIG9mIGRyaXZlcnMgc28gdGhleSBj
-YW4gYWNrL3Jldmlldy4NCj4gDQo+IEFkZGluZyBNaWtlIHRvIHRha2UgYSBsb29rLg0KPiANCj4g
-UXVvdGluZyBDb2xpbiBLaW5nICgyMDE5LTA3LTAxIDA5OjUwOjIwKQ0KPj4gRnJvbTogQ29saW4g
-SWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4+DQo+PiBUaGUgdmFyaWFibGUg
-bl9kZW4gaXMgaW5pdGlhbGl6ZWQgaG93ZXZlciB0aGF0IHZhbHVlIGlzIG5ldmVyIHJlYWQNCj4+
-IGFzIG5fZGVuIGlzIHJlLWFzc2lnbmVkIGEgbGl0dGxlIGxhdGVyIGluIHRoZSB0d28gcGF0aHMg
-b2YgYQ0KPj4gZm9sbG93aW5nIGlmLXN0YXRlbWVudC4gIFJlbW92ZSB0aGUgcmVkdW5kYW50IGFz
-c2lnbm1lbnQuDQo+Pg0KPj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+
-PiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-Pg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvY2xrL2Nsay1zaTUzNDEuYyB8IDEgLQ0KPj4gICAxIGZp
-bGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
-ay9jbGstc2k1MzQxLmMgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IGluZGV4IDcyNDI0
-ZWI3ZTVmOC4uNmU3ODBjMmE5ZTZiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXNp
-NTM0MS5jDQo+PiArKysgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IEBAIC01NDcsNyAr
-NTQ3LDYgQEAgc3RhdGljIGludCBzaTUzNDFfc3ludGhfY2xrX3NldF9yYXRlKHN0cnVjdCBjbGtf
-aHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+PiAgICAgICAgICBib29sIGlzX2ludGVnZXI7
-DQo+PiAgIA0KPj4gICAgICAgICAgbl9udW0gPSBzeW50aC0+ZGF0YS0+ZnJlcV92Y287DQo+PiAt
-ICAgICAgIG5fZGVuID0gcmF0ZTsNCj4+ICAgDQo+PiAgICAgICAgICAvKiBzZWUgaWYgdGhlcmUn
-cyBhbiBpbnRlZ2VyIHNvbHV0aW9uICovDQo+PiAgICAgICAgICByID0gZG9fZGl2KG5fbnVtLCBy
-YXRlKTsNCg0KDQotLSANCk1pa2UgTG9vaWptYW5zDQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 20:52:21 +0200
+
+Two strings which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/integrity/ima/ima_template_lib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 9fe0ef7f91e2..05636e9b19b1 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 	case DATA_FMT_DIGEST_WITH_ALGO:
+ 		buf_ptr = strnchr(field_data->data, buflen, ':');
+ 		if (buf_ptr != field_data->data)
+-			seq_printf(m, "%s", field_data->data);
++			seq_puts(m, field_data->data);
+
+ 		/* skip ':' and '\0' */
+ 		buf_ptr += 2;
+@@ -87,7 +87,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 		ima_print_digest(m, buf_ptr, buflen);
+ 		break;
+ 	case DATA_FMT_STRING:
+-		seq_printf(m, "%s", buf_ptr);
++		seq_puts(m, buf_ptr);
+ 		break;
+ 	default:
+ 		break;
+--
+2.22.0
