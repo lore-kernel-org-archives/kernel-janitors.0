@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Tue, 02 Jul 2019 17:33:08 +0000
 Subject: [PATCH] cgroup: Replace a seq_printf() call by seq_puts() in cgroup_print_ss_mask()
-Message-Id: <d465ca81-a870-b88c-0ea2-5e8bfbefb79d@web.de>
+Message-Id: <bded6e4b-7fa6-b361-cf79-260a6ce679bb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d465ca81-a870-b88c-0ea2-5e8bfbefb79d@web.de>
+In-Reply-To: <d465ca81-a870-b88c-0ea2-5e8bfbefb79d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
