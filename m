@@ -1,68 +1,42 @@
-From: Nikolay Borisov <nborisov@suse.com>
-Date: Fri, 05 Jul 2019 07:30:48 +0000
-Subject: Re: [PATCH][next][V3] btrfs: fix memory leak of path on error return path
-Message-Id: <baaeb457-d592-df65-51a6-762747943dbd@suse.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jul 2019 09:18:35 +0000
+Subject: [PATCH] scsi: libfc: fix null pointer dereference on a null lport
+Message-Id: <20190702091835.13629-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705072624.14163-1-colin.king@canonical.com>
-In-Reply-To: <20190705072624.14163-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently if lport is null then the null lport pointer is dereference
+when printing out debug via the FC_LPORT_DB macro. Fix this by using
+the more generic FC_LIBFC_DBG debug macro instead that does not use
+lport.
 
-On 5.07.19 г. 10:26 ч., Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if the allocation of roots or tmp_ulist fails the error handling
-> does not free up the allocation of path causing a memory leak. Fix this and
-> other similar leaks by moving the call of btrfs_free_path from label out
-> to label out_free_ulist.
-> 
-> Kudos to David Sterba for spotting the issue in my original fix and suggesting
-> the correct way to fix the leak and Anand Jain for spotting a double free
-> issue.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 5911c8fe05c5 ("btrfs: fiemap: preallocate ulists for btrfs_check_shared")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 7414705ea4ae ("libfc: Add runtime debugging with debug_logging module parameter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/libfc/fc_exch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
-> ---
-> V2: move the btrfs_free_path to the out_free_ulist label as suggested by
->      David Sterba as the correct fix.
-> V3: fix double free as identified Anand Jain
-> ---
-> 
->  fs/btrfs/extent_io.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 1eb671c16ff1..9de119194f8e 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4613,7 +4613,6 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  	ret = btrfs_lookup_file_extent(NULL, root, path,
->  			btrfs_ino(BTRFS_I(inode)), -1, 0);
->  	if (ret < 0) {
-> -		btrfs_free_path(path);
->  		goto out_free_ulist;
->  	} else {
->  		WARN_ON(!ret);
-> @@ -4766,11 +4765,11 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  		ret = emit_last_fiemap_cache(fieinfo, &cache);
->  	free_extent_map(em);
->  out:
-> -	btrfs_free_path(path);
->  	unlock_extent_cached(&BTRFS_I(inode)->io_tree, start, start + len - 1,
->  			     &cached_state);
->  
->  out_free_ulist:
-> +	btrfs_free_path(path);
->  	ulist_free(roots);
->  	ulist_free(tmp_ulist);
->  	return ret;
-> 
+diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+index 025cd2ff9f65..c477fadbf504 100644
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -2591,8 +2591,8 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
+ 
+ 	/* lport lock ? */
+ 	if (!lport || lport->state = LPORT_ST_DISABLED) {
+-		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
+-			     "has not been initialized correctly\n");
++		FC_LIBFC_DBG("Receiving frames for an lport that "
++			     "has not been initialized correctly\n");
+ 		fc_frame_free(fp);
+ 		return;
+ 	}
+-- 
+2.20.1
