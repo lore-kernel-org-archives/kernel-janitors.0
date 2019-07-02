@@ -1,53 +1,54 @@
-From: Keerthy <j-keerthy@ti.com>
-Date: Tue, 02 Jul 2019 11:48:59 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 02 Jul 2019 12:24:26 +0000
 Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch statement
-Message-Id: <0c0e0e49-48c3-c1af-b7c7-26603d98cfe3@ti.com>
+Message-Id: <20190702122426.GI2793@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="7SrMUQONj8Rl9QNG"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190627131639.6394-1-colin.king@canonical.com>
  <20190628143628.GJ5379@sirena.org.uk>
  <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
  <20190702104420.GD4652@dell>
  <4a0a50be-1465-0554-f787-dec72bc07a00@canonical.com>
- <20190702113157.GG4652@dell>
-In-Reply-To: <20190702113157.GG4652@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <4a0a50be-1465-0554-f787-dec72bc07a00@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+--7SrMUQONj8Rl9QNG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 02/07/19 5:01 PM, Lee Jones wrote:
-> On Tue, 02 Jul 2019, Colin Ian King wrote:
-> 
->> On 02/07/2019 11:44, Lee Jones wrote:
->>> On Fri, 28 Jun 2019, Colin Ian King wrote:
->>>
->>>> On 28/06/2019 15:36, Mark Brown wrote:
->>>>> On Thu, Jun 27, 2019 at 02:16:39PM +0100, Colin King wrote:
->>>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>>
->>>>>> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
->>>>>> break statement, causing it to fall through to a dev_err message.
->>>>>> Fix this by adding in the missing break statement.
->>>>>
->>>>> This doesn't apply against current code, please check and resend.
->>>>>
->>>> So it applies cleanly against linux-next, I think the original code
->>>> landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
->>>
->>> Applied, thanks Colin.
->>>
->> I'm confused, who is the official maintainer of the regulator patches
->> nowadays?
-> 
-> Mark.  But the patch you're fixing is currently in the MFD tree.
-> 
-> I sent him an updated pull-request.
+On Tue, Jul 02, 2019 at 12:12:10PM +0100, Colin Ian King wrote:
+> On 02/07/2019 11:44, Lee Jones wrote:
+> > On Fri, 28 Jun 2019, Colin Ian King wrote:
 
-Thanks Lee!
+> >> So it applies cleanly against linux-next, I think the original code
+> >> landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
 
-> 
-> Don't worry mate, you're in good hands. ;)
-> 
+> > Applied, thanks Colin.
+
+> I'm confused, who is the official maintainer of the regulator patches
+> nowadays?
+
+Me and Liam but since this patch only applies against Lee's tree he's
+applied it there (I didn't think it was worth me picking up the entire
+cross tree merge branch Lee prepared for this one fix, if Lee hadn't
+picked it up it'd have waited till after the merge window).
+
+--7SrMUQONj8Rl9QNG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0bTPkACgkQJNaLcl1U
+h9Blxgf/X/fK5rQM9Xb+Yt492Z9/NCArCSuCI/mxZbI1rmSe+GDcD8h5mV6hd0ok
+d5MOzJ6HnMDRxgAZIns3zlNJ+Pm9F86FKrpfEv6Amjd8ykg7Xy9Gb0DsNv2PQnj9
+0K9Zf3cD5OBEAM8VusSStT/AvvFxSkejXLjt5nswMdQFN3a7CS16U0aGIZOrd1t+
+rROoqa5YQKTb4AF9Tn6+XoVvpy96zd2ixbFPqDeV8EwXJFt6+Y5PJAbSvXfG6HX+
+PYOQO/IMeJqfH9jbg8a8GyDdOTYC5rKHKIRPmbZVuRGo7O4WEDpMRFO1PwKiBV/J
+hcNdXDspcFdYbwvUUo6Ar3d2F94ScQ==
+=aXbp
+-----END PGP SIGNATURE-----
+
+--7SrMUQONj8Rl9QNG--
