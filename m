@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Tue, 02 Jul 2019 19:00:33 +0000
 Subject: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in ima_show_template_data_ascii()
-Message-Id: <b0842345-1ab0-b199-91c7-90df51351d74@web.de>
+Message-Id: <6b3e3f9e-926e-e010-de27-58d75360ff6c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
 In-Reply-To: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
