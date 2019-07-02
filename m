@@ -1,37 +1,45 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jul 2019 06:11:00 +0000
-Subject: Re: m68k: One function call less in cf_tlb_miss()
-Message-Id: <f9af74a1-dc4a-5ad9-9da3-8fba4b4f179c@web.de>
+Date: Tue, 02 Jul 2019 14:38:06 +0000
+Subject: [PATCH] NFS: Less function calls in show_pnfs()
+Message-Id: <d2f73c3e-a55f-5fb7-a8f8-0dc3ce8ff8a5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5713aa4-d290-0f7d-7de8-82bcdf74ee95@web.de>
- <alpine.LNX.2.21.1907060951060.67@nippy.intranet>
- <CAMuHMdWd31ch+eSje4ww=_JFSZgnxRAUAvS0TCHXq0nzLeVfgg@mail.gmail.com>
- <e75a25de-861a-8ab8-ffe7-c83572d6e553@web.de>
- <CAMuHMdU+sDjiTZph1gfii=WoWQ2c+jTvvqjq4mVSbFAi0eb_VA@mail.gmail.com>
-In-Reply-To: <CAMuHMdU+sDjiTZph1gfii=WoWQ2c+jTvvqjq4mVSbFAi0eb_VA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, kernel-janitors@vger.kernel.org
-Cc: Finn Thain <fthain@telegraphics.com.au>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@linux-m68k.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> You better do,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 16:30:53 +0200
 
-It can eventually happen again under other circumstances.
+Reduce function calls for data output into a sequence.
 
+This issue was detected by using the Coccinelle software.
 
-> it can be a good learning experience!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/nfs/super.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-This can be also possible.
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index f88ddac2dcdf..c301cd585b3b 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -749,11 +749,10 @@ static void show_sessions(struct seq_file *m, struct nfs_server *server) {}
+ #ifdef CONFIG_NFS_V4_1
+ static void show_pnfs(struct seq_file *m, struct nfs_server *server)
+ {
+-	seq_printf(m, ",pnfs=");
+-	if (server->pnfs_curr_ld)
+-		seq_printf(m, "%s", server->pnfs_curr_ld->name);
+-	else
+-		seq_printf(m, "not configured");
++	seq_printf(m, ",pnfs=%s",
++		   server->pnfs_curr_ld
++		   ? server->pnfs_curr_ld->name
++		   : "not configured");
+ }
 
-
->> * Can the suggested small refactoring matter for a specific software combination there?
->> * Would you like to clarify this change possibility a bit more?
->
-> -EPARSE
-
-I am curious where you got parsing (or more understanding) difficulties
-for these questions.
-
-Regards,
-Markus
+ static void show_implementation_id(struct seq_file *m, struct nfs_server *nfss)
+--
+2.22.0
