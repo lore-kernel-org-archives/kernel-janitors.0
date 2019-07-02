@@ -1,42 +1,38 @@
-From: Dennis Zhou <dennis@kernel.org>
-Date: Tue, 23 Jul 2019 18:31:06 +0000
-Subject: Re: [PATCH] percpu: Fix a typo
-Message-Id: <20190723183106.GA85597@dennisz-mbp>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jul 2019 13:10:29 +0000
+Subject: [PATCH] ACPI: APD: remove redundant assignment to pointer clk
+Message-Id: <20190702131029.9621-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721095633.10979-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721095633.10979-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dennis@kernel.org, tj@kernel.org, cl@linux.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 11:56:33AM +0200, Christophe JAILLET wrote:
-> s/perpcu/percpu/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  mm/percpu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 9821241fdede..febf7c7c888e 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -2220,7 +2220,7 @@ static void pcpu_dump_alloc_info(const char *lvl,
->   * @base_addr: mapped address
->   *
->   * Initialize the first percpu chunk which contains the kernel static
-> - * perpcu area.  This function is to be called from arch percpu area
-> + * percpu area.  This function is to be called from arch percpu area
->   * setup path.
->   *
->   * @ai contains all information necessary to initialize the first
-> -- 
-> 2.20.1
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-5.4 with a slightly more descriptive title.
+The pointer clk is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Thanks,
-Dennis
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/acpi_apd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
+index ff47317d8ef1..7cd0c9ac71ea 100644
+--- a/drivers/acpi/acpi_apd.c
++++ b/drivers/acpi/acpi_apd.c
+@@ -57,7 +57,7 @@ struct apd_private_data {
+ static int acpi_apd_setup(struct apd_private_data *pdata)
+ {
+ 	const struct apd_device_desc *dev_desc = pdata->dev_desc;
+-	struct clk *clk = ERR_PTR(-ENODEV);
++	struct clk *clk;
+ 
+ 	if (dev_desc->fixed_clk_rate) {
+ 		clk = clk_register_fixed_rate(&pdata->adev->dev,
+-- 
+2.20.1
