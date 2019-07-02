@@ -1,21 +1,20 @@
 From: shuah <shuah@kernel.org>
-Date: Mon, 01 Jul 2019 17:59:25 +0000
+Date: Tue, 02 Jul 2019 14:22:17 +0000
 Subject: Re: [PATCH][next] selftests/x86: fix spelling mistake "FAILT" -> "FAIL"
-Message-Id: <63f05151-bc25-b19b-61de-7f907fd1c282@kernel.org>
+Message-Id: <6e5a9bed-4f7f-4851-0421-2b440ff1f584@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190701130431.13391-1-colin.king@canonical.com>
- <5D1A06CE.6000405@bfs.de>
-In-Reply-To: <5D1A06CE.6000405@bfs.de>
+ <CALCETrVo0rJVxsYvo=abDfFCZHBuCiB0coSBXoDeP_emSZgESg@mail.gmail.com>
+In-Reply-To: <CALCETrVo0rJVxsYvo=abDfFCZHBuCiB0coSBXoDeP_emSZgESg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de, Colin King <colin.king@canonical.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
+To: Andy Lutomirski <luto@kernel.org>, Colin King <colin.king@canonical.com>
+Cc: Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
 
-On 7/1/19 7:12 AM, walter harms wrote:
-> 
-> 
-> Am 01.07.2019 15:04, schrieb Colin King:
+On 7/1/19 11:48 AM, Andy Lutomirski wrote:
+> On Mon, Jul 1, 2019 at 6:04 AM Colin King <colin.king@canonical.com> wrote:
+>>
 >> From: Colin Ian King <colin.king@canonical.com>
 >>
 >> There is an spelling mistake in an a test error message. Fix it.
@@ -30,26 +29,23 @@ On 7/1/19 7:12 AM, walter harms wrote:
 >> --- a/tools/testing/selftests/x86/test_vsyscall.c
 >> +++ b/tools/testing/selftests/x86/test_vsyscall.c
 >> @@ -451,7 +451,7 @@ static int test_vsys_x(void)
->>   		printf("[OK]\tExecuting the vsyscall page failed: #PF(0x%lx)\n",
->>   		       segv_err);
->>   	} else {
->> -		printf("[FAILT]\tExecution failed with the wrong error: #PF(0x%lx)\n",
->> +		printf("[FAIL]\tExecution failed with the wrong error: #PF(0x%lx)\n",
->>   		       segv_err);
->>   		return 1;
->>   	}
+>>                  printf("[OK]\tExecuting the vsyscall page failed: #PF(0x%lx)\n",
+>>                         segv_err);
+>>          } else {
+>> -               printf("[FAILT]\tExecution failed with the wrong error: #PF(0x%lx)\n",
+>> +               printf("[FAIL]\tExecution failed with the wrong error: #PF(0x%lx)\n",
+>>                         segv_err);
+>>                  return 1;
+>>          }
+>> --
+>> 2.20.1
+>>
 > 
-> 
-> "wrong error" sounds like scratching table, perhaps "error" is here sufficient ?
-> Bomus points when user is expected to report this.
+> Acked-by: Andy Lutomirski <luto@kernel.org>
 > 
 
-Just "error" would not accurate her. I think the intent is to say
-that syscall returned an invalid error code. "Invalid error code"
-would be accurate.
+Thanks Andy!
 
+I will queue this up for 5.3
 
-It would be helpful to report the expected error code.
-
-thanks,
 -- Shuah
