@@ -1,36 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 24 Jul 2019 18:45:55 +0000
-Subject: Re: [v4 3/3] coccinelle: Add script to check for platform_get_irq() excessive prints
-Message-Id: <3ba98738-00a0-4bee-55ab-36127197fb85@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jul 2019 14:10:28 +0000
+Subject: [PATCH][next] btrfs: fix memory leak of path on error return path
+Message-Id: <20190702141028.11566-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190723181624.203864-4-swboyd@chromium.org>
- <9b5d8470-dd6e-4358-141f-6b6c40774de1@web.de>
- <5d38a232.1c69fb81.f85f4.67e3@mx.google.com>
-In-Reply-To: <5d38a232.1c69fb81.f85f4.67e3@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Stephen Boyd <swboyd@chromium.org>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Will further software development considerations become more interesting
->> also around a contribution like “Coccinelle: Add a SmPL script for
->> the reconsideration of redundant dev_err() calls”?
->> https://lore.kernel.org/lkml/2744a3fc-9e67-8113-1dd9-43669e06386a@web.de/
->> https://lore.kernel.org/patchwork/patch/1095937/
->> https://lkml.org/lkml/2019/7/1/145
->> https://systeme.lip6.fr/pipermail/cocci/2019-July/006071.html
->>
->
-> Did this patch ever get merged?
+From: Colin Ian King <colin.king@canonical.com>
 
-Not yet. - I hope that this addition is still in the usual patch review queue.
+Currently if the allocation of roots or tmp_ulist fails the error handling
+does not free up the allocation of path causing a memory leak. Fix this by
+freeing path with a call to btrfs_free_path before taking the error return
+path.
 
+Addresses-Coverity: ("Resource leak")
+Fixes: 5911c8fe05c5 ("btrfs: fiemap: preallocate ulists for btrfs_check_shared")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/extent_io.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> It seems better to amend that patch instead of introduce another one.
-
-Further extensions can become more challenging for this software area.
-How would you like to adjust common implementation details?
-
-Regards,
-Markus
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 1eb671c16ff1..d7f37a33d597 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4600,6 +4600,7 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	tmp_ulist = ulist_alloc(GFP_KERNEL);
+ 	if (!roots || !tmp_ulist) {
+ 		ret = -ENOMEM;
++		btrfs_free_path(path);
+ 		goto out_free_ulist;
+ 	}
+ 
+-- 
+2.20.1
