@@ -1,52 +1,46 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Mon, 01 Jul 2019 07:13:52 +0000
-Subject: Re: [PATCH][next] mtd: rawnand: gpmi: remove double assignment to block_size
-Message-Id: <20190701091352.3e3caf11@xps13>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jul 2019 14:40:26 +0000
+Subject: [PATCH][next] wil6210: fix wil_cid_valid with negative cid values
+Message-Id: <20190702144026.13013-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190604105859.16627-1-colin.king@canonical.com>
-In-Reply-To: <20190604105859.16627-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Han Xu <han.xu@nxp.com>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Maya Erez <merez@codeaurora.org>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin King <colin.king@canonical.com> wrote on Tue,  4 Jun 2019
-11:58:59 +0100:
+There are several occasions where a negative cid value is passed
+into wil_cid_valid and this is converted into a u8 causing the
+range check of cid >= 0 to always succeed.  Fix this by making
+the cid argument an int to handle any -ve error value of cid.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable block_size is being assigned to itself and to
-> geo->ecc_chunk_size.  Clean up the double assignment by removing
-> the assignment to itself.
-> 
-> Addresses-Coverity: ("Evaluation order violation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-> index 5db84178edff..334fe3130285 100644
-> --- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-> @@ -1428,7 +1428,7 @@ static void gpmi_bch_layout_std(struct gpmi_nand_data *this)
->  	struct bch_geometry *geo = &this->bch_geometry;
->  	unsigned int ecc_strength = geo->ecc_strength >> 1;
->  	unsigned int gf_len = geo->gf_len;
-> -	unsigned int block_size = block_size = geo->ecc_chunk_size;
-> +	unsigned int block_size = geo->ecc_chunk_size;
->  
->  	this->bch_flashlayout0 >  		BF_BCH_FLASH0LAYOUT0_NBLOCKS(geo->ecc_chunk_count - 1) |
+An example of this behaviour is in wil_cfg80211_dump_station,
+where cid is assigned -ENOENT if the call to wil_find_cid_by_idx
+fails, and this -ve value is passed to wil_cid_valid.  I believe
+that the conversion of -ENOENT to the u8 value 254 which is
+greater than wil->max_assoc_sta causes wil_find_cid_by_idx to
+currently work fine, but I think is by luck and not the
+intended behaviour.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/wil6210/wil6210.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Applied to nand/next, thanks.
-
-Miquèl
-
-
-Thanks,
-Miquèl
+diff --git a/drivers/net/wireless/ath/wil6210/wil6210.h b/drivers/net/wireless/ath/wil6210/wil6210.h
+index 6f456b311a39..25a1adcb38eb 100644
+--- a/drivers/net/wireless/ath/wil6210/wil6210.h
++++ b/drivers/net/wireless/ath/wil6210/wil6210.h
+@@ -1144,7 +1144,7 @@ static inline void wil_c(struct wil6210_priv *wil, u32 reg, u32 val)
+ /**
+  * wil_cid_valid - check cid is valid
+  */
+-static inline bool wil_cid_valid(struct wil6210_priv *wil, u8 cid)
++static inline bool wil_cid_valid(struct wil6210_priv *wil, int cid)
+ {
+ 	return (cid >= 0 && cid < wil->max_assoc_sta);
+ }
+-- 
+2.20.1
