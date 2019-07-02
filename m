@@ -1,25 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 19 Jul 2019 03:34:38 +0000
-Subject: Re: [PATCH v2] ag71xx: fix error return code in ag71xx_probe()
-Message-Id: <20190718.203438.2073335732713416227.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jul 2019 18:11:53 +0000
+Subject: [PATCH] netfilter: nf_log: Replace a seq_printf() call by seq_puts() in seq_show()
+Message-Id: <c7d397c8-4f41-1831-505f-b3fbcc3663fb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190717115215.22965-1-weiyongjun1@huawei.com>
-        <20190719012157.100396-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190719012157.100396-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, o.rempel@pengutronix.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Westphal <fw@strlen.de>, Jozsef Kadlecsik <kadlec@netfilter.org>, Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 19 Jul 2019 01:21:57 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 20:06:30 +0200
 
-> Fix to return error code -ENOMEM from the dmam_alloc_coherent() error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/netfilter/nf_log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
+index 3574a212bdc2..bb25d4c794c7 100644
+--- a/net/netfilter/nf_log.c
++++ b/net/netfilter/nf_log.c
+@@ -374,7 +374,7 @@ static int seq_show(struct seq_file *s, void *v)
+ 			continue;
+
+ 		logger = nft_log_dereference(loggers[*pos][i]);
+-		seq_printf(s, "%s", logger->name);
++		seq_puts(s, logger->name);
+ 		if (i == 0 && loggers[*pos][i + 1] != NULL)
+ 			seq_puts(s, ",");
+
+--
+2.22.0
