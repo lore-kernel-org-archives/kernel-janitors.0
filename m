@@ -1,51 +1,87 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 22 Jul 2019 21:26:39 +0000
-Subject: [PATCH] ASoC: rt5665: Fix a typo in the name of a function
-Message-Id: <20190722212639.26954-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jul 2019 12:39:04 +0000
+Subject: [PATCH][next] ath: fix various spelling mistakes
+Message-Id: <20190702123904.8786-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bardliao@realtek.com, chiou@realtek.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Maya Erez <merez@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-All function names start with rt5665_, except 'rt5655_set_verf()'.
-It is likely a typo.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix it to be consistent.
+There are a bunch of spelling mistakes in two ath drivers, fix
+these.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/rt5665.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.c | 2 +-
+ drivers/net/wireless/ath/ath10k/mac.c  | 2 +-
+ drivers/net/wireless/ath/ath10k/qmi.c  | 4 ++--
+ drivers/net/wireless/ath/wil6210/wmi.c | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5665.c b/sound/soc/codecs/rt5665.c
-index f2ad3a4c3b7f..897e53d4c40a 100644
---- a/sound/soc/codecs/rt5665.c
-+++ b/sound/soc/codecs/rt5665.c
-@@ -2569,7 +2569,7 @@ static int set_dmic_power(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index dc45d16e8d21..a7c25d49683b 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -2784,7 +2784,7 @@ int ath10k_core_start(struct ath10k *ar, enum ath10k_firmware_mode mode,
  
--static int rt5655_set_verf(struct snd_soc_dapm_widget *w,
-+static int rt5665_set_verf(struct snd_soc_dapm_widget *w,
- 	struct snd_kcontrol *kcontrol, int event)
- {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-@@ -2689,11 +2689,11 @@ static const struct snd_soc_dapm_widget rt5665_dapm_widgets[] = {
- 	SND_SOC_DAPM_SUPPLY("Mic Det Power", RT5665_PWR_VOL,
- 		RT5665_PWR_MIC_DET_BIT, 0, NULL, 0),
- 	SND_SOC_DAPM_SUPPLY("Vref1", RT5665_PWR_ANLG_1, RT5665_PWR_VREF1_BIT, 0,
--		rt5655_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
-+		rt5665_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
- 	SND_SOC_DAPM_SUPPLY("Vref2", RT5665_PWR_ANLG_1, RT5665_PWR_VREF2_BIT, 0,
--		rt5655_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
-+		rt5665_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
- 	SND_SOC_DAPM_SUPPLY("Vref3", RT5665_PWR_ANLG_1, RT5665_PWR_VREF3_BIT, 0,
--		rt5655_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
-+		rt5665_set_verf, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU),
+ 	status = ath10k_hif_set_target_log_mode(ar, fw_diag_log);
+ 	if (status && status != -EOPNOTSUPP) {
+-		ath10k_warn(ar, "set traget log mode faileds: %d\n", status);
++		ath10k_warn(ar, "set target log mode failed: %d\n", status);
+ 		goto err_hif_stop;
+ 	}
  
- 	/* ASRC */
- 	SND_SOC_DAPM_SUPPLY_S("I2S1 ASRC", 1, RT5665_ASRC_1,
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index e43a566eef77..20f72ec95b28 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -7417,7 +7417,7 @@ static bool ath10k_mac_set_vht_bitrate_mask_fixup(struct ath10k *ar,
+ 	err = ath10k_wmi_peer_set_param(ar, arvif->vdev_id, sta->addr,
+ 					WMI_PEER_PARAM_FIXED_RATE, rate);
+ 	if (err)
+-		ath10k_warn(ar, "failed to eanble STA %pM peer fixed rate: %d\n",
++		ath10k_warn(ar, "failed to enable STA %pM peer fixed rate: %d\n",
+ 			    sta->addr, err);
+ 
+ 	return true;
+diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
+index 3b63b6257c43..d28daa2d9449 100644
+--- a/drivers/net/wireless/ath/ath10k/qmi.c
++++ b/drivers/net/wireless/ath/ath10k/qmi.c
+@@ -643,7 +643,7 @@ int ath10k_qmi_set_fw_log_mode(struct ath10k *ar, u8 fw_log_mode)
+ 			       wlfw_ini_req_msg_v01_ei, &req);
+ 	if (ret < 0) {
+ 		qmi_txn_cancel(&txn);
+-		ath10k_err(ar, "fail to send fw log reqest: %d\n", ret);
++		ath10k_err(ar, "failed to send fw log request: %d\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -652,7 +652,7 @@ int ath10k_qmi_set_fw_log_mode(struct ath10k *ar, u8 fw_log_mode)
+ 		goto out;
+ 
+ 	if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
+-		ath10k_err(ar, "fw log request rejectedr: %d\n",
++		ath10k_err(ar, "fw log request rejected: %d\n",
+ 			   resp.resp.error);
+ 		ret = -EINVAL;
+ 		goto out;
+diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
+index 475b1a233cc9..e1704cdfc03e 100644
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -2688,7 +2688,7 @@ int wmi_get_all_temperatures(struct wil6210_priv *wil,
+ 		return rc;
+ 
+ 	if (reply.evt.status = WMI_FW_STATUS_FAILURE) {
+-		wil_err(wil, "Failed geting TEMP_SENSE_ALL\n");
++		wil_err(wil, "Failed getting TEMP_SENSE_ALL\n");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.20.1
