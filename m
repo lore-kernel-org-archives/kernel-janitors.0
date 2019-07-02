@@ -1,52 +1,43 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 05 Jul 2019 15:26:48 +0000
-Subject: Re: [PATCH -next] video: fbdev: imxfb: fix a typo in imxfb_probe()
-Message-Id: <2b579d3f-a441-39c9-fdb7-6089edea3cb1@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jul 2019 09:50:10 +0000
+Subject: [PATCH] brcmfmac: Replace two seq_printf() calls in brcmf_feat_fwcap_debugfs_read()
+Message-Id: <7d96085a-76e8-c290-698a-e1473d3f4be7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190704094615epcas2p30e66b919c33afcfa233c9218eae892b7@epcas2p3.samsung.com>
- <20190704095225.143177-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190704095225.143177-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-fbdev@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@cypress.com, brcm80211-dev-list.pdl@broadcom.com, Arend van Spriel <arend.vanspriel@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, "David S. Miller" <davem@davemloft.net>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Wright Feng <wright.feng@cypress.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 11:31:07 +0200
 
-On 7/4/19 11:52 AM, Wei Yongjun wrote:
-> Fix the return value check which testing the wrong variable
-> in imxfb_probe().
+A line break and a single string should be put into a sequence.
+Thus use the corresponding output functions.
 
-I added following comment while merging the patch:
+This issue was detected by using the Coccinelle software.
 
-b.zolnierkie: please note that ->screen_base and ->screen_buffer
-are equivalent (they are part of unnamed union in struct fb_info)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Fixes: 739a6439c2bf ("video: fbdev: imxfb: fix sparse warnings about using incorrect types")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
+index 73aff4e4039d..ec0e80296e43 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
+@@ -225,10 +225,10 @@ static int brcmf_feat_fwcap_debugfs_read(struct seq_file *seq, void *data)
+ 	}
 
-Patch queued for v5.3, thanks.
+ 	/* Usually there is a space at the end of capabilities string */
+-	seq_printf(seq, "%s", caps);
++	seq_puts(seq, caps);
+ 	/* So make sure we don't print two line breaks */
+ 	if (tmp > caps && *(tmp - 1) != '\n')
+-		seq_printf(seq, "\n");
++		seq_putc(seq, '\n');
 
-> ---
->  drivers/video/fbdev/imxfb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
-> index 8d1053e9ef9f..b3286d1fa543 100644
-> --- a/drivers/video/fbdev/imxfb.c
-> +++ b/drivers/video/fbdev/imxfb.c
-> @@ -976,7 +976,7 @@ static int imxfb_probe(struct platform_device *pdev)
->  	fbi->map_size = PAGE_ALIGN(info->fix.smem_len);
->  	info->screen_buffer = dma_alloc_wc(&pdev->dev, fbi->map_size,
->  					   &fbi->map_dma, GFP_KERNEL);
-> -	if (!info->screen_base) {
-> +	if (!info->screen_buffer) {
->  		dev_err(&pdev->dev, "Failed to allocate video RAM: %d\n", ret);
->  		ret = -ENOMEM;
->  		goto failed_map;
-
-Best regards,
+ 	return 0;
+ }
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+2.22.0
