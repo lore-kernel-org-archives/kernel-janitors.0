@@ -1,43 +1,46 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 22 Jul 2019 21:15:28 +0000
-Subject: [PATCH] ASoC: pcm3168a: Fix a typo in the name of a constant
-Message-Id: <20190722211528.26600-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jul 2019 18:33:21 +0000
+Subject: [PATCH] apparmor: Replace two seq_printf() calls by seq_puts() in aa_label_seq_xprint()
+Message-Id: <9dd6c122-89f5-70e8-acfc-d6d6596e1261@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, tiwai@suse.com, kuninori.morimoto.gx@renesas.com, peter.ujfalusi@ti.com, gregkh@linuxfoundation.org, wang@mentor.com, tglx@linutronix.de
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, John Johansen <john.johansen@canonical.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-There is a typo in PCM1368A_MAX_SYSCLK, it should be PCM3168A_MAX_SYSCLK
-(1 and 3 switched in 3168)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 20:27:32 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Two strings which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function “seq_puts”.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/pcm3168a.c | 4 ++--
+ security/apparmor/label.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index ed0b4317c9ae..844602710eee 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -263,7 +263,7 @@ static unsigned int pcm3168a_scki_ratios[] = {
- #define PCM3168A_NUM_SCKI_RATIOS_DAC	ARRAY_SIZE(pcm3168a_scki_ratios)
- #define PCM3168A_NUM_SCKI_RATIOS_ADC	(ARRAY_SIZE(pcm3168a_scki_ratios) - 2)
- 
--#define PCM1368A_MAX_SYSCLK		36864000
-+#define PCM3168A_MAX_SYSCLK		36864000
- 
- static int pcm3168a_reset(struct pcm3168a_priv *pcm3168a)
- {
-@@ -296,7 +296,7 @@ static int pcm3168a_set_dai_sysclk(struct snd_soc_dai *dai,
- 	struct pcm3168a_priv *pcm3168a = snd_soc_component_get_drvdata(dai->component);
- 	int ret;
- 
--	if (freq > PCM1368A_MAX_SYSCLK)
-+	if (freq > PCM3168A_MAX_SYSCLK)
- 		return -EINVAL;
- 
- 	ret = clk_set_rate(pcm3168a->scki, freq);
--- 
-2.20.1
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index 59f1cc2557a7..20acc1f3112e 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1747,13 +1747,13 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
+-		seq_printf(f, "%s", str);
++		seq_puts(f, str);
+ 		kfree(str);
+ 	} else if (display_mode(ns, label, flags))
+ 		seq_printf(f, "%s (%s)", label->hname,
+ 			   label_modename(ns, label, flags));
+ 	else
+-		seq_printf(f, "%s", label->hname);
++		seq_puts(f, label->hname);
+ }
+
+ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+--
+2.22.0
