@@ -1,30 +1,67 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 08 Jul 2019 15:44:13 +0000
-Subject: Re: sched/topology: One function call less in build_group_from_child_sched_domain()
-Message-Id: <e3ae5bd2-d963-2422-d4f0-131a5d2edbb4@web.de>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 02 Jul 2019 13:04:42 +0000
+Subject: Applied "ASoC: madera: Remove duplicated include from cs47l35.c" to the asoc tree
+Message-Id: <20190702130442.AA6C844004B@finisterre.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad2e7dfb-3323-b214-716e-a6cae41b8bcc@web.de>
- <20190706172223.GA12680@linux.vnet.ibm.com>
- <20190708102312.GF3402@hirez.programming.kicks-ass.net>
- <20190708140751.GA10675@linux.vnet.ibm.com>
-In-Reply-To: <20190708140751.GA10675@linux.vnet.ibm.com>
+References: <20190629024333.177027-1-yuehaibing@huawei.com>
+In-Reply-To: <20190629024333.177027-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com, Paul Handrigan <Paul.Handrigan@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, Takashi Iwai <tiwai@suse.com>
 
-> Yes, it definitely makes code readable.
+The patch
 
-Some developers seem to get difficulties with this view.
+   ASoC: madera: Remove duplicated include from cs47l35.c
 
+has been applied to the asoc tree at
 
-> I was only commenting on the changelog/subject which says
-> avoids a function call which I think it doesn't.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
-Do you prefer an other wording for calling functions only once
-with a selected parameter value instead of calling them (unoptimised)
-within two branches of an if statement?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Regards,
-Markus
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 559e92f78778a171adfb152f49a78e202f5b39df Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 29 Jun 2019 02:43:33 +0000
+Subject: [PATCH] ASoC: madera: Remove duplicated include from cs47l35.c
+
+Remove duplicated include.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs47l35.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/codecs/cs47l35.c b/sound/soc/codecs/cs47l35.c
+index 511d0d6fa962..e3585c1dab3d 100644
+--- a/sound/soc/codecs/cs47l35.c
++++ b/sound/soc/codecs/cs47l35.c
+@@ -19,7 +19,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/tlv.h>
+-#include <sound/tlv.h>
+ 
+ #include <linux/irqchip/irq-madera.h>
+ #include <linux/mfd/madera/core.h>
+-- 
+2.20.1
