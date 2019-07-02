@@ -1,36 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 15:54:31 +0000
-Subject: Re: [PATCH] cifs: remove redundant assignment to variable rc
-Message-Id: <2f562159-8118-f4a5-9e00-c82cf0841fd5@canonical.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 02 Jul 2019 10:44:20 +0000
+Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch statement
+Message-Id: <20190702104420.GD4652@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190731090526.27245-1-colin.king@canonical.com>
- <87r266seg4.fsf@suse.com> <20190731122841.GA1974@kadam>
- <87lfwerze8.fsf@suse.com>
-In-Reply-To: <87lfwerze8.fsf@suse.com>
+References: <20190627131639.6394-1-colin.king@canonical.com>
+ <20190628143628.GJ5379@sirena.org.uk>
+ <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
+In-Reply-To: <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: samba-technical@lists.samba.org, Steve French <sfrench@samba.org>, kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 31/07/2019 16:34, Aur=C3=A9lien Aptel wrote:
-> "Dan Carpenter" <dan.carpenter@oracle.com> writes:
->> You're just turning off GCC's static analysis (and introducing false
->> positives) when you do that.  We have seen bugs caused by this and never
->> seen any bugs prevented by this style.
->=20
-> You've never seen bugs prevented by initializing uninitialized
-> variables? Code can change overtime and I don't think coverity is
-> checked as often as it could be, meaning the var could end up being used
-> while uninitialized in the future.
+On Fri, 28 Jun 2019, Colin Ian King wrote:
 
-gcc/clang should pick up uninitialized vars at compile time. also I run
-coverity daily on linux-next.
+> On 28/06/2019 15:36, Mark Brown wrote:
+> > On Thu, Jun 27, 2019 at 02:16:39PM +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
+> >> break statement, causing it to fall through to a dev_err message.
+> >> Fix this by adding in the missing break statement.
+> > 
+> > This doesn't apply against current code, please check and resend.
+> > 
+> So it applies cleanly against linux-next, I think the original code
+> landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
 
-Colin
+Applied, thanks Colin.
 
->=20
-> Anyway I won't die on this hill, merge this if you prefer.
->=20
-> Cheers,
->=20
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
