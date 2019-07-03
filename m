@@ -1,72 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 05 Jul 2019 17:19:50 +0000
-Subject: Applied "ASoC: rt5665: remove redundant assignment to variable idx" to the asoc tree
-Message-Id: <20190705171950.D1D422742B45@ypsilon.sirena.org.uk>
+From: Sasha Levin <sashal@kernel.org>
+Date: Wed, 03 Jul 2019 02:16:07 +0000
+Subject: [PATCH AUTOSEL 4.19 08/26] x86/apic: Fix integer overflow on 10 bit left shift of cpu_khz
+Message-Id: <20190703021625.18116-8-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705075303.14692-1-colin.king@canonical.com>
-In-Reply-To: <20190705075303.14692-1-colin.king@canonical.com>
+References: <20190703021625.18116-1-sashal@kernel.org>
+In-Reply-To: <20190703021625.18116-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Oder Chiou <oder_chiou@realtek.com>, Takashi Iwai <tiwai@suse.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-The patch
-
-   ASoC: rt5665: remove redundant assignment to variable idx
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 590eb2f4ef94cb3f3e73345c6db4de97c9cd539e Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 5 Jul 2019 08:53:03 +0100
-Subject: [PATCH] ASoC: rt5665: remove redundant assignment to variable idx
 
-The variable idx is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+[ Upstream commit ea136a112d89bade596314a1ae49f748902f4727 ]
 
-Addresses-Coverity: ("Unused value")
+The left shift of unsigned int cpu_khz will overflow for large values of
+cpu_khz, so cast it to a long long before shifting it to avoid overvlow.
+For example, this can happen when cpu_khz is 4194305, i.e. ~4.2 GHz.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190705075303.14692-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190619181446.13635-1-colin.king@canonical.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/rt5665.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/apic.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5665.c b/sound/soc/codecs/rt5665.c
-index 87263317085a..c050d84a6916 100644
---- a/sound/soc/codecs/rt5665.c
-+++ b/sound/soc/codecs/rt5665.c
-@@ -1478,7 +1478,7 @@ static int set_dmic_clk(struct snd_soc_dapm_widget *w,
- {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	struct rt5665_priv *rt5665 = snd_soc_component_get_drvdata(component);
--	int pd, idx = -EINVAL;
-+	int pd, idx;
- 
- 	pd = rl6231_get_pre_div(rt5665->regmap,
- 		RT5665_ADDA_CLK_1, RT5665_I2S_PD1_SFT);
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 84132eddb5a8..2646234380cc 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1452,7 +1452,8 @@ static void apic_pending_intr_clear(void)
+ 		if (queued) {
+ 			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+ 				ntsc = rdtsc();
+-				max_loops = (cpu_khz << 10) - (ntsc - tsc);
++				max_loops = (long long)cpu_khz << 10;
++				max_loops -= ntsc - tsc;
+ 			} else {
+ 				max_loops--;
+ 			}
 -- 
 2.20.1
