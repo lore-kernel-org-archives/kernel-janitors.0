@@ -1,42 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 04 Jul 2019 13:36:24 +0000
-Subject: [PATCH] scsi: message: fusion: remove redundant assignment to variable ret
-Message-Id: <20190704133624.31081-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 03 Jul 2019 03:10:21 +0000
+Subject: [PATCH -next] RDMA/hns: Remove set but not used variable 'fclr_write_fail_flag'
+Message-Id: <20190703031021.14896-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The variable ret is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.  Also move { brace
-to the conventional coding style location.
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'hns_roce_function_clear':
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c:1135:7: warning:
+ variable 'fclr_write_fail_flag' set but not used [-Wunused-but-set-variable]
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It is never used, so can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/message/fusion/mptbase.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index c2dd322691d1..449916e062ce 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -7106,8 +7106,9 @@ mpt_SoftResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
-  *	HardReset.
-  **/
- int
--mpt_Soft_Hard_ResetHandler(MPT_ADAPTER *ioc, int sleepFlag) {
--	int ret = -1;
-+mpt_Soft_Hard_ResetHandler(MPT_ADAPTER *ioc, int sleepFlag)
-+{
-+	int ret;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index edd62b4dc0a0..edaf900b739c 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -1132,7 +1132,6 @@ static int hns_roce_cmq_query_hw_info(struct hns_roce_dev *hr_dev)
  
- 	ret = mpt_SoftResetHandler(ioc, sleepFlag);
- 	if (ret = 0)
--- 
-2.20.1
+ static void hns_roce_function_clear(struct hns_roce_dev *hr_dev)
+ {
+-	bool fclr_write_fail_flag = false;
+ 	struct hns_roce_func_clear *resp;
+ 	struct hns_roce_cmq_desc desc;
+ 	unsigned long end;
+@@ -1143,7 +1142,6 @@ static void hns_roce_function_clear(struct hns_roce_dev *hr_dev)
+ 
+ 	ret = hns_roce_cmq_send(hr_dev, &desc, 1);
+ 	if (ret) {
+-		fclr_write_fail_flag = true;
+ 		dev_err(hr_dev->dev, "Func clear write failed, ret = %d.\n",
+ 			 ret);
+ 		return;
