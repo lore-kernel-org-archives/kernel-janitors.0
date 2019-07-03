@@ -1,34 +1,50 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 04 Jul 2019 10:45:34 +0000
-Subject: [PATCH -next] drm/i915: fix possible memory leak in intel_hdcp_auth_downstream()
-Message-Id: <20190704104534.12508-1-weiyongjun1@huawei.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Wed, 03 Jul 2019 02:14:50 +0000
+Subject: [PATCH AUTOSEL 5.1 15/39] x86/apic: Fix integer overflow on 10 bit left shift of cpu_khz
+Message-Id: <20190703021514.17727-15-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190703021514.17727-1-sashal@kernel.org>
+In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-'ksv_fifo' is malloced in intel_hdcp_auth_downstream() and should be
-freed before leaving from the error handling cases, otherwise it will
-cause memory leak.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+[ Upstream commit ea136a112d89bade596314a1ae49f748902f4727 ]
+
+The left shift of unsigned int cpu_khz will overflow for large values of
+cpu_khz, so cast it to a long long before shifting it to avoid overvlow.
+For example, this can happen when cpu_khz is 4194305, i.e. ~4.2 GHz.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190619181446.13635-1-colin.king@canonical.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
+ arch/x86/kernel/apic/apic.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
-index bc3a94d491c4..27bd7276a82d 100644
---- a/drivers/gpu/drm/i915/display/intel_hdcp.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
-@@ -536,7 +536,8 @@ int intel_hdcp_auth_downstream(struct intel_connector *connector)
- 
- 	if (drm_hdcp_check_ksvs_revoked(dev, ksv_fifo, num_downstream)) {
- 		DRM_ERROR("Revoked Ksv(s) in ksv_fifo\n");
--		return -EPERM;
-+		ret = -EPERM;
-+		goto err;
- 	}
- 
- 	/*
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index b7bcdd781651..ec6225cb94f9 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1458,7 +1458,8 @@ static void apic_pending_intr_clear(void)
+ 		if (queued) {
+ 			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+ 				ntsc = rdtsc();
+-				max_loops = (cpu_khz << 10) - (ntsc - tsc);
++				max_loops = (long long)cpu_khz << 10;
++				max_loops -= ntsc - tsc;
+ 			} else {
+ 				max_loops--;
+ 			}
+-- 
+2.20.1
