@@ -1,87 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 02 Jul 2019 12:39:04 +0000
-Subject: [PATCH][next] ath: fix various spelling mistakes
-Message-Id: <20190702123904.8786-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Jul 2019 11:01:30 +0000
+Subject: Re: fs/seq_file: Replace a seq_printf() call by seq_puts() in seq_hex_dump()
+Message-Id: <f62fdb13-59b7-4e5d-b64a-37b96b5c0125@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
+ <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
+In-Reply-To: <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Maya Erez <merez@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Enrico Weigelt <lkml@metux.net>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Looks good,
 
-There are a bunch of spelling mistakes in two ath drivers, fix
-these.
+Thanks for your feedback.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/core.c | 2 +-
- drivers/net/wireless/ath/ath10k/mac.c  | 2 +-
- drivers/net/wireless/ath/ath10k/qmi.c  | 4 ++--
- drivers/net/wireless/ath/wil6210/wmi.c | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index dc45d16e8d21..a7c25d49683b 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -2784,7 +2784,7 @@ int ath10k_core_start(struct ath10k *ar, enum ath10k_firmware_mode mode,
- 
- 	status = ath10k_hif_set_target_log_mode(ar, fw_diag_log);
- 	if (status && status != -EOPNOTSUPP) {
--		ath10k_warn(ar, "set traget log mode faileds: %d\n", status);
-+		ath10k_warn(ar, "set target log mode failed: %d\n", status);
- 		goto err_hif_stop;
- 	}
- 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index e43a566eef77..20f72ec95b28 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -7417,7 +7417,7 @@ static bool ath10k_mac_set_vht_bitrate_mask_fixup(struct ath10k *ar,
- 	err = ath10k_wmi_peer_set_param(ar, arvif->vdev_id, sta->addr,
- 					WMI_PEER_PARAM_FIXED_RATE, rate);
- 	if (err)
--		ath10k_warn(ar, "failed to eanble STA %pM peer fixed rate: %d\n",
-+		ath10k_warn(ar, "failed to enable STA %pM peer fixed rate: %d\n",
- 			    sta->addr, err);
- 
- 	return true;
-diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
-index 3b63b6257c43..d28daa2d9449 100644
---- a/drivers/net/wireless/ath/ath10k/qmi.c
-+++ b/drivers/net/wireless/ath/ath10k/qmi.c
-@@ -643,7 +643,7 @@ int ath10k_qmi_set_fw_log_mode(struct ath10k *ar, u8 fw_log_mode)
- 			       wlfw_ini_req_msg_v01_ei, &req);
- 	if (ret < 0) {
- 		qmi_txn_cancel(&txn);
--		ath10k_err(ar, "fail to send fw log reqest: %d\n", ret);
-+		ath10k_err(ar, "failed to send fw log request: %d\n", ret);
- 		goto out;
- 	}
- 
-@@ -652,7 +652,7 @@ int ath10k_qmi_set_fw_log_mode(struct ath10k *ar, u8 fw_log_mode)
- 		goto out;
- 
- 	if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
--		ath10k_err(ar, "fw log request rejectedr: %d\n",
-+		ath10k_err(ar, "fw log request rejected: %d\n",
- 			   resp.resp.error);
- 		ret = -EINVAL;
- 		goto out;
-diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
-index 475b1a233cc9..e1704cdfc03e 100644
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -2688,7 +2688,7 @@ int wmi_get_all_temperatures(struct wil6210_priv *wil,
- 		return rc;
- 
- 	if (reply.evt.status = WMI_FW_STATUS_FAILURE) {
--		wil_err(wil, "Failed geting TEMP_SENSE_ALL\n");
-+		wil_err(wil, "Failed getting TEMP_SENSE_ALL\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.20.1
+> but have you checked whether "m" could ever be NULL
+
+I wonder about this enquiry.
+
+This function parameter should be valid as usual.
+Thus it should not be a null pointer under ordinary conditions.
+
+
+> and whether seq_puts() has a check for that ?
+
+These output functions do not provide an explicit sanity check for their first parameter
+so far.
+
+Regards,
+Markus
