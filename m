@@ -1,17 +1,19 @@
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Wed, 03 Jul 2019 05:12:54 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 03 Jul 2019 18:30:05 +0000
 Subject: Re: [PATCH net-next] net: socionext: remove set but not used variable 'pkts'
-Message-Id: <20190703051254.GA25517@apalos>
+Message-Id: <20190703.113005.69711790321030429.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190703024213.191191-1-yuehaibing@huawei.com>
 In-Reply-To: <20190703024213.191191-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, Alexei Starovoitov <ast@kernel.org>, "David S . Miller" <davem@davemloft.net>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: jaswinder.singh@linaro.org, ast@kernel.org, ilias.apalodimas@linaro.org, daniel@iogearbox.net, jakub.kicinski@netronome.com, hawk@kernel.org, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 02:42:13AM +0000, YueHaibing wrote:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 3 Jul 2019 02:42:13 +0000
+
 > Fixes gcc '-Wunused-but-set-variable' warning:
 > 
 > drivers/net/ethernet/socionext/netsec.c: In function 'netsec_clean_tx_dring':
@@ -38,15 +40,9 @@ On Wed, Jul 03, 2019 at 02:42:13AM +0000, YueHaibing wrote:
 >  	struct netsec_de *entry;
 >  	int tail = dring->tail;
 >  	int cnt = 0;
-> @@ -642,7 +642,6 @@ static bool netsec_clean_tx_dring(struct netsec_priv *priv)
->  	if (dring->is_xdp)
->  		spin_lock(&dring->lock);
->  
-> -	pkts = 0;
->  	bytes = 0;
->  	entry = dring->vaddr + DESC_SZ * tail;
-> 
-> 
-> 
 
-Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+This breaks the reverse christmas-tree ordering of the local variables in this
+function.  Please move the 'bytes' declaration down by two lines when you make
+this change.
+
+Thanks.
