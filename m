@@ -1,74 +1,39 @@
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Date: Fri, 19 Jul 2019 08:58:17 +0000
-Subject: Re: [PATCH -next] mtd: hyperbus: fix build error about CONFIG_REGMAP
-Message-Id: <a4c534c3-4105-08cd-874b-91d82f5a9199@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jul 2019 16:50:37 +0000
+Subject: [PATCH][next] gve: fix -ENOMEM null check on a page allocation
+Message-Id: <20190703165037.3041-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190719010703.63815-1-maowenan@huawei.com>
-In-Reply-To: <20190719010703.63815-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Catherine Sullivan <csully@google.com>, Sagi Shahar <sagis@google.com>, Jon Olson <jonolson@google.com>, "David S . Miller" <davem@davemloft.net>, Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the check to see if a page is allocated is incorrect
+and is checking if the pointer page is null, not *page as
+intended.  Fix this.
 
-On 19/07/19 6:37 AM, Mao Wenan wrote:
-> When CONFIG_MUX_MMIO and CONFIG_HBMC_AM654 are both 'm', there are
-> some building error as below:
-> 
-> drivers/mux/mmio.c: In function mux_mmio_probe:
-> drivers/mux/mmio.c:76:20: error: storage size of field isnt known
->    struct reg_field field;
->                     ^~~~~
-> drivers/mux/mmio.c:102:15: error: implicit declaration of function devm_regmap_field_alloc; did you mean devm_mux_chip_alloc? [-Werror=implicit-function-declaration]
->    fields[i] = devm_regmap_field_alloc(dev, regmap, field);
->                ^~~~~~~~~~~~~~~~~~~~~~~
->                devm_mux_chip_alloc
-> drivers/mux/mmio.c:76:20: warning: unused variable field [-Wunused-variable]
->    struct reg_field field;
->                     ^~~~~
-> cc1: some warnings being treated as errors
-> make[2]: *** [drivers/mux/mmio.o] Error 1
-> make[1]: *** [drivers/mux] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [drivers] Error 2
-> 
-> This because CONFIG_REGMAP is not enable, so change the Kconfig for HBMC_AM654.
+Addresses-Coverity: ("Dereference before null check")
+Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/google/gve/gve_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since, hbmc-am654.c does not use regmap APIs directly we don't need to
-select REGMAP here. MUX_MMIO is optional for this driver, therefore I
-have converted that to an imply clause and posted a fix here:
-https://patchwork.ozlabs.org/patch/1133946/
-
-Let me know if that fixes the issue. Thanks for the report!
-
-Regards
-Vignesh
-
-> 
-> Fixes: b07079f1642c("mtd: hyperbus: Add driver for TI's HyperBus memory controller")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/mtd/hyperbus/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/hyperbus/Kconfig b/drivers/mtd/hyperbus/Kconfig
-> index cff6bbd..f324fa6 100644
-> --- a/drivers/mtd/hyperbus/Kconfig
-> +++ b/drivers/mtd/hyperbus/Kconfig
-> @@ -14,6 +14,8 @@ if MTD_HYPERBUS
->  
->  config HBMC_AM654
->  	tristate "HyperBus controller driver for AM65x SoC"
-> +	select OF
-> +	select REGMAP
->  	select MULTIPLEXER
->  	select MUX_MMIO
->  	help
-> 
-
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 6a147ed4627f..6ea74c364a4b 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -516,7 +516,7 @@ int gve_alloc_page(struct device *dev, struct page **page, dma_addr_t *dma,
+ 		   enum dma_data_direction dir)
+ {
+ 	*page = alloc_page(GFP_KERNEL);
+-	if (!page)
++	if (!*page)
+ 		return -ENOMEM;
+ 	*dma = dma_map_page(dev, *page, 0, PAGE_SIZE, dir);
+ 	if (dma_mapping_error(dev, *dma)) {
 -- 
-Regards
-Vignesh
+2.20.1
