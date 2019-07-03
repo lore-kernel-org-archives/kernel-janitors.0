@@ -1,45 +1,43 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Date: Mon, 22 Jul 2019 06:56:28 +0000
-Subject: Re: [PATCH] ia64: perfmon: Fix a typo
-Message-Id: <6bc78765-fc54-8af9-18ad-7ed268a27439@metux.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 03 Jul 2019 05:59:08 +0000
+Subject: [PATCH -next] serial: 8250: 8250_core: Fix missing unlock on error in serial8250_register_8250_port(
+Message-Id: <20190703055908.141294-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721165144.3152-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721165144.3152-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, tony.luck@intel.com, fenghua.yu@intel.com, david@redhat.com, tglx@linutronix.de, gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 21.07.19 18:51, Christophe JAILLET wrote:
-> s/permfon.h/perfmon.h/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The reference to perfmon.h should maybe be just removed because I've found
-> no information about the increasing order to respect.
-> This is maybe now in another file?
-> ---
->   arch/ia64/kernel/perfmon.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
-> index 58a6337c0690..22795b420b10 100644
-> --- a/arch/ia64/kernel/perfmon.c
-> +++ b/arch/ia64/kernel/perfmon.c
-> @@ -4550,7 +4550,7 @@ pfm_exit_thread(struct task_struct *task)
->   }
->   
->   /*
-> - * functions MUST be listed in the increasing order of their index (see permfon.h)
-> + * functions MUST be listed in the increasing order of their index (see perfmon.h)
->    */
->   #define PFM_CMD(name, flags, arg_count, arg_type, getsz) { name, #name, flags, arg_count, sizeof(arg_type), getsz }
->   #define PFM_CMD_S(name, flags) { name, #name, flags, 0, 0, NULL }
-> 
-Reviewed-By: Enrico Weigelt <info@metux.net>
+Add the missing unlock before return from function serial8250_register_8250_port()
+in the error handling case.
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/tty/serial/8250/8250_core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index a4470771005f..df3bcc0b2d74 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -1026,8 +1026,10 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
+ 		if (!has_acpi_companion(uart->port.dev)) {
+ 			gpios = mctrl_gpio_init(&uart->port, 0);
+ 			if (IS_ERR(gpios)) {
+-				if (PTR_ERR(gpios) != -ENOSYS)
+-					return PTR_ERR(gpios);
++				if (PTR_ERR(gpios) != -ENOSYS) {
++					ret = PTR_ERR(gpios);
++					goto out_unlock;
++				}
+ 			} else {
+ 				uart->gpios = gpios;
+ 			}
+@@ -1099,6 +1101,7 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
+ 		}
+ 	}
+ 
++out_unlock:
+ 	mutex_unlock(&serial_mutex);
+ 
+ 	return ret;
