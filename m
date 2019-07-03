@@ -1,50 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 02 Jul 2019 19:00:33 +0000
-Subject: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in ima_show_template_data_ascii()
-Message-Id: <6b3e3f9e-926e-e010-de27-58d75360ff6c@web.de>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Wed, 03 Jul 2019 09:16:44 +0000
+Subject: RE: [PATCH] ima: Replace two seq_printf() calls by seq_puts() in ima_show_template_data_ascii()
+Message-Id: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
 In-Reply-To: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: 'Markus Elfring' <Markus.Elfring@web.de>, "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Jul 2019 20:52:21 +0200
-
-Two strings which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function “seq_puts”.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/integrity/ima/ima_template_lib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 9fe0ef7f91e2..05636e9b19b1 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
- 	case DATA_FMT_DIGEST_WITH_ALGO:
- 		buf_ptr = strnchr(field_data->data, buflen, ':');
- 		if (buf_ptr != field_data->data)
--			seq_printf(m, "%s", field_data->data);
-+			seq_puts(m, field_data->data);
-
- 		/* skip ':' and '\0' */
- 		buf_ptr += 2;
-@@ -87,7 +87,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
- 		ima_print_digest(m, buf_ptr, buflen);
- 		break;
- 	case DATA_FMT_STRING:
--		seq_printf(m, "%s", buf_ptr);
-+		seq_puts(m, buf_ptr);
- 		break;
- 	default:
- 		break;
---
-2.22.0
+RnJvbTogIE1hcmt1cyBFbGZyaW5nDQo+IFNlbnQ6IDAyIEp1bHkgMjAxOSAyMDowMQ0KPiANCj4g
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
+YXRlOiBUdWUsIDIgSnVsIDIwMTkgMjA6NTI6MjEgKzAyMDANCj4gDQo+IFR3byBzdHJpbmdzIHdo
+aWNoIGRpZCBub3QgY29udGFpbiBhIGRhdGEgZm9ybWF0IHNwZWNpZmljYXRpb24gc2hvdWxkIGJl
+IHB1dA0KPiBpbnRvIGEgc2VxdWVuY2UuIFRodXMgdXNlIHRoZSBjb3JyZXNwb25kaW5nIGZ1bmN0
+aW9uIOKAnHNlcV9wdXRz4oCdLg0KPiANCj4gVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNp
+bmcgdGhlIENvY2NpbmVsbGUgc29mdHdhcmUuDQoNClRoZSB0d28gY2FsbHMgYXJlIGFsbW9zdCBj
+ZXJ0YWlubHkgYWJzb2x1dGVseSBlcXVpdmFsZW50Lg0KU28gdGhpcyBpcyBwcm9iYWJseSBqdXN0
+IGEgbWlub3IgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQgaW4gYSBjb2RlDQpwYXRoIHdoZXJlIGl0
+IHJlYWxseSBkb2Vzbid0IG1hdHRlci4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmlu
+ZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IC0tLQ0KPiAgc2VjdXJpdHkvaW50
+ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMgfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvc2Vj
+dXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMgYi9zZWN1cml0eS9pbnRlZ3Jp
+dHkvaW1hL2ltYV90ZW1wbGF0ZV9saWIuYw0KPiBpbmRleCA5ZmUwZWY3ZjkxZTIuLjA1NjM2ZTli
+MTliMSAxMDA2NDQNCj4gLS0tIGEvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVf
+bGliLmMNCj4gKysrIGIvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVfbGliLmMN
+Cj4gQEAgLTc0LDcgKzc0LDcgQEAgc3RhdGljIHZvaWQgaW1hX3Nob3dfdGVtcGxhdGVfZGF0YV9h
+c2NpaShzdHJ1Y3Qgc2VxX2ZpbGUgKm0sDQo+ICAJY2FzZSBEQVRBX0ZNVF9ESUdFU1RfV0lUSF9B
+TEdPOg0KPiAgCQlidWZfcHRyID0gc3RybmNocihmaWVsZF9kYXRhLT5kYXRhLCBidWZsZW4sICc6
+Jyk7DQo+ICAJCWlmIChidWZfcHRyICE9IGZpZWxkX2RhdGEtPmRhdGEpDQo+IC0JCQlzZXFfcHJp
+bnRmKG0sICIlcyIsIGZpZWxkX2RhdGEtPmRhdGEpOw0KPiArCQkJc2VxX3B1dHMobSwgZmllbGRf
+ZGF0YS0+ZGF0YSk7DQo+IA0KPiAgCQkvKiBza2lwICc6JyBhbmQgJ1wwJyAqLw0KPiAgCQlidWZf
+cHRyICs9IDI7DQoNClRoYXQgY29kZSBsb29rcyBoaWdobHkgc3VzcGVjdCENCkl0IHVzZXMgYSBi
+b3VuZGVkIHNjYW4gdGhlbiBhc3N1bWVzIGEgJ1wwJyB0ZXJtaW5hdGVkIHN0cmluZy4NCkl0IHRo
+ZW4gYWRkcyAyIHRvIGEgcG90ZW50aWFsbHkgTlVMTCBwb2ludGVyLg0KDQpBYm91dCB0eXBpY2Fs
+IGZvciAnc2VjdXJpdHknIGNvZGUgOi0pDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
+c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
+IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo
