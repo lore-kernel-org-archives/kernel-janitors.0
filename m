@@ -1,27 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jul 2019 16:28:40 +0000
-Subject: Re: md-multipath: Replace a seq_printf() call by seq_putc() in multipath_status()
-Message-Id: <3ae39471-e1d2-2e2a-984a-888340e84447@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jul 2019 08:14:34 +0000
+Subject: [PATCH][next] staging: rtl8723bs: hal: remove redundant assignment to packetType
+Message-Id: <20190703081434.17489-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
- <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
-In-Reply-To: <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Song Liu <liu.song.a23@gmail.com>, linux-raid <linux-raid@vger.kernel.org>
-Cc: Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Himadri Pandya <himadri18.07@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> A single character (depending on a condition check) should be put
->> into a sequence. Thus use the corresponding function “seq_putc”.
-…
-> Can you explain why this is necessary?
+From: Colin Ian King <colin.king@canonical.com>
 
-I suggest another bit of software fine-tuning.
+Local variable packetType is being assigned a value that is never
+read just before a return statement. The assignment is redundant
+and can be removed.
 
-* Pass only a relevant character instead of a string.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/hal/hal_btcoex.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-* Omit the format string for a function parameter.
-
-Regards,
-Markus
+diff --git a/drivers/staging/rtl8723bs/hal/hal_btcoex.c b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+index 66caf34..2579ac3 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_btcoex.c
++++ b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+@@ -1196,7 +1196,6 @@ void EXhalbtcoutsrc_SpecialPacketNotify(PBTC_COEXIST pBtCoexist, u8 pktType)
+ 	} else if (PACKET_ARP = pktType) {
+ 		packetType = BTC_PACKET_ARP;
+ 	} else {
+-		packetType = BTC_PACKET_UNKNOWN;
+ 		return;
+ 	}
+ 
+-- 
+2.7.4
