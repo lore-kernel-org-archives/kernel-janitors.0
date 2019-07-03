@@ -1,39 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 09:47:36 +0000
-Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to variable rtstatus
-Message-Id: <20190731094736.28637-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Jul 2019 16:28:40 +0000
+Subject: Re: md-multipath: Replace a seq_printf() call by seq_putc() in multipath_status()
+Message-Id: <3ae39471-e1d2-2e2a-984a-888340e84447@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
+ <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
+In-Reply-To: <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Straube <straube.linux@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Song Liu <liu.song.a23@gmail.com>, linux-raid <linux-raid@vger.kernel.org>
+Cc: Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+>> A single character (depending on a condition check) should be put
+>> into a sequence. Thus use the corresponding function “seq_putc”.
+…
+> Can you explain why this is necessary?
 
-Variable rtstatus is being initialized with a value that is never read
-and rtstatus is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.  Also, make rtstatus a bool to
-match the function return type.
+I suggest another bit of software fine-tuning.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8188eu/hal/bb_cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Pass only a relevant character instead of a string.
 
-diff --git a/drivers/staging/rtl8188eu/hal/bb_cfg.c b/drivers/staging/rtl8188eu/hal/bb_cfg.c
-index 11e0bb9c67d7..51882858fcf0 100644
---- a/drivers/staging/rtl8188eu/hal/bb_cfg.c
-+++ b/drivers/staging/rtl8188eu/hal/bb_cfg.c
-@@ -653,7 +653,7 @@ static bool config_parafile(struct adapter *adapt)
- 
- bool rtl88eu_phy_bb_config(struct adapter *adapt)
- {
--	int rtstatus = true;
-+	bool rtstatus;
- 	u32 regval;
- 	u8 crystal_cap;
- 
--- 
-2.20.1
+* Omit the format string for a function parameter.
+
+Regards,
+Markus
