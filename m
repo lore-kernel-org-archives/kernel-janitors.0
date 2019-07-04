@@ -1,46 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 24 Jul 2019 11:46:43 +0000
-Subject: Re: [PATCH v2] libertas: Fix a double free in if_spi_c2h_data()
-Message-Id: <20190724114644.65BAB60ACE@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Jul 2019 12:44:25 +0000
+Subject: [PATCH] ALSA: hda/ca0132 - remove redundant assignment to variable 'changed'
+Message-Id: <20190704124425.2142-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
-In-Reply-To: <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dcbw@redhat.com>
-Cc: Philip Rakity <prakity@yahoo.com>, libertas-dev@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Allison Randal <allison@lohutok.net>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Connor McAdams <conmanx360@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Williams <dcbw@redhat.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The lbs_process_rxed_packet() frees the skb.  It didn't originally, but
-> we fixed it in commit f54930f36311 ("libertas: don't leak skb on receive
-> error").
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Dan Williams <dcbw@redhat.com>
+The variable 'changed' is being initialized with a value that is never
+read and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-Failed to compile:
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/hda/patch_ca0132.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/net/wireless/marvell/libertas/if_spi.c: In function 'if_spi_c2h_data':
-drivers/net/wireless/marvell/libertas/if_spi.c:771:11: error: expected ';' before '}' token
-   goto out
-           ^
-           ;
-  }
-  ~         
-make[5]: *** [drivers/net/wireless/marvell/libertas/if_spi.o] Error 1
-make[4]: *** [drivers/net/wireless/marvell/libertas] Error 2
-make[3]: *** [drivers/net/wireless/marvell] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [drivers/net/wireless] Error 2
-make[1]: *** [drivers/net] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [drivers] Error 2
-
-Patch set to Changes Requested.
-
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index c0565437ffed..0d51823d7270 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -5980,7 +5980,7 @@ static int ca0132_alt_volume_put(struct snd_kcontrol *kcontrol,
+ 	int ch = get_amp_channels(kcontrol);
+ 	long *valp = ucontrol->value.integer.value;
+ 	hda_nid_t vnid = 0;
+-	int changed = 1;
++	int changed;
+ 
+ 	switch (nid) {
+ 	case 0x02:
 -- 
-https://patchwork.kernel.org/patch/11033059/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
