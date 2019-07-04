@@ -1,29 +1,33 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 26 Jul 2019 12:29:14 +0000
-Subject: Re: [PATCH][next] crypto: ccree - fix spelling mistake "configration" -> "configuration"
-Message-Id: <20190726122914.GA7991@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 04 Jul 2019 09:52:57 +0000
+Subject: [PATCH -next] bcache: fix possible memory leak in bch_cached_dev_run()
+Message-Id: <20190704095257.143492-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190701130814.14251-1-colin.king@canonical.com>
-References: <20190701130814.14251-1-colin.king@canonical.com>
-In-Reply-To: <20190701130814.14251-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: gilad@benyossef.com, davem@davemloft.net, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/crypto/ccree/cc_driver.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+memory malloced in bch_cached_dev_run() and should be freed before
+leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: 0b13efecf5f2 ("bcache: add return value check to bch_cached_dev_run()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/md/bcache/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 26e374fbf57c..20ed838e9413 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -931,6 +931,9 @@ int bch_cached_dev_run(struct cached_dev *dc)
+ 	if (dc->io_disable) {
+ 		pr_err("I/O disabled on cached dev %s",
+ 		       dc->backing_dev_name);
++		kfree(env[1]);
++		kfree(env[2]);
++		kfree(buf);
+ 		return -EIO;
+ 	}
