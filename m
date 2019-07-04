@@ -1,60 +1,33 @@
-From: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Date: Fri, 05 Jul 2019 16:37:14 +0000
-Subject: Re: [alsa-devel] [PATCH -next] ASoC: SOF: debug: fix possible memory leak in sof_dfsentry_write()
-Message-Id: <a3a96e0f84ee04bff6855701cd7b00a25a5a5de1.camel@linux.intel.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 04 Jul 2019 09:52:25 +0000
+Subject: [PATCH -next] video: fbdev: imxfb: fix a typo in imxfb_probe()
+Message-Id: <20190704095225.143177-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705081637.157169-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190705081637.157169-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Pan Xiuli <xiuli.pan@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, 2019-07-05 at 08:16 +0000, Wei Yongjun wrote:
-> 'string' is malloced in sof_dfsentry_write() and should be freed
-> before leaving from the error handling cases, otherwise it will cause
-> memory leak.
-> 
-> Fixes: 091c12e1f50c ("ASoC: SOF: debug: add new debugfs entries for
-> IPC flood test")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Thanks for fixing this, Wei!
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Fix the return value check which testing the wrong variable
+in imxfb_probe().
 
-> ---
->  sound/soc/sof/debug.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
-> index 54bb53bfc81b..2388477a965e 100644
-> --- a/sound/soc/sof/debug.c
-> +++ b/sound/soc/sof/debug.c
-> @@ -162,7 +162,7 @@ static ssize_t sof_dfsentry_write(struct file
-> *file, const char __user *buffer,
->  	else
->  		ret = kstrtoul(string, 0, &ipc_count);
->  	if (ret < 0)
-> -		return ret;
-> +		goto out;
->  
->  	/* limit max duration/ipc count for flood test */
->  	if (flood_duration_test) {
-> @@ -191,7 +191,7 @@ static ssize_t sof_dfsentry_write(struct file
-> *file, const char __user *buffer,
->  				    "error: debugfs write failed to
-> resume %d\n",
->  				    ret);
->  		pm_runtime_put_noidle(sdev->dev);
-> -		return ret;
-> +		goto out;
->  	}
->  
->  	/* flood test */
-> 
-> 
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+Fixes: 739a6439c2bf ("video: fbdev: imxfb: fix sparse warnings about using incorrect types")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/video/fbdev/imxfb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
+index 8d1053e9ef9f..b3286d1fa543 100644
+--- a/drivers/video/fbdev/imxfb.c
++++ b/drivers/video/fbdev/imxfb.c
+@@ -976,7 +976,7 @@ static int imxfb_probe(struct platform_device *pdev)
+ 	fbi->map_size = PAGE_ALIGN(info->fix.smem_len);
+ 	info->screen_buffer = dma_alloc_wc(&pdev->dev, fbi->map_size,
+ 					   &fbi->map_dma, GFP_KERNEL);
+-	if (!info->screen_base) {
++	if (!info->screen_buffer) {
+ 		dev_err(&pdev->dev, "Failed to allocate video RAM: %d\n", ret);
+ 		ret = -ENOMEM;
+ 		goto failed_map;
