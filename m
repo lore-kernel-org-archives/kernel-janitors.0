@@ -1,43 +1,37 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Date: Mon, 22 Jul 2019 06:55:11 +0000
-Subject: Re: [PATCH] dlm: fix a typo
-Message-Id: <e561b3e8-e3da-b81c-2b06-3be4fa3d1c61@metux.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Jul 2019 22:28:03 +0000
+Subject: [PATCH][next] ubifs: remove redundant assignment to pointer fname
+Message-Id: <20190704222803.4328-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721104322.30019-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721104322.30019-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, ccaulfie@redhat.com, teigland@redhat.com
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21.07.19 12:43, Christophe JAILLET wrote:
-> s/locksapce/lockspace
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   fs/dlm/lockspace.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
-> index 00fa700f4e83..9c95df8a36e9 100644
-> --- a/fs/dlm/lockspace.c
-> +++ b/fs/dlm/lockspace.c
-> @@ -870,7 +870,7 @@ static int release_lockspace(struct dlm_ls *ls, int force)
->    * until this returns.
->    *
->    * Force has 4 possible values:
-> - * 0 - don't destroy locksapce if it has any LKBs
-> + * 0 - don't destroy lockspace if it has any LKBs
->    * 1 - destroy lockspace if it has remote LKBs but not if it has local LKBs
->    * 2 - destroy lockspace regardless of LKBs
->    * 3 - destroy lockspace as part of a forced shutdown
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-By: Enrico Weigelt <info@metux.net>
+The pointer fname rc is being assigned with a value that is never
+read because the function returns after the assignment. The assignment
+is redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ubifs/debug.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 92fe5c5ed78a..95da71e13fc8 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -2817,7 +2817,6 @@ void dbg_debugfs_init_fs(struct ubifs_info *c)
+ 		     c->vi.ubi_num, c->vi.vol_id);
+ 	if (n = UBIFS_DFS_DIR_LEN) {
+ 		/* The array size is too small */
+-		fname = UBIFS_DFS_DIR_NAME;
+ 		return;
+ 	}
+ 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.20.1
