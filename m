@@ -1,46 +1,38 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Tue, 02 Jul 2019 23:46:16 +0000
-Subject: Re: [PATCH] pci/proc: Use seq_puts() in show_device()
-Message-Id: <20190702234616.GH128603@google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Jul 2019 13:30:31 +0000
+Subject: [PATCH] staging: greybus: remove redundant assignment to variable is_empty
+Message-Id: <20190704133031.28809-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a6b110cb-0d0e-5dc3-9ca1-9041609cf74c@web.de>
-In-Reply-To: <a6b110cb-0d0e-5dc3-9ca1-9041609cf74c@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vaibhav Agarwal <vaibhav.sr@gmail.com>, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 01:26:27PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Jul 2019 13:21:33 +0200
-> 
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function “seq_puts”.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to pci/misc for v5.3, thanks!
+The variable is_empty is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-> ---
->  drivers/pci/proc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-> index 445b51db75b0..fe7fe678965b 100644
-> --- a/drivers/pci/proc.c
-> +++ b/drivers/pci/proc.c
-> @@ -377,7 +377,7 @@ static int show_device(struct seq_file *m, void *v)
->  	}
->  	seq_putc(m, '\t');
->  	if (drv)
-> -		seq_printf(m, "%s", drv->name);
-> +		seq_puts(m, drv->name);
->  	seq_putc(m, '\n');
->  	return 0;
->  }
-> --
-> 2.22.0
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/greybus/audio_manager.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
+index c2a4af4c1d06..9b19ea9d3fa1 100644
+--- a/drivers/staging/greybus/audio_manager.c
++++ b/drivers/staging/greybus/audio_manager.c
+@@ -86,7 +86,7 @@ EXPORT_SYMBOL_GPL(gb_audio_manager_remove);
+ void gb_audio_manager_remove_all(void)
+ {
+ 	struct gb_audio_manager_module *module, *next;
+-	int is_empty = 1;
++	int is_empty;
+ 
+ 	down_write(&modules_rwsem);
+ 
+-- 
+2.20.1
