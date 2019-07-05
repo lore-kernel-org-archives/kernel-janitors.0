@@ -1,25 +1,21 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 11 Jul 2019 14:45:33 +0000
-Subject: Re: [PATCH -next] infiniband: remove set but not used variables 'rv'
-Message-Id: <20190711144533.GB25807@ziepe.ca>
+From: "Sales -Jpexcc." <purchase@mathewsons.ga>
+Date: Fri, 05 Jul 2019 21:39:21 +0000
+Subject: Quotes needed For July Shipments
+Message-Id: <0.0.4D.150.1D53379E96EDDB4.0@slot0.mathewsons.ga>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Recipients <purchase@mathewsons.ga>
 
-On Thu, Jul 11, 2019 at 09:59:30PM +0800, Mao Wenan wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/sw/siw/siw_main.c: In function siw_create_tx_threads:
-> drivers/infiniband/sw/siw/siw_main.c:91:11: warning: variable rv set but not used [-Wunused-but-set-variable]
-> 
-> It is never used since introduction in bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->  drivers/infiniband/sw/siw/siw_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-
-This was already fixed, thanks
-
-Jason
+Hello dear,
+ 
+We are in the market for your products after meeting at your stand during last expo.
+ 
+Please kindly send us your latest catalog and price list so as to start a new project/order as promised during the exhibition. 
+ 
+I would appreciate your response about the above details required so we can revert back to you asap.
+ 
+Kind regards
+ 
+Rhema Zoeh
