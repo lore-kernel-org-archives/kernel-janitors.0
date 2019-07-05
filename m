@@ -1,43 +1,37 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 03 Jul 2019 03:10:21 +0000
-Subject: [PATCH -next] RDMA/hns: Remove set but not used variable 'fclr_write_fail_flag'
-Message-Id: <20190703031021.14896-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 05 Jul 2019 08:32:46 +0000
+Subject: [PATCH] [media] saa7134: remove redundant assignment to variable value
+Message-Id: <20190705083246.15849-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'hns_roce_function_clear':
-drivers/infiniband/hw/hns/hns_roce_hw_v2.c:1135:7: warning:
- variable 'fclr_write_fail_flag' set but not used [-Wunused-but-set-variable]
+The variable value is being assigned with a value that is never
+read and it is being updated later with a new value. The
+assignment is redundant and can be removed.
 
-It is never used, so can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/pci/saa7134/saa7134-tvaudio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index edd62b4dc0a0..edaf900b739c 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -1132,7 +1132,6 @@ static int hns_roce_cmq_query_hw_info(struct hns_roce_dev *hr_dev)
+diff --git a/drivers/media/pci/saa7134/saa7134-tvaudio.c b/drivers/media/pci/saa7134/saa7134-tvaudio.c
+index 5beff534d5e1..79e1afb71075 100644
+--- a/drivers/media/pci/saa7134/saa7134-tvaudio.c
++++ b/drivers/media/pci/saa7134/saa7134-tvaudio.c
+@@ -319,7 +319,6 @@ static int tvaudio_checkcarrier(struct saa7134_dev *dev, struct mainscan *scan)
+ 	__s32 left,right,value;
  
- static void hns_roce_function_clear(struct hns_roce_dev *hr_dev)
- {
--	bool fclr_write_fail_flag = false;
- 	struct hns_roce_func_clear *resp;
- 	struct hns_roce_cmq_desc desc;
- 	unsigned long end;
-@@ -1143,7 +1142,6 @@ static void hns_roce_function_clear(struct hns_roce_dev *hr_dev)
- 
- 	ret = hns_roce_cmq_send(hr_dev, &desc, 1);
- 	if (ret) {
--		fclr_write_fail_flag = true;
- 		dev_err(hr_dev->dev, "Func clear write failed, ret = %d.\n",
- 			 ret);
- 		return;
+ 	if (!(dev->tvnorm->id & scan->std)) {
+-		value = 0;
+ 		audio_dbg(1, "skipping %d.%03d MHz [%4s]\n",
+ 			  scan->carr / 1000, scan->carr % 1000, scan->name);
+ 		return 0;
+-- 
+2.20.1
