@@ -1,36 +1,57 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Thu, 25 Jul 2019 07:16:35 +0000
-Subject: Re: [RFC] Staging: fbtft: Typo in
-Message-Id: <20190725071635.GA17271@kroah.com>
+From: Dan Williams <dcbw@redhat.com>
+Date: Fri, 05 Jul 2019 16:42:48 +0000
+Subject: [PATCH v2] libertas: Fix a double free in if_spi_c2h_data()
+Message-Id: <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f4881a63-8702-55f2-ed03-cfbc30970083@wanadoo.fr>
-In-Reply-To: <f4881a63-8702-55f2-ed03-cfbc30970083@wanadoo.fr>
+References: <20190626100926.GD3242@mwanda>
+         <be491ab35ba46111a1c90cc12b6d5ff6ea3f57e8.camel@redhat.com>
+         <20190626132340.GE28859@kadam>
+         <e679c9f99d6952f82924c71f036e4a196d0e72d4.camel@redhat.com>
+In-Reply-To: <e679c9f99d6952f82924c71f036e4a196d0e72d4.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-fbdev@vger.kernel.org, Kernel Janitors <kernel-janitors@vger.kernel.org>, dri-devel@lists.freedesktop.org, nishadkamdar@gmail.com
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Philip Rakity <prakity@yahoo.com>, libertas-dev@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Allison Randal <allison@lohutok.net>, Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sun, Jul 21, 2019 at 08:54:39PM +0200, Christophe JAILLET wrote:
-> Hi,
-> 
-> looking at the code in 'drivers/staging/fbtft/fb_pcd8544.c', there seems to
-> be some typos.
-> 
-> At the end of the file, we can find:
-> 
-> FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pdc8544", &display);
-> ...
-> MODULE_ALIAS("spi:pdc8544");
-> 
-> 
-> It is likely that the 2 pdc8544 should be pcd8544. (d and c switched)
-> 
-> As I don't know the implication of such a change, I prefer to first report
-> the potential issue, before proposing a patch for it.
+The lbs_process_rxed_packet() frees the skb.  It didn't originally, but
+we fixed it in commit f54930f36311 ("libertas: don't leak skb on receive
+error").
 
-Submit a patch, that's the best way to discuss it!
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Williams <dcbw@redhat.com>
+---
+ drivers/net/wireless/marvell/libertas/if_spi.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-thanks,
-
-greg k-h
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net/wireless/marvell/libertas/if_spi.c
+index 27067e79e83fe..072da89c4986f 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -766,19 +766,15 @@ static int if_spi_c2h_data(struct if_spi_card *card)
+ 
+ 	/* Read the data from the WLAN module into our skb... */
+ 	err = spu_read(card, IF_SPI_DATA_RDWRPORT_REG, data, ALIGN(len, 4));
+-	if (err)
+-		goto free_skb;
++	if (err) {
++		dev_kfree_skb(skb);
++		goto out
++	}
+ 
+ 	/* pass the SKB to libertas */
+ 	err = lbs_process_rxed_packet(card->priv, skb);
+-	if (err)
+-		goto free_skb;
++	/* lbs_process_rxed_packet() consumes the skb */
+ 
+-	/* success */
+-	goto out;
+-
+-free_skb:
+-	dev_kfree_skb(skb);
+ out:
+ 	if (err)
+ 		netdev_err(priv->dev, "%s: err=%d\n", __func__, err);
+-- 
+2.20.1
