@@ -1,46 +1,64 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 05 Jul 2019 11:31:38 +0000
-Subject: [PATCH -next] drm/i915: Remove set but not used variable 'intel_dig_port'
-Message-Id: <20190705113138.65880-1-yuehaibing@huawei.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Date: Fri, 05 Jul 2019 12:41:51 +0000
+Subject: Re: [PATCH -next] drm/i915: Remove set but not used variable 'encoder'
+Message-Id: <20190705124151.GN5942@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190705113112.64715-1-yuehaibing@huawei.com>
 In-Reply-To: <20190705113112.64715-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch, lucas.demarchi@intel.com, ville.syrjala@linux.intel.com, imre.deak@intel.com, jose.souza@intel.com
-Cc: YueHaibing <yuehaibing@huawei.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, manasi.d.navare@intel.com, dhinakaran.pandiyan@intel.com, rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, Jul 05, 2019 at 11:31:12AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>=20
+> drivers/gpu/drm/i915/display/intel_dp.c: In function 'intel_dp_set_drrs_s=
+tate':
+> drivers/gpu/drm/i915/display/intel_dp.c:6623:24: warning:
+>  variable 'encoder' set but not used [-Wunused-but-set-variable]
+>=20
+> It's never used, so can be removed.Also remove related
+> variable 'dig_port'
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-drivers/gpu/drm/i915/display/intel_ddi.c: In function 'intel_ddi_get_config':
-drivers/gpu/drm/i915/display/intel_ddi.c:3774:29: warning:
- variable 'intel_dig_port' set but not used [-Wunused-but-set-variable]
-  struct intel_digital_port *intel_dig_port;
+Applied to drm-intel-next-queued. Thanks for the patch.
 
-It is never used, so can be removed.
+> ---
+>  drivers/gpu/drm/i915/display/intel_dp.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i9=
+15/display/intel_dp.c
+> index 8f7188d71d08..0bdb7ecc5a81 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -6620,8 +6620,6 @@ static void intel_dp_set_drrs_state(struct drm_i915=
+_private *dev_priv,
+>  				    const struct intel_crtc_state *crtc_state,
+>  				    int refresh_rate)
+>  {
+> -	struct intel_encoder *encoder;
+> -	struct intel_digital_port *dig_port =3D NULL;
+>  	struct intel_dp *intel_dp =3D dev_priv->drrs.dp;
+>  	struct intel_crtc *intel_crtc =3D to_intel_crtc(crtc_state->base.crtc);
+>  	enum drrs_refresh_rate_type index =3D DRRS_HIGH_RR;
+> @@ -6636,9 +6634,6 @@ static void intel_dp_set_drrs_state(struct drm_i915=
+_private *dev_priv,
+>  		return;
+>  	}
+> =20
+> -	dig_port =3D dp_to_dig_port(intel_dp);
+> -	encoder =3D &dig_port->base;
+> -
+>  	if (!intel_crtc) {
+>  		DRM_DEBUG_KMS("DRRS: intel_crtc not initialized\n");
+>  		return;
+>=20
+>=20
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/i915/display/intel_ddi.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
-index a4172595c8d8..30e48609db1d 100644
---- a/drivers/gpu/drm/i915/display/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/display/intel_ddi.c
-@@ -3771,7 +3771,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
- 	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
- 	struct intel_crtc *intel_crtc = to_intel_crtc(pipe_config->base.crtc);
- 	enum transcoder cpu_transcoder = pipe_config->cpu_transcoder;
--	struct intel_digital_port *intel_dig_port;
- 	u32 temp, flags = 0;
- 
- 	/* XXX: DSI transcoder paranoia */
-@@ -3810,7 +3809,6 @@ void intel_ddi_get_config(struct intel_encoder *encoder,
- 	switch (temp & TRANS_DDI_MODE_SELECT_MASK) {
- 	case TRANS_DDI_MODE_SELECT_HDMI:
- 		pipe_config->has_hdmi_sink = true;
--		intel_dig_port = enc_to_dig_port(&encoder->base);
- 
- 		pipe_config->infoframes.enable | 			intel_hdmi_infoframes_enabled(encoder, pipe_config);
+--=20
+Ville Syrj=E4l=E4
+Intel
