@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Fri, 05 Jul 2019 18:30:08 +0000
 Subject: [PATCH] mfd: asic3: One function call less in asic3_irq_probe()
-Message-Id: <e57f9ad8-24b2-5c1e-2a48-6b49e15e597c@web.de>
+Message-Id: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e57f9ad8-24b2-5c1e-2a48-6b49e15e597c@web.de>
+In-Reply-To: <e57f9ad8-24b2-5c1e-2a48-6b49e15e597c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
