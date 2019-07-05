@@ -1,38 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 22:39:17 +0000
-Subject: [PATCH] usb: musb: remove redundant assignment to variable ret
-Message-Id: <20190731223917.16532-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jul 2019 16:43:18 +0000
+Subject: [PATCH] xtensa: One function call less in bootmem_init()
+Message-Id: <495c9f2e-7880-ee9a-5c61-eee598bb24c2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 Jul 2019 18:33:58 +0200
 
-Variable ret is being initialized with a value that is never read
-and ret is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement for a setting selection.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/musb/musb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/xtensa/mm/init.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index 9f5a4819a744..2bc55e0ceace 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -1721,7 +1721,7 @@ mode_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct musb *musb = dev_to_musb(dev);
- 	unsigned long flags;
--	int ret = -EINVAL;
-+	int ret;
- 
- 	spin_lock_irqsave(&musb->lock, flags);
- 	ret = sprintf(buf, "%s\n", usb_otg_state_string(musb->xceiv->otg->state));
--- 
-2.20.1
+diff --git a/arch/xtensa/mm/init.c b/arch/xtensa/mm/init.c
+index b51746f2b80b..79467c749416 100644
+--- a/arch/xtensa/mm/init.c
++++ b/arch/xtensa/mm/init.c
+@@ -45,10 +45,7 @@ void __init bootmem_init(void)
+ 	 * If PHYS_OFFSET is zero reserve page at address 0:
+ 	 * successfull allocations should never return NULL.
+ 	 */
+-	if (PHYS_OFFSET)
+-		memblock_reserve(0, PHYS_OFFSET);
+-	else
+-		memblock_reserve(0, 1);
++	memblock_reserve(0, PHYS_OFFSET ? PHYS_OFFSET : 1);
+
+ 	early_init_fdt_scan_reserved_mem();
+
+--
+2.22.0
