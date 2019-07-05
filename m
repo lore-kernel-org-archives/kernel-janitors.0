@@ -1,30 +1,38 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 10 Jul 2019 01:57:20 +0000
-Subject: [PATCH -next] drm/amdgpu: remove duplicated include from gfx_v9_0.c
-Message-Id: <20190710015720.107326-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 05 Jul 2019 09:36:12 +0000
+Subject: [PATCH] power: supply: isp1704: remove redundant assignment to variable ret
+Message-Id: <20190705093612.21925-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, Feifei.Xu@amd.com, Likun.Gao@amd.com, James.Zhu@amd.com, shirish.s@amd.com, evan.quan@amd.com, ray.huang@amd.com, Rex.Zhu@amd.com
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The variable ret is being assigned with a value that is never
+read and it is being updated later with a new value. The
+assignment is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/power/supply/isp1704_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 5ba332376710..822f45161240 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -39,7 +39,6 @@
- #include "vega10_enum.h"
- #include "hdp/hdp_4_0_offset.h"
+diff --git a/drivers/power/supply/isp1704_charger.c b/drivers/power/supply/isp1704_charger.c
+index b48cb7aba97b..4812ac1ff2df 100644
+--- a/drivers/power/supply/isp1704_charger.c
++++ b/drivers/power/supply/isp1704_charger.c
+@@ -342,7 +342,7 @@ static inline int isp1704_test_ulpi(struct isp1704_charger *isp)
+ 	int vendor;
+ 	int product;
+ 	int i;
+-	int ret = -ENODEV;
++	int ret;
  
--#include "soc15.h"
- #include "soc15_common.h"
- #include "clearstate_gfx9.h"
- #include "v9_structs.h"
+ 	/* Test ULPI interface */
+ 	ret = isp1704_write(isp, ULPI_SCRATCH, 0xaa);
+-- 
+2.20.1
