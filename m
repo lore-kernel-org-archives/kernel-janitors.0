@@ -1,32 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 24 Jul 2019 11:44:42 +0000
-Subject: Re: [PATCH] libertas: remove redundant assignment to variable ret
-Message-Id: <20190724114443.3839860867@smtp.codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 05 Jul 2019 01:16:42 +0000
+Subject: [PATCH net-next] gve: Fix error return code in gve_alloc_qpls()
+Message-Id: <20190705011642.156707-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705081734.15292-1-colin.king@canonical.com>
-In-Reply-To: <20190705081734.15292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Catherine Sullivan <csully@google.com>, Sagi Shahar <sagis@google.com>, Jon Olson <jonolson@google.com>, Colin Ian King <colin.king@canonical.com>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo <lrizzo@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/google/gve/gve_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-4c8a46851019 libertas: remove redundant assignment to variable ret
-
--- 
-https://patchwork.kernel.org/patch/11032181/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index eef500bd2ff7..b65f6b010a82 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -625,8 +625,10 @@ static int gve_alloc_qpls(struct gve_priv *priv)
+ 				     sizeof(unsigned long) * BITS_PER_BYTE;
+ 	priv->qpl_cfg.qpl_id_map = kvzalloc(BITS_TO_LONGS(num_qpls) *
+ 					    sizeof(unsigned long), GFP_KERNEL);
+-	if (!priv->qpl_cfg.qpl_id_map)
++	if (!priv->qpl_cfg.qpl_id_map) {
++		err = -ENOMEM;
+ 		goto free_qpls;
++	}
+ 
+ 	return 0;
