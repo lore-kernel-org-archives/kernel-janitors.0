@@ -1,30 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 30 Jul 2019 10:00:40 +0000
-Subject: Re: [v5 2/3] treewide: Remove dev_err() usage after platform_get_irq()
-Message-Id: <328b98da-7e76-145f-0684-a8623efe2cc4@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 05 Jul 2019 08:17:34 +0000
+Subject: [PATCH] libertas: remove redundant assignment to variable ret
+Message-Id: <20190705081734.15292-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190730053845.126834-1-swboyd@chromium.org>
- <20190730053845.126834-3-swboyd@chromium.org>
-In-Reply-To: <20190730053845.126834-3-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <swboyd@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
+From: Colin Ian King <colin.king@canonical.com>
 
-Will the current patch review result in adjustments for the SmPL code
-in the commit description?
+The variable ret is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/marvell/libertas/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
-
-Would you like to reduce manual change efforts any further for the shown
-source code transformation approach?
-
-Regards,
-Markus
+diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/wireless/marvell/libertas/main.c
+index 5968852b65a7..2233b59cdf44 100644
+--- a/drivers/net/wireless/marvell/libertas/main.c
++++ b/drivers/net/wireless/marvell/libertas/main.c
+@@ -1046,7 +1046,7 @@ int lbs_rtap_supported(struct lbs_private *priv)
+ int lbs_start_card(struct lbs_private *priv)
+ {
+ 	struct net_device *dev = priv->dev;
+-	int ret = -1;
++	int ret;
+ 
+ 	/* poke the firmware */
+ 	ret = lbs_setup_firmware(priv);
+-- 
+2.20.1
