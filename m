@@ -1,41 +1,47 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Date: Thu, 25 Jul 2019 09:49:31 +0000
-Subject: Re: [PATCH] backlight: lms283gf05: Fix a typo in the description passed to 'devm_gpio_request_one()'
-Message-Id: <20190725094931.biqd3pkt4kuaujaq@holly.lan>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jul 2019 15:18:12 +0000
+Subject: [PATCH] m68k: One function call less in cf_tlb_miss()
+Message-Id: <c5713aa4-d290-0f7d-7de8-82bcdf74ee95@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190724213828.16916-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190724213828.16916-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lee.jones@linaro.org, jingoohan1@gmail.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-m68k@lists.linux-m68k.org, Andrew Morton <akpm@linux-foundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:38:28PM +0200, Christophe JAILLET wrote:
-> The description passed to 'devm_gpio_request_one()' should be related to
-> LMS283GF05, not LMS285GF05.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 Jul 2019 17:11:37 +0200
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement for a setting selection.
 
-> ---
->  drivers/video/backlight/lms283gf05.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/backlight/lms283gf05.c b/drivers/video/backlight/lms283gf05.c
-> index 4237aaa7f269..4b62ed7e58c0 100644
-> --- a/drivers/video/backlight/lms283gf05.c
-> +++ b/drivers/video/backlight/lms283gf05.c
-> @@ -161,7 +161,7 @@ static int lms283gf05_probe(struct spi_device *spi)
->  		ret = devm_gpio_request_one(&spi->dev, pdata->reset_gpio,
->  				GPIOF_DIR_OUT | (!pdata->reset_inverted ?
->  				GPIOF_INIT_HIGH : GPIOF_INIT_LOW),
-> -				"LMS285GF05 RESET");
-> +				"LMS283GF05 RESET");
->  		if (ret)
->  			return ret;
->  	}
-> -- 
-> 2.20.1
-> 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/m68k/mm/mcfmmu.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
+index 6cb1e41d58d0..02fc0778028e 100644
+--- a/arch/m68k/mm/mcfmmu.c
++++ b/arch/m68k/mm/mcfmmu.c
+@@ -146,12 +146,10 @@ int cf_tlb_miss(struct pt_regs *regs, int write, int dtlb, int extension_word)
+
+ 	mmu_write(MMUDR, (pte_val(*pte) & PAGE_MASK) |
+ 		((pte->pte) & CF_PAGE_MMUDR_MASK) | MMUDR_SZ_8KB | MMUDR_X);
+-
+-	if (dtlb)
+-		mmu_write(MMUOR, MMUOR_ACC | MMUOR_UAA);
+-	else
+-		mmu_write(MMUOR, MMUOR_ITLB | MMUOR_ACC | MMUOR_UAA);
+-
++	mmu_write(MMUOR,
++		  dtlb
++		  ? MMUOR_ACC | MMUOR_UAA
++		  : MMUOR_ITLB | MMUOR_ACC | MMUOR_UAA);
+ 	local_irq_restore(flags);
+ 	return 0;
+ }
+--
+2.22.0
