@@ -1,65 +1,45 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Date: Mon, 08 Jul 2019 10:18:48 +0000
-Subject: Re: [PATCH] mfd: asic3: One function call less in asic3_irq_probe()
-Message-Id: <6e8eab5f-1f5c-b3dc-6b65-96a874ec2789@metux.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jul 2019 14:16:30 +0000
+Subject: [PATCH] mm/ksm: One function call less in __ksm_enter()
+Message-Id: <997c8ec3-9af8-3db0-24dc-cd99fe3efe14@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
- <20190707005251.GQ17978@ZenIV.linux.org.uk>
- <4b06e2fb-a0ba-56e5-b46b-98e986e6f2fd@web.de>
-In-Reply-To: <4b06e2fb-a0ba-56e5-b46b-98e986e6f2fd@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, Al Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
-Cc: Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual <anshuman.khandual@arm.com>, Dave Jiang <dave.jiang@intel.com>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, Kirill Tkhai <ktkhai@virtuozzo.com>, Ralph Campbell <rcampbell@nvidia.com>, Souptick Joarder <jrdr.linux@gmail.com>, Yang Shi <yang.shi@linux.alibaba.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 07.07.19 09:56, Markus Elfring wrote:
->>> Avoid an extra function call by using a ternary operator instead of
->>> a conditional statement.
->>
->> Which is a good thing, because...?
-> 
-> I suggest to reduce a bit of duplicate source code also at this place.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 Jul 2019 16:02:26 +0200
 
-Duplicate code (logic) or just characters ?
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement.
 
-IMHO, readability is an important aspect, so we could be careful about
-that. Some of your other patches IMHO made it actually a bit easier
-to read, but this particular case doesnt seem so to (just according
-to my personal taste).
+This issue was detected by using the Coccinelle software.
 
-I believe the compiler can do optimize that, based on the given flags.
-(eg. size vs. speed). Therefore, I think that readability for the
-human reader should be primary argument.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ mm/ksm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->> ... except that the result is not objectively better by any real criteria.
-> 
-> We can have different opinions about the criteria which are relevant here.
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 3dc4346411e4..7934bab8ceae 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2521,10 +2521,10 @@ int __ksm_enter(struct mm_struct *mm)
+ 	 * scanning cursor, otherwise KSM pages in newly forked mms will be
+ 	 * missed: then we might as well insert at the end of the list.
+ 	 */
+-	if (ksm_run & KSM_RUN_UNMERGE)
+-		list_add_tail(&mm_slot->mm_list, &ksm_mm_head.mm_list);
+-	else
+-		list_add_tail(&mm_slot->mm_list, &ksm_scan.mm_slot->mm_list);
++	list_add_tail(&mm_slot->mm_list,
++		      ksm_run & KSM_RUN_UNMERGE
++		      ? &ksm_mm_head.mm_list
++		      : &ksm_scan.mm_slot->mm_list);
+ 	spin_unlock(&ksm_mmlist_lock);
 
-Which criterias are you operating on ?
-
-> I dare to point another change possibility out.
-> I am unsure if this adjustment will be picked up finally.
-
-I think it's good that you're using tools like cocci for pointing out
-*possible* points of useful refactoring. But that doesn't mean that a
-particular patch can be accepted or not in the greater context.
-
-Note that such issues are pretty subjective - it's not a technical but
-an asthetic matter, so such issues can't be resolved by logic. Here, the
-better something fits the personal taste of the maintainrs, the easier
-it is for them to quickly understand the code (w/o having to give it any
-deeper thoughts), thus reduces their brain load. Therefore that should
-be the the primary argument left.
-
-Don't see this as a judgment of your work as such - this kind of work
-just tends to have a high rate of non-acceptable output (unless the
-individual maintainer doing it himself).
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+ 	set_bit(MMF_VM_MERGEABLE, &mm->flags);
+--
+2.22.0
