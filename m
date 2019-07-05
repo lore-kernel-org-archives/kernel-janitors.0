@@ -1,47 +1,43 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 12 Jul 2019 13:07:55 +0000
-Subject: Re: [PATCH -next] platform/x86: mlx-platform: Fix error handling in mlxplat_init()
-Message-Id: <CAHp75Vf5_UjW6mXhn-rLPNjSaeRTJt7GGaseTXObk3t5HO-CLw@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 05 Jul 2019 08:16:37 +0000
+Subject: [PATCH -next] ASoC: SOF: debug: fix possible memory leak in sof_dfsentry_write()
+Message-Id: <20190705081637.157169-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1533700830-137279-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1533700830-137279-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Pan Xiuli <xiuli.pan@linux.intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 4:32 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> Add the missing platform_device_unregister() before return
-> from mlxplat_init() in the error handling case.
->
+'string' is malloced in sof_dfsentry_write() and should be freed
+before leaving from the error handling cases, otherwise it will cause
+memory leak.
 
-Applied, thanks!
+Fixes: 091c12e1f50c ("ASoC: SOF: debug: add new debugfs entries for IPC flood test")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/sof/debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Fixes: 6b266e91a071 ("platform/x86: mlx-platform: Move regmap initialization before all drivers activation")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/platform/x86/mlx-platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-> index 2b98f299faa4..8fe51e43f1bc 100644
-> --- a/drivers/platform/x86/mlx-platform.c
-> +++ b/drivers/platform/x86/mlx-platform.c
-> @@ -2111,7 +2111,7 @@ static int __init mlxplat_init(void)
->                                         mlxplat_regmap_config);
->         if (IS_ERR(priv->regmap)) {
->                 err = PTR_ERR(priv->regmap);
-> -               return err;
-> +               goto fail_alloc;
->         }
->
->         err = mlxplat_mlxcpld_verify_bus_topology(&nr);
->
->
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
+index 54bb53bfc81b..2388477a965e 100644
+--- a/sound/soc/sof/debug.c
++++ b/sound/soc/sof/debug.c
+@@ -162,7 +162,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+ 	else
+ 		ret = kstrtoul(string, 0, &ipc_count);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	/* limit max duration/ipc count for flood test */
+ 	if (flood_duration_test) {
+@@ -191,7 +191,7 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+ 				    "error: debugfs write failed to resume %d\n",
+ 				    ret);
+ 		pm_runtime_put_noidle(sdev->dev);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	/* flood test */
