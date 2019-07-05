@@ -1,81 +1,50 @@
-From: maowenan <maowenan@huawei.com>
-Date: Wed, 10 Jul 2019 07:31:28 +0000
-Subject: Re: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
-Message-Id: <8008fcf8-47a1-111f-4467-1a16171129dd@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 05 Jul 2019 09:57:04 +0000
+Subject: [PATCH] ALSA: cs4281: remove redundant assignment to variable val and remove a goto
+Message-Id: <20190705095704.26050-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624094850.GQ18776@kadam>
- <20190624112318.149299-1-maowenan@huawei.com>
- <CH2PR12MB3831BE36FF61D74FC529F64F85E00@CH2PR12MB3831.namprd12.prod.outlook.com>
- <2d7c2525-4503-3706-7d00-0b9bf230266d@huawei.com>
-In-Reply-To: <2d7c2525-4503-3706-7d00-0b9bf230266d@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Kim, Jonathan" <Jonathan.Kim@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-gentle ping
+The variable val is being assigned with a value that is never
+read and it is being updated later with a new value. The
+assignment is redundant and can be removed.  Also remove a
+goto statement and a label and replace with a break statement.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/cs4281.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On 2019/6/26 19:35, maowenan wrote:
-> 
-> 
-> On 2019/6/25 1:42, Kim, Jonathan wrote:
->> Immediate return should be ok since perf registration isn't dependent on gpu hw.
->>
->> Reviewed-by: Jonathan Kim <Jonathan.Kim@amd.com>
-> 
-> thanks for review.
-> 
->>
->> -----Original Message-----
->> From: Mao Wenan <maowenan@huawei.com> 
->> Sent: Monday, June 24, 2019 7:23 AM
->> To: airlied@linux.ie; daniel@ffwll.ch; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; dan.carpenter@oracle.com; julia.lawall@lip6.fr
->> Cc: kernel-janitors@vger.kernel.org; amd-gfx@lists.freedesktop.org; linux-kernel@vger.kernel.org; Kim, Jonathan <Jonathan.Kim@amd.com>; Mao Wenan <maowenan@huawei.com>
->> Subject: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
->>
->> [CAUTION: External Email]
->>
->> There is one warning:
->> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
->> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
->>   int ret = 0;
->>       ^
->> amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
->> which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
->> amdgpu_device_init()
->>         r = amdgpu_pmu_init(adev);
->>
->> Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
->>
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
->>  v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in  amdgpu_pmu_init().
->>  v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type().
->>  v3->v4: delete the indenting for init_pmu_by_type() arguments. The original indenting is correct.
->>
->>  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->> index 0e6dba9f60f0..c98cf77a37f3 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->> @@ -254,6 +254,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
->>                 ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
->>                                        "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
->>                                        DF_V3_6_MAX_COUNTERS);
->> +               if (ret)
->> +                       return ret;
->>
->>                 /* other pmu types go here*/
->>                 break;
->> --
->> 2.20.1
->>
-> 
-> 
-> .
-> 
+diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
+index a2cce3ecda6f..04c712647853 100644
+--- a/sound/pci/cs4281.c
++++ b/sound/pci/cs4281.c
+@@ -694,7 +694,7 @@ static int snd_cs4281_trigger(struct snd_pcm_substream *substream, int cmd)
+ 
+ static unsigned int snd_cs4281_rate(unsigned int rate, unsigned int *real_rate)
+ {
+-	unsigned int val = ~0;
++	unsigned int val;
+ 	
+ 	if (real_rate)
+ 		*real_rate = rate;
+@@ -707,9 +707,8 @@ static unsigned int snd_cs4281_rate(unsigned int rate, unsigned int *real_rate)
+ 	case 44100:	return 1;
+ 	case 48000:	return 0;
+ 	default:
+-		goto __variable;
++		break;
+ 	}
+-      __variable:
+ 	val = 1536000 / rate;
+ 	if (real_rate)
+ 		*real_rate = 1536000 / val;
+-- 
+2.20.1
