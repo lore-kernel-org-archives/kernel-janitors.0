@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Fri, 05 Jul 2019 14:50:26 +0000
 Subject: [PATCH] mm/slab: One function call less in verify_redzone_free()
-Message-Id: <90ca26d4-cc94-d7db-5ab4-ed04b29ced19@web.de>
+Message-Id: <c724416e-c8bc-6927-00c5-7a4c433c562f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <90ca26d4-cc94-d7db-5ab4-ed04b29ced19@web.de>
+In-Reply-To: <90ca26d4-cc94-d7db-5ab4-ed04b29ced19@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
