@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Sat, 06 Jul 2019 08:56:52 +0000
 Subject: [PATCH] staging: octeon: One function call less in cvm_oct_common_set_multicast_list()
-Message-Id: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
+Message-Id: <9ce376b1-0450-a0ea-bd4e-2601e4bb8168@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
+In-Reply-To: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
