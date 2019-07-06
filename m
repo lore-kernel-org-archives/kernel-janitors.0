@@ -1,48 +1,43 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sun, 21 Jul 2019 15:05:08 +0000
-Subject: Re: [PATCH] hwmon: (pmbus/max31785) Remove a useless #define
-Message-Id: <20190721150508.GA8001@roeck-us.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 06 Jul 2019 14:05:17 +0000
+Subject: [PATCH] sched/topology: One function call less in build_group_from_child_sched_domain()
+Message-Id: <ad2e7dfb-3323-b214-716e-a6cae41b8bcc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721101553.20911-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721101553.20911-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Sun, Jul 21, 2019 at 12:15:53PM +0200, Christophe JAILLET wrote:
-> There is a typo in MAX37185_NUM_FAN_PAGES. To be consistent, it should be
-> MAX31785_NUM_FAN_PAGES (1 and 7 switched).
-> 
-> At line 24, we already have:
->    #define MAX31785_NR_FAN_PAGES		6
-> and MAX37185_NUM_FAN_PAGES seems to be unused.
-> 
-> It is likely that it is only a typo and/or a left-over.
-> So, axe it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jul 2019 16:00:13 +0200
 
-Applied.
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement.
 
-Thanks,
-Guenter
+This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/hwmon/pmbus/max31785.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/max31785.c b/drivers/hwmon/pmbus/max31785.c
-> index 69d9029ea410..254b0f98c755 100644
-> --- a/drivers/hwmon/pmbus/max31785.c
-> +++ b/drivers/hwmon/pmbus/max31785.c
-> @@ -244,8 +244,6 @@ static int max31785_write_word_data(struct i2c_client *client, int page,
->  #define MAX31785_VOUT_FUNCS \
->  	(PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT)
->  
-> -#define MAX37185_NUM_FAN_PAGES 6
-> -
->  static const struct pmbus_driver_info max31785_info = {
->  	.pages = MAX31785_NR_PAGES,
->  
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/sched/topology.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index f751ce0b783e..6190eb52c30a 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -886,11 +886,7 @@ build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
+ 		return NULL;
+
+ 	sg_span = sched_group_span(sg);
+-	if (sd->child)
+-		cpumask_copy(sg_span, sched_domain_span(sd->child));
+-	else
+-		cpumask_copy(sg_span, sched_domain_span(sd));
+-
++	cpumask_copy(sg_span, sched_domain_span(sd->child ? sd->child : sd));
+ 	atomic_inc(&sg->ref);
+ 	return sg;
+ }
+--
+2.22.0
