@@ -1,49 +1,183 @@
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Date: Tue, 02 Jul 2019 09:51:45 +0000
-Subject: Re: [PATCH] brcmfmac: Replace two seq_printf() calls in brcmf_feat_fwcap_debugfs_read()
-Message-Id: <893cc567-0126-3ab9-92c5-de430fb066fc@broadcom.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 06 Jul 2019 12:16:03 +0000
+Subject: Re: [Cocci] [PATCH] coccinelle: api: add devm_platform_ioremap_resource script
+Message-Id: <CAK7LNARTJpxRmQzx+vQGfOC5YFuw8QsRQ=_9=9E=g5p62UUf6g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d96085a-76e8-c290-698a-e1473d3f4be7@web.de>
-In-Reply-To: <7d96085a-76e8-c290-698a-e1473d3f4be7@web.de>
+References: <20190406061112.31620-1-himanshujha199640@gmail.com>
+ <alpine.DEB.2.21.1904060831120.4486@hadrien>
+ <alpine.DEB.2.21.1904060833160.4486@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1904060833160.4486@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@cypress.com, brcm80211-dev-list.pdl@broadcom.com, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, "David S. Miller" <davem@davemloft.net>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Wright Feng <wright.feng@cypress.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, cocci@systeme.lip6.fr
 
-On 7/2/2019 11:50 AM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Jul 2019 11:31:07 +0200
-> 
-> A line break and a single string should be put into a sequence.
-> Thus use the corresponding output functions.
-> 
-> This issue was detected by using the Coccinelle software.
+On Sat, Apr 6, 2019 at 3:34 PM Julia Lawall <julia.lawall@lip6.fr> wrote:
+>
+>
+>
+> On Sat, 6 Apr 2019, Julia Lawall wrote:
+>
+> >
+> >
+> > On Sat, 6 Apr 2019, Himanshu Jha wrote:
+> >
+> > > Use recently introduced devm_platform_ioremap_resource
+> > > helper which wraps platform_get_resource() and
+> > > devm_ioremap_resource() together. This helps produce much
+> > > cleaner code while removing local `struct resource` declaration.
+> > >
+> > > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+> >
+> > Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+> >
+> > Thanks for taking up this issue.
+>
+> Maybe this should be
+>
+> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+>
+> since I contributed two lines to the script :)
 
-pot-ato, po-tato
+I will apply with Julia's Signed-off-by instead of Acked-by.
+I will also add SPDX tag.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-> index 73aff4e4039d..ec0e80296e43 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
-> @@ -225,10 +225,10 @@ static int brcmf_feat_fwcap_debugfs_read(struct seq_file *seq, void *data)
->   	}
-> 
->   	/* Usually there is a space at the end of capabilities string */
-> -	seq_printf(seq, "%s", caps);
-> +	seq_puts(seq, caps);
->   	/* So make sure we don't print two line breaks */
->   	if (tmp > caps && *(tmp - 1) != '\n')
-> -		seq_printf(seq, "\n");
-> +		seq_putc(seq, '\n');
-> 
->   	return 0;
->   }
-> --
-> 2.22.0
-> 
+Is this OK?
+
+
+
+> julia
+>
+> >
+> > julia
+> >
+> > > ---
+> > >
+> > > Tree wide changes has been tested through 0-day test service
+> > > with build success.
+> > >
+> > > BUILD SUCCESS 74ebaaca5d14d3d9b03e911f0b4995b78a4d60f0
+> > > tree/branch: https://github.com/himanshujha199640/linux-next  20190401-devm_platform_ioremap_resource-final
+> > > branch HEAD: 74ebaaca5d14d3d9b03e911f0b4995b78a4d60f0  Coccinelle: api: Add devm_platform_ioremap_resource.cocci
+> > >
+> > > elapsed time: 385m
+> > > configs tested: 162
+> > >
+> > >
+> > > Stats:
+> > > 916 files changed, 1028 insertions(+), 2921 deletions(-)
+> > >
+> > > Note: cases where the `struct resource *res` variable is
+> > > used subsequently in the function have been ignored out because
+> > > those cases produce:
+> > >
+> > > eg., drivers/bus/da8xx-mstpri.c
+> > >
+> > > warning: 'res' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> > >
+> > > due to:
+> > >     if (prio_descr->reg + sizeof(u32) > resource_size(res)) {
+> > >
+> > > which seems correct as `res` isn't initialized in the scope of
+> > > the function(da8xx_mstpri_probe) and instead initialized inside:
+> > >
+> > >    void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+> > >                                                 unsigned int index)
+> > >    {
+> > >            struct resource *res;
+> > >
+> > >            res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+> > >            return devm_ioremap_resource(&pdev->dev, res);
+> > >    }
+> > >    EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
+> > >
+> > >
+> > >  .../api/devm_platform_ioremap_resource.cocci  | 63 +++++++++++++++++++
+> > >  1 file changed, 63 insertions(+)
+> > >  create mode 100644 scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+> > >
+> > > diff --git a/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci b/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+> > > new file mode 100644
+> > > index 000000000000..a28274af14df
+> > > --- /dev/null
+> > > +++ b/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+> > > @@ -0,0 +1,63 @@
+> > > +/// Use devm_platform_ioremap_resource helper which wraps
+> > > +/// platform_get_resource() and devm_ioremap_resource() together.
+> > > +///
+> > > +// Confidence: High
+> > > +// Copyright: (C) 2019 Himanshu Jha GPLv2.
+> > > +// Copyright: (C) 2019 Julia Lawall, Inria/LIP6. GPLv2.
+> > > +// Keywords: platform_get_resource, devm_ioremap_resource,
+> > > +// Keywords: devm_platform_ioremap_resource
+> > > +
+> > > +virtual patch
+> > > +virtual report
+> > > +
+> > > +@r depends on patch && !report@
+> > > +expression e1, e2, arg1, arg2, arg3, arg4;
+> > > +identifier id;
+> > > +@@
+> > > +
+> > > +(
+> > > +- id = platform_get_resource(arg1, arg2, arg3);
+> > > +|
+> > > +- struct resource *id = platform_get_resource(arg1, arg2, arg3);
+> > > +)
+> > > +  ... when != id
+> > > +- e1 = devm_ioremap_resource(arg4, id);
+> > > ++ e1 = devm_platform_ioremap_resource(arg1, arg3);
+> > > +  ... when != id
+> > > +? id = e2
+> > > +
+> > > +@r1 depends on patch && !report@
+> > > +identifier r.id;
+> > > +type T;
+> > > +@@
+> > > +
+> > > +- T *id;
+> > > +  ...when != id
+> > > +
+> > > +// ----------------------------------------------------------------------------
+> > > +
+> > > +@r2 depends on report && !patch@
+> > > +identifier id;
+> > > +expression e1, e2, arg1, arg2, arg3, arg4;
+> > > +position j0;
+> > > +@@
+> > > +
+> > > +(
+> > > +  id = platform_get_resource(arg1, arg2, arg3);
+> > > +|
+> > > +  struct resource *id = platform_get_resource(arg1, arg2, arg3);
+> > > +)
+> > > +  ... when != id
+> > > +  e1@j0 = devm_ioremap_resource(arg4, id);
+> > > +  ... when != id
+> > > +? id = e2
+> > > +
+> > > +// ----------------------------------------------------------------------------
+> > > +
+> > > +@script:python depends on report && !patch@
+> > > +e1 << r2.e1;
+> > > +j0 << r2.j0;
+> > > +@@
+> > > +
+> > > +msg = "WARNING: Use devm_platform_ioremap_resource for %s" % (e1)
+> > > +coccilib.report.print_report(j0[0], msg)
+> > > --
+> > > 2.17.1
+> > >
+> > >
+> >
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
