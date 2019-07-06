@@ -1,28 +1,44 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 15 Jul 2019 07:32:57 +0000
-Subject: Re: [v4] staging: most: remove redundant print statement when kfifo_alloc fails
-Message-Id: <20190715073257.GB2100@kroah.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 06 Jul 2019 08:15:30 +0000
+Subject: [PATCH] staging: speakup: One function call less in speakup_win_enable()
+Message-Id: <11f79333-25c3-1ad9-4975-58c64821f3fe@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190714150546.31836-1-iamkeyur96@gmail.com>
- <06fc2495-dda5-61d2-17e8-0c385e02da1e@web.de>
- <20190714154737.GB32464@keyur-pc>
-In-Reply-To: <20190714154737.GB32464@keyur-pc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: speakup@linux-speakup.org, devel@driverdev.osuosl.org, Bhagyashri Dighole <digholebhagyashri@gmail.com>, Chris Brannon <chris@the-brannons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kirk Reiser <kirk@reisers.ca>, Okash Khawaja <okash.khawaja@gmail.com>, Samuel Thibault <samuel.thibault@ens-lyon.org>, William Hubbs <w.d.hubbs@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, Jul 14, 2019 at 11:47:37AM -0400, Keyur Patel wrote:
-> I didn't get you. I stiil need to update changelog and send more 
-> version or not. If you say so, I can send one more.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jul 2019 10:03:56 +0200
 
-Please note that the person/bot you are responding to is on in my email
-blacklist, and many others, so I wouldn't worry too much about the
-responses.
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement.
 
-I'll review this patch once 5.3-rc1 is out as I can't do anything with
-it during the merge window.
+This issue was detected by using the Coccinelle software.
 
-thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/speakup/main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/speakup/main.c b/drivers/staging/speakup/main.c
+index 488f2539aa9a..03bbc9a4dbb3 100644
+--- a/drivers/staging/speakup/main.c
++++ b/drivers/staging/speakup/main.c
+@@ -1917,10 +1917,9 @@ static void speakup_win_enable(struct vc_data *vc)
+ 		return;
+ 	}
+ 	win_enabled ^= 1;
+-	if (win_enabled)
+-		synth_printf("%s\n", spk_msg_get(MSG_WINDOW_SILENCED));
+-	else
+-		synth_printf("%s\n", spk_msg_get(MSG_WINDOW_SILENCE_DISABLED));
++	synth_printf("%s\n", spk_msg_get(win_enabled
++					 ? MSG_WINDOW_SILENCED
++					 : MSG_WINDOW_SILENCE_DISABLED));
+ }
+
+ static void speakup_bits(struct vc_data *vc)
+--
+2.22.0
