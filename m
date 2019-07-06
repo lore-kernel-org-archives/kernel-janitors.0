@@ -1,37 +1,46 @@
-From: Jeroen Hofstee <jhofstee@victronenergy.com>
-Date: Thu, 25 Jul 2019 08:19:10 +0000
-Subject: Re: [PATCH net-next] can: ti_hecc: remove set but not used variable 'mbx_mask'
-Message-Id: <acefc74c-b303-64b8-4a98-6d15835f1666@victronenergy.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 06 Jul 2019 08:56:52 +0000
+Subject: [PATCH] staging: octeon: One function call less in cvm_oct_common_set_multicast_list()
+Message-Id: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190725070044.2692-1-yuehaibing@huawei.com>
-In-Reply-To: <20190725070044.2692-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+To: devel@driverdev.osuosl.org, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ioannis Valasakis <code@wizofe.uk>, =?UTF-8?Q?Petr_=c5=a0tetiar?= <ynezz@true.cz>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-DQpPbiA3LzI1LzE5IDk6MDAgQU0sIFl1ZUhhaWJpbmcgd3JvdGU6DQo+IEZpeGVzIGdjYyAnLVd1
-bnVzZWQtYnV0LXNldC12YXJpYWJsZScgd2FybmluZzoNCj4NCj4gZHJpdmVycy9uZXQvY2FuL3Rp
-X2hlY2MuYzogSW4gZnVuY3Rpb24gJ3RpX2hlY2NfbWFpbGJveF9yZWFkJzoNCj4gZHJpdmVycy9u
-ZXQvY2FuL3RpX2hlY2MuYzo1MzM6MTI6IHdhcm5pbmc6DQo+ICAgdmFyaWFibGUgJ21ieF9tYXNr
-JyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQ0KPg0KPiBJdCBp
-cyBuZXZlciB1c2VkIHNvIGNhbiBiZSByZW1vdmVkLg0KPg0KPiBSZXBvcnRlZC1ieTogSHVsayBS
-b2JvdCA8aHVsa2NpQGh1YXdlaS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1
-ZWhhaWJpbmdAaHVhd2VpLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9uZXQvY2FuL3RpX2hlY2Mu
-YyB8IDMgKy0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9u
-cygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvY2FuL3RpX2hlY2MuYyBiL2RyaXZl
-cnMvbmV0L2Nhbi90aV9oZWNjLmMNCj4gaW5kZXggYjYyZjc1ZmEwM2YwLi5lNjNlMmY4NmMyODkg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2Nhbi90aV9oZWNjLmMNCj4gKysrIGIvZHJpdmVy
-cy9uZXQvY2FuL3RpX2hlY2MuYw0KPiBAQCAtNTMwLDkgKzUzMCw4IEBAIHN0YXRpYyB1bnNpZ25l
-ZCBpbnQgdGlfaGVjY19tYWlsYm94X3JlYWQoc3RydWN0IGNhbl9yeF9vZmZsb2FkICpvZmZsb2Fk
-LA0KPiAgIAkJCQkJIHUzMiAqdGltZXN0YW1wLCB1bnNpZ25lZCBpbnQgbWJ4bm8pDQo+ICAgew0K
-PiAgIAlzdHJ1Y3QgdGlfaGVjY19wcml2ICpwcml2ID0gcnhfb2ZmbG9hZF90b19wcml2KG9mZmxv
-YWQpOw0KPiAtCXUzMiBkYXRhLCBtYnhfbWFzazsNCj4gKwl1MzIgZGF0YTsNCj4gICANCj4gLQlt
-YnhfbWFzayA9IEJJVChtYnhubyk7DQo+ICAgCWRhdGEgPSBoZWNjX3JlYWRfbWJ4KHByaXYsIG1i
-eG5vLCBIRUNDX0NBTk1JRCk7DQo+ICAgCWlmIChkYXRhICYgSEVDQ19DQU5NSURfSURFKQ0KPiAg
-IAkJY2YtPmNhbl9pZCA9IChkYXRhICYgQ0FOX0VGRl9NQVNLKSB8IENBTl9FRkZfRkxBRzsNCj4N
-Cj4NCg0KSW5kZWVkLCBtYnhfbWFzayBpcyBubyBsb25nZXIgdXNlZCBhZnRlciBpbmNsdWRpbmcN
-CiJjYW46IHRpX2hlY2M6IHVzZSB0aW1lc3RhbXAgYmFzZWQgcngtb2ZmbG9hZGluZyIuDQoNClJl
-dmlld2VkLWJ5OiBKZXJvZW4gSG9mc3RlZSA8amhvZnN0ZWVAdmljdHJvbmVuZXJneS5jb20+DQoN
-Cg=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jul 2019 10:48:23 +0200
+
+Avoid an extra function call by using a ternary operator instead of
+a conditional statement.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/octeon/ethernet.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+index 8847a11c212f..93f127a0b287 100644
+--- a/drivers/staging/octeon/ethernet.c
++++ b/drivers/staging/octeon/ethernet.c
+@@ -337,13 +337,8 @@ static void cvm_oct_common_set_multicast_list(struct net_device *dev)
+
+ 		cvmx_write_csr(CVMX_GMXX_RXX_ADR_CTL(index, interface),
+ 			       control.u64);
+-		if (dev->flags & IFF_PROMISC)
+-			cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN
+-				       (index, interface), 0);
+-		else
+-			cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN
+-				       (index, interface), 1);
+-
++		cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN(index, interface),
++			       dev->flags & IFF_PROMISC ? 0 : 1);
+ 		cvmx_write_csr(CVMX_GMXX_PRTX_CFG(index, interface),
+ 			       gmx_cfg.u64);
+ 	}
+--
+2.22.0
