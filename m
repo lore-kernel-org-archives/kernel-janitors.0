@@ -1,82 +1,39 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Date: Thu, 25 Jul 2019 01:40:29 +0000
-Subject: Re: [PATCH] carl9170: remove set but not used variable 'udev'
-Message-Id: <1cfbfe67-e931-029b-1836-a6b796283c2c@huawei.com>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Sat, 06 Jul 2019 10:51:00 +0000
+Subject: Re: [PATCH][next] 6lowpan: fix off-by-one comparison of index id with LOWPAN_IPHC_CTX_TABLE_SIZE
+Message-Id: <B6A1CB42-C239-42CA-B14E-483A02B930EB@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190724015411.66525-1-yuehaibing@huawei.com>
- <CAAd0S9BvTfRyUVkQzcczyNkU_oeU5hNdK3KVQzLsU21b4JGNTQ@mail.gmail.com>
-In-Reply-To: <CAAd0S9BvTfRyUVkQzcczyNkU_oeU5hNdK3KVQzLsU21b4JGNTQ@mail.gmail.com>
+References: <20190624144757.1285-1-colin.king@canonical.com>
+In-Reply-To: <20190624144757.1285-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless <linux-wireless@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019/7/25 3:42, Christian Lamparter wrote:
-> On Wed, Jul 24, 2019 at 3:48 AM YueHaibing <yuehaibing@huawei.com> wrote:
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/net/wireless/ath/carl9170/usb.c: In function 'carl9170_usb_disco=
-nnect':
->> drivers/net/wireless/ath/carl9170/usb.c:1110:21: warning:
->>  variable 'udev' set but not used [-Wunused-but-set-variable]
->>
->> It is not used, so can be removed.
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
-> Isn't this the same patch you sent earlier:
->=20
-> https://patchwork.kernel.org/patch/11027909/
->=20
->>From what I can tell, it's the same but with an extra [-next], I
-> remember that I've acked that one
-> but your patch now does not have it? Is this an oversight, because I'm
-> the maintainer for this
-> driver. So, in my opinion at least the "ack" should have some value
-> and shouldn't be "ignored".
->=20
-> Look, from what I know, Kalle is not ignoring you, It's just that
-> carl9170 is no longer top priority.
-> So please be patient. As long as its queued in the patchwork it will
-> get considered.
+Hi Colin,
 
-Thank you for reminder. I forget the previous patch=EF=BC=8Cand our CI robot
-report it again, So I do it again, sorry for confusion.
+> The WARN_ON_ONCE check on id is off-by-one, it should be greater or equal
+> to LOWPAN_IPHC_CTX_TABLE_SIZE and not greater than. Fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> net/6lowpan/debugfs.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/6lowpan/debugfs.c b/net/6lowpan/debugfs.c
+> index 1c140af06d52..a510bed8165b 100644
+> --- a/net/6lowpan/debugfs.c
+> +++ b/net/6lowpan/debugfs.c
+> @@ -170,7 +170,7 @@ static void lowpan_dev_debugfs_ctx_init(struct net_device *dev,
+> 	struct dentry *root;
+> 	char buf[32];
+> 
+> -	WARN_ON_ONCE(id > LOWPAN_IPHC_CTX_TABLE_SIZE);
+> +	WARN_ON_ONCE(id >= LOWPAN_IPHC_CTX_TABLE_SIZE);
 
-Just pls drop this and use previous one.
+this patch no longer applied cleanly to bluetooth-next. Can you send me an updated version.
 
->=20
-> Cheers,
-> Christian
->=20
->>  drivers/net/wireless/ath/carl9170/usb.c | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/net/wireless/ath/carl9170/usb.c b/drivers/net/wirel=
-ess/ath/carl9170/usb.c
->> index 99f1897a775d..486957a04bd1 100644
->> --- a/drivers/net/wireless/ath/carl9170/usb.c
->> +++ b/drivers/net/wireless/ath/carl9170/usb.c
->> @@ -1107,12 +1107,10 @@ static int carl9170_usb_probe(struct usb_interfa=
-ce *intf,
->>  static void carl9170_usb_disconnect(struct usb_interface *intf)
->>  {
->>         struct ar9170 *ar =3D usb_get_intfdata(intf);
->> -       struct usb_device *udev;
->>
->>         if (WARN_ON(!ar))
->>                 return;
->>
->> -       udev =3D ar->udev;
->>         wait_for_completion(&ar->fw_load_wait);
->>
->>         if (IS_INITIALIZED(ar)) {
->>
->>
->>
->=20
-> .
->=20
+Regards
+
+Marcel
