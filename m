@@ -1,37 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 23 Jul 2019 13:32:19 +0000
-Subject: [PATCH][next] drm/amd/display: remove duplicated comparison
-Message-Id: <20190723133219.27877-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 07 Jul 2019 09:55:37 +0000
+Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
+Message-Id: <de953581-7ae6-952c-3922-3d5b25f48e17@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.21.1907061538580.2523@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1907061538580.2523@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+>> I will apply with Julia's Signed-off-by instead of Acked-by.
 
-The comparison of surface_pitch is duplicated and hence one of these
-comparisons is redundant and can be removed.  Remove it.
+>> I will also add SPDX tag.
 
-Addresses-Coverity: ("Same on both sides")
-Fixes: 12e2b2d4c65f ("drm/amd/display: add dcc programming for dual plane")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/core/dc.c | 1 -
- 1 file changed, 1 deletion(-)
+>>
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 94f126d2331c..168f4a7dffdf 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -1379,7 +1379,6 @@ static enum surface_update_type get_plane_info_update_type(const struct dc_surfa
- 	}
- 
- 	if (u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
--			|| u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
- 			|| u->plane_info->plane_size.chroma_pitch != u->surface->plane_size.chroma_pitch) {
- 		update_flags->bits.plane_size_change = 1;
- 		elevate_update_type(&update_type, UPDATE_TYPE_MED);
--- 
-2.20.1
+>> Is this OK?
+
+
+>
+> Yes, thanks.
+
+
+Will the clarification for following implementation details get any more
+software development attention?
+https://systeme.lip6.fr/pipermail/cocci/2019-June/005975.html
+https://lore.kernel.org/lkml/7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de/
+
+* The flag “IORESOURCE_MEM”
+
+* Exclusion of variable assignments by SmPL when constraints
+
+Regards,
+Markus
