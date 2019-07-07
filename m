@@ -1,79 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 23 Jul 2019 11:29:15 +0000
-Subject: Applied "ASoC: pcm3168a: Fix a typo in the name of a constant" to the asoc tree
-Message-Id: <20190723112915.71C2D2742B60@ypsilon.sirena.org.uk>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 07 Jul 2019 07:09:31 +0000
+Subject: Re: ipc/sem: Three function calls less in do_semtimedop()
+Message-Id: <4013bfa0-4369-3e29-b205-7d7059e68e5a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190722211528.26600-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190722211528.26600-1-christophe.jaillet@wanadoo.fr>
+References: <ba328a83-63ac-c3a3-cbc0-81059012c555@web.de>
+ <3c5d5941-63bf-5576-e6eb-17ca02a6a8a3@canonical.com>
+In-Reply-To: <3c5d5941-63bf-5576-e6eb-17ca02a6a8a3@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: alsa-devel@alsa-project.org, broonie@kernel.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.orgMarkBrownbroonie@kernel.org, peter.ujfalusi@ti.com, tglx@linutronix.de, tiwai@suse.com, wang@mentor.com
+To: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Davidlohr Bueso <dave@stgolabs.net>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Manfred Spraul <manfred@colorfullife.com>, Mathieu Malaterre <malat@debian.org>, LKML <linux-kernel@vger.kernel.org>
 
-The patch
+>> +		list_add_tail(&queue.list,
+>> +			      alter
+>> +			      ? (sma->complex_count
+>> +				? &sma->pending_alter
+>> +				: &curr->pending_alter)
+>> +			      : &curr->pending_const);
+>
+> Just no. This is making the code harder to comprehend
 
-   ASoC: pcm3168a: Fix a typo in the name of a constant
+This can be according to your current view.
 
-has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+> with no advantage.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+I propose to take additional aspects into account for the interpretation
+of such source code.
+The shown design direction can provide benefits which might get
+a lower value for the software development attention so far.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+>> +		list_add_tail(&queue.list,
+>> +			      alter ? &sma->pending_alter : &sma->pending_const);
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Can this code variant look more succinct?
 
-Thanks,
-Mark
-
-From f8f85216f8d309daadb37aba8a4b0826783d8747 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 22 Jul 2019 23:15:28 +0200
-Subject: [PATCH] ASoC: pcm3168a: Fix a typo in the name of a constant
-
-There is a typo in PCM1368A_MAX_SYSCLK, it should be PCM3168A_MAX_SYSCLK
-(1 and 3 switched in 3168)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20190722211528.26600-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/pcm3168a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index f1104d7d6426..5d59ce254821 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -263,7 +263,7 @@ static unsigned int pcm3168a_scki_ratios[] = {
- #define PCM3168A_NUM_SCKI_RATIOS_DAC	ARRAY_SIZE(pcm3168a_scki_ratios)
- #define PCM3168A_NUM_SCKI_RATIOS_ADC	(ARRAY_SIZE(pcm3168a_scki_ratios) - 2)
- 
--#define PCM1368A_MAX_SYSCLK		36864000
-+#define PCM3168A_MAX_SYSCLK		36864000
- 
- static int pcm3168a_reset(struct pcm3168a_priv *pcm3168a)
- {
-@@ -296,7 +296,7 @@ static int pcm3168a_set_dai_sysclk(struct snd_soc_dai *dai,
- 	struct pcm3168a_priv *pcm3168a = snd_soc_component_get_drvdata(dai->component);
- 	int ret;
- 
--	if (freq > PCM1368A_MAX_SYSCLK)
-+	if (freq > PCM3168A_MAX_SYSCLK)
- 		return -EINVAL;
- 
- 	ret = clk_set_rate(pcm3168a->scki, freq);
--- 
-2.20.1
+Regards,
+Markus
