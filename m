@@ -1,44 +1,56 @@
-From: Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Date: Thu, 04 Jul 2019 16:23:27 +0000
-Subject: Re: [PATCH] staging: greybus: remove redundant assignment to variable is_empty
-Message-Id: <CAAs364_ht9ubWrkr3qBYKofmCYUSsQPi-Ahqk4D+hG_JpDXreA@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 08 Jul 2019 08:42:35 +0000
+Subject: [PATCH v2] rtc: stm32: One condition check and function call less in stm32_rtc_set_alarm()
+Message-Id: <4da614a4-83c6-548c-a112-033b846c561b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704133031.28809-1-colin.king@canonical.com>
-In-Reply-To: <20190704133031.28809-1-colin.king@canonical.com>
+References: <f04277da-8a98-473e-2566-ac7846f9f8e1@web.de>
+ <20190707211638.sehikkear25dffah@shell.armlinux.org.uk>
+In-Reply-To: <20190707211638.sehikkear25dffah@shell.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
+To: linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jul 4, 2019 at 7:00 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable is_empty is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/greybus/audio_manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
-> index c2a4af4c1d06..9b19ea9d3fa1 100644
-> --- a/drivers/staging/greybus/audio_manager.c
-> +++ b/drivers/staging/greybus/audio_manager.c
-> @@ -86,7 +86,7 @@ EXPORT_SYMBOL_GPL(gb_audio_manager_remove);
->  void gb_audio_manager_remove_all(void)
->  {
->         struct gb_audio_manager_module *module, *next;
-> -       int is_empty = 1;
-> +       int is_empty;
->
->         down_write(&modules_rwsem);
->
-> --
-> 2.20.1
->
-Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 Jul 2019 10:26:47 +0200
+
+A condition check was repeated in this function implementation despite of
+a corresponding check in the stm32_rtc_alarm_irq_enable() function.
+Thus delete redundant source code here.
+
+Suggested-by: Russell King <linux@armlinux.org.uk>
+Link: https://lore.kernel.org/lkml/20190707211638.sehikkear25dffah@shell.armlinux.org.uk/
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+Russell King pointed the change possibility out to omit a condition check
+at this place.
+
+
+ drivers/rtc/rtc-stm32.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index 8e6c9b3bcc29..773a1990b93f 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -519,11 +519,7 @@ static int stm32_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	/* Write to Alarm register */
+ 	writel_relaxed(alrmar, rtc->base + regs->alrmar);
+
+-	if (alrm->enabled)
+-		stm32_rtc_alarm_irq_enable(dev, 1);
+-	else
+-		stm32_rtc_alarm_irq_enable(dev, 0);
+-
++	stm32_rtc_alarm_irq_enable(dev, alrm->enabled);
+ end:
+ 	stm32_rtc_wpr_lock(rtc);
+
+--
+2.22.0
