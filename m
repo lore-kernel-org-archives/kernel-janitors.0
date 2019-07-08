@@ -1,80 +1,68 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 07 Jul 2019 07:56:11 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 08 Jul 2019 06:36:49 +0000
 Subject: Re: [PATCH] mfd: asic3: One function call less in asic3_irq_probe()
-Message-Id: <4b06e2fb-a0ba-56e5-b46b-98e986e6f2fd@web.de>
+Message-Id: <20190708063649.GA4800@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
- <20190707005251.GQ17978@ZenIV.linux.org.uk>
-In-Reply-To: <20190707005251.GQ17978@ZenIV.linux.org.uk>
+In-Reply-To: <01f6a8cd-0205-8d34-2aa3-e4b691e7eb95@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
-Cc: Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 
->> Avoid an extra function call by using a ternary operator instead of
->> a conditional statement.
->
-> Which is a good thing, because...?
+On Fri, 05 Jul 2019, Markus Elfring wrote:
 
-I suggest to reduce a bit of duplicate source code also at this place.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 5 Jul 2019 20:22:26 +0200
+> 
+> Avoid an extra function call by using a ternary operator instead of
+> a conditional statement.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mfd/asic3.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+> index 83b18c998d6f..50f5368fb170 100644
+> --- a/drivers/mfd/asic3.c
+> +++ b/drivers/mfd/asic3.c
+> @@ -401,11 +401,10 @@ static int __init asic3_irq_probe(struct platform_device *pdev)
+>  	irq_base = asic->irq_base;
+> 
+>  	for (irq = irq_base; irq < irq_base + ASIC3_NR_IRQS; irq++) {
+> -		if (irq < asic->irq_base + ASIC3_NUM_GPIOS)
+> -			irq_set_chip(irq, &asic3_gpio_irq_chip);
+> -		else
+> -			irq_set_chip(irq, &asic3_irq_chip);
+> -
+> +		irq_set_chip(irq,
+> +			     (irq < asic->irq_base + ASIC3_NUM_GPIOS)
+> +			     ? &asic3_gpio_irq_chip
+> +			     : &asic3_irq_chip);
 
+The comparison better suits an if statement IMHO.
 
->> This issue was detected by using the Coccinelle software.
->
-> Oh, I see - that answers all questions.
+How about:
 
-Obviously not so far.
+  		struct irq_chip *chip;
 
+		if (irq < asic->irq_base + ASIC3_NUM_GPIOS)
+			chip = &asic3_gpio_irq_chip;
+		else
+			chip = &asic3_irq_chip);
 
-> "Software has detected an issue", so of course an issue it is.
+		irq_set_chip(irq, chip);
 
-The mentioned development tool can help to point refactoring
-possibilities out.
+>  		irq_set_chip_data(irq, asic);
+>  		irq_set_handler(irq, handle_level_irq);
+>  		irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
 
-
->> -		if (irq < asic->irq_base + ASIC3_NUM_GPIOS)
->> -			irq_set_chip(irq, &asic3_gpio_irq_chip);
->> -		else
->> -			irq_set_chip(irq, &asic3_irq_chip);
->> -
->> +		irq_set_chip(irq,
->> +			     (irq < asic->irq_base + ASIC3_NUM_GPIOS)
->> +			     ? &asic3_gpio_irq_chip
->> +			     : &asic3_irq_chip);
->
-> ... except that the result is not objectively better by any real criteria.
-
-We can have different opinions about the criteria which are relevant here.
-
-
-> It's not more readable,
-
-This is a possible view.
-
-
-> it conveys _less_ information to reader
-
-I guess that the interpretation of this feedback can become more interesting.
-
-
-> (the fact that calls differ only by the last argument
-> had been visually obvious already,
-
-Can the repeated code specification make the recognition of this
-implementation detail a bit harder actually?
-
-
-> had been visually obvious already, and logics used to be easier
-> to see), it (obviously) does not generate better (or different) code.
-
-The functionality should be equivalent for the shown software refactoring.
-
-
-> What the hell is the point?
-
-I dare to point another change possibility out.
-I am unsure if this adjustment will be picked up finally.
-
-Regards,
-Markus
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
