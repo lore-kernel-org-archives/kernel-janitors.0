@@ -1,27 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Jul 2019 20:53:28 +0000
-Subject: Re: [PATCH][next] gve: fix -ENOMEM null check on a page allocation
-Message-Id: <20190703.135328.756462803106168925.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 09 Jul 2019 01:35:30 +0000
+Subject: [PATCH -next] Bluetooth: hci_qca: Use kfree_skb() instead of kfree()
+Message-Id: <20190709013530.11865-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190703165037.3041-1-colin.king@canonical.com>
-In-Reply-To: <20190703165037.3041-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: csully@google.com, sagis@google.com, jonolson@google.com, willemb@google.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, Matthias Kaehlcke <mka@chromium.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  3 Jul 2019 17:50:37 +0100
+Use kfree_skb() instead of kfree() to free sk_buff.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the check to see if a page is allocated is incorrect
-> and is checking if the pointer page is null, not *page as
-> intended.  Fix this.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 2faa3f15fa2f ("Bluetooth: hci_qca: wcn3990: Drop baudrate change vendor event")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/bluetooth/hci_qca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 9a5c9c1f9484..cbae86e55aed 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -909,7 +909,7 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+ 		if (hdr->evt = HCI_EV_VENDOR)
+ 			complete(&qca->drop_ev_comp);
+ 
+-		kfree(skb);
++		kfree_skb(skb);
+ 
+ 		return 0;
+ 	}
