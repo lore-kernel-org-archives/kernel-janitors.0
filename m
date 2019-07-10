@@ -1,54 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 02 Jul 2019 12:24:26 +0000
-Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch statement
-Message-Id: <20190702122426.GI2793@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7SrMUQONj8Rl9QNG"
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 10 Jul 2019 07:25:24 +0000
+Subject: [net-next] mwifiex: use eth_broadcast_addr() to assign broadcast address
+Message-Id: <20190710072524.65953-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190627131639.6394-1-colin.king@canonical.com>
- <20190628143628.GJ5379@sirena.org.uk>
- <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
- <20190702104420.GD4652@dell>
- <4a0a50be-1465-0554-f787-dec72bc07a00@canonical.com>
-In-Reply-To: <4a0a50be-1465-0554-f787-dec72bc07a00@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: amitkarwar@gmail.com, nishants@marvell.com, gbhat@marvell.com, huxinming820@gmail.com, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
+This patch is to use eth_broadcast_addr() to assign broadcast address
+insetad of memcpy().
 
---7SrMUQONj8Rl9QNG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/wireless/marvell/mwifiex/tdls.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Tue, Jul 02, 2019 at 12:12:10PM +0100, Colin Ian King wrote:
-> On 02/07/2019 11:44, Lee Jones wrote:
-> > On Fri, 28 Jun 2019, Colin Ian King wrote:
-
-> >> So it applies cleanly against linux-next, I think the original code
-> >> landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
-
-> > Applied, thanks Colin.
-
-> I'm confused, who is the official maintainer of the regulator patches
-> nowadays?
-
-Me and Liam but since this patch only applies against Lee's tree he's
-applied it there (I didn't think it was worth me picking up the entire
-cross tree merge branch Lee prepared for this one fix, if Lee hadn't
-picked it up it'd have waited till after the merge window).
-
---7SrMUQONj8Rl9QNG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0bTPkACgkQJNaLcl1U
-h9Blxgf/X/fK5rQM9Xb+Yt492Z9/NCArCSuCI/mxZbI1rmSe+GDcD8h5mV6hd0ok
-d5MOzJ6HnMDRxgAZIns3zlNJ+Pm9F86FKrpfEv6Amjd8ykg7Xy9Gb0DsNv2PQnj9
-0K9Zf3cD5OBEAM8VusSStT/AvvFxSkejXLjt5nswMdQFN3a7CS16U0aGIZOrd1t+
-rROoqa5YQKTb4AF9Tn6+XoVvpy96zd2ixbFPqDeV8EwXJFt6+Y5PJAbSvXfG6HX+
-PYOQO/IMeJqfH9jbg8a8GyDdOTYC5rKHKIRPmbZVuRGo7O4WEDpMRFO1PwKiBV/J
-hcNdXDspcFdYbwvUUo6Ar3d2F94ScQ==
-=aXbp
------END PGP SIGNATURE-----
-
---7SrMUQONj8Rl9QNG--
+diff --git a/drivers/net/wireless/marvell/mwifiex/tdls.c b/drivers/net/wireless/marvell/mwifiex/tdls.c
+index 18e654d..0931304 100644
+--- a/drivers/net/wireless/marvell/mwifiex/tdls.c
++++ b/drivers/net/wireless/marvell/mwifiex/tdls.c
+@@ -731,7 +731,6 @@ mwifiex_construct_tdls_action_frame(struct mwifiex_private *priv,
+ 				    u16 status_code, struct sk_buff *skb)
+ {
+ 	struct ieee80211_mgmt *mgmt;
+-	u8 bc_addr[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	int ret;
+ 	u16 capab;
+ 	struct ieee80211_ht_cap *ht_cap;
+@@ -765,7 +764,7 @@ mwifiex_construct_tdls_action_frame(struct mwifiex_private *priv,
+ 		memmove(pos + ETH_ALEN, &mgmt->u.action.category,
+ 			sizeof(mgmt->u.action.u.tdls_discover_resp));
+ 		/* init address 4 */
+-		memcpy(pos, bc_addr, ETH_ALEN);
++		eth_broadcast_addr(pos);
+ 
+ 		ret = mwifiex_tdls_append_rates_ie(priv, skb);
+ 		if (ret) {
+-- 
+2.7.4
