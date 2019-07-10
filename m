@@ -1,26 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 27 Jul 2019 20:32:20 +0000
-Subject: Re: [PATCH] net: neigh: remove redundant assignment to variable bucket
-Message-Id: <20190727.133220.1577010813654823977.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 10 Jul 2019 15:15:33 +0000
+Subject: Re: Coccinelle: Checking of_node_put() calls with SmPL
+Message-Id: <9d515026-5b74-cf0c-0c64-4fe242d4104e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190726094611.3597-1-colin.king@canonical.com>
-In-Reply-To: <20190726094611.3597-1-colin.king@canonical.com>
+References: <201907101533443009168@zte.com.cn>
+In-Reply-To: <201907101533443009168@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dsahern@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Kumar Gala <galak@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 26 Jul 2019 10:46:11 +0100
+> we developed a coccinelle script to detect such problems.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable bucket is being initialized with a value that is never
-> read and it is being updated later with a new value in a following
-> for-loop. The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Would you find the implementation of the function “dt_init_idle_driver”
+suspicious according to discussed source code search patterns?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpuidle/dt_idle_states.c?id=e9a83bd2322035ed9d7dcf35753d3f984d76c6a5#n208
+https://elixir.bootlin.com/linux/v5.2/source/drivers/cpuidle/dt_idle_states.c#L208
 
-Applied to net-next.
+
+> This script is still being improved.
+
+Will corresponding software development challenges become more interesting?
+
+Regards,
+Markus
