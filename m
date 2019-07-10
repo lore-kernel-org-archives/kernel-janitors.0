@@ -1,29 +1,37 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 03 Jul 2019 17:54:43 +0000
-Subject: Re: [PATCH -next] RDMA/hns: Remove set but not used variable 'fclr_write_fail_flag'
-Message-Id: <20190703175443.GA25838@ziepe.ca>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 10 Jul 2019 06:12:22 +0000
+Subject: [PATCH -next] Bluetooth: btusb: Fix error return code in btusb_mtk_setup_firmware()
+Message-Id: <20190710061222.141247-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1538132393-54509-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1538132393-54509-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean
+ Wang <sean.wang@mediatek.com>
+Cc: linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jul 03, 2019 at 03:10:21AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'hns_roce_function_clear':
-> drivers/infiniband/hw/hns/hns_roce_hw_v2.c:1135:7: warning:
->  variable 'fclr_write_fail_flag' set but not used [-Wunused-but-set-variable]
-> 
-> It is never used, so can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 --
->  1 file changed, 2 deletions(-)
+Fix to return error code -EINVAL from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Applied to for-next, thanks
+Fixes: a1c49c434e15 ("Bluetooth: btusb: Add protocol support for MediaTek MT7668U USB devices")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/bluetooth/btusb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 3876fee6ad13..5cf0734eb31b 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2762,8 +2762,10 @@ static int btusb_mtk_setup_firmware(struct hci_dev *hdev, const char *fwname)
+ 	fw_size = fw->size;
+ 
+ 	/* The size of patch header is 30 bytes, should be skip */
+-	if (fw_size < 30)
++	if (fw_size < 30) {
++		err = -EINVAL;
+ 		goto err_release_fw;
++	}
+ 
+ 	fw_size -= 30;
+ 	fw_ptr += 30;
