@@ -1,27 +1,25 @@
-From: Joonwon Kang <kjw1627@gmail.com>
-Date: Wed, 31 Jul 2019 18:00:27 +0000
-Subject: [PATCH 0/2] fix is_pure_ops_struct()
-Message-Id: <cover.1564595346.git.kjw1627@gmail.com>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Thu, 11 Jul 2019 14:45:33 +0000
+Subject: Re: [PATCH -next] infiniband: remove set but not used variables 'rv'
+Message-Id: <20190711144533.GB25807@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: keescook@chromium.org
-Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
+To: kernel-janitors@vger.kernel.org
 
-Hello,
+On Thu, Jul 11, 2019 at 09:59:30PM +0800, Mao Wenan wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/infiniband/sw/siw/siw_main.c: In function siw_create_tx_threads:
+> drivers/infiniband/sw/siw/siw_main.c:91:11: warning: variable rv set but not used [-Wunused-but-set-variable]
+> 
+> It is never used since introduction in bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+>  drivers/infiniband/sw/siw/siw_main.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-This series fixes unreachable code bug and removes dead code in
-is_pure_ops_struct().
+This was already fixed, thanks
 
-Thanks.
-
-Joonwon Kang (2):
-  randstruct: fix a bug in is_pure_ops_struct()
-  randstruct: remove dead code in is_pure_ops_struct()
-
- scripts/gcc-plugins/randomize_layout_plugin.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
--- 
-2.17.1
+Jason
