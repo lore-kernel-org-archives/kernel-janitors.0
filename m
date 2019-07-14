@@ -1,38 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Jul 2019 08:00:35 +0000
-Subject: [PATCH] media: cobalt: remove redundant assignment to variable data
-Message-Id: <20190703080035.13975-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Jul 2019 14:42:11 +0000
+Subject: Re: [v3] staging: most: remove redundant print statement when kfifo_alloc fails
+Message-Id: <27df9bec-dbd5-8267-8df2-4948ca14e6d4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190711175055.25157-1-iamkeyur96@gmail.com>
+In-Reply-To: <20190711175055.25157-1-iamkeyur96@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Keyur Patel <iamkeyur96@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Cc: Christian Gromm <christian.gromm@microchip.com>, Suresh Udipi <sudipi@jp.adit-jv.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> This print statement is redundant as kfifo_alloc just calls kmalloc_array
+> and without the __GFP_NOWARN flag, already does a dump_stack().
 
-The variable data is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+I suggest to omit the word “and” from this sentence.
+Will any further wording adjustments become helpful for commit descriptions?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cobalt/cobalt-flash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cobalt/cobalt-flash.c b/drivers/media/pci/cobalt/cobalt-flash.c
-index ef96e0f956d2..1d3c64b4cf6d 100644
---- a/drivers/media/pci/cobalt/cobalt-flash.c
-+++ b/drivers/media/pci/cobalt/cobalt-flash.c
-@@ -69,7 +69,7 @@ static void flash_copy_to(struct map_info *map, unsigned long to,
- 
- 	pr_info("%s: offset 0x%x: length %zu\n", __func__, dest, len);
- 	while (len) {
--		u16 data = 0xffff;
-+		u16 data;
- 
- 		do {
- 			data = *src << (8 * (dest & 1));
--- 
-2.20.1
+> Changes in v3:
+> - fix checkpatch warrning
+> ---
+
+Please move such version information below the triple dashes without a typo.
+
+Regards,
+Markus
