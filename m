@@ -1,34 +1,26 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 22 Jul 2019 21:36:57 +0000
-Subject: [PATCH] ARM: davinci: dm646x: Fix a typo in the comment
-Message-Id: <20190722213657.27175-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Jul 2019 10:07:18 +0000
+Subject: Re: [PATCH 0/2] ASoC: samsung: odroid: fix err handling of odroid_audio_probe
+Message-Id: <fbd5666c-f681-4f09-eb5c-35c47d60d857@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1562989575-33785-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1562989575-33785-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: nsekhar@ti.com, bgolaszewski@baylibre.com, linux@armlinux.org.uk
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, alsa-devel@alsa-project.org
+Cc: Cheng Shengyu <cheng.shengyu@zte.com.cn>, Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The driver is dedicated to DM646x. So update the description in the top
-most comment accordingly.
+Would a subject like “ASoC: samsung: odroid: Fix handling of device node references
+in odroid_audio_probe” be more appropriate (instead of using the abbreviation “err”)?
 
-It must have been derived from dm644x.c, but looks DM646 speecific now.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/arm/mach-davinci/dm646x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> We developed a coccinelle SmPL to detect …
 
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 62ca952fe161..4c58510e5792 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -1,5 +1,5 @@
- /*
-- * TI DaVinci DM644x chip specific setup
-+ * TI DaVinci DM646x chip specific setup
-  *
-  * Author: Kevin Hilman, Deep Root Systems, LLC
-  *
--- 
-2.20.1
+* I would find a slightly different wording better.
+
+* How do you think about to convert this information into software attributions
+  for the update steps?
+
+Regards,
+Markus
