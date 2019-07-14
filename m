@@ -1,53 +1,32 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 06 Jul 2019 23:23:07 +0000
-Subject: Re: [PATCH][next] 6lowpan: fix off-by-one comparison of index id with LOWPAN_IPHC_CTX_TABLE_SIZE
-Message-Id: <f09c07d6-9a16-3acf-dd07-4b7bfcd732f3@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Jul 2019 12:47:18 +0000
+Subject: Re: [2/2] ASoC: samsung: odroid: fix a double-free issue for cpu_dai
+Message-Id: <4545ce50-493c-8faa-fdcd-5aee3ca30792@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624144757.1285-1-colin.king@canonical.com>
- <B6A1CB42-C239-42CA-B14E-483A02B930EB@holtmann.org>
-In-Reply-To: <B6A1CB42-C239-42CA-B14E-483A02B930EB@holtmann.org>
+References: <1562989575-33785-3-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1562989575-33785-3-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>
 
-On 06/07/2019 11:51, Marcel Holtmann wrote:
-> Hi Colin,
-> 
->> The WARN_ON_ONCE check on id is off-by-one, it should be greater or equal
->> to LOWPAN_IPHC_CTX_TABLE_SIZE and not greater than. Fix this.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->> net/6lowpan/debugfs.c | 2 +-
->> 1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/6lowpan/debugfs.c b/net/6lowpan/debugfs.c
->> index 1c140af06d52..a510bed8165b 100644
->> --- a/net/6lowpan/debugfs.c
->> +++ b/net/6lowpan/debugfs.c
->> @@ -170,7 +170,7 @@ static void lowpan_dev_debugfs_ctx_init(struct net_device *dev,
->> 	struct dentry *root;
->> 	char buf[32];
->>
->> -	WARN_ON_ONCE(id > LOWPAN_IPHC_CTX_TABLE_SIZE);
->> +	WARN_ON_ONCE(id >= LOWPAN_IPHC_CTX_TABLE_SIZE);
-> 
-> this patch no longer applied cleanly to bluetooth-next. Can you send me an updated version.
+> The cpu_dai variable is still being used after the of_node_put() call,
 
-I'm confused by this, I just applied it OK on bluetooth-next [1] on the
-head 9ce67c3235be71e8cf922a9b3d0b7359ed3f4ce5, am I applying this to the
-wrong repo/branch?
-
-[1]
-git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+Such an implementation detail is questionable.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+freed+memory
 
 
-Colin
+> which may result in double-free:
 
-> 
-> Regards
-> 
-> Marcel
-> 
+This consequence is also undesirable.
+https://cwe.mitre.org/data/definitions/415.html
+
+
+Now I wonder if two update steps are really appropriate as a fix
+instead of using a single update step for the desired correction
+in this software module.
+Should a commit (including previous ones) usually be correct by itself?
+
+Regards,
+Markus
