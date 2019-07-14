@@ -1,45 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 21:35:33 +0000
-Subject: [PATCH] iio: magnetometer: mmc35240: Fix a typo in the name of a constant
-Message-Id: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Jul 2019 08:47:20 +0000
+Subject: Re: [PATCH 1/2] ASoC: samsung: odroid: fix an use-after-free issue for codec
+Message-Id: <0eeabac6-edbd-b829-817f-ffff87e1a825@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1562989575-33785-2-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1562989575-33785-2-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, tglx@linutronix.de, alexios.zavras@intel.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, Krzysztof Kozlowski <krzk@kernel.org>, alsa-devel@alsa-project.org
+Cc: Cheng Shengyu <cheng.shengyu@zte.com.cn>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Everything is about mmc35240_ except MMC53240_WAIT_SET_RESET (3 and 5
-switched).
+> @@ -317,6 +316,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
 
-This is likely a typo. Define and use MMC35240_WAIT_SET_RESET instead.
+>  		goto err_put_clk_i2s;
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/magnetometer/mmc35240.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>  	}
 
-diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
-index 7de10281ad9e..425cdd07b4e5 100644
---- a/drivers/iio/magnetometer/mmc35240.c
-+++ b/drivers/iio/magnetometer/mmc35240.c
-@@ -53,7 +53,7 @@
- #define MMC35240_CTRL1_BW_SHIFT		0
- 
- #define MMC35240_WAIT_CHARGE_PUMP	50000	/* us */
--#define MMC53240_WAIT_SET_RESET		1000	/* us */
-+#define MMC35240_WAIT_SET_RESET		1000	/* us */
- 
- /*
-  * Memsic OTP process code piece is put here for reference:
-@@ -225,7 +225,7 @@ static int mmc35240_init(struct mmc35240_data *data)
- 	ret = mmc35240_hw_set(data, true);
- 	if (ret < 0)
- 		return ret;
--	usleep_range(MMC53240_WAIT_SET_RESET, MMC53240_WAIT_SET_RESET + 1);
-+	usleep_range(MMC35240_WAIT_SET_RESET, MMC35240_WAIT_SET_RESET + 1);
- 
- 	ret = mmc35240_hw_set(data, false);
- 	if (ret < 0)
--- 
-2.20.1
+>
+
+> +	of_node_put(codec);
+
+
+I would prefer to avoid a bit of duplicate source code also at this place.
+Thus I would find a statement like “goto put_node;” more appropriate here.
+
+
+>  	return 0;
+
+>
+
+>  err_put_clk_i2s:
+
+
+
+Regards,
+Markus
