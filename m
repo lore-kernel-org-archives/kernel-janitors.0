@@ -1,26 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 19 Jul 2019 03:34:47 +0000
-Subject: Re: [PATCH v2] ag71xx: fix return value check in ag71xx_probe()
-Message-Id: <20190718.203447.802057574398577206.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 14 Jul 2019 15:23:34 +0000
+Subject: Re: [v4] staging: most: remove redundant print statement when kfifo_alloc fails
+Message-Id: <06fc2495-dda5-61d2-17e8-0c385e02da1e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190717115225.23047-1-weiyongjun1@huawei.com>
-        <20190719012206.100478-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190719012206.100478-1-weiyongjun1@huawei.com>
+References: <20190714150546.31836-1-iamkeyur96@gmail.com>
+In-Reply-To: <20190714150546.31836-1-iamkeyur96@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, o.rempel@pengutronix.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Keyur Patel <iamkeyur96@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Cc: Christian Gromm <christian.gromm@microchip.com>, Suresh Udipi <sudipi@jp.adit-jv.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 19 Jul 2019 01:22:06 +0000
+> ---
+> Changes in v3:
 
-> In case of error, the function of_get_mac_address() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
-> 
-> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Thanks for your quick response.
 
-Applied.
+I find the change log incomplete (even if corresponding information
+can be determined also from public message archives).
+
+Regards,
+Markus
