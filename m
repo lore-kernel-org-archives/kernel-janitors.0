@@ -1,71 +1,136 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 04 Jul 2019 16:26:20 +0000
-Subject: Re: [PATCH][next] drm/amdgpu/psp: fix incorrect logic when checking asic_type
-Message-Id: <8f3385e9-4e53-b4b4-11ac-f77ec88bfc64@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 16 Jul 2019 09:25:48 +0000
+Subject: Re: [PATCH v3] coccinelle: semantic code search for missing of_node_put
+Message-Id: <663d8141-5740-a452-1f4a-8335203e65ba@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704142329.22983-1-colin.king@canonical.com>
- <5D1E27B4.9000003@bfs.de>
-In-Reply-To: <5D1E27B4.9000003@bfs.de>
+References: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wen.yang99@zte.com.cn>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
 
-On 04/07/2019 17:22, walter harms wrote:
-> 
-> 
-> Am 04.07.2019 16:23, schrieb Colin King:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the check of the asic_type is always returning true because
->> of the use of ||.  Fix this by using && instead.  Also break overly
->> wide line.
->>
->> Addresses-Coverity: ("Constant expression result")
->> Fixes: dab70ff24db6 ("drm/amdgpu/psp: add psp support for navi14")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
->> index 527dc371598d..e4afd34e3034 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
->> @@ -540,7 +540,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
->>  
->>  	case AMDGPU_UCODE_ID_RLC_G:
->>  		*sram_offset = 0x2000;
->> -		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
->> +		if (adev->asic_type != CHIP_NAVI10 &&
->> +		    adev->asic_type != CHIP_NAVI14) {
->>  			*sram_addr_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_ADDR);
->>  			*sram_data_reg_offset = SOC15_REG_OFFSET(GC, 0, mmRLC_GPM_UCODE_DATA);
->>  		} else {
->> @@ -551,7 +552,8 @@ psp_v11_0_sram_map(struct amdgpu_device *adev,
->>  
->>  	case AMDGPU_UCODE_ID_SDMA0:
->>  		*sram_offset = 0x0;
->> -		if (adev->asic_type != CHIP_NAVI10 || adev->asic_type != CHIP_NAVI14) {
->> +		if (adev->asic_type != CHIP_NAVI10 &&
->> +		    adev->asic_type != CHIP_NAVI14) {
->>  			*sram_addr_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_ADDR);
->>  			*sram_data_reg_offset = SOC15_REG_OFFSET(SDMA0, 0, mmSDMA0_UCODE_DATA);
->>  		} else {
-> 
-> 
-> maybe it is better to use
-> 		if (adev->asic_type = CHIP_NAVI10 ||
-> 		    adev->asic_type = CHIP_NAVI14) {
-> 
-> i guess tha was intended here and it is more easy to read.
-> ppl are bad in non-non reading.
+> We find these functions by using the following script:
 
-I'm not sure what the original intent was now.  Lets see what the folk
-at AMD say about this.
+Why would you like to keep this SmPL code in the commit description?
 
-> 
-> re,
->  wh
-> 
+I would prefer software evolution in an other direction.
+https://lore.kernel.org/lkml/44be5924-26ca-5106-aa25-3cbc3343aa2c@web.de/
+https://lkml.org/lkml/2019/7/4/21
+
+
+> @initialize:ocaml@
+> @@
+>
+> let relevant_str = "use of_node_put() on it when done"
+
+I see further possibilities to improve this data processing approach.
+https://lore.kernel.org/lkml/904b9362-cd01-ffc9-600b-0c48848617a0@web.de/
+https://lore.kernel.org/patchwork/patch/1095169/#1291378
+https://lkml.org/lkml/2019/6/28/326
+
+
+I am missing more constructive answers for mentioned development concerns.
+
+
+> And this patch also looks for places …
+
+Does a SmPL script perform an action?
+
+
+> Finally, this patch finds use-after-free issues for a node.
+> (implemented by the r_use_after_put rule)
+
+This software extension is another interesting contribution.
+But I imagine that a separate SmPL script can be more helpful for
+this source code search pattern.
+
+
+> v3: delete the global set, …
+
+To which previous implementation detail do you refer here?
+
+
+> +virtual report
+> +virtual org
+> +
+> +@initialize:python@
+> +@@
+> +
+> +report_miss_prefix = "ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line "
+> +report_miss_suffix = ", but without a corresponding object release within this function."
+> +org_miss_main = "acquired a node pointer with refcount incremented"
+> +org_miss_sec = "needed of_node_put"
+> +report_use_after_put = "ERROR: use-after-free; reference preceded by of_node_put on line "
+> +org_use_after_put_main = "of_node_put"
+> +org_use_after_put_sec = "reference"
+
+If you would insist on the usage of these variables, they should be applied
+only for the selected analysis operation mode.
+I would expect corresponding SmPL dependency specifications.
+https://github.com/coccinelle/coccinelle/blob/b4509f6e7fb06d5616bb19dd5a110b203fd0e566/docs/manual/cocci_syntax.tex#L559
+
+
+> +@r_miss_put exists@
+> +local idexpression struct device_node *x;
+> +expression e, e1;
+> +position p1, p2;
+> +statement S;
+> +type T, T1;
+> +@@
+> +
+> +* x = @p1\(of_find_all_nodes\|
+
+The usage of the SmPL asterisk functionality can fit to the operation mode “context”.
+https://bottest.wiki.kernel.org/coccicheck#modes
+Would you like to add any corresponding SmPL details?
+
+Under which circumstances will remaining programming concerns be clarified
+for such SmPL disjunctions?
+
+
+> +... when != e = (T)x
+> +    when != true x == NULL
+
+Will assignment exclusions get any more software development attention?
+https://lore.kernel.org/lkml/03cc4df5-ce7f-ba91-36b5-687fec8c7297@web.de/
+https://lore.kernel.org/patchwork/patch/1095169/#1291892
+https://lkml.org/lkml/2019/6/29/193
+
+
+> +    when != of_node_put(x)
+…
+> +)
+> +&
+> +x = f(...)
+> +...
+> +if (<+...x...+>) S
+> +...
+> +of_node_put(x);
+> +)
+
+You propose once more to use a SmPL conjunction in the rule “r_miss_put_ext”.
+I am also still waiting for a definitive explanation on the applicability
+of this combination.
+
+
+> +@r_put@
+> +expression E;
+> +position p1;
+> +@@
+> +
+> +* of_node_put@p1(E)
+
+I guess that this SmPL code will need further adjustments.
+
+
+> +@r_use_after_put exists@
+> +expression r_put.E, subE<=r_put.E;
+
+I have got an understanding difficulty around the interpretation
+of the shown SmPL constraint.
+How will the clarification be continued?
+
+Regards,
+Markus
