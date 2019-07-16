@@ -1,26 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 04 Jul 2019 19:12:30 +0000
-Subject: Re: [PATCH] net: ethernet: sun: remove redundant assignment to variable err
-Message-Id: <20190704.121230.1258734619521898253.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 16 Jul 2019 12:05:41 +0000
+Subject: Re: [v3] coccinelle: semantic code search for missing of_node_put
+Message-Id: <14f4d5dc-f3b1-5cfa-4a2b-046516369fc4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704123651.31672-1-colin.king@canonical.com>
-In-Reply-To: <20190704123651.31672-1-colin.king@canonical.com>
+References: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
+ <663d8141-5740-a452-1f4a-8335203e65ba@web.de>
+ <alpine.DEB.2.21.1907161307550.2885@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1907161307550.2885@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Wen Yang <wen.yang99@zte.com.cn>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  4 Jul 2019 13:36:51 +0100
+>> Why would you like to keep this SmPL code in the commit description?
+>
+> I don't know indetail what you are proposing,
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being assigned with a value that is never
-> read and it is being updated in the next statement with a new value.
-> The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I imagine that you can get more interesting software development ideas
+from links to previous messages.
+I hope that the desired clarification can become more constructive.
 
-Applied.
+How are the chances to move such code into SmPL script files?
+
+
+> but I would prefer not to put semantic patches that involve iteration
+> into the kernel, for simplicity.
+
+This view is also interesting.
+
+But I hope that this functionality will become more helpful
+if we can agree on value combinations which should be iterated
+for powerful source code analysis.
+
+
+>> I would prefer software evolution in an other direction.
+>> https://lore.kernel.org/lkml/44be5924-26ca-5106-aa25-3cbc3343aa2c@web.de/
+>> https://lkml.org/lkml/2019/7/4/21
+
+Would you like to add any more advices for affected software components?
+
+Regards,
+Markus
