@@ -1,48 +1,45 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 06 Jul 2019 08:56:52 +0000
-Subject: [PATCH] staging: octeon: One function call less in cvm_oct_common_set_multicast_list()
-Message-Id: <9ce376b1-0450-a0ea-bd4e-2601e4bb8168@web.de>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 16 Jul 2019 08:54:23 +0000
+Subject: [PATCH -next] keyboard: remove set but not used variables 'sts'
+Message-Id: <20190716085423.19443-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
-In-Reply-To: <877404bb-a9e4-ffa5-a621-d87fbca549ef@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ioannis Valasakis <code@wizofe.uk>, =?UTF-8?Q?Petr_=c5=a0tetiar?= <ynezz@true.cz>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 Jul 2019 10:48:23 +0200
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Avoid an extra function call by using a ternary operator instead of
-a conditional statement.
+drivers/input/keyboard/applespi.c: In function applespi_set_bl_level:
+drivers/input/keyboard/applespi.c:902:6: warning: variable sts set but not used [-Wunused-but-set-variable]
 
-This issue was detected by using the Coccinelle software.
+Fixes: b426ac0452093d ("Input: add Apple SPI keyboard and trackpad driver")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 ---
- drivers/staging/octeon/ethernet.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/input/keyboard/applespi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-index 8847a11c212f..93f127a0b287 100644
---- a/drivers/staging/octeon/ethernet.c
-+++ b/drivers/staging/octeon/ethernet.c
-@@ -337,13 +337,8 @@ static void cvm_oct_common_set_multicast_list(struct net_device *dev)
-
- 		cvmx_write_csr(CVMX_GMXX_RXX_ADR_CTL(index, interface),
- 			       control.u64);
--		if (dev->flags & IFF_PROMISC)
--			cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN
--				       (index, interface), 0);
--		else
--			cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN
--				       (index, interface), 1);
--
-+		cvmx_write_csr(CVMX_GMXX_RXX_ADR_CAM_EN(index, interface),
-+			       dev->flags & IFF_PROMISC ? 0 : 1);
- 		cvmx_write_csr(CVMX_GMXX_PRTX_CFG(index, interface),
- 			       gmx_cfg.u64);
+diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
+index c1a6843..548737e 100644
+--- a/drivers/input/keyboard/applespi.c
++++ b/drivers/input/keyboard/applespi.c
+@@ -899,7 +899,6 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
+ 	struct applespi_data *applespi  		container_of(led_cdev, struct applespi_data, backlight_info);
+ 	unsigned long flags;
+-	int sts;
+ 
+ 	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
+ 
+@@ -916,7 +915,7 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
+ 			 KBD_BL_LEVEL_MIN);
  	}
---
-2.22.0
+ 
+-	sts = applespi_send_cmd_msg(applespi);
++	applespi_send_cmd_msg(applespi);
+ 
+ 	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
+ }
+-- 
+2.7.4
