@@ -1,26 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 25 Jul 2019 05:55:31 +0000
-Subject: Re: [PATCH v4 1/3] driver core: platform: Add an error message to platform_get_irq*()
-Message-Id: <84776d98-3612-639a-8721-c0d1c981ec47@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jul 2019 11:52:25 +0000
+Subject: [PATCH] net: ag71xx: fix return value check in ag71xx_probe()
+Message-Id: <20190717115225.23047-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190723181624.203864-2-swboyd@chromium.org>
-In-Reply-To: <20190723181624.203864-2-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Stephen Boyd <swboyd@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-…
-> +++ b/drivers/base/platform.c
-> @@ -99,12 +99,7 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-…
-> -int platform_get_irq(struct platform_device *dev, unsigned int num)
-> +static int __platform_get_irq(struct platform_device *dev, unsigned int num)
->  {
-…
-I suggest to avoid the usage of double underscores in such identifiers.
-Will an other function name be more appropriate here?
+In case of error, the function of_get_mac_address() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Regards,
-Markus
+Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 72a57c6cd254..3088a43e6436 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1732,9 +1732,9 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	ag->stop_desc->next = (u32)ag->stop_desc_dma;
+ 
+ 	mac_addr = of_get_mac_address(np);
+-	if (mac_addr)
++	if (!IS_ERR(mac_addr))
+ 		memcpy(ndev->dev_addr, mac_addr, ETH_ALEN);
+-	if (!mac_addr || !is_valid_ether_addr(ndev->dev_addr)) {
++	if (IS_ERR(mac_addr) || !is_valid_ether_addr(ndev->dev_addr)) {
+ 		netif_err(ag, probe, ndev, "invalid MAC address, using random address\n");
+ 		eth_random_addr(ndev->dev_addr);
+ 	}
