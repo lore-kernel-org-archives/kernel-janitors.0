@@ -1,33 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 24 Jul 2019 11:45:43 +0000
-Subject: Re: [PATCH] wl3501_cs: remove redundant variable rc
-Message-Id: <20190724114543.C71D160398@smtp.codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 17 Jul 2019 11:52:15 +0000
+Subject: [PATCH] net: ethernet: fix error return code in ag71xx_probe()
+Message-Id: <20190717115215.22965-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705103732.30568-1-colin.king@canonical.com>
-In-Reply-To: <20190705103732.30568-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Fix to return error code -ENOMEM from the dmam_alloc_coherent() error
+handling case instead of 0, as done elsewhere in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable rc is being initialized with a value that is never
-> read and it is being updated later with a new value that is returned.
-> The variable is redundant and can be replaced with a return 0 as
-> there are no other return points in this function.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-c032461936de wl3501_cs: remove redundant variable rc
-
--- 
-https://patchwork.kernel.org/patch/11032441/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 72a57c6cd254..446d62e93439 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1724,8 +1724,10 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	ag->stop_desc = dmam_alloc_coherent(&pdev->dev,
+ 					    sizeof(struct ag71xx_desc),
+ 					    &ag->stop_desc_dma, GFP_KERNEL);
+-	if (!ag->stop_desc)
++	if (!ag->stop_desc) {
++		err = -ENOMEM;
+ 		goto err_free;
++	}
+ 
+ 	ag->stop_desc->data = 0;
+ 	ag->stop_desc->ctrl = 0;
