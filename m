@@ -1,27 +1,32 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 26 Jul 2019 06:15:50 +0000
-Subject: Re: [1/2] string: Add stracpy and stracpy_pad mechanisms
-Message-Id: <7a0c4d94-5d35-589f-18b0-f872e74aeb45@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jul 2019 09:27:10 +0000
+Subject: [PATCH] RDMA/siw: fix error return code in siw_init_module()
+Message-Id: <20190718092710.85709-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.1907251747560.2494@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1907251747560.2494@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bernard Metzler <bmt@zurich.ibm.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> The rule now properly checks that the third argument is the size of the
-> first argument.  This made a small reduction in the number of results.
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Thanks for your SmPL script adjustments.
-Will deviations from this restriction become more interesting?
+Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/infiniband/sw/siw/siw_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-> \(strscpy\|strlcpy\)(e1.f, e2, i2)@p
-
-Would you like to take the function “strscpy_pad” also into account for
-source code transformations with the macro “stracpy_pad”?
-
-Regards,
-Markus
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index fd2552a9091d..9040692f83d7 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -614,6 +614,7 @@ static __init int siw_init_module(void)
+ 
+ 	if (!siw_create_tx_threads()) {
+ 		pr_info("siw: Could not start any TX thread\n");
++		rv = -ENOMEM;
+ 		goto out_error;
+ 	}
+ 	/*
