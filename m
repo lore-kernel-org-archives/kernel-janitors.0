@@ -1,24 +1,41 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Wed, 24 Jul 2019 08:38:14 +0000
-Subject: Re: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()' function name
-Message-Id: <20190724083814.GS54126@ediswmail.ad.cirrus.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 19 Jul 2019 01:21:57 +0000
+Subject: [PATCH v2] ag71xx: fix error return code in ag71xx_probe()
+Message-Id: <20190719012157.100396-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
+References: <20190717115215.22965-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190717115215.22965-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: alsa-devel@alsa-project.org, gustavo@embeddedor.com, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, tiwai@suse.com, lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 07:26:32AM +0200, Christophe JAILLET wrote:
-> This should be 'wm8955_pll_factors()' instead.
-> Fix it and use it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Fix to return error code -ENOMEM from the dmam_alloc_coherent() error
+handling case instead of 0, as done elsewhere in this function.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+v1 -> v2: fix subsystem prefix
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Charles
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 72a57c6cd254..446d62e93439 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1724,8 +1724,10 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	ag->stop_desc = dmam_alloc_coherent(&pdev->dev,
+ 					    sizeof(struct ag71xx_desc),
+ 					    &ag->stop_desc_dma, GFP_KERNEL);
+-	if (!ag->stop_desc)
++	if (!ag->stop_desc) {
++		err = -ENOMEM;
+ 		goto err_free;
++	}
+ 
+ 	ag->stop_desc->data = 0;
+ 	ag->stop_desc->ctrl = 0;
