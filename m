@@ -1,47 +1,47 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Mon, 22 Jul 2019 07:44:33 +0000
-Subject: Re: [PATCH] s390/hypfs: fix a typo in the name of a function
-Message-Id: <fef3c70c-5c36-ea73-b52a-252656b46457@de.ibm.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 19 Jul 2019 01:51:36 +0000
+Subject: [PATCH -next] drm/i915/dsi: remove set but not used variable 'hfront_porch'
+Message-Id: <20190719015136.103988-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721123321.12879-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721123321.12879-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, heiko.carstens@de.ibm.com, Vasily Gorbik <gor@linux.ibm.com>, gregkh@linuxfoundation.org
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch, imre.deak@intel.com, madhav.chauhan@intel.com, vandita.kulkarni@intel.com, chris@chris-wilson.co.uk, ville.syrjala@linux.intel.com
+Cc: YueHaibing <yuehaibing@huawei.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-thanks, applied.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 21.07.19 14:33, Christophe JAILLET wrote:
-> Everything is about hypfs_..., except 'hpyfs_vm_create_guest()'
-> s/hpy/hyp/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/s390/hypfs/hypfs_vm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/s390/hypfs/hypfs_vm.c b/arch/s390/hypfs/hypfs_vm.c
-> index 42f2375c203e..e1fcc03159ef 100644
-> --- a/arch/s390/hypfs/hypfs_vm.c
-> +++ b/arch/s390/hypfs/hypfs_vm.c
-> @@ -118,7 +118,7 @@ do { \
->  		return PTR_ERR(rc); \
->  } while(0)
->  
-> -static int hpyfs_vm_create_guest(struct dentry *systems_dir,
-> +static int hypfs_vm_create_guest(struct dentry *systems_dir,
->  				 struct diag2fc_data *data)
->  {
->  	char guest_name[NAME_LEN + 1] = {};
-> @@ -219,7 +219,7 @@ int hypfs_vm_create_files(struct dentry *root)
->  	}
->  
->  	for (i = 0; i < count; i++) {
-> -		rc = hpyfs_vm_create_guest(dir, &(data[i]));
-> +		rc = hypfs_vm_create_guest(dir, &(data[i]));
->  		if (rc)
->  			goto failed;
->  	}
-> 
+drivers/gpu/drm/i915/display/icl_dsi.c: In function 'gen11_dsi_set_transcoder_timings':
+drivers/gpu/drm/i915/display/icl_dsi.c:768:6: warning:
+ variable 'hfront_porch' set but not used [-Wunused-but-set-variable]
+
+It is never used and can be removed.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/i915/display/icl_dsi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/icl_dsi.c b/drivers/gpu/drm/i915/display/icl_dsi.c
+index 4d952accfaaa..a42348be0438 100644
+--- a/drivers/gpu/drm/i915/display/icl_dsi.c
++++ b/drivers/gpu/drm/i915/display/icl_dsi.c
+@@ -763,7 +763,7 @@ gen11_dsi_set_transcoder_timings(struct intel_encoder *encoder,
+ 	enum transcoder dsi_trans;
+ 	/* horizontal timings */
+ 	u16 htotal, hactive, hsync_start, hsync_end, hsync_size;
+-	u16 hfront_porch, hback_porch;
++	u16 hback_porch;
+ 	/* vertical timings */
+ 	u16 vtotal, vactive, vsync_start, vsync_end, vsync_shift;
+ 
+@@ -772,8 +772,6 @@ gen11_dsi_set_transcoder_timings(struct intel_encoder *encoder,
+ 	hsync_start = adjusted_mode->crtc_hsync_start;
+ 	hsync_end = adjusted_mode->crtc_hsync_end;
+ 	hsync_size  = hsync_end - hsync_start;
+-	hfront_porch = (adjusted_mode->crtc_hsync_start -
+-			adjusted_mode->crtc_hdisplay);
+ 	hback_porch = (adjusted_mode->crtc_htotal -
+ 		       adjusted_mode->crtc_hsync_end);
+ 	vactive = adjusted_mode->crtc_vdisplay;
