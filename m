@@ -1,39 +1,42 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 21 Jul 2019 17:12:24 +0000
-Subject: Re: [PATCH] iio: light: apds9960: Fix a typo
-Message-Id: <20190721181224.4ba408d0@archlinux>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 19 Jul 2019 01:22:06 +0000
+Subject: [PATCH v2] ag71xx: fix return value check in ag71xx_probe()
+Message-Id: <20190719012206.100478-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721104918.30253-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721104918.30253-1-christophe.jaillet@wanadoo.fr>
+References: <20190717115225.23047-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190717115225.23047-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, broonie@kernel.org, dpfrey@gmail.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 21 Jul 2019 12:49:18 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+In case of error, the function of_get_mac_address() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-> s/ADPS9960/APDS9960/
-> (P and D switched)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied. Thanks
+Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+v1 -> v2: fix subsystem prefix
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Jonathan
-
-> ---
->  drivers/iio/light/apds9960.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
-> index b09b8b60bd83..c5dfb9a6b5a1 100644
-> --- a/drivers/iio/light/apds9960.c
-> +++ b/drivers/iio/light/apds9960.c
-> @@ -1135,5 +1135,5 @@ static struct i2c_driver apds9960_driver = {
->  module_i2c_driver(apds9960_driver);
->  
->  MODULE_AUTHOR("Matt Ranostay <matt.ranostay@konsulko.com>");
-> -MODULE_DESCRIPTION("ADPS9960 Gesture/RGB/ALS/Proximity sensor");
-> +MODULE_DESCRIPTION("APDS9960 Gesture/RGB/ALS/Proximity sensor");
->  MODULE_LICENSE("GPL");
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 72a57c6cd254..3088a43e6436 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1732,9 +1732,9 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	ag->stop_desc->next = (u32)ag->stop_desc_dma;
+ 
+ 	mac_addr = of_get_mac_address(np);
+-	if (mac_addr)
++	if (!IS_ERR(mac_addr))
+ 		memcpy(ndev->dev_addr, mac_addr, ETH_ALEN);
+-	if (!mac_addr || !is_valid_ether_addr(ndev->dev_addr)) {
++	if (IS_ERR(mac_addr) || !is_valid_ether_addr(ndev->dev_addr)) {
+ 		netif_err(ag, probe, ndev, "invalid MAC address, using random address\n");
+ 		eth_random_addr(ndev->dev_addr);
+ 	}
