@@ -1,57 +1,55 @@
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Date: Thu, 18 Jul 2019 07:41:13 +0000
-Subject: Re: [PATCH] net: ethernet: fix error return code in ag71xx_probe()
-Message-Id: <ec4fb148-7260-a89d-eaa2-b5bb7c01c530@pengutronix.de>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 19 Jul 2019 01:07:03 +0000
+Subject: [PATCH -next] mtd: hyperbus: fix build error about CONFIG_REGMAP
+Message-Id: <20190719010703.63815-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190717115215.22965-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190717115215.22965-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at
+Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
+When CONFIG_MUX_MMIO and CONFIG_HBMC_AM654 are both 'm', there are
+some building error as below:
 
+drivers/mux/mmio.c: In function mux_mmio_probe:
+drivers/mux/mmio.c:76:20: error: storage size of field isnt known
+   struct reg_field field;
+                    ^~~~~
+drivers/mux/mmio.c:102:15: error: implicit declaration of function devm_regmap_field_alloc; did you mean devm_mux_chip_alloc? [-Werror=implicit-function-declaration]
+   fields[i] = devm_regmap_field_alloc(dev, regmap, field);
+               ^~~~~~~~~~~~~~~~~~~~~~~
+               devm_mux_chip_alloc
+drivers/mux/mmio.c:76:20: warning: unused variable field [-Wunused-variable]
+   struct reg_field field;
+                    ^~~~~
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/mux/mmio.o] Error 1
+make[1]: *** [drivers/mux] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [drivers] Error 2
 
-On 17.07.19 13:52, Wei Yongjun wrote:
-> Fix to return error code -ENOMEM from the dmam_alloc_coherent() error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+This because CONFIG_REGMAP is not enable, so change the Kconfig for HBMC_AM654.
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Fixes: b07079f1642c("mtd: hyperbus: Add driver for TI's HyperBus memory controller")
 
-> ---
->   drivers/net/ethernet/atheros/ag71xx.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-> index 72a57c6cd254..446d62e93439 100644
-> --- a/drivers/net/ethernet/atheros/ag71xx.c
-> +++ b/drivers/net/ethernet/atheros/ag71xx.c
-> @@ -1724,8 +1724,10 @@ static int ag71xx_probe(struct platform_device *pdev)
->   	ag->stop_desc = dmam_alloc_coherent(&pdev->dev,
->   					    sizeof(struct ag71xx_desc),
->   					    &ag->stop_desc_dma, GFP_KERNEL);
-> -	if (!ag->stop_desc)
-> +	if (!ag->stop_desc) {
-> +		err = -ENOMEM;
->   		goto err_free;
-> +	}
->   
->   	ag->stop_desc->data = 0;
->   	ag->stop_desc->ctrl = 0;
-> 
-> 
-> 
-> 
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/mtd/hyperbus/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Kind regards,
-Oleksij Rempel
-
+diff --git a/drivers/mtd/hyperbus/Kconfig b/drivers/mtd/hyperbus/Kconfig
+index cff6bbd..f324fa6 100644
+--- a/drivers/mtd/hyperbus/Kconfig
++++ b/drivers/mtd/hyperbus/Kconfig
+@@ -14,6 +14,8 @@ if MTD_HYPERBUS
+ 
+ config HBMC_AM654
+ 	tristate "HyperBus controller driver for AM65x SoC"
++	select OF
++	select REGMAP
+ 	select MULTIPLEXER
+ 	select MUX_MMIO
+ 	help
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.7.4
