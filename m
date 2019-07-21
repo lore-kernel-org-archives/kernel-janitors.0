@@ -1,29 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 05 Jul 2019 22:28:08 +0000
-Subject: Re: [PATCH v3 net-next] net: socionext: remove set but not used variable 'pkts'
-Message-Id: <20190705.152808.1175306947779966525.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 12:33:21 +0000
+Subject: [PATCH] s390/hypfs: fix a typo in the name of a function
+Message-Id: <20190721123321.12879-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704032129.169282-1-yuehaibing@huawei.com>
-        <20190704033745.1758-1-yuehaibing@huawei.com>
-In-Reply-To: <20190704033745.1758-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jaswinder.singh@linaro.org, ast@kernel.org, ilias.apalodimas@linaro.org, daniel@iogearbox.net, jakub.kicinski@netronome.com, hawk@kernel.org, netdev@vger.kernel.org, xdp-newbies@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: heiko.carstens@de.ibm.com, borntraeger@de.ibm.com, schwidefsky@de.ibm.com, gregkh@linuxfoundation.org
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 4 Jul 2019 03:37:45 +0000
+Everything is about hypfs_..., except 'hpyfs_vm_create_guest()'
+s/hpy/hyp/
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/socionext/netsec.c: In function 'netsec_clean_tx_dring':
-> drivers/net/ethernet/socionext/netsec.c:637:15: warning:
->  variable 'pkts' set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit ba2b232108d3 ("net: netsec: add XDP support")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/s390/hypfs/hypfs_vm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to net-next.
+diff --git a/arch/s390/hypfs/hypfs_vm.c b/arch/s390/hypfs/hypfs_vm.c
+index 42f2375c203e..e1fcc03159ef 100644
+--- a/arch/s390/hypfs/hypfs_vm.c
++++ b/arch/s390/hypfs/hypfs_vm.c
+@@ -118,7 +118,7 @@ do { \
+ 		return PTR_ERR(rc); \
+ } while(0)
+ 
+-static int hpyfs_vm_create_guest(struct dentry *systems_dir,
++static int hypfs_vm_create_guest(struct dentry *systems_dir,
+ 				 struct diag2fc_data *data)
+ {
+ 	char guest_name[NAME_LEN + 1] = {};
+@@ -219,7 +219,7 @@ int hypfs_vm_create_files(struct dentry *root)
+ 	}
+ 
+ 	for (i = 0; i < count; i++) {
+-		rc = hpyfs_vm_create_guest(dir, &(data[i]));
++		rc = hypfs_vm_create_guest(dir, &(data[i]));
+ 		if (rc)
+ 			goto failed;
+ 	}
+-- 
+2.20.1
