@@ -1,39 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jul 2019 08:48:26 +0000
-Subject: Re: [PATCH] NFS: Less function calls in show_pnfs()
-Message-Id: <ed599239-a6a2-1cc6-14ce-d5bb41e9170f@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 16:51:44 +0000
+Subject: [PATCH] ia64: perfmon: Fix a typo
+Message-Id: <20190721165144.3152-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2f73c3e-a55f-5fb7-a8f8-0dc3ce8ff8a5@web.de>
- <alpine.DEB.2.20.1907031018000.4456@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1907031018000.4456@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, linux-nfs@vger.kernel.org
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, fenghua.yu@intel.com, david@redhat.com, tglx@linutronix.de, gregkh@linuxfoundation.org, akpm@linux-foundation.org
+Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
->> +++ b/fs/nfs/super.c
->> @@ -749,11 +749,10 @@ static void show_sessions(struct seq_file *m, struct nfs_server *server) {}
->>  #ifdef CONFIG_NFS_V4_1
->>  static void show_pnfs(struct seq_file *m, struct nfs_server *server)
->>  {
->> -	seq_printf(m, ",pnfs=");
->> -	if (server->pnfs_curr_ld)
->> -		seq_printf(m, "%s", server->pnfs_curr_ld->name);
->> -	else
->> -		seq_printf(m, "not configured");
->> +	seq_printf(m, ",pnfs=%s",
->> +		   server->pnfs_curr_ld
->> +		   ? server->pnfs_curr_ld->name
->> +		   : "not configured");
->
-> Unreadable.
+s/permfon.h/perfmon.h/
 
-* Do you find any other source code formatting more readable
-  for the usage of the ternary operator?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The reference to perfmon.h should maybe be just removed because I've found
+no information about the increasing order to respect.
+This is maybe now in another file?
+---
+ arch/ia64/kernel/perfmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* How do you think about the general software transformation possibility
-  (at this place)?
-
-Regards,
-Markus
+diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+index 58a6337c0690..22795b420b10 100644
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -4550,7 +4550,7 @@ pfm_exit_thread(struct task_struct *task)
+ }
+ 
+ /*
+- * functions MUST be listed in the increasing order of their index (see permfon.h)
++ * functions MUST be listed in the increasing order of their index (see perfmon.h)
+  */
+ #define PFM_CMD(name, flags, arg_count, arg_type, getsz) { name, #name, flags, arg_count, sizeof(arg_type), getsz }
+ #define PFM_CMD_S(name, flags) { name, #name, flags, 0, 0, NULL }
+-- 
+2.20.1
