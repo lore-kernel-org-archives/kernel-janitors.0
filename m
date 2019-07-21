@@ -1,42 +1,31 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 18 Jul 2019 09:58:47 +0000
-Subject: Re: [PATCH] ASoC: samsung: odroid: Use common code in odroid_audio_probe()
-Message-Id: <CAJKOXPdRY+HaAKEj+jugJpE6kFYpkRacoCoKnMFjFL0t-EuMcg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 10:25:58 +0000
+Subject: [PATCH] ALSA: line6: Fix a typo
+Message-Id: <20190721102558.16640-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c4c10934-f06f-24a8-1162-b023e4ab4066@web.de>
-In-Reply-To: <c4c10934-f06f-24a8-1162-b023e4ab4066@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Wen Yang <wen.yang99@zte.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.com, tglx@linutronix.de
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 18 Jul 2019 at 11:57, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 18 Jul 2019 11:42:29 +0200
->
-> Replace a function call and a return statement by a goto statement so that
-> a bit of common code will be reused at the end of this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  sound/soc/samsung/odroid.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-> index f0f5fa9c27d3..d152ef8dfea3 100644
-> --- a/sound/soc/samsung/odroid.c
-> +++ b/sound/soc/samsung/odroid.c
-> @@ -316,8 +316,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
->         }
->
->         of_node_put(cpu_dai);
-> -       of_node_put(codec);
-> -       return 0;
-> +       goto err_put_node;
+s/Vairax/Variax/
 
-No, it does not look good. It makes the code and flow more difficult to follow.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/usb/line6/variax.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/sound/usb/line6/variax.c b/sound/usb/line6/variax.c
+index 0d24c72c155f..ed158f04de80 100644
+--- a/sound/usb/line6/variax.c
++++ b/sound/usb/line6/variax.c
+@@ -244,5 +244,5 @@ static struct usb_driver variax_driver = {
+ 
+ module_usb_driver(variax_driver);
+ 
+-MODULE_DESCRIPTION("Vairax Workbench USB driver");
++MODULE_DESCRIPTION("Variax Workbench USB driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.20.1
