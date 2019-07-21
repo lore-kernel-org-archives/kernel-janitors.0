@@ -1,26 +1,33 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 30 Jul 2019 19:57:22 +0000
-Subject: Re: [PATCH v2] scsi: mpt3sas: clean up a couple sizeof() uses
-Message-Id: <yq15znjmh25.fsf@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 10:43:22 +0000
+Subject: [PATCH] dlm: fix a typo
+Message-Id: <20190721104322.30019-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190726065205.GA22701@mwanda>
-In-Reply-To: <20190726065205.GA22701@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: ccaulfie@redhat.com, teigland@redhat.com
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+s/locksapce/lockspace
 
-Dan,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/dlm/lockspace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> There is a copy and paste bug here.  It uses EVENT_TRIGGERS size instead
-> of SCSI_TRIGGERS size but fortunately both size are 84 bytes so it
-> doesn't affect runtime.
->
-> These days the prefered style is to just say sizeof(object) instead of
-> sizeof(type) so I have updated the function to the latest style as well.
-
-Applied to 5.4/scsi-queue. Thanks!
-
+diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
+index 00fa700f4e83..9c95df8a36e9 100644
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -870,7 +870,7 @@ static int release_lockspace(struct dlm_ls *ls, int force)
+  * until this returns.
+  *
+  * Force has 4 possible values:
+- * 0 - don't destroy locksapce if it has any LKBs
++ * 0 - don't destroy lockspace if it has any LKBs
+  * 1 - destroy lockspace if it has remote LKBs but not if it has local LKBs
+  * 2 - destroy lockspace regardless of LKBs
+  * 3 - destroy lockspace as part of a forced shutdown
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
