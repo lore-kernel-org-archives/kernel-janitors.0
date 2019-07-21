@@ -1,29 +1,41 @@
-From: Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date: Fri, 26 Jul 2019 16:29:26 +0000
-Subject: Re: [PATCH] ipw2x00: remove redundant assignment to err
-Message-Id: <CA++WF2PS_3X-fs7nKuxipizXE3QAPYXbYk=AV9waxDEc9JVJNg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 10:15:53 +0000
+Subject: [PATCH] hwmon: (pmbus/max31785) Remove a useless #define
+Message-Id: <20190721101553.20911-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190726100614.6924-1-colin.king@canonical.com>
-In-Reply-To: <20190726100614.6924-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux@roeck-us.net, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 26/07/2019, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable err is initialized to a value that is never read and it
-> is re-assigned later.  The initialization is redundant and can
-> be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There is a typo in MAX37185_NUM_FAN_PAGES. To be consistent, it should be
+MAX31785_NUM_FAN_PAGES (1 and 7 switched).
 
-Looks fine, thanks!
+At line 24, we already have:
+   #define MAX31785_NR_FAN_PAGES		6
+and MAX37185_NUM_FAN_PAGES seems to be unused.
 
-Stanislav.
+It is likely that it is only a typo and/or a left-over.
+So, axe it.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/pmbus/max31785.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/max31785.c b/drivers/hwmon/pmbus/max31785.c
+index 69d9029ea410..254b0f98c755 100644
+--- a/drivers/hwmon/pmbus/max31785.c
++++ b/drivers/hwmon/pmbus/max31785.c
+@@ -244,8 +244,6 @@ static int max31785_write_word_data(struct i2c_client *client, int page,
+ #define MAX31785_VOUT_FUNCS \
+ 	(PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT)
+ 
+-#define MAX37185_NUM_FAN_PAGES 6
+-
+ static const struct pmbus_driver_info max31785_info = {
+ 	.pages = MAX31785_NR_PAGES,
+ 
+-- 
+2.20.1
