@@ -1,24 +1,62 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jul 2019 13:22:07 +0000
-Subject: Re: drm/amd/powerplay: remove redundant memset
-Message-Id: <d74e5147-7429-8f11-a7dc-389714315e38@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 16:03:28 +0000
+Subject: [PATCH] power: supply: max17042_battery: Fix a typo in function names
+Message-Id: <20190721160328.24660-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190715114332.24634-1-huangfq.daxian@gmail.com>
-In-Reply-To: <20190715114332.24634-1-huangfq.daxian@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fuqian Huang <huangfq.daxian@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, David Zhou <David1.Zhou@amd.com>, Evan Quan <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> kzalloc has already zeroed the memory.
-> So the memset is unneeded.
+It is likely that 'max10742_[un]lock_model()' functions should be
+'max17042_[un]lock_model()'
+(0 and 7 switched in 10742)
 
-See also a previous patch:
-drm/amd/powerplay: Delete a redundant memory setting in vega20_set_default_od8_setttings()
-https://lore.kernel.org/lkml/de3f6a5e-8ac4-bc8e-0d0c-3a4a5db283e9@web.de/
-https://lore.kernel.org/patchwork/patch/1089691/
-https://lkml.org/lkml/2019/6/17/460
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/power/supply/max17042_battery.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+index 581c6bd23388..da3904822929 100644
+--- a/drivers/power/supply/max17042_battery.c
++++ b/drivers/power/supply/max17042_battery.c
+@@ -511,7 +511,7 @@ static inline void max17042_override_por(struct regmap *map,
+ 		regmap_write(map, reg, value);
+ }
+ 
+-static inline void max10742_unlock_model(struct max17042_chip *chip)
++static inline void max17042_unlock_model(struct max17042_chip *chip)
+ {
+ 	struct regmap *map = chip->regmap;
+ 
+@@ -519,7 +519,7 @@ static inline void max10742_unlock_model(struct max17042_chip *chip)
+ 	regmap_write(map, MAX17042_MLOCKReg2, MODEL_UNLOCK2);
+ }
+ 
+-static inline void max10742_lock_model(struct max17042_chip *chip)
++static inline void max17042_lock_model(struct max17042_chip *chip)
+ {
+ 	struct regmap *map = chip->regmap;
+ 
+@@ -577,7 +577,7 @@ static int max17042_init_model(struct max17042_chip *chip)
+ 	if (!temp_data)
+ 		return -ENOMEM;
+ 
+-	max10742_unlock_model(chip);
++	max17042_unlock_model(chip);
+ 	max17042_write_model_data(chip, MAX17042_MODELChrTbl,
+ 				table_size);
+ 	max17042_read_model_data(chip, MAX17042_MODELChrTbl, temp_data,
+@@ -589,7 +589,7 @@ static int max17042_init_model(struct max17042_chip *chip)
+ 		temp_data,
+ 		table_size);
+ 
+-	max10742_lock_model(chip);
++	max17042_lock_model(chip);
+ 	kfree(temp_data);
+ 
+ 	return ret;
+-- 
+2.20.1
