@@ -1,36 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sat, 06 Jul 2019 09:28:56 +0000
-Subject: Re: [PATCH] staging: speakup: One function call less in speakup_win_enable()
-Message-Id: <20190706092856.GA15480@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 10:53:53 +0000
+Subject: [PATCH] iio: sca3000: Fix a typo
+Message-Id: <20190721105353.30504-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11f79333-25c3-1ad9-4975-58c64821f3fe@web.de>
- <20190706090019.rivposzrqesodhso@function>
-In-Reply-To: <20190706090019.rivposzrqesodhso@function>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, gustavo@embeddedor.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, Jul 06, 2019 at 11:00:19AM +0200, Samuel Thibault wrote:
-> Markus Elfring, le sam. 06 juil. 2019 10:15:30 +0200, a ecrit:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 6 Jul 2019 10:03:56 +0200
-> > 
-> > Avoid an extra function call by using a ternary operator instead of
-> > a conditional statement.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+All #define are about SCA3000_... except the last one.
+Make it consistent.
 
-Sorry, but this author/bot is in my kill-file and I no longer accept
-patches from them.
+s/SAC3000/SCA3000/
 
-And I HATE ternary operators anyway, so it's not like I would take this
-patch if it came from someone else :)
+This #define is apparently unused up to now.
 
-thanks,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/accel/sca3000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index 4964561595f5..537e9325bcc7 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -114,7 +114,7 @@
+ /* Currently unsupported */
+ #define SCA3000_MD_CTRL_AND_Y				BIT(3)
+ #define SCA3000_MD_CTRL_AND_X				BIT(4)
+-#define SAC3000_MD_CTRL_AND_Z				BIT(5)
++#define SCA3000_MD_CTRL_AND_Z				BIT(5)
+ 
+ /*
+  * Some control registers of complex access methods requiring this register to
+-- 
+2.20.1
