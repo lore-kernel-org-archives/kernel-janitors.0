@@ -1,26 +1,31 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 31 Jul 2019 19:58:06 +0000
-Subject: Re: [PATCH 1/2] randstruct: fix a bug in is_pure_ops_struct()
-Message-Id: <201907311257.8436E997A4@keescook>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 18:54:39 +0000
+Subject: [RFC] Staging: fbtft: Typo in
+Message-Id: <f4881a63-8702-55f2-ed03-cfbc30970083@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1564595346.git.kjw1627@gmail.com>
- <2ba5ebfa2c622ece4952b5068b4154213794e5c4.1564595346.git.kjw1627@gmail.com>
-In-Reply-To: <2ba5ebfa2c622ece4952b5068b4154213794e5c4.1564595346.git.kjw1627@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joonwon Kang <kjw1627@gmail.com>
-Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
+To: linux-fbdev@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 03:01:10AM +0900, Joonwon Kang wrote:
-> Before this, there were false negatives in the case where a struct
-> contains other structs which contain only function pointers because
-> of unreachable code in is_pure_ops_struct().
-> 
-> Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+Hi,
 
-I've applied this (with some commit log tweaks) and it should be visible
-in linux-next soon. I'll send this on to Linus before -rc3.
+looking at the code in 'drivers/staging/fbtft/fb_pcd8544.c', there seems 
+to be some typos.
 
--- 
-Kees Cook
+At the end of the file, we can find:
+
+FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pdc8544", &display);
+...
+MODULE_ALIAS("spi:pdc8544");
+
+
+It is likely that the 2 pdc8544 should be pcd8544. (d and c switched)
+
+As I don't know the implication of such a change, I prefer to first 
+report the potential issue, before proposing a patch for it.
+
+Any feedback back appreciated.
+
+Best regards,
+Christophe JAILLET
