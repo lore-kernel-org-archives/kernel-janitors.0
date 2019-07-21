@@ -1,55 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 02 Jul 2019 12:30:56 +0000
-Subject: [PATCH] drm/amd/display/dce_mem_input: fix spelling mistake "eanble" -> "enable"
-Message-Id: <20190702123056.8205-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 21:35:33 +0000
+Subject: [PATCH] iio: magnetometer: mmc35240: Fix a typo in the name of a constant
+Message-Id: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, tglx@linutronix.de, alexios.zavras@intel.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Everything is about mmc35240_ except MMC53240_WAIT_SET_RESET (3 and 5
+switched).
 
-There is a spelling mistake in a variable name, fix this by renaming
-it to enable.
+This is likely a typo. Define and use MMC35240_WAIT_SET_RESET instead.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/iio/magnetometer/mmc35240.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-index a24a2bda8656..07e0cc5a26d4 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-@@ -606,11 +606,11 @@ static void dce_mi_allocate_dmif(
- 	}
+diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
+index 7de10281ad9e..425cdd07b4e5 100644
+--- a/drivers/iio/magnetometer/mmc35240.c
++++ b/drivers/iio/magnetometer/mmc35240.c
+@@ -53,7 +53,7 @@
+ #define MMC35240_CTRL1_BW_SHIFT		0
  
- 	if (dce_mi->wa.single_head_rdreq_dmif_limit) {
--		uint32_t eanble =  (total_stream_num > 1) ? 0 :
-+		uint32_t enable =  (total_stream_num > 1) ? 0 :
- 				dce_mi->wa.single_head_rdreq_dmif_limit;
+ #define MMC35240_WAIT_CHARGE_PUMP	50000	/* us */
+-#define MMC53240_WAIT_SET_RESET		1000	/* us */
++#define MMC35240_WAIT_SET_RESET		1000	/* us */
  
- 		REG_UPDATE(MC_HUB_RDREQ_DMIF_LIMIT,
--				ENABLE, eanble);
-+				ENABLE, enable);
- 	}
- }
+ /*
+  * Memsic OTP process code piece is put here for reference:
+@@ -225,7 +225,7 @@ static int mmc35240_init(struct mmc35240_data *data)
+ 	ret = mmc35240_hw_set(data, true);
+ 	if (ret < 0)
+ 		return ret;
+-	usleep_range(MMC53240_WAIT_SET_RESET, MMC53240_WAIT_SET_RESET + 1);
++	usleep_range(MMC35240_WAIT_SET_RESET, MMC35240_WAIT_SET_RESET + 1);
  
-@@ -636,11 +636,11 @@ static void dce_mi_free_dmif(
- 			10, 3500);
- 
- 	if (dce_mi->wa.single_head_rdreq_dmif_limit) {
--		uint32_t eanble =  (total_stream_num > 1) ? 0 :
-+		uint32_t enable =  (total_stream_num > 1) ? 0 :
- 				dce_mi->wa.single_head_rdreq_dmif_limit;
- 
- 		REG_UPDATE(MC_HUB_RDREQ_DMIF_LIMIT,
--				ENABLE, eanble);
-+				ENABLE, enable);
- 	}
- }
- 
+ 	ret = mmc35240_hw_set(data, false);
+ 	if (ret < 0)
 -- 
 2.20.1
