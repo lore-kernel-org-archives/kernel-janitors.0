@@ -1,33 +1,45 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 31 Jul 2019 06:44:29 +0000
-Subject: Re: patch "coccinelle: Add script to check for platform_get_irq() excessive" added to driver-core-ne
-Message-Id: <00bc6fea-f505-56d2-3803-1ac0882436b7@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 19:04:23 +0000
+Subject: [PATCH] media: ov2680: fix a typo in a function name
+Message-Id: <20190721190423.9534-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <156455237123959@kroah.com>
-In-Reply-To: <156455237123959@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <swboyd@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
-Cc: Rob Herring <robh@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Nicolas Palix <nicolas.palix@imag.fr>, Russell King <linux@armlinux.org.uk>, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mark Brown <broonie@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: rmfrfs@gmail.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> This is a note to let you know that I've just added the patch titled
->
->     coccinelle: Add script to check for platform_get_irq() excessive
->
-> to my driver-core git tree which can be found at
->     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-> in the driver-core-next branch.
+All functions in this file starts with 'ov2680_', except ov2860_parse_dt().
 
-I find it interesting somehow that this version of a script for
-the semantic patch language can be integrated already in this
-development branch.
+This is likely a typo.
+rename it to 'ov2680_parse_dt()' (6 and 8)
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/i2c/ov2680.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> The patch will also be merged in the next major kernel release
-> during the merge window.
-
-How much will questionable implementation details influence this process?
-
-Regards,
-Markus
+diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+index b10bcfabaeeb..c59c9e51c380 100644
+--- a/drivers/media/i2c/ov2680.c
++++ b/drivers/media/i2c/ov2680.c
+@@ -1023,7 +1023,7 @@ static int ov2680_check_id(struct ov2680_dev *sensor)
+ 	return 0;
+ }
+ 
+-static int ov2860_parse_dt(struct ov2680_dev *sensor)
++static int ov2680_parse_dt(struct ov2680_dev *sensor)
+ {
+ 	struct device *dev = ov2680_to_dev(sensor);
+ 	int ret;
+@@ -1064,7 +1064,7 @@ static int ov2680_probe(struct i2c_client *client)
+ 
+ 	sensor->i2c_client = client;
+ 
+-	ret = ov2860_parse_dt(sensor);
++	ret = ov2680_parse_dt(sensor);
+ 	if (ret < 0)
+ 		return -EINVAL;
+ 
+-- 
+2.20.1
