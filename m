@@ -1,44 +1,90 @@
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Date: Mon, 08 Jul 2019 14:39:36 +0000
-Subject: Re: [PATCH] sched/topology: One function call less in build_group_from_child_sched_domain()
-Message-Id: <20190708142736.GC10675@linux.vnet.ibm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 21 Jul 2019 20:59:21 +0000
+Subject: [PATCH] ia64: tioca: fix spelling mistake in macros CA_APERATURE_{BASE|SIZE}
+Message-Id: <20190721205921.9960-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad2e7dfb-3323-b214-716e-a6cae41b8bcc@web.de>
- <20190706172223.GA12680@linux.vnet.ibm.com>
- <65dedcbc-aefb-eb30-39e1-194248214369@metux.net>
-In-Reply-To: <65dedcbc-aefb-eb30-39e1-194248214369@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Enrico Weigelt, metux IT consult <lkml@metux.net> [2019-07-08 11:38:58]:
+From: Colin Ian King <colin.king@canonical.com>
 
-> > 
-> > At runtime, Are we avoiding a function call?
-> > However I think we are avoiding a branch instead of a conditional, which may
-> > be beneficial.
-> 
-> If you're assuming the compiler doesn't already optimize that (no idea
-> whether gcc really does that).
-> 
-> @Markus: could you check what gcc is actually generating out of both the
-> old and your new version ?
-> 
-> 
+The two macros CA_APERATURE_BASE and CA_APERATURE_SIZE contain
+a spelling mistake, APERATURE should be APERTURE, so fix these.
 
-I had already tried looking at the object files both on X86 and PowerPc and
-in both cases (with and without patch) the generated code differs.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/ia64/include/asm/sn/tioca.h  |  4 ++--
+ arch/ia64/sn/pci/tioca_provider.c | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-> --mtx
-> 
-> -- 
-> Enrico Weigelt, metux IT consult
-> Free software and Linux embedded engineering
-> info@metux.net -- +49-151-27565287
-> 
-
+diff --git a/arch/ia64/include/asm/sn/tioca.h b/arch/ia64/include/asm/sn/tioca.h
+index 666222d7f0f6..4529fb11c86c 100644
+--- a/arch/ia64/include/asm/sn/tioca.h
++++ b/arch/ia64/include/asm/sn/tioca.h
+@@ -590,7 +590,7 @@ struct tioca {
+ #define CA_AGP_DIRECT_BASE	0x40000000UL	/* 2GB */
+ #define CA_AGP_DIRECT_SIZE	0x40000000UL
+ 
+-#define CA_APERATURE_BASE	(CA_AGP_MAPPED_BASE)
+-#define CA_APERATURE_SIZE	(CA_AGP_MAPPED_SIZE+CA_PCI32_MAPPED_SIZE)
++#define CA_APERTURE_BASE	(CA_AGP_MAPPED_BASE)
++#define CA_APERTURE_SIZE	(CA_AGP_MAPPED_SIZE+CA_PCI32_MAPPED_SIZE)
+ 
+ #endif  /* _ASM_IA64_SN_TIO_TIOCA_H */
+diff --git a/arch/ia64/sn/pci/tioca_provider.c b/arch/ia64/sn/pci/tioca_provider.c
+index a70b11fd57d6..07832f5e8718 100644
+--- a/arch/ia64/sn/pci/tioca_provider.c
++++ b/arch/ia64/sn/pci/tioca_provider.c
+@@ -55,7 +55,7 @@ tioca_gart_init(struct tioca_kernel *tioca_kern)
+ 	 * Validate aperature size
+ 	 */
+ 
+-	switch (CA_APERATURE_SIZE >> 20) {
++	switch (CA_APERTURE_SIZE >> 20) {
+ 	case 4:
+ 		ap_reg |= (0x3ff << CA_GART_AP_SIZE_SHFT);	/* 4MB */
+ 		break;
+@@ -90,8 +90,8 @@ tioca_gart_init(struct tioca_kernel *tioca_kern)
+ 		ap_reg |= (0x000 << CA_GART_AP_SIZE_SHFT);	/* 4 GB */
+ 		break;
+ 	default:
+-		printk(KERN_ERR "%s:  Invalid CA_APERATURE_SIZE "
+-		       "0x%lx\n", __func__, (ulong) CA_APERATURE_SIZE);
++		printk(KERN_ERR "%s:  Invalid CA_APERTURE_SIZE "
++		       "0x%lx\n", __func__, (ulong) CA_APERTURE_SIZE);
+ 		return -1;
+ 	}
+ 
+@@ -106,8 +106,8 @@ tioca_gart_init(struct tioca_kernel *tioca_kern)
+ 		tioca_kern->ca_ap_pagesize = 4096;
+ 	}
+ 
+-	tioca_kern->ca_ap_size = CA_APERATURE_SIZE;
+-	tioca_kern->ca_ap_bus_base = CA_APERATURE_BASE;
++	tioca_kern->ca_ap_size = CA_APERTURE_SIZE;
++	tioca_kern->ca_ap_bus_base = CA_APERTURE_BASE;
+ 	tioca_kern->ca_gart_entries  	    tioca_kern->ca_ap_size / tioca_kern->ca_ap_pagesize;
+ 
+@@ -141,7 +141,7 @@ tioca_gart_init(struct tioca_kernel *tioca_kern)
+ 	 * Compute PCI/AGP convenience fields 
+ 	 */
+ 
+-	offset = CA_PCI32_MAPPED_BASE - CA_APERATURE_BASE;
++	offset = CA_PCI32_MAPPED_BASE - CA_APERTURE_BASE;
+ 	tioca_kern->ca_pciap_base = CA_PCI32_MAPPED_BASE;
+ 	tioca_kern->ca_pciap_size = CA_PCI32_MAPPED_SIZE;
+ 	tioca_kern->ca_pcigart_start = offset / tioca_kern->ca_ap_pagesize;
+@@ -159,7 +159,7 @@ tioca_gart_init(struct tioca_kernel *tioca_kern)
+ 		return -1;
+ 	}
+ 
+-	offset = CA_AGP_MAPPED_BASE - CA_APERATURE_BASE;
++	offset = CA_AGP_MAPPED_BASE - CA_APERTURE_BASE;
+ 	tioca_kern->ca_gfxap_base = CA_AGP_MAPPED_BASE;
+ 	tioca_kern->ca_gfxap_size = CA_AGP_MAPPED_SIZE;
+ 	tioca_kern->ca_gfxgart_start = offset / tioca_kern->ca_ap_pagesize;
 -- 
-Thanks and Regards
-Srikar Dronamraju
+2.20.1
