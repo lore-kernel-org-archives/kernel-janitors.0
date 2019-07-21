@@ -1,26 +1,45 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 18 Jul 2019 12:54:32 +0000
-Subject: =?UTF-8?Q?Re=3a_=5bv3=5d_Coccinelle=3a_semantic_code_search_for_?= =?UTF-8?B?4oCcdXNlIGFmdGVyIOKApuK
-Message-Id: <184a9193-dd65-6413-9e36-f11a8a603ed7@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 21:05:39 +0000
+Subject: [PATCH] leds: ktd2692: Fix a typo in the name of a constant
+Message-Id: <20190721210539.25669-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wen Yang <wen.yang99@zte.com.cn>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Wen Yang <yellowriver2010@hotmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> Finally, this patch finds use-after-free issues for a node.
-> (implemented by the r_use_after_put rule)
+There is a typo in KTD2962_MM_MIN_CURR_THRESHOLD_SCALE. 6 and 9 are
+switched in 2962.
 
-I suggest to take another look also at information from a clarification attempt
-on a topic like “Checking statement order for patch generation with SmPL support”.
-https://systeme.lip6.fr/pipermail/cocci/2017-September/004483.html
-https://lore.kernel.org/cocci/alpine.DEB.2.20.1709071519240.3168@hadrien/
+Define and use KTD2692_MM_MIN_CURR_THRESHOLD_SCALE instead.
 
-Under which circumstances will it become safer to develop SmPL script variants
-for such source code search patterns?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/leds/leds-ktd2692.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index 45296aaca9da..44db748c570e 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -22,7 +22,7 @@
+ /* Value related the movie mode */
+ #define KTD2692_MOVIE_MODE_CURRENT_LEVELS	16
+ #define KTD2692_MM_TO_FL_RATIO(x)		((x) / 3)
+-#define KTD2962_MM_MIN_CURR_THRESHOLD_SCALE	8
++#define KTD2692_MM_MIN_CURR_THRESHOLD_SCALE	8
+ 
+ /* Value related the flash mode */
+ #define KTD2692_FLASH_MODE_TIMEOUT_LEVELS	8
+@@ -253,7 +253,7 @@ static void ktd2692_setup(struct ktd2692_context *led)
+ 	ktd2692_expresswire_reset(led);
+ 	gpiod_direction_output(led->aux_gpio, KTD2692_LOW);
+ 
+-	ktd2692_expresswire_write(led, (KTD2962_MM_MIN_CURR_THRESHOLD_SCALE - 1)
++	ktd2692_expresswire_write(led, (KTD2692_MM_MIN_CURR_THRESHOLD_SCALE - 1)
+ 				 | KTD2692_REG_MM_MIN_CURR_THRESHOLD_BASE);
+ 	ktd2692_expresswire_write(led, KTD2692_FLASH_MODE_CURR_PERCENT(45)
+ 				 | KTD2692_REG_FLASH_CURRENT_BASE);
+-- 
+2.20.1
