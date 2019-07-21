@@ -1,29 +1,33 @@
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Wed, 03 Jul 2019 12:17:54 +0000
-Subject: Re: [PATCH] md-multipath: Replace a seq_printf() call by seq_putc() in multipath_status()
-Message-Id: <CAPhsuW7CAfu07Y319eHUUi3Ln422-jMmpTHmy0rT+MxZnO8BBA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 09:56:33 +0000
+Subject: [PATCH] percpu: Fix a typo
+Message-Id: <20190721095633.10979-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
-In-Reply-To: <ad2e4b58-268e-c9e5-8a66-8cb5dee8d91e@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-raid <linux-raid@vger.kernel.org>, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dennis@kernel.org, tj@kernel.org, cl@linux.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Jul 1, 2019 at 5:25 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 Jul 2019 13:07:55 +0200
->
-> A single character (depending on a condition check) should be put
-> into a sequence. Thus use the corresponding function “seq_putc”.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+s/perpcu/percpu/
 
-Can you explain why this is necessary?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ mm/percpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Song
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 9821241fdede..febf7c7c888e 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -2220,7 +2220,7 @@ static void pcpu_dump_alloc_info(const char *lvl,
+  * @base_addr: mapped address
+  *
+  * Initialize the first percpu chunk which contains the kernel static
+- * perpcu area.  This function is to be called from arch percpu area
++ * percpu area.  This function is to be called from arch percpu area
+  * setup path.
+  *
+  * @ai contains all information necessary to initialize the first
+-- 
+2.20.1
