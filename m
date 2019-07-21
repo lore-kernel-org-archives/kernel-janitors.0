@@ -1,30 +1,37 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 23 Jul 2019 22:44:36 +0000
-Subject: Re: [PATCH] cgroup: Replace a seq_printf() call by seq_puts() in cgroup_print_ss_mask()
-Message-Id: <20190723224436.GG696309@devbig004.ftw2.facebook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 10:38:11 +0000
+Subject: [PATCH] tipc: Fix a typo
+Message-Id: <20190721103811.29724-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d465ca81-a870-b88c-0ea2-5e8bfbefb79d@web.de>
-In-Reply-To: <d465ca81-a870-b88c-0ea2-5e8bfbefb79d@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Li Zefan <lizefan@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jon.maloy@ericsson.com, ying.xue@windriver.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Jul 02, 2019 at 07:33:08PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Jul 2019 19:26:59 +0200
-> 
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function “seq_puts”.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+s/tipc_toprsv_listener_data_ready/tipc_topsrv_listener_data_ready/
+(r and s switched in topsrv)
 
-Applied to cgroup/for-5.4.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The function name could also be removed from the comment. It does not
+bring any useful information IMHO.
+---
+ net/tipc/topsrv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-
+diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
+index f345662890a6..ca8ac96d22a9 100644
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -476,7 +476,7 @@ static void tipc_topsrv_accept(struct work_struct *work)
+ 	}
+ }
+ 
+-/* tipc_toprsv_listener_data_ready - interrupt callback with connection request
++/* tipc_topsrv_listener_data_ready - interrupt callback with connection request
+  * The queued job is launched into tipc_topsrv_accept()
+  */
+ static void tipc_topsrv_listener_data_ready(struct sock *sk)
 -- 
-tejun
+2.20.1
