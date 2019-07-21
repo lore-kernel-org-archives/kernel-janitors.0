@@ -1,45 +1,43 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Fri, 05 Jul 2019 11:02:36 +0000
-Subject: Re: [PATCH][next] ubifs: remove redundant assignment to pointer fname
-Message-Id: <1328785502.28643.1562324556415.JavaMail.zimbra@nod.at>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jul 2019 13:16:05 +0000
+Subject: [PATCH] chelsio: Fix a typo in a function name
+Message-Id: <20190721131605.16603-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704222803.4328-1-colin.king@canonical.com>
- <b5e7709b-3494-d415-b36c-b19939a15fb5@cogentembedded.com>
- <4741f358-7c21-f721-e9fd-59d73876c62c@canonical.com>
- <e97cc68c-c59a-1f5f-6580-40868bf16e90@cogentembedded.com>
-In-Reply-To: <e97cc68c-c59a-1f5f-6580-40868bf16e90@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Artem Bityutskiy <dedekind1@gmail.com>, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>, Colin Ian King <colin.king@canonical.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
-> An: "Colin Ian King" <colin.king@canonical.com>, "richard" <richard@nod.a=
-t>, "Artem Bityutskiy" <dedekind1@gmail.com>,
-> "Adrian Hunter" <adrian.hunter@intel.com>, "linux-mtd" <linux-mtd@lists.i=
-nfradead.org>
-> CC: kernel-janitors@vger.kernel.org, "linux-kernel" <linux-kernel@vger.ke=
-rnel.org>
-> Gesendet: Freitag, 5. Juli 2019 12:51:53
-> Betreff: Re: [PATCH][next] ubifs: remove redundant assignment to pointer =
-fname
+It is likely that 'my3216_poll()' should be 'my3126_poll()'. (1 and 2
+switched in 3126.
 
-> On 07/05/2019 11:31 AM, Colin Ian King wrote:
->=20
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> The pointer fname rc is being assigned with a value that is never
->>>
->>>    rc?
->>=20
->> Oops, cut'n'paste error. Do you want me to resend to can this be fixed
->> when it's applied?
->=20
->   That's the question to the maintainers...
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/chelsio/cxgb/my3126.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Please resend.
-
-Thanks,
-//richard
+diff --git a/drivers/net/ethernet/chelsio/cxgb/my3126.c b/drivers/net/ethernet/chelsio/cxgb/my3126.c
+index 20c09cc4b323..60aa45b375b6 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/my3126.c
++++ b/drivers/net/ethernet/chelsio/cxgb/my3126.c
+@@ -94,7 +94,7 @@ static int my3126_interrupt_handler(struct cphy *cphy)
+ 	return cphy_cause_link_change;
+ }
+ 
+-static void my3216_poll(struct work_struct *work)
++static void my3126_poll(struct work_struct *work)
+ {
+ 	struct cphy *cphy = container_of(work, struct cphy, phy_update.work);
+ 
+@@ -177,7 +177,7 @@ static struct cphy *my3126_phy_create(struct net_device *dev,
+ 		return NULL;
+ 
+ 	cphy_init(cphy, dev, phy_addr, &my3126_ops, mdio_ops);
+-	INIT_DELAYED_WORK(&cphy->phy_update, my3216_poll);
++	INIT_DELAYED_WORK(&cphy->phy_update, my3126_poll);
+ 	cphy->bmsr = 0;
+ 
+ 	return cphy;
+-- 
+2.20.1
