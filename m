@@ -1,14 +1,16 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 22 Jul 2019 18:15:01 +0000
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 22 Jul 2019 18:21:53 +0000
 Subject: Script to spot some typo based on the file name
-Message-Id: <460fd687-474f-8a3e-82f6-269eb5507f96@wanadoo.fr>
+Message-Id: <4dd55830-6a54-22ee-573a-390d88e9dc6f@wanadoo.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------A8F68BDB9A0462E4AC3DBAA1"
+Content-Type: multipart/mixed; boundary="------------A7EC905C608413FAE751073C"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <460fd687-474f-8a3e-82f6-269eb5507f96@wanadoo.fr>
+In-Reply-To: <460fd687-474f-8a3e-82f6-269eb5507f96@wanadoo.fr>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------A8F68BDB9A0462E4AC3DBAA1
+--------------A7EC905C608413FAE751073C
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -26,12 +28,12 @@ But it seems to work as I expect.
 
 
 The name of a file can be a good source of information to spot typo in 
-the code itself. This can help spot typo in comment or string, but also 
-# wrongly named functions or constant.
+the code itself. This can help spot typo in comments or strings, but 
+also wrongly named functions or constant.
 3 checks are implemented. They can be disabled individually.
 
 The filename should sometime be tweaked a bit to only take the part 
-before or after a '-' or a '_'. (some regex pattern are in the script 
+before or after a '-' or a '_'. (some regex patterns are in the script 
 for that, just comment/un-comment)
 
 The 2 last checks generate lot of false positives.
@@ -46,7 +48,8 @@ Best regards
 CJ
 
 
---------------A8F68BDB9A0462E4AC3DBAA1
+
+--------------A7EC905C608413FAE751073C
 Content-Type: text/plain; charset=UTF-8;
  name="script.sh"
 Content-Transfer-Encoding: base64
@@ -116,4 +119,4 @@ ZiI7DQogICAgICAgICAgICAgICAgZWNobyAgIiBXcm9uZyAtLT4iICRwYXJ0ICIgKCIgJHsj
 cGFydH0gIikiIDsNCiAgICAgICAgICAgICAgICBlY2hvICIjIyMjIyMjIyMjIyMjIyMjIyMj
 IyMjIyMjIyMjIjsNCiAgICAgICAgICAgICAgICBlY2hvIC1lICJcbiI7DQogICAgICAgICAg
 ICBmaQ0KICAgICAgICBmaQ0KICAgIGRvbmUNCg0KZG9uZQ0K
---------------A8F68BDB9A0462E4AC3DBAA1--
+--------------A7EC905C608413FAE751073C--
