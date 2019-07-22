@@ -1,7 +1,7 @@
 From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Date: Mon, 22 Jul 2019 06:57:08 +0000
+Date: Mon, 22 Jul 2019 06:57:33 +0000
 Subject: Re: [PATCH] staging: unisys: visornic: Update the description of 'poll_for_irq()'
-Message-Id: <9c65c094-ba60-cc07-e7eb-01741b91e04e@metux.net>
+Message-Id: <e40f7695-488e-12b2-685e-831b23072815@metux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190721170824.3412-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20190721170824.3412-1-christophe.jaillet@wanadoo.fr>
@@ -38,8 +38,8 @@ On 21.07.19 19:08, Christophe JAILLET wrote:
 >    * Main function of the vnic_incoming thread. Periodically check the response
 >    * queue and drain it if needed.
 > 
-Reviewed-By: Enrico Weigelt <info@metux.net>
 
+Reviewed-By: Enrico Weigelt <info@metux.net>
 -- 
 Enrico Weigelt, metux IT consult
 Free software and Linux embedded engineering
