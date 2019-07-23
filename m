@@ -1,39 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 30 Jul 2019 11:37:09 +0000
-Subject: Re: [PATCH][next] mlxsw: spectrum_ptp: fix duplicated check on orig_egr_types
-Message-Id: <85e79b89-9d48-8aa2-b96f-7d30a5716d59@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jul 2019 13:32:19 +0000
+Subject: [PATCH][next] drm/amd/display: remove duplicated comparison
+Message-Id: <20190723133219.27877-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190730102114.1506-1-colin.king@canonical.com>
- <87mugvzt1m.fsf@mellanox.com> <87imrjzsgu.fsf@mellanox.com>
-In-Reply-To: <87imrjzsgu.fsf@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Petr Machata <petrm@mellanox.com>
-Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/07/2019 12:12, Petr Machata wrote:
-> 
-> Petr Machata <petrm@mellanox.com> writes:
-> 
->> Colin King <colin.king@canonical.com> writes:
->>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently there is a duplicated check on orig_egr_types which is
->>> redundant, I believe this is a typo and should actually be
->>> orig_ing_types || orig_egr_types instead of the expression
->>> orig_egr_types || orig_egr_types.  Fix this.
->>
->> Good catch, yes, there's a typo. Thanks for the fix!
->>
->>> Addresses-Coverity: ("Same on both sides")
->>> Fixes: c6b36bdd04b5 ("mlxsw: spectrum_ptp: Increase parsing depth when PTP is enabled")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> Reviewed-by: Petr Machata <petrm@mellanox.com>
-> 
-> I see that there is an identical problem in the code one block further.
-> Can you take care of that as well, please? Or should I do it?
-> 
-I'll sort that out too
+From: Colin Ian King <colin.king@canonical.com>
+
+The comparison of surface_pitch is duplicated and hence one of these
+comparisons is redundant and can be removed.  Remove it.
+
+Addresses-Coverity: ("Same on both sides")
+Fixes: 12e2b2d4c65f ("drm/amd/display: add dcc programming for dual plane")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 94f126d2331c..168f4a7dffdf 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -1379,7 +1379,6 @@ static enum surface_update_type get_plane_info_update_type(const struct dc_surfa
+ 	}
+ 
+ 	if (u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
+-			|| u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
+ 			|| u->plane_info->plane_size.chroma_pitch != u->surface->plane_size.chroma_pitch) {
+ 		update_flags->bits.plane_size_change = 1;
+ 		elevate_update_type(&update_type, UPDATE_TYPE_MED);
+-- 
+2.20.1
