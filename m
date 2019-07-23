@@ -1,35 +1,36 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Date: Wed, 24 Jul 2019 18:23:46 +0000
-Subject: Re: [PATCH v4 3/3] coccinelle: Add script to check for platform_get_irq() excessive prints
-Message-Id: <5d38a232.1c69fb81.f85f4.67e3@mx.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jul 2019 13:41:20 +0000
+Subject: [PATCH][next] drm/amdgpu: remove redundant assignment to pointer 'ring'
+Message-Id: <20190723134120.28441-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190723181624.203864-4-swboyd@chromium.org>
- <9b5d8470-dd6e-4358-141f-6b6c40774de1@web.de>
-In-Reply-To: <9b5d8470-dd6e-4358-141f-6b6c40774de1@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Markus Elfring <Markus.Elfring@web.de>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Leo Liu <leo.liu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Markus Elfring (2019-07-24 06:18:35)
-> > +@script:python depends on org@
-> > +p1 << r.p1;
-> > +@@
-> > +
-> > +cocci.print_main(p1)
-> 
-> Will an additional message be helpful at this place?
-> 
-> 
-> Will further software development considerations become more interesting
-> also around a contribution like “Coccinelle: Add a SmPL script for
-> the reconsideration of redundant dev_err() calls”?
-> https://lore.kernel.org/lkml/2744a3fc-9e67-8113-1dd9-43669e06386a@web.de/
-> https://lore.kernel.org/patchwork/patch/1095937/
-> https://lkml.org/lkml/2019/7/1/145
-> https://systeme.lip6.fr/pipermail/cocci/2019-July/006071.html
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Did this patch ever get merged? It seems better to amend that patch
-instead of introduce another one.
+The pointer 'ring' is being assigned a value that is never
+read, hence the assignment is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
+index 93b3500e522b..a2a8ca942f34 100644
+--- a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
+@@ -1331,7 +1331,6 @@ static int vcn_v1_0_pause_dpg_mode(struct amdgpu_device *adev,
+ 				WREG32_SOC15(UVD, 0, mmUVD_JRBC_RB_CNTL,
+ 							UVD_JRBC_RB_CNTL__RB_RPTR_WR_EN_MASK);
+ 
+-				ring = &adev->vcn.inst->ring_dec;
+ 				WREG32_SOC15(UVD, 0, mmUVD_RBC_RB_WPTR,
+ 						   RREG32_SOC15(UVD, 0, mmUVD_SCRATCH2) & 0x7FFFFFFF);
+ 				SOC15_WAIT_ON_RREG(UVD, 0, mmUVD_POWER_STATUS,
+-- 
+2.20.1
