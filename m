@@ -1,57 +1,39 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 31 Jul 2019 19:59:30 +0000
-Subject: Re: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
-Message-Id: <201907311259.D485EED2B7@keescook>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jul 2019 14:23:12 +0000
+Subject: [PATCH][next] drm/amd/display: fix a missing null check on a failed kzalloc
+Message-Id: <20190723142312.4013-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1564595346.git.kjw1627@gmail.com>
- <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
-In-Reply-To: <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joonwon Kang <kjw1627@gmail.com>
-Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 03:01:49AM +0900, Joonwon Kang wrote:
-> Recursive declaration for struct which has member of the same struct
-> type, for example,
-> 
-> struct foo {
->     struct foo f;
->     ...
-> };
-> 
-> is not allowed. So, it is unnecessary to check if a struct has this
-> kind of member.
+From: Colin Ian King <colin.king@canonical.com>
 
-Is that the only case where this loop could happen? Seems also safe to
-just leave it as-is...
+Currently the allocation of config may fail and a null pointer
+dereference on config can occur.  Fix this by added a null
+check on a failed allocation of config.
 
--Kees
+Addresses-Coverity: ("Dereference null return")
+Fixes: c2cd9d04ecf0 ("drm/amd/display: Hook up calls to do stereo mux and dig programming to stereo control interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
-> ---
->  scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-> index bd29e4e7a524..e14efe23e645 100644
-> --- a/scripts/gcc-plugins/randomize_layout_plugin.c
-> +++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-> @@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
->  		const_tree fieldtype = get_field_type(field);
->  		enum tree_code code = TREE_CODE(fieldtype);
->  
-> -		if (node = fieldtype)
-> -			continue;
-> -
->  		if (code = RECORD_TYPE || code = UNION_TYPE) {
->  			if (!is_pure_ops_struct(fieldtype))
->  				return 0;
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 168f4a7dffdf..7cce2baec2af 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -1259,6 +1259,8 @@ bool dc_set_generic_gpio_for_stereo(bool enable,
+ 	struct gpio_generic_mux_config *config = kzalloc(sizeof(struct gpio_generic_mux_config),
+ 			   GFP_KERNEL);
+ 
++	if (!config)
++		return false;
+ 	pin_info = dal_gpio_get_generic_pin_info(gpio_service, GPIO_ID_GENERIC, 0);
+ 
+ 	if (pin_info.mask = 0xFFFFFFFF || pin_info.offset = 0xFFFFFFFF) {
 -- 
-Kees Cook
+2.20.1
