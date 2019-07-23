@@ -1,34 +1,36 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 22 Jul 2019 22:24:25 +0000
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Date: Tue, 23 Jul 2019 12:29:32 +0000
 Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to n_den
-Message-Id: <20190722222426.4980221985@mail.kernel.org>
+Message-Id: <e7bb11ba-c79d-3c2c-aebe-67796d518e63@topic.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190701165020.19840-1-colin.king@canonical.com> <20190722212414.6EF8D21900@mail.kernel.org> <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr> <20190722215314.9F4F121951@mail.kernel.org> <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
-In-Reply-To: <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
+References: <20190701165020.19840-1-colin.king@canonical.com>
+ <20190722212414.6EF8D21900@mail.kernel.org>
+In-Reply-To: <20190722212414.6EF8D21900@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin King <colin.king@canonical.com>, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Colin King <colin.king@canonical.com>, Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Quoting Christophe JAILLET (2019-07-22 15:00:24)
->
-> I don't use it explicitly, but the suggestions I get include some git 
-> history, so I guess that it is on by default.
-> 
-> I was thinking at parsing files to see if MODULE_AUTHOR includes an email.
-> 
-
-Ok. Feel free to write a patch. Just know that MODULE_AUTHOR isn't
-always there so it's not a substitute for looking at git history or git
-blame to figure out who wrote the code.
-
-I suspect it's better to try to work on code and infrastructure to make
-these sorts of patches and questions irrelevant by detecting these
-problems before the code is merged, instead of after, by trawling the
-mailing lists and trying to apply patches and test them for common
-problems and then notifying the people working on the code. I don't have
-unlimited time in my life, so getting patches like this just makes me
-spend more time doing mundane tasks I don't want to do.
-
-TL;DR: Please help automate this sort of stuff!
+R29vZCBjYXRjaCwgdGhhbmtzLiBZb3UgaGF2ZSBteQ0KDQpBY2tlZC1ieTogTWlrZSBMb29pam1h
+bnMgPG1pa2UubG9vaWptYW5zQHRvcGljLm5sPg0KDQoNCk9uIDIyLTA3LTE5IDIzOjI0LCBTdGVw
+aGVuIEJveWQgd3JvdGU6DQo+IFBsZWFzZSBDYyBhdXRob3JzIG9mIGRyaXZlcnMgc28gdGhleSBj
+YW4gYWNrL3Jldmlldy4NCj4gDQo+IEFkZGluZyBNaWtlIHRvIHRha2UgYSBsb29rLg0KPiANCj4g
+UXVvdGluZyBDb2xpbiBLaW5nICgyMDE5LTA3LTAxIDA5OjUwOjIwKQ0KPj4gRnJvbTogQ29saW4g
+SWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4+DQo+PiBUaGUgdmFyaWFibGUg
+bl9kZW4gaXMgaW5pdGlhbGl6ZWQgaG93ZXZlciB0aGF0IHZhbHVlIGlzIG5ldmVyIHJlYWQNCj4+
+IGFzIG5fZGVuIGlzIHJlLWFzc2lnbmVkIGEgbGl0dGxlIGxhdGVyIGluIHRoZSB0d28gcGF0aHMg
+b2YgYQ0KPj4gZm9sbG93aW5nIGlmLXN0YXRlbWVudC4gIFJlbW92ZSB0aGUgcmVkdW5kYW50IGFz
+c2lnbm1lbnQuDQo+Pg0KPj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+
+PiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
+Pg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvY2xrL2Nsay1zaTUzNDEuYyB8IDEgLQ0KPj4gICAxIGZp
+bGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
+ay9jbGstc2k1MzQxLmMgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IGluZGV4IDcyNDI0
+ZWI3ZTVmOC4uNmU3ODBjMmE5ZTZiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXNp
+NTM0MS5jDQo+PiArKysgYi9kcml2ZXJzL2Nsay9jbGstc2k1MzQxLmMNCj4+IEBAIC01NDcsNyAr
+NTQ3LDYgQEAgc3RhdGljIGludCBzaTUzNDFfc3ludGhfY2xrX3NldF9yYXRlKHN0cnVjdCBjbGtf
+aHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+PiAgICAgICAgICBib29sIGlzX2ludGVnZXI7
+DQo+PiAgIA0KPj4gICAgICAgICAgbl9udW0gPSBzeW50aC0+ZGF0YS0+ZnJlcV92Y287DQo+PiAt
+ICAgICAgIG5fZGVuID0gcmF0ZTsNCj4+ICAgDQo+PiAgICAgICAgICAvKiBzZWUgaWYgdGhlcmUn
+cyBhbiBpbnRlZ2VyIHNvbHV0aW9uICovDQo+PiAgICAgICAgICByID0gZG9fZGl2KG5fbnVtLCBy
+YXRlKTsNCg0KDQotLSANCk1pa2UgTG9vaWptYW5zDQo
