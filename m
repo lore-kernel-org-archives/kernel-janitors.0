@@ -1,26 +1,34 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 14 Jul 2019 10:07:18 +0000
-Subject: Re: [PATCH 0/2] ASoC: samsung: odroid: fix err handling of odroid_audio_probe
-Message-Id: <fbd5666c-f681-4f09-eb5c-35c47d60d857@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 24 Jul 2019 22:01:45 +0000
+Subject: [PATCH] ide: tx4939ide: Fix the name used in a 'devm_request_mem_region()' call
+Message-Id: <20190724220145.17282-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1562989575-33785-1-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1562989575-33785-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wen Yang <wen.yang99@zte.com.cn>, alsa-devel@alsa-project.org
-Cc: Cheng Shengyu <cheng.shengyu@zte.com.cn>, Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Takashi Iwai <tiwai@suse.com>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Would a subject like “ASoC: samsung: odroid: Fix handling of device node references
-in odroid_audio_probe” be more appropriate (instead of using the abbreviation “err”)?
+This should be "tx4939ide" instead of "tx4938ide", but here MODNAME is even
+better.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/ide/tx4939ide.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> We developed a coccinelle SmPL to detect …
-
-* I would find a slightly different wording better.
-
-* How do you think about to convert this information into software attributions
-  for the update steps?
-
-Regards,
-Markus
+diff --git a/drivers/ide/tx4939ide.c b/drivers/ide/tx4939ide.c
+index 88d132edc4e3..079b271dd5a7 100644
+--- a/drivers/ide/tx4939ide.c
++++ b/drivers/ide/tx4939ide.c
+@@ -549,7 +549,7 @@ static int __init tx4939ide_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	if (!devm_request_mem_region(&pdev->dev, res->start,
+-				     resource_size(res), "tx4938ide"))
++				     resource_size(res), MODNAME))
+ 		return -EBUSY;
+ 	mapbase = (unsigned long)devm_ioremap(&pdev->dev, res->start,
+ 					      resource_size(res));
+-- 
+2.20.1
