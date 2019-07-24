@@ -1,35 +1,43 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 03 Jul 2019 10:43:30 +0000
-Subject: Re: [PATCH] bpf: Replace a seq_printf() call by seq_puts() in btf_enum_seq_show()
-Message-Id: <20190703104330.GA8931@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 24 Jul 2019 05:26:32 +0000
+Subject: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()' function name
+Message-Id: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <93898abe-9a7d-0c64-0856-094b62e07ba2@web.de>
- <e0c9978f-7304-8a25-1bc9-b2be8a038382@iogearbox.net>
-In-Reply-To: <e0c9978f-7304-8a25-1bc9-b2be8a038382@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Markus Elfring <Markus.Elfring@web.de>, bpf@vger.kernel.org, netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, gustavo@embeddedor.com, patches@opensource.cirrus.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Jul 03, 2019 at 12:09:51PM +0200, Daniel Borkmann wrote:
-> On 07/02/2019 07:13 PM, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 2 Jul 2019 19:04:08 +0200
-> > 
-> > A string which did not contain a data format specification should be put
-> > into a sequence. Thus use the corresponding function “seq_puts”.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> The code is fine as is, I'm not applying this.
+This should be 'wm8955_pll_factors()' instead.
+Fix it and use it.
 
-Just a heads up, this person/bot is in my kill-file, making it easier to
-ignore crazy things like this.  I recommend it for other maintainers to
-also do as well.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/codecs/wm8955.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks,
-
-greg k-h
+diff --git a/sound/soc/codecs/wm8955.c b/sound/soc/codecs/wm8955.c
+index cd204f79647d..ec82a8fafdf6 100644
+--- a/sound/soc/codecs/wm8955.c
++++ b/sound/soc/codecs/wm8955.c
+@@ -143,7 +143,7 @@ struct pll_factors {
+  * to allow rounding later */
+ #define FIXED_FLL_SIZE ((1 << 22) * 10)
+ 
+-static int wm8995_pll_factors(struct device *dev,
++static int wm8955_pll_factors(struct device *dev,
+ 			      int Fref, int Fout, struct pll_factors *pll)
+ {
+ 	u64 Kpart;
+@@ -282,7 +282,7 @@ static int wm8955_configure_clocking(struct snd_soc_component *component)
+ 
+ 		/* Use the last divider configuration we saw for the
+ 		 * sample rate. */
+-		ret = wm8995_pll_factors(component->dev, wm8955->mclk_rate,
++		ret = wm8955_pll_factors(component->dev, wm8955->mclk_rate,
+ 					 clock_cfgs[sr].mclk, &pll);
+ 		if (ret != 0) {
+ 			dev_err(component->dev,
+-- 
+2.20.1
