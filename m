@@ -1,78 +1,30 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Sat, 06 Jul 2019 20:50:03 +0000
-Subject: Re: [PATCH] ipc/sem: Three function calls less in do_semtimedop()
-Message-Id: <20190706205003.GP17978@ZenIV.linux.org.uk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 24 Jul 2019 01:33:48 +0000
+Subject: [PATCH -next] drm/mediatek: Remove duplicated include from mtk_drm_drv.c
+Message-Id: <20190724013348.153144-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ba328a83-63ac-c3a3-cbc0-81059012c555@web.de>
- <3c5d5941-63bf-5576-e6eb-17ca02a6a8a3@canonical.com>
-In-Reply-To: <3c5d5941-63bf-5576-e6eb-17ca02a6a8a3@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Davidlohr Bueso <dave@stgolabs.net>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Manfred Spraul <manfred@colorfullife.com>, Mathieu Malaterre <malat@debian.org>, LKML <linux-kernel@vger.kernel.org>
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 06, 2019 at 09:13:46PM +0100, Colin Ian King wrote:
-> On 06/07/2019 13:28, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 6 Jul 2019 14:16:24 +0200
-> > 
-> > Avoid three function calls by using ternary operators instead of
-> > conditional statements.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  ipc/sem.c | 25 ++++++++-----------------
-> >  1 file changed, 8 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/ipc/sem.c b/ipc/sem.c
-> > index 7da4504bcc7c..56ea549ac270 100644
-> > --- a/ipc/sem.c
-> > +++ b/ipc/sem.c
-> > @@ -2122,27 +2122,18 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
-> >  		int idx = array_index_nospec(sops->sem_num, sma->sem_nsems);
-> >  		curr = &sma->sems[idx];
-> > 
-> > -		if (alter) {
-> > -			if (sma->complex_count) {
-> > -				list_add_tail(&queue.list,
-> > -						&sma->pending_alter);
-> > -			} else {
-> > -
-> > -				list_add_tail(&queue.list,
-> > -						&curr->pending_alter);
-> > -			}
-> > -		} else {
-> > -			list_add_tail(&queue.list, &curr->pending_const);
-> > -		}
-> > +		list_add_tail(&queue.list,
-> > +			      alter
-> > +			      ? (sma->complex_count
-> > +				? &sma->pending_alter
-> > +				: &curr->pending_alter)
-> > +			      : &curr->pending_const);
-> 
-> Just no. This is making the code harder to comprehend with no advantage.
-> Compilers are smart, let the do the optimization work and keep code
-> simple for us mere mortals.
+Remove duplicated include.
 
-If anything, that would've been better off as
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-		int idx = array_index_nospec(sops->sem_num, sma->sem_nsems);
-		struct sem *curr = &sma->sems[idx];
-		struct list_head *list;	/* which queue to sleep on */
-
-		if (!alter)
-			list = &curr->pending_const;
-		else if (sma->complex_count)
-			list = &sma->pending_alter;
-		else
-			list = &curr->pending_alter;
-
-		list_add_tail(&queue.list, list);
-
-perhaps with better identifier than 'list'.  This kind of ?: (ab)use makes
-for unreadable code and more than makes up for "hey, we are adding to some
-list in all those cases" extra information passed to readers...
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 2ee809a6f3dc..e3b64a266dcf 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -23,7 +23,6 @@
+ 
+ #include "mtk_drm_crtc.h"
+ #include "mtk_drm_ddp.h"
+-#include "mtk_drm_ddp.h"
+ #include "mtk_drm_ddp_comp.h"
+ #include "mtk_drm_drv.h"
+ #include "mtk_drm_fb.h"
