@@ -1,43 +1,24 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 24 Jul 2019 05:26:32 +0000
-Subject: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()' function name
-Message-Id: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Date: Wed, 24 Jul 2019 08:38:14 +0000
+Subject: Re: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()' function name
+Message-Id: <20190724083814.GS54126@ediswmail.ad.cirrus.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, gustavo@embeddedor.com, patches@opensource.cirrus.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: alsa-devel@alsa-project.org, gustavo@embeddedor.com, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, tiwai@suse.com, lgirdwood@gmail.com, broonie@kernel.org, linux-kernel@vger.kernel.org
 
-This should be 'wm8955_pll_factors()' instead.
-Fix it and use it.
+On Wed, Jul 24, 2019 at 07:26:32AM +0200, Christophe JAILLET wrote:
+> This should be 'wm8955_pll_factors()' instead.
+> Fix it and use it.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/codecs/wm8955.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-diff --git a/sound/soc/codecs/wm8955.c b/sound/soc/codecs/wm8955.c
-index cd204f79647d..ec82a8fafdf6 100644
---- a/sound/soc/codecs/wm8955.c
-+++ b/sound/soc/codecs/wm8955.c
-@@ -143,7 +143,7 @@ struct pll_factors {
-  * to allow rounding later */
- #define FIXED_FLL_SIZE ((1 << 22) * 10)
- 
--static int wm8995_pll_factors(struct device *dev,
-+static int wm8955_pll_factors(struct device *dev,
- 			      int Fref, int Fout, struct pll_factors *pll)
- {
- 	u64 Kpart;
-@@ -282,7 +282,7 @@ static int wm8955_configure_clocking(struct snd_soc_component *component)
- 
- 		/* Use the last divider configuration we saw for the
- 		 * sample rate. */
--		ret = wm8995_pll_factors(component->dev, wm8955->mclk_rate,
-+		ret = wm8955_pll_factors(component->dev, wm8955->mclk_rate,
- 					 clock_cfgs[sr].mclk, &pll);
- 		if (ret != 0) {
- 			dev_err(component->dev,
--- 
-2.20.1
+Thanks,
+Charles
