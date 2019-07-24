@@ -1,45 +1,34 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Mon, 08 Jul 2019 09:12:52 +0000
-Subject: Re: [PATCH v2] rtc: stm32: One condition check and function call less in stm32_rtc_set_alarm()
-Message-Id: <b614006a-17ac-e738-a3f3-08649f69a42c@st.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 24 Jul 2019 21:38:28 +0000
+Subject: [PATCH] backlight: lms283gf05: Fix a typo in the description passed to 'devm_gpio_request_one()'
+Message-Id: <20190724213828.16916-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f04277da-8a98-473e-2566-ac7846f9f8e1@web.de>
- <20190707211638.sehikkear25dffah@shell.armlinux.org.uk>
- <4da614a4-83c6-548c-a112-033b846c561b@web.de>
-In-Reply-To: <4da614a4-83c6-548c-a112-033b846c561b@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, b.zolnierkie@samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-T24gNy84LzE5IDEwOjQyIEFNLCBNYXJrdXMgRWxmcmluZyB3cm90ZToNCj4gRnJvbTogTWFya3Vz
-IEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBEYXRlOiBNb24sIDgg
-SnVsIDIwMTkgMTA6MjY6NDcgKzAyMDANCj4gDQo+IEEgY29uZGl0aW9uIGNoZWNrIHdhcyByZXBl
-YXRlZCBpbiB0aGlzIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uIGRlc3BpdGUgb2YNCj4gYSBjb3Jy
-ZXNwb25kaW5nIGNoZWNrIGluIHRoZSBzdG0zMl9ydGNfYWxhcm1faXJxX2VuYWJsZSgpIGZ1bmN0
-aW9uLg0KPiBUaHVzIGRlbGV0ZSByZWR1bmRhbnQgc291cmNlIGNvZGUgaGVyZS4NCj4gDQo+IFN1
-Z2dlc3RlZC1ieTogUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1saW51eC5vcmcudWs+DQo+IExpbms6
-IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAxOTA3MDcyMTE2Mzguc2VoaWtrZWFyMjVk
-ZmZhaEBzaGVsbC5hcm1saW51eC5vcmcudWsvDQo+IA0KPiBUaGlzIGlzc3VlIHdhcyBkZXRlY3Rl
-ZCBieSB1c2luZyB0aGUgQ29jY2luZWxsZSBzb2Z0d2FyZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6
-IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCg0KUmV2aWV3
-ZWQtYnk6IEFtZWxpZSBEZWxhdW5heSA8YW1lbGllLmRlbGF1bmF5QHN0LmNvbT4NCg0KPiAtLS0N
-Cj4gDQo+IHYyOg0KPiBSdXNzZWxsIEtpbmcgcG9pbnRlZCB0aGUgY2hhbmdlIHBvc3NpYmlsaXR5
-IG91dCB0byBvbWl0IGEgY29uZGl0aW9uIGNoZWNrDQo+IGF0IHRoaXMgcGxhY2UuDQo+IA0KPiAN
-Cj4gICBkcml2ZXJzL3J0Yy9ydGMtc3RtMzIuYyB8IDYgKy0tLS0tDQo+ICAgMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCA1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvcnRjL3J0Yy1zdG0zMi5jIGIvZHJpdmVycy9ydGMvcnRjLXN0bTMyLmMNCj4gaW5kZXgg
-OGU2YzliM2JjYzI5Li43NzNhMTk5MGI5M2YgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcnRjL3J0
-Yy1zdG0zMi5jDQo+ICsrKyBiL2RyaXZlcnMvcnRjL3J0Yy1zdG0zMi5jDQo+IEBAIC01MTksMTEg
-KzUxOSw3IEBAIHN0YXRpYyBpbnQgc3RtMzJfcnRjX3NldF9hbGFybShzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIHN0cnVjdCBydGNfd2thbHJtICphbHJtKQ0KPiAgIAkvKiBXcml0ZSB0byBBbGFybSByZWdp
-c3RlciAqLw0KPiAgIAl3cml0ZWxfcmVsYXhlZChhbHJtYXIsIHJ0Yy0+YmFzZSArIHJlZ3MtPmFs
-cm1hcik7DQo+IA0KPiAtCWlmIChhbHJtLT5lbmFibGVkKQ0KPiAtCQlzdG0zMl9ydGNfYWxhcm1f
-aXJxX2VuYWJsZShkZXYsIDEpOw0KPiAtCWVsc2UNCj4gLQkJc3RtMzJfcnRjX2FsYXJtX2lycV9l
-bmFibGUoZGV2LCAwKTsNCj4gLQ0KPiArCXN0bTMyX3J0Y19hbGFybV9pcnFfZW5hYmxlKGRldiwg
-YWxybS0+ZW5hYmxlZCk7DQo+ICAgZW5kOg0KPiAgIAlzdG0zMl9ydGNfd3ByX2xvY2socnRjKTsN
-Cj4gDQo+IC0tDQo+IDIuMjIuMA0KPiANCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fDQo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0DQo+
-IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlzdHMuaW5m
-cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwNCj4g
+The description passed to 'devm_gpio_request_one()' should be related to
+LMS283GF05, not LMS285GF05.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/video/backlight/lms283gf05.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/backlight/lms283gf05.c b/drivers/video/backlight/lms283gf05.c
+index 4237aaa7f269..4b62ed7e58c0 100644
+--- a/drivers/video/backlight/lms283gf05.c
++++ b/drivers/video/backlight/lms283gf05.c
+@@ -161,7 +161,7 @@ static int lms283gf05_probe(struct spi_device *spi)
+ 		ret = devm_gpio_request_one(&spi->dev, pdata->reset_gpio,
+ 				GPIOF_DIR_OUT | (!pdata->reset_inverted ?
+ 				GPIOF_INIT_HIGH : GPIOF_INIT_LOW),
+-				"LMS285GF05 RESET");
++				"LMS283GF05 RESET");
+ 		if (ret)
+ 			return ret;
+ 	}
+-- 
+2.20.1
