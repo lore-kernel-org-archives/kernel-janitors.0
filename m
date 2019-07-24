@@ -1,45 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 19:04:23 +0000
-Subject: [PATCH] media: ov2680: fix a typo in a function name
-Message-Id: <20190721190423.9534-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 24 Jul 2019 11:17:39 +0000
+Subject: Re: [v4 2/3] treewide: Remove dev_err() usage after platform_get_irq()
+Message-Id: <a69aeff9-338c-a763-3a25-3ff767e5401d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5d3788cf.1c69fb81.44f27.5907@mx.google.com>
+In-Reply-To: <5d3788cf.1c69fb81.44f27.5907@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rmfrfs@gmail.com, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Stephen Boyd <swboyd@chromium.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Michal Marek <michal.lkml@markovi.net>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-All functions in this file starts with 'ov2680_', except ov2860_parse_dt().
+> > > struct platform_device *E;
 
-This is likely a typo.
-rename it to 'ov2680_parse_dt()' (6 and 8)
+How much does this specification matter for the parameters
+of the mentioned functions (in the SmPL script)?
+Will the selection of function names be sufficient for the discussed
+source code search pattern?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/i2c/ov2680.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
-index b10bcfabaeeb..c59c9e51c380 100644
---- a/drivers/media/i2c/ov2680.c
-+++ b/drivers/media/i2c/ov2680.c
-@@ -1023,7 +1023,7 @@ static int ov2680_check_id(struct ov2680_dev *sensor)
- 	return 0;
- }
- 
--static int ov2860_parse_dt(struct ov2680_dev *sensor)
-+static int ov2680_parse_dt(struct ov2680_dev *sensor)
- {
- 	struct device *dev = ov2680_to_dev(sensor);
- 	int ret;
-@@ -1064,7 +1064,7 @@ static int ov2680_probe(struct i2c_client *client)
- 
- 	sensor->i2c_client = client;
- 
--	ret = ov2860_parse_dt(sensor);
-+	ret = ov2680_parse_dt(sensor);
- 	if (ret < 0)
- 		return -EINVAL;
- 
--- 
-2.20.1
+> > Can you teach it to remove curly braces when it's appropriate?
+> > (see below for examples)
+>
+> I don't know if that works.
+
+Such an adjustment depends on additional development efforts.
+
+
+> Is there some sort of tidy script I can run on my patches to do this?
+
+You can add corresponding case distinctions to your transformation approach
+for the semantic patch language (on demand), can't you?
+
+Regards,
+Markus
