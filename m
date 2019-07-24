@@ -1,33 +1,62 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 18:09:08 +0000
-Subject: [PATCH] mm/page_poison: fix a typo in a comment
-Message-Id: <20190721180908.6534-1-christophe.jaillet@wanadoo.fr>
+From: Dan Williams <dcbw@redhat.com>
+Date: Wed, 24 Jul 2019 14:38:15 +0000
+Subject: [PATCH v3] libertas: Fix a double free in if_spi_c2h_data()
+Message-Id: <9153261627a0f84b996e023f1349a2bc06dd03ee.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190626100926.GD3242@mwanda>
+         <be491ab35ba46111a1c90cc12b6d5ff6ea3f57e8.camel@redhat.com>
+         <20190626132340.GE28859@kadam>
+         <e679c9f99d6952f82924c71f036e4a196d0e72d4.camel@redhat.com>
+         <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
+In-Reply-To: <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akpm@linux-foundation.org, mhocko@suse.com, rppt@linux.vnet.ibm.com, aryabinin@virtuozzo.com, wei.w.wang@intel.com, cai@lca.pw
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Philip Rakity <prakity@yahoo.com>, libertas-dev@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Dan Carpenter <dan.carpenter@oracle.com>, Allison Randal <allison@lohutok.net>
 
-s/posioned/poisoned/
+The lbs_process_rxed_packet() frees the skb.  It didn't originally, but
+we fixed it in commit f54930f36311 ("libertas: don't leak skb on receive
+error").
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Williams <dcbw@redhat.com>
 ---
- mm/page_poison.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page_poison.c b/mm/page_poison.c
-index 21d4f97cb49b..34b9181ee5d1 100644
---- a/mm/page_poison.c
-+++ b/mm/page_poison.c
-@@ -101,7 +101,7 @@ static void unpoison_page(struct page *page)
- 	/*
- 	 * Page poisoning when enabled poisons each and every page
- 	 * that is freed to buddy. Thus no extra check is done to
--	 * see if a page was posioned.
-+	 * see if a page was poisoned.
- 	 */
- 	check_poison_mem(addr, PAGE_SIZE);
- 	kunmap_atomic(addr);
+Kalle: sorry about the build error; previous version of the patch before I fixed it.
+Here's the correct one.
+
+ drivers/net/wireless/marvell/libertas/if_spi.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net/wireless/marvell/libertas/if_spi.c
+index 27067e79e83fe..d07fe82c557e8 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -766,19 +766,15 @@ static int if_spi_c2h_data(struct if_spi_card *card)
+ 
+ 	/* Read the data from the WLAN module into our skb... */
+ 	err = spu_read(card, IF_SPI_DATA_RDWRPORT_REG, data, ALIGN(len, 4));
+-	if (err)
+-		goto free_skb;
++	if (err) {
++		dev_kfree_skb(skb);
++		goto out;
++	}
+ 
+ 	/* pass the SKB to libertas */
+ 	err = lbs_process_rxed_packet(card->priv, skb);
+-	if (err)
+-		goto free_skb;
++	/* lbs_process_rxed_packet() consumes the skb */
+ 
+-	/* success */
+-	goto out;
+-
+-free_skb:
+-	dev_kfree_skb(skb);
+ out:
+ 	if (err)
+ 		netdev_err(priv->dev, "%s: err=%d\n", __func__, err);
 -- 
 2.20.1
