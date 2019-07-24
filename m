@@ -1,57 +1,36 @@
-From: merez@codeaurora.org
-Date: Thu, 04 Jul 2019 07:53:09 +0000
-Subject: Re: [PATCH][next] wil6210: fix wil_cid_valid with negative cid values
-Message-Id: <787a6680930c6895d8ede457ec543fb7@codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 24 Jul 2019 15:00:43 +0000
+Subject: Re: [PATCH v4 1/3] driver core: platform: Add an error message to platform_get_irq*()
+Message-Id: <d12a32e6-fd82-71f8-c320-ea6e844db3f4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190702144026.13013-1-colin.king@canonical.com>
-In-Reply-To: <20190702144026.13013-1-colin.king@canonical.com>
+References: <20190723181624.203864-2-swboyd@chromium.org>
+In-Reply-To: <20190723181624.203864-2-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Stephen Boyd <swboyd@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
 
-On 2019-07-02 17:40, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are several occasions where a negative cid value is passed
-> into wil_cid_valid and this is converted into a u8 causing the
-> range check of cid >= 0 to always succeed.  Fix this by making
-> the cid argument an int to handle any -ve error value of cid.
-> 
-> An example of this behaviour is in wil_cfg80211_dump_station,
-> where cid is assigned -ENOENT if the call to wil_find_cid_by_idx
-> fails, and this -ve value is passed to wil_cid_valid.  I believe
-> that the conversion of -ENOENT to the u8 value 254 which is
-> greater than wil->max_assoc_sta causes wil_find_cid_by_idx to
-> currently work fine, but I think is by luck and not the
-> intended behaviour.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/ath/wil6210/wil6210.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/wil6210/wil6210.h
-> b/drivers/net/wireless/ath/wil6210/wil6210.h
-> index 6f456b311a39..25a1adcb38eb 100644
-> --- a/drivers/net/wireless/ath/wil6210/wil6210.h
-> +++ b/drivers/net/wireless/ath/wil6210/wil6210.h
-> @@ -1144,7 +1144,7 @@ static inline void wil_c(struct wil6210_priv
-> *wil, u32 reg, u32 val)
->  /**
->   * wil_cid_valid - check cid is valid
->   */
-> -static inline bool wil_cid_valid(struct wil6210_priv *wil, u8 cid)
-> +static inline bool wil_cid_valid(struct wil6210_priv *wil, int cid)
->  {
->  	return (cid >= 0 && cid < wil->max_assoc_sta);
->  }
+> Let's consolidate all these error messages into the API itself,
+> allowing us to get rid of the error messages in each driver.
 
-Reviewed-by: Maya Erez <merez@codeaurora.org>
+Such information from the commit descriptions sounds positive.
 
--- 
-Maya Erez
-Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+
+> +++ b/drivers/base/platform.c
+…
+> @@ -163,6 +158,22 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+…
+> +/**
+> + * platform_get_irq - get an IRQ for a device
+> + * @dev: platform device
+> + * @num: IRQ number index
+> + */
+
+Do you find the provided description for the programming interface
+really sufficient then?
+Would it be more helpful to indicate the existence of an appropriate error message
+also in this software documentation (besides the C source code)?
+
+Regards,
+Markus
