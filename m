@@ -1,50 +1,43 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 08 Jul 2019 11:55:59 +0000
-Subject: Re: [PATCH] mmc: alcor: remove a redundant greater or equal to zero comparison
-Message-Id: <CAPDyKFoXEr+DskqQesxJoe+btA3VXzwZKhVZSXLHiw7tiwhX3g@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 25 Jul 2019 12:40:43 +0000
+Subject: Re: [1/2] string: Add stracpy and stracpy_pad mechanisms
+Message-Id: <42a3af53-e349-6c5b-fa0f-0113fccbe9eb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190701175246.32270-1-colin.king@canonical.com>
-In-Reply-To: <20190701175246.32270-1-colin.king@canonical.com>
+References: <alpine.DEB.2.21.1907242040490.10108@hadrien>
+ <e3a37d93-0353-ebed-948a-991add184616@web.de>
+ <alpine.DEB.2.21.1907250632500.2535@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1907250632500.2535@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Daniel Drake <drake@endlessm.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org
 
-On Mon, 1 Jul 2019 at 19:52, Colin King <colin.king@canonical.com> wrote:
+>>> @@
+>>> (
+>>> -x = strlcpy
+>>> +stracpy
+>>>   (e1.f, e2
+>>> -    , i2
+>>>   )@p;
+>>>   ... when != x
+>>>
+>>> |
+>>
+>> I wonder about the deletion of the assignment target.
+>> Should the setting of such a variable be usually preserved?
 >
-> From: Colin Ian King <colin.king@canonical.com>
->
-> A greater or equal comparison on the unsigned int variable tmp_diff
-> is always true as unsigned ints are never negative.  Hence the
-> comparison is redundant and can be removed.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> If it is a local variable and never subsequently used, it doesn't seem
+> very useful.
 
-Applied for next, thanks!
+Such an explanation is easier to understand.
 
-Kind regards
-Uffe
+* How do you think about the possibility that it was (accidentally)
+  forgotten to use such a local variable?
 
+* Your transformation can result in an intentionally unused return value.
+  Would you like point any more source code places out
+  where values are unused so far?
 
-> ---
->  drivers/mmc/host/alcor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/alcor.c b/drivers/mmc/host/alcor.c
-> index e481535cba2b..1aee485d56d4 100644
-> --- a/drivers/mmc/host/alcor.c
-> +++ b/drivers/mmc/host/alcor.c
-> @@ -672,7 +672,7 @@ static void alcor_set_clock(struct alcor_sdmmc_host *host, unsigned int clock)
->                 tmp_clock = DIV_ROUND_UP(cfg->clk_src_freq, tmp_div);
->                 tmp_diff = abs(clock - tmp_clock);
->
-> -               if (tmp_diff >= 0 && tmp_diff < diff) {
-> +               if (tmp_diff < diff) {
->                         diff = tmp_diff;
->                         clk_src = cfg->clk_src_reg;
->                         clk_div = tmp_div;
-> --
-> 2.20.1
->
+Regards,
+Markus
