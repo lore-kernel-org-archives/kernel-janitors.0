@@ -1,55 +1,51 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 16 Jul 2019 18:17:06 +0000
-Subject: Re: [PATCH -next] keyboard: remove set but not used variables 'sts'
-Message-Id: <20190716181706.GA1140@penguin>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 25 Jul 2019 07:46:00 +0000
+Subject: Re: [PATCH 1/2] string: Add stracpy and stracpy_pad mechanisms
+Message-Id: <e3a37d93-0353-ebed-948a-991add184616@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190716085423.19443-1-maowenan@huawei.com>
-In-Reply-To: <20190716085423.19443-1-maowenan@huawei.com>
+References: <alpine.DEB.2.21.1907242040490.10108@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1907242040490.10108@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: David Laight <David.Laight@ACULAB.COM>, linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 04:54:23PM +0800, Mao Wenan wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/input/keyboard/applespi.c: In function applespi_set_bl_level:
-> drivers/input/keyboard/applespi.c:902:6: warning: variable sts set but not used [-Wunused-but-set-variable]
-> 
-> Fixes: b426ac0452093d ("Input: add Apple SPI keyboard and trackpad driver")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> New version.  I check for non-use of the return value of strlcpy and
+> address some issues that affected the matching of the case where the first
+> argument involves a pointer dereference.
 
-Applied, thank you.
+I suggest to take another look at corresponding implementation details
+of the shown SmPL script.
 
-> ---
->  drivers/input/keyboard/applespi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
-> index c1a6843..548737e 100644
-> --- a/drivers/input/keyboard/applespi.c
-> +++ b/drivers/input/keyboard/applespi.c
-> @@ -899,7 +899,6 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
->  	struct applespi_data *applespi >  		container_of(led_cdev, struct applespi_data, backlight_info);
->  	unsigned long flags;
-> -	int sts;
->  
->  	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
->  
-> @@ -916,7 +915,7 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
->  			 KBD_BL_LEVEL_MIN);
->  	}
->  
-> -	sts = applespi_send_cmd_msg(applespi);
-> +	applespi_send_cmd_msg(applespi);
->  
->  	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
->  }
-> -- 
-> 2.7.4
-> 
 
--- 
-Dmitry
+> \(strscpy\|strlcpy\)(e1.f, e2, i2)@p
+
+Can the data access operator “->” (arrow) matter also here?
+
+
+> @@
+> identifier r.i1,r.i2;
+> type T;
+> @@
+> struct i1 { ... T i1[i2]; ... }
+
+Will an additional SmPL rule name be helpful for this part?
+
+
+> @@
+> (
+> -x = strlcpy
+> +stracpy
+>   (e1.f, e2
+> -    , i2
+>   )@p;
+>   ... when != x
+>
+> |
+
+I wonder about the deletion of the assignment target.
+Should the setting of such a variable be usually preserved?
+
+Regards,
+Markus
