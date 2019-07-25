@@ -1,59 +1,40 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 25 Jul 2019 12:41:04 +0000
-Subject: Re: [PATCH][next] can: kvaser_pciefd: remove redundant negative check on trigger
-Message-Id: <0d61d4a1-4307-af0e-5dae-517dea89c992@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 25 Jul 2019 06:55:40 +0000
+Subject: [PATCH net-next] can: ti_hecc: remove set but not used variable 'mbx_mask'
+Message-Id: <20190725070044.2692-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190725112509.1075-1-colin.king@canonical.com>
- <5D39A274.1000800@bfs.de>
-In-Reply-To: <5D39A274.1000800@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wolfgang Grandegger <wg@grandegger.com>, Jeroen Hofstee <jhofstee@victronenergy.com>, Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On 25/07/2019 13:37, walter harms wrote:
-> 
-> 
-> Am 25.07.2019 13:25, schrieb Colin King:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The check to see if trigger is less than zero is always false, trigger
->> is always in the range 0..255.  Hence the check is redundant and can
->> be removed.
->>
->> Addresses-Coverity: ("Logically dead code")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/net/can/kvaser_pciefd.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/net/can/kvaser_pciefd.c b/drivers/net/can/kvaser_pciefd.c
->> index 3af747cbbde4..68e00aad0810 100644
->> --- a/drivers/net/can/kvaser_pciefd.c
->> +++ b/drivers/net/can/kvaser_pciefd.c
->> @@ -652,9 +652,6 @@ static void kvaser_pciefd_pwm_stop(struct kvaser_pciefd_can *can)
->>  	top = (pwm_ctrl >> KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT) & 0xff;
->>  
->>  	trigger = (100 * top + 50) / 100;
->> -	if (trigger < 0)
->> -		trigger = 0;
->> -
-> 	to be fair i do not understand the calculation here here.
-> 	(100*top+50)/100 = top+50/100
-> 
-> 	but seems to be int so it should be =top
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Indeed it does not do anything, that does look like an unintentional
-bug. Good catch.
+drivers/net/can/ti_hecc.c: In function 'ti_hecc_mailbox_read':
+drivers/net/can/ti_hecc.c:533:12: warning:
+ variable 'mbx_mask' set but not used [-Wunused-but-set-variable]
 
-> 
-> 	did i missunderstand something here ?
-> 
-> 	re,
-> 	 wh
-> 
-> 
->>  	pwm_ctrl = trigger & 0xff;
->>  	pwm_ctrl |= (top & 0xff) << KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT;
->>  	iowrite32(pwm_ctrl, can->reg_base + KVASER_PCIEFD_KCAN_PWM_REG);
+It is never used so can be removed.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/can/ti_hecc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/can/ti_hecc.c b/drivers/net/can/ti_hecc.c
+index b62f75fa03f0..e63e2f86c289 100644
+--- a/drivers/net/can/ti_hecc.c
++++ b/drivers/net/can/ti_hecc.c
+@@ -530,9 +530,8 @@ static unsigned int ti_hecc_mailbox_read(struct can_rx_offload *offload,
+ 					 u32 *timestamp, unsigned int mbxno)
+ {
+ 	struct ti_hecc_priv *priv = rx_offload_to_priv(offload);
+-	u32 data, mbx_mask;
++	u32 data;
+ 
+-	mbx_mask = BIT(mbxno);
+ 	data = hecc_read_mbx(priv, mbxno, HECC_CANMID);
+ 	if (data & HECC_CANMID_IDE)
+ 		cf->can_id = (data & CAN_EFF_MASK) | CAN_EFF_FLAG;
