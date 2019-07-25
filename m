@@ -1,20 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Jul 2019 23:21:16 +0000
-Subject: Re: [PATCH] net: ag71xx: fix return value check in ag71xx_probe()
-Message-Id: <20190718.162116.629841908556075924.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 Jul 2019 11:25:09 +0000
+Subject: [PATCH][next] can: kvaser_pciefd: remove redundant negative check on trigger
+Message-Id: <20190725112509.1075-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190717115225.23047-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190717115225.23047-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, o.rempel@pengutronix.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Please resubmit these two ag71xx patches, you use a different subsystem
-prefix in the Subject lines, so you should make them consistent.
+The check to see if trigger is less than zero is always false, trigger
+is always in the range 0..255.  Hence the check is redundant and can
+be removed.
 
-Using just "ag71xx: " is perfectly fine.
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/can/kvaser_pciefd.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thank you.
+diff --git a/drivers/net/can/kvaser_pciefd.c b/drivers/net/can/kvaser_pciefd.c
+index 3af747cbbde4..68e00aad0810 100644
+--- a/drivers/net/can/kvaser_pciefd.c
++++ b/drivers/net/can/kvaser_pciefd.c
+@@ -652,9 +652,6 @@ static void kvaser_pciefd_pwm_stop(struct kvaser_pciefd_can *can)
+ 	top = (pwm_ctrl >> KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT) & 0xff;
+ 
+ 	trigger = (100 * top + 50) / 100;
+-	if (trigger < 0)
+-		trigger = 0;
+-
+ 	pwm_ctrl = trigger & 0xff;
+ 	pwm_ctrl |= (top & 0xff) << KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT;
+ 	iowrite32(pwm_ctrl, can->reg_base + KVASER_PCIEFD_KCAN_PWM_REG);
+-- 
+2.20.1
