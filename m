@@ -1,40 +1,37 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 25 Jul 2019 06:55:40 +0000
-Subject: [PATCH net-next] can: ti_hecc: remove set but not used variable 'mbx_mask'
-Message-Id: <20190725070044.2692-1-yuehaibing@huawei.com>
+From: Jeroen Hofstee <jhofstee@victronenergy.com>
+Date: Thu, 25 Jul 2019 08:19:10 +0000
+Subject: Re: [PATCH net-next] can: ti_hecc: remove set but not used variable 'mbx_mask'
+Message-Id: <acefc74c-b303-64b8-4a98-6d15835f1666@victronenergy.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190725070044.2692-1-yuehaibing@huawei.com>
+In-Reply-To: <20190725070044.2692-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Jeroen Hofstee <jhofstee@victronenergy.com>, Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: YueHaibing <yuehaibing@huawei.com>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/net/can/ti_hecc.c: In function 'ti_hecc_mailbox_read':
-drivers/net/can/ti_hecc.c:533:12: warning:
- variable 'mbx_mask' set but not used [-Wunused-but-set-variable]
-
-It is never used so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/can/ti_hecc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/can/ti_hecc.c b/drivers/net/can/ti_hecc.c
-index b62f75fa03f0..e63e2f86c289 100644
---- a/drivers/net/can/ti_hecc.c
-+++ b/drivers/net/can/ti_hecc.c
-@@ -530,9 +530,8 @@ static unsigned int ti_hecc_mailbox_read(struct can_rx_offload *offload,
- 					 u32 *timestamp, unsigned int mbxno)
- {
- 	struct ti_hecc_priv *priv = rx_offload_to_priv(offload);
--	u32 data, mbx_mask;
-+	u32 data;
- 
--	mbx_mask = BIT(mbxno);
- 	data = hecc_read_mbx(priv, mbxno, HECC_CANMID);
- 	if (data & HECC_CANMID_IDE)
- 		cf->can_id = (data & CAN_EFF_MASK) | CAN_EFF_FLAG;
+DQpPbiA3LzI1LzE5IDk6MDAgQU0sIFl1ZUhhaWJpbmcgd3JvdGU6DQo+IEZpeGVzIGdjYyAnLVd1
+bnVzZWQtYnV0LXNldC12YXJpYWJsZScgd2FybmluZzoNCj4NCj4gZHJpdmVycy9uZXQvY2FuL3Rp
+X2hlY2MuYzogSW4gZnVuY3Rpb24gJ3RpX2hlY2NfbWFpbGJveF9yZWFkJzoNCj4gZHJpdmVycy9u
+ZXQvY2FuL3RpX2hlY2MuYzo1MzM6MTI6IHdhcm5pbmc6DQo+ICAgdmFyaWFibGUgJ21ieF9tYXNr
+JyBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQ0KPg0KPiBJdCBp
+cyBuZXZlciB1c2VkIHNvIGNhbiBiZSByZW1vdmVkLg0KPg0KPiBSZXBvcnRlZC1ieTogSHVsayBS
+b2JvdCA8aHVsa2NpQGh1YXdlaS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFl1ZUhhaWJpbmcgPHl1
+ZWhhaWJpbmdAaHVhd2VpLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9uZXQvY2FuL3RpX2hlY2Mu
+YyB8IDMgKy0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9u
+cygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvY2FuL3RpX2hlY2MuYyBiL2RyaXZl
+cnMvbmV0L2Nhbi90aV9oZWNjLmMNCj4gaW5kZXggYjYyZjc1ZmEwM2YwLi5lNjNlMmY4NmMyODkg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2Nhbi90aV9oZWNjLmMNCj4gKysrIGIvZHJpdmVy
+cy9uZXQvY2FuL3RpX2hlY2MuYw0KPiBAQCAtNTMwLDkgKzUzMCw4IEBAIHN0YXRpYyB1bnNpZ25l
+ZCBpbnQgdGlfaGVjY19tYWlsYm94X3JlYWQoc3RydWN0IGNhbl9yeF9vZmZsb2FkICpvZmZsb2Fk
+LA0KPiAgIAkJCQkJIHUzMiAqdGltZXN0YW1wLCB1bnNpZ25lZCBpbnQgbWJ4bm8pDQo+ICAgew0K
+PiAgIAlzdHJ1Y3QgdGlfaGVjY19wcml2ICpwcml2ID0gcnhfb2ZmbG9hZF90b19wcml2KG9mZmxv
+YWQpOw0KPiAtCXUzMiBkYXRhLCBtYnhfbWFzazsNCj4gKwl1MzIgZGF0YTsNCj4gICANCj4gLQlt
+YnhfbWFzayA9IEJJVChtYnhubyk7DQo+ICAgCWRhdGEgPSBoZWNjX3JlYWRfbWJ4KHByaXYsIG1i
+eG5vLCBIRUNDX0NBTk1JRCk7DQo+ICAgCWlmIChkYXRhICYgSEVDQ19DQU5NSURfSURFKQ0KPiAg
+IAkJY2YtPmNhbl9pZCA9IChkYXRhICYgQ0FOX0VGRl9NQVNLKSB8IENBTl9FRkZfRkxBRzsNCj4N
+Cj4NCg0KSW5kZWVkLCBtYnhfbWFzayBpcyBubyBsb25nZXIgdXNlZCBhZnRlciBpbmNsdWRpbmcN
+CiJjYW46IHRpX2hlY2M6IHVzZSB0aW1lc3RhbXAgYmFzZWQgcngtb2ZmbG9hZGluZyIuDQoNClJl
+dmlld2VkLWJ5OiBKZXJvZW4gSG9mc3RlZSA8amhvZnN0ZWVAdmljdHJvbmVuZXJneS5jb20+DQoN
+Cg=
