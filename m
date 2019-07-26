@@ -1,50 +1,41 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 24 Jul 2019 06:00:23 +0000
-Subject: [PATCH] ASoC: cs4271: Fix a typo in the CS4171_NR_RATIOS
-Message-Id: <20190724060023.31302-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 11:31:51 +0000
+Subject: [PATCH][next] intel_th: msu: fix overflow in shift of an unsigned int
+Message-Id: <20190726113151.8967-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: brian.austin@cirrus.com, Paul.Handrigan@cirrus.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This should be CS4271_NR_RATIOS.
-Fix it and use it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The shift of the unsigned int win->nr_blocks by PAGE_SHIFT may
+potentially overflow. Note that the intended return of this shift
+is expected to be a size_t however the shift is being performed as
+an unsigned int.  Fix this by casting win->nr_blocks to a size_t
+before performing the shift.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 615c164da0eb ("intel_th: msu: Introduce buffer interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/cs4271.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hwtracing/intel_th/msu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 1d03a1348162..04b86a51e055 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -334,7 +334,7 @@ static struct cs4271_clk_cfg cs4271_clk_tab[] = {
- 	{0, CS4271_MODE1_MODE_4X, 256,  CS4271_MODE1_DIV_2},
- };
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index fc9f15f36ad4..4892ac446c01 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -327,7 +327,7 @@ static size_t msc_win_total_sz(struct msc_window *win)
+ 		struct msc_block_desc *bdesc = sg_virt(sg);
  
--#define CS4171_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
-+#define CS4271_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
+ 		if (msc_block_wrapped(bdesc))
+-			return win->nr_blocks << PAGE_SHIFT;
++			return (size_t)win->nr_blocks << PAGE_SHIFT;
  
- static int cs4271_hw_params(struct snd_pcm_substream *substream,
- 			    struct snd_pcm_hw_params *params,
-@@ -383,13 +383,13 @@ static int cs4271_hw_params(struct snd_pcm_substream *substream,
- 		val = CS4271_MODE1_MODE_4X;
- 
- 	ratio = cs4271->mclk / cs4271->rate;
--	for (i = 0; i < CS4171_NR_RATIOS; i++)
-+	for (i = 0; i < CS4271_NR_RATIOS; i++)
- 		if ((cs4271_clk_tab[i].master = cs4271->master) &&
- 		    (cs4271_clk_tab[i].speed_mode = val) &&
- 		    (cs4271_clk_tab[i].ratio = ratio))
- 			break;
- 
--	if (i = CS4171_NR_RATIOS) {
-+	if (i = CS4271_NR_RATIOS) {
- 		dev_err(component->dev, "Invalid sample rate\n");
- 		return -EINVAL;
- 	}
+ 		size += msc_total_sz(bdesc);
+ 		if (msc_block_last_written(bdesc))
 -- 
 2.20.1
