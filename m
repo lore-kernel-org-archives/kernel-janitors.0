@@ -1,48 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 30 Jul 2019 12:30:44 +0000
-Subject: Re: [PATCH v5 1/3] driver core: platform: Add an error message to platform_get_irq*()
-Message-Id: <3197785f-91df-21d3-72f4-97ca73681bc8@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 10:06:14 +0000
+Subject: [PATCH] ipw2x00: remove redundant assignment to err
+Message-Id: <20190726100614.6924-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190730053845.126834-1-swboyd@chromium.org>
- <20190730053845.126834-2-swboyd@chromium.org>
-In-Reply-To: <20190730053845.126834-2-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Stephen Boyd <swboyd@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-…
-> +++ b/drivers/base/platform.c
-…
-> @@ -163,6 +158,33 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->  	return -ENXIO;
->  #endif
->  }
-> +
-> +/**
-> + * platform_get_irq - get an IRQ for a device
-> + * @dev: platform device
-> + * @num: IRQ number index
-> + *
-> + * Gets an IRQ for a platform device and prints an error message if finding the
-> + * IRQ fails. Device drivers should check the return value for errors so as to
-> + * not pass a negative integer value to the request_irq() APIs.
-> + *
-> + * Example:
-> + *		int irq = platform_get_irq(pdev, 0);
-> + *		if (irq < 0)
-> + *			return irq;
-> + *
-> + * Return: IRQ number on success, negative error number on failure.
-> + */
-…
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your extension of the description for this programming interface.
+Variable err is initialized to a value that is never read and it
+is re-assigned later.  The initialization is redundant and can
+be removed.
 
-I imagine that adjustments for this software documentation format can make it
-safer to extract desired API properties.
-Would you like to improve provided information any further?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 75c0c29d81f0..8dfbaff2d1fe 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -4413,7 +4413,7 @@ static void ipw2100_kill_works(struct ipw2100_priv *priv)
+ 
+ static int ipw2100_tx_allocate(struct ipw2100_priv *priv)
+ {
+-	int i, j, err = -EINVAL;
++	int i, j, err;
+ 	void *v;
+ 	dma_addr_t p;
+ 
+-- 
+2.20.1
