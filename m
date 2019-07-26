@@ -1,40 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 28 Jul 2019 18:04:07 +0000
-Subject: [PATCH] orangefs: remove redundant assignment to err
-Message-Id: <20190728180407.15156-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 26 Jul 2019 06:52:05 +0000
+Subject: [PATCH v2] scsi: mpt3sas: clean up a couple sizeof() uses
+Message-Id: <20190726065205.GA22701@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190511132700.4862-1-colin.king@canonical.com>
-In-Reply-To: <20190511132700.4862-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There is a copy and paste bug here.  It uses EVENT_TRIGGERS size instead
+of SCSI_TRIGGERS size but fortunately both size are 84 bytes so it
+doesn't affect runtime.
 
-Variable err is initialized to a value that is never read and it
-is re-assigned later.  The initialization is redundant and can
-be removed.
+These days the prefered style is to just say sizeof(object) instead of
+sizeof(type) so I have updated the function to the latest style as well.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/orangefs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Update the style to the 21st Century
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 0c337d8bdaab..efb12197da18 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -940,7 +940,7 @@ int orangefs_setattr(struct dentry *dentry, struct iattr *iattr)
- int orangefs_getattr(const struct path *path, struct kstat *stat,
- 		     u32 request_mask, unsigned int flags)
- {
--	int ret = -ENOENT;
-+	int ret;
- 	struct inode *inode = path->dentry->d_inode;
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index d4ecfbbe738c..41c54d4c9451 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -3278,9 +3278,8 @@ diag_trigger_scsi_store(struct device *cdev,
+ 	ssize_t sz;
  
- 	gossip_debug(GOSSIP_INODE_DEBUG,
+ 	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
+-	sz = min(sizeof(struct SL_WH_SCSI_TRIGGERS_T), count);
+-	memset(&ioc->diag_trigger_scsi, 0,
+-	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
++	sz = min(sizeof(ioc->diag_trigger_scsi), count);
++	memset(&ioc->diag_trigger_scsi, 0, sizeof(ioc->diag_trigger_scsi));
+ 	memcpy(&ioc->diag_trigger_scsi, buf, sz);
+ 	if (ioc->diag_trigger_scsi.ValidEntries > NUM_VALID_ENTRIES)
+ 		ioc->diag_trigger_scsi.ValidEntries = NUM_VALID_ENTRIES;
 -- 
 2.20.1
