@@ -1,68 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 01 Jul 2019 15:28:13 +0000
-Subject: [PATCH] md/raid: Replace a seq_printf() call by seq_putc() in three functions
-Message-Id: <50f0f51c-16c6-8d31-b265-8a007e6f7251@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 12:04:21 +0000
+Subject: [PATCH] intel_th: msu: fix missing allocation failure check on a kstrndup
+Message-Id: <20190726120421.9650-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jul 2019 17:10:13 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A single character (depending on a condition check) should be put
-into a sequence. Thus use the corresponding function “seq_putc”.
+kstrndup can potentially return NULL, so add a null memory check to
+avoid a null pointer reference later on.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Addresses-Coverity: ("Dereference null return")
+Fixes: 615c164da0eb ("intel_th: msu: Introduce buffer interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/raid1.c  | 4 ++--
- drivers/md/raid10.c | 3 ++-
- drivers/md/raid5.c  | 3 ++-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/hwtracing/intel_th/msu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 34e26834ad28..769d79a1d2cf 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1597,7 +1597,7 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
- 	rcu_read_lock();
- 	for (i = 0; i < conf->raid_disks; i++) {
- 		struct md_rdev *rdev = rcu_dereference(conf->mirrors[i].rdev);
--		seq_printf(seq, "%s",
--			   rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
-+		seq_putc(seq,
-+			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
- 	}
- 	rcu_read_unlock();
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 8a1354a08a1a..4e7da5dcbf86 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1572,6 +1572,7 @@ static void raid10_status(struct seq_file *seq, struct mddev *mddev)
- 	rcu_read_lock();
- 	for (i = 0; i < conf->geo.raid_disks; i++) {
- 		struct md_rdev *rdev = rcu_dereference(conf->mirrors[i].rdev);
--		seq_printf(seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
-+		seq_putc(seq,
-+			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
- 	}
- 	rcu_read_unlock();
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 3de4e13bde98..4b0e93869801 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7510,6 +7510,7 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
- 	rcu_read_lock();
- 	for (i = 0; i < conf->raid_disks; i++) {
- 		struct md_rdev *rdev = rcu_dereference(conf->disks[i].rdev);
--		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
-+		seq_putc(seq,
-+			 rdev && test_bit(In_sync, &rdev->flags) ? 'U' : '_');
- 	}
- 	rcu_read_unlock();
---
-2.22.0
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index 4892ac446c01..dd7e3c304ee5 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -1848,6 +1848,8 @@ mode_store(struct device *dev, struct device_attribute *attr, const char *buf,
+ 		len = cp - buf;
+ 
+ 	mode = kstrndup(buf, len, GFP_KERNEL);
++	if (!mode)
++		return -ENOMEM;
+ 	i = match_string(msc_mode, ARRAY_SIZE(msc_mode), mode);
+ 	if (i >= 0)
+ 		goto found;
+-- 
+2.20.1
