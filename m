@@ -1,22 +1,38 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Fri, 05 Jul 2019 07:28:46 +0000
-Subject: Re: [PATCH] dmaengine: jz4780: Fix an endian bug in IRQ handler
-Message-Id: <20190705071646.GZ2911@vkoul-mobl>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 12:48:03 +0000
+Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to rtstatus
+Message-Id: <20190726124803.11349-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190624134940.GC1754@mwanda>
-In-Reply-To: <20190624134940.GC1754@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Paul Cercueil <paul@crapouillou.net>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishka Dasgupta <nishkadg.linux@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 24-06-19, 16:49, Dan Carpenter wrote:
-> The "pending" variable was a u32 but we cast it to an unsigned long
-> pointer when we do the for_each_set_bit() loop.  The problem is that on
-> big endian 64bit systems that results in an out of bounds read.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+Variable rtstatus is initialized to a value that is never read and it
+is re-assigned later. The initialization is redundant and can be
+removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8188eu/hal/rf_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8188eu/hal/rf_cfg.c b/drivers/staging/rtl8188eu/hal/rf_cfg.c
+index 739e62dc60e3..47b1bf5a6143 100644
+--- a/drivers/staging/rtl8188eu/hal/rf_cfg.c
++++ b/drivers/staging/rtl8188eu/hal/rf_cfg.c
+@@ -222,7 +222,7 @@ bool rtl88eu_phy_rf_config(struct adapter *adapt)
+ {
+ 	struct hal_data_8188e *hal_data = adapt->HalData;
+ 	u32 u4val = 0;
+-	bool rtstatus = true;
++	bool rtstatus;
+ 	struct bb_reg_def *pphyreg;
+ 
+ 	pphyreg = &hal_data->PHYRegDef[RF90_PATH_A];
 -- 
-~Vinod
+2.20.1
