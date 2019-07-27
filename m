@@ -1,39 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jul 2019 14:32:05 +0000
-Subject: [PATCH][net-next] mac80211: add missing null return check from call to ieee80211_get_sband
-Message-Id: <20190730143205.14261-1-colin.king@canonical.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 27 Jul 2019 20:00:56 +0000
+Subject: Re: [PATCH] iio: magnetometer: mmc35240: Fix a typo in the name of a constant
+Message-Id: <20190727210056.63e7e9d2@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190721213533.9214-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Crispin <john@phrozen.org>, Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, tglx@linutronix.de, alexios.zavras@intel.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, 21 Jul 2019 23:35:33 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-The return from ieee80211_get_sband can potentially be a null pointer, so
-it seems prudent to add a null check to avoid a null pointer dereference
-on sband.
+> Everything is about mmc35240_ except MMC53240_WAIT_SET_RESET (3 and 5
+> switched).
+> 
+> This is likely a typo. Define and use MMC35240_WAIT_SET_RESET instead.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: 2ab45876756f ("mac80211: add support for the ADDBA extension element")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/mac80211/agg-rx.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to see what we missed.
 
-diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
-index 0e1bb43973b8..4d1c335e06e5 100644
---- a/net/mac80211/agg-rx.c
-+++ b/net/mac80211/agg-rx.c
-@@ -189,6 +189,8 @@ static void ieee80211_add_addbaext(struct ieee80211_sub_if_data *sdata,
- 	u8 *pos;
- 
- 	sband = ieee80211_get_sband(sdata);
-+	if (!sband)
-+		return;
- 	he_cap = ieee80211_get_he_iftype_cap(sband, sdata->vif.type);
- 	if (!he_cap)
- 		return;
--- 
-2.20.1
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/magnetometer/mmc35240.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
+> index 7de10281ad9e..425cdd07b4e5 100644
+> --- a/drivers/iio/magnetometer/mmc35240.c
+> +++ b/drivers/iio/magnetometer/mmc35240.c
+> @@ -53,7 +53,7 @@
+>  #define MMC35240_CTRL1_BW_SHIFT		0
+>  
+>  #define MMC35240_WAIT_CHARGE_PUMP	50000	/* us */
+> -#define MMC53240_WAIT_SET_RESET		1000	/* us */
+> +#define MMC35240_WAIT_SET_RESET		1000	/* us */
+>  
+>  /*
+>   * Memsic OTP process code piece is put here for reference:
+> @@ -225,7 +225,7 @@ static int mmc35240_init(struct mmc35240_data *data)
+>  	ret = mmc35240_hw_set(data, true);
+>  	if (ret < 0)
+>  		return ret;
+> -	usleep_range(MMC53240_WAIT_SET_RESET, MMC53240_WAIT_SET_RESET + 1);
+> +	usleep_range(MMC35240_WAIT_SET_RESET, MMC35240_WAIT_SET_RESET + 1);
+>  
+>  	ret = mmc35240_hw_set(data, false);
+>  	if (ret < 0)
