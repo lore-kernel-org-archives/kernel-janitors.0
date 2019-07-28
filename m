@@ -1,28 +1,25 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jul 2019 15:07:17 +0000
-Subject: [PATCH 0/3] NFS: Adjustments for three function implementations
-Message-Id: <cb79bcb1-0fd6-1b7f-c131-5883f09ad105@web.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 28 Jul 2019 09:59:26 +0000
+Subject: Re: [PATCH][next] gpio: bd70528: fix spelling misstake "debouce" -> "debounce"
+Message-Id: <CACRpkdZvmbCkfCn=PqREp=v7bB7OaGG9+B8_PG5+nK_=CRWM8w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190628161419.26439-1-colin.king@canonical.com>
+In-Reply-To: <20190628161419.26439-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee.jones@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 Jul 2019 17:02:05 +0200
+On Fri, Jun 28, 2019 at 6:14 PM Colin King <colin.king@canonical.com> wrote:
 
-A few update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (3):
-  Use seq_putc() in nfs_show_stats()
-  Replace 16 seq_printf() calls by seq_puts()
-  Three function calls less
+Patch applied.
 
- fs/nfs/nfs4xdr.c |  5 +----
- fs/nfs/super.c   | 53 ++++++++++++++++++++++++------------------------
- 2 files changed, 27 insertions(+), 31 deletions(-)
-
---
-2.22.0
+Yours,
+Linus Walleij
