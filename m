@@ -1,80 +1,42 @@
-From: Joonwon Kang <kjw1627@gmail.com>
-Date: Wed, 31 Jul 2019 16:25:37 +0000
-Subject: Re: [PATCH] randstruct: fix a bug in is_pure_ops_struct()
-Message-Id: <20190731162537.GA23152@host>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 28 Jul 2019 17:11:24 +0000
+Subject: [PATCH] media: vsp1: fix memory leak of dl on error return path
+Message-Id: <20190728171124.14202-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190727155841.GA13586@host>
- <201907301008.622218EE5@keescook>
-In-Reply-To: <201907301008.622218EE5@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kees Cook <keescook@chromium.org>
-Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 10:11:19AM -0700, Kees Cook wrote:
-> On Sun, Jul 28, 2019 at 12:58:41AM +0900, Joonwon Kang wrote:
-> > Before this, there were false negatives in the case where a struct
-> > contains other structs which contain only function pointers because
-> > of unreachable code in is_pure_ops_struct().
-> 
-> Ah, very true. Something like:
-> 
-> struct internal {
-> 	void (*callback)(void);
-> };
-> 
-> struct wrapper {
-> 	struct internal foo;
-> 	void (*other_callback)(void);
-> };
-> 
-> would have not been detected as is_pure_ops_struct()?
-> 
-> How did you notice this? (Are there cases of this in the kernel?)
+From: Colin Ian King <colin.king@canonical.com>
 
-When I compiled kernel with allyesconfig, there seemed to be no such cases,
-but I found the bug just by code review and test.
-However, I would like to slightly modify this patch and add one more patch.
-I will send the patch set soon.
+Currently when the call vsp1_dl_body_get fails and returns null the
+error return path leaks the allocation of dl. Fix this by kfree'ing
+dl before returning.
 
-> 
-> > Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
-> 
-> Applied; thanks!
-> 
-> -Kees
-> 
-> > ---
-> >  scripts/gcc-plugins/randomize_layout_plugin.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-> > index 6d5bbd31db7f..a123282a4fcd 100644
-> > --- a/scripts/gcc-plugins/randomize_layout_plugin.c
-> > +++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-> > @@ -443,13 +443,12 @@ static int is_pure_ops_struct(const_tree node)
-> >  		if (node = fieldtype)
-> >  			continue;
-> >  
-> > -		if (!is_fptr(fieldtype))
-> > -			return 0;
-> > -
-> > -		if (code != RECORD_TYPE && code != UNION_TYPE)
-> > -			continue;
-> > +		if (code = RECORD_TYPE || code = UNION_TYPE) {
-> > +			if (!is_pure_ops_struct(fieldtype))
-> > +				return 0;
-> > +		}
-> >  
-> > -		if (!is_pure_ops_struct(fieldtype))
-> > +		if (!is_fptr(fieldtype))
-> >  			return 0;
-> >  	}
-> >  
-> > -- 
-> > 2.17.1
-> > 
-> 
-> -- 
-> Kees Cook
+Addresses-Coverity: ("Resource leak")
+Fixes: 5d7936b8e27d ("media: vsp1: Convert display lists to use new body pool")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 104b6f514536..d7b43037e500 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -557,8 +557,10 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
+ 
+ 	/* Get a default body for our list. */
+ 	dl->body0 = vsp1_dl_body_get(dlm->pool);
+-	if (!dl->body0)
++	if (!dl->body0) {
++		kfree(dl);
+ 		return NULL;
++	}
+ 
+ 	header_offset = dl->body0->max_entries * sizeof(*dl->body0->entries);
+ 
+-- 
+2.20.1
