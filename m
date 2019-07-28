@@ -1,42 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 24 Jul 2019 05:07:51 +0000
-Subject: [PATCH] taskstats: Fix a typo - taskstsats --> taskstats
-Message-Id: <20190724050751.30170-1-christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 28 Jul 2019 10:00:14 +0000
+Subject: Re: [PATCH][next] gpio: bd70528: remove redundant assignment to variable ret
+Message-Id: <CACRpkdYaVT_j5Ky-nd8_1F0mG3yqBWaQ_ju8g2zSb1O+565ozw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190629123306.12519-1-colin.king@canonical.com>
+In-Reply-To: <20190629123306.12519-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bsingharora@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Colin King <colin.king@canonical.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-There is an extra 's' in 'taskstsats', remove it.
+On Sat, Jun 29, 2019 at 2:33 PM Colin King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- kernel/taskstats.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variable ret is being initialized with a value that is never read
+> and ret is being re-assigned a little later on. The assignment is
+> redundant and hence can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/kernel/taskstats.c b/kernel/taskstats.c
-index 13a0f2e6ebc2..30578b139d16 100644
---- a/kernel/taskstats.c
-+++ b/kernel/taskstats.c
-@@ -163,7 +163,7 @@ static void fill_stats(struct user_namespace *user_ns,
- 	memset(stats, 0, sizeof(*stats));
- 	/*
- 	 * Each accounting subsystem adds calls to its functions to
--	 * fill in relevant parts of struct taskstsats as follows
-+	 * fill in relevant parts of struct taskstats as follows
- 	 *
- 	 *	per-task-foo(stats, tsk);
- 	 */
-@@ -222,7 +222,7 @@ static int fill_stats_for_tgid(pid_t tgid, struct taskstats *stats)
- 			continue;
- 		/*
- 		 * Accounting subsystem can call its functions here to
--		 * fill in relevant parts of struct taskstsats as follows
-+		 * fill in relevant parts of struct taskstats as follows
- 		 *
- 		 *	per-task-foo(stats, tsk);
- 		 */
--- 
-2.20.1
+Patch applied.
+
+Yours,
+Linus Walleij
