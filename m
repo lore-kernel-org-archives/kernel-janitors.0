@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 08 Jul 2019 02:35:04 +0000
-Subject: Re: [PATCH net-next] gve: Fix error return code in gve_alloc_qpls()
-Message-Id: <20190707.193504.258563830031901437.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 28 Jul 2019 18:04:07 +0000
+Subject: [PATCH] orangefs: remove redundant assignment to err
+Message-Id: <20190728180407.15156-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190705011642.156707-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190705011642.156707-1-weiyongjun1@huawei.com>
+References: <20190511132700.4862-1-colin.king@canonical.com>
+In-Reply-To: <20190511132700.4862-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: csully@google.com, sagis@google.com, jonolson@google.com, colin.king@canonical.com, willemb@google.com, lrizzo@google.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 5 Jul 2019 01:16:42 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Variable err is initialized to a value that is never read and it
+is re-assigned later.  The initialization is redundant and can
+be removed.
 
-Applied, thank you.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/orangefs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 0c337d8bdaab..efb12197da18 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -940,7 +940,7 @@ int orangefs_setattr(struct dentry *dentry, struct iattr *iattr)
+ int orangefs_getattr(const struct path *path, struct kstat *stat,
+ 		     u32 request_mask, unsigned int flags)
+ {
+-	int ret = -ENOENT;
++	int ret;
+ 	struct inode *inode = path->dentry->d_inode;
+ 
+ 	gossip_debug(GOSSIP_INODE_DEBUG,
+-- 
+2.20.1
