@@ -1,86 +1,45 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 02 Jul 2019 22:50:31 +0000
-Subject: Re: [PATCH][next] selftests/x86: fix spelling mistake "FAILT" -> "FAIL"
-Message-Id: <4a82a57a-9f36-d525-6271-4da01bfd5241@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 29 Jul 2019 12:03:23 +0000
+Subject: [PATCH][V2] drivers: thermal: processor_thermal_device: fix missing bitwise-or operators
+Message-Id: <20190729120323.15838-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190701130431.13391-1-colin.king@canonical.com>
- <CALCETrVo0rJVxsYvo=abDfFCZHBuCiB0coSBXoDeP_emSZgESg@mail.gmail.com>
- <6e5a9bed-4f7f-4851-0421-2b440ff1f584@kernel.org>
- <9ba791d5-0d67-9834-90e9-e1dca307d386@kernel.org>
- <0031e09b-e309-3976-09b1-dc8d10365aee@canonical.com>
- <aec8c4b5-a82a-74c0-f60f-869786e4a2fa@kernel.org>
-In-Reply-To: <aec8c4b5-a82a-74c0-f60f-869786e4a2fa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: shuah <shuah@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/07/2019 23:48, shuah wrote:
-> On 7/2/19 4:42 PM, Colin Ian King wrote:
->> On 02/07/2019 20:25, shuah wrote:
->>> On 7/2/19 8:22 AM, shuah wrote:
->>>> On 7/1/19 11:48 AM, Andy Lutomirski wrote:
->>>>> On Mon, Jul 1, 2019 at 6:04 AM Colin King <colin.king@canonical.com>
->>>>> wrote:
->>>>>>
->>>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>>
->>>>>> There is an spelling mistake in an a test error message. Fix it.
->>>>>>
->>>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>>>> ---
->>>>>>    tools/testing/selftests/x86/test_vsyscall.c | 2 +-
->>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/tools/testing/selftests/x86/test_vsyscall.c
->>>>>> b/tools/testing/selftests/x86/test_vsyscall.c
->>>>>> index 4602326b8f5b..a4f4d4cf22c3 100644
->>>>>> --- a/tools/testing/selftests/x86/test_vsyscall.c
->>>>>> +++ b/tools/testing/selftests/x86/test_vsyscall.c
->>>>>> @@ -451,7 +451,7 @@ static int test_vsys_x(void)
->>>>>>                   printf("[OK]\tExecuting the vsyscall page failed:
->>>>>> #PF(0x%lx)\n",
->>>>>>                          segv_err);
->>>>>>           } else {
->>>>>> -               printf("[FAILT]\tExecution failed with the wrong
->>>>>> error: #PF(0x%lx)\n",
->>>>>> +               printf("[FAIL]\tExecution failed with the wrong
->>>>>> error: #PF(0x%lx)\n",
->>>>>>                          segv_err);
->>>>>>                   return 1;
->>>>>>           }
->>>>>> -- 
->>>>>> 2.20.1
->>>>>>
->>>>>
->>>>> Acked-by: Andy Lutomirski <luto@kernel.org>
->>>>>
->>>>
->>>> Thanks Andy!
->>>>
->>>> I will queue this up for 5.3
->>>>
->>>> -- Shuah
->>>>
->>>
->>> Hi Colin,
->>>
->>> Checkpatch warning on this. Probably failed on the original patch.
->>> Could you please fix the checkpatch warn, and send v2.
->>
->> If I split the line, I get another checkpatch warning:
->>
->> "WARNING: quoted string split across lines"
->>
->> Either way checkpatch emits a warning. The convention is to not break
->> literal strings, and the line is only a few chars over the 80 char
->> boundary, so the V1 of the patch is the way it should be IMHO.
->>
-> 
-> As such this existed before your patch. I will apply v1.
+From: Colin Ian King <colin.king@canonical.com>
 
-Cool, thanks Shuah.
-> 
-> thanks,
-> -- Shuah
+The variable val is having the top 8 bits cleared and then the variable is being
+re-assinged and setting just the top 8 bits.  I believe the intention was bitwise-or
+in the top 8 bits.  Fix this by replacing the = operators with &= and |= instead.
+
+Addresses-Coverity: ("Unused value")
+Fixes: b0c74b08517e ("drivers: thermal: processor_thermal_device: Export sysfs inteface for TCC offset")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Add in &= operator missing from V1. Doh.
+
+---
+ .../thermal/intel/int340x_thermal/processor_thermal_device.c  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index 6f6ac6a8e82d..97333fc4be42 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -163,8 +163,8 @@ static int tcc_offset_update(int tcc)
+ 	if (err)
+ 		return err;
+ 
+-	val = ~GENMASK_ULL(31, 24);
+-	val = (tcc & 0xff) << 24;
++	val &= ~GENMASK_ULL(31, 24);
++	val |= (tcc & 0xff) << 24;
+ 
+ 	err = wrmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, val);
+ 	if (err)
+-- 
+2.20.1
