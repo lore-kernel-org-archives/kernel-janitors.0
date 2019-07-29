@@ -1,24 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 21 Jul 2019 18:46:44 +0000
-Subject: Re: [PATCH] net: hns3: typo in the name of a constant
-Message-Id: <20190721.114644.1830499425455144315.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 29 Jul 2019 10:29:30 +0000
+Subject: [PATCH][next] drivers: thermal: processor_thermal_device: fix missing bitwise-or operator
+Message-Id: <20190729102930.2956-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721130831.16330-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721130831.16330-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, tanhuazhong@huawei.com, lipeng321@huawei.com, shenjian15@huawei.com, liuzhongzhu@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 15:08:31 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> All constant in 'enum HCLGE_MBX_OPCODE' start with HCLGE, except
-> 'HLCGE_MBX_PUSH_VLAN_INFO' (C and L switched)
-> 
-> s/HLC/HCL/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable val is having the top 8 bits cleared and then the variable
+is being re-assinged and setting just the top 8 bits.  I believe the
+intention was bitwise-or in the top 8 bits.  Fix this by replacing
+the = operator with |= instead.
 
-Applied.
+Addresses-Coverity: ("Unused value")
+Fixes: b0c74b08517e ("drivers: thermal: processor_thermal_device: Export sysfs inteface for TCC offset")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../thermal/intel/int340x_thermal/processor_thermal_device.c    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index 6f6ac6a8e82d..cb22317911ef 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -164,7 +164,7 @@ static int tcc_offset_update(int tcc)
+ 		return err;
+ 
+ 	val = ~GENMASK_ULL(31, 24);
+-	val = (tcc & 0xff) << 24;
++	val |= (tcc & 0xff) << 24;
+ 
+ 	err = wrmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, val);
+ 	if (err)
+-- 
+2.20.1
