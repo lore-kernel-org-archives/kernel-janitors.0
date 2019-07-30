@@ -1,30 +1,39 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 25 Jul 2019 06:59:40 +0000
-Subject: [PATCH net-next] can: sja1000: f81601: remove unused including <linux/version.h>
-Message-Id: <20190725065940.2118-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jul 2019 14:32:05 +0000
+Subject: [PATCH][net-next] mac80211: add missing null return check from call to ieee80211_get_sband
+Message-Id: <20190730143205.14261-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: John Crispin <john@phrozen.org>, Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The return from ieee80211_get_sband can potentially be a null pointer, so
+it seems prudent to add a null check to avoid a null pointer dereference
+on sband.
+
+Addresses-Coverity: ("Dereference null return")
+Fixes: 2ab45876756f ("mac80211: add support for the ADDBA extension element")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/can/sja1000/f81601.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/mac80211/agg-rx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/can/sja1000/f81601.c b/drivers/net/can/sja1000/f81601.c
-index 362a9d4f44d5..8f25e95814ef 100644
---- a/drivers/net/can/sja1000/f81601.c
-+++ b/drivers/net/can/sja1000/f81601.c
-@@ -14,7 +14,6 @@
- #include <linux/pci.h>
- #include <linux/can/dev.h>
- #include <linux/io.h>
--#include <linux/version.h>
+diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
+index 0e1bb43973b8..4d1c335e06e5 100644
+--- a/net/mac80211/agg-rx.c
++++ b/net/mac80211/agg-rx.c
+@@ -189,6 +189,8 @@ static void ieee80211_add_addbaext(struct ieee80211_sub_if_data *sdata,
+ 	u8 *pos;
  
- #include "sja1000.h"
- 
+ 	sband = ieee80211_get_sband(sdata);
++	if (!sband)
++		return;
+ 	he_cap = ieee80211_get_he_iftype_cap(sband, sdata->vif.type);
+ 	if (!he_cap)
+ 		return;
+-- 
+2.20.1
