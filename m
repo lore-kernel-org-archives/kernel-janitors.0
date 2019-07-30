@@ -1,7 +1,7 @@
 From: Petr Machata <petrm@mellanox.com>
-Date: Tue, 30 Jul 2019 11:05:25 +0000
+Date: Tue, 30 Jul 2019 11:12:35 +0000
 Subject: Re: [PATCH][next] mlxsw: spectrum_ptp: fix duplicated check on orig_egr_types
-Message-Id: <87k1bzzsss.fsf@mellanox.com>
+Message-Id: <87imrjzsgu.fsf@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190730102114.1506-1-colin.king@canonical.com>
  <87mugvzt1m.fsf@mellanox.com>
@@ -32,4 +32,5 @@ Petr Machata <petrm@mellanox.com> writes:
 >
 > Reviewed-by: Petr Machata <petrm@mellanox.com>
 
-However the patch should address "net", not "next". Can you please respin?
+I see that there is an identical problem in the code one block further.
+Can you take care of that as well, please? Or should I do it?
