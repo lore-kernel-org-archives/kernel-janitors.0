@@ -1,49 +1,53 @@
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date: Thu, 11 Jul 2019 14:41:01 +0000
-Subject: Re: Coccinelle: Checking of_node_put() calls with SmPL
-Message-Id: <23e06fc0-b969-44e9-a44d-f11b19dfdeca@linux.vnet.ibm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jul 2019 11:47:52 +0000
+Subject: [PATCH][net-next][V2] mlxsw: spectrum_ptp: fix duplicated check on orig_egr_types
+Message-Id: <20190730114752.24133-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201907111435459627761@zte.com.cn>
-In-Reply-To: <201907111435459627761@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: wen.yang99@zte.com.cn, Markus.Elfring@web.de, julia.lawall@lip6.fr
-Cc: wang.yi59@zte.com.cn, linux-pm@vger.kernel.org, rjw@rjwysocki.net, daniel.lezcano@linaro.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, oss@buserror.net, paulus@samba.org, xue.zhihong@zte.com.cn, linuxppc-dev@lists.ozlabs.org, cheng.shengyu@zte.com.cn
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Petr Machata <petrm@mellanox.com>, Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMDcvMTAvMjAxOSAxMTozNSBQTSwgd2VuLnlhbmc5OUB6dGUuY29tLmNuIHdyb3RlOgo+Pj4g
-d2UgZGV2ZWxvcGVkIGEgY29jY2luZWxsZSBzY3JpcHQgdG8gZGV0ZWN0IHN1Y2ggcHJvYmxlbXMu
-Cj4+Cj4+IFdvdWxkIHlvdSBmaW5kIHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rpb24g
-4oCcZHRfaW5pdF9pZGxlX2RyaXZlcuKAnQo+PiBzdXNwaWNpb3VzIGFjY29yZGluZyB0byBkaXNj
-dXNzZWQgc291cmNlIGNvZGUgc2VhcmNoIHBhdHRlcm5zPwo+PiBodHRwczovL2dpdC5rZXJuZWwu
-b3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9kcml2
-ZXJzL2NwdWlkbGUvZHRfaWRsZV9zdGF0ZXMuYz9pZOlhODNiZDIzMjIwMzVlZDlkN2RjZjM1NzUz
-ZDNmOTg0ZDc2YzZhNSNuMjA4Cj4+IGh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y1
-LjIvc291cmNlL2RyaXZlcnMvY3B1aWRsZS9kdF9pZGxlX3N0YXRlcy5jI0wyMDgKPj4KPj4KPj4+
-IFRoaXMgc2NyaXB0IGlzIHN0aWxsIGJlaW5nIGltcHJvdmVkLgo+Pgo+PiBXaWxsIGNvcnJlc3Bv
-bmRpbmcgc29mdHdhcmUgZGV2ZWxvcG1lbnQgY2hhbGxlbmdlcyBiZWNvbWUgbW9yZSBpbnRlcmVz
-dGluZz8KPiAKPiBIZWxsbyBNYXJrdXMsCj4gVGhpcyBpcyB0aGUgc2ltcGxpZmllZCBjb2RlIHBh
-dHRlcm4gZm9yIGl0Ogo+IAo+IDE3MiAgICAgICAgIGZvciAoaSA9IDA7IDsgaSsrKSB7CgpUaGlz
-IGxvb3AgY2FuIG9ubHkgYmUgZXhpdGVkIG9uIGEgYnJlYWsuCgo+IDE3MyAgICAgICAgICAgICAg
-ICAgc3RhdGVfbm9kZSA9IG9mX3BhcnNlX3BoYW5kbGUoLi4uKTsgICAgIC0tLT4gT2J0YWluIGhl
-cmUKPiAuLi4KPiAxNzcgICAgICAgICAgICAgICAgIG1hdGNoX2lkID0gb2ZfbWF0Y2hfbm9kZSht
-YXRjaGVzLCBzdGF0ZV9ub2RlKTsKPiAxNzggICAgICAgICAgICAgICAgIGlmICghbWF0Y2hfaWQp
-IHsKPiAxNzkgICAgICAgICAgICAgICAgICAgICAgICAgZXJyID0gLUVOT0RFVjsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAKPiAxODAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7
-ICAgICAgICAgICAgICAgICAgICAgICAgIC0tLT4gIEp1bXAgb3V0IG9mIHRoZSBsb29wIHdpdGhv
-dXQgcmVsZWFzaW5nIGl0Cj4gMTgxICAgICAgICAgICAgICAgICB9Cj4gMTgyIAo+IDE4MyAgICAg
-ICAgICAgICAgICAgaWYgKCFvZl9kZXZpY2VfaXNfYXZhaWxhYmxlKHN0YXRlX25vZGUpKSB7Cj4g
-MTg0ICAgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0KHN0YXRlX25vZGUpOwo+IDE4
-NSAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsgICAgICAgICAgICAgICAgICAgIC0t
-LT4gIFJlbGVhc2UgdGhlIG9iamVjdCByZWZlcmVuY2VzIHdpdGhpbiBhIGxvb3AKPiAxODYgICAg
-ICAgICAgICAgICAgIH0KPiAuLi4KPiAyMDggICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0KHN0
-YXRlX25vZGUpOyAgLS0+ICBSZWxlYXNlIHRoZSBvYmplY3QgcmVmZXJlbmNlcyB3aXRoaW4gYSBs
-b29wCgpUaGlzIGlzIHJlcXVpcmVkIGF0IHRoZSBlbmQgb2YgZXZlcnkgbG9vcCBvciBjb250aW51
-ZSB0byBmcmVlIHRoZSByZWZlcmVuY2UuCk9ubHkgYSBicmVhayB3aWxsIGV4aXQgdGhlIGxvb3Ag
-d2hlcmUgd2UgaGl0IHRoZSBiZWxvdyBvZl9ub2RlX3B1dCgpLgoKPiAyMDkgICAgICAgICB9Cj4g
-MjEwIAo+IDIxMSAgICAgICAgIG9mX25vZGVfcHV0KHN0YXRlX25vZGUpOyAgICAgICAtLT4gICAg
-VGhlcmUgbWF5IGJlIGRvdWJsZSBmcmVlIGhlcmUuCgpOb25lIG9mIHRoZSBicmVhayBjb25kaXRp
-b25zIGNhbGwgb2Zfbm9kZV9wdXQoKSwgc28gaXQgbmVlZHMgdG8gYmUgY2FsbGVkIGhlcmUuCgot
-VHlyZWwKCj4gCj4gVGhpcyBjb2RlIHBhdHRlcm4gaXMgdmVyeSBpbnRlcmVzdGluZyBhbmQgdGhl
-IGNvY2NpbmVsbGUgc29mdHdhcmUgc2hvdWxkIGFsc28gcmVjb2duaXplIHRoaXMgcGF0dGVybi4K
-PiAKPiBSZWdhcmRzLAo+IFdlbgo+IAo=
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently are duplicated checks on orig_egr_types which are
+redundant, I believe this is a typo and should actually be
+orig_ing_types || orig_egr_types instead of the expression
+orig_egr_types || orig_egr_types.  Fix these.
+
+Addresses-Coverity: ("Same on both sides")
+Fixes: c6b36bdd04b5 ("mlxsw: spectrum_ptp: Increase parsing depth when PTP is enabled")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
+index 98c5ba3200bc..63b07edd9d81 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
+@@ -999,14 +999,14 @@ static int mlxsw_sp1_ptp_mtpppc_update(struct mlxsw_sp_port *mlxsw_sp_port,
+ 		}
+ 	}
+ 
+-	if ((ing_types || egr_types) && !(orig_egr_types || orig_egr_types)) {
++	if ((ing_types || egr_types) && !(orig_ing_types || orig_egr_types)) {
+ 		err = mlxsw_sp_nve_inc_parsing_depth_get(mlxsw_sp);
+ 		if (err) {
+ 			netdev_err(mlxsw_sp_port->dev, "Failed to increase parsing depth");
+ 			return err;
+ 		}
+ 	}
+-	if (!(ing_types || egr_types) && (orig_egr_types || orig_egr_types))
++	if (!(ing_types || egr_types) && (orig_ing_types || orig_egr_types))
+ 		mlxsw_sp_nve_inc_parsing_depth_put(mlxsw_sp);
+ 
+ 	return mlxsw_sp1_ptp_mtpppc_set(mlxsw_sp_port->mlxsw_sp,
+
+--
+
+V2: fix both occurances of this typo. Thanks to Petr Machata for spotting
+    the 2nd occurrance
+-- 
+2.20.1
