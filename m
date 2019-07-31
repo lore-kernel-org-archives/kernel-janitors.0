@@ -1,51 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 01 Jul 2019 20:24:37 +0000
-Subject: [PATCH] clk: Use seq_puts() in possible_parent_show()
-Message-Id: <5961554a-6416-48ea-44e2-d8e3c7576af0@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 31 Jul 2019 12:52:02 +0000
+Subject: [PATCH 2/2] usb: xhci: dbc: Use GFP_KERNEL instead of GFP_ATOMIC in 'xhci_dbc_alloc_requests()'
+Message-Id: <557765ac7a028fa77f0e1ac6148ef2c0904f8ab7.1564577335.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1564577335.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1564577335.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Jul 2019 22:20:40 +0200
+There is no need to use GFP_ATOMIC to allocate 'req'. GFP_KERNEL should be
+enough and is already used for another allocation juste a few lines below.
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function “seq_puts”.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/clk.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I've done my best to check if a spinlock can be hold when reaching this
+code. Apparently it is never the case.
+But double check to be sure that it is not the kmalloc that should use
+GFP_ATOMIC.
+---
+ drivers/usb/host/xhci-dbgtty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index efa593ecbfa9..140afebeb238 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3013,15 +3013,15 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
- 	 */
- 	parent = clk_core_get_parent_by_index(core, i);
- 	if (parent)
--		seq_printf(s, "%s", parent->name);
-+		seq_puts(s, parent->name);
- 	else if (core->parents[i].name)
--		seq_printf(s, "%s", core->parents[i].name);
-+		seq_puts(s, core->parents[i].name);
- 	else if (core->parents[i].fw_name)
- 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
- 	else if (core->parents[i].index >= 0)
--		seq_printf(s, "%s",
--			   of_clk_get_parent_name(core->of_node,
--						  core->parents[i].index));
-+		seq_puts(s,
-+			 of_clk_get_parent_name(core->of_node,
-+						core->parents[i].index));
- 	else
- 		seq_puts(s, "(missing)");
-
---
-2.22.0
+diff --git a/drivers/usb/host/xhci-dbgtty.c b/drivers/usb/host/xhci-dbgtty.c
+index 845939f8a0b8..be726c791323 100644
+--- a/drivers/usb/host/xhci-dbgtty.c
++++ b/drivers/usb/host/xhci-dbgtty.c
+@@ -139,7 +139,7 @@ xhci_dbc_alloc_requests(struct dbc_ep *dep, struct list_head *head,
+ 	struct dbc_request	*req;
+ 
+ 	for (i = 0; i < DBC_QUEUE_SIZE; i++) {
+-		req = dbc_alloc_request(dep, GFP_ATOMIC);
++		req = dbc_alloc_request(dep, GFP_KERNEL);
+ 		if (!req)
+ 			break;
+ 
+-- 
+2.20.1
