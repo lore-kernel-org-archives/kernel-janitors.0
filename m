@@ -1,38 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 05 Jul 2019 07:53:03 +0000
-Subject: [PATCH] ASoC: rt5665: remove redundant assignment to variable idx
-Message-Id: <20190705075303.14692-1-colin.king@canonical.com>
+Date: Wed, 31 Jul 2019 08:42:10 +0000
+Subject: [PATCH] media: pulse8-cec: remove redundant assignment to variable err
+Message-Id: <20190731084210.24911-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable idx is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+Variable err is being initialized with a value that is never read
+and err is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/rt5665.c | 2 +-
+ drivers/media/usb/pulse8-cec/pulse8-cec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5665.c b/sound/soc/codecs/rt5665.c
-index 87263317085a..c050d84a6916 100644
---- a/sound/soc/codecs/rt5665.c
-+++ b/sound/soc/codecs/rt5665.c
-@@ -1478,7 +1478,7 @@ static int set_dmic_clk(struct snd_soc_dapm_widget *w,
+diff --git a/drivers/media/usb/pulse8-cec/pulse8-cec.c b/drivers/media/usb/pulse8-cec/pulse8-cec.c
+index ac88ade94cda..85fc11829758 100644
+--- a/drivers/media/usb/pulse8-cec/pulse8-cec.c
++++ b/drivers/media/usb/pulse8-cec/pulse8-cec.c
+@@ -640,7 +640,7 @@ static int pulse8_connect(struct serio *serio, struct serio_driver *drv)
  {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	struct rt5665_priv *rt5665 = snd_soc_component_get_drvdata(component);
--	int pd, idx = -EINVAL;
-+	int pd, idx;
+ 	u32 caps = CEC_CAP_DEFAULTS | CEC_CAP_PHYS_ADDR | CEC_CAP_MONITOR_ALL;
+ 	struct pulse8 *pulse8;
+-	int err = -ENOMEM;
++	int err;
+ 	struct cec_log_addrs log_addrs = {};
+ 	u16 pa = CEC_PHYS_ADDR_INVALID;
  
- 	pd = rl6231_get_pre_div(rt5665->regmap,
- 		RT5665_ADDA_CLK_1, RT5665_I2S_PD1_SFT);
 -- 
 2.20.1
