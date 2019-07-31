@@ -1,62 +1,27 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Wed, 24 Jul 2019 14:38:15 +0000
-Subject: [PATCH v3] libertas: Fix a double free in if_spi_c2h_data()
-Message-Id: <9153261627a0f84b996e023f1349a2bc06dd03ee.camel@redhat.com>
+From: Joonwon Kang <kjw1627@gmail.com>
+Date: Wed, 31 Jul 2019 18:00:27 +0000
+Subject: [PATCH 0/2] fix is_pure_ops_struct()
+Message-Id: <cover.1564595346.git.kjw1627@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190626100926.GD3242@mwanda>
-         <be491ab35ba46111a1c90cc12b6d5ff6ea3f57e8.camel@redhat.com>
-         <20190626132340.GE28859@kadam>
-         <e679c9f99d6952f82924c71f036e4a196d0e72d4.camel@redhat.com>
-         <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
-In-Reply-To: <ee4472e4728becc9713962ba264742cb1f337098.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Philip Rakity <prakity@yahoo.com>, libertas-dev@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Dan Carpenter <dan.carpenter@oracle.com>, Allison Randal <allison@lohutok.net>
+To: keescook@chromium.org
+Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
 
-The lbs_process_rxed_packet() frees the skb.  It didn't originally, but
-we fixed it in commit f54930f36311 ("libertas: don't leak skb on receive
-error").
+Hello,
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Dan Williams <dcbw@redhat.com>
----
+This series fixes unreachable code bug and removes dead code in
+is_pure_ops_struct().
 
-Kalle: sorry about the build error; previous version of the patch before I fixed it.
-Here's the correct one.
+Thanks.
 
- drivers/net/wireless/marvell/libertas/if_spi.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Joonwon Kang (2):
+  randstruct: fix a bug in is_pure_ops_struct()
+  randstruct: remove dead code in is_pure_ops_struct()
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net/wireless/marvell/libertas/if_spi.c
-index 27067e79e83fe..d07fe82c557e8 100644
---- a/drivers/net/wireless/marvell/libertas/if_spi.c
-+++ b/drivers/net/wireless/marvell/libertas/if_spi.c
-@@ -766,19 +766,15 @@ static int if_spi_c2h_data(struct if_spi_card *card)
- 
- 	/* Read the data from the WLAN module into our skb... */
- 	err = spu_read(card, IF_SPI_DATA_RDWRPORT_REG, data, ALIGN(len, 4));
--	if (err)
--		goto free_skb;
-+	if (err) {
-+		dev_kfree_skb(skb);
-+		goto out;
-+	}
- 
- 	/* pass the SKB to libertas */
- 	err = lbs_process_rxed_packet(card->priv, skb);
--	if (err)
--		goto free_skb;
-+	/* lbs_process_rxed_packet() consumes the skb */
- 
--	/* success */
--	goto out;
--
--free_skb:
--	dev_kfree_skb(skb);
- out:
- 	if (err)
- 		netdev_err(priv->dev, "%s: err=%d\n", __func__, err);
+ scripts/gcc-plugins/randomize_layout_plugin.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
 -- 
-2.20.1
+2.17.1
