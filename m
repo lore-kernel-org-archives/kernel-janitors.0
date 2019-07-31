@@ -1,35 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jul 2019 06:40:30 +0000
-Subject: Re: [2/2] ASoC: samsung: odroid: fix a double-free issue for cpu_dai
-Message-Id: <23d82d8b-d600-b28f-9444-65afe04a781a@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 31 Jul 2019 08:06:48 +0000
+Subject: [PATCH 2/2] net: ag71xx: Use GFP_KERNEL instead of GFP_ATOMIC in 'ag71xx_rings_init()'
+Message-Id: <75ee52ae065ce9cb1f32d88939b166773316dc45.1564560130.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201907150949139435825@zte.com.cn>
-In-Reply-To: <201907150949139435825@zte.com.cn>
+References: <cover.1564560130.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1564560130.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wen Yang <wen.yang99@zte.com.cn>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jcliburn@gmail.com, davem@davemloft.net, chris.snook@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> These two updates fix two different bugs.
+There is no need to use GFP_ATOMIC here, GFP_KERNEL should be enough.
+The 'kcalloc()' just a few lines above, already uses GFP_KERNEL.
 
-I can follow this view to some degree.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've done my best to check if a spinlock can be hold when reaching this
+code. Apparently it is never the case.
+But double check to be sure that it is not the kcalloc that should use
+GFP_ATOMIC.
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> and the other is the double-free issue
-
-This programming error affects also the use of data structures which became invalid.
-https://cwe.mitre.org/data/definitions/415.html#oc_415_Notes
-
-
-> So we sent two patches to fix them separately.
-
-You would like to fix something according to two variables (of the data type “device_node *”)
-in the same function implementation.
-Please combine these corrections in an update step under a topic like
-“ASoC: samsung: odroid: Fix handling of device node references in odroid_audio_probe()”.
-(The previous update step would contain still a known programming mistake otherwise,
-wouldn't it?)
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 40a8717f51b1..7548247455d7 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1141,7 +1141,7 @@ static int ag71xx_rings_init(struct ag71xx *ag)
+ 
+ 	tx->descs_cpu = dma_alloc_coherent(&ag->pdev->dev,
+ 					   ring_size * AG71XX_DESC_SIZE,
+-					   &tx->descs_dma, GFP_ATOMIC);
++					   &tx->descs_dma, GFP_KERNEL);
+ 	if (!tx->descs_cpu) {
+ 		kfree(tx->buf);
+ 		tx->buf = NULL;
+-- 
+2.20.1
