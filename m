@@ -1,25 +1,70 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 21 Jul 2019 18:42:50 +0000
-Subject: Re: [PATCH] tipc: Fix a typo
-Message-Id: <20190721.114250.1893607784895600131.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jul 2019 22:22:14 +0000
+Subject: [PATCH] scsi: pm80xx: remove redundant assignments to variable rc
+Message-Id: <20190731222214.15720-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190721103811.29724-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190721103811.29724-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jack Wang <jinpu.wang@cloud.ionos.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 12:38:11 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> s/tipc_toprsv_listener_data_ready/tipc_topsrv_listener_data_ready/
-> (r and s switched in topsrv)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The function name could also be removed from the comment. It does not
-> bring any useful information IMHO.
+There are several occasions where variable rc is being initialized
+with a value that is never read and error is being re-assigned a
+little later on.  Clean up the code by removing rc entirely and
+just returning the return value from the call to pm8001_issue_ssp_tmf
 
-Applied, thanks Christophe.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm8001_sas.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index 9453705f643a..7e48154e11c3 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -1308,28 +1308,22 @@ int pm8001_abort_task(struct sas_task *task)
+ 
+ int pm8001_abort_task_set(struct domain_device *dev, u8 *lun)
+ {
+-	int rc = TMF_RESP_FUNC_FAILED;
+ 	struct pm8001_tmf_task tmf_task;
+ 
+ 	tmf_task.tmf = TMF_ABORT_TASK_SET;
+-	rc = pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+-	return rc;
++	return pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+ }
+ 
+ int pm8001_clear_aca(struct domain_device *dev, u8 *lun)
+ {
+-	int rc = TMF_RESP_FUNC_FAILED;
+ 	struct pm8001_tmf_task tmf_task;
+ 
+ 	tmf_task.tmf = TMF_CLEAR_ACA;
+-	rc = pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+-
+-	return rc;
++	return pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+ }
+ 
+ int pm8001_clear_task_set(struct domain_device *dev, u8 *lun)
+ {
+-	int rc = TMF_RESP_FUNC_FAILED;
+ 	struct pm8001_tmf_task tmf_task;
+ 	struct pm8001_device *pm8001_dev = dev->lldd_dev;
+ 	struct pm8001_hba_info *pm8001_ha = pm8001_find_ha_by_dev(dev);
+@@ -1338,7 +1332,6 @@ int pm8001_clear_task_set(struct domain_device *dev, u8 *lun)
+ 		pm8001_printk("I_T_L_Q clear task set[%x]\n",
+ 		pm8001_dev->device_id));
+ 	tmf_task.tmf = TMF_CLEAR_TASK_SET;
+-	rc = pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+-	return rc;
++	return pm8001_issue_ssp_tmf(dev, lun, &tmf_task);
+ }
+ 
+-- 
+2.20.1
