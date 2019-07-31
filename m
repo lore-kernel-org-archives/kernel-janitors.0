@@ -1,34 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jul 2019 11:01:30 +0000
-Subject: Re: fs/seq_file: Replace a seq_printf() call by seq_puts() in seq_hex_dump()
-Message-Id: <f62fdb13-59b7-4e5d-b64a-37b96b5c0125@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jul 2019 09:47:36 +0000
+Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to variable rtstatus
+Message-Id: <20190731094736.28637-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
- <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
-In-Reply-To: <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Enrico Weigelt <lkml@metux.net>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Straube <straube.linux@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Looks good,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your feedback.
+Variable rtstatus is being initialized with a value that is never read
+and rtstatus is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.  Also, make rtstatus a bool to
+match the function return type.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8188eu/hal/bb_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> but have you checked whether "m" could ever be NULL
-
-I wonder about this enquiry.
-
-This function parameter should be valid as usual.
-Thus it should not be a null pointer under ordinary conditions.
-
-
-> and whether seq_puts() has a check for that ?
-
-These output functions do not provide an explicit sanity check for their first parameter
-so far.
-
-Regards,
-Markus
+diff --git a/drivers/staging/rtl8188eu/hal/bb_cfg.c b/drivers/staging/rtl8188eu/hal/bb_cfg.c
+index 11e0bb9c67d7..51882858fcf0 100644
+--- a/drivers/staging/rtl8188eu/hal/bb_cfg.c
++++ b/drivers/staging/rtl8188eu/hal/bb_cfg.c
+@@ -653,7 +653,7 @@ static bool config_parafile(struct adapter *adapt)
+ 
+ bool rtl88eu_phy_bb_config(struct adapter *adapt)
+ {
+-	int rtstatus = true;
++	bool rtstatus;
+ 	u32 regval;
+ 	u8 crystal_cap;
+ 
+-- 
+2.20.1
