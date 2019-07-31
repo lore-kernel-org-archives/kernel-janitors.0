@@ -1,38 +1,83 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jul 2019 09:33:22 +0000
-Subject: Re: ima: Replace two seq_printf() calls by seq_puts() in ima_show_template_data_ascii()
-Message-Id: <6b7db918-8d0b-b280-91e4-c15e22451cfc@web.de>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 31 Jul 2019 11:29:52 +0000
+Subject: Applied "ASoC: codec2codec: fix missing return of error return code" to the asoc tree
+Message-Id: <20190731112952.7BAE72742D57@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e96eac40-0745-80b5-6aab-f872e6415031@web.de>
- <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
-In-Reply-To: <d94bfdb9d53b46059787b9bdd10c5919@AcuMS.aculab.com>
+References: <20190726123327.10467-1-colin.king@canonical.com>
+In-Reply-To: <20190726123327.10467-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Laight <David.Laight@ACULAB.COM>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 
-> So this is probably just a minor performance improvement in a code
-> path where it really doesn't matter.
+The patch
 
-I imagine that another small software adjustment can help a bit
-to get nicer run time characteristics also at this place.
+   ASoC: codec2codec: fix missing return of error return code
 
+has been applied to the asoc tree at
 
->> +++ b/security/integrity/ima/ima_template_lib.c
->> @@ -74,7 +74,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
->>  	case DATA_FMT_DIGEST_WITH_ALGO:
->>  		buf_ptr = strnchr(field_data->data, buflen, ':');
->>  		if (buf_ptr != field_data->data)
->> -			seq_printf(m, "%s", field_data->data);
->> +			seq_puts(m, field_data->data);
->>
->>  		/* skip ':' and '\0' */
->>  		buf_ptr += 2;
->
-> That code looks highly suspect!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-Would you like to change this implementation detail any more?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Regards,
-Markus
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c8415833ec242b9ddf73bf9e1057e12f9b0fcd16 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 13:33:27 +0100
+Subject: [PATCH] ASoC: codec2codec: fix missing return of error return code
+
+Currently in function snd_soc_dai_link_event_pre_pmu the error return
+code in variable err is being set but this is not actually being returned,
+the function just returns zero even when there are failures. Fix this by
+returning the error return code.
+
+Addresses-Coverity: ("Unused value")
+Fixes: 3dcfb397dad2 ("ASoC: codec2codec: deal with params when necessary")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190726123327.10467-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-dapm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index be9bb05b0165..2d183e2d23de 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3776,7 +3776,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 	struct snd_pcm_hw_params *params = NULL;
+ 	const struct snd_soc_pcm_stream *config = NULL;
+ 	unsigned int fmt;
+-	int ret;
++	int ret = 0;
+ 
+ 	params = kzalloc(sizeof(*params), GFP_KERNEL);
+ 	if (!params)
+@@ -3865,7 +3865,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 
+ out:
+ 	kfree(params);
+-	return 0;
++	return ret;
+ }
+ 
+ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+-- 
+2.20.1
