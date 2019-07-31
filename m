@@ -1,37 +1,47 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Fri, 05 Jul 2019 19:06:51 +0000
-Subject: Re: [PATCH] xtensa: One function call less in bootmem_init()
-Message-Id: <CAMo8BfK_VuL4-xtmY+jYDmrJ-t9a-AyPNCxS7-Db4HzAqpr_BA@mail.gmail.com>
+From: Joonwon Kang <kjw1627@gmail.com>
+Date: Wed, 31 Jul 2019 18:01:10 +0000
+Subject: [PATCH 1/2] randstruct: fix a bug in is_pure_ops_struct()
+Message-Id: <2ba5ebfa2c622ece4952b5068b4154213794e5c4.1564595346.git.kjw1627@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <495c9f2e-7880-ee9a-5c61-eee598bb24c2@web.de>
-In-Reply-To: <495c9f2e-7880-ee9a-5c61-eee598bb24c2@web.de>
+References: <cover.1564595346.git.kjw1627@gmail.com>
+In-Reply-To: <cover.1564595346.git.kjw1627@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Chris Zankel <chris@zankel.net>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: keescook@chromium.org
+Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
 
-Hi Markus,
+Before this, there were false negatives in the case where a struct
+contains other structs which contain only function pointers because
+of unreachable code in is_pure_ops_struct().
 
-On Fri, Jul 5, 2019 at 9:43 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 5 Jul 2019 18:33:58 +0200
->
-> Avoid an extra function call by using a ternary operator instead of
-> a conditional statement for a setting selection.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/xtensa/mm/init.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+---
+ scripts/gcc-plugins/randomize_layout_plugin.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks for the patch. It doesn't change generated code since
-PHYS_OFFSET is a build-time constant, but it's a nice cleanup.
-Applied to my xtensa tree.
-
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index 6d5bbd31db7f..bd29e4e7a524 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -443,13 +443,13 @@ static int is_pure_ops_struct(const_tree node)
+ 		if (node = fieldtype)
+ 			continue;
+ 
+-		if (!is_fptr(fieldtype))
+-			return 0;
+-
+-		if (code != RECORD_TYPE && code != UNION_TYPE)
++		if (code = RECORD_TYPE || code = UNION_TYPE) {
++			if (!is_pure_ops_struct(fieldtype))
++				return 0;
+ 			continue;
++		}
+ 
+-		if (!is_pure_ops_struct(fieldtype))
++		if (!is_fptr(fieldtype))
+ 			return 0;
+ 	}
+ 
 -- 
-Thanks.
--- Max
+2.17.1
