@@ -1,38 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 09:05:26 +0000
-Subject: [PATCH] cifs: remove redundant assignment to variable rc
-Message-Id: <20190731090526.27245-1-colin.king@canonical.com>
+From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+Date: Wed, 31 Jul 2019 10:09:31 +0000
+Subject: Re: [PATCH] cifs: remove redundant assignment to variable rc
+Message-Id: <87r266seg4.fsf@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190731090526.27245-1-colin.king@canonical.com>
+In-Reply-To: <20190731090526.27245-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> writes:
+> Variable rc is being initialized with a value that is never read
+> and rc is being re-assigned a little later on. The assignment is
+> redundant and hence can be removed.
 
-Variable rc is being initialized with a value that is never read
-and rc is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+I think I would actually rather have rc set to an error by default than
+uninitialized. Just my personal opinion.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/smb2pdu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index ee5d74988a9f..a653c429e8dc 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -3617,7 +3617,7 @@ SMB2_read(const unsigned int xid, struct cifs_io_parms *io_parms,
- 	  unsigned int *nbytes, char **buf, int *buf_type)
- {
- 	struct smb_rqst rqst;
--	int resp_buftype, rc = -EACCES;
-+	int resp_buftype, rc;
- 	struct smb2_read_plain_req *req = NULL;
- 	struct smb2_read_rsp *rsp = NULL;
- 	struct kvec iov[1];
+Cheers,
 -- 
-2.20.1
+Aurélien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah HRB 21284 (AG Nürnberg)
