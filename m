@@ -1,42 +1,33 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 02 Jul 2019 17:50:20 +0000
-Subject: [PATCH] locking/lockdep: Replace two seq_printf() calls by seq_puts() in print_name()
-Message-Id: <f842ca82-b9f1-6aa6-7868-6b6e8c6b0f76@web.de>
+Date: Wed, 31 Jul 2019 06:44:29 +0000
+Subject: Re: patch "coccinelle: Add script to check for platform_get_irq() excessive" added to driver-core-ne
+Message-Id: <00bc6fea-f505-56d2-3803-1ac0882436b7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <156455237123959@kroah.com>
+In-Reply-To: <156455237123959@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <swboyd@chromium.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+Cc: Rob Herring <robh@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Nicolas Palix <nicolas.palix@imag.fr>, Russell King <linux@armlinux.org.uk>, Javier Martinez Canillas <javierm@redhat.com>, Andrzej Hajda <a.hajda@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mark Brown <broonie@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Jul 2019 19:45:26 +0200
+> This is a note to let you know that I've just added the patch titled
+>
+>     coccinelle: Add script to check for platform_get_irq() excessive
+>
+> to my driver-core git tree which can be found at
+>     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> in the driver-core-next branch.
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function “seq_puts”.
+I find it interesting somehow that this version of a script for
+the semantic patch language can be integrated already in this
+development branch.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- kernel/locking/lockdep_proc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The patch will also be merged in the next major kernel release
+> during the merge window.
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 9c49ec645d8b..5bc9187e6246 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -45,9 +45,9 @@ static void print_name(struct seq_file *m, struct lock_class *class)
+How much will questionable implementation details influence this process?
 
- 	if (!name) {
- 		name = __get_key_name(class->key, str);
--		seq_printf(m, "%s", name);
-+		seq_puts(m, name);
- 	} else{
--		seq_printf(m, "%s", name);
-+		seq_puts(m, name);
- 		if (class->name_version > 1)
- 			seq_printf(m, "#%d", class->name_version);
- 		if (class->subclass)
---
-2.22.0
+Regards,
+Markus
