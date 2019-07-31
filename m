@@ -1,51 +1,39 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 22 Jul 2019 18:56:09 +0000
-Subject: Re: Script to spot some typo based on the file name
-Message-Id: <alpine.DEB.2.21.1907221348390.5391@hadrien>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 31 Jul 2019 08:06:38 +0000
+Subject: [PATCH 1/2] net: ag71xx: Slighly simplify code in 'ag71xx_rings_init()'
+Message-Id: <08fbcfe0f913644fe538656221a15790a1a83f1d.1564560130.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <460fd687-474f-8a3e-82f6-269eb5507f96@wanadoo.fr>
-In-Reply-To: <460fd687-474f-8a3e-82f6-269eb5507f96@wanadoo.fr>
+References: <cover.1564560130.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1564560130.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jcliburn@gmail.com, davem@davemloft.net, chris.snook@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+A few lines above, we have:
+   tx_size = BIT(tx->order);
 
+So use 'tx_size' directly to be consistent with the way 'rx->descs_cpu' and
+'rx->descs_dma' are computed below.
 
-On Mon, 22 Jul 2019, Marion & Christophe JAILLET wrote:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Hi,
->
-> Attached is a WIP script I've just written which tries to spot typos in a
-> file, based on the filename itself.
->
-> Yesterday, I've posted some finding done with this script.
-> Today, I share if someone finds it useful, want to improve it or just want to
-> take the idea.
->
-> As, I'm not a bash guru, it is neither optimal, nor well written.
-> But it seems to work as I expect.
->
->
-> The name of a file can be a good source of information to spot typo in the
-> code itself. This can help spot typo in comments or strings, but also wrongly
-> named functions or constant.
-> 3 checks are implemented. They can be disabled individually.
->
-> The filename should sometime be tweaked a bit to only take the part before or
-> after a '-' or a '_'. (some regex patterns are in the script for that, just
-> comment/un-comment)
->
-> The 2 last checks generate lot of false positives.
-> It can find some few things, but honestly, the semantic should be improved.
->
->
-> Just in case s.o. find it useful and want to use it to clean-up a few things.
-
-It seems like a nice idea.  Based on another patch you sent, perhaps
-something could be done with non-English words in general.  If there are a
-few occurrences of XYZ in a file, but only one occurrence of XXZ, it might
-be worth highlighting XXZ as a possible typo.  (I don't know what string
-length and string distance would give the best results).
-
-julia
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 77542bd1e5bd..40a8717f51b1 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1148,7 +1148,7 @@ static int ag71xx_rings_init(struct ag71xx *ag)
+ 		return -ENOMEM;
+ 	}
+ 
+-	rx->buf = &tx->buf[BIT(tx->order)];
++	rx->buf = &tx->buf[tx_size];
+ 	rx->descs_cpu = ((void *)tx->descs_cpu) + tx_size * AG71XX_DESC_SIZE;
+ 	rx->descs_dma = tx->descs_dma + tx_size * AG71XX_DESC_SIZE;
+ 
+-- 
+2.20.1
