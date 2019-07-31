@@ -1,63 +1,45 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Date: Fri, 19 Jul 2019 17:23:35 +0000
-Subject: Re: [PATCH -next] drm/i915/dsi: remove set but not used variable 'hfront_porch'
-Message-Id: <20190719172335.GT5942@intel.com>
+From: Joonwon Kang <kjw1627@gmail.com>
+Date: Wed, 31 Jul 2019 18:01:49 +0000
+Subject: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
+Message-Id: <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190719015136.103988-1-yuehaibing@huawei.com>
-In-Reply-To: <20190719015136.103988-1-yuehaibing@huawei.com>
+References: <cover.1564595346.git.kjw1627@gmail.com>
+In-Reply-To: <cover.1564595346.git.kjw1627@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: airlied@linux.ie, Hulk Robot <hulkci@huawei.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: keescook@chromium.org
+Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
 
-On Fri, Jul 19, 2019 at 01:51:36AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->=20
-> drivers/gpu/drm/i915/display/icl_dsi.c: In function 'gen11_dsi_set_transc=
-oder_timings':
-> drivers/gpu/drm/i915/display/icl_dsi.c:768:6: warning:
->  variable 'hfront_porch' set but not used [-Wunused-but-set-variable]
->=20
-> It is never used and can be removed.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Recursive declaration for struct which has member of the same struct
+type, for example,
 
-Thanks. Applied to drm-intel-next-queued.
+struct foo {
+    struct foo f;
+    ...
+};
 
-> ---
->  drivers/gpu/drm/i915/display/icl_dsi.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/display/icl_dsi.c b/drivers/gpu/drm/i91=
-5/display/icl_dsi.c
-> index 4d952accfaaa..a42348be0438 100644
-> --- a/drivers/gpu/drm/i915/display/icl_dsi.c
-> +++ b/drivers/gpu/drm/i915/display/icl_dsi.c
-> @@ -763,7 +763,7 @@ gen11_dsi_set_transcoder_timings(struct intel_encoder=
- *encoder,
->  	enum transcoder dsi_trans;
->  	/* horizontal timings */
->  	u16 htotal, hactive, hsync_start, hsync_end, hsync_size;
-> -	u16 hfront_porch, hback_porch;
-> +	u16 hback_porch;
->  	/* vertical timings */
->  	u16 vtotal, vactive, vsync_start, vsync_end, vsync_shift;
-> =20
-> @@ -772,8 +772,6 @@ gen11_dsi_set_transcoder_timings(struct intel_encoder=
- *encoder,
->  	hsync_start =3D adjusted_mode->crtc_hsync_start;
->  	hsync_end =3D adjusted_mode->crtc_hsync_end;
->  	hsync_size  =3D hsync_end - hsync_start;
-> -	hfront_porch =3D (adjusted_mode->crtc_hsync_start -
-> -			adjusted_mode->crtc_hdisplay);
->  	hback_porch =3D (adjusted_mode->crtc_htotal -
->  		       adjusted_mode->crtc_hsync_end);
->  	vactive =3D adjusted_mode->crtc_vdisplay;
->=20
->=20
+is not allowed. So, it is unnecessary to check if a struct has this
+kind of member.
 
---=20
-Ville Syrj=E4l=E4
-Intel
+Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+---
+ scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index bd29e4e7a524..e14efe23e645 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
+ 		const_tree fieldtype = get_field_type(field);
+ 		enum tree_code code = TREE_CODE(fieldtype);
+ 
+-		if (node = fieldtype)
+-			continue;
+-
+ 		if (code = RECORD_TYPE || code = UNION_TYPE) {
+ 			if (!is_pure_ops_struct(fieldtype))
+ 				return 0;
+-- 
+2.17.1
