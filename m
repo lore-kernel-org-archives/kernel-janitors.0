@@ -1,57 +1,37 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Date: Mon, 29 Jul 2019 21:09:00 +0000
-Subject: Re: [PATCH][V2] drivers: thermal: processor_thermal_device: fix missing bitwise-or operators
-Message-Id: <42db46c33466a12221e0968e82c4c4ee17b0341d.camel@linux.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 31 Jul 2019 07:38:42 +0000
+Subject: [PATCH] net: ethernet: et131x: Use GFP_KERNEL instead of GFP_ATOMIC when allocating tx_ring->tcb_rin
+Message-Id: <20190731073842.16948-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190729120323.15838-1-colin.king@canonical.com>
-In-Reply-To: <20190729120323.15838-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mark.einon@gmail.com, davem@davemloft.net, willy@infradead.org, f.fainelli@gmail.com, andrew@lunn.ch
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, 2019-07-29 at 13:03 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable val is having the top 8 bits cleared and then the
-> variable is being
-> re-assinged and setting just the top 8 bits.  I believe the intention
-> was bitwise-or
-> in the top 8 bits.  Fix this by replacing the = operators with &= and
-> |= instead.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: b0c74b08517e ("drivers: thermal: processor_thermal_device:
-> Export sysfs inteface for TCC offset")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+There is no good reason to use GFP_ATOMIC here. Other memory allocations
+are performed with GFP_KERNEL (see other 'dma_alloc_coherent()' below and
+'kzalloc()' in 'et131x_rx_dma_memory_alloc()')
 
-> ---
-> 
-> V2: Add in &= operator missing from V1. Doh.
-> 
-> ---
->  .../thermal/intel/int340x_thermal/processor_thermal_device.c  | 4
-> ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git
-> a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> index 6f6ac6a8e82d..97333fc4be42 100644
-> ---
-> a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> +++
-> b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> @@ -163,8 +163,8 @@ static int tcc_offset_update(int tcc)
->  	if (err)
->  		return err;
->  
-> -	val = ~GENMASK_ULL(31, 24);
-> -	val = (tcc & 0xff) << 24;
-> +	val &= ~GENMASK_ULL(31, 24);
-> +	val |= (tcc & 0xff) << 24;
->  
->  	err = wrmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, val);
->  	if (err)
+Use GFP_KERNEL which should be enough.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/agere/et131x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/agere/et131x.c b/drivers/net/ethernet/agere/et131x.c
+index e43d922f043e..174344c450af 100644
+--- a/drivers/net/ethernet/agere/et131x.c
++++ b/drivers/net/ethernet/agere/et131x.c
+@@ -2362,7 +2362,7 @@ static int et131x_tx_dma_memory_alloc(struct et131x_adapter *adapter)
+ 
+ 	/* Allocate memory for the TCB's (Transmit Control Block) */
+ 	tx_ring->tcb_ring = kcalloc(NUM_TCB, sizeof(struct tcb),
+-				    GFP_ATOMIC | GFP_DMA);
++				    GFP_KERNEL | GFP_DMA);
+ 	if (!tx_ring->tcb_ring)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
