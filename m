@@ -1,33 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jul 2019 16:33:58 +0000
-Subject: [PATCH] thermal: tegra: Fix a typo
-Message-Id: <20190721163358.2377-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 31 Jul 2019 22:32:34 +0000
+Subject: [PATCH] ASoC: zx-tdm: remove redundant assignment to ts_width on error return path
+Message-Id: <20190731223234.16153-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, wni@nvidia.com, tiny.windzz@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-s/sochterm/soctherm/
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The value assigned to ts_width is never read on the error return path
+so the assignment is redundant and can be removed.  Remove it.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/thermal/tegra/soctherm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/zte/zx-tdm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index fcf70a3728b6..0ff4b22ddca7 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -202,7 +202,7 @@
- /* get dividend from the depth */
- #define THROT_DEPTH_DIVIDEND(depth)	((256 * (100 - (depth)) / 100) - 1)
- 
--/* gk20a nv_therm interface N:3 Mapping. Levels defined in tegra124-sochterm.h
-+/* gk20a nv_therm interface N:3 Mapping. Levels defined in tegra124-soctherm.h
-  * level	vector
-  * NONE		3'b000
-  * LOW		3'b001
+diff --git a/sound/soc/zte/zx-tdm.c b/sound/soc/zte/zx-tdm.c
+index 5e877fe9ba7b..0e5a05b25a77 100644
+--- a/sound/soc/zte/zx-tdm.c
++++ b/sound/soc/zte/zx-tdm.c
+@@ -211,7 +211,6 @@ static int zx_tdm_hw_params(struct snd_pcm_substream *substream,
+ 		ts_width = 1;
+ 		break;
+ 	default:
+-		ts_width = 0;
+ 		dev_err(socdai->dev, "Unknown data format\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.20.1
