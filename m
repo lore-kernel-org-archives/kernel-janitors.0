@@ -1,76 +1,108 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 17 Aug 2019 08:25:34 +0000
-Subject: Re: [PATCH][next] bus: moxtet: fix unsigned comparison to less than zero
-Message-Id: <20190817082534.GB4451@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 01 Aug 2019 11:09:56 +0000
+Subject: [PATCH] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
+Message-Id: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190816224106.11583-1-colin.king@canonical.com>
- <20190817020434.4ef2dc5f@nic.cz>
-In-Reply-To: <20190817020434.4ef2dc5f@nic.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marek Behun <marek.behun@nic.cz>, Arnd Bergmann <arnd@arndb.de>
-Cc: Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, allison@lohutok.net, tglx@linutronix.de, clg@kaod.org, groug@kaod.org
+Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 17, 2019 at 02:04:34AM +0200, Marek Behun wrote:
-> On Fri, 16 Aug 2019 23:41:06 +0100
-> Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the size_t variable res is being checked for
-> > an error failure however the unsigned variable is never
-> > less than zero so this test is always false. Fix this by
-> > making variable res ssize_t
-> > 
-> > Addresses-Coverity: ("Unsigned compared against 0")
-> > Fixes: 5bc7f990cd98 ("bus: Add support for Moxtet bus")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/bus/moxtet.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/bus/moxtet.c b/drivers/bus/moxtet.c
-> > index 1ee4570e7e17..288a9e4c6c7b 100644
-> > --- a/drivers/bus/moxtet.c
-> > +++ b/drivers/bus/moxtet.c
-> > @@ -514,7 +514,7 @@ static ssize_t output_write(struct file *file, const char __user *buf,
-> >  	struct moxtet *moxtet = file->private_data;
-> >  	u8 bin[TURRIS_MOX_MAX_MODULES];
-> >  	u8 hex[sizeof(bin) * 2 + 1];
-> > -	size_t res;
-> > +	ssize_t res;
-> >  	loff_t dummy = 0;
-> >  	int err, i;
-> >  
-> 
-> Hi Colin,
-> thanks. Should I just Ack this, or do I need to send patch to the
-> developer who commited my patches?
+'xive_irq_bitmap_add()' can return -ENOMEM.
+In this case, we should free the memory already allocated and return
+'false' to the caller.
 
-According to MAINTAINERS, you're the maintainer and not Arnd.  You
-should forward this to him.  But in the future it might be easier if
-Arnd added himself to the MAINTAINERS file for this.
+Also add an error path which undoes the 'tima = ioremap(...)'
 
-You're probably better off if you have a subsystem mailing list for this
-driver instead of using LKML.  That way more people can get involved
-with the development if they want to.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+NOT compile tested (I don't have a cross compiler and won't install one).
+So if some correction or improvement are needed, feel free to propose and
+commit it directly.
+---
+ arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-Anyway, as the maintainer, you need to collect patches and forward them
-on to Arnd or someone else.  Since you are handling the patches, that
-means you need to Sign them to certify that you haven't added any of
-SCOs private super secret UNIXWARE intellectual property.  You can't
-just use the Acked-by, you have to use the Signed-off-by tag.
-
-If Arnd or someone else is collecting the patches then you could use
-Reviewed-by or Acked-by.  Acked-by basically means you approve the
-patch and often it's going through a different maintainer's tree.  Or it
-can be you like the approach the patch is taking.  It's sort of vague.
-I seldom Ack patches because I'm not a maintainer in an official sense,
-but I do give people a Reviewed-by tag if I review their patch and I
-want to make their day a little happier.  Also if it's a huge patch
-series and I want to help out Greg to know that he can skip reviewing
-the patch if he wants to.
-
-regards,
-dan carpenter
+diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+index 52198131c75e..b3ae0b76c433 100644
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -64,6 +64,17 @@ static int xive_irq_bitmap_add(int base, int count)
+ 	return 0;
+ }
+ 
++static void xive_irq_bitmap_remove_all(void)
++{
++	struct xive_irq_bitmap *xibm, *tmp;
++
++	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
++		list_del(&xibm->list);
++		kfree(xibm->bitmap);
++		kfree(xibm);
++	}
++}
++
+ static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
+ {
+ 	int irq;
+@@ -723,7 +734,7 @@ bool __init xive_spapr_init(void)
+ 	u32 val;
+ 	u32 len;
+ 	const __be32 *reg;
+-	int i;
++	int i, err;
+ 
+ 	if (xive_spapr_disabled())
+ 		return false;
+@@ -748,23 +759,26 @@ bool __init xive_spapr_init(void)
+ 	}
+ 
+ 	if (!xive_get_max_prio(&max_prio))
+-		return false;
++		goto err_unmap;
+ 
+ 	/* Feed the IRQ number allocator with the ranges given in the DT */
+ 	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
+ 	if (!reg) {
+ 		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
+-		return false;
++		goto err_unmap;
+ 	}
+ 
+ 	if (len % (2 * sizeof(u32)) != 0) {
+ 		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
+-		return false;
++		goto err_unmap;
+ 	}
+ 
+-	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
+-		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
+-				    be32_to_cpu(reg[1]));
++	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
++		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
++					  be32_to_cpu(reg[1]));
++		if (err < 0)
++			goto err_mem_free;
++	}
+ 
+ 	/* Iterate the EQ sizes and pick one */
+ 	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
+@@ -775,8 +789,14 @@ bool __init xive_spapr_init(void)
+ 
+ 	/* Initialize XIVE core with our backend */
+ 	if (!xive_core_init(&xive_spapr_ops, tima, TM_QW1_OS, max_prio))
+-		return false;
++		goto err_mem_free;
+ 
+ 	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
+ 	return true;
++
++err_mem_free:
++	xive_irq_bitmap_remove_all();
++err_unmap:
++	iounmap(tima);
++	return false;
+ }
+-- 
+2.20.1
