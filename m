@@ -1,28 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 05 Aug 2019 12:11:45 +0000
-Subject: Re: [PATCH] phy: qualcomm: phy-qcom-qmp: Add of_node_put() before return
-Message-Id: <239020d9-ff8a-237d-b52c-bf2423f9609b@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Aug 2019 16:09:58 +0000
+Subject: [PATCH] media: drxj: remove redundant assignment to variable rc
+Message-Id: <20190801160958.28392-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190804162420.6005-1-nishkadg.linux@gmail.com>
-In-Reply-To: <20190804162420.6005-1-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>, Andy Gross <agross@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -2094,6 +2094,7 @@ static int qcom_qmp_phy_probe(struct platform_device *pdev)
->  			dev_err(dev, "failed to create lane%d phy, %d\n",
->  				id, ret);
->  			pm_runtime_disable(dev);
-> +			of_node_put(child);
->  			return ret;
->  		}
+From: Colin Ian King <colin.king@canonical.com>
 
-I suggest to move a bit of common exception handling code to the end of
-this function implementation.
-Would you like to add a jump target?
+The variable rc is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Regards,
-Markus
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/drx39xyj/drxj.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
+index a6876fa48753..8716a167917a 100644
+--- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
++++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
+@@ -4201,7 +4201,7 @@ int drxj_dap_scu_atomic_read_reg16(struct i2c_device_addr *dev_addr,
+ 					 u16 *data, u32 flags)
+ {
+ 	u8 buf[2] = { 0 };
+-	int rc = -EIO;
++	int rc;
+ 	u16 word = 0;
+ 
+ 	if (!data)
+-- 
+2.20.1
