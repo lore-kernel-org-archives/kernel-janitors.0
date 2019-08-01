@@ -1,78 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Aug 2019 08:10:47 +0000
-Subject: [PATCH] staging: rts5208: remove redundant sd30_mode checks
-Message-Id: <20190830081047.13630-1-colin.king@canonical.com>
+Date: Thu, 01 Aug 2019 16:44:19 +0000
+Subject: [PATCH] iwlwifi: remove redundant assignment to variable bufsz
+Message-Id: <20190801164419.3439-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190818184649.13828-1-colin.king@canonical.com>
-In-Reply-To: <20190818184649.13828-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are two hunks of code that check if sd30_mode is true however
-an earlier check in an outer code block on sd30_mode being false means
-that sd30_mode can never be true at these points so these checks are
-redundant.  Remove the dead code.
+The variable bufsz is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Addresses-Coverity: ("Logically dead code")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rts5208/sd.c | 28 ++++++++++------------------
- 1 file changed, 10 insertions(+), 18 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-index a06045344301..25c31496757e 100644
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -2573,17 +2573,13 @@ static int reset_sd(struct rtsx_chip *chip)
- 			retval = sd_sdr_tuning(chip);
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index f5df5b370d78..addbbb78b1af 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -2542,7 +2542,7 @@ static ssize_t iwl_dbgfs_rx_queue_read(struct file *file,
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+ 	char *buf;
+ 	int pos = 0, i, ret;
+-	size_t bufsz = sizeof(buf);
++	size_t bufsz;
  
- 		if (retval != STATUS_SUCCESS) {
--			if (sd20_mode) {
-+			retval = sd_init_power(chip);
-+			if (retval != STATUS_SUCCESS)
- 				goto status_fail;
--			} else {
--				retval = sd_init_power(chip);
--				if (retval != STATUS_SUCCESS)
--					goto status_fail;
+ 	bufsz = sizeof(char) * 121 * trans->num_rx_queues;
  
--				try_sdio = false;
--				sd20_mode = true;
--				goto switch_fail;
--			}
-+			try_sdio = false;
-+			sd20_mode = true;
-+			goto switch_fail;
- 		}
- 
- 		sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
-@@ -2598,17 +2594,13 @@ static int reset_sd(struct rtsx_chip *chip)
- 		if (read_lba0) {
- 			retval = sd_read_lba0(chip);
- 			if (retval != STATUS_SUCCESS) {
--				if (sd20_mode) {
-+				retval = sd_init_power(chip);
-+				if (retval != STATUS_SUCCESS)
- 					goto status_fail;
--				} else {
--					retval = sd_init_power(chip);
--					if (retval != STATUS_SUCCESS)
--						goto status_fail;
- 
--					try_sdio = false;
--					sd20_mode = true;
--					goto switch_fail;
--				}
-+				try_sdio = false;
-+				sd20_mode = true;
-+				goto switch_fail;
- 			}
- 		}
- 	}
 -- 
 2.20.1
