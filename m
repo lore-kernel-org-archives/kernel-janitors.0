@@ -1,62 +1,51 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 06 Aug 2019 01:37:01 +0000
-Subject: [PATCH net-next v4] net: can: Fix compiling warnings for two functions
-Message-Id: <20190806013701.71159-1-maowenan@huawei.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Date: Thu, 01 Aug 2019 10:18:23 +0000
+Subject: Re: [PATCH -next] drm/i915: fix possible memory leak in intel_hdcp_auth_downstream()
+Message-Id: <87k1bxmbo0.fsf@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190805.103002.641507066504156536.davem@davemloft.net>
-In-Reply-To: <20190805.103002.641507066504156536.davem@davemloft.net>
+References: <20190704104534.12508-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190704104534.12508-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, socketcan@hartkopp.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, maowenan@huawei.com
+To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There are two warnings in net/can, fix them by setting
-bcm_sock_no_ioctlcmd and raw_sock_no_ioctlcmd as static.
+On Thu, 04 Jul 2019, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> 'ksv_fifo' is malloced in intel_hdcp_auth_downstream() and should be
+> freed before leaving from the error handling cases, otherwise it will
+> cause memory leak.
 
-net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
-net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Fixes: 473d924d7d46 ("can: fix ioctl function removal")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
----
- v1->v2: change patch description typo error, 'warings' to 'warnings'.
- v2->v3: change subject of patch.
- v3->v4: change the alignment of two functions. 
- net/can/bcm.c | 4 ++--
- net/can/raw.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thanks for the patch, sorry for the delay, pushed to
+drm-intel-next-queued.
 
-diff --git a/net/can/bcm.c b/net/can/bcm.c
-index bf1d0bbecec8..eb1d28b8c46a 100644
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -1680,8 +1680,8 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 	return size;
- }
- 
--int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
--			 unsigned long arg)
-+static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
-+				unsigned long arg)
- {
- 	/* no ioctls for socket layer -> hand it down to NIC layer */
- 	return -ENOIOCTLCMD;
-diff --git a/net/can/raw.c b/net/can/raw.c
-index da386f1fa815..a30aaecd9327 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -837,8 +837,8 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 	return size;
- }
- 
--int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
--			 unsigned long arg)
-+static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
-+				unsigned long arg)
- {
- 	/* no ioctls for socket layer -> hand it down to NIC layer */
- 	return -ENOIOCTLCMD;
+BR,
+Jani.
+
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
+> index bc3a94d491c4..27bd7276a82d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_hdcp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
+> @@ -536,7 +536,8 @@ int intel_hdcp_auth_downstream(struct intel_connector *connector)
+>  
+>  	if (drm_hdcp_check_ksvs_revoked(dev, ksv_fifo, num_downstream)) {
+>  		DRM_ERROR("Revoked Ksv(s) in ksv_fifo\n");
+> -		return -EPERM;
+> +		ret = -EPERM;
+> +		goto err;
+>  	}
+>  
+>  	/*
+>
+>
+>
+
 -- 
-2.20.1
+Jani Nikula, Intel Open Source Graphics Center
