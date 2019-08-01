@@ -1,64 +1,56 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Mon, 12 Aug 2019 15:10:27 +0000
-Subject: Re: [PATCH] RDMA/core: Fix error code in stat_get_doit_qp()
-Message-Id: <289f2ef99bdb6d2b5adae4abbfd7db9ff3d03896.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-1qIK9eaTm6YsRAgWD4lH"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 01 Aug 2019 07:47:59 +0000
+Subject: [PATCH] HID: usbhid: Use GFP_KERNEL instead of GFP_ATOMIC when applicable
+Message-Id: <20190801074759.32738-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809101311.GA17867@mwanda>
-         <20190811095657.GG28049@mtr-leonro.mtl.com>
-In-Reply-To: <20190811095657.GG28049@mtr-leonro.mtl.com>
-To: Leon Romanovsky <leon@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Zhang <markz@mellanox.com>, Jason Gunthorpe <jgg@ziepe.ca>, Parav Pandit <parav@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Steve Wise <swise@opengridcomputing.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-1qIK9eaTm6YsRAgWD4lH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 2019-08-11 at 12:56 +0300, Leon Romanovsky wrote:
-> On Fri, Aug 09, 2019 at 01:13:19PM +0300, Dan Carpenter wrote:
-> > We need to set the error codes on these paths.  Currently the only
-> > possible error code is -EMSGSIZE so that's what the patch uses.
-> >=20
-> > Fixes: 83c2c1fcbd08 ("RDMA/nldev: Allow get counter mode through
-> > RDMA netlink")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/infiniband/core/nldev.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >=20
->=20
-> Thanks,
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-
-Thanks, applied to for-rc.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-1qIK9eaTm6YsRAgWD4lH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-usb@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
------BEGIN PGP SIGNATURE-----
+There is no need to use GFP_ATOMIC when calling 'usb_alloc_coherent()'
+here. These calls are done from probe functions and using GFP_KERNEL should
+be safe.
+The memory itself is used within some interrupts, but it is not a
+problem, once it has been allocated.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl1RgWQACgkQuCajMw5X
-L91iLw/+KBK4MzgZ+4NAeQgnsSJMXLQzDx6Fbb+cmM+ercR74Tc7Po7bLt9xuhvZ
-GrUhi6zkF6mMU1cCjYDkwOggHUf6On/yP1Bz38EswOdhwEP75zFGonF9n7EgglN7
-jMoKZMkGvWDfqLz44q7awvM/YT5wDLCQ9DMMKVbYS04DHjAo6Js+oxRbP6ds4fLA
-FAvVLSxWEYGdEKf15zBhRw+jW2aHJWTmnSJjTG51Rt7O39h15nkGyELziCgOxxtu
-q4UrCzhfbnizdubchPVtrPYqZ/mgNLvVFywc49FnBGw/V4Uy3VlVgAr2TFeGgYmO
-5ud8lTbCjM819IGT6Frn+bEntZGsewnSAmFfbOEqtLCtfcOT1jrl+8S3Ks/aM1Hl
-QuXsPGK7ajSIUAWSasmYGvlqHVpIsZRcHOn/Zz7fH+zG0WAYq1Lj433Kq9KAo93l
-PSL5nUNbJByh2yRYDyUnI7TEvuNTqW/lizLVT3szxz7sNGDsL00CAXWPCs1ZHoog
-qhCCJhcp+UdI5wtPyQgX4wc0Vt4cNhCvyyRYmj9k6aCHgDR0xtAT+/HIxi9Q7wZQ
-8JqwX/LIXGdd43YAqcJK0gjdk3usJBs57fexiOzCgVeR002qYzd4wt4bPo4Souu4
-W6q7LFz0ahA9nyuLY94rtDpNFkuthfnxIHBRz5Yv9vOllO4Tir8=
-=UXXB
------END PGP SIGNATURE-----
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/usbhid/usbkbd.c   | 4 ++--
+ drivers/hid/usbhid/usbmouse.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---=-1qIK9eaTm6YsRAgWD4lH--
+diff --git a/drivers/hid/usbhid/usbkbd.c b/drivers/hid/usbhid/usbkbd.c
+index d5b7a696a68c..63e8ef8beb45 100644
+--- a/drivers/hid/usbhid/usbkbd.c
++++ b/drivers/hid/usbhid/usbkbd.c
+@@ -239,11 +239,11 @@ static int usb_kbd_alloc_mem(struct usb_device *dev, struct usb_kbd *kbd)
+ 		return -1;
+ 	if (!(kbd->led = usb_alloc_urb(0, GFP_KERNEL)))
+ 		return -1;
+-	if (!(kbd->new = usb_alloc_coherent(dev, 8, GFP_ATOMIC, &kbd->new_dma)))
++	if (!(kbd->new = usb_alloc_coherent(dev, 8, GFP_KERNEL, &kbd->new_dma)))
+ 		return -1;
+ 	if (!(kbd->cr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL)))
+ 		return -1;
+-	if (!(kbd->leds = usb_alloc_coherent(dev, 1, GFP_ATOMIC, &kbd->leds_dma)))
++	if (!(kbd->leds = usb_alloc_coherent(dev, 1, GFP_KERNEL, &kbd->leds_dma)))
+ 		return -1;
+ 
+ 	return 0;
+diff --git a/drivers/hid/usbhid/usbmouse.c b/drivers/hid/usbhid/usbmouse.c
+index 073127e65ac1..c89332017d5d 100644
+--- a/drivers/hid/usbhid/usbmouse.c
++++ b/drivers/hid/usbhid/usbmouse.c
+@@ -130,7 +130,7 @@ static int usb_mouse_probe(struct usb_interface *intf, const struct usb_device_i
+ 	if (!mouse || !input_dev)
+ 		goto fail1;
+ 
+-	mouse->data = usb_alloc_coherent(dev, 8, GFP_ATOMIC, &mouse->data_dma);
++	mouse->data = usb_alloc_coherent(dev, 8, GFP_KERNEL, &mouse->data_dma);
+ 	if (!mouse->data)
+ 		goto fail1;
+ 
+-- 
+2.20.1
