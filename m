@@ -1,23 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 24 Aug 2019 21:21:58 +0000
-Subject: Re: [PATCH -next] net: mediatek: remove set but not used variable 'status'
-Message-Id: <20190824.142158.1506174328495468705.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 01 Aug 2019 08:32:42 +0000
+Subject: [PATCH 2/2] powerpc/xive: Add a check for memory allocation failure
+Message-Id: <cc53462734dfeaf15b6bad0e626b483de18656b4.1564647619.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822063026.70044-1-maowenan@huawei.com>
-In-Reply-To: <20190822063026.70044-1-maowenan@huawei.com>
+References: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: nbd@openwrt.org, john@phrozen.org, sean.wang@mediatek.com, nelson.chang@mediatek.com, matthias.bgg@gmail.com, netdev@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, allison@lohutok.net, tglx@linutronix.de, clg@kaod.org, groug@kaod.org
+Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Thu, 22 Aug 2019 14:30:26 +0800
+The result of this kzalloc is not checked. Add a check and corresponding
+error handling code.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> drivers/net/ethernet/mediatek/mtk_eth_soc.c: In function mtk_handle_irq:
-> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1951:6: warning: variable status set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit 296c9120752b ("net: ethernet: mediatek: Add MT7628/88 SoC support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Note that 'xive_irq_bitmap_add()' failures are not handled in
+'xive_spapr_init()'
+I guess that it is not really an issue. This function is _init, so if a
+memory allocation occures here, it is likely that the system will
+already be in bad shape.
+Anyway, the check added here would at least keep the data linked in
+'xive_irq_bitmaps' usable.
+---
+ arch/powerpc/sysdev/xive/spapr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This is not a standard commit tag, please use Fixes: or similar.
+diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+index b4f5eb9e0f82..52198131c75e 100644
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -53,6 +53,10 @@ static int xive_irq_bitmap_add(int base, int count)
+ 	xibm->base = base;
+ 	xibm->count = count;
+ 	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
++	if (!xibm->bitmap) {
++		kfree(xibm);
++		return -ENOMEM;
++	}
+ 	list_add(&xibm->list, &xive_irq_bitmaps);
+ 
+ 	pr_info("Using IRQ range [%x-%x]", xibm->base,
+-- 
+2.20.1
