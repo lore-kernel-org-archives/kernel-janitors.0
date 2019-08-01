@@ -1,27 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Aug 2019 23:23:22 +0000
-Subject: Re: [PATCH] net: usb: Delete unnecessary checks before the macro call =?iso-2022-jp?B?GyRCIUgbKEJkZX
-Message-Id: <20190822.162322.666892826002905972.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 01 Aug 2019 08:31:44 +0000
+Subject: [PATCH 0/2] powerpc/xive: 2 small tweaks in 'xive_irq_bitmap_add()'
+Message-Id: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <425214be-355b-92c0-bc74-1d0ea899290f@web.de>
-In-Reply-To: <425214be-355b-92c0-bc74-1d0ea899290f@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus.Elfring@web.de
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, petkan@nucleusys.com, swinslow@gmail.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, allison@lohutok.net, tglx@linutronix.de, clg@kaod.org, groug@kaod.org
+Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Aug 2019 22:24:16 +0200
+The first patch uses GFP_KERNEL instead of GFP_ATOMIC.
+The 2nd adds a check for memory allocation failure.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 21 Aug 2019 22:16:02 +0200
-> 
-> The dev_kfree_skb() function performs also input parameter validation.
-> Thus the test around the shown calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Christophe JAILLET (2):
+  powerpc/xive: Use GFP_KERNEL instead of GFP_ATOMIC in
+    'xive_irq_bitmap_add()'
+  powerpc/xive: Add a check for memory allocation failure
 
-Applied.
+ arch/powerpc/sysdev/xive/spapr.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.20.1
