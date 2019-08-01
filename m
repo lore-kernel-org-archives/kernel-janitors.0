@@ -1,24 +1,60 @@
-From: ''Tayeb Souami'' <niculae-tiberiu.puscas@physics.pub.ro>
-Date: Thu, 22 Aug 2019 10:54:38 +0000
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
-Message-Id: <20190822105442.A5E3FE3CAC5@physics1.physics.pub.ro>
+From: Rui Miguel Silva <rmfrfs@gmail.com>
+Date: Thu, 01 Aug 2019 15:41:13 +0000
+Subject: Re: [PATCH] media: ov2680: fix a typo in a function name
+Message-Id: <m336ikc2qu.fsf@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190721190423.9534-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190721190423.9534-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Lieber Freund,
+Hi Christophe,
+Thanks for the patch.
 
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+On Sun 21 Jul 2019 at 20:04, Christophe JAILLET wrote:
+> All functions in this file starts with 'ov2680_', except ov2860_parse_dt().
+>
+> This is likely a typo.
+>
 
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+Yup, weird is to only have one of this. Nice catch.
 
-Das ist dein Spendencode: [TS530342018]
+> rename it to 'ov2680_parse_dt()' (6 and 8)
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
 
-Antworten Sie mit dem SPENDE-CODE an diese E-Mail:Tayebsouam.spende@gmail.com
+Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+---
+Cheers,
+	Rui
 
-Grüße
-Herr Tayeb Souami
+> ---
+>  drivers/media/i2c/ov2680.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+> index b10bcfabaeeb..c59c9e51c380 100644
+> --- a/drivers/media/i2c/ov2680.c
+> +++ b/drivers/media/i2c/ov2680.c
+> @@ -1023,7 +1023,7 @@ static int ov2680_check_id(struct ov2680_dev *sensor)
+>  	return 0;
+>  }
+>
+> -static int ov2860_parse_dt(struct ov2680_dev *sensor)
+> +static int ov2680_parse_dt(struct ov2680_dev *sensor)
+>  {
+>  	struct device *dev = ov2680_to_dev(sensor);
+>  	int ret;
+> @@ -1064,7 +1064,7 @@ static int ov2680_probe(struct i2c_client *client)
+>
+>  	sensor->i2c_client = client;
+>
+> -	ret = ov2860_parse_dt(sensor);
+> +	ret = ov2680_parse_dt(sensor);
+>  	if (ret < 0)
+>  		return -EINVAL;
