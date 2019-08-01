@@ -1,50 +1,40 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Thu, 22 Aug 2019 14:44:24 +0000
-Subject: Re: [PATCH] xfs: Use BUG_ON rather than BUG() to remove unreachable code
-Message-Id: <20190822144424.GG1037350@magnolia>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Aug 2019 11:01:45 +0000
+Subject: [PATCH][drm-next] drm/amdgpu: fix unsigned variable instance compared to less than zero
+Message-Id: <20190801110145.10803-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822062320.GA35267@LGEARND20B15>
-In-Reply-To: <20190822062320.GA35267@LGEARND20B15>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Austin Kim <austindh.kim@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Le Ma <le.ma@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 03:23:20PM +0900, Austin Kim wrote:
-> Code after BUG is unreachable since system would be crashed
-> after the call to BUG is made.
-> So change BUG_ON instead of BUG() to remove unreachable code.
-> ---
->  fs/xfs/xfs_mount.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 322da69..a681808 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -213,13 +213,7 @@ xfs_initialize_perag(
->  			goto out_hash_destroy;
->  
->  		spin_lock(&mp->m_perag_lock);
-> -		if (radix_tree_insert(&mp->m_perag_tree, index, pag)) {
-> -			BUG();
-> -			spin_unlock(&mp->m_perag_lock);
-> -			radix_tree_preload_end();
-> -			error = -EEXIST;
-> -			goto out_hash_destroy;
-> -		}
-> +		BUG_ON(radix_tree_insert(&mp->m_perag_tree, index, pag));
+From: Colin Ian King <colin.king@canonical.com>
 
-/me thinks this should WARN on the insertion error but otherwise
-preserve the existing bailout behavior, since we can always fail the
-mount or shutdown the fs and move on....
+Currenly the error check on variable instance is always false because
+it is a uint32_t type and this is never less than zero. Fix this by
+making it an int type.
 
---D
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 7d0e6329dfdc ("drm/amdgpu: update more sdma instances irq support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->  		spin_unlock(&mp->m_perag_lock);
->  		radix_tree_preload_end();
->  		/* first new pag is fully initialized */
-> -- 
-> 2.6.2
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+index a33bd867287e..92257f2bf171 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+@@ -1962,7 +1962,8 @@ static int sdma_v4_0_process_trap_irq(struct amdgpu_device *adev,
+ static int sdma_v4_0_process_ras_data_cb(struct amdgpu_device *adev,
+ 		struct amdgpu_iv_entry *entry)
+ {
+-	uint32_t instance, err_source;
++	uint32_t err_source;
++	int instance;
+ 
+ 	instance = sdma_v4_0_irq_id_to_seq(entry->client_id);
+ 	if (instance < 0)
+-- 
+2.20.1
