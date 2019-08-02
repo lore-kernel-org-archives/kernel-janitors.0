@@ -1,38 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 02 Aug 2019 10:22:23 +0000
-Subject: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
-Message-Id: <20190802102223.26198-1-colin.king@canonical.com>
+From: Parav Pandit <parav@mellanox.com>
+Date: Fri, 02 Aug 2019 11:31:52 +0000
+Subject: RE: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
+Message-Id: <AM0PR05MB4866E10E1182F122D6CC05AFD1D90@AM0PR05MB4866.eurprd05.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190802102223.26198-1-colin.king@canonical.com>
+In-Reply-To: <20190802102223.26198-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a self assignment of esw->dev to itself, clean this up by
-removing it.
-
-Addresses-Coverity: ("Self assignment")
-Fixes: 6cedde451399 ("net/mlx5: E-Switch, Verify support QoS element type")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index f4ace5f8e884..de0894b695e3 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1413,7 +1413,7 @@ static int esw_vport_egress_config(struct mlx5_eswitch *esw,
- 
- static bool element_type_supported(struct mlx5_eswitch *esw, int type)
- {
--	struct mlx5_core_dev *dev = esw->dev = esw->dev;
-+	struct mlx5_core_dev *dev = esw->dev;
- 
- 	switch (type) {
- 	case SCHEDULING_CONTEXT_ELEMENT_TYPE_TSAR:
--- 
-2.20.1
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtcmRtYS1vd25l
+ckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJkbWEtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4g
+T24gQmVoYWxmIE9mIENvbGluIEtpbmcNCj4gU2VudDogRnJpZGF5LCBBdWd1c3QgMiwgMjAxOSAz
+OjUyIFBNDQo+IFRvOiBTYWVlZCBNYWhhbWVlZCA8c2FlZWRtQG1lbGxhbm94LmNvbT47IExlb24g
+Um9tYW5vdnNreQ0KPiA8bGVvbkBrZXJuZWwub3JnPjsgRGF2aWQgUyAuIE1pbGxlciA8ZGF2ZW1A
+ZGF2ZW1sb2Z0Lm5ldD47DQo+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXJkbWFAdmdl
+ci5rZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF1bbmV0LW5leHRdIG5l
+dC9tbHg1OiByZW1vdmUgc2VsZi1hc3NpZ25tZW50IG9uIGVzdy0+ZGV2DQo+IA0KPiBGcm9tOiBD
+b2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhlcmUgaXMg
+YSBzZWxmIGFzc2lnbm1lbnQgb2YgZXN3LT5kZXYgdG8gaXRzZWxmLCBjbGVhbiB0aGlzIHVwIGJ5
+IHJlbW92aW5nIGl0Lg0KPiANCj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlNlbGYgYXNzaWdubWVu
+dCIpDQo+IEZpeGVzOiA2Y2VkZGU0NTEzOTkgKCJuZXQvbWx4NTogRS1Td2l0Y2gsIFZlcmlmeSBz
+dXBwb3J0IFFvUyBlbGVtZW50IHR5cGUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2lu
+ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+IGIvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYw0KPiBpbmRleCBmNGFj
+ZTVmOGU4ODQuLmRlMDg5NGI2OTVlMyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhl
+cm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+IEBAIC0xNDEzLDcgKzE0MTMsNyBA
+QCBzdGF0aWMgaW50IGVzd192cG9ydF9lZ3Jlc3NfY29uZmlnKHN0cnVjdA0KPiBtbHg1X2Vzd2l0
+Y2ggKmVzdywNCj4gDQo+ICBzdGF0aWMgYm9vbCBlbGVtZW50X3R5cGVfc3VwcG9ydGVkKHN0cnVj
+dCBtbHg1X2Vzd2l0Y2ggKmVzdywgaW50IHR5cGUpICB7DQpNYWtpbmcgaXQgY29uc3Qgc3RydWN0
+IG1seDVfZXN3aXRjaCAqZXN3IGJyaW5ncyBpbXByb3ZlcyBjb2RlIGh5Z2llbmUgZnVydGhlciBp
+biBzdWNoIGZ1bmN0aW9ucy4NCg0KPiAtCXN0cnVjdCBtbHg1X2NvcmVfZGV2ICpkZXYgPSBlc3ct
+PmRldiA9IGVzdy0+ZGV2Ow0KPiArCXN0cnVjdCBtbHg1X2NvcmVfZGV2ICpkZXYgPSBlc3ctPmRl
+djsNCj4gDQo+ICAJc3dpdGNoICh0eXBlKSB7DQo+ICAJY2FzZSBTQ0hFRFVMSU5HX0NPTlRFWFRf
+RUxFTUVOVF9UWVBFX1RTQVI6DQo+IC0tDQo+IDIuMjAuMQ0KDQo
