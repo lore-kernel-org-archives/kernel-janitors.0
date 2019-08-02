@@ -1,41 +1,42 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Date: Thu, 22 Aug 2019 13:33:28 +0000
-Subject: Re: [PATCH] aio: remove redundant assignment to variable ret
-Message-Id: <x49h8699vfb.fsf@segfault.boston.devel.redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Aug 2019 15:13:16 +0000
+Subject: [PATCH][net-next][V2] net/mlx5: remove self-assignment on esw->dev
+Message-Id: <20190802151316.16011-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822110705.19065-1-colin.king@canonical.com>
-In-Reply-To: <20190822110705.19065-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 22 Aug 2019 12:07:05 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable ret is being set to -EINVAL however this is never read
-> and later it is being reassigned to a new value. The assignment is
-> redundant and hence can be removed.
->
-> Addresses-Coverity: ("Unused Value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/aio.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index f9f441b59966..3e290dfac10a 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1528,7 +1528,6 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
->  	file = req->ki_filp;
->  	if (unlikely(!(file->f_mode & FMODE_READ)))
->  		return -EBADF;
-> -	ret = -EINVAL;
->  	if (unlikely(!file->f_op->read_iter))
->  		return -EINVAL;
+There is a self assignment of esw->dev to itself, clean this up by
+removing it. Also make dev a const pointer.
 
-Acked-by: Jeff Moyer <jmoyer@redhat.com>
+Addresses-Coverity: ("Self assignment")
+Fixes: 6cedde451399 ("net/mlx5: E-Switch, Verify support QoS element type")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: make dev const
+
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index f4ace5f8e884..de0894b695e3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1413,7 +1413,7 @@ static int esw_vport_egress_config(struct mlx5_eswitch *esw,
+ 
+ static bool element_type_supported(struct mlx5_eswitch *esw, int type)
+ {
+-	struct mlx5_core_dev *dev = esw->dev = esw->dev;
++	const struct mlx5_core_dev *dev = esw->dev;
+ 
+ 	switch (type) {
+ 	case SCHEDULING_CONTEXT_ELEMENT_TYPE_TSAR:
+-- 
+2.20.1
