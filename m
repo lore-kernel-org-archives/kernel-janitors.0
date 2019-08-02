@@ -1,66 +1,37 @@
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Thu, 22 Aug 2019 09:13:41 +0000
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_can=3a_Delete_unnecessary_checks_before?= =?UTF-8?B?IHRoZSBtYWNybyBjYWxs
-Message-Id: <dc19a08f-eba9-ebd3-ef0a-3f99e06c9916@geanix.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 02 Aug 2019 01:29:20 +0000
+Subject: [PATCH -next] drm/vgem: Fix wrong pointer passed to PTR_ERR()
+Message-Id: <20190802012920.60344-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
-In-Reply-To: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-can@vger.kernel.org, netdev@vger.kernel.org, Allison Randal <allison@lohutok.net>, "David S. Miller" <davem@davemloft.net>, Enrico Weigelt <lkml@metux.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Lukas Wunner <lukas@wunner.de>, Marc Kleine-Budde <mkl@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Weitao Hou <houweitaoo@gmail.com>, Wolfgang Grandegger <wg@grandegger.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@chromium.org>, Thomas Zimmermann <tzimmermann@suse.de>, Eric Biggers <ebiggers@google.com>, Sam Ravnborg <sam@ravnborg.org>, Sean Paul <seanpaul@chromium.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
+Fixes: 7e9e5ead55be ("drm/vgem: fix cache synchronization on arm/arm64")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/vgem/vgem_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 21/08/2019 21.30, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 21 Aug 2019 21:16:15 +0200
-> 
-> The dev_kfree_skb() function performs also input parameter validation.
-> Thus the test around the shown calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Sean Nyekjaer <sean@geanix.com>
-> ---
->   drivers/net/can/spi/hi311x.c  | 3 +--
->   drivers/net/can/spi/mcp251x.c | 3 +--
->   2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
-> index 03a711c3221b..7c7c7e78214c 100644
-> --- a/drivers/net/can/spi/hi311x.c
-> +++ b/drivers/net/can/spi/hi311x.c
-> @@ -184,8 +184,7 @@ static void hi3110_clean(struct net_device *net)
-> 
->   	if (priv->tx_skb || priv->tx_len)
->   		net->stats.tx_errors++;
-> -	if (priv->tx_skb)
-> -		dev_kfree_skb(priv->tx_skb);
-> +	dev_kfree_skb(priv->tx_skb);
->   	if (priv->tx_len)
->   		can_free_echo_skb(priv->net, 0);
->   	priv->tx_skb = NULL;
-> diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
-> index 12358f06d194..1c496d2adb45 100644
-> --- a/drivers/net/can/spi/mcp251x.c
-> +++ b/drivers/net/can/spi/mcp251x.c
-> @@ -274,8 +274,7 @@ static void mcp251x_clean(struct net_device *net)
-> 
->   	if (priv->tx_skb || priv->tx_len)
->   		net->stats.tx_errors++;
-> -	if (priv->tx_skb)
-> -		dev_kfree_skb(priv->tx_skb);
-> +	dev_kfree_skb(priv->tx_skb);
->   	if (priv->tx_len)
->   		can_free_echo_skb(priv->net, 0);
->   	priv->tx_skb = NULL;
-> --
-> 2.23.0
-> 
-
-Good catch Markus :-)
-
-/Sean
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index b98689fb0d5d..ef52546f48c4 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -304,10 +304,10 @@ static struct page **pin_and_sync(struct drm_vgem_gem_object *bo)
+ 	if (IS_ERR(sgt)) {
+ 		dev_err(dev->dev,
+ 			"failed to allocate sgt: %ld\n",
+-			PTR_ERR(bo->table));
++			PTR_ERR(sgt));
+ 		drm_gem_put_pages(&bo->base, pages, false, false);
+ 		mutex_unlock(&bo->pages_lock);
+-		return ERR_CAST(bo->table);
++		return ERR_CAST(sgt);
+ 	}
+ 
+ 	/*
