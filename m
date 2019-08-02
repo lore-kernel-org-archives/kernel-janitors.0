@@ -1,32 +1,38 @@
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Date: Sat, 31 Aug 2019 08:19:00 +0000
-Subject: Re: [PATCH] net: seeq: Fix the function used to release some memory in an error handling path
-Message-Id: <20190831101900.c3f8881c1bbebf870eed9c68@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Aug 2019 10:22:23 +0000
+Subject: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
+Message-Id: <20190802102223.26198-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, yuehaibing@huawei.com, tglx@linutronix.de, gregkh@linuxfoundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 31 Aug 2019 09:17:51 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-> a call to 'get_zeroed_page()' has been turned into a call to
-> 'dma_alloc_coherent()'. Only the remove function has been updated to turn
-> the corresponding 'free_page()' into 'dma_free_attrs()'.
-> The error hndling path of the probe function has not been updated.
+There is a self assignment of esw->dev to itself, clean this up by
+removing it.
 
-Looks good.
+Addresses-Coverity: ("Self assignment")
+Fixes: 6cedde451399 ("net/mlx5: E-Switch, Verify support QoS element type")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-
-Thomas.
-
---=20
-SUSE Software Solutions Germany GmbH
-HRB 247165 (AG M=FCnchen)
-Gesch=E4ftsf=FChrer: Felix Imend=F6rffer
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index f4ace5f8e884..de0894b695e3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1413,7 +1413,7 @@ static int esw_vport_egress_config(struct mlx5_eswitch *esw,
+ 
+ static bool element_type_supported(struct mlx5_eswitch *esw, int type)
+ {
+-	struct mlx5_core_dev *dev = esw->dev = esw->dev;
++	struct mlx5_core_dev *dev = esw->dev;
+ 
+ 	switch (type) {
+ 	case SCHEDULING_CONTEXT_ELEMENT_TYPE_TSAR:
+-- 
+2.20.1
