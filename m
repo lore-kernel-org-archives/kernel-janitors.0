@@ -1,36 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 18 Aug 2019 09:10:44 +0000
-Subject: [PATCH] RDMA/core: Fix an error handling path in 'res_get_common_doit()'
-Message-Id: <20190818091044.8845-1-christophe.jaillet@wanadoo.fr>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 02 Aug 2019 01:31:49 +0000
+Subject: [PATCH -next] staging: fsl-dpaa2/ethsw: Remove useless set memory to zero use memset()
+Message-Id: <20190802013149.80952-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org, parav@mellanox.com, majd@mellanox.com, markz@mellanox.com, swise@opengridcomputing.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-According to surrounding error paths, it is likely that 'goto err_get;' is
-expected here. Otherwise, a call to 'rdma_restrack_put(res);' would be
-missing.
+The memory return by kzalloc() has already be set to zero, so remove
+useless memset(0).
 
-Fixes: c5dfe0ea6ffa ("RDMA/nldev: Add resource tracker doit callback")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/infiniband/core/nldev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-index e287b71a1cfd..03272791a5bf 100644
---- a/drivers/infiniband/core/nldev.c
-+++ b/drivers/infiniband/core/nldev.c
-@@ -1231,7 +1231,7 @@ static int res_get_common_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
- 	if (!msg) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto err_get;
- 	}
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index 4b94a01513a7..aac98ece2335 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -641,8 +641,6 @@ static int port_fdb_dump(struct sk_buff *skb, struct netlink_callback *cb,
+ 	if (!dma_mem)
+ 		return -ENOMEM;
  
- 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
--- 
-2.20.1
+-	memset(dma_mem, 0, fdb_dump_size);
+-
+ 	fdb_dump_iova = dma_map_single(dev, dma_mem, fdb_dump_size,
+ 				       DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(dev, fdb_dump_iova)) {
