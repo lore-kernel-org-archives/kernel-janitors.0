@@ -1,25 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Aug 2019 19:14:30 +0000
-Subject: Re: [PATCH] nexthops: remove redundant assignment to variable err
-Message-Id: <20190822.121430.1623821241154451911.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 02 Aug 2019 03:36:43 +0000
+Subject: [PATCH net-next] net: can: Fix compiling warning
+Message-Id: <20190802033643.84243-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822125340.30783-1-colin.king@canonical.com>
-In-Reply-To: <20190822125340.30783-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dsahern@kernel.org, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: socketcan@hartkopp.net, davem@davemloft.net, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Aug 2019 13:53:40 +0100
+There are two warings in net/can, fix them by setting bcm_sock_no_ioctlcmd
+and raw_sock_no_ioctlcmd as static.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable err is initialized to a value that is never read and it is
-> re-assigned later. The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused Value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
+net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Applied to net-next.
+Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ net/can/bcm.c | 2 +-
+ net/can/raw.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index bf1d0bbecec8..b8a32b4ac368 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1680,7 +1680,7 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+diff --git a/net/can/raw.c b/net/can/raw.c
+index da386f1fa815..a01848ff9b12 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -837,7 +837,7 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+-- 
+2.20.1
