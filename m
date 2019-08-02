@@ -1,43 +1,95 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 30 Aug 2019 08:25:16 +0000
-Subject: Re: [PATCH v2 -next] crypto: hisilicon: select CRYPTO_LIB_DES while compiling SEC driver
-Message-Id: <20190830082516.GJ8033@gondor.apana.org.au>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Fri, 02 Aug 2019 12:07:10 +0000
+Subject: Re: [PATCH][next] can: kvaser_pciefd: remove redundant negative check on trigger
+Message-Id: <954ea3c6-3a2d-ee4e-c4c8-a49358d569b6@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="G8TMHH3aqvcSICyEMi0JzW5k4s1Z46P22"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <affd8de1-ae35-a1d0-534a-d9cdfac90de8@huawei.com>
- <20190828080740.43244-1-maowenan@huawei.com>
-In-Reply-To: <20190828080740.43244-1-maowenan@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: davem@davemloft.net, jonathan.cameron@huawei.com, wangzhou1@hisilicon.com, liguozhu@hisilicon.com, john.garry@huawei.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190725112509.1075-1-colin.king@canonical.com>
+In-Reply-To: <20190725112509.1075-1-colin.king@canonical.com>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 04:07:40PM +0800, Mao Wenan wrote:
-> When CRYPTO_DEV_HISI_SEC=y, below compilation error is found after 
-> 'commit 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")':
-> 
-> drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_cbc':
-> sec_algs.c:(.text+0x11f0): undefined reference to `des_expand_key'
-> drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_ecb':
-> sec_algs.c:(.text+0x1390): undefined reference to `des_expand_key'
-> make: *** [vmlinux] Error 1
-> 
-> This because DES library has been moved to lib/crypto in this commit 
-> '04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")'.
-> Fix this by selecting CRYPTO_LIB_DES in CRYPTO_DEV_HISI_SEC.
-> 
-> Fixes: 04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")
-> Fixes: 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--G8TMHH3aqvcSICyEMi0JzW5k4s1Z46P22
+Content-Type: multipart/mixed; boundary="9MrFRpJrl4DodDkv4jgC1ZDYOd5mgQRYA";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Colin King <colin.king@canonical.com>,
+ Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+ Henning Colliander <henning.colliander@evidente.se>,
+ Jimmy Assarsson <extja@kvaser.com>, Christer Beskow <chbe@kvaser.com>
+Message-ID: <954ea3c6-3a2d-ee4e-c4c8-a49358d569b6@pengutronix.de>
+Subject: Re: [PATCH][next] can: kvaser_pciefd: remove redundant negative check
+ on trigger
+References: <20190725112509.1075-1-colin.king@canonical.com>
+In-Reply-To: <20190725112509.1075-1-colin.king@canonical.com>
+
+--9MrFRpJrl4DodDkv4jgC1ZDYOd5mgQRYA
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
+
+Adding the Author(s) to Cc.
+
+On 7/25/19 1:25 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The check to see if trigger is less than zero is always false, trigger
+> is always in the range 0..255.  Hence the check is redundant and can
+> be removed.
+>=20
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  v2: remove fix tag 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver") 
->  drivers/crypto/hisilicon/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/net/can/kvaser_pciefd.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>=20
+> diff --git a/drivers/net/can/kvaser_pciefd.c b/drivers/net/can/kvaser_p=
+ciefd.c
+> index 3af747cbbde4..68e00aad0810 100644
+> --- a/drivers/net/can/kvaser_pciefd.c
+> +++ b/drivers/net/can/kvaser_pciefd.c
+> @@ -652,9 +652,6 @@ static void kvaser_pciefd_pwm_stop(struct kvaser_pc=
+iefd_can *can)
+>  	top =3D (pwm_ctrl >> KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT) & 0xff;
+> =20
+>  	trigger =3D (100 * top + 50) / 100;
+> -	if (trigger < 0)
+> -		trigger =3D 0;
+> -
+>  	pwm_ctrl =3D trigger & 0xff;
+>  	pwm_ctrl |=3D (top & 0xff) << KVASER_PCIEFD_KCAN_PWM_TOP_SHIFT;
+>  	iowrite32(pwm_ctrl, can->reg_base + KVASER_PCIEFD_KCAN_PWM_REG);
+>=20
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--9MrFRpJrl4DodDkv4jgC1ZDYOd5mgQRYA--
+
+--G8TMHH3aqvcSICyEMi0JzW5k4s1Z46P22
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEmvEkXzgOfc881GuFWsYho5HknSAFAl1EJ24ACgkQWsYho5Hk
+nSDHLAf/evif4UhnEzCWXAm6eTOORviGs1HoDY+7aLbIDSzIJqNmrBE4W5H7dlVq
+II7nIgfEu4FRW2Ke4eOJFwFz7YrCrN3FfwXtULrH6oSrKzd8Jrcc+1qJBa+sfNkd
+J8dQkD1vNRlU0yhrsE7oPi8gdZwKyT55C4sJ5CSuEVNdDwOZOvpEPr8CwKd8erEc
+XI/ifzl8S/25miv9+usoONExoo+1ckwxJmzjXsqlVn1l5kLG8Z8lyhXZwpj5qYip
+ZB8qE1nW4WpdjYEAZysg15ZcN+PtZx6knodcU/LGCR4kkbai+x2YyClwFFkDZg9m
+diJnI5UV6WvPEiMx6y8GcXhBmYqVqw==
+=1rK7
+-----END PGP SIGNATURE-----
+
+--G8TMHH3aqvcSICyEMi0JzW5k4s1Z46P22--
