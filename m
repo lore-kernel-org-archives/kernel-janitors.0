@@ -1,32 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Aug 2019 12:37:30 +0000
-Subject: Re: [PATCH] ipw2x00: remove redundant assignment to err
-Message-Id: <20190806123730.2BCC36074F@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Aug 2019 10:52:11 +0000
+Subject: [PATCH]][next] selftests: nettest: fix spelling mistake: "potocol" -> "protocol"
+Message-Id: <20190805105211.27229-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190726100614.6924-1-colin.king@canonical.com>
-In-Reply-To: <20190726100614.6924-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable err is initialized to a value that is never read and it
-> is re-assigned later.  The initialization is redundant and can
-> be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is a spelling mistake in an error messgae. Fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/net/nettest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-937a194ae865 ipw2x00: remove redundant assignment to err
-
+diff --git a/tools/testing/selftests/net/nettest.c b/tools/testing/selftests/net/nettest.c
+index 9278f8460d75..83515e5ea4dc 100644
+--- a/tools/testing/selftests/net/nettest.c
++++ b/tools/testing/selftests/net/nettest.c
+@@ -1627,7 +1627,7 @@ int main(int argc, char *argv[])
+ 				args.protocol = pe->p_proto;
+ 			} else {
+ 				if (str_to_uint(optarg, 0, 0xffff, &tmp) != 0) {
+-					fprintf(stderr, "Invalid potocol\n");
++					fprintf(stderr, "Invalid protocol\n");
+ 					return 1;
+ 				}
+ 				args.protocol = tmp;
 -- 
-https://patchwork.kernel.org/patch/11060715/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
