@@ -1,71 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 02 Aug 2019 17:12:17 +0000
-Subject: Re: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
-Message-Id: <3360b179-aaf6-d126-dd40-e1f7e81ac27d@canonical.com>
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Mon, 05 Aug 2019 21:49:19 +0000
+Subject: RE: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
+Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D40F188@ORSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190802155217.16996-1-colin.king@canonical.com>
- <804857E1F29AAC47BF68C404FC60A18401096DB0DF@ORSMSX122.amr.corp.intel.com>
-In-Reply-To: <804857E1F29AAC47BF68C404FC60A18401096DB0DF@ORSMSX122.amr.corp.intel.com>
+In-Reply-To: <20190802155217.16996-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Allan, Bruce W" <bruce.w.allan@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 02/08/2019 18:07, Allan, Bruce W wrote:
->> -----Original Message-----
->> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On Behalf
->> Of Colin King
->> Sent: Friday, August 02, 2019 8:52 AM
->> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
->> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
->> netdev@vger.kernel.org
->> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The loop counter of a for-loop is a u8 however this is being compared
->> to an int upper bound and this can lead to an infinite loop if the
->> upper bound is greater than 255 since the loop counter will wrap back
->> to zero. Fix this potential issue by making the loop counter an int.
->>
->> Addresses-Coverity: ("Infinite loop")
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Colin King
+> Sent: Friday, August 2, 2019 8:52 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
+> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
+> netdev@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
 > 
-> Actually, num_alloc_vfs should probably be a u16 instead of an int since num_alloc_vfs cannot exceed 256.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Which Coverity scan reported this and what options are used in the analysis?
-
-One that I run in a private coverity scan with scan analysis cranked up
-high on linux-next, so the report is not public.
-
-Colin
-
+> The loop counter of a for-loop is a u8 however this is being compared to an
+> int upper bound and this can lead to an infinite loop if the upper bound is
+> greater than 255 since the loop counter will wrap back to zero. Fix this
+> potential issue by making the loop counter an int.
 > 
->> Fixes: c7aeb4d1b9bf ("ice: Disable VFs until reset is completed")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c
->> b/drivers/net/ethernet/intel/ice/ice_main.c
->> index c26e6a102dac..088543d50095 100644
->> --- a/drivers/net/ethernet/intel/ice/ice_main.c
->> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
->> @@ -488,7 +488,7 @@ static void
->>  ice_prepare_for_reset(struct ice_pf *pf)
->>  {
->>  	struct ice_hw *hw = &pf->hw;
->> -	u8 i;
->> +	int i;
->>
->>  	/* already prepared for reset */
->>  	if (test_bit(__ICE_PREPARED_FOR_RESET, pf->state))
->> --
->> 2.20.1
->>
->> _______________________________________________
->> Intel-wired-lan mailing list
->> Intel-wired-lan@osuosl.org
->> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+> Addresses-Coverity: ("Infinite loop")
+> Fixes: c7aeb4d1b9bf ("ice: Disable VFs until reset is completed")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
