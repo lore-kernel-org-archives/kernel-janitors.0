@@ -1,40 +1,28 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Aug 2019 12:07:56 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_staging=3a_vt6656=3a_Delete_an_unnecessary_ch?= =?UTF-8?B?ZWNrIGJlZm9yZSB0aGUg
-Message-Id: <ff6e12fb-f144-351b-25e9-a864b58d7acf@web.de>
+Date: Mon, 05 Aug 2019 12:11:45 +0000
+Subject: Re: [PATCH] phy: qualcomm: phy-qcom-qmp: Add of_node_put() before return
+Message-Id: <239020d9-ff8a-237d-b52c-bf2423f9609b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190804162420.6005-1-nishkadg.linux@gmail.com>
+In-Reply-To: <20190804162420.6005-1-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Nishka Dasgupta <nishkadg.linux@gmail.com>, Andy Gross <agross@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <vivek.gautam@codeaurora.org>, linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Aug 2019 13:56:35 +0200
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -2094,6 +2094,7 @@ static int qcom_qmp_phy_probe(struct platform_device *pdev)
+>  			dev_err(dev, "failed to create lane%d phy, %d\n",
+>  				id, ret);
+>  			pm_runtime_disable(dev);
+> +			of_node_put(child);
+>  			return ret;
+>  		}
 
-The dev_kfree_skb() function performs also input parameter validation.
-Thus the test around the call is not needed.
+I suggest to move a bit of common exception handling code to the end of
+this function implementation.
+Would you like to add a jump target?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/vt6656/main_usb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index 856ba97aec4f..f57e890659aa 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -422,8 +422,7 @@ static void vnt_free_rx_bufs(struct vnt_private *priv)
- 		}
-
- 		/* deallocate skb */
--		if (rcb->skb)
--			dev_kfree_skb(rcb->skb);
-+		dev_kfree_skb(rcb->skb);
-
- 		kfree(rcb);
- 	}
---
-2.23.0
+Regards,
+Markus
