@@ -1,53 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 27 Aug 2019 08:16:20 +0000
-Subject: [PATCH][V2] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
-Message-Id: <20190827081620.20998-1-colin.king@canonical.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 05 Aug 2019 01:26:37 +0000
+Subject: [PATCH net-next v2] net: can: Fix compiling warning
+Message-Id: <20190805012637.62314-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1d9e329a-eafc-6c32-ee2a-df3b15231a2a@huawei.com>
+In-Reply-To: <1d9e329a-eafc-6c32-ee2a-df3b15231a2a@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: socketcan@hartkopp.net, davem@davemloft.net, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+There are two warnings in net/can, fix them by setting bcm_sock_no_ioctlcmd
+and raw_sock_no_ioctlcmd as static.
 
-An earlier commit re-worked the setting of the bitmask and is now
-assigning v with some bit flags rather than bitwise or-ing them
-into v, consequently the earlier bit-settings of v are being lost.
-Fix this by replacing an assignment with the bitwise or instead.
+net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
+net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Addresses-Coverity: ("Unused value")
-Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
 ---
+ v1->v2: change patch description typo error, 'warings' to 'warnings'.
+ net/can/bcm.c | 2 +-
+ net/can/raw.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-V2: fix bcma_pcie_mdio_write as well as bcma_pcie_mdio_read
-
----
- drivers/bcma/driver_pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-index f499a469e66d..12b2cc9a3fbe 100644
---- a/drivers/bcma/driver_pci.c
-+++ b/drivers/bcma/driver_pci.c
-@@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci *pc, u16 device, u8 address)
- 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
- 	}
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index bf1d0bbecec8..b8a32b4ac368 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1680,7 +1680,7 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
  
--	v = BCMA_CORE_PCI_MDIODATA_START;
-+	v |= BCMA_CORE_PCI_MDIODATA_START;
- 	v |= BCMA_CORE_PCI_MDIODATA_READ;
- 	v |= BCMA_CORE_PCI_MDIODATA_TA;
+-int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+diff --git a/net/can/raw.c b/net/can/raw.c
+index da386f1fa815..a01848ff9b12 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -837,7 +837,7 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
  
-@@ -121,7 +121,7 @@ static void bcma_pcie_mdio_write(struct bcma_drv_pci *pc, u16 device,
- 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
- 	}
- 
--	v = BCMA_CORE_PCI_MDIODATA_START;
-+	v |= BCMA_CORE_PCI_MDIODATA_START;
- 	v |= BCMA_CORE_PCI_MDIODATA_WRITE;
- 	v |= BCMA_CORE_PCI_MDIODATA_TA;
- 	v |= data;
+-int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
 -- 
 2.20.1
