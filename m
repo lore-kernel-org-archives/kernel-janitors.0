@@ -1,55 +1,45 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 07 Aug 2019 20:47:45 +0000
-Subject: Re: [PATCH] IB/mlx5: Check the correct variable in error handling code
-Message-Id: <a9cb1d33ec5c7d30e044c331d351a6495305f2e6.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-QKp/f/v2t+6NumgNjUwF"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 06 Aug 2019 08:55:12 +0000
+Subject: [PATCH] net: cxgb3_main: Fix a resource leak in a error path in 'init_one()'
+Message-Id: <20190806085512.11729-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190807123236.GA11452@mwanda>
-In-Reply-To: <20190807123236.GA11452@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Leon Romanovsky <leon@kernel.org>, Yishai Hadas <yishaih@mellanox.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-QKp/f/v2t+6NumgNjUwF
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2019-08-07 at 15:32 +0300, Dan Carpenter wrote:
-> The code accidentally checks "event_sub" instead of "event_sub-
-> >eventfd".
->=20
-> Fixes: 759738537142 ("IB/mlx5: Enable subscription for device events
-> over DEVX")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, applied to for-rc.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-QKp/f/v2t+6NumgNjUwF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: vishal@chelsio.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
------BEGIN PGP SIGNATURE-----
+A call to 'kfree_skb()' is missing in the error handling path of
+'init_one()'.
+This is already present in 'remove_one()' but is missing here.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl1LOPEACgkQuCajMw5X
-L903jA/9E4n/DIgJE5MbY7snCWoJibwzvy+Kc3vC4t2MoS8lORuLU9+rRCX1RqEP
-acQKazYsac4TKv/SG7MgDWYbd92qqiHLfuIgUzLbAxgzyEUeY09ET+EolCZTwPAH
-d+vk1tAyKaBaJu0WLgZ5r8/XimPwVGBvxmmZRar1DcyGnK1WySXXjj9qb2US6aCU
-YVTxVhQ22vB1aVZ66fOPq6It2GGaTdLChz0iChTgaP9AldSirzbvsrDt+QGTzzPa
-BIJ0civiFRRky8Jt1OGjVprkMo4BNTY1BYxOjppdDlI4sowMhNpIuyIgmFWnv9sW
-fqNaYiEhsEAfM1wRcv5apImpgNJmaLhnGqHHQRYS6l2ykB1n+JpTunqYYW0EtjBV
-7Sni7E47fTjpPi19mTfRLfu80yE1+y/FjRnwPvKAEXg92gsZbUsy4bZf9lRHu5VJ
-8mh4XA2Xmql3ReOn3i7Q3/Ke7nNpPGF0GxkDATaxQm8kLqxXVdqCJxghfp+N++As
-mvWpmpsCymGpl1K5Kw0qMasKm2YLtoWiKoyYVyjTvB1bzyE2T+GtrgNoMtrciDUp
-npE0e9Ser099L7ZGekeU6nGdLXZEPZUutl/GDm3/uDfYk+fitsNtEStimtyUCSkd
-3fpiuZYWd0M8KKUFP9/4A8dcMB9QTnwwnWQUNPouDfxsuxzkl5I=
-=lqiY
------END PGP SIGNATURE-----
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---=-QKp/f/v2t+6NumgNjUwF--
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index 1e82b9efe447..58f89f6a040f 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -3269,7 +3269,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (!adapter->regs) {
+ 		dev_err(&pdev->dev, "cannot map device registers\n");
+ 		err = -ENOMEM;
+-		goto out_free_adapter;
++		goto out_free_adapter_nofail;
+ 	}
+ 
+ 	adapter->pdev = pdev;
+@@ -3397,6 +3397,9 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		if (adapter->port[i])
+ 			free_netdev(adapter->port[i]);
+ 
++out_free_adapter_nofail:
++	kfree_skb(adapter->nofail_skb);
++
+ out_free_adapter:
+ 	kfree(adapter);
+ 
+-- 
+2.20.1
