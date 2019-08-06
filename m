@@ -1,91 +1,51 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 30 Aug 2019 07:55:41 +0000
-Subject: Re: [PATCH v2] scripts: coccinelle: check for !(un)?likely usage
-Message-Id: <3c0f82d5-369a-1493-799e-b201a28aa671@web.de>
+From: Adam Zerella <adam.zerella@gmail.com>
+Date: Tue, 06 Aug 2019 13:04:47 +0000
+Subject: [PATCH] pcmcia/i82092: Refactored dprintk macro for pr_debug.
+Message-Id: <20190806130445.3785-1-adam.zerella@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190825130536.14683-1-efremov@linux.com>
- <20190829171013.22956-1-efremov@linux.com>
-In-Reply-To: <20190829171013.22956-1-efremov@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Denis Efremov <efremov@linux.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Joe Perches <joe@perches.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> +/// Notations !unlikely(x) and !likely(x) are confusing.
+As pointed out in https://kernelnewbies.org/KernelJanitors/Todo
+this patch replaces the outdated macro of DPRINTK for pr_debug
 
-I am curious if more software developers will share their views around
-these likeliness annotations.
+E: example patch (Testing to see if this format and type of fix is welcome)
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Adam Zerella <adam.zerella@gmail.com>
+To: linux-kernel@vger.kernel.org
+Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
+---
+ drivers/pcmcia/i82092.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-* How much does the scope matter for expressions?
-
-* Are different coding style preferences involved?
-
-
-> +//----------------------------------------------------------
-> +//  For context mode
-> +//----------------------------------------------------------
-> +
-> +@depends on context disable unlikely@
-
-I wonder about the need for such a comment when the specification
-of SmPL rule dependencies should be sufficient.
-
-
-> +@depends on patch disable unlikely@
-> +expression E;
-> +@@
-> +
-> +(
-> +-!likely(!E)
-> ++unlikely(E)
-> +|
-> +-!likely(E)
-> ++unlikely(!E)
-> +|
-> +-!unlikely(!E)
-> ++likely(E)
-> +|
-> +-!unlikely(E)
-> ++likely(!E)
-> +)
-
-Will another variant for the change specification with the semantic
-patch language influence corresponding readability concerns?
-
-+@replacement depends on patch disable unlikely@
-+expression x;
-+@@
-+-!
-+(
-+(
-+-unlikely
-++likely
-+|
-+-likely
-++unlikely
-+)
-+       (
-+-       !
-+        x
-+       )
-+|
-+(
-+-unlikely
-++likely
-+|
-+-likely
-++unlikely
-+)
-+       (
-++       !
-+        x
-+       )
-+)
-
-
-Can the use of nested SmPL disjunctions help here together with
-an other SmPL code formatting?
-
-Regards,
-Markus
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index ec54a2aa5cb8..e1929520c20e 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -117,9 +117,9 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 		
+ 		if (card_present(i)) {
+ 			sockets[i].card_state = 3;
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is occupied\n",i);
++			pr_debug("i82092aa: slot %i is occupied\n", i);
+ 		} else {
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is vacant\n",i);
++			pr_debug("i82092aa: slot %i is vacant\n", i);
+ 		}
+ 	}
+ 		
+@@ -128,7 +128,7 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 	pci_write_config_byte(dev, 0x50, configbyte); /* PCI Interrupt Routing Register */
+ 
+ 	/* Register the interrupt handler */
+-	dprintk(KERN_DEBUG "Requesting interrupt %i \n",dev->irq);
++	pr_debug("Requesting interrupt %i\n", dev->irq);
+ 	if ((ret = request_irq(dev->irq, i82092aa_interrupt, IRQF_SHARED, "i82092aa", i82092aa_interrupt))) {
+ 		printk(KERN_ERR "i82092aa: Failed to register IRQ %d, aborting\n", dev->irq);
+ 		goto err_out_free_res;
+-- 
+2.20.1
