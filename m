@@ -1,47 +1,48 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 14 Aug 2019 07:21:05 +0000
-Subject: [PATCH v2 linux-next 2/2] drivers: dma: change alignment of mux_configure32 and fsl_edma_chan_mux
-Message-Id: <20190814072105.144107-3-maowenan@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Aug 2019 13:17:21 +0000
+Subject: Re: [PATCH] scsi: snic: remove redundant assignment to variable ret
+Message-Id: <20190806131721.GI1974@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190814072105.144107-1-maowenan@huawei.com>
-In-Reply-To: <20190814072105.144107-1-maowenan@huawei.com>
+References: <20190731224950.16818-1-colin.king@canonical.com>
+In-Reply-To: <20190731224950.16818-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.j.williams@intel.com, dmaengine@vger.kernel.org, vkoul@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Karan Tilak Kumar <kartilak@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The alignment of mux_configure32() and fsl_edma_chan_mux() need 
-to be adjusted, it must start precisely at the first column after 
-the openning parenthesis of the first line.
+On Wed, Jul 31, 2019 at 11:49:50PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable ret is being assigned with a value that is never read as
+> there is return statement immediately afterwards.  The assignment
+> is redundant and hence can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/scsi/snic/snic_disc.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/snic/snic_disc.c b/drivers/scsi/snic/snic_disc.c
+> index e9ccfb97773f..d89c75991323 100644
+> --- a/drivers/scsi/snic/snic_disc.c
+> +++ b/drivers/scsi/snic/snic_disc.c
+> @@ -261,8 +261,6 @@ snic_tgt_create(struct snic *snic, struct snic_tgt_id *tgtid)
+>  	tgt = kzalloc(sizeof(*tgt), GFP_KERNEL);
+>  	if (!tgt) {
+>  		SNIC_HOST_ERR(snic->shost, "Failure to allocate snic_tgt.\n");
+> -		ret = -ENOMEM;
+> -
+>  		return tgt;
 
-Fixes: 9d831528a656 ("dmaengine: fsl-edma: extract common fsl-edma code (no changes in behavior intended)")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/dma/fsl-edma-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Not related to this patch, but it would be nicer to return NULL instead
+of tgt.  It's the same but the literal is nicer.  No need for the error
+message after a kmalloc failure either.
 
-diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
-index 264c448de409..b1a7ca91701a 100644
---- a/drivers/dma/fsl-edma-common.c
-+++ b/drivers/dma/fsl-edma-common.c
-@@ -91,7 +91,7 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
- }
- 
- static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
--		     u32 off, u32 slot, bool enable)
-+			    u32 off, u32 slot, bool enable)
- {
- 	u32 val;
- 
-@@ -104,7 +104,7 @@ static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
- }
- 
- void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
--			unsigned int slot, bool enable)
-+		       unsigned int slot, bool enable)
- {
- 	u32 ch = fsl_chan->vchan.chan.chan_id;
- 	void __iomem *muxaddr;
--- 
-2.20.1
+	tgt = kzalloc(sizeof(*tgt), GFP_KERNEL);
+	if (!tgt)
+		return NULL;
+
+regards,
+dan carpenter
