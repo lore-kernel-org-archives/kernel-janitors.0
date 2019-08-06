@@ -1,58 +1,32 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Thu, 22 Aug 2019 17:55:54 +0000
-Subject: RE: [PATCH 4/4] misc: xilinx_sdfec: Prevent integer overflow in xsdfec_table_write()
-Message-Id: <CH2PR02MB63593CB2434AC146D841E56BCBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 06 Aug 2019 12:37:30 +0000
+Subject: Re: [PATCH] ipw2x00: remove redundant assignment to err
+Message-Id: <20190806123730.2BCC36074F@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821070606.GA26957@mwanda> <20190821071122.GD26957@mwanda>
-In-Reply-To: <20190821071122.GD26957@mwanda>
+References: <20190726100614.6924-1-colin.king@canonical.com>
+In-Reply-To: <20190726100614.6924-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Derek Kiernan <dkiernan@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+Colin King <colin.king@canonical.com> wrote:
 
-
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday 21 August 2019 08:11
-> To: Derek Kiernan <dkiernan@xilinx.com>; Dragan Cvetic <draganc@xilinx.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Michal Simek <michals@xilinx.com>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 4/4] misc: xilinx_sdfec: Prevent integer overflow in xsdfec_table_write()
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The checking here needs to handle integer overflows because "offset" and
-> "len" come from the user.
-
-Good catch, thanks.
-
+> Variable err is initialized to a value that is never read and it
+> is re-assigned later.  The initialization is redundant and can
+> be removed.
 > 
-> Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/xilinx_sdfec.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-> index 3fc53d20abf3..0bf3bcc8e1ef 100644
-> --- a/drivers/misc/xilinx_sdfec.c
-> +++ b/drivers/misc/xilinx_sdfec.c
-> @@ -611,7 +611,9 @@ static int xsdfec_table_write(struct xsdfec_dev *xsdfec, u32 offset,
->  	 * Writes that go beyond the length of
->  	 * Shared Scale(SC) table should fail
->  	 */
-> -	if ((XSDFEC_REG_WIDTH_JUMP * (offset + len)) > depth) {
-> +	if (offset > depth / XSDFEC_REG_WIDTH_JUMP ||
-> +	    len > depth / XSDFEC_REG_WIDTH_JUMP ||
-> +	    offset + len > depth / XSDFEC_REG_WIDTH_JUMP) {
->  		dev_dbg(xsdfec->dev, "Write exceeds SC table length");
->  		return -EINVAL;
->  	}
-> --
-> 2.20.1
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+Patch applied to wireless-drivers-next.git, thanks.
 
-Thanks 
-Dragan
+937a194ae865 ipw2x00: remove redundant assignment to err
+
+-- 
+https://patchwork.kernel.org/patch/11060715/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
