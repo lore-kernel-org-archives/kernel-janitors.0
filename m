@@ -1,26 +1,62 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 27 Aug 2019 08:23:29 +0000
-Subject: [PATCH 0/2] powerpc/82xx: Adjustments for pq2ads_pci_init_irq()
-Message-Id: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 06 Aug 2019 01:37:01 +0000
+Subject: [PATCH net-next v4] net: can: Fix compiling warnings for two functions
+Message-Id: <20190806013701.71159-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190805.103002.641507066504156536.davem@davemloft.net>
+In-Reply-To: <20190805.103002.641507066504156536.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Enrico Weigelt <lkml@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: davem@davemloft.net, socketcan@hartkopp.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, maowenan@huawei.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Aug 2019 10:16:32 +0200
+There are two warnings in net/can, fix them by setting
+bcm_sock_no_ioctlcmd and raw_sock_no_ioctlcmd as static.
 
-Two update suggestions were taken into account
-from static source code analysis.
+net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
+net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Markus Elfring (2):
-  Delete an unnecessary of_node_put() call
-  Use common error handling code
+Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+---
+ v1->v2: change patch description typo error, 'warings' to 'warnings'.
+ v2->v3: change subject of patch.
+ v3->v4: change the alignment of two functions. 
+ net/can/bcm.c | 4 ++--
+ net/can/raw.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
- arch/powerpc/platforms/82xx/pq2ads-pci-pic.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
---
-2.23.0
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index bf1d0bbecec8..eb1d28b8c46a 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1680,8 +1680,8 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+-			 unsigned long arg)
++static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++				unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+ 	return -ENOIOCTLCMD;
+diff --git a/net/can/raw.c b/net/can/raw.c
+index da386f1fa815..a30aaecd9327 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -837,8 +837,8 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+-			 unsigned long arg)
++static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++				unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+ 	return -ENOIOCTLCMD;
+-- 
+2.20.1
