@@ -1,56 +1,68 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Thu, 22 Aug 2019 17:47:40 +0000
-Subject: RE: [PATCH 2/4] misc: xilinx_sdfec: Return -EFAULT if copy_from_user() fails
-Message-Id: <CH2PR02MB63593847840988DBE32C8D65CBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Borislav Petkov <bp@alien8.de>
+Date: Wed, 07 Aug 2019 08:46:43 +0000
+Subject: Re: [PATCH] EDAC/altera: Silence an endian warning
+Message-Id: <20190807084643.GA18207@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821070606.GA26957@mwanda> <20190821070702.GB26957@mwanda>
-In-Reply-To: <20190821070702.GB26957@mwanda>
+References: <20190624134717.GA1754@mwanda>
+ <2baa5124-f0b0-a33e-256b-6a17867862c9@linux.intel.com>
+In-Reply-To: <2baa5124-f0b0-a33e-256b-6a17867862c9@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Derek Kiernan <dkiernan@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Mon, Jun 24, 2019 at 03:27:55PM -0500, Thor Thayer wrote:
+> Hi Dan,
+> 
+> On 6/24/19 8:47 AM, Dan Carpenter wrote:
+> > Smatch complains that we're casting a u32 pointer to unsigned long.
+> > 
+> >      drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+> >      warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+> > 
+> > This code wouldn't work on a 64 bit big endian system because we would
+> > read past the end of &irq_status.
+> > 
+> > Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > Static analysis obviously and I don't know this subsystem at all.
+> > Probably we're never going to run this on a 64 bit big endian system...
+> > Feel free to ignore this if you want.
+> > 
+> >   drivers/edac/altera_edac.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> > index c2e693e34d43..bf024ec0116c 100644
+> > --- a/drivers/edac/altera_edac.c
+> > +++ b/drivers/edac/altera_edac.c
+> > @@ -1866,6 +1866,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+> >   	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+> >   	struct irq_chip *chip = irq_desc_get_chip(desc);
+> >   	int irq = irq_desc_get_irq(desc);
+> > +	unsigned long bits;
+> >   	dberr = (irq = edac->db_irq) ? 1 : 0;
+> >   	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+> > @@ -1875,7 +1876,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+> >   	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
+> > -	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
+> > +	bits = irq_status;
+> > +	for_each_set_bit(bit, &bits, 32) {
+> >   		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+> >   		if (irq)
+> >   			generic_handle_irq(irq);
+> > 
+> You are correct that we shouldn't use this on a 64 bit machine but this is a
+> good fix. Thank you!
+> 
+> Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday 21 August 2019 08:07
-> To: Derek Kiernan <dkiernan@xilinx.com>; Dragan Cvetic <draganc@xilinx.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Michal Simek <michals@xilinx.com>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 2/4] misc: xilinx_sdfec: Return -EFAULT if copy_from_user() fails
-> 
-> The copy_from_user() funciton returns the number of bytes remaining to
-> be copied but we want to return -EFAULT to the user.
-> 
-> Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/xilinx_sdfec.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-> index dc1b8b412712..813b82c59360 100644
-> --- a/drivers/misc/xilinx_sdfec.c
-> +++ b/drivers/misc/xilinx_sdfec.c
-> @@ -651,9 +651,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
->  	if (!ldpc)
->  		return -ENOMEM;
-> 
-> -	ret = copy_from_user(ldpc, arg, sizeof(*ldpc));
-> -	if (ret)
-> +	if (copy_from_user(ldpc, arg, sizeof(*ldpc))) {
-> +		ret = -EFAULT;
->  		goto err_out;
-> +	}
-> 
->  	if (xsdfec->config.code == XSDFEC_TURBO_CODE) {
->  		ret = -EIO;
-> --
-> 2.20.1
+Applied, thanks.
 
-Reviewed-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks,
-Dragan
+Good mailing practices for 400: avoid top-posting and trim the reply.
