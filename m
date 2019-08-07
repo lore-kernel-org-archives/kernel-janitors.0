@@ -1,47 +1,42 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 27 Aug 2019 15:46:41 +0000
-Subject: Re: [PATCH] cifs: Use kzfree() to zero out the password
-Message-Id: <CAH2r5mtNVwt-Dp8YVvbVHbYEpUAG_bw=aqJqWdB1Wb-hY1e=NQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Aug 2019 12:19:29 +0000
+Subject: [PATCH][ocfs2-next] ocfs2: ensure ret is set to zero before returning
+Message-Id: <20190807121929.28918-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827105917.GA23038@mwanda>
-In-Reply-To: <20190827105917.GA23038@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, Ronnie Sahlberg <lsahlber@redhat.com>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Aug 27, 2019 at 6:02 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> It's safer to zero out the password so that it can never be disclosed.
->
-> Fixes: 0c219f5799c7 ("cifs: set domainName when a domain-key is used in multiuser")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/cifs/connect.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index e6cc5c4b0f19..642bbb5bee3a 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -3101,7 +3101,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
->                         rc = -ENOMEM;
->                         kfree(vol->username);
->                         vol->username = NULL;
-> -                       kfree(vol->password);
-> +                       kzfree(vol->password);
->                         vol->password = NULL;
->                         goto out_key_put;
->                 }
-> --
-> 2.20.1
->
+A previous commit introduced a regression where variable ret was
+originally being set from the return from a call to function
+dlm_create_debugfs_subroot and this set was removed. Currently
+ret is now uninitialized if no alloction errors are found which
+may end up with a bogus check on ret < 0 on the 'leave:' return
+path.  Fix this by setting ret to zero on a successful execution
+path.
 
+Addresses-Coverity: ("Uninitialzed scalar variable")
+Fixes: cba322160ef0 ("ocfs2: further debugfs cleanups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/dlm/dlmdomain.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 5c4218d66dd2..ee6f459f9770 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -2052,6 +2052,7 @@ static struct dlm_ctxt *dlm_alloc_ctxt(const char *domain,
+ 	mlog(0, "context init: refcount %u\n",
+ 		  kref_read(&dlm->dlm_refs));
+ 
++	ret = 0;
+ leave:
+ 	if (ret < 0 && dlm) {
+ 		if (dlm->master_hash)
 -- 
-Thanks,
-
-Steve
+2.20.1
