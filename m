@@ -1,43 +1,76 @@
-From: Parav Pandit <parav@mellanox.com>
-Date: Fri, 02 Aug 2019 11:31:52 +0000
-Subject: RE: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
-Message-Id: <AM0PR05MB4866E10E1182F122D6CC05AFD1D90@AM0PR05MB4866.eurprd05.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Aug 2019 12:28:32 +0000
+Subject: [PATCH] drm/i915: Fix some NULL vs IS_ERR() conditions
+Message-Id: <20190807122832.GA10517@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190802102223.26198-1-colin.king@canonical.com>
-In-Reply-To: <20190802102223.26198-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtcmRtYS1vd25l
-ckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJkbWEtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4g
-T24gQmVoYWxmIE9mIENvbGluIEtpbmcNCj4gU2VudDogRnJpZGF5LCBBdWd1c3QgMiwgMjAxOSAz
-OjUyIFBNDQo+IFRvOiBTYWVlZCBNYWhhbWVlZCA8c2FlZWRtQG1lbGxhbm94LmNvbT47IExlb24g
-Um9tYW5vdnNreQ0KPiA8bGVvbkBrZXJuZWwub3JnPjsgRGF2aWQgUyAuIE1pbGxlciA8ZGF2ZW1A
-ZGF2ZW1sb2Z0Lm5ldD47DQo+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXJkbWFAdmdl
-ci5rZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF1bbmV0LW5leHRdIG5l
-dC9tbHg1OiByZW1vdmUgc2VsZi1hc3NpZ25tZW50IG9uIGVzdy0+ZGV2DQo+IA0KPiBGcm9tOiBD
-b2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhlcmUgaXMg
-YSBzZWxmIGFzc2lnbm1lbnQgb2YgZXN3LT5kZXYgdG8gaXRzZWxmLCBjbGVhbiB0aGlzIHVwIGJ5
-IHJlbW92aW5nIGl0Lg0KPiANCj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlNlbGYgYXNzaWdubWVu
-dCIpDQo+IEZpeGVzOiA2Y2VkZGU0NTEzOTkgKCJuZXQvbWx4NTogRS1Td2l0Y2gsIFZlcmlmeSBz
-dXBwb3J0IFFvUyBlbGVtZW50IHR5cGUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2lu
-ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVy
-bmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+IGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYw0KPiBpbmRleCBmNGFj
-ZTVmOGU4ODQuLmRlMDg5NGI2OTVlMyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+IEBAIC0xNDEzLDcgKzE0MTMsNyBA
-QCBzdGF0aWMgaW50IGVzd192cG9ydF9lZ3Jlc3NfY29uZmlnKHN0cnVjdA0KPiBtbHg1X2Vzd2l0
-Y2ggKmVzdywNCj4gDQo+ICBzdGF0aWMgYm9vbCBlbGVtZW50X3R5cGVfc3VwcG9ydGVkKHN0cnVj
-dCBtbHg1X2Vzd2l0Y2ggKmVzdywgaW50IHR5cGUpICB7DQpNYWtpbmcgaXQgY29uc3Qgc3RydWN0
-IG1seDVfZXN3aXRjaCAqZXN3IGJyaW5ncyBpbXByb3ZlcyBjb2RlIGh5Z2llbmUgZnVydGhlciBp
-biBzdWNoIGZ1bmN0aW9ucy4NCg0KPiAtCXN0cnVjdCBtbHg1X2NvcmVfZGV2ICpkZXYgPSBlc3ct
-PmRldiA9IGVzdy0+ZGV2Ow0KPiArCXN0cnVjdCBtbHg1X2NvcmVfZGV2ICpkZXYgPSBlc3ctPmRl
-djsNCj4gDQo+ICAJc3dpdGNoICh0eXBlKSB7DQo+ICAJY2FzZSBTQ0hFRFVMSU5HX0NPTlRFWFRf
-RUxFTUVOVF9UWVBFX1RTQVI6DQo+IC0tDQo+IDIuMjAuMQ0KDQo
+There were several places which check for NULL when they should have
+been checking for IS_ERR().
+
+Fixes: d8af05ff38ae ("drm/i915: Allow sharing the idle-barrier from other kernel requests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/gt/selftest_context.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gt/selftest_context.c b/drivers/gpu/drm/i915/gt/selftest_context.c
+index d39b5594cb02..6e7e9a6fd235 100644
+--- a/drivers/gpu/drm/i915/gt/selftest_context.c
++++ b/drivers/gpu/drm/i915/gt/selftest_context.c
+@@ -86,8 +86,8 @@ static int __live_active_context(struct intel_engine_cs *engine,
+ 	}
+ 
+ 	ce = intel_context_create(fixme, engine);
+-	if (!ce)
+-		return -ENOMEM;
++	if (IS_ERR(ce))
++		return PTR_ERR(ce);
+ 
+ 	for (pass = 0; pass <= 2; pass++) {
+ 		struct i915_request *rq;
+@@ -161,8 +161,8 @@ static int live_active_context(void *arg)
+ 	mutex_lock(&gt->i915->drm.struct_mutex);
+ 
+ 	fixme = live_context(gt->i915, file);
+-	if (!fixme) {
+-		err = -ENOMEM;
++	if (IS_ERR(fixme)) {
++		err = PTR_ERR(fixme);
+ 		goto unlock;
+ 	}
+ 
+@@ -226,12 +226,12 @@ static int __live_remote_context(struct intel_engine_cs *engine,
+ 	 */
+ 
+ 	remote = intel_context_create(fixme, engine);
+-	if (!remote)
+-		return -ENOMEM;
++	if (IS_ERR(remote))
++		return PTR_ERR(remote);
+ 
+ 	local = intel_context_create(fixme, engine);
+-	if (!local) {
+-		err = -ENOMEM;
++	if (IS_ERR(local)) {
++		err = PTR_ERR(local);
+ 		goto err_remote;
+ 	}
+ 
+@@ -274,8 +274,8 @@ static int live_remote_context(void *arg)
+ 	mutex_lock(&gt->i915->drm.struct_mutex);
+ 
+ 	fixme = live_context(gt->i915, file);
+-	if (!fixme) {
+-		err = -ENOMEM;
++	if (IS_ERR(fixme)) {
++		err = PTR_ERR(fixme);
+ 		goto unlock;
+ 	}
+ 
+-- 
+2.20.1
