@@ -1,76 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 07 Aug 2019 12:28:32 +0000
-Subject: [PATCH] drm/i915: Fix some NULL vs IS_ERR() conditions
-Message-Id: <20190807122832.GA10517@mwanda>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 07 Aug 2019 12:32:15 +0000
+Subject: Re: [PATCH] drm/i915: Fix some NULL vs IS_ERR() conditions
+Message-Id: <156518113518.6198.15252656122354479322@skylake-alporthouse-com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190807122832.GA10517@mwanda>
+In-Reply-To: <20190807122832.GA10517@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
 Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-There were several places which check for NULL when they should have
-been checking for IS_ERR().
+Quoting Dan Carpenter (2019-08-07 13:28:32)
+> There were several places which check for NULL when they should have
+> been checking for IS_ERR().
+> 
+> Fixes: d8af05ff38ae ("drm/i915: Allow sharing the idle-barrier from other kernel requests")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: d8af05ff38ae ("drm/i915: Allow sharing the idle-barrier from other kernel requests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/i915/gt/selftest_context.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Oops,
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
 
-diff --git a/drivers/gpu/drm/i915/gt/selftest_context.c b/drivers/gpu/drm/i915/gt/selftest_context.c
-index d39b5594cb02..6e7e9a6fd235 100644
---- a/drivers/gpu/drm/i915/gt/selftest_context.c
-+++ b/drivers/gpu/drm/i915/gt/selftest_context.c
-@@ -86,8 +86,8 @@ static int __live_active_context(struct intel_engine_cs *engine,
- 	}
- 
- 	ce = intel_context_create(fixme, engine);
--	if (!ce)
--		return -ENOMEM;
-+	if (IS_ERR(ce))
-+		return PTR_ERR(ce);
- 
- 	for (pass = 0; pass <= 2; pass++) {
- 		struct i915_request *rq;
-@@ -161,8 +161,8 @@ static int live_active_context(void *arg)
- 	mutex_lock(&gt->i915->drm.struct_mutex);
- 
- 	fixme = live_context(gt->i915, file);
--	if (!fixme) {
--		err = -ENOMEM;
-+	if (IS_ERR(fixme)) {
-+		err = PTR_ERR(fixme);
- 		goto unlock;
- 	}
- 
-@@ -226,12 +226,12 @@ static int __live_remote_context(struct intel_engine_cs *engine,
- 	 */
- 
- 	remote = intel_context_create(fixme, engine);
--	if (!remote)
--		return -ENOMEM;
-+	if (IS_ERR(remote))
-+		return PTR_ERR(remote);
- 
- 	local = intel_context_create(fixme, engine);
--	if (!local) {
--		err = -ENOMEM;
-+	if (IS_ERR(local)) {
-+		err = PTR_ERR(local);
- 		goto err_remote;
- 	}
- 
-@@ -274,8 +274,8 @@ static int live_remote_context(void *arg)
- 	mutex_lock(&gt->i915->drm.struct_mutex);
- 
- 	fixme = live_context(gt->i915, file);
--	if (!fixme) {
--		err = -ENOMEM;
-+	if (IS_ERR(fixme)) {
-+		err = PTR_ERR(fixme);
- 		goto unlock;
- 	}
- 
--- 
-2.20.1
+Thanks,
+-Chris
