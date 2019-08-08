@@ -1,45 +1,29 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Mon, 26 Aug 2019 09:20:21 +0000
-Subject: Re: [PATCH] cpufreq: remove redundant assignment to ret
-Message-Id: <2250924.CPEEF64KPg@kreacher>
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Date: Thu, 08 Aug 2019 05:23:46 +0000
+Subject: Re: [PATCH] net: ethernet: et131x: Use GFP_KERNEL instead of GFP_ATOMIC when allocating tx_ring->tcb
+Message-Id: <20190807222346.00002ba7@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190813122121.28160-1-colin.king@canonical.com> <20190819065814.333kowws4mpw3qfx@vireshk-i7>
-In-Reply-To: <20190819065814.333kowws4mpw3qfx@vireshk-i7>
+References: <20190731073842.16948-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190731073842.16948-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>, Colin King <colin.king@canonical.com>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: mark.einon@gmail.com, davem@davemloft.net, willy@infradead.org, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jesse.brandeburg@intel.com
 
-On Monday, August 19, 2019 8:58:14 AM CEST Viresh Kumar wrote:
-> On 13-08-19, 13:21, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Variable ret is initialized to a value that is never read and it is
-> > re-assigned later. The initialization is redundant and can be removed.
-> > 
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/cpufreq/cpufreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index c28ebf2810f1..26d82e0a2de5 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -2140,7 +2140,7 @@ int cpufreq_driver_target(struct cpufreq_policy *policy,
-> >  			  unsigned int target_freq,
-> >  			  unsigned int relation)
-> >  {
-> > -	int ret = -EINVAL;
-> > +	int ret;
-> >  
-> >  	down_write(&policy->rwsem);
-> >  
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
+On Wed, 31 Jul 2019 09:38:42 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Patch applied, thanks!
+> There is no good reason to use GFP_ATOMIC here. Other memory allocations
+> are performed with GFP_KERNEL (see other 'dma_alloc_coherent()' below and
+> 'kzalloc()' in 'et131x_rx_dma_memory_alloc()')
+> 
+> Use GFP_KERNEL which should be enough.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Sure, but generally I'd say GFP_ATOMIC is ok if you're in an init path
+and you can afford to have the allocation thread sleep while memory is
+being found by the kernel.
+
+Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
