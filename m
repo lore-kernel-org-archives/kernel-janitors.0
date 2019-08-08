@@ -1,76 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2019 07:26:31 +0000
-Subject: [bug report] misc: xilinx_sdfec: Add ability to configure turbo
-Message-Id: <20190821072631.GK26957@mwanda>
+Date: Thu, 08 Aug 2019 10:33:35 +0000
+Subject: [PATCH] regulator: slg51000: Fix a couple NULL vs IS_ERR() checks
+Message-Id: <20190808103335.GD30506@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Support Opensource <support.opensource@diasemi.com>, Eric Jeong <eric.jeong.opensource@diasemi.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dragan Cvetic,
+The devm_gpiod_get_from_of_node() function never returns NULL, it
+returns error pointers on error.
 
-The patch 6f86ed820178: "misc: xilinx_sdfec: Add ability to configure
-turbo" from Jul 27, 2019, leads to the following static checker
-warning:
+Fixes: a867bde3dd03 ("regulator: slg51000: add slg51000 regulator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/regulator/slg51000-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	drivers/misc/xilinx_sdfec.c:428 xsdfec_set_turbo()
-	warn: 0xfff is larger than 8 bits
-
-drivers/misc/xilinx_sdfec.c
-   417
-   418          if (turbo.alg >= XSDFEC_TURBO_ALG_MAX)
-   419                  return -EINVAL;
-   420
-   421          if (turbo.scale > XSDFEC_TURBO_SCALE_MAX)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Here we ensure that turbo scale is a u8 which is <= 0xf.
-
-   422                  return -EINVAL;
-   423
-   424          /* Check to see what device tree says about the FEC codes */
-   425          if (xsdfec->config.code = XSDFEC_LDPC_CODE)
-   426                  return -EIO;
-   427
-   428          turbo_write = ((turbo.scale & XSDFEC_TURBO_SCALE_MASK)
-                                              ^^^^^^^^^^^^^^^^^^^^^^^
-So this 0xfff is not required and sort of confusing.
-
-   429                         << XSDFEC_TURBO_SCALE_BIT_POS) |
-                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
-We shift it 8 bits.
-
-   430                        turbo.alg;
-   431          xsdfec_regwrite(xsdfec, XSDFEC_TURBO_ADDR, turbo_write);
-   432          return err;
-   433  }
-   434
-   435  static int xsdfec_get_turbo(struct xsdfec_dev *xsdfec, void __user *arg)
-   436  {
-   437          u32 reg_value;
-   438          struct xsdfec_turbo turbo_params;
-   439          int err;
-   440
-   441          if (xsdfec->config.code = XSDFEC_LDPC_CODE)
-   442                  return -EIO;
-   443
-   444          memset(&turbo_params, 0, sizeof(turbo_params));
-   445          reg_value = xsdfec_regread(xsdfec, XSDFEC_TURBO_ADDR);
-   446
-   447          turbo_params.scale = (reg_value & XSDFEC_TURBO_SCALE_MASK) >>
-   448                               XSDFEC_TURBO_SCALE_BIT_POS;
-
-Then, when we're reading it, we do (reg & 0xfff >> 8) so people would
-think the result can be 0xff instead of just 0xf.
-
-   449          turbo_params.alg = reg_value & 0x1;
-   450
-   451          err = copy_to_user(arg, &turbo_params, sizeof(turbo_params));
-   452          if (err)
-   453                  err = -EFAULT;
-   454
-   455          return err;
-   456  }
-
-regards,
-dan carpenter
+diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
+index 04b732991d69..4d859fef55e6 100644
+--- a/drivers/regulator/slg51000-regulator.c
++++ b/drivers/regulator/slg51000-regulator.c
+@@ -205,7 +205,7 @@ static int slg51000_of_parse_cb(struct device_node *np,
+ 	ena_gpiod = devm_gpiod_get_from_of_node(chip->dev, np,
+ 						"enable-gpios", 0,
+ 						gflags, "gpio-en-ldo");
+-	if (ena_gpiod) {
++	if (!IS_ERR(ena_gpiod)) {
+ 		config->ena_gpiod = ena_gpiod;
+ 		devm_gpiod_unhinge(chip->dev, config->ena_gpiod);
+ 	}
+@@ -459,7 +459,7 @@ static int slg51000_i2c_probe(struct i2c_client *client,
+ 					       GPIOD_OUT_HIGH
+ 					       | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 					       "slg51000-cs");
+-	if (cs_gpiod) {
++	if (!IS_ERR(cs_gpiod)) {
+ 		dev_info(dev, "Found chip selector property\n");
+ 		chip->cs_gpiod = cs_gpiod;
+ 	}
+-- 
+2.20.1
