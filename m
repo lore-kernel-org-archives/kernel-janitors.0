@@ -1,28 +1,26 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 30 Aug 2019 08:13:50 +0000
-Subject: Re: [PATCH] crypto: picoxcell - Fix the name of the module in the description of CRYPTO_DEV_PICOXCEL
-Message-Id: <20190830081350.GA7573@gondor.apana.org.au>
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Date: Thu, 08 Aug 2019 05:29:43 +0000
+Subject: Re: [PATCH 1/2] net: ag71xx: Slighly simplify code in 'ag71xx_rings_init()'
+Message-Id: <20190807222943.0000718b@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190819051833.6622-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190819051833.6622-1-christophe.jaillet@wanadoo.fr>
+References: <cover.1564560130.git.christophe.jaillet@wanadoo.fr>
+        <08fbcfe0f913644fe538656221a15790a1a83f1d.1564560130.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <08fbcfe0f913644fe538656221a15790a1a83f1d.1564560130.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: jcliburn@gmail.com, davem@davemloft.net, chris.snook@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jesse.brandeburg@intel.com
 
-On Mon, Aug 19, 2019 at 07:18:33AM +0200, Christophe JAILLET wrote:
-> The help section says that the module will be called 'pipcoxcell_crypto'.
-> This is likely a typo.
-> Use 'picoxcell_crypto' instead
+On Wed, 31 Jul 2019 10:06:38 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> A few lines above, we have:
+>    tx_size = BIT(tx->order);
+> 
+> So use 'tx_size' directly to be consistent with the way 'rx->descs_cpu' and
+> 'rx->descs_dma' are computed below.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
