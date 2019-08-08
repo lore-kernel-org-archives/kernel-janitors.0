@@ -1,37 +1,26 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 12 Aug 2019 10:00:45 +0000
-Subject: Re: floppy: fix usercopy direction
-Message-Id: <e514a05f-6e9f-1d62-9b38-163e13578bff@web.de>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Thu, 08 Aug 2019 15:05:25 +0000
+Subject: Re: [PATCH] clk: Use seq_puts() in possible_parent_show()
+Message-Id: <20190808150526.9F2A1217D7@mail.kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ee24295-6d63-6da9-774f-f1a599418685@linux.com>
-In-Reply-To: <3ee24295-6d63-6da9-774f-f1a599418685@linux.com>
+References: <5961554a-6416-48ea-44e2-d8e3c7576af0@web.de>
+In-Reply-To: <5961554a-6416-48ea-44e2-d8e3c7576af0@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Alexander Popov <alex.popov@linux.com>, Jann Horn <jannh@google.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
-Cc: Jens Axboe <axboe@kernel.dk>, Jiri Kosina <jikos@kernel.org>, Mukesh Ojha <mojha@codeaurora.org>, kernel-hardening@lists.openwall.com, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Denis Efremov <efremov@linux.com>, linux-block@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> =E2=80=A6, I see `exists` allows to drop `<+ +>`, right?
+Quoting Markus Elfring (2019-07-01 13:24:37)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 1 Jul 2019 22:20:40 +0200
+> 
+> A string which did not contain a data format specification should be put
+> into a sequence. Thus use the corresponding function “seq_puts”.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-I would interpret the combination of such SmPL specifications in a differen=
-t way.
-
-
-> It turned out that sparse already can find these bugs.
-
-This is generally nice, isn't it?
-
-
-> Is this rule useful anyway?
-
-I hope so.
-
-Can scripts for the semantic patch language help any more?
-
-
-> If so, I can prepare a patch.
-
-Would you like to take corresponding adjustments into account?
-
-Regards,
-Markus
+Applied to clk-next
