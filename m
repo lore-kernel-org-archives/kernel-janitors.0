@@ -1,23 +1,48 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Aug 2019 01:57:27 +0000
-Subject: Re: [PATCH] scsi: pmcraid: Fix a typo - pcmraid --> pmcraid
-Message-Id: <yq18srx969k.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Aug 2019 10:32:36 +0000
+Subject: [PATCH] drm/i915: Use after free in error path in intel_vgpu_create_workload()
+Message-Id: <20190808103236.GB30506@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809150214.24454-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190809150214.24454-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Fri, 9 Aug 2019 17:02:14 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Xiong Zhang <xiong.y.zhang@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org, Zhi Wang <zhi.a.wang@intel.com>
 
+We can't free "workload" until after the printk or it's a use after
+free.
 
-Christophe,
+Fixes: 2089a76ade90 ("drm/i915/gvt: Checking workload's gma earlier")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/gvt/scheduler.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> This should be 'pmcraid', not 'pcmraid'
-
-Applied to 5.4/scsi-queue. Thanks!
-
+diff --git a/drivers/gpu/drm/i915/gvt/scheduler.c b/drivers/gpu/drm/i915/gvt/scheduler.c
+index 32ae6b5b7e16..ac1dbb176874 100644
+--- a/drivers/gpu/drm/i915/gvt/scheduler.c
++++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+@@ -1525,9 +1525,9 @@ intel_vgpu_create_workload(struct intel_vgpu *vgpu, int ring_id,
+ 			if (!intel_gvt_ggtt_validate_range(vgpu,
+ 				workload->wa_ctx.indirect_ctx.guest_gma,
+ 				workload->wa_ctx.indirect_ctx.size)) {
+-				kmem_cache_free(s->workloads, workload);
+ 				gvt_vgpu_err("invalid wa_ctx at: 0x%lx\n",
+ 				    workload->wa_ctx.indirect_ctx.guest_gma);
++				kmem_cache_free(s->workloads, workload);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+@@ -1539,9 +1539,9 @@ intel_vgpu_create_workload(struct intel_vgpu *vgpu, int ring_id,
+ 			if (!intel_gvt_ggtt_validate_range(vgpu,
+ 				workload->wa_ctx.per_ctx.guest_gma,
+ 				CACHELINE_BYTES)) {
+-				kmem_cache_free(s->workloads, workload);
+ 				gvt_vgpu_err("invalid per_ctx at: 0x%lx\n",
+ 					workload->wa_ctx.per_ctx.guest_gma);
++				kmem_cache_free(s->workloads, workload);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
