@@ -1,85 +1,37 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Thu, 22 Aug 2019 07:05:57 +0000
-Subject: [PATCH -next] usb: udc: lpc32xx: remove set but not used 3 variables
-Message-Id: <20190822070557.74874-1-maowenan@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Aug 2019 17:22:17 +0000
+Subject: [PATCH] brcmfmac: remove redundant assignment to pointer hash
+Message-Id: <20190809172217.1809-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org, vz@mleia.com, slemieux.tyco@gmail.com, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_protocol_cmd_r’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:744:6: warning: variable ‘tmp’ set but not used [-Wunused-but-set-variable]
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_handle_dma_ep’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:1994:14: warning: variable ‘epstatus’ set but not used [-Wunused-but-set-variable]
+The pointer hash is being initialized with a value that is never read
+and is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_handle_ep0_setup’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:2200:22: warning: variable ‘wLength’ set but not used [-Wunused-but-set-variable]
-
-It is not used since commit 90fccb529d24 ("usb: gadget: Gadget directory cleanup - group UDC drivers")
-
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/udc/lpc32xx_udc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index 606c8bc..b3e073f 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -741,7 +741,6 @@ static inline void udc_protocol_cmd_data_w(struct lpc32xx_udc *udc, u32 cmd,
-  * response data */
- static u32 udc_protocol_cmd_r(struct lpc32xx_udc *udc, u32 cmd)
- {
--	u32 tmp;
- 	int to = 1000;
- 
- 	/* Write a command and read data from the protocol engine */
-@@ -751,7 +750,6 @@ static u32 udc_protocol_cmd_r(struct lpc32xx_udc *udc, u32 cmd)
- 	/* Write command code */
- 	udc_protocol_cmd_w(udc, cmd);
- 
--	tmp = readl(USBD_DEVINTST(udc->udp_baseaddr));
- 	while ((!(readl(USBD_DEVINTST(udc->udp_baseaddr)) & USBD_CDFULL))
- 	       && (to > 0))
- 		to--;
-@@ -1991,7 +1989,7 @@ void udc_handle_eps(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- /* DMA end of transfer completion */
- static void udc_handle_dma_ep(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- {
--	u32 status, epstatus;
-+	u32 status;
- 	struct lpc32xx_request *req;
- 	struct lpc32xx_usbd_dd_gad *dd;
- 
-@@ -2085,7 +2083,7 @@ static void udc_handle_dma_ep(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- 		if (udc_clearep_getsts(udc, ep->hwep_num) & EP_SEL_F) {
- 			udc_clearep_getsts(udc, ep->hwep_num);
- 			uda_enable_hwepint(udc, ep->hwep_num);
--			epstatus = udc_clearep_getsts(udc, ep->hwep_num);
-+			udc_clearep_getsts(udc, ep->hwep_num);
- 
- 			/* Let the EP interrupt handle the ZLP */
- 			return;
-@@ -2197,7 +2195,7 @@ static void udc_handle_ep0_setup(struct lpc32xx_udc *udc)
- 	struct lpc32xx_ep *ep, *ep0 = &udc->ep[0];
- 	struct usb_ctrlrequest ctrlpkt;
- 	int i, bytes;
--	u16 wIndex, wValue, wLength, reqtype, req, tmp;
-+	u16 wIndex, wValue, reqtype, req, tmp;
- 
- 	/* Nuke previous transfers */
- 	nuke(ep0, -EPROTO);
-@@ -2213,7 +2211,6 @@ static void udc_handle_ep0_setup(struct lpc32xx_udc *udc)
- 	/* Native endianness */
- 	wIndex = le16_to_cpu(ctrlpkt.wIndex);
- 	wValue = le16_to_cpu(ctrlpkt.wValue);
--	wLength = le16_to_cpu(ctrlpkt.wLength);
- 	reqtype = le16_to_cpu(ctrlpkt.bRequestType);
- 
- 	/* Set direction of EP0 */
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
+index 8428be8b8d43..e3dd8623be4e 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
+@@ -1468,7 +1468,6 @@ static int brcmf_msgbuf_stats_read(struct seq_file *seq, void *data)
+ 	seq_printf(seq, "\nh2d_flowrings: depth %u\n",
+ 		   BRCMF_H2D_TXFLOWRING_MAX_ITEM);
+ 	seq_puts(seq, "Active flowrings:\n");
+-	hash = msgbuf->flow->hash;
+ 	for (i = 0; i < msgbuf->flow->nrofrings; i++) {
+ 		if (!msgbuf->flow->rings[i])
+ 			continue;
 -- 
-2.7.4
+2.20.1
