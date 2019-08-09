@@ -1,30 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 30 Aug 2019 14:06:52 +0000
-Subject: Re: [PATCH] afs: use BIT_ULL for shifting to fix integer overflow
-Message-Id: <0a5df84f-920f-d2aa-69d6-963b40142f1f@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Aug 2019 17:59:32 +0000
+Subject: [PATCH] scsi: sym53c8xx_2: remove redundant assignment to retv
+Message-Id: <20190809175932.10197-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190830104912.1090-1-colin.king@canonical.com>
- <3079.1567173701@warthog.procyon.org.uk>
-In-Reply-To: <3079.1567173701@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/08/2019 15:01, David Howells wrote:
-> Colin King <colin.king@canonical.com> wrote:
-> 
->> The expression 1 << nr_slots is evaluated with 32 bit integer arithmetic
->> and can overflow before it is widened.
-> 
-> If it does, it's an error on the part of the caller.  See the banner comment:
-> 1 <= nr_slots <= 9.
+From: Colin Ian King <colin.king@canonical.com>
 
-Doh, totally missed that. My bad.
+Variable retv is initialized to a value that is never read and it
+is re-assigned later. The initialization is redundant and can be
+removed.
 
-> 
-> And, in any case, if nr_slots >= 64, using BIT_ULL wouldn't help...
-> 
-> David
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/sym53c8xx_2/sym_nvram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/sym53c8xx_2/sym_nvram.c b/drivers/scsi/sym53c8xx_2/sym_nvram.c
+index dd3f07b31612..9dc17f1288f9 100644
+--- a/drivers/scsi/sym53c8xx_2/sym_nvram.c
++++ b/drivers/scsi/sym53c8xx_2/sym_nvram.c
+@@ -648,7 +648,7 @@ static int sym_read_T93C46_nvram(struct sym_device *np, Tekram_nvram *nvram)
+ {
+ 	u_char gpcntl, gpreg;
+ 	u_char old_gpcntl, old_gpreg;
+-	int retv = 1;
++	int retv;
+ 
+ 	/* save current state of GPCNTL and GPREG */
+ 	old_gpreg	= INB(np, nc_gpreg);
+-- 
+2.20.1
