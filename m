@@ -1,76 +1,39 @@
-From: maowenan <maowenan@huawei.com>
-Date: Wed, 14 Aug 2019 02:40:14 +0000
-Subject: Re: [PATCH linux-next] drivers: dma: Fix sparse warning for mux_configure32
-Message-Id: <0a29e584-2385-9e7c-8d13-3ba47d3bf81c@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2019 10:16:19 +0000
+Subject: [PATCH] RDMA/siw: Fix a memory leak in siw_init_cpulist()
+Message-Id: <20190809101619.GB17867@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190812074205.96759-1-maowenan@huawei.com>
- <20190813044327.GR12733@vkoul-mobl.Dlink>
-In-Reply-To: <20190813044327.GR12733@vkoul-mobl.Dlink>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vkoul@kernel.org>
-Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bernard Metzler <bmt@zurich.ibm.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The error handling code doesn't free siw_cpu_info.tx_valid_cpus[0].  The
+first iteration through the loop is a no-op so this is sort of an off by
+one bug.
 
+Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/sw/siw/siw_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 2019/8/13 12:43, Vinod Koul wrote:
-> On 12-08-19, 15:42, Mao Wenan wrote:
-> 
-> Patch title is incorrect, it should mention the changes in patch, for
-> example make mux_configure32 static
-> 
-> Do read up on Documentation/process/submitting-patches.rst again!
-> 
->> There is one sparse warning in drivers/dma/fsl-edma-common.c,
-> 
-> It will help to explain the warning before the fix
-> 
->> fix it by setting mux_configure32() as static.
->>
->> make allmodconfig ARCH=mips CROSS_COMPILE=mips-linux-gnu-
->> make C=2 drivers/dma/fsl-edma-common.o ARCH=mips CROSS_COMPILE=mips-linux-gnu-
-> 
-> Make cmds are not relevant for the log
-> 
->> drivers/dma/fsl-edma-common.c:93:6: warning: symbol 'mux_configure32' was not declared. Should it be static?
-> 
-> This one is and should be retained
-> 
->>
->> Fixes: 232a7f18cf8ec ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
->>  drivers/dma/fsl-edma-common.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
->> index 6d6d8a4..7dbf7df 100644
->> --- a/drivers/dma/fsl-edma-common.c
->> +++ b/drivers/dma/fsl-edma-common.c
->> @@ -90,8 +90,8 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
->>  	iowrite8(val8, addr + off);
->>  }
->>  
->> -void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
->> -		     u32 off, u32 slot, bool enable)
->> +static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
-> 
-> just change this to static
-> 
->> +			    u32 off, u32 slot, bool enable)
-> 
-> and dont change anything else.
-> 
-> If you feel to change this, propose a new patch for this line explaining
-> why this should be changed
-
-thanks, I will send v2.
-
-> 
->>  {
->>  	u32 val;
->>  
->> -- 
->> 2.7.4
-> 
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index d0f140daf659..95ace3967391 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -160,9 +160,9 @@ static int siw_init_cpulist(void)
+ 
+ out_err:
+ 	siw_cpu_info.num_nodes = 0;
+-	while (i) {
++	while (--i >= 0) {
+ 		kfree(siw_cpu_info.tx_valid_cpus[i]);
+-		siw_cpu_info.tx_valid_cpus[i--] = NULL;
++		siw_cpu_info.tx_valid_cpus[i] = NULL;
+ 	}
+ 	kfree(siw_cpu_info.tx_valid_cpus);
+ 	siw_cpu_info.tx_valid_cpus = NULL;
+-- 
+2.20.1
