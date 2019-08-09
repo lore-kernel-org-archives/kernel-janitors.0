@@ -1,26 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Aug 2019 20:07:42 +0000
-Subject: Re: [PATCH] drm/mcde: Fix an error handling path in 'mcde_probe()'
-Message-Id: <CACRpkdb0CuPVby066zjqLX1rRuc6KDL7jvt3KaCpEWgEFvp+Mg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 09 Aug 2019 15:08:14 +0000
+Subject: [PATCH] Input: synaptics - Fix a typo - synpatics --> synaptics
+Message-Id: <20190809150814.24793-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822211518.5578-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190822211518.5578-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dmitry.torokhov@gmail.com, benjamin.tissoires@redhat.com, grawity@gmail.com, dev@pp3345.net, lyude@redhat.com, teika@gmx.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Aug 22, 2019 at 11:15 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+This should be 'synaptics', not 'synpatics'
 
-> If we don't find any matching components, we should go through the error
-> handling path, in order to free some resources.
->
-> Fixes: ca5be902a87d ("drm/mcde: Fix uninitialized variable")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/input/mouse/synaptics.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied!
-
-Yours,
-Linus Walleij
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index b6da0c1267e3..bbd799c7b058 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -191,7 +191,7 @@ static const char * const forcepad_pnp_ids[] = {
+ };
+ 
+ /*
+- * Send a command to the synpatics touchpad by special commands
++ * Send a command to the synaptics touchpad by special commands
+  */
+ static int synaptics_send_cmd(struct psmouse *psmouse, u8 cmd, u8 *param)
+ {
+-- 
+2.20.1
