@@ -1,20 +1,43 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Thu, 22 Aug 2019 14:14:26 +0000
-Subject: Re: [PATCH] Btrfs: Fix an assert statement in __btrfs_map_block()
-Message-Id: <20190822141426.GG2752@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 09 Aug 2019 17:02:59 +0000
+Subject: [PATCH][net-next] rxrpc: fix uninitialized return value in variable err
+Message-Id: <20190809170259.29859-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809140739.GA3552@mwanda>
-In-Reply-To: <20190809140739.GA3552@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-afs@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 05:07:39PM +0300, Dan Carpenter wrote:
-> The btrfs_get_chunk_map() never returns NULL, it returns error pointers.
-> 
-> Fixes: 89b798ad1b42 ("btrfs: Use btrfs_get_io_geometry appropriately")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Queued for 5.3, thanks.
+An earlier commit removed the setting of err to -ENOMEM so currently
+the skb_shinfo(skb)->nr_frags > 16 check returns with an uninitialized
+bogus return code.  Fix this by setting err to -ENOMEM to restore
+the original behaviour.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: b214b2d8f277 ("rxrpc: Don't use skb_cow_data() in rxkad")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rxrpc/rxkad.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index 8b4cddd8b673..c810a7c43b0f 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -248,8 +248,10 @@ static int rxkad_secure_packet_encrypt(const struct rxrpc_call *call,
+ 	crypto_skcipher_encrypt(req);
+ 
+ 	/* we want to encrypt the skbuff in-place */
+-	if (skb_shinfo(skb)->nr_frags > 16)
++	if (skb_shinfo(skb)->nr_frags > 16) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	len = data_size + call->conn->size_align - 1;
+ 	len &= ~(call->conn->size_align - 1);
+-- 
+2.20.1
