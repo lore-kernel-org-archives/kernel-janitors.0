@@ -1,45 +1,41 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 25 Aug 2019 18:09:16 +0000
-Subject: Re: [PATCH] Kconfig: Fix the reference to the RFD77402 ToF sensor in the 'help' section
-Message-Id: <20190825190916.7ca6e750@archlinux>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 12 Aug 2019 07:42:05 +0000
+Subject: [PATCH linux-next] drivers: dma: Fix sparse warning for mux_configure32
+Message-Id: <20190812074205.96759-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, ak@it-klinger.de, robh@kernel.org, songqiang1304521@gmail.com, tglx@linutronix.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.j.williams@intel.com, dmaengine@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Mon, 19 Aug 2019 06:48:27 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+There is one sparse warning in drivers/dma/fsl-edma-common.c,
+fix it by setting mux_configure32() as static.
 
-> This should be RFD77402, not RFD77420.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure that the Kconfig prefix is correct. I have choosen it because of
-> commit 21cf20a84a ("Kconfig: change configuration of srf04 ultrasonic iio sensor")
+make allmodconfig ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+make C=2 drivers/dma/fsl-edma-common.o ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+drivers/dma/fsl-edma-common.c:93:6: warning: symbol 'mux_configure32' was not declared. Should it be static?
 
-Applied thanks.  I left the prefix alone, though it's a bit unusual.
+Fixes: 232a7f18cf8ec ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/dma/fsl-edma-common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-Jonathan
-> ---
->  drivers/iio/proximity/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-> index 6b5cce6f1a7b..d53601447da4 100644
-> --- a/drivers/iio/proximity/Kconfig
-> +++ b/drivers/iio/proximity/Kconfig
-> @@ -62,7 +62,7 @@ config RFD77402
->  	tristate "RFD77402 ToF sensor"
->  	depends on I2C
->  	help
-> -	  Say Y to build a driver for the RFD77420 Time-of-Flight (distance)
-> +	  Say Y to build a driver for the RFD77402 Time-of-Flight (distance)
->  	  sensor module with I2C interface.
->  
->  	  To compile this driver as a module, choose M here: the
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 6d6d8a4..7dbf7df 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -90,8 +90,8 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ 	iowrite8(val8, addr + off);
+ }
+ 
+-void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+-		     u32 off, u32 slot, bool enable)
++static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
++			    u32 off, u32 slot, bool enable)
+ {
+ 	u32 val;
+ 
+-- 
+2.7.4
