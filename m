@@ -1,52 +1,30 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Date: Wed, 21 Aug 2019 16:20:24 +0000
-Subject: Re: [PATCH] tools/power: intel-speed-select:  Fix a read overflow in isst_set_tdp_level_msr()
-Message-Id: <1b68045227e852fb2f250d0ec858ae006490123f.camel@linux.intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 12 Aug 2019 08:05:06 +0000
+Subject: Re: [PATCH] backlight: lms283gf05: Fix a typo in the description passed to 'devm_gpio_request_one()'
+Message-Id: <20190812080506.GH4594@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821071403.GG26957@mwanda>
-In-Reply-To: <20190821071403.GG26957@mwanda>
+References: <20190724213828.16916-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190724213828.16916-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: daniel.thompson@linaro.org, b.zolnierkie@samsung.com, jingoohan1@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
 
-On Wed, 2019-08-21 at 10:14 +0300, Dan Carpenter wrote:
-> The isst_send_msr_command() function will read 8 bytes but we are
-> passing an address to an int (4 bytes) so it results in a read
-> overflow.
+On Wed, 24 Jul 2019, Christophe JAILLET wrote:
+
+> The description passed to 'devm_gpio_request_one()' should be related to
+> LMS283GF05, not LMS285GF05.
 > 
-> Fixes: 3fb4f7cd472c ("tools/power/x86: A tool to validate Intel Speed
-> Select commands")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/power/x86/intel-speed-select/isst-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/power/x86/intel-speed-select/isst-core.c
-> b/tools/power/x86/intel-speed-select/isst-core.c
-> index 8de4ac39a008..f724322856ed 100644
-> --- a/tools/power/x86/intel-speed-select/isst-core.c
-> +++ b/tools/power/x86/intel-speed-select/isst-core.c
-> @@ -190,6 +190,7 @@ int isst_get_get_trl(int cpu, int level, int
-> avx_level, int *trl)
->  
->  int isst_set_tdp_level_msr(int cpu, int tdp_level)
->  {
-> +	unsigned long long level = tdp_level;
->  	int ret;
->  
->  	debug_printf("cpu: tdp_level via MSR %d\n", cpu, tdp_level);
-> @@ -202,8 +203,7 @@ int isst_set_tdp_level_msr(int cpu, int
-> tdp_level)
->  	if (tdp_level > 2)
->  		return -1; /* invalid value */
->  
-> -	ret = isst_send_msr_command(cpu, 0x64b, 1,
-> -				    (unsigned long long *)&tdp_level);
-> +	ret = isst_send_msr_command(cpu, 0x64b, 1, &level);
->  	if (ret)
->  		return ret;
->  
+>  drivers/video/backlight/lms283gf05.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
