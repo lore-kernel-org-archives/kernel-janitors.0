@@ -1,28 +1,35 @@
-From: <Tudor.Ambarus@microchip.com>
-Date: Wed, 21 Aug 2019 08:21:45 +0000
-Subject: Re: [PATCH] mtd: spi-nor: Fix an error code in spi_nor_read_raw()
-Message-Id: <dd7530d3-33e9-7d7c-e29b-fe786b159394@microchip.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 12 Aug 2019 11:15:25 +0000
+Subject: [PATCH][crypto-next] crypto: hisilicon: fix spelling mistake "HZIP_COMSUMED_BYTE" -> "HZIP_CONSUMED_
+Message-Id: <20190812111525.574-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815083252.GD27238@mwanda>
-In-Reply-To: <20190815083252.GD27238@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com, marek.vasut@gmail.com, Cyrille.Pitchen@microchip.com
-Cc: vigneshr@ti.com, richard@nod.at, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com, computersforpeace@gmail.com, dwmw2@infradead.org
+To: Zhou Wang <wangzhou1@hisilicon.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.or
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA4LzE1LzIwMTkgMTE6MzIgQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEV4dGVy
-bmFsIEUtTWFpbA0KPiANCj4gDQo+IFRoZSBwcm9ibGVtIGlzIHRoYXQgaWYgInJldCIgaXMgbmVn
-YXRpdmUgdGhlbiB3aGVuIHdlIGNoZWNrIGlmDQo+ICJyZXQgPiBsZW4iLCB0aGF0IGNvbmRpdGlv
-biBpcyBnb2luZyB0byBiZSB0cnVlIGJlY2F1c2Ugb2YgdHlwZQ0KPiBwcm9tb3Rpb24uICBTbyB0
-aGlzIHBhdGNoIHJlLW9yZGVycyB0aGUgY29kZSB0byBjaGVjayBmb3IgbmVnYXRpdmVzDQo+IGZp
-cnN0IGFuZCBwcmVzZXJ2ZSB0aG9zZSBlcnJvciBjb2Rlcy4NCj4gDQo+IEZpeGVzOiBmMzg0YjM1
-MmNiZjAgKCJtdGQ6IHNwaS1ub3I6IHBhcnNlIFNlcmlhbCBGbGFzaCBEaXNjb3ZlcmFibGUgUGFy
-YW1ldGVycyAoU0ZEUCkgdGFibGVzIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8
-ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbXRkL3NwaS1ub3Iv
-c3BpLW5vci5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAy
-IGRlbGV0aW9ucygtKQ0KPiANCg0KU2luY2UgdGhlIGJ1ZyB3YXMgbm90IGludHJvZHVjZWQgaW4g
-dGhlIHByZXZpb3VzIHJlbGVhc2UgYW5kIHdlIGFyZSBxdWl0ZSBsYXRlDQpmb3IgbXRkL2ZpeGVz
-LA0KDQpBcHBsaWVkIHRvIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L210ZC9saW51eC5naXQsDQpzcGktbm9yL25leHQgYnJhbmNoLg0KDQpUaGFua3MsDQp0
-YQ0K
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in the hzip_dfx_regs array, fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/hisilicon/zip/zip_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+index 6e0ca75585d4..00ecae387fdd 100644
+--- a/drivers/crypto/hisilicon/zip/zip_main.c
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -206,7 +206,7 @@ static struct debugfs_reg32 hzip_dfx_regs[] = {
+ 	{"HZIP_AVG_DELAY                 ",  0x28ull},
+ 	{"HZIP_MEM_VISIBLE_DATA          ",  0x30ull},
+ 	{"HZIP_MEM_VISIBLE_ADDR          ",  0x34ull},
+-	{"HZIP_COMSUMED_BYTE             ",  0x38ull},
++	{"HZIP_CONSUMED_BYTE             ",  0x38ull},
+ 	{"HZIP_PRODUCED_BYTE             ",  0x40ull},
+ 	{"HZIP_COMP_INF                  ",  0x70ull},
+ 	{"HZIP_PRE_OUT                   ",  0x78ull},
+-- 
+2.20.1
