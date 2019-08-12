@@ -1,31 +1,69 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Mon, 12 Aug 2019 08:11:11 +0000
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 12 Aug 2019 17:19:27 +0000
 Subject: Re: [PATCH net-next] net: can: Fix compiling warning
-Message-Id: <04055e63-c2c0-78e3-1b24-47be08976750@hartkopp.net>
+Message-Id: <201908121001.0AC0A90@keescook>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190802033643.84243-1-maowenan@huawei.com>
  <0050efdb-af9f-49b9-8d83-f574b3d46a2e@hartkopp.net>
  <20190806135231.GJ1974@kadam>
  <6e1c5aa0-8ed3-eec3-a34d-867ea8f54e9d@hartkopp.net>
- <5018f6ca-53b5-c712-a012-a0fcda5c10c2@huawei.com>
-In-Reply-To: <5018f6ca-53b5-c712-a012-a0fcda5c10c2@huawei.com>
+ <20190807105042.GK1974@kadam>
+In-Reply-To: <20190807105042.GK1974@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan <maowenan@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, Patrick Bellasi <patrick.bellasi@arm.com>, linux-sparse@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
-On 12/08/2019 07.48, maowenan wrote:
-> On 2019/8/7 0:41, Oliver Hartkopp wrote:
+On Wed, Aug 07, 2019 at 01:50:42PM +0300, Dan Carpenter wrote:
+> On Tue, Aug 06, 2019 at 06:41:44PM +0200, Oliver Hartkopp wrote:
+> > I compiled the code (the original version), but I do not get that "Should it
+> > be static?" warning:
+> > 
+> > user@box:~/net-next$ make C=1
+> >   CALL    scripts/checksyscalls.sh
+> >   CALL    scripts/atomic/check-atomics.sh
+> >   DESCEND  objtool
+> >   CHK     include/generated/compile.h
+> >   CHECK   net/can/af_can.c
+> > ./include/linux/sched.h:609:43: error: bad integer constant expression
+> > ./include/linux/sched.h:609:73: error: invalid named zero-width bitfield
+> > `value'
+> > ./include/linux/sched.h:610:43: error: bad integer constant expression
+> > ./include/linux/sched.h:610:67: error: invalid named zero-width bitfield
+> > `bucket_id'
+> >   CC [M]  net/can/af_can.o
+> 
+> The sched.h errors suppress Sparse warnings so it's broken/useless now.
+> The code looks like this:
+> 
+> include/linux/sched.h
+>    613  struct uclamp_se {
+>    614          unsigned int value              : bits_per(SCHED_CAPACITY_SCALE);
+>    615          unsigned int bucket_id          : bits_per(UCLAMP_BUCKETS);
+>    616          unsigned int active             : 1;
+>    617          unsigned int user_defined       : 1;
+>    618  };
+> 
+> bits_per() is zero and Sparse doesn't like zero sized bitfields.
 
->> I compiled the code (the original version), but I do not get that "Should it be static?" warning:
+I just noticed these sparse warnings too -- what's happening here? Are
+they _supposed_ to be 0-width fields? It doesn't look like it to me:
 
-> here are my steps for net/can/bcm.c,
-> make allmodconfig ARCH=mips CROSS_COMPILE=mips-linux-gnu-
-> make C=2 net/can/bcm.o ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+CONFIG_UCLAMP_BUCKETS_COUNT=5
+...
+#define UCLAMP_BUCKETS CONFIG_UCLAMP_BUCKETS_COUNT
+...
+        unsigned int bucket_id          : bits_per(UCLAMP_BUCKETS);
 
-There were some sparse _errors_ in my setup that hide that "static" 
-warning. I will use sparse by default now.
+I would expect this to be 3 bits wide. ... Looks like gcc agrees:
 
-Many thanks,
-Oliver
+struct uclamp_se {
+    unsigned int               value:11;             /*     0: 0  4 */
+    unsigned int               bucket_id:3;          /*     0:11  4 */
+...
+
+So this is a sparse issue?
+
+-- 
+Kees Cook
