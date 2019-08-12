@@ -1,24 +1,37 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 22 Aug 2019 06:09:42 +0000
-Subject: Re: [v3 08/11] scripts: Coccinelle script for namespace dependencies
-Message-Id: <81cc3995-ea95-8125-bbd2-2889cc623e23@web.de>
+Date: Mon, 12 Aug 2019 10:00:45 +0000
+Subject: Re: floppy: fix usercopy direction
+Message-Id: <e514a05f-6e9f-1d62-9b38-163e13578bff@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821114955.12788-9-maennich@google.com>
-In-Reply-To: <20190821114955.12788-9-maennich@google.com>
+References: <3ee24295-6d63-6da9-774f-f1a599418685@linux.com>
+In-Reply-To: <3ee24295-6d63-6da9-774f-f1a599418685@linux.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthias Maennich <maennich@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Martijn Coenen <maco@android.com>, Himanshu Jha <himanshujha199640@gmail.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, kernel-team@android.com, usb-storage@lists.one-eyed-alien.net, x86@kernel.org, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Gilles Muller <Gilles.Muller@lip6.fr>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jessica Yu <jeyu@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Kate Stewart <kstewart@linuxfoundation.org>, Lucas De Marchi <lucas.de.marchi@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Alexander Popov <alex.popov@linux.com>, Jann Horn <jannh@google.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+Cc: Jens Axboe <axboe@kernel.dk>, Jiri Kosina <jikos@kernel.org>, Mukesh Ojha <mojha@codeaurora.org>, kernel-hardening@lists.openwall.com, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Denis Efremov <efremov@linux.com>, linux-block@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Al Viro <viro@zeniv.linux.org.uk>
 
-> +generate_deps_for_ns() {
-> +	$SPATCH --very-quiet --in-place --sp-file \
-> +		$srctree/scripts/coccinelle/misc/add_namespace.cocci -D ns=$1 $2
-> +}
+> =E2=80=A6, I see `exists` allows to drop `<+ +>`, right?
 
-I would appreciate more constructive answers for specific software development concerns.
-https://lore.kernel.org/lkml/1c4420f4-361c-7358-49d9-87d8a51f7920@web.de/
-https://lkml.org/lkml/2019/8/15/515
+I would interpret the combination of such SmPL specifications in a differen=
+t way.
+
+
+> It turned out that sparse already can find these bugs.
+
+This is generally nice, isn't it?
+
+
+> Is this rule useful anyway?
+
+I hope so.
+
+Can scripts for the semantic patch language help any more?
+
+
+> If so, I can prepare a patch.
+
+Would you like to take corresponding adjustments into account?
 
 Regards,
 Markus
