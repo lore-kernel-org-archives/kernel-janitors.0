@@ -1,31 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Aug 2019 08:50:08 +0000
-Subject: Re: [PATCH] staging: rtl8192u: remove redundant assignment to pointer crypt
-Message-Id: <20190822085008.GH4451@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Aug 2019 14:28:18 +0000
+Subject: [PATCH] net: ieee802154: remove redundant assignment to rc
+Message-Id: <20190813142818.15022-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822084609.8971-1-colin.king@canonical.com>
-In-Reply-To: <20190822084609.8971-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Whitmore <johnfwhitmore@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, "David S . Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 09:46:09AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer crypt is being set with a value that is never read,
-> the assignment is redundant and hence can be removed.
-> 
-> Thanks to Dan Carpenter for sanity checking that this was indeed
-> redundant.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks!
+Variable rc is initialized to a value that is never read and it is
+re-assigned later. The initialization is redundant and can be removed.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ieee802154/socket.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
+index dacbd58e1799..badc5cfe4dc6 100644
+--- a/net/ieee802154/socket.c
++++ b/net/ieee802154/socket.c
+@@ -1092,7 +1092,7 @@ static struct packet_type ieee802154_packet_type = {
+ 
+ static int __init af_ieee802154_init(void)
+ {
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	rc = proto_register(&ieee802154_raw_prot, 1);
+ 	if (rc)
+-- 
+2.20.1
