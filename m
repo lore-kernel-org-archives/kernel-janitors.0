@@ -1,51 +1,47 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Sat, 24 Aug 2019 20:51:00 +0000
-Subject: Re: [PATCH] ipmi_ssif: Fix locking on probe error path
-Message-Id: <20190824205059.GB14083@minyard.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Aug 2019 13:23:49 +0000
+Subject: [PATCH] scsi: fnic: remove redundant assignment of variable rc
+Message-Id: <20190813132349.8720-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190824145147.GB5337@mwanda>
-In-Reply-To: <20190824145147.GB5337@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 05:51:47PM +0300, Dan Carpenter wrote:
-> If the allocations failed then we returned with the lock held.  This
-> patch moves the allocations infront of the locking.
+From: Colin Ian King <colin.king@canonical.com>
 
-This had already been fixed, but thanks for the heads up.
+Variable ret is initialized to a value that is never read and it is
+re-assigned later and immediatetly returns. Clean up the code by
+removing rc and just returning 0.
 
--corey
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fnic/fnic_debugfs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> 
-> Fixes: 714acbc6cc39 ("ipmi_ssif: avoid registering duplicate ssif interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/char/ipmi/ipmi_ssif.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index 205726926bd3..9cf2efd33f19 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -1683,7 +1683,6 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	u8		  slave_addr = 0;
->  	struct ssif_addr_info *addr_info = NULL;
->  
-> -	mutex_lock(&ssif_infos_mutex);
->  	resp = kmalloc(IPMI_MAX_MSG_LENGTH, GFP_KERNEL);
->  	if (!resp)
->  		return -ENOMEM;
-> @@ -1694,6 +1693,8 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return -ENOMEM;
->  	}
->  
-> +	mutex_lock(&ssif_infos_mutex);
-> +
->  	if (!check_acpi(ssif_info, &client->dev)) {
->  		addr_info = ssif_info_find(client->addr, client->adapter->name,
->  					   true);
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
+index 21991c99db7c..13f7d88d6e57 100644
+--- a/drivers/scsi/fnic/fnic_debugfs.c
++++ b/drivers/scsi/fnic/fnic_debugfs.c
+@@ -52,7 +52,6 @@ static struct fc_trace_flag_type *fc_trc_flag;
+  */
+ int fnic_debugfs_init(void)
+ {
+-	int rc = -1;
+ 	fnic_trace_debugfs_root = debugfs_create_dir("fnic", NULL);
+ 
+ 	fnic_stats_debugfs_root = debugfs_create_dir("statistics",
+@@ -70,8 +69,7 @@ int fnic_debugfs_init(void)
+ 		fc_trc_flag->fc_clear = 4;
+ 	}
+ 
+-	rc = 0;
+-	return rc;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.20.1
