@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Aug 2019 18:34:36 +0000
-Subject: Re: [PATCH] net: cxgb3_main: Fix a resource leak in a error path in 'init_one()'
-Message-Id: <20190806.113436.87450273064586797.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Aug 2019 10:33:40 +0000
+Subject: [PATCH] drm/amdgpu/powerplay: fix spelling mistake "unsuported" -> "unsupported"
+Message-Id: <20190813103340.11051-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190806085512.11729-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190806085512.11729-1-christophe.jaillet@wanadoo.fr>
+References: <20190217221515.15575-1-colin.king@canonical.com>
+In-Reply-To: <20190217221515.15575-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: vishal@chelsio.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue,  6 Aug 2019 10:55:12 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> A call to 'kfree_skb()' is missing in the error handling path of
-> 'init_one()'.
-> This is already present in 'remove_one()' but is missing here.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in a pr_err error message. Fix it. Also
+add a space after a comma to clean up a checkpatch warning.
 
-Looks good, applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+index 8bbcf034799c..d324bd28934d 100644
+--- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
++++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+@@ -288,7 +288,7 @@ static int smu_v11_0_check_fw_version(struct smu_context *smu)
+ 		smu->smc_if_version = SMU11_DRIVER_IF_VERSION_NV14;
+ 		break;
+ 	default:
+-		pr_err("smu unsuported asic type:%d.\n",smu->adev->asic_type);
++		pr_err("smu unsupported asic type:%d.\n", smu->adev->asic_type);
+ 		smu->smc_if_version = SMU11_DRIVER_IF_VERSION_INV;
+ 		break;
+ 	}
+-- 
+2.20.1
