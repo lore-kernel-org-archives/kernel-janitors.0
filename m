@@ -1,30 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 06 Aug 2019 12:36:18 +0000
-Subject: Re: [PATCH v3] libertas: Fix a double free in if_spi_c2h_data()
-Message-Id: <20190806123619.30B4260EA5@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Aug 2019 12:48:38 +0000
+Subject: [PATCH] staging: rtl8723bs: remove redundant assignment to ret
+Message-Id: <20190813124838.1317-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9153261627a0f84b996e023f1349a2bc06dd03ee.camel@redhat.com>
-In-Reply-To: <9153261627a0f84b996e023f1349a2bc06dd03ee.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dcbw@redhat.com>
-Cc: Philip Rakity <prakity@yahoo.com>, libertas-dev@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Dan Carpenter <dan.carpenter@oracle.com>, Allison Randal <allison@lohutok.net>
+To: kernel-janitors@vger.kernel.org
 
-Dan Williams <dcbw@redhat.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The lbs_process_rxed_packet() frees the skb.  It didn't originally, but
-> we fixed it in commit f54930f36311 ("libertas: don't leak skb on receive
-> error").
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Dan Williams <dcbw@redhat.com>
+Variable ret is initialized to a value that is never read and it is
+re-assigned later. The initialization is redundant and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-3915a252ce71 libertas: Fix a double free in if_spi_c2h_data()
-
+diff --git a/drivers/staging/rtl8723bs/core/rtw_io.c b/drivers/staging/rtl8723bs/core/rtw_io.c
+index a92bc19b196a..57168578663a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_io.c
++++ b/drivers/staging/rtl8723bs/core/rtw_io.c
+@@ -142,7 +142,7 @@ u32 _rtw_write_port(struct adapter *adapter, u32 addr, u32 cnt, u8 *pmem)
+ 	u32 (*_write_port)(struct intf_hdl *pintfhdl, u32 addr, u32 cnt, u8 *pmem);
+ 	struct io_priv *pio_priv = &adapter->iopriv;
+ 	struct	intf_hdl		*pintfhdl = &(pio_priv->intf);
+-	u32 ret = _SUCCESS;
++	u32 ret;
+ 
+ 	_write_port = pintfhdl->io_ops._write_port;
+ 
 -- 
-https://patchwork.kernel.org/patch/11057049/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
