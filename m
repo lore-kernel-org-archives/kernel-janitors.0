@@ -1,25 +1,43 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 15 Aug 2019 02:12:50 +0000
-Subject: Re: [PATCH] scsi: fnic: remove redundant assignment of variable rc
-Message-Id: <yq14l2j2n31.fsf@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 14 Aug 2019 04:48:14 +0000
+Subject: [PATCH -next] drm/panfrost: Fix missing unlock on error in panfrost_mmu_map_fault_addr()
+Message-Id: <20190814044814.102294-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190813132349.8720-1-colin.king@canonical.com>
-In-Reply-To: <20190813132349.8720-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 13 Aug 2019 14:23:49 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Add the missing unlock before return from function panfrost_mmu_map_fault_addr()
+in the error handling case.
 
-Colin,
+Fixes: 187d2929206e ("drm/panfrost: Add support for GPU heap allocations")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_mmu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> Variable ret is initialized to a value that is never read and it is
-> re-assigned later and immediatetly returns. Clean up the code by
-> removing rc and just returning 0.
-
-Applied to 5.4/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+index 2ed411f09d80..06f1a563e940 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
++++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+@@ -327,14 +327,17 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+ 	if (!bo->base.pages) {
+ 		bo->sgts = kvmalloc_array(bo->base.base.size / SZ_2M,
+ 				     sizeof(struct sg_table), GFP_KERNEL | __GFP_ZERO);
+-		if (!bo->sgts)
++		if (!bo->sgts) {
++			mutex_unlock(&bo->base.pages_lock);
+ 			return -ENOMEM;
++		}
+ 
+ 		pages = kvmalloc_array(bo->base.base.size >> PAGE_SHIFT,
+ 				       sizeof(struct page *), GFP_KERNEL | __GFP_ZERO);
+ 		if (!pages) {
+ 			kfree(bo->sgts);
+ 			bo->sgts = NULL;
++			mutex_unlock(&bo->base.pages_lock);
+ 			return -ENOMEM;
+ 		}
+ 		bo->base.pages = pages;
