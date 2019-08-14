@@ -1,51 +1,47 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Thu, 01 Aug 2019 10:18:23 +0000
-Subject: Re: [PATCH -next] drm/i915: fix possible memory leak in intel_hdcp_auth_downstream()
-Message-Id: <87k1bxmbo0.fsf@intel.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 14 Aug 2019 07:21:05 +0000
+Subject: [PATCH v2 linux-next 2/2] drivers: dma: change alignment of mux_configure32 and fsl_edma_chan_mux
+Message-Id: <20190814072105.144107-3-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190704104534.12508-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190704104534.12508-1-weiyongjun1@huawei.com>
+References: <20190814072105.144107-1-maowenan@huawei.com>
+In-Reply-To: <20190814072105.144107-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.j.williams@intel.com, dmaengine@vger.kernel.org, vkoul@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Thu, 04 Jul 2019, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> 'ksv_fifo' is malloced in intel_hdcp_auth_downstream() and should be
-> freed before leaving from the error handling cases, otherwise it will
-> cause memory leak.
+The alignment of mux_configure32() and fsl_edma_chan_mux() need 
+to be adjusted, it must start precisely at the first column after 
+the openning parenthesis of the first line.
 
+Fixes: 9d831528a656 ("dmaengine: fsl-edma: extract common fsl-edma code (no changes in behavior intended)")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/dma/fsl-edma-common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the patch, sorry for the delay, pushed to
-drm-intel-next-queued.
-
-BR,
-Jani.
-
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
-> index bc3a94d491c4..27bd7276a82d 100644
-> --- a/drivers/gpu/drm/i915/display/intel_hdcp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
-> @@ -536,7 +536,8 @@ int intel_hdcp_auth_downstream(struct intel_connector *connector)
->  
->  	if (drm_hdcp_check_ksvs_revoked(dev, ksv_fifo, num_downstream)) {
->  		DRM_ERROR("Revoked Ksv(s) in ksv_fifo\n");
-> -		return -EPERM;
-> +		ret = -EPERM;
-> +		goto err;
->  	}
->  
->  	/*
->
->
->
-
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 264c448de409..b1a7ca91701a 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -91,7 +91,7 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ }
+ 
+ static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+-		     u32 off, u32 slot, bool enable)
++			    u32 off, u32 slot, bool enable)
+ {
+ 	u32 val;
+ 
+@@ -104,7 +104,7 @@ static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ }
+ 
+ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+-			unsigned int slot, bool enable)
++		       unsigned int slot, bool enable)
+ {
+ 	u32 ch = fsl_chan->vchan.chan.chan_id;
+ 	void __iomem *muxaddr;
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.20.1
