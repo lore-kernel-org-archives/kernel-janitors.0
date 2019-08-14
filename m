@@ -1,26 +1,28 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 06 Aug 2019 12:45:30 +0000
-Subject: Re: [PATCH] dm raid1: Use struct_size() in kzalloc()
-Message-Id: <a6b3127e-11cb-4dc8-7db8-e526521d11d9@web.de>
+From: "Mr NARESH KUMAR" <mscarolynsmtih@gmail.com>
+Date: Wed, 14 Aug 2019 07:51:40 +0000
+Subject: PLEASE CONFIRM PURCHASE ORDER
+Message-Id: <0.0.3.447.1D55274D37F9416.0@slot0.abamarket.ga>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190806001825.GA6854@embeddedor>
-In-Reply-To: <20190806001825.GA6854@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Recipients <mscarolynsmtih@gmail.com>
 
-> +++ b/drivers/md/dm-raid1.c
-> @@ -878,12 +878,9 @@ static struct mirror_set *alloc_context(unsigned int nr_mirrors,
->  					struct dm_target *ti,
->  					struct dm_dirty_log *dl)
->  {
-> -	size_t len;
->  	struct mirror_set *ms = NULL;
-…
+Could you please confirm if your recieved our purchase order last week.
 
-How do you think about to replace the initialisation “NULL” by the desired function call?
+If no please confirm let me resend it to you.
 
-Regards,
-Markus
+
+
+
+NARESH KUMAR
+
+Executive Purchase Saiapextrading Ltd
+
+Dubai, KSA.
+
+(T/F): +96-2667-264 777 / 778
+
+(Mo): +96 94284 02803
+
+Website - http://www.saiapexgeneraltrading.com
