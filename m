@@ -1,23 +1,28 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 29 Aug 2019 22:03:25 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: fix spelling mistake "initializatin" -> "initialization"
-Message-Id: <yq1lfvbr5n6.fsf@oracle.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 14 Aug 2019 07:21:03 +0000
+Subject: [PATCH v2 linux-next 0/2] change mux_configure32() to static
+Message-Id: <20190814072105.144107-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822215651.5403-1-colin.king@canonical.com>
-In-Reply-To: <20190822215651.5403-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 22 Aug 2019 22:56:51 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dan.j.williams@intel.com, dmaengine@vger.kernel.org, vkoul@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
+First patch is to make mux_configure32() static to avoid sparse warning,
+the second patch is to chage alignment of two functions.
 
-Colin,
+v2: change subject from "drivers: dma: Fix sparse warning for mux_configure32"
+to "drivers: dma: make mux_configure32 static", and cleanup the log. And add 
+one patch to change alignment of two functions. 
 
-> There is a spelling mistake in a ql_log message. Fix it.
+Mao Wenan (2):
+  drivers: dma: make mux_configure32 static
+  drivers: dma: change alignment of mux_configure32 and
+    fsl_edma_chan_mux
 
-Applied to 5.4/scsi-queue, thanks.
+ drivers/dma/fsl-edma-common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
