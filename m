@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 14 Aug 2019 07:17:15 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2019 08:07:54 +0000
 Subject: Re: [PATCH] scsi: mvumi: fix 32 bit shift of a u32 value
-Message-Id: <5D53B57B.3000905@bfs.de>
+Message-Id: <20190814080754.GT1974@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190813180113.14245-1-colin.king@canonical.com>
 In-Reply-To: <20190813180113.14245-1-colin.king@canonical.com>
@@ -11,9 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
 Cc: Jianyun Li <jyli@marvell.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-Am 13.08.2019 20:01, schrieb Colin King:
+On Tue, Aug 13, 2019 at 07:01:13PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Currently the top 32 bits of a 64 bit address is being calculated
@@ -39,17 +37,21 @@ Am 13.08.2019 20:01, schrieb Colin King:
 >  			phy_addr = (dma_addr_t) m_sg->baseaddr_l |
 > -				(dma_addr_t) ((m_sg->baseaddr_h << 16) << 16);
 > +				   (dma_addr_t) m_sg->baseaddr_h << 32;
->  
 
-All the casts make it hard to read, i would propose an alternativ version:
-phy_addr = m_sg->baseaddr_h;
-phy_addr <<= 32;
-phy_addr |= m_sg->baseaddr_l;
+Colin, you've sent this patch before on Feb 16, 2019.  If you shift by
+32 then it's undefined behavior on 32 bit systems.  The correct fix is
+to move the cast which was what your original patch did actually.
 
-JM2C and totaly untested.
+			(((dma_addr_t)m_sg->baseaddr_h << 16) << 16);
 
-re,
- wh
+My suggestion back then was to introduce a macro:
 
->  			dma_free_coherent(&mhba->pdev->dev, size, cmd->data_buf,
->  								phy_addr);
+/*
+ * The dma_addr_t type can be either 32 or 64 bit.  Left shifting a 32
+ * bit number is undefined so this do two 16 bit left shifts.
+ *
+ */
+#define DMA_LSHIFT_32(val) (((dma_addr_t)(val) << 16) << 16)
+
+regards,
+dan carpenter
