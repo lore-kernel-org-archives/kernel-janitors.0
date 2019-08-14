@@ -1,55 +1,21 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Fri, 23 Aug 2019 08:23:54 +0000
-Subject: RE: [PATCH 3/4] misc: xilinx_sdfec: Prevent a divide by zero in xsdfec_reg0_write()
-Message-Id: <CH2PR02MB6359602748E6F8BB56E586B9CBA40@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 14 Aug 2019 12:00:23 +0000
+Subject: Re: [v2 08/10] scripts: Coccinelle script for namespace dependencies
+Message-Id: <d3c852b2-0e41-1a7e-2f98-d8fd23cb8c1a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821070606.GA26957@mwanda> <20190821070953.GC26957@mwanda>
-In-Reply-To: <20190821070953.GC26957@mwanda>
+References: <20190813121733.52480-9-maennich@google.com>
+In-Reply-To: <20190813121733.52480-9-maennich@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Derek Kiernan <dkiernan@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Matthias Maennich <maennich@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Martijn Coenen <maco@android.com>, Himanshu Jha <himanshujha199640@gmail.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, linux-m68k@vger.kernel.org, Oliver Neukum <oneukum@suse.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, usb-storage@lists.one-eyed-alien.net, "H. Peter Anvin" <hpa@zytor.com>, Joel Fernandes <joel@joelfernandes.org>, Sam Ravnborg <sam@ravnborg.org>, linux-arch@vger.kernel.org, linux-scsi@vger.kernel.org, x86@kernel.org, Lucas De Marchi <lucas.de.marchi@gmail.com>, Ingo Molnar <mingo@redhat.com>, Alan Stern <stern@rowland.harvard.edu>, Geert Uytterhoeven <geert@linux-m68k.org>, kernel-team@android.com, ",
+ linux-kernel"@vger.kernel.org, Sandeep Patil <sspatil@google.com>, Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org, Philippe Ombredanne <pombredanne@nexb.com>, Nicolas Palix <nicolas.palix@imag.fr>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Thomas Gleixner <tglx@linutronix.de>, Michal Marek <michal.lkml@markovi.net>, linux-usb@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Martijn Coenen <maco@google.com>, Jessica Yu <jeyu@kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-modules@vger.kernel.org
 
-Hi Dan,
++# This script requires at least spatch
++# version 1.0.4.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday 21 August 2019 08:10
-> To: Derek Kiernan <dkiernan@xilinx.com>; Dragan Cvetic <draganc@xilinx.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Michal Simek <michals@xilinx.com>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 3/4] misc: xilinx_sdfec: Prevent a divide by zero in xsdfec_reg0_write()
-> 
-> The "psize" value comes from the user so we need to verify that it's
-> non-zero before we check if "n % psize" or it will crash.
-> 
-> Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The parentheses in this condition are a no-op.  They're just confusing.
-> Perhaps something else was intended?
-> 
->  drivers/misc/xilinx_sdfec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-> index 813b82c59360..3fc53d20abf3 100644
-> --- a/drivers/misc/xilinx_sdfec.c
-> +++ b/drivers/misc/xilinx_sdfec.c
-> @@ -460,7 +460,7 @@ static int xsdfec_reg0_write(struct xsdfec_dev *xsdfec, u32 n, u32 k, u32 psize,
->  {
->  	u32 wdata;
-> 
-> -	if (n < XSDFEC_REG0_N_MIN || n > XSDFEC_REG0_N_MAX ||
-> +	if (n < XSDFEC_REG0_N_MIN || n > XSDFEC_REG0_N_MAX || psize == 0 ||
->  	    (n > XSDFEC_REG0_N_MUL_P * psize) || n <= k || ((n % psize) != 0)) {
->  		dev_dbg(xsdfec->dev, "N value is not in range");
->  		return -EINVAL;
-> --
-> 2.20.1
+How do you think about to avoid the duplicate specification of this identification?
 
-Reviewed-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
-
-Thanks,
-Dragan
+Regards,
+Markus
