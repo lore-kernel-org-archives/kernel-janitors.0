@@ -1,42 +1,46 @@
-From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Date: Mon, 26 Aug 2019 13:01:46 +0000
-Subject: Re: [PATCH] drm/tinydrm: fix a loop in debugfs code
-Message-Id: <9718fea0-49f0-34d4-b1fc-f69e99b7a690@tronnes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2019 14:04:14 +0000
+Subject: Re: [PATCH] usb: host: ohci-pxa27x: Fix and & vs | typo
+Message-Id: <20190814140414.GU1974@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821072456.GJ26957@mwanda>
-In-Reply-To: <20190821072456.GJ26957@mwanda>
+References: <20180223123300.GA1062@mwanda>
+In-Reply-To: <20180223123300.GA1062@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+I was looking at this code again today and I'm still convinced this
+patch is correct.  Should I resend?
 
+regards,
+dan carpenter
 
-Den 21.08.2019 09.24, skrev Dan Carpenter:
-> This code will likely crash if we try to do a zero byte write.  The code
-> looks like this:
+On Fri, Feb 23, 2018 at 03:33:00PM +0300, Dan Carpenter wrote:
+> The code is supposed to clear the RH_A_NPS and RH_A_PSM bits, but it's
+> a no-op because of the & vs | typo.  This bug predates git and it was
+> only discovered using static analysis so it must not affect too many
+> people in real life.
 > 
->         /* strip trailing whitespace */
->         for (i = count - 1; i > 0; i--)
->                 if (isspace(buf[i]))
-> 			...
-> 
-> We're writing zero bytes so count = 0.  You would think that "count - 1"
-> would be negative one, but because "i" is unsigned it is a large
-> positive numer instead.  The "i > 0" condition is true and the "buf[i]"
-> access will be out of bounds.
-> 
-> The fix is to make "i" signed and now everything works as expected.  The
-> upper bound of "count" is capped in __kernel_write() at MAX_RW_COUNT so
-> we don't have to worry about it being higher than INT_MAX.
-> 
-> Fixes: 02dd95fe3169 ("drm/tinydrm: Add MIPI DBI support")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-
-Thanks Dan, applied to drm-misc-next with adjusted title:
--drm/tinydrm: fix a loop in debugfs code
-+drm/mipi-dbi: fix a loop in debugfs code
-
-Noralf.
+> Not tested.
+> 
+> diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+> index 3e2474959735..7679fb583e41 100644
+> --- a/drivers/usb/host/ohci-pxa27x.c
+> +++ b/drivers/usb/host/ohci-pxa27x.c
+> @@ -148,7 +148,7 @@ static int pxa27x_ohci_select_pmm(struct pxa27x_ohci *pxa_ohci, int mode)
+>  		uhcrhda |= RH_A_NPS;
+>  		break;
+>  	case PMM_GLOBAL_MODE:
+> -		uhcrhda &= ~(RH_A_NPS & RH_A_PSM);
+> +		uhcrhda &= ~(RH_A_NPS | RH_A_PSM);
+>  		break;
+>  	case PMM_PERPORT_MODE:
+>  		uhcrhda &= ~(RH_A_NPS);
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
