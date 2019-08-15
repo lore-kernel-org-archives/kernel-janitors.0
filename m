@@ -1,47 +1,39 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Fri, 23 Aug 2019 14:25:38 +0000
-Subject: Re: [PATCH][rtc-next] rtc: fsl: fix spelling mistake: "memery" -> "memory"
-Message-Id: <20190823142538.GB30479@piout.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Aug 2019 09:14:54 +0000
+Subject: [PATCH] scsi: fcoe: remove redundant call to skb_transport_header
+Message-Id: <20190815091454.13430-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190823101823.18402-1-colin.king@canonical.com>
-In-Reply-To: <20190823101823.18402-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Biwen Li <biwen.li@nxp.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hannes Reinecke <hare@suse.de>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 23/08/2019 11:18:23+0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-fsl-ftm-alarm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-I squashed that in the original patch, thanks!
+Pointer fh is being assigned a return value from the call to
+skb_transport_header however this value is never read and fh
+is being re-assigned immediately afterwards with a new value.
+Since there are side-effects from calling skb_transport_header
+the call is redundant and can be removed.
 
-> diff --git a/drivers/rtc/rtc-fsl-ftm-alarm.c b/drivers/rtc/rtc-fsl-ftm-alarm.c
-> index 4f7259c2d6a3..4bb98310cc3f 100644
-> --- a/drivers/rtc/rtc-fsl-ftm-alarm.c
-> +++ b/drivers/rtc/rtc-fsl-ftm-alarm.c
-> @@ -255,7 +255,7 @@ static int ftm_rtc_probe(struct platform_device *pdev)
->  
->  	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
->  	if (unlikely(!rtc)) {
-> -		dev_err(&pdev->dev, "cannot alloc memery for rtc\n");
-> +		dev_err(&pdev->dev, "cannot alloc memory for rtc\n");
->  		return -ENOMEM;
->  	}
->  
-> -- 
-> 2.20.1
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fcoe/fcoe.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index 587d4bbb7d22..6fd61555120a 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -1617,7 +1617,6 @@ static inline int fcoe_filter_frames(struct fc_lport *lport,
+ 	else
+ 		fr_flags(fp) |= FCPHF_CRC_UNCHECKED;
+ 
+-	fh = (struct fc_frame_header *) skb_transport_header(skb);
+ 	fh = fc_frame_header_get(fp);
+ 	if (fh->fh_r_ctl = FC_RCTL_DD_SOL_DATA && fh->fh_type = FC_TYPE_FCP)
+ 		return 0;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
