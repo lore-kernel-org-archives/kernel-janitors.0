@@ -1,59 +1,44 @@
-From: Greg Kurz <groug@kaod.org>
-Date: Thu, 01 Aug 2019 09:41:32 +0000
-Subject: Re: [PATCH 2/2] powerpc/xive: Add a check for memory allocation failure
-Message-Id: <20190801114132.4c1db5be@bahia.lan>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 15 Aug 2019 14:24:32 +0000
+Subject: [PATCH -next] btf: fix return value check in btf_vmlinux_init()
+Message-Id: <20190815142432.101401-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
- <cc53462734dfeaf15b6bad0e626b483de18656b4.1564647619.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cc53462734dfeaf15b6bad0e626b483de18656b4.1564647619.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, paulus@samba.org, clg@kaod.org, tglx@linutronix.de, linuxppc-dev@lists.ozlabs.org, allison@lohutok.net
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu,  1 Aug 2019 10:32:42 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+In case of error, the function kobject_create_and_add() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-> The result of this kzalloc is not checked. Add a check and corresponding
-> error handling code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Fixes: 341dfcf8d78e ("btf: expose BTF info through sysfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ kernel/bpf/sysfs_btf.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Reviewed-by: Greg Kurz <groug@kaod.org>
-
-> Note that 'xive_irq_bitmap_add()' failures are not handled in
-> 'xive_spapr_init()'
-> I guess that it is not really an issue. This function is _init, so if a
-> memory allocation occures here, it is likely that the system will
-> already be in bad shape.
-
-Hmm not sure... The allocation could also fail if the "ibm,xive-lisn-ranges"
-property contains an insanely big range, eg. count = 1 << 31. The system isn't
-necessarily in bad shape in this case, but XIVE is definitely unusable and
-we should let a chance to the kernel to switch to XICS in this case.
-
-I guess it is worth adding proper error handling in xive_spapr_init() as well.
-
-> Anyway, the check added here would at least keep the data linked in
-> 'xive_irq_bitmaps' usable.
-> ---
->  arch/powerpc/sysdev/xive/spapr.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-> index b4f5eb9e0f82..52198131c75e 100644
-> --- a/arch/powerpc/sysdev/xive/spapr.c
-> +++ b/arch/powerpc/sysdev/xive/spapr.c
-> @@ -53,6 +53,10 @@ static int xive_irq_bitmap_add(int base, int count)
->  	xibm->base = base;
->  	xibm->count = count;
->  	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
-> +	if (!xibm->bitmap) {
-> +		kfree(xibm);
-> +		return -ENOMEM;
-> +	}
->  	list_add(&xibm->list, &xive_irq_bitmaps);
->  
->  	pr_info("Using IRQ range [%x-%x]", xibm->base,
+diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+index 4659349fc795..be5557deb958 100644
+--- a/kernel/bpf/sysfs_btf.c
++++ b/kernel/bpf/sysfs_btf.c
+@@ -30,16 +30,13 @@ static struct kobject *btf_kobj;
+ 
+ static int __init btf_vmlinux_init(void)
+ {
+-	int err;
+-
+ 	if (!_binary__btf_vmlinux_bin_start)
+ 		return 0;
+ 
+ 	btf_kobj = kobject_create_and_add("btf", kernel_kobj);
+-	if (IS_ERR(btf_kobj)) {
+-		err = PTR_ERR(btf_kobj);
++	if (!btf_kobj) {
+ 		btf_kobj = NULL;
+-		return err;
++		return -ENOMEM;
+ 	}
+ 
+ 	bin_attr_btf_vmlinux.size = _binary__btf_vmlinux_bin_end -
