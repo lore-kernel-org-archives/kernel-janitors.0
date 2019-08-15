@@ -1,47 +1,38 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 22 Aug 2019 02:40:20 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove duplicated include from gfx_v9_0.c
-Message-Id: <CADnq5_OFd8N1PpBXwr5mC0=SvZsKx7QUPqavLDEJ+d43hOO4Ng@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Aug 2019 08:40:34 +0000
+Subject: [PATCH] staging: rtl8192u: fix up indentation of a statement
+Message-Id: <20190815084034.13885-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190710015720.107326-1-yuehaibing@huawei.com>
-In-Reply-To: <20190710015720.107326-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian Koenig <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Feifei Xu <Feifei.Xu@amd.com>, Likun Gao <Likun.Gao@amd.com>, James Zhu <James.Zhu@amd.com>, "S, Shirish" <shirish.s@amd.com>, "Quan, Evan" <evan.quan@amd.com>, Huang Rui <ray.huang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Applied. thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Alex
+There is a statement that is indented one level too deeply, remove
+the extraneous tab.
 
-On Tue, Jul 9, 2019 at 11:03 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Remove duplicated include.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> index 5ba332376710..822f45161240 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> @@ -39,7 +39,6 @@
->  #include "vega10_enum.h"
->  #include "hdp/hdp_4_0_offset.h"
->
-> -#include "soc15.h"
->  #include "soc15_common.h"
->  #include "clearstate_gfx9.h"
->  #include "v9_structs.h"
->
->
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Addresses-Coverity: ("Identation does not match nesting level")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8192u/r8190_rtl8256.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.c b/drivers/staging/rtl8192u/r8190_rtl8256.c
+index 92de92a3325a..0bedf88525cd 100644
+--- a/drivers/staging/rtl8192u/r8190_rtl8256.c
++++ b/drivers/staging/rtl8192u/r8190_rtl8256.c
+@@ -289,8 +289,8 @@ void phy_set_rf8256_ofdm_tx_power(struct net_device *dev, u8 powerlevel)
+ 			writeVal = 0x03030303;
+ 		} else {
+ 			writeVal = (byte3<<24) | (byte2<<16) | (byte1<<8) | byte0;
+-			}
+-			rtl8192_setBBreg(dev, RegOffset[index], 0x7f7f7f7f, writeVal);
++		}
++		rtl8192_setBBreg(dev, RegOffset[index], 0x7f7f7f7f, writeVal);
+ 	}
+ 	return;
+ 
+-- 
+2.20.1
