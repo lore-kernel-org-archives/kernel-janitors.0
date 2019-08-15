@@ -1,49 +1,34 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Date: Fri, 23 Aug 2019 07:16:02 +0000
-Subject: Re: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in tegra_p2u_probe()
-Message-Id: <7c060719-1df3-c0b8-2e61-5dbfdf1e4798@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Aug 2019 08:34:17 +0000
+Subject: [PATCH] Bluetooth: hci_qca: Use kfree_skb() instead of kfree()
+Message-Id: <20190815083416.GF27238@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822063407.71148-1-yuehaibing@huawei.com>
-In-Reply-To: <20190822063407.71148-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Matthias Kaehlcke <mka@chromium.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 8/22/2019 12:04 PM, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
-> index 7042bed9feaa..42394d27f4cb 100644
-> --- a/drivers/phy/tegra/phy-tegra194-p2u.c
-> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
-> @@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
->   	phy_set_drvdata(generic_phy, phy);
->   
->   	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> -	if (IS_ERR(phy_provider))
-> -		return PTR_ERR(phy_provider);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(phy_provider);
->   }
-Since PTR_ERR_OR_ZERO macro returns zero if input is valid, if some more code gets added in
-future after this, then, they might have to change this back to what it is now.
-So I ended up continuing with if(IS_ERR(...)) + PTR_ERR towards the end also.
-Having said that, I'm fine with this change as well.
+sk_buff structs need to be freed with kfree_skb().
 
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Fixes: 2faa3f15fa2f ("Bluetooth: hci_qca: wcn3990: Drop baudrate change vendor event")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/bluetooth/hci_qca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->   
->   static const struct of_device_id tegra_p2u_id_table[] = {
-> 
-> 
-> 
-> 
-> 
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index a054210ae866..7720e1748262 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -893,7 +893,7 @@ static int qca_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+ 		if (hdr->evt = HCI_EV_VENDOR)
+ 			complete(&qca->drop_ev_comp);
+ 
+-		kfree(skb);
++		kfree_skb(skb);
+ 
+ 		return 0;
+ 	}
+-- 
+2.20.1
