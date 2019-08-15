@@ -1,47 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Aug 2019 13:23:49 +0000
-Subject: [PATCH] scsi: fnic: remove redundant assignment of variable rc
-Message-Id: <20190813132349.8720-1-colin.king@canonical.com>
+From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
+Date: Thu, 15 Aug 2019 00:33:17 +0000
+Subject: RE: [PATCH] scsi: fnic: remove redundant assignment of variable rc
+Message-Id: <BYAPR11MB35115365560883FECD6C88DCC3AC0@BYAPR11MB3511.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190813132349.8720-1-colin.king@canonical.com>
+In-Reply-To: <20190813132349.8720-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Satish Kharat (satishkh)" <satishkh@cisco.com>, "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Variable ret is initialized to a value that is never read and it is
-re-assigned later and immediatetly returns. Clean up the code by
-removing rc and just returning 0.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/fnic/fnic_debugfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
-index 21991c99db7c..13f7d88d6e57 100644
---- a/drivers/scsi/fnic/fnic_debugfs.c
-+++ b/drivers/scsi/fnic/fnic_debugfs.c
-@@ -52,7 +52,6 @@ static struct fc_trace_flag_type *fc_trc_flag;
-  */
- int fnic_debugfs_init(void)
- {
--	int rc = -1;
- 	fnic_trace_debugfs_root = debugfs_create_dir("fnic", NULL);
- 
- 	fnic_stats_debugfs_root = debugfs_create_dir("statistics",
-@@ -70,8 +69,7 @@ int fnic_debugfs_init(void)
- 		fc_trc_flag->fc_clear = 4;
- 	}
- 
--	rc = 0;
--	return rc;
-+	return 0;
- }
- 
- /*
--- 
-2.20.1
+QWNrZWQtYnk6ICAgS2FyYW4gVGlsYWsgS3VtYXIgICA8a2FydGlsYWtAY2lzY28uY29tPg0KDQot
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPiANClNlbnQ6IFR1ZXNkYXksIEF1Z3VzdCAxMywgMjAxOSA2OjI0IEFNDQpU
+bzogU2F0aXNoIEtoYXJhdCAoc2F0aXNoa2gpIDxzYXRpc2hraEBjaXNjby5jb20+OyBTZXNpZGhh
+ciBCYWRkZWxhIChzZWJhZGRlbCkgPHNlYmFkZGVsQGNpc2NvLmNvbT47IEthcmFuIFRpbGFrIEt1
+bWFyIChrYXJ0aWxhaykgPGthcnRpbGFrQGNpc2NvLmNvbT47IEphbWVzIEUgLiBKIC4gQm90dG9t
+bGV5IDxqZWpiQGxpbnV4LmlibS5jb20+OyBNYXJ0aW4gSyAuIFBldGVyc2VuIDxtYXJ0aW4ucGV0
+ZXJzZW5Ab3JhY2xlLmNvbT47IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnDQpDYzoga2VybmVs
+LWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K
+U3ViamVjdDogW1BBVENIXSBzY3NpOiBmbmljOiByZW1vdmUgcmVkdW5kYW50IGFzc2lnbm1lbnQg
+b2YgdmFyaWFibGUgcmMNCg0KRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25p
+Y2FsLmNvbT4NCg0KVmFyaWFibGUgcmV0IGlzIGluaXRpYWxpemVkIHRvIGEgdmFsdWUgdGhhdCBp
+cyBuZXZlciByZWFkIGFuZCBpdCBpcw0KcmUtYXNzaWduZWQgbGF0ZXIgYW5kIGltbWVkaWF0ZXRs
+eSByZXR1cm5zLiBDbGVhbiB1cCB0aGUgY29kZSBieQ0KcmVtb3ZpbmcgcmMgYW5kIGp1c3QgcmV0
+dXJuaW5nIDAuDQoNCkFkZHJlc3Nlcy1Db3Zlcml0eTogKCJVbnVzZWQgdmFsdWUiKQ0KU2lnbmVk
+LW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0tLQ0K
+IGRyaXZlcnMvc2NzaS9mbmljL2ZuaWNfZGVidWdmcy5jIHwgNCArLS0tDQogMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9zY3NpL2ZuaWMvZm5pY19kZWJ1Z2ZzLmMgYi9kcml2ZXJzL3Njc2kvZm5pYy9mbmljX2RlYnVn
+ZnMuYw0KaW5kZXggMjE5OTFjOTlkYjdjLi4xM2Y3ZDg4ZDZlNTcgMTAwNjQ0DQotLS0gYS9kcml2
+ZXJzL3Njc2kvZm5pYy9mbmljX2RlYnVnZnMuYw0KKysrIGIvZHJpdmVycy9zY3NpL2ZuaWMvZm5p
+Y19kZWJ1Z2ZzLmMNCkBAIC01Miw3ICs1Miw2IEBAIHN0YXRpYyBzdHJ1Y3QgZmNfdHJhY2VfZmxh
+Z190eXBlICpmY190cmNfZmxhZzsNCiAgKi8NCiBpbnQgZm5pY19kZWJ1Z2ZzX2luaXQodm9pZCkN
+CiB7DQotCWludCByYyA9IC0xOw0KIAlmbmljX3RyYWNlX2RlYnVnZnNfcm9vdCA9IGRlYnVnZnNf
+Y3JlYXRlX2RpcigiZm5pYyIsIE5VTEwpOw0KIA0KIAlmbmljX3N0YXRzX2RlYnVnZnNfcm9vdCA9
+IGRlYnVnZnNfY3JlYXRlX2Rpcigic3RhdGlzdGljcyIsDQpAQCAtNzAsOCArNjksNyBAQCBpbnQg
+Zm5pY19kZWJ1Z2ZzX2luaXQodm9pZCkNCiAJCWZjX3RyY19mbGFnLT5mY19jbGVhciA9IDQ7DQog
+CX0NCiANCi0JcmMgPSAwOw0KLQlyZXR1cm4gcmM7DQorCXJldHVybiAwOw0KIH0NCiANCiAvKg0K
+LS0gDQoyLjIwLjENCg0K
