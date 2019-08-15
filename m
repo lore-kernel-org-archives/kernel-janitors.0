@@ -1,33 +1,39 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 20 Aug 2019 19:47:14 +0000
-Subject: Re: [PATCH] rtc: rv3029: Revert my error handling patch to rv3029_eeprom_write()
-Message-Id: <20190820194714.GV3545@piout.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Aug 2019 11:58:46 +0000
+Subject: [PATCH] iio: dac: ad5380: fix incorrect assignment to val
+Message-Id: <20190815115846.21800-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190817065604.GB29951@mwanda>
-In-Reply-To: <20190817065604.GB29951@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Tom Evans <tom.evans@motec.com.au>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/08/2019 09:56:04+0300, Dan Carpenter wrote:
-> My error handling "cleanup" was totally wrong.  Both the "err" and "ret"
-> variables are required.  The "err" variable holds the error codes for
-> rv3029_eeprom_enter/exit() and the "ret" variable holds the error codes
-> for if actual write fails.  In my patch if the write failed, the
-> function probably still returned success.
-> 
-> Reported-by: Tom Evans <tom.evans@motec.com.au>
-> Fixes: 97f5b0379c38 ("rtc: rv3029: Clean up error handling in rv3029_eeprom_write()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/rtc/rtc-rv3029c2.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-Applied, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the pointer val is being incorrectly incremented
+instead of the value pointed to by val. Fix this by adding
+in the missing * indirection operator.
+
+Addresses-Coverity: ("Unused value")
+Fixes: c03f2c536818 ("staging:iio:dac: Add AD5380 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/dac/ad5380.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
+index 4335214800d2..2ebe08326048 100644
+--- a/drivers/iio/dac/ad5380.c
++++ b/drivers/iio/dac/ad5380.c
+@@ -220,7 +220,7 @@ static int ad5380_read_raw(struct iio_dev *indio_dev,
+ 		if (ret)
+ 			return ret;
+ 		*val >>= chan->scan_type.shift;
+-		val -= (1 << chan->scan_type.realbits) / 2;
++		*val -= (1 << chan->scan_type.realbits) / 2;
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = 2 * st->vref;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
