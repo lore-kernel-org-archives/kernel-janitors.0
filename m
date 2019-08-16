@@ -1,65 +1,64 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Thu, 22 Aug 2019 17:47:15 +0000
-Subject: RE: [PATCH 1/4] misc: xilinx_sdfec: Fix a couple small information leaks
-Message-Id: <CH2PR02MB63599214D1FC937E256FCBC4CBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Aug 2019 22:21:51 +0000
+Subject: [PATCH][next] soc: samsung: exynos-chipid: fix memory leak
+Message-Id: <20190816222151.11098-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821070606.GA26957@mwanda>
-In-Reply-To: <20190821070606.GA26957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Derek Kiernan <dkiernan@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday 21 August 2019 08:06
-> To: Derek Kiernan <dkiernan@xilinx.com>; Dragan Cvetic <draganc@xilinx.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Michal Simek <michals@xilinx.com>;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 1/4] misc: xilinx_sdfec: Fix a couple small information leaks
-> 
-> These structs have holes in them so we end up disclosing a few bytes of
-> uninitialized stack data.
-> 
-> drivers/misc/xilinx_sdfec.c:305 xsdfec_get_status() warn: check that 'status' doesn't leak information (struct has a hole after 'activity')
-> drivers/misc/xilinx_sdfec.c:449 xsdfec_get_turbo() warn: check that 'turbo_params' doesn't leak information (struct has a hole after
-> 'scale')
-> 
-> We need to zero out the holes with memset().
-> 
-> Fixes: 6bd6a690c2e7 ("misc: xilinx_sdfec: Add stats & status ioctls")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/xilinx_sdfec.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-> index 912e939dec62..dc1b8b412712 100644
-> --- a/drivers/misc/xilinx_sdfec.c
-> +++ b/drivers/misc/xilinx_sdfec.c
-> @@ -295,6 +295,7 @@ static int xsdfec_get_status(struct xsdfec_dev *xsdfec, void __user *arg)
->  	struct xsdfec_status status;
->  	int err;
-> 
-> +	memset(&status, 0, sizeof(status));
->  	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
->  	status.state = xsdfec->state;
->  	xsdfec->state_updated = false;
-> @@ -440,6 +441,7 @@ static int xsdfec_get_turbo(struct xsdfec_dev *xsdfec, void __user *arg)
->  	if (xsdfec->config.code == XSDFEC_LDPC_CODE)
->  		return -EIO;
-> 
-> +	memset(&turbo_params, 0, sizeof(turbo_params));
->  	reg_value = xsdfec_regread(xsdfec, XSDFEC_TURBO_ADDR);
-> 
->  	turbo_params.scale = (reg_value & XSDFEC_TURBO_SCALE_MASK) >>
-> --
-> 2.20.1
+Currently when the call to product_id_to_soc_id fails there
+is a memory leak of soc_dev_attr->revision and soc_dev_attr
+on the error return path.  Fix this by adding a common error
+return path that frees there obects and use this for two
+error return paths.
 
-Reviewed-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+Addresses-Coverity: ("Resource leak")
+Fixes: 3253b7b7cd44 ("soc: samsung: Add exynos chipid driver support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/samsung/exynos-chipid.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Thanks,
-Dragan
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 006a95feb618..4e194a97c0fa 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -81,15 +81,15 @@ int __init exynos_chipid_early_init(void)
+ 	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+ 	if (!soc_dev_attr->soc_id) {
+ 		pr_err("Unknown SoC\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err;
+ 	}
+ 
+ 	/* please note that the actual registration will be deferred */
+ 	soc_dev = soc_device_register(soc_dev_attr);
+ 	if (IS_ERR(soc_dev)) {
+-		kfree(soc_dev_attr->revision);
+-		kfree(soc_dev_attr);
+-		return PTR_ERR(soc_dev);
++		ret = PTR_ERR(soc_dev);
++		goto err;
+ 	}
+ 
+ 	/* it is too early to use dev_info() here (soc_dev is NULL) */
+@@ -97,5 +97,11 @@ int __init exynos_chipid_early_init(void)
+ 		soc_dev_attr->soc_id, product_id, revision);
+ 
+ 	return 0;
++
++err:
++	kfree(soc_dev_attr->revision);
++	kfree(soc_dev_attr);
++	return ret;
+ }
++
+ early_initcall(exynos_chipid_early_init);
+-- 
+2.20.1
