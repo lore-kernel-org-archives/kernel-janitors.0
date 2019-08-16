@@ -1,27 +1,33 @@
-From: Nathan Lynch <nathanl@linux.ibm.com>
-Date: Tue, 27 Aug 2019 14:26:19 +0000
-Subject: Re: [PATCH 1/2] powerpc/pseries: Delete an unnecessary kfree() call in dlpar_store()
-Message-Id: <878sresn04.fsf@linux.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Aug 2019 11:39:07 +0000
+Subject: [PATCH] RDMA/hns: Fix some white space check_mtu_validate()
+Message-Id: <20190816113907.GA30799@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de>
- <b46cc4ff-a14c-0c10-0c0c-95573a960178@web.de>
-In-Reply-To: <b46cc4ff-a14c-0c10-0c0c-95573a960178@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oliver O'Halloran <oohall@gmail.com>, Allison Randal <allison@lohutok.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org, Frank Rowand <frank.rowand@sony.com>, Gen Zhang <blackgod016574@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lijun Ou <oulijun@huawei.com>
+Cc: "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 27 Aug 2019 13:34:02 +0200
->
-> A null pointer would be passed to a call of the function “kfree”
-> immediately after a call of the function “kstrdup” failed at one place.
-> Remove this superfluous function call.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This line was indented a bit too far.
 
-Acked-by: Nathan Lynch <nathanl@linux.ibm.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_qp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
+index b729f8ef90a2..f972127edbf6 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_qp.c
++++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
+@@ -1080,7 +1080,7 @@ static int check_mtu_validate(struct hns_roce_dev *hr_dev,
+ 	int p;
+ 
+ 	p = attr_mask & IB_QP_PORT ? (attr->port_num - 1) : hr_qp->port;
+-	    active_mtu = iboe_get_mtu(hr_dev->iboe.netdevs[p]->mtu);
++	active_mtu = iboe_get_mtu(hr_dev->iboe.netdevs[p]->mtu);
+ 
+ 	if ((hr_dev->caps.max_mtu >= IB_MTU_2048 &&
+ 	    attr->path_mtu > hr_dev->caps.max_mtu) ||
+-- 
+2.20.1
