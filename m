@@ -1,23 +1,37 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 12 Aug 2019 12:05:14 +0000
-Subject: Re: [PATCH][net-next] rxrpc: fix uninitialized return value in variable err
-Message-Id: <17308.1565611514@warthog.procyon.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 17 Aug 2019 12:21:24 +0000
+Subject: [PATCH][drm-next] drm/panel: remove redundant assignment to val
+Message-Id: <20190817122124.29650-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809170259.29859-1-colin.king@canonical.com>
-In-Reply-To: <20190809170259.29859-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: dhowells@redhat.com, "David S . Miller" <davem@davemloft.net>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fixes: b214b2d8f277 ("rxrpc: Don't use skb_cow_data() in rxkad")
+Variable val is initialized to a value in a for-loop that is
+never read and hence it is redundant. Remove it.
 
-This isn't in net or net-next and has been superseded in any case.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/panel/panel-tpo-td043mtea1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can find it still in my afs-next branch, but the replacement in
-rxrpc-fixes is fixed differently.
-
-David
+diff --git a/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c b/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
+index 3b4f30c0fdae..84370562910f 100644
+--- a/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
++++ b/drivers/gpu/drm/panel/panel-tpo-td043mtea1.c
+@@ -116,7 +116,7 @@ static void td043mtea1_write_gamma(struct td043mtea1_panel *lcd)
+ 	td043mtea1_write(lcd, 0x13, val);
+ 
+ 	/* gamma bits [7:0] */
+-	for (val = i = 0; i < 12; i++)
++	for (i = 0; i < 12; i++)
+ 		td043mtea1_write(lcd, 0x14 + i, gamma[i] & 0xff);
+ }
+ 
+-- 
+2.20.1
