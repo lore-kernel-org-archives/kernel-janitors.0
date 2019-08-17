@@ -1,23 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 05 Aug 2019 17:28:11 +0000
-Subject: Re: [PATCH]][next] selftests: nettest: fix spelling mistake: "potocol" -> "protocol"
-Message-Id: <20190805.102811.142667979127203692.davem@davemloft.net>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 17 Aug 2019 07:22:51 +0000
+Subject: Re: [PATCH] clk: Remove extraneous 'for' word in comments
+Message-Id: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190805105211.27229-1-colin.king@canonical.com>
-In-Reply-To: <20190805105211.27229-1-colin.king@canonical.com>
+References: <1566023759-7880-1-git-send-email-gupt21@gmail.com>
+In-Reply-To: <1566023759-7880-1-git-send-email-gupt21@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rishi Gupta <gupt21@gmail.com>, sboyd@kernel.org, kernel-janitors <kernel-janitors@vger.kernel.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  5 Aug 2019 11:52:11 +0100
+On Sat, 2019-08-17 at 12:05 +0530, Rishi Gupta wrote:
+> An extra 'for' word is grammatically incorrect in the comment
+> 'verifying ops for multi-parent clks'. This commit removes
+> this extra for word.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in an error messgae. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+A few other repeated word typos in comments are 
+common in the kernel and most could be changed.
 
-Applied to net-next.
+$ git grep -P '^\s*/?\*.*\bthe the\b' | wc -l
+285
+$ git grep -P '^\s*/?\*.*\bto to\b' | wc -l
+62
+$ git grep -P '^\s*/?\*.*\bfor for\b' | wc -l
+31
+$ git grep -P
+'^\s*/?\*.*\bfrom from\b' | wc -l
+22
+$ git grep -P '^\s*/?\*.*\bare are\b'
+| wc -l
+16
