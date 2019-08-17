@@ -1,36 +1,64 @@
-From: Dmitry Fomichev <Dmitry.Fomichev@wdc.com>
-Date: Mon, 19 Aug 2019 16:11:18 +0000
-Subject: Re: [PATCH] dm zoned: Potential NULL dereference in dmz_do_reclaim()
-Message-Id: <d53fb01681501c2a777f74a3acc145df37b97458.camel@wdc.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Aug 2019 06:56:04 +0000
+Subject: [PATCH] rtc: rv3029: Revert my error handling patch to rv3029_eeprom_write()
+Message-Id: <20190817065604.GB29951@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190819095814.GA19905@mwanda>
-In-Reply-To: <20190819095814.GA19905@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "agk@redhat.com" <agk@redhat.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "dm-devel@redhat.com" <dm-devel@redhat.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "snitzer@redhat.com" <snitzer@redhat.com>
+To: Alessandro Zummo <a.zummo@towertech.it>, Tom Evans <tom.evans@motec.com.au>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-RGFuLA0KDQpPbiBNb24sIDIwMTktMDgtMTkgYXQgMTI6NTggKzAzMDAsIERhbiBDYXJwZW50ZXIg
-d3JvdGU6DQo+IFRoaXMgZnVuY3Rpb24gaXMgc3VwcG9zZWQgdG8gcmV0dXJuIGVycm9yIHBvaW50
-ZXJzIHNvIGl0IG1hdGNoZXMgdGhlDQo+IGRtel9nZXRfcm5kX3pvbmVfZm9yX3JlY2xhaW0oKSBm
-dW5jdGlvbi4gIFRoZSBjdXJyZW50IGNvZGUgY291bGQgbGVhZCB0bw0KPiBhIE5VTEwgZGVyZWZl
-cmVuY2UgaW4gZG16X2RvX3JlY2xhaW0oKQ0KPiANCj4gRml4ZXM6IGIyMzRjNmQ3YTcwMyAoImRt
-IHpvbmVkOiBpbXByb3ZlIGVycm9yIGhhbmRsaW5nIGluIHJlY2xhaW0iKQ0KPiBTaWduZWQtb2Zm
-LWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IC0tLQ0KPiAg
-ZHJpdmVycy9tZC9kbS16b25lZC1tZXRhZGF0YS5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvbWQvZG0tem9uZWQtbWV0YWRhdGEuYyBiL2RyaXZlcnMvbWQvZG0tem9uZWQtbWV0YWRh
-dGEuYw0KPiBpbmRleCAyYTViYzUxZmQ2ZDUuLjU5NWE3MzExMGUxNyAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9tZC9kbS16b25lZC1tZXRhZGF0YS5jDQo+ICsrKyBiL2RyaXZlcnMvbWQvZG0tem9u
-ZWQtbWV0YWRhdGEuYw0KPiBAQCAtMTU4OCw3ICsxNTg4LDcgQEAgc3RhdGljIHN0cnVjdCBkbV96
-b25lICpkbXpfZ2V0X3NlcV96b25lX2Zvcl9yZWNsYWltKHN0cnVjdCBkbXpfbWV0YWRhdGEgKnpt
-ZCkNCj4gIAlzdHJ1Y3QgZG1fem9uZSAqem9uZTsNCj4gIA0KPiAgCWlmIChsaXN0X2VtcHR5KCZ6
-bWQtPm1hcF9zZXFfbGlzdCkpDQo+IC0JCXJldHVybiBOVUxMOw0KPiArCQlyZXR1cm4gRVJSX1BU
-UigtRUJVU1kpOw0KPiAgDQo+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeSh6b25lLCAmem1kLT5tYXBf
-c2VxX2xpc3QsIGxpbmspIHsNCj4gIAkJaWYgKCF6b25lLT5iem9uZSkNCj4gQEAgLTE1OTcsNyAr
-MTU5Nyw3IEBAIHN0YXRpYyBzdHJ1Y3QgZG1fem9uZSAqZG16X2dldF9zZXFfem9uZV9mb3JfcmVj
-bGFpbShzdHJ1Y3QgZG16X21ldGFkYXRhICp6bWQpDQo+ICAJCQlyZXR1cm4gem9uZTsNCj4gIAl9
-DQo+ICANCj4gLQlyZXR1cm4gTlVMTDsNCj4gKwlyZXR1cm4gRVJSX1BUUigtRUJVU1kpOw0KPiAg
-fQ0KPiAgDQo+ICAvKg0KDQp0aGFua3MgZm9yIG5vdGljaW5nIHRoaXMgLQ0KDQpSZXZpZXdlZC1i
-eTogRG1pdHJ5IEZvbWljaGV2IDxkbWl0cnkuZm9taWNoZXZAd2RjLmNvbT4NCg=
+My error handling "cleanup" was totally wrong.  Both the "err" and "ret"
+variables are required.  The "err" variable holds the error codes for
+rv3029_eeprom_enter/exit() and the "ret" variable holds the error codes
+for if actual write fails.  In my patch if the write failed, the
+function probably still returned success.
+
+Reported-by: Tom Evans <tom.evans@motec.com.au>
+Fixes: 97f5b0379c38 ("rtc: rv3029: Clean up error handling in rv3029_eeprom_write()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/rtc/rtc-rv3029c2.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/rtc/rtc-rv3029c2.c b/drivers/rtc/rtc-rv3029c2.c
+index 4a0e8ec015cc..4cdf6588e1d9 100644
+--- a/drivers/rtc/rtc-rv3029c2.c
++++ b/drivers/rtc/rtc-rv3029c2.c
+@@ -278,13 +278,13 @@ static int rv3029_eeprom_read(struct device *dev, u8 reg,
+ static int rv3029_eeprom_write(struct device *dev, u8 reg,
+ 			       u8 const buf[], size_t len)
+ {
+-	int ret;
++	int ret, err;
+ 	size_t i;
+ 	u8 tmp;
+ 
+-	ret = rv3029_eeprom_enter(dev);
+-	if (ret < 0)
+-		return ret;
++	err = rv3029_eeprom_enter(dev);
++	if (err < 0)
++		return err;
+ 
+ 	for (i = 0; i < len; i++, reg++) {
+ 		ret = rv3029_read_regs(dev, reg, &tmp, 1);
+@@ -300,11 +300,11 @@ static int rv3029_eeprom_write(struct device *dev, u8 reg,
+ 			break;
+ 	}
+ 
+-	ret = rv3029_eeprom_exit(dev);
+-	if (ret < 0)
+-		return ret;
++	err = rv3029_eeprom_exit(dev);
++	if (err < 0)
++		return err;
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int rv3029_eeprom_update_bits(struct device *dev,
+-- 
+2.20.1
