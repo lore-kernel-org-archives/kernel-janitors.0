@@ -1,61 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 23 Aug 2019 17:24:07 +0000
-Subject: Re: staging: vt6656: Use common error handling code in vnt_alloc_bufs()
-Message-Id: <10006e33-ed90-74ec-4d59-4074caf4ecd4@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 18 Aug 2019 18:53:49 +0000
+Subject: [PATCH] NTB: ntb_transport: remove redundant assignment to rc
+Message-Id: <20190818185349.15275-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <91e8a9b7-e79d-dafc-10b8-dd79eb59eff9@web.de>
- <20190823145540.GA2536@qd-ubuntu>
-In-Reply-To: <20190823145540.GA2536@qd-ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
- Your patch remove redundant code, which is fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your constructive feedback.
+Variable rc is initialized to a value that is never read and it
+is re-assigned later. The initialization is redundant and can be
+removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/ntb/ntb_transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> code you changed was simple enough to be understand quickly. I think replacing
-> it with a crossed goto (even if it remove redundant code) might not be the best
-> option.
->
-> A solution might be to move the second loop to the top of the function
-
-I am unsure about the relevance of the loop ordering for the affected
-resource allocations.
-
-
-> so you should be able to replace the end of the cleanup calls with:
->
-> enomem:
-> 	ret = -ENOMEM;
-> free_rx:
-> 	vnt_free_rx_bufs(priv);
-> 	return ret;
-
-The exception handling can eventually adjusted another bit according
-to your refactoring.
-
-
-> This way, only a failed call to vnt_submit_rx_urb() should jump to free_rx,
-
-It seems that a goto statement will still be needed in an error code
-part by both discussed variants.
-
-
-> another failed call should jump to enomem or previously defined
-> label, so we can correctly forward errors.
-
-This view sounds promising.
-
-
-> With such solution it might be worth adding a comment to describe
-> that all error should be ENOMEM except for vnt_submit_rx_urb().
-
-Can this function implementation become clearer also without
-such a comment?
-
-Regards,
-Markus
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 40c90ca10729..00a5d5764993 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -292,7 +292,7 @@ static int ntb_transport_bus_match(struct device *dev,
+ static int ntb_transport_bus_probe(struct device *dev)
+ {
+ 	const struct ntb_transport_client *client;
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	get_device(dev);
+ 
+-- 
+2.20.1
