@@ -1,56 +1,36 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Thu, 01 Aug 2019 16:58:10 +0000
-Subject: Re: [PATCH] RDMA/hns: Fix error return code in hns_roce_v1_rsv_lp_qp()
-Message-Id: <64747a477cca5b066dd9ae8a3f26f69f37207d41.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-S1pTOHu1eOQms7iLaqVT"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Aug 2019 15:59:57 +0000
+Subject: [PATCH] drm/amdgpu: Fix a typo in the include header guard of 'navi12_ip_offset.h'
+Message-Id: <20190818155957.4029-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190801012725.150493-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190801012725.150493-1-weiyongjun1@huawei.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>, Lijun Ou <oulijun@huawei.com>, "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Jason Gunthorpe <jgg@ziepe.ca>, Colin Ian King <colin.king@canonical.com>
-Cc: linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-S1pTOHu1eOQms7iLaqVT
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2019-08-01 at 01:27 +0000, Wei Yongjun wrote:
-> Fix to return error code -ENOMEM from the rdma_zalloc_drv_obj() error
-> handling case instead of 0, as done elsewhere in this function.
->=20
-> Fixes: e8ac9389f0d7 ("RDMA: Fix allocation failure on pointer pd")
-> Fixes: 21a428a019c9 ("RDMA: Handle PD allocations by IB/core")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-
-Thanks, applied to for-rc.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-S1pTOHu1eOQms7iLaqVT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, xiaojie.yuan@amd.com, Hawking.Zhang@amd.com, Jack.Xiao@amd.com
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
------BEGIN PGP SIGNATURE-----
+'_navi10_ip_offset_HEADER' is already used in 'navi10_ip_offset.h', so use
+'_navi12_ip_offset_HEADER' instead here.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl1DGiMACgkQuCajMw5X
-L92COBAAjzK3u3pLoF522VMnvbRpyUySBtHMVzeCEd9AWjnp1eqtNwih97EtniO/
-pqhIpX/x3O7IdlMgsUSUZ8/pYwCcyEpWSLZcmBBtiYgtdDZJ5LffTGgnq95rRnHX
-NP1yPDqnEUQRQsoJYpWl2wx2izB94ml+RWgWuEhO6jIm3dHvquLwQfP1RwjTvvBs
-kgFkU5s3vRnfPD3wyihKx8g9eihdFXiu//JjL+feL53MYd116xQm0/E1hqV3c1ld
-4YwVUf1L3My0HEDkfLqYYt+FqoBB64+8hMXzAXpa10eDAqmsM6Jg/yOsx6YCnhET
-66Fa58vl0geGBTvZE9HmyILq7q/UtaTRErMEHpanUyoXw/JRZb5DRHiRb7qfld6y
-wGt83+R2rN3OOfzwq4ZMNvRCIuXezW2SOgYg2a0zshmB8K2pE4cpGhQQtaapRMJ2
-eMx9Vzze9kXgR5IgxfIJnJY6DoiaEx4gxclXEsaHaYWl7iwCEyTPL5FiInVWNKJi
-bCBjNQDOumeQjlUBvmikxqn6/Ob5LyjBAM5F/lES6u+YZvTiYjGzY1sHWXYAmo+i
-pZ3WKbomSvJm18IEgDNFhgifG+ZkyjycIbAgk4ZkU5oCRj2no5zYLyevnpOxY5n5
-gFu+o+SlVtamLIZJ9Shco/EsPdDFHwNlYwDfdJsKaBtEHc9yumc=
-=XPLG
------END PGP SIGNATURE-----
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/include/navi12_ip_offset.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=-S1pTOHu1eOQms7iLaqVT--
+diff --git a/drivers/gpu/drm/amd/include/navi12_ip_offset.h b/drivers/gpu/drm/amd/include/navi12_ip_offset.h
+index 229e8fddfcc1..6c2cc6296c06 100644
+--- a/drivers/gpu/drm/amd/include/navi12_ip_offset.h
++++ b/drivers/gpu/drm/amd/include/navi12_ip_offset.h
+@@ -18,8 +18,8 @@
+  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  */
+-#ifndef _navi10_ip_offset_HEADER
+-#define _navi10_ip_offset_HEADER
++#ifndef _navi12_ip_offset_HEADER
++#define _navi12_ip_offset_HEADER
+ 
+ #define MAX_INSTANCE                                       7
+ #define MAX_SEGMENT                                        5
+-- 
+2.20.1
