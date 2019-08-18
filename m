@@ -1,42 +1,63 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 27 Aug 2019 08:26:43 +0000
-Subject: [PATCH 1/2] powerpc/82xx: Delete an unnecessary of_node_put() call in pq2ads_pci_init_irq()
-Message-Id: <9c060a41-438b-6fb8-d549-37c72fae4898@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Aug 2019 15:06:09 +0000
+Subject: [PATCH] staging: rtl8712: Improve naming of include hearder guards
+Message-Id: <20190818150609.3376-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
-In-Reply-To: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Enrico Weigelt <lkml@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Aug 2019 08:44:20 +0200
+Choose a better name for the include hearder guard used in rtl871x_io.h.
+'_IO_H_' is to generic and does not match the comment after the #endif.
+Use '_RTL871X_IO_H_' instead.
 
-A null pointer would be passed to a call of the function “of_node_put”
-immediately after a call of the function “of_find_compatible_node” failed
-at one place.
-Remove this superfluous function call.
+Also make the comments in the #endif /* XXX */ match the name used in
+#ifndef.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/powerpc/platforms/82xx/pq2ads-pci-pic.c | 1 -
- 1 file changed, 1 deletion(-)
+__RTL871X_RF_H_ could have been turned into _RTL871X_RF_H_ (one leading
+'_' removed) but there does not seem to be a clear logic in the way the
+header guards are named in this directory. So leave it as-is in order to
+limit the diff.
+---
+ drivers/staging/rtl8712/rtl871x_io.h | 7 +++----
+ drivers/staging/rtl8712/rtl871x_rf.h | 3 +--
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-index 096cc0d59fd8..6cc054db7043 100644
---- a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-+++ b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-@@ -123,7 +123,6 @@ int __init pq2ads_pci_init_irq(void)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,pq2ads-pci-pic");
- 	if (!np) {
- 		printk(KERN_ERR "No pci pic node in device tree.\n");
--		of_node_put(np);
- 		goto out;
- 	}
-
---
-2.23.0
+diff --git a/drivers/staging/rtl8712/rtl871x_io.h b/drivers/staging/rtl8712/rtl871x_io.h
+index 28941423b7ed..c20dd5a6bbd1 100644
+--- a/drivers/staging/rtl8712/rtl871x_io.h
++++ b/drivers/staging/rtl8712/rtl871x_io.h
+@@ -11,8 +11,8 @@
+  * Larry Finger <Larry.Finger@lwfinger.net>
+  *
+  ******************************************************************************/
+-#ifndef _IO_H_
+-#define _IO_H_
++#ifndef _RTL871X_IO_H_
++#define _RTL871X_IO_H_
+ 
+ #include "osdep_service.h"
+ #include "osdep_intf.h"
+@@ -234,5 +234,4 @@ void r8712_write_port(struct _adapter *adapter, u32 addr, u32 cnt, u8 *pmem);
+ uint r8712_alloc_io_queue(struct _adapter *adapter);
+ void r8712_free_io_queue(struct _adapter *adapter);
+ 
+-#endif	/*_RTL8711_IO_H_*/
+-
++#endif	/*_RTL871X_IO_H_*/
+diff --git a/drivers/staging/rtl8712/rtl871x_rf.h b/drivers/staging/rtl8712/rtl871x_rf.h
+index cc54453cd424..7d98921a48fa 100644
+--- a/drivers/staging/rtl8712/rtl871x_rf.h
++++ b/drivers/staging/rtl8712/rtl871x_rf.h
+@@ -52,5 +52,4 @@ enum {
+ 	RTL8712_RFC_2T2R = 0x22
+ };
+ 
+-#endif /*_RTL8711_RF_H_*/
+-
++#endif /*__RTL871X_RF_H_*/
+-- 
+2.20.1
