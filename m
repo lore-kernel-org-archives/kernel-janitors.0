@@ -1,74 +1,37 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Mon, 19 Aug 2019 06:32:43 +0000
-Subject: Re: [PATCH][V2] drivers: thermal: processor_thermal_device: fix missing bitwise-or operators
-Message-Id: <95dce698e7790dac7178e950a6a9dde71d231cae.camel@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 18 Aug 2019 18:46:49 +0000
+Subject: [PATCH] staging: rts5208: remove redundant assignment to retval
+Message-Id: <20190818184649.13828-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190729120323.15838-1-colin.king@canonical.com>
-         <42db46c33466a12221e0968e82c4c4ee17b0341d.camel@linux.intel.com>
-In-Reply-To: <42db46c33466a12221e0968e82c4c4ee17b0341d.camel@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Colin King <colin.king@canonical.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2019-07-29 at 14:09 -0700, Srinivas Pandruvada wrote:
-> On Mon, 2019-07-29 at 13:03 +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The variable val is having the top 8 bits cleared and then the
-> > variable is being
-> > re-assinged and setting just the top 8 bits.  I believe the
-> > intention
-> > was bitwise-or
-> > in the top 8 bits.  Fix this by replacing the = operators with &> > and
-> > > = instead.
-> > 
-> > Addresses-Coverity: ("Unused value")
-> > Fixes: b0c74b08517e ("drivers: thermal: processor_thermal_device:
-> > Export sysfs inteface for TCC offset")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com
-> >
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi, Colin,
+Variable retval is initialized to a value that is never read and it
+is re-assigned later. The initialization is redundant and can be
+removed.
 
-thanks for the fix, as b0c74b08517e ("drivers: thermal:
-processor_thermal_device: Export sysfs inteface for TCC offset") has
-not been shipped in upstream yet, I will fold this fix into the
-original patch directly.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rts5208/ms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
-rui
-> 
-> > ---
-> > 
-> > V2: Add in &= operator missing from V1. Doh.
-> > 
-> > ---
-> >  .../thermal/intel/int340x_thermal/processor_thermal_device.c  | 4
-> > ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git
-> > a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > index 6f6ac6a8e82d..97333fc4be42 100644
-> > ---
-> > a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > +++
-> > b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-> > @@ -163,8 +163,8 @@ static int tcc_offset_update(int tcc)
-> >  	if (err)
-> >  		return err;
-> >  
-> > -	val = ~GENMASK_ULL(31, 24);
-> > -	val = (tcc & 0xff) << 24;
-> > +	val &= ~GENMASK_ULL(31, 24);
-> > +	val |= (tcc & 0xff) << 24;
-> >  
-> >  	err = wrmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, val);
-> >  	if (err)
-> 
-> 
+diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
+index 1128eec3bd08..e853fa9cc950 100644
+--- a/drivers/staging/rts5208/ms.c
++++ b/drivers/staging/rts5208/ms.c
+@@ -3842,7 +3842,7 @@ int mg_set_leaf_id(struct scsi_cmnd *srb, struct rtsx_chip *chip)
+ 
+ int mg_get_local_EKB(struct scsi_cmnd *srb, struct rtsx_chip *chip)
+ {
+-	int retval = STATUS_FAIL;
++	int retval;
+ 	int bufflen;
+ 	unsigned int lun = SCSI_LUN(srb);
+ 	u8 *buf = NULL;
+-- 
+2.20.1
