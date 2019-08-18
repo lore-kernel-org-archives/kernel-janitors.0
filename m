@@ -1,36 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Aug 2019 13:31:14 +0000
-Subject: [PATCH] regulator: max8660: remove redundant assignment of variable ret
-Message-Id: <20190813133114.14931-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 18 Aug 2019 09:10:44 +0000
+Subject: [PATCH] RDMA/core: Fix an error handling path in 'res_get_common_doit()'
+Message-Id: <20190818091044.8845-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org, parav@mellanox.com, majd@mellanox.com, markz@mellanox.com, swise@opengridcomputing.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+According to surrounding error paths, it is likely that 'goto err_get;' is
+expected here. Otherwise, a call to 'rdma_restrack_put(res);' would be
+missing.
 
-Variable ret is initialized to a value that is never read before
-a return statement and hence can be removed. Remove it.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c5dfe0ea6ffa ("RDMA/nldev: Add resource tracker doit callback")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/regulator/max8660.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/core/nldev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/max8660.c b/drivers/regulator/max8660.c
-index 4bca54446287..347043a5a9a7 100644
---- a/drivers/regulator/max8660.c
-+++ b/drivers/regulator/max8660.c
-@@ -485,7 +485,6 @@ static int max8660_probe(struct i2c_client *client,
- 		rdev = devm_regulator_register(&client->dev,
- 						  &max8660_reg[id], &config);
- 		if (IS_ERR(rdev)) {
--			ret = PTR_ERR(rdev);
- 			dev_err(&client->dev, "failed to register %s\n",
- 				max8660_reg[id].name);
- 			return PTR_ERR(rdev);
+diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
+index e287b71a1cfd..03272791a5bf 100644
+--- a/drivers/infiniband/core/nldev.c
++++ b/drivers/infiniband/core/nldev.c
+@@ -1231,7 +1231,7 @@ static int res_get_common_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
+ 	if (!msg) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto err_get;
+ 	}
+ 
+ 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
 -- 
 2.20.1
