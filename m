@@ -1,45 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 19 Aug 2019 09:58:14 +0000
-Subject: [PATCH] dm zoned: Potential NULL dereference in dmz_do_reclaim()
-Message-Id: <20190819095814.GA19905@mwanda>
+From: Dmitry Fomichev <Dmitry.Fomichev@wdc.com>
+Date: Mon, 19 Aug 2019 16:11:18 +0000
+Subject: Re: [PATCH] dm zoned: Potential NULL dereference in dmz_do_reclaim()
+Message-Id: <d53fb01681501c2a777f74a3acc145df37b97458.camel@wdc.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190819095814.GA19905@mwanda>
+In-Reply-To: <20190819095814.GA19905@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+To: "agk@redhat.com" <agk@redhat.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "dm-devel@redhat.com" <dm-devel@redhat.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "snitzer@redhat.com" <snitzer@redhat.com>
 
-This function is supposed to return error pointers so it matches the
-dmz_get_rnd_zone_for_reclaim() function.  The current code could lead to
-a NULL dereference in dmz_do_reclaim()
-
-Fixes: b234c6d7a703 ("dm zoned: improve error handling in reclaim")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/md/dm-zoned-metadata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
-index 2a5bc51fd6d5..595a73110e17 100644
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -1588,7 +1588,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
- 	struct dm_zone *zone;
- 
- 	if (list_empty(&zmd->map_seq_list))
--		return NULL;
-+		return ERR_PTR(-EBUSY);
- 
- 	list_for_each_entry(zone, &zmd->map_seq_list, link) {
- 		if (!zone->bzone)
-@@ -1597,7 +1597,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
- 			return zone;
- 	}
- 
--	return NULL;
-+	return ERR_PTR(-EBUSY);
- }
- 
- /*
--- 
-2.20.1
+RGFuLA0KDQpPbiBNb24sIDIwMTktMDgtMTkgYXQgMTI6NTggKzAzMDAsIERhbiBDYXJwZW50ZXIg
+d3JvdGU6DQo+IFRoaXMgZnVuY3Rpb24gaXMgc3VwcG9zZWQgdG8gcmV0dXJuIGVycm9yIHBvaW50
+ZXJzIHNvIGl0IG1hdGNoZXMgdGhlDQo+IGRtel9nZXRfcm5kX3pvbmVfZm9yX3JlY2xhaW0oKSBm
+dW5jdGlvbi4gIFRoZSBjdXJyZW50IGNvZGUgY291bGQgbGVhZCB0bw0KPiBhIE5VTEwgZGVyZWZl
+cmVuY2UgaW4gZG16X2RvX3JlY2xhaW0oKQ0KPiANCj4gRml4ZXM6IGIyMzRjNmQ3YTcwMyAoImRt
+IHpvbmVkOiBpbXByb3ZlIGVycm9yIGhhbmRsaW5nIGluIHJlY2xhaW0iKQ0KPiBTaWduZWQtb2Zm
+LWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IC0tLQ0KPiAg
+ZHJpdmVycy9tZC9kbS16b25lZC1tZXRhZGF0YS5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbWQvZG0tem9uZWQtbWV0YWRhdGEuYyBiL2RyaXZlcnMvbWQvZG0tem9uZWQtbWV0YWRh
+dGEuYw0KPiBpbmRleCAyYTViYzUxZmQ2ZDUuLjU5NWE3MzExMGUxNyAxMDA2NDQNCj4gLS0tIGEv
+ZHJpdmVycy9tZC9kbS16b25lZC1tZXRhZGF0YS5jDQo+ICsrKyBiL2RyaXZlcnMvbWQvZG0tem9u
+ZWQtbWV0YWRhdGEuYw0KPiBAQCAtMTU4OCw3ICsxNTg4LDcgQEAgc3RhdGljIHN0cnVjdCBkbV96
+b25lICpkbXpfZ2V0X3NlcV96b25lX2Zvcl9yZWNsYWltKHN0cnVjdCBkbXpfbWV0YWRhdGEgKnpt
+ZCkNCj4gIAlzdHJ1Y3QgZG1fem9uZSAqem9uZTsNCj4gIA0KPiAgCWlmIChsaXN0X2VtcHR5KCZ6
+bWQtPm1hcF9zZXFfbGlzdCkpDQo+IC0JCXJldHVybiBOVUxMOw0KPiArCQlyZXR1cm4gRVJSX1BU
+UigtRUJVU1kpOw0KPiAgDQo+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeSh6b25lLCAmem1kLT5tYXBf
+c2VxX2xpc3QsIGxpbmspIHsNCj4gIAkJaWYgKCF6b25lLT5iem9uZSkNCj4gQEAgLTE1OTcsNyAr
+MTU5Nyw3IEBAIHN0YXRpYyBzdHJ1Y3QgZG1fem9uZSAqZG16X2dldF9zZXFfem9uZV9mb3JfcmVj
+bGFpbShzdHJ1Y3QgZG16X21ldGFkYXRhICp6bWQpDQo+ICAJCQlyZXR1cm4gem9uZTsNCj4gIAl9
+DQo+ICANCj4gLQlyZXR1cm4gTlVMTDsNCj4gKwlyZXR1cm4gRVJSX1BUUigtRUJVU1kpOw0KPiAg
+fQ0KPiAgDQo+ICAvKg0KDQp0aGFua3MgZm9yIG5vdGljaW5nIHRoaXMgLQ0KDQpSZXZpZXdlZC1i
+eTogRG1pdHJ5IEZvbWljaGV2IDxkbWl0cnkuZm9taWNoZXZAd2RjLmNvbT4NCg=
