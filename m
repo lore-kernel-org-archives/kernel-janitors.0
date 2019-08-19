@@ -1,54 +1,35 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 01 Aug 2019 19:12:16 +0000
-Subject: Re: [PATCH][drm-next] drm/amdgpu: fix unsigned variable instance compared to less than zero
-Message-Id: <CADnq5_Oo8AthzgGsRCRaiNqn7skzGCGMZGdMcNo8Et+5Zt12Og@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Aug 2019 09:41:37 +0000
+Subject: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake: "Schdule" -> "Schedule"
+Message-Id: <20190819094137.390-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190801110145.10803-1-colin.king@canonical.com>
-In-Reply-To: <20190801110145.10803-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Le Ma <le.ma@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 7:01 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currenly the error check on variable instance is always false because
-> it is a uint32_t type and this is never less than zero. Fix this by
-> making it an int type.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 7d0e6329dfdc ("drm/amdgpu: update more sdma instances irq support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+There is a spelling mistake in a dev_dbg message, fix it.
 
-Alex
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/xilinx_sdfec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> index a33bd867287e..92257f2bf171 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-> @@ -1962,7 +1962,8 @@ static int sdma_v4_0_process_trap_irq(struct amdgpu_device *adev,
->  static int sdma_v4_0_process_ras_data_cb(struct amdgpu_device *adev,
->                 struct amdgpu_iv_entry *entry)
->  {
-> -       uint32_t instance, err_source;
-> +       uint32_t err_source;
-> +       int instance;
->
->         instance = sdma_v4_0_irq_id_to_seq(entry->client_id);
->         if (instance < 0)
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+index 912e939dec62..b25c58ee618c 100644
+--- a/drivers/misc/xilinx_sdfec.c
++++ b/drivers/misc/xilinx_sdfec.c
+@@ -553,7 +553,7 @@ static int xsdfec_reg2_write(struct xsdfec_dev *xsdfec, u32 nlayers, u32 nmqc,
+ 		 XSDFEC_REG2_NO_FINAL_PARITY_MASK);
+ 	if (max_schedule &
+ 	    ~(XSDFEC_REG2_MAX_SCHEDULE_MASK >> XSDFEC_REG2_MAX_SCHEDULE_LSB))
+-		dev_dbg(xsdfec->dev, "Max Schdule exceeds 2 bits");
++		dev_dbg(xsdfec->dev, "Max Schedule exceeds 2 bits");
+ 	max_schedule = ((max_schedule << XSDFEC_REG2_MAX_SCHEDULE_LSB) &
+ 			XSDFEC_REG2_MAX_SCHEDULE_MASK);
+ 
+-- 
+2.20.1
