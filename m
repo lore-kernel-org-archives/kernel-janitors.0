@@ -1,36 +1,35 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Aug 2019 04:48:27 +0000
-Subject: [PATCH] Kconfig: Fix the reference to the RFD77402 ToF sensor in the 'help' section
-Message-Id: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Aug 2019 05:04:25 +0000
+Subject: [PATCH] Kconfig: Fix the reference to the IDT77105 Phy driver in the description of ATM_NICSTAR_USE_
+Message-Id: <20190819050425.6119-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, ak@it-klinger.de, robh@kernel.org, songqiang1304521@gmail.com, tglx@linutronix.de
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: 3chas3@gmail.com
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This should be RFD77402, not RFD77420.
+This should be IDT77105, not IDT77015.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Not sure that the Kconfig prefix is correct. I have choosen it because of
-commit 21cf20a84a ("Kconfig: change configuration of srf04 ultrasonic iio sensor")
----
- drivers/iio/proximity/Kconfig | 2 +-
+ drivers/atm/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-index 6b5cce6f1a7b..d53601447da4 100644
---- a/drivers/iio/proximity/Kconfig
-+++ b/drivers/iio/proximity/Kconfig
-@@ -62,7 +62,7 @@ config RFD77402
- 	tristate "RFD77402 ToF sensor"
- 	depends on I2C
- 	help
--	  Say Y to build a driver for the RFD77420 Time-of-Flight (distance)
-+	  Say Y to build a driver for the RFD77402 Time-of-Flight (distance)
- 	  sensor module with I2C interface.
+diff --git a/drivers/atm/Kconfig b/drivers/atm/Kconfig
+index 2e2efa577437..8c37294f1d1e 100644
+--- a/drivers/atm/Kconfig
++++ b/drivers/atm/Kconfig
+@@ -200,7 +200,7 @@ config ATM_NICSTAR_USE_SUNI
+ 	  make the card work).
  
- 	  To compile this driver as a module, choose M here: the
+ config ATM_NICSTAR_USE_IDT77105
+-	bool "Use IDT77015 PHY driver (25Mbps)"
++	bool "Use IDT77105 PHY driver (25Mbps)"
+ 	depends on ATM_NICSTAR
+ 	help
+ 	  Support for the PHYsical layer chip in ForeRunner LE25 cards. In
 -- 
 2.20.1
