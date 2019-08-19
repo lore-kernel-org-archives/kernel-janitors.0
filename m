@@ -1,50 +1,45 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 27 Aug 2019 13:49:43 +0000
-Subject: Re: [PATCH -next] mmc: aspeed: Fix return value check in aspeed_sdc_probe()
-Message-Id: <CAPDyKFqXLG7VCh+9oQQ4HD=6dHQLY1PHEkmC+atnB-zDntKULA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Aug 2019 09:58:14 +0000
+Subject: [PATCH] dm zoned: Potential NULL dereference in dmz_do_reclaim()
+Message-Id: <20190819095814.GA19905@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826120013.183435-1-weiyongjun1@huawei.com>
- <20190826130343.GA23584@kadam>
- <629128e7-cc91-412f-8946-668fac2eb3b9@www.fastmail.com>
- <alpine.DEB.2.21.1908270845410.2537@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1908270845410.2537@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>, Andrew Jeffery <andrew@aj.id.au>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-aspeed <linux-aspeed@lists.ozlabs.org>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Joel Stanley <joel@jms.id.au>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Alasdair Kergon <agk@redhat.com>, Dmitry Fomichev <dmitry.fomichev@wdc.com>
+Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
 
-On Tue, 27 Aug 2019 at 02:47, Julia Lawall <julia.lawall@lip6.fr> wrote:
->
->
->
-> On Tue, 27 Aug 2019, Andrew Jeffery wrote:
->
-> >
-> >
-> > On Mon, 26 Aug 2019, at 22:34, Dan Carpenter wrote:
-> > > > Fixes: 09eed7fffd33 ("mmc: Add support for the ASPEED SD controller")
-> > >                         ^^^^
-> > > When we're adding new files, could we use the prefix for the new driver
-> > > instead of just the subsystem?  "mmc: aspeed: Add new driver"?
-> > > Otherwise it's tricky to know what people want for the driver.
-> >
-> > I don't have any issue with the request, but I don't understand this last
-> > bit. What do you mean by "it's tricky to know what people want for the
-> > driver"?
->
-> There is no obvious algorithm that tells how to go from a file name to an
-> appropriate subject line prefix.
+This function is supposed to return error pointers so it matches the
+dmz_get_rnd_zone_for_reclaim() function.  The current code could lead to
+a NULL dereference in dmz_do_reclaim()
 
-For MMC we normally use the name of the host driver file (excluding
-".c") as part of the prefix.
+Fixes: b234c6d7a703 ("dm zoned: improve error handling in reclaim")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/md/dm-zoned-metadata.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-For this case that means I amended the header into: mmc:
-sdhci-of-aspeed: Fix return value check in aspeed_sdc_probe() and
-applied it for next.
-
-I also took the liberty to change this for the other related patches
-for the "aspeed" driver to follow the same pattern.
-
-Kind regards
-Uffe
+diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
+index 2a5bc51fd6d5..595a73110e17 100644
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -1588,7 +1588,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
+ 	struct dm_zone *zone;
+ 
+ 	if (list_empty(&zmd->map_seq_list))
+-		return NULL;
++		return ERR_PTR(-EBUSY);
+ 
+ 	list_for_each_entry(zone, &zmd->map_seq_list, link) {
+ 		if (!zone->bzone)
+@@ -1597,7 +1597,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
+ 			return zone;
+ 	}
+ 
+-	return NULL;
++	return ERR_PTR(-EBUSY);
+ }
+ 
+ /*
+-- 
+2.20.1
