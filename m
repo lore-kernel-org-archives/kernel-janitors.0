@@ -1,44 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Aug 2019 10:33:35 +0000
-Subject: [PATCH] regulator: slg51000: Fix a couple NULL vs IS_ERR() checks
-Message-Id: <20190808103335.GD30506@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 19 Aug 2019 06:17:33 +0000
+Subject: [PATCH -next] drm/etnaviv: fix missing unlock on error in etnaviv_iommuv1_context_alloc()
+Message-Id: <20190819061733.50023-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Support Opensource <support.opensource@diasemi.com>, Eric Jeong <eric.jeong.opensource@diasemi.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The devm_gpiod_get_from_of_node() function never returns NULL, it
-returns error pointers on error.
+Add the missing unlock before return from function etnaviv_iommuv1_context_alloc()
+in the error handling case.
 
-Fixes: a867bde3dd03 ("regulator: slg51000: add slg51000 regulator driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 27b67278e007 ("drm/etnaviv: rework MMU handling")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/regulator/slg51000-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
-index 04b732991d69..4d859fef55e6 100644
---- a/drivers/regulator/slg51000-regulator.c
-+++ b/drivers/regulator/slg51000-regulator.c
-@@ -205,7 +205,7 @@ static int slg51000_of_parse_cb(struct device_node *np,
- 	ena_gpiod = devm_gpiod_get_from_of_node(chip->dev, np,
- 						"enable-gpios", 0,
- 						gflags, "gpio-en-ldo");
--	if (ena_gpiod) {
-+	if (!IS_ERR(ena_gpiod)) {
- 		config->ena_gpiod = ena_gpiod;
- 		devm_gpiod_unhinge(chip->dev, config->ena_gpiod);
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
+index aac8dbf3ea56..1a7c89a67bea 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
+@@ -140,8 +140,10 @@ etnaviv_iommuv1_context_alloc(struct etnaviv_iommu_global *global)
  	}
-@@ -459,7 +459,7 @@ static int slg51000_i2c_probe(struct i2c_client *client,
- 					       GPIOD_OUT_HIGH
- 					       | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 					       "slg51000-cs");
--	if (cs_gpiod) {
-+	if (!IS_ERR(cs_gpiod)) {
- 		dev_info(dev, "Found chip selector property\n");
- 		chip->cs_gpiod = cs_gpiod;
- 	}
--- 
-2.20.1
+ 
+ 	v1_context = kzalloc(sizeof(*v1_context), GFP_KERNEL);
+-	if (!v1_context)
++	if (!v1_context) {
++		mutex_unlock(&global->lock);
+ 		return NULL;
++	}
+ 
+ 	v1_context->pgtable_cpu = dma_alloc_wc(global->dev, PT_SIZE,
+ 					       &v1_context->pgtable_dma,
