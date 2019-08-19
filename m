@@ -1,25 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 28 Aug 2019 03:48:21 +0000
-Subject: Re: [PATCH v2 -next] net: mediatek: remove set but not used variable 'status'
-Message-Id: <20190827.204821.340435873815704705.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Aug 2019 04:48:27 +0000
+Subject: [PATCH] Kconfig: Fix the reference to the RFD77402 ToF sensor in the 'help' section
+Message-Id: <20190819044827.5259-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190824.142158.1506174328495468705.davem@davemloft.net>
- <20190826013118.22720-1-maowenan@huawei.com>
-In-Reply-To: <20190826013118.22720-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: nbd@openwrt.org, nelson.chang@mediatek.com, netdev@vger.kernel.org, sean.wang@mediatek.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, john@phrozen.org, matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, ak@it-klinger.de, robh@kernel.org, songqiang1304521@gmail.com, tglx@linutronix.de
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Mon, 26 Aug 2019 09:31:18 +0800
+This should be RFD77402, not RFD77420.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> drivers/net/ethernet/mediatek/mtk_eth_soc.c: In function mtk_handle_irq:
-> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1951:6: warning: variable status set but not used [-Wunused-but-set-variable]
-> 
-> Fixes: 296c9120752b ("net: ethernet: mediatek: Add MT7628/88 SoC support")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that the Kconfig prefix is correct. I have choosen it because of
+commit 21cf20a84a ("Kconfig: change configuration of srf04 ultrasonic iio sensor")
+---
+ drivers/iio/proximity/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to net-next.
+diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+index 6b5cce6f1a7b..d53601447da4 100644
+--- a/drivers/iio/proximity/Kconfig
++++ b/drivers/iio/proximity/Kconfig
+@@ -62,7 +62,7 @@ config RFD77402
+ 	tristate "RFD77402 ToF sensor"
+ 	depends on I2C
+ 	help
+-	  Say Y to build a driver for the RFD77420 Time-of-Flight (distance)
++	  Say Y to build a driver for the RFD77402 Time-of-Flight (distance)
+ 	  sensor module with I2C interface.
+ 
+ 	  To compile this driver as a module, choose M here: the
+-- 
+2.20.1
