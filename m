@@ -1,33 +1,35 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Aug 2019 11:36:52 +0000
-Subject: Re: [PATCH -next] pinctrl: sh-pfc: Fix missing unlock on error in sh_pfc_func_set_mux()
-Message-Id: <CAMuHMdUobaBZOZjVY7=rvJq=NCqsX6aQwbT9f81HM45wbTjNaA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 19 Aug 2019 05:18:33 +0000
+Subject: [PATCH] crypto: picoxcell - Fix the name of the module in the description of CRYPTO_DEV_PICOXCELL
+Message-Id: <20190819051833.6622-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827113527.99831-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190827113527.99831-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Aug 27, 2019 at 1:32 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> Add the missing unlock before return from function sh_pfc_func_set_mux()
-> in the error handling case.
->
-> Fixes: 8a0cc47ccc7c ("pinctrl: sh-pfc: Rollback to mux if required when the gpio is freed")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The help section says that the module will be called 'pipcoxcell_crypto'.
+This is likely a typo.
+Use 'picoxcell_crypto' instead
 
-Thanks, but this is a duplicate of
-https://lore.kernel.org/linux-gpio/20190827093927.GB8443@mwanda/
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index b8c50871f11b..2305416c2393 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -393,7 +393,7 @@ config CRYPTO_DEV_PICOXCELL
+ 	  Picochip picoXcell SoC devices. Select this for IPSEC ESP offload
+ 	  and for 3gpp Layer 2 ciphering support.
+ 
+-	  Saying m here will build a module named pipcoxcell_crypto.
++	  Saying m here will build a module named picoxcell_crypto.
+ 
+ config CRYPTO_DEV_SAHARA
+ 	tristate "Support for SAHARA crypto accelerator"
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.20.1
