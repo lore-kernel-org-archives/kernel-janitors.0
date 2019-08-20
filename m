@@ -1,42 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 30 Aug 2019 12:00:09 +0000
-Subject: Re: Checking usage of likeliness annotations
-Message-Id: <50c1dad3-c19c-3f95-405c-da7c6d0b7bf4@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Aug 2019 09:00:53 +0000
+Subject: [PATCH net] gve: Copy and paste buy in gve_get_stats()
+Message-Id: <20190820090053.GA24410@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190830063838.GA144157@architecture4>
-In-Reply-To: <20190830063838.GA144157@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gao Xiang <gaoxiang25@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>, Denis Efremov <efremov@linux.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christoph Hellwig <hch@infradead.org>, Ogawa Hirofumi <hirofumi@mail.parknet.co.jp>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, Chao Yu <yuchao0@huawei.com>
+To: Catherine Sullivan <csully@google.com>
+Cc: Sagi Shahar <sagis@google.com>, Jon Olson <jonolson@google.com>, "David S. Miller" <davem@davemloft.net>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo <lrizzo@google.com>, Chuhong Yuan <hslester96@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> I'm also curious about that, what is the filesystem or kernel standard about
-> likely/unlikely use (since I didn't find some documented standard
-> so I used in my personal way,
+There is a copy and paste error so we have "rx" where "tx" was intended
+in the priv->tx[] array.
 
-Such information is helpful.
+Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/google/gve/gve_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> I think it is reasonable at least to cover all error handling paths),
-
-I hope so, too.
-
-I imagine that the likeliness annotation usage could depend also on
-software build parameters.
-Would you occasionally like to influence corresponding probabilities
-any more by system settings?
-
-
-> maybe I'm an _idiot_
-
-I hope not.
-
-
-> as some earlier unfriendly word said somewhere
-> so I'm too stupid to understand the implicit meaning of some document.
-
-Can the software development discussion be continued in more constructive ways?
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 497298752381..aca95f64bde8 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -50,7 +50,7 @@ static void gve_get_stats(struct net_device *dev, struct rtnl_link_stats64 *s)
+ 				  u64_stats_fetch_begin(&priv->tx[ring].statss);
+ 				s->tx_packets += priv->tx[ring].pkt_done;
+ 				s->tx_bytes += priv->tx[ring].bytes_done;
+-			} while (u64_stats_fetch_retry(&priv->rx[ring].statss,
++			} while (u64_stats_fetch_retry(&priv->tx[ring].statss,
+ 						       start));
+ 		}
+ 	}
+-- 
+2.20.1
