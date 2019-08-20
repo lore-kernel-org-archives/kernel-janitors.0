@@ -1,64 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 17 Aug 2019 06:56:04 +0000
-Subject: [PATCH] rtc: rv3029: Revert my error handling patch to rv3029_eeprom_write()
-Message-Id: <20190817065604.GB29951@mwanda>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Tue, 20 Aug 2019 19:47:14 +0000
+Subject: Re: [PATCH] rtc: rv3029: Revert my error handling patch to rv3029_eeprom_write()
+Message-Id: <20190820194714.GV3545@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190817065604.GB29951@mwanda>
+In-Reply-To: <20190817065604.GB29951@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Tom Evans <tom.evans@motec.com.au>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Tom Evans <tom.evans@motec.com.au>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My error handling "cleanup" was totally wrong.  Both the "err" and "ret"
-variables are required.  The "err" variable holds the error codes for
-rv3029_eeprom_enter/exit() and the "ret" variable holds the error codes
-for if actual write fails.  In my patch if the write failed, the
-function probably still returned success.
+On 17/08/2019 09:56:04+0300, Dan Carpenter wrote:
+> My error handling "cleanup" was totally wrong.  Both the "err" and "ret"
+> variables are required.  The "err" variable holds the error codes for
+> rv3029_eeprom_enter/exit() and the "ret" variable holds the error codes
+> for if actual write fails.  In my patch if the write failed, the
+> function probably still returned success.
+> 
+> Reported-by: Tom Evans <tom.evans@motec.com.au>
+> Fixes: 97f5b0379c38 ("rtc: rv3029: Clean up error handling in rv3029_eeprom_write()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/rtc/rtc-rv3029c2.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+Applied, thanks.
 
-Reported-by: Tom Evans <tom.evans@motec.com.au>
-Fixes: 97f5b0379c38 ("rtc: rv3029: Clean up error handling in rv3029_eeprom_write()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/rtc/rtc-rv3029c2.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/rtc/rtc-rv3029c2.c b/drivers/rtc/rtc-rv3029c2.c
-index 4a0e8ec015cc..4cdf6588e1d9 100644
---- a/drivers/rtc/rtc-rv3029c2.c
-+++ b/drivers/rtc/rtc-rv3029c2.c
-@@ -278,13 +278,13 @@ static int rv3029_eeprom_read(struct device *dev, u8 reg,
- static int rv3029_eeprom_write(struct device *dev, u8 reg,
- 			       u8 const buf[], size_t len)
- {
--	int ret;
-+	int ret, err;
- 	size_t i;
- 	u8 tmp;
- 
--	ret = rv3029_eeprom_enter(dev);
--	if (ret < 0)
--		return ret;
-+	err = rv3029_eeprom_enter(dev);
-+	if (err < 0)
-+		return err;
- 
- 	for (i = 0; i < len; i++, reg++) {
- 		ret = rv3029_read_regs(dev, reg, &tmp, 1);
-@@ -300,11 +300,11 @@ static int rv3029_eeprom_write(struct device *dev, u8 reg,
- 			break;
- 	}
- 
--	ret = rv3029_eeprom_exit(dev);
--	if (ret < 0)
--		return ret;
-+	err = rv3029_eeprom_exit(dev);
-+	if (err < 0)
-+		return err;
- 
--	return 0;
-+	return ret;
- }
- 
- static int rv3029_eeprom_update_bits(struct device *dev,
 -- 
-2.20.1
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
