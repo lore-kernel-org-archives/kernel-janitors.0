@@ -1,38 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Aug 2019 11:37:28 +0000
-Subject: [PATCH] rtw88: remove redundant assignment to pointer debugfs_topdir
-Message-Id: <20190822113728.25494-1-colin.king@canonical.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 20 Aug 2019 12:40:15 +0000
+Subject: [PATCH linux-next] tty: serial: add dependence for CONFIG_SERIAL_FSL_LINFLEXUART
+Message-Id: <20190820124015.28409-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+When CONFIG_SERIAL_FSL_LINFLEXUART=y and CONFIG_PRINTK is not set,
+one compilation error is found as below:
+drivers/tty/serial/fsl_linflexuart.c: In function linflex_earlycon_putchar:
+drivers/tty/serial/fsl_linflexuart.c:608:31: error: CONFIG_LOG_BUF_SHIFT undeclared
+(first use in this function); did you mean CONFIG_ISA_BUS_API?
+  if (earlycon_buf.len >= 1 << CONFIG_LOG_BUF_SHIFT)
+                               ^~~~~~~~~~~~~~~~~~~~
+                               CONFIG_ISA_BUS_API
+This because CONFIG_LOG_BUF_SHIFT is depended on CONFIG_PRINTK, fix this
+by adding dependence for CONFIG_SERIAL_FSL_LINFLEXUART.
 
-Pointer debugfs_topdir is initialized to a value that is never read
-and it is re-assigned later. The initialization is redundant and can
-be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: b953815b819b ("tty: serial: Add linflexuart driver for S32V234")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 ---
- drivers/net/wireless/realtek/rtw88/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/realtek/rtw88/debug.c b/drivers/net/wireless/realtek/rtw88/debug.c
-index 383b04c16703..5d235968d475 100644
---- a/drivers/net/wireless/realtek/rtw88/debug.c
-+++ b/drivers/net/wireless/realtek/rtw88/debug.c
-@@ -672,7 +672,7 @@ static struct rtw_debugfs_priv rtw_debug_priv_rsvd_page = {
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index d9caf3242b25..4789b5d62f63 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1392,6 +1392,7 @@ config SERIAL_FSL_LPUART_CONSOLE
  
- void rtw_debugfs_init(struct rtw_dev *rtwdev)
- {
--	struct dentry *debugfs_topdir = rtwdev->debugfs;
-+	struct dentry *debugfs_topdir;
- 
- 	debugfs_topdir = debugfs_create_dir("rtw88",
- 					    rtwdev->hw->wiphy->debugfsdir);
+ config SERIAL_FSL_LINFLEXUART
+ 	tristate "Freescale linflexuart serial port support"
++	depends on PRINTK
+ 	select SERIAL_CORE
+ 	help
+ 	  Support for the on-chip linflexuart on some Freescale SOCs.
 -- 
 2.20.1
