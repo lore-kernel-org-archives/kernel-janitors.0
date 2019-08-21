@@ -1,40 +1,55 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 22 Aug 2019 16:32:14 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_net/ipv4/tcp=5fbpf=3a_Delete_an_unnecessary_c?= =?UTF-8?Q?heck_before_the_func
-Message-Id: <25ca9c48-1ac9-daa1-8472-0a53e4beed6a@web.de>
+Date: Wed, 21 Aug 2019 20:00:16 +0000
+Subject: =?UTF-8?Q?=5bPATCH=5d_hamradio=3a_Delete_unnecessary_checks_before_?= =?UTF-8?B?dGhlIG1hY3JvIGNhbGwg
+Message-Id: <61fc7b82-dbc0-93e4-bf43-9856eb4c6688@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Hideaki Yoshifuji <yoshfuji@linux-ipv6.org>, John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
+To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, Allison Randal <allison@lohutok.net>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas Sailer <t.sailer@alumni.ethz.ch>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Aug 2019 18:20:42 +0200
+Date: Wed, 21 Aug 2019 21:48:46 +0200
 
-The consume_skb() function performs also input parameter validation.
-Thus the test around the call is not needed.
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the shown calls is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/ipv4/tcp_bpf.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/hamradio/baycom_epp.c | 3 +--
+ drivers/net/hamradio/hdlcdrv.c    | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
-index 8a56e09cfb0e..4ae18bd431a0 100644
---- a/net/ipv4/tcp_bpf.c
-+++ b/net/ipv4/tcp_bpf.c
-@@ -103,8 +103,7 @@ int __tcp_bpf_recvmsg(struct sock *sk, struct sk_psock *psock,
- 		msg_rx->sg.start = i;
- 		if (!sge->length && msg_rx->sg.start == msg_rx->sg.end) {
- 			list_del(&msg_rx->list);
--			if (msg_rx->skb)
--				consume_skb(msg_rx->skb);
-+			consume_skb(msg_rx->skb);
- 			kfree(msg_rx);
- 		}
- 		msg_rx = list_first_entry_or_null(&psock->ingress_msg,
+diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
+index 9303aeb2595f..4476491b58f9 100644
+--- a/drivers/net/hamradio/baycom_epp.c
++++ b/drivers/net/hamradio/baycom_epp.c
+@@ -961,8 +961,7 @@ static int epp_close(struct net_device *dev)
+ 	parport_write_control(pp, 0); /* reset the adapter */
+         parport_release(bc->pdev);
+         parport_unregister_device(bc->pdev);
+-	if (bc->skb)
+-		dev_kfree_skb(bc->skb);
++	dev_kfree_skb(bc->skb);
+ 	bc->skb = NULL;
+ 	printk(KERN_INFO "%s: close epp at iobase 0x%lx irq %u\n",
+ 	       bc_drvname, dev->base_addr, dev->irq);
+diff --git a/drivers/net/hamradio/hdlcdrv.c b/drivers/net/hamradio/hdlcdrv.c
+index c6f83e0df0a3..df495b5595f5 100644
+--- a/drivers/net/hamradio/hdlcdrv.c
++++ b/drivers/net/hamradio/hdlcdrv.c
+@@ -475,8 +475,7 @@ static int hdlcdrv_close(struct net_device *dev)
+
+ 	if (s->ops && s->ops->close)
+ 		i = s->ops->close(dev);
+-	if (s->skb)
+-		dev_kfree_skb(s->skb);
++	dev_kfree_skb(s->skb);
+ 	s->skb = NULL;
+ 	s->opened = 0;
+ 	return i;
 --
 2.23.0
