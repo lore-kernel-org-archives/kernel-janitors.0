@@ -1,15 +1,40 @@
-From: Rishi Gupta <gupt21@gmail.com>
-Date: Sat, 17 Aug 2019 14:58:13 +0000
-Subject: Re: [PATCH] clk: Remove extraneous 'for' word in comments
-Message-Id: <1566053875-32322-1-git-send-email-gupt21@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2019 07:07:02 +0000
+Subject: [PATCH 2/4] misc: xilinx_sdfec: Return -EFAULT if copy_from_user() fails
+Message-Id: <20190821070702.GB26957@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
-In-Reply-To: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
+In-Reply-To: <20190821070606.GA26957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
-Cc: kernel-janitors@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Rishi Gupta <gupt21@gmail.com>
+To: Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Thanks Joe for higlighting this. I am going
-to send patches for them as well soon.
+The copy_from_user() funciton returns the number of bytes remaining to
+be copied but we want to return -EFAULT to the user.
+
+Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/misc/xilinx_sdfec.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+index dc1b8b412712..813b82c59360 100644
+--- a/drivers/misc/xilinx_sdfec.c
++++ b/drivers/misc/xilinx_sdfec.c
+@@ -651,9 +651,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
+ 	if (!ldpc)
+ 		return -ENOMEM;
+ 
+-	ret = copy_from_user(ldpc, arg, sizeof(*ldpc));
+-	if (ret)
++	if (copy_from_user(ldpc, arg, sizeof(*ldpc))) {
++		ret = -EFAULT;
+ 		goto err_out;
++	}
+ 
+ 	if (xsdfec->config.code = XSDFEC_TURBO_CODE) {
+ 		ret = -EIO;
+-- 
+2.20.1
