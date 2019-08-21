@@ -1,58 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Aug 2019 14:41:33 +0000
+From: <Tudor.Ambarus@microchip.com>
+Date: Wed, 21 Aug 2019 07:35:21 +0000
 Subject: Re: [PATCH] mtd: spi-nor: Fix an error code in spi_nor_read_raw()
-Message-Id: <20190815144133.GA19557@kadam>
+Message-Id: <568a064f-af88-bfd6-b50c-208f9cc9f8b0@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190815083252.GD27238@mwanda>
- <5D553585.2020907@bfs.de>
-In-Reply-To: <5D553585.2020907@bfs.de>
+In-Reply-To: <20190815083252.GD27238@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Tudor Ambarus <tudor.ambarus@microchip.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@microchip.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+To: dan.carpenter@oracle.com, marek.vasut@gmail.com, Cyrille.Pitchen@microchip.com
+Cc: vigneshr@ti.com, richard@nod.at, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com, computersforpeace@gmail.com, dwmw2@infradead.org
 
-On Thu, Aug 15, 2019 at 12:35:49PM +0200, walter harms wrote:
-> 
-> 
-> Am 15.08.2019 10:32, schrieb Dan Carpenter:
-> > The problem is that if "ret" is negative then when we check if
-> > "ret > len", that condition is going to be true because of type
-> > promotion.  So this patch re-orders the code to check for negatives
-> > first and preserve those error codes.
-> > 
-> > Fixes: f384b352cbf0 ("mtd: spi-nor: parse Serial Flash Discoverable Parameters (SFDP) tables")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/mtd/spi-nor/spi-nor.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> > index 63af87609bac..986b0754495d 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -2903,10 +2903,10 @@ static int spi_nor_read_raw(struct spi_nor *nor, u32 addr, size_t len, u8 *buf)
-> >  
-> >  	while (len) {
-> >  		ret = spi_nor_read_data(nor, addr, len, buf);
-> > -		if (!ret || ret > len)
-> > -			return -EIO;
-> >  		if (ret < 0)
-> >  			return ret;
-> > +		if (!ret || ret > len)
-> > +			return -EIO;
-> 
-> Bonuspoints to make this more readable:
-> 
-> 	if (ret=0 || ret > len)
-> 		return -EIO;
-> 
-> that makes the intention more obvious.
-
-That's not really related to the bug fix.
-
-I do agree with your style though.  "ret" is a number here, and not a
-bool or error vs no error so = 0 is nicer.
-
-regards,
-dan carpenter
+DQoNCk9uIDA4LzE1LzIwMTkgMTE6MzIgQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEV4dGVy
+bmFsIEUtTWFpbA0KPiANCj4gDQo+IFRoZSBwcm9ibGVtIGlzIHRoYXQgaWYgInJldCIgaXMgbmVn
+YXRpdmUgdGhlbiB3aGVuIHdlIGNoZWNrIGlmDQo+ICJyZXQgPiBsZW4iLCB0aGF0IGNvbmRpdGlv
+biBpcyBnb2luZyB0byBiZSB0cnVlIGJlY2F1c2Ugb2YgdHlwZQ0KPiBwcm9tb3Rpb24uICBTbyB0
+aGlzIHBhdGNoIHJlLW9yZGVycyB0aGUgY29kZSB0byBjaGVjayBmb3IgbmVnYXRpdmVzDQo+IGZp
+cnN0IGFuZCBwcmVzZXJ2ZSB0aG9zZSBlcnJvciBjb2Rlcy4NCj4gDQo+IEZpeGVzOiBmMzg0YjM1
+MmNiZjAgKCJtdGQ6IHNwaS1ub3I6IHBhcnNlIFNlcmlhbCBGbGFzaCBEaXNjb3ZlcmFibGUgUGFy
+YW1ldGVycyAoU0ZEUCkgdGFibGVzIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8
+ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KDQpSZXZpZXdlZC1ieTogVHVkb3IgQW1iYXJ1cyA8
+dHVkb3IuYW1iYXJ1c0BtaWNyb2NoaXAuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9tdGQvc3Bp
+LW5vci9zcGktbm9yLmMgfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
+KyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5v
+ci9zcGktbm9yLmMgYi9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYw0KPiBpbmRleCA2M2Fm
+ODc2MDliYWMuLjk4NmIwNzU0NDk1ZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5v
+ci9zcGktbm9yLmMNCj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4gQEAg
+LTI5MDMsMTAgKzI5MDMsMTAgQEAgc3RhdGljIGludCBzcGlfbm9yX3JlYWRfcmF3KHN0cnVjdCBz
+cGlfbm9yICpub3IsIHUzMiBhZGRyLCBzaXplX3QgbGVuLCB1OCAqYnVmKQ0KPiAgDQo+ICAJd2hp
+bGUgKGxlbikgew0KPiAgCQlyZXQgPSBzcGlfbm9yX3JlYWRfZGF0YShub3IsIGFkZHIsIGxlbiwg
+YnVmKTsNCj4gLQkJaWYgKCFyZXQgfHwgcmV0ID4gbGVuKQ0KPiAtCQkJcmV0dXJuIC1FSU87DQo+
+ICAJCWlmIChyZXQgPCAwKQ0KPiAgCQkJcmV0dXJuIHJldDsNCj4gKwkJaWYgKCFyZXQgfHwgcmV0
+ID4gbGVuKQ0KPiArCQkJcmV0dXJuIC1FSU87DQo+ICANCj4gIAkJYnVmICs9IHJldDsNCj4gIAkJ
+YWRkciArPSByZXQ7DQo+IA0K
