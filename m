@@ -1,48 +1,50 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 18 Aug 2019 17:14:44 +0000
-Subject: Re: [PATCH][iio-next] iio: light: noa1305: fix missing break in a switch statement
-Message-Id: <20190818181444.55fc35b3@archlinux>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2019 07:24:56 +0000
+Subject: [PATCH] drm/tinydrm: fix a loop in debugfs code
+Message-Id: <20190821072456.GJ26957@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815074339.32380-1-colin.king@canonical.com>
-In-Reply-To: <20190815074339.32380-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Martyn Welch <martyn.welch@collabora.com>, Sergei M <fizik1@yandex.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>
 
-On Thu, 15 Aug 2019 08:43:39 +0100
-Colin King <colin.king@canonical.com> wrote:
+This code will likely crash if we try to do a zero byte write.  The code
+looks like this:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing break for the NOA1305_INTEGR_TIME_400MS case,
-> fix it by adding it in.
-> 
-> Addresses-Coverity: ("Missing break in switch")
-> Fixes: 741172d18e8a ("iio: light: noa1305: Add support for NOA1305")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Hi Colin
+        /* strip trailing whitespace */
+        for (i = count - 1; i > 0; i--)
+                if (isspace(buf[i]))
+			...
 
-Fix already on it's way in.  Was also caught by 0-day.
+We're writing zero bytes so count = 0.  You would think that "count - 1"
+would be negative one, but because "i" is unsigned it is a large
+positive numer instead.  The "i > 0" condition is true and the "buf[i]"
+access will be out of bounds.
 
-Thanks,
+The fix is to make "i" signed and now everything works as expected.  The
+upper bound of "count" is capped in __kernel_write() at MAX_RW_COUNT so
+we don't have to worry about it being higher than INT_MAX.
 
-Jonathan
+Fixes: 02dd95fe3169 ("drm/tinydrm: Add MIPI DBI support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/drm_mipi_dbi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->  drivers/iio/light/noa1305.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/light/noa1305.c b/drivers/iio/light/noa1305.c
-> index 7b859ae1044d..5ebfbc52f541 100644
-> --- a/drivers/iio/light/noa1305.c
-> +++ b/drivers/iio/light/noa1305.c
-> @@ -85,6 +85,7 @@ static int noa1305_scale(struct noa1305_priv *priv, int *val, int *val2)
->  	case NOA1305_INTEGR_TIME_400MS:
->  		*val = 100;
->  		*val2 = 77 * 4;
-> +		break;
->  	case NOA1305_INTEGR_TIME_200MS:
->  		*val = 100;
->  		*val2 = 77 * 2;
+diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
+index 1961f713aaab..c4ee2709a6f3 100644
+--- a/drivers/gpu/drm/drm_mipi_dbi.c
++++ b/drivers/gpu/drm/drm_mipi_dbi.c
+@@ -1187,8 +1187,7 @@ static ssize_t mipi_dbi_debugfs_command_write(struct file *file,
+ 	struct mipi_dbi_dev *dbidev = m->private;
+ 	u8 val, cmd = 0, parameters[64];
+ 	char *buf, *pos, *token;
+-	unsigned int i;
+-	int ret, idx;
++	int i, ret, idx;
+ 
+ 	if (!drm_dev_enter(&dbidev->drm, &idx))
+ 		return -ENODEV;
+-- 
+2.20.1
