@@ -1,51 +1,44 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Thu, 22 Aug 2019 15:35:39 +0000
-Subject: Re: [PATCH] typec: tcpm: fix a typo in the comparison of pdo_max_voltage
-Message-Id: <20190822153539.GD5356@kuha.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2019 07:14:03 +0000
+Subject: [PATCH] tools/power: intel-speed-select:  Fix a read overflow in isst_set_tdp_level_msr()
+Message-Id: <20190821071403.GG26957@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822135212.10195-1-colin.king@canonical.com>
-In-Reply-To: <20190822135212.10195-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Badhri Jagan Sridharan <badhri@google.com>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Aug 22, 2019 at 02:52:12PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There appears to be a typo in the comparison of pdo_max_voltage[i]
-> with the previous value, currently it is checking against the
-> array pdo_min_voltage rather than pdo_max_voltage. I believe this
-> is a typo. Fix this.
-> 
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: 5007e1b5db73 ("typec: tcpm: Validate source and sink caps")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The isst_send_msr_command() function will read 8 bytes but we are
+passing an address to an int (4 bytes) so it results in a read overflow.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Fixes: 3fb4f7cd472c ("tools/power/x86: A tool to validate Intel Speed Select commands")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ tools/power/x86/intel-speed-select/isst-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 166b28562395..96562744101c 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -1439,7 +1439,7 @@ static enum pdo_err tcpm_caps_err(struct tcpm_port *port, const u32 *pdo,
->  				else if ((pdo_min_voltage(pdo[i]) =
->  					  pdo_min_voltage(pdo[i - 1])) &&
->  					 (pdo_max_voltage(pdo[i]) =
-> -					  pdo_min_voltage(pdo[i - 1])))
-> +					  pdo_max_voltage(pdo[i - 1])))
->  					return PDO_ERR_DUPE_PDO;
->  				break;
->  			/*
-> -- 
-> 2.20.1
-
-thanks,
-
+diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
+index 8de4ac39a008..f724322856ed 100644
+--- a/tools/power/x86/intel-speed-select/isst-core.c
++++ b/tools/power/x86/intel-speed-select/isst-core.c
+@@ -190,6 +190,7 @@ int isst_get_get_trl(int cpu, int level, int avx_level, int *trl)
+ 
+ int isst_set_tdp_level_msr(int cpu, int tdp_level)
+ {
++	unsigned long long level = tdp_level;
+ 	int ret;
+ 
+ 	debug_printf("cpu: tdp_level via MSR %d\n", cpu, tdp_level);
+@@ -202,8 +203,7 @@ int isst_set_tdp_level_msr(int cpu, int tdp_level)
+ 	if (tdp_level > 2)
+ 		return -1; /* invalid value */
+ 
+-	ret = isst_send_msr_command(cpu, 0x64b, 1,
+-				    (unsigned long long *)&tdp_level);
++	ret = isst_send_msr_command(cpu, 0x64b, 1, &level);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-heikki
+2.20.1
