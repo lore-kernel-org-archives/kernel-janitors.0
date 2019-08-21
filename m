@@ -1,64 +1,49 @@
-From: Joonwon Kang <kjw1627@gmail.com>
-Date: Thu, 01 Aug 2019 13:41:49 +0000
-Subject: Re: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
-Message-Id: <20190801134149.GA2149@host>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Aug 2019 12:01:23 +0000
+Subject: [PATCH][next] PCI: tegra: tegra194: fix phy_count less than zero check
+Message-Id: <20190821120123.14223-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1564595346.git.kjw1627@gmail.com>
- <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
- <201907311259.D485EED2B7@keescook>
-In-Reply-To: <201907311259.D485EED2B7@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kees Cook <keescook@chromium.org>
-Cc: re.emese@gmail.com, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, jinb.park7@gmail.com
+To: Vidya Sagar <vidyas@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 12:59:30PM -0700, Kees Cook wrote:
-> On Thu, Aug 01, 2019 at 03:01:49AM +0900, Joonwon Kang wrote:
-> > Recursive declaration for struct which has member of the same struct
-> > type, for example,
-> > 
-> > struct foo {
-> >     struct foo f;
-> >     ...
-> > };
-> > 
-> > is not allowed. So, it is unnecessary to check if a struct has this
-> > kind of member.
-> 
-> Is that the only case where this loop could happen? Seems also safe to
-> just leave it as-is...
-> 
-> -Kees
+From: Colin Ian King <colin.king@canonical.com>
 
-I think it is pretty obvious that it is the only case. I compiled kernel
-with allyesconfig and the condition never hit even once. However, it will
-also be no problem to just leave it as-is as you mentioned.
+The check for pcie->phy_count < 0 is always false because phy_count
+is an unsigned int and can never be less than zero. Fix this by
+assigning ret to the return from of_property_count_strings and
+checking if this is less than zero instead.
 
-> 
-> > 
-> > Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
-> > ---
-> >  scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-> > index bd29e4e7a524..e14efe23e645 100644
-> > --- a/scripts/gcc-plugins/randomize_layout_plugin.c
-> > +++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-> > @@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
-> >  		const_tree fieldtype = get_field_type(field);
-> >  		enum tree_code code = TREE_CODE(fieldtype);
-> >  
-> > -		if (node = fieldtype)
-> > -			continue;
-> > -
-> >  		if (code = RECORD_TYPE || code = UNION_TYPE) {
-> >  			if (!is_pure_ops_struct(fieldtype))
-> >  				return 0;
-> > -- 
-> > 2.17.1
-> > 
-> 
-> -- 
-> Kees Cook
+Addresses-Coverity: ("Dead code")
+Fixes: 6404441c8e13 ("PCI: tegra: Add Tegra194 PCIe support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index fc0dbeb31d78..b47ea3e68303 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -969,12 +969,13 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 		return ret;
+ 	}
+ 
+-	pcie->phy_count = of_property_count_strings(np, "phy-names");
+-	if (pcie->phy_count < 0) {
++	ret = of_property_count_strings(np, "phy-names");
++	if (ret < 0) {
+ 		dev_err(pcie->dev, "Failed to find PHY entries: %d\n",
+-			pcie->phy_count);
+-		return pcie->phy_count;
++			ret);
++		return ret;
+ 	}
++	pcie->phy_count = ret;
+ 
+ 	if (of_property_read_bool(np, "nvidia,update-fc-fixup"))
+ 		pcie->update_fc_fixup = true;
+-- 
+2.20.1
