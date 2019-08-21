@@ -1,58 +1,40 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 31 Aug 2019 10:00:24 +0000
-Subject: [PATCH] pxa168fb: Fix the function used to release some memory in an error handling path
-Message-Id: <20190831100024.3248-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 21 Aug 2019 12:07:56 +0000
+Subject: =?UTF-8?Q?=5bPATCH=5d_staging=3a_vt6656=3a_Delete_an_unnecessary_ch?= =?UTF-8?B?ZWNrIGJlZm9yZSB0aGUg
+Message-Id: <ff6e12fb-f144-351b-25e9-a864b58d7acf@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, lkundrak@v3.sk, yuehaibing@huawei.com
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: devel@driverdev.osuosl.org, Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In the probe function, some resources are allocated using 'dma_alloc_wc()',
-they should be released with 'dma_free_wc()', not 'dma_free_coherent()'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Aug 2019 13:56:35 +0200
 
-We already use 'dma_free_wc()' in the remove function, but not in the
-error handling path of the probe function.
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Also, remove a useless 'PAGE_ALIGN()'. 'info->fix.smem_len' is already
-PAGE_ALIGNed.
+This issue was detected by using the Coccinelle software.
 
-Fixes: 638772c7553f ("fb: add support of LCD display controller on pxa168/910 (base layer)")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The change about PAGE_ALIGN should probably be part of a separate commit.
-However, git history for this driver is really quiet. If you think it
-REALLY deserves a separate patch, either split it by yourself or axe this
-part of the patch. I won't bother resubmitting for this lonely cleanup.
-Hoping for your understanding.
----
- drivers/video/fbdev/pxa168fb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/vt6656/main_usb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
-index 1410f476e135..1fc50fc0694b 100644
---- a/drivers/video/fbdev/pxa168fb.c
-+++ b/drivers/video/fbdev/pxa168fb.c
-@@ -766,8 +766,8 @@ static int pxa168fb_probe(struct platform_device *pdev)
- failed_free_clk:
- 	clk_disable_unprepare(fbi->clk);
- failed_free_fbmem:
--	dma_free_coherent(fbi->dev, info->fix.smem_len,
--			info->screen_base, fbi->fb_start_dma);
-+	dma_free_wc(fbi->dev, info->fix.smem_len,
-+		    info->screen_base, fbi->fb_start_dma);
- failed_free_info:
- 	kfree(info);
- 
-@@ -801,7 +801,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 
--	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
-+	dma_free_wc(fbi->dev, info->fix.smem_len,
- 		    info->screen_base, info->fix.smem_start);
- 
- 	clk_disable_unprepare(fbi->clk);
--- 
-2.20.1
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index 856ba97aec4f..f57e890659aa 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -422,8 +422,7 @@ static void vnt_free_rx_bufs(struct vnt_private *priv)
+ 		}
+
+ 		/* deallocate skb */
+-		if (rcb->skb)
+-			dev_kfree_skb(rcb->skb);
++		dev_kfree_skb(rcb->skb);
+
+ 		kfree(rcb);
+ 	}
+--
+2.23.0
