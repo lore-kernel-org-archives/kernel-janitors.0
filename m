@@ -1,39 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Aug 2019 18:46:44 +0000
-Subject: [PATCH] staging: exfat: fix uninitialized variable ret
-Message-Id: <20190830184644.15590-1-colin.king@canonical.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 22 Aug 2019 02:40:20 +0000
+Subject: Re: [PATCH -next] drm/amdgpu: remove duplicated include from gfx_v9_0.c
+Message-Id: <CADnq5_OFd8N1PpBXwr5mC0=SvZsKx7QUPqavLDEJ+d43hOO4Ng@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190710015720.107326-1-yuehaibing@huawei.com>
+In-Reply-To: <20190710015720.107326-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian Koenig <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Feifei Xu <Feifei.Xu@amd.com>, Likun Gao <Likun.Gao@amd.com>, James Zhu <James.Zhu@amd.com>, "S, Shirish" <shirish.s@amd.com>, "Quan, Evan" <evan.quan@amd.com>, Huang Rui <ray.huang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Applied. thanks!
 
-Currently there are error return paths in ffsReadFile that
-exit via lable err_out that return and uninitialized error
-return in variable ret. Fix this by initializing ret to zero.
+Alex
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/exfat/exfat_super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5b3c4dfe0ecc..6939aa4f25ee 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -771,7 +771,7 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
- {
- 	s32 offset, sec_offset, clu_offset;
- 	u32 clu;
--	int ret;
-+	int ret = 0;
- 	sector_t LogSector;
- 	u64 oneblkread, read_bytes;
- 	struct buffer_head *tmp_bh = NULL;
--- 
-2.20.1
+On Tue, Jul 9, 2019 at 11:03 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> index 5ba332376710..822f45161240 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -39,7 +39,6 @@
+>  #include "vega10_enum.h"
+>  #include "hdp/hdp_4_0_offset.h"
+>
+> -#include "soc15.h"
+>  #include "soc15_common.h"
+>  #include "clearstate_gfx9.h"
+>  #include "v9_structs.h"
+>
+>
+>
+>
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
