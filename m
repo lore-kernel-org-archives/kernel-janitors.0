@@ -1,36 +1,41 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 19 Aug 2019 06:17:33 +0000
-Subject: [PATCH -next] drm/etnaviv: fix missing unlock on error in etnaviv_iommuv1_context_alloc()
-Message-Id: <20190819061733.50023-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 22 Aug 2019 14:52:55 +0000
+Subject: =?UTF-8?Q?=5bPATCH_1/2=5d_ipc/mqueue=3a_Delete_an_unnecessary_check?= =?UTF-8?B?IGJlZm9yZSB0aGUgbWFj
+Message-Id: <07477187-63e5-cc80-34c1-32dd16b38e12@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
+In-Reply-To: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>, Kees Cook <keescook@chromium.org>, Li Rongqing <lirongqing@baidu.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Add the missing unlock before return from function etnaviv_iommuv1_context_alloc()
-in the error handling case.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Aug 2019 14:07:57 +0200
 
-Fixes: 27b67278e007 ("drm/etnaviv: rework MMU handling")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_iommu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ ipc/mqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-index aac8dbf3ea56..1a7c89a67bea 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-@@ -140,8 +140,10 @@ etnaviv_iommuv1_context_alloc(struct etnaviv_iommu_global *global)
- 	}
- 
- 	v1_context = kzalloc(sizeof(*v1_context), GFP_KERNEL);
--	if (!v1_context)
-+	if (!v1_context) {
-+		mutex_unlock(&global->lock);
- 		return NULL;
-+	}
- 
- 	v1_context->pgtable_cpu = dma_alloc_wc(global->dev, PT_SIZE,
- 					       &v1_context->pgtable_dma,
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 7a5a8edc3de3..494ab78863f4 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -1334,7 +1334,7 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
+ out:
+ 	if (sock)
+ 		netlink_detachskb(sock, nc);
+-	else if (nc)
++	else
+ 		dev_kfree_skb(nc);
+
+ 	return ret;
+--
+2.23.0
