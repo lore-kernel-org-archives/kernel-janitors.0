@@ -1,53 +1,40 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Date: Thu, 08 Aug 2019 01:08:46 +0000
-Subject: Re: [PATCH][ocfs2-next] ocfs2: ensure ret is set to zero before returning
-Message-Id: <0cee7ca9-8704-171a-ec82-ee6c16e3381b@linux.alibaba.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 22 Aug 2019 16:32:14 +0000
+Subject: =?UTF-8?Q?=5bPATCH=5d_net/ipv4/tcp=5fbpf=3a_Delete_an_unnecessary_c?= =?UTF-8?Q?heck_before_the_func
+Message-Id: <25ca9c48-1ac9-daa1-8472-0a53e4beed6a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190807121929.28918-1-colin.king@canonical.com>
- <fb3d7441-93ea-b619-52fc-00da950c9201@gmail.com>
- <bf4d059a-94fc-d8cf-78c7-8606644185a5@canonical.com>
-In-Reply-To: <bf4d059a-94fc-d8cf-78c7-8606644185a5@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Joseph Qi <jiangqi903@gmail.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ocfs2-devel@oss.oracle.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Hideaki Yoshifuji <yoshfuji@linux-ipv6.org>, John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Aug 2019 18:20:42 +0200
 
+The consume_skb() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-On 19/8/7 20:42, Colin Ian King wrote:
-> On 07/08/2019 13:35, Joseph Qi wrote:
->>
->>
->> On 19/8/7 20:19, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> A previous commit introduced a regression where variable ret was
->>> originally being set from the return from a call to function
->>> dlm_create_debugfs_subroot and this set was removed. Currently
->>> ret is now uninitialized if no alloction errors are found which
->>> may end up with a bogus check on ret < 0 on the 'leave:' return
->>> path.  Fix this by setting ret to zero on a successful execution
->>> path.
->>
->> Good catch.
->> Or shall we just initialize 'ret' at first?
-> 
-> Initialized ret first may not catch subsequent coding errors where error
-> returns paths have not initialized ret, so my preference is when it is
-> required and not before.
-> 
-Okay, looks good to me.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+This issue was detected by using the Coccinelle software.
 
->>
->>>
->>> Addresses-Coverity: ("Uninitialzed scalar variable")
-> 
-> Can this be fixed up when applied rather sending a V2?
->>
-Currently ocfs2 patches are maintained in Andrew's mm tree.
-So it depends on Andrew.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/ipv4/tcp_bpf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Joseph
+diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
+index 8a56e09cfb0e..4ae18bd431a0 100644
+--- a/net/ipv4/tcp_bpf.c
++++ b/net/ipv4/tcp_bpf.c
+@@ -103,8 +103,7 @@ int __tcp_bpf_recvmsg(struct sock *sk, struct sk_psock *psock,
+ 		msg_rx->sg.start = i;
+ 		if (!sge->length && msg_rx->sg.start == msg_rx->sg.end) {
+ 			list_del(&msg_rx->list);
+-			if (msg_rx->skb)
+-				consume_skb(msg_rx->skb);
++			consume_skb(msg_rx->skb);
+ 			kfree(msg_rx);
+ 		}
+ 		msg_rx = list_first_entry_or_null(&psock->ingress_msg,
+--
+2.23.0
