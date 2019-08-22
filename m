@@ -1,43 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 22 Aug 2019 09:04:43 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_s390/ctcm=3a_Delete_unnecessary_checks_before?= =?UTF-8?B?IHRoZSBtYWNybyBjYWxs
-Message-Id: <84733436-46d1-8f43-780e-7b3ab9f2a0ae@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Aug 2019 21:53:13 +0000
+Subject: [PATCH] ntfs: mft: fix spelling mistake "initiailized" -> "initialized"
+Message-Id: <20190822215313.5080-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Julian Wiedmann <jwi@linux.ibm.com>, Ursula Braun <ubraun@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anton Altaparmakov <anton@tuxera.com>, linux-ntfs-dev@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Aug 2019 10:55:33 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The dev_kfree_skb() function performs also input parameter validation.
-Thus the test around the shown calls is not needed.
+There is a spelling mistake in a ntfs_debug message, fix it.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/s390/net/ctcm_main.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/ntfs/mft.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
-index f63c5c871d3d..90025d1923d2 100644
---- a/drivers/s390/net/ctcm_main.c
-+++ b/drivers/s390/net/ctcm_main.c
-@@ -1074,10 +1074,8 @@ static void ctcm_free_netdevice(struct net_device *dev)
- 		if (grp) {
- 			if (grp->fsm)
- 				kfree_fsm(grp->fsm);
--			if (grp->xid_skb)
--				dev_kfree_skb(grp->xid_skb);
--			if (grp->rcvd_xid_skb)
--				dev_kfree_skb(grp->rcvd_xid_skb);
-+			dev_kfree_skb(grp->xid_skb);
-+			dev_kfree_skb(grp->rcvd_xid_skb);
- 			tasklet_kill(&grp->mpc_tasklet2);
- 			kfree(grp);
- 			priv->mpcg = NULL;
---
-2.23.0
+diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
+index 20c841a906f2..218984422f49 100644
+--- a/fs/ntfs/mft.c
++++ b/fs/ntfs/mft.c
+@@ -1580,7 +1580,7 @@ static int ntfs_mft_bitmap_extend_initialized_nolock(ntfs_volume *vol)
+ 	ATTR_RECORD *a;
+ 	int ret;
+ 
+-	ntfs_debug("Extending mft bitmap initiailized (and data) size.");
++	ntfs_debug("Extending mft bitmap initialized (and data) size.");
+ 	mft_ni = NTFS_I(vol->mft_ino);
+ 	mftbmp_vi = vol->mftbmp_ino;
+ 	mftbmp_ni = NTFS_I(mftbmp_vi);
+-- 
+2.20.1
