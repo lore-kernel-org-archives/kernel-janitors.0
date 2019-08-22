@@ -1,37 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 09 Aug 2019 17:22:17 +0000
-Subject: [PATCH] brcmfmac: remove redundant assignment to pointer hash
-Message-Id: <20190809172217.1809-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 22 Aug 2019 23:23:39 +0000
+Subject: Re: [PATCH] ethernet: Delete unnecessary checks before the macro call =?iso-2022-jp?B?GyRCIUgbKEJkZX
+Message-Id: <20190822.162339.831735149510227752.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <af1ae1cf-4a01-5e3a-edc2-058668487137@web.de>
+In-Reply-To: <af1ae1cf-4a01-5e3a-edc2-058668487137@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus.Elfring@web.de
+Cc: kstewart@linuxfoundation.org, michael.heimpold@i2se.com, kernel-janitors@vger.kernel.org, wsa+renesas@sang-engineering.com, weiyongjun1@huawei.com, opensource@jilayne.com, linux-stm32@st-md-mailman.stormreply.com, stefan.wahren@i2se.com, opendmb@gmail.com, yuehaibing@huawei.com, joabreu@synopsys.com, intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, ynezz@true.cz, bryan.whitehead@microchip.com, jeffrey.t.kirsher@intel.com, alexandre.torgue@st.com, jonathan.lemon@gmail.com, yang.wei9@zte.com.cn, alexios.zavras@intel.com, claudiu.manoil@nxp.com, f.fainelli@gmail.com, swinslow@gmail.com, shannon.nelson@oracle.com, peppe.cavallaro@st.com, tglx@linutronix.de, zhongjiang@huawei.com, allison@lohutok.net, nico@fluxnic.net, gregkh@linuxfoundation.org, dougmill@linux.ibm.com, linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, mcgrof@kernel.org, mcoquelin.stm32@gmail.com, netdev@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 22 Aug 2019 20:30:15 +0200
 
-The pointer hash is being initialized with a value that is never read
-and is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 22 Aug 2019 20:02:56 +0200
+> 
+> The dev_kfree_skb() function performs also input parameter validation.
+> Thus the test around the shown calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-index 8428be8b8d43..e3dd8623be4e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
-@@ -1468,7 +1468,6 @@ static int brcmf_msgbuf_stats_read(struct seq_file *seq, void *data)
- 	seq_printf(seq, "\nh2d_flowrings: depth %u\n",
- 		   BRCMF_H2D_TXFLOWRING_MAX_ITEM);
- 	seq_puts(seq, "Active flowrings:\n");
--	hash = msgbuf->flow->hash;
- 	for (i = 0; i < msgbuf->flow->nrofrings; i++) {
- 		if (!msgbuf->flow->rings[i])
- 			continue;
--- 
-2.20.1
+Applied.
