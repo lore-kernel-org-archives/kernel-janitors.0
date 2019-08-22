@@ -1,37 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Tue, 20 Aug 2019 11:53:05 +0000
-Subject: Re: [PATCH v2 linux-next 0/2] change mux_configure32() to static
-Message-Id: <20190820114105.GW12733@vkoul-mobl.Dlink>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 22 Aug 2019 06:34:07 +0000
+Subject: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in tegra_p2u_probe()
+Message-Id: <20190822063407.71148-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190814072105.144107-1-maowenan@huawei.com>
-In-Reply-To: <20190814072105.144107-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Vidya Sagar <vidyas@nvidia.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14-08-19, 15:21, Mao Wenan wrote:
-> First patch is to make mux_configure32() static to avoid sparse warning,
-> the second patch is to chage alignment of two functions.
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-The subsystem name is "dmaengine" please use that in future, I have
-fixed that and applied
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> v2: change subject from "drivers: dma: Fix sparse warning for mux_configure32"
-> to "drivers: dma: make mux_configure32 static", and cleanup the log. And add 
-> one patch to change alignment of two functions. 
-> 
-> Mao Wenan (2):
->   drivers: dma: make mux_configure32 static
->   drivers: dma: change alignment of mux_configure32 and
->     fsl_edma_chan_mux
-> 
->  drivers/dma/fsl-edma-common.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.20.1
-
--- 
-~Vinod
+diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
+index 7042bed9feaa..42394d27f4cb 100644
+--- a/drivers/phy/tegra/phy-tegra194-p2u.c
++++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+@@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
+ 	phy_set_drvdata(generic_phy, phy);
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+-	if (IS_ERR(phy_provider))
+-		return PTR_ERR(phy_provider);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(phy_provider);
+ }
+ 
+ static const struct of_device_id tegra_p2u_id_table[] = {
