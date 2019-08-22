@@ -1,39 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Aug 2019 17:50:50 +0000
-Subject: [PATCH] staging: exfat: check for null return from call to FAT_getblk
-Message-Id: <20190830175050.12706-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 22 Aug 2019 14:50:45 +0000
+Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
+Message-Id: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>, Kees Cook <keescook@chromium.org>, Li Rongqing <lirongqing@baidu.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Aug 2019 16:38:49 +0200
+Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
 
-A call to FAT_getblk is missing a null return check which can
-lead to a null pointer dereference.  Fix this by adding a null
-check to match all the other FAT_getblk return sanity checks.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/exfat/exfat_cache.c | 2 ++
- 1 file changed, 2 insertions(+)
+Markus Elfring (2):
+  Delete an unnecessary check before the macro call “dev_kfree_skb”
+  Improve exception handling in do_mq_notify()
 
-diff --git a/drivers/staging/exfat/exfat_cache.c b/drivers/staging/exfat/exfat_cache.c
-index f05d692c2b1e..1565ce65d39f 100644
---- a/drivers/staging/exfat/exfat_cache.c
-+++ b/drivers/staging/exfat/exfat_cache.c
-@@ -369,6 +369,8 @@ static s32 __FAT_write(struct super_block *sb, u32 loc, u32 content)
- 				FAT_modify(sb, sec);
- 
- 				fat_sector = FAT_getblk(sb, ++sec);
-+				if (!fat_sector)
-+					return -1;
- 				fat_sector[0] = (u8)((fat_sector[0] & 0xF0) |
- 						     (content >> 8));
- 			} else {
--- 
-2.20.1
+ ipc/mqueue.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
+
+--
+2.23.0
