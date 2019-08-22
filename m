@@ -1,35 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 19 Aug 2019 09:41:37 +0000
-Subject: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake: "Schdule" -> "Schedule"
-Message-Id: <20190819094137.390-1-colin.king@canonical.com>
+From: Dragan Cvetic <draganc@xilinx.com>
+Date: Thu, 22 Aug 2019 17:46:37 +0000
+Subject: RE: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake: "Schdule" -> "Schedule"
+Message-Id: <CH2PR02MB635948C20B17ED85455EBE06CBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190819094137.390-1-colin.king@canonical.com>
+In-Reply-To: <20190819094137.390-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Derek Kiernan <dkiernan@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a dev_dbg message, fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/misc/xilinx_sdfec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-index 912e939dec62..b25c58ee618c 100644
---- a/drivers/misc/xilinx_sdfec.c
-+++ b/drivers/misc/xilinx_sdfec.c
-@@ -553,7 +553,7 @@ static int xsdfec_reg2_write(struct xsdfec_dev *xsdfec, u32 nlayers, u32 nmqc,
- 		 XSDFEC_REG2_NO_FINAL_PARITY_MASK);
- 	if (max_schedule &
- 	    ~(XSDFEC_REG2_MAX_SCHEDULE_MASK >> XSDFEC_REG2_MAX_SCHEDULE_LSB))
--		dev_dbg(xsdfec->dev, "Max Schdule exceeds 2 bits");
-+		dev_dbg(xsdfec->dev, "Max Schedule exceeds 2 bits");
- 	max_schedule = ((max_schedule << XSDFEC_REG2_MAX_SCHEDULE_LSB) &
- 			XSDFEC_REG2_MAX_SCHEDULE_MASK);
- 
--- 
-2.20.1
+SGkgQ29saW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4g
+S2luZyBbbWFpbHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogTW9uZGF5IDE5
+IEF1Z3VzdCAyMDE5IDEwOjQyDQo+IFRvOiBEZXJlayBLaWVybmFuIDxka2llcm5hbkB4aWxpbngu
+Y29tPjsgRHJhZ2FuIEN2ZXRpYyA8ZHJhZ2FuY0B4aWxpbnguY29tPjsgQXJuZCBCZXJnbWFubiA8
+YXJuZEBhcm5kYi5kZT47IEdyZWcgS3JvYWgtDQo+IEhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5k
+YXRpb24ub3JnPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+OyBsaW51eC1hcm0t
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENI
+XVtuZXh0XSBtaXNjOiB4aWxpbnhfc2RmZWM6IGZpeCBzcGVsbGluZyBtaXN0YWtlOiAiU2NoZHVs
+ZSIgLT4gIlNjaGVkdWxlIg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZXJlIGlzIGEgc3BlbGxpbmcgbWlzdGFrZSBpbiBhIGRl
+dl9kYmcgbWVzc2FnZSwgZml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
+bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21pc2MveGls
+aW54X3NkZmVjLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
+ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVj
+LmMgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gaW5kZXggOTEyZTkzOWRlYzYyLi5i
+MjVjNThlZTYxOGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWlzYy94aWxpbnhfc2RmZWMuYw0K
+PiArKysgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gQEAgLTU1Myw3ICs1NTMsNyBA
+QCBzdGF0aWMgaW50IHhzZGZlY19yZWcyX3dyaXRlKHN0cnVjdCB4c2RmZWNfZGV2ICp4c2RmZWMs
+IHUzMiBubGF5ZXJzLCB1MzIgbm1xYywNCj4gIAkJIFhTREZFQ19SRUcyX05PX0ZJTkFMX1BBUklU
+WV9NQVNLKTsNCj4gIAlpZiAobWF4X3NjaGVkdWxlICYNCj4gIAkgICAgfihYU0RGRUNfUkVHMl9N
+QVhfU0NIRURVTEVfTUFTSyA+PiBYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTFNCKSkNCj4gLQkJ
+ZGV2X2RiZyh4c2RmZWMtPmRldiwgIk1heCBTY2hkdWxlIGV4Y2VlZHMgMiBiaXRzIik7DQo+ICsJ
+CWRldl9kYmcoeHNkZmVjLT5kZXYsICJNYXggU2NoZWR1bGUgZXhjZWVkcyAyIGJpdHMiKTsNCj4g
+IAltYXhfc2NoZWR1bGUgPSAoKG1heF9zY2hlZHVsZSA8PCBYU0RGRUNfUkVHMl9NQVhfU0NIRURV
+TEVfTFNCKSAmDQo+ICAJCQlYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTUFTSyk7DQo+IA0KPiAt
+LQ0KPiAyLjIwLjENCg0KUmV2aWV3ZWQtYnk6IERyYWdhbiBDdmV0aWMgPGRyYWdhbi5jdmV0aWNA
+eGlsaW54LmNvbT4NCg0KVGhhbmtzLA0KRHJhZ2FuDQo
