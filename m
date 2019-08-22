@@ -1,37 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 02 Aug 2019 01:29:20 +0000
-Subject: [PATCH -next] drm/vgem: Fix wrong pointer passed to PTR_ERR()
-Message-Id: <20190802012920.60344-1-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Aug 2019 08:31:05 +0000
+Subject: [PATCH 2/4 v2] misc: xilinx_sdfec: Return -EFAULT if copy_from_user() fails
+Message-Id: <20190822083105.GI3964@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20190821070702.GB26957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@chromium.org>, Thomas Zimmermann <tzimmermann@suse.de>, Eric Biggers <ebiggers@google.com>, Sam Ravnborg <sam@ravnborg.org>, Sean Paul <seanpaul@chromium.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+The copy_from_user() function returns the number of bytes remaining to
+be copied but we want to return -EFAULT to the user.
 
-Fixes: 7e9e5ead55be ("drm/vgem: fix cache synchronization on arm/arm64")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: Fix a typo in the commit message.  funciton --> function
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index b98689fb0d5d..ef52546f48c4 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -304,10 +304,10 @@ static struct page **pin_and_sync(struct drm_vgem_gem_object *bo)
- 	if (IS_ERR(sgt)) {
- 		dev_err(dev->dev,
- 			"failed to allocate sgt: %ld\n",
--			PTR_ERR(bo->table));
-+			PTR_ERR(sgt));
- 		drm_gem_put_pages(&bo->base, pages, false, false);
- 		mutex_unlock(&bo->pages_lock);
--		return ERR_CAST(bo->table);
-+		return ERR_CAST(sgt);
- 	}
+ drivers/misc/xilinx_sdfec.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+index dc1b8b412712..813b82c59360 100644
+--- a/drivers/misc/xilinx_sdfec.c
++++ b/drivers/misc/xilinx_sdfec.c
+@@ -651,9 +651,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
+ 	if (!ldpc)
+ 		return -ENOMEM;
  
- 	/*
+-	ret = copy_from_user(ldpc, arg, sizeof(*ldpc));
+-	if (ret)
++	if (copy_from_user(ldpc, arg, sizeof(*ldpc))) {
++		ret = -EFAULT;
+ 		goto err_out;
++	}
+ 
+ 	if (xsdfec->config.code = XSDFEC_TURBO_CODE) {
+ 		ret = -EIO;
+-- 
+2.20.1
