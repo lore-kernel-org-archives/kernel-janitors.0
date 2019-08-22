@@ -1,40 +1,64 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Aug 2019 13:35:24 +0000
-Subject: [PATCH] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
-Message-Id: <20190822133524.6274-1-colin.king@canonical.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Thu, 22 Aug 2019 16:03:59 +0000
+Subject: Re: [PATCH] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
+Message-Id: <d3c16158-ef89-f5ee-2f67-4357c70e8fe9@lwfinger.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190822133524.6274-1-colin.king@canonical.com>
+In-Reply-To: <20190822133524.6274-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 8/22/19 8:35 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> An earlier commit re-worked the setting of the bitmask and is now
+> assigning v with some bit flags rather than bitwise or-ing them
+> into v, consequently the earlier bit-settings of v are being lost.
+> Fix this by replacing an assignment with the bitwise or instead.
+> 
+> Addresses-Coverity: ("Unused value")
+> Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/bcma/driver_pci.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+> index f499a469e66d..d219ee947c07 100644
+> --- a/drivers/bcma/driver_pci.c
+> +++ b/drivers/bcma/driver_pci.c
+> @@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci *pc, u16 device, u8 address)
+>   		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
+>   	}
+>   
+> -	v = BCMA_CORE_PCI_MDIODATA_START;
+> +	v |= BCMA_CORE_PCI_MDIODATA_START;
+>   	v |= BCMA_CORE_PCI_MDIODATA_READ;
+>   	v |= BCMA_CORE_PCI_MDIODATA_TA;
 
-An earlier commit re-worked the setting of the bitmask and is now
-assigning v with some bit flags rather than bitwise or-ing them
-into v, consequently the earlier bit-settings of v are being lost.
-Fix this by replacing an assignment with the bitwise or instead.
+I'm not sure the "Fixes" attribute is correct.
 
-Addresses-Coverity: ("Unused value")
-Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/bcma/driver_pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The changes for this section in commit 2be25cac8402 are
 
-diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-index f499a469e66d..d219ee947c07 100644
---- a/drivers/bcma/driver_pci.c
-+++ b/drivers/bcma/driver_pci.c
-@@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci *pc, u16 device, u8 address)
- 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
- 	}
- 
--	v = BCMA_CORE_PCI_MDIODATA_START;
-+	v |= BCMA_CORE_PCI_MDIODATA_START;
- 	v |= BCMA_CORE_PCI_MDIODATA_READ;
- 	v |= BCMA_CORE_PCI_MDIODATA_TA;
- 
--- 
-2.20.1
+-       v = (1 << 30); /* Start of Transaction */
+-       v |= (1 << 28); /* Write Transaction */
+-       v |= (1 << 17); /* Turnaround */
+-       v |= (0x1F << 18);
++       v = BCMA_CORE_PCI_MDIODATA_START;
++       v |= BCMA_CORE_PCI_MDIODATA_WRITE;
++       v |= (BCMA_CORE_PCI_MDIODATA_DEV_ADDR <<
++             BCMA_CORE_PCI_MDIODATA_DEVADDR_SHF);
++       v |= (BCMA_CORE_PCI_MDIODATA_BLK_ADDR <<
++             BCMA_CORE_PCI_MDIODATA_REGADDR_SHF);
++       v |= BCMA_CORE_PCI_MDIODATA_TA;
+
+Because the code has done quite a bit of work on v just above this section, I 
+agree that this is likely an error, but that error happened in an earlier 
+commit. Thus 2be25cac8402 did not introduce the error, merely copied it.
+
+Has this change been tested?
+
+Larry
