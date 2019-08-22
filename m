@@ -1,55 +1,24 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Aug 2019 20:00:16 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_hamradio=3a_Delete_unnecessary_checks_before_?= =?UTF-8?B?dGhlIG1hY3JvIGNhbGwg
-Message-Id: <61fc7b82-dbc0-93e4-bf43-9856eb4c6688@web.de>
+Date: Thu, 22 Aug 2019 06:09:42 +0000
+Subject: Re: [v3 08/11] scripts: Coccinelle script for namespace dependencies
+Message-Id: <81cc3995-ea95-8125-bbd2-2889cc623e23@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190821114955.12788-9-maennich@google.com>
+In-Reply-To: <20190821114955.12788-9-maennich@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, Allison Randal <allison@lohutok.net>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas Sailer <t.sailer@alumni.ethz.ch>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Matthias Maennich <maennich@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Martijn Coenen <maco@android.com>, Himanshu Jha <himanshujha199640@gmail.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, kernel-team@android.com, usb-storage@lists.one-eyed-alien.net, x86@kernel.org, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Gilles Muller <Gilles.Muller@lip6.fr>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jessica Yu <jeyu@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Kate Stewart <kstewart@linuxfoundation.org>, Lucas De Marchi <lucas.de.marchi@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Aug 2019 21:48:46 +0200
+> +generate_deps_for_ns() {
+> +	$SPATCH --very-quiet --in-place --sp-file \
+> +		$srctree/scripts/coccinelle/misc/add_namespace.cocci -D ns=$1 $2
+> +}
 
-The dev_kfree_skb() function performs also input parameter validation.
-Thus the test around the shown calls is not needed.
+I would appreciate more constructive answers for specific software development concerns.
+https://lore.kernel.org/lkml/1c4420f4-361c-7358-49d9-87d8a51f7920@web.de/
+https://lkml.org/lkml/2019/8/15/515
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/hamradio/baycom_epp.c | 3 +--
- drivers/net/hamradio/hdlcdrv.c    | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index 9303aeb2595f..4476491b58f9 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -961,8 +961,7 @@ static int epp_close(struct net_device *dev)
- 	parport_write_control(pp, 0); /* reset the adapter */
-         parport_release(bc->pdev);
-         parport_unregister_device(bc->pdev);
--	if (bc->skb)
--		dev_kfree_skb(bc->skb);
-+	dev_kfree_skb(bc->skb);
- 	bc->skb = NULL;
- 	printk(KERN_INFO "%s: close epp at iobase 0x%lx irq %u\n",
- 	       bc_drvname, dev->base_addr, dev->irq);
-diff --git a/drivers/net/hamradio/hdlcdrv.c b/drivers/net/hamradio/hdlcdrv.c
-index c6f83e0df0a3..df495b5595f5 100644
---- a/drivers/net/hamradio/hdlcdrv.c
-+++ b/drivers/net/hamradio/hdlcdrv.c
-@@ -475,8 +475,7 @@ static int hdlcdrv_close(struct net_device *dev)
-
- 	if (s->ops && s->ops->close)
- 		i = s->ops->close(dev);
--	if (s->skb)
--		dev_kfree_skb(s->skb);
-+	dev_kfree_skb(s->skb);
- 	s->skb = NULL;
- 	s->opened = 0;
- 	return i;
---
-2.23.0
+Regards,
+Markus
