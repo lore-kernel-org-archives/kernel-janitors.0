@@ -1,55 +1,24 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Aug 2019 19:30:11 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_can=3a_Delete_unnecessary_checks_before_the_m?= =?UTF-8?B?YWNybyBjYWxsIOKAnGRl
-Message-Id: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
+From: ''Tayeb Souami'' <niculae-tiberiu.puscas@physics.pub.ro>
+Date: Thu, 22 Aug 2019 10:54:38 +0000
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
+Message-Id: <20190822105442.A5E3FE3CAC5@physics1.physics.pub.ro>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-can@vger.kernel.org, netdev@vger.kernel.org, Allison Randal <allison@lohutok.net>, "David S. Miller" <davem@davemloft.net>, Enrico Weigelt <lkml@metux.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Lukas Wunner <lukas@wunner.de>, Marc Kleine-Budde <mkl@pengutronix.de>, Sean Nyekjaer <sean@geanix.com>, Thomas Gleixner <tglx@linutronix.de>, Weitao Hou <houweitaoo@gmail.com>, Wolfgang Grandegger <wg@grandegger.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Aug 2019 21:16:15 +0200
+Lieber Freund,
 
-The dev_kfree_skb() function performs also input parameter validation.
-Thus the test around the shown calls is not needed.
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
 
-This issue was detected by using the Coccinelle software.
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/can/spi/hi311x.c  | 3 +--
- drivers/net/can/spi/mcp251x.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+Das ist dein Spendencode: [TS530342018]
 
-diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
-index 03a711c3221b..7c7c7e78214c 100644
---- a/drivers/net/can/spi/hi311x.c
-+++ b/drivers/net/can/spi/hi311x.c
-@@ -184,8 +184,7 @@ static void hi3110_clean(struct net_device *net)
+Antworten Sie mit dem SPENDE-CODE an diese E-Mail:Tayebsouam.spende@gmail.com
 
- 	if (priv->tx_skb || priv->tx_len)
- 		net->stats.tx_errors++;
--	if (priv->tx_skb)
--		dev_kfree_skb(priv->tx_skb);
-+	dev_kfree_skb(priv->tx_skb);
- 	if (priv->tx_len)
- 		can_free_echo_skb(priv->net, 0);
- 	priv->tx_skb = NULL;
-diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
-index 12358f06d194..1c496d2adb45 100644
---- a/drivers/net/can/spi/mcp251x.c
-+++ b/drivers/net/can/spi/mcp251x.c
-@@ -274,8 +274,7 @@ static void mcp251x_clean(struct net_device *net)
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
 
- 	if (priv->tx_skb || priv->tx_len)
- 		net->stats.tx_errors++;
--	if (priv->tx_skb)
--		dev_kfree_skb(priv->tx_skb);
-+	dev_kfree_skb(priv->tx_skb);
- 	if (priv->tx_len)
- 		can_free_echo_skb(priv->net, 0);
- 	priv->tx_skb = NULL;
---
-2.23.0
+Grüße
+Herr Tayeb Souami
