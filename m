@@ -1,77 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 27 Aug 2019 19:58:10 +0000
-Subject: Applied "ASoC: SOF: imx8: Fix return value check in imx8_probe()" to the asoc tree
-Message-Id: <20190827195810.6AED8D02CEA@fitzroy.sirena.org.uk>
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Thu, 22 Aug 2019 09:13:41 +0000
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_can=3a_Delete_unnecessary_checks_before?= =?UTF-8?B?IHRoZSBtYWNybyBjYWxs
+Message-Id: <dc19a08f-eba9-ebd3-ef0a-3f99e06c9916@geanix.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826120003.183279-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190826120003.183279-1-weiyongjun1@huawei.com>
+References: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
+In-Reply-To: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: alsa-devel@alsa-project.org, Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pengutronix@sirena.org.uk, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-can@vger.kernel.org, netdev@vger.kernel.org, Allison Randal <allison@lohutok.net>, "David S. Miller" <davem@davemloft.net>, Enrico Weigelt <lkml@metux.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Lukas Wunner <lukas@wunner.de>, Marc Kleine-Budde <mkl@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Weitao Hou <houweitaoo@gmail.com>, Wolfgang Grandegger <wg@grandegger.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
 
-   ASoC: SOF: imx8: Fix return value check in imx8_probe()
 
-has been applied to the asoc tree at
+On 21/08/2019 21.30, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 21 Aug 2019 21:16:15 +0200
+> 
+> The dev_kfree_skb() function performs also input parameter validation.
+> Thus the test around the shown calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>   drivers/net/can/spi/hi311x.c  | 3 +--
+>   drivers/net/can/spi/mcp251x.c | 3 +--
+>   2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
+> index 03a711c3221b..7c7c7e78214c 100644
+> --- a/drivers/net/can/spi/hi311x.c
+> +++ b/drivers/net/can/spi/hi311x.c
+> @@ -184,8 +184,7 @@ static void hi3110_clean(struct net_device *net)
+> 
+>   	if (priv->tx_skb || priv->tx_len)
+>   		net->stats.tx_errors++;
+> -	if (priv->tx_skb)
+> -		dev_kfree_skb(priv->tx_skb);
+> +	dev_kfree_skb(priv->tx_skb);
+>   	if (priv->tx_len)
+>   		can_free_echo_skb(priv->net, 0);
+>   	priv->tx_skb = NULL;
+> diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+> index 12358f06d194..1c496d2adb45 100644
+> --- a/drivers/net/can/spi/mcp251x.c
+> +++ b/drivers/net/can/spi/mcp251x.c
+> @@ -274,8 +274,7 @@ static void mcp251x_clean(struct net_device *net)
+> 
+>   	if (priv->tx_skb || priv->tx_len)
+>   		net->stats.tx_errors++;
+> -	if (priv->tx_skb)
+> -		dev_kfree_skb(priv->tx_skb);
+> +	dev_kfree_skb(priv->tx_skb);
+>   	if (priv->tx_len)
+>   		can_free_echo_skb(priv->net, 0);
+>   	priv->tx_skb = NULL;
+> --
+> 2.23.0
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+Good catch Markus :-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 393151c211006cc5ac6af26ecd9982dd916a8104 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 26 Aug 2019 12:00:03 +0000
-Subject: [PATCH] ASoC: SOF: imx8: Fix return value check in imx8_probe()
-
-In case of error, the function devm_ioremap_wc() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
-
-Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/20190826120003.183279-1-weiyongjun1@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sof/imx/imx8.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index 640472491037..c9d849ced54a 100644
---- a/sound/soc/sof/imx/imx8.c
-+++ b/sound/soc/sof/imx/imx8.c
-@@ -296,10 +296,10 @@ static int imx8_probe(struct snd_sof_dev *sdev)
- 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
- 							  res.end - res.start +
- 							  1);
--	if (IS_ERR(sdev->bar[SOF_FW_BLK_TYPE_SRAM])) {
-+	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
- 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
- 			base, size);
--		ret = PTR_ERR(sdev->bar[SOF_FW_BLK_TYPE_SRAM]);
-+		ret = -ENOMEM;
- 		goto exit_pdev_unregister;
- 	}
- 	sdev->mailbox_bar = SOF_FW_BLK_TYPE_SRAM;
--- 
-2.20.1
+/Sean
