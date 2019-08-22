@@ -1,38 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 26 Jul 2019 12:48:03 +0000
-Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to rtstatus
-Message-Id: <20190726124803.11349-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 22 Aug 2019 06:52:52 +0000
+Subject: [PATCH -next] ASoC: sun4i-i2s: Use PTR_ERR_OR_ZERO in sun4i_i2s_init_regmap_fields()
+Message-Id: <20190822065252.74028-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishka Dasgupta <nishkadg.linux@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Marcus Cooper <codekipper@gmail.com>, Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Variable rtstatus is initialized to a value that is never read and it
-is re-assigned later. The initialization is redundant and can be
-removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/staging/rtl8188eu/hal/rf_cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sunxi/sun4i-i2s.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rf_cfg.c b/drivers/staging/rtl8188eu/hal/rf_cfg.c
-index 739e62dc60e3..47b1bf5a6143 100644
---- a/drivers/staging/rtl8188eu/hal/rf_cfg.c
-+++ b/drivers/staging/rtl8188eu/hal/rf_cfg.c
-@@ -222,7 +222,7 @@ bool rtl88eu_phy_rf_config(struct adapter *adapt)
- {
- 	struct hal_data_8188e *hal_data = adapt->HalData;
- 	u32 u4val = 0;
--	bool rtstatus = true;
-+	bool rtstatus;
- 	struct bb_reg_def *pphyreg;
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 9e691baee1e8..2071c54265f3 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -1095,10 +1095,7 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+ 	i2s->field_fmt_sr  			devm_regmap_field_alloc(dev, i2s->regmap,
+ 						i2s->variant->field_fmt_sr);
+-	if (IS_ERR(i2s->field_fmt_sr))
+-		return PTR_ERR(i2s->field_fmt_sr);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
+ }
  
- 	pphyreg = &hal_data->PHYRegDef[RF90_PATH_A];
--- 
-2.20.1
+ static int sun4i_i2s_probe(struct platform_device *pdev)
