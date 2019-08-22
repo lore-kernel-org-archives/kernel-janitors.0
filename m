@@ -1,31 +1,46 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Fri, 30 Aug 2019 21:43:34 +0000
-Subject: Re: [PATCH -next] net: mlx5: Kconfig: Fix MLX5_CORE_EN dependencies
-Message-Id: <ef0ab9738f6afa81c709f56cffe4bcad13bec654.camel@mellanox.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 22 Aug 2019 06:35:17 +0000
+Subject: [PATCH net-next] cirrus: cs89x0: remove set but not used variable 'lp'
+Message-Id: <20190822063517.71231-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827031251.98881-1-maowenan@huawei.com>
-In-Reply-To: <20190827031251.98881-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "davem@davemloft.net" <davem@davemloft.net>, "maowenan@huawei.com" <maowenan@huawei.com>, "leon@kernel.org" <leon@kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, YueHaibing <yuehaibing@huawei.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-T24gVHVlLCAyMDE5LTA4LTI3IGF0IDExOjEyICswODAwLCBNYW8gV2VuYW4gd3JvdGU6DQo+IFdo
-ZW4gTUxYNV9DT1JFX0VOPXkgYW5kIFBDSV9IWVBFUlZfSU5URVJGQUNFIGlzIG5vdCBzZXQsIGJl
-bG93IGVycm9ycw0KDQpUaGUgaXNzdWUgaGFwcGVucyB3aGVuIFBDSV9IWVBFUlZfSU5URVJGQUNF
-IGlzIGEgbW9kdWxlIGFuZCBtbHg1X2NvcmUNCmlzIGJ1aWx0LWluLg0KDQo+IGFyZSBmb3VuZDoN
-Cj4gZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX21haW4ubzogSW4g
-ZnVuY3Rpb24NCj4gYG1seDVlX25pY19lbmFibGUnOg0KPiBlbl9tYWluLmM6KC50ZXh0KzB4YjY0
-OSk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8NCj4gYG1seDVlX2h2X3ZoY2Ffc3RhdHNfY3JlYXRl
-Jw0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fbWFpbi5vOiBJ
-biBmdW5jdGlvbg0KPiBgbWx4NWVfbmljX2Rpc2FibGUnOg0KPiBlbl9tYWluLmM6KC50ZXh0KzB4
-YjhjNCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8NCj4gYG1seDVlX2h2X3ZoY2Ffc3RhdHNfZGVz
-dHJveScNCj4gDQo+IFRoaXMgYmVjYXVzZSBDT05GSUdfUENJX0hZUEVSVl9JTlRFUkZBQ0UgaXMg
-bmV3bHkgaW50cm9kdWNlZCBieQ0KPiAnY29tbWl0IDM0OGRkOTNlNDBjMQ0KPiAoIlBDSTogaHY6
-IEFkZCBhIEh5cGVyLVYgUENJIGludGVyZmFjZSBkcml2ZXIgZm9yIHNvZnR3YXJlDQo+IGJhY2tj
-aGFubmVsIGludGVyZmFjZSIpLA0KPiBGaXggdGhpcyBieSBtYWtpbmcgTUxYNV9DT1JFX0VOIGlt
-cGx5IFBDSV9IWVBFUlZfSU5URVJGQUNFLg0KPiANCg0KdGhlIGltcGx5IHNob3VsZCBiZSBpbiBN
-TFg1X0NPUkUgbm90IE1MWDVfQ09SRV9FTiBzaW5jZSB0aGUNCmltcGxlbWVudGF0aW9uIGFsc28g
-aW52b2x2ZXMgTUxYNV9DT1JFLiANCg0KSSB3aWxsIHByZXBhcmUgYSBwYXRjaCB3aXRoIHRoZXNl
-IGZpeHVwcy4NCg0KVGhhbmtzLA0KU2FlZWQuDQoNCg=
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/ethernet/cirrus/cs89x0.c: In function 'cs89x0_platform_probe':
+drivers/net/ethernet/cirrus/cs89x0.c:1847:20: warning:
+ variable 'lp' set but not used [-Wunused-but-set-variable]
+
+It is not used since commit 6751edeb8700 ("cirrus: cs89x0: Use
+managed interfaces")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/cirrus/cs89x0.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/cirrus/cs89x0.c b/drivers/net/ethernet/cirrus/cs89x0.c
+index 2d30972df06b..c9aebcde403a 100644
+--- a/drivers/net/ethernet/cirrus/cs89x0.c
++++ b/drivers/net/ethernet/cirrus/cs89x0.c
+@@ -1844,15 +1844,12 @@ cleanup_module(void)
+ static int __init cs89x0_platform_probe(struct platform_device *pdev)
+ {
+ 	struct net_device *dev = alloc_etherdev(sizeof(struct net_local));
+-	struct net_local *lp;
+ 	void __iomem *virt_addr;
+ 	int err;
+ 
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	lp = netdev_priv(dev);
+-
+ 	dev->irq = platform_get_irq(pdev, 0);
+ 	if (dev->irq <= 0) {
+ 		dev_warn(&dev->dev, "interrupt resource missing\n");
