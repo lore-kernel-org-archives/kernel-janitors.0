@@ -1,71 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 01 Aug 2019 13:10:39 +0000
-Subject: Applied "ASoC: zx-tdm: remove redundant assignment to ts_width on error return path" to the asoc tre
-Message-Id: <20190801131039.3CC712742C48@ypsilon.sirena.org.uk>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 22 Aug 2019 16:08:48 +0000
+Subject: =?UTF-8?Q?=5bPATCH=5d_net/core/skmsg=3a_Delete_an_unnecessary_check?= =?UTF-8?Q?_before_the_function
+Message-Id: <2755f638-7846-91f2-74f4-61031f3e34c8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190731223234.16153-1-colin.king@canonical.com>
-In-Reply-To: <20190731223234.16153-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org, bpf@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, John Fastabend <john.fastabend@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Aug 2019 18:00:40 +0200
 
-   ASoC: zx-tdm: remove redundant assignment to ts_width on error return path
+The consume_skb() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f24e41d3d04f326613d8a7ebecf72c3019826f71 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 31 Jul 2019 23:32:34 +0100
-Subject: [PATCH] ASoC: zx-tdm: remove redundant assignment to ts_width on
- error return path
-
-The value assigned to ts_width is never read on the error return path
-so the assignment is redundant and can be removed.  Remove it.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190731223234.16153-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/zte/zx-tdm.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/core/skmsg.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/zte/zx-tdm.c b/sound/soc/zte/zx-tdm.c
-index 5e877fe9ba7b..0e5a05b25a77 100644
---- a/sound/soc/zte/zx-tdm.c
-+++ b/sound/soc/zte/zx-tdm.c
-@@ -211,7 +211,6 @@ static int zx_tdm_hw_params(struct snd_pcm_substream *substream,
- 		ts_width = 1;
- 		break;
- 	default:
--		ts_width = 0;
- 		dev_err(socdai->dev, "Unknown data format\n");
- 		return -EINVAL;
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 6832eeb4b785..cf390e0aa73d 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -190,8 +190,7 @@ static int __sk_msg_free(struct sock *sk, struct sk_msg *msg, u32 i,
+ 		sk_msg_check_to_free(msg, i, msg->sg.size);
+ 		sge = sk_msg_elem(msg, i);
  	}
--- 
-2.20.1
+-	if (msg->skb)
+-		consume_skb(msg->skb);
++	consume_skb(msg->skb);
+ 	sk_msg_init(msg);
+ 	return freed;
+ }
+--
+2.23.0
