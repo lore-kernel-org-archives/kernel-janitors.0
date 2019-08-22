@@ -1,43 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Aug 2019 08:31:05 +0000
-Subject: [PATCH 2/4 v2] misc: xilinx_sdfec: Return -EFAULT if copy_from_user() fails
-Message-Id: <20190822083105.GI3964@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Aug 2019 11:37:28 +0000
+Subject: [PATCH] rtw88: remove redundant assignment to pointer debugfs_topdir
+Message-Id: <20190822113728.25494-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190821070702.GB26957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The copy_from_user() function returns the number of bytes remaining to
-be copied but we want to return -EFAULT to the user.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 20ec628e8007 ("misc: xilinx_sdfec: Add ability to configure LDPC")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
+Pointer debugfs_topdir is initialized to a value that is never read
+and it is re-assigned later. The initialization is redundant and can
+be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: Fix a typo in the commit message.  funciton --> function
+ drivers/net/wireless/realtek/rtw88/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/misc/xilinx_sdfec.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-index dc1b8b412712..813b82c59360 100644
---- a/drivers/misc/xilinx_sdfec.c
-+++ b/drivers/misc/xilinx_sdfec.c
-@@ -651,9 +651,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
- 	if (!ldpc)
- 		return -ENOMEM;
+diff --git a/drivers/net/wireless/realtek/rtw88/debug.c b/drivers/net/wireless/realtek/rtw88/debug.c
+index 383b04c16703..5d235968d475 100644
+--- a/drivers/net/wireless/realtek/rtw88/debug.c
++++ b/drivers/net/wireless/realtek/rtw88/debug.c
+@@ -672,7 +672,7 @@ static struct rtw_debugfs_priv rtw_debug_priv_rsvd_page = {
  
--	ret = copy_from_user(ldpc, arg, sizeof(*ldpc));
--	if (ret)
-+	if (copy_from_user(ldpc, arg, sizeof(*ldpc))) {
-+		ret = -EFAULT;
- 		goto err_out;
-+	}
+ void rtw_debugfs_init(struct rtw_dev *rtwdev)
+ {
+-	struct dentry *debugfs_topdir = rtwdev->debugfs;
++	struct dentry *debugfs_topdir;
  
- 	if (xsdfec->config.code = XSDFEC_TURBO_CODE) {
- 		ret = -EIO;
+ 	debugfs_topdir = debugfs_create_dir("rtw88",
+ 					    rtwdev->hw->wiphy->debugfsdir);
 -- 
 2.20.1
