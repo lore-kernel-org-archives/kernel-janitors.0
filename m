@@ -1,32 +1,37 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 19 Aug 2019 17:09:05 +0000
-Subject: Re: [PATCH][next] soc: samsung: exynos-chipid: fix memory leak
-Message-Id: <20190819170905.GA14115@kozik-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Aug 2019 11:07:05 +0000
+Subject: [PATCH] aio: remove redundant assignment to variable ret
+Message-Id: <20190822110705.19065-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190816222151.11098-1-colin.king@canonical.com>
-In-Reply-To: <20190816222151.11098-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-samsung-soc@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 11:21:51PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to product_id_to_soc_id fails there
-> is a memory leak of soc_dev_attr->revision and soc_dev_attr
-> on the error return path.  Fix this by adding a common error
-> return path that frees there obects and use this for two
-> error return paths.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 3253b7b7cd44 ("soc: samsung: Add exynos chipid driver support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/soc/samsung/exynos-chipid.c | 14 ++++++++++----
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The variable ret is being set to -EINVAL however this is never read
+and later it is being reassigned to a new value. The assignment is
+redundant and hence can be removed.
 
-Best regards,
-Krzysztof
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/aio.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index f9f441b59966..3e290dfac10a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1528,7 +1528,6 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+ 	file = req->ki_filp;
+ 	if (unlikely(!(file->f_mode & FMODE_READ)))
+ 		return -EBADF;
+-	ret = -EINVAL;
+ 	if (unlikely(!file->f_op->read_iter))
+ 		return -EINVAL;
+ 
+-- 
+2.20.1
