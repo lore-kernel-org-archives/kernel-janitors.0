@@ -1,27 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 22 Aug 2019 14:50:45 +0000
-Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
-Message-Id: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Aug 2019 22:00:25 +0000
+Subject: [PATCH] ipw2x00: fix spelling mistake "initializationg" -> "initialization"
+Message-Id: <20190822220025.5690-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>, Kees Cook <keescook@chromium.org>, Li Rongqing <lirongqing@baidu.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Aug 2019 16:38:49 +0200
-Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+There is a spelling mistake in an IPW_DEBUG_INFO message. Fix it.
 
-Markus Elfring (2):
-  Delete an unnecessary check before the macro call “dev_kfree_skb”
-  Improve exception handling in do_mq_notify()
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- ipc/mqueue.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
-
---
-2.23.0
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index fa55d2ccbfab..ed0f06532d5e 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -2721,7 +2721,7 @@ static void ipw_eeprom_init_sram(struct ipw_priv *priv)
+ 		/* Do not load eeprom data on fatal error or suspend */
+ 		ipw_write32(priv, IPW_EEPROM_LOAD_DISABLE, 0);
+ 	} else {
+-		IPW_DEBUG_INFO("Enabling FW initializationg of SRAM\n");
++		IPW_DEBUG_INFO("Enabling FW initialization of SRAM\n");
+ 
+ 		/* Load eeprom data on fatal error or suspend */
+ 		ipw_write32(priv, IPW_EEPROM_LOAD_DISABLE, 1);
+-- 
+2.20.1
