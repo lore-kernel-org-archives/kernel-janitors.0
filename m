@@ -1,39 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Aug 2019 08:46:09 +0000
-Subject: [PATCH] staging: rtl8192u: remove redundant assignment to pointer crypt
-Message-Id: <20190822084609.8971-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 22 Aug 2019 23:23:10 +0000
+Subject: Re: [PATCH] can: Delete unnecessary checks before the macro call =?iso-2022-jp?B?GyRCIUgbKEJkZXZfa2Z
+Message-Id: <20190822.162310.1544602687585865172.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
+In-Reply-To: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Whitmore <johnfwhitmore@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus.Elfring@web.de
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, allison@lohutok.net, lkml@metux.net, gregkh@linuxfoundation.org, gustavo@embeddedor.com, lukas@wunner.de, mkl@pengutronix.de, sean@geanix.com, tglx@linutronix.de, houweitaoo@gmail.com, wg@grandegger.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 21 Aug 2019 21:30:11 +0200
 
-The pointer crypt is being set with a value that is never read,
-the assignment is redundant and hence can be removed.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 21 Aug 2019 21:16:15 +0200
+> 
+> The dev_kfree_skb() function performs also input parameter validation.
+> Thus the test around the shown calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thanks to Dan Carpenter for sanity checking that this was indeed
-redundant.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-index e0da0900a4f7..33a6af7aad22 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-@@ -743,7 +743,6 @@ static struct sk_buff *ieee80211_probe_resp(struct ieee80211_device *ieee, u8 *d
- 	if (ieee->short_slot && (ieee->current_network.capability & WLAN_CAPABILITY_SHORT_SLOT))
- 		beacon_buf->capability |= cpu_to_le16(WLAN_CAPABILITY_SHORT_SLOT);
- 
--	crypt = ieee->crypt[ieee->tx_keyidx];
- 	if (encrypt)
- 		beacon_buf->capability |= cpu_to_le16(WLAN_CAPABILITY_PRIVACY);
- 
--- 
-2.20.1
+Applied.
