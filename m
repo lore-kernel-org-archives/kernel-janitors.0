@@ -1,49 +1,42 @@
-From: "Andrew Jeffery" <andrew@aj.id.au>
-Date: Mon, 26 Aug 2019 23:52:37 +0000
-Subject: =?UTF-8?Q?Re:_[PATCH_-next]_mmc:_aspeed:_Fix_return_value_check_in_aspee?= =?UTF-8?Q?d=5Fsdc=5Fprobe
-Message-Id: <e23e0193-51c8-41a2-95f7-d48f0ef00eb5@www.fastmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Aug 2019 08:52:30 +0000
+Subject: [PATCH] wimax/i2400m: fix calculation of index, remove sizeof
+Message-Id: <20190823085230.6225-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826120013.183435-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190826120013.183435-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Joel Stanley <joel@jms.id.au>
-Cc: kernel-janitors@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The subtraction of the two pointers is automatically scaled by the
+size of the size of the object the pointers point to, so the division
+by sizeof(*i2400m->barker) is incorrect.  Fix this by removing the
+division.  Also make index an unsigned int to clean up a checkpatch
+warning.
 
-On Mon, 26 Aug 2019, at 21:27, Wei Yongjun wrote:
-> In case of error, the function of_platform_device_create() returns
-> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
-> 
-> Fixes: 09eed7fffd33 ("mmc: Add support for the ASPEED SD controller")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/mmc/host/sdhci-of-aspeed.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c 
-> b/drivers/mmc/host/sdhci-of-aspeed.c
-> index 8bb095ca2fa9..d5acb5afc50f 100644
-> --- a/drivers/mmc/host/sdhci-of-aspeed.c
-> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
-> @@ -261,9 +261,9 @@ static int aspeed_sdc_probe(struct platform_device 
-> *pdev)
->  		struct platform_device *cpdev;
->  
->  		cpdev = of_platform_device_create(child, NULL, &pdev->dev);
-> -		if (IS_ERR(cpdev)) {
-> +		if (!cpdev) {
->  			of_node_put(child);
-> -			ret = PTR_ERR(cpdev);
-> +			ret = -ENODEV;
->  			goto err_clk;
->  		}
->  	}
+Addresses-Coverity: ("Extra sizeof expression")
+Fixes: aba3792ac2d7 ("wimax/i2400m: rework bootrom initialization to be more flexible")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wimax/i2400m/fw.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I ... have no idea why I wrote it that way. I must have just assumed it returned
-an ERR_PTR(). Thanks for finding/fixing that.
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
+index 489cba9b284d..599a703af6eb 100644
+--- a/drivers/net/wimax/i2400m/fw.c
++++ b/drivers/net/wimax/i2400m/fw.c
+@@ -399,8 +399,7 @@ int i2400m_is_boot_barker(struct i2400m *i2400m,
+ 	 * associated with the device. */
+ 	if (i2400m->barker
+ 	    && !memcmp(buf, i2400m->barker, sizeof(i2400m->barker->data))) {
+-		unsigned index = (i2400m->barker - i2400m_barker_db)
+-			/ sizeof(*i2400m->barker);
++		unsigned int index = i2400m->barker - i2400m_barker_db;
+ 		d_printf(2, dev, "boot barker cache-confirmed #%u/%08x\n",
+ 			 index, le32_to_cpu(i2400m->barker->data[0]));
+ 		return 0;
+-- 
+2.20.1
