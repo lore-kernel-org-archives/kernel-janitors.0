@@ -1,34 +1,49 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 22 Aug 2019 06:34:07 +0000
-Subject: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in tegra_p2u_probe()
-Message-Id: <20190822063407.71148-1-yuehaibing@huawei.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Date: Fri, 23 Aug 2019 07:16:02 +0000
+Subject: Re: [PATCH -next] phy: tegra: Use PTR_ERR_OR_ZERO in tegra_p2u_probe()
+Message-Id: <7c060719-1df3-c0b8-2e61-5dbfdf1e4798@nvidia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190822063407.71148-1-yuehaibing@huawei.com>
+In-Reply-To: <20190822063407.71148-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Vidya Sagar <vidyas@nvidia.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+On 8/22/2019 12:04 PM, YueHaibing wrote:
+> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
+> index 7042bed9feaa..42394d27f4cb 100644
+> --- a/drivers/phy/tegra/phy-tegra194-p2u.c
+> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+> @@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
+>   	phy_set_drvdata(generic_phy, phy);
+>   
+>   	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> -	if (IS_ERR(phy_provider))
+> -		return PTR_ERR(phy_provider);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+>   }
+Since PTR_ERR_OR_ZERO macro returns zero if input is valid, if some more code gets added in
+future after this, then, they might have to change this back to what it is now.
+So I ended up continuing with if(IS_ERR(...)) + PTR_ERR towards the end also.
+Having said that, I'm fine with this change as well.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
 
-diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
-index 7042bed9feaa..42394d27f4cb 100644
---- a/drivers/phy/tegra/phy-tegra194-p2u.c
-+++ b/drivers/phy/tegra/phy-tegra194-p2u.c
-@@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device *pdev)
- 	phy_set_drvdata(generic_phy, phy);
- 
- 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
--	if (IS_ERR(phy_provider))
--		return PTR_ERR(phy_provider);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(phy_provider);
- }
- 
- static const struct of_device_id tegra_p2u_id_table[] = {
+>   
+>   static const struct of_device_id tegra_p2u_id_table[] = {
+> 
+> 
+> 
+> 
+> 
