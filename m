@@ -1,38 +1,53 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Tue, 06 Aug 2019 17:24:28 +0000
-Subject: Re: [PATCH] Input: docs: fix spelling mistake "potocol" -> "protocol"
-Message-Id: <20190806112428.3ab5d604@lwn.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 24 Aug 2019 14:49:55 +0000
+Subject: [PATCH v2] netfilter: ipset: Fix an error code in ip_set_sockfn_get()
+Message-Id: <20190824144955.GA5337@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190805104951.26947-1-colin.king@canonical.com>
-In-Reply-To: <20190805104951.26947-1-colin.king@canonical.com>
+In-Reply-To: <alpine.DEB.2.20.1908221109390.11879@blackhole.kfki.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: Florian Westphal <fw@strlen.de>, Florent Fourcot <florent.fourcot@wifirst.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Aditya Pakki <pakki001@umn.edu>, Johannes Berg <johannes.berg@intel.com>, Stefano Brivio <sbrivio@redhat.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-On Mon,  5 Aug 2019 11:49:51 +0100
-Colin King <colin.king@canonical.com> wrote:
+The copy_to_user() function returns the number of bytes remaining to be
+copied.  In this code, that positive return is checked at the end of the
+function and we return zero/success.  What we should do instead is
+return -EFAULT.
 
-> There is a minor spelling mistake in the documentation, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  Documentation/input/multi-touch-protocol.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/input/multi-touch-protocol.rst b/Documentation/input/multi-touch-protocol.rst
-> index 6be70342e709..307fe22d9668 100644
-> --- a/Documentation/input/multi-touch-protocol.rst
-> +++ b/Documentation/input/multi-touch-protocol.rst
-> @@ -23,7 +23,7 @@ devices capable of tracking identifiable contacts (type B), the protocol
->  describes how to send updates for individual contacts via event slots.
->  
->  .. note::
-> -   MT potocol type A is obsolete, all kernel drivers have been
-> +   MT protocol type A is obsolete, all kernel drivers have been
->     converted to use type B.
+Fixes: a7b4f989a629 ("netfilter: ipset: IP set core support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I missed the other instance of this issue
 
-Applied, thanks.
+ net/netfilter/ipset/ip_set_core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-jon
+diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+index e64d5f9a89dd..e7288eab7512 100644
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -2069,8 +2069,9 @@ ip_set_sockfn_get(struct sock *sk, int optval, void __user *user, int *len)
+ 		}
+ 
+ 		req_version->version = IPSET_PROTOCOL;
+-		ret = copy_to_user(user, req_version,
+-				   sizeof(struct ip_set_req_version));
++		if (copy_to_user(user, req_version,
++				 sizeof(struct ip_set_req_version)))
++			ret = -EFAULT;
+ 		goto done;
+ 	}
+ 	case IP_SET_OP_GET_BYNAME: {
+@@ -2129,7 +2130,8 @@ ip_set_sockfn_get(struct sock *sk, int optval, void __user *user, int *len)
+ 	}	/* end of switch(op) */
+ 
+ copy:
+-	ret = copy_to_user(user, data, copylen);
++	if (copy_to_user(user, data, copylen))
++		ret = -EFAULT;
+ 
+ done:
+ 	vfree(data);
+-- 
+2.11.0
