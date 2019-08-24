@@ -1,43 +1,42 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 09 Aug 2019 16:45:44 +0000
-Subject: Re: [PATCH] Input: synaptics - Fix a typo - synpatics --> synaptics
-Message-Id: <20190809164544.GM178933@dtor-ws>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 24 Aug 2019 14:51:47 +0000
+Subject: [PATCH] ipmi_ssif: Fix locking on probe error path
+Message-Id: <20190824145147.GB5337@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809150814.24793-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190809150814.24793-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benjamin.tissoires@redhat.com, grawity@gmail.com, dev@pp3345.net, lyude@redhat.com, teika@gmx.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 05:08:14PM +0200, Christophe JAILLET wrote:
-> This should be 'synaptics', not 'synpatics'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If the allocations failed then we returned with the lock held.  This
+patch moves the allocations infront of the locking.
 
-Applied, thank you.
+Fixes: 714acbc6cc39 ("ipmi_ssif: avoid registering duplicate ssif interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/char/ipmi/ipmi_ssif.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/input/mouse/synaptics.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-> index b6da0c1267e3..bbd799c7b058 100644
-> --- a/drivers/input/mouse/synaptics.c
-> +++ b/drivers/input/mouse/synaptics.c
-> @@ -191,7 +191,7 @@ static const char * const forcepad_pnp_ids[] = {
->  };
->  
->  /*
-> - * Send a command to the synpatics touchpad by special commands
-> + * Send a command to the synaptics touchpad by special commands
->   */
->  static int synaptics_send_cmd(struct psmouse *psmouse, u8 cmd, u8 *param)
->  {
-> -- 
-> 2.20.1
-> 
-
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index 205726926bd3..9cf2efd33f19 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -1683,7 +1683,6 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	u8		  slave_addr = 0;
+ 	struct ssif_addr_info *addr_info = NULL;
+ 
+-	mutex_lock(&ssif_infos_mutex);
+ 	resp = kmalloc(IPMI_MAX_MSG_LENGTH, GFP_KERNEL);
+ 	if (!resp)
+ 		return -ENOMEM;
+@@ -1694,6 +1693,8 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		return -ENOMEM;
+ 	}
+ 
++	mutex_lock(&ssif_infos_mutex);
++
+ 	if (!check_acpi(ssif_info, &client->dev)) {
+ 		addr_info = ssif_info_find(client->addr, client->adapter->name,
+ 					   true);
 -- 
-Dmitry
+2.20.1
