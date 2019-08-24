@@ -1,35 +1,16 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 05 Aug 2019 12:30:55 +0000
-Subject: Re: [PATCH] regulator: core: Add of_node_put() before return
-Message-Id: <127231a4-f181-e172-2262-eb2604cacb0b@web.de>
+From: "Herr.Robert Jackson" <liliana.marinero@osep.mendoza.gov.ar>
+Date: Sat, 24 Aug 2019 14:15:33 +0000
+Subject: 
+Message-Id: <1352227383.24999124.1566656133478.JavaMail.zimbra@osep.mendoza.gov.ar>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190804162023.5673-1-nishkadg.linux@gmail.com>
-In-Reply-To: <20190804162023.5673-1-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="euc-kr"
+Content-Transfer-Encoding: base64
+To: kernel-janitors@vger.kernel.org
 
-> +++ b/drivers/regulator/core.c
-> @@ -380,9 +380,12 @@ static struct device_node *of_get_child_regulator(struct device_node *parent,
->
->  		if (!regnode) {
->  			regnode = of_get_child_regulator(child, prop_name);
-> -			if (regnode)
-> +			if (regnode) {
-> +				of_node_put(child);
->  				return regnode;
-> +			}
->  		} else {
-> +			of_node_put(child);
->  			return regnode;
->  		}
->  	}
-
-I suggest to move common exception handling code to the end of
-this function implementation.
-Would you like to add a jump target like “put_node”?
-
-Regards,
-Markus
+CgpXaXIgc2luZCB6dXZlcmzDpHNzaWdlLCB2ZXJ0cmF1ZW5zd8O8cmRpZ2UgS3JlZGl0Z2ViZXIs
+IGxlaWhlbiB3aXIgVW50ZXJuZWhtZW4gdW5kIEVpbnplbHBlcnNvbmVuIHp1IGVpbmVtIG5pZWRy
+aWdlbiBaaW5zc2F0eiB2b24gMiUsIFNpbmQgU2llIGF1ZiBkZXIgU3VjaGUgbmFjaCBlaW5lbSBH
+ZXNjaMOkZnRza3JlZGl0LCBQcml2YXRrcmVkaXRlLCBTY2h1bGRlbmtvbnNvbGlkaWVydW5nLCB1
+bmJlc2ljaGVydGUgS3JlZGl0ZSwgUmlzaWtva2FwaXRhbCwgd2VubiBqYSBLb250YWt0aWVyZW4g
+U2llIHVucyBqZXR6dCBmw7xyIHdlaXRlcmUgRWluemVsaGVpdGVuLg==
