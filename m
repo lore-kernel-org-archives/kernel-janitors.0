@@ -1,35 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Aug 2019 22:00:25 +0000
-Subject: [PATCH] ipw2x00: fix spelling mistake "initializationg" -> "initialization"
-Message-Id: <20190822220025.5690-1-colin.king@canonical.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
+Date: Sun, 25 Aug 2019 13:36:08 +0000
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_s390/ctcm=3a_Delete_unnecessary_checks_?= =?UTF-8?B?YmVmb3JlIHRoZSBtYWNy
+Message-Id: <9b655bf1-8565-d768-04ee-bc286a7e9efe@linux.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <84733436-46d1-8f43-780e-7b3ab9f2a0ae@web.de>
+In-Reply-To: <84733436-46d1-8f43-780e-7b3ab9f2a0ae@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ursula Braun <ubraun@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 22.08.19 17:04, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 22 Aug 2019 10:55:33 +0200
+> 
+> The dev_kfree_skb() function performs also input parameter validation.
+> Thus the test around the shown calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-There is a spelling mistake in an IPW_DEBUG_INFO message. Fix it.
+Applied, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index fa55d2ccbfab..ed0f06532d5e 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -2721,7 +2721,7 @@ static void ipw_eeprom_init_sram(struct ipw_priv *priv)
- 		/* Do not load eeprom data on fatal error or suspend */
- 		ipw_write32(priv, IPW_EEPROM_LOAD_DISABLE, 0);
- 	} else {
--		IPW_DEBUG_INFO("Enabling FW initializationg of SRAM\n");
-+		IPW_DEBUG_INFO("Enabling FW initialization of SRAM\n");
- 
- 		/* Load eeprom data on fatal error or suspend */
- 		ipw_write32(priv, IPW_EEPROM_LOAD_DISABLE, 1);
--- 
-2.20.1
+>  drivers/s390/net/ctcm_main.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+> index f63c5c871d3d..90025d1923d2 100644
+> --- a/drivers/s390/net/ctcm_main.c
+> +++ b/drivers/s390/net/ctcm_main.c
+> @@ -1074,10 +1074,8 @@ static void ctcm_free_netdevice(struct net_device *dev)
+>  		if (grp) {
+>  			if (grp->fsm)
+>  				kfree_fsm(grp->fsm);
+> -			if (grp->xid_skb)
+> -				dev_kfree_skb(grp->xid_skb);
+> -			if (grp->rcvd_xid_skb)
+> -				dev_kfree_skb(grp->rcvd_xid_skb);
+> +			dev_kfree_skb(grp->xid_skb);
+> +			dev_kfree_skb(grp->rcvd_xid_skb);
+>  			tasklet_kill(&grp->mpc_tasklet2);
+>  			kfree(grp);
+>  			priv->mpcg = NULL;
+> --
+> 2.23.0
+> 
