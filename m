@@ -1,55 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2019 14:41:43 +0000
-Subject: Re: [PATCH -next] ASoC: sun4i-i2s: Use PTR_ERR_OR_ZERO in sun4i_i2s_init_regmap_fields()
-Message-Id: <20190822144143.GB4630@sirena.co.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="JYK4vJDZwFMowpUq"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 26 Aug 2019 19:02:09 +0000
+Subject: [PATCH] net/hamradio/6pack: Fix the size of a sk_buff used in 'sp_bump()'
+Message-Id: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822065252.74028-1-yuehaibing@huawei.com>
- <20190822141826.is6nizjpdgvhd7ra@flea>
- <5b15becf-b79b-ae5d-91e2-6521ded50946@huawei.com>
-In-Reply-To: <5b15becf-b79b-ae5d-91e2-6521ded50946@huawei.com>
-To: Yuehaibing <yuehaibing@huawei.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, Marcus Cooper <codekipper@gmail.com>, Vasily Khoruzhick <anarsoul@gmail.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ajk@comnets.uni-bremen.de, davem@davemloft.net
+Cc: linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+We 'allocate' 'count' bytes here. In fact, 'dev_alloc_skb' already add some
+extra space for padding, so a bit more is allocated.
 
---JYK4vJDZwFMowpUq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+However, we use 1 byte for the KISS command, then copy 'count' bytes, so
+count+1 bytes.
 
-On Thu, Aug 22, 2019 at 10:34:37PM +0800, Yuehaibing wrote:
-> On 2019/8/22 22:18, Maxime Ripard wrote:
-> > On Thu, Aug 22, 2019 at 06:52:52AM +0000, YueHaibing wrote:
+Explicitly allocate and use 1 more byte to be safe.
 
-> >> -	if (IS_ERR(i2s->field_fmt_sr))
-> >> -		return PTR_ERR(i2s->field_fmt_sr);
-> >> -
-> >> -	return 0;
-> >> +	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch should be safe, be however may no be the correct way to fix the
+"buffer overflow". Maybe, the allocated size is correct and we should have:
+   memcpy(ptr, sp->cooked_buf + 1, count - 1);
+or
+   memcpy(ptr, sp->cooked_buf + 1, count - 1sp->rcount);
 
-> > I'm not really convinced that this more readable or more maintainable
-> > though. Is there a reason for this other than we can do it?
+I've not dig deep enough to understand the link betwwen 'rcount' and
+how 'cooked_buf' is used.
+---
+ drivers/net/hamradio/6pack.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> No special reason, just suggested by scripts/coccinelle/api/ptr_ret.cocci
-
-Which is a bit of a reason in itself since it'll save other people
-looking at the same thing though with a return like this I have to agree
-with Maxime a bit and question if the coccinelle script is really a good
-idea.
-
---JYK4vJDZwFMowpUq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1eqacACgkQJNaLcl1U
-h9CAkwf/Uf2VAqlhiMOqQ0rV7FeewNL+az6bwpVvk0y9wd3MeFAYAwjfhm6ssxTm
-0VFGFwQOrBZly3V5sM2+RPO7rvR+73k8ilAAKH4Te423k6tghyvem195C+W8XoE5
-A8R0VBmnIIocvgj1PjbeF1R6Tq5uUWP88SUMCHbRDBGcLqXGY3JlVWao6UKXbas4
-bHRmTBWA7qliaKrmrXnVXLpl/zYvz30YzW6IOBSzWVIDPL6ivAZjvRNz+x0iYs3E
-xbv5KF1NPxQQILnHCxAQ5W+4PmqJ856qMgrFcnrc1D6VKE+1Nph67EOVrGy1lf65
-l5xMPz2Dd7PtRcLXKdLVxuXxeJzUxw==
-=BB78
------END PGP SIGNATURE-----
-
---JYK4vJDZwFMowpUq--
+diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
+index 331c16d30d5d..23281aeeb222 100644
+--- a/drivers/net/hamradio/6pack.c
++++ b/drivers/net/hamradio/6pack.c
+@@ -344,10 +344,10 @@ static void sp_bump(struct sixpack *sp, char cmd)
+ 
+ 	sp->dev->stats.rx_bytes += count;
+ 
+-	if ((skb = dev_alloc_skb(count)) = NULL)
++	if ((skb = dev_alloc_skb(count + 1)) = NULL)
+ 		goto out_mem;
+ 
+-	ptr = skb_put(skb, count);
++	ptr = skb_put(skb, count + 1);
+ 	*ptr++ = cmd;	/* KISS command */
+ 
+ 	memcpy(ptr, sp->cooked_buf + 1, count);
+-- 
+2.20.1
