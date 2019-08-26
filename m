@@ -1,41 +1,35 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Thu, 22 Aug 2019 17:46:37 +0000
-Subject: RE: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake: "Schdule" -> "Schedule"
-Message-Id: <CH2PR02MB635948C20B17ED85455EBE06CBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Aug 2019 13:20:12 +0000
+Subject: [PATCH] drm/amd/powerplay: Fix an off by one in navi10_get_smu_msg_index()
+Message-Id: <20190826132012.GB6840@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190819094137.390-1-colin.king@canonical.com>
-In-Reply-To: <20190819094137.390-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Derek Kiernan <dkiernan@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michals@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Kevin Wang <kevin1.wang-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, Kenneth Feng <kenneth.feng-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-SGkgQ29saW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4g
-S2luZyBbbWFpbHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogTW9uZGF5IDE5
-IEF1Z3VzdCAyMDE5IDEwOjQyDQo+IFRvOiBEZXJlayBLaWVybmFuIDxka2llcm5hbkB4aWxpbngu
-Y29tPjsgRHJhZ2FuIEN2ZXRpYyA8ZHJhZ2FuY0B4aWxpbnguY29tPjsgQXJuZCBCZXJnbWFubiA8
-YXJuZEBhcm5kYi5kZT47IEdyZWcgS3JvYWgtDQo+IEhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5k
-YXRpb24ub3JnPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+OyBsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENI
-XVtuZXh0XSBtaXNjOiB4aWxpbnhfc2RmZWM6IGZpeCBzcGVsbGluZyBtaXN0YWtlOiAiU2NoZHVs
-ZSIgLT4gIlNjaGVkdWxlIg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
-Y2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZXJlIGlzIGEgc3BlbGxpbmcgbWlzdGFrZSBpbiBhIGRl
-dl9kYmcgbWVzc2FnZSwgZml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
-bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21pc2MveGls
-aW54X3NkZmVjLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVj
-LmMgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gaW5kZXggOTEyZTkzOWRlYzYyLi5i
-MjVjNThlZTYxOGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWlzYy94aWxpbnhfc2RmZWMuYw0K
-PiArKysgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gQEAgLTU1Myw3ICs1NTMsNyBA
-QCBzdGF0aWMgaW50IHhzZGZlY19yZWcyX3dyaXRlKHN0cnVjdCB4c2RmZWNfZGV2ICp4c2RmZWMs
-IHUzMiBubGF5ZXJzLCB1MzIgbm1xYywNCj4gIAkJIFhTREZFQ19SRUcyX05PX0ZJTkFMX1BBUklU
-WV9NQVNLKTsNCj4gIAlpZiAobWF4X3NjaGVkdWxlICYNCj4gIAkgICAgfihYU0RGRUNfUkVHMl9N
-QVhfU0NIRURVTEVfTUFTSyA+PiBYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTFNCKSkNCj4gLQkJ
-ZGV2X2RiZyh4c2RmZWMtPmRldiwgIk1heCBTY2hkdWxlIGV4Y2VlZHMgMiBiaXRzIik7DQo+ICsJ
-CWRldl9kYmcoeHNkZmVjLT5kZXYsICJNYXggU2NoZWR1bGUgZXhjZWVkcyAyIGJpdHMiKTsNCj4g
-IAltYXhfc2NoZWR1bGUgPSAoKG1heF9zY2hlZHVsZSA8PCBYU0RGRUNfUkVHMl9NQVhfU0NIRURV
-TEVfTFNCKSAmDQo+ICAJCQlYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTUFTSyk7DQo+IA0KPiAt
-LQ0KPiAyLjIwLjENCg0KUmV2aWV3ZWQtYnk6IERyYWdhbiBDdmV0aWMgPGRyYWdhbi5jdmV0aWNA
-eGlsaW54LmNvbT4NCg0KVGhhbmtzLA0KRHJhZ2FuDQo
+The navi10_message_map[] array has SMU_MSG_MAX_COUNT elements so the ">"
+has to be changed to ">=" to prevent reading one element beyond the end
+of the array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+index d7e25f5113f1..fbecd25f150f 100644
+--- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+@@ -213,7 +213,7 @@ static int navi10_get_smu_msg_index(struct smu_context *smc, uint32_t index)
+ {
+ 	struct smu_11_0_cmn2aisc_mapping mapping;
+ 
+-	if (index > SMU_MSG_MAX_COUNT)
++	if (index >= SMU_MSG_MAX_COUNT)
+ 		return -EINVAL;
+ 
+ 	mapping = navi10_message_map[index];
+-- 
+2.20.1
