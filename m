@@ -1,32 +1,48 @@
-From: Paul Burton <paul.burton@mips.com>
-Date: Mon, 19 Aug 2019 21:17:06 +0000
-Subject: Re: [PATCH] MIPS: Octeon: Fix a typo in #define OCTOEN_SERIAL_LEN
-Message-Id: <MWHPR2201MB1277135EF8A78FC49EACA957C1A80@MWHPR2201MB1277.namprd22.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 26 Aug 2019 02:49:15 +0000
+Subject: [PATCH v2 net-next] cirrus: cs89x0: remove set but not used variable 'lp'
+Message-Id: <20190826024915.67642-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190818155124.3750-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190818155124.3750-1-christophe.jaillet@wanadoo.fr>
+References: <20190822063517.71231-1-yuehaibing@huawei.com>
+In-Reply-To: <20190822063517.71231-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "ralf@linux-mips.org" <ralf@linux-mips.org>, Paul Burton <pburton@wavecomp.com>, "jhogan@kernel.org" <jhogan@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, YueHaibing <yuehaibing@huawei.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-Hello,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Christophe JAILLET wrote:
-> It should be OCTEON_SERIAL_LEN.
-> Update the #define and use it accordingly
+drivers/net/ethernet/cirrus/cs89x0.c: In function 'cs89x0_platform_probe':
+drivers/net/ethernet/cirrus/cs89x0.c:1847:20: warning:
+ variable 'lp' set but not used [-Wunused-but-set-variable]
 
-Applied to mips-next.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 6751edeb8700 ("cirrus: cs89x0: Use managed interfaces")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: add Fixes tag
+---
+ drivers/net/ethernet/cirrus/cs89x0.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> commit 3becd97e032a
-> https://git.kernel.org/mips/c/3becd97e032a
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
-
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+diff --git a/drivers/net/ethernet/cirrus/cs89x0.c b/drivers/net/ethernet/cirrus/cs89x0.c
+index 2d30972df06b..c9aebcde403a 100644
+--- a/drivers/net/ethernet/cirrus/cs89x0.c
++++ b/drivers/net/ethernet/cirrus/cs89x0.c
+@@ -1844,15 +1844,12 @@ cleanup_module(void)
+ static int __init cs89x0_platform_probe(struct platform_device *pdev)
+ {
+ 	struct net_device *dev = alloc_etherdev(sizeof(struct net_local));
+-	struct net_local *lp;
+ 	void __iomem *virt_addr;
+ 	int err;
+ 
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	lp = netdev_priv(dev);
+-
+ 	dev->irq = platform_get_irq(pdev, 0);
+ 	if (dev->irq <= 0) {
+ 		dev_warn(&dev->dev, "interrupt resource missing\n");
