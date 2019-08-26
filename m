@@ -1,48 +1,34 @@
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-Date: Fri, 09 Aug 2019 00:58:40 +0000
-Subject: Re: [PATCH] drm/i915: Use after free in error path in intel_vgpu_create_workload()
-Message-Id: <20190809005840.GA7032@zhen-hp.sh.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="FCuugMFkClbJLl1L"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Aug 2019 13:45:50 +0000
+Subject: [PATCH] ALSA: usb-audio: remove some dead code
+Message-Id: <20190826134550.GA8842@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190808103236.GB30506@mwanda>
- <156526106102.20411.17520131390381233492@skylake-alporthouse-com>
-In-Reply-To: <156526106102.20411.17520131390381233492@skylake-alporthouse-com>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, Dan Carpenter <dan.carpenter@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: Richard Fontana <rfontana@redhat.com>, alsa-devel@alsa-project.org, Hui Peng <benquike@gmail.com>, kernel-janitors@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>
 
+We recently cleaned up the error handling in commit 52c3e317a857 ("ALSA:
+usb-audio: Unify the release of usb_mixer_elem_info objects") but
+accidentally left this stray return.
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/usb/mixer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 2019.08.08 11:44:21 +0100, Chris Wilson wrote:
-> Quoting Dan Carpenter (2019-08-08 11:32:36)
-> > We can't free "workload" until after the printk or it's a use after
-> > free.
-> >=20
-> > Fixes: 2089a76ade90 ("drm/i915/gvt: Checking workload's gma earlier")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> That's the simpler patch,
-> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-
-Thanks a lot, will queue this up.
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXUzFQAAKCRCxBBozTXgY
-J5EAAJkBRaKvljSknayoIbjCoWwSQK+1XgCeKPC2dx9VcLD8Sd9OLXGHqHyWtS8=
-=O1aB
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index a0468c4a6326..a607577f0097 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2633,7 +2633,6 @@ static int parse_audio_selector_unit(struct mixer_build *state, int unitid,
+ 		usb_audio_err(state->chip, "cannot malloc kcontrol\n");
+ 		err = -ENOMEM;
+ 		goto error_name;
+-		return -ENOMEM;
+ 	}
+ 	kctl->private_value = (unsigned long)namelist;
+ 	kctl->private_free = usb_mixer_selector_elem_free;
+-- 
+2.20.1
