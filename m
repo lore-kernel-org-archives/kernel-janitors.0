@@ -1,50 +1,42 @@
-From: Julian Wiedmann <jwi@linux.ibm.com>
-Date: Sun, 25 Aug 2019 13:36:08 +0000
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_s390/ctcm=3a_Delete_unnecessary_checks_?= =?UTF-8?B?YmVmb3JlIHRoZSBtYWNy
-Message-Id: <9b655bf1-8565-d768-04ee-bc286a7e9efe@linux.ibm.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 26 Aug 2019 11:30:08 +0000
+Subject: [PATCH] media: em28xx: Fix exception handling in em28xx_alloc_urbs()
+Message-Id: <ce8f4240-1d81-87fc-c900-713ddb0bc4f2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <84733436-46d1-8f43-780e-7b3ab9f2a0ae@web.de>
-In-Reply-To: <84733436-46d1-8f43-780e-7b3ab9f2a0ae@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ursula Braun <ubraun@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
 
-On 22.08.19 17:04, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Aug 2019 10:55:33 +0200
-> 
-> The dev_kfree_skb() function performs also input parameter validation.
-> Thus the test around the shown calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Aug 2019 13:14:02 +0200
 
-Applied, thanks.
+A null pointer would be passed to a call of the function "kfree" directly
+after a call of the function "kcalloc" failed at one place.
+Pass the data structure member "urb" instead for which memory
+was allocated before (so that this resource will be properly cleaned up).
 
->  drivers/s390/net/ctcm_main.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
-> index f63c5c871d3d..90025d1923d2 100644
-> --- a/drivers/s390/net/ctcm_main.c
-> +++ b/drivers/s390/net/ctcm_main.c
-> @@ -1074,10 +1074,8 @@ static void ctcm_free_netdevice(struct net_device *dev)
->  		if (grp) {
->  			if (grp->fsm)
->  				kfree_fsm(grp->fsm);
-> -			if (grp->xid_skb)
-> -				dev_kfree_skb(grp->xid_skb);
-> -			if (grp->rcvd_xid_skb)
-> -				dev_kfree_skb(grp->rcvd_xid_skb);
-> +			dev_kfree_skb(grp->xid_skb);
-> +			dev_kfree_skb(grp->rcvd_xid_skb);
->  			tasklet_kill(&grp->mpc_tasklet2);
->  			kfree(grp);
->  			priv->mpcg = NULL;
-> --
-> 2.23.0
-> 
+This issue was detected by using the Coccinelle software.
+
+Fixes: d571b592c6206d33731f41aa710fa0f69ac8611b ("media: em28xx: don't use coherent buffer for DMA transfers")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/em28xx/em28xx-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/em28xx/em28xx-core.c b/drivers/media/usb/em28xx/em28xx-core.c
+index 2b8c84a5c9a8..e6088b5d1b80 100644
+--- a/drivers/media/usb/em28xx/em28xx-core.c
++++ b/drivers/media/usb/em28xx/em28xx-core.c
+@@ -931,7 +931,7 @@ int em28xx_alloc_urbs(struct em28xx *dev, enum em28xx_mode mode, int xfer_bulk,
+
+ 	usb_bufs->buf = kcalloc(num_bufs, sizeof(void *), GFP_KERNEL);
+ 	if (!usb_bufs->buf) {
+-		kfree(usb_bufs->buf);
++		kfree(usb_bufs->urb);
+ 		return -ENOMEM;
+ 	}
+
+--
+2.23.0
