@@ -1,37 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Aug 2019 13:18:55 +0000
-Subject: [PATCH] ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check
-Message-Id: <20190826131855.GA6840@mwanda>
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Mon, 26 Aug 2019 13:23:07 +0000
+Subject: Re: [PATCH] ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check
+Message-Id: <17ba2fb20a06d3e167005db6a225ef68f6b78777.camel@nxp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190826131855.GA6840@mwanda>
+In-Reply-To: <20190826131855.GA6840@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+To: "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>, "broonie@kernel.org" <broonie@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>
 
-The device_link_add() function only returns NULL on error, it doesn't
-return error pointers.
-
-Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- sound/soc/sof/imx/imx8.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index e502f584207f..41ad3a310808 100644
---- a/sound/soc/sof/imx/imx8.c
-+++ b/sound/soc/sof/imx/imx8.c
-@@ -227,8 +227,8 @@ static int imx8_probe(struct snd_sof_dev *sdev)
- 						DL_FLAG_STATELESS |
- 						DL_FLAG_PM_RUNTIME |
- 						DL_FLAG_RPM_ACTIVE);
--		if (IS_ERR(priv->link[i])) {
--			ret = PTR_ERR(priv->link[i]);
-+		if (!priv->link[i]) {
-+			ret = -ENOMEM;
- 			dev_pm_domain_detach(priv->pd_dev[i], false);
- 			goto exit_unroll_pm;
- 		}
--- 
-2.20.1
+T24gTW9uLCAyMDE5LTA4LTI2IGF0IDE2OjE4ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGUgZGV2aWNlX2xpbmtfYWRkKCkgZnVuY3Rpb24gb25seSByZXR1cm5zIE5VTEwgb24gZXJy
+b3IsIGl0IGRvZXNuJ3QNCj4gcmV0dXJuIGVycm9yIHBvaW50ZXJzLg0KPiANCj4gRml4ZXM6IDIw
+MmFjYzU2NWExZiAoIkFTb0M6IFNPRjogaW14OiBBZGQgaS5NWDggSFcgc3VwcG9ydCIpDQo+IFNp
+Z25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0K
+VGhhbmtzIERhbiEgTmljZSBjYXRjaC4NCg0KUmV2aWV3ZWQtYnk6IERhbmllbCBCYWx1dGEgPGRh
+bmllbC5iYWx1dGFAbnhwLmNvbT4NCg0KPiAtLS0NCj4gIHNvdW5kL3NvYy9zb2YvaW14L2lteDgu
+YyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
+bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mvc29mL2lteC9pbXg4LmMgYi9zb3Vu
+ZC9zb2Mvc29mL2lteC9pbXg4LmMNCj4gaW5kZXggZTUwMmY1ODQyMDdmLi40MWFkM2EzMTA4MDgg
+MTAwNjQ0DQo+IC0tLSBhL3NvdW5kL3NvYy9zb2YvaW14L2lteDguYw0KPiArKysgYi9zb3VuZC9z
+b2Mvc29mL2lteC9pbXg4LmMNCj4gQEAgLTIyNyw4ICsyMjcsOCBAQCBzdGF0aWMgaW50IGlteDhf
+cHJvYmUoc3RydWN0IHNuZF9zb2ZfZGV2ICpzZGV2KQ0KPiAgCQkJCQkJRExfRkxBR19TVEFURUxF
+U1MgfA0KPiAgCQkJCQkJRExfRkxBR19QTV9SVU5USU1FIHwNCj4gIAkJCQkJCURMX0ZMQUdfUlBN
+X0FDVElWRSk7DQo+IC0JCWlmIChJU19FUlIocHJpdi0+bGlua1tpXSkpIHsNCj4gLQkJCXJldCA9
+IFBUUl9FUlIocHJpdi0+bGlua1tpXSk7DQo+ICsJCWlmICghcHJpdi0+bGlua1tpXSkgew0KPiAr
+CQkJcmV0ID0gLUVOT01FTTsNCj4gIAkJCWRldl9wbV9kb21haW5fZGV0YWNoKHByaXYtPnBkX2Rl
+dltpXSwgZmFsc2UpOw0KPiAgCQkJZ290byBleGl0X3Vucm9sbF9wbTsNCj4gIAkJfQ0K
