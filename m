@@ -1,50 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2019 07:24:56 +0000
-Subject: [PATCH] drm/tinydrm: fix a loop in debugfs code
-Message-Id: <20190821072456.GJ26957@mwanda>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Date: Mon, 26 Aug 2019 13:01:46 +0000
+Subject: Re: [PATCH] drm/tinydrm: fix a loop in debugfs code
+Message-Id: <9718fea0-49f0-34d4-b1fc-f69e99b7a690@tronnes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190821072456.GJ26957@mwanda>
+In-Reply-To: <20190821072456.GJ26957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>
 
-This code will likely crash if we try to do a zero byte write.  The code
-looks like this:
 
-        /* strip trailing whitespace */
-        for (i = count - 1; i > 0; i--)
-                if (isspace(buf[i]))
-			...
 
-We're writing zero bytes so count = 0.  You would think that "count - 1"
-would be negative one, but because "i" is unsigned it is a large
-positive numer instead.  The "i > 0" condition is true and the "buf[i]"
-access will be out of bounds.
+Den 21.08.2019 09.24, skrev Dan Carpenter:
+> This code will likely crash if we try to do a zero byte write.  The code
+> looks like this:
+> 
+>         /* strip trailing whitespace */
+>         for (i = count - 1; i > 0; i--)
+>                 if (isspace(buf[i]))
+> 			...
+> 
+> We're writing zero bytes so count = 0.  You would think that "count - 1"
+> would be negative one, but because "i" is unsigned it is a large
+> positive numer instead.  The "i > 0" condition is true and the "buf[i]"
+> access will be out of bounds.
+> 
+> The fix is to make "i" signed and now everything works as expected.  The
+> upper bound of "count" is capped in __kernel_write() at MAX_RW_COUNT so
+> we don't have to worry about it being higher than INT_MAX.
+> 
+> Fixes: 02dd95fe3169 ("drm/tinydrm: Add MIPI DBI support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
 
-The fix is to make "i" signed and now everything works as expected.  The
-upper bound of "count" is capped in __kernel_write() at MAX_RW_COUNT so
-we don't have to worry about it being higher than INT_MAX.
+Thanks Dan, applied to drm-misc-next with adjusted title:
+-drm/tinydrm: fix a loop in debugfs code
++drm/mipi-dbi: fix a loop in debugfs code
 
-Fixes: 02dd95fe3169 ("drm/tinydrm: Add MIPI DBI support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/drm_mipi_dbi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
-index 1961f713aaab..c4ee2709a6f3 100644
---- a/drivers/gpu/drm/drm_mipi_dbi.c
-+++ b/drivers/gpu/drm/drm_mipi_dbi.c
-@@ -1187,8 +1187,7 @@ static ssize_t mipi_dbi_debugfs_command_write(struct file *file,
- 	struct mipi_dbi_dev *dbidev = m->private;
- 	u8 val, cmd = 0, parameters[64];
- 	char *buf, *pos, *token;
--	unsigned int i;
--	int ret, idx;
-+	int i, ret, idx;
- 
- 	if (!drm_dev_enter(&dbidev->drm, &idx))
- 		return -ENODEV;
--- 
-2.20.1
+Noralf.
