@@ -1,68 +1,28 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 01 Aug 2019 19:16:23 +0000
-Subject: Re: [PATCH][drm-next] drm/amd/powerplay: fix a few spelling mistakes
-Message-Id: <ce8c8a7342282467c3b681fd1b0874817250c16e.camel@perches.com>
+From: "Andrew Jeffery" <andrew@aj.id.au>
+Date: Mon, 26 Aug 2019 23:49:17 +0000
+Subject: =?UTF-8?Q?Re:_[PATCH_-next]_mmc:_aspeed:_Fix_return_value_check_in_aspee?= =?UTF-8?Q?d=5Fsdc=5Fprobe
+Message-Id: <629128e7-cc91-412f-8946-668fac2eb3b9@www.fastmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190801083941.4230-1-colin.king@canonical.com>
-         <CADnq5_OdBM83zkkgtjwzQ0jqsiDP5wZoMXioGcq4mycX2=Tavw@mail.gmail.com>
-In-Reply-To: <CADnq5_OdBM83zkkgtjwzQ0jqsiDP5wZoMXioGcq4mycX2=Tavw@mail.gmail.com>
+References: <20190826120013.183435-1-weiyongjun1@huawei.com>
+ <20190826130343.GA23584@kadam>
+In-Reply-To: <20190826130343.GA23584@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexdeucher@gmail.com>, Colin King <colin.king@canonical.com>
-Cc: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-aspeed@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org
 
-On Thu, 2019-08-01 at 15:02 -0400, Alex Deucher wrote:
-> Applied.  thanks!
-> 
-> Alex
-> 
-> On Thu, Aug 1, 2019 at 4:39 AM Colin King <colin.king@canonical.com> wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There are a few spelling mistakes "unknow" -> "unknown" and
-> > "enabeld" -> "enabled". Fix these.
-[]
-> > diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-[]
-> > @@ -39,7 +39,7 @@ static const char* __smu_message_names[] = {
-> >  const char *smu_get_message_name(struct smu_context *smu, enum smu_message_type type)
-> >  {
-> >         if (type < 0 || type > SMU_MSG_MAX_COUNT)
 
-This looks like an off-by-one test against
-SMU_MSG_MAX_COUNT where type
-should be >
-> > -               return "unknow smu message";
-> > +               return "unknown smu message";
-> >         return __smu_message_names[type];
-[]
-> > @@ -52,7 +52,7 @@ static const char* __smu_feature_names[] = {
-> >  const char *smu_get_feature_name(struct smu_context *smu, enum smu_feature_mask feature)
-> >  {
-> >         if (feature < 0 || feature > SMU_FEATURE_COUNT)
 
-here too
+On Mon, 26 Aug 2019, at 22:34, Dan Carpenter wrote:
+> > Fixes: 09eed7fffd33 ("mmc: Add support for the ASPEED SD controller")
+>                         ^^^^
+> When we're adding new files, could we use the prefix for the new driver
+> instead of just the subsystem?  "mmc: aspeed: Add new driver"?
+> Otherwise it's tricky to know what people want for the driver.
 
-> > -               return "unknow smu feature";
-> > +               return "unknown smu feature";
-> >         return __smu_feature_names[feature];
+I don't have any issue with the request, but I don't understand this last
+bit. What do you mean by "it's tricky to know what people want for the
+driver"?
 
-Perhaps instead it should be against ARRAY_SIZE(__smu_<foo>)
-
-Also, the  __SMU_DUMMY_MAP macro is unnecessarily complex.
-
-It might be better to have some direct
-index and name struct like
-
-struct enum_name {
-	int val;
-	const char *name;
-};
-
-And walk that.
-
-Perhaps add a macro like
-
-#define enum_map(e)
-	{.val = e, .name = #e}
+Andrew
