@@ -1,37 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Aug 2019 08:27:17 +0000
-Subject: [PATCH] tools/power x86_energy_perf_policy: remove unneeded check
-Message-Id: <20190815082717.GB27238@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Aug 2019 11:47:39 +0000
+Subject: [PATCH] wimax/i2400m: remove redundant assignment to variable result
+Message-Id: <20190827114739.27305-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170517125156.10977-1-colin.king@canonical.com>
-In-Reply-To: <20170517125156.10977-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Winslow <swinslow@gmail.com>, Len Brown <len.brown@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Allison Randal <allison@lohutok.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The "i" variable is an int.  The condition doesn't really make sense.
-Since we ensure that "i" is in the 0 to 0xff range on the following
-lines it's not required and this patch deletes it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable result is being assigned a value that is never read and result
+is being re-assigned a little later on. The assignment is redundant
+and hence can be removed.
+
+Addresses-Coverity: ("Ununsed value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wimax/i2400m/rx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index 34a796b303fe..ce9a3fcf4a6c 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -331,8 +331,6 @@ int parse_optarg_string(char *s)
- 		fprintf(stderr, "no digits in \"%s\"\n", s);
- 		usage();
- 	}
--	if (i = LONG_MIN || i = LONG_MAX)
--		errx(-1, "%s", s);
- 
- 	if (i > 0xFF)
- 		errx(-1, "%d (0x%x) must be < 256", i, i);
+diff --git a/drivers/net/wimax/i2400m/rx.c b/drivers/net/wimax/i2400m/rx.c
+index d28b96d06919..c9fb619a9e01 100644
+--- a/drivers/net/wimax/i2400m/rx.c
++++ b/drivers/net/wimax/i2400m/rx.c
+@@ -1253,7 +1253,6 @@ int i2400m_rx(struct i2400m *i2400m, struct sk_buff *skb)
+ 	skb_len = skb->len;
+ 	d_fnstart(4, dev, "(i2400m %p skb %p [size %u])\n",
+ 		  i2400m, skb, skb_len);
+-	result = -EIO;
+ 	msg_hdr = (void *) skb->data;
+ 	result = i2400m_rx_msg_hdr_check(i2400m, msg_hdr, skb_len);
+ 	if (result < 0)
 -- 
 2.20.1
