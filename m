@@ -1,66 +1,40 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Aug 2019 20:24:16 +0000
-Subject: =?UTF-8?Q?=5bPATCH=5d_net=3a_usb=3a_Delete_unnecessary_checks_befor?= =?UTF-8?B?ZSB0aGUgbWFjcm8gY2Fs
-Message-Id: <425214be-355b-92c0-bc74-1d0ea899290f@web.de>
+Date: Tue, 27 Aug 2019 14:09:42 +0000
+Subject: [PATCH] media: stm32-dcmi: Delete an unnecessary of_node_put() call in dcmi_probe()
+Message-Id: <129a4933-2171-7ed9-c84c-8e56b6d05270@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Petko Manolov <petkan@nucleusys.com>, Steve Winslow <swinslow@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alexandre Torgue <alexandre.torgue@st.com>, Hugues Fruchet <hugues.fruchet@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Aug 2019 22:16:02 +0200
+Date: Tue, 27 Aug 2019 16:00:13 +0200
 
-The dev_kfree_skb() function performs also input parameter validation.
-Thus the test around the shown calls is not needed.
+A null pointer would be passed to a call of the function “of_node_put”
+immediately after a call of the function “of_graph_get_next_endpoint”
+failed at one place.
+Remove this superfluous function call.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/usb/lg-vl600.c | 4 +---
- drivers/net/usb/rtl8150.c  | 6 ++----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/platform/stm32/stm32-dcmi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/usb/lg-vl600.c b/drivers/net/usb/lg-vl600.c
-index 6c2b3e368efe..217a2d8fa47b 100644
---- a/drivers/net/usb/lg-vl600.c
-+++ b/drivers/net/usb/lg-vl600.c
-@@ -87,9 +87,7 @@ static void vl600_unbind(struct usbnet *dev, struct usb_interface *intf)
- {
- 	struct vl600_state *s = dev->driver_priv;
-
--	if (s->current_rx_buf)
--		dev_kfree_skb(s->current_rx_buf);
--
-+	dev_kfree_skb(s->current_rx_buf);
- 	kfree(s);
-
- 	return usbnet_cdc_unbind(dev, intf);
-diff --git a/drivers/net/usb/rtl8150.c b/drivers/net/usb/rtl8150.c
-index 98f33e270af1..13e51ccf0214 100644
---- a/drivers/net/usb/rtl8150.c
-+++ b/drivers/net/usb/rtl8150.c
-@@ -586,8 +586,7 @@ static void free_skb_pool(rtl8150_t *dev)
- 	int i;
-
- 	for (i = 0; i < RX_SKB_POOL_SIZE; i++)
--		if (dev->rx_skb_pool[i])
--			dev_kfree_skb(dev->rx_skb_pool[i]);
-+		dev_kfree_skb(dev->rx_skb_pool[i]);
- }
-
- static void rx_fixup(unsigned long data)
-@@ -946,8 +945,7 @@ static void rtl8150_disconnect(struct usb_interface *intf)
- 		unlink_all_urbs(dev);
- 		free_all_urbs(dev);
- 		free_skb_pool(dev);
--		if (dev->rx_skb)
--			dev_kfree_skb(dev->rx_skb);
-+		dev_kfree_skb(dev->rx_skb);
- 		kfree(dev->intr_buff);
- 		free_netdev(dev->netdev);
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index cb1daf8217ff..9392e3409fba 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -1861,7 +1861,6 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	np = of_graph_get_next_endpoint(np, NULL);
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "Could not find the endpoint\n");
+-		of_node_put(np);
+ 		return -ENODEV;
  	}
+
 --
 2.23.0
