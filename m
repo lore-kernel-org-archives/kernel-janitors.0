@@ -1,51 +1,74 @@
-From: Adam Zerella <adam.zerella@gmail.com>
-Date: Tue, 06 Aug 2019 13:04:47 +0000
-Subject: [PATCH] pcmcia/i82092: Refactored dprintk macro for pr_debug.
-Message-Id: <20190806130445.3785-1-adam.zerella@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 27 Aug 2019 19:58:10 +0000
+Subject: Applied "ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check" to the asoc tree
+Message-Id: <20190827195810.443E9D02CE8@fitzroy.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190826131855.GA6840@mwanda>
+In-Reply-To: <20190826131855.GA6840@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, Daniel Baluta <daniel.baluta@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>
 
-As pointed out in https://kernelnewbies.org/KernelJanitors/Todo
-this patch replaces the outdated macro of DPRINTK for pr_debug
+The patch
 
-E: example patch (Testing to see if this format and type of fix is welcome)
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Adam Zerella <adam.zerella@gmail.com>
-To: linux-kernel@vger.kernel.org
-Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
+   ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a325c7bc3a92f1d5ba8cff10d7ab93a989cdeb80 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Aug 2019 16:18:55 +0300
+Subject: [PATCH] ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check
+
+The device_link_add() function only returns NULL on error, it doesn't
+return error pointers.
+
+Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20190826131855.GA6840@mwanda
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/pcmcia/i82092.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/sof/imx/imx8.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index ec54a2aa5cb8..e1929520c20e 100644
---- a/drivers/pcmcia/i82092.c
-+++ b/drivers/pcmcia/i82092.c
-@@ -117,9 +117,9 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
- 		
- 		if (card_present(i)) {
- 			sockets[i].card_state = 3;
--			dprintk(KERN_DEBUG "i82092aa: slot %i is occupied\n",i);
-+			pr_debug("i82092aa: slot %i is occupied\n", i);
- 		} else {
--			dprintk(KERN_DEBUG "i82092aa: slot %i is vacant\n",i);
-+			pr_debug("i82092aa: slot %i is vacant\n", i);
+diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
+index c9d849ced54a..2a22b18e5ec0 100644
+--- a/sound/soc/sof/imx/imx8.c
++++ b/sound/soc/sof/imx/imx8.c
+@@ -227,8 +227,8 @@ static int imx8_probe(struct snd_sof_dev *sdev)
+ 						DL_FLAG_STATELESS |
+ 						DL_FLAG_PM_RUNTIME |
+ 						DL_FLAG_RPM_ACTIVE);
+-		if (IS_ERR(priv->link[i])) {
+-			ret = PTR_ERR(priv->link[i]);
++		if (!priv->link[i]) {
++			ret = -ENOMEM;
+ 			dev_pm_domain_detach(priv->pd_dev[i], false);
+ 			goto exit_unroll_pm;
  		}
- 	}
- 		
-@@ -128,7 +128,7 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
- 	pci_write_config_byte(dev, 0x50, configbyte); /* PCI Interrupt Routing Register */
- 
- 	/* Register the interrupt handler */
--	dprintk(KERN_DEBUG "Requesting interrupt %i \n",dev->irq);
-+	pr_debug("Requesting interrupt %i\n", dev->irq);
- 	if ((ret = request_irq(dev->irq, i82092aa_interrupt, IRQF_SHARED, "i82092aa", i82092aa_interrupt))) {
- 		printk(KERN_ERR "i82092aa: Failed to register IRQ %d, aborting\n", dev->irq);
- 		goto err_out_free_res;
 -- 
 2.20.1
