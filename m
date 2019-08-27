@@ -1,26 +1,26 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 06 Aug 2019 11:37:42 +0000
-Subject: Re: [v4] net: can: Fix compiling warnings for two functions
-Message-Id: <d928a635-accd-2a8f-1829-5d7da551a8e8@web.de>
+Date: Tue, 27 Aug 2019 08:23:29 +0000
+Subject: [PATCH 0/2] powerpc/82xx: Adjustments for pq2ads_pci_init_irq()
+Message-Id: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190806013701.71159-1-maowenan@huawei.com>
-In-Reply-To: <20190806013701.71159-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Mao Wenan <maowenan@huawei.com>, "David S. Miller" <davem@davemloft.net>, Oliver Hartkopp <socketcan@hartkopp.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Enrico Weigelt <lkml@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->  v2->v3: change subject of patch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Aug 2019 10:16:32 +0200
 
-Will it be nicer to use the word “compilation” in your patch subject?
+Two update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (2):
+  Delete an unnecessary of_node_put() call
+  Use common error handling code
 
->  v3->v4: change the alignment of two functions.
+ arch/powerpc/platforms/82xx/pq2ads-pci-pic.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-I would refer to an adjusted indentation.
-
-How do you think about to omit “arrows” in these version identifications?
-
-Regards,
-Markus
+--
+2.23.0
