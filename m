@@ -1,30 +1,31 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 27 Aug 2019 07:23:34 +0000
-Subject: [PATCH -next] MIPS: Octeon: remove duplicated include from dma-octeon.c
-Message-Id: <20190827072334.96670-1-yuehaibing@huawei.com>
+From: Paul Burton <paul.burton@mips.com>
+Date: Tue, 27 Aug 2019 10:04:21 +0000
+Subject: Re: [PATCH -next] MIPS: Octeon: remove duplicated include from dma-octeon.c
+Message-Id: <MWHPR2201MB1277BA013BC2E677E1924887C1A00@MWHPR2201MB1277.namprd22.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190827072334.96670-1-yuehaibing@huawei.com>
+In-Reply-To: <20190827072334.96670-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.ibm.com>, Michal Hocko <mhocko@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <pburton@wavecomp.com>, James Hogan <jhogan@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.ibm.com>, Michal Hocko <mhocko@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
 
-Remove duplicated include.
+Hello,
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- arch/mips/cavium-octeon/dma-octeon.c | 1 -
- 1 file changed, 1 deletion(-)
+YueHaibing wrote:
+> Remove duplicated include.
 
-diff --git a/arch/mips/cavium-octeon/dma-octeon.c b/arch/mips/cavium-octeon/dma-octeon.c
-index 72f24a4db099..14ea680d180e 100644
---- a/arch/mips/cavium-octeon/dma-octeon.c
-+++ b/arch/mips/cavium-octeon/dma-octeon.c
-@@ -16,7 +16,6 @@
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/mm.h>
--#include <linux/memblock.h>
- 
- #include <asm/bootinfo.h>
- 
+Applied to mips-next.
+
+> commit 00f3e689518b
+> https://git.kernel.org/mips/c/00f3e689518b
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: Paul Burton <paul.burton@mips.com>
+
+Thanks,
+    Paul
+
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paul.burton@mips.com to report it. ]
