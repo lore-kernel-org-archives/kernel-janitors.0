@@ -1,69 +1,77 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 27 Aug 2019 08:28:18 +0000
-Subject: [PATCH 2/2] powerpc/82xx: Use common error handling code in pq2ads_pci_init_irq()
-Message-Id: <1a4bafee-562f-5eb4-d2bd-34704f8c5ab3@web.de>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 27 Aug 2019 19:58:10 +0000
+Subject: Applied "ASoC: SOF: imx8: Fix return value check in imx8_probe()" to the asoc tree
+Message-Id: <20190827195810.6AED8D02CEA@fitzroy.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
-In-Reply-To: <6dc7d70e-8a40-46ab-897b-d2eaf9a87d77@web.de>
+References: <20190826120003.183279-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190826120003.183279-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Enrico Weigelt <lkml@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: alsa-devel@alsa-project.org, Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Pengutronix@sirena.org.uk, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Aug 2019 09:19:32 +0200
+The patch
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+   ASoC: SOF: imx8: Fix return value check in imx8_probe()
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 393151c211006cc5ac6af26ecd9982dd916a8104 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 26 Aug 2019 12:00:03 +0000
+Subject: [PATCH] ASoC: SOF: imx8: Fix return value check in imx8_probe()
+
+In case of error, the function devm_ioremap_wc() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
+
+Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20190826120003.183279-1-weiyongjun1@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/platforms/82xx/pq2ads-pci-pic.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ sound/soc/sof/imx/imx8.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-index 6cc054db7043..f82f75a6085c 100644
---- a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-+++ b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
-@@ -129,13 +129,11 @@ int __init pq2ads_pci_init_irq(void)
- 	irq = irq_of_parse_and_map(np, 0);
- 	if (!irq) {
- 		printk(KERN_ERR "No interrupt in pci pic node.\n");
--		of_node_put(np);
--		goto out;
-+		goto out_put_node;
+diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
+index 640472491037..c9d849ced54a 100644
+--- a/sound/soc/sof/imx/imx8.c
++++ b/sound/soc/sof/imx/imx8.c
+@@ -296,10 +296,10 @@ static int imx8_probe(struct snd_sof_dev *sdev)
+ 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
+ 							  res.end - res.start +
+ 							  1);
+-	if (IS_ERR(sdev->bar[SOF_FW_BLK_TYPE_SRAM])) {
++	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
+ 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
+ 			base, size);
+-		ret = PTR_ERR(sdev->bar[SOF_FW_BLK_TYPE_SRAM]);
++		ret = -ENOMEM;
+ 		goto exit_pdev_unregister;
  	}
-
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv) {
--		of_node_put(np);
- 		ret = -ENOMEM;
- 		goto out_unmap_irq;
- 	}
-@@ -160,17 +158,17 @@ int __init pq2ads_pci_init_irq(void)
- 	priv->host = host;
- 	irq_set_handler_data(irq, priv);
- 	irq_set_chained_handler(irq, pq2ads_pci_irq_demux);
--
--	of_node_put(np);
--	return 0;
-+	ret = 0;
-+	goto out_put_node;
-
- out_unmap_regs:
- 	iounmap(priv->regs);
- out_free_kmalloc:
- 	kfree(priv);
--	of_node_put(np);
- out_unmap_irq:
- 	irq_dispose_mapping(irq);
-+out_put_node:
-+	of_node_put(np);
- out:
- 	return ret;
- }
---
-2.23.0
+ 	sdev->mailbox_bar = SOF_FW_BLK_TYPE_SRAM;
+-- 
+2.20.1
