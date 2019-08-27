@@ -1,36 +1,39 @@
-From: Mimi Zohar <zohar@kernel.org>
-Date: Thu, 08 Aug 2019 11:55:38 +0000
-Subject: Re: [PATCH] ima: Fix a use after free in ima_read_modsig()
-Message-Id: <1565265338.4077.1.camel@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Aug 2019 09:38:52 +0000
+Subject: [PATCH] x86: KVM: svm: Fix a check in nested_svm_vmrun()
+Message-Id: <20190827093852.GA8443@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190808103310.GC30506@mwanda>
-         <1565263042.4220.25.camel@kernel.org> <20190808114549.GJ1935@kadam>
-In-Reply-To: <20190808114549.GJ1935@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thiago Jung Bauermann <bauerman@linux.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2019-08-08 at 14:45 +0300, Dan Carpenter wrote:
-> On Thu, Aug 08, 2019 at 07:17:22AM -0400, Mimi Zohar wrote:
-> > On Thu, 2019-08-08 at 13:33 +0300, Dan Carpenter wrote:
-> > > This code frees "hdr" and then dereferences it on the next line to get
-> > > the error code.
-> > > 
-> > > Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Thanks, Dan.  Julia already reported this.  Thiago posted a patch last
-> > night.  Just getting to it now.  Can I add your Reviewed-by or Tested-
-> > by?
-> 
-> I haven't seen the other patch so Reviewed-by seems like the wrong
-> thing.  I don't really need any sort of credit.  I'm just going through
-> my backlog of warnings from being out of office.  Perhaps Reported-by?
+We refactored this code a bit and accidentally deleted the "-" character
+from "-EINVAL".  The kvm_vcpu_map() function never returns positive
+EINVAL.
 
-That works.  FYI, your solution and Thiago's are exactly the same.[1]
+Fixes: c8e16b78c614 ("x86: KVM: svm: eliminate hardcoded RIP advancement from vmrun_interception()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  I don't really know the impact.
 
-Mimi
 
-[1] https://lore.kernel.org/linux-integrity/8736ico5ax.fsf@morokweng.localdomain/T/#u
+ arch/x86/kvm/svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 1f220a85514f..ef646e22d1ab 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3598,7 +3598,7 @@ static int nested_svm_vmrun(struct vcpu_svm *svm)
+ 	vmcb_gpa = svm->vmcb->save.rax;
+ 
+ 	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
+-	if (ret = EINVAL) {
++	if (ret = -EINVAL) {
+ 		kvm_inject_gp(&svm->vcpu, 0);
+ 		return 1;
+ 	} else if (ret) {
+-- 
+2.20.1
