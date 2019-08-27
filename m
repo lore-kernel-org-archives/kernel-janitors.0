@@ -1,60 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 29 Aug 2019 15:44:59 +0000
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-Id: <d5c289ef-6c5c-ecdc-0e73-c5bd410b3d26@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Aug 2019 11:15:27 +0000
+Subject: [PATCH] media: dvb: redundant assignment to variable tmp
+Message-Id: <20190827111527.26337-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
-In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> +++ b/drivers/staging/exfat/exfat_core.c
-> @@ -0,0 +1,3704 @@
-…
-> +static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
-> +			       u32 num_sectors, u32 utbl_checksum)
-> +{
-…
-> +error:
+From: Colin Ian King <colin.king@canonical.com>
 
-An other label would be nicer, wouldn't it?
+Variable tmp is being assigned a value that is never read and tmp
+is being re-assigned a little later on. The assignment is redundant
+and hence can be removed.
 
+Addresses-Coverity: ("Ununsed value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/sp8870.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> +	if (tmp_bh)
-> +		brelse(tmp_bh);
-
-This inline function tolerates the passing of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/buffer_head.h?id=9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5#n292
-https://elixir.bootlin.com/linux/v5.3-rc6/source/include/linux/buffer_head.h#L292
-
-Thus I suggest to omit the extra pointer check at affected places.
-
-
-> +++ b/drivers/staging/exfat/exfat_super.c
-> @@ -0,0 +1,4137 @@
-…
-> +// FIXME use commented lines
-> +// static int exfat_default_codepage = CONFIG_EXFAT_DEFAULT_CODEPAGE;
-
-Is such information still relevant anyhow?
-
-
-> +static int exfat_fill_super(struct super_block *sb, void *data, int silent)
-> +{
-…
-> +out_fail:
-> +	if (root_inode)
-> +		iput(root_inode);
-
-I am informed in the way that this function tolerates the passing
-of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/inode.c?id=9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5#n1564
-https://elixir.bootlin.com/linux/v5.3-rc6/source/fs/inode.c#L1564
-
-Thus I suggest to omit the extra pointer check also at this place.
-
-Regards,
-Markus
+diff --git a/drivers/media/dvb-frontends/sp8870.c b/drivers/media/dvb-frontends/sp8870.c
+index 655db8272268..f6793c9c2dc3 100644
+--- a/drivers/media/dvb-frontends/sp8870.c
++++ b/drivers/media/dvb-frontends/sp8870.c
+@@ -378,8 +378,6 @@ static int sp8870_read_ber (struct dvb_frontend* fe, u32 * ber)
+ 	if (ret < 0)
+ 		return -EIO;
+ 
+-	tmp = ret & 0x3F;
+-
+ 	ret = sp8870_readreg(state, 0xC07);
+ 	if (ret < 0)
+ 		return -EIO;
+-- 
+2.20.1
