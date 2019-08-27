@@ -1,32 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Aug 2019 09:41:52 +0000
-Subject: Re: [PATCH] netfilter: ipset: Fix an error code in ip_set_sockfn_get()
-Message-Id: <20190822094152.GJ3964@kadam>
+Date: Tue, 27 Aug 2019 10:59:17 +0000
+Subject: [PATCH] cifs: Use kzfree() to zero out the password
+Message-Id: <20190827105917.GA23038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190821071830.GI26957@mwanda>
- <alpine.DEB.2.20.1908221109390.11879@blackhole.kfki.hu>
-In-Reply-To: <alpine.DEB.2.20.1908221109390.11879@blackhole.kfki.hu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Kadlecsik =?iso-8859-1?Q?J=F3zsef?= <kadlec@blackhole.kfki.hu>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, Florent Fourcot <florent.fourcot@wifirst.fr>, Kate Stewart <kstewart@linuxfoundation.org>, Allison Randal <allison@lohutok.net>, Aditya Pakki <pakki001@umn.edu>, Qian Cai <cai@gmx.us>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Johannes Berg <johannes.berg@intel.com>, Stefano Brivio <sbrivio@redhat.com>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench@samba.org>, Ronnie Sahlberg <lsahlber@redhat.com>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 11:11:56AM +0200, Kadlecsik J=F3zsef wrote:
-> Hi Dan,
->=20
-> On Wed, 21 Aug 2019, Dan Carpenter wrote:
->=20
-> > The copy_to_user() function returns the number of bytes remaining to be
-> > copied.  In this code, that positive return is checked at the end of the
-> > function and we return zero/success.  What we should do instead is
-> > return -EFAULT.
->=20
-> Yes, you are right. There's another usage of copy_to_user() in this=20
-> function, could you fix it as well?
->=20
+It's safer to zero out the password so that it can never be disclosed.
 
-Yes, of course.  Thanks for the review.
+Fixes: 0c219f5799c7 ("cifs: set domainName when a domain-key is used in multiuser")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifs/connect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index e6cc5c4b0f19..642bbb5bee3a 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -3101,7 +3101,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 			rc = -ENOMEM;
+ 			kfree(vol->username);
+ 			vol->username = NULL;
+-			kfree(vol->password);
++			kzfree(vol->password);
+ 			vol->password = NULL;
+ 			goto out_key_put;
+ 		}
+-- 
+2.20.1
