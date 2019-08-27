@@ -1,52 +1,39 @@
-From: maowenan <maowenan@huawei.com>
-Date: Mon, 19 Aug 2019 01:31:14 +0000
-Subject: Re: [PATCH linux-next] qcom: qcs404: remove COMPILE_TEST from CONFIG_INTERCONNECT_QCOM_QCS404
-Message-Id: <314f2762-f3a8-a645-c6b4-511f687fb731@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 27 Aug 2019 14:44:55 +0000
+Subject: [PATCH] wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc()
+Message-Id: <b9620e49-618d-b392-6456-17de5807df75@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815074848.195806-1-maowenan@huawei.com>
- <20190818010905.7AD602173B@mail.kernel.org>
-In-Reply-To: <20190818010905.7AD602173B@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <sboyd@kernel.org>, agross@kernel.org, georgi.djakov@linaro.org, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com, "David S. Miller" <davem@davemloft.net>, Kalle Valo <kvalo@codeaurora.org>, Maya Erez <merez@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Aug 2019 16:39:02 +0200
 
+A null pointer would be passed to a call of the function “kfree”
+directly after a call of the function “kcalloc” failed at one place.
+Remove this superfluous function call.
 
-On 2019/8/18 9:09, Stephen Boyd wrote:
-> Quoting Mao Wenan (2019-08-15 00:48:48)
->> There is one compilation error when CONFIG_INTERCONNECT_QCOM_QCS404=y and
->> CONFIG_INTERCONNECT_QCOM_SMD_RPM=y, as well as CONFIG_COMPILE_TEST=y,
->> but CONFIG_QCOM_SMD_RPM is not set, logs as below:
->>
->> drivers/interconnect/qcom/smd-rpm.o: In function `qcom_icc_rpm_smd_send':
->> smd-rpm.c:(.text+0xe4): undefined reference to `qcom_rpm_smd_write'
->> Makefile:1071: recipe for target 'vmlinux' failed
->> make: *** [vmlinux] Error 1
->>
->> This is because
->> INTERCONNECT_QCOM_QCS404 depends on QCOM_SMD_RPM || COMPILE_TEST.
->> Here CONFIG_COMPILE_TEST=y, so CONFIG_INTERCONNECT_QCOM_SMD_RPM
->> is selected. If CONFIG_QCOM_SMD_RPM is not set, then
->> qcom_rpm_smd_write() is not defined, and compilation error happen.
->> Fix this by removing COMPILE_TEST from CONFIG_INTERCONNECT_QCOM_QCS404.
-> 
-> Can you fix the actual problem with compile testing this driver vs. just
-> removing the possibility to compile test. Otherwise it gives up on
-> the spirit of the idea of COMPILE_TEST.
+This issue was detected by using the Coccinelle software.
 
-yes, I have already tried to move COMPILE_TEST to INTERCONNECT_QCOM,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ath/wil6210/rx_reorder.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
- config INTERCONNECT_QCOM
-        bool "Qualcomm Network-on-Chip interconnect drivers"
--       depends on ARCH_QCOM
-+       depends on ARCH_QCOM || COMPILE_TEST
-        help
-          Support for Qualcomm's Network-on-Chip interconnect hardware.
-
-> 
-> 
-> .
-> 
+diff --git a/drivers/net/wireless/ath/wil6210/rx_reorder.c b/drivers/net/wireless/ath/wil6210/rx_reorder.c
+index 784239bcb3a6..13246d216803 100644
+--- a/drivers/net/wireless/ath/wil6210/rx_reorder.c
++++ b/drivers/net/wireless/ath/wil6210/rx_reorder.c
+@@ -260,7 +260,6 @@ struct wil_tid_ampdu_rx *wil_tid_ampdu_rx_alloc(struct wil6210_priv *wil,
+ 	r->reorder_buf =
+ 		kcalloc(size, sizeof(struct sk_buff *), GFP_KERNEL);
+ 	if (!r->reorder_buf) {
+-		kfree(r->reorder_buf);
+ 		kfree(r);
+ 		return NULL;
+ 	}
+--
+2.23.0
