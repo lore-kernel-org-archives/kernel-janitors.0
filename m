@@ -1,25 +1,41 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 07 Aug 2019 16:17:10 +0000
-Subject: Re: [PATCH] mtd: rawnand: remove redundant assignment to variable ret
-Message-Id: <20190807161710.13341-1-miquel.raynal@bootlin.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 27 Aug 2019 11:46:14 +0000
+Subject: [PATCH -next] tty: serial: linflexuart: Use DEFINE_SPINLOCK() for spinlock
+Message-Id: <20190827114614.102037-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190731085208.26765-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Vignesh Raghavendra <vigneshr@ti.com>, Boris Brezillon <bbrezillon@kernel.org>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2019-07-31 at 08:52:08 UTC, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret is being initialized with a value that is never read
-> and ret is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+spinlock can be initialized automatically with DEFINE_SPINLOCK()
+rather than explicitly calling spin_lock_init().
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/tty/serial/fsl_linflexuart.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Miquel
+diff --git a/drivers/tty/serial/fsl_linflexuart.c b/drivers/tty/serial/fsl_linflexuart.c
+index 26b9601a0952..8aea7822b731 100644
+--- a/drivers/tty/serial/fsl_linflexuart.c
++++ b/drivers/tty/serial/fsl_linflexuart.c
+@@ -136,7 +136,7 @@ MODULE_DEVICE_TABLE(of, linflex_dt_ids);
+ #ifdef CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE
+ static struct uart_port *earlycon_port;
+ static bool linflex_earlycon_same_instance;
+-static spinlock_t init_lock;
++static DEFINE_SPINLOCK(init_lock);
+ static bool during_init;
+ 
+ static struct {
+@@ -922,10 +922,6 @@ static int __init linflex_serial_init(void)
+ 	if (ret)
+ 		uart_unregister_driver(&linflex_reg);
+ 
+-#ifdef CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE
+-	spin_lock_init(&init_lock);
+-#endif
+-
+ 	return ret;
+ }
