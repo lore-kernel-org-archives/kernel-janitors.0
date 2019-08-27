@@ -1,46 +1,43 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Thu, 15 Aug 2019 09:08:53 +0000
-Subject: Re: [PATCH] drm/i915/tgl: Fix TGL_TRANS_DDI_FUNC_CTL_VAL_TO_PORT() macro
-Message-Id: <87lfvug5i2.fsf@intel.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 27 Aug 2019 13:27:30 +0000
+Subject: [PATCH] clk: renesas: mstp: Delete an unnecessary kfree() call in cpg_mstp_clocks_init()
+Message-Id: <e66b822b-026b-29cc-e461-6334aafd1d30@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815083336.GE27238@mwanda>
-In-Reply-To: <20190815083336.GE27238@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?utf-8?Q?Jos=C3=A9?= Roberto de Souza <jose.souza@intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 15 Aug 2019, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This macro doesn't work because the right shift has higher precedence
-> than bitwise AND.
->
-> Fixes: 9749a5b6c09f ("drm/i915/tgl: Fix the read of the DDI that transcoder is attached to")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Aug 2019 15:22:12 +0200
 
-Thanks, already fixed by 1cdd8705c7ac ("drm/i915/tgl: Fix missing
-parentheses on TGL_TRANS_DDI_FUNC_CTL_VAL_TO_PORT").
+A null pointer would be passed to a call of the function “kfree”
+directly after a call of the function “kzalloc” failed at one place.
+Remove this superfluous function call.
 
-BR,
-Jani.
+This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/gpu/drm/i915/i915_reg.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_reg.h b/drivers/gpu/drm/i915/i915_reg.h
-> index 4a947bd0a294..def6dbdc7e2e 100644
-> --- a/drivers/gpu/drm/i915/i915_reg.h
-> +++ b/drivers/gpu/drm/i915/i915_reg.h
-> @@ -9433,7 +9433,7 @@ enum skl_power_gate {
->  #define  TRANS_DDI_SELECT_PORT(x)	((x) << TRANS_DDI_PORT_SHIFT)
->  #define  TGL_TRANS_DDI_SELECT_PORT(x)	(((x) + 1) << TGL_TRANS_DDI_PORT_SHIFT)
->  #define  TRANS_DDI_FUNC_CTL_VAL_TO_PORT(val)	 (((val) & TRANS_DDI_PORT_MASK) >> TRANS_DDI_PORT_SHIFT)
-> -#define  TGL_TRANS_DDI_FUNC_CTL_VAL_TO_PORT(val) (((val) & TGL_TRANS_DDI_PORT_MASK >> TGL_TRANS_DDI_PORT_SHIFT) - 1)
-> +#define  TGL_TRANS_DDI_FUNC_CTL_VAL_TO_PORT(val) ((((val) & TGL_TRANS_DDI_PORT_MASK) >> TGL_TRANS_DDI_PORT_SHIFT) - 1)
->  #define  TRANS_DDI_MODE_SELECT_MASK	(7 << 24)
->  #define  TRANS_DDI_MODE_SELECT_HDMI	(0 << 24)
->  #define  TRANS_DDI_MODE_SELECT_DVI	(1 << 24)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/renesas/clk-mstp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 2db9093546c6..09f8894bb91b 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -189,10 +189,8 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	unsigned int i;
+
+ 	group = kzalloc(struct_size(group, clks, MSTP_MAX_CLOCKS), GFP_KERNEL);
+-	if (group == NULL) {
+-		kfree(group);
++	if (!group)
+ 		return;
+-	}
+
+ 	clks = group->clks;
+ 	spin_lock_init(&group->lock);
+--
+2.23.0
