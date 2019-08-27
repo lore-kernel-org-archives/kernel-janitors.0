@@ -1,35 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Aug 2019 10:46:42 +0000
-Subject: [PATCH] rtw88: Fix an error message
-Message-Id: <20190814104642.GA14268@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 27 Aug 2019 12:44:36 +0000
+Subject: [PATCH 2/2] powerpc/pseries: Delete an error message for a failed string duplication in dlpar_store(
+Message-Id: <535cfec2-782f-61ec-f6fb-c50186ead2af@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de>
+In-Reply-To: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yan-Hsuan Chuang <yhchuang@realtek.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Allison Randal <allison@lohutok.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Frank Rowand <frank.rowand@sony.com>, Gen Zhang <blackgod016574@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Nathan Lynch <nathanl@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The WARN_ON() macro takes a condition, not a warning message.  I've
-changed this to use WARN() instead.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Aug 2019 13:37:56 +0200
 
-Fixes: 4136214f7c46 ("rtw88: add BT co-existence support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/realtek/rtw88/coex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw88/coex.c b/drivers/net/wireless/realtek/rtw88/coex.c
-index 4577fceddc5e..13701ec40302 100644
---- a/drivers/net/wireless/realtek/rtw88/coex.c
-+++ b/drivers/net/wireless/realtek/rtw88/coex.c
-@@ -1059,7 +1059,7 @@ static void rtw_coex_set_ant_path(struct rtw_dev *rtwdev, bool force, u8 phase)
- 		pos_type = COEX_SWITCH_TO_WLG_BT;
- 		break;
- 	default:
--		WARN_ON("unknown phase when setting antenna path\n");
-+		WARN(1, "unknown phase when setting antenna path\n");
- 		return;
- 	}
- 
--- 
-2.20.1
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 2a783dc0cfa7..deb48b41d488 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -521,10 +521,8 @@ static ssize_t dlpar_store(struct class *class, struct class_attribute *attr,
+ 	int rc;
+
+ 	args = argbuf = kstrdup(buf, GFP_KERNEL);
+-	if (!argbuf) {
+-		pr_info("Could not allocate resources for DLPAR operation\n");
++	if (!argbuf)
+ 		return -ENOMEM;
+-	}
+
+ 	/*
+ 	 * Parse out the request from the user, this will be in the form:
+--
+2.23.0
