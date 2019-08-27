@@ -1,42 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 09 Aug 2019 15:46:16 +0000
-Subject: [PATCH] drm/amd/display: Fix a typo - amdpgu_dm --> amdgpu_dm
-Message-Id: <20190809154616.25479-1-christophe.jaillet@wanadoo.fr>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Tue, 27 Aug 2019 16:27:20 +0000
+Subject: Re: [PATCH] RDMA/iwpm: Delete =?utf-8?Q?un?= =?utf-8?Q?necessary_checks_before_the_macro_call_=E2=80
+Message-Id: <20190827162720.GA19357@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <16df4c50-1f61-d7c4-3fc8-3073666d281d@web.de>
+In-Reply-To: <16df4c50-1f61-d7c4-3fc8-3073666d281d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: harry.wentland@amd.com, sunpeng.li@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, nicholas.kazlauskas@amd.com, David.Francis@amd.com, mario.kleiner.de@gmail.com, Bhawanpreet.Lakha@amd.com, Anthony.Koo@amd.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Leon Romanovsky <leon@kernel.org>, Parav Pandit <parav@mellanox.com>, Steve Wise <swise@opengridcomputing.com>, Tatyana Nikolova <Tatyana.E.Nikolova@intel.com>, YueHaibing <yuehaibing@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This should be 'amdgpu_dm', not 'amdpgu_dm'
+On Wed, Aug 21, 2019 at 07:47:08PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 21 Aug 2019 19:30:09 +0200
+> 
+> The dev_kfree_skb() function performs also input parameter validation.
+> Thus the test around the shown calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/infiniband/core/iwpm_msg.c  | 9 +++------
+>  drivers/infiniband/core/iwpm_util.c | 9 +++------
+>  2 files changed, 6 insertions(+), 12 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to for-next, thanks
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 332ac9d985f2..1ccd0e4d459f 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -836,7 +836,7 @@ static void s3_handle_mst(struct drm_device *dev, bool suspend)
- 
- /**
-  * dm_hw_init() - Initialize DC device
-- * @handle: The base driver device containing the amdpgu_dm device.
-+ * @handle: The base driver device containing the amdgpu_dm device.
-  *
-  * Initialize the &struct amdgpu_display_manager device. This involves calling
-  * the initializers of each DM component, then populating the struct with them.
-@@ -866,7 +866,7 @@ static int dm_hw_init(void *handle)
- 
- /**
-  * dm_hw_fini() - Teardown DC device
-- * @handle: The base driver device containing the amdpgu_dm device.
-+ * @handle: The base driver device containing the amdgpu_dm device.
-  *
-  * Teardown components within &struct amdgpu_display_manager that require
-  * cleanup. This involves cleaning up the DRM device, DC, and any modules that
--- 
-2.20.1
+Jason
