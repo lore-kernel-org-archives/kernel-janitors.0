@@ -1,28 +1,42 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Date: Mon, 12 Aug 2019 20:36:05 +0000
-Subject: Re: [PATCH] ext4: set error return correctly when ext4_htree_store_dirent fails
-Message-Id: <20190812203605.GC28705@mit.edu>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Aug 2019 23:14:50 +0000
+Subject: [PATCH][V2] arcnet: capmode: remove redundant assignment to pointer pkt
+Message-Id: <20190828231450.22424-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190805224419.24639-1-colin.king@canonical.com>
-In-Reply-To: <20190805224419.24639-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 11:44:19PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to ext4_htree_store_dirent fails the error return
-> variable 'ret' is is not being set to the error code and variable count is
-> instead, hence the error code is not being returned.  Fix this by assigning
-> ret to the error return code.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: 8af0f0822797 ("ext4: fix readdir error in the case of inline_data+dir_index")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Pointer pkt is being initialized with a value that is never read
+and pkt is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
-					- Ted
+Addresses-Coverity: ("Ununsed value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: fix typo in patch description, pkg -> pkt
+
+---
+ drivers/net/arcnet/capmode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/arcnet/capmode.c b/drivers/net/arcnet/capmode.c
+index b780be6f41ff..c09b567845e1 100644
+--- a/drivers/net/arcnet/capmode.c
++++ b/drivers/net/arcnet/capmode.c
+@@ -44,7 +44,7 @@ static void rx(struct net_device *dev, int bufnum,
+ {
+ 	struct arcnet_local *lp = netdev_priv(dev);
+ 	struct sk_buff *skb;
+-	struct archdr *pkt = pkthdr;
++	struct archdr *pkt;
+ 	char *pktbuf, *pkthdrbuf;
+ 	int ofs;
+ 
+-- 
+2.20.1
