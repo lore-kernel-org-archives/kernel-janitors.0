@@ -1,23 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 24 Aug 2019 21:22:58 +0000
-Subject: Re: [PATCH net-next] net/mlx5e: Use PTR_ERR_OR_ZERO in mlx5e_tc_add_nic_flow()
-Message-Id: <20190824.142258.1684009361732174753.davem@davemloft.net>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 29 Aug 2019 22:03:25 +0000
+Subject: Re: [PATCH] scsi: qla2xxx: fix spelling mistake "initializatin" -> "initialization"
+Message-Id: <yq1lfvbr5n6.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822065219.73945-1-yuehaibing@huawei.com>
-In-Reply-To: <20190822065219.73945-1-yuehaibing@huawei.com>
+References: <20190822215651.5403-1-colin.king@canonical.com>
+In-Reply-To: <20190822215651.5403-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 22 Aug 2019 22:56:51 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 22 Aug 2019 06:52:19 +0000
 
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Colin,
 
-Saeed, please pick this up if you haven't already.
+> There is a spelling mistake in a ql_log message. Fix it.
 
-Thank you.
+Applied to 5.4/scsi-queue, thanks.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
