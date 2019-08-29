@@ -1,38 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 01 Aug 2019 16:09:58 +0000
-Subject: [PATCH] media: drxj: remove redundant assignment to variable rc
-Message-Id: <20190801160958.28392-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 29 Aug 2019 01:22:41 +0000
+Subject: [PATCH -next] media: imx: remove unused including <linux/version.h>
+Message-Id: <20190829012241.133597-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Remove including <linux/version.h> that don't need it.
 
-The variable rc is being initialized with a value that is never
-read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/media/dvb-frontends/drx39xyj/drxj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/imx/imx-media-csc-scaler.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-index a6876fa48753..8716a167917a 100644
---- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-+++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-@@ -4201,7 +4201,7 @@ int drxj_dap_scu_atomic_read_reg16(struct i2c_device_addr *dev_addr,
- 					 u16 *data, u32 flags)
- {
- 	u8 buf[2] = { 0 };
--	int rc = -EIO;
-+	int rc;
- 	u16 word = 0;
- 
- 	if (!data)
--- 
-2.20.1
+diff --git a/drivers/staging/media/imx/imx-media-csc-scaler.c b/drivers/staging/media/imx/imx-media-csc-scaler.c
+index de599af59ffc..2b635ebf62d6 100644
+--- a/drivers/staging/media/imx/imx-media-csc-scaler.c
++++ b/drivers/staging/media/imx/imx-media-csc-scaler.c
+@@ -8,7 +8,6 @@
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/fs.h>
+-#include <linux/version.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <video/imx-ipu-v3.h>
