@@ -1,43 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 28 Aug 2019 04:39:53 +0000
-Subject: Re: [PATCH] net/hamradio/6pack: Fix the size of a sk_buff used in 'sp_bump()'
-Message-Id: <20190827.213953.102911550129423796.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Aug 2019 00:00:06 +0000
+Subject: [PATCH][cifs-next] cifs: ensure variable rc is initialized at the after_open label
+Message-Id: <20190829000006.24187-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: ajk@comnets.uni-bremen.de, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 26 Aug 2019 21:02:09 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> We 'allocate' 'count' bytes here. In fact, 'dev_alloc_skb' already add some
-> extra space for padding, so a bit more is allocated.
-> 
-> However, we use 1 byte for the KISS command, then copy 'count' bytes, so
-> count+1 bytes.
-> 
-> Explicitly allocate and use 1 more byte to be safe.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch should be safe, be however may no be the correct way to fix the
-> "buffer overflow". Maybe, the allocated size is correct and we should have:
->    memcpy(ptr, sp->cooked_buf + 1, count - 1);
-> or
->    memcpy(ptr, sp->cooked_buf + 1, count - 1sp->rcount);
-> 
-> I've not dig deep enough to understand the link betwwen 'rcount' and
-> how 'cooked_buf' is used.
+A previous fix added a jump to after_open which now leaves variable
+rc in a uninitialized state. A couple of the cases in the following
+switch statement do not set variable rc, hence the error check on rc
+at the end of the switch statement is reading a garbage value in rc
+for those specific cases. Fix this by initializing rc to zero before
+the switch statement.
 
-I'm trying to figure out how this code works too.
+Fixes: 955a9c5b39379 ("cifs: create a helper to find a writeable handle by path name")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Why are they skipping over the first byte?  Is that to avoid the
-command byte?  Yes, then using sp->rcount as the memcpy length makes
-sense.
-
-Why is the caller subtracting 2 from the RX buffer count when
-calculating sp->rcount?  This makes the situation even more confusing.
+diff --git a/fs/cifs/smb2inode.c b/fs/cifs/smb2inode.c
+index 70342bcd89b4..939fc7b2234c 100644
+--- a/fs/cifs/smb2inode.c
++++ b/fs/cifs/smb2inode.c
+@@ -116,6 +116,7 @@ smb2_compound_op(const unsigned int xid, struct cifs_tcon *tcon,
+ 	smb2_set_next_command(tcon, &rqst[num_rqst]);
+  after_open:
+ 	num_rqst++;
++	rc = 0;
+ 
+ 	/* Operation */
+ 	switch (command) {
+-- 
+2.20.1
