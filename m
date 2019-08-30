@@ -1,37 +1,78 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 18 Aug 2019 18:46:49 +0000
-Subject: [PATCH] staging: rts5208: remove redundant assignment to retval
-Message-Id: <20190818184649.13828-1-colin.king@canonical.com>
+Date: Fri, 30 Aug 2019 08:10:47 +0000
+Subject: [PATCH] staging: rts5208: remove redundant sd30_mode checks
+Message-Id: <20190830081047.13630-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190818184649.13828-1-colin.king@canonical.com>
+In-Reply-To: <20190818184649.13828-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Variable retval is initialized to a value that is never read and it
-is re-assigned later. The initialization is redundant and can be
-removed.
+There are two hunks of code that check if sd30_mode is true however
+an earlier check in an outer code block on sd30_mode being false means
+that sd30_mode can never be true at these points so these checks are
+redundant.  Remove the dead code.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Logically dead code")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rts5208/ms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rts5208/sd.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index 1128eec3bd08..e853fa9cc950 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -3842,7 +3842,7 @@ int mg_set_leaf_id(struct scsi_cmnd *srb, struct rtsx_chip *chip)
+diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
+index a06045344301..25c31496757e 100644
+--- a/drivers/staging/rts5208/sd.c
++++ b/drivers/staging/rts5208/sd.c
+@@ -2573,17 +2573,13 @@ static int reset_sd(struct rtsx_chip *chip)
+ 			retval = sd_sdr_tuning(chip);
  
- int mg_get_local_EKB(struct scsi_cmnd *srb, struct rtsx_chip *chip)
- {
--	int retval = STATUS_FAIL;
-+	int retval;
- 	int bufflen;
- 	unsigned int lun = SCSI_LUN(srb);
- 	u8 *buf = NULL;
+ 		if (retval != STATUS_SUCCESS) {
+-			if (sd20_mode) {
++			retval = sd_init_power(chip);
++			if (retval != STATUS_SUCCESS)
+ 				goto status_fail;
+-			} else {
+-				retval = sd_init_power(chip);
+-				if (retval != STATUS_SUCCESS)
+-					goto status_fail;
+ 
+-				try_sdio = false;
+-				sd20_mode = true;
+-				goto switch_fail;
+-			}
++			try_sdio = false;
++			sd20_mode = true;
++			goto switch_fail;
+ 		}
+ 
+ 		sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
+@@ -2598,17 +2594,13 @@ static int reset_sd(struct rtsx_chip *chip)
+ 		if (read_lba0) {
+ 			retval = sd_read_lba0(chip);
+ 			if (retval != STATUS_SUCCESS) {
+-				if (sd20_mode) {
++				retval = sd_init_power(chip);
++				if (retval != STATUS_SUCCESS)
+ 					goto status_fail;
+-				} else {
+-					retval = sd_init_power(chip);
+-					if (retval != STATUS_SUCCESS)
+-						goto status_fail;
+ 
+-					try_sdio = false;
+-					sd20_mode = true;
+-					goto switch_fail;
+-				}
++				try_sdio = false;
++				sd20_mode = true;
++				goto switch_fail;
+ 			}
+ 		}
+ 	}
 -- 
 2.20.1
