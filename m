@@ -1,26 +1,39 @@
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Thu, 22 Aug 2019 21:12:19 +0000
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_net=2Fipv4=2Ftcp=5Fbpf=3A_Delete_an_unnecessary_?= =?UTF-8?Q?check_befor
-Message-Id: <CAPhsuW5c7xn9hW70C3BV3GqysEzScJfpw11yRSMx39T5+Hxd5Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Aug 2019 11:16:21 +0000
+Subject: [PATCH] ocfs2: remove deadcode on variable tmp_oh check
+Message-Id: <20190830111621.8929-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <25ca9c48-1ac9-daa1-8472-0a53e4beed6a@web.de>
-In-Reply-To: <25ca9c48-1ac9-daa1-8472-0a53e4beed6a@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Hideaki Yoshifuji <yoshfuji@linux-ipv6.org>, John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 10:19 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Aug 2019 18:20:42 +0200
->
-> The consume_skb() function performs also input parameter validation.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Song Liu <songliubraving@fb.com>
+At the end of cfs2_inode_lock_tracker tmp_oh is true because an
+earlier check on tmp_oh being false returns out of the function.
+Since tmp_oh is true, the function will always return 1 so remove
+the redundant check and return of 0.
+
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/dlmglue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index ad594fef2ab0..ff0cf851c9e6 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2712,7 +2712,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			return status;
+ 		}
+ 	}
+-	return tmp_oh ? 1 : 0;
++	return 1;
+ }
+ 
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
+-- 
+2.20.1
