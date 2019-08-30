@@ -1,35 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Aug 2019 09:00:53 +0000
-Subject: [PATCH net] gve: Copy and paste buy in gve_get_stats()
-Message-Id: <20190820090053.GA24410@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Aug 2019 17:50:50 +0000
+Subject: [PATCH] staging: exfat: check for null return from call to FAT_getblk
+Message-Id: <20190830175050.12706-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Catherine Sullivan <csully@google.com>
-Cc: Sagi Shahar <sagis@google.com>, Jon Olson <jonolson@google.com>, "David S. Miller" <davem@davemloft.net>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo <lrizzo@google.com>, Chuhong Yuan <hslester96@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is a copy and paste error so we have "rx" where "tx" was intended
-in the priv->tx[] array.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A call to FAT_getblk is missing a null return check which can
+lead to a null pointer dereference.  Fix this by adding a null
+check to match all the other FAT_getblk return sanity checks.
+
+Addresses-Coverity: ("Dereference null return")
+Fixes: c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/google/gve/gve_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/exfat/exfat_cache.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-index 497298752381..aca95f64bde8 100644
---- a/drivers/net/ethernet/google/gve/gve_main.c
-+++ b/drivers/net/ethernet/google/gve/gve_main.c
-@@ -50,7 +50,7 @@ static void gve_get_stats(struct net_device *dev, struct rtnl_link_stats64 *s)
- 				  u64_stats_fetch_begin(&priv->tx[ring].statss);
- 				s->tx_packets += priv->tx[ring].pkt_done;
- 				s->tx_bytes += priv->tx[ring].bytes_done;
--			} while (u64_stats_fetch_retry(&priv->rx[ring].statss,
-+			} while (u64_stats_fetch_retry(&priv->tx[ring].statss,
- 						       start));
- 		}
- 	}
+diff --git a/drivers/staging/exfat/exfat_cache.c b/drivers/staging/exfat/exfat_cache.c
+index f05d692c2b1e..1565ce65d39f 100644
+--- a/drivers/staging/exfat/exfat_cache.c
++++ b/drivers/staging/exfat/exfat_cache.c
+@@ -369,6 +369,8 @@ static s32 __FAT_write(struct super_block *sb, u32 loc, u32 content)
+ 				FAT_modify(sb, sec);
+ 
+ 				fat_sector = FAT_getblk(sb, ++sec);
++				if (!fat_sector)
++					return -1;
+ 				fat_sector[0] = (u8)((fat_sector[0] & 0xF0) |
+ 						     (content >> 8));
+ 			} else {
 -- 
 2.20.1
