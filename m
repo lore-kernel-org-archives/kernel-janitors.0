@@ -1,43 +1,42 @@
-From: "Law firm(Eku and Associates)" <elenabaltach66@gmail.com>
-Date: Thu, 22 Aug 2019 12:30:08 +0000
-Subject: MY $25,000,000.00 INVESTMENT PROPOSAL WITH YOU AND IN YOUR COUNTRY.
-Message-Id: <CAOGpsp5-jtxg0EF9UNKiS2JiLByUAiDoKpw7HM0DuZo7wP=xMw@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 30 Aug 2019 12:00:09 +0000
+Subject: Re: Checking usage of likeliness annotations
+Message-Id: <50c1dad3-c19c-3f95-405c-da7c6d0b7bf4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190830063838.GA144157@architecture4>
+In-Reply-To: <20190830063838.GA144157@architecture4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gao Xiang <gaoxiang25@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Sasha Levin <alexander.levin@microsoft.com>, Denis Efremov <efremov@linux.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christoph Hellwig <hch@infradead.org>, Ogawa Hirofumi <hirofumi@mail.parknet.co.jp>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, Chao Yu <yuchao0@huawei.com>
 
--- 
-Dear,
-With due respect this is not spam or Scam mail, because I have
-contacted you before and there was no response from you,I apologise if
-the contents of this mail are contrary to your moral ethics, which I
-feel may be of great disturbance to your person, but please treat this
-with absolute confidentiality, believing that this email reaches you
-in good faith. My contacting you is not a mistake or a coincidence
-because God can use any person known or unknown to accomplish great
-things.
-I am a lawyer and I have an investment business proposal to offer you.
-It is not official but should be considered as legal and confidential
-business. I have a customer's deposit of $US25 million dollars ready
-to be moved for investment if you can partner with us. We are ready to
-offer you 10% of this total amount as your compensation for supporting
-the transaction to completion. If you are interested to help me please
-reply me with your full details as stated below:
-(1) Your full names:
-(2) Your address:
-(3) Your occupation:
-(4) Your mobile telephone number:
-(5) Your nationality:
-(6) Your present location:
-(7) Your age:
-So that I will provide you more details on what to do and what is
-required for successful completion.
-Note: DO NOT REPLY ME IF YOU ARE NOT INTERESTED AND WITHOUT THE ABOVE
-MENTIONED DETAILS
+> I'm also curious about that, what is the filesystem or kernel standard about
+> likely/unlikely use (since I didn't find some documented standard
+> so I used in my personal way,
 
-Sincèrement vôtre,
-Avocat Etienne Eku Esq.(Lawfirm)
-Procureur principal. De Cabinet d’avocats de l’Afrique de l’ouest.
-Skype:westafricalawfirm
+Such information is helpful.
+
+
+> I think it is reasonable at least to cover all error handling paths),
+
+I hope so, too.
+
+I imagine that the likeliness annotation usage could depend also on
+software build parameters.
+Would you occasionally like to influence corresponding probabilities
+any more by system settings?
+
+
+> maybe I'm an _idiot_
+
+I hope not.
+
+
+> as some earlier unfriendly word said somewhere
+> so I'm too stupid to understand the implicit meaning of some document.
+
+Can the software development discussion be continued in more constructive ways?
+
+Regards,
+Markus
