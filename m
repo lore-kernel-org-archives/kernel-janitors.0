@@ -1,48 +1,53 @@
-From: Stefan Schmidt <stefan@datenfreihafen.org>
-Date: Tue, 13 Aug 2019 23:28:02 +0000
-Subject: Re: [PATCH] net: ieee802154: remove redundant assignment to rc
-Message-Id: <a3262e25-209d-209d-59fc-a09511fb9280@datenfreihafen.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Aug 2019 09:07:11 +0000
+Subject: [PATCH][V2] wimax/i2400m: remove debug containing bogus calculation of index
+Message-Id: <20190830090711.15300-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190813142818.15022-1-colin.king@canonical.com>
-In-Reply-To: <20190813142818.15022-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexander Aring <alex.aring@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello.
+From: Colin Ian King <colin.king@canonical.com>
 
-On 13.08.19 16:28, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable rc is initialized to a value that is never read and it is
-> re-assigned later. The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/ieee802154/socket.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
-> index dacbd58e1799..badc5cfe4dc6 100644
-> --- a/net/ieee802154/socket.c
-> +++ b/net/ieee802154/socket.c
-> @@ -1092,7 +1092,7 @@ static struct packet_type ieee802154_packet_type = {
->  
->  static int __init af_ieee802154_init(void)
->  {
-> -	int rc = -EINVAL;
-> +	int rc;
->  
->  	rc = proto_register(&ieee802154_raw_prot, 1);
->  	if (rc)
-> 
+The subtraction of the two pointers is automatically scaled by the
+size of the size of the object the pointers point to, so the division
+by sizeof(*i2400m->barker) is incorrect.  This has been broken since
+day one of the driver and is only debug, so remove the debug completely.
 
+Also move && in condition to clean up a checkpatch warning.
 
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
+Addresses-Coverity: ("Extra sizeof expression")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-regards
-Stefan Schmidt
+V2: completely remove debug, clean up checkpatch warning, change subject line
+
+---
+ drivers/net/wimax/i2400m/fw.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
+index 489cba9b284d..6c9a41bff2e0 100644
+--- a/drivers/net/wimax/i2400m/fw.c
++++ b/drivers/net/wimax/i2400m/fw.c
+@@ -397,14 +397,9 @@ int i2400m_is_boot_barker(struct i2400m *i2400m,
+ 
+ 	/* Short circuit if we have already discovered the barker
+ 	 * associated with the device. */
+-	if (i2400m->barker
+-	    && !memcmp(buf, i2400m->barker, sizeof(i2400m->barker->data))) {
+-		unsigned index = (i2400m->barker - i2400m_barker_db)
+-			/ sizeof(*i2400m->barker);
+-		d_printf(2, dev, "boot barker cache-confirmed #%u/%08x\n",
+-			 index, le32_to_cpu(i2400m->barker->data[0]));
++	if (i2400m->barker &&
++	    !memcmp(buf, i2400m->barker, sizeof(i2400m->barker->data)))
+ 		return 0;
+-	}
+ 
+ 	for (i = 0; i < i2400m_barker_db_used; i++) {
+ 		barker = &i2400m_barker_db[i];
+-- 
+2.20.1
