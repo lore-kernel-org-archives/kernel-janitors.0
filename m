@@ -1,38 +1,40 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Mon, 05 Aug 2019 21:49:19 +0000
-Subject: RE: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
-Message-Id: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D40F188@ORSMSX104.amr.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Aug 2019 18:15:23 +0000
+Subject: [PATCH] staging: exfat: remove redundant goto
+Message-Id: <20190830181523.13356-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190802155217.16996-1-colin.king@canonical.com>
-In-Reply-To: <20190802155217.16996-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Colin King
-> Sent: Friday, August 2, 2019 8:52 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
-> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH][net-next] ice: fix potential infinite loop
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The loop counter of a for-loop is a u8 however this is being compared to an
-> int upper bound and this can lead to an infinite loop if the upper bound is
-> greater than 255 since the loop counter will wrap back to zero. Fix this
-> potential issue by making the loop counter an int.
-> 
-> Addresses-Coverity: ("Infinite loop")
-> Fixes: c7aeb4d1b9bf ("ice: Disable VFs until reset is completed")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+The goto after a return is never executed, so it is redundant and can
+be removed.
+
+Addresses-Coverity: ("Structurally dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/exfat/exfat_super.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5b5c2ca8c9aa..5b3c4dfe0ecc 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -663,10 +663,8 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
+ 	/* search the file name for directories */
+ 	dentry = p_fs->fs_func->find_dir_entry(sb, &dir, &uni_name, num_entries,
+ 					       &dos_name, TYPE_ALL);
+-	if (dentry < -1) {
++	if (dentry < -1)
+ 		return FFS_NOTFOUND;
+-		goto out;
+-	}
+ 
+ 	fid->dir.dir = dir.dir;
+ 	fid->dir.size = dir.size;
+-- 
+2.20.1
