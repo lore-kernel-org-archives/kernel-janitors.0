@@ -1,31 +1,39 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 29 Aug 2019 01:22:41 +0000
-Subject: [PATCH -next] media: imx: remove unused including <linux/version.h>
-Message-Id: <20190829012241.133597-1-yuehaibing@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 31 Aug 2019 06:42:58 +0000
+Subject: [PATCH] media: seco-cec: Add a missing 'release_region()' in an error handling path
+Message-Id: <20190831064258.916-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Longerbeam <slongerbeam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: ek5.chimenti@gmail.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Remove including <linux/version.h> that don't need it.
+At the beginning of the probe function, we have a call to
+'request_muxed_region(BRA_SMB_BASE_ADDR, 7, "CEC00001")()'
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+A corresponding 'release_region()' is performed in the remove function but
+is lacking in the error handling path.
+
+Add it.
+
+Fixes: b03c2fb97adc ("media: add SECO cec driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/media/imx/imx-media-csc-scaler.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/platform/seco-cec/seco-cec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/media/imx/imx-media-csc-scaler.c b/drivers/staging/media/imx/imx-media-csc-scaler.c
-index de599af59ffc..2b635ebf62d6 100644
---- a/drivers/staging/media/imx/imx-media-csc-scaler.c
-+++ b/drivers/staging/media/imx/imx-media-csc-scaler.c
-@@ -8,7 +8,6 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
--#include <linux/version.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <video/imx-ipu-v3.h>
+diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/platform/seco-cec/seco-cec.c
+index 9cd60fe1867c..a86b6e8f9196 100644
+--- a/drivers/media/platform/seco-cec/seco-cec.c
++++ b/drivers/media/platform/seco-cec/seco-cec.c
+@@ -675,6 +675,7 @@ static int secocec_probe(struct platform_device *pdev)
+ err_delete_adapter:
+ 	cec_delete_adapter(secocec->cec_adap);
+ err:
++	release_region(BRA_SMB_BASE_ADDR, 7);
+ 	dev_err(dev, "%s device probe failed\n", dev_name(dev));
+ 
+ 	return ret;
+-- 
+2.20.1
