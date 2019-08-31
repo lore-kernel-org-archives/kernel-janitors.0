@@ -1,31 +1,43 @@
-From: Daniel Baluta <daniel.baluta@nxp.com>
-Date: Mon, 26 Aug 2019 13:23:07 +0000
-Subject: Re: [PATCH] ASoC: SOF: imx8: Fix an is IS_ERR() vs NULL check
-Message-Id: <17ba2fb20a06d3e167005db6a225ef68f6b78777.camel@nxp.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 31 Aug 2019 13:03:48 +0000
+Subject: [PATCH -next] scsi: smartpqi: remove set but not used variable 'ctrl_info'
+Message-Id: <20190831130348.20552-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826131855.GA6840@mwanda>
-In-Reply-To: <20190826131855.GA6840@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>, "broonie@kernel.org" <broonie@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>
+To: Don Brace <don.brace@microsemi.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Murthy Bhat <Murthy.Bhat@microsemi.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-T24gTW9uLCAyMDE5LTA4LTI2IGF0IDE2OjE4ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGUgZGV2aWNlX2xpbmtfYWRkKCkgZnVuY3Rpb24gb25seSByZXR1cm5zIE5VTEwgb24gZXJy
-b3IsIGl0IGRvZXNuJ3QNCj4gcmV0dXJuIGVycm9yIHBvaW50ZXJzLg0KPiANCj4gRml4ZXM6IDIw
-MmFjYzU2NWExZiAoIkFTb0M6IFNPRjogaW14OiBBZGQgaS5NWDggSFcgc3VwcG9ydCIpDQo+IFNp
-Z25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0K
-VGhhbmtzIERhbiEgTmljZSBjYXRjaC4NCg0KUmV2aWV3ZWQtYnk6IERhbmllbCBCYWx1dGEgPGRh
-bmllbC5iYWx1dGFAbnhwLmNvbT4NCg0KPiAtLS0NCj4gIHNvdW5kL3NvYy9zb2YvaW14L2lteDgu
-YyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
-bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mvc29mL2lteC9pbXg4LmMgYi9zb3Vu
-ZC9zb2Mvc29mL2lteC9pbXg4LmMNCj4gaW5kZXggZTUwMmY1ODQyMDdmLi40MWFkM2EzMTA4MDgg
-MTAwNjQ0DQo+IC0tLSBhL3NvdW5kL3NvYy9zb2YvaW14L2lteDguYw0KPiArKysgYi9zb3VuZC9z
-b2Mvc29mL2lteC9pbXg4LmMNCj4gQEAgLTIyNyw4ICsyMjcsOCBAQCBzdGF0aWMgaW50IGlteDhf
-cHJvYmUoc3RydWN0IHNuZF9zb2ZfZGV2ICpzZGV2KQ0KPiAgCQkJCQkJRExfRkxBR19TVEFURUxF
-U1MgfA0KPiAgCQkJCQkJRExfRkxBR19QTV9SVU5USU1FIHwNCj4gIAkJCQkJCURMX0ZMQUdfUlBN
-X0FDVElWRSk7DQo+IC0JCWlmIChJU19FUlIocHJpdi0+bGlua1tpXSkpIHsNCj4gLQkJCXJldCA9
-IFBUUl9FUlIocHJpdi0+bGlua1tpXSk7DQo+ICsJCWlmICghcHJpdi0+bGlua1tpXSkgew0KPiAr
-CQkJcmV0ID0gLUVOT01FTTsNCj4gIAkJCWRldl9wbV9kb21haW5fZGV0YWNoKHByaXYtPnBkX2Rl
-dltpXSwgZmFsc2UpOw0KPiAgCQkJZ290byBleGl0X3Vucm9sbF9wbTsNCj4gIAkJfQ0K
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/scsi/smartpqi/smartpqi_init.c: In function 'pqi_driver_version_show':
+drivers/scsi/smartpqi/smartpqi_init.c:6164:24: warning:
+ variable 'ctrl_info' set but not used [-Wunused-but-set-variable]
+
+commit 6d90615f1346 ("scsi: smartpqi: add sysfs entries") add it but never
+use, so remove it also variable 'shost'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/smartpqi/smartpqi_init.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index ea5409bebf57..b9e7dabee1e5 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -6160,12 +6160,6 @@ static ssize_t pqi_firmware_version_show(struct device *dev,
+ static ssize_t pqi_driver_version_show(struct device *dev,
+ 	struct device_attribute *attr, char *buffer)
+ {
+-	struct Scsi_Host *shost;
+-	struct pqi_ctrl_info *ctrl_info;
+-
+-	shost = class_to_shost(dev);
+-	ctrl_info = shost_to_hba(shost);
+-
+ 	return snprintf(buffer, PAGE_SIZE,
+ 		"%s\n", DRIVER_VERSION BUILD_TIMESTAMP);
+ }
