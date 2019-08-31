@@ -1,78 +1,36 @@
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-Date: Thu, 29 Aug 2019 14:53:20 +0000
-Subject: Re: [PATCH] staging: greybus: light: fix a couple double frees
-Message-Id: <m35zmgvx9b.fsf@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 31 Aug 2019 12:44:24 +0000
+Subject: [PATCH -next] scsi: ufs: Use kmemdup in ufshcd_read_string_desc()
+Message-Id: <20190831124424.18642-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190829122839.GA20116@mwanda>
-In-Reply-To: <20190829122839.GA20116@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Tomas Winkler <tomas.winkler@intel.com>, Subhash Jadavani <subhashj@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
-On Thu 29 Aug 2019 at 13:28, Dan Carpenter wrote:
-> The problem is in gb_lights_request_handler().  If we get a request to
-> change the config then we release the light with gb_lights_light_release()
-> and re-allocated it.  However, if the allocation fails part way through
-> then we call gb_lights_light_release() again.  This can lead to a couple
-> different double frees where we haven't cleared out the original values:
->
-> 	gb_lights_light_v4l2_unregister(light);
-> 	...
-> 	kfree(light->channels);
-> 	kfree(light->name);
->
-> I also made a small change to how we set "light->channels_count = 0;".
-> The original code handled this part fine and did not cause a use after
-> free but it was sort of complicated to read.
->
-> Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+Use kmemdup rather than duplicating its implementation
 
-Thanks so much for this, I was looking for some time at this and
-was half way to a much less elegant fix then yours.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/ufs/ufshcd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
-
-Cheers,
-    Rui
-
-> ---
->  drivers/staging/greybus/light.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-> index 010ae1e9c7fb..40680eaf3974 100644
-> --- a/drivers/staging/greybus/light.c
-> +++ b/drivers/staging/greybus/light.c
-> @@ -1098,21 +1098,21 @@ static void gb_lights_channel_release(struct gb_channel *channel)
->  static void gb_lights_light_release(struct gb_light *light)
->  {
->  	int i;
-> -	int count;
->
->  	light->ready = false;
->
-> -	count = light->channels_count;
-> -
->  	if (light->has_flash)
->  		gb_lights_light_v4l2_unregister(light);
-> +	light->has_flash = false;
->
-> -	for (i = 0; i < count; i++) {
-> +	for (i = 0; i < light->channels_count; i++)
->  		gb_lights_channel_release(&light->channels[i]);
-> -		light->channels_count--;
-> -	}
-> +	light->channels_count = 0;
-> +
->  	kfree(light->channels);
-> +	light->channels = NULL;
->  	kfree(light->name);
-> +	light->name = NULL;
->  }
->
->  static void gb_lights_release(struct gb_lights *glights)
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index acf298da054c..6d5e2f5d8468 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3309,12 +3309,11 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+ 		str[ret++] = '\0';
+ 
+ 	} else {
+-		str = kzalloc(uc_str->len, GFP_KERNEL);
++		str = kmemdup(uc_str, uc_str->len, GFP_KERNEL);
+ 		if (!str) {
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
+-		memcpy(str, uc_str, uc_str->len);
+ 		ret = uc_str->len;
+ 	}
+ out:
