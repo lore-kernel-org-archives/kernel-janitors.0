@@ -1,36 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Aug 2019 13:14:20 +0000
-Subject: Re: [PATCH] scsi: sym53c8xx_2: remove redundant assignment to retv
-Message-Id: <20190813131420.GS1974@kadam>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 31 Aug 2019 12:49:32 +0000
+Subject: [PATCH -next] PCI: Use GFP_ATOMIC in resource_alignment_store()
+Message-Id: <20190831124932.18759-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190809175932.10197-1-colin.king@canonical.com>
- <20190809181733.GQ5482@bombadil.infradead.org>
-In-Reply-To: <20190809181733.GQ5482@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 11:17:33AM -0700, Matthew Wilcox wrote:
-> On Fri, Aug 09, 2019 at 06:59:32PM +0100, Colin King wrote:
-> > Variable retv is initialized to a value that is never read and it
-> > is re-assigned later. The initialization is redundant and can be
-> > removed.
-> 
-> Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> Seems like a bit of a pointless class of warnings, given that gcc now
-> initialises all locals.  But I'm happy for James or Martin to pick it up.
+When allocating memory, the GFP_KERNEL cannot be used during the
+spin_lock period. It may cause scheduling when holding spin_lock.
 
-GCC doesn't initialize all locals.  Just some depending on the
-optimization level.  It's related to a bug that's several years old.
+Fixes: f13755318675 ("PCI: Move pci_[get|set]_resource_alignment_param() into their callers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pci/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This warning does find some bugs.  The common one is where people forget
-to check the return.
-
-	ret = something();
-	// blank line here indicates that ret is never checked again.
-
-regards,
-dan carpenter
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 484e35349565..0b5fc6736f3f 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6148,7 +6148,7 @@ static ssize_t resource_alignment_store(struct bus_type *bus,
+ 	spin_lock(&resource_alignment_lock);
+ 
+ 	kfree(resource_alignment_param);
+-	resource_alignment_param = kstrndup(buf, count, GFP_KERNEL);
++	resource_alignment_param = kstrndup(buf, count, GFP_ATOMIC);
+ 
+ 	spin_unlock(&resource_alignment_lock);
