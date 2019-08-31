@@ -1,60 +1,56 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 09 Aug 2019 19:32:36 +0000
-Subject: Re: [PATCH] USB: storage: isd200: remove redundant assignment to variable sendToTransport
-Message-Id: <b68ee52d-f6d6-c626-3ed7-9b590fb1ed1b@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 31 Aug 2019 07:17:51 +0000
+Subject: [PATCH] net: seeq: Fix the function used to release some memory in an error handling path
+Message-Id: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.44L0.1908091528040.1630-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1908091528040.1630-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: davem@davemloft.net, yuehaibing@huawei.com, tglx@linutronix.de, gregkh@linuxfoundation.org, tbogendoerfer@suse.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 09/08/2019 20:29, Alan Stern wrote:
-> On Fri, 9 Aug 2019, Colin King wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variable sendToTransport is being initialized with a value that is
->> never read and is being re-assigned a little later on. The assignment
->> is redundant and hence can be removed.
->>
->> Addresses-Coverity: ("Unused value")
-> 
-> Of what use is that tag to general kernel developers?
+In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
+a call to 'get_zeroed_page()' has been turned into a call to
+'dma_alloc_coherent()'. Only the remove function has been updated to turn
+the corresponding 'free_page()' into 'dma_free_attrs()'.
+The error hndling path of the probe function has not been updated.
 
-This is being informally used so that we can track which bugs are
-getting found with specific static analysis tools.  The public coverity
-bug reports also have a CID# number.  I'm working on range of coverity
-builds (different build configs) that are not public because I can crank
-multiple builds per day to find issues.
+Fix it now.
 
-Colin
+Rename the corresponding label to something more in line.
 
-> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/usb/storage/isd200.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
->> index 2b474d60b4db..28e1128d53a4 100644
->> --- a/drivers/usb/storage/isd200.c
->> +++ b/drivers/usb/storage/isd200.c
->> @@ -1511,7 +1511,7 @@ static int isd200_Initialization(struct us_data *us)
->>  
->>  static void isd200_ata_command(struct scsi_cmnd *srb, struct us_data *us)
->>  {
->> -	int sendToTransport = 1, orig_bufflen;
->> +	int sendToTransport, orig_bufflen;
->>  	union ata_cdb ataCdb;
->>  
->>  	/* Make sure driver was initialized */
-> 
-> Otherwise:
-> 
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> Alan Stern
-> 
+Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If 'dma_alloc_coherent()' fails, maybe the message in printk could be
+improved. The comment above may also not be relevant.
+---
+ drivers/net/ethernet/seeq/sgiseeq.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
+index 7a5e6c5abb57..276c7cae7cee 100644
+--- a/drivers/net/ethernet/seeq/sgiseeq.c
++++ b/drivers/net/ethernet/seeq/sgiseeq.c
+@@ -794,15 +794,16 @@ static int sgiseeq_probe(struct platform_device *pdev)
+ 		printk(KERN_ERR "Sgiseeq: Cannot register net device, "
+ 		       "aborting.\n");
+ 		err = -ENODEV;
+-		goto err_out_free_page;
++		goto err_out_free_attrs;
+ 	}
+ 
+ 	printk(KERN_INFO "%s: %s %pM\n", dev->name, sgiseeqstr, dev->dev_addr);
+ 
+ 	return 0;
+ 
+-err_out_free_page:
+-	free_page((unsigned long) sp->srings);
++err_out_free_attrs:
++	dma_free_attrs(&pdev->dev, sizeof(*sp->srings), sp->srings,
++		       sp->srings_dma, DMA_ATTR_NON_CONSISTENT);
+ err_out_free_dev:
+ 	free_netdev(dev);
+ 
+-- 
+2.20.1
