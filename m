@@ -1,40 +1,58 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 14 Aug 2019 07:21:04 +0000
-Subject: [PATCH v2 linux-next 1/2] drivers: dma: make mux_configure32 static
-Message-Id: <20190814072105.144107-2-maowenan@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 31 Aug 2019 10:00:24 +0000
+Subject: [PATCH] pxa168fb: Fix the function used to release some memory in an error handling path
+Message-Id: <20190831100024.3248-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190814072105.144107-1-maowenan@huawei.com>
-In-Reply-To: <20190814072105.144107-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.j.williams@intel.com, dmaengine@vger.kernel.org, vkoul@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+To: b.zolnierkie@samsung.com, lkundrak@v3.sk, yuehaibing@huawei.com
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-There is one sparse warning in drivers/dma/fsl-edma-common.c:
-drivers/dma/fsl-edma-common.c:93:6: warning: symbol 'mux_configure32'
-was not declared. Should it be static?
+In the probe function, some resources are allocated using 'dma_alloc_wc()',
+they should be released with 'dma_free_wc()', not 'dma_free_coherent()'.
 
-Fix it by setting mux_configure32() as static.
+We already use 'dma_free_wc()' in the remove function, but not in the
+error handling path of the probe function.
 
-Fixes: 232a7f18cf8ec ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Also, remove a useless 'PAGE_ALIGN()'. 'info->fix.smem_len' is already
+PAGE_ALIGNed.
+
+Fixes: 638772c7553f ("fb: add support of LCD display controller on pxa168/910 (base layer)")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/dma/fsl-edma-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The change about PAGE_ALIGN should probably be part of a separate commit.
+However, git history for this driver is really quiet. If you think it
+REALLY deserves a separate patch, either split it by yourself or axe this
+part of the patch. I won't bother resubmitting for this lonely cleanup.
+Hoping for your understanding.
+---
+ drivers/video/fbdev/pxa168fb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
-index 6d6d8a4e8e38..264c448de409 100644
---- a/drivers/dma/fsl-edma-common.c
-+++ b/drivers/dma/fsl-edma-common.c
-@@ -90,7 +90,7 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
- 	iowrite8(val8, addr + off);
- }
+diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
+index 1410f476e135..1fc50fc0694b 100644
+--- a/drivers/video/fbdev/pxa168fb.c
++++ b/drivers/video/fbdev/pxa168fb.c
+@@ -766,8 +766,8 @@ static int pxa168fb_probe(struct platform_device *pdev)
+ failed_free_clk:
+ 	clk_disable_unprepare(fbi->clk);
+ failed_free_fbmem:
+-	dma_free_coherent(fbi->dev, info->fix.smem_len,
+-			info->screen_base, fbi->fb_start_dma);
++	dma_free_wc(fbi->dev, info->fix.smem_len,
++		    info->screen_base, fbi->fb_start_dma);
+ failed_free_info:
+ 	kfree(info);
  
--void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
-+static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
- 		     u32 off, u32 slot, bool enable)
- {
- 	u32 val;
+@@ -801,7 +801,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 
+-	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
++	dma_free_wc(fbi->dev, info->fix.smem_len,
+ 		    info->screen_base, info->fix.smem_start);
+ 
+ 	clk_disable_unprepare(fbi->clk);
 -- 
 2.20.1
