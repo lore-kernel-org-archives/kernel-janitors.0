@@ -1,41 +1,39 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 27 Aug 2019 11:46:14 +0000
-Subject: [PATCH -next] tty: serial: linflexuart: Use DEFINE_SPINLOCK() for spinlock
-Message-Id: <20190827114614.102037-1-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 31 Aug 2019 07:39:03 +0000
+Subject: [PATCH][smartpqi-next] scsi: smartpqi: clean up indentation of a statement
+Message-Id: <20190831073903.7834-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-spinlock can be initialized automatically with DEFINE_SPINLOCK()
-rather than explicitly calling spin_lock_init().
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+There is a statement that is indented one level too deeply, remove
+the tab, re-join broken line and remove some empty lines.
+
+Addresses-Coverity: ("Indentation does not match nesting")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/fsl_linflexuart.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_linflexuart.c b/drivers/tty/serial/fsl_linflexuart.c
-index 26b9601a0952..8aea7822b731 100644
---- a/drivers/tty/serial/fsl_linflexuart.c
-+++ b/drivers/tty/serial/fsl_linflexuart.c
-@@ -136,7 +136,7 @@ MODULE_DEVICE_TABLE(of, linflex_dt_ids);
- #ifdef CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE
- static struct uart_port *earlycon_port;
- static bool linflex_earlycon_same_instance;
--static spinlock_t init_lock;
-+static DEFINE_SPINLOCK(init_lock);
- static bool during_init;
- 
- static struct {
-@@ -922,10 +922,6 @@ static int __init linflex_serial_init(void)
- 	if (ret)
- 		uart_unregister_driver(&linflex_reg);
- 
--#ifdef CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE
--	spin_lock_init(&init_lock);
--#endif
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index ea5409bebf57..652d48224942 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -2175,10 +2175,7 @@ static int pqi_update_scsi_devices(struct pqi_ctrl_info *ctrl_info)
+ 					device->aio_handle  						phys_lun_ext_entry->aio_handle;
+ 			}
 -
- 	return ret;
- }
+-				pqi_get_physical_disk_info(ctrl_info,
+-					device, id_phys);
+-
++			pqi_get_physical_disk_info(ctrl_info, device, id_phys);
+ 		} else {
+ 			memcpy(device->volume_id, log_lun_ext_entry->volume_id,
+ 				sizeof(device->volume_id));
+-- 
+2.20.1
