@@ -1,53 +1,38 @@
-From: Ira Weiny <ira.weiny@intel.com>
-Date: Wed, 25 Sep 2019 21:15:20 +0000
-Subject: Re: [PATCH V2] bnvdimm/namsepace: Don't set claim_class on error
-Message-Id: <20190925211520.GA12748@iweiny-DESK2.sc.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 01 Sep 2019 15:22:51 +0000
+Subject: [PATCH] autofs: remove redundant assignment to variable err
+Message-Id: <20190901152251.11374-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925184852.11707-1-ira.weiny@intel.com>
- <CAPcyv4jtYxggf-+ZvO5PN3KTMjiqqJrpj_V39_9axJZNpG_EQg@mail.gmail.com>
-In-Reply-To: <CAPcyv4jtYxggf-+ZvO5PN3KTMjiqqJrpj_V39_9axJZNpG_EQg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-nvdimm <linux-nvdimm@lists.01.org>
+To: Ian Kent <raven@themaw.net>, autofs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 12:36:35PM -0700, Dan Williams wrote:
-> On Wed, Sep 25, 2019 at 11:49 AM <ira.weiny@intel.com> wrote:
-> >
+From: Colin Ian King <colin.king@canonical.com>
 
-[snip]
+Variable err is being assigned a value that is never read and
+is being re-assigned a little later on. The assignment is redundant
+and hence can be removed.
 
-> >
-> > ---
-> > V1->V2
-> >         Add space after variable declaration...
-> 
-> Oh, was also hoping this would address s/bnvdimm/libnvdimm/ in the
-> patch subject.
+Addresses-Coverity: ("Ununsed value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/autofs/dev-ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yea...
-
-> 
-> Note, kernel-janitors is for minor spelling fixes and trivial changes
-> with no runtime side-effects that might otherwise fall through the
-> cracks. This has functional implications so is not a janitorial
-> change.
-
-Ah yea I just thought it was ok to let that list know what was going on...
-I've removed them from V3.  Sorry.
-
-> 
-> One more comment below...
-> 
-
-[snip]
-
-> > -
-> 
-> Since this effectively replaces Dan's patch can you respin without
-> that baseline, and just give Dan credit with a Reported-by?
-
-V3 sent.
-
-Ira
+diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+index a3cdb0036c5d..65d84b4d4464 100644
+--- a/fs/autofs/dev-ioctl.c
++++ b/fs/autofs/dev-ioctl.c
+@@ -422,7 +422,7 @@ static int autofs_dev_ioctl_requester(struct file *fp,
+ 	struct autofs_info *ino;
+ 	struct path path;
+ 	dev_t devid;
+-	int err = -ENOENT;
++	int err;
+ 
+ 	/* param->path has been checked in validate_dev_ioctl() */
+ 
+-- 
+2.20.1
