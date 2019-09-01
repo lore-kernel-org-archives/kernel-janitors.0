@@ -1,37 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 26 Sep 2019 12:50:57 +0000
-Subject: [PATCH] staging: rtl8192e: clean up indentation issue
-Message-Id: <20190926125057.16158-1-colin.king@canonical.com>
+From: David Miller <davem@redhat.com>
+Date: Sun, 01 Sep 2019 19:13:16 +0000
+Subject: Re: [PATCH net-next] net: hns3: remove set but not used variable 'qos'
+Message-Id: <20190901.121316.444864364160353651.davem@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190831122911.181336-1-yuehaibing@huawei.com>
+In-Reply-To: <20190831122911.181336-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Colin Ian King <colin.king@canonical.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, linyunsheng@huawei.com, liuzhongzhu@huawei.com, huangguangbin2@huawei.com, lipeng321@huawei.com, tanhuazhong@huawei.com, shenjian15@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, hulkci@huawei.com
 
-From: Colin Ian King <colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 31 Aug 2019 12:29:11 +0000
 
-The RT_TRACE is indented incorrectly, add in the missing tabs.
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c: In function 'hclge_restore_vlan_table':
+> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:8016:18: warning:
+>  variable 'qos' set but not used [-Wunused-but-set-variable]
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 70a214903da9 ("net: hns3: reduce the parameters of some functions")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index f932cb15e4e5..b08712a9c029 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -715,8 +715,8 @@ void rtl92e_set_wireless_mode(struct net_device *dev, u8 wireless_mode)
- 	if ((wireless_mode = WIRELESS_MODE_N_24G) ||
- 	    (wireless_mode = WIRELESS_MODE_N_5G)) {
- 		priv->rtllib->pHTInfo->bEnableHT = 1;
--	RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 1\n",
--		 __func__, wireless_mode);
-+		RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 1\n",
-+			 __func__, wireless_mode);
- 	} else {
- 		priv->rtllib->pHTInfo->bEnableHT = 0;
- 		RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 0\n",
--- 
-2.20.1
+Applied.
