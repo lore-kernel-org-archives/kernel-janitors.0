@@ -1,28 +1,38 @@
-From: =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date: Tue, 03 Sep 2019 13:59:32 +0000
-Subject: Re: [PATCH] gfs2: Delete an unnecessary check before brelse()
-Message-Id: <CAHpGcMKEFaZBRNnt1edrvBMS6VUXs5hMdQ2BdNBE3ssgkmDoww@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 01 Sep 2019 15:52:05 +0000
+Subject: [PATCH] netlabel: remove redundant assignment to pointer iter
+Message-Id: <20190901155205.16877-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9250af4a-993c-e86e-678c-acbd59b0861a@web.de>
-In-Reply-To: <9250af4a-993c-e86e-678c-acbd59b0861a@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: cluster-devel <cluster-devel@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Di., 3. Sept. 2019 um 15:21 Uhr schrieb Markus Elfring
-<Markus.Elfring@web.de>:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 3 Sep 2019 15:10:05 +0200
->
-> The brelse() function tests whether its argument is NULL
-> and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks. The same applies to brelse() in gfs2_dir_no_add (which Coccinelle
-apparently missed), so let me fix that as well.
+Pointer iter is being initialized with a value that is never read and
+is being re-assigned a little later on. The assignment is redundant
+and hence can be removed.
 
-Andreas
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netlabel/netlabel_kapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 2b0ef55cf89e..409a3ae47ce2 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -607,7 +607,7 @@ static struct netlbl_lsm_catmap *_netlbl_catmap_getnode(
+  */
+ int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap, u32 offset)
+ {
+-	struct netlbl_lsm_catmap *iter = catmap;
++	struct netlbl_lsm_catmap *iter;
+ 	u32 idx;
+ 	u32 bit;
+ 	NETLBL_CATMAP_MAPTYPE bitmap;
+-- 
+2.20.1
