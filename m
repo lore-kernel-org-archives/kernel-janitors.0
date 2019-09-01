@@ -1,41 +1,54 @@
-From: Luciano Coelho <luciano.coelho@intel.com>
-Date: Wed, 18 Sep 2019 13:17:02 +0000
-Subject: Re: [PATCH net] iwlwifi: add dependency of THERMAL with IWLMVM
-Message-Id: <d135b9ba7900c28b3d11560666a4790e015490a2.camel@intel.com>
+From: walter harms <wharms@bfs.de>
+Date: Sun, 01 Sep 2019 13:04:19 +0000
+Subject: Re: [PATCH -next] scsi: smartpqi: remove set but not used variable 'ctrl_info'
+Message-Id: <5D6BC1D3.7040605@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190918122815.155657-1-maowenan@huawei.com>
-         <875zlpbvks.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <875zlpbvks.fsf@kamboji.qca.qualcomm.com>
+References: <20190831130348.20552-1-yuehaibing@huawei.com>
+In-Reply-To: <20190831130348.20552-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Mao Wenan <maowenan@huawei.com>
-Cc: johannes.berg@intel.com, emmanuel.grumbach@intel.com, linuxwifi@intel.com, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2019-09-18 at 16:08 +0300, Kalle Valo wrote:
-> Mao Wenan <maowenan@huawei.com> writes:
+
+
+Am 31.08.2019 15:03, schrieb YueHaibing:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> > If CONFIG_IWLMVM=y, CONFIG_THERMAL=n, below error can be found:
-> > drivers/net/wireless/intel/iwlwifi/mvm/fw.o: In function `iwl_mvm_up':
-> > fw.c:(.text+0x2c26): undefined reference to `iwl_mvm_send_temp_report_ths_cmd'
-> > make: *** [vmlinux] Error 1
-> > 
-> > After commit 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal
-> > monitoring regardless of CONFIG_THERMAL"), iwl_mvm_up()
-> > calls iwl_mvm_send_temp_report_ths_cmd(), but this function
-> > is under CONFIG_THERMAL, which is depended on CONFIG_THERMAL.
-> > 
-> > Fixes: 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal monitoring regardless of CONFIG_THERMAL")
-> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> drivers/scsi/smartpqi/smartpqi_init.c: In function 'pqi_driver_version_show':
+> drivers/scsi/smartpqi/smartpqi_init.c:6164:24: warning:
+>  variable 'ctrl_info' set but not used [-Wunused-but-set-variable]
 > 
-> Luca, should I apply this directly to wireless-drivers?
+> commit 6d90615f1346 ("scsi: smartpqi: add sysfs entries") add it but never
+> use, so remove it also variable 'shost'
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/scsi/smartpqi/smartpqi_init.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+> index ea5409bebf57..b9e7dabee1e5 100644
+> --- a/drivers/scsi/smartpqi/smartpqi_init.c
+> +++ b/drivers/scsi/smartpqi/smartpqi_init.c
+> @@ -6160,12 +6160,6 @@ static ssize_t pqi_firmware_version_show(struct device *dev,
+>  static ssize_t pqi_driver_version_show(struct device *dev,
+>  	struct device_attribute *attr, char *buffer)
+>  {
+> -	struct Scsi_Host *shost;
+> -	struct pqi_ctrl_info *ctrl_info;
+> -
+> -	shost = class_to_shost(dev);
+> -	ctrl_info = shost_to_hba(shost);
+> -
+>  	return snprintf(buffer, PAGE_SIZE,
+>  		"%s\n", DRIVER_VERSION BUILD_TIMESTAMP);
+>  }
+> 
 
-No, this patch defeats the point of the patch it fixes.
+so, only snprintf() is left. That begs an other question:
+Is that function need at all or can it be replaced with snprintf() ?
 
-We have a proper fix already internally, which I haven't sent out yet,
-that moves a couple of #ifdef's around to solve the issue.  I'll send
-the patch in a sec.
-
---
-Cheers,
-Luca.
+re,
+ wh
