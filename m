@@ -1,36 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 11:19:04 +0000
-Subject: [PATCH] HID: alps: clean up indentation issue
-Message-Id: <20190925111904.8900-1-colin.king@canonical.com>
+From: David Miller <davem@redhat.com>
+Date: Sun, 01 Sep 2019 19:12:32 +0000
+Subject: Re: [PATCH][next] net: hns3: remove redundant assignment to pointer reg_info
+Message-Id: <20190901.121232.2071064498490409022.davem@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190831072949.7505-1-colin.king@canonical.com>
+In-Reply-To: <20190831072949.7505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, tanhuazhong@huawei.com, liuzhongzhu@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 31 Aug 2019 08:29:49 +0100
 
-There is an if statement that is indented one level too deeply,
-remove the extraneous tab.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer reg_info is being initialized with a value that is never read and
+> is being re-assigned a little later on. The assignment is redundant
+> and hence can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hid/hid-alps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-index ae79a7c66737..280f1962914b 100644
---- a/drivers/hid/hid-alps.c
-+++ b/drivers/hid/hid-alps.c
-@@ -525,7 +525,7 @@ static int u1_init(struct hid_device *hdev, struct alps_dev *pri_data)
- 
- 	ret = u1_read_write_register(hdev, ADDRESS_U1_NUM_SENS_Y,
- 			&sen_line_num_y, 0, true);
--		if (ret < 0) {
-+	if (ret < 0) {
- 		dev_err(&hdev->dev, "failed U1_NUM_SENS_Y (%d)\n", ret);
- 		goto exit;
- 	}
--- 
-2.20.1
+Applied.
