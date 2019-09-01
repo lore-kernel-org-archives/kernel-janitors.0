@@ -1,53 +1,71 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 01 Sep 2019 16:04:24 +0000
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 01 Sep 2019 17:20:25 +0000
 Subject: Re: [PATCH] netlabel: remove redundant assignment to pointer iter
-Message-Id: <CAHC9VhSVKEJ-EBAry5fVN3Ux22occGQ5jxbFBecMsR+q7+UT5A@mail.gmail.com>
+Message-Id: <b03aff72-6e61-e196-e81a-373f50c9fbc9@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190901155205.16877-1-colin.king@canonical.com>
-In-Reply-To: <20190901155205.16877-1-colin.king@canonical.com>
+ <CAHC9VhSVKEJ-EBAry5fVN3Ux22occGQ5jxbFBecMsR+q7+UT5A@mail.gmail.com>
+In-Reply-To: <CAHC9VhSVKEJ-EBAry5fVN3Ux22occGQ5jxbFBecMsR+q7+UT5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Paul Moore <paul@paul-moore.com>, Colin King <colin.king@canonical.com>
 Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Sep 1, 2019 at 11:52 AM Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+Le 01/09/2019 à 18:04, Paul Moore a écrit :
+> On Sun, Sep 1, 2019 at 11:52 AM Colin King <colin.king@canonical.com> wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Pointer iter is being initialized with a value that is never read and
+>> is being re-assigned a little later on. The assignment is redundant
+>> and hence can be removed.
+>>
+>> Addresses-Coverity: ("Unused value")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   net/netlabel/netlabel_kapi.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch doesn't seem correct to me, at least not in current form.
+> At the top of _netlbl_catmap_getnode() is a check to see if iter is
+> NULL (as well as a few other checks on iter after that); this patch
+> would break that code.
 >
-> Pointer iter is being initialized with a value that is never read and
-> is being re-assigned a little later on. The assignment is redundant
-> and hence can be removed.
+> Perhaps we can get rid of the iter/catmap assignment when we define
+> iter, but I don't think this patch is the right way to do it.
 >
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/netlabel/netlabel_kapi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+>> index 2b0ef55cf89e..409a3ae47ce2 100644
+>> --- a/net/netlabel/netlabel_kapi.c
+>> +++ b/net/netlabel/netlabel_kapi.c
+>> @@ -607,7 +607,7 @@ static struct netlbl_lsm_catmap *_netlbl_catmap_getnode(
+>>    */
+>>   int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap, u32 offset)
+>>   {
+>> -       struct netlbl_lsm_catmap *iter = catmap;
+>> +       struct netlbl_lsm_catmap *iter;
+>>          u32 idx;
+>>          u32 bit;
+>>          NETLBL_CATMAP_MAPTYPE bitmap;
+>> --
+>> 2.20.1
+>
 
-This patch doesn't seem correct to me, at least not in current form.
-At the top of _netlbl_catmap_getnode() is a check to see if iter is
-NULL (as well as a few other checks on iter after that); this patch
-would break that code.
+Hi,
 
-Perhaps we can get rid of the iter/catmap assignment when we define
-iter, but I don't think this patch is the right way to do it.
+'iter' is reassigned a value between the declaration and the NULL test, so removing the first initialization looks good to me.
+int  netlbl_catmap_walk(struct  netlbl_lsm_catmap  *catmap,  u32  offset)
+{
+|
 
-> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-> index 2b0ef55cf89e..409a3ae47ce2 100644
-> --- a/net/netlabel/netlabel_kapi.c
-> +++ b/net/netlabel/netlabel_kapi.c
-> @@ -607,7 +607,7 @@ static struct netlbl_lsm_catmap *_netlbl_catmap_getnode(
->   */
->  int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap, u32 offset)
->  {
-> -       struct netlbl_lsm_catmap *iter = catmap;
-> +       struct netlbl_lsm_catmap *iter;
->         u32 idx;
->         u32 bit;
->         NETLBL_CATMAP_MAPTYPE bitmap;
-> --
-> 2.20.1
+	struct  netlbl_lsm_catmap  *iter  =  catmap;
+	u32  idx;
+	u32  bit;
+	NETLBL_CATMAP_MAPTYPE  bitmap;
 
--- 
-paul moore
-www.paul-moore.com
+	iter  =  _netlbl_catmap_getnode(&catmap,  offset,  _CM_F_WALK,  0);			<-- Here
+	if  (iter  =  NULL)
+		return  -ENOENT; This is dead code since commit d960a6184a92 ("netlabel: fix the catmap walking functions") where the call to _netlbl_catmap_getnode has been introduced.
+
+Just my 2c,
+
+CJ|
