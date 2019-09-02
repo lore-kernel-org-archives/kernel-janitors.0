@@ -1,54 +1,82 @@
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 04 Sep 2019 07:48:30 +0000
-Subject: Re: [PATCH] fs-udf: Delete an unnecessary check before brelse()
-Message-Id: <20190904074830.GD8225@quack2.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Sep 2019 15:10:59 +0000
+Subject: [PATCH][V2][cifs-next] cifs: fix dereference on ses before it is null checked
+Message-Id: <20190902151059.22088-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a254c1d1-0109-ab51-c67a-edc5c1c4b4cd@web.de>
-In-Reply-To: <a254c1d1-0109-ab51-c67a-edc5c1c4b4cd@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue 03-09-19 21:15:58, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 3 Sep 2019 21:12:09 +0200
-> 
-> The brelse() function tests whether its argument is NULL
-> and then returns immediately.
-> Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch. Added to my tree.
+The assignment of pointer server dereferences pointer ses, however,
+this dereference occurs before ses is null checked and hence we
+have a potential null pointer dereference.  Fix this by only
+dereferencing ses after it has been null checked.
 
-								Honza
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 2808c6639104 ("cifs: add new debugging macro cifs_server_dbg")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2pdu.c   | 11 ++++++++---
+ fs/cifs/transport.c |  3 ++-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-> ---
->  fs/udf/super.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 56da1e1680ea..0cd0be642a2f 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -273,8 +273,7 @@ static void udf_sb_free_bitmap(struct udf_bitmap *bitmap)
->  	int nr_groups = bitmap->s_nr_groups;
-> 
->  	for (i = 0; i < nr_groups; i++)
-> -		if (bitmap->s_block_bitmap[i])
-> -			brelse(bitmap->s_block_bitmap[i]);
-> +		brelse(bitmap->s_block_bitmap[i]);
-> 
->  	kvfree(bitmap);
->  }
-> --
-> 2.23.0
-> 
-> 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index dbc6ef50dd45..0e92983de0b7 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2759,8 +2759,10 @@ SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon, u64 persistent_fid,
+ 	else
+ 		return -EIO;
+ 
++	if (!ses)
++		return -EIO;
+ 	server = ses->server;
+-	if (!ses || !(server))
++	if (!server)
+ 		return -EIO;
+ 
+ 	if (smb3_encryption_required(tcon))
+@@ -3058,13 +3060,16 @@ query_info(const unsigned int xid, struct cifs_tcon *tcon,
+ 	int rc = 0;
+ 	int resp_buftype = CIFS_NO_BUFFER;
+ 	struct cifs_ses *ses = tcon->ses;
+-	struct TCP_Server_Info *server = ses->server;
++	struct TCP_Server_Info *server;
+ 	int flags = 0;
+ 	bool allocated = false;
+ 
+ 	cifs_dbg(FYI, "Query Info\n");
+ 
+-	if (!ses || !(server))
++	if (!ses)
++		return -EIO;
++	server = ses->server;
++	if (!server)
+ 		return -EIO;
+ 
+ 	if (smb3_encryption_required(tcon))
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index 0d60bd2f4dca..a90bd4d75b4d 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -1242,12 +1242,13 @@ SendReceive(const unsigned int xid, struct cifs_ses *ses,
+ 	struct kvec iov = { .iov_base = in_buf, .iov_len = len };
+ 	struct smb_rqst rqst = { .rq_iov = &iov, .rq_nvec = 1 };
+ 	struct cifs_credits credits = { .value = 1, .instance = 0 };
+-	struct TCP_Server_Info *server = ses->server;
++	struct TCP_Server_Info *server;
+ 
+ 	if (ses = NULL) {
+ 		cifs_dbg(VFS, "Null smb session\n");
+ 		return -EIO;
+ 	}
++	server = ses->server;
+ 	if (server = NULL) {
+ 		cifs_dbg(VFS, "Null tcp session\n");
+ 		return -EIO;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
