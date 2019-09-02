@@ -1,46 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 14:30:12 +0000
-Subject: [PATCH] mm/shmem.c: make array 'values' static const, makes object smaller
-Message-Id: <20190906143012.28698-1-colin.king@canonical.com>
+Date: Mon, 02 Sep 2019 18:43:34 +0000
+Subject: [PATCH][next] usb: cdns3: remove redundant assignment to ret on error exit path
+Message-Id: <20190902184334.27406-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Laszczak <pawell@cadence.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array 'values' on the stack but instead make it
-static const. Makes the object code smaller by 111 bytes.
+In the case where an allocation fails for priv_ep ret is
+assigned -ENOMEM and the code exits via the exit path 'err'.
+The exit path returns -ENOMEM without using variable ret, so
+the assingment is redundant and can be removed.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 108612	  11169	    512	 120293	  1d5e5	mm/shmem.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
- 108437	  11233	    512	 120182	  1d576	mm/shmem.o
-
-(gcc version 9.2.1, amd64)
-
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/cdns3/gadget.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 77d2df011c0e..30e1de87bdca 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3934,7 +3934,7 @@ int __init shmem_init(void)
- static ssize_t shmem_enabled_show(struct kobject *kobj,
- 		struct kobj_attribute *attr, char *buf)
- {
--	int values[] = {
-+	static const int values[] = {
- 		SHMEM_HUGE_ALWAYS,
- 		SHMEM_HUGE_WITHIN_SIZE,
- 		SHMEM_HUGE_ADVISE,
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index 0eb3022838d6..de0e14a4fb9f 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -2447,10 +2447,8 @@ static int cdns3_init_eps(struct cdns3_device *priv_dev)
+ 
+ 		priv_ep = devm_kzalloc(priv_dev->dev, sizeof(*priv_ep),
+ 				       GFP_KERNEL);
+-		if (!priv_ep) {
+-			ret = -ENOMEM;
++		if (!priv_ep)
+ 			goto err;
+-		}
+ 
+ 		/* set parent of endpoint object */
+ 		priv_ep->cdns3_dev = priv_dev;
 -- 
 2.20.1
