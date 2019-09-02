@@ -1,36 +1,33 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Sat, 14 Sep 2019 15:23:07 +0000
-Subject: Re: Problems during compiling in kernel modules
-Message-Id: <cffb789d-1464-c194-bfc4-bc05a5ac9db7@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 02 Sep 2019 14:38:50 +0000
+Subject: [PATCH] platform/x86: asus-wmi: Fix condition in charge_threshold_store()
+Message-Id: <20190902143850.GA607@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190913173821.GA5986@SARKAR> <20190913180103.GB5986@SARKAR>
- <ff4b5c99-086b-4456-fb2b-643a6caefcee@infradead.org>
- <20190914063136.GA23166@SARKAR>
-In-Reply-To: <20190914063136.GA23166@SARKAR>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rohit Sarkar <rohitsarkar5398@gmail.com>
-Cc: linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 9/13/19 11:31 PM, Rohit Sarkar wrote:
-> On Fri, Sep 13, 2019 at 03:36:03PM -0700, Randy Dunlap wrote:
->> Hi,
->> It works for me.  Do you have a kernel .config file?
->> Does it set/enable CONFIG_IIO and some/any/all drivers in drivers/iio/accel/ ?
->>
->> If you don't have a kernel .config file, I don't expect it to work.
->> -- 
->> ~Randy
-> 
-> Hey Randy,
-> I do have a .config file but no it does not set "CONFIG_IIO".
-> The weird thing is when I built the kernel initially the object files
-> for drivers/iio/accel/ were generated. 
-> That's strange right?
+This error handling is reversed so we return early.
 
-Sounds like you now have a different .config file and that the earlier
-.config file did enable CONFIG_IIO.
+Fixes: 84d8e80b0a36 ("platform/x86: asus-wmi: Refactor charge_threshold_store()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/x86/asus-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 14467748b343..848b23764fc3 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2068,7 +2068,7 @@ static ssize_t charge_threshold_store(struct device *dev,
+ 		return -EINVAL;
+ 
+ 	ret = asus_wmi_set_devstate(ASUS_WMI_CHARGE_THRESHOLD, value, &rv);
+-	if (!ret)
++	if (ret)
+ 		return ret;
+ 
+ 	if (rv != 1)
 -- 
-~Randy
+2.20.1
