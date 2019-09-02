@@ -1,52 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Sep 2019 14:50:35 +0000
-Subject: [PATCH][usb-next] usb: cdns3: fix missing assignment of ret before error check on ret
-Message-Id: <20190902145035.18200-1-colin.king@canonical.com>
+From: Pawel Laszczak <pawell@cadence.com>
+Date: Mon, 02 Sep 2019 15:29:32 +0000
+Subject: RE: [PATCH][usb-next] usb: cdns3: fix missing assignment of ret before error check on ret
+Message-Id: <BYAPR07MB4709DF377BFBD54FD6BF88B3DDBE0@BYAPR07MB4709.namprd07.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190902145035.18200-1-colin.king@canonical.com>
+In-Reply-To: <20190902145035.18200-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the check on a non-zero return code in ret is false because
-ret has been initialized to zero.  I believe that ret should be assigned
-to the return from the call to readl_poll_timeout_atomic before the
-check on ret.  Since ret is being re-assinged the original initialization
-of ret to zero can be removed.
-
-Addresses-Coverity: ("'Constant' variable guards dead code")
-Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/cdns3/gadget.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 3094ad65ffc9..0eb3022838d6 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -2154,7 +2154,7 @@ int __cdns3_gadget_ep_clear_halt(struct cdns3_endpoint *priv_ep)
- {
- 	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
- 	struct usb_request *request;
--	int ret = 0;
-+	int ret;
- 	int val;
- 
- 	trace_cdns3_halt(priv_ep, 0, 0);
-@@ -2162,8 +2162,8 @@ int __cdns3_gadget_ep_clear_halt(struct cdns3_endpoint *priv_ep)
- 	writel(EP_CMD_CSTALL | EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
- 
- 	/* wait for EPRST cleared */
--	readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
--				  !(val & EP_CMD_EPRST), 1, 100);
-+	ret = readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
-+					!(val & EP_CMD_EPRST), 1, 100);
- 	if (ret)
- 		return -EINVAL;
- 
--- 
-2.20.1
+SGkgQ29saW4NCg0KPg0KPkZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNh
+bC5jb20+DQo+DQo+Q3VycmVudGx5IHRoZSBjaGVjayBvbiBhIG5vbi16ZXJvIHJldHVybiBjb2Rl
+IGluIHJldCBpcyBmYWxzZSBiZWNhdXNlDQo+cmV0IGhhcyBiZWVuIGluaXRpYWxpemVkIHRvIHpl
+cm8uICBJIGJlbGlldmUgdGhhdCByZXQgc2hvdWxkIGJlIGFzc2lnbmVkDQo+dG8gdGhlIHJldHVy
+biBmcm9tIHRoZSBjYWxsIHRvIHJlYWRsX3BvbGxfdGltZW91dF9hdG9taWMgYmVmb3JlIHRoZQ0K
+PmNoZWNrIG9uIHJldC4gIFNpbmNlIHJldCBpcyBiZWluZyByZS1hc3NpbmdlZCB0aGUgb3JpZ2lu
+YWwgaW5pdGlhbGl6YXRpb24NCj5vZiByZXQgdG8gemVybyBjYW4gYmUgcmVtb3ZlZC4NCg0KVGhh
+bmtzIHlvdSBmb3IgbGV0dGluZyBtZSBrbm93LiANCkZvcnR1bmF0ZWx5IHRoYXQncyBub3QgYSBj
+cml0aWNhbCBidWcgYW5kIGhhcyBubyBpbXBhY3QgZm9yIGRyaXZlci4gDQpJIHdpbGwgY29ycmVj
+dCBpdC4gIA0KDQpDaGVlcnMNClBhd2VsbA0KDQo+DQo+QWRkcmVzc2VzLUNvdmVyaXR5OiAoIidD
+b25zdGFudCcgdmFyaWFibGUgZ3VhcmRzIGRlYWQgY29kZSIpDQo+Rml4ZXM6IDc3MzNmNmMzMmUz
+NiAoInVzYjogY2RuczM6IEFkZCBDYWRlbmNlIFVTQjMgRFJEIERyaXZlciIpDQo+U2lnbmVkLW9m
+Zi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4tLS0NCj4g
+ZHJpdmVycy91c2IvY2RuczMvZ2FkZ2V0LmMgfCA2ICsrKy0tLQ0KPiAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPg0KPmRpZmYgLS1naXQgYS9kcml2ZXJz
+L3VzYi9jZG5zMy9nYWRnZXQuYyBiL2RyaXZlcnMvdXNiL2NkbnMzL2dhZGdldC5jDQo+aW5kZXgg
+MzA5NGFkNjVmZmM5Li4wZWIzMDIyODM4ZDYgMTAwNjQ0DQo+LS0tIGEvZHJpdmVycy91c2IvY2Ru
+czMvZ2FkZ2V0LmMNCj4rKysgYi9kcml2ZXJzL3VzYi9jZG5zMy9nYWRnZXQuYw0KPkBAIC0yMTU0
+LDcgKzIxNTQsNyBAQCBpbnQgX19jZG5zM19nYWRnZXRfZXBfY2xlYXJfaGFsdChzdHJ1Y3QgY2Ru
+czNfZW5kcG9pbnQgKnByaXZfZXApDQo+IHsNCj4gCXN0cnVjdCBjZG5zM19kZXZpY2UgKnByaXZf
+ZGV2ID0gcHJpdl9lcC0+Y2RuczNfZGV2Ow0KPiAJc3RydWN0IHVzYl9yZXF1ZXN0ICpyZXF1ZXN0
+Ow0KPi0JaW50IHJldCA9IDA7DQo+KwlpbnQgcmV0Ow0KPiAJaW50IHZhbDsNCj4NCj4gCXRyYWNl
+X2NkbnMzX2hhbHQocHJpdl9lcCwgMCwgMCk7DQo+QEAgLTIxNjIsOCArMjE2Miw4IEBAIGludCBf
+X2NkbnMzX2dhZGdldF9lcF9jbGVhcl9oYWx0KHN0cnVjdCBjZG5zM19lbmRwb2ludCAqcHJpdl9l
+cCkNCj4gCXdyaXRlbChFUF9DTURfQ1NUQUxMIHwgRVBfQ01EX0VQUlNULCAmcHJpdl9kZXYtPnJl
+Z3MtPmVwX2NtZCk7DQo+DQo+IAkvKiB3YWl0IGZvciBFUFJTVCBjbGVhcmVkICovDQo+LQlyZWFk
+bF9wb2xsX3RpbWVvdXRfYXRvbWljKCZwcml2X2Rldi0+cmVncy0+ZXBfY21kLCB2YWwsDQo+LQkJ
+CQkgICEodmFsICYgRVBfQ01EX0VQUlNUKSwgMSwgMTAwKTsNCj4rCXJldCA9IHJlYWRsX3BvbGxf
+dGltZW91dF9hdG9taWMoJnByaXZfZGV2LT5yZWdzLT5lcF9jbWQsIHZhbCwNCj4rCQkJCQkhKHZh
+bCAmIEVQX0NNRF9FUFJTVCksIDEsIDEwMCk7DQo+IAlpZiAocmV0KQ0KPiAJCXJldHVybiAtRUlO
+VkFMOw0KPg0KDQo+LS0NCj4yLjIwLjENCg0K
