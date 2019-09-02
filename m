@@ -1,20 +1,56 @@
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date: Sun, 22 Sep 2019 03:18:43 +0000
-Subject: Re: [PATCH] qede: qede_fp: simplify a bit 'qede_rx_build_skb()'
-Message-Id: <20190921201843.12d21abf@cakuba.netronome.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Sep 2019 09:34:34 +0000
+Subject: [PATCH][V2] ocfs2: remove deadcode on variable tmp_oh check
+Message-Id: <20190902093434.27739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920045656.3725-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190920045656.3725-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 06:56:56 +0200, Christophe JAILLET wrote:
-> Use 'skb_put_data()' instead of rewritting it.
-> This improves readability.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+At the end of ocfs2_inode_lock_tracker tmp_oh is true because an
+earlier check on tmp_oh being false returns out of the function.
+Since tmp_oh is true, the function will always return 1 so remove
+the redundant check and return of 0.
+
+Also update description in comment, return -EINVAL and not -1.
+
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Fix typo of function name in description.
+    Update description in comment as noted by Joseph Qi
+
+---
+ fs/ocfs2/dlmglue.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index ad594fef2ab0..640eee2bb903 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2626,7 +2626,8 @@ void ocfs2_inode_unlock(struct inode *inode,
+  *
+  * return < 0 on error, return = 0 if there's no lock holder on the stack
+  * before this call, return = 1 if this call would be a recursive locking.
+- * return = -1 if this lock attempt will cause an upgrade which is forbidden.
++ * return = -EINVAL if this lock attempt will cause an upgrade which is
++ * forbidden.
+  *
+  * When taking lock levels into account,we face some different situations.
+  *
+@@ -2712,7 +2713,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			return status;
+ 		}
+ 	}
+-	return tmp_oh ? 1 : 0;
++	return 1;
+ }
+ 
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
+-- 
+2.20.1
