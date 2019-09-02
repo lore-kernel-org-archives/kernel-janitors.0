@@ -1,85 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Sep 2019 14:57:01 +0000
-Subject: Re: [PATCH] fs/qnx: Delete unnecessary checks before brelse()
-Message-Id: <20190904145700.GB3115@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Sep 2019 18:26:37 +0000
+Subject: [PATCH][next] net/sched: cbs: remove redundant assignment to variable port_rate
+Message-Id: <20190902182637.22167-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <056c8b8e-abaa-8856-4953-118d14048ddc@web.de>
- <21774224.cEpxz9ejUk@alarsen.net>
-In-Reply-To: <21774224.cEpxz9ejUk@alarsen.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anders Larsen <al@alarsen.net>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Deepa Dinamani <deepa.kernel@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeff Layton <jlayton@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 07:27:22PM +0200, Anders Larsen wrote:
-> On Tuesday, 2019-09-03 19:20 Markus Elfring wrote:
-> > diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-> > index 345db56c98fd..083170541add 100644
-> > --- a/fs/qnx6/inode.c
-> > +++ b/fs/qnx6/inode.c
-> > @@ -472,10 +472,8 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
-> >  out1:
-> >  	iput(sbi->inodes);
-> >  out:
-> > -	if (bh1)
-> > -		brelse(bh1);
-> > -	if (bh2)
-> > -		brelse(bh2);
-> > +	brelse(bh1);
-> > +	brelse(bh2);
-> >  outnobh:
-> >  	kfree(qs);
-> >  	s->s_fs_info = NULL;
+From: Colin Ian King <colin.king@canonical.com>
 
-It looks like the original code is buggy:
+Variable port_rate is being initialized with a value that is never read
+and is being re-assigned a little later on. The assignment is redundant
+and hence can be removed.
 
-fs/qnx6/inode.c
-   409                  pr_info("superblock #1 active\n");
-   410          } else {
-   411                  /* superblock #2 active */
-   412                  sbi->sb_buf = bh2;
-   413                  sbi->sb = (struct qnx6_super_block *)bh2->b_data;
-   414                  brelse(bh1);
-                        ^^^^^^^^^^
-brelse()
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sched/sch_cbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   415                  pr_info("superblock #2 active\n");
-   416          }
-   417  mmi_success:
-   418          /* sanity check - limit maximum indirect pointer levels */
-   419          if (sb1->Inode.levels > QNX6_PTR_MAX_LEVELS) {
-   420                  pr_err("too many inode levels (max %i, sb %i)\n",
-   421                         QNX6_PTR_MAX_LEVELS, sb1->Inode.levels);
-   422                  goto out;
-                        ^^^^^^^^
-goto
-
-   423          }
-
-[ snip ]
-
-   466  
-   467  out3:
-   468          dput(s->s_root);
-   469          s->s_root = NULL;
-   470  out2:
-   471          iput(sbi->longfile);
-   472  out1:
-   473          iput(sbi->inodes);
-   474  out:
-   475          if (bh1)
-   476                  brelse(bh1);
-                        ^^^^^^^^^^^
-Double brelse().
-
-   477          if (bh2)
-   478                  brelse(bh2);
-   479  outnobh:
-   480          kfree(qs);
-   481          s->s_fs_info = NULL;
-   482          return ret;
-   483  }
-
-regards,
-dan carpenter
+diff --git a/net/sched/sch_cbs.c b/net/sched/sch_cbs.c
+index 810645b5c086..93b58fde99b7 100644
+--- a/net/sched/sch_cbs.c
++++ b/net/sched/sch_cbs.c
+@@ -299,7 +299,7 @@ static void cbs_set_port_rate(struct net_device *dev, struct cbs_sched_data *q)
+ {
+ 	struct ethtool_link_ksettings ecmd;
+ 	int speed = SPEED_10;
+-	int port_rate = -1;
++	int port_rate;
+ 	int err;
+ 
+ 	err = __ethtool_get_link_ksettings(dev, &ecmd);
+-- 
+2.20.1
