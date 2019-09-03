@@ -1,46 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 13:06:32 +0000
-Subject: [PATCH] regulator: lp8788-ldo: make array en_mask static const, makes object smaller
-Message-Id: <20190906130632.6709-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 03 Sep 2019 15:36:25 +0000
+Subject: [PATCH -next] usb: cdns3: Remove redundant dev_err call in cdns3_probe()
+Message-Id: <20190903153625.85691-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Pawel Laszczak <pawell@cadence.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Don't populate the array en_mask on the stack but instead make it
-static const. Makes the object code smaller by 87 bytes.
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  12967	   3408	      0	  16375	   3ff7	drivers/regulator/lp8788-ldo.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  12816	   3472	      0	  16288	   3fa0	drivers/regulator/lp8788-ldo.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/regulator/lp8788-ldo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/cdns3/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index 1b00f3638996..00e9bb92c326 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -464,7 +464,7 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- {
- 	struct lp8788 *lp = ldo->lp;
- 	enum lp8788_ext_ldo_en_id enable_id;
--	u8 en_mask[] = {
-+	static const u8 en_mask[] = {
- 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
- 		[EN_ALDO234] = LP8788_EN_SEL_ALDO234_M,
- 		[EN_ALDO5]   = LP8788_EN_SEL_ALDO5_M,
--- 
-2.20.1
+diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+index 300df58a190b..9b1d8fed4e5a 100644
+--- a/drivers/usb/cdns3/core.c
++++ b/drivers/usb/cdns3/core.c
+@@ -462,10 +462,8 @@ static int cdns3_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dev");
+ 	regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(regs)) {
+-		dev_err(dev, "couldn't iomap dev resource\n");
++	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+-	}
+ 	cdns->dev_regs	= regs;
+ 
+ 	cdns->otg_irq = platform_get_irq_byname(pdev, "otg");
