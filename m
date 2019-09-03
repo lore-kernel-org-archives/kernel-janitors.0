@@ -1,35 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 16 Sep 2019 09:17:06 +0000
-Subject: [PATCH][next] scsi: hisi_sas: fix spelling mistake "digial" -> "digital"
-Message-Id: <20190916091706.32268-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 03 Sep 2019 13:44:19 +0000
+Subject: Re: [PATCH][V2] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
+Message-Id: <20190903134420.6A8D9608FF@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190827081620.20998-1-colin.king@canonical.com>
+In-Reply-To: <20190827081620.20998-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in literal string. Fix it.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> An earlier commit re-worked the setting of the bitmask and is now
+> assigning v with some bit flags rather than bitwise or-ing them
+> into v, consequently the earlier bit-settings of v are being lost.
+> Fix this by replacing an assignment with the bitwise or instead.
+> 
+> Addresses-Coverity: ("Unused value")
+> Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index d1513fdf1e00..e934d0b11745 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -3539,7 +3539,7 @@ static const struct {
- 	int		value;
- 	char		*name;
- } hisi_sas_debugfs_loop_modes[] = {
--	{ HISI_SAS_BIST_LOOPBACK_MODE_DIGITAL, "digial" },
-+	{ HISI_SAS_BIST_LOOPBACK_MODE_DIGITAL, "digital" },
- 	{ HISI_SAS_BIST_LOOPBACK_MODE_SERDES, "serdes" },
- 	{ HISI_SAS_BIST_LOOPBACK_MODE_REMOTE, "remote" },
- };
+420c20be08a4 bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/11116317/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
