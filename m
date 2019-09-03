@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Tue, 03 Sep 2019 12:29:00 +0000
 Subject: [PATCH] efs: Delete unnecessary checks before brelse()
-Message-Id: <8fcea3ac-469f-a84b-e4d2-347f047307f8@web.de>
+Message-Id: <30140782-38b7-5eb6-885e-8289997842f6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8fcea3ac-469f-a84b-e4d2-347f047307f8@web.de>
+In-Reply-To: <8fcea3ac-469f-a84b-e4d2-347f047307f8@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
