@@ -1,56 +1,34 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 19 Sep 2019 13:56:56 +0000
-Subject: [PATCH] usb: gadget: udc: lpc32xx: Use devm_platform_ioremap_resource() in lpc32xx_udc_probe()
-Message-Id: <6671a08a-fb20-f15e-5dbd-8b6b710e0ef9@web.de>
+Date: Tue, 03 Sep 2019 15:00:46 +0000
+Subject: Re: gfs2: Delete an unnecessary check before brelse()
+Message-Id: <5e7b4313-c3e9-c3c8-8823-7c7a62a13fff@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9250af4a-993c-e86e-678c-acbd59b0861a@web.de>
+ <CAHpGcMKEFaZBRNnt1edrvBMS6VUXs5hMdQ2BdNBE3ssgkmDoww@mail.gmail.com>
+In-Reply-To: <CAHpGcMKEFaZBRNnt1edrvBMS6VUXs5hMdQ2BdNBE3ssgkmDoww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Stephen Boyd <swboyd@chromium.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+To: =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>, cluster-devel <cluster-devel@redhat.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Sep 2019 15:47:24 +0200
+>> The brelse() function tests whether its argument is NULL
+>> and then returns immediately.
+>> Thus the test around the call is not needed.
+>>
+>> This issue was detected by using the Coccinelle software.
+>
+> The same applies to brelse() in gfs2_dir_no_add
+> (which Coccinelle apparently missed),
 
-Simplify this function implementation by using a known wrapper function.
+Would you like to achieve that such source code analysis
+will be extended to corresponding header files?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/gfs2/dir.h?id=7dc4585e03786f84d6e9dc16caa3ba5b8b44d986#n33
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/usb/gadget/udc/lpc32xx_udc.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> so let me fix that as well.
 
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index b3e073fb88c6..0ed3fd8c6610 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -3000,7 +3000,6 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct lpc32xx_udc *udc;
- 	int retval, i;
--	struct resource *res;
- 	dma_addr_t dma_handle;
- 	struct device_node *isp1301_node;
+Thanks for your positive feedback.
 
-@@ -3048,9 +3047,6 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
- 	 *  IORESOURCE_IRQ, USB device interrupt number
- 	 *  IORESOURCE_IRQ, USB transceiver interrupt number
- 	 */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENXIO;
-
- 	spin_lock_init(&udc->lock);
-
-@@ -3061,7 +3057,7 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
- 			return udc->udp_irq[i];
- 	}
-
--	udc->udp_baseaddr = devm_ioremap_resource(dev, res);
-+	udc->udp_baseaddr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(udc->udp_baseaddr)) {
- 		dev_err(udc->dev, "IO map failure\n");
- 		return PTR_ERR(udc->udp_baseaddr);
---
-2.23.0
+Regards,
+Markus
