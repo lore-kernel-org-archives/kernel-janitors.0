@@ -1,26 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Sep 2019 10:21:40 +0000
-Subject: Re: [PATCH] ipv6: Fix the link time qualifier of 'ping_v6_proc_exit_net()'
-Message-Id: <20190912.122140.1024775651317943407.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 03 Sep 2019 13:20:42 +0000
+Subject: [PATCH] gfs2: Delete an unnecessary check before brelse()
+Message-Id: <0ce30a08-be05-8211-27b4-47d0397ba330@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190910112959.9222-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190910112959.9222-1-christophe.jaillet@wanadoo.fr>
+References: <563A6A22.5000206@users.sourceforge.net>
+In-Reply-To: <563A6A22.5000206@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cluster-devel@redhat.com, Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 10 Sep 2019 13:29:59 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Sep 2019 15:10:05 +0200
 
-> The '.exit' functions from 'pernet_operations' structure should be marked
-> as __net_exit, not __net_init.
-> 
-> Fixes: d862e5461423 ("net: ipv6: Implement /proc/net/icmp6.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Untested, but using __net_exit looks consistent with other
-> pernet_operations.exit use case.
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus the test around the call is not needed.
 
-Looks good, applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/gfs2/dir.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
+index 6f35d19eec25..eb9c0578978f 100644
+--- a/fs/gfs2/dir.c
++++ b/fs/gfs2/dir.c
+@@ -1463,8 +1463,7 @@ static int gfs2_dir_read_leaf(struct inode *inode, struct dir_context *ctx,
+ 				sort_offset : entries, copied);
+ out_free:
+ 	for(i = 0; i < leaf; i++)
+-		if (larr[i])
+-			brelse(larr[i]);
++		brelse(larr[i]);
+ 	kvfree(larr);
+ out:
+ 	return error;
+--
+2.23.0
