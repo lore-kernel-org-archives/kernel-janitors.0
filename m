@@ -1,52 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Sep 2019 19:03:57 +0000
-Subject: [PATCH] drm/tegra: vic: Use devm_platform_ioremap_resource() in vic_probe()
-Message-Id: <50adb1d3-93fc-44c1-9988-02036911ee46@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Sep 2019 12:28:12 +0000
+Subject: [PATCH][spi-next] spi: npcm-fiu: fix spelling mistake "frequancy" -> "frequency"
+Message-Id: <20190903122812.3986-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
+To: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 20:51:52 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+There is a spelling mistake in a dev_warning message. Fix it. Also
+break line to clear up checkpatch warning.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/tegra/vic.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/spi/spi-npcm-fiu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index cd0399fd8c63..bc72d326588b 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -370,7 +370,6 @@ static int vic_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct host1x_syncpt **syncpts;
--	struct resource *regs;
- 	struct vic *vic;
- 	int err;
-
-@@ -384,13 +383,7 @@ static int vic_probe(struct platform_device *pdev)
- 	if (!syncpts)
- 		return -ENOMEM;
-
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!regs) {
--		dev_err(&pdev->dev, "failed to get registers\n");
--		return -ENXIO;
--	}
--
--	vic->regs = devm_ioremap_resource(dev, regs);
-+	vic->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(vic->regs))
- 		return PTR_ERR(vic->regs);
-
---
-2.23.0
+diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
+index 3ea1ec68147e..d9e2f58b104b 100644
+--- a/drivers/spi/spi-npcm-fiu.c
++++ b/drivers/spi/spi-npcm-fiu.c
+@@ -544,7 +544,8 @@ static int npcm_fiu_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	if (fiu->clkrate != chip->clkrate) {
+ 		ret = clk_set_rate(fiu->clk, chip->clkrate);
+ 		if (ret < 0)
+-			dev_warn(fiu->dev, "Failed setting %lu frequancy, stay at %lu frequancy\n", chip->clkrate, fiu->clkrate);
++			dev_warn(fiu->dev, "Failed setting %lu frequency, stay at %lu frequency\n",
++				 chip->clkrate, fiu->clkrate);
+ 		else
+ 			fiu->clkrate = chip->clkrate;
+ 	}
+-- 
+2.20.1
