@@ -1,24 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Sep 2019 11:55:10 +0000
-Subject: Re: [PATCH] atm: he: clean up an indentation issue
-Message-Id: <20190925.135510.1792420576895991388.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 03 Sep 2019 13:00:11 +0000
+Subject: [PATCH] fat: Delete an unnecessary check before brelse()
+Message-Id: <cfff3b81-fb5d-af26-7b5e-724266509045@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190922114216.10158-1-colin.king@canonical.com>
-In-Reply-To: <20190922114216.10158-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Ogawa Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 22 Sep 2019 13:42:16 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Sep 2019 14:56:16 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented one level too many, remove
-> the extraneous tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus the test around the call is not needed.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/fat/dir.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 1bda2ab6745b..f4bc87a3c98d 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -88,9 +88,7 @@ static int fat__get_entry(struct inode *dir, loff_t *pos,
+ 	int err, offset;
+
+ next:
+-	if (*bh)
+-		brelse(*bh);
+-
++	brelse(*bh);
+ 	*bh = NULL;
+ 	iblock = *pos >> sb->s_blocksize_bits;
+ 	err = fat_bmap(dir, iblock, &phys, &mapped_blocks, 0, false);
+--
+2.23.0
