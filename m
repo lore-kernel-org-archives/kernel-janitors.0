@@ -1,52 +1,78 @@
-From: Pawel Laszczak <pawell@cadence.com>
-Date: Tue, 03 Sep 2019 03:29:50 +0000
-Subject: RE: [PATCH][usb-next] usb: cdns3: fix missing assignment of ret before error check on ret
-Message-Id: <BYAPR07MB470927CBDF6CC2345DD350E6DDB90@BYAPR07MB4709.namprd07.prod.outlook.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 03 Sep 2019 13:43:04 +0000
+Subject: Re: [PATCH][usb-next] usb: cdns3: fix missing assignment of ret before error check on ret
+Message-Id: <20190903134304.GB9435@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190902145035.18200-1-colin.king@canonical.com>
  <BYAPR07MB4709DF377BFBD54FD6BF88B3DDBE0@BYAPR07MB4709.namprd07.prod.outlook.com>
-In-Reply-To: <BYAPR07MB4709DF377BFBD54FD6BF88B3DDBE0@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <BYAPR07MB470927CBDF6CC2345DD350E6DDB90@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB470927CBDF6CC2345DD350E6DDB90@BYAPR07MB4709.namprd07.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: Colin King <colin.king@canonical.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-SGkgQ29saW4NCg0KPkhpIENvbGluDQo+DQo+Pg0KPj5Gcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPj4NCj4+Q3VycmVudGx5IHRoZSBjaGVjayBvbiBhIG5v
-bi16ZXJvIHJldHVybiBjb2RlIGluIHJldCBpcyBmYWxzZSBiZWNhdXNlDQo+PnJldCBoYXMgYmVl
-biBpbml0aWFsaXplZCB0byB6ZXJvLiAgSSBiZWxpZXZlIHRoYXQgcmV0IHNob3VsZCBiZSBhc3Np
-Z25lZA0KPj50byB0aGUgcmV0dXJuIGZyb20gdGhlIGNhbGwgdG8gcmVhZGxfcG9sbF90aW1lb3V0
-X2F0b21pYyBiZWZvcmUgdGhlDQo+PmNoZWNrIG9uIHJldC4gIFNpbmNlIHJldCBpcyBiZWluZyBy
-ZS1hc3NpbmdlZCB0aGUgb3JpZ2luYWwgaW5pdGlhbGl6YXRpb24NCj4+b2YgcmV0IHRvIHplcm8g
-Y2FuIGJlIHJlbW92ZWQuDQo+DQo+VGhhbmtzIHlvdSBmb3IgbGV0dGluZyBtZSBrbm93Lg0KPkZv
-cnR1bmF0ZWx5IHRoYXQncyBub3QgYSBjcml0aWNhbCBidWcgYW5kIGhhcyBubyBpbXBhY3QgZm9y
-IGRyaXZlci4NCj5JIHdpbGwgY29ycmVjdCBpdC4NCj4NCj5DaGVlcnMNCj5QYXdlbGwNCj4NCj4+
-DQo+PkFkZHJlc3Nlcy1Db3Zlcml0eTogKCInQ29uc3RhbnQnIHZhcmlhYmxlIGd1YXJkcyBkZWFk
-IGNvZGUiKQ0KPj5GaXhlczogNzczM2Y2YzMyZTM2ICgidXNiOiBjZG5zMzogQWRkIENhZGVuY2Ug
-VVNCMyBEUkQgRHJpdmVyIikNCj4+U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4+LS0tDQo+PiBkcml2ZXJzL3VzYi9jZG5zMy9nYWRnZXQu
-YyB8IDYgKysrLS0tDQo+PiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0
-aW9ucygtKQ0KPj4NCj4+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2NkbnMzL2dhZGdldC5jIGIv
-ZHJpdmVycy91c2IvY2RuczMvZ2FkZ2V0LmMNCj4+aW5kZXggMzA5NGFkNjVmZmM5Li4wZWIzMDIy
-ODM4ZDYgMTAwNjQ0DQo+Pi0tLSBhL2RyaXZlcnMvdXNiL2NkbnMzL2dhZGdldC5jDQo+PisrKyBi
-L2RyaXZlcnMvdXNiL2NkbnMzL2dhZGdldC5jDQo+PkBAIC0yMTU0LDcgKzIxNTQsNyBAQCBpbnQg
-X19jZG5zM19nYWRnZXRfZXBfY2xlYXJfaGFsdChzdHJ1Y3QgY2RuczNfZW5kcG9pbnQgKnByaXZf
-ZXApDQo+PiB7DQo+PiAJc3RydWN0IGNkbnMzX2RldmljZSAqcHJpdl9kZXYgPSBwcml2X2VwLT5j
-ZG5zM19kZXY7DQo+PiAJc3RydWN0IHVzYl9yZXF1ZXN0ICpyZXF1ZXN0Ow0KPj4tCWludCByZXQg
-PSAwOw0KPj4rCWludCByZXQ7DQo+PiAJaW50IHZhbDsNCj4+DQo+PiAJdHJhY2VfY2RuczNfaGFs
-dChwcml2X2VwLCAwLCAwKTsNCj4+QEAgLTIxNjIsOCArMjE2Miw4IEBAIGludCBfX2NkbnMzX2dh
-ZGdldF9lcF9jbGVhcl9oYWx0KHN0cnVjdCBjZG5zM19lbmRwb2ludCAqcHJpdl9lcCkNCj4+IAl3
-cml0ZWwoRVBfQ01EX0NTVEFMTCB8IEVQX0NNRF9FUFJTVCwgJnByaXZfZGV2LT5yZWdzLT5lcF9j
-bWQpOw0KPj4NCj4+IAkvKiB3YWl0IGZvciBFUFJTVCBjbGVhcmVkICovDQo+Pi0JcmVhZGxfcG9s
-bF90aW1lb3V0X2F0b21pYygmcHJpdl9kZXYtPnJlZ3MtPmVwX2NtZCwgdmFsLA0KPj4tCQkJCSAg
-ISh2YWwgJiBFUF9DTURfRVBSU1QpLCAxLCAxMDApOw0KPj4rCXJldCA9IHJlYWRsX3BvbGxfdGlt
-ZW91dF9hdG9taWMoJnByaXZfZGV2LT5yZWdzLT5lcF9jbWQsIHZhbCwNCj4+KwkJCQkJISh2YWwg
-JiBFUF9DTURfRVBSU1QpLCAxLCAxMDApOw0KPj4gCWlmIChyZXQpDQo+PiAJCXJldHVybiAtRUlO
-VkFMOw0KDQpXaGF0IGFib3V0IHN1Y2ggY29uZGl0aW9uOg0KCWlmICh1bmxpa2VseShyZXQpKSB7
-DQoJCWRldl9lcnIocHJpdl9kZXYtPmRldiwgIkZhaWxlZCB0byBjbGVhciBoYWx0ICVzICh0aW1l
-b3V0KS4iLA0KCQkJcHJpdl9lcC0+bmFtZSk7DQoJCXJldHVybiByZXQ7DQoJfQ0KDQpJbnZhbGlk
-IHJldHVybiB2YWx1ZSBpbiB0aGlzIHBsYWNlIGlzIHJhdGhlciBpbXBvc3NpYmxlIGNhc2UuIElm
-IGl0IG9jY3VycyANCnRoZW4gaXQgc2hvdWxkIGJlIHRyZWF0ZWQgYXMgY3JpdGljYWwgZXJyb3Is
-IHNvIGl0IGNvdWxkIGJlIGdvb2QgdG8gaGF2ZSANCmluZm9ybWF0aW9uIGFib3V0IGl0Lg0KDQpD
-aGVlcnMsDQpQYXdlbA0KDQo+Pg0KPg0KPj4tLQ0KPj4yLjIwLjENCg0K
+On Tue, Sep 03, 2019 at 03:29:50AM +0000, Pawel Laszczak wrote:
+> Hi Colin
+> 
+> >Hi Colin
+> >
+> >>
+> >>From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >>Currently the check on a non-zero return code in ret is false because
+> >>ret has been initialized to zero.  I believe that ret should be assigned
+> >>to the return from the call to readl_poll_timeout_atomic before the
+> >>check on ret.  Since ret is being re-assinged the original initialization
+> >>of ret to zero can be removed.
+> >
+> >Thanks you for letting me know.
+> >Fortunately that's not a critical bug and has no impact for driver.
+> >I will correct it.
+> >
+> >Cheers
+> >Pawell
+> >
+> >>
+> >>Addresses-Coverity: ("'Constant' variable guards dead code")
+> >>Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
+> >>Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >>---
+> >> drivers/usb/cdns3/gadget.c | 6 +++---
+> >> 1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >>diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+> >>index 3094ad65ffc9..0eb3022838d6 100644
+> >>--- a/drivers/usb/cdns3/gadget.c
+> >>+++ b/drivers/usb/cdns3/gadget.c
+> >>@@ -2154,7 +2154,7 @@ int __cdns3_gadget_ep_clear_halt(struct cdns3_endpoint *priv_ep)
+> >> {
+> >> 	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> >> 	struct usb_request *request;
+> >>-	int ret = 0;
+> >>+	int ret;
+> >> 	int val;
+> >>
+> >> 	trace_cdns3_halt(priv_ep, 0, 0);
+> >>@@ -2162,8 +2162,8 @@ int __cdns3_gadget_ep_clear_halt(struct cdns3_endpoint *priv_ep)
+> >> 	writel(EP_CMD_CSTALL | EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
+> >>
+> >> 	/* wait for EPRST cleared */
+> >>-	readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
+> >>-				  !(val & EP_CMD_EPRST), 1, 100);
+> >>+	ret = readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
+> >>+					!(val & EP_CMD_EPRST), 1, 100);
+> >> 	if (ret)
+> >> 		return -EINVAL;
+> 
+> What about such condition:
+> 	if (unlikely(ret)) {
+
+Only use likely/unlikely if you can actually measure the performance
+impact of not using it.  Otherwise drop it as the compiler and CPU will
+almost always get it correct for you (like in this case).
+
+thanks,
+
+greg k-h
