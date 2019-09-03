@@ -1,26 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Sep 2019 18:45:22 +0000
-Subject: Re: [PATCH] netlabel: remove redundant assignment to pointer iter
-Message-Id: <20190901.114522.824322370364603821.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 03 Sep 2019 14:40:53 +0000
+Subject: [PATCH] ocfs2: Delete unnecessary checks before brelse()
+Message-Id: <55cde320-394b-f985-56ce-1a2abea782aa@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190901155205.16877-1-colin.king@canonical.com>
-In-Reply-To: <20190901155205.16877-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: paul@paul-moore.com, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Fasheh <mark@fasheh.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jia-Ju Bai <baijiaju1990@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  1 Sep 2019 16:52:05 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Sep 2019 16:33:32 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer iter is being initialized with a value that is never read and
-> is being re-assigned a little later on. The assignment is redundant
-> and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus the tests around the shown calls are not needed.
 
-Applied to net-next.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ocfs2/dlmglue.c    | 7 ++-----
+ fs/ocfs2/extent_map.c | 3 +--
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index ad594fef2ab0..6e774c5ea13b 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2508,9 +2508,7 @@ int ocfs2_inode_lock_full_nested(struct inode *inode,
+ 			ocfs2_inode_unlock(inode, ex);
+ 	}
+
+-	if (local_bh)
+-		brelse(local_bh);
+-
++	brelse(local_bh);
+ 	return status;
+ }
+
+@@ -2593,8 +2591,7 @@ int ocfs2_inode_lock_atime(struct inode *inode,
+ 		*level = 1;
+ 		if (ocfs2_should_update_atime(inode, vfsmnt))
+ 			ocfs2_update_inode_atime(inode, bh);
+-		if (bh)
+-			brelse(bh);
++		brelse(bh);
+ 	} else
+ 		*level = 0;
+
+diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+index e66a249fe07c..e3e2d1b2af51 100644
+--- a/fs/ocfs2/extent_map.c
++++ b/fs/ocfs2/extent_map.c
+@@ -590,8 +590,7 @@ int ocfs2_xattr_get_clusters(struct inode *inode, u32 v_cluster,
+ 			*extent_flags = rec->e_flags;
+ 	}
+ out:
+-	if (eb_bh)
+-		brelse(eb_bh);
++	brelse(eb_bh);
+ 	return ret;
+ }
+
+--
+2.23.0
