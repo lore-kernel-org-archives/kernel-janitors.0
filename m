@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 03 Sep 2019 14:20:42 +0000
+Date: Tue, 03 Sep 2019 14:20:43 +0000
 Subject: [PATCH] ntfs: Delete unnecessary checks before brelse()
-Message-Id: <43a59c6a-3635-1fab-1945-292d637663c9@web.de>
+Message-Id: <9d047687-af84-4688-c025-13103cc22a52@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <43a59c6a-3635-1fab-1945-292d637663c9@web.de>
+In-Reply-To: <43a59c6a-3635-1fab-1945-292d637663c9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
