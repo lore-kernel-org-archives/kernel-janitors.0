@@ -1,34 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Sep 2019 08:29:36 +0000
-Subject: Re: [PATCH] net/mlx4_en: ethtool: make array modes static const, makes object smaller
-Message-Id: <20190910.102936.1648930911852673896.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 03 Sep 2019 17:20:49 +0000
+Subject: [PATCH] fs/qnx: Delete unnecessary checks before brelse()
+Message-Id: <056c8b8e-abaa-8856-4953-118d14048ddc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906115348.16621-1-colin.king@canonical.com>
-In-Reply-To: <20190906115348.16621-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: tariqt@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Anders Larsen <al@alarsen.net>, Deepa Dinamani <deepa.kernel@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeff Layton <jlayton@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri,  6 Sep 2019 12:53:48 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Sep 2019 19:15:09 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array modes on the stack but instead make it
-> static const. Makes the object code smaller by 303 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   51240	   5008	   1312	  57560	   e0d8 mellanox/mlx4/en_ethtool.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   50937	   5008	   1312	  57257	   dfa9	mellanox/mlx4/en_ethtool.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus the tests around the shown calls are not needed.
 
-Applied to net-next.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/qnx4/inode.c | 3 +--
+ fs/qnx6/inode.c | 6 ++----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+index e8da1cde87b9..018a4c657f7c 100644
+--- a/fs/qnx4/inode.c
++++ b/fs/qnx4/inode.c
+@@ -118,8 +118,7 @@ unsigned long qnx4_block_map( struct inode *inode, long iblock )
+ 				bh = NULL;
+ 			}
+ 		}
+-		if ( bh )
+-			brelse( bh );
++		brelse(bh);
+ 	}
+
+ 	QNX4DEBUG((KERN_INFO "qnx4: mapping block %ld of inode %ld = %ld\n",iblock,inode->i_ino,block));
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index 345db56c98fd..083170541add 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -472,10 +472,8 @@ static int qnx6_fill_super(struct super_block *s, void *data, int silent)
+ out1:
+ 	iput(sbi->inodes);
+ out:
+-	if (bh1)
+-		brelse(bh1);
+-	if (bh2)
+-		brelse(bh2);
++	brelse(bh1);
++	brelse(bh2);
+ outnobh:
+ 	kfree(qs);
+ 	s->s_fs_info = NULL;
+--
+2.23.0
