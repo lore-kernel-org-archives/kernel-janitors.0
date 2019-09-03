@@ -1,30 +1,41 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 23 Sep 2019 13:56:32 +0000
-Subject: [PATCH] ath9k: remove unused including <linux/version.h>
-Message-Id: <20190923135632.145051-1-yuehaibing@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 03 Sep 2019 19:30:31 +0000
+Subject: [PATCH] ufs: Delete an unnecessary check before brelse()
+Message-Id: <d57685d8-d0ce-4a53-177f-a98d116d2981@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org, afaerber@suse.de, manivannan.sadhasivam@linaro.org
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Evgeniy Dushistov <dushistov@mail.ru>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Remove including <linux/version.h> that don't need it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Sep 2019 21:27:55 +0200
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/ufs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c b/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
-index 159490f5a111..956fa7828d0c 100644
---- a/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
-+++ b/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
-@@ -12,7 +12,6 @@
-  * initialize the chip when the user-space is ready to extract the init code.
-  */
- #include <linux/module.h>
--#include <linux/version.h>
- #include <linux/completion.h>
- #include <linux/etherdevice.h>
- #include <linux/firmware.h>
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 1da0be667409..20799faa307a 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -574,8 +574,7 @@ static int ufs_read_cylinder_structures(struct super_block *sb)
+ 	kfree (base);
+ 	if (sbi->s_ucg) {
+ 		for (i = 0; i < uspi->s_ncg; i++)
+-			if (sbi->s_ucg[i])
+-				brelse (sbi->s_ucg[i]);
++			brelse(sbi->s_ucg[i]);
+ 		kfree (sbi->s_ucg);
+ 		for (i = 0; i < UFS_MAX_GROUP_LOADED; i++)
+ 			kfree (sbi->s_ucpi[i]);
+--
+2.23.0
