@@ -1,17 +1,19 @@
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Date: Wed, 04 Sep 2019 09:50:40 +0000
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Wed, 04 Sep 2019 10:19:51 +0000
 Subject: Re: [PATCH net] net: sonic: remove dev_kfree_skb before return NETDEV_TX_BUSY
-Message-Id: <20190904095040.GA12628@alpha.franken.de>
+Message-Id: <c4a4d1b0-d036-7af7-2b30-117f9fdee9ad@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190904094211.117454-1-maowenan@huawei.com>
 In-Reply-To: <20190904094211.117454-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mao Wenan <maowenan@huawei.com>, tsbogend@alpha.franken.de, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 05:42:11PM +0800, Mao Wenan wrote:
+
+
+On 9/4/19 11:42 AM, Mao Wenan wrote:
 > When dma_map_single is failed to map buffer, skb can't be freed
 > before sonic driver return to stack with NETDEV_TX_BUSY, because
 > this skb may be requeued to qdisc, it might trigger use-after-free.
@@ -33,11 +35,19 @@ On Wed, Sep 04, 2019 at 05:42:11PM +0800, Mao Wenan wrote:
 > -		dev_kfree_skb(skb);
 >  		return NETDEV_TX_BUSY;
 >  	}
+>  
+> 
 
-Reviewed-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+That is the wrong way to fix this bug.
 
-Thomas.
+What guarantee do we have that the mapping operation will succeed next time we attempt
+the transmit (and the dma_map_single() operation) ?
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+NETDEV_TX_BUSY is very dangerous, this might trigger an infinite loop.
+
+I would rather leave the dev_kfree_skb(skb), and return NETDEV_TX_OK
+
+Also the printk(KERN_ERR ...) should be replaced by pr_err_ratelimited(...)
+
+NETDEV_TX_BUSY really should only be used by drivers that call netif_tx_stop_queue()
+at the wrong moment.
