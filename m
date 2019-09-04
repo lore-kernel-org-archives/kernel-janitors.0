@@ -1,65 +1,34 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Date: Tue, 03 Sep 2019 07:48:47 +0000
-Subject: Re: [PATCH -next] scsi: smartpqi: remove set but not used variable 'ctrl_info'
-Message-Id: <56925735-5fff-9de3-e5db-db088e830461@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Sep 2019 10:02:39 +0000
+Subject: [PATCH] f2fs: signedness bug in f2fs_fname_setup_ci_filename()
+Message-Id: <20190904100239.GC7007@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190831130348.20552-1-yuehaibing@huawei.com>
-In-Reply-To: <20190831130348.20552-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2019/9/1 21:04, walter harms wrote:
-> 
-> 
-> Am 31.08.2019 15:03, schrieb YueHaibing:
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/scsi/smartpqi/smartpqi_init.c: In function 'pqi_driver_version_show':
->> drivers/scsi/smartpqi/smartpqi_init.c:6164:24: warning:
->>  variable 'ctrl_info' set but not used [-Wunused-but-set-variable]
->>
->> commit 6d90615f1346 ("scsi: smartpqi: add sysfs entries") add it but never
->> use, so remove it also variable 'shost'
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/scsi/smartpqi/smartpqi_init.c | 6 ------
->>  1 file changed, 6 deletions(-)
->>
->> diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
->> index ea5409bebf57..b9e7dabee1e5 100644
->> --- a/drivers/scsi/smartpqi/smartpqi_init.c
->> +++ b/drivers/scsi/smartpqi/smartpqi_init.c
->> @@ -6160,12 +6160,6 @@ static ssize_t pqi_firmware_version_show(struct device *dev,
->>  static ssize_t pqi_driver_version_show(struct device *dev,
->>  	struct device_attribute *attr, char *buffer)
->>  {
->> -	struct Scsi_Host *shost;
->> -	struct pqi_ctrl_info *ctrl_info;
->> -
->> -	shost = class_to_shost(dev);
->> -	ctrl_info = shost_to_hba(shost);
->> -
->>  	return snprintf(buffer, PAGE_SIZE,
->>  		"%s\n", DRIVER_VERSION BUILD_TIMESTAMP);
->>  }
->>
-> 
-> so, only snprintf() is left. That begs an other question:
-> Is that function need at all or can it be replaced with snprintf() ?
+The error handling doesn't work because "cf_name->len" is unsigned.
 
-No, pqi_driver_version_show is used as below:
+Fixes: fbce5d4ab3ab ("f2fs: optimize case-insensitive lookups")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/f2fs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-static DEVICE_ATTR(driver_version, 0444, pqi_driver_version_show, NULL);
-
-so seems it cannot be removed.
-
-> 
-> re,
->  wh
-> 
-> 
-> 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 9de688a4e115..c83b666f9d7e 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -157,7 +157,7 @@ void f2fs_fname_setup_ci_filename(struct inode *dir,
+ 	cf_name->len = utf8_casefold(sbi->s_encoding,
+ 					iname, cf_name->name,
+ 					F2FS_NAME_LEN);
+-	if (cf_name->len <= 0) {
++	if ((int)cf_name->len <= 0) {
+ 		kvfree(cf_name->name);
+ 		cf_name->name = NULL;
+ 	}
+-- 
+2.20.1
