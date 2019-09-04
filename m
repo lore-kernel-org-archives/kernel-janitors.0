@@ -1,48 +1,34 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 17 Sep 2019 12:58:14 +0000
-Subject: Re: [PATCH] drm/selftests: fix spelling mistake "misssing" -> "missing"
-Message-Id: <20190917125814.GS3958@phenom.ffwll.local>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Sep 2019 14:18:57 +0000
+Subject: [PATCH] drm/nouveau: add missing single_release()
+Message-Id: <20190904141857.196103-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190911091227.5710-1-colin.king@canonical.com>
-In-Reply-To: <20190911091227.5710-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 10:12:27AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a literal string, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+When using single_open() for opening, single_release() should be
+used, otherwise there is a memory leak.
 
-Applied, thanks.
--Daniel
+This is detected by Coccinelle semantic patch.
 
-> ---
->  drivers/gpu/drm/selftests/test-drm_framebuffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/selftests/test-drm_framebuffer.c b/drivers/gpu/drm/selftests/test-drm_framebuffer.c
-> index 74d5561a862b..2d29ea6f92e2 100644
-> --- a/drivers/gpu/drm/selftests/test-drm_framebuffer.c
-> +++ b/drivers/gpu/drm/selftests/test-drm_framebuffer.c
-> @@ -126,7 +126,7 @@ static struct drm_framebuffer_test createbuffer_tests[] = {
->  		 .handles = { 1, 1, 0 }, .pitches = { MAX_WIDTH, MAX_WIDTH - 1, 0 },
->  	}
->  },
-> -{ .buffer_created = 0, .name = "NV12 Invalid modifier/misssing DRM_MODE_FB_MODIFIERS flag",
-> +{ .buffer_created = 0, .name = "NV12 Invalid modifier/missing DRM_MODE_FB_MODIFIERS flag",
->  	.cmd = { .width = MAX_WIDTH, .height = MAX_HEIGHT, .pixel_format = DRM_FORMAT_NV12,
->  		 .handles = { 1, 1, 0 }, .modifier = { DRM_FORMAT_MOD_SAMSUNG_64_32_TILE, 0, 0 },
->  		 .pitches = { MAX_WIDTH, MAX_WIDTH, 0 },
-> -- 
-> 2.20.1
-> 
+Fixes: 6e9fc177399f ("drm/nouveau/debugfs: add copy of sysfs pstate interface ported to debugfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_debugfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+index 7dfbbbc1beea..35695f493271 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
++++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+@@ -202,6 +202,7 @@ static const struct file_operations nouveau_pstate_fops = {
+ 	.open = nouveau_debugfs_pstate_open,
+ 	.read = seq_read,
+ 	.write = nouveau_debugfs_pstate_set,
++	.release = single_release,
+ };
+ 
+ static struct drm_info_list nouveau_debugfs_list[] = {
