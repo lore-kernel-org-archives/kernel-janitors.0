@@ -1,78 +1,35 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Date: Wed, 18 Sep 2019 11:00:53 +0000
-Subject: Re: [PATCH] media: rc: Use devm_platform_ioremap_resource() in tango_ir_probe()
-Message-Id: <yw1xk1a56f8a.fsf@mansr.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Sep 2019 13:58:53 +0000
+Subject: [PATCH] rtlwifi: Fix file release memory leak
+Message-Id: <20190904141611.4780-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <04df8450-1b15-55ec-91e7-7d72ffbedac7@web.de>
-In-Reply-To: <04df8450-1b15-55ec-91e7-7d72ffbedac7@web.de> (Markus Elfring's
- message of "Wed, 18 Sep 2019 12:37:24 +0200")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Himanshu Jha <himanshujha199640@gmail.com>, Marc Gonzalez <marc.w.gonzalez@free.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Allison Randal <allison@lohutok.net>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
+When using single_open() for opening, single_release() should be
+used instead of seq_release(), otherwise there is a memory leak.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Sep 2019 12:30:18 +0200
->
-> Simplify this function implementation by using a known wrapper function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This is detected by Coccinelle semantic patch.
 
-Acked-by: Mans Rullgard <mans@mansr.com>
+Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/media/rc/tango-ir.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/media/rc/tango-ir.c b/drivers/media/rc/tango-ir.c
-> index 451ec4e9dcfa..b8eb5bc4d9be 100644
-> --- a/drivers/media/rc/tango-ir.c
-> +++ b/drivers/media/rc/tango-ir.c
-> @@ -157,20 +157,10 @@ static int tango_ir_probe(struct platform_device *p=
-dev)
->  	struct device *dev =3D &pdev->dev;
->  	struct rc_dev *rc;
->  	struct tango_ir *ir;
-> -	struct resource *rc5_res;
-> -	struct resource *rc6_res;
->  	u64 clkrate, clkdiv;
->  	int irq, err;
->  	u32 val;
->
-> -	rc5_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!rc5_res)
-> -		return -EINVAL;
-> -
-> -	rc6_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -	if (!rc6_res)
-> -		return -EINVAL;
-> -
->  	irq =3D platform_get_irq(pdev, 0);
->  	if (irq <=3D 0)
->  		return -EINVAL;
-> @@ -179,11 +169,11 @@ static int tango_ir_probe(struct platform_device *p=
-dev)
->  	if (!ir)
->  		return -ENOMEM;
->
-> -	ir->rc5_base =3D devm_ioremap_resource(dev, rc5_res);
-> +	ir->rc5_base =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(ir->rc5_base))
->  		return PTR_ERR(ir->rc5_base);
->
-> -	ir->rc6_base =3D devm_ioremap_resource(dev, rc6_res);
-> +	ir->rc6_base =3D devm_platform_ioremap_resource(pdev, 1);
->  	if (IS_ERR(ir->rc6_base))
->  		return PTR_ERR(ir->rc6_base);
->
-> --
-> 2.23.0
->
-
---=20
-M=E5ns Rullg=E5rd
+diff --git a/drivers/net/wireless/realtek/rtlwifi/debug.c b/drivers/net/wireless/realtek/rtlwifi/debug.c
+index a051de16284d..55db71c766fe 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/debug.c
++++ b/drivers/net/wireless/realtek/rtlwifi/debug.c
+@@ -88,7 +88,7 @@ static const struct file_operations file_ops_common = {
+ 	.open = dl_debug_open_common,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = seq_release,
++	.release = single_release,
+ };
+ 
+ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
