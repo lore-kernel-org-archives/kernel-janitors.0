@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 18:32:49 +0000
-Subject: Re: [PATCH] net: ena: clean up indentation issue
-Message-Id: <20190927.203249.1546413118601715111.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Sep 2019 13:58:53 +0000
+Subject: [PATCH] rtw88: fix seq_file memory leak
+Message-Id: <20190904141601.186107-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926112252.21498-1-colin.king@canonical.com>
-In-Reply-To: <20190926112252.21498-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netanel@amazon.com, saeedb@amazon.com, zorik@amazon.com, akiyano@amazon.com, sameehj@amazon.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 26 Sep 2019 12:22:52 +0100
+When using single_open(), single_release() should be used instead
+of seq_release(), otherwise there is a memory leak.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There memset is indented incorrectly, remove the extraneous tabs.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is detected by Coccinelle semantic patch.
 
-Applied.
+Fixes: e3037485c68e ("rtw88: new Realtek 802.11ac driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/realtek/rtw88/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/debug.c b/drivers/net/wireless/realtek/rtw88/debug.c
+index f0ae26018f97..a7d45f4d34c4 100644
+--- a/drivers/net/wireless/realtek/rtw88/debug.c
++++ b/drivers/net/wireless/realtek/rtw88/debug.c
+@@ -76,7 +76,7 @@ static const struct file_operations file_ops_single_r = {
+ 	.open = rtw_debugfs_single_open_rw,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = seq_release,
++	.release = single_release,
+ };
+ 
+ static const struct file_operations file_ops_single_rw = {
