@@ -1,32 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 03 Sep 2019 13:36:25 +0000
-Subject: Re: [PATCH] rtw88: remove redundant assignment to pointer debugfs_topdir
-Message-Id: <20190903133625.DD0A3605A2@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Sep 2019 10:01:02 +0000
+Subject: [PATCH] usb: cdns3: Fix use after free in probe error handling
+Message-Id: <20190904100102.GB7007@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190822113728.25494-1-colin.king@canonical.com>
-In-Reply-To: <20190822113728.25494-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Laszczak <pawell@cadence.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+We can't use "wrap" after it has been freed.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer debugfs_topdir is initialized to a value that is never read
-> and it is re-assigned later. The initialization is redundant and can
-> be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/cdns3/cdns3-pci-wrap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-9f7d65fb3935 rtw88: remove redundant assignment to pointer debugfs_topdir
-
+diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+index c41ddb61b857..b0a29efe7d31 100644
+--- a/drivers/usb/cdns3/cdns3-pci-wrap.c
++++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+@@ -159,8 +159,9 @@ static int cdns3_pci_probe(struct pci_dev *pdev,
+ 		wrap->plat_dev = platform_device_register_full(&plat_info);
+ 		if (IS_ERR(wrap->plat_dev)) {
+ 			pci_disable_device(pdev);
++			err = PTR_ERR(wrap->plat_dev);
+ 			kfree(wrap);
+-			return PTR_ERR(wrap->plat_dev);
++			return err;
+ 		}
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/11109159/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
