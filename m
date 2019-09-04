@@ -1,33 +1,33 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Sep 2019 07:12:44 +0000
-Subject: Re: [0/2] net: dsa: vsc73xx: Adjustments for vsc73xx_platform_probe()
-Message-Id: <a5e3f8e6-bdb9-c5fb-2435-81a545cad121@web.de>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 04 Sep 2019 06:08:01 +0000
+Subject: Re: [PATCH] wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc()
+Message-Id: <20190904060801.1FDD460863@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
- <20190920150924.GG3530@lunn.ch> <4a220bc4-0340-d54a-70bd-7bea62257b81@web.de>
- <5d068275-796d-7d76-ba33-6eb03fb1d7cc@gmail.com>
- <20190920151230.0d290654@cakuba.netronome.com>
-In-Reply-To: <20190920151230.0d290654@cakuba.netronome.com>
+References: <b9620e49-618d-b392-6456-17de5807df75@web.de>
+In-Reply-To: <b9620e49-618d-b392-6456-17de5807df75@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Pawel Dembicki <paweldembicki@gmail.com>, Vivien Didelot <vivien.didelot@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com, "David S. Miller" <davem@davemloft.net>, Maya Erez <merez@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Indeed, looks like we have a mix of clean ups of varying clarity here.
-> I will just drop all, including the devm_platform_ioremap_resource()
-> conversion patches from patchwork for now.
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-I would prefer an other patch management in this case.
+> A null pointer would be passed to a call of the function “kfree”
+> directly after a call of the function “kcalloc” failed at one place.
+> Remove this superfluous function call.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Reviewed-by: Maya Erez <merez@codeaurora.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
+Patch applied to ath-next branch of ath.git, thanks.
 
-> Markus, please repost them all once net-next opens.
-> Sorry for inconvenience.
+d20b1e6c8307 wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc()
 
-I would find it nicer if presented change possibilities can be
-automatically reconsidered on demand after each closed period.
-https://patchwork.ozlabs.org/project/netdev/list/?submitter=76334&state=*
-https://patchwork.ozlabs.org/project/netdev/list/?submitter=65077&state=*&archive=both
+-- 
+https://patchwork.kernel.org/patch/11117119/
 
-Regards,
-Markus
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
