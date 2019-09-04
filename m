@@ -1,39 +1,40 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Sep 2019 08:14:26 +0000
-Subject: [PATCH] ns2: Fix off by one bugs in ns2_pinmux_enable()
-Message-Id: <20190926081426.GB2332@mwanda>
+Date: Wed, 04 Sep 2019 18:55:07 +0000
+Subject: [PATCH v2] drm: panel-lvds: Potential Oops in probe error handling
+Message-Id: <20190904185507.GA3634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190904115057.GC4811@pendragon.ideasonboard.com>
+In-Reply-To: <20190904115057.GC4811@pendragon.ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ray Jui <rjui@broadcom.com>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, dri-devel@lists.freedesktop.org, Mark Brown <broonie@kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 
-The pinctrl->functions[] array has pinctrl->num_functions elements and
-the pinctrl->groups[] array is the same way.  These are set in
-ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
-read one element beyond the end of the array.
+The "lvds->backlight" pointer could be NULL in situations were
+of_parse_phandle() returns NULL.  Also it's slightly cleaner to use
+backlight_put() which already has a check for NULL built in.
 
-Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
+Fixes: 7c9dff5bd643 ("drm: panels: Add LVDS panel driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: Use backlight_put().  Thanks, Laurent!
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-index 2bf6af7df7d9..9fabc451550e 100644
---- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-@@ -640,8 +640,8 @@ static int ns2_pinmux_enable(struct pinctrl_dev *pctrl_dev,
- 	const struct ns2_pin_function *func;
- 	const struct ns2_pin_group *grp;
+ drivers/gpu/drm/panel/panel-lvds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index ad47cc95459e..05e8885db7ed 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -272,7 +272,7 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 	return 0;
  
--	if (grp_select > pinctrl->num_groups ||
--		func_select > pinctrl->num_functions)
-+	if (grp_select >= pinctrl->num_groups ||
-+		func_select >= pinctrl->num_functions)
- 		return -EINVAL;
+ error:
+-	put_device(&lvds->backlight->dev);
++	backlight_put(lvds->backlight);
+ 	return ret;
+ }
  
- 	func = &pinctrl->functions[func_select];
 -- 
 2.20.1
