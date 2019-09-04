@@ -1,36 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 07 Sep 2019 16:20:02 +0000
-Subject: =?UTF-8?Q?Re=3a_Adjusting_SmPL_script_=e2=80=9cptr=5fret=2ecocci?= =?UTF-8?B?4oCdPw==?=
-Message-Id: <a50cebe5-4aae-ea93-1920-d5743435cd1d@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Sep 2019 19:38:41 +0000
+Subject: [PATCH][next] net/mlx5: fix spelling mistake "offlaods" -> "offloads"
+Message-Id: <20190904193841.20138-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
- <alpine.DEB.2.21.1909071804090.2562@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1909071804090.2562@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Allison Randal <allison@lohutok.net>
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> How do you think about to reduce subsequent SmPL rules also according to
->> a possible recombination of affected implementation details?
->
-> There is not going to be any change with respect to this issue.
+From: Colin Ian King <colin.king@canonical.com>
 
-I am curious if the software situation will be reconsidered any further
-under other circumstances.
+There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message.
+Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> It's fine when replacing one statement by another, but introduces complexity
-> when removing something more complex.
-
-Thanks for such information.
-
-
-> And there's not point to have something that works in only one special case.
-
-Will corresponding software development concerns be eventually discussed
-a bit more?
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/devlink.c b/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
+index 7bf7b6fbc776..381925c90d94 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/devlink.c
+@@ -133,7 +133,7 @@ static int mlx5_devlink_fs_mode_validate(struct devlink *devlink, u32 id,
+ 
+ 		else if (eswitch_mode = MLX5_ESWITCH_OFFLOADS) {
+ 			NL_SET_ERR_MSG_MOD(extack,
+-					   "Software managed steering is not supported when eswitch offlaods enabled.");
++					   "Software managed steering is not supported when eswitch offloads enabled.");
+ 			err = -EOPNOTSUPP;
+ 		}
+ 	} else {
+-- 
+2.20.1
