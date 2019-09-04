@@ -1,21 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 07 Sep 2019 16:01:37 +0000
-Subject: Re: [PATCH net-next] ionic: Remove unused including <linux/version.h>
-Message-Id: <20190907.180137.1412353242412904149.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Sep 2019 14:18:34 +0000
+Subject: [PATCH] gpio: mockup: add missing single_release()
+Message-Id: <20190904141834.195294-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906095410.107596-1-yuehaibing@huawei.com>
-In-Reply-To: <20190906095410.107596-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: snelson@pensando.io, drivers@pensando.io, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 6 Sep 2019 09:54:09 +0000
+When using single_open() for opening, single_release() should be
+used instead of seq_release(), otherwise there is a memory leak.
 
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-mockup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied.
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index f1a9c0544e3f..213aedc97dc2 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -309,6 +309,7 @@ static const struct file_operations gpio_mockup_debugfs_ops = {
+ 	.read = gpio_mockup_debugfs_read,
+ 	.write = gpio_mockup_debugfs_write,
+ 	.llseek = no_llseek,
++	.release = single_release,
+ };
+ 
+ static void gpio_mockup_debugfs_setup(struct device *dev,
