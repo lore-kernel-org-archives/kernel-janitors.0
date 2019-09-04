@@ -1,37 +1,30 @@
-From: David Miller <davem@redhat.com>
-Date: Sun, 01 Sep 2019 19:11:09 +0000
-Subject: Re: [PATCH] net: seeq: Fix the function used to release some memory in an error handling path
-Message-Id: <20190901.121109.1164811815017267709.davem@redhat.com>
+From: Cornelia Huck <cohuck@redhat.com>
+Date: Wed, 04 Sep 2019 08:31:00 +0000
+Subject: Re: [PATCH -next] vfio-ccw: fix error return code in vfio_ccw_sch_init()
+Message-Id: <20190904103100.4a53d035.cohuck@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
+References: <20190904083315.105600-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190904083315.105600-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: yuehaibing@huawei.com, tglx@linutronix.de, gregkh@linuxfoundation.org, tbogendoerfer@suse.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Eric Farman <farman@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>, Sebastian Ott <sebott@linux.ibm.com>, Peter Oberparleiter <oberpar@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 31 Aug 2019 09:17:51 +0200
+On Wed, 4 Sep 2019 08:33:15 +0000
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-> In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-> a call to 'get_zeroed_page()' has been turned into a call to
-> 'dma_alloc_coherent()'. Only the remove function has been updated to turn
-> the corresponding 'free_page()' into 'dma_free_attrs()'.
-> The error hndling path of the probe function has not been updated.
+> Fix to return negative error code -ENOMEM from the memory alloc failed
+> error handling case instead of 0, as done elsewhere in this function.
 > 
-> Fix it now.
-> 
-> Rename the corresponding label to something more in line.
-> 
-> Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 60e05d1cf087 ("vfio-ccw: add some logging")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/s390/cio/vfio_ccw_drv.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-Applied.
+Ah, yes.
 
-> If 'dma_alloc_coherent()' fails, maybe the message in printk could be
-> improved. The comment above may also not be relevant.
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 
-Memory allocation failures already give a stack backtrack down deep in the
-memory allocators, therefore printing messages at allocation call sites
-are veboten.
+Heiko/Vasily/Christian: can you queue this directly?
