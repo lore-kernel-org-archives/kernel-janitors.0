@@ -1,51 +1,34 @@
-From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Date: Fri, 27 Sep 2019 10:21:46 +0000
-Subject: Re: [PATCH] staging: vt6656: clean up an indentation issue
-Message-Id: <20190927102144.GA23080@jiffies>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 04 Sep 2019 11:40:14 +0000
+Subject: [PATCH -next] phy: lantiq: vrx200-pcie: fix error return code in ltq_vrx200_pcie_phy_power_on()
+Message-Id: <20190904114014.124099-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190927092400.20213-1-colin.king@canonical.com>
-In-Reply-To: <20190927092400.20213-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 10:24:00AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a block of code that is indented incorrectly, add in the
-> missing tabs.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/vt6656/main_usb.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> index 856ba97aec4f..3478a10f8025 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -249,10 +249,10 @@ static int vnt_init_registers(struct vnt_private *priv)
->  		} else {
->  			priv->tx_antenna_mode = ANT_B;
->  
-> -		if (priv->tx_rx_ant_inv)
-> -			priv->rx_antenna_mode = ANT_A;
-> -		else
-> -			priv->rx_antenna_mode = ANT_B;
-> +			if (priv->tx_rx_ant_inv)
-> +				priv->rx_antenna_mode = ANT_A;
-> +			else
-> +				priv->rx_antenna_mode = ANT_B;
->  		}
->  	}
->  
-> -- 
-> 2.20.1
-> 
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Fixes: e52a632195bf ("phy: lantiq: vrx200-pcie: add a driver for the Lantiq VRX200 PCIe PHY")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
-Quentin
+diff --git a/drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c b/drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c
+index 544d64a84cc0..6e457967653e 100644
+--- a/drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c
++++ b/drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c
+@@ -323,7 +323,8 @@ static int ltq_vrx200_pcie_phy_power_on(struct phy *phy)
+ 		goto err_disable_pdi_clk;
+ 
+ 	/* Check if we are in "startup ready" status */
+-	if (ltq_vrx200_pcie_phy_wait_for_pll(phy) != 0)
++	ret = ltq_vrx200_pcie_phy_wait_for_pll(phy);
++	if (ret)
+ 		goto err_disable_phy_clk;
+ 
+ 	ltq_vrx200_pcie_phy_apply_workarounds(phy);
