@@ -1,40 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 04 Sep 2019 19:29:14 +0000
-Subject: [PATCH][next] net/mlx5: fix missing assignment of variable err
-Message-Id: <20190904192914.19684-1-colin.king@canonical.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
+Date: Wed, 04 Sep 2019 23:30:48 +0000
+Subject: Re: [PATCH][next] net/mlx5: fix missing assignment of variable err
+Message-Id: <16073125f6bbc617a9ddc77441b9d3b840d50e28.camel@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190904192914.19684-1-colin.king@canonical.com>
+In-Reply-To: <20190904192914.19684-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maor Gottlieb <maorg@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Maor Gottlieb <maorg@mellanox.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The error return from a call to mlx5_flow_namespace_set_peer is not
-being assigned to variable err and hence the error check following
-the call is currently not working.  Fix this by assigning ret as
-intended.
-
-Addresses-Coverity: ("Logically dead code")
-Fixes: 8463daf17e80 ("net/mlx5: Add support to use SMFS in switchdev mode")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-index afa623b15a38..00d71db15f22 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@ -1651,7 +1651,7 @@ static int mlx5_esw_offloads_set_ns_peer(struct mlx5_eswitch *esw,
- 		if (err)
- 			return err;
- 
--		mlx5_flow_namespace_set_peer(peer_ns, ns);
-+		err = mlx5_flow_namespace_set_peer(peer_ns, ns);
- 		if (err) {
- 			mlx5_flow_namespace_set_peer(ns, NULL);
- 			return err;
--- 
-2.20.1
+T24gV2VkLCAyMDE5LTA5LTA0IGF0IDIwOjI5ICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
+IGVycm9yIHJldHVybiBmcm9tIGEgY2FsbCB0byBtbHg1X2Zsb3dfbmFtZXNwYWNlX3NldF9wZWVy
+IGlzIG5vdA0KPiBiZWluZyBhc3NpZ25lZCB0byB2YXJpYWJsZSBlcnIgYW5kIGhlbmNlIHRoZSBl
+cnJvciBjaGVjayBmb2xsb3dpbmcNCj4gdGhlIGNhbGwgaXMgY3VycmVudGx5IG5vdCB3b3JraW5n
+LiAgRml4IHRoaXMgYnkgYXNzaWduaW5nIHJldCBhcw0KPiBpbnRlbmRlZC4NCj4gDQo+IEFkZHJl
+c3Nlcy1Db3Zlcml0eTogKCJMb2dpY2FsbHkgZGVhZCBjb2RlIikNCj4gRml4ZXM6IDg0NjNkYWYx
+N2U4MCAoIm5ldC9tbHg1OiBBZGQgc3VwcG9ydCB0byB1c2UgU01GUyBpbiBzd2l0Y2hkZXYNCj4g
+bW9kZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9u
+aWNhbC5jb20+DQo+IC0tLQ0KDQpBcHBsaWVkIHRvIG5ldC1uZXh0LW1seDUuDQoNCkkgaGF2ZSBh
+IGNsZWFudXAgc2VyaWVzIGNvbWluZyB1cCwgd2lsbCBzZW5kIGl0IGFsbCB0b2dldGhlciB0byAN
+Cm5ldC1uZXh0IHNvb24uIA0KDQpUaGFua3MsDQpTYWVlZC4NCg=
