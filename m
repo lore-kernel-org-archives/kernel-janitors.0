@@ -1,43 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 01 Sep 2019 15:30:37 +0000
-Subject: Re: [PATCH] autofs: remove redundant assignment to variable err
-Message-Id: <01ec26e2-6fd9-5ea0-4ef7-6a47e00bb2c5@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 04 Sep 2019 17:50:35 +0000
+Subject: Re: drm/amdgpu: remove the redundant null check
+Message-Id: <62b33279-9ca9-5970-5336-a8511ce54197@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190901152251.11374-1-colin.king@canonical.com>
-In-Reply-To: <20190901152251.11374-1-colin.king@canonical.com>
+References: <1567491305-18320-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1567491305-18320-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Ian Kent <raven@themaw.net>, autofs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: zhong jiang <zhongjiang@huawei.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 01/09/2019 à 17:22, Colin King a écrit :
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable err is being assigned a value that is never read and
-> is being re-assigned a little later on. The assignment is redundant
-> and hence can be removed.
->
-> Addresses-Coverity: ("Ununsed value")
+> debugfs_remove and kfree has taken the null check in account.
+> hence it is unnecessary to check it. Just remove the condition.
 
-Ununsed?
+How do you think about a wording like the following?
+
+  The functions “debugfs_remove” and “kfree” tolerate the passing
+  of null pointers. Hence it is unnecessary to check such arguments
+  around the calls. Thus remove the extra condition check at two places.
 
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   fs/autofs/dev-ioctl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-> index a3cdb0036c5d..65d84b4d4464 100644
-> --- a/fs/autofs/dev-ioctl.c
-> +++ b/fs/autofs/dev-ioctl.c
-> @@ -422,7 +422,7 @@ static int autofs_dev_ioctl_requester(struct file *fp,
->   	struct autofs_info *ino;
->   	struct path path;
->   	dev_t devid;
-> -	int err = -ENOENT;
-> +	int err;
->   
->   	/* param->path has been checked in validate_dev_ioctl() */
->   
+> No functional change.
+
+I find this information questionable while it is partly reasonable
+according to the shown software refactoring.
+
+Can a subject like “[PATCH] drm/amdgpu: Remove two redundant
+null pointer checks” be nicer here?
+
+
+Were any source code analysis tools involved for finding
+these update candidates?
+
+Regards,
+Markus
