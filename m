@@ -1,57 +1,55 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 04 Sep 2019 13:58:03 +0000
-Subject: Re: [PATCH -next] vfio-ccw: fix error return code in vfio_ccw_sch_init()
-Message-Id: <1ceef8c5-f5c1-79e5-7442-beb38b94f6f6@de.ibm.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 04 Sep 2019 11:00:27 +0000
+Subject: [PATCH] drm/amdgpu: Delete an unnecessary check before two function calls
+Message-Id: <a3739125-5fa8-cadb-d2b8-8a9f12e9bacd@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904083315.105600-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190904083315.105600-1-weiyongjun1@huawei.com>
+References: <558FB427.80103@users.sourceforge.net>
+In-Reply-To: <558FB427.80103@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Cornelia Huck <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>, Sebastian Ott <sebott@linux.ibm.com>, Peter Oberparleiter <oberpar@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Hawking Zhang <Hawking.Zhang@amd.com>, Jack Xiao <Jack.Xiao@amd.com>, Kevin Wang <Kevin1.Wang@amd.com>, Tom St Denis <tom.stdenis@amd.com>, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Sep 2019 12:30:23 +0200
 
+The functions “debugfs_remove” and “kfree” test whether their argument
+is NULL and then return immediately.
+Thus the tests around the shown calls are not needed.
 
-On 04.09.19 10:33, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the memory alloc failed
-> error handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 60e05d1cf087 ("vfio-ccw: add some logging")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+This issue was detected by using the Coccinelle software.
 
-thanks applied to s390 tree. 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-> ---
->  drivers/s390/cio/vfio_ccw_drv.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-> index 45e792f6afd0..e401a3d0aa57 100644
-> --- a/drivers/s390/cio/vfio_ccw_drv.c
-> +++ b/drivers/s390/cio/vfio_ccw_drv.c
-> @@ -317,15 +317,19 @@ static int __init vfio_ccw_sch_init(void)
->  					sizeof(struct ccw_io_region), 0,
->  					SLAB_ACCOUNT, 0,
->  					sizeof(struct ccw_io_region), NULL);
-> -	if (!vfio_ccw_io_region)
-> +	if (!vfio_ccw_io_region) {
-> +		ret = -ENOMEM;
->  		goto out_err;
-> +	}
->  
->  	vfio_ccw_cmd_region = kmem_cache_create_usercopy("vfio_ccw_cmd_region",
->  					sizeof(struct ccw_cmd_region), 0,
->  					SLAB_ACCOUNT, 0,
->  					sizeof(struct ccw_cmd_region), NULL);
-> -	if (!vfio_ccw_cmd_region)
-> +	if (!vfio_ccw_cmd_region) {
-> +		ret = -ENOMEM;
->  		goto out_err;
-> +	}
->  
->  	isc_register(VFIO_CCW_ISC);
->  	ret = css_driver_register(&vfio_ccw_sch_driver);
-> 
-> 
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+index 5652cc72ed3a..d321c72d63d1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+@@ -1076,10 +1076,7 @@ static int amdgpu_debugfs_ib_preempt(void *data, u64 val)
+ 	kthread_unpark(ring->sched.thread);
+
+ 	ttm_bo_unlock_delayed_workqueue(&adev->mman.bdev, resched);
+-
+-	if (fences)
+-		kfree(fences);
+-
++	kfree(fences);
+ 	return 0;
+ }
+
+@@ -1103,8 +1100,7 @@ int amdgpu_debugfs_init(struct amdgpu_device *adev)
+
+ void amdgpu_debugfs_preempt_cleanup(struct amdgpu_device *adev)
+ {
+-	if (adev->debugfs_preempt)
+-		debugfs_remove(adev->debugfs_preempt);
++	debugfs_remove(adev->debugfs_preempt);
+ }
+
+ #else
+--
+2.23.0
