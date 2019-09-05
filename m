@@ -1,34 +1,30 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 03 Sep 2019 13:44:19 +0000
-Subject: Re: [PATCH][V2] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
-Message-Id: <20190903134420.6A8D9608FF@smtp.codeaurora.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 05 Sep 2019 02:56:23 +0000
+Subject: [PATCH -next] staging: exfat: remove unused including <linux/version.h>
+Message-Id: <20190905025623.63210-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827081620.20998-1-colin.king@canonical.com>
-In-Reply-To: <20190827081620.20998-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Remove including <linux/version.h> that don't need it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An earlier commit re-worked the setting of the bitmask and is now
-> assigning v with some bit flags rather than bitwise or-ing them
-> into v, consequently the earlier bit-settings of v are being lost.
-> Fix this by replacing an assignment with the bitwise or instead.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/exfat/exfat_super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-420c20be08a4 bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
-
--- 
-https://patchwork.kernel.org/patch/11116317/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5b5c2ca8c9aa..cb43a39864af 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -3,7 +3,6 @@
+  *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+  */
+ 
+-#include <linux/version.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/time.h>
