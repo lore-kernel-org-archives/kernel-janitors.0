@@ -1,73 +1,31 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 03 Sep 2019 12:29:00 +0000
-Subject: [PATCH] efs: Delete unnecessary checks before brelse()
-Message-Id: <30140782-38b7-5eb6-885e-8289997842f6@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 05 Sep 2019 09:53:26 +0000
+Subject: [PATCH net-next] net/mlx5: DR, Remove useless set memory to zero use memset()
+Message-Id: <20190905095326.127277-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8fcea3ac-469f-a84b-e4d2-347f047307f8@web.de>
-In-Reply-To: <8fcea3ac-469f-a84b-e4d2-347f047307f8@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Alex Vesker <valex@mellanox.com>, Erez Shitrit <erezsh@mellanox.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Sep 2019 14:24:38 +0200
+The memory return by kzalloc() has already be set to zero, so
+remove useless memset(0).
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus the tests around the shown calls are not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- fs/efs/inode.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_send.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/efs/inode.c b/fs/efs/inode.c
-index 89e73a6f0d36..176061d107ed 100644
---- a/fs/efs/inode.c
-+++ b/fs/efs/inode.c
-@@ -262,7 +262,7 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 			/* should never happen */
- 			pr_err("couldn't find direct extent for indirect extent %d (block %u)\n",
- 			       cur, block);
--			if (bh) brelse(bh);
-+			brelse(bh);
- 			return 0;
- 		}
-
-@@ -274,8 +274,7 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 			(EFS_BLOCKSIZE / sizeof(efs_extent));
-
- 		if (first || lastblock != iblock) {
--			if (bh) brelse(bh);
--
-+			brelse(bh);
- 			bh = sb_bread(inode->i_sb, iblock);
- 			if (!bh) {
- 				pr_err("%s() failed at block %d\n",
-@@ -295,17 +294,17 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 		if (ext.cooked.ex_magic != 0) {
- 			pr_err("extent %d has bad magic number in block %d\n",
- 			       cur, iblock);
--			if (bh) brelse(bh);
-+			brelse(bh);
- 			return 0;
- 		}
-
- 		if ((result = efs_extent_check(&ext, block, sb))) {
--			if (bh) brelse(bh);
-+			brelse(bh);
- 			in->lastextent = cur;
- 			return result;
- 		}
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_send.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_send.c
+index ef0dea44f3b3..5df8436b2ae3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_send.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_send.c
+@@ -899,7 +899,6 @@ int mlx5dr_send_ring_alloc(struct mlx5dr_domain *dmn)
+ 		goto clean_qp;
  	}
--	if (bh) brelse(bh);
-+	brelse(bh);
- 	pr_err("%s() failed to map block %u (indir)\n", __func__, block);
- 	return 0;
- }
---
-2.23.0
+ 
+-	memset(dmn->send_ring->buf, 0, size);
+ 	dmn->send_ring->buf_size = size;
+ 
+ 	dmn->send_ring->mr = dr_reg_mr(dmn->mdev,
