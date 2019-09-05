@@ -1,28 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 17 Sep 2019 14:13:22 +0000
-Subject: Re: [PATCH] ath10k: fix spelling mistake "eanble" -> "enable"
-Message-Id: <20190917141322.B2985614C3@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Sep 2019 14:34:35 +0000
+Subject: [PATCH] nvme: tcp: remove redundant assignment to variable ret
+Message-Id: <20190905143435.2864-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190913074339.27280-1-colin.king@canonical.com>
-In-Reply-To: <20190913074339.27280-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There is a spelling mistake in a ath10k_warn warning message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The variable ret is being initialized with a value that is never read
+and is being re-assigned immediately afterwards. The assignment is
+redundant and hence can be removed.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvme/host/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-09764659003d ath10k: fix spelling mistake "eanble" -> "enable"
-
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 2d8ba31cb691..d91be6ddfe25 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1824,7 +1824,7 @@ static void nvme_tcp_reconnect_or_remove(struct nvme_ctrl *ctrl)
+ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+ {
+ 	struct nvmf_ctrl_options *opts = ctrl->opts;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	ret = nvme_tcp_configure_admin_queue(ctrl, new);
+ 	if (ret)
 -- 
-https://patchwork.kernel.org/patch/11144035/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
