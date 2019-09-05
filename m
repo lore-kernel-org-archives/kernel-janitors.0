@@ -1,33 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Sep 2019 09:57:54 +0000
-Subject: [bug report] net/mlx5: DR, Add Steering entry (STE) utilities
-Message-Id: <20190905095754.GA26074@mwanda>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 05 Sep 2019 02:43:41 +0000
+Subject: [PATCH -next] staging: exfat: Use kmemdup in exfat_symlink()
+Message-Id: <20190905030047.88401-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-Hello Alex Vesker,
+Use kmemdup rather than duplicating its implementation
 
-The patch 26d688e33f88: "net/mlx5: DR, Add Steering entry (STE)
-utilities" from Aug 19, 2019, leads to the following static checker
-warning:
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/exfat/exfat_super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-	drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c:271 mlx5dr_ste_get_miss_addr()
-	warn: potential shift truncation.  '0xff (0-255) << 26'
-
-drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste.c
-   267  u64 mlx5dr_ste_get_miss_addr(u8 *hw_ste)
-   268  {
-   269          u64 index    270                  (MLX5_GET(ste_rx_steering_mult, hw_ste, miss_address_31_6) |
-   271                   MLX5_GET(ste_rx_steering_mult, hw_ste, miss_address_39_32) << 26);
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Smatch thinks this needs to be cast to u64.
-
-   272  
-   273          return index << 6;
-   274  }
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5b5c2ca8c9aa..05fdecc3e9ea 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -2696,12 +2696,11 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+ 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
+ 
+-	EXFAT_I(inode)->target = kmalloc(len+1, GFP_KERNEL);
++	EXFAT_I(inode)->target = kmemdup(target, len + 1, GFP_KERNEL);
+ 	if (!EXFAT_I(inode)->target) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+-	memcpy(EXFAT_I(inode)->target, target, len+1);
+ 
+ 	dentry->d_time = GET_IVERSION(dentry->d_parent->d_inode);
+ 	d_instantiate(dentry, inode);
