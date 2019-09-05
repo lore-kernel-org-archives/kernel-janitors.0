@@ -1,47 +1,44 @@
-From: Karol Herbst <kherbst@redhat.com>
-Date: Thu, 05 Sep 2019 09:11:49 +0000
-Subject: Re: [PATCH] drm/nouveau: add missing single_release()
-Message-Id: <CACO55tsJt2Z-EQBpPw1=yq_jya2kJ5u5xs_xg=nhB8ZHwhjCoA@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 05 Sep 2019 01:57:12 +0000
+Subject: [PATCH v2 net] net: sonic: return NETDEV_TX_OK if failed to map buffer
+Message-Id: <20190905015712.107173-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904141857.196103-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190904141857.196103-1-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+References: <960c7d1f-6e80-84fb-8d7a-9c5692605500@huawei.com>
+In-Reply-To: <960c7d1f-6e80-84fb-8d7a-9c5692605500@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+To: eric.dumazet@gmail.com, tsbogend@alpha.franken.de, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-Reviewed-by: Karol Herbst <kherbst@redhat.com>
+NETDEV_TX_BUSY really should only be used by drivers that call
+netif_tx_stop_queue() at the wrong moment. If dma_map_single() is
+failed to map tx DMA buffer, it might trigger an infinite loop.
+This patch use NETDEV_TX_OK instead of NETDEV_TX_BUSY, and change
+printk to pr_err_ratelimited.
 
-On Thu, Sep 5, 2019 at 9:14 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> When using single_open() for opening, single_release() should be
-> used, otherwise there is a memory leak.
->
-> This is detected by Coccinelle semantic patch.
->
-> Fixes: 6e9fc177399f ("drm/nouveau/debugfs: add copy of sysfs pstate interface ported to debugfs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_debugfs.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> index 7dfbbbc1beea..35695f493271 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> @@ -202,6 +202,7 @@ static const struct file_operations nouveau_pstate_fops = {
->         .open = nouveau_debugfs_pstate_open,
->         .read = seq_read,
->         .write = nouveau_debugfs_pstate_set,
-> +       .release = single_release,
->  };
->
->  static struct drm_info_list nouveau_debugfs_list[] = {
->
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Fixes: d9fb9f384292 ("*sonic/natsemi/ns83829: Move the National Semi-conductor drivers")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: change subject and description of patch, use NETDEV_TX_OK instead of NETDEV_TX_BUSY.
+ drivers/net/ethernet/natsemi/sonic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index d0a01e8f000a..18fd62fbfb64 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -232,9 +232,9 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	laddr = dma_map_single(lp->device, skb->data, length, DMA_TO_DEVICE);
+ 	if (!laddr) {
+-		printk(KERN_ERR "%s: failed to map tx DMA buffer.\n", dev->name);
++		pr_err_ratelimited("%s: failed to map tx DMA buffer.\n", dev->name);
+ 		dev_kfree_skb(skb);
+-		return NETDEV_TX_BUSY;
++		return NETDEV_TX_OK;
+ 	}
+ 
+ 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
+-- 
+2.20.1
