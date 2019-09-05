@@ -1,40 +1,66 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 06 Sep 2019 16:18:12 +0000
-Subject: [PATCH] dca: Use PTR_ERR_OR_ZERO() in dca_sysfs_add_req()
-Message-Id: <266c98ba-43ad-28c8-055b-a3e832e7e8a5@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Sep 2019 09:08:44 +0000
+Subject: [bug report] net/mlx5: Add direct rule fs_cmd implementation
+Message-Id: <20190905090844.GA16180@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Allison Randal <allison@lohutok.net>, Kate Stewart <kstewart@linuxfoundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Richard Fontana <rfontana@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, zhong jiang <zhongjiang@huawei.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Sep 2019 18:05:21 +0200
+Hello Maor Gottlieb,
 
-Simplify this function implementation by using a known function.
+The patch 6a48faeeca10: "net/mlx5: Add direct rule fs_cmd
+implementation" from Aug 20, 2019, leads to the following static
+checker warning:
 
-This issue was detected by using the Coccinelle software.
+	drivers/net/ethernet/mellanox/mlx5/core/steering/fs_dr.c:52 set_miss_action()
+	warn: 'action' was already freed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/dca/dca-sysfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+drivers/net/ethernet/mellanox/mlx5/core/steering/fs_dr.c
+    27  static int set_miss_action(struct mlx5_flow_root_namespace *ns,
+    28                             struct mlx5_flow_table *ft,
+    29                             struct mlx5_flow_table *next_ft)
+    30  {
+    31          struct mlx5dr_action *old_miss_action;
+    32          struct mlx5dr_action *action = NULL;
+    33          struct mlx5dr_table *next_tbl;
+    34          int err;
+    35  
+    36          next_tbl = next_ft ? next_ft->fs_dr_table.dr_table : NULL;
+    37          if (next_tbl) {
+    38                  action = mlx5dr_action_create_dest_table(next_tbl);
+    39                  if (!action)
+    40                          return -EINVAL;
+    41          }
+    42          old_miss_action = ft->fs_dr_table.miss_action;
+    43          err = mlx5dr_table_set_miss_action(ft->fs_dr_table.dr_table, action);
+    44          if (err && action) {
+    45                  err = mlx5dr_action_destroy(action);
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-diff --git a/drivers/dca/dca-sysfs.c b/drivers/dca/dca-sysfs.c
-index eb25627b059d..21ebd0af268b 100644
---- a/drivers/dca/dca-sysfs.c
-+++ b/drivers/dca/dca-sysfs.c
-@@ -24,9 +24,7 @@ int dca_sysfs_add_req(struct dca_provider *dca, struct device *dev, int slot)
+If err returns -EBUSY then "action" is not freed but if it returns zero
+that means it is freed.
 
- 	cd = device_create(dca_class, dca->cd, MKDEV(0, slot + 1), NULL,
- 			   "requester%d", req_count++);
--	if (IS_ERR(cd))
--		return PTR_ERR(cd);
--	return 0;
-+	return PTR_ERR_OR_ZERO(cd);
- }
+    46                  if (err) {
+    47                          action = NULL;
+    48                          mlx5_core_err(ns->dev, "Failed to destroy action (%d)\n",
+    49                                        err);
+    50                  }
+    51          }
+    52          ft->fs_dr_table.miss_action = action;
+                                              ^^^^^^
+Use after free.
 
- void dca_sysfs_remove_req(struct dca_provider *dca, int slot)
---
-2.23.0
+    53          if (old_miss_action) {
+    54                  err = mlx5dr_action_destroy(old_miss_action);
+    55                  if (err)
+    56                          mlx5_core_err(ns->dev, "Failed to destroy action (%d)\n",
+    57                                        err);
+    58          }
+    59  
+    60          return err;
+    61  }
+
+regards,
+dan carpenter
