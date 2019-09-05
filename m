@@ -1,51 +1,32 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 26 Sep 2019 16:20:51 +0000
-Subject: [PATCH] phy-mvebu-a3700-utmi: Use devm_platform_ioremap_resource() in mvebu_a3700_utmi_phy_probe()
-Message-Id: <5403540b-d3de-4a29-ec84-7ce5bb8d6d9f@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 05 Sep 2019 09:42:22 +0000
+Subject: [PATCH -next] xhci-ext-caps.c: Add missing platform_device_put() on error in xhci_create_intel_xhci_
+Message-Id: <20190905100001.128349-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Igal Liberman <igall@marvell.com>, Kishon Vijay Abraham I <kishon@ti.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saranya Gopal <saranya.gopal@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2019 18:15:23 +0200
+Add the missing platform_device_put() before return from
+xhci_create_intel_xhci_sw_pdev() in the error handling case.
 
-Simplify this function implementation by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 6ed151f26484 ("xhci-ext-caps.c: Add property to disable Intel SW switch")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/phy/marvell/phy-mvebu-a3700-utmi.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/usb/host/xhci-ext-caps.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
-index ded900b06f5a..23bc3bf5c4c0 100644
---- a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
-+++ b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
-@@ -216,20 +216,13 @@ static int mvebu_a3700_utmi_phy_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct mvebu_a3700_utmi *utmi;
- 	struct phy_provider *provider;
--	struct resource *res;
-
- 	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
- 	if (!utmi)
- 		return -ENOMEM;
-
- 	/* Get UTMI memory region */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(dev, "Missing UTMI PHY memory resource\n");
--		return -ENODEV;
--	}
--
--	utmi->regs = devm_ioremap_resource(dev, res);
-+	utmi->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(utmi->regs))
- 		return PTR_ERR(utmi->regs);
-
---
-2.23.0
+diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
+index f498160df969..3351d07c431f 100644
+--- a/drivers/usb/host/xhci-ext-caps.c
++++ b/drivers/usb/host/xhci-ext-caps.c
+@@ -57,6 +57,7 @@ static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
+ 		ret = platform_device_add_properties(pdev, role_switch_props);
+ 		if (ret) {
+ 			dev_err(dev, "failed to register device properties\n");
++			platform_device_put(pdev);
+ 			return ret;
+ 		}
+ 	}
