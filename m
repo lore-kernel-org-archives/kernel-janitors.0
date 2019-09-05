@@ -1,44 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Sep 2019 11:36:30 +0000
-Subject: Re: [PATCH] iio: imu: adis16480: clean up a condition
-Message-Id: <20190926113630.GF27389@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Sep 2019 15:48:26 +0000
+Subject: [PATCH] ALSA: hda/hdmi: remove redundant assignment to variable pcm_idx
+Message-Id: <20190905154826.5916-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926081016.GA2332@mwanda>
- <9e40c550310d6f30e6481329e01061beb474bc33.camel@analog.com>
-In-Reply-To: <9e40c550310d6f30e6481329e01061beb474bc33.camel@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc: "lars@metafoo.de" <lars@metafoo.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "jic23@kernel.org" <jic23@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Hennerich, Michael" <Michael.Hennerich@analog.com>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "knaack.h@gmx.de" <knaack.h@gmx.de>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 11:06:39AM +0000, Ardelean, Alexandru wrote:
-> On Thu, 2019-09-26 at 11:10 +0300, Dan Carpenter wrote:
-> > [External]
-> > 
-> > The "t" variable is unsigned so it can't be less than zero.  We really
-> > are just trying to prevent divide by zero bugs so just checking against
-> > zero is sufficient.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/iio/imu/adis16480.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-> > index b99d73887c9f..e144e567675d 100644
-> > --- a/drivers/iio/imu/adis16480.c
-> > +++ b/drivers/iio/imu/adis16480.c
-> > @@ -318,7 +318,7 @@ static int adis16480_set_freq(struct iio_dev
-> > *indio_dev, int val, int val2)
-> >  	unsigned int t, reg;
-> 
-> I would just change the type of "t" to "int".
-> Especially, since "val" & "val2" are "int".
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah, but negatives or high values are basically fine.  We only care
-zero.
+Variable pcm_idx is being initialized with a value that is never read
+and is being re-assigned immediately afterwards. The assignment is
+redundant and hence can be removed.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/hda/patch_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 83b8b9d27711..bca5de78e9ad 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1440,7 +1440,7 @@ static bool update_eld(struct hda_codec *codec,
+ 	struct hdmi_spec *spec = codec->spec;
+ 	bool old_eld_valid = pin_eld->eld_valid;
+ 	bool eld_changed;
+-	int pcm_idx = -1;
++	int pcm_idx;
+ 
+ 	/* for monitor disconnection, save pcm_idx firstly */
+ 	pcm_idx = per_pin->pcm_idx;
+-- 
+2.20.1
