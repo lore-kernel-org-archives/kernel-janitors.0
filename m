@@ -1,25 +1,68 @@
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Sun, 22 Sep 2019 02:46:49 +0000
-Subject: Re: [PATCH] rtc: r7301: Use devm_platform_ioremap_resource() in rtc7301_rtc_probe()
-Message-Id: <CAC5umyjWuFH4iADS=_KYWsL=osdw1o56cdabjNftgSDsXzzLUw@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 05 Sep 2019 12:32:54 +0000
+Subject: Re: [RFC PATCH] coccinelle: check for integer overflow in binary search
+Message-Id: <8f454c56-735c-0620-ead4-b59e328b0283@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8c17a59c-82ff-aa6b-5653-a38d786d3e83@web.de>
-In-Reply-To: <8c17a59c-82ff-aa6b-5653-a38d786d3e83@web.de>
+References: <20190904221223.5281-1-efremov@linux.com>
+In-Reply-To: <20190904221223.5281-1-efremov@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Rob Herring <robh@kernel.org>
+To: Denis Efremov <efremov@linux.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org
 
-2019年9月21日(土) 20:49 Markus Elfring <Markus.Elfring@web.de>:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Sep 2019 13:43:07 +0200
->
-> Simplify this function implementation by using a known wrapper function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> +identifier l, h, m;
 
-Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
+Can expressions make sense for these metavariables?
+
+
+> +@@
+> +(
+> + while (\(l < h\|l <= h\|(h - l) > 1\|(l + 1) < h\|l < (h - 1)\)) {
+> +  ...
+> +(
+> +  ((l + h)@p / c)
+> +|
+> +  ((l + h)@p >> c)
+> +)
+> +  ...
+> + }
+
+* I suggest again to look at further possibilities to reduce undesirable
+  code duplication also together with the usage of SmPL disjunctions.
+
+* The condition specification might be easier to read with a few
+  additional spaces (or the following variant).
+
+* The SmPL ellipses will probably need further considerations.
+
+
++@@
++(
++ while (
++(       l \( < \| <= \) h
++|       (h - l) > 1
++|       (h - 1) > l
++|       (l + 1) < h
++)      )
++ {
++ <+...
++ ((l + h)@p \( / \| >> \) c)
++ ...+>
++ }
+
+
+> +@script:python depends on report@
+> +p << r.p;
+> +@@
+> +
+> +msg="WARNING: custom implementation of bsearch is error-prone. "
+> +msg+="Consider using lib/bsearch.c or fix the midpoint calculation "
+> +msg+="as 'm = l + (h - l) / 2;' to prevent the arithmetic overflow."
+> +coccilib.report.print_report(p[0], msg)
+
+The Linux coding style supports to put a long string literal also into a single line.
+Thus I find such a message construction nicer without the extra variable “msg”.
+
+Regards,
+Markus
