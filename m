@@ -1,36 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Sep 2019 10:01:02 +0000
-Subject: [PATCH] usb: cdns3: Fix use after free in probe error handling
-Message-Id: <20190904100102.GB7007@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Sep 2019 17:45:12 +0000
+Subject: [PATCH] media: cxd2820r: make array tab static const, makes object smaller
+Message-Id: <20190905174512.8126-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Laszczak <pawell@cadence.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We can't use "wrap" after it has been freed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Don't populate the array tab on the stack but instead make it
+static const. Makes the object code smaller by 53 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   7045	   1736	      0	   8781	   224d	media/dvb-frontends/cxd2820r_c.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6896	   1832	      0	   8728	   2218	media/dvb-frontends/cxd2820r_c.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/cdns3/cdns3-pci-wrap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/cxd2820r_c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
-index c41ddb61b857..b0a29efe7d31 100644
---- a/drivers/usb/cdns3/cdns3-pci-wrap.c
-+++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
-@@ -159,8 +159,9 @@ static int cdns3_pci_probe(struct pci_dev *pdev,
- 		wrap->plat_dev = platform_device_register_full(&plat_info);
- 		if (IS_ERR(wrap->plat_dev)) {
- 			pci_disable_device(pdev);
-+			err = PTR_ERR(wrap->plat_dev);
- 			kfree(wrap);
--			return PTR_ERR(wrap->plat_dev);
-+			return err;
- 		}
- 	}
- 
+diff --git a/drivers/media/dvb-frontends/cxd2820r_c.c b/drivers/media/dvb-frontends/cxd2820r_c.c
+index 6f7eedb4c00e..0ba382948c51 100644
+--- a/drivers/media/dvb-frontends/cxd2820r_c.c
++++ b/drivers/media/dvb-frontends/cxd2820r_c.c
+@@ -298,7 +298,7 @@ int cxd2820r_sleep_c(struct dvb_frontend *fe)
+ 	struct cxd2820r_priv *priv = fe->demodulator_priv;
+ 	struct i2c_client *client = priv->client[0];
+ 	int ret;
+-	struct reg_val_mask tab[] = {
++	static const struct reg_val_mask tab[] = {
+ 		{ 0x000ff, 0x1f, 0xff },
+ 		{ 0x00085, 0x00, 0xff },
+ 		{ 0x00088, 0x01, 0xff },
 -- 
 2.20.1
