@@ -1,36 +1,55 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 27 Sep 2019 16:09:09 +0000
-Subject: Re: [PATCH] staging: rtl8192u: fix multiple memory leaks on error path
-Message-Id: <02e4032a-d5f4-abfc-1d71-6a8d50554e40@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Sep 2019 16:54:06 +0000
+Subject: [PATCH] HID: prodikeys: make array keys static const, makes object smaller
+Message-Id: <20190905165406.24641-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920025137.29407-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190920025137.29407-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Nishka Dasgupta <nishkadg.linux@gmail.com>, Stephen A McCamant <smccaman@umn.edu>, Colin Ian King <colin.king@canonical.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> In rtl8192_tx on error handling path allocated urbs and also skb should
-> be released.
+From: Colin Ian King <colin.king@canonical.com>
 
-Can this change description be improved?
+Don't populate the array keys on the stack but instead make it
+static const. Makes the object code smaller by 166 bytes.
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  18931	   5872	    480	  25283	   62c3	drivers/hid/hid-prodikeys.o
 
-How do you think about to add the tag “Fixes” here?
+After:
+   text	   data	    bss	    dec	    hex	filename
+  18669	   5968	    480	  25117	   621d	drivers/hid/hid-prodikeys.o
 
+(gcc version 9.2.1, amd64)
 
-> @@ -1588,7 +1590,12 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->  	RT_TRACE(COMP_ERR, "Error TX URB %d, error %d",
->  		 atomic_read(&priv->tx_pending[tcb_desc->queue_index]),
->  		 status);
-> -	return -1;
-> +
-> +error:
-> +	dev_kfree_skb_any(skb);
-…
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-prodikeys.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Would an other label be more appropriate according to the Linux coding style?
-
-Regards,
-Markus
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index 21544ebff855..fb6841ebe4d9 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -516,7 +516,7 @@ static void pcmidi_setup_extra_keys(
+ 		MY PICTURES =>	KEY_WORDPROCESSOR
+ 		MY MUSIC=>	KEY_SPREADSHEET
+ 	*/
+-	unsigned int keys[] = {
++	static const unsigned int keys[] = {
+ 		KEY_FN,
+ 		KEY_MESSENGER, KEY_CALENDAR,
+ 		KEY_ADDRESSBOOK, KEY_DOCUMENTS,
+@@ -532,7 +532,7 @@ static void pcmidi_setup_extra_keys(
+ 		0
+ 	};
+ 
+-	unsigned int *pkeys = &keys[0];
++	const unsigned int *pkeys = &keys[0];
+ 	unsigned short i;
+ 
+ 	if (pm->ifnum != 1)  /* only set up ONCE for interace 1 */
+-- 
+2.20.1
