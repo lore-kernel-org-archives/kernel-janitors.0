@@ -1,7 +1,7 @@
 From: Oleh Kravchenko <oleg@kaa.org.ua>
-Date: Thu, 05 Sep 2019 12:23:21 +0000
+Date: Thu, 05 Sep 2019 12:39:38 +0000
 Subject: Re: [PATCH] led: triggers: Fix NULL dereference in led_trigger_set() error handling
-Message-Id: <BC1CA967-2B9F-44A4-A1A9-FD9C6E874991@kaa.org.ua>
+Message-Id: <78d23283-47b3-9333-ea65-9763404a9bcf@kaa.org.ua>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190905095728.GA26005@mwanda>
  <20190905120626.hyegecmy6hf5lvhj@pengutronix.de>
@@ -9,7 +9,7 @@ In-Reply-To: <20190905120626.hyegecmy6hf5lvhj@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hello Jacek,
@@ -35,14 +35,19 @@ Hello Jacek,
 > Did you find this at runtime or by using some static checker?
 
 Let me summarize the chronology of the last activities below:
-1. I have sent the patch for the bugs that I have found by static analyzer at PVS-Studio
+1. I have sent the patch for the bugs that I have found by static
+analyzer at PVS-Studio
     Date: Wed, 4 Sep 2019 00:18:19 +0300
     https://www.spinics.net/lists/linux-leds/msg13181.html
 
-2. At 5 Sep 2019 12:57:19 +0300 Time Dan Cartpen has sent the patch with the same proposal
-3. Uwe Kleine-König started to discuss his results of review by asking Dan on how he was found it.
+2. At 5 Sep 2019 12:57:19 +0300 Time Dan Cartpen has sent the patch with
+the same proposal
 
-Would you mine if you will keep me as a Original author of this patch based on fact 1?
+3. Uwe Kleine-König started to discuss his results of review by asking
+Dan on how he was found it.
+
+Would you mine if you will keep me as a Original author of this patch
+based on fact 1?
 
 Best regards,
 Oleh Kravchenko
