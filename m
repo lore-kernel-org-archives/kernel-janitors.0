@@ -1,56 +1,46 @@
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date: Sun, 08 Sep 2019 10:22:27 +0000
-Subject: Re: [PATCH] fat: Delete an unnecessary check before brelse()
-Message-Id: <87r24rxf30.fsf@mail.parknet.co.jp>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 11:28:04 +0000
+Subject: [PATCH] net: hns3: make array spec_opcode static const, makes object smaller
+Message-Id: <20190906112804.7812-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cfff3b81-fb5d-af26-7b5e-724266509045@web.de>
-In-Reply-To: <cfff3b81-fb5d-af26-7b5e-724266509045@web.de> (Markus Elfring's
-        message of "Tue, 3 Sep 2019 15:00:11 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Peng Li <lipeng321@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 3 Sep 2019 14:56:16 +0200
->
-> The brelse() function tests whether its argument is NULL
-> and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Don't populate the array spec_opcode on the stack but instead make it
+static const. Makes the object code smaller by 48 bytes.
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6914	   1040	    128	   8082	   1f92	hns3/hns3vf/hclgevf_cmd.o
 
-Thanks.
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6866	   1040	    128	   8034	   1f62	hns3/hns3vf/hclgevf_cmd.o
 
-> ---
->  fs/fat/dir.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index 1bda2ab6745b..f4bc87a3c98d 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -88,9 +88,7 @@ static int fat__get_entry(struct inode *dir, loff_t *pos,
->  	int err, offset;
->
->  next:
-> -	if (*bh)
-> -		brelse(*bh);
-> -
-> +	brelse(*bh);
->  	*bh = NULL;
->  	iblock = *pos >> sb->s_blocksize_bits;
->  	err = fat_bmap(dir, iblock, &phys, &mapped_blocks, 0, false);
-> --
-> 2.23.0
->
+(gcc version 9.2.1, amd64)
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+index 4c2c9458648f..d5d1cc5d1b6e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+@@ -74,7 +74,7 @@ static bool hclgevf_cmd_csq_done(struct hclgevf_hw *hw)
+ 
+ static bool hclgevf_is_special_opcode(u16 opcode)
+ {
+-	u16 spec_opcode[] = {0x30, 0x31, 0x32};
++	static const u16 spec_opcode[] = {0x30, 0x31, 0x32};
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(spec_opcode); i++) {
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.20.1
