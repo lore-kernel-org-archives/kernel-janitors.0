@@ -1,43 +1,142 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 03 Sep 2019 12:11:14 +0000
-Subject: [PATCH] befs: Delete an unnecessary check before brelse()
-Message-Id: <83cda9b2-a2c9-2201-48b7-3bf2273d7e87@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 15:30:52 +0000
+Subject: [PATCH] staging: fbtft: make several arrays static const, makes object smaller
+Message-Id: <20190906153052.31846-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Sep 2019 14:04:05 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus the test around the call is not needed.
+Don't populate the arrays on the stack but instead make them
+static const. Makes the object code smaller by 1329 bytes.
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   5581	   1488	     64	   7133	   1bdd	drivers/staging/fbtft/fb_hx8340bn.o
+   5444	   1264	      0	   6708	   1a34	drivers/staging/fbtft/fb_hx8347d.o
+   3581	   1360	      0	   4941	   134d	drivers/staging/fbtft/fb_ili9163.o
+   7154	   1552	      0	   8706	   2202	drivers/staging/fbtft/fb_ili9320.o
+   7478	   2544	      0	  10022	   2726	drivers/staging/fbtft/fb_ili9325.o
+   6327	   1424	      0	   7751	   1e47	drivers/staging/fbtft/fb_s6d1121.o
+   6498	   1776	      0	   8274	   2052	drivers/staging/fbtft/fb_ssd1289.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5376	   1584	     64	   7024	   1b70	drivers/staging/fbtft/fb_hx8340bn.o
+   5276	   1328	      0	   6604	   19cc	drivers/staging/fbtft/fb_hx8347d.o
+   3581	   1360	      0	   4941	   134d	drivers/staging/fbtft/fb_ili9163.o
+   6905	   1616	      0	   8521	   2149	drivers/staging/fbtft/fb_ili9320.o
+   7229	   2608	      0	   9837	   266d	drivers/staging/fbtft/fb_ili9325.o
+   6030	   1488	      0	   7518	   1d5e	drivers/staging/fbtft/fb_s6d1121.o
+   6249	   1872	      0	   8121	   1fb9	drivers/staging/fbtft/fb_ssd1289.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/befs/btree.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/staging/fbtft/fb_hx8340bn.c | 2 +-
+ drivers/staging/fbtft/fb_hx8347d.c  | 2 +-
+ drivers/staging/fbtft/fb_ili9163.c  | 2 +-
+ drivers/staging/fbtft/fb_ili9320.c  | 2 +-
+ drivers/staging/fbtft/fb_ili9325.c  | 2 +-
+ drivers/staging/fbtft/fb_s6d1121.c  | 2 +-
+ drivers/staging/fbtft/fb_ssd1289.c  | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/befs/btree.c b/fs/befs/btree.c
-index 1b7e0f7128d6..a293e9ce1410 100644
---- a/fs/befs/btree.c
-+++ b/fs/befs/btree.c
-@@ -194,10 +194,7 @@ befs_bt_read_node(struct super_block *sb, const befs_data_stream *ds,
- 	uint off = 0;
-
- 	befs_debug(sb, "---> %s", __func__);
--
--	if (node->bh)
--		brelse(node->bh);
--
-+	brelse(node->bh);
- 	node->bh = befs_read_datastream(sb, ds, node_off, &off);
- 	if (!node->bh) {
- 		befs_error(sb, "%s failed to read "
---
-2.23.0
+diff --git a/drivers/staging/fbtft/fb_hx8340bn.c b/drivers/staging/fbtft/fb_hx8340bn.c
+index d47dcf31fffb..2fd7b87ea0ce 100644
+--- a/drivers/staging/fbtft/fb_hx8340bn.c
++++ b/drivers/staging/fbtft/fb_hx8340bn.c
+@@ -151,7 +151,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x0f, 0x0f, 0x1f, 0x0f, 0x0f, 0x0f, 0x1f, 0x07, 0x07, 0x07,
+ 		0x07, 0x07, 0x07, 0x03, 0x03, 0x0f, 0x0f, 0x1f, 0x0f, 0x0f,
+ 		0x0f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x00, 0x00,
+diff --git a/drivers/staging/fbtft/fb_hx8347d.c b/drivers/staging/fbtft/fb_hx8347d.c
+index 3427a858d17c..37eaf0862c5b 100644
+--- a/drivers/staging/fbtft/fb_hx8347d.c
++++ b/drivers/staging/fbtft/fb_hx8347d.c
+@@ -95,7 +95,7 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x7f, 0x7f, 0x1f, 0x1f,
+ 		0x1f, 0x1f, 0x1f, 0x0f,
+ 	};
+diff --git a/drivers/staging/fbtft/fb_ili9163.c b/drivers/staging/fbtft/fb_ili9163.c
+index fd32376700e2..05648c3ffe47 100644
+--- a/drivers/staging/fbtft/fb_ili9163.c
++++ b/drivers/staging/fbtft/fb_ili9163.c
+@@ -195,7 +195,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int gamma_adj(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
+ 		0x1f, 0x3f, 0x0f, 0x0f, 0x7f, 0x1f,
+ 		0x3F, 0x3F, 0x3F, 0x3F, 0x3F};
+diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
+index ea6e001288ce..f2e72d14431d 100644
+--- a/drivers/staging/fbtft/fb_ili9320.c
++++ b/drivers/staging/fbtft/fb_ili9320.c
+@@ -214,7 +214,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 	};
+diff --git a/drivers/staging/fbtft/fb_ili9325.c b/drivers/staging/fbtft/fb_ili9325.c
+index 85e54a10ed72..c9aa4cb43123 100644
+--- a/drivers/staging/fbtft/fb_ili9325.c
++++ b/drivers/staging/fbtft/fb_ili9325.c
+@@ -208,7 +208,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 	};
+diff --git a/drivers/staging/fbtft/fb_s6d1121.c b/drivers/staging/fbtft/fb_s6d1121.c
+index 5a129b1352cc..8c7de3290343 100644
+--- a/drivers/staging/fbtft/fb_s6d1121.c
++++ b/drivers/staging/fbtft/fb_s6d1121.c
+@@ -123,7 +123,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
+ 		0x3f, 0x3f, 0x1f, 0x1f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
+ 		0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x1f, 0x1f,
+diff --git a/drivers/staging/fbtft/fb_ssd1289.c b/drivers/staging/fbtft/fb_ssd1289.c
+index 88a5b6925901..7a3fe022cc69 100644
+--- a/drivers/staging/fbtft/fb_ssd1289.c
++++ b/drivers/staging/fbtft/fb_ssd1289.c
+@@ -129,7 +129,7 @@ static int set_var(struct fbtft_par *par)
+ #define CURVE(num, idx)  curves[(num) * par->gamma.num_values + (idx)]
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long mask[] = {
++	static const unsigned long mask[] = {
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 		0x1f, 0x1f, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+ 	};
+-- 
+2.20.1
