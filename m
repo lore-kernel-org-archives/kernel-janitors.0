@@ -1,36 +1,46 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 05 Sep 2019 02:43:41 +0000
-Subject: [PATCH -next] staging: exfat: Use kmemdup in exfat_symlink()
-Message-Id: <20190905030047.88401-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 12:49:44 +0000
+Subject: [PATCH] phy: xgene: make array serdes_reg static const, makes object smaller
+Message-Id: <20190906124944.1574-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Don't populate the array serdes_reg on the stack but instead make it
+static const. Makes the object code smaller by 228 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  23875	   6232	     64	  30171	   75db	drivers/phy/phy-xgene.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  23551	   6328	     64	  29943	   74f7	drivers/phy/phy-xgene.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/exfat/exfat_super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/phy/phy-xgene.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5b5c2ca8c9aa..05fdecc3e9ea 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -2696,12 +2696,11 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
- 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
- 
--	EXFAT_I(inode)->target = kmalloc(len+1, GFP_KERNEL);
-+	EXFAT_I(inode)->target = kmemdup(target, len + 1, GFP_KERNEL);
- 	if (!EXFAT_I(inode)->target) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
--	memcpy(EXFAT_I(inode)->target, target, len+1);
- 
- 	dentry->d_time = GET_IVERSION(dentry->d_parent->d_inode);
- 	d_instantiate(dentry, inode);
+diff --git a/drivers/phy/phy-xgene.c b/drivers/phy/phy-xgene.c
+index 3c9189473407..7a33ec12f71b 100644
+--- a/drivers/phy/phy-xgene.c
++++ b/drivers/phy/phy-xgene.c
+@@ -1342,7 +1342,7 @@ static int xgene_phy_hw_initialize(struct xgene_phy_ctx *ctx,
+ static void xgene_phy_force_lat_summer_cal(struct xgene_phy_ctx *ctx, int lane)
+ {
+ 	int i;
+-	struct {
++	static const struct {
+ 		u32 reg;
+ 		u32 val;
+ 	} serdes_reg[] = {
+-- 
+2.20.1
