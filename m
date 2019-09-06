@@ -1,39 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Sep 2019 13:42:29 +0000
-Subject: [PATCH] scsi: qla2xxx: remove redundant assignment to pointer host
-Message-Id: <20190905134229.21194-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 06 Sep 2019 13:10:32 +0000
+Subject: [PATCH -next] gpio: creg-snps: use devm_platform_ioremap_resource() to simplify code
+Message-Id: <20190906131032.22148-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190213135335.4790-1-colin.king@canonical.com>
-In-Reply-To: <20190213135335.4790-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eugeniy.Paltsev@synopsys.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-The pointer host is being initialized with a value that is never read
-and is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/qla2xxx/qla_target.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-creg-snps.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 0ffda6171614..584f45a7be2f 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -463,7 +463,7 @@ void qlt_response_pkt_all_vps(struct scsi_qla_host *vha,
+diff --git a/drivers/gpio/gpio-creg-snps.c b/drivers/gpio/gpio-creg-snps.c
+index 8cbc94d..ff19a8a 100644
+--- a/drivers/gpio/gpio-creg-snps.c
++++ b/drivers/gpio/gpio-creg-snps.c
+@@ -137,7 +137,6 @@ static int creg_gpio_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 	struct device *dev = &pdev->dev;
+ 	struct creg_gpio *hcg;
+-	struct resource *mem;
+ 	u32 ngpios;
+ 	int ret;
  
- 	case IMMED_NOTIFY_TYPE:
- 	{
--		struct scsi_qla_host *host = vha;
-+		struct scsi_qla_host *host;
- 		struct imm_ntfy_from_isp *entry  		    (struct imm_ntfy_from_isp *)pkt;
+@@ -145,8 +144,7 @@ static int creg_gpio_probe(struct platform_device *pdev)
+ 	if (!hcg)
+ 		return -ENOMEM;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hcg->regs = devm_ioremap_resource(dev, mem);
++	hcg->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hcg->regs))
+ 		return PTR_ERR(hcg->regs);
  
 -- 
-2.20.1
+2.7.4
