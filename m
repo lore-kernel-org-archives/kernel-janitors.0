@@ -1,27 +1,46 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Fri, 20 Sep 2019 15:09:24 +0000
-Subject: Re: [PATCH 0/2] net: dsa: vsc73xx: Adjustments for vsc73xx_platform_probe()
-Message-Id: <20190920150924.GG3530@lunn.ch>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 09:17:19 +0000
+Subject: [PATCH] mmc: dw_mmc: hi3798cv200: make array degrees static const, makes object smaller
+Message-Id: <20190906091719.24886-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
-In-Reply-To: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Pawel Dembicki <paweldembicki@gmail.com>, Vivien Didelot <vivien.didelot@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 04:25:53PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Sep 2019 16:17:18 +0200
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus
+Don't populate the array degrees on the stack but instead make it
+static const. Makes the object code smaller by 46 bytes.
 
-netdev is closed at the moment for patch. Please repost once it
-reopens, in about 2 weeks time.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   5356	   1560	      0	   6916	   1b04	dw_mmc-hi3798cv200.o
 
-	 Thanks
-		Andrew
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5214	   1656	      0	   6870	   1ad6	dw_mmc-hi3798cv200.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/dw_mmc-hi3798cv200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+index bc51cef47c47..83e1bad0a008 100644
+--- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
++++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+@@ -66,7 +66,7 @@ static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+ static int dw_mci_hi3798cv200_execute_tuning(struct dw_mci_slot *slot,
+ 					     u32 opcode)
+ {
+-	int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
++	static const int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
+ 	struct dw_mci *host = slot->host;
+ 	struct hi3798cv200_priv *priv = host->priv;
+ 	int raise_point = -1, fall_point = -1;
+-- 
+2.20.1
