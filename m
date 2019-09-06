@@ -1,60 +1,55 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 26 Sep 2019 12:53:10 +0000
-Subject: Re: [PATCH] usb: typec: tcpm: Fix a signedness bug in tcpm_fw_get_caps()
-Message-Id: <20190926125310.GA9967@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 17:39:49 +0000
+Subject: [PATCH] staging: rtl8188eu: make two arrays static const, makes object smaller
+Message-Id: <20190906173949.21860-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925110219.GN3264@mwanda>
-In-Reply-To: <20190925110219.GN3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 02:02:19PM +0300, Dan Carpenter wrote:
-> The "port->typec_caps.data" and "port->typec_caps.type" variables are
-> enums and in this context GCC will treat them as an unsigned int so they
-> can never be less than zero.
-> 
-> Fixes: ae8a2ca8a221 ("usb: typec: Group all TCPCI/TCPM code together")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 96562744101c..d3b63e000ae2 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -4410,7 +4410,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
->  	ret = fwnode_property_read_string(fwnode, "data-role", &cap_str);
->  	if (ret = 0) {
->  		port->typec_caps.data = typec_find_port_data_role(cap_str);
-> -		if (port->typec_caps.data < 0)
-> +		if ((int)port->typec_caps.data < 0)
->  			return -EINVAL;
+From: Colin Ian King <colin.king@canonical.com>
 
-Doesn't that also cause a warning about overwriting error return codes ?
-I would prefer something like
+Don't populate two arrays on the stack but instead make them
+static const. Makes the object code smaller by 49 bytes.
 
-		ret = typec_find_port_data_role(cap_str);
-		if (ret < 0)
-			return ret;
-		port->typec_caps.data = ret;
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  26821	   5616	      0	  32437	   7eb5	rtl8188eu/core/rtw_ieee80211.o
 
-Guenter
+After:
+   text	   data	    bss	    dec	    hex	filename
+  26612	   5776	      0	  32388	   7e84	rtl8188eu/core/rtw_ieee80211.o
 
->  	}
->  
-> @@ -4419,7 +4419,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
->  		return ret;
->  
->  	port->typec_caps.type = typec_find_port_power_role(cap_str);
-> -	if (port->typec_caps.type < 0)
-> +	if ((int)port->typec_caps.type < 0)
->  		return -EINVAL;
->  	port->port_type = port->typec_caps.type;
->  
-> -- 
-> 2.20.1
-> 
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_ieee80211.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
+index 28b3cdd10397..cc1b5438c04c 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
+@@ -59,7 +59,7 @@ static u8 WIFI_OFDMRATES[] = {
+ 
+ int rtw_get_bit_value_from_ieee_value(u8 val)
+ {
+-	unsigned char dot11_rate_table[] = {
++	static const unsigned char dot11_rate_table[] = {
+ 		2, 4, 11, 22, 12, 18, 24, 36, 48,
+ 		72, 96, 108, 0}; /*  last element must be zero!! */
+ 	int i = 0;
+@@ -275,7 +275,7 @@ unsigned char *rtw_get_wpa_ie(unsigned char *pie, uint *wpa_ie_len, int limit)
+ 	uint len;
+ 	u16 val16;
+ 	__le16 le_tmp;
+-	unsigned char wpa_oui_type[] = {0x00, 0x50, 0xf2, 0x01};
++	static const unsigned char wpa_oui_type[] = {0x00, 0x50, 0xf2, 0x01};
+ 	u8 *pbuf = pie;
+ 	int limit_new = limit;
+ 
+-- 
+2.20.1
