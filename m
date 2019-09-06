@@ -1,41 +1,29 @@
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Fri, 06 Sep 2019 14:01:45 +0000
-Subject: Re: [PATCH] 9p: make two arrays static const, makes object smaller
-Message-Id: <20190906140145.GA16910@nautica>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 06 Sep 2019 09:54:09 +0000
+Subject: [PATCH net-next] ionic: Remove unused including <linux/version.h>
+Message-Id: <20190906095410.107596-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906133812.17196-1-colin.king@canonical.com>
-In-Reply-To: <20190906133812.17196-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Shannon Nelson <snelson@pensando.io>, Pensando Drivers <drivers@pensando.io>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King wrote on Fri, Sep 06, 2019:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays on the stack but instead make them
-> static const. Makes the object code smaller by 386 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   17443	   2076	      0	  19519	   4c3f	fs/9p/vfs_inode_dotl.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   16897	   2236	      0	  19133	   4abd	fs/9p/vfs_inode_dotl.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Remove including <linux/version.h> that don't need it.
 
-Fine with me, I'll pick it up for the next cycle.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/pensando/ionic/ionic_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-There are a couple of static structs in net/9p that aren't const (but
-could be); I guess the static is all that matters here?
-(I'll try to go through and make the rest const when I have time
-though, no harm there)
-
-Thanks,
--- 
-Dominique
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_main.c b/drivers/net/ethernet/pensando/ionic/ionic_main.c
+index 5ec67f3f1853..15e432386b35 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_main.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_main.c
+@@ -2,7 +2,6 @@
+ /* Copyright(c) 2017 - 2019 Pensando Systems, Inc */
+ 
+ #include <linux/module.h>
+-#include <linux/version.h>
+ #include <linux/netdevice.h>
+ #include <linux/utsname.h>
