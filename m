@@ -1,57 +1,165 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Sep 2019 11:30:29 +0000
-Subject: [PATCH] rtc: m48t86: Use devm_platform_ioremap_resource() in m48t86_rtc_probe()
-Message-Id: <25448e11-c43f-9ae0-4c43-6f789accc026@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 08:58:39 +0000
+Subject: [PATCH] media: em28xx: make various arrays static const, makes object smaller
+Message-Id: <20190906085839.24344-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 13:13:35 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+Don't populate the arrays on the stack but instead make them
+static const. Makes the object code smaller by 767 bytes.
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  41567	  15088	    192	  56847	   de0f	em28xx/em28xx-dvb.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  39872	  16016	    192	  56080	   db10	em28xx/em28xx-dvb.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/rtc/rtc-m48t86.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/media/usb/em28xx/em28xx-dvb.c | 30 +++++++++++++--------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/rtc/rtc-m48t86.c b/drivers/rtc/rtc-m48t86.c
-index 59b54ed9b841..75a0e73071d8 100644
---- a/drivers/rtc/rtc-m48t86.c
-+++ b/drivers/rtc/rtc-m48t86.c
-@@ -218,7 +218,6 @@ static bool m48t86_verify_chip(struct platform_device *pdev)
- static int m48t86_rtc_probe(struct platform_device *pdev)
+diff --git a/drivers/media/usb/em28xx/em28xx-dvb.c b/drivers/media/usb/em28xx/em28xx-dvb.c
+index a73faf12f7e4..0ab6c493bc74 100644
+--- a/drivers/media/usb/em28xx/em28xx-dvb.c
++++ b/drivers/media/usb/em28xx/em28xx-dvb.c
+@@ -471,13 +471,13 @@ static void hauppauge_hvr930c_init(struct em28xx *dev)
  {
- 	struct m48t86_rtc_info *info;
--	struct resource *res;
- 	unsigned char reg;
- 	int err;
- 	struct nvmem_config m48t86_nvmem_cfg = {
-@@ -235,17 +234,11 @@ static int m48t86_rtc_probe(struct platform_device *pdev)
- 	if (!info)
- 		return -ENOMEM;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--	info->index_reg = devm_ioremap_resource(&pdev->dev, res);
-+	info->index_reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(info->index_reg))
- 		return PTR_ERR(info->index_reg);
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res)
--		return -ENODEV;
--	info->data_reg = devm_ioremap_resource(&pdev->dev, res);
-+	info->data_reg = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(info->data_reg))
- 		return PTR_ERR(info->data_reg);
-
---
-2.23.0
+ 	int i;
+ 
+-	struct em28xx_reg_seq hauppauge_hvr930c_init[] = {
++	static const struct em28xx_reg_seq hauppauge_hvr930c_init[] = {
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xff,	0xff,	0x65},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xfb,	0xff,	0x32},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xff,	0xff,	0xb8},
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+-	struct em28xx_reg_seq hauppauge_hvr930c_end[] = {
++	static const struct em28xx_reg_seq hauppauge_hvr930c_end[] = {
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xef,	0xff,	0x01},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xaf,	0xff,	0x65},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xef,	0xff,	0x76},
+@@ -493,7 +493,7 @@ static void hauppauge_hvr930c_init(struct em28xx *dev)
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+ 
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs[] = {
+@@ -537,20 +537,20 @@ static void hauppauge_hvr930c_init(struct em28xx *dev)
+ static void terratec_h5_init(struct em28xx *dev)
+ {
+ 	int i;
+-	struct em28xx_reg_seq terratec_h5_init[] = {
++	static const struct em28xx_reg_seq terratec_h5_init[] = {
+ 		{EM2820_R08_GPIO_CTRL,		0xff,	0xff,	10},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf6,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf2,	0xff,	50},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf6,	0xff,	100},
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+-	struct em28xx_reg_seq terratec_h5_end[] = {
++	static const struct em28xx_reg_seq terratec_h5_end[] = {
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xe6,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xa6,	0xff,	50},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xe6,	0xff,	100},
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs[] = {
+@@ -594,14 +594,14 @@ static void terratec_htc_stick_init(struct em28xx *dev)
+ 	 * 0xe6: unknown (does not affect DVB-T).
+ 	 * 0xb6: unknown (does not affect DVB-T).
+ 	 */
+-	struct em28xx_reg_seq terratec_htc_stick_init[] = {
++	static const struct em28xx_reg_seq terratec_htc_stick_init[] = {
+ 		{EM2820_R08_GPIO_CTRL,		0xff,	0xff,	10},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf6,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xe6,	0xff,	50},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf6,	0xff,	100},
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+-	struct em28xx_reg_seq terratec_htc_stick_end[] = {
++	static const struct em28xx_reg_seq terratec_htc_stick_end[] = {
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xb6,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xf6,	0xff,	50},
+ 		{	-1,			-1,	-1,	-1},
+@@ -611,7 +611,7 @@ static void terratec_htc_stick_init(struct em28xx *dev)
+ 	 * Init the analog decoder (not yet supported), but
+ 	 * it's probably still a good idea.
+ 	 */
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs[] = {
+@@ -642,14 +642,14 @@ static void terratec_htc_usb_xs_init(struct em28xx *dev)
+ {
+ 	int i;
+ 
+-	struct em28xx_reg_seq terratec_htc_usb_xs_init[] = {
++	static const struct em28xx_reg_seq terratec_htc_usb_xs_init[] = {
+ 		{EM2820_R08_GPIO_CTRL,		0xff,	0xff,	10},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xb2,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xb2,	0xff,	50},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xb6,	0xff,	100},
+ 		{	-1,			-1,	-1,	-1},
+ 	};
+-	struct em28xx_reg_seq terratec_htc_usb_xs_end[] = {
++	static const struct em28xx_reg_seq terratec_htc_usb_xs_end[] = {
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xa6,	0xff,	100},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xa6,	0xff,	50},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xe6,	0xff,	100},
+@@ -660,7 +660,7 @@ static void terratec_htc_usb_xs_init(struct em28xx *dev)
+ 	 * Init the analog decoder (not yet supported), but
+ 	 * it's probably still a good idea.
+ 	 */
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs[] = {
+@@ -704,7 +704,7 @@ static void pctv_520e_init(struct em28xx *dev)
+ 	 * digital demodulator and tuner are routed via AVF4910B.
+ 	 */
+ 	int i;
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs[] = {
+@@ -800,7 +800,7 @@ static int em28xx_mt352_terratec_xs_init(struct dvb_frontend *fe)
+ static void px_bcud_init(struct em28xx *dev)
+ {
+ 	int i;
+-	struct {
++	static const struct {
+ 		unsigned char r[4];
+ 		int len;
+ 	} regs1[] = {
+@@ -818,7 +818,7 @@ static void px_bcud_init(struct em28xx *dev)
+ 		{{ 0x85, 0x7a }, 2},
+ 		{{ 0x87, 0x04 }, 2},
+ 	};
+-	static struct em28xx_reg_seq gpio[] = {
++	static const struct em28xx_reg_seq gpio[] = {
+ 		{EM28XX_R06_I2C_CLK,		0x40,	0xff,	300},
+ 		{EM2874_R80_GPIO_P0_CTRL,	0xfd,	0xff,	60},
+ 		{EM28XX_R15_RGAIN,		0x20,	0xff,	0},
+-- 
+2.20.1
