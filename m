@@ -1,43 +1,55 @@
-From: "J . Bruce Fields" <bfields@fieldses.org>
-Date: Wed, 25 Sep 2019 15:13:22 +0000
-Subject: Re: [PATCH] sunrpc: clean up indentation issue
-Message-Id: <20190925151322.GA8581@fieldses.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 13:38:12 +0000
+Subject: [PATCH] 9p: make two arrays static const, makes object smaller
+Message-Id: <20190906133812.17196-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925130930.13076-1-colin.king@canonical.com>
-In-Reply-To: <20190925130930.13076-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, v9fs-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied, thanks.--b.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Sep 25, 2019 at 02:09:30PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are statements that are indented incorrectly, remove the
-> extraneous spacing.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/sunrpc/svc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-> index 220b79988000..d11b70552c33 100644
-> --- a/net/sunrpc/svc.c
-> +++ b/net/sunrpc/svc.c
-> @@ -1233,8 +1233,8 @@ svc_generic_init_request(struct svc_rqst *rqstp,
->  
->  	if (rqstp->rq_vers >= progp->pg_nvers )
->  		goto err_bad_vers;
-> -	  versp = progp->pg_vers[rqstp->rq_vers];
-> -	  if (!versp)
-> +	versp = progp->pg_vers[rqstp->rq_vers];
-> +	if (!versp)
->  		goto err_bad_vers;
->  
->  	/*
-> -- 
-> 2.20.1
+Don't populate the arrays on the stack but instead make them
+static const. Makes the object code smaller by 386 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  17443	   2076	      0	  19519	   4c3f	fs/9p/vfs_inode_dotl.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  16897	   2236	      0	  19133	   4abd	fs/9p/vfs_inode_dotl.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/9p/vfs_inode_dotl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 60328b21c5fb..961d8d0fa905 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -167,7 +167,7 @@ static int v9fs_mapped_dotl_flags(int flags)
+ {
+ 	int i;
+ 	int rflags = 0;
+-	struct dotl_openflag_map dotl_oflag_map[] = {
++	static const struct dotl_openflag_map dotl_oflag_map[] = {
+ 		{ O_CREAT,	P9_DOTL_CREATE },
+ 		{ O_EXCL,	P9_DOTL_EXCL },
+ 		{ O_NOCTTY,	P9_DOTL_NOCTTY },
+@@ -512,7 +512,7 @@ static int v9fs_mapped_iattr_valid(int iattr_valid)
+ {
+ 	int i;
+ 	int p9_iattr_valid = 0;
+-	struct dotl_iattr_map dotl_iattr_map[] = {
++	static const struct dotl_iattr_map dotl_iattr_map[] = {
+ 		{ ATTR_MODE,		P9_ATTR_MODE },
+ 		{ ATTR_UID,		P9_ATTR_UID },
+ 		{ ATTR_GID,		P9_ATTR_GID },
+-- 
+2.20.1
