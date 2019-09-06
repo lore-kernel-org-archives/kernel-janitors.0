@@ -1,41 +1,46 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 04 Sep 2019 09:12:33 +0000
-Subject: [PATCH] KVM: PPC: Book3S HV: Delete an unnecessary check before kfree() in __kvmhv_nested_page_fault
-Message-Id: <238d3e33-5222-3829-742a-ced4e71a56cd@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 08:11:33 +0000
+Subject: [PATCH] media: s3c-camif: make array 'registers' static const, makes object smaller
+Message-Id: <20190906081133.22543-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@ozlabs.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Sep 2019 11:00:20 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The kfree() function tests whether its argument is NULL
-and then returns immediately.
-Thus the test around the call is not needed.
+Don't populate the array 'registers' on the stack but instead make it
+static const. Makes the object code smaller by 45 bytes.
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  17364	   5000	      0	  22364	   575c	platform/s3c-camif/camif-regs.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  17255	   5064	      0	  22319	   572f	platform/s3c-camif/camif-regs.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/powerpc/kvm/book3s_hv_nested.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/s3c-camif/camif-regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
-index 735e0ac6f5b2..36d21090a713 100644
---- a/arch/powerpc/kvm/book3s_hv_nested.c
-+++ b/arch/powerpc/kvm/book3s_hv_nested.c
-@@ -1416,8 +1416,7 @@ static long int __kvmhv_nested_page_fault(struct kvm_run *run,
- 	rmapp = &memslot->arch.rmap[gfn - memslot->base_gfn];
- 	ret = kvmppc_create_pte(kvm, gp->shadow_pgtable, pte, n_gpa, level,
- 				mmu_seq, gp->shadow_lpid, rmapp, &n_rmap);
--	if (n_rmap)
--		kfree(n_rmap);
-+	kfree(n_rmap);
- 	if (ret == -EAGAIN)
- 		ret = RESUME_GUEST;	/* Let the guest try again */
-
---
-2.23.0
+diff --git a/drivers/media/platform/s3c-camif/camif-regs.c b/drivers/media/platform/s3c-camif/camif-regs.c
+index 1a65532dc36d..e80204f5720c 100644
+--- a/drivers/media/platform/s3c-camif/camif-regs.c
++++ b/drivers/media/platform/s3c-camif/camif-regs.c
+@@ -553,7 +553,7 @@ void camif_hw_disable_capture(struct camif_vp *vp)
+ 
+ void camif_hw_dump_regs(struct camif_dev *camif, const char *label)
+ {
+-	struct {
++	static const struct {
+ 		u32 offset;
+ 		const char * const name;
+ 	} registers[] = {
+-- 
+2.20.1
