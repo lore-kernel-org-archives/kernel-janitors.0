@@ -1,42 +1,46 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Sep 2019 18:43:34 +0000
-Subject: [PATCH][next] usb: cdns3: remove redundant assignment to ret on error exit path
-Message-Id: <20190902184334.27406-1-colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 13:06:32 +0000
+Subject: [PATCH] regulator: lp8788-ldo: make array en_mask static const, makes object smaller
+Message-Id: <20190906130632.6709-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Laszczak <pawell@cadence.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
+To: Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the case where an allocation fails for priv_ep ret is
-assigned -ENOMEM and the code exits via the exit path 'err'.
-The exit path returns -ENOMEM without using variable ret, so
-the assingment is redundant and can be removed.
+Don't populate the array en_mask on the stack but instead make it
+static const. Makes the object code smaller by 87 bytes.
 
-Addresses-Coverity: ("Unused value")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  12967	   3408	      0	  16375	   3ff7	drivers/regulator/lp8788-ldo.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  12816	   3472	      0	  16288	   3fa0	drivers/regulator/lp8788-ldo.o
+
+(gcc version 9.2.1, amd64)
+
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/cdns3/gadget.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/regulator/lp8788-ldo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 0eb3022838d6..de0e14a4fb9f 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -2447,10 +2447,8 @@ static int cdns3_init_eps(struct cdns3_device *priv_dev)
- 
- 		priv_ep = devm_kzalloc(priv_dev->dev, sizeof(*priv_ep),
- 				       GFP_KERNEL);
--		if (!priv_ep) {
--			ret = -ENOMEM;
-+		if (!priv_ep)
- 			goto err;
--		}
- 
- 		/* set parent of endpoint object */
- 		priv_ep->cdns3_dev = priv_dev;
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index 1b00f3638996..00e9bb92c326 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -464,7 +464,7 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+ {
+ 	struct lp8788 *lp = ldo->lp;
+ 	enum lp8788_ext_ldo_en_id enable_id;
+-	u8 en_mask[] = {
++	static const u8 en_mask[] = {
+ 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
+ 		[EN_ALDO234] = LP8788_EN_SEL_ALDO234_M,
+ 		[EN_ALDO5]   = LP8788_EN_SEL_ALDO5_M,
 -- 
 2.20.1
