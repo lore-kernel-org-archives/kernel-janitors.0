@@ -1,38 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 09:51:26 +0000
-Subject: [PATCH] counter: stm32: clean up indentation issue
-Message-Id: <20190925095126.20219-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 Sep 2019 08:18:08 +0000
+Subject: [PATCH] netfilter: nf_tables: Fix an Oops in nf_tables_updobj() error handling
+Message-Id: <20190906081808.GA8281@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabrice Gasnier <fabrice.gasnier@st.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The "newobj" is an error pointer so we can't pass it to kfree().  It
+doesn't need to be freed so we can remove that and I also renamed the
+error label.
 
-There is an if statement that is indented one level too deeply,
-remove the extraneous tabs.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d62d0ba97b58 ("netfilter: nf_tables: Introduce stateful object update operation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/counter/stm32-timer-cnt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/nf_tables_api.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-index 644ba18a72ad..613dcccf79e1 100644
---- a/drivers/counter/stm32-timer-cnt.c
-+++ b/drivers/counter/stm32-timer-cnt.c
-@@ -219,8 +219,8 @@ static ssize_t stm32_count_enable_write(struct counter_device *counter,
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index cf767bc58e18..6f66898d63b4 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -5148,7 +5148,7 @@ static int nf_tables_updobj(const struct nft_ctx *ctx,
+ 	newobj = nft_obj_init(ctx, type, attr);
+ 	if (IS_ERR(newobj)) {
+ 		err = PTR_ERR(newobj);
+-		goto err1;
++		goto err_free_trans;
+ 	}
  
- 	if (enable) {
- 		regmap_read(priv->regmap, TIM_CR1, &cr1);
--			if (!(cr1 & TIM_CR1_CEN))
--				clk_enable(priv->clk);
-+		if (!(cr1 & TIM_CR1_CEN))
-+			clk_enable(priv->clk);
+ 	nft_trans_obj(trans) = obj;
+@@ -5157,9 +5157,9 @@ static int nf_tables_updobj(const struct nft_ctx *ctx,
+ 	list_add_tail(&trans->list, &ctx->net->nft.commit_list);
  
- 		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
- 				   TIM_CR1_CEN);
+ 	return 0;
+-err1:
++
++err_free_trans:
+ 	kfree(trans);
+-	kfree(newobj);
+ 	return err;
+ }
+ 
 -- 
 2.20.1
