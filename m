@@ -1,47 +1,58 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sun, 22 Sep 2019 11:47:00 +0000
-Subject: [PATCH] memstick: jmb38x_ms: clean up indentation issue
-Message-Id: <20190922114700.10563-1-colin.king@canonical.com>
+Date: Fri, 06 Sep 2019 11:33:56 +0000
+Subject: [PATCH] net/ixgbevf: make array api static const, makes object smaller
+Message-Id: <20190906113356.9985-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+To: gJeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a hunk of code that is indented one level too deep, fix
-this by removing the extraneous tabs.
+Don't populate the array api on the stack but instead make it
+static const. Makes the object code smaller by 58 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  82969	   9763	    256	  92988	  16b3c	ixgbevf/ixgbevf_main.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  82815	   9859	    256	  92930	  16b02	ixgbevf/ixgbevf_main.o
+
+(gcc version 9.2.1, amd64)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/memstick/host/jmb38x_ms.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
-index 32747425297d..3394164a7968 100644
---- a/drivers/memstick/host/jmb38x_ms.c
-+++ b/drivers/memstick/host/jmb38x_ms.c
-@@ -433,13 +433,13 @@ static int jmb38x_ms_issue_cmd(struct memstick_host *msh)
- 		writel(((1 << 16) & BLOCK_COUNT_MASK)
- 		       | (data_len & BLOCK_SIZE_MASK),
- 		       host->addr + BLOCK);
--			t_val = readl(host->addr + INT_STATUS_ENABLE);
--			t_val |= host->req->data_dir = READ
--				 ? INT_STATUS_FIFO_RRDY
--				 : INT_STATUS_FIFO_WRDY;
-+		t_val = readl(host->addr + INT_STATUS_ENABLE);
-+		t_val |= host->req->data_dir = READ
-+			 ? INT_STATUS_FIFO_RRDY
-+			 : INT_STATUS_FIFO_WRDY;
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 8c011d4ce7a9..46c8e2501084 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -2261,12 +2261,14 @@ static void ixgbevf_init_last_counter_stats(struct ixgbevf_adapter *adapter)
+ static void ixgbevf_negotiate_api(struct ixgbevf_adapter *adapter)
+ {
+ 	struct ixgbe_hw *hw = &adapter->hw;
+-	int api[] = { ixgbe_mbox_api_14,
+-		      ixgbe_mbox_api_13,
+-		      ixgbe_mbox_api_12,
+-		      ixgbe_mbox_api_11,
+-		      ixgbe_mbox_api_10,
+-		      ixgbe_mbox_api_unknown };
++	static const int api[] = {
++		ixgbe_mbox_api_14,
++		ixgbe_mbox_api_13,
++		ixgbe_mbox_api_12,
++		ixgbe_mbox_api_11,
++		ixgbe_mbox_api_10,
++		ixgbe_mbox_api_unknown
++	};
+ 	int err, idx = 0;
  
--			writel(t_val, host->addr + INT_STATUS_ENABLE);
--			writel(t_val, host->addr + INT_SIGNAL_ENABLE);
-+		writel(t_val, host->addr + INT_STATUS_ENABLE);
-+		writel(t_val, host->addr + INT_SIGNAL_ENABLE);
- 	} else {
- 		cmd &= ~(TPC_DATA_SEL | 0xf);
- 		host->cmd_flags |= REG_DATA;
+ 	spin_lock_bh(&adapter->mbx_lock);
 -- 
 2.20.1
