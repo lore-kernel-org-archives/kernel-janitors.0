@@ -1,44 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 18:42:06 +0000
-Subject: [PATCH] soc: ixp4xx: qmgr: Use devm_platform_ioremap_resource() in ixp4xx_qmgr_probe()
-Message-Id: <e70a4035-dae9-db3d-4cf0-0e3bb718a949@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 06 Sep 2019 12:25:02 +0000
+Subject: [PATCH -next] crypto: essiv - Remove unnecessary NULL checks
+Message-Id: <20190906122502.27236-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Krzysztof Halasa <khalasa@piap.pl>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 20:33:27 +0200
+NULL check before kfree is not needed.
+Generated-by: scripts/coccinelle/free/ifnullfree.cocci
 
-Simplify this function implementation by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/soc/ixp4xx/ixp4xx-qmgr.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ crypto/essiv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-index 8c968382cea7..520babbd9037 100644
---- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-@@ -375,13 +375,9 @@ static int ixp4xx_qmgr_probe(struct platform_device *pdev)
- 	int i, err;
- 	irq_handler_t handler1, handler2;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	int irq1, irq2;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--	qmgr_regs = devm_ioremap_resource(dev, res);
-+	qmgr_regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(qmgr_regs))
- 		return PTR_ERR(qmgr_regs);
-
---
-2.23.0
+diff --git a/crypto/essiv.c b/crypto/essiv.c
+index a8befc8..3d3f9d7 100644
+--- a/crypto/essiv.c
++++ b/crypto/essiv.c
+@@ -188,8 +188,7 @@ static void essiv_aead_done(struct crypto_async_request *areq, int err)
+ 	struct aead_request *req = areq->data;
+ 	struct essiv_aead_request_ctx *rctx = aead_request_ctx(req);
+ 
+-	if (rctx->assoc)
+-		kfree(rctx->assoc);
++	kfree(rctx->assoc);
+ 	aead_request_complete(req, err);
+ }
+ 
+-- 
+2.7.4
