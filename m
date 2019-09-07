@@ -1,55 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 16:14:04 +0000
-Subject: [PATCH] ASoC: codecs: ad193x: make two arrays static const, makes object smaller
-Message-Id: <20190906161404.1440-1-colin.king@canonical.com>
+From: Alice Walton <saraharmony501@gmail.com>
+Date: Sat, 07 Sep 2019 01:35:52 +0000
+Subject: Please forgive me
+Message-Id: <CAHoQAbVi2eUJHHAx8-i6uv=tXXkdZbDQj+bGXrd4foXr+8goAQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+My Dearest,
 
-Don't populate the arrays on the stack but instead make them
-static const. Makes the object code smaller by 37 bytes.
+Please forgive me for stressing you with my predicaments as I know
+that this letter may come to you as a big surprise.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  16253	   7200	      0	  23453	   5b9d	sound/soc/codecs/ad193x.o
+Actually, I came across your E-mail from my personal search afterward
+I decided to email you directly believing that you will be honest to
+fulfil my final wish before anything happens to me. Meanwhile, I am
+Madam Alice Walton, 71 years old childless widow from France but i
+reside and doing Gold mining business in Africa before i fall sick.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  16056	   7360	      0	  23416	   5b78	sound/soc/codecs/ad193x.o
+I am suffering from Adenocarcinoma Cancer of the lungs for the past 8
+years and from all indication my condition is really deteriorating as
+my doctors have confirmed and courageously advised me that I may not
+live beyond 3 weeks from now for the reason that my tumor has reached
+a critical stage which has defiled all forms of medical treatment.
 
-(gcc version 9.2.1, amd64)
+Since my days are numbered, I’ve decided willingly to fulfil my
+long-time vow to donate to the less privileges the sum of($18.5
+million dollars) I deposited in my offshore account over 7 years now
+because I have tried to handle this project by myself but I have seen
+that my health could not allow me to do so anymore.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/ad193x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+My promise to God includes building of well-equipped charity
+foundation/hospital and a technical school for the orphans and less
+privileges.
 
-diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index fb04c9379b71..980e024a5720 100644
---- a/sound/soc/codecs/ad193x.c
-+++ b/sound/soc/codecs/ad193x.c
-@@ -416,7 +416,7 @@ static struct snd_soc_dai_driver ad193x_no_adc_dai = {
- /* codec register values to set after reset */
- static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
- {
--	const struct reg_sequence reg_init[] = {
-+	static const struct reg_sequence reg_init[] = {
- 		{  0, 0x99 },	/* PLL_CLK_CTRL0: pll input: mclki/xi 12.288Mhz */
- 		{  1, 0x04 },	/* PLL_CLK_CTRL1: no on-chip Vref */
- 		{  2, 0x40 },	/* DAC_CTRL0: TDM mode */
-@@ -432,7 +432,7 @@ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
- 		{ 12, 0x00 },	/* DAC_L4_VOL: no attenuation */
- 		{ 13, 0x00 },	/* DAC_R4_VOL: no attenuation */
- 	};
--	const struct reg_sequence reg_adc_init[] = {
-+	static const struct reg_sequence reg_adc_init[] = {
- 		{ 14, 0x03 },	/* ADC_CTRL0: high-pass filter enable */
- 		{ 15, 0x43 },	/* ADC_CTRL1: sata delay=1, adc aux mode */
- 		{ 16, 0x00 },	/* ADC_CTRL2: reset */
--- 
-2.20.1
+Since i am not capable to handle this again myself due to my critical
+health condition,please i need your consent to help me receive my
+money from the bank and use it to do this divine works of God in your
+country in my name so that my soul can be at rest if anything happens
+to me.
+
+If you will be honest, kind and willing to assist me handle this
+charity project as I’ve mentioned here, I will like you to provide me
+your personal data like,
+
+(1) Your full name:
+(2) country:
+(3) Occupation:
+(4) phone number:
+(5) Age:
+
+Let me have this data so that i can link you up with my bank as my
+representative and receiver of the funds now that i am still alive.
+
+Warmest Regards!
+Mrs. Alice Walton
