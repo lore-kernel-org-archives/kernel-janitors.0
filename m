@@ -1,31 +1,23 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 06 Sep 2019 14:11:53 +0000
-Subject: Re: [PATCH] rtlwifi: Fix file release memory leak
-Message-Id: <20190906141153.CF5606118D@smtp.codeaurora.org>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Sat, 07 Sep 2019 20:40:10 +0000
+Subject: Re: [PATCH -next] scsi: ufs: Use kmemdup in ufshcd_read_string_desc()
+Message-Id: <yq18sqzkfh1.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904141611.4780-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190904141611.4780-1-weiyongjun1@huawei.com>
+References: <20190831124424.18642-1-yuehaibing@huawei.com>
+In-Reply-To: <20190831124424.18642-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Sat, 31 Aug 2019 12:44:24 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Tomas Winkler <tomas.winkler@intel.com>, Subhash Jadavani <subhashj@codeaurora.org>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-> When using single_open() for opening, single_release() should be
-> used instead of seq_release(), otherwise there is a memory leak.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+YueHaibing,
 
-Patch applied to wireless-drivers-next.git, thanks.
+> Use kmemdup rather than duplicating its implementation
 
-4c3e48794dec rtlwifi: Fix file release memory leak
+Applied to 5.4/scsi-queue. Thanks!
 
 -- 
-https://patchwork.kernel.org/patch/11130357/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Martin K. Petersen	Oracle Linux Engineering
