@@ -1,45 +1,121 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 10:03:30 +0000
-Subject: [PATCH] ASoC: rt5663: clean up indentation issues
-Message-Id: <20190925100330.20695-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 07 Sep 2019 16:40:44 +0000
+Subject: =?UTF-8?Q?=5bPATCH=5d_Coccinelle=3a_Reduce_rules_in_SmPL_script_?= =?UTF-8?B?4oCccHRyX3JldC5jb2NjaeK
+Message-Id: <23823c18-9f22-e107-81dc-a03dbaf0e0b0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
+ <alpine.DEB.2.21.1909071804090.2562@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1909071804090.2562@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Allison Randal <allison@lohutok.net>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Sep 2019 18:30:32 +0200
 
-There are two break statements that are indented one level too deeply,
-remove the extraneous tabs.
+This SmPL script contains duplicate code.
+Thus reduce it to the required source code search functionality
+by the means of the semantic patch language.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rt5663.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/coccinelle/api/ptr_ret.cocci | 61 +++++-----------------------
+ 1 file changed, 10 insertions(+), 51 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 2943692f66ed..e6c1ec6c426e 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -3644,7 +3644,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
- 		regmap_update_bits(rt5663->regmap, RT5663_PWR_ANLG_1,
- 			RT5663_LDO1_DVO_MASK | RT5663_AMP_HP_MASK,
- 			RT5663_LDO1_DVO_0_9V | RT5663_AMP_HP_3X);
--			break;
-+		break;
- 	case CODEC_VER_0:
- 		regmap_update_bits(rt5663->regmap, RT5663_DIG_MISC,
- 			RT5663_DIG_GATE_CTRL_MASK, RT5663_DIG_GATE_CTRL_EN);
-@@ -3663,7 +3663,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
- 		regmap_update_bits(rt5663->regmap, RT5663_TDM_2,
- 			RT5663_DATA_SWAP_ADCDAT1_MASK,
- 			RT5663_DATA_SWAP_ADCDAT1_LL);
--			break;
-+		break;
- 	default:
- 		dev_err(&i2c->dev, "%s:Unknown codec type\n", __func__);
- 	}
--- 
-2.20.1
+diff --git a/scripts/coccinelle/api/ptr_ret.cocci b/scripts/coccinelle/api/ptr_ret.cocci
+index e76cd5d90a8a..f4b1ce4a06d0 100644
+--- a/scripts/coccinelle/api/ptr_ret.cocci
++++ b/scripts/coccinelle/api/ptr_ret.cocci
+@@ -20,44 +20,28 @@ virtual report
+ @depends on patch@
+ expression ptr;
+ @@
+-
++(
+ - if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
+ + return PTR_ERR_OR_ZERO(ptr);
+-
+-@depends on patch@
+-expression ptr;
+-@@
+-
++|
+ - if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
+ + return PTR_ERR_OR_ZERO(ptr);
+-
+-@depends on patch@
+-expression ptr;
+-@@
+-
++|
+ - (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
+ + PTR_ERR_OR_ZERO(ptr)
++)
+
+ @r1 depends on !patch@
+ expression ptr;
+ position p1;
+ @@
+-
++(
+ * if@p1 (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
+-
+-@r2 depends on !patch@
+-expression ptr;
+-position p2;
+-@@
+-
+-* if@p2 (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
+-
+-@r3 depends on !patch@
+-expression ptr;
+-position p3;
+-@@
+-
+-* IS_ERR@p3(ptr) ? PTR_ERR(ptr) : 0
++|
++* if@p1 (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
++|
++* IS_ERR@p1(ptr) ? PTR_ERR(ptr) : 0
++)
+
+ @script:python depends on org@
+ p << r1.p1;
+@@ -65,33 +49,8 @@ p << r1.p1;
+
+ coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+
+-
+-@script:python depends on org@
+-p << r2.p2;
+-@@
+-
+-coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+-
+-@script:python depends on org@
+-p << r3.p3;
+-@@
+-
+-coccilib.org.print_todo(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+-
+ @script:python depends on report@
+ p << r1.p1;
+ @@
+
+ coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+-
+-@script:python depends on report@
+-p << r2.p2;
+-@@
+-
+-coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+-
+-@script:python depends on report@
+-p << r3.p3;
+-@@
+-
+-coccilib.report.print_report(p[0], "WARNING: PTR_ERR_OR_ZERO can be used")
+--
+2.23.0
