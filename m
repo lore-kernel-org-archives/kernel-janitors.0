@@ -1,31 +1,33 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Fri, 20 Sep 2019 19:13:50 +0000
-Subject: Re: [PATCH 2/2] net/phy/mdio-mscc-miim: Move the setting of mii_bus structure members in mscc_miim_p
-Message-Id: <20190920191350.GI3530@lunn.ch>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 07 Sep 2019 13:48:09 +0000
+Subject: Re: [PATCH] net/hamradio/6pack: Fix the size of a sk_buff used in 'sp_bump()'
+Message-Id: <20190907.154809.649105225947712090.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
- <fe3ecdd2-a011-e4ed-5ef2-c3a8a02b343c@web.de>
-In-Reply-To: <fe3ecdd2-a011-e4ed-5ef2-c3a8a02b343c@web.de>
+References: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: christophe.jaillet@wanadoo.fr
+Cc: ajk@comnets.uni-bremen.de, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 09:03:57PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Sep 2019 20:42:42 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 26 Aug 2019 21:02:09 +0200
+
+> We 'allocate' 'count' bytes here. In fact, 'dev_alloc_skb' already add some
+> extra space for padding, so a bit more is allocated.
 > 
-> Move the modification of some members in the data structure “mii_bus”
-> for the local variable “bus” directly before the call of
-> the function “of_mdiobus_register” so that this change will be performed
-> only after previous resource allocations succeeded.
+> However, we use 1 byte for the KISS command, then copy 'count' bytes, so
+> count+1 bytes.
+> 
+> Explicitly allocate and use 1 more byte to be safe.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Markus
+I applied your patch as-is, as it is correct and doesn't change the contents
+of the data put into the SKB at all.
 
-I'm not sure it is worth making this change. The resource allocations
-succeeds 99.9999% of the time. It is a chunk of MMIO, not some gpio,
-or i2c device which might give us EPROBE_DEFERRED. So we are not
-wasting anything in reality.
-
-	Andrew
+->rcount is the cooked count minus two, but then we copy effectively
+cooked count minus one bytes from one byte past the beginning of the
+cooked buffer and so all the accesses are in range on the input buffer
+side.
