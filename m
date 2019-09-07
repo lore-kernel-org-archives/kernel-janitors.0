@@ -1,42 +1,47 @@
-From: Connor Kuehl <connor.kuehl@canonical.com>
-Date: Wed, 25 Sep 2019 21:32:15 +0000
-Subject: [PATCH] staging: rtl8188eu: fix possible null dereference
-Message-Id: <20190925213215.25082-1-connor.kuehl@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 07 Sep 2019 07:41:56 +0000
+Subject: [PATCH] ASoC: rt1305: make array pd static const, makes object smaller
+Message-Id: <20190907074156.21907-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Inside a nested 'else' block at the beginning of this function is a
-call that assigns 'psta' to the return value of 'rtw_get_stainfo()'.
-If 'rtw_get_stainfo()' returns NULL and the flow of control reaches
-the 'else if' where 'psta' is dereferenced, then we will dereference
-a NULL pointer.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix this by checking if 'psta' is not NULL before reading its
-'psta->qos_option' data member.
+Don't populate the array pd on the stack but instead make it
+static const. Makes the object code smaller by 93 bytes.
 
-Addresses-Coverity: ("Dereference null return value")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  38961	   9784	     64	  48809	   bea9	sound/soc/codecs/rt1305.o
 
-Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  38804	   9848	     64	  48716	   be4c	sound/soc/codecs/rt1305.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_xmit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt1305.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-index 952f2ab51347..bf8877cbe9b6 100644
---- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-@@ -784,7 +784,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
- 			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv), ETH_ALEN);
+diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
+index 9909369483f0..e27742abfa76 100644
+--- a/sound/soc/codecs/rt1305.c
++++ b/sound/soc/codecs/rt1305.c
+@@ -608,7 +608,8 @@ static const struct snd_soc_dapm_route rt1305_dapm_routes[] = {
  
--			if (psta->qos_option)
-+			if (psta && psta->qos_option)
- 				qos_option = true;
- 		} else {
- 			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("fw_state:%x is not allowed to xmit frame\n", get_fwstate(pmlmepriv)));
+ static int rt1305_get_clk_info(int sclk, int rate)
+ {
+-	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
++	int i;
++	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
+ 
+ 	if (sclk <= 0 || rate <= 0)
+ 		return -EINVAL;
 -- 
-2.17.1
+2.20.1
