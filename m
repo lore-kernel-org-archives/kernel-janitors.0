@@ -1,64 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Sep 2019 15:22:27 +0000
-Subject: [PATCH][V2] staging: rtl8723bs: hal: remove redundant variable n
-Message-Id: <20190905152227.4610-1-colin.king@canonical.com>
+Date: Sat, 07 Sep 2019 07:46:34 +0000
+Subject: [PATCH] ASoC: rt1308: make array pd static const, makes object smaller
+Message-Id: <20190907074634.22144-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable n is being assigned a value that is never read inside
-an if statement block, the assignment is redundant and can be removed.
-With this removed, n is only being used for a constant loop bounds
-check, so replace n with that value instead and remove n completely.
+Don't populate the array pd on the stack but instead make it
+static const. Makes the object code smaller by 82 bytes.
 
-Addresses-Coverity: ("Unused value")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  26548	   7288	     64	  33900	   846c	sound/soc/codecs/rt1308.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  26370	   7384	     64	  33818	   841a	sound/soc/codecs/rt1308.o
+
+(gcc version 9.2.1, amd64)
+
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
 ---
+ sound/soc/codecs/rt1308.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-V2: remove the variable n completely, thanks to Dan Carpenter for
-    spotting this.
-
----
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 032d01834f3f..0f3301091258 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -502,7 +502,7 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
-  */
- void rtl8723bs_free_recv_priv(struct adapter *padapter)
+diff --git a/sound/soc/codecs/rt1308.c b/sound/soc/codecs/rt1308.c
+index 6f2ee6809dbb..b75931a69a1c 100644
+--- a/sound/soc/codecs/rt1308.c
++++ b/sound/soc/codecs/rt1308.c
+@@ -436,7 +436,8 @@ static const struct snd_soc_dapm_route rt1308_dapm_routes[] = {
+ 
+ static int rt1308_get_clk_info(int sclk, int rate)
  {
--	u32 i, n;
-+	u32 i;
- 	struct recv_priv *precvpriv;
- 	struct recv_buf *precvbuf;
+-	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
++	int i;
++	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
  
-@@ -514,9 +514,8 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 	/* 3 2. free all recv buffers */
- 	precvbuf = (struct recv_buf *)precvpriv->precv_buf;
- 	if (precvbuf) {
--		n = NR_RECVBUFF;
- 		precvpriv->free_recv_buf_queue_cnt = 0;
--		for (i = 0; i < n ; i++) {
-+		for (i = 0; i < NR_RECVBUFF; i++) {
- 			list_del_init(&precvbuf->list);
- 			rtw_os_recvbuf_resource_free(padapter, precvbuf);
- 			precvbuf++;
-@@ -525,7 +524,6 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 	}
- 
- 	if (precvpriv->pallocated_recv_buf) {
--		n = NR_RECVBUFF * sizeof(struct recv_buf) + 4;
- 		kfree(precvpriv->pallocated_recv_buf);
- 		precvpriv->pallocated_recv_buf = NULL;
- 	}
+ 	if (sclk <= 0 || rate <= 0)
+ 		return -EINVAL;
 -- 
 2.20.1
