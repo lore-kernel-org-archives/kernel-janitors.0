@@ -1,67 +1,71 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 27 Sep 2019 08:16:56 +0000
-Subject: [PATCH v2 1/2] net: phy: mscc-miim: Use devm_platform_ioremap_resource() in mscc_miim_probe()
-Message-Id: <90c7a71f-d39a-2615-eedb-cc2d1150f3b3@web.de>
+Date: Sat, 07 Sep 2019 14:54:26 +0000
+Subject: =?UTF-8?B?QWRqdXN0aW5nIFNtUEwgc2NyaXB0IOKAnHB0cl9yZXQuY29jY2nigJ0/?=
+Message-Id: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
- <506889a6-4148-89f9-302e-4be069595bb4@web.de> <20190920190908.GH3530@lunn.ch>
- <121e75c5-4d45-9df2-a471-6997a1fb3218@web.de>
- <20190926161825.GB6825@piout.net>
- <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
- <20190926193239.GC6825@piout.net>
- <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
-In-Reply-To: <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Allison Randal <allison@lohutok.net>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Sep 2019 09:24:03 +0200
+Hello,
 
-Simplify this function implementation a bit by using
-a known wrapper function.
+I have taken another look at a known script for the semantic patch language.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccinelle/api/ptr_ret.cocci?id=1e3778cb223e861808ae0daccf353536e7573eed#n3
 
-This issue was detected by using the Coccinelle software.
+I got the impression that duplicate SmPL code can be reduced here.
+So I tried the following approach out.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+…
+@depends on patch@
+expression ptr;
+@@
+(
+(
+- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
+|
+- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
+)
++ return PTR_ERR_OR_ZERO(ptr);
+|
+- (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
++ PTR_ERR_OR_ZERO(ptr)
+)
+…
 
-v2:
-Alexandre Belloni pointed the need for adjustments out.
-https://lore.kernel.org/r/20190926193239.GC6825@piout.net/
 
-* The mapping of internal phy registers should be treated as optional.
-* An other prefix would be preferred in the commit subject.
+Unfortunately, I got the following information then for a test transformation.
+
+elfring@Sonne:~/Projekte/Linux/next-patched> spatch -D patch scripts/coccinelle/api/ptr_ret.cocci drivers/spi/spi-gpio.c
+…
+29: no available token to attach to
 
 
- drivers/net/phy/mdio-mscc-miim.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+It seems that the Coccinelle software “1.0.7-00218-gf284bf36” does not like
+the addition of the shown return statement after a nested SmPL disjunction.
+But the following SmPL code variant seems to work as expected.
 
-diff --git a/drivers/net/phy/mdio-mscc-miim.c b/drivers/net/phy/mdio-mscc-miim.c
-index badbc99bedd3..aabb13982251 100644
---- a/drivers/net/phy/mdio-mscc-miim.c
-+++ b/drivers/net/phy/mdio-mscc-miim.c
-@@ -120,10 +120,6 @@ static int mscc_miim_probe(struct platform_device *pdev)
- 	struct mscc_miim_dev *dev;
- 	int ret;
 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--
- 	bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*dev));
- 	if (!bus)
- 		return -ENOMEM;
-@@ -136,7 +132,7 @@ static int mscc_miim_probe(struct platform_device *pdev)
- 	bus->parent = &pdev->dev;
+…
+@depends on patch@
+expression ptr;
+@@
+(
+- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
++ return PTR_ERR_OR_ZERO(ptr);
+|
+- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
++ return PTR_ERR_OR_ZERO(ptr);
+|
+- (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
++ PTR_ERR_OR_ZERO(ptr)
+)
+…
 
- 	dev = bus->priv;
--	dev->regs = devm_ioremap_resource(&pdev->dev, res);
-+	dev->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dev->regs)) {
- 		dev_err(&pdev->dev, "Unable to map MIIM registers\n");
- 		return PTR_ERR(dev->regs);
---
-2.23.0
+
+How do you think about to reduce subsequent SmPL rules also according to
+a possible recombination of affected implementation details?
+
+Regards,
+Markus
