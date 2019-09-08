@@ -1,38 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 01 Sep 2019 15:27:49 +0000
-Subject: [PATCH] iio: light: cm36651: redundant assignment to variable ret
-Message-Id: <20190901152749.12916-1-colin.king@canonical.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 08 Sep 2019 11:38:22 +0000
+Subject: Re: [PATCH] iio: light: cm36651: redundant assignment to variable ret
+Message-Id: <20190908123822.7a17b7cc@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190901152749.12916-1-colin.king@canonical.com>
+In-Reply-To: <20190901152749.12916-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Tsai <ktsai@capellamicro.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Kevin Tsai <ktsai@capellamicro.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun,  1 Sep 2019 16:27:49 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Variable ret is being assigned a value that is never read and
-is being re-assigned a little later on. The assignment is redundant
-and hence can be removed.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable ret is being assigned a value that is never read and
+> is being re-assigned a little later on. The assignment is redundant
+> and hence can be removed.
+> 
+> Addresses-Coverity: ("Ununsed value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Addresses-Coverity: ("Ununsed value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iio/light/cm36651.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to do not much with it.
 
-diff --git a/drivers/iio/light/cm36651.c b/drivers/iio/light/cm36651.c
-index 1019d625adb1..90e38fcc974b 100644
---- a/drivers/iio/light/cm36651.c
-+++ b/drivers/iio/light/cm36651.c
-@@ -532,7 +532,7 @@ static int cm36651_write_prox_event_config(struct iio_dev *indio_dev,
- 					int state)
- {
- 	struct cm36651_data *cm36651 = iio_priv(indio_dev);
--	int cmd, ret = -EINVAL;
-+	int cmd, ret;
- 
- 	mutex_lock(&cm36651->lock);
- 
--- 
-2.20.1
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/light/cm36651.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/light/cm36651.c b/drivers/iio/light/cm36651.c
+> index 1019d625adb1..90e38fcc974b 100644
+> --- a/drivers/iio/light/cm36651.c
+> +++ b/drivers/iio/light/cm36651.c
+> @@ -532,7 +532,7 @@ static int cm36651_write_prox_event_config(struct iio_dev *indio_dev,
+>  					int state)
+>  {
+>  	struct cm36651_data *cm36651 = iio_priv(indio_dev);
+> -	int cmd, ret = -EINVAL;
+> +	int cmd, ret;
+>  
+>  	mutex_lock(&cm36651->lock);
+>  
