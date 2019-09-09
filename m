@@ -1,84 +1,81 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Sat, 14 Sep 2019 12:46:09 +0000
-Subject: Re: [PATCH] media: uvcvideo: Fix a typo in UVC_METATADA_BUF_SIZE
-Message-Id: <20190914124609.GE4734@pendragon.ideasonboard.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 09 Sep 2019 10:07:16 +0000
+Subject: Applied "ASoC: rt1305: make array pd static const, makes object smaller" to the asoc tree
+Message-Id: <20190909100716.E8650D02D4C@fitzroy.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190724045612.29870-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190724045612.29870-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190907074156.21907-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>
 
-Hi Christophe,
+The patch
 
-Thank you for the patch.
+   ASoC: rt1305: make array pd static const, makes object smaller
 
-On Wed, Jul 24, 2019 at 06:56:12AM +0200, Christophe JAILLET wrote:
-> It is likely that it should be UVC_METADATA_BUF_SIZE instead.
-> Fix it and use it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+has been applied to the asoc tree at
 
-Oops indeed. Applied to my tree for v5.5.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-> ---
->  drivers/media/usb/uvc/uvc_metadata.c | 4 ++--
->  drivers/media/usb/uvc/uvc_queue.c    | 2 +-
->  drivers/media/usb/uvc/uvcvideo.h     | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> index 99bb71b47117..b6279ad7ac84 100644
-> --- a/drivers/media/usb/uvc/uvc_metadata.c
-> +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> @@ -51,7 +51,7 @@ static int uvc_meta_v4l2_get_format(struct file *file, void *fh,
->  	memset(fmt, 0, sizeof(*fmt));
->  
->  	fmt->dataformat = stream->meta.format;
-> -	fmt->buffersize = UVC_METATADA_BUF_SIZE;
-> +	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->  
->  	return 0;
->  }
-> @@ -72,7 +72,7 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
->  
->  	fmt->dataformat = fmeta = dev->info->meta_format
->  			? fmeta : V4L2_META_FMT_UVC;
-> -	fmt->buffersize = UVC_METATADA_BUF_SIZE;
-> +	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->  
->  	return 0;
->  }
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> index da72577c2998..cd60c6c1749e 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -79,7 +79,7 @@ static int uvc_queue_setup(struct vb2_queue *vq,
->  
->  	switch (vq->type) {
->  	case V4L2_BUF_TYPE_META_CAPTURE:
-> -		size = UVC_METATADA_BUF_SIZE;
-> +		size = UVC_METADATA_BUF_SIZE;
->  		break;
->  
->  	default:
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index c7c1baa90dea..f773dc5d802c 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -491,7 +491,7 @@ struct uvc_stats_stream {
->  	unsigned int max_sof;		/* Maximum STC.SOF value */
->  };
->  
-> -#define UVC_METATADA_BUF_SIZE 1024
-> +#define UVC_METADATA_BUF_SIZE 1024
->  
->  /**
->   * struct uvc_copy_op: Context structure to schedule asynchronous memcpy
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b61b1e35ed06db180968cb5ca0fbf8b8887ccb93 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 7 Sep 2019 08:41:56 +0100
+Subject: [PATCH] ASoC: rt1305: make array pd static const, makes object
+ smaller
+
+Don't populate the array pd on the stack but instead make it
+static const. Makes the object code smaller by 93 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  38961	   9784	     64	  48809	   bea9	sound/soc/codecs/rt1305.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  38804	   9848	     64	  48716	   be4c	sound/soc/codecs/rt1305.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190907074156.21907-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/rt1305.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
+index 9909369483f0..e27742abfa76 100644
+--- a/sound/soc/codecs/rt1305.c
++++ b/sound/soc/codecs/rt1305.c
+@@ -608,7 +608,8 @@ static const struct snd_soc_dapm_route rt1305_dapm_routes[] = {
+ 
+ static int rt1305_get_clk_info(int sclk, int rate)
+ {
+-	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
++	int i;
++	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
+ 
+ 	if (sclk <= 0 || rate <= 0)
+ 		return -EINVAL;
 -- 
-Regards,
-
-Laurent Pinchart
+2.20.1
