@@ -1,27 +1,38 @@
-From: Rohit Sarkar <rohitsarkar5398@gmail.com>
-Date: Fri, 13 Sep 2019 14:41:16 +0000
-Subject: Re: Queries of an aspiring kernel developer
-Message-Id: <20190913142916.GB309@SARKAR>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 10 Sep 2019 11:29:59 +0000
+Subject: [PATCH] ipv6: Fix the link time qualifier of 'ping_v6_proc_exit_net()'
+Message-Id: <20190910112959.9222-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190912142517.GA22751@SARKAR> <20190913132310.GQ20699@kadam>
- <20190913141935.GA309@SARKAR>
- <alpine.DEB.2.21.1909131623300.2767@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1909131623300.2767@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, kernelnewbies@kernelnewbies.org
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Sep 13, 2019 at 04:24:37PM +0200, Julia Lawall wrote:
-> 
-> Dan's suggestions are fine.  You may want to take a fairly recent driver
-> from staging (to check using git log) to be sure that the work has not
-> already been done by others.
-> 
-> julia
+The '.exit' functions from 'pernet_operations' structure should be marked
+as __net_exit, not __net_init.
 
-Sure, thanks julia.
+Fixes: d862e5461423 ("net: ipv6: Implement /proc/net/icmp6.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Untested, but using __net_exit looks consistent with other
+pernet_operations.exit use case.
+---
+ net/ipv6/ping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-Rohit
+diff --git a/net/ipv6/ping.c b/net/ipv6/ping.c
+index 87d2d8c1db7c..98ac32b49d8c 100644
+--- a/net/ipv6/ping.c
++++ b/net/ipv6/ping.c
+@@ -223,7 +223,7 @@ static int __net_init ping_v6_proc_init_net(struct net *net)
+ 	return 0;
+ }
+ 
+-static void __net_init ping_v6_proc_exit_net(struct net *net)
++static void __net_exit ping_v6_proc_exit_net(struct net *net)
+ {
+ 	remove_proc_entry("icmp6", net->proc_net);
+ }
+-- 
+2.20.1
