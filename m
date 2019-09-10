@@ -1,35 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 06 Sep 2019 12:25:02 +0000
-Subject: [PATCH -next] crypto: essiv - Remove unnecessary NULL checks
-Message-Id: <20190906122502.27236-1-yuehaibing@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 10 Sep 2019 04:11:29 +0000
+Subject: [PATCH] tty: serial: owl: Fix the link time qualifier of 'owl_uart_exit()'
+Message-Id: <20190910041129.6978-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-NULL check before kfree is not needed.
-Generated-by: scripts/coccinelle/free/ifnullfree.cocci
+'exit' functions should be marked as __exit, not __init.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: fc60a8b675bd ("tty: serial: owl: Implement console driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- crypto/essiv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/owl-uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/essiv.c b/crypto/essiv.c
-index a8befc8..3d3f9d7 100644
---- a/crypto/essiv.c
-+++ b/crypto/essiv.c
-@@ -188,8 +188,7 @@ static void essiv_aead_done(struct crypto_async_request *areq, int err)
- 	struct aead_request *req = areq->data;
- 	struct essiv_aead_request_ctx *rctx = aead_request_ctx(req);
- 
--	if (rctx->assoc)
--		kfree(rctx->assoc);
-+	kfree(rctx->assoc);
- 	aead_request_complete(req, err);
+diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
+index 03963af77b15..d2d8b3494685 100644
+--- a/drivers/tty/serial/owl-uart.c
++++ b/drivers/tty/serial/owl-uart.c
+@@ -740,7 +740,7 @@ static int __init owl_uart_init(void)
+ 	return ret;
  }
  
+-static void __init owl_uart_exit(void)
++static void __exit owl_uart_exit(void)
+ {
+ 	platform_driver_unregister(&owl_uart_platform_driver);
+ 	uart_unregister_driver(&owl_uart_driver);
 -- 
-2.7.4
+2.20.1
