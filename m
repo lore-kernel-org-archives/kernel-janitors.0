@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:14:38 +0000
-Subject: Re: [PATCH net] net: socionext: Fix a signedness bug in ave_probe()
-Message-Id: <20190927.101438.1911842769067545634.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 10 Sep 2019 08:58:48 +0000
+Subject: [PATCH net] net: sonic: replace dev_kfree_skb in sonic_send_packet
+Message-Id: <20190910085848.144780-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105750.GG3264@mwanda>
-In-Reply-To: <20190925105750.GG3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: hayashi.kunihiko@socionext.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tsbogend@alpha.franken.de, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 13:57:50 +0300
+sonic_send_packet will be processed in irq or none
+irq context, so it would better use dev_kfree_skb_any
+instead of dev_kfree_skb.
 
-> The "phy_mode" variable is an enum and in this context GCC treats it as
-> an unsigned int so the error handling is never triggered.
-> 
-> Fixes: 4c270b55a5af ("net: ethernet: socionext: add AVE ethernet driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: d9fb9f384292 ("*sonic/natsemi/ns83829: Move the National Semi-conductor drivers")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/natsemi/sonic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 18fd62fbfb64..b339125b2f09 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -233,7 +233,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	laddr = dma_map_single(lp->device, skb->data, length, DMA_TO_DEVICE);
+ 	if (!laddr) {
+ 		pr_err_ratelimited("%s: failed to map tx DMA buffer.\n", dev->name);
+-		dev_kfree_skb(skb);
++		dev_kfree_skb_any(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+ 
+-- 
+2.20.1
