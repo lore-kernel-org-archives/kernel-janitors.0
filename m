@@ -1,46 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 09:17:19 +0000
-Subject: [PATCH] mmc: dw_mmc: hi3798cv200: make array degrees static const, makes object smaller
-Message-Id: <20190906091719.24886-1-colin.king@canonical.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 11 Sep 2019 14:21:10 +0000
+Subject: Re: [PATCH] mmc: dw_mmc: hi3798cv200: make array degrees static const, makes object smaller
+Message-Id: <CAPDyKFqriNuywSzk-c77==abgJQLWRXuKWSn_04jVy+gaB8h-Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190906091719.24886-1-colin.king@canonical.com>
+In-Reply-To: <20190906091719.24886-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 6 Sep 2019 at 11:17, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate the array degrees on the stack but instead make it
+> static const. Makes the object code smaller by 46 bytes.
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>    5356    1560       0    6916    1b04 dw_mmc-hi3798cv200.o
+>
+> After:
+>    text    data     bss     dec     hex filename
+>    5214    1656       0    6870    1ad6 dw_mmc-hi3798cv200.o
+>
+> (gcc version 9.2.1, amd64)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array degrees on the stack but instead make it
-static const. Makes the object code smaller by 46 bytes.
+Applied for next, thanks!
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   5356	   1560	      0	   6916	   1b04	dw_mmc-hi3798cv200.o
+Kind regards
+Uffe
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   5214	   1656	      0	   6870	   1ad6	dw_mmc-hi3798cv200.o
 
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mmc/host/dw_mmc-hi3798cv200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-index bc51cef47c47..83e1bad0a008 100644
---- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
-+++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-@@ -66,7 +66,7 @@ static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- static int dw_mci_hi3798cv200_execute_tuning(struct dw_mci_slot *slot,
- 					     u32 opcode)
- {
--	int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
-+	static const int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
- 	struct dw_mci *host = slot->host;
- 	struct hi3798cv200_priv *priv = host->priv;
- 	int raise_point = -1, fall_point = -1;
--- 
-2.20.1
+> ---
+>  drivers/mmc/host/dw_mmc-hi3798cv200.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+> index bc51cef47c47..83e1bad0a008 100644
+> --- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
+> +++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+> @@ -66,7 +66,7 @@ static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  static int dw_mci_hi3798cv200_execute_tuning(struct dw_mci_slot *slot,
+>                                              u32 opcode)
+>  {
+> -       int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
+> +       static const int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
+>         struct dw_mci *host = slot->host;
+>         struct hi3798cv200_priv *priv = host->priv;
+>         int raise_point = -1, fall_point = -1;
+> --
+> 2.20.1
+>
