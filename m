@@ -1,29 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 25 Sep 2019 06:12:53 +0000
-Subject: Re: [PATCH] wil6210: use after free in wil_netif_rx_any()
-Message-Id: <20190925061253.8F93560E73@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 09:28:56 +0000
+Subject: [PATCH] RDMA/bnxt_re: fix spelling mistake "missin_resp" -> "missing_resp"
+Message-Id: <20190911092856.11146-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190921060145.GD18726@mwanda>
-In-Reply-To: <20190921060145.GD18726@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maya Erez <merez@codeaurora.org>, Dedy Lansky <dlansky@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, kernel-janitors@vger.kernel.org
+To: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The debug code dereferences "skb" to print "skb->len" so we have to
-> print the message before we free "skb".
-> 
-> Fixes: f99fe49ff372 ("wil6210: add wil_netif_rx() helper function")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in a literal string, fix it.
 
-Patch applied to wireless-drivers.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/bnxt_re/hw_counters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-2b481835cf4e wil6210: use after free in wil_netif_rx_any()
-
+diff --git a/drivers/infiniband/hw/bnxt_re/hw_counters.c b/drivers/infiniband/hw/bnxt_re/hw_counters.c
+index 604b71875f5f..3421a0b15983 100644
+--- a/drivers/infiniband/hw/bnxt_re/hw_counters.c
++++ b/drivers/infiniband/hw/bnxt_re/hw_counters.c
+@@ -74,7 +74,7 @@ static const char * const bnxt_re_stat_name[] = {
+ 	[BNXT_RE_SEQ_ERR_NAKS_RCVD]     = "seq_err_naks_rcvd",
+ 	[BNXT_RE_MAX_RETRY_EXCEEDED]    = "max_retry_exceeded",
+ 	[BNXT_RE_RNR_NAKS_RCVD]         = "rnr_naks_rcvd",
+-	[BNXT_RE_MISSING_RESP]          = "missin_resp",
++	[BNXT_RE_MISSING_RESP]          = "missing_resp",
+ 	[BNXT_RE_UNRECOVERABLE_ERR]     = "unrecoverable_err",
+ 	[BNXT_RE_BAD_RESP_ERR]          = "bad_resp_err",
+ 	[BNXT_RE_LOCAL_QP_OP_ERR]       = "local_qp_op_err",
 -- 
-https://patchwork.kernel.org/patch/11155359/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
