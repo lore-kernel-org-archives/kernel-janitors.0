@@ -1,60 +1,83 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Date: Tue, 24 Sep 2019 19:32:32 +0000
-Subject: Re: [PATCH] dmaengine: jz4780: Use devm_platform_ioremap_resource() in jz4780_dma_probe()
-Message-Id: <1569353552.1911.0@crapouillou.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Sep 2019 10:49:28 +0000
+Subject: [PATCH v3] drm: panel-lvds: Potential Oops in probe error handling
+Message-Id: <20190911104928.GA15930@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5dd19f28-349a-4957-ea3a-6aebbd7c97e2@web.de>
-In-Reply-To: <5dd19f28-349a-4957-ea3a-6aebbd7c97e2@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Alex Smith <alex.smith@imgtec.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, dri-devel@lists.freedesktop.org, Mark Brown <broonie@kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 
-Hi Markus,
+The "lvds->backlight" pointer could be NULL in situations where
+of_parse_phandle() returns NULL.  This code is cleaner if we use the
+managed devm_of_find_backlight() so the clean up is automatic.
 
+Fixes: 7c9dff5bd643 ("drm: panels: Add LVDS panel driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v3: Use devm_of_find_backlight().  This version is quite a bit more
+    ambitious, and I haven't tested it so please review carefully.
+v2: Use backlight_put()
 
-Le dim. 22 sept. 2019 =E0 11:25, Markus Elfring <Markus.Elfring@web.de>=20
-a =E9crit :
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 11:18:27 +0200
->=20
-> Simplify this function implementation a bit by using
-> a known wrapper function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+ drivers/gpu/drm/panel/panel-lvds.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-Looks good to me.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-
-
-> ---
->  drivers/dma/dma-jz4780.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->=20
-> diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-> index cafb1cc065bb..f42b3ef8e036 100644
-> --- a/drivers/dma/dma-jz4780.c
-> +++ b/drivers/dma/dma-jz4780.c
-> @@ -858,13 +858,7 @@ static int jz4780_dma_probe(struct=20
-> platform_device *pdev)
->  	jzdma->soc_data =3D soc_data;
->  	platform_set_drvdata(pdev, jzdma);
->=20
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res) {
-> -		dev_err(dev, "failed to get I/O memory\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	jzdma->chn_base =3D devm_ioremap_resource(dev, res);
-> +	jzdma->chn_base =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(jzdma->chn_base))
->  		return PTR_ERR(jzdma->chn_base);
->=20
-> --
-> 2.23.0
->=20
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index ad47cc95459e..bf5fcc3e5379 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -197,7 +197,6 @@ static int panel_lvds_parse_dt(struct panel_lvds *lvds)
+ static int panel_lvds_probe(struct platform_device *pdev)
+ {
+ 	struct panel_lvds *lvds;
+-	struct device_node *np;
+ 	int ret;
+ 
+ 	lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
+@@ -243,14 +242,9 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	np = of_parse_phandle(lvds->dev->of_node, "backlight", 0);
+-	if (np) {
+-		lvds->backlight = of_find_backlight_by_node(np);
+-		of_node_put(np);
+-
+-		if (!lvds->backlight)
+-			return -EPROBE_DEFER;
+-	}
++	lvds->backlight = devm_of_find_backlight(lvds->dev);
++	if (IS_ERR(lvds->backlight))
++		return PTR_ERR(lvds->backlight);
+ 
+ 	/*
+ 	 * TODO: Handle all power supplies specified in the DT node in a generic
+@@ -266,14 +260,10 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 
+ 	ret = drm_panel_add(&lvds->panel);
+ 	if (ret < 0)
+-		goto error;
++		return ret;
+ 
+ 	dev_set_drvdata(lvds->dev, lvds);
+ 	return 0;
+-
+-error:
+-	put_device(&lvds->backlight->dev);
+-	return ret;
+ }
+ 
+ static int panel_lvds_remove(struct platform_device *pdev)
+@@ -284,9 +274,6 @@ static int panel_lvds_remove(struct platform_device *pdev)
+ 
+ 	panel_lvds_disable(&lvds->panel);
+ 
+-	if (lvds->backlight)
+-		put_device(&lvds->backlight->dev);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
