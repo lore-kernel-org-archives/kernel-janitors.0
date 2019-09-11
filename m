@@ -1,29 +1,35 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Tue, 10 Sep 2019 10:23:00 +0000
-Subject: Re: [PATCH net] net: sonic: replace dev_kfree_skb in sonic_send_packet
-Message-Id: <a48a6690-eeb4-91d2-bed8-439d14b63e2f@cogentembedded.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 09:31:23 +0000
+Subject: [PATCH] dtc: fix spelling mistake "mmory" -> "memory"
+Message-Id: <20190911093123.11312-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190910085848.144780-1-maowenan@huawei.com>
-In-Reply-To: <20190910085848.144780-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, tsbogend@alpha.franken.de, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello!
+From: Colin Ian King <colin.king@canonical.com>
 
-On 10.09.2019 11:58, Mao Wenan wrote:
+There is a spelling mistake in an error message. Fix it.
 
-> sonic_send_packet will be processed in irq or none
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/dtc/fdtput.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    s/none irq/non-irq/?
-
-> irq context, so it would better use dev_kfree_skb_any
-> instead of dev_kfree_skb.
-> 
-> Fixes: d9fb9f384292 ("*sonic/natsemi/ns83829: Move the National Semi-conductor drivers")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-[...]
-
-MBR, Sergei
+diff --git a/scripts/dtc/fdtput.c b/scripts/dtc/fdtput.c
+index a363c3cabc59..3755e5f68a5a 100644
+--- a/scripts/dtc/fdtput.c
++++ b/scripts/dtc/fdtput.c
+@@ -84,7 +84,7 @@ static int encode_value(struct display_info *disp, char **arg, int arg_count,
+ 			value_size = (upto + len) + 500;
+ 			value = realloc(value, value_size);
+ 			if (!value) {
+-				fprintf(stderr, "Out of mmory: cannot alloc "
++				fprintf(stderr, "Out of memory: cannot alloc "
+ 					"%d bytes\n", value_size);
+ 				return -1;
+ 			}
+-- 
+2.20.1
