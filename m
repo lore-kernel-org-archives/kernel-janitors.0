@@ -1,62 +1,35 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 26 Sep 2019 17:04:05 +0000
-Subject: Re: [PATCH v2] staging: rtl8188eu: fix possible null dereference
-Message-Id: <c0601b1f-9366-fbc7-7da8-9b00df94483a@lwfinger.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 10:33:57 +0000
+Subject: [PATCH] ms_block: fix spelling mistake "randomally" -> "randomly"
+Message-Id: <20190911103357.1744-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926150317.5894-1-connor.kuehl@canonical.com>
-In-Reply-To: <20190926150317.5894-1-connor.kuehl@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Connor Kuehl <connor.kuehl@canonical.com>, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>, linux-mmc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 9/26/19 10:03 AM, Connor Kuehl wrote:
-> Inside a nested 'else' block at the beginning of this function is a
-> call that assigns 'psta' to the return value of 'rtw_get_stainfo()'.
-> If 'rtw_get_stainfo()' returns NULL and the flow of control reaches
-> the 'else if' where 'psta' is dereferenced, then we will dereference
-> a NULL pointer.
-> 
-> Fix this by checking if 'psta' is not NULL before reading its
-> 'psta->qos_option' data member.
-> 
-> Addresses-Coverity: ("Dereference null return value")
-> 
-> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-> ---
-> v1 -> v2:
->    - Add the same null check to line 779
-> 
->   drivers/staging/rtl8188eu/core/rtw_xmit.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-> index 952f2ab51347..c37591657bac 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-> @@ -776,7 +776,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
->   			memcpy(pwlanhdr->addr2, get_bssid(pmlmepriv), ETH_ALEN);
->   			memcpy(pwlanhdr->addr3, pattrib->src, ETH_ALEN);
->   
-> -			if (psta->qos_option)
-> +			if (psta && psta->qos_option)
->   				qos_option = true;
->   		} else if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) ||
->   			   check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE)) {
-> @@ -784,7 +784,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
->   			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
->   			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv), ETH_ALEN);
->   
-> -			if (psta->qos_option)
-> +			if (psta && psta->qos_option)
->   				qos_option = true;
->   		} else {
->   			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("fw_state:%x is not allowed to xmit frame\n", get_fwstate(pmlmepriv)));
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+There is a spelling mistake in a dbg_verbose message. Fix it.
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/memstick/core/ms_block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Larry
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index 384927ebde74..d9ee8e3dc72d 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -1087,7 +1087,7 @@ static u16 msb_get_free_block(struct msb_data *msb, int zone)
+ 
+ 	pos %= msb->free_block_count[zone];
+ 
+-	dbg_verbose("have %d choices for a free block, selected randomally: %d",
++	dbg_verbose("have %d choices for a free block, selected randomly: %d",
+ 		msb->free_block_count[zone], pos);
+ 
+ 	pba = find_next_zero_bit(msb->used_blocks_bitmap,
+-- 
+2.20.1
