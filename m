@@ -1,49 +1,34 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 08 Sep 2019 11:38:22 +0000
-Subject: Re: [PATCH] iio: light: cm36651: redundant assignment to variable ret
-Message-Id: <20190908123822.7a17b7cc@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 16:07:28 +0000
+Subject: [PATCH] ocfs2: fix spelling mistake "ambigous" -> "ambiguous"
+Message-Id: <20190911160728.24322-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190901152749.12916-1-colin.king@canonical.com>
-In-Reply-To: <20190901152749.12916-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kevin Tsai <ktsai@capellamicro.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun,  1 Sep 2019 16:27:49 +0100
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret is being assigned a value that is never read and
-> is being re-assigned a little later on. The assignment is redundant
-> and hence can be removed.
-> 
-> Addresses-Coverity: ("Ununsed value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is a spelling mistake in a mlog_bug_on_msg message. Fix it.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to do not much with it.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/light/cm36651.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/cm36651.c b/drivers/iio/light/cm36651.c
-> index 1019d625adb1..90e38fcc974b 100644
-> --- a/drivers/iio/light/cm36651.c
-> +++ b/drivers/iio/light/cm36651.c
-> @@ -532,7 +532,7 @@ static int cm36651_write_prox_event_config(struct iio_dev *indio_dev,
->  					int state)
->  {
->  	struct cm36651_data *cm36651 = iio_priv(indio_dev);
-> -	int cmd, ret = -EINVAL;
-> +	int cmd, ret;
->  
->  	mutex_lock(&cm36651->lock);
->  
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 7ad9d6590818..7c9dfd50c1c1 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -534,7 +534,7 @@ static int ocfs2_read_locked_inode(struct inode *inode,
+ 	 */
+ 	mlog_bug_on_msg(!!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) ! 			!!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE),
+-			"Inode %llu: system file state is ambigous\n",
++			"Inode %llu: system file state is ambiguous\n",
+ 			(unsigned long long)args->fi_blkno);
+ 
+ 	if (S_ISCHR(le16_to_cpu(fe->i_mode)) ||
+-- 
+2.20.1
