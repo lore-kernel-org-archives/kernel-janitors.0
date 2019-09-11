@@ -1,61 +1,177 @@
-From: Radhey Shyam Pandey <radheys@xilinx.com>
-Date: Fri, 20 Sep 2019 11:57:31 +0000
-Subject: RE: [PATCH v2] ethernet: axienet: Use devm_platform_ioremap_resource() in axienet_probe()
-Message-Id: <CH2PR02MB70007655B190BCBC9113BD4BC7880@CH2PR02MB7000.namprd02.prod.outlook.com>
+From: Rohit Sarkar <rohitsarkar5398@gmail.com>
+Date: Wed, 11 Sep 2019 13:51:30 +0000
+Subject: [PATCH] staging: vhciq_core: replace snprintf with scnprintf
+Message-Id: <20190911135112.GA5569@SARKAR>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
- <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
- <604a6376-0298-ebcd-ee84-435945370374@web.de>
-In-Reply-To: <604a6376-0298-ebcd-ee84-435945370374@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "David S. Miller" <davem@davemloft.net>, Michal Simek <michals@xilinx.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Eric Anholt <eric@anholt.net>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Tobias =?iso-8859-1?Q?B=FCttner?= <tobias.buettner@fau.de>, linux-rpi-kernel@lists.infradead.org, Dominic Braun <inf.braun@fau.de>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8TWFy
-a3VzLkVsZnJpbmdAd2ViLmRlPg0KPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMCwgMjAxOSA1
-OjAxIFBNDQo+IFRvOiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmc7IERhdmlkIFMuDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5l
-dD47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gUmFkaGV5IFNoeWFtIFBh
-bmRleSA8cmFkaGV5c0B4aWxpbnguY29tPg0KPiBDYzogTEtNTCA8bGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZz47IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
-W1BBVENIIHYyXSBldGhlcm5ldDogYXhpZW5ldDogVXNlDQo+IGRldm1fcGxhdGZvcm1faW9yZW1h
-cF9yZXNvdXJjZSgpIGluIGF4aWVuZXRfcHJvYmUoKQ0KPiANCj4gRnJvbTogTWFya3VzIEVsZnJp
-bmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBEYXRlOiBGcmksIDIwIFNlcCAy
-MDE5IDEzOjE3OjAxICswMjAwDQo+IA0KPiBTaW1wbGlmeSB0aGlzIGZ1bmN0aW9uIGltcGxlbWVu
-dGF0aW9uIGJ5IHVzaW5nIHRoZSB3cmFwcGVyIGZ1bmN0aW9uDQo+IOKAnGRldm1fcGxhdGZvcm1f
-aW9yZW1hcF9yZXNvdXJjZeKAnSBpbnN0ZWFkIG9mIGNhbGxpbmcgdGhlIGZ1bmN0aW9ucw0KPiDi
-gJxwbGF0Zm9ybV9nZXRfcmVzb3VyY2XigJ0gYW5kIOKAnGRldm1faW9yZW1hcF9yZXNvdXJjZeKA
-nSBkaXJlY3RseS4NCj4gDQo+ICogVGh1cyByZWR1Y2UgYWxzbyBhIGJpdCBvZiBleGNlcHRpb24g
-aGFuZGxpbmcgY29kZSBoZXJlLg0KPiAqIERlbGV0ZSB0aGUgbG9jYWwgdmFyaWFibGUg4oCccmVz
-4oCdLg0KPiANCj4gVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVs
-bGUgc29mdHdhcmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmlu
-Z0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQoNClJldmlld2VkLWJ5OiBSYWRoZXkgU2h5YW0gUGFu
-ZGV5IDxyYWRoZXkuc2h5YW0ucGFuZGV5QHhpbGlueC5jb20+DQoNClRoYW5rcyENCj4gLS0tDQo+
-IA0KPiB2MjoNCj4gRnVydGhlciBjaGFuZ2VzIHdlcmUgcmVxdWVzdGVkIGJ5IFJhZGhleSBTaHlh
-bSBQYW5kZXkuDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvQ0gyUFIwMk1CNzAwMDQ3QUZG
-RkUwOEZFNUZENTYzNTQxQzc4RTBAQw0KPiBIMlBSMDJNQjcwMDAubmFtcHJkMDIucHJvZC5vdXRs
-b29rLmNvbS8NCj4gDQo+ICogVXBkYXRlcyBmb3IgdGhyZWUgbW9kdWxlcyB3ZXJlIHNwbGl0IGlu
-dG8gYSBzZXBhcmF0ZSBwYXRjaCBmb3IgZWFjaCBkcml2ZXIuDQo+ICogVGhlIGNvbW1pdCBkZXNj
-cmlwdGlvbiB3YXMgYWRqdXN0ZWQuDQo+IA0KPiANCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3hp
-bGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMgfCA5ICstLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCA4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGlsaW54X2F4aWVuZXRfbWFpbi5jDQo+IGluZGV4IDRm
-YzYyN2ZiNGQxMS4uOTI3ODNhYWFhMGEyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhl
-cm5ldC94aWxpbngveGlsaW54X2F4aWVuZXRfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0
-aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gQEAgLTE3ODcsMTQgKzE3ODcs
-NyBAQCBzdGF0aWMgaW50IGF4aWVuZXRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAq
-cGRldikNCj4gIAkJb2Zfbm9kZV9wdXQobnApOw0KPiAgCQlscC0+ZXRoX2lycSA9IHBsYXRmb3Jt
-X2dldF9pcnEocGRldiwgMCk7DQo+ICAJfSBlbHNlIHsNCj4gLQkJLyogQ2hlY2sgZm9yIHRoZXNl
-IHJlc291cmNlcyBkaXJlY3RseSBvbiB0aGUgRXRoZXJuZXQgbm9kZS4NCj4gKi8NCj4gLQkJc3Ry
-dWN0IHJlc291cmNlICpyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwNCj4gLQ0KPiBJ
-T1JFU09VUkNFX01FTSwgMSk7DQo+IC0JCWlmICghcmVzKSB7DQo+IC0JCQlkZXZfZXJyKCZwZGV2
-LT5kZXYsICJ1bmFibGUgdG8gZ2V0IERNQSBtZW1vcnkNCj4gcmVzb3VyY2VcbiIpOw0KPiAtCQkJ
-Z290byBmcmVlX25ldGRldjsNCj4gLQkJfQ0KPiAtCQlscC0+ZG1hX3JlZ3MgPSBkZXZtX2lvcmVt
-YXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcmVzKTsNCj4gKwkJbHAtPmRtYV9yZWdzID0gZGV2bV9w
-bGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKHBkZXYsIDEpOw0KPiAgCQlscC0+cnhfaXJxID0gcGxh
-dGZvcm1fZ2V0X2lycShwZGV2LCAxKTsNCj4gIAkJbHAtPnR4X2lycSA9IHBsYXRmb3JtX2dldF9p
-cnEocGRldiwgMCk7DQo+ICAJCWxwLT5ldGhfaXJxID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAy
-KTsNCj4gLS0NCj4gMi4yMy4wDQoNCg=
+When the number of bytes to be printed exceeds the limit snprintf
+returns the number of bytes that would have been printed (if there was
+no truncation). This might cause issues, hence use scnprintf which
+returns the actual number of bytes printed to buffer always
+
+Signed-off-by: Rohit Sarkar <rohitsarkar5398@gmail.com>
+---
+ .../interface/vchiq_arm/vchiq_core.c          | 38 +++++++++----------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 183f5cf887e0..56a23a297fa4 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -3322,13 +3322,13 @@ vchiq_dump_shared_state(void *dump_context, struct vchiq_state *state,
+ 	char buf[80];
+ 	int len;
+ 
+-	len = snprintf(buf, sizeof(buf),
++	len = scnprintf(buf, sizeof(buf),
+ 		"  %s: slots %d-%d tx_pos=%x recycle=%x",
+ 		label, shared->slot_first, shared->slot_last,
+ 		shared->tx_pos, shared->slot_queue_recycle);
+ 	vchiq_dump(dump_context, buf, len + 1);
+ 
+-	len = snprintf(buf, sizeof(buf),
++	len = scnprintf(buf, sizeof(buf),
+ 		"    Slots claimed:");
+ 	vchiq_dump(dump_context, buf, len + 1);
+ 
+@@ -3336,7 +3336,7 @@ vchiq_dump_shared_state(void *dump_context, struct vchiq_state *state,
+ 		struct vchiq_slot_info slot_info  						*SLOT_INFO_FROM_INDEX(state, i);
+ 		if (slot_info.use_count != slot_info.release_count) {
+-			len = snprintf(buf, sizeof(buf),
++			len = scnprintf(buf, sizeof(buf),
+ 				"      %d: %d/%d", i, slot_info.use_count,
+ 				slot_info.release_count);
+ 			vchiq_dump(dump_context, buf, len + 1);
+@@ -3344,7 +3344,7 @@ vchiq_dump_shared_state(void *dump_context, struct vchiq_state *state,
+ 	}
+ 
+ 	for (i = 1; i < shared->debug[DEBUG_ENTRIES]; i++) {
+-		len = snprintf(buf, sizeof(buf), "    DEBUG: %s = %d(%x)",
++		len = scnprintf(buf, sizeof(buf), "    DEBUG: %s = %d(%x)",
+ 			debug_names[i], shared->debug[i], shared->debug[i]);
+ 		vchiq_dump(dump_context, buf, len + 1);
+ 	}
+@@ -3357,11 +3357,11 @@ vchiq_dump_state(void *dump_context, struct vchiq_state *state)
+ 	int len;
+ 	int i;
+ 
+-	len = snprintf(buf, sizeof(buf), "State %d: %s", state->id,
++	len = scnprintf(buf, sizeof(buf), "State %d: %s", state->id,
+ 		conn_state_names[state->conn_state]);
+ 	vchiq_dump(dump_context, buf, len + 1);
+ 
+-	len = snprintf(buf, sizeof(buf),
++	len = scnprintf(buf, sizeof(buf),
+ 		"  tx_pos=%x(@%pK), rx_pos=%x(@%pK)",
+ 		state->local->tx_pos,
+ 		state->tx_data + (state->local_tx_pos & VCHIQ_SLOT_MASK),
+@@ -3369,13 +3369,13 @@ vchiq_dump_state(void *dump_context, struct vchiq_state *state)
+ 		state->rx_data + (state->rx_pos & VCHIQ_SLOT_MASK));
+ 	vchiq_dump(dump_context, buf, len + 1);
+ 
+-	len = snprintf(buf, sizeof(buf),
++	len = scnprintf(buf, sizeof(buf),
+ 		"  Version: %d (min %d)",
+ 		VCHIQ_VERSION, VCHIQ_VERSION_MIN);
+ 	vchiq_dump(dump_context, buf, len + 1);
+ 
+ 	if (VCHIQ_ENABLE_STATS) {
+-		len = snprintf(buf, sizeof(buf),
++		len = scnprintf(buf, sizeof(buf),
+ 			"  Stats: ctrl_tx_count=%d, ctrl_rx_count=%d, "
+ 			"error_count=%d",
+ 			state->stats.ctrl_tx_count, state->stats.ctrl_rx_count,
+@@ -3383,7 +3383,7 @@ vchiq_dump_state(void *dump_context, struct vchiq_state *state)
+ 		vchiq_dump(dump_context, buf, len + 1);
+ 	}
+ 
+-	len = snprintf(buf, sizeof(buf),
++	len = scnprintf(buf, sizeof(buf),
+ 		"  Slots: %d available (%d data), %d recyclable, %d stalls "
+ 		"(%d data)",
+ 		((state->slot_queue_available * VCHIQ_SLOT_SIZE) -
+@@ -3416,7 +3416,7 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 	char buf[80];
+ 	int len;
+ 
+-	len = snprintf(buf, sizeof(buf), "Service %u: %s (ref %u)",
++	len = scnprintf(buf, sizeof(buf), "Service %u: %s (ref %u)",
+ 		service->localport, srvstate_names[service->srvstate],
+ 		service->ref_count - 1); /*Don't include the lock just taken*/
+ 
+@@ -3428,17 +3428,17 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 		int tx_pending, rx_pending;
+ 
+ 		if (service->remoteport != VCHIQ_PORT_FREE) {
+-			int len2 = snprintf(remoteport, sizeof(remoteport),
++			int len2 = scnprintf(remoteport, sizeof(remoteport),
+ 				"%u", service->remoteport);
+ 
+ 			if (service->public_fourcc != VCHIQ_FOURCC_INVALID)
+-				snprintf(remoteport + len2,
++				scnprintf(remoteport + len2,
+ 					sizeof(remoteport) - len2,
+ 					" (client %x)", service->client_id);
+ 		} else
+ 			strcpy(remoteport, "n/a");
+ 
+-		len += snprintf(buf + len, sizeof(buf) - len,
++		len += scnprintf(buf + len, sizeof(buf) - len,
+ 			" '%c%c%c%c' remote %s (msg use %d/%d, slot use %d/%d)",
+ 			VCHIQ_FOURCC_AS_4CHARS(fourcc),
+ 			remoteport,
+@@ -3455,7 +3455,7 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 		rx_pending = service->bulk_rx.local_insert -
+ 			service->bulk_rx.remote_insert;
+ 
+-		len = snprintf(buf, sizeof(buf),
++		len = scnprintf(buf, sizeof(buf),
+ 			"  Bulk: tx_pending=%d (size %d),"
+ 			" rx_pending=%d (size %d)",
+ 			tx_pending,
+@@ -3468,7 +3468,7 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 		if (VCHIQ_ENABLE_STATS) {
+ 			vchiq_dump(dump_context, buf, len + 1);
+ 
+-			len = snprintf(buf, sizeof(buf),
++			len = scnprintf(buf, sizeof(buf),
+ 				"  Ctrl: tx_count=%d, tx_bytes=%llu, "
+ 				"rx_count=%d, rx_bytes=%llu",
+ 				service->stats.ctrl_tx_count,
+@@ -3477,7 +3477,7 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 				service->stats.ctrl_rx_bytes);
+ 			vchiq_dump(dump_context, buf, len + 1);
+ 
+-			len = snprintf(buf, sizeof(buf),
++			len = scnprintf(buf, sizeof(buf),
+ 				"  Bulk: tx_count=%d, tx_bytes=%llu, "
+ 				"rx_count=%d, rx_bytes=%llu",
+ 				service->stats.bulk_tx_count,
+@@ -3486,7 +3486,7 @@ vchiq_dump_service_state(void *dump_context, struct vchiq_service *service)
+ 				service->stats.bulk_rx_bytes);
+ 			vchiq_dump(dump_context, buf, len + 1);
+ 
+-			len = snprintf(buf, sizeof(buf),
++			len = scnprintf(buf, sizeof(buf),
+ 				"  %d quota stalls, %d slot stalls, "
+ 				"%d bulk stalls, %d aborted, %d errors",
+ 				service->stats.quota_stalls,
+@@ -3562,9 +3562,9 @@ void vchiq_log_dump_mem(const char *label, u32 addr, const void *void_mem,
+ 
+ 		for (offset = 0; offset < 16; offset++) {
+ 			if (offset < num_bytes)
+-				s += snprintf(s, 4, "%02x ", mem[offset]);
++				s += scnprintf(s, 4, "%02x ", mem[offset]);
+ 			else
+-				s += snprintf(s, 4, "   ");
++				s += scnprintf(s, 4, "   ");
+ 		}
+ 
+ 		for (offset = 0; offset < 16; offset++) {
+-- 
+2.17.1
