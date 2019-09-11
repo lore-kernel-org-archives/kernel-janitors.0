@@ -1,54 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 22 Sep 2019 11:14:11 +0000
-Subject: [PATCH] dmaengine: mediatek: Use devm_platform_ioremap_resource() in mtk_uart_apdma_probe()
-Message-Id: <366e776c-8760-eeb7-c248-7380c9f4fd34@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 11:37:34 +0000
+Subject: [PATCH] net: lmc: fix spelling mistake "runnin" -> "running"
+Message-Id: <20190911113734.26185-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c7e3bbae-44fa-9019-18ee-c6cdfd7c2a14@web.de>
-In-Reply-To: <c7e3bbae-44fa-9019-18ee-c6cdfd7c2a14@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Long Cheng <long.cheng@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Sep 2019 13:07:41 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+There is a spelling mistake in the lmc_trace message. Fix it.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/mediatek/mtk-uart-apdma.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/net/wan/lmc/lmc_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/mediatek/mtk-uart-apdma.c b/drivers/dma/mediatek/mtk-uart-apdma.c
-index f40051d6aecb..c20e6bd4e298 100644
---- a/drivers/dma/mediatek/mtk-uart-apdma.c
-+++ b/drivers/dma/mediatek/mtk-uart-apdma.c
-@@ -475,7 +475,6 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mtk_uart_apdmadev *mtkd;
- 	int bit_mask = 32, rc;
--	struct resource *res;
- 	struct mtk_chan *c;
- 	unsigned int i;
-
-@@ -532,13 +531,7 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
- 			goto err_no_dma;
- 		}
-
--		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		if (!res) {
--			rc = -ENODEV;
--			goto err_no_dma;
--		}
--
--		c->base = devm_ioremap_resource(&pdev->dev, res);
-+		c->base = devm_platform_ioremap_resource(pdev, i);
- 		if (IS_ERR(c->base)) {
- 			rc = PTR_ERR(c->base);
- 			goto err_no_dma;
---
-2.23.0
+diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
+index d74349628db2..0e6a51525d91 100644
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -1115,7 +1115,7 @@ static void lmc_running_reset (struct net_device *dev) /*fold00*/
+     sc->lmc_cmdmode |= (TULIP_CMD_TXRUN | TULIP_CMD_RXRUN);
+     LMC_CSR_WRITE (sc, csr_command, sc->lmc_cmdmode);
+ 
+-    lmc_trace(dev, "lmc_runnin_reset_out");
++    lmc_trace(dev, "lmc_running_reset_out");
+ }
+ 
+ 
+-- 
+2.20.1
