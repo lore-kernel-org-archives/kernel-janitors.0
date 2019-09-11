@@ -1,48 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 22 Sep 2019 12:37:13 +0000
-Subject: [PATCH] dmaengine: zx: Use devm_platform_ioremap_resource() in zx_dma_probe()
-Message-Id: <85de79fa-1ca5-a1e5-0296-9e8a2066f134@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 15:39:47 +0000
+Subject: [PATCH] bus: qcom: fix spelling mistake "ambigous" -> "ambiguous"
+Message-Id: <20190911153947.10203-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Sep 2019 14:32:12 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+There is a spelling mistake on the documentation. Fix it.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/zx_dma.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ Documentation/devicetree/bindings/bus/qcom,ebi2.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/zx_dma.c b/drivers/dma/zx_dma.c
-index 9f4436f7c914..6b457e683e70 100644
---- a/drivers/dma/zx_dma.c
-+++ b/drivers/dma/zx_dma.c
-@@ -754,18 +754,13 @@ static struct dma_chan *zx_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
- static int zx_dma_probe(struct platform_device *op)
- {
- 	struct zx_dma_dev *d;
--	struct resource *iores;
- 	int i, ret = 0;
-
--	iores = platform_get_resource(op, IORESOURCE_MEM, 0);
--	if (!iores)
--		return -EINVAL;
--
- 	d = devm_kzalloc(&op->dev, sizeof(*d), GFP_KERNEL);
- 	if (!d)
- 		return -ENOMEM;
-
--	d->base = devm_ioremap_resource(&op->dev, iores);
-+	d->base = devm_platform_ioremap_resource(op, 0);
- 	if (IS_ERR(d->base))
- 		return PTR_ERR(d->base);
-
---
-2.23.0
+diff --git a/Documentation/devicetree/bindings/bus/qcom,ebi2.txt b/Documentation/devicetree/bindings/bus/qcom,ebi2.txt
+index 5a7d567f6833..5058aa2c63b2 100644
+--- a/Documentation/devicetree/bindings/bus/qcom,ebi2.txt
++++ b/Documentation/devicetree/bindings/bus/qcom,ebi2.txt
+@@ -71,7 +71,7 @@ Optional subnodes:
+ 
+ The following optional properties are properties that can be tagged onto
+ any device subnode. We are assuming that there can be only ONE device per
+-chipselect subnode, else the properties will become ambigous.
++chipselect subnode, else the properties will become ambiguous.
+ 
+ Optional properties arrays for SLOW chip selects:
+ - qcom,xmem-recovery-cycles: recovery cycles is the time the memory continues to
+-- 
+2.20.1
