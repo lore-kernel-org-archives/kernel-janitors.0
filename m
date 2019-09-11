@@ -1,25 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Sep 2019 12:44:24 +0000
-Subject: Re: [PATCH] f2fs: signedness bug in f2fs_fname_setup_ci_filename()
-Message-Id: <20190904124424.GA3115@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 11 Sep 2019 16:02:39 +0000
+Subject: [PATCH] sctp: Fix the link time qualifier of 'sctp_ctrlsock_exit()'
+Message-Id: <20190911160239.10734-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904100239.GC7007@mwanda>
- <29accb39-1ed7-ab3f-4783-9a07836db8e3@huawei.com>
-In-Reply-To: <29accb39-1ed7-ab3f-4783-9a07836db8e3@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: davem@davemloft.net, vyasevich@gmail.com, nhorman@tuxdriver.com, marcelo.leitner@gmail.com
+Cc: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Sep 04, 2019 at 07:43:07PM +0800, Chao Yu wrote:
-> On 2019/9/4 18:02, Dan Carpenter wrote:
-> > The error handling doesn't work because "cf_name->len" is unsigned.
-> 
-> Dan, thanks for catching this, would you mind merging this into original patch,
-> since it's still in the dev branch. :)
+The '.exit' functions from 'pernet_operations' structure should be marked
+as __net_exit, not __net_init.
 
-I don't mind if you fold it into the original.  That's fine.
+Fixes: 8e2d61e0aed2 ("sctp: fix race on protocol/netns initialization")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/sctp/protocol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 2d47adcb4cbe..53746ffeeca3 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1336,7 +1336,7 @@ static int __net_init sctp_ctrlsock_init(struct net *net)
+ 	return status;
+ }
+ 
+-static void __net_init sctp_ctrlsock_exit(struct net *net)
++static void __net_exit sctp_ctrlsock_exit(struct net *net)
+ {
+ 	/* Free the control endpoint.  */
+ 	inet_ctl_sock_destroy(net->sctp.ctl_sock);
+-- 
+2.20.1
