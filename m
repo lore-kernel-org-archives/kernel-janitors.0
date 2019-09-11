@@ -1,58 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Sep 2019 13:19:27 +0000
-Subject: [PATCH] spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_slave_probe()
-Message-Id: <225b76ca-a367-4bef-d8ce-42c7af9242a5@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 15:21:48 +0000
+Subject: [PATCH] perf test: fix spelling mistake "allos" -> "allocate"
+Message-Id: <20190911152148.17031-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de>
-In-Reply-To: <478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de>
+References: <20181129103133.17353-1-colin.king@canonical.com>
+In-Reply-To: <20181129103133.17353-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Leilk Liu <leilk.liu@mediatek.com>, Mark Brown <broonie@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 15:12:33 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+There is a spelling mistake in a TEST_ASSERT_VAL message. Fix it.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/spi/spi-slave-mt27xx.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ tools/perf/tests/event_update.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx.c
-index 61bc43b0fe57..44edaa360405 100644
---- a/drivers/spi/spi-slave-mt27xx.c
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -368,7 +368,6 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- {
- 	struct spi_controller *ctlr;
- 	struct mtk_spi_slave *mdata;
--	struct resource *res;
- 	int irq, ret;
-
- 	ctlr = spi_alloc_slave(&pdev->dev, sizeof(*mdata));
-@@ -392,17 +391,8 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctlr);
-
- 	init_completion(&mdata->xfer_done);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		ret = -ENODEV;
--		dev_err(&pdev->dev, "failed to determine base address\n");
--		goto err_put_ctlr;
--	}
--
- 	mdata->dev = &pdev->dev;
--
--	mdata->base = devm_ioremap_resource(&pdev->dev, res);
-+	mdata->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mdata->base)) {
- 		ret = PTR_ERR(mdata->base);
- 		goto err_put_ctlr;
---
-2.23.0
+diff --git a/tools/perf/tests/event_update.c b/tools/perf/tests/event_update.c
+index cac4290e233a..7f0868a31a7f 100644
+--- a/tools/perf/tests/event_update.c
++++ b/tools/perf/tests/event_update.c
+@@ -92,7 +92,7 @@ int test__event_update(struct test *test __maybe_unused, int subtest __maybe_unu
+ 
+ 	evsel = perf_evlist__first(evlist);
+ 
+-	TEST_ASSERT_VAL("failed to allos ids",
++	TEST_ASSERT_VAL("failed to allocate ids",
+ 			!perf_evsel__alloc_id(evsel, 1, 1));
+ 
+ 	perf_evlist__id_add(evlist, evsel, 0, 0, 123);
+-- 
+2.20.1
