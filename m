@@ -1,99 +1,35 @@
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 02 Sep 2019 19:42:34 +0000
-Subject: Re: [PATCH][V2][cifs-next] cifs: fix dereference on ses before it is null checked
-Message-Id: <CAH2r5mv_Fv_k8h=-i8-bBrgBU3ghCVM3W=KyLrL=LrrCiT=vOQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Sep 2019 15:35:00 +0000
+Subject: [PATCH] s390/qeth: fix spelling mistake "alocpool" -> "allocpool"
+Message-Id: <20190911153500.30836-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190902151059.22088-1-colin.king@canonical.com>
-In-Reply-To: <20190902151059.22088-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Julian Wiedmann <jwi@linux.ibm.com>, Ursula Braun <ubraun@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tentatively merged into cifs-2.6.git pending additional testing
+From: Colin Ian King <colin.king@canonical.com>
 
-Kicked off buildbot with rc7+patches in cifs for-next
+There is a spelling mistake in QETH_CARD_TEXT text. Fix it.
 
-See http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/247
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/s390/net/qeth_core_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Sep 2, 2019 at 10:33 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The assignment of pointer server dereferences pointer ses, however,
-> this dereference occurs before ses is null checked and hence we
-> have a potential null pointer dereference.  Fix this by only
-> dereferencing ses after it has been null checked.
->
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 2808c6639104 ("cifs: add new debugging macro cifs_server_dbg")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2pdu.c   | 11 ++++++++---
->  fs/cifs/transport.c |  3 ++-
->  2 files changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index dbc6ef50dd45..0e92983de0b7 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -2759,8 +2759,10 @@ SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon, u64 persistent_fid,
->         else
->                 return -EIO;
->
-> +       if (!ses)
-> +               return -EIO;
->         server = ses->server;
-> -       if (!ses || !(server))
-> +       if (!server)
->                 return -EIO;
->
->         if (smb3_encryption_required(tcon))
-> @@ -3058,13 +3060,16 @@ query_info(const unsigned int xid, struct cifs_tcon *tcon,
->         int rc = 0;
->         int resp_buftype = CIFS_NO_BUFFER;
->         struct cifs_ses *ses = tcon->ses;
-> -       struct TCP_Server_Info *server = ses->server;
-> +       struct TCP_Server_Info *server;
->         int flags = 0;
->         bool allocated = false;
->
->         cifs_dbg(FYI, "Query Info\n");
->
-> -       if (!ses || !(server))
-> +       if (!ses)
-> +               return -EIO;
-> +       server = ses->server;
-> +       if (!server)
->                 return -EIO;
->
->         if (smb3_encryption_required(tcon))
-> diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-> index 0d60bd2f4dca..a90bd4d75b4d 100644
-> --- a/fs/cifs/transport.c
-> +++ b/fs/cifs/transport.c
-> @@ -1242,12 +1242,13 @@ SendReceive(const unsigned int xid, struct cifs_ses *ses,
->         struct kvec iov = { .iov_base = in_buf, .iov_len = len };
->         struct smb_rqst rqst = { .rq_iov = &iov, .rq_nvec = 1 };
->         struct cifs_credits credits = { .value = 1, .instance = 0 };
-> -       struct TCP_Server_Info *server = ses->server;
-> +       struct TCP_Server_Info *server;
->
->         if (ses = NULL) {
->                 cifs_dbg(VFS, "Null smb session\n");
->                 return -EIO;
->         }
-> +       server = ses->server;
->         if (server = NULL) {
->                 cifs_dbg(VFS, "Null tcp session\n");
->                 return -EIO;
-> --
-> 2.20.1
->
-
-
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index a7868c8133ee..ab96b22db3fe 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -218,7 +218,7 @@ static int qeth_alloc_buffer_pool(struct qeth_card *card)
+ 	void *ptr;
+ 	int i, j;
+ 
+-	QETH_CARD_TEXT(card, 5, "alocpool");
++	QETH_CARD_TEXT(card, 5, "allocpool");
+ 	for (i = 0; i < card->qdio.init_pool.buf_count; ++i) {
+ 		pool_entry = kzalloc(sizeof(*pool_entry), GFP_KERNEL);
+ 		if (!pool_entry) {
 -- 
-Thanks,
-
-Steve
+2.20.1
