@@ -1,17 +1,24 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 22 Sep 2019 15:07:54 +0000
-Subject: Re: [PATCH] ata: libahci_platform: Add of_node_put() before loop exit
-Message-Id: <ac53316a-7856-fdad-d982-5e80305be9d2@web.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 12 Sep 2019 12:01:03 +0000
+Subject: Re: [PATCH] pinctrl: sh-pfc: Unlock on error in sh_pfc_func_set_mux()
+Message-Id: <CACRpkdbG0bz40U8qFSvi6ds-8XiUSX+yj1uC4XynyAfJWfantA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815060014.2191-1-nishkadg.linux@gmail.com>
-In-Reply-To: <20190815060014.2191-1-nishkadg.linux@gmail.com>
+References: <20190827093927.GB8443@mwanda>
+In-Reply-To: <20190827093927.GB8443@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>, Jens Axboe <axboe@kernel.dk>, Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-How do you think about to add the tag “Fixes” for this software correction?
+On Tue, Aug 27, 2019 at 10:39 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Regards,
-Markus
+> We need to unlock and enable IRQs before we return on this error path.
+>
+> Fixes: 8a0cc47ccc7c ("pinctrl: sh-pfc: Rollback to mux if required when the gpio is freed")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied for v5.4 with the ACKs.
+
+Yours,
+Linus Walleij
