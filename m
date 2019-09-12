@@ -1,23 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:15:48 +0000
-Subject: Re: [PATCH net] net: stmmac: dwmac-meson8b: Fix signedness bug in probe
-Message-Id: <20190927.101548.1428184970448877652.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 12 Sep 2019 03:45:09 +0000
+Subject: [PATCH v2 net 2/3] sctp: remove redundant assignment when call sctp_get_port_local
+Message-Id: <20190912040219.67517-3-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105822.GH3264@mwanda>
-In-Reply-To: <20190925105822.GH3264@mwanda>
+References: <7a450679-40ca-8a84-4cba-7a16f22ea3c0@huawei.com>
+ <20190912040219.67517-1-maowenan@huawei.com>
+In-Reply-To: <20190912040219.67517-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: peppe.cavallaro@st.com, martin.blumenstingl@googlemail.com, alexandre.torgue@st.com, joabreu@synopsys.com, khilman@baylibre.com, mcoquelin.stm32@gmail.com, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+To: vyasevich@gmail.com, nhorman@tuxdriver.com, marcelo.leitner@gmail.com, davem@davemloft.net
+Cc: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 13:58:22 +0300
+There are more parentheses in if clause when call sctp_get_port_local
+in sctp_do_bind, and redundant assignment to 'ret'. This patch is to
+do cleanup.
 
-> The "dwmac->phy_mode" is an enum and in this context GCC treats it as
-> an unsigned int so the error handling is never triggered.
-> 
-> Fixes: 566e82516253 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+---
+ net/sctp/socket.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied.
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index 5e1934c48709..2f810078c91d 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -399,9 +399,8 @@ static int sctp_do_bind(struct sock *sk, union sctp_addr *addr, int len)
+ 	 * detection.
+ 	 */
+ 	addr->v4.sin_port = htons(snum);
+-	if ((ret = sctp_get_port_local(sk, addr))) {
++	if (sctp_get_port_local(sk, addr))
+ 		return -EADDRINUSE;
+-	}
+ 
+ 	/* Refresh ephemeral port.  */
+ 	if (!bp->port)
+-- 
+2.20.1
