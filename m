@@ -1,60 +1,37 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 26 Sep 2019 12:26:31 +0000
-Subject: Re: [PATCH][next] io_uring: ensure variable ret is initialized to zero
-Message-Id: <b9754557-38a5-052b-f42d-6ba9d7acfed2@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Sep 2019 09:07:59 +0000
+Subject: [PATCH] qed: fix spelling mistake "fullill" -> "fulfill"
+Message-Id: <20190913090759.3490-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926095012.31826-1-colin.king@canonical.com>
- <3aa821ea-3041-fb56-2458-ec643963c511@kernel.dk>
- <20190926113329.GE27389@kadam>
- <04262621-68fd-a4bb-ab0c-83954c03fbb0@kernel.dk>
- <2de0eb45-3abc-3ccd-f3d3-346d899ba50d@rasmusvillemoes.dk>
-In-Reply-To: <2de0eb45-3abc-3ccd-f3d3-346d899ba50d@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 9/26/19 2:14 PM, Rasmus Villemoes wrote:
-> On 26/09/2019 13.42, Jens Axboe wrote:
->> On 9/26/19 1:33 PM, Dan Carpenter wrote:
->>> On Thu, Sep 26, 2019 at 11:56:30AM +0200, Jens Axboe wrote:
->>>> On 9/26/19 11:50 AM, Colin King wrote:
->>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>
->>>>> In the case where sig is NULL the error variable ret is not initialized
->>>>> and may contain a garbage value on the final checks to see if ret is
->>>>> -ERESTARTSYS.  Best to initialize ret to zero before the do loop to
->>>>> ensure the ret does not accidentially contain -ERESTARTSYS before the
->>>>> loop.
->>>>
->>>> Oops, weird it didn't complain. I've folded in this fix, as that commit
->>>> isn't upstream yet. Thanks!
->>>
->>> There is a bug in GCC where at certain optimization levels, instead of
->>> complaining, it initializes it to zero.
->>
->> That's awfully nice of it ;-)
->>
->> Tried with -O0 and still didn't complain for me.
->>
->> $ gcc --version
->> gcc (Ubuntu 9.1.0-2ubuntu2~18.04) 9.1.0
->>
->> Tried gcc 5/6/7/8 as well. Might have to go look at what code it's
->> generating.
->>
-> 
-> I think it's essentially the same as
-> https://lore.kernel.org/lkml/CAHk-=whP-9yPAWuJDwA6+rQ-9owuYZgmrMA9AqO3EGJVefe8vg@mail.gmail.com/
-> (thread "tmpfs: fix uninitialized return value in shmem_link").
+From: Colin Ian King <colin.king@canonical.com>
 
-I think you're right, it's the same pattern. If I kill the:
+There is a spelling mistake in a DP_VERBOSE debug message. Fix it.
+(Using American English spelling as this is the most common way
+to spell this in the kernel).
 
-if (ret)
-	return ret;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_vf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-inside the if (sig) branch, then gcc does show the warning as it should.
-
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+index 5dda547772c1..856051f50eb7 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -231,7 +231,7 @@ static void qed_vf_pf_acquire_reduce_resc(struct qed_hwfn *p_hwfn,
+ {
+ 	DP_VERBOSE(p_hwfn,
+ 		   QED_MSG_IOV,
+-		   "PF unwilling to fullill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
++		   "PF unwilling to fulfill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
+ 		   p_req->num_rxqs,
+ 		   p_resp->num_rxqs,
+ 		   p_req->num_rxqs,
 -- 
-Jens Axboe
+2.20.1
