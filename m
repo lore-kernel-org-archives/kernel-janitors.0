@@ -1,58 +1,55 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 18 Sep 2019 13:39:12 +0000
-Subject: Re: [PATCH] hwmon: (aspeed-pwm-tacho) Use devm_platform_ioremap_resource() in aspeed_pwm_tacho_probe
-Message-Id: <20190918133912.GA14788@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Sep 2019 08:02:48 +0000
+Subject: [PATCH] drm/amd/display: rename variable eanble -> enable
+Message-Id: <20190913080248.28695-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
-In-Reply-To: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org, Himanshu Jha <himanshujha199640@gmail.com>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 10:20:09AM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Sep 2019 10:12:31 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to hwmon-next.
+There is a spelling mistake in the variable name eanble,
+rename it to enable.
 
-Thanks,
-Guenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/hwmon/aspeed-pwm-tacho.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> --
-> 2.23.0
-> 
-> diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
-> index 40c489be62ea..33fb54845bf6 100644
-> --- a/drivers/hwmon/aspeed-pwm-tacho.c
-> +++ b/drivers/hwmon/aspeed-pwm-tacho.c
-> @@ -891,17 +891,12 @@ static int aspeed_pwm_tacho_probe(struct platform_device *pdev)
->  	struct device_node *np, *child;
->  	struct aspeed_pwm_tacho_data *priv;
->  	void __iomem *regs;
-> -	struct resource *res;
->  	struct device *hwmon;
->  	struct clk *clk;
->  	int ret;
-> 
->  	np = dev->of_node;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res)
-> -		return -ENOENT;
-> -	regs = devm_ioremap_resource(dev, res);
-> +	regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(regs))
->  		return PTR_ERR(regs);
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
+index 1488ffddf4e3..5944524faab9 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
+@@ -606,11 +606,11 @@ static void dce_mi_allocate_dmif(
+ 	}
+ 
+ 	if (dce_mi->wa.single_head_rdreq_dmif_limit) {
+-		uint32_t eanble =  (total_stream_num > 1) ? 0 :
++		uint32_t enable =  (total_stream_num > 1) ? 0 :
+ 				dce_mi->wa.single_head_rdreq_dmif_limit;
+ 
+ 		REG_UPDATE(MC_HUB_RDREQ_DMIF_LIMIT,
+-				ENABLE, eanble);
++				ENABLE, enable);
+ 	}
+ }
+ 
+@@ -636,11 +636,11 @@ static void dce_mi_free_dmif(
+ 			10, 3500);
+ 
+ 	if (dce_mi->wa.single_head_rdreq_dmif_limit) {
+-		uint32_t eanble =  (total_stream_num > 1) ? 0 :
++		uint32_t enable =  (total_stream_num > 1) ? 0 :
+ 				dce_mi->wa.single_head_rdreq_dmif_limit;
+ 
+ 		REG_UPDATE(MC_HUB_RDREQ_DMIF_LIMIT,
+-				ENABLE, eanble);
++				ENABLE, enable);
+ 	}
+ }
+ 
+-- 
+2.20.1
