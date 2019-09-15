@@ -1,7 +1,7 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 15 Sep 2019 12:52:11 +0000
+From: walter harms <wharms@bfs.de>
+Date: Sun, 15 Sep 2019 13:31:06 +0000
 Subject: Re: [PATCH] usbip: vhci_hcd indicate failed message
-Message-Id: <20190915125211.GA527125@kroah.com>
+Message-Id: <5D7E3D1A.5070906@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190915034332.21168-1-maowenan@huawei.com>
 In-Reply-To: <20190915034332.21168-1-maowenan@huawei.com>
@@ -9,9 +9,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mao Wenan <maowenan@huawei.com>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: valentina.manea.m@gmail.com, shuah@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 15, 2019 at 11:43:32AM +0800, Mao Wenan wrote:
+
+
+Am 15.09.2019 05:43, schrieb Mao Wenan:
 > If the return value of vhci_init_attr_group and
 > sysfs_create_group is non-zero, which mean they failed
 > to init attr_group and create sysfs group, so it would
@@ -33,9 +35,6 @@ On Sun, Sep 15, 2019 at 11:43:32AM +0800, Mao Wenan wrote:
 >  		if (err) {
 > -			pr_err("init attr group\n");
 > +			pr_err("init attr group failed\n");
-
-dev_err() would also be good to use here.
-
 >  			return err;
 >  		}
 >  		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
@@ -43,8 +42,11 @@ dev_err() would also be good to use here.
 > -			pr_err("create sysfs files\n");
 > +			pr_err("create sysfs failed\n");
 
-Same here.
+I guess "sysfs files" is here intended ?
 
-thanks,
+re,
+ wh
 
-greg k-h
+>  			vhci_finish_attr_group();
+>  			return err;
+>  		}
