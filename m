@@ -1,66 +1,38 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Sun, 22 Sep 2019 18:52:38 +0000
-Subject: [PATCH AUTOSEL 4.19 028/128] EDAC/altera: Use the proper type for the IRQ status bits
-Message-Id: <20190922185418.2158-28-sashal@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 15 Sep 2019 19:41:14 +0000
+Subject: [PATCH] drm/mcde: Fix some resource leak in an error path in 'mcde_probe()'
+Message-Id: <20190915194114.27658-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190922185418.2158-1-sashal@kernel.org>
-In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
+To: linus.walleij@linaro.org, airlied@linux.ie, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+All error handling paths before and after this one go to the
+'clk_disable' label in order to free some resources.
 
-[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
+So the same here.
 
-Smatch complains about the cast of a u32 pointer to unsigned long:
-
-  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
-  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
-
-This code wouldn't work on a 64 bit big endian system because it would
-read past the end of &irq_status.
-
- [ bp: massage. ]
-
-Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ca5be902a87d ("drm/mcde: Fix uninitialized variable")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/edac/altera_edac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mcde/mcde_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 5762c3c383f2e..56de378ad13dc 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1956,6 +1956,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	int irq = irq_desc_get_irq(desc);
-+	unsigned long bits;
- 
- 	dberr = (irq = edac->db_irq) ? 1 : 0;
- 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
-@@ -1965,7 +1966,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 
- 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
- 
--	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
-+	bits = irq_status;
-+	for_each_set_bit(bit, &bits, 32) {
- 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
- 		if (irq)
- 			generic_handle_irq(irq);
+diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
+index 9a09eba53182..5649887d2b90 100644
+--- a/drivers/gpu/drm/mcde/mcde_drv.c
++++ b/drivers/gpu/drm/mcde/mcde_drv.c
+@@ -484,7 +484,8 @@ static int mcde_probe(struct platform_device *pdev)
+ 	}
+ 	if (!match) {
+ 		dev_err(dev, "no matching components\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto clk_disable;
+ 	}
+ 	if (IS_ERR(match)) {
+ 		dev_err(dev, "could not create component match\n");
 -- 
 2.20.1
