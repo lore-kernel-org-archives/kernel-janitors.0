@@ -1,47 +1,33 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Sep 2019 16:46:31 +0000
-Subject: [PATCH] EDAC: Aspeed: Use devm_platform_ioremap_resource() in aspeed_probe()
-Message-Id: <baabb9e9-a1b2-3a04-9fb6-aa632de5f722@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 15 Sep 2019 19:34:01 +0000
+Subject: [PATCH] iommu/arm-smmu: Axe a useless test in 'arm_smmu_master_alloc_smes()'
+Message-Id: <20190915193401.27426-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-edac@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Andrew Jeffery <andrew@aj.id.au>, Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Joel Stanley <joel@jms.id.au>, Robert Richter <rrichter@marvell.com>, Stefan Schaeckeler <sschaeck@cisco.com>, Tony Luck <tony.luck@intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 18:32:46 +0200
+'ommu_group_get_for_dev()' never returns NULL, so this test can be removed.
 
-Simplify this function implementation by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/edac/aspeed_edac.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/iommu/arm-smmu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/edac/aspeed_edac.c b/drivers/edac/aspeed_edac.c
-index 5634437bb39d..09a9e3de9595 100644
---- a/drivers/edac/aspeed_edac.c
-+++ b/drivers/edac/aspeed_edac.c
-@@ -281,16 +281,11 @@ static int aspeed_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct edac_mc_layer layers[2];
- 	struct mem_ctl_info *mci;
--	struct resource *res;
- 	void __iomem *regs;
- 	u32 reg04;
- 	int rc;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENOENT;
--
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
-
---
-2.23.0
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index c3ef0cc8f764..6fae8cdbe985 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1038,8 +1038,6 @@ static int arm_smmu_master_alloc_smes(struct device *dev)
+ 	}
+ 
+ 	group = iommu_group_get_for_dev(dev);
+-	if (!group)
+-		group = ERR_PTR(-ENOMEM);
+ 	if (IS_ERR(group)) {
+ 		ret = PTR_ERR(group);
+ 		goto out_err;
+-- 
+2.20.1
