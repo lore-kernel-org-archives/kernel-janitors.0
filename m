@@ -1,24 +1,34 @@
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Date: Thu, 12 Sep 2019 14:52:03 +0000
-Subject: Re: [PATCH v2 net 2/3] sctp: remove redundant assignment when call sctp_get_port_local
-Message-Id: <20190912145203.GS3431@localhost.localdomain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 15 Sep 2019 19:32:10 +0000
+Subject: [PATCH] brcmsmac: remove a useless test
+Message-Id: <20190915193210.27357-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a450679-40ca-8a84-4cba-7a16f22ea3c0@huawei.com>
- <20190912040219.67517-1-maowenan@huawei.com>
- <20190912040219.67517-3-maowenan@huawei.com>
-In-Reply-To: <20190912040219.67517-3-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: arend.vanspriel@broadcom.com, franky.lin@broadcom.com, hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com, wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Sep 12, 2019 at 12:02:18PM +0800, Mao Wenan wrote:
-> There are more parentheses in if clause when call sctp_get_port_local
-> in sctp_do_bind, and redundant assignment to 'ret'. This patch is to
-> do cleanup.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
+'pih' is known to be non-NULL at this point, so the test can be removed.
 
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
+index 080e829da9b3..6bb34a12a94b 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
+@@ -1816,8 +1816,7 @@ void brcms_b_phy_reset(struct brcms_hardware *wlc_hw)
+ 	udelay(2);
+ 	brcms_b_core_phy_clk(wlc_hw, ON);
+ 
+-	if (pih)
+-		wlc_phy_anacore(pih, ON);
++	wlc_phy_anacore(pih, ON);
+ }
+ 
+ /* switch to and initialize new band */
+-- 
+2.20.1
