@@ -1,25 +1,43 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Wed, 04 Sep 2019 23:30:48 +0000
-Subject: Re: [PATCH][next] net/mlx5: fix missing assignment of variable err
-Message-Id: <16073125f6bbc617a9ddc77441b9d3b840d50e28.camel@mellanox.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sun, 15 Sep 2019 03:43:32 +0000
+Subject: [PATCH] usbip: vhci_hcd indicate failed message
+Message-Id: <20190915034332.21168-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904192914.19684-1-colin.king@canonical.com>
-In-Reply-To: <20190904192914.19684-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Maor Gottlieb <maorg@mellanox.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: valentina.manea.m@gmail.com, shuah@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-T24gV2VkLCAyMDE5LTA5LTA0IGF0IDIwOjI5ICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
-IGVycm9yIHJldHVybiBmcm9tIGEgY2FsbCB0byBtbHg1X2Zsb3dfbmFtZXNwYWNlX3NldF9wZWVy
-IGlzIG5vdA0KPiBiZWluZyBhc3NpZ25lZCB0byB2YXJpYWJsZSBlcnIgYW5kIGhlbmNlIHRoZSBl
-cnJvciBjaGVjayBmb2xsb3dpbmcNCj4gdGhlIGNhbGwgaXMgY3VycmVudGx5IG5vdCB3b3JraW5n
-LiAgRml4IHRoaXMgYnkgYXNzaWduaW5nIHJldCBhcw0KPiBpbnRlbmRlZC4NCj4gDQo+IEFkZHJl
-c3Nlcy1Db3Zlcml0eTogKCJMb2dpY2FsbHkgZGVhZCBjb2RlIikNCj4gRml4ZXM6IDg0NjNkYWYx
-N2U4MCAoIm5ldC9tbHg1OiBBZGQgc3VwcG9ydCB0byB1c2UgU01GUyBpbiBzd2l0Y2hkZXYNCj4g
-bW9kZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9u
-aWNhbC5jb20+DQo+IC0tLQ0KDQpBcHBsaWVkIHRvIG5ldC1uZXh0LW1seDUuDQoNCkkgaGF2ZSBh
-IGNsZWFudXAgc2VyaWVzIGNvbWluZyB1cCwgd2lsbCBzZW5kIGl0IGFsbCB0b2dldGhlciB0byAN
-Cm5ldC1uZXh0IHNvb24uIA0KDQpUaGFua3MsDQpTYWVlZC4NCg=
+If the return value of vhci_init_attr_group and
+sysfs_create_group is non-zero, which mean they failed
+to init attr_group and create sysfs group, so it would
+better add 'failed' message to indicate that.
+
+Fixes: 0775a9cbc694 ("usbip: vhci extension: modifications to vhci driver")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/usb/usbip/vhci_hcd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index 000ab7225717..dd54c95d2498 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -1185,12 +1185,12 @@ static int vhci_start(struct usb_hcd *hcd)
+ 	if (id = 0 && usb_hcd_is_primary_hcd(hcd)) {
+ 		err = vhci_init_attr_group();
+ 		if (err) {
+-			pr_err("init attr group\n");
++			pr_err("init attr group failed\n");
+ 			return err;
+ 		}
+ 		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
+ 		if (err) {
+-			pr_err("create sysfs files\n");
++			pr_err("create sysfs failed\n");
+ 			vhci_finish_attr_group();
+ 			return err;
+ 		}
+-- 
+2.20.1
