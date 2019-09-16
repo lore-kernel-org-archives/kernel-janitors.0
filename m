@@ -1,34 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 10 Sep 2019 04:17:02 +0000
-Subject: [PATCH] tty: serial: rda: Fix the link time qualifier of 'rda_uart_exit()'
-Message-Id: <20190910041702.7357-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Sep 2019 09:17:06 +0000
+Subject: [PATCH][next] scsi: hisi_sas: fix spelling mistake "digial" -> "digital"
+Message-Id: <20190916091706.32268-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: manivannan.sadhasivam@linaro.org, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-unisoc@lists.infradead.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'exit' functions should be marked as __exit, not __init.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c10b13325ced ("tty: serial: Add RDA8810PL UART driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in literal string. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/rda-uart.c | 2 +-
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/rda-uart.c b/drivers/tty/serial/rda-uart.c
-index c1b0d7662ef9..ff9a27d48bca 100644
---- a/drivers/tty/serial/rda-uart.c
-+++ b/drivers/tty/serial/rda-uart.c
-@@ -815,7 +815,7 @@ static int __init rda_uart_init(void)
- 	return ret;
- }
- 
--static void __init rda_uart_exit(void)
-+static void __exit rda_uart_exit(void)
- {
- 	platform_driver_unregister(&rda_uart_platform_driver);
- 	uart_unregister_driver(&rda_uart_driver);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index d1513fdf1e00..e934d0b11745 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -3539,7 +3539,7 @@ static const struct {
+ 	int		value;
+ 	char		*name;
+ } hisi_sas_debugfs_loop_modes[] = {
+-	{ HISI_SAS_BIST_LOOPBACK_MODE_DIGITAL, "digial" },
++	{ HISI_SAS_BIST_LOOPBACK_MODE_DIGITAL, "digital" },
+ 	{ HISI_SAS_BIST_LOOPBACK_MODE_SERDES, "serdes" },
+ 	{ HISI_SAS_BIST_LOOPBACK_MODE_REMOTE, "remote" },
+ };
 -- 
 2.20.1
