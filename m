@@ -1,17 +1,19 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Date: Sun, 15 Sep 2019 23:06:40 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 16 Sep 2019 07:15:31 +0000
 Subject: Re: [PATCH] net/wan: dscc4: remove broken dscc4 driver
-Message-Id: <20190915230640.GA7382@electric-eye.fr.zoreil.com>
+Message-Id: <20190916.091531.804053772243575655.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190913132817.GA13179@mwanda>
 In-Reply-To: <20190913132817.GA13179@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: romieu@fr.zoreil.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> :
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Sep 2019 16:28:17 +0300
+
 > Using static analysis, I discovered that the "dpriv->pci_priv->pdev"
 > pointer is always NULL.  This pointer was supposed to be initialized
 > during probe and is essential for the driver to work.  It would be easy
@@ -21,7 +23,4 @@ Dan Carpenter <dan.carpenter@oracle.com> :
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Francois Romieu <romieu@fr.zoreil.com>
-
--- 
-Ueimor
+Applied to net-next.
