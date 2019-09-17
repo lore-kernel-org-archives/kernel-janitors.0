@@ -1,35 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 13 Sep 2019 07:43:39 +0000
-Subject: [PATCH] ath10k: fix spelling mistake "eanble" -> "enable"
-Message-Id: <20190913074339.27280-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 17 Sep 2019 14:13:22 +0000
+Subject: Re: [PATCH] ath10k: fix spelling mistake "eanble" -> "enable"
+Message-Id: <20190917141322.B2985614C3@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190913074339.27280-1-colin.king@canonical.com>
+In-Reply-To: <20190913074339.27280-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in a ath10k_warn warning message. Fix it.
+> There is a spelling mistake in a ath10k_warn warning message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/mac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 12dad659bf68..a3d612f5f652 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -7418,7 +7418,7 @@ static bool ath10k_mac_set_vht_bitrate_mask_fixup(struct ath10k *ar,
- 	err = ath10k_wmi_peer_set_param(ar, arvif->vdev_id, sta->addr,
- 					WMI_PEER_PARAM_FIXED_RATE, rate);
- 	if (err)
--		ath10k_warn(ar, "failed to eanble STA %pM peer fixed rate: %d\n",
-+		ath10k_warn(ar, "failed to enable STA %pM peer fixed rate: %d\n",
- 			    sta->addr, err);
- 
- 	return true;
+09764659003d ath10k: fix spelling mistake "eanble" -> "enable"
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/11144035/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
