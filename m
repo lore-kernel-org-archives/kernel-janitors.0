@@ -1,58 +1,48 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 11 Sep 2019 14:21:10 +0000
-Subject: Re: [PATCH] mmc: dw_mmc: hi3798cv200: make array degrees static const, makes object smaller
-Message-Id: <CAPDyKFqriNuywSzk-c77==abgJQLWRXuKWSn_04jVy+gaB8h-Q@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 08:20:09 +0000
+Subject: [PATCH] hwmon: (aspeed-pwm-tacho) Use devm_platform_ioremap_resource() in aspeed_pwm_tacho_probe()
+Message-Id: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906091719.24886-1-colin.king@canonical.com>
-In-Reply-To: <20190906091719.24886-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Joel Stanley <joel@jms.id.au>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-On Fri, 6 Sep 2019 at 11:17, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the array degrees on the stack but instead make it
-> static const. Makes the object code smaller by 46 bytes.
->
-> Before:
->    text    data     bss     dec     hex filename
->    5356    1560       0    6916    1b04 dw_mmc-hi3798cv200.o
->
-> After:
->    text    data     bss     dec     hex filename
->    5214    1656       0    6870    1ad6 dw_mmc-hi3798cv200.o
->
-> (gcc version 9.2.1, amd64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 10:12:31 +0200
 
-Applied for next, thanks!
+Simplify this function implementation by using a known wrapper function.
 
-Kind regards
-Uffe
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hwmon/aspeed-pwm-tacho.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> ---
->  drivers/mmc/host/dw_mmc-hi3798cv200.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-> index bc51cef47c47..83e1bad0a008 100644
-> --- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
-> +++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
-> @@ -66,7 +66,7 @@ static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->  static int dw_mci_hi3798cv200_execute_tuning(struct dw_mci_slot *slot,
->                                              u32 opcode)
->  {
-> -       int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
-> +       static const int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
->         struct dw_mci *host = slot->host;
->         struct hi3798cv200_priv *priv = host->priv;
->         int raise_point = -1, fall_point = -1;
-> --
-> 2.20.1
->
+diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
+index 40c489be62ea..33fb54845bf6 100644
+--- a/drivers/hwmon/aspeed-pwm-tacho.c
++++ b/drivers/hwmon/aspeed-pwm-tacho.c
+@@ -891,17 +891,12 @@ static int aspeed_pwm_tacho_probe(struct platform_device *pdev)
+ 	struct device_node *np, *child;
+ 	struct aspeed_pwm_tacho_data *priv;
+ 	void __iomem *regs;
+-	struct resource *res;
+ 	struct device *hwmon;
+ 	struct clk *clk;
+ 	int ret;
+
+ 	np = dev->of_node;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENOENT;
+-	regs = devm_ioremap_resource(dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+--
+2.23.0
