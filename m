@@ -1,44 +1,51 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 26 Sep 2019 16:08:17 +0000
-Subject: [PATCH] phy-brcm-usb: Use devm_platform_ioremap_resource() in brcm_usb_phy_probe()
-Message-Id: <88679e6a-6701-7d30-d52e-5e970af4de04@web.de>
+Date: Wed, 18 Sep 2019 06:34:25 +0000
+Subject: [PATCH] sata_gemini: Use devm_platform_ioremap_resource() in gemini_sata_probe()
+Message-Id: <b17404cd-294f-fe2f-e8a3-2218a0dae14f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bcm-kernel-feedback-list@broadcom.com, Al Cooper <alcooperx@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-ide@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2019 18:00:14 +0200
+Date: Wed, 18 Sep 2019 08:28:09 +0200
 
-Simplify this function implementation a bit by using
-a known wrapper function.
+Simplify this function implementation by using a known wrapper function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/phy/broadcom/phy-brcm-usb.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/ata/sata_gemini.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
-index f5c1f2983a1d..2a0a8bd2b056 100644
---- a/drivers/phy/broadcom/phy-brcm-usb.c
-+++ b/drivers/phy/broadcom/phy-brcm-usb.c
-@@ -298,12 +298,7 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
- 	brcm_usb_set_family_map(&priv->ini);
- 	dev_dbg(dev, "Best mapping table is for %s\n",
- 		priv->ini.family_name);
+diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+index f793564f3d78..61a34cad90c1 100644
+--- a/drivers/ata/sata_gemini.c
++++ b/drivers/ata/sata_gemini.c
+@@ -318,7 +318,6 @@ static int gemini_sata_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct sata_gemini *sg;
+ 	struct regmap *map;
+-	struct resource *res;
+ 	enum gemini_muxmode muxmode;
+ 	u32 gmode;
+ 	u32 gmask;
+@@ -328,12 +327,7 @@ static int gemini_sata_probe(struct platform_device *pdev)
+ 	if (!sg)
+ 		return -ENOMEM;
+ 	sg->dev = dev;
+-
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(dev, "can't get USB_CTRL base address\n");
--		return -EINVAL;
--	}
--	priv->ini.ctrl_regs = devm_ioremap_resource(dev, res);
-+	priv->ini.ctrl_regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->ini.ctrl_regs)) {
- 		dev_err(dev, "can't map CTRL register space\n");
- 		return -EINVAL;
+-	if (!res)
+-		return -ENODEV;
+-
+-	sg->base = devm_ioremap_resource(dev, res);
++	sg->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(sg->base))
+ 		return PTR_ERR(sg->base);
+
 --
 2.23.0
