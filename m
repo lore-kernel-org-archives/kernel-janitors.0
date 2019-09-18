@@ -1,71 +1,71 @@
-From: Parav Pandit <parav@mellanox.com>
-Date: Wed, 25 Sep 2019 17:14:43 +0000
-Subject: RE: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
-Message-Id: <AM0PR05MB4866F268D9FB654EFBD1E8E4D1870@AM0PR05MB4866.eurprd05.prod.outlook.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 08:55:18 +0000
+Subject: [PATCH] leds-bcm63xx: Use devm_platform_ioremap_resource() in two functions
+Message-Id: <b6ea044c-c483-0de6-67c5-5ea2fa3c85aa@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190415094610.GO6095@kadam>
- <VI1PR0501MB22713CCB1141529CCB6934B1D12B0@VI1PR0501MB2271.eurprd05.prod.outlook.com>
- <20190416082112.GA27670@kadam>
- <AM4PR0501MB22609E4C9D126A096DD7F614D1240@AM4PR0501MB2260.eurprd05.prod.outlook.com>
- <20190420095102.GA14798@kadam>
- <VI1PR0501MB22713B232B3CF42B849F959BD1220@VI1PR0501MB2271.eurprd05.prod.outlook.com>
- <20190423154943.GC14820@kadam>
- <AM4PR0501MB2260ADC1DA37E87D01979969D1230@AM4PR0501MB2260.eurprd05.prod.outlook.com>
- <20190424140820.GB14798@kadam>
- <AM4PR0501MB2260DF0BBBC528A147F07E0DD13D0@AM4PR0501MB2260.eurprd05.prod.outlook.com>
- <20190924091823.GM20699@kadam>
-In-Reply-To: <20190924091823.GM20699@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Leon Romanovsky <leon@kernel.org>, Eli Cohen <eli@mellanox.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-leds@vger.kernel.org, =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 10:45:24 +0200
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Tuesday, September 24, 2019 4:21 AM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: netdev@vger.kernel.org; Leon Romanovsky <leon@kernel.org>; Eli Cohen
-> <eli@mellanox.com>; Doug Ledford <dledford@redhat.com>; Jason Gunthorpe
-> <jgg@ziepe.ca>; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from do_setvfinfo()
-> 
-> On Thu, Apr 25, 2019 at 06:15:13AM +0000, Parav Pandit wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Sent: Wednesday, April 24, 2019 9:08 AM
-> > > To: Parav Pandit <parav@mellanox.com>; netdev@vger.kernel.org
-> > > Cc: Leon Romanovsky <leon@kernel.org>; Eli Cohen <eli@mellanox.com>;
-> > > Doug Ledford <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>;
-> > > linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > > Subject: Re: [PATCH] IB/mlx5: add checking for "vf" from
-> > > do_setvfinfo()
-> > >
-> > > I think I'm just going to ask netdev for an opinion on this.  It
-> > > could be that we're just reading the code wrong...
-> > >
-> > > I'm getting a lot of Smatch warning about buffer underflows.  The
-> > > problem is that Smatch marks everything from nla_data() as unknown
-> > > and untrusted user data.  In do_setvfinfo() we get the "->vf" values
-> > > from nla_data().  It starts as u32, but all the function pointers in
-> > > net_device_ops use it as a signed integer.  Most of the functions
-> > > return -EINVAL if "vf" is negative but there are at least 48 which
-> > > potentially use negative values as an offset into an array.
-> > >
-> > > To me making "vf" a u32 throughout seems like a good idea but it's
-> > > an extensive patch and I'm not really able to test it at all.
-> >
-> > I will be try to get you patch early next week for core and in mlx5,
-> > tested on mlx5 VFs, that possibly you can carry forward?
-> 
-> Whatever happened with this?
-> 
-I had internal few patches that Leon and Saeed reviewed, but it needs more rework at core and driver level.
-I haven't had chance to finish it.
+Simplify these function implementations by using a known function.
 
-> regards,
-> dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/leds/leds-bcm6328.c | 7 +------
+ drivers/leds/leds-bcm6358.c | 7 +------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index c50d34e2b098..42e1b7598c3a 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -346,16 +346,11 @@ static int bcm6328_leds_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device_node *child;
+-	struct resource *mem_r;
+ 	void __iomem *mem;
+ 	spinlock_t *lock; /* memory lock */
+ 	unsigned long val, *blink_leds, *blink_delay;
+
+-	mem_r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem_r)
+-		return -EINVAL;
+-
+-	mem = devm_ioremap_resource(dev, mem_r);
++	mem = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mem))
+ 		return PTR_ERR(mem);
+
+diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
+index aec285fd21c0..94fefd456ba0 100644
+--- a/drivers/leds/leds-bcm6358.c
++++ b/drivers/leds/leds-bcm6358.c
+@@ -151,17 +151,12 @@ static int bcm6358_leds_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device_node *child;
+-	struct resource *mem_r;
+ 	void __iomem *mem;
+ 	spinlock_t *lock; /* memory lock */
+ 	unsigned long val;
+ 	u32 clk_div;
+
+-	mem_r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem_r)
+-		return -EINVAL;
+-
+-	mem = devm_ioremap_resource(dev, mem_r);
++	mem = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mem))
+ 		return PTR_ERR(mem);
+
+--
+2.23.0
