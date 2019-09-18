@@ -1,22 +1,44 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 20 Sep 2019 14:24:44 +0000
-Subject: Re: [PATCH] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
-Message-Id: <20190920142444.GP5610@atomide.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 12:10:18 +0000
+Subject: [PATCH] misc/pvpanic: Use devm_platform_ioremap_resource() in pvpanic_mmio_probe()
+Message-Id: <e0ce24fe-ff3c-cbbb-4a56-4e529ebbe8d0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920122030.14340-1-colin.king@canonical.com>
-In-Reply-To: <20190920122030.14340-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, YueHaibing <yuehaibing@huawei.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peng Hao <peng.hao2@zte.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
-* Colin King <colin.king@canonical.com> [190920 12:21]:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to pinctrl_count_index_with_args checks for a -EINVAL return
-> however this function calls pinctrl_get_list_and_count and this can
-> return -ENOENT. Rather than check for a specific error, fix this by
-> checking for any error return to catch the -ENOENT case.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 14:00:13 +0200
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Simplify this function implementation by using a known wrapper function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/pvpanic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+index 95ff7c5a1dfb..74bcdd171558 100644
+--- a/drivers/misc/pvpanic.c
++++ b/drivers/misc/pvpanic.c
+@@ -137,13 +137,7 @@ static void pvpanic_unregister_acpi_driver(void) {}
+
+ static int pvpanic_mmio_probe(struct platform_device *pdev)
+ {
+-	struct resource *mem;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem)
+-		return -EINVAL;
+-
+-	base = devm_ioremap_resource(&pdev->dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+
+--
+2.23.0
