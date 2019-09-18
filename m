@@ -1,52 +1,53 @@
-From: "tip-bot2 for Colin Ian King" <tip-bot2@linutronix.de>
-Date: Fri, 20 Sep 2019 16:20:57 +0000
-Subject: [tip: perf/urgent] perf test: Fix spelling mistake "allos" -> "allocate"
-Message-Id: <156899645716.24167.3109929081723398408.tip-bot2@tip-bot2>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 05:57:05 +0000
+Subject: [PATCH] ARM: zx: Use devm_platform_ioremap_resource() in zx296702_pd_probe()
+Message-Id: <30b6c588-6c4b-c8ff-6414-a3fc53867bfe@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190911152148.17031-1-colin.king@canonical.com>
-In-Reply-To: <20190911152148.17031-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-tip-commits@vger.kernel.org
-Cc: Colin King <colin.king@canonical.com>, Mukesh Ojha <mojha@codeaurora.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-The following commit has been merged into the perf/urgent branch of tip:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 07:40:26 +0200
 
-Commit-ID:     ce095c9ac293d1683f9fedb214811727dff0d508
-Gitweb:        https://git.kernel.org/tip/ce095c9ac293d1683f9fedb214811727dff0d508
-Author:        Colin Ian King <colin.king@canonical.com>
-AuthorDate:    Wed, 11 Sep 2019 16:21:48 +01:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Fri, 20 Sep 2019 10:28:26 -03:00
+Simplify this function implementation by using a known wrapper function.
 
-perf test: Fix spelling mistake "allos" -> "allocate"
+This issue was detected by using the Coccinelle software.
 
-There is a spelling mistake in a TEST_ASSERT_VAL message. Fix it.
-
-Signed-off-by: Colin King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20190911152148.17031-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/perf/tests/event_update.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-zx/zx296702-pm-domain.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/tools/perf/tests/event_update.c b/tools/perf/tests/event_update.c
-index 4bb772e..0497d90 100644
---- a/tools/perf/tests/event_update.c
-+++ b/tools/perf/tests/event_update.c
-@@ -94,7 +94,7 @@ int test__event_update(struct test *test __maybe_unused, int subtest __maybe_unu
- 
- 	evsel = perf_evlist__first(evlist);
- 
--	TEST_ASSERT_VAL("failed to allos ids",
-+	TEST_ASSERT_VAL("failed to allocate ids",
- 			!perf_evsel__alloc_id(evsel, 1, 1));
- 
- 	perf_evlist__id_add(evlist, evsel, 0, 0, 123);
+diff --git a/arch/arm/mach-zx/zx296702-pm-domain.c b/arch/arm/mach-zx/zx296702-pm-domain.c
+index 7a08bf9dd792..ba4f556b7a13 100644
+--- a/arch/arm/mach-zx/zx296702-pm-domain.c
++++ b/arch/arm/mach-zx/zx296702-pm-domain.c
+@@ -152,7 +152,6 @@ static struct generic_pm_domain *zx296702_pm_domains[] = {
+ static int zx296702_pd_probe(struct platform_device *pdev)
+ {
+ 	struct genpd_onecell_data *genpd_data;
+-	struct resource *res;
+ 	int i;
+
+ 	genpd_data = devm_kzalloc(&pdev->dev, sizeof(*genpd_data), GFP_KERNEL);
+@@ -161,14 +160,7 @@ static int zx296702_pd_probe(struct platform_device *pdev)
+
+ 	genpd_data->domains = zx296702_pm_domains;
+ 	genpd_data->num_domains = ARRAY_SIZE(zx296702_pm_domains);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no memory resource defined\n");
+-		return -ENODEV;
+-	}
+-
+-	pcubase = devm_ioremap_resource(&pdev->dev, res);
++	pcubase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pcubase)) {
+ 		dev_err(&pdev->dev, "ioremap fail.\n");
+ 		return -EIO;
+--
+2.23.0
