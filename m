@@ -1,71 +1,63 @@
-From: Oleh Kravchenko <oleg@kaa.org.ua>
-Date: Sun, 08 Sep 2019 09:46:21 +0000
-Subject: Re: [PATCH] led: triggers: Fix NULL dereference in led_trigger_set() error handling
-Message-Id: <351E367B-8964-4A4D-A4CF-94EDE3B3B2FA@kaa.org.ua>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 18 Sep 2019 08:32:53 +0000
+Subject: Re: [PATCH stable 4.4 net] net: rds: Fix NULL ptr use in rds_tcp_kill_sock
+Message-Id: <20190918083253.GA1862222@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190905095728.GA26005@mwanda>
- <20190905120626.hyegecmy6hf5lvhj@pengutronix.de>
- <BC1CA967-2B9F-44A4-A1A9-FD9C6E874991@kaa.org.ua>
- <20190905133233.GF3093@kadam>
-In-Reply-To: <20190905133233.GF3093@kadam>
+References: <20190918083733.50266-1-maowenan@huawei.com>
+In-Reply-To: <20190918083733.50266-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mao Wenan <maowenan@huawei.com>
+Cc: chien.yen@oracle.com, davem@davemloft.net, stable@vger.kernel.org, rds-devel@oss.oracle.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
-
-> 5 вер. 2019 р. о 4:32 пп Dan Carpenter <dan.carpenter@oracle.com> написав(ла):
+On Wed, Sep 18, 2019 at 04:37:33PM +0800, Mao Wenan wrote:
+> After the commit c4e97b06cfdc ("net: rds: force to destroy
+> connection if t_sock is NULL in rds_tcp_kill_sock()."),
+> it introduced null-ptr-deref in rds_tcp_kill_sock as below:
 > 
-> On Thu, Sep 05, 2019 at 03:23:21PM +0300, Oleh Kravchenko wrote:
->> Let me summarize the chronology of the last activities below:
->> 1. I have sent the patch for the bugs that I have found by static analyzer at PVS-Studio
->>    Date: Wed, 4 Sep 2019 00:18:19 +0300
->>    https://www.spinics.net/lists/linux-leds/msg13181.html
->> 
->> 2. At 5 Sep 2019 12:57:19 +0300 Time Dan Cartpen has sent the patch with the same proposal
->> 3. Uwe Kleine-König started to discuss his results of review by asking Dan on how he was found it.
->> 
->> Would you mine if you will keep me as a Original author of this patch based on fact 1?
+> BUG: KASAN: null-ptr-deref on address 0000000000000020
+> Read of size 8 by task kworker/u16:10/910
+> CPU: 3 PID: 910 Comm: kworker/u16:10 Not tainted 4.4.178+ #3
+> Hardware name: linux,dummy-virt (DT)
+> Workqueue: netns cleanup_net
+> Call trace:
+> [<ffffff90080abb50>] dump_backtrace+0x0/0x618
+> [<ffffff90080ac1a0>] show_stack+0x38/0x60
+> [<ffffff9008c42b78>] dump_stack+0x1a8/0x230
+> [<ffffff90085d469c>] kasan_report_error+0xc8c/0xfc0
+> [<ffffff90085d54a4>] kasan_report+0x94/0xd8
+> [<ffffff90085d1b28>] __asan_load8+0x88/0x150
+> [<ffffff9009c9cc2c>] rds_tcp_dev_event+0x734/0xb48
+> [<ffffff90081eacb0>] raw_notifier_call_chain+0x150/0x1e8
+> [<ffffff900973fec0>] call_netdevice_notifiers_info+0x90/0x110
+> [<ffffff9009764874>] netdev_run_todo+0x2f4/0xb08
+> [<ffffff9009796d34>] rtnl_unlock+0x2c/0x48
+> [<ffffff9009756484>] default_device_exit_batch+0x444/0x528
+> [<ffffff9009720498>] ops_exit_list+0x1c0/0x240
+> [<ffffff9009724a80>] cleanup_net+0x738/0xbf8
+> [<ffffff90081ca6cc>] process_one_work+0x96c/0x13e0
+> [<ffffff90081cf370>] worker_thread+0x7e0/0x1910
+> [<ffffff90081e7174>] kthread+0x304/0x390
+> [<ffffff9008094280>] ret_from_fork+0x10/0x50
 > 
-> Heh.
+> If the first loop add the tc->t_sock = NULL to the tmp_list,
+> 1). list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node)
 > 
-> No, I didn't steal your patch.  :P  I am the author of the Smatch static
-> analysis tool and mostly fix things found by Smatch.  I don't use other
-> static analysis tools except to do a final QC of my patches.
+> then the second loop is to find connections to destroy, tc->t_sock
+> might equal NULL, and tc->t_sock->sk happens null-ptr-deref.
+> 2). list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
 > 
+> Fixes: c4e97b06cfdc ("net: rds: force to destroy connection if t_sock is NULL in rds_tcp_kill_sock().")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  net/rds/tcp.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
-Thanks!
-I didn’t know this tool. Will take a look on it.
+Why is this not needed upstream as well?
 
-By the way, you can use PVS-Studio freely
-https://www.viva64.com/en/b/0600/
-They provide free license for open source projects.
+4.9.y?  4.14.y?  anything else?
 
-> It's super common for people to send duplicate fixes when it's based on
-> static analysis.  Most of the static analysis people hang out on
-> kernel-janitors so we don't send duplicate patches.  For a while people
-> were getting annoyed by all the duplicates but now they accept it as
-> their punishment for introducing a bug in the first place.
-> 
+thanks,
 
-No problem.
-We all doing good things!
-
-> Anyway, the rule for kernel development is that normally the first
-> person's patch goes in, so we will take your patch.
-> 
-
-I think next time you will take a look at mail list before sending patches ;-)
-
-> regards,
-> dan carpenter
-> 
-
-P.S.:
-resent because was in non plain-text format. 
-
--- 
-Best regards,
-Oleh Kravchenko
+greg k-h
