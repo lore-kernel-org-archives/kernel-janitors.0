@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 12:10:18 +0000
+Date: Wed, 18 Sep 2019 12:10:19 +0000
 Subject: [PATCH] misc/pvpanic: Use devm_platform_ioremap_resource() in pvpanic_mmio_probe()
-Message-Id: <e0ce24fe-ff3c-cbbb-4a56-4e529ebbe8d0@web.de>
+Message-Id: <4fa1c1b3-71db-4d8d-ddc9-86219b74b87d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e0ce24fe-ff3c-cbbb-4a56-4e529ebbe8d0@web.de>
+In-Reply-To: <e0ce24fe-ff3c-cbbb-4a56-4e529ebbe8d0@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
