@@ -1,48 +1,58 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 08:20:09 +0000
-Subject: [PATCH] hwmon: (aspeed-pwm-tacho) Use devm_platform_ioremap_resource() in aspeed_pwm_tacho_probe()
-Message-Id: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Wed, 18 Sep 2019 13:39:12 +0000
+Subject: Re: [PATCH] hwmon: (aspeed-pwm-tacho) Use devm_platform_ioremap_resource() in aspeed_pwm_tacho_probe
+Message-Id: <20190918133912.GA14788@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
+In-Reply-To: <cd5bab7b-9333-2a43-bcf0-a47bbbe719eb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, Joel Stanley <joel@jms.id.au>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 10:12:31 +0200
+On Wed, Sep 18, 2019 at 10:20:09AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2019 10:12:31 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Simplify this function implementation by using a known wrapper function.
+Applied to hwmon-next.
 
-This issue was detected by using the Coccinelle software.
+Thanks,
+Guenter
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hwmon/aspeed-pwm-tacho.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
-index 40c489be62ea..33fb54845bf6 100644
---- a/drivers/hwmon/aspeed-pwm-tacho.c
-+++ b/drivers/hwmon/aspeed-pwm-tacho.c
-@@ -891,17 +891,12 @@ static int aspeed_pwm_tacho_probe(struct platform_device *pdev)
- 	struct device_node *np, *child;
- 	struct aspeed_pwm_tacho_data *priv;
- 	void __iomem *regs;
--	struct resource *res;
- 	struct device *hwmon;
- 	struct clk *clk;
- 	int ret;
-
- 	np = dev->of_node;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENOENT;
--	regs = devm_ioremap_resource(dev, res);
-+	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
---
-2.23.0
+> ---
+>  drivers/hwmon/aspeed-pwm-tacho.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> --
+> 2.23.0
+> 
+> diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
+> index 40c489be62ea..33fb54845bf6 100644
+> --- a/drivers/hwmon/aspeed-pwm-tacho.c
+> +++ b/drivers/hwmon/aspeed-pwm-tacho.c
+> @@ -891,17 +891,12 @@ static int aspeed_pwm_tacho_probe(struct platform_device *pdev)
+>  	struct device_node *np, *child;
+>  	struct aspeed_pwm_tacho_data *priv;
+>  	void __iomem *regs;
+> -	struct resource *res;
+>  	struct device *hwmon;
+>  	struct clk *clk;
+>  	int ret;
+> 
+>  	np = dev->of_node;
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res)
+> -		return -ENOENT;
+> -	regs = devm_ioremap_resource(dev, res);
+> +	regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(regs))
+>  		return PTR_ERR(regs);
+>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
