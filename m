@@ -1,36 +1,46 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Thu, 26 Sep 2019 19:32:39 +0000
-Subject: Re: [1/2] net/phy/mdio-mscc-miim: Use devm_platform_ioremap_resource() in mscc_miim_probe()
-Message-Id: <20190926193239.GC6825@piout.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 19:43:19 +0000
+Subject: [PATCH] thermal: st: Use devm_platform_ioremap_resource() in st_mmap_regmap_init()
+Message-Id: <27c67867-d39e-a5c1-12aa-a1e6ba6e7c32@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
- <506889a6-4148-89f9-302e-4be069595bb4@web.de>
- <20190920190908.GH3530@lunn.ch>
- <121e75c5-4d45-9df2-a471-6997a1fb3218@web.de>
- <20190926161825.GB6825@piout.net>
- <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
-In-Reply-To: <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-pm@vger.kernel.org, Allison Randal <allison@lohutok.net>, Amit Kucheria <amit.kucheria@verdurent.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
-On 26/09/2019 20:52:38+0200, Markus Elfring wrote:
-> >> Does this feedback indicate also an agreement for the detail
-> >> if the mapping of internal phy registers would be a required operation?
-> >> (Would such a resource allocation eventually be optional?)
-> >
-> > It is optional.
-> 
-> Would you like to integrate an other patch variant then?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 21:32:14 +0200
 
-You have to ensure it stays optional. Also, adjust the subject so it
-uses the correct prefix.
+Simplify this function implementation by using a known wrapper function.
 
+This issue was detected by using the Coccinelle software.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thermal/st/st_thermal_memmap.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/thermal/st/st_thermal_memmap.c b/drivers/thermal/st/st_thermal_memmap.c
+index a824b78dabf8..d8ff46abd8eb 100644
+--- a/drivers/thermal/st/st_thermal_memmap.c
++++ b/drivers/thermal/st/st_thermal_memmap.c
+@@ -121,15 +121,8 @@ static int st_mmap_regmap_init(struct st_thermal_sensor *sensor)
+ {
+ 	struct device *dev = sensor->dev;
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct resource *res;
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "no memory resources defined\n");
+-		return -ENODEV;
+-	}
+-
+-	sensor->mmio_base = devm_ioremap_resource(dev, res);
++	sensor->mmio_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(sensor->mmio_base)) {
+ 		dev_err(dev, "failed to remap IO\n");
+ 		return PTR_ERR(sensor->mmio_base);
+--
+2.23.0
