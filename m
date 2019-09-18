@@ -1,99 +1,96 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 13:30:35 +0000
-Subject: [PATCH] ethernet: Use devm_platform_ioremap_resource() in three functions
-Message-Id: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
+From: Radhey Shyam Pandey <radheys@xilinx.com>
+Date: Wed, 18 Sep 2019 14:16:23 +0000
+Subject: RE: [PATCH] ethernet: Use devm_platform_ioremap_resource() in three functions
+Message-Id: <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
+In-Reply-To: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "David S. Miller" <davem@davemloft.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michals@xilinx.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 15:15:06 +0200
-
-Simplify these function implementations by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/cortina/gemini.c             |  6 +-----
- drivers/net/ethernet/lantiq_xrx200.c              | 11 +----------
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c |  9 +--------
- 3 files changed, 3 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
-index e736ce2c58ca..f009415ee4d8 100644
---- a/drivers/net/ethernet/cortina/gemini.c
-+++ b/drivers/net/ethernet/cortina/gemini.c
-@@ -2549,17 +2549,13 @@ static int gemini_ethernet_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct gemini_ethernet *geth;
- 	unsigned int retry = 5;
--	struct resource *res;
- 	u32 val;
-
- 	/* Global registers */
- 	geth = devm_kzalloc(dev, sizeof(*geth), GFP_KERNEL);
- 	if (!geth)
- 		return -ENOMEM;
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--	geth->base = devm_ioremap_resource(dev, res);
-+	geth->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(geth->base))
- 		return PTR_ERR(geth->base);
- 	geth->dev = dev;
-diff --git a/drivers/net/ethernet/lantiq_xrx200.c b/drivers/net/ethernet/lantiq_xrx200.c
-index 900affbdcc0e..0a7ea45b9e59 100644
---- a/drivers/net/ethernet/lantiq_xrx200.c
-+++ b/drivers/net/ethernet/lantiq_xrx200.c
-@@ -424,7 +424,6 @@ static int xrx200_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct resource *res;
- 	struct xrx200_priv *priv;
- 	struct net_device *net_dev;
- 	const u8 *mac;
-@@ -443,15 +442,7 @@ static int xrx200_probe(struct platform_device *pdev)
- 	SET_NETDEV_DEV(net_dev, dev);
- 	net_dev->min_mtu = ETH_ZLEN;
- 	net_dev->max_mtu = XRX200_DMA_DATA_LEN;
--
--	/* load the memory ranges */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(dev, "failed to get resources\n");
--		return -ENOENT;
--	}
--
--	priv->pmac_reg = devm_ioremap_resource(dev, res);
-+	priv->pmac_reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->pmac_reg)) {
- 		dev_err(dev, "failed to request and remap io ranges\n");
- 		return PTR_ERR(priv->pmac_reg);
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 4fc627fb4d11..92783aaaa0a2 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1787,14 +1787,7 @@ static int axienet_probe(struct platform_device *pdev)
- 		of_node_put(np);
- 		lp->eth_irq = platform_get_irq(pdev, 0);
- 	} else {
--		/* Check for these resources directly on the Ethernet node. */
--		struct resource *res = platform_get_resource(pdev,
--							     IORESOURCE_MEM, 1);
--		if (!res) {
--			dev_err(&pdev->dev, "unable to get DMA memory resource\n");
--			goto free_netdev;
--		}
--		lp->dma_regs = devm_ioremap_resource(&pdev->dev, res);
-+		lp->dma_regs = devm_platform_ioremap_resource(pdev, 1);
- 		lp->rx_irq = platform_get_irq(pdev, 1);
- 		lp->tx_irq = platform_get_irq(pdev, 0);
- 		lp->eth_irq = platform_get_irq(pdev, 2);
---
-2.23.0
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8TWFy
+a3VzLkVsZnJpbmdAd2ViLmRlPg0KPiBTZW50OiBXZWRuZXNkYXksIFNlcHRlbWJlciAxOCwgMjAx
+OSA3OjAxIFBNDQo+IFRvOiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVs
+QGxpc3RzLmluZnJhZGVhZC5vcmc7IERhdmlkIFMuDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0
+Lm5ldD47IEhhbnMgVWxsaSBLcm9sbCA8dWxsaS5rcm9sbEBnb29nbGVtYWlsLmNvbT47DQo+IEhh
+dWtlIE1laHJ0ZW5zIDxoYXVrZUBoYXVrZS1tLmRlPjsgTGludXMgV2FsbGVpag0KPiA8bGludXMu
+d2FsbGVpakBsaW5hcm8ub3JnPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+OyBS
+YWRoZXkNCj4gU2h5YW0gUGFuZGV5IDxyYWRoZXlzQHhpbGlueC5jb20+DQo+IENjOiBMS01MIDxs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVs
+Lm9yZzsNCj4gQmFydG9zeiBHb2xhc3pld3NraSA8YmdvbGFzemV3c2tpQGJheWxpYnJlLmNvbT47
+IEhpbWFuc2h1IEpoYQ0KPiA8aGltYW5zaHVqaGExOTk2NDBAZ21haWwuY29tPg0KPiBTdWJqZWN0
+OiBbUEFUQ0hdIGV0aGVybmV0OiBVc2UgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKCkg
+aW4gdGhyZWUNCj4gZnVuY3Rpb25zDQoNClByZWZlciB1c2luZyBhIHNlcGFyYXRlIHBhdGNoIGZv
+ciBlYWNoIGRyaXZlci4gQWxzbyBza2lwIG1lbnRpb25pbmcNCiJ0aHJlZSBmdW5jdGlvbnMiIGlu
+IGNvbW1pdCBkZXNjcmlwdGlvbi4gIA0KDQo+IA0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8ZWxm
+cmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFdlZCwgMTggU2VwIDIwMTkgMTU6
+MTU6MDYgKzAyMDANCj4gDQo+IFNpbXBsaWZ5IHRoZXNlIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9u
+cyBieSB1c2luZyBhIGtub3duIHdyYXBwZXIgZnVuY3Rpb24uDQoNCk1pbm9yIG5pdC0gQmV0dGVy
+IHRvIG1lbnRpb24gYWJvdXQgdGhlc2UgZnVuY3MgaW4gY29tbWl0IGRlc2NyaXB0aW9uLg0KU29t
+ZXRoaW5nIGxpa2UtIHVzZXMgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKCkgaW5zdGVh
+ZCBvZiB1c2luZw0KcGxhdGZvcm1fZ2V0X3Jlc291cmNlKCkgYW5kIGRldm1faW9yZW1hcF9yZXNv
+dXJjZSgpIHRvZ2V0aGVyIHRvIHNpbXBsaWZ5Lg0KDQo+IA0KPiBUaGlzIGlzc3VlIHdhcyBkZXRl
+Y3RlZCBieSB1c2luZyB0aGUgQ29jY2luZWxsZSBzb2Z0d2FyZS4NCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gLS0t
+DQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9jb3J0aW5hL2dlbWluaS5jICAgICAgICAgICAgIHwg
+IDYgKy0tLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9sYW50aXFfeHJ4MjAwLmMgICAgICAg
+ICAgICAgIHwgMTEgKy0tLS0tLS0tLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94
+aWxpbnhfYXhpZW5ldF9tYWluLmMgfCAgOSArLS0tLS0tLS0NCj4gIDMgZmlsZXMgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9jb3J0aW5hL2dlbWluaS5jDQo+IGIvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvY29ydGluYS9nZW1pbmkuYw0KPiBpbmRleCBlNzM2Y2UyYzU4Y2EuLmYwMDk0MTVlZTRkOCAx
+MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvY29ydGluYS9nZW1pbmkuYw0KPiAr
+KysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9jb3J0aW5hL2dlbWluaS5jDQo+IEBAIC0yNTQ5LDE3
+ICsyNTQ5LDEzIEBAIHN0YXRpYyBpbnQgZ2VtaW5pX2V0aGVybmV0X3Byb2JlKHN0cnVjdA0KPiBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRl
+djsNCj4gIAlzdHJ1Y3QgZ2VtaW5pX2V0aGVybmV0ICpnZXRoOw0KPiAgCXVuc2lnbmVkIGludCBy
+ZXRyeSA9IDU7DQo+IC0Jc3RydWN0IHJlc291cmNlICpyZXM7DQo+ICAJdTMyIHZhbDsNCj4gDQo+
+ICAJLyogR2xvYmFsIHJlZ2lzdGVycyAqLw0KPiAgCWdldGggPSBkZXZtX2t6YWxsb2MoZGV2LCBz
+aXplb2YoKmdldGgpLCBHRlBfS0VSTkVMKTsNCj4gIAlpZiAoIWdldGgpDQo+ICAJCXJldHVybiAt
+RU5PTUVNOw0KPiAtCXJlcyA9IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNF
+X01FTSwgMCk7DQo+IC0JaWYgKCFyZXMpDQo+IC0JCXJldHVybiAtRU5PREVWOw0KPiAtCWdldGgt
+PmJhc2UgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOw0KPiArCWdldGgtPmJhc2Ug
+PSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UocGRldiwgMCk7DQo+ICAJaWYgKElTX0VS
+UihnZXRoLT5iYXNlKSkNCj4gIAkJcmV0dXJuIFBUUl9FUlIoZ2V0aC0+YmFzZSk7DQo+ICAJZ2V0
+aC0+ZGV2ID0gZGV2Ow0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbGFudGlx
+X3hyeDIwMC5jDQo+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbGFudGlxX3hyeDIwMC5jDQo+IGlu
+ZGV4IDkwMGFmZmJkY2MwZS4uMGE3ZWE0NWI5ZTU5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25l
+dC9ldGhlcm5ldC9sYW50aXFfeHJ4MjAwLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQv
+bGFudGlxX3hyeDIwMC5jDQo+IEBAIC00MjQsNyArNDI0LDYgQEAgc3RhdGljIGludCB4cngyMDBf
+cHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIHsNCj4gIAlzdHJ1Y3QgZGV2
+aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPiAgCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBkZXYt
+Pm9mX25vZGU7DQo+IC0Jc3RydWN0IHJlc291cmNlICpyZXM7DQo+ICAJc3RydWN0IHhyeDIwMF9w
+cml2ICpwcml2Ow0KPiAgCXN0cnVjdCBuZXRfZGV2aWNlICpuZXRfZGV2Ow0KPiAgCWNvbnN0IHU4
+ICptYWM7DQo+IEBAIC00NDMsMTUgKzQ0Miw3IEBAIHN0YXRpYyBpbnQgeHJ4MjAwX3Byb2JlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJU0VUX05FVERFVl9ERVYobmV0X2Rldiwg
+ZGV2KTsNCj4gIAluZXRfZGV2LT5taW5fbXR1ID0gRVRIX1pMRU47DQo+ICAJbmV0X2Rldi0+bWF4
+X210dSA9IFhSWDIwMF9ETUFfREFUQV9MRU47DQo+IC0NCj4gLQkvKiBsb2FkIHRoZSBtZW1vcnkg
+cmFuZ2VzICovDQo+IC0JcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VS
+Q0VfTUVNLCAwKTsNCj4gLQlpZiAoIXJlcykgew0KPiAtCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0
+byBnZXQgcmVzb3VyY2VzXG4iKTsNCj4gLQkJcmV0dXJuIC1FTk9FTlQ7DQo+IC0JfQ0KPiAtDQo+
+IC0JcHJpdi0+cG1hY19yZWcgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOw0KPiAr
+CXByaXYtPnBtYWNfcmVnID0gZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKHBkZXYsIDAp
+Ow0KPiAgCWlmIChJU19FUlIocHJpdi0+cG1hY19yZWcpKSB7DQo+ICAJCWRldl9lcnIoZGV2LCAi
+ZmFpbGVkIHRvIHJlcXVlc3QgYW5kIHJlbWFwIGlvIHJhbmdlc1xuIik7DQo+ICAJCXJldHVybiBQ
+VFJfRVJSKHByaXYtPnBtYWNfcmVnKTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVy
+bmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5l
+dC94aWxpbngveGlsaW54X2F4aWVuZXRfbWFpbi5jDQo+IGluZGV4IDRmYzYyN2ZiNGQxMS4uOTI3
+ODNhYWFhMGEyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGls
+aW54X2F4aWVuZXRfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94
+aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gQEAgLTE3ODcsMTQgKzE3ODcsNyBAQCBzdGF0aWMgaW50
+IGF4aWVuZXRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAqcGRldikNCj4gIAkJb2Zf
+bm9kZV9wdXQobnApOw0KPiAgCQlscC0+ZXRoX2lycSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwg
+MCk7DQo+ICAJfSBlbHNlIHsNCj4gLQkJLyogQ2hlY2sgZm9yIHRoZXNlIHJlc291cmNlcyBkaXJl
+Y3RseSBvbiB0aGUgRXRoZXJuZXQgbm9kZS4gKi8NCj4gLQkJc3RydWN0IHJlc291cmNlICpyZXMg
+PSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwNCj4gLQ0KPiBJT1JFU09VUkNFX01FTSwgMSk7
+DQo+IC0JCWlmICghcmVzKSB7DQo+IC0JCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJ1bmFibGUgdG8g
+Z2V0IERNQSBtZW1vcnkNCj4gcmVzb3VyY2VcbiIpOw0KPiAtCQkJZ290byBmcmVlX25ldGRldjsN
+Cj4gLQkJfQ0KPiAtCQlscC0+ZG1hX3JlZ3MgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoJnBkZXYt
+PmRldiwgcmVzKTsNCj4gKwkJbHAtPmRtYV9yZWdzID0gZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jl
+c291cmNlKHBkZXYsIDEpOw0KPiAgCQlscC0+cnhfaXJxID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2
+LCAxKTsNCj4gIAkJbHAtPnR4X2lycSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+ICAJ
+CWxwLT5ldGhfaXJxID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAyKTsNCj4gLS0NCj4gMi4yMy4w
+DQoNCg=
