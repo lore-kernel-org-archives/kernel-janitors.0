@@ -1,52 +1,53 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 15 Sep 2019 13:31:06 +0000
-Subject: Re: [PATCH] usbip: vhci_hcd indicate failed message
-Message-Id: <5D7E3D1A.5070906@bfs.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 19:12:48 +0000
+Subject: [PATCH] staging: mt7621-pci-phy: Use devm_platform_ioremap_resource() in mt7621_pci_phy_probe()
+Message-Id: <1c16a43c-3a01-8a86-02b0-1941ab7321dd@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190915034332.21168-1-maowenan@huawei.com>
-In-Reply-To: <20190915034332.21168-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, =?UTF-8?Q?Antti_Ker=c3=a4nen?= <detegr@gmail.com>, Emanuel Bennici <benniciemanuel78@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, Neil Brown <neil@brown.name>, Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 21:01:32 +0200
 
+Simplify this function implementation by using a known wrapper function.
 
-Am 15.09.2019 05:43, schrieb Mao Wenan:
-> If the return value of vhci_init_attr_group and
-> sysfs_create_group is non-zero, which mean they failed
-> to init attr_group and create sysfs group, so it would
-> better add 'failed' message to indicate that.
-> 
-> Fixes: 0775a9cbc694 ("usbip: vhci extension: modifications to vhci driver")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/usb/usbip/vhci_hcd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index 000ab7225717..dd54c95d2498 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -1185,12 +1185,12 @@ static int vhci_start(struct usb_hcd *hcd)
->  	if (id = 0 && usb_hcd_is_primary_hcd(hcd)) {
->  		err = vhci_init_attr_group();
->  		if (err) {
-> -			pr_err("init attr group\n");
-> +			pr_err("init attr group failed\n");
->  			return err;
->  		}
->  		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
->  		if (err) {
-> -			pr_err("create sysfs files\n");
-> +			pr_err("create sysfs failed\n");
+This issue was detected by using the Coccinelle software.
 
-I guess "sysfs files" is here intended ?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/mt7621-pci-phy/pci-mt7621-phy.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-re,
- wh
+diff --git a/drivers/staging/mt7621-pci-phy/pci-mt7621-phy.c b/drivers/staging/mt7621-pci-phy/pci-mt7621-phy.c
+index d2a07f145143..6ca4a33d13c3 100644
+--- a/drivers/staging/mt7621-pci-phy/pci-mt7621-phy.c
++++ b/drivers/staging/mt7621-pci-phy/pci-mt7621-phy.c
+@@ -324,7 +324,6 @@ static int mt7621_pci_phy_probe(struct platform_device *pdev)
+ 	const struct soc_device_attribute *attr;
+ 	struct phy_provider *provider;
+ 	struct mt7621_pci_phy *phy;
+-	struct resource *res;
+ 	int port;
+ 	void __iomem *port_base;
 
->  			vhci_finish_attr_group();
->  			return err;
->  		}
+@@ -344,14 +343,7 @@ static int mt7621_pci_phy_probe(struct platform_device *pdev)
+
+ 	phy->dev = dev;
+ 	platform_set_drvdata(pdev, phy);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "failed to get address resource\n");
+-		return -ENXIO;
+-	}
+-
+-	port_base = devm_ioremap_resource(dev, res);
++	port_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(port_base)) {
+ 		dev_err(dev, "failed to remap phy regs\n");
+ 		return PTR_ERR(port_base);
+--
+2.23.0
