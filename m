@@ -1,24 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 12 Sep 2019 12:01:03 +0000
-Subject: Re: [PATCH] pinctrl: sh-pfc: Unlock on error in sh_pfc_func_set_mux()
-Message-Id: <CACRpkdbG0bz40U8qFSvi6ds-8XiUSX+yj1uC4XynyAfJWfantA@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 10:37:24 +0000
+Subject: [PATCH] media: rc: Use devm_platform_ioremap_resource() in tango_ir_probe()
+Message-Id: <04df8450-1b15-55ec-91e7-7d72ffbedac7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827093927.GB8443@mwanda>
-In-Reply-To: <20190827093927.GB8443@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allison Randal <allison@lohutok.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mans Rullgard <mans@mansr.com>, Marc Gonzalez <marc.w.gonzalez@free.fr>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-On Tue, Aug 27, 2019 at 10:39 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 12:30:18 +0200
 
-> We need to unlock and enable IRQs before we return on this error path.
->
-> Fixes: 8a0cc47ccc7c ("pinctrl: sh-pfc: Rollback to mux if required when the gpio is freed")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Simplify this function implementation by using a known wrapper function.
 
-Applied for v5.4 with the ACKs.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/tango-ir.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/media/rc/tango-ir.c b/drivers/media/rc/tango-ir.c
+index 451ec4e9dcfa..b8eb5bc4d9be 100644
+--- a/drivers/media/rc/tango-ir.c
++++ b/drivers/media/rc/tango-ir.c
+@@ -157,20 +157,10 @@ static int tango_ir_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rc_dev *rc;
+ 	struct tango_ir *ir;
+-	struct resource *rc5_res;
+-	struct resource *rc6_res;
+ 	u64 clkrate, clkdiv;
+ 	int irq, err;
+ 	u32 val;
+
+-	rc5_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!rc5_res)
+-		return -EINVAL;
+-
+-	rc6_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!rc6_res)
+-		return -EINVAL;
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq <= 0)
+ 		return -EINVAL;
+@@ -179,11 +169,11 @@ static int tango_ir_probe(struct platform_device *pdev)
+ 	if (!ir)
+ 		return -ENOMEM;
+
+-	ir->rc5_base = devm_ioremap_resource(dev, rc5_res);
++	ir->rc5_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ir->rc5_base))
+ 		return PTR_ERR(ir->rc5_base);
+
+-	ir->rc6_base = devm_ioremap_resource(dev, rc6_res);
++	ir->rc6_base = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(ir->rc6_base))
+ 		return PTR_ERR(ir->rc6_base);
+
+--
+2.23.0
