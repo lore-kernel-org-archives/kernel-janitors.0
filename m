@@ -1,24 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 18:58:48 +0000
-Subject: Re: [PATCH] net: tap: clean up an indentation issue
-Message-Id: <20190927.205848.1064731628947090039.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 18 Sep 2019 07:19:18 +0000
+Subject: [PATCH] hwrng: iproc-rng200 - Use devm_platform_ioremap_resource() in iproc_rng200_probe()
+Message-Id: <0ecb0679-0558-6cbe-af2f-6ee9122a4a7e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190927094039.23370-1-colin.king@canonical.com>
-In-Reply-To: <20190927094039.23370-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Arnd Bergmann <arnd@arndb.de>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Sep 2019 10:40:39 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 09:09:22 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented too deeply, remove
-> the extraneous tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Simplify this function implementation by using a known wrapper function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/hw_random/iproc-rng200.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/char/hw_random/iproc-rng200.c b/drivers/char/hw_random/iproc-rng200.c
+index 92be1c0ab99f..899ff25f4f28 100644
+--- a/drivers/char/hw_random/iproc-rng200.c
++++ b/drivers/char/hw_random/iproc-rng200.c
+@@ -181,7 +181,6 @@ static void iproc_rng200_cleanup(struct hwrng *rng)
+ static int iproc_rng200_probe(struct platform_device *pdev)
+ {
+ 	struct iproc_rng200_dev *priv;
+-	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+ 	int ret;
+
+@@ -190,13 +189,7 @@ static int iproc_rng200_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+
+ 	/* Map peripheral */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "failed to get rng resources\n");
+-		return -EINVAL;
+-	}
+-
+-	priv->base = devm_ioremap_resource(dev, res);
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base)) {
+ 		dev_err(dev, "failed to remap rng regs\n");
+ 		return PTR_ERR(priv->base);
+--
+2.23.0
