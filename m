@@ -1,53 +1,53 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 03 Sep 2019 14:20:43 +0000
-Subject: [PATCH] ntfs: Delete unnecessary checks before brelse()
-Message-Id: <9d047687-af84-4688-c025-13103cc22a52@web.de>
+From: Vladimir Oltean <olteanv@gmail.com>
+Date: Thu, 19 Sep 2019 06:25:21 +0000
+Subject: Re: [PATCH net] net: dsa: sja1105: Add dependency for NET_DSA_SJA1105_TAS
+Message-Id: <CA+h21hqjrt2qcCAFosOC61QcsiHS1TYaR6u=SjMMFH8W+ZZYug@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43a59c6a-3635-1fab-1945-292d637663c9@web.de>
-In-Reply-To: <43a59c6a-3635-1fab-1945-292d637663c9@web.de>
+References: <20190919063819.164826-1-maowenan@huawei.com>
+In-Reply-To: <20190919063819.164826-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ntfs-dev@lists.sourceforge.net, Anton Altaparmakov <anton@tuxera.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mao Wenan <maowenan@huawei.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, lkml <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Sep 2019 16:18:07 +0200
+On Thu, 19 Sep 2019 at 09:22, Mao Wenan <maowenan@huawei.com> wrote:
+>
+> If CONFIG_NET_DSA_SJA1105_TAS=y and CONFIG_NET_SCH_TAPRIO=n,
+> below error can be found:
+> drivers/net/dsa/sja1105/sja1105_tas.o: In function `sja1105_setup_tc_taprio':
+> sja1105_tas.c:(.text+0x318): undefined reference to `taprio_offload_free'
+> sja1105_tas.c:(.text+0x590): undefined reference to `taprio_offload_get'
+> drivers/net/dsa/sja1105/sja1105_tas.o: In function `sja1105_tas_teardown':
+> sja1105_tas.c:(.text+0x610): undefined reference to `taprio_offload_free'
+> make: *** [vmlinux] Error 1
+>
+> sja1105_tas needs tc-taprio, so this patch add the dependency for it.
+>
+> Fixes: 317ab5b86c8e ("net: dsa: sja1105: Configure the Time-Aware Scheduler via tc-taprio offload")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus the tests around the shown calls are not needed.
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
-This issue was detected by using the Coccinelle software.
+>  drivers/net/dsa/sja1105/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/net/dsa/sja1105/Kconfig b/drivers/net/dsa/sja1105/Kconfig
+> index 55424f3..f40b248 100644
+> --- a/drivers/net/dsa/sja1105/Kconfig
+> +++ b/drivers/net/dsa/sja1105/Kconfig
+> @@ -27,6 +27,7 @@ config NET_DSA_SJA1105_PTP
+>  config NET_DSA_SJA1105_TAS
+>         bool "Support for the Time-Aware Scheduler on NXP SJA1105"
+>         depends on NET_DSA_SJA1105
+> +       depends on NET_SCH_TAPRIO
+>         help
+>           This enables support for the TTEthernet-based egress scheduling
+>           engine in the SJA1105 DSA driver, which is controlled using a
+> --
+> 2.7.4
+>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/ntfs/super.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
-index 29621d40f448..f0ed1a3e5c7e 100644
---- a/fs/ntfs/super.c
-+++ b/fs/ntfs/super.c
-@@ -676,8 +676,7 @@ static struct buffer_head *read_ntfs_boot_sector(struct super_block *sb,
- 	} else if (!silent)
- 		ntfs_error(sb, read_err_str, "primary");
- 	if (!(NTFS_SB(sb)->on_errors & ON_ERRORS_RECOVER)) {
--		if (bh_primary)
--			brelse(bh_primary);
-+		brelse(bh_primary);
- 		if (!silent)
- 			ntfs_error(sb, "Mount option errors=recover not used. "
- 					"Aborting without trying to recover.");
-@@ -703,8 +702,7 @@ static struct buffer_head *read_ntfs_boot_sector(struct super_block *sb,
- 	} else if (!silent)
- 		ntfs_error(sb, read_err_str, "backup");
- 	/* We failed. Cleanup and return. */
--	if (bh_primary)
--		brelse(bh_primary);
-+	brelse(bh_primary);
- 	return NULL;
- hotfix_primary_boot_sector:
- 	if (bh_primary) {
---
-2.23.0
+Thanks!
+-Vladimir
