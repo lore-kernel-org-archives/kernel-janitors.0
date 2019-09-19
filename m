@@ -1,28 +1,71 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 04 Sep 2019 17:11:33 +0000
-Subject: Re: drm/amdgpu: Delete an unnecessary check before two function calls
-Message-Id: <ef57fbc1-8c67-c6ae-42b8-0de76df7cea3@web.de>
+Date: Thu, 19 Sep 2019 12:04:30 +0000
+Subject: [PATCH v2] mtd: st_spi_fsm: Use devm_platform_ioremap_resource() in stfsm_probe()
+Message-Id: <eec0774d-135b-2b19-2595-7a126341c77c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3739125-5fa8-cadb-d2b8-8a9f12e9bacd@web.de>
-In-Reply-To: <a3739125-5fa8-cadb-d2b8-8a9f12e9bacd@web.de>
+References: <e1d32aa4-7c82-64e0-b7c4-33c94d9a2769@web.de>
+ <20190919111014.6c569cf3@xps13>
+In-Reply-To: <20190919111014.6c569cf3@xps13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Hawking Zhang <Hawking.Zhang@amd.com>, Jack Xiao <Jack.Xiao@amd.com>, Kevin Wang <Kevin1.Wang@amd.com>, Tom St Denis <tom.stdenis@amd.com>, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Allison Randal <allison@lohutok.net>, Armijn Hemel <armijn@tjaldur.nl>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Thomas Gleixner <tglx@linutronix.de>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-> The functions “debugfs_remove” and “kfree” test whether their argument
-> is NULL and then return immediately.
-> Thus the tests around the shown calls are not needed.
->
-> This issue was detected by using the Coccinelle software.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Sep 2019 13:30:51 +0200
 
-I suggest to take another look at a similar patch.
+Simplify this function implementation by using a known wrapper function.
+* Thus reduce also a bit of exception handling code.
+* Delete the local variable “res”.
 
-drm/amdgpu: remove the redundant null check
-https://lkml.org/lkml/2019/9/3/59
-https://lore.kernel.org/patchwork/patch/1123118/
-https://lore.kernel.org/r/1567491305-18320-1-git-send-email-zhongjiang@huawei.com/
+This issue was detected by using the Coccinelle software.
 
-Regards,
-Markus
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+Further changes were requested by Miquel Raynal.
+https://lore.kernel.org/r/20190919111014.6c569cf3@xps13/
+
+* An error message was adjusted another bit.
+* A variable was removed.
+
+
+ drivers/mtd/devices/st_spi_fsm.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/mtd/devices/st_spi_fsm.c b/drivers/mtd/devices/st_spi_fsm.c
+index f4d1667daaf9..ce18198301d5 100644
+--- a/drivers/mtd/devices/st_spi_fsm.c
++++ b/drivers/mtd/devices/st_spi_fsm.c
+@@ -2017,7 +2017,6 @@ static int stfsm_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct flash_info *info;
+-	struct resource *res;
+ 	struct stfsm *fsm;
+ 	int ret;
+
+@@ -2033,17 +2032,9 @@ static int stfsm_probe(struct platform_device *pdev)
+ 	fsm->dev = &pdev->dev;
+
+ 	platform_set_drvdata(pdev, fsm);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Resource not found\n");
+-		return -ENODEV;
+-	}
+-
+-	fsm->base = devm_ioremap_resource(&pdev->dev, res);
++	fsm->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(fsm->base)) {
+-		dev_err(&pdev->dev,
+-			"Failed to reserve memory region %pR\n", res);
++		dev_err(&pdev->dev, "Failed to reserve memory region\n");
+ 		return PTR_ERR(fsm->base);
+ 	}
+
+--
+2.23.0
