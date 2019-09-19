@@ -1,28 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 11 Sep 2019 09:57:59 +0000
-Subject: Re: [PATCH] pinctrl: bcm: remove redundant assignment to pointer log
-Message-Id: <CACRpkdbYKjKPAT=V8K_JtP49teq5q9GELkK-vc+mQEdwcU781w@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 19 Sep 2019 19:52:08 +0000
+Subject: [PATCH] bluetooth: hci_nokia: Save a few cycles in 'nokia_enqueue()'
+Message-Id: <20190919195208.2254-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190905140919.29283-1-colin.king@canonical.com>
-In-Reply-To: <20190905140919.29283-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: marcel@holtmann.org, johan.hedberg@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Sep 5, 2019 at 3:09 PM Colin King <colin.king@canonical.com> wrote:
+'skb_pad()' a few lines above already initializes the "padded" byte to 0.
+So there is no need to do it twice.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer log is being initialized with a value that is never read
-> and is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+All what is needed is to increase the len of the skb. So 'skb_put(..., 1)'
+is enough here.
 
-Patch applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/bluetooth/hci_nokia.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
+index 6463350b7977..05f7f6de6863 100644
+--- a/drivers/bluetooth/hci_nokia.c
++++ b/drivers/bluetooth/hci_nokia.c
+@@ -520,7 +520,7 @@ static int nokia_enqueue(struct hci_uart *hu, struct sk_buff *skb)
+ 		err = skb_pad(skb, 1);
+ 		if (err)
+ 			return err;
+-		skb_put_u8(skb, 0x00);
++		skb_put(skb, 1);
+ 	}
+ 
+ 	skb_queue_tail(&btdev->txq, skb);
+-- 
+2.20.1
