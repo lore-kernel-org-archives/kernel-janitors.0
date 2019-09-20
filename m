@@ -1,24 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:04:12 +0000
-Subject: Re: [PATCH net] enetc: Fix a signedness bug in enetc_of_get_phy()
-Message-Id: <20190927.100412.283048791655860337.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Sep 2019 12:54:14 +0000
+Subject: [PATCH] mt7601u: phy: simplify zero check on val
+Message-Id: <20190920125414.15507-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105714.GF3264@mwanda>
-In-Reply-To: <20190925105714.GF3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: claudiu.manoil@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jakub Kicinski <kubakici@wp.pl>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 13:57:14 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> The "priv->if_mode" is type phy_interface_t which is an enum.  In this
-> context GCC will treat the enum as an unsigned int so this error
-> handling is never triggered.
-> 
-> Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently the zero check on val to break out of a loop
+is a little obscure.  Replace the val is zero and break check
+with a loop while value is non-zero.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/mediatek/mt7601u/phy.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt7601u/phy.c b/drivers/net/wireless/mediatek/mt7601u/phy.c
+index 06f5702ab4bd..4e0e473caae1 100644
+--- a/drivers/net/wireless/mediatek/mt7601u/phy.c
++++ b/drivers/net/wireless/mediatek/mt7601u/phy.c
+@@ -213,9 +213,7 @@ int mt7601u_wait_bbp_ready(struct mt7601u_dev *dev)
+ 
+ 	do {
+ 		val = mt7601u_bbp_rr(dev, MT_BBP_REG_VERSION);
+-		if (val && ~val)
+-			break;
+-	} while (--i);
++	} while (val && --i);
+ 
+ 	if (!i) {
+ 		dev_err(dev->dev, "Error: BBP is not ready\n");
+-- 
+2.20.1
