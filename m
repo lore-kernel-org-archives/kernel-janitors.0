@@ -1,75 +1,52 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Date: Fri, 20 Sep 2019 19:49:00 +0000
-Subject: Re: [PATCH v2] leds-bcm6328: Use devm_platform_ioremap_resource() in bcm6328_leds_probe()
-Message-Id: <72d7c197-e5ca-d51e-4c36-016147ce3d1c@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 20 Sep 2019 14:30:13 +0000
+Subject: [PATCH 2/2] net: dsa: vsc73xx: Return an error code as a constant in vsc73xx_platform_probe()
+Message-Id: <738c12c8-f51e-d2e5-f31e-7f726cf6325d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b6ea044c-c483-0de6-67c5-5ea2fa3c85aa@web.de>
- <658bd05d-376d-adfd-64a5-e20f83d7b90a@gmail.com>
- <bd063a0e-d541-b95f-add1-90edde0acf50@web.de>
-In-Reply-To: <bd063a0e-d541-b95f-add1-90edde0acf50@web.de>
+References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
+In-Reply-To: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-leds@vger.kernel.org, =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>, Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Pawel Dembicki <paweldembicki@gmail.com>, Vivien Didelot <vivien.didelot@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 16:07:07 +0200
 
-Thank you for the updated patch set.
+* Return an error code without storing it in an intermediate variable.
 
-Applied to the for-5.5 branch.
+* Delete the local variable “ret” which became unnecessary
+  with this refactoring.
 
-Best regards,
-Jacek Anaszewski
+This issue was detected by using the Coccinelle software.
 
-On 9/20/19 2:40 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Sep 2019 14:30:31 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> 
-> v2:
-> 
-> Jacek Anaszewski requested to split updates for two modules
-> 
-> into a separate patch for each driver.
-> 
-> https://lore.kernel.org/r/658bd05d-376d-adfd-64a5-e20f83d7b90a@gmail.com/
-> 
-> 
-> 
->  drivers/leds/leds-bcm6328.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-> index c50d34e2b098..42e1b7598c3a 100644
-> --- a/drivers/leds/leds-bcm6328.c
-> +++ b/drivers/leds/leds-bcm6328.c
-> @@ -346,16 +346,11 @@ static int bcm6328_leds_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = pdev->dev.of_node;
->  	struct device_node *child;
-> -	struct resource *mem_r;
->  	void __iomem *mem;
->  	spinlock_t *lock; /* memory lock */
->  	unsigned long val, *blink_leds, *blink_delay;
-> 
-> -	mem_r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!mem_r)
-> -		return -EINVAL;
-> -
-> -	mem = devm_ioremap_resource(dev, mem_r);
-> +	mem = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(mem))
->  		return PTR_ERR(mem);
-> 
-> --
-> 2.23.0
-> 
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/dsa/vitesse-vsc73xx-platform.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/dsa/vitesse-vsc73xx-platform.c b/drivers/net/dsa/vitesse-vsc73xx-platform.c
+index a3bbf9bd1bf1..0ae8d904ca85 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx-platform.c
++++ b/drivers/net/dsa/vitesse-vsc73xx-platform.c
+@@ -89,7 +89,6 @@ static int vsc73xx_platform_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct vsc73xx_platform *vsc_platform;
+-	int ret;
+
+ 	vsc_platform = devm_kzalloc(dev, sizeof(*vsc_platform), GFP_KERNEL);
+ 	if (!vsc_platform)
+@@ -103,8 +102,7 @@ static int vsc73xx_platform_probe(struct platform_device *pdev)
+ 	vsc_platform->base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(vsc_platform->base_addr)) {
+ 		dev_err(&pdev->dev, "cannot request I/O memory space\n");
+-		ret = -ENXIO;
+-		return ret;
++		return -ENXIO;
+ 	}
+
+ 	return vsc73xx_probe(&vsc_platform->vsc);
+--
+2.23.0
