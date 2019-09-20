@@ -1,40 +1,57 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Date: Thu, 12 Sep 2019 00:54:41 +0000
-Subject: Re: [PATCH] ocfs2: fix spelling mistake "ambigous" -> "ambiguous"
-Message-Id: <831bdff4-064e-038b-f45d-c4d265cbff1e@linux.alibaba.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 20 Sep 2019 14:28:00 +0000
+Subject: [PATCH 1/2] net: dsa: vsc73xx: Use devm_platform_ioremap_resource() in vsc73xx_platform_probe()
+Message-Id: <dbc78014-6ed4-5080-8208-0a5930a3bf6e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190911160728.24322-1-colin.king@canonical.com>
-In-Reply-To: <20190911160728.24322-1-colin.king@canonical.com>
+References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
+In-Reply-To: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Pawel Dembicki <paweldembicki@gmail.com>, Vivien Didelot <vivien.didelot@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 15:23:39 +0200
 
+Simplify this function implementation by using a known wrapper function.
 
-On 19/9/12 00:07, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a mlog_bug_on_msg message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 7ad9d6590818..7c9dfd50c1c1 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -534,7 +534,7 @@ static int ocfs2_read_locked_inode(struct inode *inode,
->  	 */
->  	mlog_bug_on_msg(!!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) !>  			!!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE),
-> -			"Inode %llu: system file state is ambigous\n",
-> +			"Inode %llu: system file state is ambiguous\n",
->  			(unsigned long long)args->fi_blkno);
->  
->  	if (S_ISCHR(le16_to_cpu(fe->i_mode)) ||
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/dsa/vitesse-vsc73xx-platform.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/drivers/net/dsa/vitesse-vsc73xx-platform.c b/drivers/net/dsa/vitesse-vsc73xx-platform.c
+index 0541785f9fee..a3bbf9bd1bf1 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx-platform.c
++++ b/drivers/net/dsa/vitesse-vsc73xx-platform.c
+@@ -89,7 +89,6 @@ static int vsc73xx_platform_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct vsc73xx_platform *vsc_platform;
+-	struct resource *res = NULL;
+ 	int ret;
+
+ 	vsc_platform = devm_kzalloc(dev, sizeof(*vsc_platform), GFP_KERNEL);
+@@ -101,16 +100,7 @@ static int vsc73xx_platform_probe(struct platform_device *pdev)
+ 	vsc_platform->vsc.dev = dev;
+ 	vsc_platform->vsc.priv = vsc_platform;
+ 	vsc_platform->vsc.ops = &vsc73xx_platform_ops;
+-
+-	/* obtain I/O memory space */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "cannot obtain I/O memory space\n");
+-		ret = -ENXIO;
+-		return ret;
+-	}
+-
+-	vsc_platform->base_addr = devm_ioremap_resource(&pdev->dev, res);
++	vsc_platform->base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(vsc_platform->base_addr)) {
+ 		dev_err(&pdev->dev, "cannot request I/O memory space\n");
+ 		ret = -ENXIO;
+--
+2.23.0
