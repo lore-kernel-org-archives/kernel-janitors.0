@@ -1,46 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 16:39:45 +0000
-Subject: [PATCH] scsi: fnic: make array dev_cmd_err static const, makes object smaller
-Message-Id: <20190906163945.3889-1-colin.king@canonical.com>
+From: Connor Kuehl <connor.kuehl@canonical.com>
+Date: Fri, 20 Sep 2019 09:48:07 +0000
+Subject: [PATCH] staging: rtl8188eu: remove unnecessary self-assignment
+Message-Id: <20190920094807.9217-1-connor.kuehl@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is a self-assignment which is redundant. Fix this by removing the
+self-assignment.
 
-Don't populate the array dev_cmd_err on the stack but instead make it
-static const. Makes the object code smaller by 80 bytes.
+Addresses-Coverity: ("Self assignment")
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  21461	   1564	      0	  23025	   59f1	drivers/scsi/fnic/vnic_dev.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  21318	   1628	      0	  22946	   59a2	drivers/scsi/fnic/vnic_dev.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
 ---
- drivers/scsi/fnic/vnic_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/fnic/vnic_dev.c b/drivers/scsi/fnic/vnic_dev.c
-index 78af9cc2009b..f7f445c6b4fc 100644
---- a/drivers/scsi/fnic/vnic_dev.c
-+++ b/drivers/scsi/fnic/vnic_dev.c
-@@ -259,7 +259,7 @@ int vnic_dev_cmd1(struct vnic_dev *vdev, enum vnic_devcmd_cmd cmd, int wait)
- 	struct vnic_devcmd __iomem *devcmd = vdev->devcmd;
- 	int delay;
- 	u32 status;
--	int dev_cmd_err[] = {
-+	static const int dev_cmd_err[] = {
- 		/* convert from fw's version of error.h to host's version */
- 		0,	/* ERR_SUCCESS */
- 		EINVAL,	/* ERR_EINVAL */
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
+index 086f98d38cba..57ae0e83dd3e 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
+@@ -552,7 +552,6 @@ void Hal_ReadAntennaDiversity88E(struct adapter *pAdapter, u8 *PROMContent, bool
+ 			pHalData->AntDivCfg = 1; /*  0xC1[3] is ignored. */
+ 	} else {
+ 		pHalData->AntDivCfg = 0;
+-		pHalData->TRxAntDivType = pHalData->TRxAntDivType; /*  The value in the driver setting of device manager. */
+ 	}
+ 	DBG_88E("EEPROM : AntDivCfg = %x, TRxAntDivType = %x\n", pHalData->AntDivCfg, pHalData->TRxAntDivType);
+ }
 -- 
-2.20.1
+2.17.1
