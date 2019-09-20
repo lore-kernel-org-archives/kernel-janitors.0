@@ -1,37 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Sep 2019 11:11:04 +0000
-Subject: [PATCH] drm/i915/gvt: fix spelling mistake "resseting" -> "resetting"
-Message-Id: <20190911111104.28357-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 20 Sep 2019 14:25:53 +0000
+Subject: [PATCH 0/2] net: dsa: vsc73xx: Adjustments for vsc73xx_platform_probe()
+Message-Id: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181125232524.14672-1-colin.king@canonical.com>
-In-Reply-To: <20181125232524.14672-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Pawel Dembicki <paweldembicki@gmail.com>, Vivien Didelot <vivien.didelot@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 16:17:18 +0200
 
-There is a spelling mistake in a gvt_dbg_core debug message. Fix it.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/gvt/vgpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/vgpu.c b/drivers/gpu/drm/i915/gvt/vgpu.c
-index d5a6e4e3d0fd..ecfd91b1b12c 100644
---- a/drivers/gpu/drm/i915/gvt/vgpu.c
-+++ b/drivers/gpu/drm/i915/gvt/vgpu.c
-@@ -531,7 +531,7 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
- 	intel_engine_mask_t resetting_eng = dmlr ? ALL_ENGINES : engine_mask;
- 
- 	gvt_dbg_core("------------------------------------------\n");
--	gvt_dbg_core("resseting vgpu%d, dmlr %d, engine_mask %08x\n",
-+	gvt_dbg_core("resetting vgpu%d, dmlr %d, engine_mask %08x\n",
- 		     vgpu->id, dmlr, engine_mask);
- 
- 	vgpu->resetting_eng = resetting_eng;
--- 
-2.20.1
+Markus Elfring (2):
+  Use devm_platform_ioremap_resource()
+  Return an error code as a constant
+
+ drivers/net/dsa/vitesse-vsc73xx-platform.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+--
+2.23.0
