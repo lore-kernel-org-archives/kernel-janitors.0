@@ -1,33 +1,78 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 07 Sep 2019 13:48:09 +0000
-Subject: Re: [PATCH] net/hamradio/6pack: Fix the size of a sk_buff used in 'sp_bump()'
-Message-Id: <20190907.154809.649105225947712090.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 20 Sep 2019 10:57:00 +0000
+Subject: [PATCH v2] ethernet: lantiq_xrx200: Use devm_platform_ioremap_resource() in xrx200_probe()
+Message-Id: <43bed158-2af9-c518-2f97-a473c2b84eb7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
+References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
+ <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
+In-Reply-To: <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: ajk@comnets.uni-bremen.de, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Hauke Mehrtens <hauke@hauke-m.de>, Radhey Shyam Pandey <radheys@xilinx.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 26 Aug 2019 21:02:09 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 11:48:33 +0200
 
-> We 'allocate' 'count' bytes here. In fact, 'dev_alloc_skb' already add some
-> extra space for padding, so a bit more is allocated.
-> 
-> However, we use 1 byte for the KISS command, then copy 'count' bytes, so
-> count+1 bytes.
-> 
-> Explicitly allocate and use 1 more byte to be safe.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Simplify this function implementation by using the wrapper function
+“devm_platform_ioremap_resource” instead of calling the functions
+“platform_get_resource” and “devm_ioremap_resource” directly.
 
-I applied your patch as-is, as it is correct and doesn't change the contents
-of the data put into the SKB at all.
+* Thus reduce also a bit of exception handling code here.
+* Delete the local variable “res”.
 
-->rcount is the cooked count minus two, but then we copy effectively
-cooked count minus one bytes from one byte past the beginning of the
-cooked buffer and so all the accesses are in range on the input buffer
-side.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+Further changes were requested by Radhey Shyam Pandey.
+
+https://lore.kernel.org/r/CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com/
+
+
+
+* Updates for three modules were split into a separate patch for each driver.
+
+* The commit description was adjusted.
+
+
+
+
+
+ drivers/net/ethernet/lantiq_xrx200.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/lantiq_xrx200.c b/drivers/net/ethernet/lantiq_xrx200.c
+index 900affbdcc0e..0a7ea45b9e59 100644
+--- a/drivers/net/ethernet/lantiq_xrx200.c
++++ b/drivers/net/ethernet/lantiq_xrx200.c
+@@ -424,7 +424,6 @@ static int xrx200_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct resource *res;
+ 	struct xrx200_priv *priv;
+ 	struct net_device *net_dev;
+ 	const u8 *mac;
+@@ -443,15 +442,7 @@ static int xrx200_probe(struct platform_device *pdev)
+ 	SET_NETDEV_DEV(net_dev, dev);
+ 	net_dev->min_mtu = ETH_ZLEN;
+ 	net_dev->max_mtu = XRX200_DMA_DATA_LEN;
+-
+-	/* load the memory ranges */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "failed to get resources\n");
+-		return -ENOENT;
+-	}
+-
+-	priv->pmac_reg = devm_ioremap_resource(dev, res);
++	priv->pmac_reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->pmac_reg)) {
+ 		dev_err(dev, "failed to request and remap io ranges\n");
+ 		return PTR_ERR(priv->pmac_reg);
+--
+2.23.0
