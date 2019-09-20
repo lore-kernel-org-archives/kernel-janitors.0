@@ -1,24 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:22:06 +0000
-Subject: Re: [PATCH net] net: ethernet: stmmac: Fix signedness bug in ipq806x_gmac_of_parse()
-Message-Id: <20190927.102206.1720435175604577653.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 20 Sep 2019 19:45:33 +0000
+Subject: [PATCH] ieee802154: mcr20a: simplify a bit 'mcr20a_handle_rx_read_buf_complete()'
+Message-Id: <20190920194533.5886-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925110554.GQ3264@mwanda>
-In-Reply-To: <20190925110554.GQ3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: peppe.cavallaro@st.com, mathieu@codeaurora.org, alexandre.torgue@st.com, joabreu@synopsys.com, mcoquelin.stm32@gmail.com, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+To: liuxuenetmail@gmail.com, alex.aring@gmail.com, stefan@datenfreihafen.org, davem@davemloft.net
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 14:05:54 +0300
+Use a 'skb_put_data()' variant instead of rewritting it.
+The __skb_put_data variant is safe here. It is obvious that the skb can
+not overflow. It has just been allocated a few lines above with the same
+'len'.
 
-> The "gmac->phy_mode" variable is an enum and in this context GCC will
-> treat it as an unsigned int so the error handling will never be
-> triggered.
-> 
-> Fixes: b1c17215d718 ("stmmac: add ipq806x glue layer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ieee802154/mcr20a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+index 17f2300e63ee..8dc04e2590b1 100644
+--- a/drivers/net/ieee802154/mcr20a.c
++++ b/drivers/net/ieee802154/mcr20a.c
+@@ -800,7 +800,7 @@ mcr20a_handle_rx_read_buf_complete(void *context)
+ 	if (!skb)
+ 		return;
+ 
+-	memcpy(skb_put(skb, len), lp->rx_buf, len);
++	__skb_put_data(skb, lp->rx_buf, len);
+ 	ieee802154_rx_irqsafe(lp->hw, skb, lp->rx_lqi[0]);
+ 
+ 	print_hex_dump_debug("mcr20a rx: ", DUMP_PREFIX_OFFSET, 16, 1,
+-- 
+2.20.1
