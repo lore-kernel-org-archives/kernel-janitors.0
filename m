@@ -1,31 +1,35 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Tue, 10 Sep 2019 07:16:49 +0000
-Subject: Re: [PATCH net 0/2] fix memory leak for sctp_do_bind
-Message-Id: <20190910071649.GB31884@localhost.localdomain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 20 Sep 2019 04:56:56 +0000
+Subject: [PATCH] qede: qede_fp: simplify a bit 'qede_rx_build_skb()'
+Message-Id: <20190920045656.3725-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190910071343.18808-1-maowenan@huawei.com>
-In-Reply-To: <20190910071343.18808-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: vyasevich@gmail.com, marcelo.leitner@gmail.com, davem@davemloft.net, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: aelior@marvell.com, GR-everest-linux-l2@marvell.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Sep 10, 2019 at 03:13:41PM +0800, Mao Wenan wrote:
-> First patch is to do cleanup, remove redundant assignment,
-> second patch is to fix memory leak for sctp_do_bind if failed
-> to bind address.
-> 
-> Mao Wenan (2):
->   sctp: remove redundant assignment when call sctp_get_port_local
->   sctp: destroy bucket if failed to bind addr
-> 
->  net/sctp/socket.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
-> 
-Series
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Use 'skb_put_data()' instead of rewritting it.
+This improves readability.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/qlogic/qede/qede_fp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_fp.c b/drivers/net/ethernet/qlogic/qede/qede_fp.c
+index 0ae28f0d2523..004c0bfec41d 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_fp.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_fp.c
+@@ -779,8 +779,7 @@ qede_rx_build_skb(struct qede_dev *edev,
+ 			return NULL;
+ 
+ 		skb_reserve(skb, pad);
+-		memcpy(skb_put(skb, len),
+-		       page_address(bd->data) + offset, len);
++		skb_put_data(skb, page_address(bd->data) + offset, len);
+ 		qede_reuse_page(rxq, bd);
+ 		goto out;
+ 	}
+-- 
+2.20.1
