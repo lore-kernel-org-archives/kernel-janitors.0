@@ -1,62 +1,61 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 20 Sep 2019 11:30:35 +0000
-Subject: [PATCH v2] ethernet: axienet: Use devm_platform_ioremap_resource() in axienet_probe()
-Message-Id: <604a6376-0298-ebcd-ee84-435945370374@web.de>
+From: Radhey Shyam Pandey <radheys@xilinx.com>
+Date: Fri, 20 Sep 2019 11:57:31 +0000
+Subject: RE: [PATCH v2] ethernet: axienet: Use devm_platform_ioremap_resource() in axienet_probe()
+Message-Id: <CH2PR02MB70007655B190BCBC9113BD4BC7880@CH2PR02MB7000.namprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
  <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
-In-Reply-To: <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
+ <604a6376-0298-ebcd-ee84-435945370374@web.de>
+In-Reply-To: <604a6376-0298-ebcd-ee84-435945370374@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Michal Simek <michals@xilinx.com>, Radhey Shyam Pandey <radheys@xilinx.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "David S. Miller" <davem@davemloft.net>, Michal Simek <michals@xilinx.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2019 13:17:01 +0200
-
-Simplify this function implementation by using the wrapper function
-“devm_platform_ioremap_resource” instead of calling the functions
-“platform_get_resource” and “devm_ioremap_resource” directly.
-
-* Thus reduce also a bit of exception handling code here.
-* Delete the local variable “res”.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
-
-v2:
-Further changes were requested by Radhey Shyam Pandey.
-https://lore.kernel.org/r/CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com/
-
-* Updates for three modules were split into a separate patch for each driver.
-* The commit description was adjusted.
-
-
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 4fc627fb4d11..92783aaaa0a2 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1787,14 +1787,7 @@ static int axienet_probe(struct platform_device *pdev)
- 		of_node_put(np);
- 		lp->eth_irq = platform_get_irq(pdev, 0);
- 	} else {
--		/* Check for these resources directly on the Ethernet node. */
--		struct resource *res = platform_get_resource(pdev,
--							     IORESOURCE_MEM, 1);
--		if (!res) {
--			dev_err(&pdev->dev, "unable to get DMA memory resource\n");
--			goto free_netdev;
--		}
--		lp->dma_regs = devm_ioremap_resource(&pdev->dev, res);
-+		lp->dma_regs = devm_platform_ioremap_resource(pdev, 1);
- 		lp->rx_irq = platform_get_irq(pdev, 1);
- 		lp->tx_irq = platform_get_irq(pdev, 0);
- 		lp->eth_irq = platform_get_irq(pdev, 2);
---
-2.23.0
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8TWFy
+a3VzLkVsZnJpbmdAd2ViLmRlPg0KPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMCwgMjAxOSA1
+OjAxIFBNDQo+IFRvOiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmc7IERhdmlkIFMuDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5l
+dD47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gUmFkaGV5IFNoeWFtIFBh
+bmRleSA8cmFkaGV5c0B4aWxpbnguY29tPg0KPiBDYzogTEtNTCA8bGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZz47IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
+W1BBVENIIHYyXSBldGhlcm5ldDogYXhpZW5ldDogVXNlDQo+IGRldm1fcGxhdGZvcm1faW9yZW1h
+cF9yZXNvdXJjZSgpIGluIGF4aWVuZXRfcHJvYmUoKQ0KPiANCj4gRnJvbTogTWFya3VzIEVsZnJp
+bmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBEYXRlOiBGcmksIDIwIFNlcCAy
+MDE5IDEzOjE3OjAxICswMjAwDQo+IA0KPiBTaW1wbGlmeSB0aGlzIGZ1bmN0aW9uIGltcGxlbWVu
+dGF0aW9uIGJ5IHVzaW5nIHRoZSB3cmFwcGVyIGZ1bmN0aW9uDQo+IOKAnGRldm1fcGxhdGZvcm1f
+aW9yZW1hcF9yZXNvdXJjZeKAnSBpbnN0ZWFkIG9mIGNhbGxpbmcgdGhlIGZ1bmN0aW9ucw0KPiDi
+gJxwbGF0Zm9ybV9nZXRfcmVzb3VyY2XigJ0gYW5kIOKAnGRldm1faW9yZW1hcF9yZXNvdXJjZeKA
+nSBkaXJlY3RseS4NCj4gDQo+ICogVGh1cyByZWR1Y2UgYWxzbyBhIGJpdCBvZiBleGNlcHRpb24g
+aGFuZGxpbmcgY29kZSBoZXJlLg0KPiAqIERlbGV0ZSB0aGUgbG9jYWwgdmFyaWFibGUg4oCccmVz
+4oCdLg0KPiANCj4gVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVs
+bGUgc29mdHdhcmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmlu
+Z0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQoNClJldmlld2VkLWJ5OiBSYWRoZXkgU2h5YW0gUGFu
+ZGV5IDxyYWRoZXkuc2h5YW0ucGFuZGV5QHhpbGlueC5jb20+DQoNClRoYW5rcyENCj4gLS0tDQo+
+IA0KPiB2MjoNCj4gRnVydGhlciBjaGFuZ2VzIHdlcmUgcmVxdWVzdGVkIGJ5IFJhZGhleSBTaHlh
+bSBQYW5kZXkuDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvQ0gyUFIwMk1CNzAwMDQ3QUZG
+RkUwOEZFNUZENTYzNTQxQzc4RTBAQw0KPiBIMlBSMDJNQjcwMDAubmFtcHJkMDIucHJvZC5vdXRs
+b29rLmNvbS8NCj4gDQo+ICogVXBkYXRlcyBmb3IgdGhyZWUgbW9kdWxlcyB3ZXJlIHNwbGl0IGlu
+dG8gYSBzZXBhcmF0ZSBwYXRjaCBmb3IgZWFjaCBkcml2ZXIuDQo+ICogVGhlIGNvbW1pdCBkZXNj
+cmlwdGlvbiB3YXMgYWRqdXN0ZWQuDQo+IA0KPiANCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3hp
+bGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMgfCA5ICstLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCA4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGlsaW54X2F4aWVuZXRfbWFpbi5jDQo+IGluZGV4IDRm
+YzYyN2ZiNGQxMS4uOTI3ODNhYWFhMGEyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhl
+cm5ldC94aWxpbngveGlsaW54X2F4aWVuZXRfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0
+aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gQEAgLTE3ODcsMTQgKzE3ODcs
+NyBAQCBzdGF0aWMgaW50IGF4aWVuZXRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAq
+cGRldikNCj4gIAkJb2Zfbm9kZV9wdXQobnApOw0KPiAgCQlscC0+ZXRoX2lycSA9IHBsYXRmb3Jt
+X2dldF9pcnEocGRldiwgMCk7DQo+ICAJfSBlbHNlIHsNCj4gLQkJLyogQ2hlY2sgZm9yIHRoZXNl
+IHJlc291cmNlcyBkaXJlY3RseSBvbiB0aGUgRXRoZXJuZXQgbm9kZS4NCj4gKi8NCj4gLQkJc3Ry
+dWN0IHJlc291cmNlICpyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwNCj4gLQ0KPiBJ
+T1JFU09VUkNFX01FTSwgMSk7DQo+IC0JCWlmICghcmVzKSB7DQo+IC0JCQlkZXZfZXJyKCZwZGV2
+LT5kZXYsICJ1bmFibGUgdG8gZ2V0IERNQSBtZW1vcnkNCj4gcmVzb3VyY2VcbiIpOw0KPiAtCQkJ
+Z290byBmcmVlX25ldGRldjsNCj4gLQkJfQ0KPiAtCQlscC0+ZG1hX3JlZ3MgPSBkZXZtX2lvcmVt
+YXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcmVzKTsNCj4gKwkJbHAtPmRtYV9yZWdzID0gZGV2bV9w
+bGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKHBkZXYsIDEpOw0KPiAgCQlscC0+cnhfaXJxID0gcGxh
+dGZvcm1fZ2V0X2lycShwZGV2LCAxKTsNCj4gIAkJbHAtPnR4X2lycSA9IHBsYXRmb3JtX2dldF9p
+cnEocGRldiwgMCk7DQo+ICAJCWxwLT5ldGhfaXJxID0gcGxhdGZvcm1fZ2V0X2lycShwZGV2LCAy
+KTsNCj4gLS0NCj4gMi4yMy4wDQoNCg=
