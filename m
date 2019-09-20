@@ -1,34 +1,62 @@
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date: Sun, 22 Sep 2019 21:08:00 +0000
-Subject: Re: [PATCH v2 net] net: ena: Select DIMLIB for ENA_ETHERNET
-Message-Id: <20190922140800.6b1ed695@cakuba.netronome.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 20 Sep 2019 11:30:35 +0000
+Subject: [PATCH v2] ethernet: axienet: Use devm_platform_ioremap_resource() in axienet_probe()
+Message-Id: <604a6376-0298-ebcd-ee84-435945370374@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190921200741.1c3289e8@cakuba.netronome.com>
-        <20190922053808.117965-1-maowenan@huawei.com>
-In-Reply-To: <20190922053808.117965-1-maowenan@huawei.com>
+References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
+ <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
+In-Reply-To: <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: netanel@amazon.com, saeedb@amazon.com, zorik@amazon.com, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Michal Simek <michals@xilinx.com>, Radhey Shyam Pandey <radheys@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, 22 Sep 2019 13:38:08 +0800, Mao Wenan wrote:
-> If CONFIG_ENA_ETHERNET=y and CONFIG_DIMLIB=n,
-> below erros can be found:
-> drivers/net/ethernet/amazon/ena/ena_netdev.o: In function `ena_dim_work':
-> ena_netdev.c:(.text+0x21cc): undefined reference to `net_dim_get_rx_moderation'
-> ena_netdev.c:(.text+0x21cc): relocation truncated to
-> fit: R_AARCH64_CALL26 against undefined symbol `net_dim_get_rx_moderation'
-> drivers/net/ethernet/amazon/ena/ena_netdev.o: In function `ena_io_poll':
-> ena_netdev.c:(.text+0x7bd4): undefined reference to `net_dim'
-> ena_netdev.c:(.text+0x7bd4): relocation truncated to fit:
-> R_AARCH64_CALL26 against undefined symbol `net_dim'
-> 
-> After commit 282faf61a053 ("net: ena: switch to dim algorithm for rx adaptive
-> interrupt moderation"), it introduces dim algorithm, which configured by CONFIG_DIMLIB.
-> So, this patch is to select DIMLIB for ENA_ETHERNET.
-> 
-> Fixes: 282faf61a053 ("net: ena: switch to dim algorithm for rx adaptive interrupt moderation")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 13:17:01 +0200
 
-Applied, thank you!
+Simplify this function implementation by using the wrapper function
+“devm_platform_ioremap_resource” instead of calling the functions
+“platform_get_resource” and “devm_ioremap_resource” directly.
+
+* Thus reduce also a bit of exception handling code here.
+* Delete the local variable “res”.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+Further changes were requested by Radhey Shyam Pandey.
+https://lore.kernel.org/r/CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com/
+
+* Updates for three modules were split into a separate patch for each driver.
+* The commit description was adjusted.
+
+
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 4fc627fb4d11..92783aaaa0a2 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1787,14 +1787,7 @@ static int axienet_probe(struct platform_device *pdev)
+ 		of_node_put(np);
+ 		lp->eth_irq = platform_get_irq(pdev, 0);
+ 	} else {
+-		/* Check for these resources directly on the Ethernet node. */
+-		struct resource *res = platform_get_resource(pdev,
+-							     IORESOURCE_MEM, 1);
+-		if (!res) {
+-			dev_err(&pdev->dev, "unable to get DMA memory resource\n");
+-			goto free_netdev;
+-		}
+-		lp->dma_regs = devm_ioremap_resource(&pdev->dev, res);
++		lp->dma_regs = devm_platform_ioremap_resource(pdev, 1);
+ 		lp->rx_irq = platform_get_irq(pdev, 1);
+ 		lp->tx_irq = platform_get_irq(pdev, 0);
+ 		lp->eth_irq = platform_get_irq(pdev, 2);
+--
+2.23.0
