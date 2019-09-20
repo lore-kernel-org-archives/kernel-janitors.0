@@ -1,51 +1,26 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 20:12:40 +0000
-Subject: [PATCH] serial: bcm2835: Use devm_platform_ioremap_resource() in bcm2835aux_serial_probe()
-Message-Id: <fcb34c72-89c7-9993-fc0a-ba3a61708bec@web.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Fri, 20 Sep 2019 17:51:20 +0000
+Subject: Re: [PATCH] serial: bcm2835: Use devm_platform_ioremap_resource() in bcm2835aux_serial_probe()
+Message-Id: <b874901f-8dc2-e0ec-b2da-26b37e75ec26@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <fcb34c72-89c7-9993-fc0a-ba3a61708bec@web.de>
+In-Reply-To: <fcb34c72-89c7-9993-fc0a-ba3a61708bec@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Martin Sperl <kernel@martin.sperl.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Stephen Boyd <swboyd@chromium.org>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-serial@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Martin Sperl <kernel@martin.sperl.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Stephen Boyd <swboyd@chromium.org>
 Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 22:00:14 +0200
+On 9/18/19 1:12 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2019 22:00:14 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Simplify this function implementation by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/tty/serial/8250/8250_bcm2835aux.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_bcm2835aux.c b/drivers/tty/serial/8250/8250_bcm2835aux.c
-index 8ce700c1a7fc..e2c9d19fc8e9 100644
---- a/drivers/tty/serial/8250/8250_bcm2835aux.c
-+++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
-@@ -25,7 +25,6 @@ struct bcm2835aux_data {
- static int bcm2835aux_serial_probe(struct platform_device *pdev)
- {
- 	struct bcm2835aux_data *data;
--	struct resource *res;
- 	int ret;
-
- 	/* allocate the custom structure */
-@@ -61,12 +60,7 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
- 	data->uart.port.irq = ret;
-
- 	/* map the main registers */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "memory resource not found");
--		return -EINVAL;
--	}
--	data->uart.port.membase = devm_ioremap_resource(&pdev->dev, res);
-+	data->uart.port.membase = devm_platform_ioremap_resource(pdev, 0);
- 	ret = PTR_ERR_OR_ZERO(data->uart.port.membase);
- 	if (ret)
- 		return ret;
---
-2.23.0
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
