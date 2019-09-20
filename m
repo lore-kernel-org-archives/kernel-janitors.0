@@ -1,24 +1,27 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 05 Sep 2019 09:00:38 +0000
-Subject: Re: NFS: Checking the handling of patch variations
-Message-Id: <6687a296-e656-872e-02e4-e2722383d363@web.de>
+Date: Fri, 20 Sep 2019 19:00:13 +0000
+Subject: [PATCH 0/2] net/phy/mdio-mscc-miim: Adjustments for mscc_miim_probe()
+Message-Id: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1567490688-17872-1-git-send-email-zhongjiang@huawei.com>
- <ee684073-bd3e-9a1c-4d38-702f55affba4@web.de> <5D7075B7.3080400@huawei.com>
-In-Reply-To: <5D7075B7.3080400@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: zhong jiang <zhongjiang@huawei.com>, kernel-janitors@vger.kernel.org
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> I suggest to take another look at a similar patch.
-> How to fast find out the similar patch. Search the key word doesn't work well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 20:52:25 +0200
 
-This is a recurring development challenge, isn't it?
+Two update suggestions were taken into account
 
-The occurrence of related update suggestions can occasionally become
-more interesting.
+from static source code analysis.
 
-Regards,
-Markus
+Markus Elfring (2):
+  Use devm_platform_ioremap_resource()
+  Move the setting of mii_bus structure members
+
+ drivers/net/phy/mdio-mscc-miim.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
+
+--
+2.23.0
