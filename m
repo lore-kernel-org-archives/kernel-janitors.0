@@ -1,48 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 Sep 2019 14:27:36 +0000
-Subject: Re: [PATCH] ASoC: amd: acp3x: clean up an indentation issue
-Message-Id: <20190927142552.GH27389@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Sep 2019 12:20:30 +0000
+Subject: [PATCH] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
+Message-Id: <20190920122030.14340-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190927103858.631-1-colin.king@canonical.com>
- <729ae953-b78a-9452-e8b3-3583a21a1295@canonical.com>
-In-Reply-To: <729ae953-b78a-9452-e8b3-3583a21a1295@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, YueHaibing <yuehaibing@huawei.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 11:43:31AM +0100, Colin Ian King wrote:
-> On 27/09/2019 11:38, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a return statement that is indented too deeply, remove
-> > the extraneous tab.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  sound/soc/amd/raven/acp3x-pcm-dma.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > index bc4dfafdfcd1..ea57088d50ce 100644
-> > --- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > +++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > @@ -631,7 +631,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	if (!res) {
-> >  		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
-> > -			return -ENODEV;
-> > +		return -ENODEV;
-> >  	}
-> >  
-> >  	adata = devm_kzalloc(&pdev->dev, sizeof(*adata), GFP_KERNEL);
-> > 
-> Oops, I've sent this fix before. ignore. apologies.
+From: Colin Ian King <colin.king@canonical.com>
 
-Haha.  I used to do this all the time.  Now my QC script searches my
-outbox.  I still send duplicates sometimes if I'm travelling and forget
-to copy my outbox over.
+The call to pinctrl_count_index_with_args checks for a -EINVAL return
+however this function calls pinctrl_get_list_and_count and this can
+return -ENOENT. Rather than check for a specific error, fix this by
+checking for any error return to catch the -ENOENT case.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Improper use of negative")
+Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index e5e7f1f22813..b522ca010332 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -496,7 +496,7 @@ static int ti_iodelay_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 
+ 	rows = pinctrl_count_index_with_args(np, name);
+-	if (rows = -EINVAL)
++	if (rows < 0)
+ 		return rows;
+ 
+ 	*map = devm_kzalloc(iod->dev, sizeof(**map), GFP_KERNEL);
+-- 
+2.20.1
