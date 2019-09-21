@@ -1,59 +1,65 @@
-From: shuah <shuah@kernel.org>
-Date: Mon, 16 Sep 2019 13:18:30 +0000
-Subject: Re: [PATCH v2] usbip: vhci_hcd indicate failed message
-Message-Id: <2743ad5b-9348-bd2b-4763-a2a199e6edad@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Sep 2019 15:57:24 +0000
+Subject: [PATCH] EDAC: Armada XP: Use devm_platform_ioremap_resource() in two functions
+Message-Id: <3cf2076e-6394-4997-613d-cbf5b6dbee1e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5D7E3D1A.5070906@bfs.de>
- <20190915142223.158404-1-maowenan@huawei.com>
-In-Reply-To: <20190915142223.158404-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, valentina.manea.m@gmail.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, shuah <shuah@kernel.org>
+To: linux-edac@vger.kernel.org, Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter <rrichter@marvell.com>, Tony Luck <tony.luck@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 9/15/19 8:22 AM, Mao Wenan wrote:
-> If the return value of vhci_init_attr_group and
-> sysfs_create_group is non-zero, which mean they failed
-> to init attr_group and create sysfs group, so it would
-> better add 'failed' message to indicate that.
-> This patch also change pr_err to dev_err to trace which
-> device is failed.
-> 
-> Fixes: 0775a9cbc694 ("usbip: vhci extension: modifications to vhci driver")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->   v2: change pr_err to dev_err.
->   drivers/usb/usbip/vhci_hcd.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index 000ab7225717..bea28ec846ee 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -1185,12 +1185,12 @@ static int vhci_start(struct usb_hcd *hcd)
->   	if (id = 0 && usb_hcd_is_primary_hcd(hcd)) {
->   		err = vhci_init_attr_group();
->   		if (err) {
-> -			pr_err("init attr group\n");
-> +			dev_err(hcd_dev(hcd), "init attr group failed\n");
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 17:50:17 +0200
 
-Why not include err information in the message. Helps figure out why
-it failed.
+Simplify these function implementations by using a known function.
 
->   			return err;
->   		}
->   		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
->   		if (err) {
-> -			pr_err("create sysfs files\n");
-> +			dev_err(hcd_dev(hcd), "create sysfs files failed\n");
->   			vhci_finish_attr_group();
->   			return err;
->   		}
-> 
+This issue was detected by using the Coccinelle software.
 
-Why not include err information in the message. Helps figure out why
-it failed.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/edac/armada_xp_edac.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/edac/armada_xp_edac.c b/drivers/edac/armada_xp_edac.c
+index 7f227bdcbc84..096d8de3893e 100644
+--- a/drivers/edac/armada_xp_edac.c
++++ b/drivers/edac/armada_xp_edac.c
+@@ -286,17 +286,10 @@ static int axp_mc_probe(struct platform_device *pdev)
+ 	struct edac_mc_layer layers[1];
+ 	const struct of_device_id *id;
+ 	struct mem_ctl_info *mci;
+-	struct resource *r;
+ 	void __iomem *base;
+ 	uint32_t config;
+
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r) {
+-		dev_err(&pdev->dev, "Unable to get mem resource\n");
+-		return -ENODEV;
+-	}
+-
+-	base = devm_ioremap_resource(&pdev->dev, r);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		dev_err(&pdev->dev, "Unable to map regs\n");
+ 		return PTR_ERR(base);
+@@ -516,15 +509,8 @@ static int aurora_l2_probe(struct platform_device *pdev)
+ 	const struct of_device_id *id;
+ 	uint32_t l2x0_aux_ctrl;
+ 	void __iomem *base;
+-	struct resource *r;
+-
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r) {
+-		dev_err(&pdev->dev, "Unable to get mem resource\n");
+-		return -ENODEV;
+-	}
+
+-	base = devm_ioremap_resource(&pdev->dev, r);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		dev_err(&pdev->dev, "Unable to map regs\n");
+ 		return PTR_ERR(base);
+--
+2.23.0
