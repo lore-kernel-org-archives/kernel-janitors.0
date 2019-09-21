@@ -1,71 +1,53 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 07 Sep 2019 14:54:26 +0000
-Subject: =?UTF-8?B?QWRqdXN0aW5nIFNtUEwgc2NyaXB0IOKAnHB0cl9yZXQuY29jY2nigJ0/?=
-Message-Id: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
+Date: Sat, 21 Sep 2019 13:40:38 +0000
+Subject: [PATCH] spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in xtfpga_spi_probe()
+Message-Id: <178bb78e-714f-645f-d819-5732870c4272@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Allison Randal <allison@lohutok.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 15:35:08 +0200
 
-I have taken another look at a known script for the semantic patch language.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccinelle/api/ptr_ret.cocci?id=1e3778cb223e861808ae0daccf353536e7573eed#n3
+Simplify this function implementation by using a known wrapper function.
 
-I got the impression that duplicate SmPL code can be reduced here.
-So I tried the following approach out.
+This issue was detected by using the Coccinelle software.
 
-…
-@depends on patch@
-expression ptr;
-@@
-(
-(
-- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
-|
-- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
-)
-+ return PTR_ERR_OR_ZERO(ptr);
-|
-- (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
-+ PTR_ERR_OR_ZERO(ptr)
-)
-…
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/spi/spi-xtensa-xtfpga.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
+diff --git a/drivers/spi/spi-xtensa-xtfpga.c b/drivers/spi/spi-xtensa-xtfpga.c
+index 86516eb1e143..fc2b5eb7d614 100644
+--- a/drivers/spi/spi-xtensa-xtfpga.c
++++ b/drivers/spi/spi-xtensa-xtfpga.c
+@@ -80,7 +80,6 @@ static void xtfpga_spi_chipselect(struct spi_device *spi, int is_on)
+ static int xtfpga_spi_probe(struct platform_device *pdev)
+ {
+ 	struct xtfpga_spi *xspi;
+-	struct resource *mem;
+ 	int ret;
+ 	struct spi_master *master;
 
-Unfortunately, I got the following information then for a test transformation.
-
-elfring@Sonne:~/Projekte/Linux/next-patched> spatch -D patch scripts/coccinelle/api/ptr_ret.cocci drivers/spi/spi-gpio.c
-…
-29: no available token to attach to
-
-
-It seems that the Coccinelle software “1.0.7-00218-gf284bf36” does not like
-the addition of the shown return statement after a nested SmPL disjunction.
-But the following SmPL code variant seems to work as expected.
-
-
-…
-@depends on patch@
-expression ptr;
-@@
-(
-- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
-+ return PTR_ERR_OR_ZERO(ptr);
-|
-- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
-+ return PTR_ERR_OR_ZERO(ptr);
-|
-- (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
-+ PTR_ERR_OR_ZERO(ptr)
-)
-…
-
-
-How do you think about to reduce subsequent SmPL rules also according to
-a possible recombination of affected implementation details?
-
-Regards,
-Markus
+@@ -97,14 +96,7 @@ static int xtfpga_spi_probe(struct platform_device *pdev)
+ 	xspi->bitbang.master = master;
+ 	xspi->bitbang.chipselect = xtfpga_spi_chipselect;
+ 	xspi->bitbang.txrx_word[SPI_MODE_0] = xtfpga_spi_txrx_word;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "No memory resource\n");
+-		ret = -ENODEV;
+-		goto err;
+-	}
+-	xspi->regs = devm_ioremap_resource(&pdev->dev, mem);
++	xspi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(xspi->regs)) {
+ 		ret = PTR_ERR(xspi->regs);
+ 		goto err;
+--
+2.23.0
