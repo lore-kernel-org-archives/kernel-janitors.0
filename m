@@ -1,32 +1,57 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 05 Sep 2019 09:42:22 +0000
-Subject: [PATCH -next] xhci-ext-caps.c: Add missing platform_device_put() on error in xhci_create_intel_xhci_
-Message-Id: <20190905100001.128349-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Sep 2019 11:30:29 +0000
+Subject: [PATCH] rtc: m48t86: Use devm_platform_ioremap_resource() in m48t86_rtc_probe()
+Message-Id: <25448e11-c43f-9ae0-4c43-6f789accc026@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saranya Gopal <saranya.gopal@intel.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Add the missing platform_device_put() before return from
-xhci_create_intel_xhci_sw_pdev() in the error handling case.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 13:13:35 +0200
 
-Fixes: 6ed151f26484 ("xhci-ext-caps.c: Add property to disable Intel SW switch")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Simplify this function implementation by using a known wrapper function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/xhci-ext-caps.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-m48t86.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
-index f498160df969..3351d07c431f 100644
---- a/drivers/usb/host/xhci-ext-caps.c
-+++ b/drivers/usb/host/xhci-ext-caps.c
-@@ -57,6 +57,7 @@ static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
- 		ret = platform_device_add_properties(pdev, role_switch_props);
- 		if (ret) {
- 			dev_err(dev, "failed to register device properties\n");
-+			platform_device_put(pdev);
- 			return ret;
- 		}
- 	}
+diff --git a/drivers/rtc/rtc-m48t86.c b/drivers/rtc/rtc-m48t86.c
+index 59b54ed9b841..75a0e73071d8 100644
+--- a/drivers/rtc/rtc-m48t86.c
++++ b/drivers/rtc/rtc-m48t86.c
+@@ -218,7 +218,6 @@ static bool m48t86_verify_chip(struct platform_device *pdev)
+ static int m48t86_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct m48t86_rtc_info *info;
+-	struct resource *res;
+ 	unsigned char reg;
+ 	int err;
+ 	struct nvmem_config m48t86_nvmem_cfg = {
+@@ -235,17 +234,11 @@ static int m48t86_rtc_probe(struct platform_device *pdev)
+ 	if (!info)
+ 		return -ENOMEM;
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+-	info->index_reg = devm_ioremap_resource(&pdev->dev, res);
++	info->index_reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(info->index_reg))
+ 		return PTR_ERR(info->index_reg);
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!res)
+-		return -ENODEV;
+-	info->data_reg = devm_ioremap_resource(&pdev->dev, res);
++	info->data_reg = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(info->data_reg))
+ 		return PTR_ERR(info->data_reg);
+
+--
+2.23.0
