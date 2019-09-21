@@ -1,19 +1,48 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Sun, 08 Sep 2019 16:11:18 +0000
-Subject: Re: [PATCH] netfilter: nf_tables: Fix an Oops in nf_tables_updobj() error handling
-Message-Id: <20190908161118.hfvcmrqsxyyxogyj@salvia>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 21 Sep 2019 06:17:38 +0000
+Subject: [PATCH] hdlc: Simplify code in 'pvc_xmit()'
+Message-Id: <20190921061738.25326-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906081808.GA8281@mwanda>
-In-Reply-To: <20190906081808.GA8281@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Fernando Fernandez Mancera <ffmancera@riseup.net>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: khc@pm.waw.pl, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Sep 06, 2019 at 11:18:08AM +0300, Dan Carpenter wrote:
-> The "newobj" is an error pointer so we can't pass it to kfree().  It
-> doesn't need to be freed so we can remove that and I also renamed the
-> error label.
+Use __skb_pad instead of rewriting it, this saves some LoC.
 
-Applied, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/net/wan/hdlc_fr.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wan/hdlc_fr.c b/drivers/net/wan/hdlc_fr.c
+index 9acad651ea1f..30f20b667c8b 100644
+--- a/drivers/net/wan/hdlc_fr.c
++++ b/drivers/net/wan/hdlc_fr.c
+@@ -414,16 +414,12 @@ static netdev_tx_t pvc_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		if (dev->type = ARPHRD_ETHER) {
+ 			int pad = ETH_ZLEN - skb->len;
+ 			if (pad > 0) { /* Pad the frame with zeros */
+-				int len = skb->len;
+-				if (skb_tailroom(skb) < pad)
+-					if (pskb_expand_head(skb, 0, pad,
+-							     GFP_ATOMIC)) {
+-						dev->stats.tx_dropped++;
+-						dev_kfree_skb(skb);
+-						return NETDEV_TX_OK;
+-					}
++				if (__skb_pad(skb, pad, false) < 0) {
++					dev->stats.tx_dropped++;
++					dev_kfree_skb(skb);
++					return NETDEV_TX_OK;
++				}
+ 				skb_put(skb, pad);
+-				memset(skb->data + len, 0, pad);
+ 			}
+ 			skb->protocol = cpu_to_be16(ETH_P_802_3);
+ 		}
+-- 
+2.20.1
