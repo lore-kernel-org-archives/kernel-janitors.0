@@ -1,37 +1,58 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 06 Sep 2019 17:50:39 +0000
-Subject: Re: [PATCH] staging: rtl8188eu: make two arrays static const, makes object smaller
-Message-Id: <9f1e1550-2a75-abc3-4d87-a0c1d1ae1ccb@lwfinger.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Sep 2019 17:50:46 +0000
+Subject: [PATCH] drm/komeda: Use devm_platform_ioremap_resource() in komeda_dev_create()
+Message-Id: <64a6ea39-3e4b-2ebe-74f7-98720e581e3e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906173949.21860-1-colin.king@canonical.com>
-In-Reply-To: <20190906173949.21860-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Brian Starkey <brian.starkey@arm.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, "James (Qian) Wang" <james.qian.wang@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 9/6/19 12:39 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate two arrays on the stack but instead make them
-> static const. Makes the object code smaller by 49 bytes.
-> 
-> Before:
->     text	   data	    bss	    dec	    hex	filename
->    26821	   5616	      0	  32437	   7eb5	rtl8188eu/core/rtw_ieee80211.o
-> 
-> After:
->     text	   data	    bss	    dec	    hex	filename
->    26612	   5776	      0	  32388	   7e84	rtl8188eu/core/rtw_ieee80211.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 19:43:51 +0200
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Simplify this function implementation by using a known wrapper function.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-Larry
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+index ca64a129c594..a387d923962e 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+@@ -172,19 +172,12 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	const struct komeda_product_data *product;
+ 	struct komeda_dev *mdev;
+-	struct resource *io_res;
+ 	int err = 0;
+
+ 	product = of_device_get_match_data(dev);
+ 	if (!product)
+ 		return ERR_PTR(-ENODEV);
+
+-	io_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!io_res) {
+-		DRM_ERROR("No registers defined.\n");
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+ 	mdev = devm_kzalloc(dev, sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev)
+ 		return ERR_PTR(-ENOMEM);
+@@ -192,7 +185,7 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
+ 	mutex_init(&mdev->lock);
+
+ 	mdev->dev = dev;
+-	mdev->reg_base = devm_ioremap_resource(dev, io_res);
++	mdev->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mdev->reg_base)) {
+ 		DRM_ERROR("Map register space failed.\n");
+ 		err = PTR_ERR(mdev->reg_base);
+--
+2.23.0
