@@ -1,46 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 06 Sep 2019 17:01:04 +0000
-Subject: [PATCH] scsi: ufs: make array setup_attrs static const, makes object smaller
-Message-Id: <20190906170104.10450-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Sep 2019 10:48:25 +0000
+Subject: [PATCH] rtc: goldfish: Use devm_platform_ioremap_resource() in goldfish_rtc_probe()
+Message-Id: <5ecfcf43-d6b2-1a38-dee8-b8806f30bc83@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pedro Sousa <pedrom.sousa@synopsys.com>, Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Miodrag Dinic <miodrag.dinic@mips.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aleksandar Markovic <aleksandar.markovic@imgtec.com>, Goran Ferenc <goran.ferenc@imgtec.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 12:20:11 +0200
 
-Don't populate the array setup_attrs on the stack but instead make it
-static const. Makes the object code smaller by 180 bytes.
+Simplify this function implementation by using a known wrapper function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   2140	    224	      0	   2364	    93c	drivers/scsi/ufs/ufshcd-dwc.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   1863	    320	      0	   2183	    887	drivers/scsi/ufs/ufshcd-dwc.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/ufs/ufshcd-dwc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-goldfish.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd-dwc.c b/drivers/scsi/ufs/ufshcd-dwc.c
-index fb9e2ff4f8d2..6a901da2d15a 100644
---- a/drivers/scsi/ufs/ufshcd-dwc.c
-+++ b/drivers/scsi/ufs/ufshcd-dwc.c
-@@ -80,7 +80,7 @@ static int ufshcd_dwc_link_is_up(struct ufs_hba *hba)
-  */
- static int ufshcd_dwc_connection_setup(struct ufs_hba *hba)
+diff --git a/drivers/rtc/rtc-goldfish.c b/drivers/rtc/rtc-goldfish.c
+index 1a3420ee6a4d..cb6b0ad7ec3f 100644
+--- a/drivers/rtc/rtc-goldfish.c
++++ b/drivers/rtc/rtc-goldfish.c
+@@ -165,7 +165,6 @@ static const struct rtc_class_ops goldfish_rtc_ops = {
+ static int goldfish_rtc_probe(struct platform_device *pdev)
  {
--	const struct ufshcd_dme_attr_val setup_attrs[] = {
-+	static const struct ufshcd_dme_attr_val setup_attrs[] = {
- 		{ UIC_ARG_MIB(T_CONNECTIONSTATE), 0, DME_LOCAL },
- 		{ UIC_ARG_MIB(N_DEVICEID), 0, DME_LOCAL },
- 		{ UIC_ARG_MIB(N_DEVICEID_VALID), 0, DME_LOCAL },
--- 
-2.20.1
+ 	struct goldfish_rtc *rtcdrv;
+-	struct resource *r;
+ 	int err;
+
+ 	rtcdrv = devm_kzalloc(&pdev->dev, sizeof(*rtcdrv), GFP_KERNEL);
+@@ -173,12 +172,7 @@ static int goldfish_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+
+ 	platform_set_drvdata(pdev, rtcdrv);
+-
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r)
+-		return -ENODEV;
+-
+-	rtcdrv->base = devm_ioremap_resource(&pdev->dev, r);
++	rtcdrv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rtcdrv->base))
+ 		return -ENODEV;
+
+--
+2.23.0
