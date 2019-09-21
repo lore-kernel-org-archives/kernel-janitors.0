@@ -1,55 +1,47 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 23 Sep 2019 19:07:46 +0000
-Subject: [PATCH] RDMA/iw_cgxb4: Fix an error handling path in 'c4iw_connect()'
-Message-Id: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Sep 2019 16:46:31 +0000
+Subject: [PATCH] EDAC: Aspeed: Use devm_platform_ioremap_resource() in aspeed_probe()
+Message-Id: <baabb9e9-a1b2-3a04-9fb6-aa632de5f722@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bharat@chelsio.com, dledford@redhat.com, jgg@ziepe.ca
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-edac@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Andrew Jeffery <andrew@aj.id.au>, Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Joel Stanley <joel@jms.id.au>, Robert Richter <rrichter@marvell.com>, Stefan Schaeckeler <sschaeck@cisco.com>, Tony Luck <tony.luck@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-We should jump to fail3 in order to undo the 'xa_insert_irq()' call.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 18:32:46 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Simplify this function implementation by using a known wrapper function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not sure which Fixes tag to use because of the many refactorings in this
-area. So I've choosen to use none :).
-The issue was already there in 4a740838bf44c. This commit has renamed
-all labels because a new fail1 was introduced. I've not searched further.
+ drivers/edac/aspeed_edac.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Naming of error labels should be improved. Having nowadays a fail5
-between fail2 and fail3 (because fail5 was the last
-error handling path added) is not that readable.
-However, it goes beyong the purpose of this patch.
+diff --git a/drivers/edac/aspeed_edac.c b/drivers/edac/aspeed_edac.c
+index 5634437bb39d..09a9e3de9595 100644
+--- a/drivers/edac/aspeed_edac.c
++++ b/drivers/edac/aspeed_edac.c
+@@ -281,16 +281,11 @@ static int aspeed_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct edac_mc_layer layers[2];
+ 	struct mem_ctl_info *mci;
+-	struct resource *res;
+ 	void __iomem *regs;
+ 	u32 reg04;
+ 	int rc;
 
-Maybe, just using a fail2a, just as already done in 9f5a9632e412 (which
-introduced fail5) would be enough.
----
- drivers/infiniband/hw/cxgb4/cm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENOENT;
+-
+-	regs = devm_ioremap_resource(dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
 
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index e87fc0408470..81440eaf0a00 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -3381,7 +3381,7 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
- 		if (raddr->sin_addr.s_addr = htonl(INADDR_ANY)) {
- 			err = pick_local_ipaddrs(dev, cm_id);
- 			if (err)
--				goto fail2;
-+				goto fail3;
- 		}
- 
- 		/* find a route */
-@@ -3403,7 +3403,7 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
- 		if (ipv6_addr_type(&raddr6->sin6_addr) = IPV6_ADDR_ANY) {
- 			err = pick_local_ip6addrs(dev, cm_id);
- 			if (err)
--				goto fail2;
-+				goto fail3;
- 		}
- 
- 		/* find a route */
--- 
-2.20.1
+--
+2.23.0
