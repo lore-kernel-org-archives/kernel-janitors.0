@@ -1,22 +1,52 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 19 Sep 2019 12:16:17 +0000
-Subject: Re: mtd: st_spi_fsm: Use devm_platform_ioremap_resource() in stfsm_probe()
-Message-Id: <4b467bab-db44-da99-b1fd-0b6cc4ac9547@web.de>
+Date: Sat, 21 Sep 2019 19:03:57 +0000
+Subject: [PATCH] drm/tegra: vic: Use devm_platform_ioremap_resource() in vic_probe()
+Message-Id: <50adb1d3-93fc-44c1-9988-02036911ee46@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e1d32aa4-7c82-64e0-b7c4-33c94d9a2769@web.de>
- <20190919111014.6c569cf3@xps13> <20190919112937.GA3072241@kroah.com>
- <20190919133506.6e46601f@xps13>
-In-Reply-To: <20190919133506.6e46601f@xps13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Armijn Hemel <armijn@tjaldur.nl>, Himanshu Jha <himanshujha199640@gmail.com>, Richard Weinberger <richard@nod.at>, Thomas Gleixner <tglx@linutronix.de>, Brian Norris <computersforpeace@gmail.com>, Lee Jones <lee.jones@linaro.org>, Allison Randal <allison@lohutok.net>
+To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
 
-> Oh right... Sure, I'll ignore it/him as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 20:51:52 +0200
 
-I hope that you will still care for further possible software improvements
-because of presented transformation results around collateral evolution.
+Simplify this function implementation by using a known wrapper function.
 
-Regards,
-Markus
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tegra/vic.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index cd0399fd8c63..bc72d326588b 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -370,7 +370,6 @@ static int vic_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct host1x_syncpt **syncpts;
+-	struct resource *regs;
+ 	struct vic *vic;
+ 	int err;
+
+@@ -384,13 +383,7 @@ static int vic_probe(struct platform_device *pdev)
+ 	if (!syncpts)
+ 		return -ENOMEM;
+
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!regs) {
+-		dev_err(&pdev->dev, "failed to get registers\n");
+-		return -ENXIO;
+-	}
+-
+-	vic->regs = devm_ioremap_resource(dev, regs);
++	vic->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(vic->regs))
+ 		return PTR_ERR(vic->regs);
+
+--
+2.23.0
