@@ -1,44 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Sep 2019 13:42:42 +0000
-Subject: [PATCH v2] i2c: i2c-amd-mp2-pci: Fix Oops in amd_mp2_pci_init() error handling
-Message-Id: <20190910134242.GA6620@mwanda>
+Date: Sat, 21 Sep 2019 06:01:45 +0000
+Subject: [PATCH] wil6210: use after free in wil_netif_rx_any()
+Message-Id: <20190921060145.GD18726@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maya Erez <merez@codeaurora.org>, Dedy Lansky <dlansky@codeaurora.org>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com, kernel-janitors@vger.kernel.org
 
-The problem is that we dereference "privdata->pci_dev" when we print
-the error messages in amd_mp2_pci_init():
+The debug code dereferences "skb" to print "skb->len" so we have to
+print the message before we free "skb".
 
-	dev_err(ndev_dev(privdata), "Failed to enable MP2 PCI device\n");
-		^^^^^^^^^^^^^^^^^
-
-Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
+Fixes: f99fe49ff372 ("wil6210: add wil_netif_rx() helper function")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: style change
-
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 2 +-
+ drivers/net/wireless/ath/wil6210/txrx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index 5e4800d72e00..cd3fd5ee5f65 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -349,12 +349,12 @@ static int amd_mp2_pci_probe(struct pci_dev *pci_dev,
- 	if (!privdata)
- 		return -ENOMEM;
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
+index cb13652491ad..598c1fba9dac 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx.c
++++ b/drivers/net/wireless/ath/wil6210/txrx.c
+@@ -1012,11 +1012,11 @@ void wil_netif_rx_any(struct sk_buff *skb, struct net_device *ndev)
+ 	skb_orphan(skb);
  
-+	privdata->pci_dev = pci_dev;
- 	rc = amd_mp2_pci_init(privdata, pci_dev);
- 	if (rc)
- 		return rc;
+ 	if (security && (wil->txrx_ops.rx_crypto_check(wil, skb) != 0)) {
++		wil_dbg_txrx(wil, "Rx drop %d bytes\n", skb->len);
+ 		dev_kfree_skb(skb);
+ 		ndev->stats.rx_dropped++;
+ 		stats->rx_replay++;
+ 		stats->rx_dropped++;
+-		wil_dbg_txrx(wil, "Rx drop %d bytes\n", skb->len);
+ 		return;
+ 	}
  
- 	mutex_init(&privdata->c2p_lock);
--	privdata->pci_dev = pci_dev;
- 
- 	pm_runtime_set_autosuspend_delay(&pci_dev->dev, 1000);
- 	pm_runtime_use_autosuspend(&pci_dev->dev);
 -- 
 2.20.1
