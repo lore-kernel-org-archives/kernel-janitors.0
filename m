@@ -1,23 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:02:10 +0000
-Subject: Re: [PATCH net] net: hisilicon: Fix signedness bug in hix5hd2_dev_probe()
-Message-Id: <20190927.100210.239358779936843638.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Sep 2019 05:59:26 +0000
+Subject: [PATCH net] ionic: Fix an error code in ionic_lif_alloc()
+Message-Id: <20190921055926.GA18726@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105532.GC3264@mwanda>
-In-Reply-To: <20190925105532.GC3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: yisen.zhuang@huawei.com, zhangfei.gao@linaro.org, salil.mehta@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shannon Nelson <snelson@pensando.io>
+Cc: Pensando Drivers <drivers@pensando.io>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 13:55:32 +0300
+We need to set the error code on this path.  Otherwise it probably
+results in a NULL dereference down the line.
 
-> The "priv->phy_mode" variable is an enum and in this context GCC will
-> treat it as unsigned to the error handling will never trigger.
-> 
-> Fixes: 57c5bc9ad7d7 ("net: hisilicon: add hix5hd2 mac driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: aa3198819bea ("ionic: Add RSS support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied.
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+index db7c82742828..72107a0627a9 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -1704,6 +1704,7 @@ static struct ionic_lif *ionic_lif_alloc(struct ionic *ionic, unsigned int index
+ 					      GFP_KERNEL);
+ 
+ 	if (!lif->rss_ind_tbl) {
++		err = -ENOMEM;
+ 		dev_err(dev, "Failed to allocate rss indirection table, aborting\n");
+ 		goto err_out_free_qcqs;
+ 	}
+-- 
+2.20.1
