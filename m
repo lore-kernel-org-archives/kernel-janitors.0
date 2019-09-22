@@ -1,42 +1,48 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 19 Sep 2019 07:21:57 +0000
-Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
-Message-Id: <2cacd712-a8b8-6471-a9b4-23ba54434c02@web.de>
+Date: Sun, 22 Sep 2019 12:37:13 +0000
+Subject: [PATCH] dmaengine: zx: Use devm_platform_ioremap_resource() in zx_dma_probe()
+Message-Id: <85de79fa-1ca5-a1e5-0296-9e8a2066f134@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.1907061538580.2523@hadrien>
- <de953581-7ae6-952c-3922-3d5b25f48e17@web.de>
- <CAK7LNAT0kxA53k894sfRXOjcbyjj_mmY60JbKy5Lhi2qHJcC9g@mail.gmail.com>
-In-Reply-To: <CAK7LNAT0kxA53k894sfRXOjcbyjj_mmY60JbKy5Lhi2qHJcC9g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> OK, for this refactoring to happen,
-> the second argument should be IORESOURCE_MEM
-> instead of generic 'arg2'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Sep 2019 14:32:12 +0200
 
-A corresponding adjustment was committed on 2019-07-17.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci?id=d09778d16e20bc4f1f4971cc9a9fd7ff6ba898ff
+Simplify this function implementation by using a known wrapper function.
 
-I constructed another variant of a script for the semantic patch language
-based on this contribution.
-I tried out to delete a bit of exception handling code after a call
-of the function “platform_get_resource”.
-Yesterday I sent a selection of patches from this transformation approach.
-(An analysis based on “Linux next-20190916” pointed 56 source files
-as update candidates out.)
+This issue was detected by using the Coccinelle software.
 
-Will it be useful to integrate such a case distinction into
-the SmPL script directory?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/zx_dma.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
+diff --git a/drivers/dma/zx_dma.c b/drivers/dma/zx_dma.c
+index 9f4436f7c914..6b457e683e70 100644
+--- a/drivers/dma/zx_dma.c
++++ b/drivers/dma/zx_dma.c
+@@ -754,18 +754,13 @@ static struct dma_chan *zx_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
+ static int zx_dma_probe(struct platform_device *op)
+ {
+ 	struct zx_dma_dev *d;
+-	struct resource *iores;
+ 	int i, ret = 0;
 
-The analysis based on the committed SmPL script pointed 657 source files
-as update candidates out.
-So there are further opportunities for collateral software evolution.
-Can it become easier to check how many update suggestions are already
-in corresponding patch review queues?
+-	iores = platform_get_resource(op, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -EINVAL;
+-
+ 	d = devm_kzalloc(&op->dev, sizeof(*d), GFP_KERNEL);
+ 	if (!d)
+ 		return -ENOMEM;
 
-Regards,
-Markus
+-	d->base = devm_ioremap_resource(&op->dev, iores);
++	d->base = devm_platform_ioremap_resource(op, 0);
+ 	if (IS_ERR(d->base))
+ 		return PTR_ERR(d->base);
+
+--
+2.23.0
