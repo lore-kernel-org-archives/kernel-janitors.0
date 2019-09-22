@@ -1,58 +1,66 @@
-From: Alice Walton <saraharmony501@gmail.com>
-Date: Sat, 07 Sep 2019 01:35:52 +0000
-Subject: Please forgive me
-Message-Id: <CAHoQAbVi2eUJHHAx8-i6uv=tXXkdZbDQj+bGXrd4foXr+8goAQ@mail.gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Sun, 22 Sep 2019 18:56:10 +0000
+Subject: [PATCH AUTOSEL 4.14 22/89] EDAC/altera: Use the proper type for the IRQ status bits
+Message-Id: <20190922185717.3412-22-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190922185717.3412-1-sashal@kernel.org>
+In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
 
-My Dearest,
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please forgive me for stressing you with my predicaments as I know
-that this letter may come to you as a big surprise.
+[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
 
-Actually, I came across your E-mail from my personal search afterward
-I decided to email you directly believing that you will be honest to
-fulfil my final wish before anything happens to me. Meanwhile, I am
-Madam Alice Walton, 71 years old childless widow from France but i
-reside and doing Gold mining business in Africa before i fall sick.
+Smatch complains about the cast of a u32 pointer to unsigned long:
 
-I am suffering from Adenocarcinoma Cancer of the lungs for the past 8
-years and from all indication my condition is really deteriorating as
-my doctors have confirmed and courageously advised me that I may not
-live beyond 3 weeks from now for the reason that my tumor has reached
-a critical stage which has defiled all forms of medical treatment.
+  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
 
-Since my days are numbered, I’ve decided willingly to fulfil my
-long-time vow to donate to the less privileges the sum of($18.5
-million dollars) I deposited in my offshore account over 7 years now
-because I have tried to handle this project by myself but I have seen
-that my health could not allow me to do so anymore.
+This code wouldn't work on a 64 bit big endian system because it would
+read past the end of &irq_status.
 
-My promise to God includes building of well-equipped charity
-foundation/hospital and a technical school for the orphans and less
-privileges.
+ [ bp: massage. ]
 
-Since i am not capable to handle this again myself due to my critical
-health condition,please i need your consent to help me receive my
-money from the bank and use it to do this divine works of God in your
-country in my name so that my soul can be at rest if anything happens
-to me.
+Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-If you will be honest, kind and willing to assist me handle this
-charity project as I’ve mentioned here, I will like you to provide me
-your personal data like,
-
-(1) Your full name:
-(2) country:
-(3) Occupation:
-(4) phone number:
-(5) Age:
-
-Let me have this data so that i can link you up with my bank as my
-representative and receiver of the funds now that i am still alive.
-
-Warmest Regards!
-Mrs. Alice Walton
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 38983f56ad0dd..d92090b127de7 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1646,6 +1646,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int irq = irq_desc_get_irq(desc);
++	unsigned long bits;
+ 
+ 	dberr = (irq = edac->db_irq) ? 1 : 0;
+ 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+@@ -1655,7 +1656,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 
+ 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
+ 
+-	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
++	bits = irq_status;
++	for_each_set_bit(bit, &bits, 32) {
+ 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+ 		if (irq)
+ 			generic_handle_irq(irq);
+-- 
+2.20.1
