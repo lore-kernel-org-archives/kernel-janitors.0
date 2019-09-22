@@ -1,24 +1,52 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 30 Sep 2019 07:16:30 +0000
-Subject: Re: [PATCH] lightnvm: prevent memory leak in nvm_bb_chunk_sense
-Message-Id: <d44a6dca-006e-5bcc-64b4-2b62cf9a9769@web.de>
+Date: Sun, 22 Sep 2019 10:09:42 +0000
+Subject: [PATCH] dmaengine: k3dma: Use devm_platform_ioremap_resource() in k3_dma_probe()
+Message-Id: <aaed7862-49bb-e368-3e7b-5cc2c3d915b1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190930023415.24171-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190930023415.24171-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-block@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Matias Bjorling <mb@lightnvm.io>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> To fix this issue I moved the __free_page call before error check.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Sep 2019 11:36:18 +0200
 
-Would the wording “Move the __free_page() call before the error check.”
-be more succinct for the change description?
+Simplify this function implementation by using a known wrapper function.
 
-Can the following code variant be applied at the end of this function?
+This issue was detected by using the Coccinelle software.
 
- 	return ret ? ret : rqd.error;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/k3dma.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+index 4b36c8810517..adecea51814f 100644
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -835,13 +835,8 @@ static int k3_dma_probe(struct platform_device *op)
+ 	const struct k3dma_soc_data *soc_data;
+ 	struct k3_dma_dev *d;
+ 	const struct of_device_id *of_id;
+-	struct resource *iores;
+ 	int i, ret, irq = 0;
+
+-	iores = platform_get_resource(op, IORESOURCE_MEM, 0);
+-	if (!iores)
+-		return -EINVAL;
+-
+ 	d = devm_kzalloc(&op->dev, sizeof(*d), GFP_KERNEL);
+ 	if (!d)
+ 		return -ENOMEM;
+@@ -850,7 +845,7 @@ static int k3_dma_probe(struct platform_device *op)
+ 	if (!soc_data)
+ 		return -EINVAL;
+
+-	d->base = devm_ioremap_resource(&op->dev, iores);
++	d->base = devm_platform_ioremap_resource(op, 0);
+ 	if (IS_ERR(d->base))
+ 		return PTR_ERR(d->base);
+
+--
+2.23.0
