@@ -1,45 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Sep 2019 14:22:57 +0000
-Subject: [PATCH] ASoC: soc-component: fix a couple missing error assignments
-Message-Id: <20190923142257.GB31251@mwanda>
+From: Sasha Levin <sashal@kernel.org>
+Date: Sun, 22 Sep 2019 18:52:38 +0000
+Subject: [PATCH AUTOSEL 4.19 028/128] EDAC/altera: Use the proper type for the IRQ status bits
+Message-Id: <20190922185418.2158-28-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190922185418.2158-1-sashal@kernel.org>
+In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
 
-There were a couple places where the return value wasn't assigned so the
-error handling wouldn't trigger.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 5c0769af4caf ("ASoC: soc-dai: add snd_soc_dai_bespoke_trigger()")
-Fixes: 95aef3553384 ("ASoC: soc-dai: add snd_soc_dai_trigger()")
+[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
+
+Smatch complains about the cast of a u32 pointer to unsigned long:
+
+  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+
+This code wouldn't work on a 64 bit big endian system because it would
+read past the end of &irq_status.
+
+ [ bp: massage. ]
+
+Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-pcm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index e163dde5eab1..a1b99ac57d9e 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1070,7 +1070,7 @@ static int soc_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
- 			return ret;
- 	}
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 5762c3c383f2e..56de378ad13dc 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1956,6 +1956,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int irq = irq_desc_get_irq(desc);
++	unsigned long bits;
  
--	snd_soc_dai_trigger(cpu_dai, substream, cmd);
-+	ret = snd_soc_dai_trigger(cpu_dai, substream, cmd);
- 	if (ret < 0)
- 		return ret;
+ 	dberr = (irq = edac->db_irq) ? 1 : 0;
+ 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+@@ -1965,7 +1966,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
  
-@@ -1097,7 +1097,7 @@ static int soc_pcm_bespoke_trigger(struct snd_pcm_substream *substream,
- 			return ret;
- 	}
+ 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
  
--	snd_soc_dai_bespoke_trigger(cpu_dai, substream, cmd);
-+	ret = snd_soc_dai_bespoke_trigger(cpu_dai, substream, cmd);
- 	if (ret < 0)
- 		return ret;
- 
+-	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
++	bits = irq_status;
++	for_each_set_bit(bit, &bits, 32) {
+ 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+ 		if (irq)
+ 			generic_handle_irq(irq);
 -- 
 2.20.1
