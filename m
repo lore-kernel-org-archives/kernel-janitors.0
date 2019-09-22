@@ -1,26 +1,36 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Thu, 26 Sep 2019 03:18:05 +0000
-Subject: Re: [PATCH net] net: broadcom/bcmsysport: Fix signedness in bcm_sysport_probe()
-Message-Id: <2424620c-7e8f-43ad-498f-966f26dc7e9f@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 22 Sep 2019 11:42:16 +0000
+Subject: [PATCH] atm: he: clean up an indentation issue
+Message-Id: <20190922114216.10158-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105604.GD3264@mwanda>
-In-Reply-To: <20190925105604.GD3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a statement that is indented one level too many, remove
+the extraneous tab.
 
-On 9/25/2019 3:56 AM, Dan Carpenter wrote:
-> The "priv->phy_interface" variable is an enum and in this context GCC
-> will treat it as unsigned so the error handling will never be
-> triggered.
-> 
-> Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/he.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index 70b00ae4ec38..8af793f5e811 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -1690,7 +1690,7 @@ he_service_rbrq(struct he_dev *he_dev, int group)
+ 
+ 		if (RBRQ_HBUF_ERR(he_dev->rbrq_head)) {
+ 			hprintk("HBUF_ERR!  (cid 0x%x)\n", cid);
+-				atomic_inc(&vcc->stats->rx_drop);
++			atomic_inc(&vcc->stats->rx_drop);
+ 			goto return_host_buffers;
+ 		}
+ 
 -- 
-Florian
+2.20.1
