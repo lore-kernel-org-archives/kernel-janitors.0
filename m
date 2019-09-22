@@ -1,82 +1,77 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Sep 2019 17:57:26 +0000
-Subject: [PATCH][V2] media: cxd2820r: make arrays tab static const, makes object smaller
-Message-Id: <20190905175726.11805-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 22 Sep 2019 07:41:23 +0000
+Subject: [PATCH] [media] cx88: Fix some error handling path in 'cx8800_initdev()'
+Message-Id: <20190922074123.29124-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+A call to 'pci_disable_device()' is missing in the error handling path.
+In some cases, a call to 'free_irq()' may also be missing.
 
-Don't populate the array tab on the stack but instead make it
-static const. Makes the object size smaller by 170 bytes in total.
+Reorder the error handling path, add some new labels and fix the 2 issues
+mentionned above.
 
-Before:
-   text    data     bss     dec     hex filename
-   7045    1736       0    8781    224d media/dvb-frontends/cxd2820r_c.o
-   8800	   2216	      0	  11016	   2b08	media/dvb-frontends/cxd2820r_t.o
-   8981	   2120	      0	  11101	   2b5d	media/dvb-frontends/cxd2820r_t2.o
+This way, the error handling path in more in line with 'cx8800_finidev()'
+(i.e. the remove function)
 
-After:
-   text    data     bss     dec     hex filename
-   6896    1832       0    8728    2218 media/dvb-frontends/cxd2820r_c.o
-   8651	   2312	      0	  10963	   2ad3	media/dvb-frontends/cxd2820r_t.o
-   8853	   2184	      0	  11037	   2b1d	media/dvb-frontends/cxd2820r_t2.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-
-V2: also make same change to cxd2820r_t.c and cxd2820r_t2.c
-
+It is likely that this is still incomplete, but at least it should be
+better :)
 ---
- drivers/media/dvb-frontends/cxd2820r_c.c  | 2 +-
- drivers/media/dvb-frontends/cxd2820r_t.c  | 2 +-
- drivers/media/dvb-frontends/cxd2820r_t2.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/pci/cx88/cx88-video.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/cxd2820r_c.c b/drivers/media/dvb-frontends/cxd2820r_c.c
-index 6f7eedb4c00e..0ba382948c51 100644
---- a/drivers/media/dvb-frontends/cxd2820r_c.c
-+++ b/drivers/media/dvb-frontends/cxd2820r_c.c
-@@ -298,7 +298,7 @@ int cxd2820r_sleep_c(struct dvb_frontend *fe)
- 	struct cxd2820r_priv *priv = fe->demodulator_priv;
- 	struct i2c_client *client = priv->client[0];
- 	int ret;
--	struct reg_val_mask tab[] = {
-+	static const struct reg_val_mask tab[] = {
- 		{ 0x000ff, 0x1f, 0xff },
- 		{ 0x00085, 0x00, 0xff },
- 		{ 0x00088, 0x01, 0xff },
-diff --git a/drivers/media/dvb-frontends/cxd2820r_t.c b/drivers/media/dvb-frontends/cxd2820r_t.c
-index d56c6f788196..fbdfa6bf38dc 100644
---- a/drivers/media/dvb-frontends/cxd2820r_t.c
-+++ b/drivers/media/dvb-frontends/cxd2820r_t.c
-@@ -392,7 +392,7 @@ int cxd2820r_sleep_t(struct dvb_frontend *fe)
- 	struct cxd2820r_priv *priv = fe->demodulator_priv;
- 	struct i2c_client *client = priv->client[0];
- 	int ret;
--	struct reg_val_mask tab[] = {
-+	static struct reg_val_mask tab[] = {
- 		{ 0x000ff, 0x1f, 0xff },
- 		{ 0x00085, 0x00, 0xff },
- 		{ 0x00088, 0x01, 0xff },
-diff --git a/drivers/media/dvb-frontends/cxd2820r_t2.c b/drivers/media/dvb-frontends/cxd2820r_t2.c
-index f924a80b968a..34ef2bb2de34 100644
---- a/drivers/media/dvb-frontends/cxd2820r_t2.c
-+++ b/drivers/media/dvb-frontends/cxd2820r_t2.c
-@@ -386,7 +386,7 @@ int cxd2820r_sleep_t2(struct dvb_frontend *fe)
- 	struct cxd2820r_priv *priv = fe->demodulator_priv;
- 	struct i2c_client *client = priv->client[0];
- 	int ret;
--	struct reg_val_mask tab[] = {
-+	static const struct reg_val_mask tab[] = {
- 		{ 0x000ff, 0x1f, 0xff },
- 		{ 0x00085, 0x00, 0xff },
- 		{ 0x00088, 0x01, 0xff },
+diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
+index dcc0f02aeb70..b8abcd550604 100644
+--- a/drivers/media/pci/cx88/cx88-video.c
++++ b/drivers/media/pci/cx88/cx88-video.c
+@@ -1277,7 +1277,7 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
+ 	core = cx88_core_get(dev->pci);
+ 	if (!core) {
+ 		err = -EINVAL;
+-		goto fail_free;
++		goto fail_disable;
+ 	}
+ 	dev->core = core;
+ 
+@@ -1323,7 +1323,7 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
+ 				       cc->step, cc->default_value);
+ 		if (!vc) {
+ 			err = core->audio_hdl.error;
+-			goto fail_core;
++			goto fail_irq;
+ 		}
+ 		vc->priv = (void *)cc;
+ 	}
+@@ -1337,7 +1337,7 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
+ 				       cc->step, cc->default_value);
+ 		if (!vc) {
+ 			err = core->video_hdl.error;
+-			goto fail_core;
++			goto fail_irq;
+ 		}
+ 		vc->priv = (void *)cc;
+ 		if (vc->id = V4L2_CID_CHROMA_AGC)
+@@ -1509,11 +1509,14 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
+ 
+ fail_unreg:
+ 	cx8800_unregister_video(dev);
+-	free_irq(pci_dev->irq, dev);
+ 	mutex_unlock(&core->lock);
++fail_irq:
++	free_irq(pci_dev->irq, dev);
+ fail_core:
+ 	core->v4ldev = NULL;
+ 	cx88_core_put(core, dev->pci);
++fail_disable:
++	pci_disable_device(pci_dev);
+ fail_free:
+ 	kfree(dev);
+ 	return err;
 -- 
 2.20.1
