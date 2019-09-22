@@ -1,38 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Sep 2019 17:06:39 +0000
-Subject: [PATCH] media: cx231xx: remove redundant assignment to variable status
-Message-Id: <20190903170639.13849-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 22 Sep 2019 11:30:41 +0000
+Subject: [PATCH] dmaengine: owl: Use devm_platform_ioremap_resource() in owl_dma_probe()
+Message-Id: <d36b6a6c-2e3d-8d68-6ddc-969a377ca3b2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, Dan Williams <dan.j.williams@intel.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Sep 2019 13:23:54 +0200
 
-Variable status is being initialized with a value that is never read
-and is being re-assigned a later on. The assignment is redundant and
-hence can be removed.
+Simplify this function implementation by using a known wrapper function.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cx231xx/cx231xx-avcore.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/owl-dma.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-avcore.c b/drivers/media/usb/cx231xx/cx231xx-avcore.c
-index d417b5fe4093..0974965e848f 100644
---- a/drivers/media/usb/cx231xx/cx231xx-avcore.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-avcore.c
-@@ -1240,7 +1240,7 @@ int cx231xx_init_ctrl_pin_status(struct cx231xx *dev)
- int cx231xx_set_agc_analog_digital_mux_select(struct cx231xx *dev,
- 					      u8 analog_or_digital)
+diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
+index 90bbcef99ef8..023f951189a7 100644
+--- a/drivers/dma/owl-dma.c
++++ b/drivers/dma/owl-dma.c
+@@ -1045,18 +1045,13 @@ static int owl_dma_probe(struct platform_device *pdev)
  {
--	int status = 0;
-+	int status;
- 
- 	/* first set the direction to output */
- 	status = cx231xx_set_gpio_direction(dev,
--- 
-2.20.1
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct owl_dma *od;
+-	struct resource *res;
+ 	int ret, i, nr_channels, nr_requests;
+
+ 	od = devm_kzalloc(&pdev->dev, sizeof(*od), GFP_KERNEL);
+ 	if (!od)
+ 		return -ENOMEM;
+
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -EINVAL;
+-
+-	od->base = devm_ioremap_resource(&pdev->dev, res);
++	od->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(od->base))
+ 		return PTR_ERR(od->base);
+
+--
+2.23.0
