@@ -1,36 +1,47 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 26 Sep 2019 11:13:06 +0000
-Subject: [PATCH] NFC: st95hf: clean up indentation issue
-Message-Id: <20190926111306.17409-1-colin.king@canonical.com>
+Date: Sun, 22 Sep 2019 11:47:00 +0000
+Subject: [PATCH] memstick: jmb38x_ms: clean up indentation issue
+Message-Id: <20190922114700.10563-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The return statement is indented incorrectly, add in a missing
-tab and remove an extraneous space after the return
+There is a hunk of code that is indented one level too deep, fix
+this by removing the extraneous tabs.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/nfc/st95hf/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memstick/host/jmb38x_ms.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-index ce38782ebf80..291efff048af 100644
---- a/drivers/nfc/st95hf/core.c
-+++ b/drivers/nfc/st95hf/core.c
-@@ -661,7 +661,7 @@ static int st95hf_error_handling(struct st95hf_context *stcontext,
- 			result = -ETIMEDOUT;
- 		else
- 			result = -EIO;
--	return  result;
-+		return result;
- 	}
+diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
+index 32747425297d..3394164a7968 100644
+--- a/drivers/memstick/host/jmb38x_ms.c
++++ b/drivers/memstick/host/jmb38x_ms.c
+@@ -433,13 +433,13 @@ static int jmb38x_ms_issue_cmd(struct memstick_host *msh)
+ 		writel(((1 << 16) & BLOCK_COUNT_MASK)
+ 		       | (data_len & BLOCK_SIZE_MASK),
+ 		       host->addr + BLOCK);
+-			t_val = readl(host->addr + INT_STATUS_ENABLE);
+-			t_val |= host->req->data_dir = READ
+-				 ? INT_STATUS_FIFO_RRDY
+-				 : INT_STATUS_FIFO_WRDY;
++		t_val = readl(host->addr + INT_STATUS_ENABLE);
++		t_val |= host->req->data_dir = READ
++			 ? INT_STATUS_FIFO_RRDY
++			 : INT_STATUS_FIFO_WRDY;
  
- 	/* Check for CRC err only if CRC is present in the tag response */
+-			writel(t_val, host->addr + INT_STATUS_ENABLE);
+-			writel(t_val, host->addr + INT_SIGNAL_ENABLE);
++		writel(t_val, host->addr + INT_STATUS_ENABLE);
++		writel(t_val, host->addr + INT_SIGNAL_ENABLE);
+ 	} else {
+ 		cmd &= ~(TPC_DATA_SEL | 0xf);
+ 		host->cmd_flags |= REG_DATA;
 -- 
 2.20.1
