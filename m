@@ -1,55 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 07:44:06 +0000
-Subject: [PATCH] hwrng: mediatek: Use devm_platform_ioremap_resource() in mtk_rng_probe()
-Message-Id: <e6e03822-c68f-55ea-3a65-ee2a44f50e8c@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 22 Sep 2019 11:54:43 +0000
+Subject: [PATCH] mmc: dw_mmc: fix indentation issue
+Message-Id: <20190922115443.11693-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 09:34:11 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+There are a couple of statements that are indented by an extra
+space, clean this up by remove the extraneous spaces.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/char/hw_random/mtk-rng.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/mmc/host/dw_mmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/hw_random/mtk-rng.c b/drivers/char/hw_random/mtk-rng.c
-index e649be5a5f13..8ad7b515a51b 100644
---- a/drivers/char/hw_random/mtk-rng.c
-+++ b/drivers/char/hw_random/mtk-rng.c
-@@ -105,16 +105,9 @@ static int mtk_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-
- static int mtk_rng_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	int ret;
- 	struct mtk_rng *priv;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "no iomem resource\n");
--		return -ENXIO;
--	}
--
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
-@@ -135,7 +128,7 @@ static int mtk_rng_probe(struct platform_device *pdev)
- 		return ret;
- 	}
-
--	priv->base = devm_ioremap_resource(&pdev->dev, res);
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
-
---
-2.23.0
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 79c55c7b4afd..bf0048ebbda3 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -3441,8 +3441,8 @@ int dw_mci_runtime_resume(struct device *dev)
+ 	 * Restore the initial value at FIFOTH register
+ 	 * And Invalidate the prev_blksz with zero
+ 	 */
+-	 mci_writel(host, FIFOTH, host->fifoth_val);
+-	 host->prev_blksz = 0;
++	mci_writel(host, FIFOTH, host->fifoth_val);
++	host->prev_blksz = 0;
+ 
+ 	/* Put in max timeout */
+ 	mci_writel(host, TMOUT, 0xFFFFFFFF);
+-- 
+2.20.1
