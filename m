@@ -1,23 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:21:06 +0000
-Subject: Re: [PATCH net] net: nixge: Fix a signedness bug in nixge_probe()
-Message-Id: <20190927.102106.1025434748772068784.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 22 Sep 2019 11:00:09 +0000
+Subject: [PATCH] dmaengine: mediatek: Use devm_platform_ioremap_resource() in mtk_cqdma_probe()
+Message-Id: <c7e3bbae-44fa-9019-18ee-c6cdfd7c2a14@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925110524.GP3264@mwanda>
-In-Reply-To: <20190925110524.GP3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: mdf@kernel.org, andrew@lunn.ch, alex.williams@ni.com, mcgrof@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, Shun-Chih Yu <shun-chih.yu@mediatek.com>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 14:05:24 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Sep 2019 12:52:25 +0200
 
-> The "priv->phy_mode" is an enum and in this context GCC will treat it
-> as an unsigned int so it can never be less than zero.
-> 
-> Fixes: 492caffa8a1a ("net: ethernet: nixge: Add support for National Instruments XGE netdev")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Simplify this function implementation a bit by using
+a known wrapper function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/mediatek/mtk-cqdma.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
+index 723b11c190b3..6bf838e63be1 100644
+--- a/drivers/dma/mediatek/mtk-cqdma.c
++++ b/drivers/dma/mediatek/mtk-cqdma.c
+@@ -819,15 +819,7 @@ static int mtk_cqdma_probe(struct platform_device *pdev)
+ 		INIT_LIST_HEAD(&cqdma->pc[i]->queue);
+ 		spin_lock_init(&cqdma->pc[i]->lock);
+ 		refcount_set(&cqdma->pc[i]->refcnt, 0);
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res) {
+-			dev_err(&pdev->dev, "No mem resource for %s\n",
+-				dev_name(&pdev->dev));
+-			return -EINVAL;
+-		}
+-
+-		cqdma->pc[i]->base = devm_ioremap_resource(&pdev->dev, res);
++		cqdma->pc[i]->base = devm_platform_ioremap_resource(pdev, i);
+ 		if (IS_ERR(cqdma->pc[i]->base))
+ 			return PTR_ERR(cqdma->pc[i]->base);
+
+--
+2.23.0
