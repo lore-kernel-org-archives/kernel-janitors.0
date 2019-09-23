@@ -1,34 +1,44 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 03 Sep 2019 15:00:46 +0000
-Subject: Re: gfs2: Delete an unnecessary check before brelse()
-Message-Id: <5e7b4313-c3e9-c3c8-8823-7c7a62a13fff@web.de>
+Date: Mon, 23 Sep 2019 09:25:46 +0000
+Subject: Re: EDAC: Armada XP: Use devm_platform_ioremap_resource() in two functions
+Message-Id: <65836b6f-9133-4a14-466d-865830f5bfc0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9250af4a-993c-e86e-678c-acbd59b0861a@web.de>
- <CAHpGcMKEFaZBRNnt1edrvBMS6VUXs5hMdQ2BdNBE3ssgkmDoww@mail.gmail.com>
-In-Reply-To: <CAHpGcMKEFaZBRNnt1edrvBMS6VUXs5hMdQ2BdNBE3ssgkmDoww@mail.gmail.com>
+References: <3cf2076e-6394-4997-613d-cbf5b6dbee1e@web.de>
+ <20190923081117.4p4mwqz35fzavkeg@rric.localdomain>
+In-Reply-To: <20190923081117.4p4mwqz35fzavkeg@rric.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>, cluster-devel <cluster-devel@redhat.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Robert Richter <rrichter@marvell.com>, linux-edac@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> The brelse() function tests whether its argument is NULL
->> and then returns immediately.
->> Thus the test around the call is not needed.
->>
->> This issue was detected by using the Coccinelle software.
->
-> The same applies to brelse() in gfs2_dir_no_add
-> (which Coccinelle apparently missed),
+> Which semantic patch did you use here?
 
-Would you like to achieve that such source code analysis
-will be extended to corresponding header files?
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/gfs2/dir.h?id=7dc4585e03786f84d6e9dc16caa3ba5b8b44d986#n33
+I suggest to take another look at details around background information
+on a subject like “Coccinelle: api: add devm_platform_ioremap_resource script”.
+https://lore.kernel.org/r/2cacd712-a8b8-6471-a9b4-23ba54434c02@web.de/
+https://systeme.lip6.fr/pipermail/cocci/2019-September/006303.html
+https://lkml.org/lkml/2019/9/19/81
 
 
-> so let me fix that as well.
+> There are probably more drivers to fix than the above and the one you fixed:
 
-Thanks for your positive feedback.
+Yes, of course.
+
+I concentrated my update suggestions on a specific source code
+transformation variant recently.
+
+
+> So while at it, how about fixing the .cocci patch in scripts/ and run
+> it for drivers/edac?
+
+Some developers are trying to improve affected software components further.
+Did you eventually receive similar patches already by other contributors?
+
+
+> There should be one patch only for all edac drivers.
+
+Is there consensus for this kind of change expectation?
 
 Regards,
 Markus
