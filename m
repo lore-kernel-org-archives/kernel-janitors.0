@@ -1,71 +1,29 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 19 Sep 2019 12:04:30 +0000
-Subject: [PATCH v2] mtd: st_spi_fsm: Use devm_platform_ioremap_resource() in stfsm_probe()
-Message-Id: <eec0774d-135b-2b19-2595-7a126341c77c@web.de>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 23 Sep 2019 08:25:11 +0000
+Subject: Re: [PATCH][next] ath: fix various spelling mistakes
+Message-Id: <20190923082511.4088660850@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e1d32aa4-7c82-64e0-b7c4-33c94d9a2769@web.de>
- <20190919111014.6c569cf3@xps13>
-In-Reply-To: <20190919111014.6c569cf3@xps13>
+References: <20190702123904.8786-1-colin.king@canonical.com>
+In-Reply-To: <20190702123904.8786-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Allison Randal <allison@lohutok.net>, Armijn Hemel <armijn@tjaldur.nl>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Thomas Gleixner <tglx@linutronix.de>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Maya Erez <merez@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Sep 2019 13:30:51 +0200
+Colin King <colin.king@canonical.com> wrote:
 
-Simplify this function implementation by using a known wrapper function.
-* Thus reduce also a bit of exception handling code.
-* Delete the local variable “res”.
+> There are a bunch of spelling mistakes in two ath drivers, fix
+> these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+80ce8ca7a647 ath: fix various spelling mistakes
 
-v2:
-Further changes were requested by Miquel Raynal.
-https://lore.kernel.org/r/20190919111014.6c569cf3@xps13/
+-- 
+https://patchwork.kernel.org/patch/11027799/
 
-* An error message was adjusted another bit.
-* A variable was removed.
-
-
- drivers/mtd/devices/st_spi_fsm.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/mtd/devices/st_spi_fsm.c b/drivers/mtd/devices/st_spi_fsm.c
-index f4d1667daaf9..ce18198301d5 100644
---- a/drivers/mtd/devices/st_spi_fsm.c
-+++ b/drivers/mtd/devices/st_spi_fsm.c
-@@ -2017,7 +2017,6 @@ static int stfsm_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct flash_info *info;
--	struct resource *res;
- 	struct stfsm *fsm;
- 	int ret;
-
-@@ -2033,17 +2032,9 @@ static int stfsm_probe(struct platform_device *pdev)
- 	fsm->dev = &pdev->dev;
-
- 	platform_set_drvdata(pdev, fsm);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "Resource not found\n");
--		return -ENODEV;
--	}
--
--	fsm->base = devm_ioremap_resource(&pdev->dev, res);
-+	fsm->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(fsm->base)) {
--		dev_err(&pdev->dev,
--			"Failed to reserve memory region %pR\n", res);
-+		dev_err(&pdev->dev, "Failed to reserve memory region\n");
- 		return PTR_ERR(fsm->base);
- 	}
-
---
-2.23.0
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
