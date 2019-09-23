@@ -1,40 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 22 Sep 2019 11:50:54 +0000
-Subject: [PATCH] HID: core: clean up indentation issue
-Message-Id: <20190922115054.10880-1-colin.king@canonical.com>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Mon, 23 Sep 2019 11:04:13 +0000
+Subject: Re: [PATCH] HID: core: clean up indentation issue
+Message-Id: <nycvar.YFH.7.76.1909231303180.1459@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190922115054.10880-1-colin.king@canonical.com>
+In-Reply-To: <20190922115054.10880-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, 22 Sep 2019, Colin King wrote:
 
-There is an if statement that is indented by one extra space,
-fix this by removing the extraneous space.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is an if statement that is indented by one extra space,
+> fix this by removing the extraneous space.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/hid/hid-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 3eaee2c37931..9469c382a182 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -2329,10 +2329,10 @@ int hid_add_device(struct hid_device *hdev)
+>  	/*
+>  	 * Check for the mandatory transport channel.
+>  	 */
+> -	 if (!hdev->ll_driver->raw_request) {
+> +	if (!hdev->ll_driver->raw_request) {
+>  		hid_err(hdev, "transport driver missing .raw_request()\n");
+>  		return -EINVAL;
+> -	 }
+> +	}
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hid/hid-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Let's not pollute git blame and wait for an ocasion when we need to touch 
+the code for some more valid reason.
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 3eaee2c37931..9469c382a182 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2329,10 +2329,10 @@ int hid_add_device(struct hid_device *hdev)
- 	/*
- 	 * Check for the mandatory transport channel.
- 	 */
--	 if (!hdev->ll_driver->raw_request) {
-+	if (!hdev->ll_driver->raw_request) {
- 		hid_err(hdev, "transport driver missing .raw_request()\n");
- 		return -EINVAL;
--	 }
-+	}
- 
- 	/*
- 	 * Read the device report descriptor once and use as template
+Thanks,
+
 -- 
-2.20.1
+Jiri Kosina
+SUSE Labs
