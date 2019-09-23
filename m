@@ -1,52 +1,64 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 22 Sep 2019 08:48:20 +0000
-Subject: [PATCH] dmaengine: at_xdmac: Use devm_platform_ioremap_resource() in at_xdmac_probe()
-Message-Id: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 23 Sep 2019 13:48:37 +0000
+Subject: [PATCH net] Bluetooth: SMP: remove set but not used variable 'smp'
+Message-Id: <20190923140516.166241-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Sep 2019 10:37:31 +0200
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Simplify this function implementation by using a known wrapper function.
+net/bluetooth/smp.c: In function 'smp_irk_matches':
+net/bluetooth/smp.c:505:18: warning:
+ variable 'smp' set but not used [-Wunused-but-set-variable]
 
-This issue was detected by using the Coccinelle software.
+net/bluetooth/smp.c: In function 'smp_generate_rpa':
+net/bluetooth/smp.c:526:18: warning:
+ variable 'smp' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+It is not used since commit 28a220aac596 ("bluetooth: switch
+to AES library")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/dma/at_xdmac.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ net/bluetooth/smp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-index b58ac720d9a1..f71c9f77d405 100644
---- a/drivers/dma/at_xdmac.c
-+++ b/drivers/dma/at_xdmac.c
-@@ -1957,21 +1957,16 @@ static int atmel_xdmac_resume(struct device *dev)
-
- static int at_xdmac_probe(struct platform_device *pdev)
+diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+index 26e8cfad22b8..6b42be4b5861 100644
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -502,15 +502,12 @@ bool smp_irk_matches(struct hci_dev *hdev, const u8 irk[16],
+ 		     const bdaddr_t *bdaddr)
  {
--	struct resource	*res;
- 	struct at_xdmac	*atxdmac;
- 	int		irq, size, nr_channels, i, ret;
- 	void __iomem	*base;
- 	u32		reg;
-
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
+ 	struct l2cap_chan *chan = hdev->smp_data;
+-	struct smp_dev *smp;
+ 	u8 hash[3];
+ 	int err;
+ 
+ 	if (!chan || !chan->data)
+ 		return false;
+ 
+-	smp = chan->data;
 -
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return irq;
-
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-
---
-2.23.0
+ 	BT_DBG("RPA %pMR IRK %*phN", bdaddr, 16, irk);
+ 
+ 	err = smp_ah(irk, &bdaddr->b[3], hash);
+@@ -523,14 +520,11 @@ bool smp_irk_matches(struct hci_dev *hdev, const u8 irk[16],
+ int smp_generate_rpa(struct hci_dev *hdev, const u8 irk[16], bdaddr_t *rpa)
+ {
+ 	struct l2cap_chan *chan = hdev->smp_data;
+-	struct smp_dev *smp;
+ 	int err;
+ 
+ 	if (!chan || !chan->data)
+ 		return -EOPNOTSUPP;
+ 
+-	smp = chan->data;
+-
+ 	get_random_bytes(&rpa->b[3], 3);
+ 
+ 	rpa->b[5] &= 0x3f;	/* Clear two most significant bits */
