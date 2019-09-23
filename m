@@ -1,34 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 10 Sep 2019 04:11:29 +0000
-Subject: [PATCH] tty: serial: owl: Fix the link time qualifier of 'owl_uart_exit()'
-Message-Id: <20190910041129.6978-1-christophe.jaillet@wanadoo.fr>
+From: Connor Kuehl <connor.kuehl@canonical.com>
+Date: Mon, 23 Sep 2019 19:48:06 +0000
+Subject: [PATCH] staging: rtl8188eu: remove dead code in do-while conditional step
+Message-Id: <20190923194806.25347-1-connor.kuehl@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'exit' functions should be marked as __exit, not __init.
+The local variable 'bcmd_down' is always set to true almost immediately
+before the do-while's condition is checked. As a result, !bcmd_down
+evaluates to false which short circuits the logical AND operator meaning
+that the second operand is never reached and is therefore dead code.
 
-Fixes: fc60a8b675bd ("tty: serial: owl: Implement console driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Logically dead code")
+
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
 ---
- drivers/tty/serial/owl-uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 03963af77b15..d2d8b3494685 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -740,7 +740,7 @@ static int __init owl_uart_init(void)
- 	return ret;
- }
- 
--static void __init owl_uart_exit(void)
-+static void __exit owl_uart_exit(void)
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+index 47352f210c0b..a4b317937b23 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+@@ -48,7 +48,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
+ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
  {
- 	platform_driver_unregister(&owl_uart_platform_driver);
- 	uart_unregister_driver(&owl_uart_driver);
+ 	u8 bcmd_down = false;
+-	s32 retry_cnts = 100;
+ 	u8 h2c_box_num;
+ 	u32 msgbox_addr;
+ 	u32 msgbox_ex_addr;
+@@ -103,7 +102,7 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
+ 		adapt->HalData->LastHMEBoxNum  			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
+ 
+-	} while ((!bcmd_down) && (retry_cnts--));
++	} while (!bcmd_down);
+ 
+ 	ret = _SUCCESS;
+ 
 -- 
-2.20.1
+2.17.1
