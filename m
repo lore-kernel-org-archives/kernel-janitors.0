@@ -1,62 +1,116 @@
-From: Stefan Schmidt <stefan@datenfreihafen.org>
-Date: Wed, 25 Sep 2019 06:25:35 +0000
-Subject: Re: [PATCH] ieee802154: mcr20a: simplify a bit 'mcr20a_handle_rx_read_buf_complete()'
-Message-Id: <7d131e76-d487-ead3-1780-6a9a7d7877a4@datenfreihafen.org>
+From: Connor Kuehl <connor.kuehl@canonical.com>
+Date: Tue, 24 Sep 2019 14:28:19 +0000
+Subject: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial do..while loop
+Message-Id: <20190924142819.5243-1-connor.kuehl@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920194533.5886-1-christophe.jaillet@wanadoo.fr>
- <388f335a-a9ae-7230-1713-a1ecb682fecf@datenfreihafen.org>
- <CAJuUDwtWJgo7PHJR4kBpQ9mGamTMEaPZBNOZcL3mWFwwZ-zOmw@mail.gmail.com>
-In-Reply-To: <CAJuUDwtWJgo7PHJR4kBpQ9mGamTMEaPZBNOZcL3mWFwwZ-zOmw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Xue Liu <liuxuenetmail@gmail.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "alex. aring" <alex.aring@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org, dan.carpenter@oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello.
+The local variable 'bcmd_down' is always set to true almost immediately
+before the do-while's condition is checked. As a result, !bcmd_down
+evaluates to false which short circuits the logical AND operator meaning
+that the second operand is never reached and is therefore dead code.
 
-On 24.09.19 23:40, Xue Liu wrote:
-> On Sat, 21 Sep 2019 at 13:52, Stefan Schmidt <stefan@datenfreihafen.org> wrote:
->>
->> Hello Xue.
->>
->> On 20.09.19 21:45, Christophe JAILLET wrote:
->>> Use a 'skb_put_data()' variant instead of rewritting it.
->>> The __skb_put_data variant is safe here. It is obvious that the skb can
->>> not overflow. It has just been allocated a few lines above with the same
->>> 'len'.
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/net/ieee802154/mcr20a.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
->>> index 17f2300e63ee..8dc04e2590b1 100644
->>> --- a/drivers/net/ieee802154/mcr20a.c
->>> +++ b/drivers/net/ieee802154/mcr20a.c
->>> @@ -800,7 +800,7 @@ mcr20a_handle_rx_read_buf_complete(void *context)
->>>        if (!skb)
->>>                return;
->>>
->>> -     memcpy(skb_put(skb, len), lp->rx_buf, len);
->>> +     __skb_put_data(skb, lp->rx_buf, len);
->>>        ieee802154_rx_irqsafe(lp->hw, skb, lp->rx_lqi[0]);
->>>
->>>        print_hex_dump_debug("mcr20a rx: ", DUMP_PREFIX_OFFSET, 16, 1,
->>>
->>
->> Could you please review and ACK this? If you are happy I will take it
->> through my tree.
->>
->> regards
->> Stefan Schmidt
-> 
-> Acked-by: Xue Liu <liuxuenetmail@gmail.com>
+Furthermore, the do..while loop may be removed since it will always only
+execute once because 'bcmd_down' is always set to true, so the
+!bcmd_down evaluates to false and the loop exits immediately after the
+first pass.
 
+Fix this by removing the loop and its condition variables 'bcmd_down'
+and 'retry_cnts'
 
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
+While we're in there, also fix some checkpatch.pl suggestions regarding
+spaces around arithmetic operators like '+'
 
-regards
-Stefan Schmidt
+Addresses-Coverity: ("Logically dead code")
+
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+---
+v1 -> v2:
+ - remove the loop and its condition variable bcmd_down
+ - address some non-invasive checkpatch.pl suggestions as a result of
+   deleting the loop
+
+ drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 55 +++++++++-----------
+ 1 file changed, 24 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+index 47352f210c0b..7646167a0b36 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+@@ -47,8 +47,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
+ ******************************************/
+ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
+ {
+-	u8 bcmd_down = false;
+-	s32 retry_cnts = 100;
+ 	u8 h2c_box_num;
+ 	u32 msgbox_addr;
+ 	u32 msgbox_ex_addr;
+@@ -71,39 +69,34 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
+ 		goto exit;
+ 
+ 	/* pay attention to if  race condition happened in  H2C cmd setting. */
+-	do {
+-		h2c_box_num = adapt->HalData->LastHMEBoxNum;
+-
+-		if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
+-			DBG_88E(" fw read cmd failed...\n");
+-			goto exit;
+-		}
+-
+-		*(u8 *)(&h2c_cmd) = ElementID;
+-
+-		if (CmdLen <= 3) {
+-			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, CmdLen);
+-		} else {
+-			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
+-			ext_cmd_len = CmdLen-3;
+-			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, ext_cmd_len);
++	h2c_box_num = adapt->HalData->LastHMEBoxNum;
+ 
+-			/* Write Ext command */
+-			msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
+-			for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
+-				usb_write8(adapt, msgbox_ex_addr+cmd_idx, *((u8 *)(&h2c_cmd_ex)+cmd_idx));
+-		}
+-		/*  Write command */
+-		msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
+-		for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
+-			usb_write8(adapt, msgbox_addr+cmd_idx, *((u8 *)(&h2c_cmd)+cmd_idx));
++	if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
++		DBG_88E(" fw read cmd failed...\n");
++		goto exit;
++	}
+ 
+-		bcmd_down = true;
++	*(u8 *)(&h2c_cmd) = ElementID;
+ 
+-		adapt->HalData->LastHMEBoxNum -			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
++	if (CmdLen <= 3) {
++		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, CmdLen);
++	} else {
++		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, 3);
++		ext_cmd_len = CmdLen - 3;
++		memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer + 3, ext_cmd_len);
++
++		/* Write Ext command */
++		msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
++		for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
++			usb_write8(adapt, msgbox_ex_addr + cmd_idx, *((u8 *)(&h2c_cmd_ex) + cmd_idx));
++	}
++	/*  Write command */
++	msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
++	for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
++		usb_write8(adapt, msgbox_addr + cmd_idx, *((u8 *)(&h2c_cmd) + cmd_idx));
+ 
+-	} while ((!bcmd_down) && (retry_cnts--));
++	adapt->HalData->LastHMEBoxNum +		(h2c_box_num + 1) % RTL88E_MAX_H2C_BOX_NUMS;
+ 
+ 	ret = _SUCCESS;
+ 
+-- 
+2.17.1
