@@ -1,55 +1,56 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 09 Sep 2019 08:08:39 +0000
-Subject: Re: [PATCH] gpio: mockup: add missing single_release()
-Message-Id: <CAMpxmJVyYVd-B=6x2sNk3Qa1TTsOHju7TKAG=_8h3Bo1zXxDzw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 11:04:49 +0000
+Subject: [PATCH] mm, vmpressure: Fix a signedness bug in vmpressure_register_event()
+Message-Id: <20190925110449.GO3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904141834.195294-1-weiyongjun1@huawei.com> <CAMpxmJWJr0uBCs_oGX+h1uFmQ2f7Axo1iqtD6rzwgT-bbZdD6g@mail.gmail.com>
-In-Reply-To: <CAMpxmJWJr0uBCs_oGX+h1uFmQ2f7Axo1iqtD6rzwgT-bbZdD6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Bamvor Jian Zhang <bamv2005@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: tglx@linutronix.de, Enrico Weigelt <info@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-śr., 4 wrz 2019 o 16:54 Bartosz Golaszewski
-<bgolaszewski@baylibre.com> napisał(a):
->
-> śr., 4 wrz 2019 o 16:00 Wei Yongjun <weiyongjun1@huawei.com> napisał(a):
-> >
-> > When using single_open() for opening, single_release() should be
-> > used instead of seq_release(), otherwise there is a memory leak.
-> >
-> > Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/gpio/gpio-mockup.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> > index f1a9c0544e3f..213aedc97dc2 100644
-> > --- a/drivers/gpio/gpio-mockup.c
-> > +++ b/drivers/gpio/gpio-mockup.c
-> > @@ -309,6 +309,7 @@ static const struct file_operations gpio_mockup_debugfs_ops = {
-> >         .read = gpio_mockup_debugfs_read,
-> >         .write = gpio_mockup_debugfs_write,
-> >         .llseek = no_llseek,
-> > +       .release = single_release,
-> >  };
-> >
-> >  static void gpio_mockup_debugfs_setup(struct device *dev,
-> >
-> >
-> >
->
-> Good catch!
->
-> Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Linus: can you pick it up for your last pull-requests with fixes for v5.3?
->
-> Bart
+The "mode" and "level" variables are enums and in this context GCC will
+treat them as unsigned ints so the error handling is never triggered.
 
-Nevermind - I applied it to my tree and will send it with two other
-fixes in a PR.
+I also removed the bogus initializer because it isn't required any more
+and it's sort of confusing.
 
-Bart
+Fixes: 3cadfa2b9497 ("mm/vmpressure.c: convert to use match_string() helper")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ mm/vmpressure.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mm/vmpressure.c b/mm/vmpressure.c
+index f3b50811497a..fe077500cf20 100644
+--- a/mm/vmpressure.c
++++ b/mm/vmpressure.c
+@@ -362,7 +362,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
+ 	struct vmpressure *vmpr = memcg_to_vmpressure(memcg);
+ 	struct vmpressure_event *ev;
+ 	enum vmpressure_modes mode = VMPRESSURE_NO_PASSTHROUGH;
+-	enum vmpressure_levels level = -1;
++	enum vmpressure_levels level;
+ 	char *spec, *spec_orig;
+ 	char *token;
+ 	int ret = 0;
+@@ -376,7 +376,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
+ 	/* Find required level */
+ 	token = strsep(&spec, ",");
+ 	level = match_string(vmpressure_str_levels, VMPRESSURE_NUM_LEVELS, token);
+-	if (level < 0) {
++	if ((int)level < 0) {
+ 		ret = level;
+ 		goto out;
+ 	}
+@@ -385,7 +385,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
+ 	token = strsep(&spec, ",");
+ 	if (token) {
+ 		mode = match_string(vmpressure_str_modes, VMPRESSURE_NUM_MODES, token);
+-		if (mode < 0) {
++		if ((int)mode < 0) {
+ 			ret = mode;
+ 			goto out;
+ 		}
+-- 
+2.20.1
