@@ -1,32 +1,38 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Wed, 04 Sep 2019 16:35:42 +0000
-Subject: Re: [PATCH -next] pwm: sifive: Remove redundant dev_err call in pwm_sifive_probe()
-Message-Id: <20190904163542.me5q4hlzaf3pdnmx@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Sep 2019 09:51:26 +0000
+Subject: [PATCH] counter: stm32: clean up indentation issue
+Message-Id: <20190925095126.20219-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190904111836.122616-1-weiyongjun1@huawei.com>
-In-Reply-To: <20190904111836.122616-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-pwm@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>, kernel-janitors@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Sep 04, 2019 at 11:18:36AM +0000, Wei Yongjun wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
->=20
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+There is an if statement that is indented one level too deeply,
+remove the extraneous tabs.
 
-that's right
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/counter/stm32-timer-cnt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Thanks
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+index 644ba18a72ad..613dcccf79e1 100644
+--- a/drivers/counter/stm32-timer-cnt.c
++++ b/drivers/counter/stm32-timer-cnt.c
+@@ -219,8 +219,8 @@ static ssize_t stm32_count_enable_write(struct counter_device *counter,
+ 
+ 	if (enable) {
+ 		regmap_read(priv->regmap, TIM_CR1, &cr1);
+-			if (!(cr1 & TIM_CR1_CEN))
+-				clk_enable(priv->clk);
++		if (!(cr1 & TIM_CR1_CEN))
++			clk_enable(priv->clk);
+ 
+ 		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
+ 				   TIM_CR1_CEN);
+-- 
+2.20.1
