@@ -1,65 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 10:54:30 +0000
-Subject: [PATCH net] net: aquantia: Fix aq_vec_isr_legacy() return value
-Message-Id: <20190925105430.GA3264@mwanda>
+From: Igor Russkikh <Igor.Russkikh@aquantia.com>
+Date: Wed, 25 Sep 2019 11:57:59 +0000
+Subject: Re: [PATCH net] net: aquantia: Fix aq_vec_isr_legacy() return value
+Message-Id: <f5be37aa-4744-3976-f899-fafb4b822e3a@aquantia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925105430.GA3264@mwanda>
+In-Reply-To: <20190925105430.GA3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Igor Russkikh <igor.russkikh@aquantia.com>, David VomLehn <vomlehn@texas.net>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, David VomLehn <vomlehn@texas.net>
+Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The irqreturn_t type is an enum or an unsigned int in GCC.  That
-creates to problems because it can't detect if the
-self->aq_hw_ops->hw_irq_read() call fails and at the end the function
-always returns IRQ_HANDLED.
-
-drivers/net/ethernet/aquantia/atlantic/aq_vec.c:316 aq_vec_isr_legacy() warn: unsigned 'err' is never less than zero.
-drivers/net/ethernet/aquantia/atlantic/aq_vec.c:329 aq_vec_isr_legacy() warn: always true condition '(err >= 0) => (0-u32max >= 0)'
-
-Fixes: 970a2e9864b0 ("net: ethernet: aquantia: Vector operations")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/aquantia/atlantic/aq_vec.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-index 28892b8acd0e..a95c263a45aa 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-@@ -306,15 +306,13 @@ irqreturn_t aq_vec_isr_legacy(int irq, void *private)
- {
- 	struct aq_vec_s *self = private;
- 	u64 irq_mask = 0U;
--	irqreturn_t err = 0;
-+	int err;
- 
--	if (!self) {
--		err = -EINVAL;
--		goto err_exit;
--	}
-+	if (!self)
-+		return IRQ_NONE;
- 	err = self->aq_hw_ops->hw_irq_read(self->aq_hw, &irq_mask);
- 	if (err < 0)
--		goto err_exit;
-+		return IRQ_NONE;
- 
- 	if (irq_mask) {
- 		self->aq_hw_ops->hw_irq_disable(self->aq_hw,
-@@ -322,11 +320,10 @@ irqreturn_t aq_vec_isr_legacy(int irq, void *private)
- 		napi_schedule(&self->napi);
- 	} else {
- 		self->aq_hw_ops->hw_irq_enable(self->aq_hw, 1U);
--		err = IRQ_NONE;
-+		return IRQ_NONE;
- 	}
- 
--err_exit:
--	return err >= 0 ? IRQ_HANDLED : IRQ_NONE;
-+	return IRQ_HANDLED;
- }
- 
- cpumask_t *aq_vec_get_affinity_mask(struct aq_vec_s *self)
--- 
-2.20.1
+DQoNCk9uIDI1LjA5LjIwMTkgMTM6NTQsIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRoZSBpcnFy
+ZXR1cm5fdCB0eXBlIGlzIGFuIGVudW0gb3IgYW4gdW5zaWduZWQgaW50IGluIEdDQy4gIFRoYXQN
+Cj4gY3JlYXRlcyB0byBwcm9ibGVtcyBiZWNhdXNlIGl0IGNhbid0IGRldGVjdCBpZiB0aGUNCj4g
+c2VsZi0+YXFfaHdfb3BzLT5od19pcnFfcmVhZCgpIGNhbGwgZmFpbHMgYW5kIGF0IHRoZSBlbmQg
+dGhlIGZ1bmN0aW9uDQo+IGFsd2F5cyByZXR1cm5zIElSUV9IQU5ETEVELg0KDQpUaGFua3MgZm9y
+IG5vdGljaW5nIHRoaXMsIERhbiENCg0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9h
+dGxhbnRpYy9hcV92ZWMuYzozMTYgYXFfdmVjX2lzcl9sZWdhY3koKSB3YXJuOiB1bnNpZ25lZCAn
+ZXJyJyBpcyBuZXZlciBsZXNzIHRoYW4gemVyby4NCj4gZHJpdmVycy9uZXQvZXRoZXJuZXQvYXF1
+YW50aWEvYXRsYW50aWMvYXFfdmVjLmM6MzI5IGFxX3ZlY19pc3JfbGVnYWN5KCkgd2FybjogYWx3
+YXlzIHRydWUgY29uZGl0aW9uICcoZXJyID49IDApID0+ICgwLXUzMm1heCA+PSAwKScNCj4gDQo+
+IEZpeGVzOiA5NzBhMmU5ODY0YjAgKCJuZXQ6IGV0aGVybmV0OiBhcXVhbnRpYTogVmVjdG9yIG9w
+ZXJhdGlvbnMiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVy
+QG9yYWNsZS5jb20+DQoNClJldmlld2VkLWJ5OiBJZ29yIFJ1c3NraWtoIDxpZ29yLnJ1c3NraWto
+QGFxdWFudGlhLmNvbT4NCg0KDQpSZWdhcmRzLA0KICBJZ29yDQo
