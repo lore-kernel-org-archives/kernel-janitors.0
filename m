@@ -1,52 +1,71 @@
-From: "Verma, Vishal L" <vishal.l.verma@intel.com>
-Date: Wed, 25 Sep 2019 17:49:08 +0000
+From: Ira Weiny <ira.weiny@intel.com>
+Date: Wed, 25 Sep 2019 18:11:28 +0000
 Subject: Re: [PATCH] libnvdimm/namespace: Fix a signedness bug in __holder_class_store()
-Message-Id: <c4a097f38fb4a51c9bca183bf72b356f00826c10.camel@intel.com>
+Message-Id: <20190925181127.GA6721@iweiny-DESK2.sc.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190925110008.GK3264@mwanda>
  <71808ca30f4e367931bf58fa3e1798371c2a5044.camel@intel.com>
  <2807E5FD2F6FDA4886F6618EAC48510E8991FB01@CRSMSX101.amr.corp.intel.com>
-In-Reply-To: <2807E5FD2F6FDA4886F6618EAC48510E8991FB01@CRSMSX101.amr.corp.intel.com>
+ <c4a097f38fb4a51c9bca183bf72b356f00826c10.camel@intel.com>
+In-Reply-To: <c4a097f38fb4a51c9bca183bf72b356f00826c10.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Williams, Dan J" <dan.j.williams@intel.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Weiny, Ira" <ira.weiny@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+To: "Verma, Vishal L" <vishal.l.verma@intel.com>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
 
-T24gV2VkLCAyMDE5LTA5LTI1IGF0IDExOjI1IC0wNjAwLCBXZWlueSwgSXJhIHdyb3RlOg0KPiA+
-IE9uIFdlZCwgMjAxOS0wOS0yNSBhdCAxNDowMCArMDMwMCwgRGFuIENhcnBlbnRlciB3cm90ZToN
-Cj4gPiA+IFRoZSAibmRucy0+Y2xhaW1fY2xhc3MiIHZhcmlhYmxlIGlzIGFuIGVudW0gYnV0IGlu
-IHRoaXMgY2FzZSBHQ0Mgd2lsbA0KPiA+ID4gdHJlYXQgaXQgYXMgYW4gdW5zaWduZWQgaW50IHNv
-IHRoZSBlcnJvciBoYW5kbGluZyBpcyBuZXZlciB0cmlnZ2VyZWQuDQo+ID4gPiANCj4gPiA+IEZp
-eGVzOiAxNGU0OTQ1NDI2MzYgKCJsaWJudmRpbW0sIGJ0dDogQlRUIHVwZGF0ZXMgZm9yIFVFRkkg
-Mi43DQo+ID4gPiBmb3JtYXQiKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8
-ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgZHJpdmVycy9udmRp
-bW0vbmFtZXNwYWNlX2RldnMuYyB8IDIgKy0NCj4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbnZkaW1tL25hbWVzcGFjZV9kZXZzLmMNCj4gPiA+IGIvZHJpdmVycy9udmRpbW0vbmFtZXNw
-YWNlX2RldnMuYyBpbmRleCBjY2EwYTNiYTFkMmMuLjY2OTk4NTUyNzcxNg0KPiA+ID4gMTAwNjQ0
-DQo+ID4gPiAtLS0gYS9kcml2ZXJzL252ZGltbS9uYW1lc3BhY2VfZGV2cy5jDQo+ID4gPiArKysg
-Yi9kcml2ZXJzL252ZGltbS9uYW1lc3BhY2VfZGV2cy5jDQo+ID4gPiBAQCAtMTUyOSw3ICsxNTI5
-LDcgQEAgc3RhdGljIHNzaXplX3QgX19ob2xkZXJfY2xhc3Nfc3RvcmUoc3RydWN0IGRldmljZQ0K
-PiA+ICpkZXYsIGNvbnN0IGNoYXIgKmJ1ZikNCj4gPiA+ICAJCXJldHVybiAtRUlOVkFMOw0KPiA+
-ID4gDQo+ID4gPiAgCS8qIGJ0dF9jbGFpbV9jbGFzcygpIGNvdWxkJ3ZlIHJldHVybmVkIGFuIGVy
-cm9yICovDQo+ID4gPiAtCWlmIChuZG5zLT5jbGFpbV9jbGFzcyA8IDApDQo+ID4gPiArCWlmICgo
-aW50KW5kbnMtPmNsYWltX2NsYXNzIDwgMCkNCj4gPiA+ICAJCXJldHVybiBuZG5zLT5jbGFpbV9j
-bGFzczsNCj4gPiA+IA0KPiA+ID4gIAlyZXR1cm4gMDsNCj4gPiANCj4gPiBMb29rcyBzdHJhaWdo
-dGZvcndhcmQsIGFuZCBhIGdvb2QgY2F0Y2guDQo+ID4gUmV2aWV3ZWQtYnk6IFZpc2hhbCBWZXJt
-YSA8dmlzaGFsLmwudmVybWFAaW50ZWwuY29tPg0KPiANCj4gSSdtIG5vdCBzdXJlIHRoaXMgaXMg
-cmVhbGx5IGEgZ29vZCBmaXguICBUaGlzIGxlYXZlcyBuZG5zLT5jbGFpbV9jbGFzcyBzZXQgdG8g
-YW4gaW52YWxpZCB2YWx1ZS4gIElzIHRoYXQgb2s/DQo+IA0KDQpIbSwgaXQgaXMganVzdCBpbiBh
-IHN0b3JlIG9wZXJhdGlvbiBmb3IgdGhlIGhvbGRlcl9jbGFzcyBzeXNmcw0KYXR0cmlidXRlLiBp
-ZiBjbGFpbV9jbGFzcyB3YXMgbmVnYXRpdmUsIHRoYXQgc3RvcmUgd2lsbCBqdXN0IGZhaWwuDQoN
-CkZyb20gdGhlIHVzZXJzcGFjZSBzaWRlLCB0aGlzIG1lYW5zIHRoZSAnbW9kZScgZW5mb3JjZW1l
-bnQgQVBJIHdpbGwNCmZhaWwuIFR5cGljYWxseSwgJ25kY3RsJyBkb2Vzbid0IHJlcXVpcmUgdGhl
-IGVuZm9yY2VtZW50IHRvIHN1Y2NlZWQsDQpzaW5jZSB3ZSBjYW4gZGlzYW1iaWd1YXRlIG5hbWVz
-cGFjZXMgZXZlbiB3aXRob3V0IGl0LCBzbyBpdCBkb2Vzbid0DQpibG9jayBuYW1lc3BhY2UgY3Jl
-YXRpb24gZXRjLg0KDQpPbiB0aGUga2VybmVsIHNpZGUsIGNsYWltX2NsYXNzIGdldHMgdXNlZCBi
-eSBidHRfZGV2cy5jIGR1cmluZyBwcm9iZSwNCmFuZCBsb29rcyBsaWtlIHRoaXMgY2FzZSwgYXMg
-aXQgY3VycmVudGx5IHN0YW5kcywgd291bGQgZmFpbCB0aGUgQlRUDQpwcm9iZSAobmRfYnR0X3By
-b2JlKCkpLiBJIHRoaW5rIHRoaXMgaXMgd2hhdCB3ZSB3YW50Pw0KDQpJIGd1ZXNzIGl0IGNhbiBi
-ZSBtYWRlIGEgYml0IGNsZWFyZXIgYnkgc3RvcmluZyBOVkRJTU1fQ0NMQVNTX1VOS05PV04NCmV4
-cGxpY2l0bHkgaW4gaG9sZGVyX2NsYXNzX3N0b3JlKCksIGJ1dCB0aGF0IGNhbiBiZSBhIHNlcGFy
-YXRlDQppbXByb3ZlbWVudCBmcm9tIHdoYXQgdGhpcyBwYXRjaCBpcyBhZGRyZXNzaW5nLg0K
+On Wed, Sep 25, 2019 at 10:49:08AM -0700, 'Vishal Verma' wrote:
+> On Wed, 2019-09-25 at 11:25 -0600, Weiny, Ira wrote:
+> > > On Wed, 2019-09-25 at 14:00 +0300, Dan Carpenter wrote:
+> > > > The "ndns->claim_class" variable is an enum but in this case GCC will
+> > > > treat it as an unsigned int so the error handling is never triggered.
+> > > > 
+> > > > Fixes: 14e494542636 ("libnvdimm, btt: BTT updates for UEFI 2.7
+> > > > format")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > > ---
+> > > >  drivers/nvdimm/namespace_devs.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/nvdimm/namespace_devs.c
+> > > > b/drivers/nvdimm/namespace_devs.c index cca0a3ba1d2c..669985527716
+> > > > 100644
+> > > > --- a/drivers/nvdimm/namespace_devs.c
+> > > > +++ b/drivers/nvdimm/namespace_devs.c
+> > > > @@ -1529,7 +1529,7 @@ static ssize_t __holder_class_store(struct device
+> > > *dev, const char *buf)
+> > > >  		return -EINVAL;
+> > > > 
+> > > >  	/* btt_claim_class() could've returned an error */
+> > > > -	if (ndns->claim_class < 0)
+> > > > +	if ((int)ndns->claim_class < 0)
+> > > >  		return ndns->claim_class;
+> > > > 
+> > > >  	return 0;
+> > > 
+> > > Looks straightforward, and a good catch.
+> > > Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+> > 
+> > I'm not sure this is really a good fix.  This leaves ndns->claim_class set to an invalid value.  Is that ok?
+> > 
+> 
+> Hm, it is just in a store operation for the holder_class sysfs
+> attribute. if claim_class was negative, that store will just fail.
+> 
+> From the userspace side, this means the 'mode' enforcement API will
+> fail. Typically, 'ndctl' doesn't require the enforcement to succeed,
+> since we can disambiguate namespaces even without it, so it doesn't
+> block namespace creation etc.
+> 
+> On the kernel side, claim_class gets used by btt_devs.c during probe,
+> and looks like this case, as it currently stands, would fail the BTT
+> probe (nd_btt_probe()). I think this is what we want?
+> 
+> I guess it can be made a bit clearer by storing NVDIMM_CCLASS_UNKNOWN
+> explicitly in holder_class_store(), but that can be a separate
+> improvement from what this patch is addressing.
+
+Fair enough I've sent a follow on patch.
+
+Thanks,
+Ira
