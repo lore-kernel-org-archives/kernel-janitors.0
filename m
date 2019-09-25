@@ -1,35 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 11:00:08 +0000
-Subject: [PATCH] libnvdimm/namespace: Fix a signedness bug in __holder_class_store()
-Message-Id: <20190925110008.GK3264@mwanda>
+From: "Verma, Vishal L" <vishal.l.verma@intel.com>
+Date: Wed, 25 Sep 2019 17:24:09 +0000
+Subject: Re: [PATCH] libnvdimm/namespace: Fix a signedness bug in __holder_class_store()
+Message-Id: <71808ca30f4e367931bf58fa3e1798371c2a5044.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925110008.GK3264@mwanda>
+In-Reply-To: <20190925110008.GK3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>
-Cc: linux-nvdimm@lists.01.org, kernel-janitors@vger.kernel.org
+To: "Williams, Dan J" <dan.j.williams@intel.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
 
-The "ndns->claim_class" variable is an enum but in this case GCC will
-treat it as an unsigned int so the error handling is never triggered.
-
-Fixes: 14e494542636 ("libnvdimm, btt: BTT updates for UEFI 2.7 format")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/nvdimm/namespace_devs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index cca0a3ba1d2c..669985527716 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -1529,7 +1529,7 @@ static ssize_t __holder_class_store(struct device *dev, const char *buf)
- 		return -EINVAL;
- 
- 	/* btt_claim_class() could've returned an error */
--	if (ndns->claim_class < 0)
-+	if ((int)ndns->claim_class < 0)
- 		return ndns->claim_class;
- 
- 	return 0;
--- 
-2.20.1
+T24gV2VkLCAyMDE5LTA5LTI1IGF0IDE0OjAwICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGUgIm5kbnMtPmNsYWltX2NsYXNzIiB2YXJpYWJsZSBpcyBhbiBlbnVtIGJ1dCBpbiB0aGlz
+IGNhc2UgR0NDIHdpbGwNCj4gdHJlYXQgaXQgYXMgYW4gdW5zaWduZWQgaW50IHNvIHRoZSBlcnJv
+ciBoYW5kbGluZyBpcyBuZXZlciB0cmlnZ2VyZWQuDQo+IA0KPiBGaXhlczogMTRlNDk0NTQyNjM2
+ICgibGlibnZkaW1tLCBidHQ6IEJUVCB1cGRhdGVzIGZvciBVRUZJIDIuNyBmb3JtYXQiKQ0KPiBT
+aWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9udmRpbW0vbmFtZXNwYWNlX2RldnMuYyB8IDIgKy0NCj4gIDEgZmls
+ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbnZkaW1tL25hbWVzcGFjZV9kZXZzLmMgYi9kcml2ZXJzL252ZGltbS9uYW1l
+c3BhY2VfZGV2cy5jDQo+IGluZGV4IGNjYTBhM2JhMWQyYy4uNjY5OTg1NTI3NzE2IDEwMDY0NA0K
+PiAtLS0gYS9kcml2ZXJzL252ZGltbS9uYW1lc3BhY2VfZGV2cy5jDQo+ICsrKyBiL2RyaXZlcnMv
+bnZkaW1tL25hbWVzcGFjZV9kZXZzLmMNCj4gQEAgLTE1MjksNyArMTUyOSw3IEBAIHN0YXRpYyBz
+c2l6ZV90IF9faG9sZGVyX2NsYXNzX3N0b3JlKHN0cnVjdCBkZXZpY2UgKmRldiwgY29uc3QgY2hh
+ciAqYnVmKQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gIA0KPiAgCS8qIGJ0dF9jbGFpbV9jbGFz
+cygpIGNvdWxkJ3ZlIHJldHVybmVkIGFuIGVycm9yICovDQo+IC0JaWYgKG5kbnMtPmNsYWltX2Ns
+YXNzIDwgMCkNCj4gKwlpZiAoKGludCluZG5zLT5jbGFpbV9jbGFzcyA8IDApDQo+ICAJCXJldHVy
+biBuZG5zLT5jbGFpbV9jbGFzczsNCj4gIA0KPiAgCXJldHVybiAwOw0KDQpMb29rcyBzdHJhaWdo
+dGZvcndhcmQsIGFuZCBhIGdvb2QgY2F0Y2guDQpSZXZpZXdlZC1ieTogVmlzaGFsIFZlcm1hIDx2
+aXNoYWwubC52ZXJtYUBpbnRlbC5jb20+DQoNCg0K
