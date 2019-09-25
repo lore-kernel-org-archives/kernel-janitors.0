@@ -1,41 +1,36 @@
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Date: Mon, 30 Sep 2019 21:01:55 +0000
-Subject: Re: [PATCH] fs: affs: fix a memory leak in affs_remount
-Message-Id: <CAEkB2EQwfCZk9e=MKx-U0g_e9Dgjr_RV0n6JrVaxwUP5Z=cY+w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Sep 2019 09:38:35 +0000
+Subject: [PATCH] bpf: clean up indentation issue
+Message-Id: <20190925093835.19515-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190930032200.30474-1-navid.emamdoost@gmail.com> <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
-In-Reply-To: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Deepa Dinamani <deepa.kernel@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixed the issues in v2.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks,
-Navid.
+There is a statement that is indented one level too deeply,
+remove the extraneous tab.
 
-On Mon, Sep 30, 2019 at 1:03 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> * Please avoid typos in the commit message.
->
-> * I would prefer an other wording for the change description.
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=97f9a3c4eee55b0178b518ae7114a6a53372913d#n151
->
->
-> > But this is not actually used later!
->
-> Can this information trigger the deletion of questionable source code
-> instead of adding a missing function call “kfree(new_opts)”?
->
->
-> How do you think about to add the tag “Fixes”?
->
-> Regards,
-> Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 722d38e543e9..29c7c06c6bd6 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -2332,7 +2332,7 @@ static int btf_enum_check_kflag_member(struct btf_verifier_env *env,
+ 		if (BITS_PER_BYTE_MASKED(struct_bits_off)) {
+ 			btf_verifier_log_member(env, struct_type, member,
+ 						"Member is not byte aligned");
+-				return -EINVAL;
++			return -EINVAL;
+ 		}
+ 
+ 		nr_bits = int_bitsize;
 -- 
-Navid.
+2.20.1
