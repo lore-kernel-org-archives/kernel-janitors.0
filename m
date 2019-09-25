@@ -1,45 +1,45 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 11 Sep 2019 15:28:20 +0000
-Subject: Re: [PATCH] x86: KVM: svm: Fix a check in nested_svm_vmrun()
-Message-Id: <5d683b17-5eee-78cc-8a92-401f0ff27e17@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 11:02:19 +0000
+Subject: [PATCH] usb: typec: tcpm: Fix a signedness bug in tcpm_fw_get_caps()
+Message-Id: <20190925110219.GN3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190827093852.GA8443@mwanda>
-In-Reply-To: <20190827093852.GA8443@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 27/08/19 11:38, Dan Carpenter wrote:
-> We refactored this code a bit and accidentally deleted the "-" character
-> from "-EINVAL".  The kvm_vcpu_map() function never returns positive
-> EINVAL.
-> 
-> Fixes: c8e16b78c614 ("x86: KVM: svm: eliminate hardcoded RIP advancement from vmrun_interception()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  I don't really know the impact.
-> 
-> 
->  arch/x86/kvm/svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 1f220a85514f..ef646e22d1ab 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -3598,7 +3598,7 @@ static int nested_svm_vmrun(struct vcpu_svm *svm)
->  	vmcb_gpa = svm->vmcb->save.rax;
->  
->  	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
-> -	if (ret = EINVAL) {
-> +	if (ret = -EINVAL) {
->  		kvm_inject_gp(&svm->vcpu, 0);
->  		return 1;
->  	} else if (ret) {
-> 
+The "port->typec_caps.data" and "port->typec_caps.type" variables are
+enums and in this context GCC will treat them as an unsigned int so they
+can never be less than zero.
 
-Queued, thanks.
+Fixes: ae8a2ca8a221 ("usb: typec: Group all TCPCI/TCPM code together")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Paolo
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 96562744101c..d3b63e000ae2 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -4410,7 +4410,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+ 	ret = fwnode_property_read_string(fwnode, "data-role", &cap_str);
+ 	if (ret = 0) {
+ 		port->typec_caps.data = typec_find_port_data_role(cap_str);
+-		if (port->typec_caps.data < 0)
++		if ((int)port->typec_caps.data < 0)
+ 			return -EINVAL;
+ 	}
+ 
+@@ -4419,7 +4419,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+ 		return ret;
+ 
+ 	port->typec_caps.type = typec_find_port_power_role(cap_str);
+-	if (port->typec_caps.type < 0)
++	if ((int)port->typec_caps.type < 0)
+ 		return -EINVAL;
+ 	port->port_type = port->typec_caps.type;
+ 
+-- 
+2.20.1
