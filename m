@@ -1,25 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 14 Sep 2019 06:24:37 +0000
-Subject: Re: omfs: make use of kmemdup
-Message-Id: <4fd20946-b991-0c0f-975e-ef79b433912b@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Sep 2019 11:26:21 +0000
+Subject: [PATCH] ASoC: stm32: sai: clean up indentation issue
+Message-Id: <20190925112621.9312-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190913171134.GA10301@SD>
-In-Reply-To: <20190913171134.GA10301@SD>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saiyam Doshi <saiyamdoshi.in@gmail.com>, Bob Copeland <me@bobcopeland.com>
-Cc: linux-karma-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Olivier Moysan <olivier.moysan@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, alsa-devel@alsa-project.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Replace call to kmalloc followed by memcpy with a direct call
-> to kmemdup to achieve same functionality.
+From: Colin Ian King <colin.king@canonical.com>
 
-I suggest to take another look at a similar patch.
+There is a statement that is indented one level too deeply,
+remove the extraneous tab.
 
-fs/omfs: make use of kmemdup
-https://lore.kernel.org/r/20190721112326.GA5927@hari-Inspiron-1545/
-https://lore.kernel.org/patchwork/patch/1102482/
-https://lkml.org/lkml/2019/7/21/40
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/stm/stm32_sai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
+index ef4273361d0d..e20267504b16 100644
+--- a/sound/soc/stm/stm32_sai.c
++++ b/sound/soc/stm/stm32_sai.c
+@@ -100,7 +100,7 @@ static int stm32_sai_sync_conf_provider(struct stm32_sai_data *sai, int synco)
+ 		dev_err(&sai->pdev->dev, "%pOFn%s already set as sync provider\n",
+ 			sai->pdev->dev.of_node,
+ 			prev_synco = STM_SAI_SYNC_OUT_A ? "A" : "B");
+-			stm32_sai_pclk_disable(&sai->pdev->dev);
++		stm32_sai_pclk_disable(&sai->pdev->dev);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.20.1
