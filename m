@@ -1,53 +1,42 @@
-From: Radhey Shyam Pandey <radheys@xilinx.com>
-Date: Wed, 25 Sep 2019 12:01:54 +0000
-Subject: RE: [PATCH net] net: axienet: fix a signedness bug in probe
-Message-Id: <CH2PR02MB700081E7F84C502F36E6FBEFC7870@CH2PR02MB7000.namprd02.prod.outlook.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Wed, 25 Sep 2019 12:14:06 +0000
+Subject: Re: [PATCH net] net: axienet: fix a signedness bug in probe
+Message-Id: <20190925121406.GA1864@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190925105911.GI3264@mwanda>
-In-Reply-To: <20190925105911.GI3264@mwanda>
+ <20190925110542.GA21923@salem.gmr.ssr.upm.es>
+ <20190925.133507.2083224833639646147.davem@davemloft.net>
+In-Reply-To: <20190925.133507.2083224833639646147.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Alvaro G. M" <alvaro.gamez@hazent.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Michal Simek <michals@xilinx.com>, Russell King <linux@armlinux.org.uk>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: alvaro.gamez@hazent.com, dan.carpenter@oracle.com, radhey.shyam.pandey@xilinx.com, michal.simek@xilinx.com, linux@armlinux.org.uk, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Wednesday, September 25, 2019 4:29 PM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>; Alvaro G. M
-> <alvaro.gamez@hazent.com>
-> Cc: David S. Miller <davem@davemloft.net>; Michal Simek
-> <michals@xilinx.com>; Russell King <linux@armlinux.org.uk>;
-> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH net] net: axienet: fix a signedness bug in probe
+On Wed, Sep 25, 2019 at 01:35:07PM +0200, David Miller wrote:
+> From: "Alvaro G. M" <alvaro.gamez@hazent.com>
+> Date: Wed, 25 Sep 2019 13:05:43 +0200
 > 
-> The "lp->phy_mode" is an enum but in this context GCC treats it as an
-> unsigned int so the error handling is never triggered.
+> > Hi, Dan
+> > 
+> > On Wed, Sep 25, 2019 at 01:59:11PM +0300, Dan Carpenter wrote:
+> >> The "lp->phy_mode" is an enum but in this context GCC treats it as an
+> >> unsigned int so the error handling is never triggered.
+> >> 
+> >>  		lp->phy_mode = of_get_phy_mode(pdev->dev.of_node);
+> >> -		if (lp->phy_mode < 0) {
+> >> +		if ((int)lp->phy_mode < 0) {
+> > 
+> > This (almost) exact code appears in a lot of different drivers too,
+> > so maybe it'd be nice to review them all and apply the same cast if needed?
 > 
-> Fixes: ee06b1728b95 ("net: axienet: add support for standard phy-mode
-> binding")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Or make the thing an int if negative values are never valid 32-bit phy_mode
+> values anyways.
 
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Maybe we should change the API
 
-> ---
->  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 4fc627fb4d11..676006f32f91 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -1762,7 +1762,7 @@ static int axienet_probe(struct platform_device
-> *pdev)
->  		}
->  	} else {
->  		lp->phy_mode = of_get_phy_mode(pdev->dev.of_node);
-> -		if (lp->phy_mode < 0) {
-> +		if ((int)lp->phy_mode < 0) {
->  			ret = -EINVAL;
->  			goto free_netdev;
->  		}
-> --
-> 2.20.1
+int of_get_phy_mode(struct device_node *np, phy_interface_t *phy_mode);
+
+Separate the error from the value we are getting.
+
+	 Andrew
