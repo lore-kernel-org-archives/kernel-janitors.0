@@ -1,17 +1,35 @@
-From: " Lan" <shiying588@gmail.com>
-Date: Sun, 29 Sep 2019 19:34:35 +0000
-Subject: Please my good friend
-Message-Id: <20190929193431.AE4486448A@imap.lebert.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 11:06:24 +0000
+Subject: [PATCH] ASoC: topology: Fix a signedness bug in soc_tplg_dapm_widget_create()
+Message-Id: <20190925110624.GR3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-Please my good friend
-I have a lucrative business proposal that I would like to share with you.
-I'm glad about your quick answer
-E-mail; fulan3719@gmail.com
+The "template.id" variable is an enum and in this context GCC will
+treat it as an unsigned int so it can never be less than zero.
 
-greetings
-Mr. Fu Lan
+Fixes: 8a9782346dcc ("ASoC: topology: Add topology core")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/soc-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index aa9a1fca46fa..0fd032914a31 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1582,7 +1582,7 @@ static int soc_tplg_dapm_widget_create(struct soc_tplg *tplg,
+ 
+ 	/* map user to kernel widget ID */
+ 	template.id = get_widget_id(le32_to_cpu(w->id));
+-	if (template.id < 0)
++	if ((int)template.id < 0)
+ 		return template.id;
+ 
+ 	/* strings are allocated here, but used and freed by the widget */
+-- 
+2.20.1
