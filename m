@@ -1,53 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 05:57:05 +0000
-Subject: [PATCH] ARM: zx: Use devm_platform_ioremap_resource() in zx296702_pd_probe()
-Message-Id: <30b6c588-6c4b-c8ff-6414-a3fc53867bfe@web.de>
+From: Connor Kuehl <connor.kuehl@canonical.com>
+Date: Wed, 25 Sep 2019 21:32:15 +0000
+Subject: [PATCH] staging: rtl8188eu: fix possible null dereference
+Message-Id: <20190925213215.25082-1-connor.kuehl@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 07:40:26 +0200
+Inside a nested 'else' block at the beginning of this function is a
+call that assigns 'psta' to the return value of 'rtw_get_stainfo()'.
+If 'rtw_get_stainfo()' returns NULL and the flow of control reaches
+the 'else if' where 'psta' is dereferenced, then we will dereference
+a NULL pointer.
 
-Simplify this function implementation by using a known wrapper function.
+Fix this by checking if 'psta' is not NULL before reading its
+'psta->qos_option' data member.
 
-This issue was detected by using the Coccinelle software.
+Addresses-Coverity: ("Dereference null return value")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
 ---
- arch/arm/mach-zx/zx296702-pm-domain.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_xmit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-zx/zx296702-pm-domain.c b/arch/arm/mach-zx/zx296702-pm-domain.c
-index 7a08bf9dd792..ba4f556b7a13 100644
---- a/arch/arm/mach-zx/zx296702-pm-domain.c
-+++ b/arch/arm/mach-zx/zx296702-pm-domain.c
-@@ -152,7 +152,6 @@ static struct generic_pm_domain *zx296702_pm_domains[] = {
- static int zx296702_pd_probe(struct platform_device *pdev)
- {
- 	struct genpd_onecell_data *genpd_data;
--	struct resource *res;
- 	int i;
-
- 	genpd_data = devm_kzalloc(&pdev->dev, sizeof(*genpd_data), GFP_KERNEL);
-@@ -161,14 +160,7 @@ static int zx296702_pd_probe(struct platform_device *pdev)
-
- 	genpd_data->domains = zx296702_pm_domains;
- 	genpd_data->num_domains = ARRAY_SIZE(zx296702_pm_domains);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
--	pcubase = devm_ioremap_resource(&pdev->dev, res);
-+	pcubase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pcubase)) {
- 		dev_err(&pdev->dev, "ioremap fail.\n");
- 		return -EIO;
---
-2.23.0
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 952f2ab51347..bf8877cbe9b6 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -784,7 +784,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+ 			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv), ETH_ALEN);
+ 
+-			if (psta->qos_option)
++			if (psta && psta->qos_option)
+ 				qos_option = true;
+ 		} else {
+ 			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("fw_state:%x is not allowed to xmit frame\n", get_fwstate(pmlmepriv)));
+-- 
+2.17.1
