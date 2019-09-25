@@ -1,59 +1,35 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Thu, 05 Sep 2019 11:54:46 +0000
-Subject: Re: [PATCH] drm/vmwgfx: Fix double free in vmw_recv_msg()
-Message-Id: <830c68e5591dd197e098028227148106739e5591.camel@vmware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 10:55:32 +0000
+Subject: [PATCH net] net: hisilicon: Fix signedness bug in hix5hd2_dev_probe()
+Message-Id: <20190925105532.GC3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190815083050.GC27238@mwanda>
- <08f19935-97fe-4c8b-ca7b-707586ed89a1@canonical.com>
-In-Reply-To: <08f19935-97fe-4c8b-ca7b-707586ed89a1@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "colin.king@canonical.com" <colin.king@canonical.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>
-Cc: "airlied@linux.ie" <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Salil Mehta <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTA4LTE1IGF0IDA5OjM4ICswMTAwLCBDb2xpbiBJYW4gS2luZyB3cm90ZToN
-Cj4gT24gMTUvMDgvMjAxOSAwOTozMCwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gPiBXZSByZWNl
-bnRseSBhZGRlZCBhIGtmcmVlKCkgYWZ0ZXIgdGhlIGVuZCBvZiB0aGUgbG9vcDoNCj4gPiANCj4g
-PiAJaWYgKHJldHJpZXMgPT0gUkVUUklFUykgew0KPiA+IAkJa2ZyZWUocmVwbHkpOw0KPiA+IAkJ
-cmV0dXJuIC1FSU5WQUw7DQo+ID4gCX0NCj4gPiANCj4gPiBUaGVyZSBhcmUgdHdvIHByb2JsZW1z
-LiAgRmlyc3QgdGhlIHRlc3QgaXMgd3JvbmcgYW5kIGJlY2F1c2UNCj4gPiByZXRyaWVzDQo+ID4g
-ZXF1YWxzIFJFVFJJRVMgaWYgd2Ugc3VjY2VlZCBvbiB0aGUgbGFzdCBpdGVyYXRpb24gdGhyb3Vn
-aCB0aGUNCj4gPiBsb29wLg0KPiA+IFNlY29uZCBpZiB3ZSBmYWlsIG9uIHRoZSBsYXN0IGl0ZXJh
-dGlvbiB0aHJvdWdoIHRoZSBsb29wIHRoZW4gdGhlDQo+ID4ga2ZyZWUNCj4gPiBpcyBhIGRvdWJs
-ZSBmcmVlLg0KPiA+IA0KPiA+IFdoZW4geW91J3JlIHJlYWRpbmcgdGhpcyBjb2RlLCBwbGVhc2Ug
-bm90ZSB0aGUgYnJlYWsgc3RhdGVtZW50IGF0DQo+ID4gdGhlDQo+ID4gZW5kIG9mIHRoZSB3aGls
-ZSBsb29wLiAgVGhpcyBwYXRjaCBjaGFuZ2VzIHRoZSBsb29wIHNvIHRoYXQgaWYgaXQncw0KPiA+
-IG5vdA0KPiA+IHN1Y2Nlc3NmdWwgdGhlbiAicmVwbHkiIGlzIE5VTEwgYW5kIHdlIGNhbiB0ZXN0
-IGZvciB0aGF0IGFmdGVyd2FyZC4NCj4gPiANCj4gPiBGaXhlczogNmI3YzNiODZmMGI2ICgiZHJt
-L3Ztd2dmeDogZml4IG1lbW9yeSBsZWFrIHdoZW4gdG9vIG1hbnkNCj4gPiByZXRyaWVzIGhhdmUg
-b2NjdXJyZWQiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50
-ZXJAb3JhY2xlLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdn
-ZnhfbXNnLmMgfCA4ICsrKy0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
-KyksIDUgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS92bXdnZngvdm13Z2Z4X21zZy5jDQo+ID4gYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dm
-eF9tc2cuYw0KPiA+IGluZGV4IDU5ZTlkMDVhYjkyOC4uMGFmMDQ4ZDFhODE1IDEwMDY0NA0KPiA+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X21zZy5jDQo+ID4gKysrIGIvZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfbXNnLmMNCj4gPiBAQCAtMzUzLDcgKzM1Myw3IEBA
-IHN0YXRpYyBpbnQgdm13X3JlY3ZfbXNnKHN0cnVjdCBycGNfY2hhbm5lbA0KPiA+ICpjaGFubmVs
-LCB2b2lkICoqbXNnLA0KPiA+ICAJCQkJICAgICAhIShISUdIX1dPUkQoZWN4KSAmDQo+ID4gTUVT
-U0FHRV9TVEFUVVNfSEIpKTsNCj4gPiAgCQlpZiAoKEhJR0hfV09SRChlYngpICYgTUVTU0FHRV9T
-VEFUVVNfU1VDQ0VTUykgPT0gMCkgew0KPiA+ICAJCQlrZnJlZShyZXBseSk7DQo+ID4gLQ0KPiA+
-ICsJCQlyZXBseSA9IE5VTEw7DQo+ID4gIAkJCWlmICgoSElHSF9XT1JEKGVieCkgJiBNRVNTQUdF
-X1NUQVRVU19DUFQpICE9IDApDQo+ID4gew0KPiA+ICAJCQkJLyogQSBjaGVja3BvaW50IG9jY3Vy
-cmVkLiBSZXRyeS4gKi8NCj4gPiAgCQkJCWNvbnRpbnVlOw0KPiA+IEBAIC0zNzcsNyArMzc3LDcg
-QEAgc3RhdGljIGludCB2bXdfcmVjdl9tc2coc3RydWN0IHJwY19jaGFubmVsDQo+ID4gKmNoYW5u
-ZWwsIHZvaWQgKiptc2csDQo+ID4gIA0KPiA+ICAJCWlmICgoSElHSF9XT1JEKGVjeCkgJiBNRVNT
-QUdFX1NUQVRVU19TVUNDRVNTKSA9PSAwKSB7DQo+ID4gIAkJCWtmcmVlKHJlcGx5KTsNCj4gPiAt
-DQo+ID4gKwkJCXJlcGx5ID0gTlVMTDsNCj4gPiAgCQkJaWYgKChISUdIX1dPUkQoZWN4KSAmIE1F
-U1NBR0VfU1RBVFVTX0NQVCkgIT0gMCkNCj4gPiB7DQo+ID4gIAkJCQkvKiBBIGNoZWNrcG9pbnQg
-b2NjdXJyZWQuIFJldHJ5LiAqLw0KPiA+ICAJCQkJY29udGludWU7DQo+ID4gQEAgLTM4OSwxMCAr
-Mzg5LDggQEAgc3RhdGljIGludCB2bXdfcmVjdl9tc2coc3RydWN0IHJwY19jaGFubmVsDQo+ID4g
-KmNoYW5uZWwsIHZvaWQgKiptc2csDQo+ID4gIAkJYnJlYWs7DQo+ID4gIAl9DQo+ID4gIA0KPiA+
-IC0JaWYgKHJldHJpZXMgPT0gUkVUUklFUykgew0KPiA+IC0JCWtmcmVlKHJlcGx5KTsNCj4gPiAr
-CWlmICghcmVwbHkpDQo+ID4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+ID4gLQl9DQo+ID4gIA0KPiA+
-ICAJKm1zZ19sZW4gPSByZXBseV9sZW47DQo+ID4gIAkqbXNnICAgICA9IHJlcGx5Ow0KPiA+IA0K
-PiANCj4gRGFuLCBUaGFua3MgZm9yIGZpeGluZyB1cCBteSBtaXN0YWtlLg0KDQpUaGFua3MsIERh
-bi4gU29ycnkgZm9yIHRoZSBsYXRlIHJlcGx5LiANClJldmlld2VkLWJ5OiBUaG9tYXMgSGVsbHN0
-csO2bSA8dGhlbGxzdHJvbUB2bXdhcmUuY29tPg0KV2lsbCBwdXNoIHRoaXMgdG8gZml4ZXMuDQoN
-Ci9UaG9tYXMNCg0K
+The "priv->phy_mode" variable is an enum and in this context GCC will
+treat it as unsigned to the error handling will never trigger.
+
+Fixes: 57c5bc9ad7d7 ("net: hisilicon: add hix5hd2 mac driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+index 95a6b0926170..c41b19c760f8 100644
+--- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+@@ -1194,7 +1194,7 @@ static int hix5hd2_dev_probe(struct platform_device *pdev)
+ 		goto err_free_mdio;
+ 
+ 	priv->phy_mode = of_get_phy_mode(node);
+-	if (priv->phy_mode < 0) {
++	if ((int)priv->phy_mode < 0) {
+ 		netdev_err(ndev, "not find phy-mode\n");
+ 		ret = -EINVAL;
+ 		goto err_mdiobus;
+-- 
+2.20.1
