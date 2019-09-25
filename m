@@ -1,27 +1,35 @@
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 13 Sep 2019 22:01:38 +0000
-Subject: Re: [PATCH] bus: qcom: fix spelling mistake "ambigous" -> "ambiguous"
-Message-Id: <20190913220138.GA17592@bogus>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 11:05:24 +0000
+Subject: [PATCH net] net: nixge: Fix a signedness bug in nixge_probe()
+Message-Id: <20190925110524.GP3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190911153947.10203-1-colin.king@canonical.com>
-In-Reply-To: <20190911153947.10203-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Moritz Fischer <mdf@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Alex Williams <alex.williams@ni.com>, Luis Chamberlain <mcgrof@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 11 Sep 2019 16:39:47 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake on the documentation. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  Documentation/devicetree/bindings/bus/qcom,ebi2.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+The "priv->phy_mode" is an enum and in this context GCC will treat it
+as an unsigned int so it can never be less than zero.
 
-Applied, thanks.
+Fixes: 492caffa8a1a ("net: ethernet: nixge: Add support for National Instruments XGE netdev")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/ni/nixge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
+index 0b384f97d2fd..2761f3a3ae50 100644
+--- a/drivers/net/ethernet/ni/nixge.c
++++ b/drivers/net/ethernet/ni/nixge.c
+@@ -1347,7 +1347,7 @@ static int nixge_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	priv->phy_mode = of_get_phy_mode(pdev->dev.of_node);
+-	if (priv->phy_mode < 0) {
++	if ((int)priv->phy_mode < 0) {
+ 		netdev_err(ndev, "not find \"phy-mode\" property\n");
+ 		err = -EINVAL;
+ 		goto unregister_mdio;
+-- 
+2.20.1
