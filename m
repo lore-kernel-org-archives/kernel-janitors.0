@@ -1,27 +1,35 @@
-From: Connor Kuehl <connor.kuehl@canonical.com>
-Date: Thu, 26 Sep 2019 15:01:18 +0000
-Subject: Re: [PATCH] staging: rtl8188eu: fix possible null dereference
-Message-Id: <2f07d7cb-23a1-f5c0-af9f-1c3e19a7082c@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 11:01:00 +0000
+Subject: [PATCH net] of: mdio: Fix a signedness bug in of_phy_get_and_connect()
+Message-Id: <20190925110100.GL3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925213215.25082-1-connor.kuehl@canonical.com>
- <b725820f-525c-519b-4474-476abf004985@lwfinger.net>
-In-Reply-To: <b725820f-525c-519b-4474-476abf004985@lwfinger.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Dongpo Li <lidongpo@hisilicon.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 9/25/19 5:05 PM, Larry Finger wrote:
-> This change is a good one, but why not get the same fix at line 779?
+The "iface" variable is an enum and in this context GCC treats it as
+an unsigned int so the error handling is never triggered.
 
-Ah yes! Thanks for pointing that out. I missed that. I will send a V2 
-shortly.
+Fixes: b78624125304 ("of_mdio: Abstract a general interface for phy connect")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/of/of_mdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you,
-
-Connor
-
-> 
-> Larry
-> 
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index 000b95787df1..bd6129db6417 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -362,7 +362,7 @@ struct phy_device *of_phy_get_and_connect(struct net_device *dev,
+ 	int ret;
+ 
+ 	iface = of_get_phy_mode(np);
+-	if (iface < 0)
++	if ((int)iface < 0)
+ 		return NULL;
+ 	if (of_phy_is_fixed_link(np)) {
+ 		ret = of_phy_register_fixed_link(np);
+-- 
+2.20.1
