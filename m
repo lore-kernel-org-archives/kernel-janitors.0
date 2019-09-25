@@ -1,33 +1,65 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 04 Sep 2019 06:08:01 +0000
-Subject: Re: [PATCH] wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc()
-Message-Id: <20190904060801.1FDD460863@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2019 10:54:30 +0000
+Subject: [PATCH net] net: aquantia: Fix aq_vec_isr_legacy() return value
+Message-Id: <20190925105430.GA3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b9620e49-618d-b392-6456-17de5807df75@web.de>
-In-Reply-To: <b9620e49-618d-b392-6456-17de5807df75@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, wil6210@qti.qualcomm.com, "David S. Miller" <davem@davemloft.net>, Maya Erez <merez@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Igor Russkikh <igor.russkikh@aquantia.com>, David VomLehn <vomlehn@texas.net>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> wrote:
+The irqreturn_t type is an enum or an unsigned int in GCC.  That
+creates to problems because it can't detect if the
+self->aq_hw_ops->hw_irq_read() call fails and at the end the function
+always returns IRQ_HANDLED.
 
-> A null pointer would be passed to a call of the function “kfree”
-> directly after a call of the function “kcalloc” failed at one place.
-> Remove this superfluous function call.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/net/ethernet/aquantia/atlantic/aq_vec.c:316 aq_vec_isr_legacy() warn: unsigned 'err' is never less than zero.
+drivers/net/ethernet/aquantia/atlantic/aq_vec.c:329 aq_vec_isr_legacy() warn: always true condition '(err >= 0) => (0-u32max >= 0)'
 
-Patch applied to ath-next branch of ath.git, thanks.
+Fixes: 970a2e9864b0 ("net: ethernet: aquantia: Vector operations")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_vec.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-d20b1e6c8307 wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc()
-
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
+index 28892b8acd0e..a95c263a45aa 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
+@@ -306,15 +306,13 @@ irqreturn_t aq_vec_isr_legacy(int irq, void *private)
+ {
+ 	struct aq_vec_s *self = private;
+ 	u64 irq_mask = 0U;
+-	irqreturn_t err = 0;
++	int err;
+ 
+-	if (!self) {
+-		err = -EINVAL;
+-		goto err_exit;
+-	}
++	if (!self)
++		return IRQ_NONE;
+ 	err = self->aq_hw_ops->hw_irq_read(self->aq_hw, &irq_mask);
+ 	if (err < 0)
+-		goto err_exit;
++		return IRQ_NONE;
+ 
+ 	if (irq_mask) {
+ 		self->aq_hw_ops->hw_irq_disable(self->aq_hw,
+@@ -322,11 +320,10 @@ irqreturn_t aq_vec_isr_legacy(int irq, void *private)
+ 		napi_schedule(&self->napi);
+ 	} else {
+ 		self->aq_hw_ops->hw_irq_enable(self->aq_hw, 1U);
+-		err = IRQ_NONE;
++		return IRQ_NONE;
+ 	}
+ 
+-err_exit:
+-	return err >= 0 ? IRQ_HANDLED : IRQ_NONE;
++	return IRQ_HANDLED;
+ }
+ 
+ cpumask_t *aq_vec_get_affinity_mask(struct aq_vec_s *self)
 -- 
-https://patchwork.kernel.org/patch/11117119/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
