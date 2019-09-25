@@ -1,45 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Sep 2019 13:52:19 +0000
-Subject: [PATCH] i2c: i2c-amd-mp2-pci: Fix Oops in amd_mp2_pci_init() error handling
-Message-Id: <20190905135219.GA29629@mwanda>
+Date: Wed, 25 Sep 2019 11:01:28 +0000
+Subject: [PATCH] power: supply: sbs-battery: Fix a signedness bug in sbs_get_battery_capacity()
+Message-Id: <20190925110128.GM3264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Rhyland Klein <rklein@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The problem is that we dereference "privdata->pci_dev" when we print
-the error messages in amd_mp2_pci_init():
+The "mode" variable is an enum and in this context GCC treats it as an
+unsigned int so the error handling is never triggered.
 
-	dev_err(ndev_dev(privdata), "Failed to enable MP2 PCI device\n");
-                ^^^^^^^^^^^^^^^^^
-
-Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controller")
+Fixes: 51d075660457 ("bq20z75: Add support for charge properties")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/power/supply/sbs-battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index 5e4800d72e00..6bbc89d0bb27 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -349,13 +349,13 @@ static int amd_mp2_pci_probe(struct pci_dev *pci_dev,
- 	if (!privdata)
- 		return -ENOMEM;
+diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+index f8d74e9f7931..62110af1abcf 100644
+--- a/drivers/power/supply/sbs-battery.c
++++ b/drivers/power/supply/sbs-battery.c
+@@ -555,7 +555,7 @@ static int sbs_get_battery_capacity(struct i2c_client *client,
+ 		mode = BATTERY_MODE_AMPS;
  
-+	mutex_init(&privdata->c2p_lock);
-+	privdata->pci_dev = pci_dev;
-+
- 	rc = amd_mp2_pci_init(privdata, pci_dev);
- 	if (rc)
- 		return rc;
+ 	mode = sbs_set_battery_mode(client, mode);
+-	if (mode < 0)
++	if ((int)mode < 0)
+ 		return mode;
  
--	mutex_init(&privdata->c2p_lock);
--	privdata->pci_dev = pci_dev;
--
- 	pm_runtime_set_autosuspend_delay(&pci_dev->dev, 1000);
- 	pm_runtime_use_autosuspend(&pci_dev->dev);
- 	pm_runtime_put_autosuspend(&pci_dev->dev);
+ 	ret = sbs_read_word_data(client, sbs_data[reg_offset].addr);
 -- 
 2.20.1
