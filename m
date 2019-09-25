@@ -1,28 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 05 Sep 2019 08:23:32 +0000
-Subject: Re: [v2] drm/amdgpu: Remove two redundant null pointer checks
-Message-Id: <d1aee32e-c9ad-2953-84c0-267037a82288@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Sep 2019 11:13:25 +0000
+Subject: [PATCH] firmware: turris-mox-rwtm: clean up indentation issue
+Message-Id: <20190925111325.8311-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1567662552-3583-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1567662552-3583-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: zhong jiang <zhongjiang@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Hawking Zhang <Hawking.Zhang@amd.com>, Jack Xiao <Jack.Xiao@amd.com>, Kevin Wang <Kevin1.Wang@amd.com>, Tom St Denis <tom.stdenis@amd.com>, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marek Behun <marek.behun@nic.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> The functions "debugfs_remove" and "kfree" tolerate the passing
-> of null pointers. Hence it is unnecessary to check such arguments
-> around the calls. Thus remove the extra condition check at two places.
+From: Colin Ian King <colin.king@canonical.com>
 
-Will a tag like “Generated-by: scripts/coccinelle/free/ifnullfree.cocci” be relevant here?
+There is a statement that is indented one level too deeply,
+remove the extraneous tab.
 
-How do you think about to compare this change approach with another patch variant?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/firmware/turris-mox-rwtm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drm/amdgpu: Delete an unnecessary check before two function calls
-https://lkml.org/lkml/2019/9/4/401
-https://lore.kernel.org/patchwork/patch/1123689/
-https://lore.kernel.org/r/a3739125-5fa8-cadb-d2b8-8a9f12e9bacd@web.de/
-
-Regards,
-Markus
+diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
+index 72be58960e54..e27f68437b56 100644
+--- a/drivers/firmware/turris-mox-rwtm.c
++++ b/drivers/firmware/turris-mox-rwtm.c
+@@ -197,7 +197,7 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
+ 		rwtm->serial_number = reply->status[1];
+ 		rwtm->serial_number <<= 32;
+ 		rwtm->serial_number |= reply->status[0];
+-			rwtm->board_version = reply->status[2];
++		rwtm->board_version = reply->status[2];
+ 		rwtm->ram_size = reply->status[3];
+ 		reply_to_mac_addr(rwtm->mac_address1, reply->status[4],
+ 				  reply->status[5]);
+-- 
+2.20.1
