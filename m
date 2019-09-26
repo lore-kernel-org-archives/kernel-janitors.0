@@ -1,48 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Sep 2019 13:18:11 +0000
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Thu, 26 Sep 2019 13:24:58 +0000
 Subject: Re: [PATCH net] net: axienet: fix a signedness bug in probe
-Message-Id: <20190926131811.GG29696@kadam>
+Message-Id: <20190926132458.GC20927@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190925105911.GI3264@mwanda>
  <20190925110542.GA21923@salem.gmr.ssr.upm.es>
-In-Reply-To: <20190925110542.GA21923@salem.gmr.ssr.upm.es>
+ <20190926131811.GG29696@kadam>
+In-Reply-To: <20190926131811.GG29696@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Alvaro G. M" <alvaro.gamez@hazent.com>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>, "David S. Miller" <davem@davemloft.net>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Alvaro G. M" <alvaro.gamez@hazent.com>, Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>, "David S. Miller" <davem@davemloft.net>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 01:05:43PM +0200, Alvaro G. M wrote:
-> Hi, Dan
-> 
-> On Wed, Sep 25, 2019 at 01:59:11PM +0300, Dan Carpenter wrote:
-> > The "lp->phy_mode" is an enum but in this context GCC treats it as an
-> > unsigned int so the error handling is never triggered.
-> > 
-> >  		lp->phy_mode = of_get_phy_mode(pdev->dev.of_node);
-> > -		if (lp->phy_mode < 0) {
-> > +		if ((int)lp->phy_mode < 0) {
-> 
-> This (almost) exact code appears in a lot of different drivers too,
-> so maybe it'd be nice to review them all and apply the same cast if needed?
-> 
+> The get_phy_mode() function seem like they lend themselves to creating
+> these bugs.  The ->phy_mode variables tend to be declared in the driver
+> so it would require quite a few patches to make them all int and I'm not
+> sure that's more beautiful.  Andrew Lunn's idea to update the API would
+> probably be a good idea.
 
-This is a new warning in Smatch.  I did send patches for the whole
-kernel.  We won't get these bugs in the future because people run Smatch
-on the kernel and will find the bugs.  All the bugs were from 2017 or
-later which suggests that someone cleared these out two years ago but
-soon the 0-day bot will warn about issues so they will get fixed
-quicker.
+Hi Dan
 
-I'm sort of out of it today...
+I started on it. Once net-next has opened, and 0-day has compile
+tested my changes, i will post the code for review.
 
-The get_phy_mode() function seem like they lend themselves to creating
-these bugs.  The ->phy_mode variables tend to be declared in the driver
-so it would require quite a few patches to make them all int and I'm not
-sure that's more beautiful.  Andrew Lunn's idea to update the API would
-probably be a good idea.
-
-I'm going back to bed for now and I'll think about this some more.
-
-regards,
-dan carpenter
+       Andrew
