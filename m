@@ -1,57 +1,39 @@
-From: Ira Weiny <ira.weiny@intel.com>
-Date: Wed, 25 Sep 2019 18:49:39 +0000
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Date: Thu, 26 Sep 2019 07:08:14 +0000
 Subject: Re: [PATCH] bnvdimm/namsepace: Don't set claim_class on error
-Message-Id: <20190925184939.GA11669@iweiny-DESK2.sc.intel.com>
+Message-Id: <fe170e53-92d1-eca8-d419-1a4210cb7313@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190925181056.11097-1-ira.weiny@intel.com>
  <ff7ff4f5b4289d189a7c347591a5c35876ea804f.camel@intel.com>
-In-Reply-To: <ff7ff4f5b4289d189a7c347591a5c35876ea804f.camel@intel.com>
+ <20190925184939.GA11669@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190925184939.GA11669@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Verma, Vishal L" <vishal.l.verma@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ira Weiny <ira.weiny@intel.com>, "Verma, Vishal L" <vishal.l.verma@intel.com>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
 
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  drivers/nvdimm/namespace_devs.c | 19 +++++++++----------
-> >  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> One minor nit below, but otherwise it looks good to me:
-> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+On 25/09/2019 20:49, Ira Weiny wrote:
+>>>
+>>> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+>>> ---
+>>>  drivers/nvdimm/namespace_devs.c | 19 +++++++++----------
+>>>  1 file changed, 9 insertions(+), 10 deletions(-)
+>>
+>> One minor nit below, but otherwise it looks good to me:
+>> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
 
-Thanks...
+Another minor nit, the Subject says:
+"bnvdimm/namsepace: Don't set claim_class on error"
 
-> 
-> > 
-> > diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> > index 5b22cecefc99..a020c166e1e7 100644
-> > --- a/drivers/nvdimm/namespace_devs.c
-> > +++ b/drivers/nvdimm/namespace_devs.c
-> > @@ -1510,16 +1510,19 @@ static ssize_t holder_show(struct device *dev,
-> >  }
-> >  static DEVICE_ATTR_RO(holder);
-> >  
-> > -static ssize_t __holder_class_store(struct device *dev, const char *buf)
-> > +static int __holder_class_store(struct device *dev, const char *buf)
-> >  {
-> >  	struct nd_namespace_common *ndns = to_ndns(dev);
-> >  
-> >  	if (dev->driver || ndns->claim)
-> >  		return -EBUSY;
-> >  
-> > -	if (sysfs_streq(buf, "btt"))
-> > -		ndns->claim_class = btt_claim_class(dev);
-> > -	else if (sysfs_streq(buf, "pfn"))
-> > +	if (sysfs_streq(buf, "btt")) {
-> > +		int rc = btt_claim_class(dev);
-> 
-> Need a blank line here separating variable declarations and code.
+a.k.a missing the 'li' part of libnvdimm
 
-<sigh> yea I know better...  ;-)
-
-V2 sent...
-
-Thanks,
-Ira
+-- 
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5
+90409 Nürnberg
+Germany
+(HRB 247165, AG München)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
