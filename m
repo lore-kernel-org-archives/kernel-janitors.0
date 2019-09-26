@@ -1,35 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Sep 2019 08:10:18 +0000
-Subject: [PATCH] iio: imu: adis16480: clean up a condition
-Message-Id: <20190926081016.GA2332@mwanda>
+From: "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Date: Thu, 26 Sep 2019 11:06:39 +0000
+Subject: Re: [PATCH] iio: imu: adis16480: clean up a condition
+Message-Id: <9e40c550310d6f30e6481329e01061beb474bc33.camel@analog.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190926081016.GA2332@mwanda>
+In-Reply-To: <20190926081016.GA2332@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "lars@metafoo.de" <lars@metafoo.de>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "jic23@kernel.org" <jic23@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Hennerich, Michael" <Michael.Hennerich@analog.com>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "knaack.h@gmx.de" <knaack.h@gmx.de>
 
-The "t" variable is unsigned so it can't be less than zero.  We really
-are just trying to prevent divide by zero bugs so just checking against
-zero is sufficient.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/iio/imu/adis16480.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-index b99d73887c9f..e144e567675d 100644
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -318,7 +318,7 @@ static int adis16480_set_freq(struct iio_dev *indio_dev, int val, int val2)
- 	unsigned int t, reg;
- 
- 	t =  val * 1000 + val2 / 1000;
--	if (t <= 0)
-+	if (t = 0)
- 		return -EINVAL;
- 
- 	/*
--- 
-2.20.1
+T24gVGh1LCAyMDE5LTA5LTI2IGF0IDExOjEwICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBbRXh0ZXJuYWxdDQo+IA0KPiBUaGUgInQiIHZhcmlhYmxlIGlzIHVuc2lnbmVkIHNvIGl0IGNh
+bid0IGJlIGxlc3MgdGhhbiB6ZXJvLiAgV2UgcmVhbGx5DQo+IGFyZSBqdXN0IHRyeWluZyB0byBw
+cmV2ZW50IGRpdmlkZSBieSB6ZXJvIGJ1Z3Mgc28ganVzdCBjaGVja2luZyBhZ2FpbnN0DQo+IHpl
+cm8gaXMgc3VmZmljaWVudC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRh
+bi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2lpby9pbXUvYWRpczE2
+NDgwLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRp
+b24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lpby9pbXUvYWRpczE2NDgwLmMgYi9k
+cml2ZXJzL2lpby9pbXUvYWRpczE2NDgwLmMNCj4gaW5kZXggYjk5ZDczODg3YzlmLi5lMTQ0ZTU2
+NzY3NWQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaWlvL2ltdS9hZGlzMTY0ODAuYw0KPiArKysg
+Yi9kcml2ZXJzL2lpby9pbXUvYWRpczE2NDgwLmMNCj4gQEAgLTMxOCw3ICszMTgsNyBAQCBzdGF0
+aWMgaW50IGFkaXMxNjQ4MF9zZXRfZnJlcShzdHJ1Y3QgaWlvX2Rldg0KPiAqaW5kaW9fZGV2LCBp
+bnQgdmFsLCBpbnQgdmFsMikNCj4gIAl1bnNpZ25lZCBpbnQgdCwgcmVnOw0KDQpJIHdvdWxkIGp1
+c3QgY2hhbmdlIHRoZSB0eXBlIG9mICJ0IiB0byAiaW50Ii4NCkVzcGVjaWFsbHksIHNpbmNlICJ2
+YWwiICYgInZhbDIiIGFyZSAiaW50Ii4NCg0KVGhhbmtzIGZvciB0aGUgY2F0Y2ggOikNCkFsZXgN
+Cg0KPiAgDQo+ICAJdCA9ICB2YWwgKiAxMDAwICsgdmFsMiAvIDEwMDA7DQo+IC0JaWYgKHQgPD0g
+MCkNCj4gKwlpZiAodCA9PSAwKQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gIA0KPiAgCS8qDQo
