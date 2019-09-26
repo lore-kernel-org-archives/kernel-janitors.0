@@ -1,48 +1,35 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 13 Sep 2019 21:04:59 +0000
-Subject: Re: drm/amdgpu: remove the redundant null check
-Message-Id: <CADnq5_MH5HnfihRTBRHnSWRzDj5nu_8w0TWf82-999nKCa4wDQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Sep 2019 08:10:18 +0000
+Subject: [PATCH] iio: imu: adis16480: clean up a condition
+Message-Id: <20190926081016.GA2332@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1567491305-18320-1-git-send-email-zhongjiang@huawei.com>
- <62b33279-9ca9-5970-5336-a8511ce54197@web.de> <5D70A196.3020106@huawei.com>
- <dd351754-cb3a-b19a-64e1-f2f583c2a23a@web.de> <5D70CB7A.8040307@huawei.com>
-In-Reply-To: <5D70CB7A.8040307@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: zhong jiang <zhongjiang@huawei.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 3:01 AM zhong jiang <zhongjiang@huawei.com> wrote:
->
-> On 2019/9/5 16:38, Markus Elfring wrote:
-> >>> Were any source code analysis tools involved for finding
-> >>> these update candidates?
-> >> With the help of Coccinelle. You can find out some example in scripts/coccinelle/.
-> > Thanks for such background information.
-> > Was the script “ifnullfree.cocci” applied here?
-> Yep
-> > Will it be helpful to add attribution for such tools
-> > to any more descriptions in your patches?
-> Sometimes, I will add the description in my patches. Not always.
+The "t" variable is unsigned so it can't be less than zero.  We really
+are just trying to prevent divide by zero bugs so just checking against
+zero is sufficient.
 
-Applied with some minor tweaks to the commit message.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/iio/imu/adis16480.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-Alex
-
->
-> Thanks,
-> zhong jiang
-> > Regards,
-> > Markus
-> >
-> > .
-> >
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
+index b99d73887c9f..e144e567675d 100644
+--- a/drivers/iio/imu/adis16480.c
++++ b/drivers/iio/imu/adis16480.c
+@@ -318,7 +318,7 @@ static int adis16480_set_freq(struct iio_dev *indio_dev, int val, int val2)
+ 	unsigned int t, reg;
+ 
+ 	t =  val * 1000 + val2 / 1000;
+-	if (t <= 0)
++	if (t = 0)
+ 		return -EINVAL;
+ 
+ 	/*
+-- 
+2.20.1
