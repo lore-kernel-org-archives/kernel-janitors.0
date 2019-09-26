@@ -1,24 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Sep 2019 06:53:34 +0000
-Subject: Re: [PATCH] enetc: Add missing call to 'pci_free_irq_vectors()' in probe and remove functions
-Message-Id: <20190831.235334.383882811136027003.davem@davemloft.net>
+From: Benson Leung <bleung@chromium.org>
+Date: Thu, 26 Sep 2019 22:43:56 +0000
+Subject: Re: [PATCH -next] platform/chrome: wilco_ec: Use kmemdup in enqueue_events()
+Message-Id: <CANLzEkvw-UGKh-OE91PiHUvOnjjdbTngnUNwFC4f54h8e3v+9A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190830202312.21287-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190830202312.21287-1-christophe.jaillet@wanadoo.fr>
+References: <20190621135907.112232-1-yuehaibing@huawei.com> <CAHX4x86qUKPTkRFWvWMgTMh1VY8ogJfr55khsSJTakS0emiyFA@mail.gmail.com>
+In-Reply-To: <CAHX4x86qUKPTkRFWvWMgTMh1VY8ogJfr55khsSJTakS0emiyFA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: yangbo.lu@nxp.com, claudiu.manoil@nxp.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nick Crews <ncrews@chromium.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 30 Aug 2019 22:23:12 +0200
+Hey Nick,
+On Fri, Jun 21, 2019 at 7:51 AM Nick Crews <ncrews@chromium.org> wrote:
+>
+> Thanks Yue, looks good to me.
+>
+> Nick
+>
+> On Fri, Jun 21, 2019 at 7:59 AM YueHaibing <yuehaibing@huawei.com> wrote:
+> >
+> > Use kmemdup rather than duplicating its implementation
+> >
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  drivers/platform/chrome/wilco_ec/event.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+> > index c975b76e6255..70156e75047e 100644
+> > --- a/drivers/platform/chrome/wilco_ec/event.c
+> > +++ b/drivers/platform/chrome/wilco_ec/event.c
+> > @@ -248,10 +248,9 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
+> >                 offset += event_size;
+> >
+> >                 /* Copy event into the queue */
+> > -               queue_event = kzalloc(event_size, GFP_KERNEL);
+> > +               queue_event = kmemdup(event, event_size, GFP_KERNEL);
+> >                 if (!queue_event)
+> >                         return -ENOMEM;
+> > -               memcpy(queue_event, event, event_size);
+> >                 event_queue_push(dev_data->events, queue_event);
+> >         }
+> >
+> >
+> >
 
-> Call to 'pci_free_irq_vectors()' are missing both in the error handling
-> path of the probe function, and in the remove function.
-> Add them.
-> 
-> Fixes: 19971f5ea0ab ("enetc: add PTP clock driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Looks like this was already incorporated into your commit,
+platform/chrome: wilco_ec: Use kmemdup in enqueue_events().
 
-Applied, thanks.
+Thanks!
+Benson
+
+-- 
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
