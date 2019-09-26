@@ -1,61 +1,36 @@
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Fri, 27 Sep 2019 10:04:04 +0000
-Subject: Re: [PATCH] HID: core: clean up indentation issue
-Message-Id: <CAO-hwJKpqGBi+9CRn08sNcn+ggQtnefuMgG98bXtW1UiGqneQA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 11:22:52 +0000
+Subject: [PATCH] net: ena: clean up indentation issue
+Message-Id: <20190926112252.21498-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190922115054.10880-1-colin.king@canonical.com>
- <nycvar.YFH.7.76.1909231303180.1459@cbobk.fhfr.pm> <20190925114741.GD27389@kadam>
-In-Reply-To: <20190925114741.GD27389@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Colin King <colin.king@canonical.com>, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Netanel Belgazal <netanel@amazon.com>, Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>, "David S . Miller" <davem@davemloft.net>, Arthur Kiyanovski <akiyano@amazon.com>, Sameeh Jubran <sameehj@amazon.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 1:48 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Mon, Sep 23, 2019 at 01:04:13PM +0200, Jiri Kosina wrote:
-> > On Sun, 22 Sep 2019, Colin King wrote:
-> >
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > There is an if statement that is indented by one extra space,
-> > > fix this by removing the extraneous space.
-> > >
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/hid/hid-core.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> > > index 3eaee2c37931..9469c382a182 100644
-> > > --- a/drivers/hid/hid-core.c
-> > > +++ b/drivers/hid/hid-core.c
-> > > @@ -2329,10 +2329,10 @@ int hid_add_device(struct hid_device *hdev)
-> > >     /*
-> > >      * Check for the mandatory transport channel.
-> > >      */
-> > > -    if (!hdev->ll_driver->raw_request) {
-> > > +   if (!hdev->ll_driver->raw_request) {
-> > >             hid_err(hdev, "transport driver missing .raw_request()\n");
-> > >             return -EINVAL;
-> > > -    }
-> > > +   }
-> >
-> > Let's not pollute git blame and wait for an ocasion when we need to touch
-> > the code for some more valid reason.
->
-> Just use `git blame -w`.
->
-> This probably came from a Smatch warning.  Smatch warns very seldom
-> warns about style issues, but in this case the indenting is legitimately
-> bad.
+From: Colin Ian King <colin.king@canonical.com>
 
-Well, I tend to agree with Jiri here. Yes, you can use a particular
-flag in a tool to 'solve' the git blame/history issue, but this is
-putting the workload on the user, while tthe code is fine, in this
-case. Why do we need to pollute the history of a file for no good
-reasons?
+There memset is indented incorrectly, remove the extraneous tabs.
 
-Cheers,
-Benjamin
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_eth_com.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_eth_com.c b/drivers/net/ethernet/amazon/ena/ena_eth_com.c
+index 38046bf0ff44..2845ac277724 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_eth_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_eth_com.c
+@@ -211,8 +211,8 @@ static int ena_com_sq_update_llq_tail(struct ena_com_io_sq *io_sq)
+ 
+ 		pkt_ctrl->curr_bounce_buf  			ena_com_get_next_bounce_buffer(&io_sq->bounce_buf_ctrl);
+-			memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
+-			       0x0, llq_info->desc_list_entry_size);
++		memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
++		       0x0, llq_info->desc_list_entry_size);
+ 
+ 		pkt_ctrl->idx = 0;
+ 		if (unlikely(llq_info->desc_stride_ctrl = ENA_ADMIN_SINGLE_DESC_PER_ENTRY))
+-- 
+2.20.1
