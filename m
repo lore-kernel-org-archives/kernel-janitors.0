@@ -1,45 +1,51 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Fri, 20 Sep 2019 14:25:39 +0000
-Subject: [PATCH 28/31] perf test: Fix spelling mistake "allos" -> "allocate"
-Message-Id: <20190920142542.12047-29-acme@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 26 Sep 2019 16:20:51 +0000
+Subject: [PATCH] phy-mvebu-a3700-utmi: Use devm_platform_ioremap_resource() in mvebu_a3700_utmi_phy_probe()
+Message-Id: <5403540b-d3de-4a29-ec84-7ce5bb8d6d9f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920142542.12047-1-acme@kernel.org>
-In-Reply-To: <20190920142542.12047-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mukesh Ojha <mojha@codeaurora.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: kernel-janitors@vger.kernel.org, Igal Liberman <igall@marvell.com>, Kishon Vijay Abraham I <kishon@ti.com>, Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2019 18:15:23 +0200
 
-There is a spelling mistake in a TEST_ASSERT_VAL message. Fix it.
+Simplify this function implementation by using a known wrapper function.
 
-Signed-off-by: Colin King <colin.king@canonical.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20190911152148.17031-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/perf/tests/event_update.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/marvell/phy-mvebu-a3700-utmi.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/tools/perf/tests/event_update.c b/tools/perf/tests/event_update.c
-index 4bb772e2b73d..0497d900ced2 100644
---- a/tools/perf/tests/event_update.c
-+++ b/tools/perf/tests/event_update.c
-@@ -94,7 +94,7 @@ int test__event_update(struct test *test __maybe_unused, int subtest __maybe_unu
- 
- 	evsel = perf_evlist__first(evlist);
- 
--	TEST_ASSERT_VAL("failed to allos ids",
-+	TEST_ASSERT_VAL("failed to allocate ids",
- 			!perf_evsel__alloc_id(evsel, 1, 1));
- 
- 	perf_evlist__id_add(evlist, evsel, 0, 0, 123);
--- 
-2.21.0
+diff --git a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
+index ded900b06f5a..23bc3bf5c4c0 100644
+--- a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
++++ b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
+@@ -216,20 +216,13 @@ static int mvebu_a3700_utmi_phy_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct mvebu_a3700_utmi *utmi;
+ 	struct phy_provider *provider;
+-	struct resource *res;
+
+ 	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
+ 	if (!utmi)
+ 		return -ENOMEM;
+
+ 	/* Get UTMI memory region */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "Missing UTMI PHY memory resource\n");
+-		return -ENODEV;
+-	}
+-
+-	utmi->regs = devm_ioremap_resource(dev, res);
++	utmi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(utmi->regs))
+ 		return PTR_ERR(utmi->regs);
+
+--
+2.23.0
