@@ -1,45 +1,16 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Tue, 10 Sep 2019 17:02:27 +0000
-Subject: Re: [PATCH] NTB: ntb_transport: remove redundant assignment to rc
-Message-Id: <CAPoiz9z-e_oK2urbkWcoa2qqybAFbR54SR7gGzU1EA19zrxc=A@mail.gmail.com>
+From: Dive Advice Travel <dom@diveadvice.com>
+Date: Thu, 26 Sep 2019 12:51:24 +0000
+Subject: =?utf-8?B?Q29weSBvZjog5Lqr5Y+X5bCx5Zyo572R57uc6YeR5rKZ77yM5pa55L6/5L2g?=  =?utf-8?B?5oiR5LuW44CC?=
+Message-Id: <3668b2b0bb0690591974c44c27050e40@www.diveadvice.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190818185349.15275-1-colin.king@canonical.com>
-In-Reply-To: <20190818185349.15275-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, linux-ntb <linux-ntb@googlegroups.com>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 7:53 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable rc is initialized to a value that is never read and it
-> is re-assigned later. The initialization is redundant and can be
-> removed.
+This is a copy of the following message you sent to Dive Advice Travel via Dive Advice Travel - Your Liveaboard Specialists - World's Finest Diving
 
-Applied to ntb-next, thanks
+This is an enquiry email via http://www.diveadvice.com/ from:
+家益江 <kernel-janitors@vger.kernel.org>
 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/ntb/ntb_transport.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-> index 40c90ca10729..00a5d5764993 100644
-> --- a/drivers/ntb/ntb_transport.c
-> +++ b/drivers/ntb/ntb_transport.c
-> @@ -292,7 +292,7 @@ static int ntb_transport_bus_match(struct device *dev,
->  static int ntb_transport_bus_probe(struct device *dev)
->  {
->         const struct ntb_transport_client *client;
-> -       int rc = -EINVAL;
-> +       int rc;
->
->         get_device(dev);
->
-> --
-> 2.20.1
->
+专享大礼包澳門金沙，註测就鎹58圜，满188即可出款，www.1642999.com 以小博大全新升級，最高侟120鎹68，等你挑战 。。
