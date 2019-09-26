@@ -1,36 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 10:56:04 +0000
-Subject: [PATCH net] net: broadcom/bcmsysport: Fix signedness in bcm_sysport_probe()
-Message-Id: <20190925105604.GD3264@mwanda>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 26 Sep 2019 03:18:05 +0000
+Subject: Re: [PATCH net] net: broadcom/bcmsysport: Fix signedness in bcm_sysport_probe()
+Message-Id: <2424620c-7e8f-43ad-498f-966f26dc7e9f@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925105604.GD3264@mwanda>
+In-Reply-To: <20190925105604.GD3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Florian Fainelli <f.fainelli@gmail.com>
 Cc: "David S. Miller" <davem@davemloft.net>, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "priv->phy_interface" variable is an enum and in this context GCC
-will treat it as unsigned so the error handling will never be
-triggered.
 
-Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/broadcom/bcmsysport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index 7df887e4024c..a977a459bd20 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2481,7 +2481,7 @@ static int bcm_sysport_probe(struct platform_device *pdev)
- 
- 	priv->phy_interface = of_get_phy_mode(dn);
- 	/* Default to GMII interface mode */
--	if (priv->phy_interface < 0)
-+	if ((int)priv->phy_interface < 0)
- 		priv->phy_interface = PHY_INTERFACE_MODE_GMII;
- 
- 	/* In the case of a fixed PHY, the DT node associated
+On 9/25/2019 3:56 AM, Dan Carpenter wrote:
+> The "priv->phy_interface" variable is an enum and in this context GCC
+> will treat it as unsigned so the error handling will never be
+> triggered.
+> 
+> Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.20.1
+Florian
