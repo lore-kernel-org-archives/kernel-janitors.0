@@ -1,47 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 07 Sep 2019 07:46:34 +0000
-Subject: [PATCH] ASoC: rt1308: make array pd static const, makes object smaller
-Message-Id: <20190907074634.22144-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 26 Sep 2019 16:08:17 +0000
+Subject: [PATCH] phy-brcm-usb: Use devm_platform_ioremap_resource() in brcm_usb_phy_probe()
+Message-Id: <88679e6a-6701-7d30-d52e-5e970af4de04@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bcm-kernel-feedback-list@broadcom.com, Al Cooper <alcooperx@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2019 18:00:14 +0200
 
-Don't populate the array pd on the stack but instead make it
-static const. Makes the object code smaller by 82 bytes.
+Simplify this function implementation a bit by using
+a known wrapper function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  26548	   7288	     64	  33900	   846c	sound/soc/codecs/rt1308.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  26370	   7384	     64	  33818	   841a	sound/soc/codecs/rt1308.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rt1308.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/broadcom/phy-brcm-usb.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/rt1308.c b/sound/soc/codecs/rt1308.c
-index 6f2ee6809dbb..b75931a69a1c 100644
---- a/sound/soc/codecs/rt1308.c
-+++ b/sound/soc/codecs/rt1308.c
-@@ -436,7 +436,8 @@ static const struct snd_soc_dapm_route rt1308_dapm_routes[] = {
- 
- static int rt1308_get_clk_info(int sclk, int rate)
- {
--	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
-+	int i;
-+	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
- 
- 	if (sclk <= 0 || rate <= 0)
+diff --git a/drivers/phy/broadcom/phy-brcm-usb.c b/drivers/phy/broadcom/phy-brcm-usb.c
+index f5c1f2983a1d..2a0a8bd2b056 100644
+--- a/drivers/phy/broadcom/phy-brcm-usb.c
++++ b/drivers/phy/broadcom/phy-brcm-usb.c
+@@ -298,12 +298,7 @@ static int brcm_usb_phy_probe(struct platform_device *pdev)
+ 	brcm_usb_set_family_map(&priv->ini);
+ 	dev_dbg(dev, "Best mapping table is for %s\n",
+ 		priv->ini.family_name);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "can't get USB_CTRL base address\n");
+-		return -EINVAL;
+-	}
+-	priv->ini.ctrl_regs = devm_ioremap_resource(dev, res);
++	priv->ini.ctrl_regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->ini.ctrl_regs)) {
+ 		dev_err(dev, "can't map CTRL register space\n");
  		return -EINVAL;
--- 
-2.20.1
+--
+2.23.0
