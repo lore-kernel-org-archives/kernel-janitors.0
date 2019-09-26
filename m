@@ -1,35 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Sep 2019 10:38:48 +0000
-Subject: [PATCH] NFC: st95hf: fix spelling mistake "receieve" -> "receive"
-Message-Id: <20190911103848.17966-1-colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 11:57:16 +0000
+Subject: [PATCH] scsi: csiostor: clean up indentation issue
+Message-Id: <20190926115716.3698-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+The goto statement is indented incorrectly, remove the extraneous tab.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/nfc/st95hf/core.c | 2 +-
+ drivers/scsi/csiostor/csio_mb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-index 6034c5bf49d9..ce38782ebf80 100644
---- a/drivers/nfc/st95hf/core.c
-+++ b/drivers/nfc/st95hf/core.c
-@@ -316,7 +316,7 @@ static int st95hf_echo_command(struct st95hf_context *st95context)
- 					  &echo_response);
- 	if (result) {
- 		dev_err(&st95context->spicontext.spidev->dev,
--			"err: echo response receieve error = 0x%x\n", result);
-+			"err: echo response receive error = 0x%x\n", result);
- 		return result;
+diff --git a/drivers/scsi/csiostor/csio_mb.c b/drivers/scsi/csiostor/csio_mb.c
+index 6f13673d6aa0..94810b19e747 100644
+--- a/drivers/scsi/csiostor/csio_mb.c
++++ b/drivers/scsi/csiostor/csio_mb.c
+@@ -1210,7 +1210,7 @@ csio_mb_issue(struct csio_hw *hw, struct csio_mb *mbp)
+ 		   !csio_is_hw_intr_enabled(hw)) {
+ 		csio_err(hw, "Cannot issue mailbox in interrupt mode 0x%x\n",
+ 			 *((uint8_t *)mbp->mb));
+-			goto error_out;
++		goto error_out;
  	}
  
+ 	if (mbm->mcurrent != NULL) {
 -- 
 2.20.1
