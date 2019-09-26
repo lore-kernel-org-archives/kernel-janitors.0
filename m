@@ -1,52 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 22 Sep 2019 10:09:42 +0000
-Subject: [PATCH] dmaengine: k3dma: Use devm_platform_ioremap_resource() in k3_dma_probe()
-Message-Id: <aaed7862-49bb-e368-3e7b-5cc2c3d915b1@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 12:50:57 +0000
+Subject: [PATCH] staging: rtl8192e: clean up indentation issue
+Message-Id: <20190926125057.16158-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Colin Ian King <colin.king@canonical.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Sep 2019 11:36:18 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using a known wrapper function.
+The RT_TRACE is indented incorrectly, add in the missing tabs.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/k3dma.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index 4b36c8810517..adecea51814f 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -835,13 +835,8 @@ static int k3_dma_probe(struct platform_device *op)
- 	const struct k3dma_soc_data *soc_data;
- 	struct k3_dma_dev *d;
- 	const struct of_device_id *of_id;
--	struct resource *iores;
- 	int i, ret, irq = 0;
-
--	iores = platform_get_resource(op, IORESOURCE_MEM, 0);
--	if (!iores)
--		return -EINVAL;
--
- 	d = devm_kzalloc(&op->dev, sizeof(*d), GFP_KERNEL);
- 	if (!d)
- 		return -ENOMEM;
-@@ -850,7 +845,7 @@ static int k3_dma_probe(struct platform_device *op)
- 	if (!soc_data)
- 		return -EINVAL;
-
--	d->base = devm_ioremap_resource(&op->dev, iores);
-+	d->base = devm_platform_ioremap_resource(op, 0);
- 	if (IS_ERR(d->base))
- 		return PTR_ERR(d->base);
-
---
-2.23.0
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+index f932cb15e4e5..b08712a9c029 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+@@ -715,8 +715,8 @@ void rtl92e_set_wireless_mode(struct net_device *dev, u8 wireless_mode)
+ 	if ((wireless_mode = WIRELESS_MODE_N_24G) ||
+ 	    (wireless_mode = WIRELESS_MODE_N_5G)) {
+ 		priv->rtllib->pHTInfo->bEnableHT = 1;
+-	RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 1\n",
+-		 __func__, wireless_mode);
++		RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 1\n",
++			 __func__, wireless_mode);
+ 	} else {
+ 		priv->rtllib->pHTInfo->bEnableHT = 0;
+ 		RT_TRACE(COMP_DBG, "%s(), wireless_mode:%x, bEnableHT = 0\n",
+-- 
+2.20.1
