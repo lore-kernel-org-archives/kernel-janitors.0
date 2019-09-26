@@ -1,40 +1,40 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 27 Aug 2019 14:09:42 +0000
-Subject: [PATCH] media: stm32-dcmi: Delete an unnecessary of_node_put() call in dcmi_probe()
-Message-Id: <129a4933-2171-7ed9-c84c-8e56b6d05270@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 09:50:12 +0000
+Subject: [PATCH][next] io_uring: ensure variable ret is initialized to zero
+Message-Id: <20190926095012.31826-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alexandre Torgue <alexandre.torgue@st.com>, Hugues Fruchet <hugues.fruchet@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Aug 2019 16:00:13 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A null pointer would be passed to a call of the function “of_node_put”
-immediately after a call of the function “of_graph_get_next_endpoint”
-failed at one place.
-Remove this superfluous function call.
+In the case where sig is NULL the error variable ret is not initialized
+and may contain a garbage value on the final checks to see if ret is
+-ERESTARTSYS.  Best to initialize ret to zero before the do loop to
+ensure the ret does not accidentially contain -ERESTARTSYS before the
+loop.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: dd671c79e40b ("io_uring: make CQ ring wakeups be more efficient")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index cb1daf8217ff..9392e3409fba 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1861,7 +1861,6 @@ static int dcmi_probe(struct platform_device *pdev)
- 	np = of_graph_get_next_endpoint(np, NULL);
- 	if (!np) {
- 		dev_err(&pdev->dev, "Could not find the endpoint\n");
--		of_node_put(np);
- 		return -ENODEV;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7b5710e3a18c..aa8ac557493c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2835,6 +2835,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 			return ret;
  	}
-
---
-2.23.0
+ 
++	ret = 0;
+ 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
+ 	do {
+ 		prepare_to_wait_exclusive(&ctx->wait, &iowq.wq,
+-- 
+2.20.1
