@@ -1,46 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Sep 2019 18:05:32 +0000
-Subject: [PATCH] media: i2c: mt9m001: make array init_regs static, makes object smaller
-Message-Id: <20190905180532.14093-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 16:37:37 +0000
+Subject: Re: [PATCH v2] drm/amdgpu: fix multiple memory leaks
+Message-Id: <1cc7e3f9-69fb-e8dc-4bfc-dbb69de66ec7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190918190529.17298-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190918190529.17298-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Chunming Zhou <David1.Zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> v2: moved the released into goto error handlings
 
-Don't populate the array init_regs on the stack but instead make it
-static. Makes the object code smaller by 57 bytes.
+A better version comment should be moved below the triple dashes.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  15935	   3600	    128	  19663	   4ccf	drivers/media/i2c/mt9m001.o
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  15782	   3696	    128	  19606	   4c96	drivers/media/i2c/mt9m001.o
+Will the tag “Fixes” be added?
 
-(gcc version 9.2.1, amd64)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/i2c/mt9m001.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> @@ -393,6 +395,16 @@ static int acp_hw_init(void *handle)
+>  	val &= ~ACP_SOFT_RESET__SoftResetAud_MASK;
+>  	cgs_write_register(adev->acp.cgs_device, mmACP_SOFT_RESET, val);
+>  	return 0;
+> +
+> +out4:
+> +	kfree(i2s_pdata);
+> +out3:
+> +	kfree(adev->acp.acp_res);
+> +out2:
+> +	kfree(adev->acp.acp_cell);
+> +out1:
+> +	kfree(adev->acp.acp_genpd);
+> +	return ret;
+>  }
+>
+>  /**
 
-diff --git a/drivers/media/i2c/mt9m001.c b/drivers/media/i2c/mt9m001.c
-index 5613072908ac..210ea76adb53 100644
---- a/drivers/media/i2c/mt9m001.c
-+++ b/drivers/media/i2c/mt9m001.c
-@@ -167,7 +167,7 @@ static int multi_reg_write(struct i2c_client *client,
- 
- static int mt9m001_init(struct i2c_client *client)
- {
--	const struct mt9m001_reg init_regs[] = {
-+	static const struct mt9m001_reg init_regs[] = {
- 		/*
- 		 * Issue a soft reset. This returns all registers to their
- 		 * default values.
--- 
-2.20.1
+I suggest to reconsider the label selection according to the Linux coding style.
+
+Regards,
+Markus
