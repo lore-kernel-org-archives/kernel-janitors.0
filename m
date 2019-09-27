@@ -1,70 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 20 Sep 2019 09:23:05 +0000
-Subject: [PATCH v2] ethernet: gemini: Use devm_platform_ioremap_resource() in gemini_ethernet_probe()
-Message-Id: <bd860b05-f493-20e6-083d-66ef3cb61f60@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Sep 2019 09:58:40 +0000
+Subject: [PATCH] scsi: smartpqi: clean up an indentation issue
+Message-Id: <20190927095840.26377-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
- <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
-In-Reply-To: <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Radhey Shyam Pandey <radheys@xilinx.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2019 10:52:56 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Simplify this function implementation by using the wrapper function
-“devm_platform_ioremap_resource” instead of calling the functions
-“platform_get_resource” and “devm_ioremap_resource” directly.
+There are some statements that are indented too deeply, remove
+the extraneous tabs and rejoin split lines.
 
-* Thus reduce also a bit of exception handling code here.
-* Delete the local variable “res”.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/scsi/smartpqi/smartpqi_init.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-v2:
-Further changes were requested by Radhey Shyam Pandey.
-
-https://lore.kernel.org/r/CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com/
-
-
-
-* Updates for three modules were split into
- a separate patch for each driver.
-* The commit description was adjusted.
-
-
-
- drivers/net/ethernet/cortina/gemini.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
-index e736ce2c58ca..f009415ee4d8 100644
---- a/drivers/net/ethernet/cortina/gemini.c
-+++ b/drivers/net/ethernet/cortina/gemini.c
-@@ -2549,17 +2549,13 @@ static int gemini_ethernet_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct gemini_ethernet *geth;
- 	unsigned int retry = 5;
--	struct resource *res;
- 	u32 val;
-
- 	/* Global registers */
- 	geth = devm_kzalloc(dev, sizeof(*geth), GFP_KERNEL);
- 	if (!geth)
- 		return -ENOMEM;
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--	geth->base = devm_ioremap_resource(dev, res);
-+	geth->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(geth->base))
- 		return PTR_ERR(geth->base);
- 	geth->dev = dev;
---
-2.23.0
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index ea5409bebf57..be496d63aea3 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -2172,13 +2172,10 @@ static int pqi_update_scsi_devices(struct pqi_ctrl_info *ctrl_info)
+ 				REPORT_PHYS_LUN_DEV_FLAG_AIO_ENABLED) &&
+ 				phys_lun_ext_entry->aio_handle) {
+ 				device->aio_enabled = true;
+-					device->aio_handle -						phys_lun_ext_entry->aio_handle;
++				device->aio_handle +					phys_lun_ext_entry->aio_handle;
+ 			}
+-
+-				pqi_get_physical_disk_info(ctrl_info,
+-					device, id_phys);
+-
++			pqi_get_physical_disk_info(ctrl_info, device, id_phys);
+ 		} else {
+ 			memcpy(device->volume_id, log_lun_ext_entry->volume_id,
+ 				sizeof(device->volume_id));
+-- 
+2.20.1
