@@ -1,45 +1,36 @@
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Date: Thu, 12 Sep 2019 14:52:18 +0000
-Subject: Re: [PATCH v2 net 3/3] sctp: destroy bucket if failed to bind addr
-Message-Id: <20190912145218.GT3431@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Sep 2019 09:40:39 +0000
+Subject: [PATCH] net: tap: clean up an indentation issue
+Message-Id: <20190927094039.23370-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a450679-40ca-8a84-4cba-7a16f22ea3c0@huawei.com>
- <20190912040219.67517-1-maowenan@huawei.com>
- <20190912040219.67517-4-maowenan@huawei.com>
-In-Reply-To: <20190912040219.67517-4-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 12:02:19PM +0800, Mao Wenan wrote:
-> There is one memory leak bug report:
-> BUG: memory leak
-> unreferenced object 0xffff8881dc4c5ec0 (size 40):
->   comm "syz-executor.0", pid 5673, jiffies 4298198457 (age 27.578s)
->   hex dump (first 32 bytes):
->     02 00 00 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
->     f8 63 3d c1 81 88 ff ff 00 00 00 00 00 00 00 00  .c=.............
->   backtrace:
->     [<0000000072006339>] sctp_get_port_local+0x2a1/0xa00 [sctp]
->     [<00000000c7b379ec>] sctp_do_bind+0x176/0x2c0 [sctp]
->     [<000000005be274a2>] sctp_bind+0x5a/0x80 [sctp]
->     [<00000000b66b4044>] inet6_bind+0x59/0xd0 [ipv6]
->     [<00000000c68c7f42>] __sys_bind+0x120/0x1f0 net/socket.c:1647
->     [<000000004513635b>] __do_sys_bind net/socket.c:1658 [inline]
->     [<000000004513635b>] __se_sys_bind net/socket.c:1656 [inline]
->     [<000000004513635b>] __x64_sys_bind+0x3e/0x50 net/socket.c:1656
->     [<0000000061f2501e>] do_syscall_64+0x72/0x2e0 arch/x86/entry/common.c:296
->     [<0000000003d1e05e>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> This is because in sctp_do_bind, if sctp_get_port_local is to
-> create hash bucket successfully, and sctp_add_bind_addr failed
-> to bind address, e.g return -ENOMEM, so memory leak found, it
-> needs to destroy allocated bucket.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+There is a statement that is indented too deeply, remove
+the extraneous tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/tap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+index bcdfb0d88753..a6d63665ad03 100644
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -1190,7 +1190,7 @@ static int tap_get_user_xdp(struct tap_queue *q, struct xdp_buff *xdp)
+ 	kfree_skb(skb);
+ err:
+ 	rcu_read_lock();
+-		tap = rcu_dereference(q->tap);
++	tap = rcu_dereference(q->tap);
+ 	if (tap && tap->count_tx_dropped)
+ 		tap->count_tx_dropped(tap);
+ 	rcu_read_unlock();
+-- 
+2.20.1
