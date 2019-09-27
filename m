@@ -1,22 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 05 Sep 2019 15:02:21 +0000
-Subject: Re: [PATCH] staging: rtl8723bs: hal: remove redundant assignment to variable n
-Message-Id: <dbf73103-0f78-8f37-5acb-aecf8a8fb0a0@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Sep 2019 09:20:00 +0000
+Subject: [PATCH] usbip: clean up an indentation issue
+Message-Id: <20190927092000.19373-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190905141555.31582-1-colin.king@canonical.com>
- <20190905143341.GC3115@kadam>
-In-Reply-To: <20190905143341.GC3115@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Valentina Manea <valentina.manea.m@gmail.com>, Shuah Khan <shuah@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/09/2019 15:52, Dan Carpenter wrote:
-> It would be better to remove "n" altogether.
+From: Colin Ian King <colin.king@canonical.com>
 
-Good point, will resend a V2 later.
-> 
-> regards,
-> dan carpenter
-> 
+There is a return statement that is indented incorrectly, fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/usbip/stub_tx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/usbip/stub_tx.c b/drivers/usb/usbip/stub_tx.c
+index 36010a82b359..b1c2f6781cb3 100644
+--- a/drivers/usb/usbip/stub_tx.c
++++ b/drivers/usb/usbip/stub_tx.c
+@@ -291,7 +291,7 @@ static int stub_send_ret_submit(struct stub_device *sdev)
+ 				kfree(iov);
+ 				usbip_event_add(&sdev->ud,
+ 						SDEV_EVENT_ERROR_TCP);
+-			   return -1;
++				return -1;
+ 			}
+ 		}
+ 
+-- 
+2.20.1
