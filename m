@@ -1,23 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 08:20:14 +0000
-Subject: Re: [PATCH net] of: mdio: Fix a signedness bug in of_phy_get_and_connect()
-Message-Id: <20190927.102014.1540733849871544653.davem@davemloft.net>
+From: Connor Kuehl <connor.kuehl@canonical.com>
+Date: Fri, 27 Sep 2019 21:44:15 +0000
+Subject: [PATCH] staging: rtl8188eu: fix null dereference when kzalloc fails
+Message-Id: <20190927214415.899-1-connor.kuehl@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925110100.GL3264@mwanda>
-In-Reply-To: <20190925110100.GL3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, lidongpo@hisilicon.com, f.fainelli@gmail.com, hkallweit1@gmail.com, robh+dt@kernel.org, frowand.list@gmail.com, netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 14:01:00 +0300
+If kzalloc() returns NULL, the error path doesn't stop the flow of
+control from entering rtw_hal_read_chip_version() which dereferences the
+null pointer. Fix this by adding a 'goto' to the error path to more
+gracefully handle the issue and avoid proceeding with initialization
+steps that we're no longer prepared to handle.
 
-> The "iface" variable is an enum and in this context GCC treats it as
-> an unsigned int so the error handling is never triggered.
-> 
-> Fixes: b78624125304 ("of_mdio: Abstract a general interface for phy connect")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Also update the debug message to be more consistent with the other debug
+messages in this function.
 
-Applied.
+Addresses-Coverity: ("Dereference after null check")
+
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+---
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 664d93a7f90d..4fac9dca798e 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -348,8 +348,10 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
+ 	}
+ 
+ 	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
+-	if (!padapter->HalData)
+-		DBG_88E("cant not alloc memory for HAL DATA\n");
++	if (!padapter->HalData) {
++		DBG_88E("Failed to allocate memory for HAL data\n");
++		goto free_adapter;
++	}
+ 
+ 	/* step read_chip_version */
+ 	rtw_hal_read_chip_version(padapter);
+-- 
+2.17.1
