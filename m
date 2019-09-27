@@ -1,42 +1,33 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 18 Sep 2019 11:48:47 +0000
-Subject: [PATCH] mfd: ipaq-micro: Use devm_platform_ioremap_resource() in micro_probe()
-Message-Id: <d9990bcc-2daa-67ad-4de5-7a849668d038@web.de>
+Date: Fri, 27 Sep 2019 15:04:45 +0000
+Subject: Re: [PATCH] i40e: prevent memory leak in i40e_setup_macvlans
+Message-Id: <8d7d8cf4-c016-d22c-c2cc-dc71ea407cb4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925154831.19044-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190925154831.19044-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Jeffrey Kirsher <jeffrey.t.kirsher@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2019 13:40:30 +0200
+> In i40e_setup_macvlans if i40e_setup_channel fails the allocated memory
+> for ch should be released.
 
-Simplify this function implementation by using a known wrapper function.
+I suggest to improve also this change description.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mfd/ipaq-micro.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> +++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+> @@ -7168,6 +7168,7 @@ static int i40e_setup_macvlans(struct i40e_vsi *vsi, u16 macvlan_cnt, u16 qcnt,
+>  		ch->num_queue_pairs = qcnt;
+>  		if (!i40e_setup_channel(pf, vsi, ch)) {
+>  			ret = -EINVAL;
+> +			kfree(ch);
+>  			goto err_free;
+>  		}
+>  		ch->parent_vsi = vsi;
 
-diff --git a/drivers/mfd/ipaq-micro.c b/drivers/mfd/ipaq-micro.c
-index a1d9be82734d..e92eeeb67a98 100644
---- a/drivers/mfd/ipaq-micro.c
-+++ b/drivers/mfd/ipaq-micro.c
-@@ -396,11 +396,7 @@ static int __init micro_probe(struct platform_device *pdev)
- 	if (IS_ERR(micro->base))
- 		return PTR_ERR(micro->base);
+Can it matter to perform the added function call before the error code assignment?
 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res)
--		return -EINVAL;
--
--	micro->sdlc = devm_ioremap_resource(&pdev->dev, res);
-+	micro->sdlc = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(micro->sdlc))
- 		return PTR_ERR(micro->sdlc);
-
---
-2.23.0
+Regards,
+Markus
