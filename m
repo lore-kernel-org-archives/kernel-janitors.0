@@ -1,36 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Sep 2019 06:00:31 +0000
-Subject: [PATCH] md/raid0: Fix an error message in raid0_make_request()
-Message-Id: <20190921060031.GB18726@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 14:26:28 +0000
+Subject: Re: [PATCH] nfp: flower: prevent memory leak in nfp_flower_spawn_phy_reprs
+Message-Id: <95ee54a0-a5ff-a9f0-0d87-471e0f1f790c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925182405.31287-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190925182405.31287-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Song Liu <song@kernel.org>, NeilBrown <neilb@suse.de>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org, oss-drivers@netronome.com
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Frederik Lotter <frederik.lotter@netronome.com>, John Hurley <john.hurley@netronome.com>, Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>, Simon Horman <simon.horman@netronome.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The first argument to WARN() is supposed to be a condition.  The
-original code will just print the mdname() instead of the full warning
-message.
+> In nfp_flower_spawn_phy_reprs, in the for loop over eth_tbl if any of
+> intermediate allocations or initializations fail memory is leaked.
+> requiered releases are added.
 
-Fixes: c84a1372df92 ("md/raid0: avoid RAID0 data corruption due to layout confusion.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/md/raid0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I suggest to improve also this change description.
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index f61693e59684..3956ea502f97 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -615,7 +615,7 @@ static bool raid0_make_request(struct mddev *mddev, struct bio *bio)
- 		tmp_dev = map_sector(mddev, zone, sector, &sector);
- 		break;
- 	default:
--		WARN("md/raid0:%s: Invalid layout\n", mdname(mddev));
-+		WARN(1, "md/raid0:%s: Invalid layout\n", mdname(mddev));
- 		bio_io_error(bio);
- 		return true;
- 	}
--- 
-2.20.1
+
+> @@ -542,6 +545,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_app *app, struct nfp_flower_priv *priv)
+>  		err = nfp_repr_init(app, repr,
+>  				    cmsg_port_id, port, priv->nn->dp.netdev);
+>  		if (err) {
+> +			kfree(repr_priv);
+>  			nfp_port_free(port);
+>  			nfp_repr_free(repr);
+>  			goto err_reprs_clean;
+
+How do you think about to move common exception handling code
+to the end of this function implementation by adding jump targets?
+
+Regards,
+Markus
