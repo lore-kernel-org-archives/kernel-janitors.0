@@ -1,122 +1,17 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 26 Sep 2019 17:53:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Sep 2019 13:58:18 +0000
 Subject: Re: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial do..while loop
-Message-Id: <2f275661-5945-9e27-95a4-a82584756f2e@lwfinger.net>
+Message-Id: <20190927102349.GG27389@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190924142819.5243-1-connor.kuehl@canonical.com>
 In-Reply-To: <20190924142819.5243-1-connor.kuehl@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Connor Kuehl <connor.kuehl@canonical.com>, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org, dan.carpenter@oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Connor Kuehl <connor.kuehl@canonical.com>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
 
-On 9/24/19 9:28 AM, Connor Kuehl wrote:
-> The local variable 'bcmd_down' is always set to true almost immediately
-> before the do-while's condition is checked. As a result, !bcmd_down
-> evaluates to false which short circuits the logical AND operator meaning
-> that the second operand is never reached and is therefore dead code.
-> 
-> Furthermore, the do..while loop may be removed since it will always only
-> execute once because 'bcmd_down' is always set to true, so the
-> !bcmd_down evaluates to false and the loop exits immediately after the
-> first pass.
-> 
-> Fix this by removing the loop and its condition variables 'bcmd_down'
-> and 'retry_cnts'
-> 
-> While we're in there, also fix some checkpatch.pl suggestions regarding
-> spaces around arithmetic operators like '+'
-> 
-> Addresses-Coverity: ("Logically dead code")
-> 
-> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-> ---
-> v1 -> v2:
->   - remove the loop and its condition variable bcmd_down
->   - address some non-invasive checkpatch.pl suggestions as a result of
->     deleting the loop
-> 
->   drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 55 +++++++++-----------
->   1 file changed, 24 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> index 47352f210c0b..7646167a0b36 100644
-> --- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> @@ -47,8 +47,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
->   ******************************************/
->   static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
->   {
-> -	u8 bcmd_down = false;
-> -	s32 retry_cnts = 100;
->   	u8 h2c_box_num;
->   	u32 msgbox_addr;
->   	u32 msgbox_ex_addr;
-> @@ -71,39 +69,34 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
->   		goto exit;
->   
->   	/* pay attention to if  race condition happened in  H2C cmd setting. */
-> -	do {
-> -		h2c_box_num = adapt->HalData->LastHMEBoxNum;
-> -
-> -		if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
-> -			DBG_88E(" fw read cmd failed...\n");
-> -			goto exit;
-> -		}
-> -
-> -		*(u8 *)(&h2c_cmd) = ElementID;
-> -
-> -		if (CmdLen <= 3) {
-> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, CmdLen);
-> -		} else {
-> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
-> -			ext_cmd_len = CmdLen-3;
-> -			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, ext_cmd_len);
-> +	h2c_box_num = adapt->HalData->LastHMEBoxNum;
->   
-> -			/* Write Ext command */
-> -			msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
-> -			for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
-> -				usb_write8(adapt, msgbox_ex_addr+cmd_idx, *((u8 *)(&h2c_cmd_ex)+cmd_idx));
-> -		}
-> -		/*  Write command */
-> -		msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
-> -		for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
-> -			usb_write8(adapt, msgbox_addr+cmd_idx, *((u8 *)(&h2c_cmd)+cmd_idx));
-> +	if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
-> +		DBG_88E(" fw read cmd failed...\n");
-> +		goto exit;
-> +	}
->   
-> -		bcmd_down = true;
-> +	*(u8 *)(&h2c_cmd) = ElementID;
->   
-> -		adapt->HalData->LastHMEBoxNum > -			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
-> +	if (CmdLen <= 3) {
-> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, CmdLen);
-> +	} else {
-> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, 3);
-> +		ext_cmd_len = CmdLen - 3;
-> +		memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer + 3, ext_cmd_len);
-> +
-> +		/* Write Ext command */
-> +		msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
-> +		for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
-> +			usb_write8(adapt, msgbox_ex_addr + cmd_idx, *((u8 *)(&h2c_cmd_ex) + cmd_idx));
-> +	}
-> +	/*  Write command */
-> +	msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
-> +	for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
-> +		usb_write8(adapt, msgbox_addr + cmd_idx, *((u8 *)(&h2c_cmd) + cmd_idx));
->   
-> -	} while ((!bcmd_down) && (retry_cnts--));
-> +	adapt->HalData->LastHMEBoxNum > +		(h2c_box_num + 1) % RTL88E_MAX_H2C_BOX_NUMS;
->   
->   	ret = _SUCCESS;
+Looks good.  Thanks!
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-Thanks,
-
-Larry
+regards,
+dan carpenter
