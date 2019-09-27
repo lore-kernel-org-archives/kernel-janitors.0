@@ -1,28 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Sep 2019 07:59:43 +0000
-Subject: Re: [PATCH net] net: aquantia: Fix aq_vec_isr_legacy() return value
-Message-Id: <20190927.095943.808126689307036272.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 12:12:42 +0000
+Subject: Re: [PATCH v3] nfp: abm: fix memory leak in nfp_abm_u32_knode_replace
+Message-Id: <1cde6417-5942-598b-3670-c0a7227ffe25@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925105430.GA3264@mwanda>
-In-Reply-To: <20190925105430.GA3264@mwanda>
+References: <20190927015157.20070-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190927015157.20070-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: igor.russkikh@aquantia.com, vomlehn@texas.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org, oss-drivers@netronome.com
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, John Hurley <john.hurley@netronome.com>, Pablo Neira <pablo@netfilter.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 13:54:30 +0300
+> Updated other gotos to have correct errno returned, too.
 
-> The irqreturn_t type is an enum or an unsigned int in GCC.  That
-> creates to problems because it can't detect if the
-> self->aq_hw_ops->hw_irq_read() call fails and at the end the function
-> always returns IRQ_HANDLED.
-> 
-> drivers/net/ethernet/aquantia/atlantic/aq_vec.c:316 aq_vec_isr_legacy() warn: unsigned 'err' is never less than zero.
-> drivers/net/ethernet/aquantia/atlantic/aq_vec.c:329 aq_vec_isr_legacy() warn: always true condition '(err >= 0) => (0-u32max >= 0)'
-> 
-> Fixes: 970a2e9864b0 ("net: ethernet: aquantia: Vector operations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+How do you think about to add a jump target here?
 
-Applied.
+
+> +++ b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> @@ -176,8 +176,10 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+>  	u8 mask, val;
+>  	int err;
+>
+> -	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack))
+> +	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack)) {
+> +		err = -EOPNOTSUPP;
+>  		goto err_delete;
+> +	}
+>
+>  	tos_off = proto == htons(ETH_P_IP) ? 16 : 20;
+
+-		goto err_delete;
++		goto e_opnotsupp;
+
+
+> @@ -221,7 +227,7 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+>
+
++e_opnotsupp:
++	err = -EOPNOTSUPP;
+
+>  err_delete:
+>  	nfp_abm_u32_knode_delete(alink, knode);
+> -	return -EOPNOTSUPP;
+> +	return err;
+>  }
+>
+>  static int nfp_abm_setup_tc_block_cb(enum tc_setup_type type,
+
+
+Can such a change variant be a bit nicer?
+
+Regards,
+Markus
