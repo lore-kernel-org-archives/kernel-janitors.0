@@ -1,35 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 13 Sep 2019 08:08:49 +0000
-Subject: [PATCH] genirq/debugfs: fix spelling mistake "effectiv" -> "effective"
-Message-Id: <20190913080849.29050-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 13:40:17 +0000
+Subject: Re: net/ncsi: prevent memory leak in ncsi_rsp_handler_gc
+Message-Id: <2bee11b1-b6f9-8d5f-1e94-5ce9d2381d9a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190927031501.GF22969@cs-dulles.cs.umn.edu>
+In-Reply-To: <20190927031501.GF22969@cs-dulles.cs.umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, netdev@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, Al Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, Samuel Mendoza-Jonas <sam@mendozajonas.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> > > In ncsi_rsp_handler_gc if allocation for nc->vlan_filter.vids fails the
+> > > allocated memory for nc->mac_filter.addrs should be released.
+…
+> The problem is that just by traversing the code using tools
+> like ctags or elixir I couldn't find any caller to ncsi_rsp_handler_gc
+> that handles such errnos.
 
-There is a spelling mistake in the debugfs output, fix it.
+Would you like to collaborate with higher level source code analysis tools?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/irq/debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
-index c1eccd4f6520..55b1b7ce667e 100644
---- a/kernel/irq/debugfs.c
-+++ b/kernel/irq/debugfs.c
-@@ -36,7 +36,7 @@ static void irq_debug_show_masks(struct seq_file *m, struct irq_desc *desc)
- 	seq_printf(m, "affinity: %*pbl\n", cpumask_pr_args(msk));
- #ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
- 	msk = irq_data_get_effective_affinity_mask(data);
--	seq_printf(m, "effectiv: %*pbl\n", cpumask_pr_args(msk));
-+	seq_printf(m, "effective: %*pbl\n", cpumask_pr_args(msk));
- #endif
- #ifdef CONFIG_GENERIC_PENDING_IRQ
- 	msk = desc->pending_mask;
--- 
-2.20.1
+How do you think about to add the tag “Fixes” here?
+
+Regards,
+Markus
