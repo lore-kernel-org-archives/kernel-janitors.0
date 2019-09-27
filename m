@@ -1,35 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2019 11:01:28 +0000
-Subject: [PATCH] power: supply: sbs-battery: Fix a signedness bug in sbs_get_battery_capacity()
-Message-Id: <20190925110128.GM3264@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 15:24:57 +0000
+Subject: Re: [PATCH] mtd: onenand: prevent memory leak in onenand_scan
+Message-Id: <0b12fc29-d93c-ef02-cc5c-85057bfe6197@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925154302.17708-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190925154302.17708-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, Rhyland Klein <rklein@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, Stephen A McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Navid Emamdoost <emamd001@umn.edu>, Miquel Raynal <miquel.raynal@bootlin.com>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-The "mode" variable is an enum and in this context GCC treats it as an
-unsigned int so the error handling is never triggered.
+> In onenand_scan if scan_bbt fails the allocated buffers should be released.
 
-Fixes: 51d075660457 ("bq20z75: Add support for charge properties")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/power/supply/sbs-battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will an other change description be more appropriate?
 
-diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-index f8d74e9f7931..62110af1abcf 100644
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -555,7 +555,7 @@ static int sbs_get_battery_capacity(struct i2c_client *client,
- 		mode = BATTERY_MODE_AMPS;
- 
- 	mode = sbs_set_battery_mode(client, mode);
--	if (mode < 0)
-+	if ((int)mode < 0)
- 		return mode;
- 
- 	ret = sbs_read_word_data(client, sbs_data[reg_offset].addr);
--- 
-2.20.1
+
+How do you think about to add the tag “Fixes” here?
+
+Regards,
+Markus
