@@ -1,103 +1,36 @@
-From: maowenan <maowenan@huawei.com>
-Date: Tue, 24 Sep 2019 09:33:56 +0000
-Subject: Re: [PATCH stable 4.4 net] net: rds: Fix NULL ptr use in rds_tcp_kill_sock
-Message-Id: <8b5b7fd5-dd53-4a73-371d-c997b1b3ce78@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Sep 2019 10:38:58 +0000
+Subject: [PATCH] ASoC: amd: acp3x: clean up an indentation issue
+Message-Id: <20190927103858.631-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190918083733.50266-1-maowenan@huawei.com>
- <20190918083253.GA1862222@kroah.com>
- <c8953355-2b98-c4d0-2af2-4a69ad3e2d2d@huawei.com>
-In-Reply-To: <c8953355-2b98-c4d0-2af2-4a69ad3e2d2d@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: chien.yen@oracle.com, davem@davemloft.net, stable@vger.kernel.org, rds-devel@oss.oracle.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Kindly ping...
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2019/9/18 17:02, maowenan wrote:
-> 
-> 
-> On 2019/9/18 16:32, Greg KH wrote:
->> On Wed, Sep 18, 2019 at 04:37:33PM +0800, Mao Wenan wrote:
->>> After the commit c4e97b06cfdc ("net: rds: force to destroy
->>> connection if t_sock is NULL in rds_tcp_kill_sock()."),
->>> it introduced null-ptr-deref in rds_tcp_kill_sock as below:
->>>
->>> BUG: KASAN: null-ptr-deref on address 0000000000000020
->>> Read of size 8 by task kworker/u16:10/910
->>> CPU: 3 PID: 910 Comm: kworker/u16:10 Not tainted 4.4.178+ #3
->>> Hardware name: linux,dummy-virt (DT)
->>> Workqueue: netns cleanup_net
->>> Call trace:
->>> [<ffffff90080abb50>] dump_backtrace+0x0/0x618
->>> [<ffffff90080ac1a0>] show_stack+0x38/0x60
->>> [<ffffff9008c42b78>] dump_stack+0x1a8/0x230
->>> [<ffffff90085d469c>] kasan_report_error+0xc8c/0xfc0
->>> [<ffffff90085d54a4>] kasan_report+0x94/0xd8
->>> [<ffffff90085d1b28>] __asan_load8+0x88/0x150
->>> [<ffffff9009c9cc2c>] rds_tcp_dev_event+0x734/0xb48
->>> [<ffffff90081eacb0>] raw_notifier_call_chain+0x150/0x1e8
->>> [<ffffff900973fec0>] call_netdevice_notifiers_info+0x90/0x110
->>> [<ffffff9009764874>] netdev_run_todo+0x2f4/0xb08
->>> [<ffffff9009796d34>] rtnl_unlock+0x2c/0x48
->>> [<ffffff9009756484>] default_device_exit_batch+0x444/0x528
->>> [<ffffff9009720498>] ops_exit_list+0x1c0/0x240
->>> [<ffffff9009724a80>] cleanup_net+0x738/0xbf8
->>> [<ffffff90081ca6cc>] process_one_work+0x96c/0x13e0
->>> [<ffffff90081cf370>] worker_thread+0x7e0/0x1910
->>> [<ffffff90081e7174>] kthread+0x304/0x390
->>> [<ffffff9008094280>] ret_from_fork+0x10/0x50
->>>
->>> If the first loop add the tc->t_sock = NULL to the tmp_list,
->>> 1). list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node)
->>>
->>> then the second loop is to find connections to destroy, tc->t_sock
->>> might equal NULL, and tc->t_sock->sk happens null-ptr-deref.
->>> 2). list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
->>>
->>> Fixes: c4e97b06cfdc ("net: rds: force to destroy connection if t_sock is NULL in rds_tcp_kill_sock().")
->>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->>> ---
->>>  net/rds/tcp.c | 8 +++++---
->>>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> Why is this not needed upstream as well?
-> Upstream does not use tc->t_sock in the second loop after below two patches.
-> afb4164d91c7 ("RDS: TCP: Refactor connection destruction to handle multiple paths") and
-> 2d746c93b6e5 ("rds: tcp: remove redundant function rds_tcp_conn_paths_destroy()")
-> 
->>
->> 4.9.y?  4.14.y?  anything else?
-> 4.19.y and 4.14.y exist rds_tcp_conn_paths_destroy()
-> to guarantee that.
-> +static void rds_tcp_conn_paths_destroy(struct rds_connection *conn)
-> +{
-> +       struct rds_conn_path *cp;
-> +       struct rds_tcp_connection *tc;
-> +       int i;
-> +       struct sock *sk;
-> +
-> +       for (i = 0; i < RDS_MPATH_WORKERS; i++) {
-> +               cp = &conn->c_path[i];
-> +               tc = cp->cp_transport_data;
-> +               if (!tc->t_sock)
-> +                       continue;
-> +               sk = tc->t_sock->sk;
-> +               sk->sk_prot->disconnect(sk, 0);
-> +               tcp_done(sk);
-> +       }
-> +}
-> +
-> 
->>
->> thanks,
->>
->> greg k-h
->>
->> .
->>
-> 
-> 
-> .
-> 
+There is a return statement that is indented too deeply, remove
+the extraneous tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
+index bc4dfafdfcd1..ea57088d50ce 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
++++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
+@@ -631,7 +631,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
+-			return -ENODEV;
++		return -ENODEV;
+ 	}
+ 
+ 	adata = devm_kzalloc(&pdev->dev, sizeof(*adata), GFP_KERNEL);
+-- 
+2.20.1
