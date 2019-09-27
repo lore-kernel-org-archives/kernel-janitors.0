@@ -1,45 +1,70 @@
-From: Connor Kuehl <connor.kuehl@canonical.com>
-Date: Mon, 23 Sep 2019 19:48:06 +0000
-Subject: [PATCH] staging: rtl8188eu: remove dead code in do-while conditional step
-Message-Id: <20190923194806.25347-1-connor.kuehl@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 08:18:27 +0000
+Subject: [PATCH v2 2/2] net: phy: mscc-miim: Move the setting of mii_bus structure members in mscc_miim_probe
+Message-Id: <70ec73ad-19aa-76aa-168b-b9a2a6911938@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
+ <506889a6-4148-89f9-302e-4be069595bb4@web.de> <20190920190908.GH3530@lunn.ch>
+ <121e75c5-4d45-9df2-a471-6997a1fb3218@web.de>
+ <20190926161825.GB6825@piout.net>
+ <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
+ <20190926193239.GC6825@piout.net>
+ <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
+In-Reply-To: <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org, straube.linux@gmail.com, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The local variable 'bcmd_down' is always set to true almost immediately
-before the do-while's condition is checked. As a result, !bcmd_down
-evaluates to false which short circuits the logical AND operator meaning
-that the second operand is never reached and is therefore dead code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Sep 2019 09:30:14 +0200
 
-Addresses-Coverity: ("Logically dead code")
+Move the modification of some members in the data structure “mii_bus”
+for the local variable “bus” directly before the call of
+the function “of_mdiobus_register” so that this change will be performed
+only after previous resource allocations succeeded.
 
-Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-index 47352f210c0b..a4b317937b23 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-@@ -48,7 +48,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
- static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
- {
- 	u8 bcmd_down = false;
--	s32 retry_cnts = 100;
- 	u8 h2c_box_num;
- 	u32 msgbox_addr;
- 	u32 msgbox_ex_addr;
-@@ -103,7 +102,7 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
- 		adapt->HalData->LastHMEBoxNum  			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
- 
--	} while ((!bcmd_down) && (retry_cnts--));
-+	} while (!bcmd_down);
- 
- 	ret = _SUCCESS;
- 
--- 
-2.17.1
+v2:
+This suggestion was repeated based on the change for the previous update step.
+
+
+ drivers/net/phy/mdio-mscc-miim.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-mscc-miim.c b/drivers/net/phy/mdio-mscc-miim.c
+index aabb13982251..a270f83bb207 100644
+--- a/drivers/net/phy/mdio-mscc-miim.c
++++ b/drivers/net/phy/mdio-mscc-miim.c
+@@ -124,13 +124,6 @@ static int mscc_miim_probe(struct platform_device *pdev)
+ 	if (!bus)
+ 		return -ENOMEM;
+
+-	bus->name = "mscc_miim";
+-	bus->read = mscc_miim_read;
+-	bus->write = mscc_miim_write;
+-	bus->reset = mscc_miim_reset;
+-	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev->dev));
+-	bus->parent = &pdev->dev;
+-
+ 	dev = bus->priv;
+ 	dev->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dev->regs)) {
+@@ -147,6 +140,12 @@ static int mscc_miim_probe(struct platform_device *pdev)
+ 		}
+ 	}
+
++	bus->name = "mscc_miim";
++	bus->read = mscc_miim_read;
++	bus->write = mscc_miim_write;
++	bus->reset = mscc_miim_reset;
++	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev->dev));
++	bus->parent = &pdev->dev;
+ 	ret = of_mdiobus_register(bus, pdev->dev.of_node);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Cannot register MDIO bus (%d)\n", ret);
+--
+2.23.0
