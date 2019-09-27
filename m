@@ -1,23 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Sep 2019 11:43:14 +0000
-Subject: Re: [PATCH] hdlc: Simplify code in 'pvc_xmit()'
-Message-Id: <20190925.134314.794543116027582950.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 27 Sep 2019 13:15:06 +0000
+Subject: Re: genetlink: prevent memory leak in netlbl_unlabel_defconf
+Message-Id: <c490685a-c7d6-5c95-5bf4-ed71f3c60cb6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190921061738.25326-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190921061738.25326-1-christophe.jaillet@wanadoo.fr>
+References: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
+In-Reply-To: <CAHC9VhR+4pZObDz7kG+rxnox2ph4z_wpZdyOL=WmdnRvdQNH9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Paul Moore <paul@paul-moore.com>, Navid Emamdoost <navid.emamdoost@gmail.com>, linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Stephen A McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 21 Sep 2019 08:17:38 +0200
+> > In netlbl_unlabel_defconf if netlbl_domhsh_add_default fails the
+> > allocated entry should be released.
+…
+> That said, netlbl_unlabel_defconf() *should* clean up here just on
+> principal if nothing else.
 
-> Use __skb_pad instead of rewriting it, this saves some LoC.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
+How do you think about to add the tag “Fixes” then?
 
-Please test this code and resubmit for net-next, thank you.
+Regards,
+Markus
