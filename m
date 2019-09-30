@@ -1,28 +1,20 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 28 Sep 2019 05:55:38 +0000
-Subject: Re: nfp: abm: fix memory leak in nfp_abm_u32_knode_replace
-Message-Id: <6854393f-8222-3077-1ff8-8be6b07d4862@web.de>
+Date: Mon, 30 Sep 2019 06:55:20 +0000
+Subject: Re: [PATCH] usb: dwc3: pci: prevent memory leak in dwc3_pci_probe
+Message-Id: <5f21ff8b-0cd2-5442-7d8b-f31b0f5dcdfe@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190927015157.20070-1-navid.emamdoost@gmail.com>
- <1cde6417-5942-598b-3670-c0a7227ffe25@web.de>
- <20190927144242.7e0d8fde@cakuba.netronome.com>
-In-Reply-To: <20190927144242.7e0d8fde@cakuba.netronome.com>
+References: <20190930024147.25243-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190930024147.25243-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jakub Kicinski <jakub.kicinski@netronome.com>, Navid Emamdoost <navid.emamdoost@gmail.com>, netdev@vger.kernel.org, oss-drivers@netronome.com
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen A McCamant <smccaman@umn.edu>, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, John Hurley <john.hurley@netronome.com>, Pablo Neira <pablo@netfilter.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-usb@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Can such a change variant be a bit nicer?
->
-> Definitely not.
->
-> Looks good as is, thanks Navid!
+> … This commit replaces return with the goto.
 
-I find it interesting how the software development opinions are different
-also in this use case for the implementation of correct and efficient
-exception handling.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=f1f2f614d535564992f32e720739cb53cf03489f#n450
+How do you think about to omit the wording “This commit” from your change descriptions?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=97f9a3c4eee55b0178b518ae7114a6a53372913d#n151
 
 Regards,
 Markus
