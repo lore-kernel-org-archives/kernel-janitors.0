@@ -1,61 +1,69 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 01 Oct 2019 14:21:34 +0000
-Subject: Re: [PATCH] HID: prodikeys: make array keys static const, makes object smaller
-Message-Id: <nycvar.YFH.7.76.1910011621240.13160@cbobk.fhfr.pm>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 01 Oct 2019 11:41:05 +0000
+Subject: Applied "spi: fsl-lpspi: clean up indentation issue" to the spi tree
+Message-Id: <20191001114105.4111927429C0@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190905165406.24641-1-colin.king@canonical.com>
-In-Reply-To: <20190905165406.24641-1-colin.king@canonical.com>
+References: <20190926113701.26986-1-colin.king@canonical.com>
+In-Reply-To: <20190926113701.26986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-On Thu, 5 Sep 2019, Colin King wrote:
+The patch
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array keys on the stack but instead make it
-> static const. Makes the object code smaller by 166 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   18931	   5872	    480	  25283	   62c3	drivers/hid/hid-prodikeys.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   18669	   5968	    480	  25117	   621d	drivers/hid/hid-prodikeys.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hid/hid-prodikeys.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-> index 21544ebff855..fb6841ebe4d9 100644
-> --- a/drivers/hid/hid-prodikeys.c
-> +++ b/drivers/hid/hid-prodikeys.c
-> @@ -516,7 +516,7 @@ static void pcmidi_setup_extra_keys(
->  		MY PICTURES =>	KEY_WORDPROCESSOR
->  		MY MUSIC=>	KEY_SPREADSHEET
->  	*/
-> -	unsigned int keys[] = {
-> +	static const unsigned int keys[] = {
->  		KEY_FN,
->  		KEY_MESSENGER, KEY_CALENDAR,
->  		KEY_ADDRESSBOOK, KEY_DOCUMENTS,
-> @@ -532,7 +532,7 @@ static void pcmidi_setup_extra_keys(
->  		0
->  	};
->  
-> -	unsigned int *pkeys = &keys[0];
-> +	const unsigned int *pkeys = &keys[0];
->  	unsigned short i;
+   spi: fsl-lpspi: clean up indentation issue
 
-Applied, thanks for the fix.
+has been applied to the spi tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1b0a2b2d3ccb98cf998816d87f7193139d54579e Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 12:37:01 +0100
+Subject: [PATCH] spi: fsl-lpspi: clean up indentation issue
+
+The complete call is indented incorrectly, remove the extraneous tabs.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190926113701.26986-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-fsl-lpspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index d08e9324140e..5efd73cd0ead 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -779,7 +779,7 @@ static irqreturn_t fsl_lpspi_isr(int irq, void *dev_id)
+ 
+ 	if (temp_SR & SR_FCF && (temp_IER & IER_FCIE)) {
+ 		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
+-			complete(&fsl_lpspi->xfer_done);
++		complete(&fsl_lpspi->xfer_done);
+ 		return IRQ_HANDLED;
+ 	}
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.20.1
