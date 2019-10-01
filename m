@@ -1,38 +1,94 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Oct 2019 11:48:24 +0000
-Subject: [PATCH] crypto: mediatek: remove redundant bitwise-or
-Message-Id: <20191023114824.30509-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 01 Oct 2019 11:41:06 +0000
+Subject: Applied "spi: lantiq-ssc: Use devm_platform_ioremap_resource() in lantiq_ssc_probe()" to the spi tre
+Message-Id: <20191001114106.6CD7D2742A30@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <230495a7-b754-bc6a-05e0-059a6b6c643d@web.de>
+In-Reply-To: <230495a7-b754-bc6a-05e0-059a6b6c643d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Matthias Brugger <matthias.bgg@gmail.com>, Vic Wu <vic.wu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Bitwise-or'ing 0xffffffff with the u32 variable ctr is the same result
-as assigning the value to ctr.  Remove the redundant bitwise-or and
-just use an assignment.
+   spi: lantiq-ssc: Use devm_platform_ioremap_resource() in lantiq_ssc_probe()
 
-Addresses-Coverity: ("Suspicious &= or |= constant expression")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 22262695f46b68659ba98a12e275df388c74968c Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 14:16:49 +0200
+Subject: [PATCH] spi: lantiq-ssc: Use devm_platform_ioremap_resource() in
+ lantiq_ssc_probe()
+
+Simplify this function implementation by using a known wrapper function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Link: https://lore.kernel.org/r/230495a7-b754-bc6a-05e0-059a6b6c643d@web.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/crypto/mediatek/mtk-aes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-lantiq-ssc.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/mediatek/mtk-aes.c b/drivers/crypto/mediatek/mtk-aes.c
-index 90c9644fb8a8..d43410259113 100644
---- a/drivers/crypto/mediatek/mtk-aes.c
-+++ b/drivers/crypto/mediatek/mtk-aes.c
-@@ -591,7 +591,7 @@ static int mtk_aes_ctr_transfer(struct mtk_cryp *cryp, struct mtk_aes_rec *aes)
- 	start = ctr;
- 	end = start + blocks - 1;
- 	if (end < start) {
--		ctr |= 0xffffffff;
-+		ctr = 0xffffffff;
- 		datalen = AES_BLOCK_SIZE * -start;
- 		fragmented = true;
+diff --git a/drivers/spi/spi-lantiq-ssc.c b/drivers/spi/spi-lantiq-ssc.c
+index 9dfe8b04e688..1fd7ee53d451 100644
+--- a/drivers/spi/spi-lantiq-ssc.c
++++ b/drivers/spi/spi-lantiq-ssc.c
+@@ -797,7 +797,6 @@ static int lantiq_ssc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct spi_master *master;
+-	struct resource *res;
+ 	struct lantiq_ssc_spi *spi;
+ 	const struct lantiq_ssc_hwcfg *hwcfg;
+ 	const struct of_device_id *match;
+@@ -812,12 +811,6 @@ static int lantiq_ssc_probe(struct platform_device *pdev)
  	}
+ 	hwcfg = match->data;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "failed to get resources\n");
+-		return -ENXIO;
+-	}
+-
+ 	rx_irq = platform_get_irq_byname(pdev, LTQ_SPI_RX_IRQ_NAME);
+ 	if (rx_irq < 0)
+ 		return -ENXIO;
+@@ -839,8 +832,7 @@ static int lantiq_ssc_probe(struct platform_device *pdev)
+ 	spi->dev = dev;
+ 	spi->hwcfg = hwcfg;
+ 	platform_set_drvdata(pdev, spi);
+-
+-	spi->regbase = devm_ioremap_resource(dev, res);
++	spi->regbase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(spi->regbase)) {
+ 		err = PTR_ERR(spi->regbase);
+ 		goto err_master_put;
 -- 
 2.20.1
