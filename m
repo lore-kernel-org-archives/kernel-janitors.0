@@ -1,21 +1,24 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 05 Oct 2019 15:35:44 +0000
-Subject: Re: [PATCH] nl80211: fix memory leak in nl80211_get_ftm_responder_stats
-Message-Id: <dc0edb88-457f-fde8-4d91-d5b3b94bfb6d@web.de>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 01 Oct 2019 02:46:07 +0000
+Subject: Re: [PATCH] scsi: fnic: make array dev_cmd_err static const, makes object smaller
+Message-Id: <yq1a7alyyhc.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004194220.19412-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191004194220.19412-1-navid.emamdoost@gmail.com>
+References: <20190906163945.3889-1-colin.king@canonical.com>
+In-Reply-To: <20190906163945.3889-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 6 Sep 2019 17:39:45 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> In nl80211_get_ftm_responder_stats, a new skb is created via nlmsg_new
-> named msg. If nl80211hdr_put() fails, then msg should be released. The
-> return statement should be replace by goto to error handling code.
 
-Please improve this change description (also by avoiding a typo).
+Colin,
 
-Regards,
-Markus
+> Don't populate the array dev_cmd_err on the stack but instead make it
+> static const. Makes the object code smaller by 80 bytes.
+
+Applied to 5.5/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
