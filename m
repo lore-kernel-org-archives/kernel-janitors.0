@@ -1,27 +1,23 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Sun, 13 Oct 2019 21:58:26 +0000
-Subject: Re: [PATCH] drm/rockchip/rk3066: Use devm_platform_ioremap_resource() in rk3066_hdmi_bind()
-Message-Id: <12988569.FbAFs2EWry@phil>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 01 Oct 2019 03:10:00 +0000
+Subject: Re: [PATCH] scsi: csiostor: clean up indentation issue
+Message-Id: <yq1blv1xit3.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
-In-Reply-To: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
+References: <20190926115716.3698-1-colin.king@canonical.com>
+In-Reply-To: <20190926115716.3698-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 26 Sep 2019 12:57:16 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org, Zheng Yang <zhengyang@rock-chips.com>
+To: Colin King <colin.king@canonical.com>
+Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Samstag, 21. September 2019, 20:40:16 CEST schrieb Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Sep 2019 20:32:25 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-applied to drm-misc-next
+Colin,
 
-Thanks
-Heiko
+> The goto statement is indented incorrectly, remove the extraneous tab.
+
+Applied to 5.5/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
