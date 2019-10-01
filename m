@@ -1,33 +1,77 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 04 Oct 2019 13:46:41 +0000
-Subject: Re: [PATCH] libertas: remove redundant assignment to variable ret
-Message-Id: <20191004134641.62F9D61A37@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Oct 2019 13:11:22 +0000
+Subject: Re: [PATCH] staging: rtl8188eu: fix null dereference when kzalloc fails
+Message-Id: <20191001131122.GC22609@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191002101517.10836-1-colin.king@canonical.com>
-In-Reply-To: <20191002101517.10836-1-colin.king@canonical.com>
+References: <20190927214415.899-1-connor.kuehl@canonical.com>
+In-Reply-To: <20190927214415.899-1-connor.kuehl@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Connor Kuehl <connor.kuehl@canonical.com>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
 
-Colin King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, Sep 27, 2019 at 02:44:15PM -0700, Connor Kuehl wrote:
+> If kzalloc() returns NULL, the error path doesn't stop the flow of
+> control from entering rtw_hal_read_chip_version() which dereferences the
+> null pointer. Fix this by adding a 'goto' to the error path to more
+> gracefully handle the issue and avoid proceeding with initialization
+> steps that we're no longer prepared to handle.
 > 
-> The variable ret is being assigned a value that is never read and is
-> being re-assigned a little later on. The assignment is redundant and hence
-> can be removed.
+> Also update the debug message to be more consistent with the other debug
+> messages in this function.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Addresses-Coverity: ("Dereference after null check")
+> 
+> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+> ---
+>  drivers/staging/rtl8188eu/os_dep/usb_intf.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+> index 664d93a7f90d..4fac9dca798e 100644
+> --- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+> +++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+> @@ -348,8 +348,10 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
+>  	}
+>  
 
-Patch applied to wireless-drivers-next.git, thanks.
+There is another one earlier in the function as well.
 
-60b5b49f6a6e libertas: remove redundant assignment to variable ret
+drivers/staging/rtl8188eu/os_dep/usb_intf.c
+   336  
+   337          pnetdev = rtw_init_netdev(padapter);
+   338          if (!pnetdev)
+   339                  goto free_adapter;
+   340          SET_NETDEV_DEV(pnetdev, dvobj_to_dev(dvobj));
+   341          padapter = rtw_netdev_priv(pnetdev);
+   342  
+   343          if (padapter->registrypriv.monitor_enable) {
+   344                  pmondev = rtl88eu_mon_init();
+   345                  if (!pmondev)
+   346                          netdev_warn(pnetdev, "Failed to initialize monitor interface");
 
--- 
-https://patchwork.kernel.org/patch/11170731/
+goto free_adapter.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+   347                  padapter->pmondev = pmondev;
+   348          }
+   349  
+   350          padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
+   351          if (!padapter->HalData)
+   352                  DBG_88E("cant not alloc memory for HAL DATA\n");
+   353  
+
+>  	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
+> -	if (!padapter->HalData)
+> -		DBG_88E("cant not alloc memory for HAL DATA\n");
+> +	if (!padapter->HalData) {
+> +		DBG_88E("Failed to allocate memory for HAL data\n");
+
+Remove this debug printk.
+
+> +		goto free_adapter;
+> +	}
+
+
+regards,
+dan carpenter
