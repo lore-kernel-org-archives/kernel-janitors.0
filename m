@@ -1,47 +1,25 @@
-From: "DR.Mike Benz" <eco.bank1204@gmail.com>
-Date: Sat, 05 Oct 2019 17:44:05 +0000
-Subject: Happy to inform you, CONTACT WALMART TRANSFER To pick up $8000.00 sent to you this morning.
-Message-Id: <CAOE+jAALK37sQDc81dr2a5xeBRKYePHre7UydVaqGOVjtM94iw@mail.gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 01 Oct 2019 02:43:02 +0000
+Subject: Re: [PATCH] scsi: mvsas: remove redundant assignment to variable rc
+Message-Id: <yq1eezxyymh.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190905135017.23772-1-colin.king@canonical.com>
+In-Reply-To: <20190905135017.23772-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 5 Sep 2019 14:50:17 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Attn Dear Beneficiary.
-Happy to inform you, CONTACT WALMART TRANSFER To pick up $8000.00 sent
-to you this morning.
 
-I have deposited your payment funds $2.500,000MillionUS Dollars
-With Walmart international money transfers.
-Receive the Money with Walmart | MoneyGram service.
-Walmart partners with MoneyGram to allow customers
-easily receive money transfers abroad,
-Contact Walmart international money transfers office -Benin
-Receive your approval payment funds $10.500,000MillionUS Dollars
-HERE IS WALMART CONTACT INFORMATIONS.
-Contact person. Mrs. Mary Anderson,Dir. Walmart transfers-Benin
-Email: walmart.b100263@gmail.com
-Telephone. +229 68823234
-Text Her on this international phone line. (256) 284-4886
+Colin,
 
-Ask Mrs. Mary Anderson,Dir. Walmart transfers-Benin to send the transfer
-as i instructed.
-we agreed to keep sending the transfer to you $8000.00 daily.
-Until you received your total payment $10.500,000 from the office
-Once again,
-make sure you contact Mrs. Mary Anderson,Dir. Walmart transfers-Benin
-today including your infos.
-(1) Your  Full Name=3D=3D=3D=3D=3D=3D=3D
-(2) house address=3D=3D=3D=3D=3D=3D(3) Your Phone Numbers=3D=3D=3D=3D=3D=3D=
-Urgent to receive your transfer now without any further delay.
-Finally, Send your first payment transfer fees to Walmart office on
-below address
-Receiver's Name=3D=3D=3D ALAN UDE
-Country=3D=3D=BENIN
-City=3D=3D=3D=3DCOTONOU
-AMOUNT =3D=3D=3D$58.00 only. Your first payment $8000.00 transfer fee.
-Question=3D=3D=3DGod
-Answer=3D=3D=3D=3D=3DCreator
-Thanks
-DR.Mike Benz
+> The variable rc is being initialized with a value that is never read
+> and is being re-assigned a little later on. The assignment is
+> redundant and hence can be removed.
+
+Applied to 5.5/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
