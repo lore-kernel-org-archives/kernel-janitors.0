@@ -1,18 +1,18 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 25 Oct 2019 10:12:13 +0000
-Subject: Applied "ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp" to the asoc tree
-Message-Id: <20191025101213.3AA502743273@ypsilon.sirena.org.uk>
+Date: Tue, 01 Oct 2019 11:40:47 +0000
+Subject: Applied "ASoC: stm32: sai: clean up indentation issue" to the asoc tree
+Message-Id: <20191001114047.2F9722742A30@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20191024124610.18182-1-colin.king@canonical.com>
+In-Reply-To: <20190925112621.9312-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Ben Zhang <benzh@chromium.org>, Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Curtis Malainey <cujomalainey@chromium.org>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olivier Moysan <olivier.moysan@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
 The patch
 
-   ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp
+   ASoC: stm32: sai: clean up indentation issue
 
 has been applied to the asoc tree at
 
@@ -37,36 +37,33 @@ to this mail.
 Thanks,
 Mark
 
-From f8a60435703bdde8f8a0ceb1aa8dad59df821583 Mon Sep 17 00:00:00 2001
+From 423013f824ab0590c229a107f21c54ac6596c4e1 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 24 Oct 2019 13:46:10 +0100
-Subject: [PATCH] ASoC: rt5677: Add missing null check for failed allocation of
- rt5677_dsp
+Date: Wed, 25 Sep 2019 12:26:21 +0100
+Subject: [PATCH] ASoC: stm32: sai: clean up indentation issue
 
-The allocation of rt5677_dsp can potentially fail and return null, so add
-a null check and return -ENOMEM on a memory allocation failure.
+There is a statement that is indented one level too deeply,
+remove the extraneous tab.
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: a0e0d135427c ("ASoC: rt5677: Add a PCM device for streaming hotword via SPI")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20191024124610.18182-1-colin.king@canonical.com
+Link: https://lore.kernel.org/r/20190925112621.9312-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5677-spi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/stm/stm32_sai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5677-spi.c b/sound/soc/codecs/rt5677-spi.c
-index 36c02d200cfc..3a17643fcd9f 100644
---- a/sound/soc/codecs/rt5677-spi.c
-+++ b/sound/soc/codecs/rt5677-spi.c
-@@ -376,6 +376,8 @@ static int rt5677_spi_pcm_probe(struct snd_soc_component *component)
+diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
+index ef4273361d0d..e20267504b16 100644
+--- a/sound/soc/stm/stm32_sai.c
++++ b/sound/soc/stm/stm32_sai.c
+@@ -100,7 +100,7 @@ static int stm32_sai_sync_conf_provider(struct stm32_sai_data *sai, int synco)
+ 		dev_err(&sai->pdev->dev, "%pOFn%s already set as sync provider\n",
+ 			sai->pdev->dev.of_node,
+ 			prev_synco = STM_SAI_SYNC_OUT_A ? "A" : "B");
+-			stm32_sai_pclk_disable(&sai->pdev->dev);
++		stm32_sai_pclk_disable(&sai->pdev->dev);
+ 		return -EINVAL;
+ 	}
  
- 	rt5677_dsp = devm_kzalloc(component->dev, sizeof(*rt5677_dsp),
- 			GFP_KERNEL);
-+	if (!rt5677_dsp)
-+		return -ENOMEM;
- 	rt5677_dsp->dev = &g_spi->dev;
- 	mutex_init(&rt5677_dsp->dma_lock);
- 	INIT_DELAYED_WORK(&rt5677_dsp->copy_work, rt5677_spi_copy_work);
 -- 
 2.20.1
