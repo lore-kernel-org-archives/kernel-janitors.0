@@ -1,26 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 15 Oct 2019 16:58:51 +0000
-Subject: Re: [PATCH] net: b44: remove redundant assignment to variable reg
-Message-Id: <20191015.125851.2305315548091261475.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 01 Oct 2019 09:11:34 +0000
+Subject: Re: [PATCH v2] spi: gpio: prevent memory leak in spi_gpio_probe
+Message-Id: <6b55e753-5797-2bdc-fae6-f575a0ef8186@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191011172232.14430-1-colin.king@canonical.com>
-In-Reply-To: <20191011172232.14430-1-colin.king@canonical.com>
+References: <20190930205241.5483-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190930205241.5483-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: michael.chan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-spi@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 11 Oct 2019 18:22:32 +0100
+> … In order to avoid leak spi_contriller_put must
+> be called in case of failure for devm_add_action_or_reset.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable reg is being assigned a value that is never read
-> and is being re-assigned in the following for-loop. The
-> assignment is redundant and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+How does this wording fit to the diff display that you would like
+to add the function call “spi_master_put(master)” in
+one if branch?
 
-Applied to net-next.
+
+> Fixes: 8b797490b4db ("spi: gpio: Make sure spi_master_put() is called in every error path")
+
+Is there a need to complete the corresponding exception handling
+at any more source code places?
+
+Regards,
+Markus
