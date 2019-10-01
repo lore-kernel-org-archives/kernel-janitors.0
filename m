@@ -1,9 +1,11 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2019 11:41:05 +0000
-Subject: Applied "spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_slave_probe()" to the spi tr
-Message-Id: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
+Date: Tue, 01 Oct 2019 11:41:06 +0000
+Subject: Applied "spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_probe()" to the spi tree
+Message-Id: <20191001114106.2FA1C2742A10@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <225b76ca-a367-4bef-d8ce-42c7af9242a5@web.de>
+In-Reply-To: <478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de>
+References: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
+In-Reply-To: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,7 +14,7 @@ Cc: Leilk Liu <leilk.liu@mediatek.com>, kernel-janitors@vger.kernel.org, LKML <l
 
 The patch
 
-   spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_slave_probe()
+   spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_probe()
 
 has been applied to the spi tree at
 
@@ -37,53 +39,51 @@ to this mail.
 Thanks,
 Mark
 
-From 6cdcb5d394413d906773f1ae2efaa86485d6d6e1 Mon Sep 17 00:00:00 2001
+From 5dd381e71994ab554f711afe89b5a6157bdcd19d Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 15:12:33 +0200
+Date: Sat, 21 Sep 2019 14:45:40 +0200
 Subject: [PATCH] spi: mediatek: Use devm_platform_ioremap_resource() in
- mtk_spi_slave_probe()
+ mtk_spi_probe()
 
 Simplify this function implementation by using a known wrapper function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Link: https://lore.kernel.org/r/225b76ca-a367-4bef-d8ce-42c7af9242a5@web.de
+Link: https://lore.kernel.org/r/478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-slave-mt27xx.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/spi/spi-mt65xx.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx.c
-index 61bc43b0fe57..44edaa360405 100644
---- a/drivers/spi/spi-slave-mt27xx.c
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -368,7 +368,6 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- {
- 	struct spi_controller *ctlr;
- 	struct mtk_spi_slave *mdata;
+diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
+index 6888a4dcff6d..25fe149a8d9a 100644
+--- a/drivers/spi/spi-mt65xx.c
++++ b/drivers/spi/spi-mt65xx.c
+@@ -619,7 +619,6 @@ static int mtk_spi_probe(struct platform_device *pdev)
+ 	struct spi_master *master;
+ 	struct mtk_spi *mdata;
+ 	const struct of_device_id *of_id;
 -	struct resource *res;
- 	int irq, ret;
+ 	int i, irq, ret, addr_bits;
  
- 	ctlr = spi_alloc_slave(&pdev->dev, sizeof(*mdata));
-@@ -392,17 +391,8 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctlr);
+ 	master = spi_alloc_master(&pdev->dev, sizeof(*mdata));
+@@ -682,15 +681,7 @@ static int mtk_spi_probe(struct platform_device *pdev)
+ 	}
  
- 	init_completion(&mdata->xfer_done);
+ 	platform_set_drvdata(pdev, master);
 -
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
 -		ret = -ENODEV;
 -		dev_err(&pdev->dev, "failed to determine base address\n");
--		goto err_put_ctlr;
+-		goto err_put_master;
 -	}
--
- 	mdata->dev = &pdev->dev;
 -
 -	mdata->base = devm_ioremap_resource(&pdev->dev, res);
 +	mdata->base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(mdata->base)) {
  		ret = PTR_ERR(mdata->base);
- 		goto err_put_ctlr;
+ 		goto err_put_master;
 -- 
 2.20.1
