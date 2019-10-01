@@ -1,80 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Oct 2019 22:09:56 +0000
-Subject: Re: [PATCH] drm/v3d: Fix double free in v3d_submit_cl_ioctl()
-Message-Id: <20191025090956.0bd40095@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/4bVL9=DKNMyJYmPOU7U_Uo9"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Oct 2019 11:54:42 +0000
+Subject: Re: [PATCH] usb: typec: tcpm: Fix a signedness bug in tcpm_fw_get_caps()
+Message-Id: <20191001115442.GB22609@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191024205306.GA14416@mwanda>
-In-Reply-To: <20191024205306.GA14416@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20190925110219.GN3264@mwanda>
+ <20190926125310.GA9967@roeck-us.net>
+In-Reply-To: <20190926125310.GA9967@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---Sig_/4bVL9=DKNMyJYmPOU7U_Uo9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 26, 2019 at 05:53:10AM -0700, Guenter Roeck wrote:
+> On Wed, Sep 25, 2019 at 02:02:19PM +0300, Dan Carpenter wrote:
+> > The "port->typec_caps.data" and "port->typec_caps.type" variables are
+> > enums and in this context GCC will treat them as an unsigned int so they
+> > can never be less than zero.
+> > 
+> > Fixes: ae8a2ca8a221 ("usb: typec: Group all TCPCI/TCPM code together")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> > index 96562744101c..d3b63e000ae2 100644
+> > --- a/drivers/usb/typec/tcpm/tcpm.c
+> > +++ b/drivers/usb/typec/tcpm/tcpm.c
+> > @@ -4410,7 +4410,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+> >  	ret = fwnode_property_read_string(fwnode, "data-role", &cap_str);
+> >  	if (ret = 0) {
+> >  		port->typec_caps.data = typec_find_port_data_role(cap_str);
+> > -		if (port->typec_caps.data < 0)
+> > +		if ((int)port->typec_caps.data < 0)
+> >  			return -EINVAL;
+> 
+> Doesn't that also cause a warning about overwriting error return codes ?
 
-Hi Dan,
+I'm happy that you think there is a tool which generates warnings like
+that but it's just people manually complaining.  :P
 
-On Thu, 24 Oct 2019 23:53:06 +0300 Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
->
-> Originally this error path used to leak "bin" but then we accidentally
-> applied two separate commits to fix it and ended up with a double free.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Hi Stephen,
->=20
-> I think this one is actually just a linux-next issue and the Fixes tag
-> would point to commit f8593384f83f ("Merge remote-tracking branch
-> 'drm/drm-next'").
->=20
-> The original commits are 0d352a3a8a1f ("drm/v3d: don't leak bin job if
-> v3d_job_init fails.") and commit 29cd13cfd762 ("drm/v3d: Fix memory leak
-> in v3d_submit_cl_ioctl").
->=20
-> I'm not totally sure how you guys address this normally but presumably
-> you are experts at dealing with merge issues.  :)
->=20
->  drivers/gpu/drm/v3d/v3d_gem.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 549dde83408b..37515e47b47e 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *dat=
-a,
->  		ret =3D v3d_job_init(v3d, file_priv, &bin->base,
->  				   v3d_job_free, args->in_sync_bcl);
->  		if (ret) {
-> -			kfree(bin);
->  			v3d_job_put(&render->base);
->  			kfree(bin);
->  			return ret;
+I'll resend though.
 
-I will just apply this as part of the drm tree merge until Dave merges
-the drm-misc-fixes tree and fixes this up.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4bVL9=DKNMyJYmPOU7U_Uo9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2yITQACgkQAVBC80lX
-0Gyd1Qf+PWEOF9qVO5Oz4D2TfN8Rw7FAJzMQ0OsgJocCWOaCH86/U9vQHCPIutvG
-JOZLbYWP0v8pmE3XEGptNvUekQkGx3Gv6DZpxd/4dcf4Vb7PeWCpqt8d3sOpIRIu
-oImlR7EbrSULvhR5OkP2KHycdv8Dn++J3xHB9hu/RDR/Krux7wqO8su/+/XeoApW
-3AJ8ngwnlMYi6lkVXPx1AAXSY5PPiydcSdMR0bjbJ19jze42OADd8lNbaNaG5Hup
-O39J5G3gHaKZOWVb8dH3FJoMkf1INplG+R+hx55fRoKQZEE7L0QNaUv8UqnkiIBn
-2htAbc7tE3h3nBRgTDnpbJRDWYYUWA==
-=JGmF
------END PGP SIGNATURE-----
-
---Sig_/4bVL9=DKNMyJYmPOU7U_Uo9--
+regards,
+dan carpenter
