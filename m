@@ -1,67 +1,57 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 04 Oct 2019 12:57:25 +0000
-Subject: Re: [PATCH][next] drm/amdgpu: remove redundant variable r and redundant return statement
-Message-Id: <CADnq5_N6WP=gDE=Yqv6CqKs13LkUJzFx9C6YmiU1ua_MSg_uiw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Oct 2019 12:01:17 +0000
+Subject: [PATCH v2] usb: typec: tcpm: usb: typec: tcpm: Fix a signedness bug in tcpm_fw_get_caps()
+Message-Id: <20191001120117.GA23528@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191003214049.23067-1-colin.king@canonical.com> <70c50fec-7ab7-3ac9-3f49-d5f2651554e4@amd.com>
-In-Reply-To: <70c50fec-7ab7-3ac9-3f49-d5f2651554e4@amd.com>
+In-Reply-To: <20190926125310.GA9967@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc: Colin King <colin.king@canonical.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 3:29 AM Koenig, Christian
-<Christian.Koenig@amd.com> wrote:
->
-> Am 03.10.19 um 23:40 schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a return statement that is not reachable and a variable that
-> > is not used.  Remove them.
-> >
-> > Addresses-Coverity: ("Structurally dead code")
-> > Fixes: de7b45babd9b ("drm/amdgpu: cleanup creating BOs at fixed locatio=
-n (v2)")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+The "port->typec_caps.data" and "port->typec_caps.type" variables are
+enums and in this context GCC will treat them as an unsigned int so they
+can never be less than zero.
 
-Applied.  Thanks!
+Fixes: ae8a2ca8a221 ("usb: typec: Group all TCPCI/TCPM code together")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: preserve the error code
 
-Alex
+ drivers/usb/typec/tcpm/tcpm.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
->
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 2 --
-> >   1 file changed, 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_ttm.c
-> > index 481e4c381083..814159f15633 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> > @@ -1636,7 +1636,6 @@ static void amdgpu_ttm_fw_reserve_vram_fini(struc=
-t amdgpu_device *adev)
-> >   static int amdgpu_ttm_fw_reserve_vram_init(struct amdgpu_device *adev)
-> >   {
-> >       uint64_t vram_size =3D adev->gmc.visible_vram_size;
-> > -     int r;
-> >
-> >       adev->fw_vram_usage.va =3D NULL;
-> >       adev->fw_vram_usage.reserved_bo =3D NULL;
-> > @@ -1651,7 +1650,6 @@ static int amdgpu_ttm_fw_reserve_vram_init(struct=
- amdgpu_device *adev)
-> >                                         AMDGPU_GEM_DOMAIN_VRAM,
-> >                                         &adev->fw_vram_usage.reserved_b=
-o,
-> >                                         &adev->fw_vram_usage.va);
-> > -     return r;
-> >   }
-> >
-> >   /**
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 96562744101c..5f61d9977a15 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -4409,18 +4409,20 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+ 	/* USB data support is optional */
+ 	ret = fwnode_property_read_string(fwnode, "data-role", &cap_str);
+ 	if (ret = 0) {
+-		port->typec_caps.data = typec_find_port_data_role(cap_str);
+-		if (port->typec_caps.data < 0)
+-			return -EINVAL;
++		ret = typec_find_port_data_role(cap_str);
++		if (ret < 0)
++			return ret;
++		port->typec_caps.data = ret;
+ 	}
+ 
+ 	ret = fwnode_property_read_string(fwnode, "power-role", &cap_str);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	port->typec_caps.type = typec_find_port_power_role(cap_str);
+-	if (port->typec_caps.type < 0)
+-		return -EINVAL;
++	ret = typec_find_port_power_role(cap_str);
++	if (ret < 0)
++		return ret;
++	port->typec_caps.type = ret;
+ 	port->port_type = port->typec_caps.type;
+ 
+ 	if (port->port_type = TYPEC_PORT_SNK)
+-- 
+2.20.1
