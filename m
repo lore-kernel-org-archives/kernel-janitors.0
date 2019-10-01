@@ -1,37 +1,59 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Oct 2019 08:27:06 +0000
-Subject: [PATCH] drm: sti: fix spelling mistake: rejec -> rejection
-Message-Id: <20191004082706.26478-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 01 Oct 2019 11:24:39 +0000
+Subject: Re: [PATCH v3] drm/amdgpu: fix multiple memory leaks in acp_hw_init
+Message-Id: <3e685bb8-8a76-cda7-2118-a317516b2bf5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190930212644.9372-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190930212644.9372-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Alex Deucher <alexander.deucher@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Sam Ravnborg <sam@ravnborg.org>, Sven Van Asbroeck <thesven73@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
+> @@ -184,12 +184,12 @@ static struct device *get_mfd_cell_dev(const char *device_name, int r)
+…
+> +	struct i2s_platform_data *i2s_pdata = NULL;
+…
 
-In other places of the driver the string hdmi_rejection_pll is
-used instead of the truncated hdmi_rejec_pll, so use this string
-instead to be consistent.
+I propose to reconsider this update suggestion.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/sti/sti_hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 814560ead4e1..e2018e4a3ec5 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -886,7 +886,7 @@ static void sti_hdmi_pre_enable(struct drm_bridge *bridge)
- 	if (clk_prepare_enable(hdmi->clk_tmds))
- 		DRM_ERROR("Failed to prepare/enable hdmi_tmds clk\n");
- 	if (clk_prepare_enable(hdmi->clk_phy))
--		DRM_ERROR("Failed to prepare/enable hdmi_rejec_pll clk\n");
-+		DRM_ERROR("Failed to prepare/enable hdmi_rejection_pll clk\n");
- 
- 	hdmi->enabled = true;
- 
--- 
-2.20.1
+> @@ -231,20 +231,21 @@ static int acp_hw_init(void *handle)
+>  	adev->acp.acp_cell = kcalloc(ACP_DEVS, sizeof(struct mfd_cell),
+>  							GFP_KERNEL);
+>
+> -	if (adev->acp.acp_cell == NULL)
+> -		return -ENOMEM;
+…
+
+I suggest to keep this source code place unchanged (at the moment).
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c#n456
+
+
+> @@ -393,6 +399,13 @@ static int acp_hw_init(void *handle)
+>  	val &= ~ACP_SOFT_RESET__SoftResetAud_MASK;
+>  	cgs_write_register(adev->acp.cgs_device, mmACP_SOFT_RESET, val);
+>  	return 0;
+> +
+> +failure:
+> +	kfree(i2s_pdata);
+> +	kfree(adev->acp.acp_res);
+> +	kfree(adev->acp.acp_cell);
+> +	kfree(adev->acp.acp_genpd);
+> +	return ret;
+>  }
+>
+>  /**
+
+I would prefer separate jump targets for efficient exception handling.
+Please choose more appropriate labels for this function implementation.
+
+
+> ---
+
+I suggest to replace this second delimiter by a blank line.
+
+Regards,
+Markus
