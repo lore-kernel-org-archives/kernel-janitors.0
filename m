@@ -1,76 +1,40 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 31 Oct 2019 21:35:58 +0000
-Subject: [PATCH] scsi: megaraid_sas: Use common error handling code in megasas_mgmt_ioctl_fw()
-Message-Id: <d5c12f05-5a07-b698-ae60-2728330dd378@web.de>
+Date: Tue, 01 Oct 2019 15:33:47 +0000
+Subject: Re: [Cocci] [RFC] scripts: Fix coccicheck failed
+Message-Id: <15b52ec6-1cb4-f419-351a-07241cdb8674@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191001125742.GD90796@google.com>
+In-Reply-To: <20191001125742.GD90796@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, "James E. J. Bottomley" <jejb@linux.ibm.com>, Kashyap Desai <kashyap.desai@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Chandrakanth Patil <chandrakanth.patil@broadcom.com>, YueHaibing <yuehaibing@huawei.com>
+To: Matthias Maennich <maennich@google.com>, Yue Haibing <yuehaibing@huawei.com>, Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>, Martijn Coenen <maco@android.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Oct 2019 22:23:02 +0100
+> >+virtual report
+> >+
+> > @has_ns_import@
+> > declarer name MODULE_IMPORT_NS;
+> > identifier virtual.ns;
+> >
+> >Adding virtual report make the coccicheck go ahead smoothly.
 
-Move the same error code assignments so that such exception handling
-can be better reused at the end of this function.
+Such an adjustment might be an interesting solution.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 25 ++++++++++-------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+> Thanks for reporting and following up with this issue. I certainly did
+> not expect all scripts in scripts/coccinelle to be automatically called
+> by coccicheck
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index c40fbea06cc5..f2f2a240e5af 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -8272,27 +8272,20 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
- 		return PTR_ERR(ioc);
+Did you (or any other contributor) test the collaboration of the added
+small SmPL file with the known call interface?
 
- 	instance = megasas_lookup_instance(ioc->host_no);
--	if (!instance) {
--		error = -ENODEV;
--		goto out_kfree_ioc;
--	}
-+	if (!instance)
-+		goto e_nodev;
 
- 	/* Block ioctls in VF mode */
--	if (instance->requestorId && !allow_vf_ioctls) {
--		error = -ENODEV;
--		goto out_kfree_ioc;
--	}
-+	if (instance->requestorId && !allow_vf_ioctls)
-+		goto e_nodev;
+> and I still think scripts/coccinelle is the right location
+> for add_namespace.cocci.
 
- 	if (atomic_read(&instance->adprecovery) == MEGASAS_HW_CRITICAL_ERROR) {
- 		dev_err(&instance->pdev->dev, "Controller in crit error\n");
--		error = -ENODEV;
--		goto out_kfree_ioc;
-+		goto e_nodev;
- 	}
+I got additional software development ideas around this view in the meantime.
+Would you like to take any other collateral evolution better into account?
 
--	if (instance->unload == 1) {
--		error = -ENODEV;
--		goto out_kfree_ioc;
--	}
-+	if (instance->unload == 1)
-+		goto e_nodev;
-
- 	if (down_interruptible(&instance->ioctl_sem)) {
- 		error = -ERESTARTSYS;
-@@ -8311,6 +8304,10 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
- out_kfree_ioc:
- 	kfree(ioc);
- 	return error;
-+
-+e_nodev:
-+	error = -ENODEV;
-+	goto out_kfree_ioc;
- }
-
- static int megasas_mgmt_ioctl_aen(struct file *file, unsigned long arg)
---
-2.23.0
+Regards,
+Markus
