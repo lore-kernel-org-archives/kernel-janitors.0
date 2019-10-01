@@ -1,45 +1,77 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 14 Oct 2019 11:02:01 +0000
-Subject: [PATCH] staging: wlan-ng: fix exit return when sme->key_idx >= NUM_WEPKEYS
-Message-Id: <20191014110201.9874-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 01 Oct 2019 11:40:47 +0000
+Subject: Applied "ASoC: wcd9335: clean up indentation issue" to the asoc tree
+Message-Id: <20191001114047.6CF3527429C0@ypsilon.sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20190925111023.7771-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Claudiu Beznea <claudiu.beznea@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
+The patch
+
+   ASoC: wcd9335: clean up indentation issue
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 944eedd8c021893d08d02a8eec8e5161327316cd Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 25 Sep 2019 12:10:23 +0100
+Subject: [PATCH] ASoC: wcd9335: clean up indentation issue
 
-Currently the exit return path when sme->key_idx >= NUM_WEPKEYS is via
-label 'exit' and this checks if result is non-zero, however result has
-not been initialized and contains garbage.  Fix this by replacing the
-goto with a return with the error code.
-
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 0ca6d8e74489 ("Staging: wlan-ng: replace switch-case statements with macro")
+There is an if statement that is indented one level too deeply,
+remove the extraneous tabs.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190925111023.7771-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/wlan-ng/cfg80211.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ sound/soc/codecs/wcd9335.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
-index eee1998c4b18..fac38c842ac5 100644
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -469,10 +469,8 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
- 	/* Set the encryption - we only support wep */
- 	if (is_wep) {
- 		if (sme->key) {
--			if (sme->key_idx >= NUM_WEPKEYS) {
--				err = -EINVAL;
--				goto exit;
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index f318403133e9..f11ffa28683b 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -2837,11 +2837,11 @@ static int wcd9335_codec_enable_dec(struct snd_soc_dapm_widget *w,
+ 				   TX_HPF_CUT_OFF_FREQ_MASK) >> 5;
+ 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x10);
+ 		snd_soc_component_update_bits(comp, dec_cfg_reg, 0x08, 0x00);
+-			if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
+-				snd_soc_component_update_bits(comp, dec_cfg_reg,
+-						    TX_HPF_CUT_OFF_FREQ_MASK,
+-						    hpf_coff_freq << 5);
 -			}
-+			if (sme->key_idx >= NUM_WEPKEYS)
-+				return -EINVAL;
- 
- 			result = prism2_domibset_uint32(wlandev,
- 				DIDMIB_DOT11SMT_PRIVACYTABLE_WEPDEFAULTKEYID,
++		if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
++			snd_soc_component_update_bits(comp, dec_cfg_reg,
++						      TX_HPF_CUT_OFF_FREQ_MASK,
++						      hpf_coff_freq << 5);
++		}
+ 		break;
+ 	case SND_SOC_DAPM_POST_PMD:
+ 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x00);
 -- 
 2.20.1
