@@ -1,48 +1,24 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Wed, 09 Oct 2019 17:06:09 +0000
-Subject: [PATCH AUTOSEL 4.14 16/21] mips: Loongson: Fix the link time qualifier of 'serial_exit()'
-Message-Id: <20191009170615.32750-16-sashal@kernel.org>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 01 Oct 2019 03:12:57 +0000
+Subject: Re: [PATCH] scsi: smartpqi: clean up an indentation issue
+Message-Id: <yq15zl9xio6.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009170615.32750-1-sashal@kernel.org>
-In-Reply-To: <20191009170615.32750-1-sashal@kernel.org>
+References: <20190927095840.26377-1-colin.king@canonical.com>
+In-Reply-To: <20190927095840.26377-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 27 Sep 2019 10:58:40 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Don Brace <don.brace@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
+Colin,
 
-'exit' functions should be marked as __exit, not __init.
+> There are some statements that are indented too deeply, remove the
+> extraneous tabs and rejoin split lines.
 
-Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: chenhc@lemote.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/loongson64/common/serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied (additional hunk) to 5.5/scsi-queue, thanks!
 
-diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
-index ffefc1cb26121..98c3a7feb10f8 100644
---- a/arch/mips/loongson64/common/serial.c
-+++ b/arch/mips/loongson64/common/serial.c
-@@ -110,7 +110,7 @@ static int __init serial_init(void)
- }
- module_init(serial_init);
- 
--static void __init serial_exit(void)
-+static void __exit serial_exit(void)
- {
- 	platform_device_unregister(&uart8250_device);
- }
 -- 
-2.20.1
+Martin K. Petersen	Oracle Linux Engineering
