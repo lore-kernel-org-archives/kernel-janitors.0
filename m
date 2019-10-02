@@ -1,31 +1,26 @@
-From: Sven Schnelle <svens@stackframe.org>
-Date: Sat, 12 Oct 2019 17:20:55 +0000
-Subject: Re: net: tulip: de2104x: Checking a kmemdup() call in de21041_get_srom_info()
-Message-Id: <20191012172055.GA22569@t470p.stackframe.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 02 Oct 2019 05:09:39 +0000
+Subject: Re: [v2] fs: affs: fix a memory leak in affs_remount
+Message-Id: <98ab1248-dd45-6dbe-50d4-58529f46a4e6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eb1f904a-a2e4-fe9b-c50e-b8087d7e57c4@web.de>
-In-Reply-To: <eb1f904a-a2e4-fe9b-c50e-b8087d7e57c4@web.de>
+References: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de>
+ <20190930210114.6557-1-navid.emamdoost@gmail.com>
+ <44ad775e-3b6f-4cbc-ba6f-455ff7191c58@web.de>
+ <CAEkB2ERMqs=xbt4H-1ro0zAQryoQUH=N5iJop-CKbSOo_mTk3w@mail.gmail.com>
+In-Reply-To: <CAEkB2ERMqs=xbt4H-1ro0zAQryoQUH=N5iJop-CKbSOo_mTk3w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, linux-parisc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Yang Wei <yang.wei9@zte.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>, David Sterba <dsterba@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Deepa Dinamani <deepa.kernel@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 07:03:09PM +0200, Markus Elfring wrote:
-> Hello,
-> 
-> I tried another script for the semantic patch language out.
-> This source code analysis approach points out that the implementation
-> of the function “de21041_get_srom_info” contains still an unchecked call
-> of the function “kmemdup”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/dec/tulip/de2104x.c?id0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1940
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/net/ethernet/dec/tulip/de2104x.c#L1940
-> 
-> How do you think about to improve it?
+> Hi Markus, thanks for your suggestions for improving the quality of
+> the patch. At the moment I prefer first get a confirmation from
+> contributors about the leak and then work on any possible improvements
+> for the patch.
 
-If i have not missed a place, the only user is de_get_eeprom(), which checks
-whether de->ee_data is valid. So i think although not obvious, there's no
-problem here.
+Please fix this patch as soon as possible if you care for the correctness
+of the provided information.
 
-Regards
-Sven
+Regards,
+Markus
