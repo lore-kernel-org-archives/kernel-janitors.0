@@ -1,29 +1,51 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Mon, 14 Oct 2019 22:33:50 +0000
-Subject: Re: SUNRPC: Checking a kmemdup() call in xdr_netobj_dup()
-Message-Id: <20191014223350.GA19883@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Oct 2019 13:17:35 +0000
+Subject: Re: [PATCH] libertas: remove redundant assignment to variable ret
+Message-Id: <20191002131734.GN22609@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b5a5e63-2a24-ad79-20e2-4c01331ee041@web.de>
-In-Reply-To: <9b5a5e63-2a24-ad79-20e2-4c01331ee041@web.de>
+References: <20191002101517.10836-1-colin.king@canonical.com>
+In-Reply-To: <20191002101517.10836-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 12, 2019 at 08:20:04PM +0200, Markus Elfring wrote:
-> I tried another script for the semantic patch language out.
-> This source code analysis approach points out that the implementation
-> of the function “xdr_netobj_dup” contains still an unchecked call
-> of the function “kmemdup”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/sunrpc/xdr.h?id0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n167
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/include/linux/sunrpc/xdr.h#L167
+Added Lubomir Rintel to the CC list.
+
+On Wed, Oct 02, 2019 at 11:15:17AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> How do you think about to improve it?
+> The variable ret is being assigned a value that is never read and is
+> being re-assigned a little later on. The assignment is redundant and hence
+> can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/marvell/libertas/mesh.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/marvell/libertas/mesh.c b/drivers/net/wireless/marvell/libertas/mesh.c
+> index 2747c957d18c..44c8a550da4c 100644
+> --- a/drivers/net/wireless/marvell/libertas/mesh.c
+> +++ b/drivers/net/wireless/marvell/libertas/mesh.c
+> @@ -1003,7 +1003,6 @@ static int lbs_add_mesh(struct lbs_private *priv)
+>  	if (priv->mesh_tlv) {
+>  		sprintf(mesh_wdev->ssid, "mesh");
+>  		mesh_wdev->mesh_id_up_len = 4;
+> -		ret = 1;
+>  	}
 
-On a quick check--I see five xdr_netobj_dup callers, and all of them
-check whether dst->data is NULL.
+Removing this is fine.  "ret = 1" is a mistake.
 
-Sounds like a false positive for your tool?
+This was copy and pasted in commit 2199c9817670 ("libertas: use
+mesh_wdev->ssid instead of priv->mesh_ssid").  The return value was
+never used so it's not clear what returning 1 vs 0 was supposed to mean.
 
---b.
+lbs_init_mesh() should just be a void function.
+
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+regards,
+dan carpenter
