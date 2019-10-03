@@ -1,69 +1,59 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2019 11:40:47 +0000
-Subject: Applied "ASoC: amd: acp3x: clean up indentation issue" to the asoc tree
-Message-Id: <20191001114047.E96E82742A30@ypsilon.sirena.org.uk>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 03 Oct 2019 10:01:57 +0000
+Subject: Re: [PATCH] memstick: jmb38x_ms: clean up indentation issue
+Message-Id: <CAPDyKFqnzLNQXwAn2j821LM8EkW4yagDd8Tp4BaFFy-rFMhs8Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190925094545.19941-1-colin.king@canonical.com>
+References: <20190922114700.10563-1-colin.king@canonical.com>
+In-Reply-To: <20190922114700.10563-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-The patch
+On Sun, 22 Sep 2019 at 13:47, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a hunk of code that is indented one level too deep, fix
+> this by removing the extraneous tabs.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: amd: acp3x: clean up indentation issue
+Applied for next, thanks!
 
-has been applied to the asoc tree at
+Kind regards
+Uffe
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 67f798c78242ef3051bf6bf304ddb8a09514e1c5 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 10:45:45 +0100
-Subject: [PATCH] ASoC: amd: acp3x: clean up indentation issue
-
-There is a statement that is indented one level too deeply,
-remove the extraneous tab.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190925094545.19941-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/amd/raven/acp3x-pcm-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index bc4dfafdfcd1..ea57088d50ce 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -631,7 +631,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
--			return -ENODEV;
-+		return -ENODEV;
- 	}
- 
- 	adata = devm_kzalloc(&pdev->dev, sizeof(*adata), GFP_KERNEL);
--- 
-2.20.1
+> ---
+>  drivers/memstick/host/jmb38x_ms.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
+> index 32747425297d..3394164a7968 100644
+> --- a/drivers/memstick/host/jmb38x_ms.c
+> +++ b/drivers/memstick/host/jmb38x_ms.c
+> @@ -433,13 +433,13 @@ static int jmb38x_ms_issue_cmd(struct memstick_host *msh)
+>                 writel(((1 << 16) & BLOCK_COUNT_MASK)
+>                        | (data_len & BLOCK_SIZE_MASK),
+>                        host->addr + BLOCK);
+> -                       t_val = readl(host->addr + INT_STATUS_ENABLE);
+> -                       t_val |= host->req->data_dir = READ
+> -                                ? INT_STATUS_FIFO_RRDY
+> -                                : INT_STATUS_FIFO_WRDY;
+> +               t_val = readl(host->addr + INT_STATUS_ENABLE);
+> +               t_val |= host->req->data_dir = READ
+> +                        ? INT_STATUS_FIFO_RRDY
+> +                        : INT_STATUS_FIFO_WRDY;
+>
+> -                       writel(t_val, host->addr + INT_STATUS_ENABLE);
+> -                       writel(t_val, host->addr + INT_SIGNAL_ENABLE);
+> +               writel(t_val, host->addr + INT_STATUS_ENABLE);
+> +               writel(t_val, host->addr + INT_SIGNAL_ENABLE);
+>         } else {
+>                 cmd &= ~(TPC_DATA_SEL | 0xf);
+>                 host->cmd_flags |= REG_DATA;
+> --
+> 2.20.1
+>
