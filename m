@@ -1,38 +1,66 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 11 Oct 2019 17:13:54 +0000
-Subject: [PATCH] media: lm3646: remove redundant assignment to variable rval
-Message-Id: <20191011171354.13787-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 03 Oct 2019 15:52:32 +0000
+Subject: [PATCH 4.14 074/185] EDAC/altera: Use the proper type for the IRQ status bits
+Message-Id: <20191003154454.303806714@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-The variable rval is being initialized with a value that
-is never read and is being re-assigned a little later on. The
-assignment is redundant and hence can be removed.
+[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Smatch complains about the cast of a u32 pointer to unsigned long:
+
+  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+
+This code wouldn't work on a 64 bit big endian system because it would
+read past the end of &irq_status.
+
+ [ bp: massage. ]
+
+Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/lm3646.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/lm3646.c b/drivers/media/i2c/lm3646.c
-index d8a8853f9a2b..c76ccf67a909 100644
---- a/drivers/media/i2c/lm3646.c
-+++ b/drivers/media/i2c/lm3646.c
-@@ -134,7 +134,7 @@ static int lm3646_set_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct lm3646_flash *flash = to_lm3646_flash(ctrl);
- 	unsigned int reg_val;
--	int rval = -EINVAL;
-+	int rval;
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 38983f56ad0dd..d92090b127de7 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1646,6 +1646,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int irq = irq_desc_get_irq(desc);
++	unsigned long bits;
  
- 	switch (ctrl->id) {
- 	case V4L2_CID_FLASH_LED_MODE:
+ 	dberr = (irq = edac->db_irq) ? 1 : 0;
+ 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+@@ -1655,7 +1656,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 
+ 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
+ 
+-	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
++	bits = irq_status;
++	for_each_set_bit(bit, &bits, 32) {
+ 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+ 		if (irq)
+ 			generic_handle_irq(irq);
 -- 
 2.20.1
