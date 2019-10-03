@@ -1,121 +1,170 @@
-From: Harry Wentland <hwentlan@amd.com>
-Date: Thu, 03 Oct 2019 13:27:05 +0000
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 03 Oct 2019 16:05:52 +0000
 Subject: Re: [PATCH][drm-next] drm/amd/display: fix spelling mistake AUTHENICATED -> AUTHENTICATED
-Message-Id: <125634cd-b636-c4dc-4e05-bc5c543b7230@amd.com>
+Message-Id: <CADnq5_OAoct7q-CQQ=aLoUXpGcJa8qf=P7V1g=FS9Z6wiPhGog@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191003082232.4136-1-colin.king@canonical.com>
-In-Reply-To: <20191003082232.4136-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+ <125634cd-b636-c4dc-4e05-bc5c543b7230@amd.com>
+In-Reply-To: <125634cd-b636-c4dc-4e05-bc5c543b7230-5C7GfCeVMHo@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Wentland, Harry" <Harry.Wentland-5C7GfCeVMHo@public.gmane.org>, "Li, Sun peng (Leo)" <Sunpeng.Li-5C7GfCeVMHo@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Liu,
- Wenjing" <Wenjing.Liu-5C7GfCeVMHo@public.gmane.org>, "Lakha, Bhawanpreet" <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9/EVdHwE84te@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9/EVdHwE84te@public.gmane.org>
-Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Harry Wentland <hwentlan-5C7GfCeVMHo@public.gmane.org>
+Cc: "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Li,
+ Sun peng (Leo)" <Sunpeng.Li-5C7GfCeVMHo@public.gmane.org>, "Lakha,
+ Bhawanpreet" <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9/EVdHwE84te@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9/EVdHwE84te@public.gmane.org>, "Liu,
+ Wenjing" <Wenjing.Liu-5C7GfCeVMHo@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "Deucher,
+ Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Wentland, Harry" <Harry.Wentland-5C7GfCeVMHo@public.gmane.org>, "Koenig,
+ Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>
 
-T24gMjAxOS0xMC0wMyA0OjIyIGEubS4sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENvbGlu
-IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGVyZSBpcyBhIHNw
-ZWxsaW5nIG1pc3Rha2UgaW4gdGhlIG1hY3JvcyBIMV9BNDVfQVVUSEVOSUNBVEVEIGFuZA0KPiBE
-MV9BNF9BVVRIRU5JQ0FURUQsIGZpeCB0aGVzZSBieSBhZGRpbmcgdGhlIG1pc3NpbmcgVC4NCj4g
-DQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5j
-b20+DQoNClJldmlld2VkLWJ5OiBIYXJyeSBXZW50bGFuZCA8aGFycnkud2VudGxhbmRAYW1kLmNv
-bT4NCg0KSGFycnkNCg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1
-bGVzL2hkY3AvaGRjcC5oICAgICAgfCAgNCArKy0tDQo+ICAuLi4vZHJtL2FtZC9kaXNwbGF5L21v
-ZHVsZXMvaGRjcC9oZGNwMV9leGVjdXRpb24uYyAgIHwgIDQgKystLQ0KPiAgLi4uL2RybS9hbWQv
-ZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcDFfdHJhbnNpdGlvbi5jICB8IDEyICsrKysrKy0tLS0t
-LQ0KPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L21vZHVsZXMvaGRjcC9oZGNwX2xvZy5j
-ICB8ICA4ICsrKystLS0tDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDE0
-IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlz
-cGxheS9tb2R1bGVzL2hkY3AvaGRjcC5oIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L21v
-ZHVsZXMvaGRjcC9oZGNwLmgNCj4gaW5kZXggNDAyYmI3OTk5MDkzLi41NjY0YmMwYjViZDAgMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRj
-cC5oDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRj
-cC5oDQo+IEBAIC0xNzYsNyArMTc2LDcgQEAgZW51bSBtb2RfaGRjcF9oZGNwMV9zdGF0ZV9pZCB7
-DQo+ICAJSDFfQTBfV0FJVF9GT1JfQUNUSVZFX1JYLA0KPiAgCUgxX0ExX0VYQ0hBTkdFX0tTVlMs
-DQo+ICAJSDFfQTJfQ09NUFVUQVRJT05TX0EzX1ZBTElEQVRFX1JYX0E2X1RFU1RfRk9SX1JFUEVB
-VEVSLA0KPiAtCUgxX0E0NV9BVVRIRU5JQ0FURUQsDQo+ICsJSDFfQTQ1X0FVVEhFTlRJQ0FURUQs
-DQo+ICAJSDFfQThfV0FJVF9GT1JfUkVBRFksDQo+ICAJSDFfQTlfUkVBRF9LU1ZfTElTVCwNCj4g
-IAlIRENQMV9TVEFURV9FTkQgPSBIMV9BOV9SRUFEX0tTVl9MSVNUDQo+IEBAIC0xODgsNyArMTg4
-LDcgQEAgZW51bSBtb2RfaGRjcF9oZGNwMV9kcF9zdGF0ZV9pZCB7DQo+ICAJRDFfQTFfRVhDSEFO
-R0VfS1NWUywNCj4gIAlEMV9BMjNfV0FJVF9GT1JfUjBfUFJJTUUsDQo+ICAJRDFfQTJfQ09NUFVU
-QVRJT05TX0EzX1ZBTElEQVRFX1JYX0E1X1RFU1RfRk9SX1JFUEVBVEVSLA0KPiAtCUQxX0E0X0FV
-VEhFTklDQVRFRCwNCj4gKwlEMV9BNF9BVVRIRU5USUNBVEVELA0KPiAgCUQxX0E2X1dBSVRfRk9S
-X1JFQURZLA0KPiAgCUQxX0E3X1JFQURfS1NWX0xJU1QsDQo+ICAJSERDUDFfRFBfU1RBVEVfRU5E
-ID0gRDFfQTdfUkVBRF9LU1ZfTElTVCwNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9h
-bWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcDFfZXhlY3V0aW9uLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9oZGNwL2hkY3AxX2V4ZWN1dGlvbi5jDQo+IGluZGV4IDll
-NzMwMmVhYzI5OS4uM2RiNGE3ZGE0MTRmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-YW1kL2Rpc3BsYXkvbW9kdWxlcy9oZGNwL2hkY3AxX2V4ZWN1dGlvbi5jDQo+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcDFfZXhlY3V0aW9uLmMNCj4g
-QEAgLTQ3Niw3ICs0NzYsNyBAQCBlbnVtIG1vZF9oZGNwX3N0YXR1cyBtb2RfaGRjcF9oZGNwMV9l
-eGVjdXRpb24oc3RydWN0IG1vZF9oZGNwICpoZGNwLA0KPiAgCQlzdGF0dXMgPSBjb21wdXRhdGlv
-bnNfdmFsaWRhdGVfcnhfdGVzdF9mb3JfcmVwZWF0ZXIoaGRjcCwNCj4gIAkJCQlldmVudF9jdHgs
-IGlucHV0KTsNCj4gIAkJYnJlYWs7DQo+IC0JY2FzZSBIMV9BNDVfQVVUSEVOSUNBVEVEOg0KPiAr
-CWNhc2UgSDFfQTQ1X0FVVEhFTlRJQ0FURUQ6DQo+ICAJCXN0YXR1cyA9IGF1dGhlbnRpY2F0ZWQo
-aGRjcCwgZXZlbnRfY3R4LCBpbnB1dCk7DQo+ICAJCWJyZWFrOw0KPiAgCWNhc2UgSDFfQThfV0FJ
-VF9GT1JfUkVBRFk6DQo+IEBAIC01MTMsNyArNTEzLDcgQEAgZXh0ZXJuIGVudW0gbW9kX2hkY3Bf
-c3RhdHVzIG1vZF9oZGNwX2hkY3AxX2RwX2V4ZWN1dGlvbihzdHJ1Y3QgbW9kX2hkY3AgKmhkY3As
-DQo+ICAJCXN0YXR1cyA9IGNvbXB1dGF0aW9uc192YWxpZGF0ZV9yeF90ZXN0X2Zvcl9yZXBlYXRl
-cigNCj4gIAkJCQloZGNwLCBldmVudF9jdHgsIGlucHV0KTsNCj4gIAkJYnJlYWs7DQo+IC0JY2Fz
-ZSBEMV9BNF9BVVRIRU5JQ0FURUQ6DQo+ICsJY2FzZSBEMV9BNF9BVVRIRU5USUNBVEVEOg0KPiAg
-CQlzdGF0dXMgPSBhdXRoZW50aWNhdGVkX2RwKGhkY3AsIGV2ZW50X2N0eCwgaW5wdXQpOw0KPiAg
-CQlicmVhazsNCj4gIAljYXNlIEQxX0E2X1dBSVRfRk9SX1JFQURZOg0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L21vZHVsZXMvaGRjcC9oZGNwMV90cmFuc2l0aW9u
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9kdWxlcy9oZGNwL2hkY3AxX3RyYW5z
-aXRpb24uYw0KPiBpbmRleCAxZDE4NzgwOWI3MDkuLjEzNmI4MDExZmYzZiAxMDA2NDQNCj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L21vZHVsZXMvaGRjcC9oZGNwMV90cmFuc2l0
-aW9uLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L21vZHVsZXMvaGRjcC9o
-ZGNwMV90cmFuc2l0aW9uLmMNCj4gQEAgLTgxLDExICs4MSwxMSBAQCBlbnVtIG1vZF9oZGNwX3N0
-YXR1cyBtb2RfaGRjcF9oZGNwMV90cmFuc2l0aW9uKHN0cnVjdCBtb2RfaGRjcCAqaGRjcCwNCj4g
-IAkJCXNldF9zdGF0ZV9pZChoZGNwLCBvdXRwdXQsIEgxX0E4X1dBSVRfRk9SX1JFQURZKTsNCj4g
-IAkJfSBlbHNlIHsNCj4gIAkJCWNhbGxiYWNrX2luX21zKDAsIG91dHB1dCk7DQo+IC0JCQlzZXRf
-c3RhdGVfaWQoaGRjcCwgb3V0cHV0LCBIMV9BNDVfQVVUSEVOSUNBVEVEKTsNCj4gKwkJCXNldF9z
-dGF0ZV9pZChoZGNwLCBvdXRwdXQsIEgxX0E0NV9BVVRIRU5USUNBVEVEKTsNCj4gIAkJCUhEQ1Bf
-RlVMTF9ERENfVFJBQ0UoaGRjcCk7DQo+ICAJCX0NCj4gIAkJYnJlYWs7DQo+IC0JY2FzZSBIMV9B
-NDVfQVVUSEVOSUNBVEVEOg0KPiArCWNhc2UgSDFfQTQ1X0FVVEhFTlRJQ0FURUQ6DQo+ICAJCWlm
-IChpbnB1dC0+bGlua19tYWludGVuYW5jZSAhPSBQQVNTKSB7DQo+ICAJCQkvKiAxQS0wNzogY29u
-c2lkZXIgaW52YWxpZCByaScgYSBmYWlsdXJlICovDQo+ICAJCQkvKiAxQS0wN2E6IGNvbnNpZGVy
-IHJlYWQgcmknIG5vdCByZXR1cm5lZCBhIGZhaWx1cmUgKi8NCj4gQEAgLTEyOSw3ICsxMjksNyBA
-QCBlbnVtIG1vZF9oZGNwX3N0YXR1cyBtb2RfaGRjcF9oZGNwMV90cmFuc2l0aW9uKHN0cnVjdCBt
-b2RfaGRjcCAqaGRjcCwNCj4gIAkJCWJyZWFrOw0KPiAgCQl9DQo+ICAJCWNhbGxiYWNrX2luX21z
-KDAsIG91dHB1dCk7DQo+IC0JCXNldF9zdGF0ZV9pZChoZGNwLCBvdXRwdXQsIEgxX0E0NV9BVVRI
-RU5JQ0FURUQpOw0KPiArCQlzZXRfc3RhdGVfaWQoaGRjcCwgb3V0cHV0LCBIMV9BNDVfQVVUSEVO
-VElDQVRFRCk7DQo+ICAJCUhEQ1BfRlVMTF9ERENfVFJBQ0UoaGRjcCk7DQo+ICAJCWJyZWFrOw0K
-PiAgCWRlZmF1bHQ6DQo+IEBAIC0yMjQsMTEgKzIyNCwxMSBAQCBlbnVtIG1vZF9oZGNwX3N0YXR1
-cyBtb2RfaGRjcF9oZGNwMV9kcF90cmFuc2l0aW9uKHN0cnVjdCBtb2RfaGRjcCAqaGRjcCwNCj4g
-IAkJCXNldF93YXRjaGRvZ19pbl9tcyhoZGNwLCA1MDAwLCBvdXRwdXQpOw0KPiAgCQkJc2V0X3N0
-YXRlX2lkKGhkY3AsIG91dHB1dCwgRDFfQTZfV0FJVF9GT1JfUkVBRFkpOw0KPiAgCQl9IGVsc2Ug
-ew0KPiAtCQkJc2V0X3N0YXRlX2lkKGhkY3AsIG91dHB1dCwgRDFfQTRfQVVUSEVOSUNBVEVEKTsN
-Cj4gKwkJCXNldF9zdGF0ZV9pZChoZGNwLCBvdXRwdXQsIEQxX0E0X0FVVEhFTlRJQ0FURUQpOw0K
-PiAgCQkJSERDUF9GVUxMX0REQ19UUkFDRShoZGNwKTsNCj4gIAkJfQ0KPiAgCQlicmVhazsNCj4g
-LQljYXNlIEQxX0E0X0FVVEhFTklDQVRFRDoNCj4gKwljYXNlIEQxX0E0X0FVVEhFTlRJQ0FURUQ6
-DQo+ICAJCWlmIChpbnB1dC0+bGlua19pbnRlZ2lyeV9jaGVjayAhPSBQQVNTIHx8DQo+ICAJCQkJ
-aW5wdXQtPnJlYXV0aF9yZXF1ZXN0X2NoZWNrICE9IFBBU1MpIHsNCj4gIAkJCS8qIDFBLTA3OiBy
-ZXN0YXJ0IGhkY3Agb24gYSBsaW5rIGludGVncml0eSBmYWlsdXJlICovDQo+IEBAIC0yOTUsNyAr
-Mjk1LDcgQEAgZW51bSBtb2RfaGRjcF9zdGF0dXMgbW9kX2hkY3BfaGRjcDFfZHBfdHJhbnNpdGlv
-bihzdHJ1Y3QgbW9kX2hkY3AgKmhkY3AsDQo+ICAJCQlmYWlsX2FuZF9yZXN0YXJ0X2luX21zKDAs
-ICZzdGF0dXMsIG91dHB1dCk7DQo+ICAJCQlicmVhazsNCj4gIAkJfQ0KPiAtCQlzZXRfc3RhdGVf
-aWQoaGRjcCwgb3V0cHV0LCBEMV9BNF9BVVRIRU5JQ0FURUQpOw0KPiArCQlzZXRfc3RhdGVfaWQo
-aGRjcCwgb3V0cHV0LCBEMV9BNF9BVVRIRU5USUNBVEVEKTsNCj4gIAkJSERDUF9GVUxMX0REQ19U
-UkFDRShoZGNwKTsNCj4gIAkJYnJlYWs7DQo+ICAJZGVmYXVsdDoNCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcF9sb2cuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcF9sb2cuYw0KPiBpbmRleCBk
-ODY4ZjU1NmQxODAuLjM5ODJjZWQ1Zjk2OSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2FtZC9kaXNwbGF5L21vZHVsZXMvaGRjcC9oZGNwX2xvZy5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9hbWQvZGlzcGxheS9tb2R1bGVzL2hkY3AvaGRjcF9sb2cuYw0KPiBAQCAtMTM2LDggKzEz
-Niw4IEBAIGNoYXIgKm1vZF9oZGNwX3N0YXRlX2lkX3RvX3N0cihpbnQzMl90IGlkKQ0KPiAgCQly
-ZXR1cm4gIkgxX0ExX0VYQ0hBTkdFX0tTVlMiOw0KPiAgCWNhc2UgSDFfQTJfQ09NUFVUQVRJT05T
-X0EzX1ZBTElEQVRFX1JYX0E2X1RFU1RfRk9SX1JFUEVBVEVSOg0KPiAgCQlyZXR1cm4gIkgxX0Ey
-X0NPTVBVVEFUSU9OU19BM19WQUxJREFURV9SWF9BNl9URVNUX0ZPUl9SRVBFQVRFUiI7DQo+IC0J
-Y2FzZSBIMV9BNDVfQVVUSEVOSUNBVEVEOg0KPiAtCQlyZXR1cm4gIkgxX0E0NV9BVVRIRU5JQ0FU
-RUQiOw0KPiArCWNhc2UgSDFfQTQ1X0FVVEhFTlRJQ0FURUQ6DQo+ICsJCXJldHVybiAiSDFfQTQ1
-X0FVVEhFTlRJQ0FURUQiOw0KPiAgCWNhc2UgSDFfQThfV0FJVF9GT1JfUkVBRFk6DQo+ICAJCXJl
-dHVybiAiSDFfQThfV0FJVF9GT1JfUkVBRFkiOw0KPiAgCWNhc2UgSDFfQTlfUkVBRF9LU1ZfTElT
-VDoNCj4gQEAgLTE1MCw4ICsxNTAsOCBAQCBjaGFyICptb2RfaGRjcF9zdGF0ZV9pZF90b19zdHIo
-aW50MzJfdCBpZCkNCj4gIAkJcmV0dXJuICJEMV9BMjNfV0FJVF9GT1JfUjBfUFJJTUUiOw0KPiAg
-CWNhc2UgRDFfQTJfQ09NUFVUQVRJT05TX0EzX1ZBTElEQVRFX1JYX0E1X1RFU1RfRk9SX1JFUEVB
-VEVSOg0KPiAgCQlyZXR1cm4gIkQxX0EyX0NPTVBVVEFUSU9OU19BM19WQUxJREFURV9SWF9BNV9U
-RVNUX0ZPUl9SRVBFQVRFUiI7DQo+IC0JY2FzZSBEMV9BNF9BVVRIRU5JQ0FURUQ6DQo+IC0JCXJl
-dHVybiAiRDFfQTRfQVVUSEVOSUNBVEVEIjsNCj4gKwljYXNlIEQxX0E0X0FVVEhFTlRJQ0FURUQ6
-DQo+ICsJCXJldHVybiAiRDFfQTRfQVVUSEVOVElDQVRFRCI7DQo+ICAJY2FzZSBEMV9BNl9XQUlU
-X0ZPUl9SRUFEWToNCj4gIAkJcmV0dXJuICJEMV9BNl9XQUlUX0ZPUl9SRUFEWSI7DQo+ICAJY2Fz
-ZSBEMV9BN19SRUFEX0tTVl9MSVNUOg0KPiANCg=
+On Thu, Oct 3, 2019 at 9:27 AM Harry Wentland <hwentlan@amd.com> wrote:
+>
+> On 2019-10-03 4:22 a.m., Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > There is a spelling mistake in the macros H1_A45_AUTHENICATED and
+> > D1_A4_AUTHENICATED, fix these by adding the missing T.
+> >
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>
+
+Applied.  thanks!
+
+Alex
+
+> Harry
+>
+> > ---
+> >  drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h      |  4 ++--
+> >  .../drm/amd/display/modules/hdcp/hdcp1_execution.c   |  4 ++--
+> >  .../drm/amd/display/modules/hdcp/hdcp1_transition.c  | 12 ++++++------
+> >  drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c  |  8 ++++----
+> >  4 files changed, 14 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > index 402bb7999093..5664bc0b5bd0 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > @@ -176,7 +176,7 @@ enum mod_hdcp_hdcp1_state_id {
+> >       H1_A0_WAIT_FOR_ACTIVE_RX,
+> >       H1_A1_EXCHANGE_KSVS,
+> >       H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER,
+> > -     H1_A45_AUTHENICATED,
+> > +     H1_A45_AUTHENTICATED,
+> >       H1_A8_WAIT_FOR_READY,
+> >       H1_A9_READ_KSV_LIST,
+> >       HDCP1_STATE_END = H1_A9_READ_KSV_LIST
+> > @@ -188,7 +188,7 @@ enum mod_hdcp_hdcp1_dp_state_id {
+> >       D1_A1_EXCHANGE_KSVS,
+> >       D1_A23_WAIT_FOR_R0_PRIME,
+> >       D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER,
+> > -     D1_A4_AUTHENICATED,
+> > +     D1_A4_AUTHENTICATED,
+> >       D1_A6_WAIT_FOR_READY,
+> >       D1_A7_READ_KSV_LIST,
+> >       HDCP1_DP_STATE_END = D1_A7_READ_KSV_LIST,
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > index 9e7302eac299..3db4a7da414f 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > @@ -476,7 +476,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_execution(struct mod_hdcp *hdcp,
+> >               status = computations_validate_rx_test_for_repeater(hdcp,
+> >                               event_ctx, input);
+> >               break;
+> > -     case H1_A45_AUTHENICATED:
+> > +     case H1_A45_AUTHENTICATED:
+> >               status = authenticated(hdcp, event_ctx, input);
+> >               break;
+> >       case H1_A8_WAIT_FOR_READY:
+> > @@ -513,7 +513,7 @@ extern enum mod_hdcp_status mod_hdcp_hdcp1_dp_execution(struct mod_hdcp *hdcp,
+> >               status = computations_validate_rx_test_for_repeater(
+> >                               hdcp, event_ctx, input);
+> >               break;
+> > -     case D1_A4_AUTHENICATED:
+> > +     case D1_A4_AUTHENTICATED:
+> >               status = authenticated_dp(hdcp, event_ctx, input);
+> >               break;
+> >       case D1_A6_WAIT_FOR_READY:
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > index 1d187809b709..136b8011ff3f 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > @@ -81,11 +81,11 @@ enum mod_hdcp_status mod_hdcp_hdcp1_transition(struct mod_hdcp *hdcp,
+> >                       set_state_id(hdcp, output, H1_A8_WAIT_FOR_READY);
+> >               } else {
+> >                       callback_in_ms(0, output);
+> > -                     set_state_id(hdcp, output, H1_A45_AUTHENICATED);
+> > +                     set_state_id(hdcp, output, H1_A45_AUTHENTICATED);
+> >                       HDCP_FULL_DDC_TRACE(hdcp);
+> >               }
+> >               break;
+> > -     case H1_A45_AUTHENICATED:
+> > +     case H1_A45_AUTHENTICATED:
+> >               if (input->link_maintenance != PASS) {
+> >                       /* 1A-07: consider invalid ri' a failure */
+> >                       /* 1A-07a: consider read ri' not returned a failure */
+> > @@ -129,7 +129,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_transition(struct mod_hdcp *hdcp,
+> >                       break;
+> >               }
+> >               callback_in_ms(0, output);
+> > -             set_state_id(hdcp, output, H1_A45_AUTHENICATED);
+> > +             set_state_id(hdcp, output, H1_A45_AUTHENTICATED);
+> >               HDCP_FULL_DDC_TRACE(hdcp);
+> >               break;
+> >       default:
+> > @@ -224,11 +224,11 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
+> >                       set_watchdog_in_ms(hdcp, 5000, output);
+> >                       set_state_id(hdcp, output, D1_A6_WAIT_FOR_READY);
+> >               } else {
+> > -                     set_state_id(hdcp, output, D1_A4_AUTHENICATED);
+> > +                     set_state_id(hdcp, output, D1_A4_AUTHENTICATED);
+> >                       HDCP_FULL_DDC_TRACE(hdcp);
+> >               }
+> >               break;
+> > -     case D1_A4_AUTHENICATED:
+> > +     case D1_A4_AUTHENTICATED:
+> >               if (input->link_integiry_check != PASS ||
+> >                               input->reauth_request_check != PASS) {
+> >                       /* 1A-07: restart hdcp on a link integrity failure */
+> > @@ -295,7 +295,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
+> >                       fail_and_restart_in_ms(0, &status, output);
+> >                       break;
+> >               }
+> > -             set_state_id(hdcp, output, D1_A4_AUTHENICATED);
+> > +             set_state_id(hdcp, output, D1_A4_AUTHENTICATED);
+> >               HDCP_FULL_DDC_TRACE(hdcp);
+> >               break;
+> >       default:
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > index d868f556d180..3982ced5f969 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > @@ -136,8 +136,8 @@ char *mod_hdcp_state_id_to_str(int32_t id)
+> >               return "H1_A1_EXCHANGE_KSVS";
+> >       case H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER:
+> >               return "H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER";
+> > -     case H1_A45_AUTHENICATED:
+> > -             return "H1_A45_AUTHENICATED";
+> > +     case H1_A45_AUTHENTICATED:
+> > +             return "H1_A45_AUTHENTICATED";
+> >       case H1_A8_WAIT_FOR_READY:
+> >               return "H1_A8_WAIT_FOR_READY";
+> >       case H1_A9_READ_KSV_LIST:
+> > @@ -150,8 +150,8 @@ char *mod_hdcp_state_id_to_str(int32_t id)
+> >               return "D1_A23_WAIT_FOR_R0_PRIME";
+> >       case D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER:
+> >               return "D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER";
+> > -     case D1_A4_AUTHENICATED:
+> > -             return "D1_A4_AUTHENICATED";
+> > +     case D1_A4_AUTHENTICATED:
+> > +             return "D1_A4_AUTHENTICATED";
+> >       case D1_A6_WAIT_FOR_READY:
+> >               return "D1_A6_WAIT_FOR_READY";
+> >       case D1_A7_READ_KSV_LIST:
+> >
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
