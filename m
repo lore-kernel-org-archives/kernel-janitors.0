@@ -1,27 +1,66 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 11 Oct 2019 05:15:53 +0000
-Subject: Re: Searching for missing variable checks
-Message-Id: <dd1adf86-1bc1-2ffe-1af8-3d7082c5a468@web.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 03 Oct 2019 15:50:48 +0000
+Subject: [PATCH 5.3 083/344] EDAC/altera: Use the proper type for the IRQ status bits
+Message-Id: <20191003154548.364674925@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
-In-Reply-To: <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, Steven Rostedt <rostedt@goodmis.org>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Coccinelle <cocci@systeme.lip6.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
 
-> The problem is the __must_check does not mean that the
-> return value must be followed by a comparison to NULL and bailing out
-> (that can't really be checked), it simply ensures the return value is
-> assigned somewhere or used in an if(). So foo->bar = kstrdup() not
-> followed by a check of foo->bar won't warn.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Higher level source code analysis tools like the semantic patch language
-(Coccinelle software) can help to find such missing checks.
-Would you like to point any additional development tools out
-for this purpose?
+[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
 
-Regards,
-Markus
+Smatch complains about the cast of a u32 pointer to unsigned long:
+
+  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
+  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+
+This code wouldn't work on a 64 bit big endian system because it would
+read past the end of &irq_status.
+
+ [ bp: massage. ]
+
+Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index c2e693e34d434..bf024ec0116c7 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1866,6 +1866,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int irq = irq_desc_get_irq(desc);
++	unsigned long bits;
+ 
+ 	dberr = (irq = edac->db_irq) ? 1 : 0;
+ 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
+@@ -1875,7 +1876,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
+ 
+ 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
+ 
+-	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
++	bits = irq_status;
++	for_each_set_bit(bit, &bits, 32) {
+ 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
+ 		if (irq)
+ 			generic_handle_irq(irq);
+-- 
+2.20.1
