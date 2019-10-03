@@ -1,140 +1,138 @@
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Date: Wed, 02 Oct 2019 14:05:16 +0000
-Subject: [PATCH V6] drm/drm_vblank: Change EINVAL by the correct errno
-Message-Id: <20191002140516.adeyj3htylimmlmg@smtp.gmail.com>
+From: Pekka Paalanen <pekka.paalanen@collabora.com>
+Date: Thu, 03 Oct 2019 07:42:58 +0000
+Subject: Re: [PATCH V6] drm/drm_vblank: Change EINVAL by the correct errno
+Message-Id: <20191003104258.119d72e9.pekka.paalanen@collabora.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="rl7p723dixcepzft"
+Content-Type: multipart/mixed; boundary="Sig_/o+JZAc3u12D=Y2_U=czydx8"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: Keith Packard <keithp@keithp.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Pekka Paalanen <pekka.paalanen@collabora.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20191002140516.adeyj3htylimmlmg@smtp.gmail.com>
+In-Reply-To: <20191002140516.adeyj3htylimmlmg@smtp.gmail.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Keith Packard <keithp@keithp.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org
 
-
---rl7p723dixcepzft
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--Sig_/o+JZAc3u12D=Y2_U=czydx8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-For historical reasons, the function drm_wait_vblank_ioctl always return
--EINVAL if something gets wrong. This scenario limits the flexibility
-for the userspace to make detailed verification of any problem and take
-some action. In particular, the validation of =E2=80=9Cif (!dev->irq_enable=
-d)=E2=80=9D
-in the drm_wait_vblank_ioctl is responsible for checking if the driver
-support vblank or not. If the driver does not support VBlank, the
-function drm_wait_vblank_ioctl returns EINVAL, which does not represent
-the real issue; this patch changes this behavior by return EOPNOTSUPP.
-Additionally, drm_crtc_get_sequence_ioctl and
-drm_crtc_queue_sequence_ioctl, also returns EINVAL if vblank is not
-supported; this patch also changes the return value to EOPNOTSUPP in
-these functions. Lastly, these functions are invoked by libdrm, which is
-used by many compositors; because of this, it is important to check if
-this change breaks any compositor. In this sense, the following projects
-were examined:
+On Wed, 2 Oct 2019 11:05:16 -0300
+Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-* Drm-hwcomposer
-* Kwin
-* Sway
-* Wlroots
-* Wayland
-* Weston
-* Mutter
-* Xorg (67 different drivers)
+> For historical reasons, the function drm_wait_vblank_ioctl always return
+> -EINVAL if something gets wrong. This scenario limits the flexibility
+> for the userspace to make detailed verification of any problem and take
+> some action. In particular, the validation of =E2=80=9Cif (!dev->irq_enab=
+led)=E2=80=9D
+> in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> support vblank or not. If the driver does not support VBlank, the
+> function drm_wait_vblank_ioctl returns EINVAL, which does not represent
+> the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> Additionally, drm_crtc_get_sequence_ioctl and
+> drm_crtc_queue_sequence_ioctl, also returns EINVAL if vblank is not
+> supported; this patch also changes the return value to EOPNOTSUPP in
+> these functions. Lastly, these functions are invoked by libdrm, which is
+> used by many compositors; because of this, it is important to check if
+> this change breaks any compositor. In this sense, the following projects
+> were examined:
+>=20
+> * Drm-hwcomposer
+> * Kwin
+> * Sway
+> * Wlroots
+> * Wayland
+> * Weston
+> * Mutter
+> * Xorg (67 different drivers)
+>=20
+> For each repository the verification happened in three steps:
+>=20
+> * Update the main branch
+> * Look for any occurrence of "drmCrtcQueueSequence",
+>   "drmCrtcGetSequence", and "drmWaitVBlank" with the command git grep -n
+>   "STRING".
+> * Look in the git history of the project with the command
+> git log -S<STRING>
+>=20
+> None of the above projects validate the use of EINVAL when using
+> drmWaitVBlank(), which make safe, at least for these projects, to change
+> the return values. On the other hand, mesa and xserver project uses
+> drmCrtcQueueSequence() and drmCrtcGetSequence(); this change is harmless
+> for both projects.
+>=20
+> Change since V5 (Pekka Paalanen):
+>  - Check if the change also affects Mutter
+>=20
+> Change since V4 (Daniel):
+>  - Also return EOPNOTSUPP in drm_crtc_[get|queue]_sequence_ioctl
+>=20
+> Change since V3:
+>  - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
+>=20
+> Change since V2:
+>  Daniel Vetter and Chris Wilson
+>  - Replace ENOTTY by EOPNOTSUPP
+>  - Return EINVAL if the parameters are wrong
+>=20
+> Cc: Keith Packard <keithp@keithp.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Pekka Paalanen <pekka.paalanen@collabora.com>
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_vblank.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 9c6899758bc9..71cf2633ac58 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1610,7 +1610,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, v=
+oid *data,
+>  	unsigned int flags, pipe, high_pipe;
+> =20
+>  	if (!dev->irq_enabled)
+> -		return -EINVAL;
+> +		return -EOPNOTSUPP;
+> =20
+>  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+>  		return -EINVAL;
 
-For each repository the verification happened in three steps:
+Hi,
 
-* Update the main branch
-* Look for any occurrence of "drmCrtcQueueSequence",
-  "drmCrtcGetSequence", and "drmWaitVBlank" with the command git grep -n
-  "STRING".
-* Look in the git history of the project with the command
-git log -S<STRING>
+this part looks safe for Weston indeed, so this part:
 
-None of the above projects validate the use of EINVAL when using
-drmWaitVBlank(), which make safe, at least for these projects, to change
-the return values. On the other hand, mesa and xserver project uses
-drmCrtcQueueSequence() and drmCrtcGetSequence(); this change is harmless
-for both projects.
+Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
 
-Change since V5 (Pekka Paalanen):
- - Check if the change also affects Mutter
+There is no need to check the "Wayland" project, it will never do
+anything with DRM.
 
-Change since V4 (Daniel):
- - Also return EOPNOTSUPP in drm_crtc_[get|queue]_sequence_ioctl
+(What looks extremely suspicious though is the libdrm implementation of
+drmWaitVblank() in case the ioctl returns EINTR, but that's unrelated.)
 
-Change since V3:
- - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
 
-Change since V2:
- Daniel Vetter and Chris Wilson
- - Replace ENOTTY by EOPNOTSUPP
- - Return EINVAL if the parameters are wrong
+Thanks,
+pq
 
-Cc: Keith Packard <keithp@keithp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Pekka Paalanen <pekka.paalanen@collabora.com>
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/gpu/drm/drm_vblank.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 9c6899758bc9..71cf2633ac58 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -1610,7 +1610,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, voi=
-d *data,
- 	unsigned int flags, pipe, high_pipe;
-=20
- 	if (!dev->irq_enabled)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
-=20
- 	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
- 		return -EINVAL;
-@@ -1876,7 +1876,7 @@ int drm_crtc_get_sequence_ioctl(struct drm_device *de=
-v, void *data,
- 		return -EOPNOTSUPP;
-=20
- 	if (!dev->irq_enabled)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
-=20
- 	crtc =3D drm_crtc_find(dev, file_priv, get_seq->crtc_id);
- 	if (!crtc)
-@@ -1934,7 +1934,7 @@ int drm_crtc_queue_sequence_ioctl(struct drm_device *=
-dev, void *data,
- 		return -EOPNOTSUPP;
-=20
- 	if (!dev->irq_enabled)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
-=20
- 	crtc =3D drm_crtc_find(dev, file_priv, queue_seq->crtc_id);
- 	if (!crtc)
---=20
-2.23.0
-
---rl7p723dixcepzft
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/o+JZAc3u12D=Y2_U=czydx8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAl2UrpsACgkQWJzP/com
-vP9Bgw/7B/I5MWK+6MLQD5y+0VUQythB5k6k9wovD2C56y3E0D5IOxknr7iX5xTb
-nNCZCFN8Ks4Zd3lhBRxcHMbetf+CwhvaWSRBhpxfptOSCeJK18WKADoULmTfgii3
-DUeQsN5Ohr79ftYn89vb8TrsoGnAYXFFaCtlfT6IE7iUYw8kAAgIKJ5ngexvwMlt
-MNvluV1MJVaE6kEet73dUbcW25kCwksR+tuSk1GK5w5F1reX6n3m8FAkdMSdVyPU
-DcRHEv3q3D7d3jCGmFfj16MiqxQFBhyN7rjk36kZxNysfLm/mzyfxTl7LiCkUDkI
-jmfZvIww+HHuU3I9D/4yORqfcuGNVHwVdT0IgzYx+RdpOmYej7SlhW2Nur/oP0Du
-vKbyKtoXFGQ2tBAAWVEyPeLeVYUgO3Yczn7qHbbnQflnDGCLhof3V64CtvXjzvCK
-vMrrwTqC8lDF7l9Fm84AFX1whua8+pU7xS99NNyPzmXMLkT37kgDaAHUBzrCKoHM
-mwilQUmgiDLw7n8HTmCYkomWIGK4G3sMii/df4vqQoOEeyYjG3CrzGuXYzNBYamy
-bXqpI2jQUy/hYLg2l9/vgVAvBatIeWEcGsej/+NhssUB4vTMlA1YUqwobJUnnA6e
-5PsyKjJus9M5WJDCfJSfn+DSYUpA2+t/MRWwiS0xZGCl4ebAc90=
-=nh5K
+iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAl2VpoIACgkQI1/ltBGq
+qqdxlRAAjTrqbU3NrK1kJ8lgwsXFGgwwlLVU2uu56fq5vVb6wyZb0coZEe01/OP8
+KCunoHBG0e6I7HKgmay2y73JKvy9HA93YZ4tm0ErI4KqTIc+EqnKVCMfnVr3HSCh
+cbEqjVdAVmfYRHmEu4UczgQdeGg1Vqfvfq5UVCI0v2vrPzVpAnqfJ6btVYX8f4tM
+FkXUAAyVgPyHojcwUopU+XiuKruDekrfv/n5edC2uP9gi/bM5n2Gu3Nq+s7+kzGZ
+PW01We28veJ9b1jjWhrvbW1J8M2ot35HXRtgNwDBcpoWtb8qcZk/n3M2+J2CdjCx
+W8Q7ZLfq/j6ee0XlE4ZJRzy19FNzyl2lLzhp3GxR5vbZ7ml3A4yUY5vjQxpcADgu
+dUjXLSdw2VPyJmzsc8A5hGjjH8Pv17Va3zkjOtKJiW6Bmq1D0z8m7hdcFy6zxZKh
+/SrcBq/U6y8Cvo33tRElcsDVQ3zQWECAJFmaZ4AG3xtVXvO17fmly4saU7jwOx1f
+/2K5NiENNhJ8vpHBh3jz6KDRHiiVmDC5DtLStk4O7JqDvErlMRUMHdY0V6XMoRqu
+CWRvYDB3+E5FykEPYIoTpOf/LLX41I0EpFXuzh6tWmOHgtl8CgIUrQS5HX0u/Oo8
+JjOBP+oWKotSmqD7eS95ug7N3EVuk4/9bWun+kFe8pKzLDg+Ws4=
+=AcvH
 -----END PGP SIGNATURE-----
 
---rl7p723dixcepzft--
+--Sig_/o+JZAc3u12D=Y2_U=czydx8--
