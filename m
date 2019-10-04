@@ -1,44 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 05 Oct 2019 14:04:03 +0000
-Subject: Re: [PATCH v2] mtd: onenand: prevent memory leak in onenand_scan
-Message-Id: <d136f119-d408-0c20-c554-818d13dc48df@web.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 04 Oct 2019 21:08:02 +0000
+Subject: Re: [PATCH v2] ethernet: gemini: Use devm_platform_ioremap_resource() in gemini_ethernet_probe()
+Message-Id: <CACRpkdZPnRJWojgRsZvSTDWuxbOtQws5uQXDSPBBem6HE8iJgA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004171909.6378-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191004171909.6378-1-navid.emamdoost@gmail.com>
+References: <af65355e-c2f8-9142-4d0b-6903f23a98b2@web.de>
+ <CH2PR02MB700047AFFFE08FE5FD563541C78E0@CH2PR02MB7000.namprd02.prod.outlook.com>
+ <bd860b05-f493-20e6-083d-66ef3cb61f60@web.de>
+In-Reply-To: <bd860b05-f493-20e6-083d-66ef3cb61f60@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Radhey Shyam Pandey <radheys@xilinx.com>, netdev <netdev@vger.kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-> In onenand_scan if scan_bbt fails the allocated buffers for oob_buf,
-> verify_buf, and page_buf should be released.
+On Fri, Sep 20, 2019 at 11:23 AM Markus Elfring <Markus.Elfring@web.de> wrote:
 
-Can a wording like the following be nicer for the change description?
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 20 Sep 2019 10:52:56 +0200
+>
+> Simplify this function implementation by using the wrapper function
+> “devm_platform_ioremap_resource” instead of calling the functions
+> “platform_get_resource” and “devm_ioremap_resource” directly.
+>
+> * Thus reduce also a bit of exception handling code here.
+> * Delete the local variable “res”.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-  Release the memory for the buffers “oob_buf”, “verify_buf” and “page_buf”
-  after a call of the function “scan_bbt” failed in the implementation
-  of the function “onenand_scan”.
+Seems correct.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-
-> Fixes: 5988af231978 ("mtd: Flex-OneNAND support")
-…
-> ---
-> Changes in v2:
-…
-> for the hint).
-
-Did you take another review comment into account for this patch change log?
-
-
-> ---
-
-Please replace the delimiter at this place by a blank line in subsequent messages.
-
-
->  drivers/mtd/nand/onenand/onenand_base.c | 8 +++++++-
-…
-
-
-Regards,
-Markus
+BR
+Linus Walleij
