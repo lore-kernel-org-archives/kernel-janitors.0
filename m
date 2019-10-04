@@ -1,66 +1,31 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 03 Oct 2019 15:51:57 +0000
-Subject: [PATCH 4.19 051/211] EDAC/altera: Use the proper type for the IRQ status bits
-Message-Id: <20191003154459.712803357@linuxfoundation.org>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 04 Oct 2019 15:42:49 +0000
+Subject: Re: [PATCH] hwrng: mediatek: Use devm_platform_ioremap_resource() in mtk_rng_probe()
+Message-Id: <20191004154249.GS5148@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191003154447.010950442@linuxfoundation.org>
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <e6e03822-c68f-55ea-3a65-ee2a44f50e8c@web.de>
+In-Reply-To: <e6e03822-c68f-55ea-3a65-ee2a44f50e8c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-mediatek@lists.infradead.org, linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On Wed, Sep 18, 2019 at 09:44:06AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2019 09:34:11 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/char/hw_random/mtk-rng.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 
-[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
-
-Smatch complains about the cast of a u32 pointer to unsigned long:
-
-  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
-  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
-
-This code wouldn't work on a 64 bit big endian system because it would
-read past the end of &irq_status.
-
- [ bp: massage. ]
-
-Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/edac/altera_edac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 5762c3c383f2e..56de378ad13dc 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1956,6 +1956,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	int irq = irq_desc_get_irq(desc);
-+	unsigned long bits;
- 
- 	dberr = (irq = edac->db_irq) ? 1 : 0;
- 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
-@@ -1965,7 +1966,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 
- 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
- 
--	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
-+	bits = irq_status;
-+	for_each_set_bit(bit, &bits, 32) {
- 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
- 		if (irq)
- 			generic_handle_irq(irq);
+Patch applied.  Thanks.
 -- 
-2.20.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
