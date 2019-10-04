@@ -1,37 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 Oct 2019 09:57:48 +0000
-Subject: [PATCH][next] staging: wfx: fix spelling mistake "non existant" -> "non-existent"
-Message-Id: <20191010095748.17047-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Oct 2019 10:22:51 +0000
+Subject: [PATCH] drm/i810: Prevent underflow in ioctl
+Message-Id: <20191004102251.GC823@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191008082205.19740-1-colin.king@canonical.com>
-In-Reply-To: <20191008082205.19740-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>, Emil Velikov <emil.velikov@collabora.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+The "used" variables here come from the user in the ioctl and it can be
+negative.  It could result in an out of bounds write.
 
-There is a spelling mistake in a dev_warn message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/wfx/hif_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i810/i810_dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/wfx/hif_rx.c b/drivers/staging/wfx/hif_rx.c
-index 52db02d3aa41..36e171b27ae2 100644
---- a/drivers/staging/wfx/hif_rx.c
-+++ b/drivers/staging/wfx/hif_rx.c
-@@ -137,7 +137,7 @@ static int hif_receive_indication(struct wfx_dev *wdev, struct hif_msg *hif, voi
- 	struct hif_ind_rx *body = buf;
+diff --git a/drivers/gpu/drm/i810/i810_dma.c b/drivers/gpu/drm/i810/i810_dma.c
+index 2a77823b8e9a..e66c38332df4 100644
+--- a/drivers/gpu/drm/i810/i810_dma.c
++++ b/drivers/gpu/drm/i810/i810_dma.c
+@@ -728,7 +728,7 @@ static void i810_dma_dispatch_vertex(struct drm_device *dev,
+ 	if (nbox > I810_NR_SAREA_CLIPRECTS)
+ 		nbox = I810_NR_SAREA_CLIPRECTS;
  
- 	if (!wvif) {
--		dev_warn(wdev->dev, "ignore rx data for non existant vif %d\n", hif->interface);
-+		dev_warn(wdev->dev, "ignore rx data for non-existent vif %d\n", hif->interface);
- 		return 0;
- 	}
- 	skb_pull(skb, sizeof(struct hif_msg) + sizeof(struct hif_ind_rx));
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
+ 
+ 	if (sarea_priv->dirty)
+@@ -1048,7 +1048,7 @@ static void i810_dma_dispatch_mc(struct drm_device *dev, struct drm_buf *buf, in
+ 	if (u != I810_BUF_CLIENT)
+ 		DRM_DEBUG("MC found buffer that isn't mine!\n");
+ 
+-	if (used > 4 * 1024)
++	if (used < 0 || used > 4 * 1024)
+ 		used = 0;
+ 
+ 	sarea_priv->dirty = 0x7f;
 -- 
 2.20.1
