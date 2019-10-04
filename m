@@ -1,38 +1,26 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 23 Oct 2019 08:00:24 +0000
-Subject: Re: [PATCH v2] clocksource/drivers: Fix memory leak in ttc_setup_clockevent
-Message-Id: <3785f6cf-e8ea-9cd8-80b3-e88b2c4d085f@web.de>
+From: Angel Helen <isslamicbank@gmail.com>
+Date: Fri, 04 Oct 2019 19:11:35 +0000
+Subject: HELLO PLEASE CAN I SPEAK WITH YOU?
+Message-Id: <CABU49e=m5HNGJpwvNO_mW5jcwDtgW+5F4a+BVr03n1jFqfBEXA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com>
- <20191023043139.31183-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191023043139.31183-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-> In the implementation of ttc_setup_clockevent() release the allocated
-> memory for ttcce if clk_notifier_register() fails.
+Hello dear,
+My name is Miss Helen i am a humble sincere single girl looking for
+true love, and a partner to assist me transfer my late father money,
+an amount of, (Four Million Two Hundred Thousand US Dollars) to your
+country for investment. I will give you 40% after the transfer, while
+the remaining amount will be invest in your country in your names,
+with 50% equal profits sharing.
 
-I got other wording preferences. Thus I imagine that such a change
-description can still be improved another bit.
-Would you like to express the addition of a jump target (according to
-the Linux coding style) for the completion of desired exception handling
-in a different way?
+Send me your pictures with brief introductions about your self's, so
+that i will give you further details and procedure.
 
+Message me to my email: helenpatrrick@gmail.com
 
-…
-> +++ b/drivers/clocksource/timer-cadence-ttc.c
-…
-> @@ -453,15 +451,18 @@ static int __init ttc_setup_clockevent(struct clk *clk,
-…
-> +release_ttcce:
-> +
-> +	kfree(ttcce);
-…
-
-I would prefer that a blank line will not be added directly after such a label.
-
-Regards,
-Markus
+I awaits your answer today.
+God bless you.
+Miss Helen.
