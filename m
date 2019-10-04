@@ -1,31 +1,29 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 12 Oct 2019 09:04:17 +0000
-Subject: [PATCH 0/2] drm/imx: Adjustments for two functions
-Message-Id: <2abf545b-023b-853a-95ef-ce99e1896a5d@web.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 04 Oct 2019 19:44:52 +0000
+Subject: Re: [PATCH] sata_gemini: Use devm_platform_ioremap_resource() in gemini_sata_probe()
+Message-Id: <CACRpkdbgUVm_6MdHw+6MJBc-oHYp-MA7_3jM3buQtKJEtEMtnA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
- <540321eb-7699-1d51-59d5-dde5ffcb8fc4@web.de>
- <CAEkB2ETtVwtmkpup65D3wqyLn=84ZHt0QRo0dJK5GsV=-L=qVw@mail.gmail.com>
-In-Reply-To: <CAEkB2ETtVwtmkpup65D3wqyLn=84ZHt0QRo0dJK5GsV=-L=qVw@mail.gmail.com>
+References: <b17404cd-294f-fe2f-e8a3-2218a0dae14f@web.de>
+In-Reply-To: <b17404cd-294f-fe2f-e8a3-2218a0dae14f@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Navid Emamdoost <navid.emamdoost@gmail.com>, Peter Senna Tschudin <peter.senna@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen McCamant <smccaman@umn.edu>, Navid Emamdoost <emamd001@umn.edu>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-ide@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Oct 2019 10:45:45 +0200
+On Wed, Sep 18, 2019 at 8:34 AM Markus Elfring <Markus.Elfring@web.de> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2019 08:28:09 +0200
+>
+> Simplify this function implementation by using a known wrapper function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Markus Elfring (2):
-  Fix error handling for a kmemdup() call in imx_pd_bind()
-  Fix error handling for a kmemdup() call in imx_ldb_panel_ddc()
+Looks correct.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
- drivers/gpu/drm/imx/imx-ldb.c          | 2 ++
- drivers/gpu/drm/imx/parallel-display.c | 7 ++++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
---
-2.23.0
+Yours,
+Linus Walleij
