@@ -1,36 +1,30 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Mon, 07 Oct 2019 21:49:43 +0000
-Subject: Re: [PATCH] drm/i915: make array hw_engine_mask static, makes object smaller
-Message-Id: <157048498331.8520.2832276261708225981@skylake-alporthouse-com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 04 Oct 2019 21:09:33 +0000
+Subject: Re: [PATCH] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
+Message-Id: <CACRpkdbQBaZgYBGAAfi7mg+4RMfWovi9io28q4u7KAW44bJ6WQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191007154151.23245-1-colin.king@canonical.com>
- <157046537209.5063.10118308844290609426@skylake-alporthouse-com>
-In-Reply-To: <157046537209.5063.10118308844290609426@skylake-alporthouse-com>
+References: <20190920122030.14340-1-colin.king@canonical.com>
+In-Reply-To: <20190920122030.14340-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Tony Lindgren <tony@atomide.com>, YueHaibing <yuehaibing@huawei.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Quoting Chris Wilson (2019-10-07 17:22:52)
-> Quoting Colin King (2019-10-07 16:41:51)
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Don't populate the array hw_engine_mask on the stack but instead make it
-> > static. Makes the object code smaller by 316 bytes.
-> > 
-> > Before:
-> >    text    data     bss     dec     hex filename
-> >   34004    4388     320   38712    9738 gpu/drm/i915/gt/intel_reset.o
-> > 
-> > After:
-> >    text    data     bss     dec     hex filename
-> >   33528    4548     320   38396    95fc gpu/drm/i915/gt/intel_reset.o
-> > 
-> > (gcc version 9.2.1, amd64)
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+On Fri, Sep 20, 2019 at 2:20 PM Colin King <colin.king@canonical.com> wrote:
 
-And pushed, thanks for the patch.
--Chris
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The call to pinctrl_count_index_with_args checks for a -EINVAL return
+> however this function calls pinctrl_get_list_and_count and this can
+> return -ENOENT. Rather than check for a specific error, fix this by
+> checking for any error return to catch the -ENOENT case.
+>
+> Addresses-Coverity: ("Improper use of negative")
+> Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Patch applied with Tony's ACK.
+
+Yours,
+Linus Walleij
