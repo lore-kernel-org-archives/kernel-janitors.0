@@ -1,61 +1,27 @@
-From: Connor Kuehl <connor.kuehl@canonical.com>
-Date: Thu, 03 Oct 2019 21:05:51 +0000
-Subject: Re: [PATCH] staging: rtl8188eu: fix null dereference when kzalloc fails
-Message-Id: <ac882530-4197-7813-ca24-49738eebb0c8@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 05 Oct 2019 16:08:36 +0000
+Subject: Re: [PATCH] rtlwifi: fix memory leak in rtl_usb_probe
+Message-Id: <037d04e8-4651-a657-6be6-b1eca072bb81@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190927214415.899-1-connor.kuehl@canonical.com>
- <20191001131122.GC22609@kadam>
-In-Reply-To: <20191001131122.GC22609@kadam>
+References: <20191004195315.21168-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004195315.21168-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/1/19 6:11 AM, Dan Carpenter wrote:
-> 
-> There is another one earlier in the function as well.
-> 
-> drivers/staging/rtl8188eu/os_dep/usb_intf.c
->     336
->     337          pnetdev = rtw_init_netdev(padapter);
->     338          if (!pnetdev)
->     339                  goto free_adapter;
->     340          SET_NETDEV_DEV(pnetdev, dvobj_to_dev(dvobj));
->     341          padapter = rtw_netdev_priv(pnetdev);
->     342
->     343          if (padapter->registrypriv.monitor_enable) {
->     344                  pmondev = rtl88eu_mon_init();
->     345                  if (!pmondev)
->     346                          netdev_warn(pnetdev, "Failed to initialize monitor interface");
-> 
-> goto free_adapter.
-> 
->     347                  padapter->pmondev = pmondev;
->     348          }
->     349
->     350          padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
->     351          if (!padapter->HalData)
->     352                  DBG_88E("cant not alloc memory for HAL DATA\n");
->     353
-> 
->>   	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
->> -	if (!padapter->HalData)
->> -		DBG_88E("cant not alloc memory for HAL DATA\n");
->> +	if (!padapter->HalData) {
->> +		DBG_88E("Failed to allocate memory for HAL data\n");
-> 
-> Remove this debug printk.
-> 
->> +		goto free_adapter;
->> +	}
+> In rtl_usb_probe, a new hw is allocated via ieee80211_alloc_hw(). This
+> allocation should be released in case of allocation failure for
+> rtlpriv->usb_data.
+>
+> Fixes: a7959c1394d4 ("rtlwifi: Preallocate USB read buffers and eliminate kalloc in read routine")
 
-Hi Dan,
+Which event did trigger the sending of this patch variant
+after a similar change was integrated already?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id?93616951138a598d930dcaec40f2bfd9ce43bb
+https://lore.kernel.org/lkml/20191001092047.71E8460A30@smtp.codeaurora.org/
+https://lore.kernel.org/patchwork/comment/1331936/
 
-Sorry for such a late response! By the time I saw the e-mail with your 
-feedback I also saw another e-mail saying this patch was accepted into a 
-staging-linus tree. I'll address your comments in a separate patch.
-
-Thank you,
-
-Connor
+Regards,
+Markus
