@@ -1,35 +1,27 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 16 Oct 2019 18:19:40 +0000
-Subject: [PATCH 06/10] thermal: devfreq_cooling: Remove unneeded conversions to bool
-Message-Id: <20191016181944.25106-3-afd@ti.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 05 Oct 2019 14:34:09 +0000
+Subject: Re: [PATCH] of: unittest: fix memory leak in unittest_data_add
+Message-Id: <50421413-f535-a608-fa7d-1b337eeb95e5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191016181944.25106-1-afd@ti.com>
-In-Reply-To: <20191016181944.25106-1-afd@ti.com>
+References: <20191004185847.14074-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004185847.14074-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, devicetree@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+> In unittest_data_add, a copy buffer is created via kmemdup. This buffer
+> is leaked if of_fdt_unflatten_tree fails. The release for the
+> unittest_data buffer is added.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/thermal/devfreq_cooling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can a wording like the following be nicer for the change description?
 
-diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_cooling.c
-index ef59256887ff..e386a3241700 100644
---- a/drivers/thermal/devfreq_cooling.c
-+++ b/drivers/thermal/devfreq_cooling.c
-@@ -85,7 +85,7 @@ static int partition_enable_opps(struct devfreq_cooling_device *dfc,
- 		struct dev_pm_opp *opp;
- 		int ret = 0;
- 		unsigned int freq = dfc->freq_table[i];
--		bool want_enable = i >= cdev_state ? true : false;
-+		bool want_enable = i >= cdev_state;
- 
- 		opp = dev_pm_opp_find_freq_exact(dev, freq, !want_enable);
- 
--- 
-2.17.1
+  The buffer “__dtb_testcases_begin” will be duplicated to the local
+  variable “unittest_data”. Release the corresponding memory
+  after a call of the function “of_fdt_unflatten_tree” failed
+  in the implementation of the function “unittest_data_add”.
+
+
+Regards,
+Markus
