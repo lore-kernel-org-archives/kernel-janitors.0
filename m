@@ -1,51 +1,41 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Date: Mon, 14 Oct 2019 13:05:21 +0000
-Subject: Re: [PATCH] dmaengine: jz4780: Use devm_platform_ioremap_resource() in jz4780_dma_probe()
-Message-Id: <1571058321.3.1@crapouillou.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Oct 2019 05:23:37 +0000
+Subject: [PATCH] uverbs: prevent potential underflow
+Message-Id: <20191005052337.GA20129@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5dd19f28-349a-4957-ea3a-6aebbd7c97e2@web.de>
-        <1569353552.1911.0@crapouillou.net> <20191014071400.GD2654@vkoul-mobl>
-In-Reply-To: <20191014071400.GD2654@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Alex Smith <alex.smith@imgtec.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Doug Ledford <dledford@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>, Matan Barak <matanb@mellanox.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Shamir Rabinovitch <shamir.rabinovitch@oracle.com>, Matthew Wilcox <willy@infradead.org>, Michael Guralnik <michaelgur@mellanox.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Vinod,
+The issue is in drivers/infiniband/core/uverbs_std_types_cq.c in the
+UVERBS_HANDLER(UVERBS_METHOD_CQ_CREATE) function.  We check that:
 
+	if (attr.comp_vector >= attrs->ufile->device->num_comp_vectors) {
 
+But we don't check that "attr.comp_vector" whether negative.  It
+could potentially lead to an array underflow.  My concern would be where
+cq->vector is used in the create_cq() function from the cxgb4 driver.
 
-Le lun., oct. 14, 2019 at 12:44, Vinod Koul <vkoul@kernel.org> a =E9crit=20
-:
-> On 24-09-19, 21:32, Paul Cercueil wrote:
->>  Hi Markus,
->>=20
->>=20
->>  Le dim. 22 sept. 2019 =E0 11:25, Markus Elfring=20
->> <Markus.Elfring@web.de> a
->>  =E9crit :
->>  > From: Markus Elfring <elfring@users.sourceforge.net>
->>  > Date: Sun, 22 Sep 2019 11:18:27 +0200
->>  >
->>  > Simplify this function implementation a bit by using
->>  > a known wrapper function.
->>  >
->>  > This issue was detected by using the Coccinelle software.
->>  >
->>  > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>=20
->>  Looks good to me.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->=20
-> Did you mean Acked or Reviewed ...??
+Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/core/uverbs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Definitely. Sorry about that.
-
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-
->=20
-> --
-> ~Vinod
+diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
+index 1e5aeb39f774..63f7f7db5902 100644
+--- a/drivers/infiniband/core/uverbs.h
++++ b/drivers/infiniband/core/uverbs.h
+@@ -98,7 +98,7 @@ ib_uverbs_init_udata_buf_or_null(struct ib_udata *udata,
+ 
+ struct ib_uverbs_device {
+ 	atomic_t				refcount;
+-	int					num_comp_vectors;
++	u32					num_comp_vectors;
+ 	struct completion			comp;
+ 	struct device				dev;
+ 	/* First group for device attributes, NULL terminated array */
+-- 
+2.20.1
