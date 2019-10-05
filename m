@@ -1,24 +1,47 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 01 Oct 2019 02:46:59 +0000
-Subject: Re: [PATCH] scsi: ips: make array 'options' static const, makes object smaller
-Message-Id: <yq15zl9yyfw.fsf@oracle.com>
+From: "DR.Mike Benz" <eco.bank1204@gmail.com>
+Date: Sat, 05 Oct 2019 17:44:05 +0000
+Subject: Happy to inform you, CONTACT WALMART TRANSFER To pick up $8000.00 sent to you this morning.
+Message-Id: <CAOE+jAALK37sQDc81dr2a5xeBRKYePHre7UydVaqGOVjtM94iw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906164522.5644-1-colin.king@canonical.com>
-In-Reply-To: <20190906164522.5644-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 6 Sep 2019 17:45:22 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
+Attn Dear Beneficiary.
+Happy to inform you, CONTACT WALMART TRANSFER To pick up $8000.00 sent
+to you this morning.
 
-Colin,
+I have deposited your payment funds $2.500,000MillionUS Dollars
+With Walmart international money transfers.
+Receive the Money with Walmart | MoneyGram service.
+Walmart partners with MoneyGram to allow customers
+easily receive money transfers abroad,
+Contact Walmart international money transfers office -Benin
+Receive your approval payment funds $10.500,000MillionUS Dollars
+HERE IS WALMART CONTACT INFORMATIONS.
+Contact person. Mrs. Mary Anderson,Dir. Walmart transfers-Benin
+Email: walmart.b100263@gmail.com
+Telephone. +229 68823234
+Text Her on this international phone line. (256) 284-4886
 
-> Don't populate the array 'options' on the stack but instead make it
-> static const. Makes the object code smaller by 143 bytes.
-
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Ask Mrs. Mary Anderson,Dir. Walmart transfers-Benin to send the transfer
+as i instructed.
+we agreed to keep sending the transfer to you $8000.00 daily.
+Until you received your total payment $10.500,000 from the office
+Once again,
+make sure you contact Mrs. Mary Anderson,Dir. Walmart transfers-Benin
+today including your infos.
+(1) Your  Full Name=3D=3D=3D=3D=3D=3D=3D
+(2) house address=3D=3D=3D=3D=3D=3D(3) Your Phone Numbers=3D=3D=3D=3D=3D=3D=
+Urgent to receive your transfer now without any further delay.
+Finally, Send your first payment transfer fees to Walmart office on
+below address
+Receiver's Name=3D=3D=3D ALAN UDE
+Country=3D=3D=BENIN
+City=3D=3D=3D=3DCOTONOU
+AMOUNT =3D=3D=3D$58.00 only. Your first payment $8000.00 transfer fee.
+Question=3D=3D=3DGod
+Answer=3D=3D=3D=3D=3DCreator
+Thanks
+DR.Mike Benz
