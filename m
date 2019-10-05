@@ -1,37 +1,21 @@
-From: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
-Date: Mon, 07 Oct 2019 14:43:20 +0000
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Message-Id: <1r9-6-2h$mict7-lt$5@tqqi4.kkn.s01>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="BB118ED_BAB2D5FF1EA50F"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 05 Oct 2019 15:35:44 +0000
+Subject: Re: [PATCH] nl80211: fix memory leak in nl80211_get_ftm_responder_stats
+Message-Id: <dc0edb88-457f-fde8-4d91-d5b3b94bfb6d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20191004194220.19412-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004194220.19412-1-navid.emamdoost@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+> In nl80211_get_ftm_responder_stats, a new skb is created via nlmsg_new
+> named msg. If nl80211hdr_put() fails, then msg should be released. The
+> return statement should be replace by goto to error handling code.
 
---BB118ED_BAB2D5FF1EA50F
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Please improve this change description (also by avoiding a typo).
 
-Greetings
-
-My name is Barrister Hans Erich.
-
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
-
-Your full names --------
-
-
-Your urgent response will be appreciated
-
-Thank you and God bless you.
-
-Barrister Hans Erich
-
-Yours sincerely,
-Barrister Hans Erich
-CONTACT: hanserich9helmut@gmail.com
-
---BB118ED_BAB2D5FF1EA50F--
+Regards,
+Markus
