@@ -1,31 +1,42 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 06 Oct 2019 07:30:16 +0000
-Subject: Re: [Cocci] [RFC] scripts: Fix coccicheck failed
-Message-Id: <20191006073016.GA2133217@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 05 Oct 2019 11:32:05 +0000
+Subject: [PATCH] drm/amd/display: Fix typo in some comments
+Message-Id: <20191005113205.14601-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
- <21684307-d05c-1856-c849-95436aedeb86@web.de>
- <alpine.DEB.2.21.1910051425050.2653@hadrien>
- <f64fc086-7852-b074-6247-108b753dc272@web.de>
- <alpine.DEB.2.21.1910060727580.4623@hadrien>
- <8390d1f8-1907-ef19-c527-6bdb380d96c9@web.de>
-In-Reply-To: <8390d1f8-1907-ef19-c527-6bdb380d96c9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Yue Haibing <yuehaibing@huawei.com>, Matthias =?iso-8859-1?Q?M=E4nnich?= <maennich@google.com>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>, Martijn Coenen <maco@android.com>, cocci@systeme.lip6.fr
+To: harry.wentland@amd.com, sunpeng.li@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Oct 06, 2019 at 07:34:49AM +0200, Markus Elfring wrote:
-> >> Would you like to increase your software development attention for
-> >> efficient system configuration on this issue?
-> >
-> > No.
-> 
-> Thanks for this information.
-> 
-> I am still curious if other contributors will care more for this aspect.
+p and g are switched in 'amdpgu_dm'
 
-No.  Please stop.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 92932d521d7f..b9c2e1a930ab 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -1043,7 +1043,7 @@ static void s3_handle_mst(struct drm_device *dev, bool suspend)
+ 
+ /**
+  * dm_hw_init() - Initialize DC device
+- * @handle: The base driver device containing the amdpgu_dm device.
++ * @handle: The base driver device containing the amdgpu_dm device.
+  *
+  * Initialize the &struct amdgpu_display_manager device. This involves calling
+  * the initializers of each DM component, then populating the struct with them.
+@@ -1073,7 +1073,7 @@ static int dm_hw_init(void *handle)
+ 
+ /**
+  * dm_hw_fini() - Teardown DC device
+- * @handle: The base driver device containing the amdpgu_dm device.
++ * @handle: The base driver device containing the amdgpu_dm device.
+  *
+  * Teardown components within &struct amdgpu_display_manager that require
+  * cleanup. This involves cleaning up the DRM device, DC, and any modules that
+-- 
+2.20.1
