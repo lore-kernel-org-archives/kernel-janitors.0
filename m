@@ -1,36 +1,44 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 16 Oct 2019 18:19:43 +0000
-Subject: [PATCH 09/10] ixgbe: Remove unneeded conversions to bool
-Message-Id: <20191016181944.25106-6-afd@ti.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 05 Oct 2019 14:04:03 +0000
+Subject: Re: [PATCH v2] mtd: onenand: prevent memory leak in onenand_scan
+Message-Id: <d136f119-d408-0c20-c554-818d13dc48df@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191016181944.25106-1-afd@ti.com>
-In-Reply-To: <20191016181944.25106-1-afd@ti.com>
+References: <20191004171909.6378-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004171909.6378-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+> In onenand_scan if scan_bbt fails the allocated buffers for oob_buf,
+> verify_buf, and page_buf should be released.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_common.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Can a wording like the following be nicer for the change description?
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-index 0bd1294ba517..2d896d663e3d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-@@ -64,8 +64,7 @@ bool ixgbe_device_supports_autoneg_fc(struct ixgbe_hw *hw)
- 			hw->mac.ops.check_link(hw, &speed, &link_up, false);
- 			/* if link is down, assume supported */
- 			if (link_up)
--				supported = speed = IXGBE_LINK_SPEED_1GB_FULL ?
--				true : false;
-+				supported = speed = IXGBE_LINK_SPEED_1GB_FULL;
- 			else
- 				supported = true;
- 		}
--- 
-2.17.1
+  Release the memory for the buffers “oob_buf”, “verify_buf” and “page_buf”
+  after a call of the function “scan_bbt” failed in the implementation
+  of the function “onenand_scan”.
+
+
+> Fixes: 5988af231978 ("mtd: Flex-OneNAND support")
+…
+> ---
+> Changes in v2:
+…
+> for the hint).
+
+Did you take another review comment into account for this patch change log?
+
+
+> ---
+
+Please replace the delimiter at this place by a blank line in subsequent messages.
+
+
+>  drivers/mtd/nand/onenand/onenand_base.c | 8 +++++++-
+…
+
+
+Regards,
+Markus
