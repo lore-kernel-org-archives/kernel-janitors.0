@@ -1,51 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 17 Oct 2019 19:39:14 +0000
-Subject: Re: [PATCH] drm/amdgpu/vi: silence an uninitialized variable warning
-Message-Id: <CADnq5_N50-qL9KStb9_1kSqHgXb3fO=AzqOgAVzKDHSONZPXvw@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 05 Oct 2019 15:02:58 +0000
+Subject: Re: [PATCH] drm/imx: fix memory leak in imx_pd_bind
+Message-Id: <027fde47-86b3-35c8-85e6-ea7c191e772c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191017091216.GA31278@mwanda>
-In-Reply-To: <20191017091216.GA31278@mwanda>
+References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004190938.15353-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Jim Qu <Jim.Qu-5C7GfCeVMHo@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Evan Quan <evan.quan-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <rex.zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, kernel@pengutronix.de
+Cc: kernel-janitors@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, Stephen McCamant <smccaman@umn.edu>, Fabio Estevam <festevam@gmail.com>
 
-On Thu, Oct 17, 2019 at 5:12 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Smatch complains that we need to initialized "*cap" otherwise it can
-> lead to an uninitialized variable bug in the caller.  This seems like a
-> reasonable warning and it doesn't hurt to silence it at least.
->
-> drivers/gpu/drm/amd/amdgpu/vi.c:767 vi_asic_reset_method() error: uninitialized symbol 'baco_reset'.
->
-> Fixes: 425db2553e43 ("drm/amdgpu: expose BACO interfaces to upper level from PP")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> In imx_pd_bind, the duplicated memory for imxpd->edid via kmemdup should
+> be released in drm_of_find_panel_or_bridge or imx_pd_register fail.
 
-Applied.  thanks!
+Please improve this change description.
 
-Alex
 
-> ---
->  drivers/gpu/drm/amd/powerplay/amd_powerplay.c | 1 +
->  1 file changed, 1 insertion(+)
+> +++ b/drivers/gpu/drm/imx/parallel-display.c
+> @@ -227,14 +227,18 @@ static int imx_pd_bind(struct device *dev, struct d=
+evice *master, void *data)
 >
-> diff --git a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> index 83196b79edd5..f4ff15378e61 100644
-> --- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> +++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> @@ -1421,6 +1421,7 @@ static int pp_get_asic_baco_capability(void *handle, bool *cap)
->  {
->         struct pp_hwmgr *hwmgr = handle;
+>  	/* port@1 is the output port */
+>  	ret =3D drm_of_find_panel_or_bridge(np, 1, 0, &imxpd->panel, &imxpd->br=
+idge);
+> -	if (ret && ret !=3D -ENODEV)
+> +	if (ret && ret !=3D -ENODEV) {
+> +		kfree(imxpd->edid);
+>  		return ret;
+> +	}
 >
-> +       *cap = false;
->         if (!hwmgr)
->                 return -EINVAL;
->
-> --
-> 2.20.1
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+>  	imxpd->dev =3D dev;
+
+Please use a jump target here instead of adding duplicate source code
+for the completion of exception handling.
+
+ 	if (ret && ret !=3D -ENODEV)
+-		return ret;
++		goto free_edid;
+
+=E2=80=A6
+
++free_edid:
++ 	kfree(imxpd->edid);
++ 	return ret;
+
+
+Regards,
+Markus
