@@ -1,48 +1,30 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Wed, 09 Oct 2019 17:05:52 +0000
-Subject: [PATCH AUTOSEL 4.19 20/26] mips: Loongson: Fix the link time qualifier of 'serial_exit()'
-Message-Id: <20191009170558.32517-20-sashal@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sun, 06 Oct 2019 07:43:24 +0000
+Subject: [PATCH -next] media: cx231xx: remove duplicated include from cx231xx-417.c
+Message-Id: <20191006074324.48283-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009170558.32517-1-sashal@kernel.org>
-In-Reply-To: <20191009170558.32517-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, Kate Stewart <kstewart@linuxfoundation.org>, Wenwen Wang <wenwen@cs.uga.edu>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Remove duplicated include.
 
-[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
-
-'exit' functions should be marked as __exit, not __init.
-
-Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: chenhc@lemote.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/mips/loongson64/common/serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/cx231xx/cx231xx-417.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
-index ffefc1cb26121..98c3a7feb10f8 100644
---- a/arch/mips/loongson64/common/serial.c
-+++ b/arch/mips/loongson64/common/serial.c
-@@ -110,7 +110,7 @@ static int __init serial_init(void)
- }
- module_init(serial_init);
- 
--static void __init serial_exit(void)
-+static void __exit serial_exit(void)
- {
- 	platform_device_unregister(&uart8250_device);
- }
--- 
-2.20.1
+diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
+index 46d0215deee6..1aec4459f50a 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-417.c
++++ b/drivers/media/usb/cx231xx/cx231xx-417.c
+@@ -22,7 +22,6 @@
+ #include <linux/firmware.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+-#include <linux/slab.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-event.h>
