@@ -1,32 +1,46 @@
-From: Paul Burton <paul.burton@mips.com>
-Date: Wed, 02 Oct 2019 22:54:08 +0000
-Subject: Re: [PATCH] mips: Loongson: Fix the link time qualifier of 'serial_exit()'
-Message-Id: <MWHPR2201MB12775BCFABEBAC5426879C41C19C0@MWHPR2201MB1277.namprd22.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 06 Oct 2019 15:04:29 +0000
+Subject: [PATCH] media: vpx3220: make array input_vals static, makes object smaller
+Message-Id: <20191006150429.24311-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190910035907.6430-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20190910035907.6430-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "chenhc@lemote.com" <chenhc@lemote.com>, "ralf@linux-mips.org" <ralf@linux-mips.org>, Paul Burton <pburton@wavecomp.com>, "jhogan@kernel.org" <jhogan@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-Christophe JAILLET wrote:
-> 'exit' functions should be marked as __exit, not __init.
+Don't populate the array input_vals on the stack but instead make it
+static. Makes the object code smaller by 106 bytes.
 
-Applied to mips-fixes.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  11744	   3536	    128	  15408	   3c30	drivers/media/i2c/vpx3220.o
 
-> commit 25b69a889b63
-> https://git.kernel.org/mips/c/25b69a889b63
-> 
-> Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  11574	   3600	    128	  15302	   3bc6	drivers/media/i2c/vpx3220.o
 
-Thanks,
-    Paul
+(gcc version 9.2.1, amd64)
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/vpx3220.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/vpx3220.c b/drivers/media/i2c/vpx3220.c
+index 39f66e7a0e42..8be03fe5928c 100644
+--- a/drivers/media/i2c/vpx3220.c
++++ b/drivers/media/i2c/vpx3220.c
+@@ -375,7 +375,7 @@ static int vpx3220_s_routing(struct v4l2_subdev *sd,
+ 		 input = 1: COMPOSITE  input
+ 		 input = 2: SVHS       input  */
+ 
+-	const int input_vals[3][2] = {
++	static const int input_vals[3][2] = {
+ 		{0x0c, 0},
+ 		{0x0d, 0},
+ 		{0x0e, 1}
+-- 
+2.20.1
