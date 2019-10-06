@@ -1,42 +1,61 @@
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Date: Sat, 12 Oct 2019 19:22:18 +0000
-Subject: Re: [PATCH] drm/imx: fix memory leak in imx_pd_bind
-Message-Id: <CAEkB2EQUrHpfCXDQ9HV9_hw7Ke5DmX3SvKWJd+wSwXB1Uqaf5g@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 06 Oct 2019 06:40:14 +0000
+Subject: Re: [PATCH] scripts: add_namespace: Fix coccicheck failed
+Message-Id: <f9862128-8fa2-812e-cfb3-c9953b9e98a2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
- <027fde47-86b3-35c8-85e6-ea7c191e772c@web.de> <f90d7b4a-c4af-eac1-f326-211e932dbd22@web.de>
-In-Reply-To: <f90d7b4a-c4af-eac1-f326-211e932dbd22@web.de>
+References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
+ <20191006044456.57608-1-yuehaibing@huawei.com>
+In-Reply-To: <20191006044456.57608-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, Jessica Yu <jeyu@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-No, that is not correct! You should not try to free imxpd here as it
-is a resource-managed allocation via devm_kzalloc(). It means memory
-allocated with this function is automatically freed on driver detach.
-So, this patch introduces a double-free.
+> Now all scripts in scripts/coccinelle to be automatically called
+> by coccicheck. However new adding add_namespace.cocci does not
+> support report mode, which make coccicheck failed.
+> This add "virtual report" to  make the coccicheck go ahead smoothly.
 
-On Sat, Oct 12, 2019 at 6:54 AM Markus Elfring <Markus.Elfring@web.de> wrote:
+I find that this change description needs improvements and corrections.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=43b815c6a8e7dbccb5b8bd9c4b099c24bc22d135#n151
+
+I would find a commit subject like “scripts: add_namespace:
+Add support for the default coccicheck operation mode” more appropriate
+(if this software development will be clarified further in the shown direction
+at all).
+
+
+> Fixes: eb8305aecb95 ("scripts: Coccinelle script for namespace dependencies.")
+
+I got the impression that a sub-optimal solution approach would be chosen here.
+The automatic script execution is requested despite of the fact
+that the input parameter “name space” (SmPL identifier “virtual.ns”)
+will be required.
+
+I am curious under which circumstances an other transformation
+can become more attractive.
+[PATCH 0/2] Coccinelle: Extend directory hierarchy
+https://lore.kernel.org/cocci/d8c97f0a-6ce2-0f5a-74a9-63366c17f3a6@web.de/
+https://lore.kernel.org/patchwork/project/lkml/list/?series=412494
+https://lkml.org/lkml/2019/10/2/60
+
+
+> +++ b/scripts/coccinelle/misc/add_namespace.cocci
+> @@ -6,6 +6,8 @@
+>  /// add a missing namespace tag to a module source file.
+>  ///
 >
-> > +free_edid:
-> > +     kfree(imxpd->edid);
-> > +     return ret;
->
-> I have taken another look at this change idea.
-> Can the function call “devm_kfree(dev, imxpd)” become relevant
-> also at this place?
->
-> Would you like to combine it with the update suggestion
-> “Fix error handling for a kmemdup() call in imx_pd_bind()”?
-> https://lore.kernel.org/r/3fd6aa8b-2529-7ff5-3e19-05267101b2a4@web.de/
-> https://lore.kernel.org/patchwork/patch/1138912/
-> https://lkml.org/lkml/2019/10/12/87
->
-> Regards,
-> Markus
+> +virtual report
+> +
+>  @has_ns_import@
 
+If you would insist on the complete support for the operation mode “report”
+of the tool “coccicheck”, I would eventually expect that another SmPL rule
+will provide a helpful message instead of immediately exiting after
+the script variable “ns” was defined.
+Are you going to take any additional software design options better
+into account?
 
-
--- 
-Navid.
+Regards,
+Markus
