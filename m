@@ -1,66 +1,40 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 03 Oct 2019 15:50:49 +0000
-Subject: [PATCH 5.2 071/313] EDAC/altera: Use the proper type for the IRQ status bits
-Message-Id: <20191003154539.855119513@linuxfoundation.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 06 Oct 2019 07:00:40 +0000
+Subject: Re: scripts: add_namespace: Fix coccicheck failed
+Message-Id: <fd7a2ab6-3fd3-e967-1959-04a828331884@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191003154533.590915454@linuxfoundation.org>
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
+ <20191006044456.57608-1-yuehaibing@huawei.com>
+ <f9862128-8fa2-812e-cfb3-c9953b9e98a2@web.de>
+ <alpine.DEB.2.21.1910060843030.4623@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1910060843030.4623@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Borislav Petkov <bp@suse.de>, Thor Thayer <thor.thayer@linux.intel.com>, James Morse <james.morse@arm.com>, kernel-janitors@vger.kernel.org, linux-edac <linux-edac@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@lip6.fr>, YueHaibing <yuehaibing@huawei.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Jessica Yu <jeyu@kernel.org>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+>> I would find a commit subject like “scripts: add_namespace:
+>> Add support for the default coccicheck operation mode” more appropriate
+>> (if this software development will be clarified further in the shown direction
+>> at all).
+>
+> Please let this go.
 
-[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
+This will not happen for a while.
 
-Smatch complains about the cast of a u32 pointer to unsigned long:
 
-  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
-  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+> Please stop criticizing the English of others.
 
-This code wouldn't work on a 64 bit big endian system because it would
-read past the end of &irq_status.
+I am occasionally trying to provide some code review.
 
- [ bp: massage. ]
+Chances for further improvements will eventually be lost, if you do not
+get informed about corresponding update candidates.
 
-Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/edac/altera_edac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 8816f74a22b4a..2d12b94eccda2 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1829,6 +1829,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	int irq = irq_desc_get_irq(desc);
-+	unsigned long bits;
- 
- 	dberr = (irq = edac->db_irq) ? 1 : 0;
- 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
-@@ -1838,7 +1839,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 
- 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
- 
--	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
-+	bits = irq_status;
-+	for_each_set_bit(bit, &bits, 32) {
- 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
- 		if (irq)
- 			generic_handle_irq(irq);
--- 
-2.20.1
+> The message is understandable, and even more informative than what you propose.
+
+I would appreciate the selection of a better wording also in this case.
+
+Regards,
+Markus
