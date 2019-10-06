@@ -1,24 +1,30 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 12 Oct 2019 16:04:15 +0000
-Subject: drm/nouveau: Checking a kmemdup() call in nouveau_connector_of_detect()
-Message-Id: <5ff56ca3-0e20-2820-f981-d2d37dded133@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sun, 06 Oct 2019 07:44:04 +0000
+Subject: [PATCH -next] drm/amdgpu: remove duplicated include from mmhub_v1_0.c
+Message-Id: <20191006074404.48416-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, le.ma@amd.com, Yong.Zhao@amd.com, Trigger.Huang@amd.com, tao.zhou1@amd.com, Hawking.Zhang@amd.com, Felix.Kuehling@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+Remove duplicated include.
 
-I tried another script for the semantic patch language out.
-This source code analysis approach points out that the implementation
-of the function “nouveau_connector_of_detect” contains still
-an unchecked call of the function “kmemdup”.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nouveau_connector.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n476
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/gpu/drm/nouveau/nouveau_connector.c#L476
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-How do you think about to improve it?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
+index 4c7e8c64a94e..6965e1e6fa9e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
+@@ -31,7 +31,6 @@
+ #include "vega10_enum.h"
+ 
+ #include "soc15_common.h"
+-#include "amdgpu_ras.h"
+ 
+ #define mmDAGB0_CNTL_MISC2_RV 0x008f
+ #define mmDAGB0_CNTL_MISC2_RV_BASE_IDX 0
