@@ -1,65 +1,59 @@
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 19 Oct 2019 15:32:52 +0000
-Subject: Re: [PATCH -next] CIFS: remove set but not used variables 'cinode' and 'netfid'
-Message-Id: <CAH2r5mucpgb=cOzbq52kLojoTega3fCVh9yRtpodPe1zw9GG6Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 06 Oct 2019 14:29:56 +0000
+Subject: [PATCH][V2] ata: pata_artop: make arrays static const, makes object smaller
+Message-Id: <20191006142956.23360-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191017035351.125013-1-yuehaibing@huawei.com>
-In-Reply-To: <20191017035351.125013-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-tentatively pushed to cifs-2.6.git for-next pending more testing of
-the flock patch it modified.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Fri, Oct 18, 2019 at 1:07 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> fs/cifs/file.c: In function 'cifs_flock':
-> fs/cifs/file.c:1704:8: warning:
->  variable 'netfid' set but not used [-Wunused-but-set-variable]
->
-> fs/cifs/file.c:1702:24: warning:
->  variable 'cinode' set but not used [-Wunused-but-set-variable]
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/cifs/file.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 936e03892e2a..02a81dc6861a 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1699,9 +1699,7 @@ int cifs_flock(struct file *file, int cmd, struct file_lock *fl)
->         bool posix_lck = false;
->         struct cifs_sb_info *cifs_sb;
->         struct cifs_tcon *tcon;
-> -       struct cifsInodeInfo *cinode;
->         struct cifsFileInfo *cfile;
-> -       __u16 netfid;
->         __u32 type;
->
->         rc = -EACCES;
-> @@ -1716,8 +1714,6 @@ int cifs_flock(struct file *file, int cmd, struct file_lock *fl)
->         cifs_read_flock(fl, &type, &lock, &unlock, &wait_flag,
->                         tcon->ses->server);
->         cifs_sb = CIFS_FILE_SB(file);
-> -       netfid = cfile->fid.netfid;
-> -       cinode = CIFS_I(file_inode(file));
->
->         if (cap_unix(tcon->ses) &&
->             (CIFS_UNIX_FCNTL_CAP & le64_to_cpu(tcon->fsUnixInfo.Capability)) &&
->
->
->
+Don't populate the const arrays on the stack but instead make them
+static. Makes the object code smaller by 292 bytes.
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6988	   3132	    128	  10248	   2808	drivers/ata/pata_artop.o
 
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6536	   3292	    128	   9956	   26e4	drivers/ata/pata_artop.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: fix up commit message
+
+---
+ drivers/ata/pata_artop.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/pata_artop.c b/drivers/ata/pata_artop.c
+index 3aa006c5ed0c..6bd2228bb6ff 100644
+--- a/drivers/ata/pata_artop.c
++++ b/drivers/ata/pata_artop.c
+@@ -100,7 +100,7 @@ static void artop6210_load_piomode(struct ata_port *ap, struct ata_device *adev,
+ {
+ 	struct pci_dev *pdev	= to_pci_dev(ap->host->dev);
+ 	int dn = adev->devno + 2 * ap->port_no;
+-	const u16 timing[2][5] = {
++	static const u16 timing[2][5] = {
+ 		{ 0x0000, 0x000A, 0x0008, 0x0303, 0x0301 },
+ 		{ 0x0700, 0x070A, 0x0708, 0x0403, 0x0401 }
+ 
+@@ -154,7 +154,7 @@ static void artop6260_load_piomode (struct ata_port *ap, struct ata_device *adev
+ {
+ 	struct pci_dev *pdev	= to_pci_dev(ap->host->dev);
+ 	int dn = adev->devno + 2 * ap->port_no;
+-	const u8 timing[2][5] = {
++	static const u8 timing[2][5] = {
+ 		{ 0x00, 0x0A, 0x08, 0x33, 0x31 },
+ 		{ 0x70, 0x7A, 0x78, 0x43, 0x41 }
+ 
 -- 
-Thanks,
-
-Steve
+2.20.1
