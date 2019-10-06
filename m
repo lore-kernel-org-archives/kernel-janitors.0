@@ -1,53 +1,46 @@
-From: John Stultz <john.stultz@linaro.org>
-Date: Wed, 30 Oct 2019 16:30:40 +0000
-Subject: [PATCH] dma-buf: heaps: Fix redundant assignment to variable ret in system_heap.c
-Message-Id: <20191030163040.70055-1-john.stultz@linaro.org>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 06 Oct 2019 08:47:15 +0000
+Subject: Re: [PATCH] iio: gyro: clean up indentation issue
+Message-Id: <20191006094715.61f0a32e@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20190925123253.11944-1-colin.king@canonical.com>
+In-Reply-To: <20190925123253.11944-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: John Stultz <john.stultz@linaro.org>, Colin King <colin.king@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Liam Mark <lmark@codeaurora.org>, Laura Abbott <labbott@redhat.com>, Brian Starkey <brian.starkey@arm.com>, "Andrew F . Davis" <afd@ti.com>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King reported a coverity error:
- The variable ret is being assigned with a value that is never
- read, it is being re-assigned the same value on the err0 exit
- path. The assignment is redundant and hence can be removed.
+On Wed, 25 Sep 2019 13:32:53 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-He had a fix, but Andrew Davis suggested a better solution
-(actually returning ret), so this patch implements that fix.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a return statement that is indented incorrectly, add in
+> the missing tab.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to ignore it.
 
-Cc: Colin King <colin.king@canonical.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Liam Mark <lmark@codeaurora.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Brian Starkey <brian.starkey@arm.com>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linaro-mm-sig@lists.linaro.org
-Cc: kernel-janitors@vger.kernel.org
-Addresses-Coverity: ("Unused value")
-Fixes: 47a32f9c1226 ("dma-buf: heaps: Add system heap to dmabuf heaps")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Suggested-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- drivers/dma-buf/heaps/system_heap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
-index 455782efbb32..9a56393e40b4 100644
---- a/drivers/dma-buf/heaps/system_heap.c
-+++ b/drivers/dma-buf/heaps/system_heap.c
-@@ -98,7 +98,7 @@ static int system_heap_allocate(struct dma_heap *heap,
- err0:
- 	kfree(helper_buffer);
- 
--	return -ENOMEM;
-+	return ret;
- }
- 
- static const struct dma_heap_ops system_heap_ops = {
--- 
-2.17.1
+Jonathan
+
+> ---
+>  drivers/iio/gyro/itg3200_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/gyro/itg3200_core.c b/drivers/iio/gyro/itg3200_core.c
+> index 998fb8d66fe3..981ae2291505 100644
+> --- a/drivers/iio/gyro/itg3200_core.c
+> +++ b/drivers/iio/gyro/itg3200_core.c
+> @@ -154,7 +154,7 @@ static int itg3200_write_raw(struct iio_dev *indio_dev,
+>  					  t);
+>  
+>  		mutex_unlock(&indio_dev->mlock);
+> -	return ret;
+> +		return ret;
+>  
+>  	default:
+>  		return -EINVAL;
