@@ -1,51 +1,62 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Date: Sat, 05 Oct 2019 17:30:04 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 06 Oct 2019 08:46:15 +0000
 Subject: Re: [PATCH] counter: stm32: clean up indentation issue
-Message-Id: <20191005173004.GA7431@icarus>
+Message-Id: <20191006094615.5b798a42@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20190925095126.20219-1-colin.king@canonical.com>
-In-Reply-To: <20190925095126.20219-1-colin.king@canonical.com>
+ <20191005173004.GA7431@icarus>
+In-Reply-To: <20191005173004.GA7431@icarus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jonathan Cameron <jic23@kernel.org>, Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Colin King <colin.king@canonical.com>, Fabrice Gasnier <fabrice.gasnier@st.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 25, 2019 at 10:51:26AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, 5 Oct 2019 13:30:04 -0400
+William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+
+> On Wed, Sep 25, 2019 at 10:51:26AM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is an if statement that is indented one level too deeply,
+> > remove the extraneous tabs.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/counter/stm32-timer-cnt.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+> > index 644ba18a72ad..613dcccf79e1 100644
+> > --- a/drivers/counter/stm32-timer-cnt.c
+> > +++ b/drivers/counter/stm32-timer-cnt.c
+> > @@ -219,8 +219,8 @@ static ssize_t stm32_count_enable_write(struct counter_device *counter,
+> >  
+> >  	if (enable) {
+> >  		regmap_read(priv->regmap, TIM_CR1, &cr1);
+> > -			if (!(cr1 & TIM_CR1_CEN))
+> > -				clk_enable(priv->clk);
+> > +		if (!(cr1 & TIM_CR1_CEN))
+> > +			clk_enable(priv->clk);
+> >  
+> >  		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
+> >  				   TIM_CR1_CEN);
+> > -- 
+> > 2.20.1  
 > 
-> There is an if statement that is indented one level too deeply,
-> remove the extraneous tabs.
+> Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to poke it.
+
+Thanks,
+
+Jonathan
+
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/counter/stm32-timer-cnt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Fabrice,
 > 
-> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-> index 644ba18a72ad..613dcccf79e1 100644
-> --- a/drivers/counter/stm32-timer-cnt.c
-> +++ b/drivers/counter/stm32-timer-cnt.c
-> @@ -219,8 +219,8 @@ static ssize_t stm32_count_enable_write(struct counter_device *counter,
->  
->  	if (enable) {
->  		regmap_read(priv->regmap, TIM_CR1, &cr1);
-> -			if (!(cr1 & TIM_CR1_CEN))
-> -				clk_enable(priv->clk);
-> +		if (!(cr1 & TIM_CR1_CEN))
-> +			clk_enable(priv->clk);
->  
->  		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
->  				   TIM_CR1_CEN);
-> -- 
-> 2.20.1
-
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-
-Fabrice,
-
-I noticed the TIM_CR1_CEN check is happening before the
-regmap_update_bits call for the enable path, while the disable path does
-the check after. Is this logic is correct.
-
-William Breathitt Gray
+> I noticed the TIM_CR1_CEN check is happening before the
+> regmap_update_bits call for the enable path, while the disable path does
+> the check after. Is this logic is correct.
+> 
+> William Breathitt Gray
