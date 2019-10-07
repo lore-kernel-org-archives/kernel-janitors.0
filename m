@@ -1,19 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 01 Oct 2019 07:20:31 +0000
-Subject: Re: [PATCH] mm, vmpressure: Fix a signedness bug in vmpressure_register_event()
-Message-Id: <20191001072031.GI27389@kadam>
+Date: Mon, 07 Oct 2019 08:52:10 +0000
+Subject: [PATCH] drm/amdkfd: Fix a && vs || typo
+Message-Id: <20191007085210.GC3865@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925110449.GO3264@mwanda>
- <20190928142356.932cff0ad6c17f4a18edc80f@linux-foundation.org>
-In-Reply-To: <20190928142356.932cff0ad6c17f4a18edc80f@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, tglx@linutronix.de, Enrico Weigelt <info@metux.net>, Kate Stewart <kstewart@linuxfoundation.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felix Kuehling <Felix.Kuehling@amd.com>, Yong Zhao <Yong.Zhao@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-Sorry, for not replying.  I got sick last week so I was out of office.
-Feeling better now.
+In the current code if "device_info" is ever NULL then the kernel will
+Oops so probably || was intended instead of &&.
 
-regards,
-dan carpenter
+Fixes: e392c887df97 ("drm/amdkfd: Use array to probe kfd2kgd_calls")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+index 0db273587af4..070c9b5593c9 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+@@ -498,7 +498,7 @@ struct kfd_dev *kgd2kfd_probe(struct kgd_dev *kgd,
+ 	device_info = kfd_supported_devices[asic_type][vf];
+ 	f2g = kfd2kgd_funcs[asic_type];
+ 
+-	if (!device_info && !f2g) {
++	if (!device_info || !f2g) {
+ 		dev_err(kfd_device, "%s %s not supported in kfd\n",
+ 			amdgpu_asic_name[asic_type], vf ? "VF" : "");
+ 		return NULL;
+-- 
+2.20.1
