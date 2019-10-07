@@ -1,48 +1,46 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 27 Oct 2019 21:00:28 +0000
-Subject: [PATCH 4.19 16/93] mips: Loongson: Fix the link time qualifier of serial_exit()
-Message-Id: <20191027203255.107174272@linuxfoundation.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Oct 2019 09:52:40 +0000
+Subject: [PATCH] media: cx18: make array mapping static, makes object smaller
+Message-Id: <20191007095240.29540-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191027203251.029297948@linuxfoundation.org>
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
+Don't populate the array mapping on the stack but instead make it
+static. Makes the object code smaller by 79 bytes.
 
-'exit' functions should be marked as __exit, not __init.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  27572	   2096	      0	  29668	   73e4	drivers/media/pci/cx18/cx18-ioctl.o
 
-Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: chenhc@lemote.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  27429	   2160	      0	  29589	   7395	drivers/media/pci/cx18/cx18-ioctl.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/mips/loongson64/common/serial.c | 2 +-
+ drivers/media/pci/cx18/cx18-ioctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
-index ffefc1cb26121..98c3a7feb10f8 100644
---- a/arch/mips/loongson64/common/serial.c
-+++ b/arch/mips/loongson64/common/serial.c
-@@ -110,7 +110,7 @@ static int __init serial_init(void)
- }
- module_init(serial_init);
+diff --git a/drivers/media/pci/cx18/cx18-ioctl.c b/drivers/media/pci/cx18/cx18-ioctl.c
+index 85f3e7307538..fa57e12f2ac8 100644
+--- a/drivers/media/pci/cx18/cx18-ioctl.c
++++ b/drivers/media/pci/cx18/cx18-ioctl.c
+@@ -664,7 +664,7 @@ static int _cx18_process_idx_data(struct cx18_buffer *buf,
+ 	struct cx18_enc_idx_entry *e_buf;
  
--static void __init serial_exit(void)
-+static void __exit serial_exit(void)
- {
- 	platform_device_unregister(&uart8250_device);
- }
+ 	/* Frame type lookup: 1=I, 2=P, 4=B */
+-	const int mapping[8] = {
++	static const int mapping[8] = {
+ 		-1, V4L2_ENC_IDX_FRAME_I, V4L2_ENC_IDX_FRAME_P,
+ 		-1, V4L2_ENC_IDX_FRAME_B, -1, -1, -1
+ 	};
 -- 
 2.20.1
