@@ -1,33 +1,24 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 18 Oct 2019 08:02:16 +0000
-Subject: Re: [PATCH][V2][next] crypto: inside-secure: fix spelling mistake "algorithmn" -> "algorithm"
-Message-Id: <20191018080216.GA25128@gondor.apana.org.au>
+From: Shawn Guo <shawnguo@kernel.org>
+Date: Mon, 07 Oct 2019 12:25:49 +0000
+Subject: Re: [PATCH] dmaengine: zx: Use devm_platform_ioremap_resource() in zx_dma_probe()
+Message-Id: <20191007122546.GK7150@dragon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191008082428.19839-1-colin.king@canonical.com>
-In-Reply-To: <20191008082428.19839-1-colin.king@canonical.com>
+References: <85de79fa-1ca5-a1e5-0296-9e8a2066f134@web.de>
+In-Reply-To: <85de79fa-1ca5-a1e5-0296-9e8a2066f134@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Jun Nie <jun.nie@linaro.org>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 08, 2019 at 09:24:28AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Sep 22, 2019 at 02:37:13PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Sep 2019 14:32:12 +0200
 > 
-> There is a spelling mistake in a dev_err message. Fix it. Add in missing
-> newline.
+> Simplify this function implementation by using a known wrapper function.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+> This issue was detected by using the Coccinelle software.
 > 
-> V2: Add in newline \n
-> 
-> ---
->  drivers/crypto/inside-secure/safexcel_cipher.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Acked-by: Shawn Guo <shawnguo@kernel.org>
