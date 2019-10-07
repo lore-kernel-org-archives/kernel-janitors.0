@@ -1,26 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 25 Oct 2019 07:42:17 +0000
-Subject: Re: [PATCH v3] coccicheck: Support search for SmPL scripts within selected directory hierarchy
-Message-Id: <14f7a50d-63f5-343f-70e8-6b42ab5baa4c@web.de>
+From: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+Date: Mon, 07 Oct 2019 14:43:20 +0000
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Message-Id: <1r9-6-2h$mict7-lt$5@tqqi4.kkn.s01>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="BB118ED_BAB2D5FF1EA50F"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1571966374-42566-1-git-send-email-zhong.shiqi@zte.com.cn>
-In-Reply-To: <1571966374-42566-1-git-send-email-zhong.shiqi@zte.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
+To: kernel-janitors@vger.kernel.org
 
-> Allow defining COCCI as a directory to search SmPL scripts. Start a
-> corresponding file determination if the environment variable “COCCI”
-> contains an acceptable path.
 
-Can another wording fine-tuning matter for such a change description?
+--BB118ED_BAB2D5FF1EA50F
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-  * Allow defining the environment variable “COCCI” as a directory
-    to search SmPL scripts.
+Greetings
 
-  * Start a corresponding file determination if it contains an acceptable path.
+My name is Barrister Hans Erich.
 
-Regards,
-Markus
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full names --------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+CONTACT: hanserich9helmut@gmail.com
+
+--BB118ED_BAB2D5FF1EA50F--
