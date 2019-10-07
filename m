@@ -1,22 +1,46 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 23 Oct 2019 10:31:08 +0000
-Subject: Re: [PATCH] clocksource/drivers: Fix error handling in ttc_setup_clocksource
-Message-Id: <9065be0d-c169-ecf7-9ea3-1bcde10fe3ab@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Oct 2019 11:09:35 +0000
+Subject: [PATCH] net: hns3: make array tick_array static, makes object smaller
+Message-Id: <20191007110935.32607-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com>
- <20191023044737.2824-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191023044737.2824-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Huazhong Tan <tanhuazhong@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>, Peng Li <lipeng321@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Fixes: e932900a3279 ("arm: zynq: Use standard timer binding")
+From: Colin Ian King <colin.king@canonical.com>
 
-I find the commit 70504f311d4bd5b6a6d494f50c5ab0bd30fdf75c
-("clocksource/drivers/cadence_ttc: Convert init function to return error" from 2016-06-28)
-also interesting (besides the contribution from 2013-04-04) for your software update.
+Don't populate the array tick_array on the stack but instead make it
+static. Makes the object code smaller by 29 bytes.
 
-Regards,
-Markus
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  19191	    432	      0	  19623	   4ca7	hisilicon/hns3/hns3pf/hclge_tm.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  19098	    496	      0	  19594	   4c8a	hisilicon/hns3/hns3pf/hclge_tm.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 9f0e35f27789..5cce9b7f1d3d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -46,7 +46,7 @@ static int hclge_shaper_para_calc(u32 ir, u8 shaper_level,
+ #define DIVISOR_CLK		(1000 * 8)
+ #define DIVISOR_IR_B_126	(126 * DIVISOR_CLK)
+ 
+-	const u16 tick_array[HCLGE_SHAPER_LVL_CNT] = {
++	static const u16 tick_array[HCLGE_SHAPER_LVL_CNT] = {
+ 		6 * 256,        /* Prioriy level */
+ 		6 * 32,         /* Prioriy group level */
+ 		6 * 8,          /* Port level */
+-- 
+2.20.1
