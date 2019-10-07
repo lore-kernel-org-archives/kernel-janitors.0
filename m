@@ -1,31 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Oct 2019 23:18:22 +0000
-Subject: Re: [PATCH -next] net: dsa: LAN9303: select REGMAP when LAN9303 enable
-Message-Id: <20191029.161822.1063139909523659432.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Oct 2019 13:41:13 +0000
+Subject: [PATCH] iwlegacy: make array interval static, makes object smaller
+Message-Id: <20191007134113.5647-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191026022139.179166-1-maowenan@huawei.com>
-In-Reply-To: <20191026022139.179166-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, jbe@pengutronix.de, robh@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Sat, 26 Oct 2019 10:21:39 +0800
+From: Colin Ian King <colin.king@canonical.com>
 
-> When NET_DSA_SMSC_LAN9303=y and NET_DSA_SMSC_LAN9303_MDIO=y,
-> below errors can be seen:
-> drivers/net/dsa/lan9303_mdio.c:87:23: error: REGMAP_ENDIAN_LITTLE
-> undeclared here (not in a function)
->   .reg_format_endian = REGMAP_ENDIAN_LITTLE,
-> drivers/net/dsa/lan9303_mdio.c:93:3: error: const struct regmap_config
-> has no member named reg_read
->   .reg_read = lan9303_mdio_read,
-> 
-> It should select REGMAP in config NET_DSA_SMSC_LAN9303.
-> 
-> Fixes: dc7005831523 ("net: dsa: LAN9303: add MDIO managed mode support")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Don't populate the array interval on the stack but instead make it
+static. Makes the object code smaller by 121 bytes.
 
-Applied.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 167797	  29676	    448	 197921	  30521	wireless/intel/iwlegacy/common.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 167580	  29772	    448	 197800	  304a8	wireless/intel/iwlegacy/common.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlegacy/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
+index 73f7bbf742bc..e4ea734e58d8 100644
+--- a/drivers/net/wireless/intel/iwlegacy/common.c
++++ b/drivers/net/wireless/intel/iwlegacy/common.c
+@@ -1072,7 +1072,7 @@ EXPORT_SYMBOL(il_get_channel_info);
+ static void
+ il_build_powertable_cmd(struct il_priv *il, struct il_powertable_cmd *cmd)
+ {
+-	const __le32 interval[3][IL_POWER_VEC_SIZE] = {
++	static const __le32 interval[3][IL_POWER_VEC_SIZE] = {
+ 		SLP_VEC(2, 2, 4, 6, 0xFF),
+ 		SLP_VEC(2, 4, 7, 10, 10),
+ 		SLP_VEC(4, 7, 10, 10, 0xFF)
+-- 
+2.20.1
