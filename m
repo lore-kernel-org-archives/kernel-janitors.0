@@ -1,43 +1,37 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Fri, 11 Oct 2019 13:59:35 +0000
-Subject: Re: [PATCH] usb: typec: fix an IS_ERR() vs NULL bug in hd3ss3220_probe()
-Message-Id: <20191011135935.GB32191@kuha.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Oct 2019 08:48:05 +0000
+Subject: [PATCH] rtw88: Fix an error message
+Message-Id: <20191007084805.GA3865@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191011133558.GC22905@mwanda>
-In-Reply-To: <20191011133558.GC22905@mwanda>
+References: <20190814104642.GA14268@mwanda>
+In-Reply-To: <20190814104642.GA14268@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 04:35:58PM +0300, Dan Carpenter wrote:
-> The device_get_named_child_node() function doesn't return error
-> pointers, it returns NULL on error.
-> 
-> Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/usb/typec/hd3ss3220.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-> index 9715600aeb04..37b08f57aac4 100644
-> --- a/drivers/usb/typec/hd3ss3220.c
-> +++ b/drivers/usb/typec/hd3ss3220.c
-> @@ -172,8 +172,8 @@ static int hd3ss3220_probe(struct i2c_client *client,
->  	hd3ss3220_set_source_pref(hd3ss3220,
->  				  HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
->  	connector = device_get_named_child_node(hd3ss3220->dev, "connector");
-> -	if (IS_ERR(connector))
-> -		return PTR_ERR(connector);
-> +	if (!connector)
-> +		return -EIO;
+The WARN_ON() macro doesn't take an error message, the argument is a
+condition so this won't display the warning message.
 
-I think the driver should return -ENODEV if there is no node for the
-connector.
+Fixes: 27e117e4b01b ("rtw88: add deep power save support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/realtek/rtw88/ps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
-
+diff --git a/drivers/net/wireless/realtek/rtw88/ps.c b/drivers/net/wireless/realtek/rtw88/ps.c
+index 83db6cf6a219..228309b411ec 100644
+--- a/drivers/net/wireless/realtek/rtw88/ps.c
++++ b/drivers/net/wireless/realtek/rtw88/ps.c
+@@ -108,7 +108,7 @@ void rtw_power_mode_change(struct rtw_dev *rtwdev, bool enter)
+ 		 * read/write. It should be treated as fatal error and
+ 		 * requires an entire analysis about the firmware/hardware
+ 		 */
+-		WARN_ON("Hardware power state locked\n");
++		WARN(1, "Hardware power state locked\n");
+ 	}
+ }
+ EXPORT_SYMBOL(rtw_power_mode_change);
 -- 
-heikki
+2.20.1
