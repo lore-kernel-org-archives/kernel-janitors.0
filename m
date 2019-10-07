@@ -1,23 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 30 Oct 2019 18:40:38 +0000
-Subject: Re: [PATCH] qed: fix spelling mistake "queuess" -> "queues"
-Message-Id: <20191030.114038.1144808125305048918.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Oct 2019 12:18:22 +0000
+Subject: Re: [PATCH] RDMA/hns: prevent undefined behavior in hns_roce_set_user_sq_size()
+Message-Id: <20191007121821.GI21515@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191030075922.11047-1-colin.king@canonical.com>
-In-Reply-To: <20191030075922.11047-1-colin.king@canonical.com>
+References: <20190608092514.GC28890@mwanda>
+In-Reply-To: <20190608092514.GC28890@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lijun Ou <oulijun@huawei.com>
+Cc: "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 Oct 2019 08:59:22 +0100
+This one still needs to be applied.
 
-> From: Colin Ian King <colin.king@canonical.com>
+regards,
+dan carpenter
+
+On Sat, Jun 08, 2019 at 12:25:14PM +0300, Dan Carpenter wrote:
+> The "ucmd->log_sq_bb_count" variable is a user controlled variable in
+> the 0-255 range.  If we shift more than then number of bits in an int
+> then it's undefined behavior (it shift wraps).  It turns out this
+> doesn't cause any real issues at runtime, but it's good to check anyway.
 > 
-> There is a spelling misake in a DP_NOTICE message. Fix it.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_qp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Applied.
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
+> index 8db2817a249e..006b3e7f4ed5 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_qp.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
+> @@ -342,7 +342,8 @@ static int hns_roce_set_user_sq_size(struct hns_roce_dev *hr_dev,
+>  	u32 max_cnt;
+>  
+>  	/* Sanity check SQ size before proceeding */
+> -	if ((u32)(1 << ucmd->log_sq_bb_count) > hr_dev->caps.max_wqes ||
+> +	if (ucmd->log_sq_bb_count > 31 ||
+> +	    (u32)(1 << ucmd->log_sq_bb_count) > hr_dev->caps.max_wqes ||
+>  	     ucmd->log_sq_stride > max_sq_stride ||
+>  	     ucmd->log_sq_stride < HNS_ROCE_IB_MIN_SQ_STRIDE) {
+>  		dev_err(hr_dev->dev, "check SQ size error!\n");
+> -- 
+> 2.20.1
