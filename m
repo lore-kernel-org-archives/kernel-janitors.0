@@ -1,27 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 01 Oct 2019 02:38:28 +0000
-Subject: Re: [PATCH -next] scsi: smartpqi: remove set but not used variable 'ctrl_info'
-Message-Id: <yq1muelyyu3.fsf@oracle.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 08 Oct 2019 09:01:33 +0000
+Subject: [PATCH -next] media: vimc: Fix error return code in vimc_register_devices()
+Message-Id: <20191008090133.9760-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190831130348.20552-1-yuehaibing@huawei.com>
-In-Reply-To: <20190831130348.20552-1-yuehaibing@huawei.com>
-        (yuehaibing@huawei.com's message of "Sat, 31 Aug 2019 13:03:48 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Don Brace <don.brace@microsemi.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Murthy Bhat <Murthy.Bhat@microsemi.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Helen Koike <helen.koike@collabora.com>, Shuah Khan <skhan@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-YueHaibing,
+Fixes: f13d5f361959 ("media: vimc: Collapse component structure into a single monolithic driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/media/platform/vimc/vimc-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/smartpqi/smartpqi_init.c: In function 'pqi_driver_version_show':
-> drivers/scsi/smartpqi/smartpqi_init.c:6164:24: warning:
->  variable 'ctrl_info' set but not used [-Wunused-but-set-variable]
-
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+index 6e3e5c91ae39..2d20a7c10398 100644
+--- a/drivers/media/platform/vimc/vimc-core.c
++++ b/drivers/media/platform/vimc/vimc-core.c
+@@ -202,8 +202,10 @@ static int vimc_register_devices(struct vimc_device *vimc)
+ 	vimc->ent_devs = kmalloc_array(vimc->pipe_cfg->num_ents,
+ 				       sizeof(*vimc->ent_devs),
+ 				       GFP_KERNEL);
+-	if (!vimc->ent_devs)
++	if (!vimc->ent_devs) {
++		ret = -ENOMEM;
+ 		goto err_v4l2_unregister;
++	}
+ 
+ 	/* Invoke entity config hooks to initialize and register subdevs */
+ 	ret = vimc_add_subdevs(vimc);
