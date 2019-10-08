@@ -1,79 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Oct 2019 21:58:57 +0000
-Subject: [PATCH] drm/amdgpu/display: make various arrays static, makes object smaller
-Message-Id: <20191007215857.14720-1-colin.king@canonical.com>
+From: Harry Wentland <hwentlan@amd.com>
+Date: Tue, 08 Oct 2019 13:56:00 +0000
+Subject: Re: [PATCH] drm/amdgpu/display: make various arrays static, makes object smaller
+Message-Id: <9579bfae-1db5-d282-79ea-df1966f4c123@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191007215857.14720-1-colin.king@canonical.com>
+In-Reply-To: <20191007215857.14720-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Wentland, Harry" <Harry.Wentland-5C7GfCeVMHo@public.gmane.org>, "Li, Sun peng (Leo)" <Sunpeng.Li-5C7GfCeVMHo@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, "Zhou, David(ChunMing)" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate the arrays on the stack but instead make them
-static. Makes the object code smaller by 158 bytes.
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  32468	   2072	      0	  34540	   86ec	display/dc/bios/bios_parser.o
-  22198	   1088	      0	  23286	   5af6	display/dc/bios/bios_parser2.o
-  22278	   1076	      0	  23354	   5b3a	display/dc/dce/dce_mem_input.o
-
-81180
-After:
-   text	   data	    bss	    dec	    hex	filename
-  32341	   2136	      0	  34477	   86ad	display/dc/bios/bios_parser.o
-  22070	   1184	      0	  23254	   5ad6	display/dc/bios/bios_parser2.o
-  22119	   1172	      0	  23291	   5afb	display/dc/dce/dce_mem_input.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/bios/bios_parser.c  | 2 +-
- drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 2 +-
- drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-index 221e0f56389f..65ab225cf542 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser.c
-@@ -2745,7 +2745,7 @@ static enum bp_result bios_get_board_layout_info(
- 	struct bios_parser *bp;
- 	enum bp_result record_result;
- 
--	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
-+	static const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
- 		GENERICOBJECT_BRACKET_LAYOUT_ENUM_ID1,
- 		GENERICOBJECT_BRACKET_LAYOUT_ENUM_ID2,
- 		0, 0
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index dff65c0fe82f..809c4a89b899 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -1832,7 +1832,7 @@ static enum bp_result bios_get_board_layout_info(
- 	struct bios_parser *bp;
- 	enum bp_result record_result;
- 
--	const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
-+	static const unsigned int slot_index_to_vbios_id[MAX_BOARD_SLOTS] = {
- 		GENERICOBJECT_BRACKET_LAYOUT_ENUM_ID1,
- 		GENERICOBJECT_BRACKET_LAYOUT_ENUM_ID2,
- 		0, 0
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-index 8aa937f496c4..ed0031d5e021 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-@@ -395,7 +395,7 @@ static void program_size_and_rotation(
- {
- 	const struct rect *in_rect = &plane_size->surface_size;
- 	struct rect hw_rect = plane_size->surface_size;
--	const uint32_t rotation_angles[ROTATION_ANGLE_COUNT] = {
-+	static const uint32_t rotation_angles[ROTATION_ANGLE_COUNT] = {
- 			[ROTATION_ANGLE_0] = 0,
- 			[ROTATION_ANGLE_90] = 1,
- 			[ROTATION_ANGLE_180] = 2,
--- 
-2.20.1
+T24gMjAxOS0xMC0wNyA1OjU4IHAubS4sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENvbGlu
+IElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBEb24ndCBwb3B1bGF0
+ZSB0aGUgYXJyYXlzIG9uIHRoZSBzdGFjayBidXQgaW5zdGVhZCBtYWtlIHRoZW0NCj4gc3RhdGlj
+LiBNYWtlcyB0aGUgb2JqZWN0IGNvZGUgc21hbGxlciBieSAxNTggYnl0ZXMuDQo+IA0KPiBCZWZv
+cmU6DQo+ICAgIHRleHQJICAgZGF0YQkgICAgYnNzCSAgICBkZWMJICAgIGhleAlmaWxlbmFtZQ0K
+PiAgIDMyNDY4CSAgIDIwNzIJICAgICAgMAkgIDM0NTQwCSAgIDg2ZWMJZGlzcGxheS9kYy9iaW9z
+L2Jpb3NfcGFyc2VyLm8NCj4gICAyMjE5OAkgICAxMDg4CSAgICAgIDAJICAyMzI4NgkgICA1YWY2
+CWRpc3BsYXkvZGMvYmlvcy9iaW9zX3BhcnNlcjIubw0KPiAgIDIyMjc4CSAgIDEwNzYJICAgICAg
+MAkgIDIzMzU0CSAgIDViM2EJZGlzcGxheS9kYy9kY2UvZGNlX21lbV9pbnB1dC5vDQo+IA0KPiA4
+MTE4MA0KPiBBZnRlcjoNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4
+CWZpbGVuYW1lDQo+ICAgMzIzNDEJICAgMjEzNgkgICAgICAwCSAgMzQ0NzcJICAgODZhZAlkaXNw
+bGF5L2RjL2Jpb3MvYmlvc19wYXJzZXIubw0KPiAgIDIyMDcwCSAgIDExODQJICAgICAgMAkgIDIz
+MjU0CSAgIDVhZDYJZGlzcGxheS9kYy9iaW9zL2Jpb3NfcGFyc2VyMi5vDQo+ICAgMjIxMTkJICAg
+MTE3MgkgICAgICAwCSAgMjMyOTEJICAgNWFmYglkaXNwbGF5L2RjL2RjZS9kY2VfbWVtX2lucHV0
+Lm8NCj4gDQo+IChnY2MgdmVyc2lvbiA5LjIuMSwgYW1kNjQpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
+OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRy
+aXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iaW9zL2Jpb3NfcGFyc2VyLmMgIHwgMiArLQ0K
+PiAgZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Jpb3MvYmlvc19wYXJzZXIyLmMgfCAy
+ICstDQo+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvZGNlL2RjZV9tZW1faW5wdXQu
+YyB8IDIgKy0NCj4gIDMgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9u
+cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9i
+aW9zL2Jpb3NfcGFyc2VyLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvYmlvcy9i
+aW9zX3BhcnNlci5jDQo+IGluZGV4IDIyMWUwZjU2Mzg5Zi4uNjVhYjIyNWNmNTQyIDEwMDY0NA0K
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvYmlvcy9iaW9zX3BhcnNlci5j
+DQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9iaW9zL2Jpb3NfcGFyc2Vy
+LmMNCj4gQEAgLTI3NDUsNyArMjc0NSw3IEBAIHN0YXRpYyBlbnVtIGJwX3Jlc3VsdCBiaW9zX2dl
+dF9ib2FyZF9sYXlvdXRfaW5mbygNCj4gIAlzdHJ1Y3QgYmlvc19wYXJzZXIgKmJwOw0KPiAgCWVu
+dW0gYnBfcmVzdWx0IHJlY29yZF9yZXN1bHQ7DQo+ICANCj4gLQljb25zdCB1bnNpZ25lZCBpbnQg
+c2xvdF9pbmRleF90b192Ymlvc19pZFtNQVhfQk9BUkRfU0xPVFNdID0gew0KPiArCXN0YXRpYyBj
+b25zdCB1bnNpZ25lZCBpbnQgc2xvdF9pbmRleF90b192Ymlvc19pZFtNQVhfQk9BUkRfU0xPVFNd
+ID0gew0KDQpXb24ndCB0aGlzIGJyZWFrIHRoZSBtdWx0aS1HUFUgY2FzZSB3aGVyZSB5b3UnbGwg
+aGF2ZSBtdWx0aXBsZSBkcml2ZXINCmluc3RhbmNlcyB3aXRoIGRpZmZlcmVudCBsYXlvdXQ/DQoN
+CkhhcnJ5DQoNCj4gIAkJR0VORVJJQ09CSkVDVF9CUkFDS0VUX0xBWU9VVF9FTlVNX0lEMSwNCj4g
+IAkJR0VORVJJQ09CSkVDVF9CUkFDS0VUX0xBWU9VVF9FTlVNX0lEMiwNCj4gIAkJMCwgMA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Jpb3MvYmlvc19wYXJz
+ZXIyLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvYmlvcy9iaW9zX3BhcnNlcjIu
+Yw0KPiBpbmRleCBkZmY2NWMwZmU4MmYuLjgwOWM0YTg5Yjg5OSAxMDA2NDQNCj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Jpb3MvYmlvc19wYXJzZXIyLmMNCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Jpb3MvYmlvc19wYXJzZXIyLmMNCj4gQEAg
+LTE4MzIsNyArMTgzMiw3IEBAIHN0YXRpYyBlbnVtIGJwX3Jlc3VsdCBiaW9zX2dldF9ib2FyZF9s
+YXlvdXRfaW5mbygNCj4gIAlzdHJ1Y3QgYmlvc19wYXJzZXIgKmJwOw0KPiAgCWVudW0gYnBfcmVz
+dWx0IHJlY29yZF9yZXN1bHQ7DQo+ICANCj4gLQljb25zdCB1bnNpZ25lZCBpbnQgc2xvdF9pbmRl
+eF90b192Ymlvc19pZFtNQVhfQk9BUkRfU0xPVFNdID0gew0KPiArCXN0YXRpYyBjb25zdCB1bnNp
+Z25lZCBpbnQgc2xvdF9pbmRleF90b192Ymlvc19pZFtNQVhfQk9BUkRfU0xPVFNdID0gew0KPiAg
+CQlHRU5FUklDT0JKRUNUX0JSQUNLRVRfTEFZT1VUX0VOVU1fSUQxLA0KPiAgCQlHRU5FUklDT0JK
+RUNUX0JSQUNLRVRfTEFZT1VUX0VOVU1fSUQyLA0KPiAgCQkwLCAwDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvZGNlL2RjZV9tZW1faW5wdXQuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9kY2UvZGNlX21lbV9pbnB1dC5jDQo+IGluZGV4IDhh
+YTkzN2Y0OTZjNC4uZWQwMDMxZDVlMDIxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YW1kL2Rpc3BsYXkvZGMvZGNlL2RjZV9tZW1faW5wdXQuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vYW1kL2Rpc3BsYXkvZGMvZGNlL2RjZV9tZW1faW5wdXQuYw0KPiBAQCAtMzk1LDcgKzM5NSw3
+IEBAIHN0YXRpYyB2b2lkIHByb2dyYW1fc2l6ZV9hbmRfcm90YXRpb24oDQo+ICB7DQo+ICAJY29u
+c3Qgc3RydWN0IHJlY3QgKmluX3JlY3QgPSAmcGxhbmVfc2l6ZS0+c3VyZmFjZV9zaXplOw0KPiAg
+CXN0cnVjdCByZWN0IGh3X3JlY3QgPSBwbGFuZV9zaXplLT5zdXJmYWNlX3NpemU7DQo+IC0JY29u
+c3QgdWludDMyX3Qgcm90YXRpb25fYW5nbGVzW1JPVEFUSU9OX0FOR0xFX0NPVU5UXSA9IHsNCj4g
+KwlzdGF0aWMgY29uc3QgdWludDMyX3Qgcm90YXRpb25fYW5nbGVzW1JPVEFUSU9OX0FOR0xFX0NP
+VU5UXSA9IHsNCj4gIAkJCVtST1RBVElPTl9BTkdMRV8wXSA9IDAsDQo+ICAJCQlbUk9UQVRJT05f
+QU5HTEVfOTBdID0gMSwNCj4gIAkJCVtST1RBVElPTl9BTkdMRV8xODBdID0gMiwNCj4gDQo
