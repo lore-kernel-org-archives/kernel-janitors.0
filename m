@@ -1,35 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 08 Oct 2019 08:14:10 +0000
-Subject: [PATCH][next] crypto: inside-secure: fix spelling mistake "algorithmn" -> "algorithm"
-Message-Id: <20191008081410.18857-1-colin.king@canonical.com>
+From: Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+Date: Tue, 08 Oct 2019 08:15:43 +0000
+Subject: RE: [PATCH][next] crypto: inside-secure: fix spelling mistake "algorithmn" -> "algorithm"
+Message-Id: <MN2PR20MB29735A64971670E9CE56821ECA9A0@MN2PR20MB2973.namprd20.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191008081410.18857-1-colin.king@canonical.com>
+In-Reply-To: <20191008081410.18857-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antoine Tenart <antoine.tenart@bootlin.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Antoine Tenart <antoine.tenart@bootlin.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a dev_err message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/inside-secure/safexcel_cipher.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
-index cecc56073337..8ccc9c59f376 100644
---- a/drivers/crypto/inside-secure/safexcel_cipher.c
-+++ b/drivers/crypto/inside-secure/safexcel_cipher.c
-@@ -437,7 +437,7 @@ static int safexcel_aead_setkey(struct crypto_aead *ctfm, const u8 *key,
- 			goto badkey;
- 		break;
- 	default:
--		dev_err(priv->dev, "aead: unsupported hash algorithmn");
-+		dev_err(priv->dev, "aead: unsupported hash algorithm");
- 		goto badkey;
- 	}
- 
--- 
-2.20.1
+DQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jcnlwdG8t
+b3duZXJAdmdlci5rZXJuZWwub3JnIDxsaW51eC1jcnlwdG8tb3duZXJAdmdlci5rZXJuZWwub3Jn
+PiBPbiBCZWhhbGYgT2YgQ29saW4NCj4gS2luZw0KPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDgs
+IDIwMTkgMTA6MTQgQU0NCj4gVG86IEFudG9pbmUgVGVuYXJ0IDxhbnRvaW5lLnRlbmFydEBib290
+bGluLmNvbT47IEhlcmJlcnQgWHUgPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT47IERhdmlk
+DQo+IFMgLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+OyBsaW51eC1jcnlwdG9Admdlci5r
+ZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF1bbmV4dF0gY3J5cHRvOiBp
+bnNpZGUtc2VjdXJlOiBmaXggc3BlbGxpbmcgbWlzdGFrZSAiYWxnb3JpdGhtbiIgLT4gImFsZ29y
+aXRobSINCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5j
+b20+DQo+IA0KPiBUaGVyZSBpcyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBkZXZfZXJyIG1lc3Nh
+Z2UuIEZpeCBpdC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
+aW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9jcnlwdG8vaW5zaWRlLXNlY3Vy
+ZS9zYWZleGNlbF9jaXBoZXIuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
+bigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRvL2lu
+c2lkZS1zZWN1cmUvc2FmZXhjZWxfY2lwaGVyLmMgYi9kcml2ZXJzL2NyeXB0by9pbnNpZGUtDQo+
+IHNlY3VyZS9zYWZleGNlbF9jaXBoZXIuYw0KPiBpbmRleCBjZWNjNTYwNzMzMzcuLjhjY2M5YzU5
+ZjM3NiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jcnlwdG8vaW5zaWRlLXNlY3VyZS9zYWZleGNl
+bF9jaXBoZXIuYw0KPiArKysgYi9kcml2ZXJzL2NyeXB0by9pbnNpZGUtc2VjdXJlL3NhZmV4Y2Vs
+X2NpcGhlci5jDQo+IEBAIC00MzcsNyArNDM3LDcgQEAgc3RhdGljIGludCBzYWZleGNlbF9hZWFk
+X3NldGtleShzdHJ1Y3QgY3J5cHRvX2FlYWQgKmN0Zm0sIGNvbnN0IHU4ICprZXksDQo+ICAJCQln
+b3RvIGJhZGtleTsNCj4gIAkJYnJlYWs7DQo+ICAJZGVmYXVsdDoNCj4gLQkJZGV2X2Vycihwcml2
+LT5kZXYsICJhZWFkOiB1bnN1cHBvcnRlZCBoYXNoIGFsZ29yaXRobW4iKTsNCj4gKwkJZGV2X2Vy
+cihwcml2LT5kZXYsICJhZWFkOiB1bnN1cHBvcnRlZCBoYXNoIGFsZ29yaXRobSIpOw0KPiAgCQln
+b3RvIGJhZGtleTsNCj4gIAl9DQo+IA0KPiAtLQ0KPiAyLjIwLjENCg0KQWN0dWFsbHksIHRoZSB0
+eXBpbmcgZXJyb3IgaXMgd2VsbCBzcG90dGVkLCBidXQgdGhlIGZpeCBpcyBub3QgY29ycmVjdC4N
+CldoYXQgYWN0dWFsbHkgaGFwcGVuZWQgaGVyZSBpcyB0aGF0IGEgXCBnb3QgYWNjaWRlbnRhbGx5
+IGRlbGV0ZWQsDQp0aGVyZSBzaG91bGQgaGF2ZSBiZWVuIGEgIlxuIiBhdCB0aGUgZW5kIG9mIHRo
+ZSBsaW5lIC4uLg0KDQpSZWdhcmRzLA0KUGFzY2FsIHZhbiBMZWV1d2VuDQpTaWxpY29uIElQIEFy
+Y2hpdGVjdCwgTXVsdGktUHJvdG9jb2wgRW5naW5lcyBAIFZlcmltYXRyaXgNCnd3dy5pbnNpZGVz
+ZWN1cmUuY29tDQo
