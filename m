@@ -1,32 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Oct 2019 14:30:01 +0000
+From: Steven Rostedt <rostedt@goodmis.org>
+Date: Wed, 09 Oct 2019 15:09:43 +0000
 Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
-Message-Id: <20191009143000.GD13286@kadam>
+Message-Id: <20191009110943.7ff3a08a@gandalf.local.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
- <20191009135522.GA20194@kadam>
- <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
-In-Reply-To: <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
+In-Reply-To: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 09, 2019 at 04:21:20PM +0200, Rasmus Villemoes wrote:
-> On 09/10/2019 15.56, Dan Carpenter wrote:
-> > That's because glibc strlen is annotated with __attribute_pure__ which
-> > means it has no side effects.
+On Wed, 9 Oct 2019 14:14:28 +0200
+Markus Elfring <Markus.Elfring@web.de> wrote:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 9 Oct 2019 13:53:59 +0200
 > 
-> I know, except it has nothing to do with glibc headers. Just try the
-> same thing in the kernel. gcc itself knows this about __builtin_strlen()
-> etc. If anything, we could annotate some of our non-standard functions
-> (say, memchr_inv) with __pure - then we'd both get the Wunused-value in
-> the nonsense cases, and allow gcc to optimize or reorder the calls.
+> Several functions return values with which useful data processing
+> should be performed. These values must not be ignored then.
+> Thus use the annotation “__must_check” in the shown function declarations.
+> 
+> Add also corresponding parameter names for adjusted functions.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>
 
-Huh.  You're right.  GCC already knows.  So this patch is pointless like
-you say.
+I'm curious. How many warnings showed up when you applied this patch?
 
-regards,
-dan carpenter
+-- Steve
