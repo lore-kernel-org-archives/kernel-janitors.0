@@ -1,64 +1,47 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 07 Oct 2019 16:23:27 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: unlock on error in smu_resume()
-Message-Id: <CADnq5_N3=qpKJ2YaP4h=SMnNU1jP8Y9VhwqfhzYZos7txQgcMw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 Oct 2019 09:39:35 +0000
+Subject: [PATCH][next] drm/i915: remove redundant variable err
+Message-Id: <20191009093935.17895-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191007090454.GE3865@mwanda>
- <MN2PR12MB3296695EB3D9799B10971184A29B0@MN2PR12MB3296.namprd12.prod.outlook.com>
-In-Reply-To: <MN2PR12MB3296695EB3D9799B10971184A29B0@MN2PR12MB3296.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Wang, Kevin(Yang)" <Kevin1.Wang@amd.com>
-Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "Deucher,
- Alexander" <Alexander.Deucher@amd.com>, "Quan, Evan" <Evan.Quan@amd.com>, Rex Zhu <rex.zhu@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied.  thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Alex
+An earlier commit removed any error assignments to err and we
+are now left with a zero assignment to err and a check that is
+always false. Clean this up by removing the redundant variable
+err and the error check.
 
-On Mon, Oct 7, 2019 at 6:29 AM Wang, Kevin(Yang) <Kevin1.Wang@amd.com> wrote:
->
-> Reviewed-by: Kevin Wang <kevin1.wang@amd.com>
->
-> Best Regards,
-> Kevin
-> ________________________________
-> From: amd-gfx <amd-gfx-bounces@lists.freedesktop.org> on behalf of Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Monday, October 7, 2019 5:04 PM
-> To: Rex Zhu <rex.zhu@amd.com>; Quan, Evan <Evan.Quan@amd.com>
-> Cc: Zhou, David(ChunMing) <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; kernel-janitors@vger.kernel.org <kernel-janitors@vger.kernel.org>; amd-gfx@lists.freedesktop.org <amd-gfx@lists.freedesktop.org>; dri-devel@lists.freedesktop.org <dri-devel@lists.freedesktop.org>; Daniel Vetter <daniel@ffwll.ch>; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>
-> Subject: [PATCH] drm/amd/powerplay: unlock on error in smu_resume()
->
-> This function needs to drop the mutex before returning.
->
-> Fixes: f7e3a5776fa6 ("drm/amd/powerplay: check SMU engine readiness before proceeding on S3 resume")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> index 6a64f765fcd4..f1fbbc8b77ee 100644
-> --- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> +++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-> @@ -1384,7 +1384,7 @@ static int smu_resume(void *handle)
->          ret = smu_start_smc_engine(smu);
->          if (ret) {
->                  pr_err("SMU is not ready yet!\n");
-> -               return ret;
-> +               goto failed;
->          }
->
->          ret = smu_smc_table_hw_init(smu, false);
-> --
-> 2.20.1
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Addresses-Coverity: ("'Constant' variable guard")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/i915_active.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
+index aa37c07004b9..67305165c12a 100644
+--- a/drivers/gpu/drm/i915/i915_active.c
++++ b/drivers/gpu/drm/i915/i915_active.c
+@@ -438,7 +438,6 @@ static void enable_signaling(struct i915_active_fence *active)
+ int i915_active_wait(struct i915_active *ref)
+ {
+ 	struct active_node *it, *n;
+-	int err = 0;
+ 
+ 	might_sleep();
+ 
+@@ -456,8 +455,6 @@ int i915_active_wait(struct i915_active *ref)
+ 	/* Any fence added after the wait begins will not be auto-signaled */
+ 
+ 	i915_active_release(ref);
+-	if (err)
+-		return err;
+ 
+ 	if (wait_var_event_interruptible(ref, i915_active_is_idle(ref)))
+ 		return -EINTR;
+-- 
+2.20.1
