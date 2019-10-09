@@ -1,42 +1,61 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 14 Oct 2019 12:56:28 +0000
-Subject: [PATCH] scsi: aic7xxx: fix unintended sign extension on left shifts
-Message-Id: <20191014125628.30856-1-colin.king@canonical.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Date: Wed, 09 Oct 2019 07:46:42 +0000
+Subject: Re: [PATCH] dmaengine: at_xdmac: Use devm_platform_ioremap_resource() in at_xdmac_probe()
+Message-Id: <20191009074641.taocxbrs2vodvsgm@M43218.corp.atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20181025151334.15622-1-colin.king@canonical.com>
-In-Reply-To: <20181025151334.15622-1-colin.king@canonical.com>
+References: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
+In-Reply-To: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Sep 22, 2019 at 10:48:20AM +0200, Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Sep 2019 10:37:31 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
 
-Shifting a u8 left will cause the value to be promoted to an integer. If
-the top bit of the u8 is set then the following conversion to an u64 will
-sign extend the value causing the upper 32 bits to be set in the result.
+Thanks
 
-Fix this by casting the u8 value to a u64 before the shift.  The commit
-this fixes is pre-git history.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/aic7xxx/aic79xx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 7e5044bf05c0..fa440c1b9baa 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -622,7 +622,7 @@ ahd_inq(struct ahd_softc *ahd, u_int port)
- 	return ((ahd_inb(ahd, port))
- 	      | (ahd_inb(ahd, port+1) << 8)
- 	      | (ahd_inb(ahd, port+2) << 16)
--	      | (ahd_inb(ahd, port+3) << 24)
-+	      | (((uint64_t)ahd_inb(ahd, port+3)) << 24)
- 	      | (((uint64_t)ahd_inb(ahd, port+4)) << 32)
- 	      | (((uint64_t)ahd_inb(ahd, port+5)) << 40)
- 	      | (((uint64_t)ahd_inb(ahd, port+6)) << 48)
--- 
-2.20.1
+> ---
+>  drivers/dma/at_xdmac.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+> index b58ac720d9a1..f71c9f77d405 100644
+> --- a/drivers/dma/at_xdmac.c
+> +++ b/drivers/dma/at_xdmac.c
+> @@ -1957,21 +1957,16 @@ static int atmel_xdmac_resume(struct device *dev)
+> 
+>  static int at_xdmac_probe(struct platform_device *pdev)
+>  {
+> -	struct resource	*res;
+>  	struct at_xdmac	*atxdmac;
+>  	int		irq, size, nr_channels, i, ret;
+>  	void __iomem	*base;
+>  	u32		reg;
+> 
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res)
+> -		return -EINVAL;
+> -
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq < 0)
+>  		return irq;
+> 
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+> 
+> --
+> 2.23.0
+> 
