@@ -1,38 +1,40 @@
-From: ayman.bagabas@gmail.com
-Date: Tue, 15 Oct 2019 13:20:35 +0000
-Subject: Re: [PATCH] platform/x86: huawei-wmi: make validation stricter in huawei_wmi_battery_set()
-Message-Id: <4eaef0a107796895fc59989d1481676f794fcac5.camel@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 Oct 2019 10:00:24 +0000
+Subject: [PATCH][next] drm/i915/selftests: fix null pointer dereference on pointer data
+Message-Id: <20191009100024.23077-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191015083837.GA29104@mwanda>
-         <CAB3uXr63uUwxBjkeeoftZ6HYm_hmN+E5EUhu15_Mta2qruOugA@mail.gmail.com>
-         <20191015124623.GF21344@kadam>
-In-Reply-To: <20191015124623.GF21344@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Takashi Iwai <tiwai@suse.de>, Mattias Jacobsson <2pi@mok.nu>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTEwLTE1IGF0IDE1OjQ2ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+
-IE9uIFR1ZSwgT2N0IDE1LCAyMDE5IGF0IDA4OjIxOjU5QU0gLTA0MDAsIEF5bWFuIEJhZ2FiYXMg
-d3JvdGU6Cj4gPiBIaSBEYW4KPiA+IAo+ID4gT24gVHVlLCBPY3QgMTUsIDIwMTksIDQ6MzkgQU0g
-RGFuIENhcnBlbnRlciA8Cj4gPiBkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+Cj4gPiB3cm90ZToK
-PiA+IAo+ID4gPiBJIGRvbid0IHRoaW5rIGl0IG1ha2VzIHNlbnNlIGZvciAiZW5kIiB0byBiZSBu
-ZWdhdGl2ZSBvciBmb3IgZXZlbgo+ID4gPiBmb3IgaXQKPiA+ID4gdG8gYmUgbGVzcyB0aGFuICJz
-dGFydCIuICBUaGF0IGFsc28gbWVhbnMgdGhhdCAic3RhcnQiIGNhbid0IGJlCj4gPiA+IG1vcmUK
-PiA+ID4gdGhhbiAxMDAgd2hpY2ggaXMgZ29vZC4KPiA+ID4gCj4gPiAKPiA+IFdoaWxlIHRoaXMg
-bWFrZXMgc2Vuc2UsIHlvdSBydW4gaW50byBpc3N1ZXMgd2hlcmUgeW91IGNhbm5vdCBzZXQKPiA+
-ICJzdGFydCIKPiA+IGJlZm9yZSAiZW5kIiBhbmQgdmljZSB2ZXJzYS4KPiA+IAo+ID4gVGFrZSB0
-aGlzIHNjZW5hcmlvLCB5b3UgaGF2ZSBzdGFydHAgYW5kIGVuZJAsIG5vdyB5b3Ugd2FudCB0bwo+
-ID4gc2V0IHRoZXNlCj4gPiB0byBzdGFydEAgYW5kIGVuZGAsIHlvdSB3b3VsZCBoYXZlIHRvIHNl
-dCAic3RhcnQiIGZpcnN0IGJlZm9yZQo+ID4geW91IGNhbgo+ID4gY2hhbmdlIHRoZSB2YWx1ZSBv
-ZiAiZW5kIiBvdGhlcndpc2UgeW91IHdpbGwgcnVuIGludG8gRUlOVkFMLiBOb3cKPiA+IGltYWdp
-bmUKPiA+IHlvdSB3YW5uYSBnbyB0aGUgb3Bwb3NpdGUgZGlyZWN0aW9uLCB5b3Ugd291bGQgaGF2
-ZSB0byBzZXQgImVuZCIKPiA+IGJlZm9yZSB5b3UKPiA+IGNhbiBjaGFuZ2UgInN0YXJ0Ii4KPiA+
-IEkgdGhpbmsgaGF2aW5nIGEgbGl0dGxlIHdpZ2dsZSByb29tIGlzIGZpbmUgZm9yIHN1Y2ggc2Nl
-bmFyaW9zLgo+ID4gCj4gCj4gSSBoYXZlbid0IHRlc3RlZCB0aGlzIGNvZGUuLi4gIFdoYXQgeW91
-J3JlIGRlc2NyaWJpbmcgc291bmRzIHJlYWxseQo+IHZlcnkgd2VpcmQgdG8gbWUsIGJ1dCBJIHdp
-bGwgYWNjZXB0IHRoYXQgeW91IGtub3cgbW9yZSBhYm91dCB5b3VyCj4gdXNlIGNhc2VzIHRoYW4g
-SSBkby4KPiAKPiBNeSBvdGhlciBjb25jZXJuIGlzIHRoYXQgcmlnaHQgbm93IHlvdSBjYW4gc2V0
-IHN0YXJ0ID4gMTAwIG9yIGVuZCA8Cj4gMC4KCldlIHNob3VsZCBjaGVjayBmb3IgdGhlc2UgY2Fz
-ZXMuCgo+IAo+IHJlZ2FyZHMsCj4gZGFuIGNhcnBlbnRlcgo+IAo=
+From: Colin Ian King <colin.king@canonical.com>
+
+In the case where data fails to be allocated the error exit path is
+via label 'out' where data is dereferenced in a for-loop.  Fix this
+by exiting via the label 'out_file' instead to avoid the null pointer
+dereference.
+
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 50d16d44cce4 ("drm/i915/selftests: Exercise context switching in parallel")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gem/selftests/i915_gem_context.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_context.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_context.c
+index fb58c0919ea1..e5c235051ae5 100644
+--- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_context.c
+@@ -263,7 +263,7 @@ static int live_parallel_switch(void *arg)
+ 	if (!data) {
+ 		i915_gem_context_unlock_engines(ctx);
+ 		err = -ENOMEM;
+-		goto out;
++		goto out_file;
+ 	}
+ 
+ 	m = 0; /* Use the first context as our template for the engines */
+-- 
+2.20.1
