@@ -1,25 +1,38 @@
-From: Igor Russkikh <irusskikh@marvell.com>
-Date: Tue, 29 Oct 2019 14:49:40 +0000
-Subject: Re: [EXT] [bug report] net: aquantia: add basic ptp_clock callbacks
-Message-Id: <46c25334-e73d-f5fc-bff7-18e0490ecf90@marvell.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 Oct 2019 09:46:02 +0000
+Subject: [PATCH][next] staging: wfx: fix swapped arguments in memset call
+Message-Id: <20191009094602.19663-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
-In-Reply-To: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQo+PiBIaSBEYW4sIEknZCBzYXkgdGhhdHMgYSBmYWxzZSBwb3NpdGl2ZS4NCj4+IFRoZXJlIGV4
-aXN0IEhXIGNvbmZpZ3VyYXRpb24gd2hlcmUgUFRQIGlzIGRpc2FibGVkIG9yIG5vdCBhdmFpbGFi
-bGUuDQo+Pg0KPj4gUFRSX0VSUihOVUxMKSBpcyAwLCBzbyBldmVudHVhbGx5IGRyaXZlciBub3cg
-ZnVuY3Rpb25zIGNvcnJlY3RseSwgYWxsb3dpbmcgdG8NCj4+IHByb2NlZWQgYnV0IG1hcmtpbmcg
-cHRwIGZ1bmN0aW9uYWxpdHkgYXMgZGlzYWJsZWQuDQo+Pg0KPj4gSSBhZ3JlZSB0aGF0J3MgYSBi
-aXQgY291bnRlcmludHVpdGl2ZSBidXQgY29ycmVjdC4NCj4gDQo+IEkgaGF2ZSBsb29rZWQgYXQg
-aXQgYWdhaW4gYW5kIHRoZSAiIWNsb2NrIiBjaGVjayBzaG91bGQgYmUgcmVtb3ZlZA0KPiBiZWNh
-dXNlIGl0IGlzIGRlYWQgY29kZS4gIEl0J3Mgbm90IHBvc3NpYmxlIGZvciBpdCB0byBiZSBOVUxM
-IHRoZXJlDQo+IGJlY2F1c2UgYXFfcHRwX2luaXQoKSBpcyBhIGR1bW15IGZ1bmN0aW9uIGlmIHRo
-ZSBQVFAgY2xvY2sgaXMgbm90DQo+IGVuYWJsZWQuDQoNCkhtLCBzZWVtcyB5b3UgYXJlIHJpZ2h0
-LiBJJ3ZlIGFkZGVkIGV4Y2x1c2lvbiBjb2RlIHdpdGggYSBsYXRlciBjb21taXQNCmFuZCB5ZXMs
-IHRoaXMgbWVhbnMgTlVMTCB3aWxsIG5ldmVyIGJlIGEgcmV0dmFsIGhlcmUuDQoNClRoYW5rcyBh
-Z2FpbiwgSSdsbCBjbGVhbiBpdCB1cC4NCg0KLS0gDQpSZWdhcmRzLA0KICBJZ29yDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The memset appears to have the 2nd and 3rd arguments in the wrong
+order, fix this by swapping these around into the correct order.
+
+Addresses-Coverity: ("Memset fill truncated")
+Fixes: 4f8b7fabb15d ("staging: wfx: allow to send commands to chip")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wfx/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wfx/debug.c b/drivers/staging/wfx/debug.c
+index 8de16ad7c710..761ad9b4f27e 100644
+--- a/drivers/staging/wfx/debug.c
++++ b/drivers/staging/wfx/debug.c
+@@ -226,7 +226,7 @@ static ssize_t wfx_send_hif_msg_write(struct file *file, const char __user *user
+ 	// wfx_cmd_send() chekc that reply buffer is wide enough, but do not
+ 	// return precise length read. User have to know how many bytes should
+ 	// be read. Filling reply buffer with a memory pattern may help user.
+-	memset(context->reply, sizeof(context->reply), 0xFF);
++	memset(context->reply, 0xFF, sizeof(context->reply));
+ 	request = memdup_user(user_buf, count);
+ 	if (IS_ERR(request))
+ 		return PTR_ERR(request);
+-- 
+2.20.1
