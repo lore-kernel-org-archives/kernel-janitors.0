@@ -1,45 +1,50 @@
-From: John Stultz <john.stultz@linaro.org>
-Date: Wed, 30 Oct 2019 16:17:14 +0000
-Subject: Re: [PATCH] dma-buf: Fix a warning message in dma_heap_buffer_destroy()
-Message-Id: <CALAqxLU7k-z6JXbEFpK0D_7+jZz_Jdk7HxaSWm_rkBFEpQRQtg@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 09 Oct 2019 01:47:07 +0000
+Subject: [PATCH -next] usb: typec: add dependency for TYPEC_HD3SS3220
+Message-Id: <20191009014707.38716-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029182943.GD17569@mwanda>
-In-Reply-To: <20191029182943.GD17569@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>, "Andrew F. Davis" <afd@ti.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Liam Mark <lmark@codeaurora.org>, Laura Abbott <labbott@redhat.com>, Brian Starkey <Brian.Starkey@arm.com>, linux-media@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, biju.das@bp.renesas.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
 
-On Tue, Oct 29, 2019 at 11:31 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The first argument of WARN() is a condition so this will just print the
-> function name instead of the whole warning message.
->
-> Fixes: 7b87ea704fd9 ("dma-buf: heaps: Add heap helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/dma-buf/heaps/heap-helpers.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma-buf/heaps/heap-helpers.c b/drivers/dma-buf/heaps/heap-helpers.c
-> index 750bef4e902d..a31684c0d5b2 100644
-> --- a/drivers/dma-buf/heaps/heap-helpers.c
-> +++ b/drivers/dma-buf/heaps/heap-helpers.c
-> @@ -52,7 +52,7 @@ static void *dma_heap_map_kernel(struct heap_helper_buffer *buffer)
->  static void dma_heap_buffer_destroy(struct heap_helper_buffer *buffer)
->  {
->         if (buffer->vmap_cnt > 0) {
-> -               WARN("%s: buffer still mapped in the kernel\n", __func__);
-> +               WARN(1, "%s: buffer still mapped in the kernel\n", __func__);
->                 vunmap(buffer->vaddr);
->         }
+If CONFIG_TYPEC_HD3SS3220=y, CONFIG_USB_ROLE_SWITCH=m, below errors
+can be found:
+drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_remove':
+hd3ss3220.c:(.text+0x64): undefined reference to `usb_role_switch_put'
+drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_dr_set':
+hd3ss3220.c:(.text+0x154): undefined reference to `usb_role_switch_set_role'
+drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_set_role':
+hd3ss3220.c:(.text+0x294): undefined reference to `usb_role_switch_set_role'
+hd3ss3220.c:(.text+0x2f4): undefined reference to `usb_role_switch_set_role'
+hd3ss3220.c:(.text+0x348): undefined reference to `usb_role_switch_set_role'
+hd3ss3220.c:(.text+0x390): undefined reference to `usb_role_switch_set_role'
+drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_probe':
+hd3ss3220.c:(.text+0x5e8): undefined reference to `fwnode_usb_role_switch_get'
+hd3ss3220.c:(.text+0x8a4): undefined reference to `usb_role_switch_put'
+make: *** [vmlinux] Error 1
 
-Thanks for catching and reporting this!
+This patch add dependency USB_ROLE_SWITCH for TYPEC_HD3SS3220.
 
-Acked-by: John Stultz <john.stultz@linaro.org>
+Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/usb/typec/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sumit, do you mind picking this up for drm-misc-next?
-
-thanks
--john
+diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+index aceb2af..b4f2aac 100644
+--- a/drivers/usb/typec/Kconfig
++++ b/drivers/usb/typec/Kconfig
+@@ -53,6 +53,7 @@ source "drivers/usb/typec/ucsi/Kconfig"
+ config TYPEC_HD3SS3220
+ 	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
+ 	depends on I2C
++	depends on USB_ROLE_SWITCH
+ 	help
+ 	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
+ 	  controller driver.
+-- 
+2.7.4
