@@ -1,36 +1,48 @@
-From: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
-Date: Sun, 13 Oct 2019 09:37:00 +0000
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA ??
-Message-Id: <995d$$$0v$g4ou1$5-b0$qd@z0vv4wuvo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="C.F387.BA..3D"
+From: Sasha Levin <sashal@kernel.org>
+Date: Wed, 09 Oct 2019 17:06:09 +0000
+Subject: [PATCH AUTOSEL 4.14 16/21] mips: Loongson: Fix the link time qualifier of 'serial_exit()'
+Message-Id: <20191009170615.32750-16-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20191009170615.32750-1-sashal@kernel.org>
+In-Reply-To: <20191009170615.32750-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---C.F387.BA..3D
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
 
-Greetings
+'exit' functions should be marked as __exit, not __init.
 
-My name is Barrister Hans Erich.
+Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: chenhc@lemote.com
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/loongson64/common/serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
-
-Your full nameS -----------
-
-
-Your urgent response will be appreciated
-
-Thank you and God bless you.
-
-Barrister Hans Erich
-
-Yours sincerely,
-Barrister Hans Erich
-
---C.F387.BA..3D--
+diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
+index ffefc1cb26121..98c3a7feb10f8 100644
+--- a/arch/mips/loongson64/common/serial.c
++++ b/arch/mips/loongson64/common/serial.c
+@@ -110,7 +110,7 @@ static int __init serial_init(void)
+ }
+ module_init(serial_init);
+ 
+-static void __init serial_exit(void)
++static void __exit serial_exit(void)
+ {
+ 	platform_device_unregister(&uart8250_device);
+ }
+-- 
+2.20.1
