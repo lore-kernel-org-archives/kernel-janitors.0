@@ -1,23 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 25 Oct 2019 01:17:40 +0000
-Subject: Re: [PATCH] [SCSI] esas2r: unlock on error in esas2r_nvram_read_direct()
-Message-Id: <yq1h83xbp3f.fsf@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 09 Oct 2019 12:06:21 +0000
+Subject: [PATCH -next] crypto: Use PTR_ERR_OR_ZERO in safexcel_xcbcmac_cra_init()
+Message-Id: <20191009120621.45834-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191022102324.GA27540@mwanda>
-In-Reply-To: <20191022102324.GA27540@mwanda> (Dan Carpenter's message of "Tue,
-        22 Oct 2019 13:23:24 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bradley Grove <linuxdrivers@attotech.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antoine Tenart <antoine.tenart@bootlin.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Dan,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/inside-secure/safexcel_hash.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> This error path is missing an unlock.
-
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index 85c3a075f283..a07a2915fab1 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -2109,10 +2109,7 @@ static int safexcel_xcbcmac_cra_init(struct crypto_tfm *tfm)
+ 
+ 	safexcel_ahash_cra_init(tfm);
+ 	ctx->kaes = crypto_alloc_cipher("aes", 0, 0);
+-	if (IS_ERR(ctx->kaes))
+-		return PTR_ERR(ctx->kaes);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(ctx->kaes);
+ }
+ 
+ static void safexcel_xcbcmac_cra_exit(struct crypto_tfm *tfm)
