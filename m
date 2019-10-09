@@ -1,57 +1,61 @@
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Wed, 09 Oct 2019 17:33:45 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Oct 2019 18:45:18 +0000
 Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
-Message-Id: <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
+Message-Id: <20191009184518.GF13286@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de> <20191009110943.7ff3a08a@gandalf.local.home>
- <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com> <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
-In-Reply-To: <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
+References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
+ <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+ <20191009135522.GA20194@kadam>
+ <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
+ <20191009143000.GD13286@kadam>
+ <CAKwvOd=Jkd_qJULB+i1u31VJAex6KB=wFAyXO04V0UcAAEZeXw@mail.gmail.com>
+In-Reply-To: <CAKwvOd=Jkd_qJULB+i1u31VJAex6KB=wFAyXO04V0UcAAEZeXw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 9, 2019 at 9:38 AM Joe Perches <joe@perches.com> wrote:
->
-> On Wed, 2019-10-09 at 09:13 -0700, Nick Desaulniers wrote:
-> > On Wed, Oct 9, 2019 at 8:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > On Wed, 9 Oct 2019 14:14:28 +0200 Markus Elfring <Markus.Elfring@web.de> wrote:
-> []
-> > > > Several functions return values with which useful data processing
-> > > > should be performed. These values must not be ignored then.
-> > > > Thus use the annotation “__must_check” in the shown function declarations.
-> []
-> > > I'm curious. How many warnings showed up when you applied this patch?
+On Wed, Oct 09, 2019 at 09:31:41AM -0700, Nick Desaulniers wrote:
+> On Wed, Oct 9, 2019 at 7:30 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > >
-> > I got zero for x86_64 and arm64 defconfig builds of linux-next with
-> > this applied.  Hopefully that's not an argument against the more
-> > liberal application of it?  I view __must_check as a good thing, and
-> > encourage its application, unless someone can show that a certain
-> > function would be useful to call without it.
->
-> stylistic trivia, neither agreeing nor disagreeing with the patch
-> as I generally avoid reading Markus' patches.
->
-> I believe __must_check is best placed before the return type as
-> that makes grep for function return type easier to parse.
->
-> i.e. prefer
->         [static inline] __must_check <type> <function>(<args...>);
-> over
->         [static inline] <type> __must_check <function>(<args...>);
->
+> > On Wed, Oct 09, 2019 at 04:21:20PM +0200, Rasmus Villemoes wrote:
+> > > On 09/10/2019 15.56, Dan Carpenter wrote:
+> > > > That's because glibc strlen is annotated with __attribute_pure__ which
+> > > > means it has no side effects.
+> > >
+> > > I know, except it has nothing to do with glibc headers. Just try the
+> > > same thing in the kernel. gcc itself knows this about __builtin_strlen()
+> > > etc. If anything, we could annotate some of our non-standard functions
+> > > (say, memchr_inv) with __pure - then we'd both get the Wunused-value in
+> > > the nonsense cases, and allow gcc to optimize or reorder the calls.
+> >
+> > Huh.  You're right.  GCC already knows.  So this patch is pointless like
+> > you say.
+> 
+> Is it? None of the functions in include/linux/string.h are currently
+> marked __pure today.
 
-+ Miguel
-So I just checked `__cold`, and `__cold` is all over the board in
-style.  I see it:
-1. before anything fs/btrfs/super.c#L101
-2. after static before return type (what you recommend) fs/btrfs/super.c#L2318
-3. after return type fs/btrfs/inode.c#L9426
+I've already embarrassed myself with my ignorance once so I may as well
+keep talking now...  GCC did complain about the unused result even
+though we don't declare them as __pure.  So GCC rule must have this rule
+built in.
 
-Can we pick a style and enforce it via checkpatch? (It's probably not
-fun to check for each function attribute in
-include/linux/compiler_attributes.h).
--- 
-Thanks,
-~Nick Desaulniers
+We were discussing in a different thread that standard says that
+memcpy() pointers can't be NULL (even when we're copying zero bytes) so
+GCC will assume that's true.  If you have:
+
+	memcpy(foo, bar, 0);
+
+	if (foo)
+		*foo = 0;
+
+
+GCC will sometimes remove the condition.  This doesn't affect the kernel
+because we use -fno-delete-null-pointer-checks.
+https://groups.google.com/forum/#!msg/syzkaller-netbsd-bugs/8B4CIKN0Xz8/wRvIUWxiAgAJ
+
+Weird, huh?
+
+regards,
+dan carpenter
