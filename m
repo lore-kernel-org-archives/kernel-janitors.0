@@ -1,43 +1,31 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 09 Oct 2019 16:42:27 +0000
+Date: Wed, 09 Oct 2019 17:04:23 +0000
 Subject: Re: string.h: Mark 34 functions with __must_check
-Message-Id: <074dfd38-dc1d-3795-ab75-a17c24b36844@web.de>
+Message-Id: <b8bdfb25-deb8-9da0-3572-408b19bb0507@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
-In-Reply-To: <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+ <20191009110943.7ff3a08a@gandalf.local.home>
+ <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
+ <20191009122735.17415f9c@gandalf.local.home>
+ <CAKwvOdkvgeHnQ_SyR7QUqpsmtMPRe1SCJ_XJLQYv-gvLB6rbLg@mail.gmail.com>
+In-Reply-To: <CAKwvOdkvgeHnQ_SyR7QUqpsmtMPRe1SCJ_XJLQYv-gvLB6rbLg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, Steven Rostedt <rostedt@goodmis.org>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Nick Desaulniers <ndesaulniers@google.com>, Steven Rostedt <rostedt@goodmis.org>, kernel-janitors@vger.kernel.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>
 
-> You're also not consistent - strlen() is not annotated.
+> Ah, granted, I was surprised, too.
 
-Would you like to integrate any additional function annotations?
-
-
-> And, for the standard C functions, -Wall already seems to warn about
-> an unused call:
-
-This detail is nice, isn't it?
+Thanks for this view.
 
 
-> a.c:5:2: warning: statement with no effect [-Wunused-value]
->   strlen(s);
+> Maybe would be helpful to mention that in the commit message.
 
-Are there any differences to consider for the Linux function variant?
-
-
-> The problem is the __must_check does not mean that the
-> return value must be followed by a comparison to NULL and bailing out
-> (that can't really be checked), it simply ensures the return value is
-> assigned somewhere or used in an if(). So foo->bar = kstrdup() not
-> followed by a check of foo->bar won't warn. So one would essentially
-> only catch instant-leaks.
-
-How do you think about to improve the source code analysis support
-any further?
+My Linux software build resources might be too limited to take
+more system configuration variations safely into account
+for this issue.
+Would you like to achieve further checks here?
 
 Regards,
 Markus
