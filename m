@@ -1,50 +1,30 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Wed, 02 Oct 2019 19:06:51 +0000
-Subject: [PATCH 3.16 74/87] x86/apic: Fix integer overflow on 10 bit left shift of cpu_khz
-Message-Id: <lsq.1570043211.277995732@decadent.org.uk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 09 Oct 2019 12:04:49 +0000
+Subject: [PATCH -next] usb: typec: remove duplicated include from hd3ss3220.c
+Message-Id: <20191009120449.44899-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, Colin Ian King <colin.king@canonical.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-3.16.75-rc1 review patch.  If anyone has any objections, please let me know.
+Remove duplicated include.
 
-------------------
-
-From: Colin Ian King <colin.king@canonical.com>
-
-commit ea136a112d89bade596314a1ae49f748902f4727 upstream.
-
-The left shift of unsigned int cpu_khz will overflow for large values of
-cpu_khz, so cast it to a long long before shifting it to avoid overvlow.
-For example, this can happen when cpu_khz is 4194305, i.e. ~4.2 GHz.
-
-Addresses-Coverity: ("Unintentional integer overflow")
-Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190619181446.13635-1-colin.king@canonical.com
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/apic/apic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/typec/hd3ss3220.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1403,7 +1403,8 @@ void setup_local_APIC(void)
- 		if (queued) {
- 			if (cpu_has_tsc && cpu_khz) {
- 				rdtscll(ntsc);
--				max_loops = (cpu_khz << 10) - (ntsc - tsc);
-+				max_loops = (long long)cpu_khz << 10;
-+				max_loops -= ntsc - tsc;
- 			} else
- 				max_loops--;
- 		}
+diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+index 1900910c637e..0ea5bf3c19c7 100644
+--- a/drivers/usb/typec/hd3ss3220.c
++++ b/drivers/usb/typec/hd3ss3220.c
+@@ -10,7 +10,6 @@
+ #include <linux/usb/role.h>
+ #include <linux/irqreturn.h>
+ #include <linux/interrupt.h>
+-#include <linux/module.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/usb/typec.h>
