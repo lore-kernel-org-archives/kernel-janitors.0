@@ -1,152 +1,83 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date: Thu, 10 Oct 2019 07:20:39 +0000
+From: David Sterba <dsterba@suse.cz>
+Date: Thu, 10 Oct 2019 14:27:33 +0000
 Subject: Re: [PATCH] string.h: Mark 34 functions with __must_check
-Message-Id: <b35d2c1a-641f-b97f-8335-066693dfe37a@rasmusvillemoes.dk>
+Message-Id: <20191010142733.GT2751@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
- <20191009135522.GA20194@kadam>
- <b1f055ec-b4ec-d0ed-a03d-7d9828fa9440@rasmusvillemoes.dk>
- <20191009143000.GD13286@kadam>
- <CAKwvOd=Jkd_qJULB+i1u31VJAex6KB=wFAyXO04V0UcAAEZeXw@mail.gmail.com>
-In-Reply-To: <CAKwvOd=Jkd_qJULB+i1u31VJAex6KB=wFAyXO04V0UcAAEZeXw@mail.gmail.com>
+ <20191009110943.7ff3a08a@gandalf.local.home>
+ <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
+ <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
+ <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
+In-Reply-To: <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nick Desaulniers <ndesaulniers@google.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Joe Perches <joe@perches.com>, Steven Rostedt <rostedt@goodmis.org>, Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-On 09/10/2019 18.31, Nick Desaulniers wrote:
-> On Wed, Oct 9, 2019 at 7:30 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> On Wed, Oct 09, 2019 at 04:21:20PM +0200, Rasmus Villemoes wrote:
->>> On 09/10/2019 15.56, Dan Carpenter wrote:
->>>> That's because glibc strlen is annotated with __attribute_pure__ which
->>>> means it has no side effects.
->>>
->>> I know, except it has nothing to do with glibc headers. Just try the
->>> same thing in the kernel. gcc itself knows this about __builtin_strlen()
->>> etc. If anything, we could annotate some of our non-standard functions
->>> (say, memchr_inv) with __pure - then we'd both get the Wunused-value in
->>> the nonsense cases, and allow gcc to optimize or reorder the calls.
->>
->> Huh.  You're right.  GCC already knows.  So this patch is pointless like
->> you say.
+On Wed, Oct 09, 2019 at 10:33:45AM -0700, Nick Desaulniers wrote:
+> On Wed, Oct 9, 2019 at 9:38 AM Joe Perches <joe@perches.com> wrote:
+> >
+> > On Wed, 2019-10-09 at 09:13 -0700, Nick Desaulniers wrote:
+> > > On Wed, Oct 9, 2019 at 8:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > > On Wed, 9 Oct 2019 14:14:28 +0200 Markus Elfring <Markus.Elfring@web.de> wrote:
+> > []
+> > > > > Several functions return values with which useful data processing
+> > > > > should be performed. These values must not be ignored then.
+> > > > > Thus use the annotation “__must_check” in the shown function declarations.
+> > []
+> > > > I'm curious. How many warnings showed up when you applied this patch?
+> > >
+> > > I got zero for x86_64 and arm64 defconfig builds of linux-next with
+> > > this applied.  Hopefully that's not an argument against the more
+> > > liberal application of it?  I view __must_check as a good thing, and
+> > > encourage its application, unless someone can show that a certain
+> > > function would be useful to call without it.
+> >
+> > stylistic trivia, neither agreeing nor disagreeing with the patch
+> > as I generally avoid reading Markus' patches.
+> >
+> > I believe __must_check is best placed before the return type as
+> > that makes grep for function return type easier to parse.
+> >
+> > i.e. prefer
+> >         [static inline] __must_check <type> <function>(<args...>);
+> > over
+> >         [static inline] <type> __must_check <function>(<args...>);
+> >
 > 
-> Is it? None of the functions in include/linux/string.h are currently
-> marked __pure today. 
+> + Miguel
+> So I just checked `__cold`, and `__cold` is all over the board in
+> style.  I see it:
+> 1. before anything fs/btrfs/super.c#L101
+> 2. after static before return type (what you recommend) fs/btrfs/super.c#L2318
+> 3. after return type fs/btrfs/inode.c#L9426
 
-As I said, gcc knows this about the standard C functions, the ones it
-has a __builtin_* version of. So it doesn't matter if the user adds a
-__pure annotation or not (be it in libc or kernel headers). For example,
-here's a line from gcc's builtins.def
+As you can see in the git history, case 1 is from 2015 and the newer
+changes put the attribute between type and name - that's my "current"
+but hopefully final preference.
 
-DEF_LIB_BUILTIN        (BUILT_IN_STRCMP, "strcmp",
-BT_FN_INT_CONST_STRING_CONST_STRING, ATTR_PURE_NOTHROW_NONNULL_LEAF)
+> Can we pick a style and enforce it via checkpatch? (It's probably not
+> fun to check for each function attribute in
+> include/linux/compiler_attributes.h).
 
-so gcc knows that __builtin_strcmp is not just pure, but its argument
-can also be assumed to be non-NULL, etc. (OK, the kernel disables the
-use of that knowledge, but this is irrelevant to this discussion).
+Anything that has the return type, attributes and function name on one
+line works for me, but I know that there are other style preferences
+that put function name as the first word on a separate line.  My reasons
+are for better search results, ie.
 
-In constrast, e.g. abs and most libm functions is
+  extent_map.c:void __cold extent_map_exit(void)
+  extent_map.h:void __cold extent_map_exit(void);
+  file.c:void __cold btrfs_auto_defrag_exit(void)
+  inode.c:void __cold btrfs_destroy_cachep(void)
+  ordered-data.c:void __cold ordered_data_exit(void)
+  ordered-data.h:void __cold ordered_data_exit(void);
 
-DEF_LIB_BUILTIN        (BUILT_IN_ABS, "abs", BT_FN_INT_INT,
-ATTR_CONST_NOTHROW_LEAF_LIST)
+is better than
 
-i.e. "attribute(__const__)" (se below).
+  send.c:__cold
+  super.c:__cold
+  super.c:__cold
+  super.c:__cold
 
- (Side note, I'm surprised that any function that
-> accepts a pointer could be considered pure. I could reassign pointed
-> to value without changing the pointers value.
-
-Probably depends on your definition of pure. What matters is gcc's, which is
-
-'const'
-     Many functions do not examine any values except their arguments,
-     and have no effects except the return value.  Basically this is
-     just slightly more strict class than the 'pure' attribute below,
-     since function is not allowed to read global memory.
-
-     Note that a function that has pointer arguments and examines the
-     data pointed to must _not_ be declared 'const'.  Likewise, a
-     function that calls a non-'const' function usually must not be
-     'const'.  It does not make sense for a 'const' function to return
-     'void'.
-
-'pure'
-     Many functions have no effects except the return value and their
-     return value depends only on the parameters and/or global
-     variables.  Such a function can be subject to common subexpression
-     elimination and loop optimization just as an arithmetic operator
-     would be.  These functions should be declared with the attribute
-     'pure'.  For example,
-
-          int square (int) __attribute__ ((pure));
-
-     says that the hypothetical function 'square' is safe to call fewer
-     times than the program says.
-
-     Some common examples of pure functions are 'strlen' or 'memcmp'.
-     Interesting non-pure functions are functions with infinite loops or
-     those depending on volatile memory or other system resource, that
-     may change between two consecutive calls (such as 'feof' in a
-     multithreading environment).
-
-And yes, gcc knows perfectly well that more or less any write to memory
-(except in the very few cases where it can prove no aliasing)
-"invalidates" the result of a pure function. In some very simple cases,
-that means it can hoist a strlen() call out of a badly written loop like
-
-for (i = 0; i < strlen(s); ++i)
-
-but the loop body can't be very complicated before that fails. Example:
-https://godbolt.org/z/f0PPRt . I gave up trying to decipher what clang
-produced.
-
-(BTW, the pure example in the docs is bad, because that function is
-likely to be const and not just pure.)
-
-I can see strlen being
-> "pure" for string literals, but not for char[].  This is something
-> I'll play with more, I've already spotted one missed optimization in
-> LLVM: https://bugs.llvm.org/show_bug.cgi?idC624).
-
-I see that compiler_attributes unconditionally #defines __pure, but
-there's no reference to clang docs. Do they exist?
-
-> I think it would be an interesting study to see how often functions
-> that have return codes are ok to not check vs aren't ok (in a large
-> production codebase like the Linux kernel), similar to how 97% of
-> cases fallthrough is unintentional (which to me sounds like maybe the
-> default behavior of the language is incorrect).
-
-Again, _please_ do not confuse the name __must_check with what it
-actually does and means. It only means you get a warning if you throw
-away the result completely, it does not mean the return value must
-soonish be subject to some if-condition (because how'd you define or
-implement that...).
-
-To reiterate:
-
-(1) for __pure functions, it makes no sense to add __must_check, because
-gcc already warns
-(2) all the standard-C string functions are already __pure, even if
-linux/string.h does not declare them that way - so one shouldn't expect
-any new warnings at least for those functions
-(3) for the non-standard string functions (memchr_inv), I'd rather mark
-them __pure than __must_check, since the former is effectively a
-superset of the latter. We can then bikeshed whether the standard ones
-should be marked __pure as well for consistency (and perhaps benefit of
-clang, in case clang does not know __builtin_strlen is pure).
-(4) The kmalloc() wrappers (kstrdup etc.) are a whole different story.
-We're not marking kmalloc() itself, only krealloc(), so I don't see why
-kstrdup() should be __must_check. Yes, it would catch a silly
-instant-leak like
-
-  kstrdup(foo);
-
-but I really don't think that ever happens in practice. And again,
-there's no point making kstrdup() __must_check unless we also decide
-that it's worth it for kmalloc() and friends.
-
-Rasmus
+which I might get to fix eventually.
