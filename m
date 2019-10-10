@@ -1,33 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Oct 2019 10:06:15 +0000
-Subject: [PATCH] scsi: mpt3sas: Clean up some indenting
-Message-Id: <20191004100615.GA823@mwanda>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 10 Oct 2019 02:34:40 +0000
+Subject: Re: [PATCH] scsi: mpt3sas: Clean up some indenting
+Message-Id: <yq18sptjpkv.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191004100615.GA823@mwanda>
+In-Reply-To: <20191004100615.GA823@mwanda> (Dan Carpenter's message of "Fri, 4
+        Oct 2019 13:06:15 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Cc: Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Sreekanth Reddy <sreekanth.reddy@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This line is indented too far so it's a bit confusing.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dan,
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 0c77f2209cec..6874cf017739 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -1821,7 +1821,7 @@ mpt3sas_enable_diag_buffer(struct MPT3SAS_ADAPTER *ioc, u8 bits_to_register)
- 				     trace_buff_size>>10);
- 				ioc_err(ioc,
- 				    "Using zero Min Trace Buff Size\n");
--				    min_trace_buff_size = 0;
-+				min_trace_buff_size = 0;
- 			}
- 
- 			if (decr_trace_buff_size = 0) {
+> This line is indented too far so it's a bit confusing.
+
+Applied to 5.5/scsi-queue. Thank you!
+
 -- 
-2.20.1
+Martin K. Petersen	Oracle Linux Engineering
