@@ -1,27 +1,31 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 05 Oct 2019 14:34:09 +0000
-Subject: Re: [PATCH] of: unittest: fix memory leak in unittest_data_add
-Message-Id: <50421413-f535-a608-fa7d-1b337eeb95e5@web.de>
+From: "Coryna Rizky Amelia, SST" <coryna_fk@ub.ac.id>
+Date: Thu, 10 Oct 2019 13:06:26 +0000
+Subject: Apply For Financial investment at a lower rate 2%
+Message-Id: <CADotR_pXk0ovrYa13YuS-1nV8fQ26AyePr8SsNdfphc6PpacJA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004185847.14074-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191004185847.14074-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, devicetree@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-> In unittest_data_add, a copy buffer is created via kmemdup. This buffer
-> is leaked if of_fdt_unflatten_tree fails. The release for the
-> unittest_data buffer is added.
+-- 
+Hello,
 
-Can a wording like the following be nicer for the change description?
+We are private lenders based in UK.
+Do you need a loan (credit) as soon as possible. Are you in search of
+money to solve your personal needs or finance your business venture,
+then get Your desired loan today! Consult us at Sunrise Funding Ltd.
 
-  The buffer “__dtb_testcases_begin” will be duplicated to the local
-  variable “unittest_data”. Release the corresponding memory
-  after a call of the function “of_fdt_unflatten_tree” failed
-  in the implementation of the function “unittest_data_add”.
+* We offer personal loan & huge capital loan at 2% interest rate to
+the general public both locally and internationally.
+* Credit amount range from $5,000.00 -- $500,000.00 and above.
+* Special $10,000,000.00 Loan offer for huge project also available.
+* Loan period of 6 months -- 10 years.
+* Loan is granted 24 hours after approval and accredited, directly in
+hand or bank account.
 
+Please note that you are advised to contact us for more details via
+the following e-mail address below;
 
-Regards,
-Markus
+EMAIL : sunrisefundingltd50@gmail.com
+FIRM : Sunrise Funding Ltd UK.
