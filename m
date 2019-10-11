@@ -1,49 +1,53 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 16 Oct 2019 21:51:43 +0000
-Subject: [PATCH 5.3 111/112] efi/tpm: Fix sanity check of unsigned tbl_size being less than zero
-Message-Id: <20191016214907.521785772@linuxfoundation.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 11 Oct 2019 20:48:29 +0000
+Subject: [PATCH] media: i2c: adv7842: make array cri static and const, makes object smaller
+Message-Id: <20191011204829.11537-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191016214844.038848564@linuxfoundation.org>
-In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Jerry Snitselaar <jsnitsel@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: hverkuil-cisco@xs4all.nl, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Don't populate the array 'cri' on the stack but instead make it
+static and const. Makes the object code smaller by 165 bytes.
 
-commit be59d57f98065af0b8472f66a0a969207b168680 upstream.
+Turn the 2nd parameter of 'log_infoframe()' const accordingly.
 
-Currently the check for tbl_size being less than zero is always false
-because tbl_size is unsigned. Fix this by making it a signed int.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  98533	  20024	    256	 118813	  1d01d	drivers/media/i2c/adv7842.o
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-efi@vger.kernel.org
-Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size' after successful event log parsing")
-Link: https://lkml.kernel.org/r/20191008100153.8499-1-colin.king@canonical.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  98304	  20088	    256	 118648	  1cf78	drivers/media/i2c/adv7842.o
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/efi/tpm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/adv7842.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -40,7 +40,7 @@ int __init efi_tpm_eventlog_init(void)
- {
- 	struct linux_efi_tpm_eventlog *log_tbl;
- 	struct efi_tcg2_final_events_table *final_tbl;
--	unsigned int tbl_size;
-+	int tbl_size;
- 	int ret = 0;
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 885619841719..0855f648416d 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -2547,7 +2547,7 @@ struct adv7842_cfg_read_infoframe {
+ 	u8 payload_addr;
+ };
  
- 	if (efi.tpm_log = EFI_INVALID_TABLE_ADDR) {
+-static void log_infoframe(struct v4l2_subdev *sd, struct adv7842_cfg_read_infoframe *cri)
++static void log_infoframe(struct v4l2_subdev *sd, const struct adv7842_cfg_read_infoframe *cri)
+ {
+ 	int i;
+ 	u8 buffer[32];
+@@ -2585,7 +2585,7 @@ static void log_infoframe(struct v4l2_subdev *sd, struct adv7842_cfg_read_infofr
+ static void adv7842_log_infoframes(struct v4l2_subdev *sd)
+ {
+ 	int i;
+-	struct adv7842_cfg_read_infoframe cri[] = {
++	static const struct adv7842_cfg_read_infoframe cri[] = {
+ 		{ "AVI", 0x01, 0xe0, 0x00 },
+ 		{ "Audio", 0x02, 0xe3, 0x1c },
+ 		{ "SDP", 0x04, 0xe6, 0x2a },
+-- 
+2.20.1
