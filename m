@@ -1,39 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Oct 2019 16:02:27 +0000
-Subject: [PATCH][next] ath10k: fix null dereference on pointer crash_data
-Message-Id: <20191004160227.31577-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 11 Oct 2019 08:46:26 +0000
+Subject: Re: [PATCH][next] ath10k: fix null dereference on pointer crash_data
+Message-Id: <20191011084626.E2F5D60AA3@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191004160227.31577-1-colin.king@canonical.com>
+In-Reply-To: <20191004160227.31577-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-Currently when pointer crash_data is null the present null check
-will also check that crash_data->ramdump_buf is null and will cause
-a null pointer dereference on crash_data. Fix this by using the ||
-operator instead of &&.
+> Currently when pointer crash_data is null the present null check
+> will also check that crash_data->ramdump_buf is null and will cause
+> a null pointer dereference on crash_data. Fix this by using the ||
+> operator instead of &&.
+> 
+> Fixes: 3f14b73c3843 ("ath10k: Enable MSA region dump support for WCN3990")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Fixes: 3f14b73c3843 ("ath10k: Enable MSA region dump support for WCN3990")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/snoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index cd22c8654aa9..16177497bba7 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -1400,7 +1400,7 @@ static void ath10k_msa_dump_memory(struct ath10k *ar,
- 	size_t buf_len;
- 	u8 *buf;
- 
--	if (!crash_data && !crash_data->ramdump_buf)
-+	if (!crash_data || !crash_data->ramdump_buf)
- 		return;
- 
- 	mem_layout = ath10k_coredump_get_mem_layout(ar);
+a69d3bdd4d40 ath10k: fix null dereference on pointer crash_data
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/11174955/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
