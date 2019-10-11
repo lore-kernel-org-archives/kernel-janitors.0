@@ -1,46 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Oct 2019 14:05:59 +0000
-Subject: [PATCH] pinctrl: rzn1: array reg_drive static, makes object smaller
-Message-Id: <20191007140559.11840-1-colin.king@canonical.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 11 Oct 2019 11:46:01 +0000
+Subject: Re: [PATCH] pinctrl: rzn1: array reg_drive static, makes object smaller
+Message-Id: <CAMuHMdUYvNaCYHDK_=HnyyAKa4Zqr+0xe0QnO0KzKpZws4YsCw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191007140559.11840-1-colin.king@canonical.com>
+In-Reply-To: <20191007140559.11840-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Don't populate the array reg_drive on the stack but instead make it
-static. Makes the object code smaller by 32 bytes.
+On Mon, Oct 7, 2019 at 4:06 PM Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate the array reg_drive on the stack but instead make it
+> static. Makes the object code smaller by 32 bytes.
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>   31991   15696       0   47687    ba47 drivers/pinctrl/pinctrl-rzn1.o
+>
+> After:
+>    text    data     bss     dec     hex filename
+>   31863   15792       0   47655    ba27 drivers/pinctrl/pinctrl-rzn1.o
+>
+> (gcc version 9.2.1, amd64)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  31991	  15696	      0	  47687	   ba47	drivers/pinctrl/pinctrl-rzn1.o
+Thanks for your patch!
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  31863	  15792	      0	  47655	   ba27	drivers/pinctrl/pinctrl-rzn1.o
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v5.5.
 
-(gcc version 9.2.1, amd64)
+FTR, on arm32, it saves 64 bytes:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/pinctrl-rzn1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   8594     148       0    8742    2226 drivers/pinctrl/pinctrl-rzn1.o.before
+   8530     148       0    8678    21e6 drivers/pinctrl/pinctrl-rzn1.o.after
 
-diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-index 0f6f8a10a53a..39538d40dbf3 100644
---- a/drivers/pinctrl/pinctrl-rzn1.c
-+++ b/drivers/pinctrl/pinctrl-rzn1.c
-@@ -487,7 +487,7 @@ static int rzn1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
- {
- 	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
- 	enum pin_config_param param = pinconf_to_config_param(*config);
--	const u32 reg_drive[4] = { 4, 6, 8, 12 };
-+	static const u32 reg_drive[4] = { 4, 6, 8, 12 };
- 	u32 pull, drive, l1mux;
- 	u32 l1, l2, arg = 0;
- 
+BTW, what debug options do you have enabled, to get a binary that's
+more than 5x as large? Amd64 code generation can't be that bad...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
