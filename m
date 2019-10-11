@@ -1,44 +1,38 @@
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 29 Oct 2019 07:43:21 +0000
-Subject: Re: [PATCH] clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18
-Message-Id: <20191029074321.ftamn6qitkbfrucm@hendrix>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gufwthkvpo2ckxgg"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 Oct 2019 18:57:46 +0000
+Subject: [PATCH] media: gspca: remove redundant assignment to variable ret
+Message-Id: <20191011185746.18570-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191023112809.27595-1-colin.king@canonical.com>
-In-Reply-To: <20191023112809.27595-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---gufwthkvpo2ckxgg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The variable ret is being initialized with a value that
+is never read and is being re-assigned a little later on. The
+assignment is redundant and hence can be removed.
 
-On Wed, Oct 23, 2019 at 12:28:09PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The zero'ing of bits 16 and 18 is incorrect. Currently the code
-> is masking with the bitwise-and of BIT(16) & BIT(18) which is
-> 0, so the updated value for val is always zero. Fix this by bitwise
-> and-ing value with the correct mask that will zero bits 16 and 18.
->
-> Addresses-Coverity: (" Suspicious &= or |= constant expression")
-> Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/gspca/stv0680.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-Maxime
-
---gufwthkvpo2ckxgg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbftmQAKCRDj7w1vZxhR
-xUkfAP9Z5pgiCu01sgdMtiTA28A0ugCnNsspfAqhabiBnF1uMAD/UtXwYMkvUTC7
-Eqx/KFAYrADVGg14oOUSrdk0eFxowwY=
-=j3Hb
------END PGP SIGNATURE-----
-
---gufwthkvpo2ckxgg--
+diff --git a/drivers/media/usb/gspca/stv0680.c b/drivers/media/usb/gspca/stv0680.c
+index f869eb6065ce..b23988d8c7bc 100644
+--- a/drivers/media/usb/gspca/stv0680.c
++++ b/drivers/media/usb/gspca/stv0680.c
+@@ -35,7 +35,7 @@ struct sd {
+ static int stv_sndctrl(struct gspca_dev *gspca_dev, int set, u8 req, u16 val,
+ 		       int size)
+ {
+-	int ret = -1;
++	int ret;
+ 	u8 req_type = 0;
+ 	unsigned int pipe = 0;
+ 
+-- 
+2.20.1
