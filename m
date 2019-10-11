@@ -1,25 +1,27 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 14 Oct 2019 07:53:41 +0000
-Subject: Re: [PATCH] dmaengine: owl: Use devm_platform_ioremap_resource() in owl_dma_probe()
-Message-Id: <20191014075242.GH2654@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 11 Oct 2019 05:15:53 +0000
+Subject: Re: Searching for missing variable checks
+Message-Id: <dd1adf86-1bc1-2ffe-1af8-3d7082c5a468@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d36b6a6c-2e3d-8d68-6ddc-969a377ca3b2@web.de>
-In-Reply-To: <d36b6a6c-2e3d-8d68-6ddc-969a377ca3b2@web.de>
+References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
+ <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
+In-Reply-To: <954c5d70-742f-7b0e-57ad-ea967e93be89@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Dan Williams <dan.j.williams@intel.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, Steven Rostedt <rostedt@goodmis.org>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 22-09-19, 13:30, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 13:23:54 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
+> The problem is the __must_check does not mean that the
+> return value must be followed by a comparison to NULL and bailing out
+> (that can't really be checked), it simply ensures the return value is
+> assigned somewhere or used in an if(). So foo->bar = kstrdup() not
+> followed by a check of foo->bar won't warn.
 
-Applied, thanks
+Higher level source code analysis tools like the semantic patch language
+(Coccinelle software) can help to find such missing checks.
+Would you like to point any additional development tools out
+for this purpose?
 
--- 
-~Vinod
+Regards,
+Markus
