@@ -1,26 +1,61 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 18 Oct 2019 08:02:34 +0000
-Subject: Re: [PATCH -next] crypto: Use PTR_ERR_OR_ZERO in safexcel_xcbcmac_cra_init()
-Message-Id: <20191018080233.GC25128@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Oct 2019 13:34:19 +0000
+Subject: [PATCH v2] uverbs: prevent potential underflow
+Message-Id: <20191011133419.GA22905@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009120621.45834-1-yuehaibing@huawei.com>
-In-Reply-To: <20191009120621.45834-1-yuehaibing@huawei.com>
+In-Reply-To: <20191008194425.GA28067@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Matan Barak <matanb@mellanox.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Shamir Rabinovitch <shamir.rabinovitch@oracle.com>, Michael Guralnik <michaelgur@mellanox.com>, Matthew Wilcox <willy@infradead.org>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 12:06:21PM +0000, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/inside-secure/safexcel_hash.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+The issue is in drivers/infiniband/core/uverbs_std_types_cq.c in the
+UVERBS_HANDLER(UVERBS_METHOD_CQ_CREATE) function.  We check that:
 
-Patch applied.  Thanks.
+        if (attr.comp_vector >= attrs->ufile->device->num_comp_vectors) {
+
+But we don't check that "attr.comp_vector" whether negative.  It
+could potentially lead to an array underflow.  My concern would be where
+cq->vector is used in the create_cq() function from the cxgb4 driver.
+
+And really "attr.comp_vector" is appears as a u32 to user space so that's
+the right type to use.
+
+Fixes: 9ee79fce3642 ("IB/core: Add completion queue (cq) object actions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Change both types to u32
+
+ drivers/infiniband/core/uverbs.h | 2 +-
+ include/rdma/ib_verbs.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
+index 1e5aeb39f774..63f7f7db5902 100644
+--- a/drivers/infiniband/core/uverbs.h
++++ b/drivers/infiniband/core/uverbs.h
+@@ -98,7 +98,7 @@ ib_uverbs_init_udata_buf_or_null(struct ib_udata *udata,
+ 
+ struct ib_uverbs_device {
+ 	atomic_t				refcount;
+-	int					num_comp_vectors;
++	u32					num_comp_vectors;
+ 	struct completion			comp;
+ 	struct device				dev;
+ 	/* First group for device attributes, NULL terminated array */
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 6a47ba85c54c..e7e733add99f 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -366,7 +366,7 @@ struct ib_tm_caps {
+ 
+ struct ib_cq_init_attr {
+ 	unsigned int	cqe;
+-	int		comp_vector;
++	u32		comp_vector;
+ 	u32		flags;
+ };
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
