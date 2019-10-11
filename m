@@ -1,60 +1,36 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Wed, 09 Oct 2019 09:52:15 +0000
-Subject: Re: [PATCH][next] drm/i915: remove redundant variable err
-Message-Id: <87h84igsa8.fsf@intel.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 11 Oct 2019 05:24:36 +0000
+Subject: [PATCH -next] soc: ti: omap-prm: fix return value check in omap_prm_probe()
+Message-Id: <20191011052436.76075-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009093935.17895-1-colin.king@canonical.com>
-In-Reply-To: <20191009093935.17895-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <t-kristo@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, 09 Oct 2019, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> An earlier commit removed any error assignments to err and we
-> are now left with a zero assignment to err and a check that is
-> always false. Clean this up by removing the redundant variable
-> err and the error check.
->
-> Addresses-Coverity: ("'Constant' variable guard")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-Fixes: b1e3177bd1d8 ("drm/i915: Coordinate i915_active with its own mutex")
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Fixes: 3e99cb214f03 ("soc: ti: add initial PRM driver with reset control support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/soc/ti/omap_prm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-BR,
-Jani.
-
-
-> ---
->  drivers/gpu/drm/i915/i915_active.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-> index aa37c07004b9..67305165c12a 100644
-> --- a/drivers/gpu/drm/i915/i915_active.c
-> +++ b/drivers/gpu/drm/i915/i915_active.c
-> @@ -438,7 +438,6 @@ static void enable_signaling(struct i915_active_fence *active)
->  int i915_active_wait(struct i915_active *ref)
->  {
->  	struct active_node *it, *n;
-> -	int err = 0;
->  
->  	might_sleep();
->  
-> @@ -456,8 +455,6 @@ int i915_active_wait(struct i915_active *ref)
->  	/* Any fence added after the wait begins will not be auto-signaled */
->  
->  	i915_active_release(ref);
-> -	if (err)
-> -		return err;
->  
->  	if (wait_var_event_interruptible(ref, i915_active_is_idle(ref)))
->  		return -EINTR;
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+diff --git a/drivers/soc/ti/omap_prm.c b/drivers/soc/ti/omap_prm.c
+index db47a8bceb87..96c6f777519c 100644
+--- a/drivers/soc/ti/omap_prm.c
++++ b/drivers/soc/ti/omap_prm.c
+@@ -375,8 +375,8 @@ static int omap_prm_probe(struct platform_device *pdev)
+ 	prm->data = data;
+ 
+ 	prm->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!prm->base)
+-		return -ENOMEM;
++	if (IS_ERR(prm->base))
++		return PTR_ERR(prm->base);
+ 
+ 	return omap_prm_reset_init(pdev, prm);
+ }
