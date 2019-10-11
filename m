@@ -1,41 +1,39 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Thu, 10 Oct 2019 15:46:15 +0000
-Subject: RE: [PATCH] string.h: Mark 34 functions with __must_check
-Message-Id: <3b133d6f8742472e8a99a76fb0bd3b11@AcuMS.aculab.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 Oct 2019 17:22:32 +0000
+Subject: [PATCH] net: b44: remove redundant assignment to variable reg
+Message-Id: <20191011172232.14430-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
- <20191009110943.7ff3a08a@gandalf.local.home>
- <CAKwvOdk3OTaAVmbV9Cu+Dzg8zuojjU6ENZfu4cUPaKS2a58d3w@mail.gmail.com>
- <4d890cae9cbbd873096cb1fadb477cf4632ddb9a.camel@perches.com>
- <CAKwvOdntBXd3OPiCV5adcDjXor886-XnsSxcStAjYBJpuEBrqQ@mail.gmail.com>
- <20191010142733.GT2751@twin.jikos.cz>
-In-Reply-To: <20191010142733.GT2751@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "'dsterba@suse.cz'" <dsterba@suse.cz>, Nick Desaulniers <ndesaulniers@google.com>
-Cc: Joe Perches <joe@perches.com>, Steven Rostedt <rostedt@goodmis.org>, Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To: Michael Chan <michael.chan@broadcom.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogRGF2aWQgU3RlcmJhDQo+IFNlbnQ6IDEwIE9jdG9iZXIgMjAxOSAxNToyOA0KLi4uDQo+
-ID4gQ2FuIHdlIHBpY2sgYSBzdHlsZSBhbmQgZW5mb3JjZSBpdCB2aWEgY2hlY2twYXRjaD8gKEl0
-J3MgcHJvYmFibHkgbm90DQo+ID4gZnVuIHRvIGNoZWNrIGZvciBlYWNoIGZ1bmN0aW9uIGF0dHJp
-YnV0ZSBpbg0KPiA+IGluY2x1ZGUvbGludXgvY29tcGlsZXJfYXR0cmlidXRlcy5oKS4NCj4gDQo+
-IEFueXRoaW5nIHRoYXQgaGFzIHRoZSByZXR1cm4gdHlwZSwgYXR0cmlidXRlcyBhbmQgZnVuY3Rp
-b24gbmFtZSBvbiBvbmUNCj4gbGluZSB3b3JrcyBmb3IgbWUsIGJ1dCBJIGtub3cgdGhhdCB0aGVy
-ZSBhcmUgb3RoZXIgc3R5bGUgcHJlZmVyZW5jZXMNCj4gdGhhdCBwdXQgZnVuY3Rpb24gbmFtZSBh
-cyB0aGUgZmlyc3Qgd29yZCBvbiBhIHNlcGFyYXRlIGxpbmUuDQoNCkhhdmluZyB0aGUgZnVuY3Rp
-b24gbmFtZSBmaXJzdCBtYWtlcyBpdCBtdWNoIGVhc2llciB0byBmaW5kIHRoZSBmdW5jdGlvbiBp
-dHNlbGYuDQpJbiB0aGUgbGludXgga2VybmVsIHRyZWUgc2VhcmNoaW5nIGZvciAnRVhQT1JULipm
-dW5jdGlvbl9uYW1lJyB3b3JrcyBtb3N0IGYgdGhlIHRpbWUuDQoNCj4gTXkgcmVhc29ucyBhcmUg
-Zm9yIGJldHRlciBzZWFyY2ggcmVzdWx0cywgaWUuDQo+IA0KPiAgIGV4dGVudF9tYXAuYzp2b2lk
-IF9fY29sZCBleHRlbnRfbWFwX2V4aXQodm9pZCkNCj4gICBleHRlbnRfbWFwLmg6dm9pZCBfX2Nv
-bGQgZXh0ZW50X21hcF9leGl0KHZvaWQpOw0KPiAgIGZpbGUuYzp2b2lkIF9fY29sZCBidHJmc19h
-dXRvX2RlZnJhZ19leGl0KHZvaWQpDQo+ICAgaW5vZGUuYzp2b2lkIF9fY29sZCBidHJmc19kZXN0
-cm95X2NhY2hlcCh2b2lkKQ0KPiAgIG9yZGVyZWQtZGF0YS5jOnZvaWQgX19jb2xkIG9yZGVyZWRf
-ZGF0YV9leGl0KHZvaWQpDQo+ICAgb3JkZXJlZC1kYXRhLmg6dm9pZCBfX2NvbGQgb3JkZXJlZF9k
-YXRhX2V4aXQodm9pZCk7DQo+IA0KPiBpcyBiZXR0ZXIgdGhhbg0KPiANCj4gICBzZW5kLmM6X19j
-b2xkDQo+ICAgc3VwZXIuYzpfX2NvbGQNCj4gICBzdXBlci5jOl9fY29sZA0KPiAgIHN1cGVyLmM6
-X19jb2xkDQo+IA0KPiB3aGljaCBJIG1pZ2h0IGdldCB0byBmaXggZXZlbnR1YWxseS4NCg0KVGhh
-dCBpcyB3aGF0IC1BMSBpbiBmb3IgOi0pDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
-c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
-IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable reg is being assigned a value that is never read
+and is being re-assigned in the following for-loop. The
+assignment is redundant and hence can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/b44.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+index 97ab0dd25552..035dbb1b2c98 100644
+--- a/drivers/net/ethernet/broadcom/b44.c
++++ b/drivers/net/ethernet/broadcom/b44.c
+@@ -511,9 +511,6 @@ static void b44_stats_update(struct b44 *bp)
+ 		*val++ += br32(bp, reg);
+ 	}
+ 
+-	/* Pad */
+-	reg += 8*4UL;
+-
+ 	for (reg = B44_RX_GOOD_O; reg <= B44_RX_NPAUSE; reg += 4UL) {
+ 		*val++ += br32(bp, reg);
+ 	}
+-- 
+2.20.1
