@@ -1,38 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 25 Oct 2019 17:11:51 +0000
-Subject: [PATCH] drm/vmwgfx: remove redundant assignment to variable ret
-Message-Id: <20191025171151.3493-1-colin.king@canonical.com>
+Date: Fri, 11 Oct 2019 17:13:54 +0000
+Subject: [PATCH] media: lm3646: remove redundant assignment to variable rval
+Message-Id: <20191011171354.13787-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable ret is being assigned with a value that
-is never read and is being re-assigned on the next statement.
-The assignment is redundant and hence can be removed.
+The variable rval is being initialized with a value that
+is never read and is being re-assigned a little later on. The
+assignment is redundant and hence can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/i2c/lm3646.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-index e5a283263211..b6a8ce23d3a8 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-@@ -959,8 +959,6 @@ int vmw_kms_sou_init_display(struct vmw_private *dev_priv)
- 		return -ENOSYS;
- 	}
+diff --git a/drivers/media/i2c/lm3646.c b/drivers/media/i2c/lm3646.c
+index d8a8853f9a2b..c76ccf67a909 100644
+--- a/drivers/media/i2c/lm3646.c
++++ b/drivers/media/i2c/lm3646.c
+@@ -134,7 +134,7 @@ static int lm3646_set_ctrl(struct v4l2_ctrl *ctrl)
+ {
+ 	struct lm3646_flash *flash = to_lm3646_flash(ctrl);
+ 	unsigned int reg_val;
+-	int rval = -EINVAL;
++	int rval;
  
--	ret = -ENOMEM;
--
- 	ret = drm_vblank_init(dev, VMWGFX_NUM_DISPLAY_UNITS);
- 	if (unlikely(ret != 0))
- 		return ret;
+ 	switch (ctrl->id) {
+ 	case V4L2_CID_FLASH_LED_MODE:
 -- 
 2.20.1
