@@ -1,35 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Oct 2019 10:58:01 +0000
-Subject: [PATCH] platform/x86: huawei-wmi: Fix a precision vs width printf bug
-Message-Id: <20191014105801.GA31759@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 18:04:57 +0000
+Subject: pinctrl: lantiq: Checking two kmemdup() calls in ltq_pinctrl_dt_subnode_to_map()
+Message-Id: <e0284a24-08f9-01da-98d9-366a45c3c8ff@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Darren Hart <dvhart@infradead.org>, Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc: Andy Shevchenko <andy@infradead.org>, Mattias Jacobsson <2pi@mok.nu>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-This was supposed to be precision "%.*s" instead of width "%*s".  It's
-possible that this results in printing beyond the end of the string.
+Hello,
 
-Fixes: a970b95345ab ("platform/x86: huawei-wmi: Add debugfs support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/platform/x86/huawei-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “ltq_pinctrl_dt_subnode_to_map” contains still
+two unchecked calls of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pinctrl/pinctrl-lantiq.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n116
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/gpu/drm/nouveau/nouveau_connector.c#L476
 
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 6720f78c60c2..69a7be8dafcd 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -612,7 +612,7 @@ static void huawei_wmi_debugfs_call_dump(struct seq_file *m, void *data,
- 		seq_printf(m, "0x%llx", obj->integer.value);
- 		break;
- 	case ACPI_TYPE_STRING:
--		seq_printf(m, "\"%*s\"", obj->string.length, obj->string.pointer);
-+		seq_printf(m, "\"%.*s\"", obj->string.length, obj->string.pointer);
- 		break;
- 	case ACPI_TYPE_BUFFER:
- 		seq_puts(m, "{");
--- 
-2.20.1
+How do you think about to improve it?
+
+Regards,
+Markus
