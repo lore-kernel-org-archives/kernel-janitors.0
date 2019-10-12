@@ -1,26 +1,24 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Wed, 09 Oct 2019 10:15:42 +0000
-Subject: Re: [PATCH][next] drm/i915/selftests: fix null pointer dereference on pointer data
-Message-Id: <157061614282.18808.3604540678077210321@skylake-alporthouse-com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 18:20:04 +0000
+Subject: SUNRPC: Checking a kmemdup() call in xdr_netobj_dup()
+Message-Id: <9b5a5e63-2a24-ad79-20e2-4c01331ee041@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009100024.23077-1-colin.king@canonical.com>
-In-Reply-To: <20191009100024.23077-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-Quoting Colin King (2019-10-09 11:00:24)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where data fails to be allocated the error exit path is
-> via label 'out' where data is dereferenced in a for-loop.  Fix this
-> by exiting via the label 'out_file' instead to avoid the null pointer
-> dereference.
-> 
-> Addresses-Coverity: ("Dereference after null check")
-> Fixes: 50d16d44cce4 ("drm/i915/selftests: Exercise context switching in parallel")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+Hello,
+
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “xdr_netobj_dup” contains still an unchecked call
+of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/sunrpc/xdr.h?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n167
+https://elixir.bootlin.com/linux/v5.4-rc2/source/include/linux/sunrpc/xdr.h#L167
+
+How do you think about to improve it?
+
+Regards,
+Markus
