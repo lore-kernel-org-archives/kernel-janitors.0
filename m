@@ -1,39 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Oct 2019 11:58:20 +0000
-Subject: Re: [PATCH][next] drm/v3d: fix double free of bin
-Message-Id: <20191025115819.GA7244@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 14:51:48 +0000
+Subject: tcp: Checking a kmemdup() call in tcp_time_wait()
+Message-Id: <a219235e-bad5-8a9d-0f3e-c05d5cb11df1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191024104801.3122-1-colin.king@canonical.com>
- <20191024123853.GH11828@phenom.ffwll.local>
-In-Reply-To: <20191024123853.GH11828@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Navid Emamdoost <navid.emamdoost@gmail.com>, Iago Toral Quiroga <itoral@igalia.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Hideaki Yoshifuji <yoshfuji@linux-ipv6.org>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-On Thu, Oct 24, 2019 at 02:38:53PM +0200, Daniel Vetter wrote:
-> On Thu, Oct 24, 2019 at 11:48:01AM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Two different fixes have addressed the same memory leak of bin and
-> > this now causes a double free of bin.  While the individual memory
-> > leak fixes are fine, both fixes together are problematic.
-> > 
-> > Addresses-Coverity: ("Double free")
-> > Fixes: 29cd13cfd762 ("drm/v3d: Fix memory leak in v3d_submit_cl_ioctl")
-> > Fixes: 0d352a3a8a1f (" rm/v3d: don't leak bin job if v3d_job_init fails.")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> That sounds like wrong merge resolution somewhere, and we don't have those
-> patches merged together in any final tree yet anywhere. What's this based
-> on?
-> -Daniel
+Hello,
 
-linux-next.
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “tcp_time_wait” contains also a call of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/ipv4/tcp_minisocks.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n306
+https://elixir.bootlin.com/linux/v5.4-rc2/source/net/ipv4/tcp_minisocks.c#L306
 
-I sent this fix to you and Stephen Rothwell yesterday so this one is
-sorted already.  Stephen will apply my patch until you guys merge your
-drm trees.
+* Do you find the usage of the macro call “BUG_ON” still appropriate at this place?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/checkpatch.pl?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n4080
 
-regards,
-dan carpenter
+* Is there a need to adjust the error handling here?
+
+Regards,
+Markus
