@@ -1,27 +1,24 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 04 Oct 2019 22:14:14 +0000
-Subject: Re: [PATCH] ns2: Fix off by one bugs in ns2_pinmux_enable()
-Message-Id: <CACRpkdY6f5MX16cJL--D3O=_4us=vXEF6vWfRpd+ju8T_JsE0Q@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 17:03:09 +0000
+Subject: net: tulip: de2104x: Checking a kmemdup() call in de21041_get_srom_info()
+Message-Id: <eb1f904a-a2e4-fe9b-c50e-b8087d7e57c4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926081426.GB2332@mwanda>
-In-Reply-To: <20190926081426.GB2332@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ray Jui <rjui@broadcom.com>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, linux-parisc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Yang Wei <yang.wei9@zte.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-On Thu, Sep 26, 2019 at 10:14 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Hello,
 
-> The pinctrl->functions[] array has pinctrl->num_functions elements and
-> the pinctrl->groups[] array is the same way.  These are set in
-> ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
-> read one element beyond the end of the array.
->
-> Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “de21041_get_srom_info” contains still an unchecked call
+of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/dec/tulip/de2104x.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1940
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/net/ethernet/dec/tulip/de2104x.c#L1940
 
-Patch applied with Scott's ACK.
+How do you think about to improve it?
 
-Yours,
-Linus Walleij
+Regards,
+Markus
