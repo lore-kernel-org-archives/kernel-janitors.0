@@ -1,29 +1,24 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 18 Oct 2019 06:30:42 +0000
-Subject: iommu/exynos: Checking a device_link_add() call in exynos_iommu_add_device()
-Message-Id: <dfb07352-877b-0ed2-ea1b-5a4885cd740b@web.de>
+Date: Sat, 12 Oct 2019 16:04:15 +0000
+Subject: drm/nouveau: Checking a kmemdup() call in nouveau_connector_of_detect()
+Message-Id: <5ff56ca3-0e20-2820-f981-d2d37dded133@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org, Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Aditya Pakki <pakki001@umn.edu>
+To: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
 Hello,
 
 I tried another script for the semantic patch language out.
 This source code analysis approach points out that the implementation
-of the function “exynos_iommu_add_device” contains still
-an unchecked call of the function “device_link_add”.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iommu/exynos-iommu.c?id=0e2adab6cf285c41e825b6c74a3aa61324d1132c#n1253
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/iommu/exynos-iommu.c#L1253
+of the function “nouveau_connector_of_detect” contains still
+an unchecked call of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nouveau_connector.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n476
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/gpu/drm/nouveau/nouveau_connector.c#L476
 
 How do you think about to improve it?
-
-* Which error code would you like to return for a failed
-  device link addition at this place?
-
-* Will it be needed to delete any links as exception handling?
 
 Regards,
 Markus
