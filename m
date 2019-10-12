@@ -1,66 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Oct 2019 08:54:51 +0000
-Subject: [bug report] usb: hso: obey DMA rules in tiocmget
-Message-Id: <20191019085451.GA13915@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 16:40:50 +0000
+Subject: IB/hfi1: Checking a kmemdup() call in get_platform_config()
+Message-Id: <f566cf8a-96df-f145-296f-8f6d72d8fbad@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-rdma@vger.kernel.org, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-Hello Oliver Neukum,
+Hello,
 
-The patch af0de1303c4e: "usb: hso: obey DMA rules in tiocmget" from
-Oct 17, 2019, leads to the following static checker warning:
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “get_platform_config” contains still an unchecked call
+of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/infiniband/hw/hfi1/platform.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n187
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/infiniband/hw/hfi1/platform.c#L187
 
-	drivers/net/usb/hso.c:2626 hso_create_bulk_serial_device()
-	warn: variable dereferenced before check 'serial->tiocmget' (see line 2620)
+How do you think about to improve it?
 
-drivers/net/usb/hso.c
-  2615  
-  2616          if ((port & HSO_PORT_MASK) = HSO_PORT_MODEM) {
-  2617                  num_urbs = 2;
-  2618                  serial->tiocmget = kzalloc(sizeof(struct hso_tiocmget),
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-Allocation
-
-  2619                                             GFP_KERNEL);
-  2620                  serial->tiocmget->serial_state_notification
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Dereference
-
-  2621                          = kzalloc(sizeof(struct hso_serial_state_notification),
-  2622                                             GFP_KERNEL);
-  2623                  /* it isn't going to break our heart if serial->tiocmget
-  2624                   *  allocation fails don't bother checking this.
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Comment says not to check for failure.
-
-  2625                   */
-  2626                  if (serial->tiocmget && serial->tiocmget->serial_state_notification) {
-                            ^^^^^^^^^^^^^^^^
-Check too late.
-
-  2627                          tiocmget = serial->tiocmget;
-  2628                          tiocmget->endp = hso_get_ep(interface,
-  2629                                                      USB_ENDPOINT_XFER_INT,
-  2630                                                      USB_DIR_IN);
-  2631                          if (!tiocmget->endp) {
-  2632                                  dev_err(&interface->dev, "Failed to find INT IN ep\n");
-  2633                                  goto exit;
-  2634                          }
-  2635  
-  2636                          tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
-  2637                          if (tiocmget->urb) {
-  2638                                  mutex_init(&tiocmget->mutex);
-  2639                                  init_waitqueue_head(&tiocmget->waitq);
-  2640                          } else
-  2641                                  hso_free_tiomget(serial);
-  2642                  }
-  2643          }
-  2644          else
-  2645                  num_urbs = 1;
-
-
-regards,
-dan carpenter
+Regards,
+Markus
