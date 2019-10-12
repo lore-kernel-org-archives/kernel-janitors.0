@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Sat, 12 Oct 2019 14:17:03 +0000
 Subject: clk: samsung: Checking a kmemdup() call in _samsung_clk_register_pll()
-Message-Id: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
+Message-Id: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
+In-Reply-To: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
