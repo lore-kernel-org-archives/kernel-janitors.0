@@ -1,22 +1,49 @@
-From: <Adham.Abozaeid@microchip.com>
-Date: Thu, 17 Oct 2019 17:06:32 +0000
-Subject: Re: [PATCH] staging: wilc1000: potential corruption in wilc_parse_join_bss_param()
-Message-Id: <79ba46e7-9349-04fa-40f7-5367672b8189@microchip.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 09:07:43 +0000
+Subject: [PATCH 1/2] drm/imx: Fix error handling for a kmemdup() call in imx_pd_bind()
+Message-Id: <3fd6aa8b-2529-7ff5-3e19-05267101b2a4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191017091832.GB31278@mwanda>
-In-Reply-To: <20191017091832.GB31278@mwanda>
+References: <20191004190938.15353-1-navid.emamdoost@gmail.com>
+ <540321eb-7699-1d51-59d5-dde5ffcb8fc4@web.de>
+ <CAEkB2ETtVwtmkpup65D3wqyLn=84ZHt0QRo0dJK5GsV=-L=qVw@mail.gmail.com>
+ <2abf545b-023b-853a-95ef-ce99e1896a5d@web.de>
+In-Reply-To: <2abf545b-023b-853a-95ef-ce99e1896a5d@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, Ajay.Kathat@microchip.com, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Navid Emamdoost <navid.emamdoost@gmail.com>, Peter Senna Tschudin <peter.senna@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen McCamant <smccaman@umn.edu>, Navid Emamdoost <emamd001@umn.edu>
 
-DQoNCk9uIDEwLzE3LzE5IDI6MTggQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRoZSAicmF0
-ZXNfbGVuIiB2YWx1ZSBuZWVkcyB0byBiZSBjYXBwZWQgc28gdGhhdCB0aGUgbWVtY3B5KCkgZG9l
-c24ndA0KPiBjb3B5IGJleW9uZCB0aGUgZW5kIG9mIHRoZSBhcnJheS4NCj4NCj4gRml4ZXM6IGM1
-Yzc3YmExOGVhNiAoInN0YWdpbmc6IHdpbGMxMDAwOiBBZGQgU0RJTy9TUEkgODAyLjExIGRyaXZl
-ciIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xl
-LmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY19oaWYuYyB8IDIg
-KysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCg0KUmV2aWV3ZWQtYnk6IEFk
-aGFtIEFib3phZWlkIDxhZGhhbS5hYm96YWVpZEBtaWNyb2NoaXAuY29tPg0KDQpUaGFua3MgRGFu
-IGZvciB0aGUgcGF0Y2guDQoNCg0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Oct 2019 10:30:21 +0200
+
+The return value from a call of the function “kmemdup” was not checked
+in this function implementation. Thus add the corresponding error handling.
+
+Fixes: 19022aaae677dfa171a719e9d1ff04823ce65a65 ("staging: drm/imx: Add parallel display support")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/imx/parallel-display.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/imx/parallel-display.c b/drivers/gpu/drm/imx/parallel-display.c
+index 35518e5de356..39c4798f56b6 100644
+--- a/drivers/gpu/drm/imx/parallel-display.c
++++ b/drivers/gpu/drm/imx/parallel-display.c
+@@ -210,8 +210,13 @@ static int imx_pd_bind(struct device *dev, struct device *master, void *data)
+ 		return -ENOMEM;
+
+ 	edidp = of_get_property(np, "edid", &imxpd->edid_len);
+-	if (edidp)
++	if (edidp) {
+ 		imxpd->edid = kmemdup(edidp, imxpd->edid_len, GFP_KERNEL);
++		if (!imxpd->edid) {
++			devm_kfree(dev, imxpd);
++			return -ENOMEM;
++		}
++	}
+
+ 	ret = of_property_read_string(np, "interface-pix-fmt", &fmt);
+ 	if (!ret) {
+--
+2.23.0
