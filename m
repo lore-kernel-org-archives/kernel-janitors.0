@@ -1,24 +1,25 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 01 Oct 2019 02:46:07 +0000
-Subject: Re: [PATCH] scsi: fnic: make array dev_cmd_err static const, makes object smaller
-Message-Id: <yq1a7alyyhc.fsf@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 12 Oct 2019 17:26:24 +0000
+Subject: iwlwifi: Checking a kmemdup() call in iwl_req_fw_callback()
+Message-Id: <71774617-79f9-1365-4267-a15a47422d10@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190906163945.3889-1-colin.king@canonical.com>
-In-Reply-To: <20190906163945.3889-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 6 Sep 2019 17:39:45 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, Karan Tilak Kumar <kartilak@cisco.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-wireless@vger.kernel.org, linuxwifi@intel.com, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Luca Coelho <luciano.coelho@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
+Hello,
 
-Colin,
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “iwl_req_fw_callback” contains still an unchecked call
+of the function “kmemdup”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/wireless/intel/iwlwifi/iwl-drv.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1454
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c#L1454
 
-> Don't populate the array dev_cmd_err on the stack but instead make it
-> static const. Makes the object code smaller by 80 bytes.
+Can it be that just an other data structure member should be used
+for the desired null pointer check at this place?
 
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
