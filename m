@@ -1,52 +1,70 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 13 Oct 2019 08:45:09 +0000
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Sun, 13 Oct 2019 21:49:54 +0000
 Subject: Re: clk: rockchip: Checking a kmemdup() call in rockchip_clk_register_pll()
-Message-Id: <29d12079-d888-e090-da5a-c407c13d696b@web.de>
+Message-Id: <2588953.0pqkEXWxhN@phil>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
- <5801053.xxhhKtLrcJ@diego>
-In-Reply-To: <5801053.xxhhKtLrcJ@diego>
+ <5801053.xxhhKtLrcJ@diego> <29d12079-d888-e090-da5a-c407c13d696b@web.de>
+In-Reply-To: <29d12079-d888-e090-da5a-c407c13d696b@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Stephen Boyd <sboyd@kernel.org>, Kangjie Lu <kjlu@umn.edu>, Michael Turquette <mturquette@baylibre.com>, Stephen McCamant <smccaman@umn.edu>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Navid Emamdoost <emamd001@umn.edu>, Aditya Pakki <pakki001@umn.edu>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/rockchip/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n913
->> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/rockchip/clk-pll.c#L913
->>
->> * Do you find the usage of the format string “%s: could not allocate
->>   rate table for %s\n” still appropriate at this place?
->
-> If there is an internal "no-memory" output from inside kmemdup now,
-> I guess the one in the clock driver would be a duplicate and could go away.
-
-How do you think about to recheck information sources around
-the Linux allocation failure report?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=da94001239cceb93c132a31928d6ddc4214862d5#n878
-
-
->> * Is there a need to adjust the error handling here?
->
-> There is no need for additional error handling.
-
-If you would like to omit the macro call “WARN”, I would expect also
-to express a corresponding null pointer check.
-
-
-> Like if the rate-table could not be duplicated,
-> the clock will still report the correct clockrate
-> you can just not set a new rate.
-
-How much will a different system configuration matter finally?
-(Do you really want to treat this setting as “optional”?)
-
-
-> And for a system it's always better to have the clock driver present
-> than for all device-drivers to fail probing. Especially as this start as
-> core clock driver, so there is no deferring possible.
-
-I imagine that such a view can be clarified further.
-
-Regards,
-Markus
+QW0gU29ubnRhZywgMTMuIE9rdG9iZXIgMjAxOSwgMTA6NDU6MDkgQ0VTVCBzY2hyaWViIE1hcmt1
+cyBFbGZyaW5nOgo+ID4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
+ZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZlcnMvY2xrL3JvY2tjaGlwL2Nsay1w
+bGwuYz9pZBwwY2M1ZjFhZTVlZTVhNjkxMzcwNGMwZDc1YTZlOTk2MDRlZTMwYSNuOTEzCj4gPj4g
+aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuNC1yYzIvc291cmNlL2RyaXZlcnMv
+Y2xrL3JvY2tjaGlwL2Nsay1wbGwuYyNMOTEzCj4gPj4KPiA+PiAqIERvIHlvdSBmaW5kIHRoZSB1
+c2FnZSBvZiB0aGUgZm9ybWF0IHN0cmluZyDigJwlczogY291bGQgbm90IGFsbG9jYXRlCj4gPj4g
+ICByYXRlIHRhYmxlIGZvciAlc1xu4oCdIHN0aWxsIGFwcHJvcHJpYXRlIGF0IHRoaXMgcGxhY2U/
+Cj4gPgo+ID4gSWYgdGhlcmUgaXMgYW4gaW50ZXJuYWwgIm5vLW1lbW9yeSIgb3V0cHV0IGZyb20g
+aW5zaWRlIGttZW1kdXAgbm93LAo+ID4gSSBndWVzcyB0aGUgb25lIGluIHRoZSBjbG9jayBkcml2
+ZXIgd291bGQgYmUgYSBkdXBsaWNhdGUgYW5kIGNvdWxkIGdvIGF3YXkuCj4gCj4gSG93IGRvIHlv
+dSB0aGluayBhYm91dCB0byByZWNoZWNrIGluZm9ybWF0aW9uIHNvdXJjZXMgYXJvdW5kCj4gdGhl
+IExpbnV4IGFsbG9jYXRpb24gZmFpbHVyZSByZXBvcnQ/Cj4gaHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1l
+bnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5yc3Q/aWTaOTQwMDEyMzljY2ViOTNjMTMyYTMx
+OTI4ZDZkZGM0MjE0ODYyZDUjbjg3OAo+IAo+IAo+ID4+ICogSXMgdGhlcmUgYSBuZWVkIHRvIGFk
+anVzdCB0aGUgZXJyb3IgaGFuZGxpbmcgaGVyZT8KPiA+Cj4gPiBUaGVyZSBpcyBubyBuZWVkIGZv
+ciBhZGRpdGlvbmFsIGVycm9yIGhhbmRsaW5nLgo+IAo+IElmIHlvdSB3b3VsZCBsaWtlIHRvIG9t
+aXQgdGhlIG1hY3JvIGNhbGwg4oCcV0FSTuKAnSwgSSB3b3VsZCBleHBlY3QgYWxzbwo+IHRvIGV4
+cHJlc3MgYSBjb3JyZXNwb25kaW5nIG51bGwgcG9pbnRlciBjaGVjay4KClNvIEkgZ3Vlc3Mgd2Ug
+d2FudCBzb21ldGhpbmcgbGlrZSB0aGUgY2hhbmdlIGF0IHRoZSBib3R0b20uCgoKPiA+IExpa2Ug
+aWYgdGhlIHJhdGUtdGFibGUgY291bGQgbm90IGJlIGR1cGxpY2F0ZWQsCj4gPiB0aGUgY2xvY2sg
+d2lsbCBzdGlsbCByZXBvcnQgdGhlIGNvcnJlY3QgY2xvY2tyYXRlCj4gPiB5b3UgY2FuIGp1c3Qg
+bm90IHNldCBhIG5ldyByYXRlLgo+IAo+IEhvdyBtdWNoIHdpbGwgYSBkaWZmZXJlbnQgc3lzdGVt
+IGNvbmZpZ3VyYXRpb24gbWF0dGVyIGZpbmFsbHk/Cj4gKERvIHlvdSByZWFsbHkgd2FudCB0byB0
+cmVhdCB0aGlzIHNldHRpbmcgYXMg4oCcb3B0aW9uYWzigJ0/KQo+IAo+ID4gQW5kIGZvciBhIHN5
+c3RlbSBpdCdzIGFsd2F5cyBiZXR0ZXIgdG8gaGF2ZSB0aGUgY2xvY2sgZHJpdmVyIHByZXNlbnQK
+PiA+IHRoYW4gZm9yIGFsbCBkZXZpY2UtZHJpdmVycyB0byBmYWlsIHByb2JpbmcuIEVzcGVjaWFs
+bHkgYXMgdGhpcyBzdGFydCBhcwo+ID4gY29yZSBjbG9jayBkcml2ZXIsIHNvIHRoZXJlIGlzIG5v
+IGRlZmVycmluZyBwb3NzaWJsZS4KPiAKPiBJIGltYWdpbmUgdGhhdCBzdWNoIGEgdmlldyBjYW4g
+YmUgY2xhcmlmaWVkIGZ1cnRoZXIuCgpUaGUgY29yZSBzb2MgY2xvY2sgZHJpdmVyIGdldHMgaW5p
+dGlhbGl6ZWQgdGhyb3VnaCBDTEtfT0ZfREVDTEFSRSgpLApha2EgcmVhbCBlYXJseSBkdXJpbmcg
+Ym9vdC4gU28gaWYgdGhlIGttZW1kdXAgZmFpbHMgdGhlcmUgY2FuIG5vdCBiZQphbnkgLUVQUk9C
+RV9ERUZFUiwgYXMgdGhlcmUgaXMgbm8ga2VybmVsLWRyaXZlci1tb2RlbCBydW5uaW5nIHlldC4K
+CkFsbCBvdGhlciBjb21wb25lbnRzIG9mIHRoZSBzeXN0ZW0gb2YgY291cnNlIGRlcGVuZCBvbiB0
+aGUgY2xvY2stCmNvbnRyb2xsZXIgYmVpbmcgYXZhaWxhYmxlLCBzbyB0aGF0IHdheSB0aGUgc3lz
+dGVtIGNhbiBhdCBsZWFzdCBjb21lCnVwIGZ1cnRoZXIgc28gdGhhdCBwZW9wbGUgbWlnaHQgYmUg
+YWJsZSB0byBkZWJ1ZyB0aGVpciBpc3N1ZSBmdXJ0aGVyLgoKVGhlIG90aGVyIG9wdGlvbiB3b3Vs
+ZCBiZSB0byBwYW5pYywgYnV0IHRoZSBrZXJuZWwgc2hvdWxkIG5vdApwYW5pYyBpZiBvdGhlciBv
+cHRpb25zIGFyZSBhdmFpbGFibGUgLSBhbmQgY29udGludWluZyB3aXRoIGEgc3RhdGljCnBsbCBm
+cmVxdWVuY3kgaXMgbGVzcyBpbnZhc2l2ZSBpbiB0aGUgZXJyb3IgY2FzZS4KCkhlaWtvCgotLS0t
+LS0gODwgLS0tLS0tLQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5j
+IGIvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5jCmluZGV4IDE5ODQxN2Q1NjMwMC4uMTdi
+ZmFjNjExZTc5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2Nsay9yb2NrY2hpcC9jbGstcGxsLmMKKysr
+IGIvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5jCkBAIC05MDksMTQgKzkwOSwxNiBAQCBz
+dHJ1Y3QgY2xrICpyb2NrY2hpcF9jbGtfcmVnaXN0ZXJfcGxsKHN0cnVjdCByb2NrY2hpcF9jbGtf
+cHJvdmlkZXIgKmN0eCwKIAkJZm9yIChsZW4gPSAwOyByYXRlX3RhYmxlW2xlbl0ucmF0ZSAhPSAw
+OyApCiAJCQlsZW4rKzsKIAotCQlwbGwtPnJhdGVfY291bnQgPSBsZW47CiAJCXBsbC0+cmF0ZV90
+YWJsZSA9IGttZW1kdXAocmF0ZV90YWJsZSwKIAkJCQkJcGxsLT5yYXRlX2NvdW50ICoKIAkJCQkJ
+c2l6ZW9mKHN0cnVjdCByb2NrY2hpcF9wbGxfcmF0ZV90YWJsZSksCiAJCQkJCUdGUF9LRVJORUwp
+OwotCQlXQVJOKCFwbGwtPnJhdGVfdGFibGUsCi0JCQkiJXM6IGNvdWxkIG5vdCBhbGxvY2F0ZSBy
+YXRlIHRhYmxlIGZvciAlc1xuIiwKLQkJCV9fZnVuY19fLCBuYW1lKTsKKworCQkvKgorCQkgKiBT
+ZXQgbnVtIHJhdGVzIHRvIDAgaWYga21lbWR1cCBmYWlscy4gVGhhdCB3YXkgdGhlIGNsb2NrCisJ
+CSAqIGF0IGxlYXN0IGNhbiByZXBvcnQgaXRzIHJhdGUgYW5kIHN0YXlzIHVzYWJsZS4KKwkJICov
+CisJCXBsbC0+cmF0ZV9jb3VudCA9IHBsbC0+cmF0ZV90YWJsZSA/IGxlbiA6IDA7CiAJfQogCiAJ
+c3dpdGNoIChwbGxfdHlwZSkgewoKCg==
