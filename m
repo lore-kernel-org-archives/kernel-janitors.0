@@ -1,33 +1,27 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 16 Oct 2019 18:19:38 +0000
-Subject: [PATCH 04/10] atl1c: remove unneeded conversions to bool
-Message-Id: <20191016181944.25106-1-afd@ti.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Sun, 13 Oct 2019 21:58:26 +0000
+Subject: Re: [PATCH] drm/rockchip/rk3066: Use devm_platform_ioremap_resource() in rk3066_hdmi_bind()
+Message-Id: <12988569.FbAFs2EWry@phil>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
+In-Reply-To: <0666bc0b-6624-21a0-47c4-b78e2a3b3ad5@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org, Zheng Yang <zhengyang@rock-chips.com>
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+Am Samstag, 21. September 2019, 20:40:16 CEST schrieb Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 21 Sep 2019 20:32:25 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+applied to drm-misc-next
 
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-index 2b239ecea05f..d6385899762c 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-@@ -1189,7 +1189,7 @@ static void atl1c_start_mac(struct atl1c_adapter *adapter)
- 	struct atl1c_hw *hw = &adapter->hw;
- 	u32 mac, txq, rxq;
- 
--	hw->mac_duplex = adapter->link_duplex = FULL_DUPLEX ? true : false;
-+	hw->mac_duplex = adapter->link_duplex = FULL_DUPLEX;
- 	hw->mac_speed = adapter->link_speed = SPEED_1000 ?
- 		atl1c_mac_speed_1000 : atl1c_mac_speed_10_100;
- 
--- 
-2.17.1
+Thanks
+Heiko
