@@ -1,47 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 25 Oct 2019 13:46:12 +0000
-Subject: [PATCH] media: zr364xx: remove redundant assigmnent to idx, clean up code
-Message-Id: <20191025134612.30703-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Oct 2019 10:58:01 +0000
+Subject: [PATCH] platform/x86: huawei-wmi: Fix a precision vs width printf bug
+Message-Id: <20191014105801.GA31759@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc: Andy Shevchenko <andy@infradead.org>, Mattias Jacobsson <2pi@mok.nu>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This was supposed to be precision "%.*s" instead of width "%*s".  It's
+possible that this results in printing beyond the end of the string.
 
-The variable cable_type is being initialized with a value that
-is never read and is being re-assigned a little later on. Replace
-the redundant initializtion with the assignment that occurs a little
-later. Also initialize frm too rather than have a later assignment.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a970b95345ab ("platform/x86: huawei-wmi: Add debugfs support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/zr364xx/zr364xx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/platform/x86/huawei-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
-index aff78d63b869..57dbcc8083bf 100644
---- a/drivers/media/usb/zr364xx/zr364xx.c
-+++ b/drivers/media/usb/zr364xx/zr364xx.c
-@@ -555,14 +555,12 @@ static int zr364xx_read_video_callback(struct zr364xx_camera *cam,
- {
- 	unsigned char *pdest;
- 	unsigned char *psrc;
--	s32 idx = -1;
--	struct zr364xx_framei *frm;
-+	s32 idx = cam->cur_frame;
-+	struct zr364xx_framei *frm = &cam->buffer.frame[idx];
- 	int i = 0;
- 	unsigned char *ptr = NULL;
- 
- 	_DBG("buffer to user\n");
--	idx = cam->cur_frame;
--	frm = &cam->buffer.frame[idx];
- 
- 	/* swap bytes if camera needs it */
- 	if (cam->method = METHOD0) {
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+index 6720f78c60c2..69a7be8dafcd 100644
+--- a/drivers/platform/x86/huawei-wmi.c
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -612,7 +612,7 @@ static void huawei_wmi_debugfs_call_dump(struct seq_file *m, void *data,
+ 		seq_printf(m, "0x%llx", obj->integer.value);
+ 		break;
+ 	case ACPI_TYPE_STRING:
+-		seq_printf(m, "\"%*s\"", obj->string.length, obj->string.pointer);
++		seq_printf(m, "\"%.*s\"", obj->string.length, obj->string.pointer);
+ 		break;
+ 	case ACPI_TYPE_BUFFER:
+ 		seq_puts(m, "{");
 -- 
 2.20.1
