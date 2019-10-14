@@ -1,35 +1,95 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 31 Oct 2019 22:12:10 +0000
-Subject: Re: [PATCH] fbdev: potential information leak in do_fb_ioctl()
-Message-Id: <87ftj8k1j9.fsf@x220.int.ebiederm.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Oct 2019 12:16:13 +0000
+Subject: [PATCH] scsi: fix unintended sign extension on left shifts
+Message-Id: <20191014121613.21999-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029182320.GA17569@mwanda>
-        <87zhhjjryk.fsf@x220.int.ebiederm.org> <20191030074321.GD2656@xps-13>
-        <87r22ujaqq.fsf@x220.int.ebiederm.org> <20191030201201.GA3209@xps-13>
-        <734ef2833e4e4e7bded92e9d964bc2415aadf3c4.camel@perches.com>
-In-Reply-To: <734ef2833e4e4e7bded92e9d964bc2415aadf3c4.camel@perches.com> (Joe
-        Perches's message of "Thu, 31 Oct 2019 11:16:39 -0700")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Andrea Righi <andrea.righi@canonical.com>, Dan Carpenter <dan.carpenter@oracle.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Peter Rosin <peda@axentia.se>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, security@kernel.org, Kees Cook <keescook@chromium.org>, Julia Lawall <Julia.Lawall@lip6.fr>
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Tomohiro Kusumi <kusumi.tomohiro@jp.fujitsu.com>, Kei Tokunaga <tokunaga.keiich@jp.fujitsu.com>, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Joe Perches <joe@perches.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Wed, 2019-10-30 at 21:12 +0100, Andrea Righi wrote:
->> Then memset() + memcpy() is probably the best option,
->> since copying all those fields one by one looks quite ugly to me...
->
-> A memset of an automatic before a memcpy to the same
-> automatic is unnecessary.
+Shifting a u8 left will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an u64 will
+sign extend the value causing the upper 32 bits to be set in the result.
 
-You still need to guarantee that all of the holes in the
-structure you are copying are initialized before you copy it.
+Fix this by casting the u8 value to a u64 before the shift.
 
-Otherwise you are just changing which unitialized memory that
-is being copied to userspace.
+Fixes: bf8162354233 ("[SCSI] add scsi trace core functions and put trace points")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/scsi_trace.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Which is my concern with your very simple suggestion.
-
-Eric
+diff --git a/drivers/scsi/scsi_trace.c b/drivers/scsi/scsi_trace.c
+index 0f17e7dac1b0..1d3a5a2dc229 100644
+--- a/drivers/scsi/scsi_trace.c
++++ b/drivers/scsi/scsi_trace.c
+@@ -38,7 +38,7 @@ scsi_trace_rw10(struct trace_seq *p, unsigned char *cdb, int len)
+ 	const char *ret = trace_seq_buffer_ptr(p);
+ 	sector_t lba = 0, txlen = 0;
+ 
+-	lba |= (cdb[2] << 24);
++	lba |= ((u64)cdb[2] << 24);
+ 	lba |= (cdb[3] << 16);
+ 	lba |= (cdb[4] << 8);
+ 	lba |=  cdb[5];
+@@ -63,11 +63,11 @@ scsi_trace_rw12(struct trace_seq *p, unsigned char *cdb, int len)
+ 	const char *ret = trace_seq_buffer_ptr(p);
+ 	sector_t lba = 0, txlen = 0;
+ 
+-	lba |= (cdb[2] << 24);
++	lba |= ((u64)cdb[2] << 24);
+ 	lba |= (cdb[3] << 16);
+ 	lba |= (cdb[4] << 8);
+ 	lba |=  cdb[5];
+-	txlen |= (cdb[6] << 24);
++	txlen |= ((u64)cdb[6] << 24);
+ 	txlen |= (cdb[7] << 16);
+ 	txlen |= (cdb[8] << 8);
+ 	txlen |=  cdb[9];
+@@ -90,11 +90,11 @@ scsi_trace_rw16(struct trace_seq *p, unsigned char *cdb, int len)
+ 	lba |= ((u64)cdb[3] << 48);
+ 	lba |= ((u64)cdb[4] << 40);
+ 	lba |= ((u64)cdb[5] << 32);
+-	lba |= (cdb[6] << 24);
++	lba |= ((u64)cdb[6] << 24);
+ 	lba |= (cdb[7] << 16);
+ 	lba |= (cdb[8] << 8);
+ 	lba |=  cdb[9];
+-	txlen |= (cdb[10] << 24);
++	txlen |= ((u64)cdb[10] << 24);
+ 	txlen |= (cdb[11] << 16);
+ 	txlen |= (cdb[12] << 8);
+ 	txlen |=  cdb[13];
+@@ -140,7 +140,7 @@ scsi_trace_rw32(struct trace_seq *p, unsigned char *cdb, int len)
+ 	lba |= ((u64)cdb[13] << 48);
+ 	lba |= ((u64)cdb[14] << 40);
+ 	lba |= ((u64)cdb[15] << 32);
+-	lba |= (cdb[16] << 24);
++	lba |= ((u64)cdb[16] << 24);
+ 	lba |= (cdb[17] << 16);
+ 	lba |= (cdb[18] << 8);
+ 	lba |=  cdb[19];
+@@ -148,7 +148,7 @@ scsi_trace_rw32(struct trace_seq *p, unsigned char *cdb, int len)
+ 	ei_lbrt |= (cdb[21] << 16);
+ 	ei_lbrt |= (cdb[22] << 8);
+ 	ei_lbrt |=  cdb[23];
+-	txlen |= (cdb[28] << 24);
++	txlen |= ((u64)cdb[28] << 24);
+ 	txlen |= (cdb[29] << 16);
+ 	txlen |= (cdb[30] << 8);
+ 	txlen |=  cdb[31];
+@@ -201,7 +201,7 @@ scsi_trace_service_action_in(struct trace_seq *p, unsigned char *cdb, int len)
+ 	lba |= ((u64)cdb[3] << 48);
+ 	lba |= ((u64)cdb[4] << 40);
+ 	lba |= ((u64)cdb[5] << 32);
+-	lba |= (cdb[6] << 24);
++	lba |= ((u64)cdb[6] << 24);
+ 	lba |= (cdb[7] << 16);
+ 	lba |= (cdb[8] << 8);
+ 	lba |=  cdb[9];
+-- 
+2.20.1
