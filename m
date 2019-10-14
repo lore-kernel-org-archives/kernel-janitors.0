@@ -1,31 +1,45 @@
-From: "Coryna Rizky Amelia, SST" <coryna_fk@ub.ac.id>
-Date: Thu, 10 Oct 2019 13:06:26 +0000
-Subject: Apply For Financial investment at a lower rate 2%
-Message-Id: <CADotR_pXk0ovrYa13YuS-1nV8fQ26AyePr8SsNdfphc6PpacJA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Oct 2019 11:02:01 +0000
+Subject: [PATCH] staging: wlan-ng: fix exit return when sme->key_idx >= NUM_WEPKEYS
+Message-Id: <20191014110201.9874-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Claudiu Beznea <claudiu.beznea@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently the exit return path when sme->key_idx >= NUM_WEPKEYS is via
+label 'exit' and this checks if result is non-zero, however result has
+not been initialized and contains garbage.  Fix this by replacing the
+goto with a return with the error code.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 0ca6d8e74489 ("Staging: wlan-ng: replace switch-case statements with macro")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wlan-ng/cfg80211.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
+index eee1998c4b18..fac38c842ac5 100644
+--- a/drivers/staging/wlan-ng/cfg80211.c
++++ b/drivers/staging/wlan-ng/cfg80211.c
+@@ -469,10 +469,8 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
+ 	/* Set the encryption - we only support wep */
+ 	if (is_wep) {
+ 		if (sme->key) {
+-			if (sme->key_idx >= NUM_WEPKEYS) {
+-				err = -EINVAL;
+-				goto exit;
+-			}
++			if (sme->key_idx >= NUM_WEPKEYS)
++				return -EINVAL;
+ 
+ 			result = prism2_domibset_uint32(wlandev,
+ 				DIDMIB_DOT11SMT_PRIVACYTABLE_WEPDEFAULTKEYID,
 -- 
-Hello,
-
-We are private lenders based in UK.
-Do you need a loan (credit) as soon as possible. Are you in search of
-money to solve your personal needs or finance your business venture,
-then get Your desired loan today! Consult us at Sunrise Funding Ltd.
-
-* We offer personal loan & huge capital loan at 2% interest rate to
-the general public both locally and internationally.
-* Credit amount range from $5,000.00 -- $500,000.00 and above.
-* Special $10,000,000.00 Loan offer for huge project also available.
-* Loan period of 6 months -- 10 years.
-* Loan is granted 24 hours after approval and accredited, directly in
-hand or bank account.
-
-Please note that you are advised to contact us for more details via
-the following e-mail address below;
-
-EMAIL : sunrisefundingltd50@gmail.com
-FIRM : Sunrise Funding Ltd UK.
+2.20.1
