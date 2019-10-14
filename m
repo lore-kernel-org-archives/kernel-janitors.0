@@ -1,70 +1,67 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Sun, 13 Oct 2019 21:49:54 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 14 Oct 2019 07:26:41 +0000
 Subject: Re: clk: rockchip: Checking a kmemdup() call in rockchip_clk_register_pll()
-Message-Id: <2588953.0pqkEXWxhN@phil>
+Message-Id: <45588ab8-2a6c-3f29-61ff-bccf8d6fb291@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
  <5801053.xxhhKtLrcJ@diego> <29d12079-d888-e090-da5a-c407c13d696b@web.de>
-In-Reply-To: <29d12079-d888-e090-da5a-c407c13d696b@web.de>
+ <2588953.0pqkEXWxhN@phil>
+In-Reply-To: <2588953.0pqkEXWxhN@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Stephen Boyd <sboyd@kernel.org>, Kangjie Lu <kjlu@umn.edu>, Michael Turquette <mturquette@baylibre.com>, Stephen McCamant <smccaman@umn.edu>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Navid Emamdoost <emamd001@umn.edu>, Aditya Pakki <pakki001@umn.edu>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-QW0gU29ubnRhZywgMTMuIE9rdG9iZXIgMjAxOSwgMTA6NDU6MDkgQ0VTVCBzY2hyaWViIE1hcmt1
-cyBFbGZyaW5nOgo+ID4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZlcnMvY2xrL3JvY2tjaGlwL2Nsay1w
-bGwuYz9pZBwwY2M1ZjFhZTVlZTVhNjkxMzcwNGMwZDc1YTZlOTk2MDRlZTMwYSNuOTEzCj4gPj4g
-aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuNC1yYzIvc291cmNlL2RyaXZlcnMv
-Y2xrL3JvY2tjaGlwL2Nsay1wbGwuYyNMOTEzCj4gPj4KPiA+PiAqIERvIHlvdSBmaW5kIHRoZSB1
-c2FnZSBvZiB0aGUgZm9ybWF0IHN0cmluZyDigJwlczogY291bGQgbm90IGFsbG9jYXRlCj4gPj4g
-ICByYXRlIHRhYmxlIGZvciAlc1xu4oCdIHN0aWxsIGFwcHJvcHJpYXRlIGF0IHRoaXMgcGxhY2U/
-Cj4gPgo+ID4gSWYgdGhlcmUgaXMgYW4gaW50ZXJuYWwgIm5vLW1lbW9yeSIgb3V0cHV0IGZyb20g
-aW5zaWRlIGttZW1kdXAgbm93LAo+ID4gSSBndWVzcyB0aGUgb25lIGluIHRoZSBjbG9jayBkcml2
-ZXIgd291bGQgYmUgYSBkdXBsaWNhdGUgYW5kIGNvdWxkIGdvIGF3YXkuCj4gCj4gSG93IGRvIHlv
-dSB0aGluayBhYm91dCB0byByZWNoZWNrIGluZm9ybWF0aW9uIHNvdXJjZXMgYXJvdW5kCj4gdGhl
-IExpbnV4IGFsbG9jYXRpb24gZmFpbHVyZSByZXBvcnQ/Cj4gaHR0cHM6Ly9naXQua2VybmVsLm9y
-Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1l
-bnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5yc3Q/aWTaOTQwMDEyMzljY2ViOTNjMTMyYTMx
-OTI4ZDZkZGM0MjE0ODYyZDUjbjg3OAo+IAo+IAo+ID4+ICogSXMgdGhlcmUgYSBuZWVkIHRvIGFk
-anVzdCB0aGUgZXJyb3IgaGFuZGxpbmcgaGVyZT8KPiA+Cj4gPiBUaGVyZSBpcyBubyBuZWVkIGZv
-ciBhZGRpdGlvbmFsIGVycm9yIGhhbmRsaW5nLgo+IAo+IElmIHlvdSB3b3VsZCBsaWtlIHRvIG9t
-aXQgdGhlIG1hY3JvIGNhbGwg4oCcV0FSTuKAnSwgSSB3b3VsZCBleHBlY3QgYWxzbwo+IHRvIGV4
-cHJlc3MgYSBjb3JyZXNwb25kaW5nIG51bGwgcG9pbnRlciBjaGVjay4KClNvIEkgZ3Vlc3Mgd2Ug
-d2FudCBzb21ldGhpbmcgbGlrZSB0aGUgY2hhbmdlIGF0IHRoZSBib3R0b20uCgoKPiA+IExpa2Ug
-aWYgdGhlIHJhdGUtdGFibGUgY291bGQgbm90IGJlIGR1cGxpY2F0ZWQsCj4gPiB0aGUgY2xvY2sg
-d2lsbCBzdGlsbCByZXBvcnQgdGhlIGNvcnJlY3QgY2xvY2tyYXRlCj4gPiB5b3UgY2FuIGp1c3Qg
-bm90IHNldCBhIG5ldyByYXRlLgo+IAo+IEhvdyBtdWNoIHdpbGwgYSBkaWZmZXJlbnQgc3lzdGVt
-IGNvbmZpZ3VyYXRpb24gbWF0dGVyIGZpbmFsbHk/Cj4gKERvIHlvdSByZWFsbHkgd2FudCB0byB0
-cmVhdCB0aGlzIHNldHRpbmcgYXMg4oCcb3B0aW9uYWzigJ0/KQo+IAo+ID4gQW5kIGZvciBhIHN5
-c3RlbSBpdCdzIGFsd2F5cyBiZXR0ZXIgdG8gaGF2ZSB0aGUgY2xvY2sgZHJpdmVyIHByZXNlbnQK
-PiA+IHRoYW4gZm9yIGFsbCBkZXZpY2UtZHJpdmVycyB0byBmYWlsIHByb2JpbmcuIEVzcGVjaWFs
-bHkgYXMgdGhpcyBzdGFydCBhcwo+ID4gY29yZSBjbG9jayBkcml2ZXIsIHNvIHRoZXJlIGlzIG5v
-IGRlZmVycmluZyBwb3NzaWJsZS4KPiAKPiBJIGltYWdpbmUgdGhhdCBzdWNoIGEgdmlldyBjYW4g
-YmUgY2xhcmlmaWVkIGZ1cnRoZXIuCgpUaGUgY29yZSBzb2MgY2xvY2sgZHJpdmVyIGdldHMgaW5p
-dGlhbGl6ZWQgdGhyb3VnaCBDTEtfT0ZfREVDTEFSRSgpLApha2EgcmVhbCBlYXJseSBkdXJpbmcg
-Ym9vdC4gU28gaWYgdGhlIGttZW1kdXAgZmFpbHMgdGhlcmUgY2FuIG5vdCBiZQphbnkgLUVQUk9C
-RV9ERUZFUiwgYXMgdGhlcmUgaXMgbm8ga2VybmVsLWRyaXZlci1tb2RlbCBydW5uaW5nIHlldC4K
-CkFsbCBvdGhlciBjb21wb25lbnRzIG9mIHRoZSBzeXN0ZW0gb2YgY291cnNlIGRlcGVuZCBvbiB0
-aGUgY2xvY2stCmNvbnRyb2xsZXIgYmVpbmcgYXZhaWxhYmxlLCBzbyB0aGF0IHdheSB0aGUgc3lz
-dGVtIGNhbiBhdCBsZWFzdCBjb21lCnVwIGZ1cnRoZXIgc28gdGhhdCBwZW9wbGUgbWlnaHQgYmUg
-YWJsZSB0byBkZWJ1ZyB0aGVpciBpc3N1ZSBmdXJ0aGVyLgoKVGhlIG90aGVyIG9wdGlvbiB3b3Vs
-ZCBiZSB0byBwYW5pYywgYnV0IHRoZSBrZXJuZWwgc2hvdWxkIG5vdApwYW5pYyBpZiBvdGhlciBv
-cHRpb25zIGFyZSBhdmFpbGFibGUgLSBhbmQgY29udGludWluZyB3aXRoIGEgc3RhdGljCnBsbCBm
-cmVxdWVuY3kgaXMgbGVzcyBpbnZhc2l2ZSBpbiB0aGUgZXJyb3IgY2FzZS4KCkhlaWtvCgotLS0t
-LS0gODwgLS0tLS0tLQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5j
-IGIvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5jCmluZGV4IDE5ODQxN2Q1NjMwMC4uMTdi
-ZmFjNjExZTc5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2Nsay9yb2NrY2hpcC9jbGstcGxsLmMKKysr
-IGIvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXBsbC5jCkBAIC05MDksMTQgKzkwOSwxNiBAQCBz
-dHJ1Y3QgY2xrICpyb2NrY2hpcF9jbGtfcmVnaXN0ZXJfcGxsKHN0cnVjdCByb2NrY2hpcF9jbGtf
-cHJvdmlkZXIgKmN0eCwKIAkJZm9yIChsZW4gPSAwOyByYXRlX3RhYmxlW2xlbl0ucmF0ZSAhPSAw
-OyApCiAJCQlsZW4rKzsKIAotCQlwbGwtPnJhdGVfY291bnQgPSBsZW47CiAJCXBsbC0+cmF0ZV90
-YWJsZSA9IGttZW1kdXAocmF0ZV90YWJsZSwKIAkJCQkJcGxsLT5yYXRlX2NvdW50ICoKIAkJCQkJ
-c2l6ZW9mKHN0cnVjdCByb2NrY2hpcF9wbGxfcmF0ZV90YWJsZSksCiAJCQkJCUdGUF9LRVJORUwp
-OwotCQlXQVJOKCFwbGwtPnJhdGVfdGFibGUsCi0JCQkiJXM6IGNvdWxkIG5vdCBhbGxvY2F0ZSBy
-YXRlIHRhYmxlIGZvciAlc1xuIiwKLQkJCV9fZnVuY19fLCBuYW1lKTsKKworCQkvKgorCQkgKiBT
-ZXQgbnVtIHJhdGVzIHRvIDAgaWYga21lbWR1cCBmYWlscy4gVGhhdCB3YXkgdGhlIGNsb2NrCisJ
-CSAqIGF0IGxlYXN0IGNhbiByZXBvcnQgaXRzIHJhdGUgYW5kIHN0YXlzIHVzYWJsZS4KKwkJICov
-CisJCXBsbC0+cmF0ZV9jb3VudCA9IHBsbC0+cmF0ZV90YWJsZSA/IGxlbiA6IDA7CiAJfQogCiAJ
-c3dpdGNoIChwbGxfdHlwZSkgewoKCg==
+> The other option would be to panic, but the kernel should not
+> panic if other options are available - and continuing with a static
+> pll frequency is less invasive in the error case.
+
+I would like to point out that this function implementation contains
+the following source code already.
+
+…
+	/* name the actual pll */
+	snprintf(pll_name, sizeof(pll_name), "pll_%s", name);
+
+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+	if (!pll)
+		return ERR_PTR(-ENOMEM);
+…
+
+
+
+…
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -909,14 +909,16 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+…
+> -		pll->rate_count = len;
+>  		pll->rate_table = kmemdup(rate_table,
+>  					pll->rate_count *
+>  					sizeof(struct rockchip_pll_rate_table),
+>  					GFP_KERNEL);
+> -		WARN(!pll->rate_table,
+> -			"%s: could not allocate rate table for %s\n",
+> -			__func__, name);
+> +
+> +		/*
+> +		 * Set num rates to 0 if kmemdup fails. That way the clock
+> +		 * at least can report its rate and stays usable.
+> +		 */
+> +		pll->rate_count = pll->rate_table ? len : 0;
+
+Can an other error handling strategy make sense occasionally?
+
+…
+		if (!pll->rate_table) {
+			clk_unregister(mux_clk);
+			mux_clk = ERR_PTR(-ENOMEM);
+			goto err_mux;
+		}
+…
+
+
+Would you like to adjust such exception handling another bit?
+
+Regards,
+Markus
