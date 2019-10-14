@@ -1,24 +1,25 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 11 Oct 2019 15:33:17 +0000
-Subject: staging: wlan-ng: Checking a kmemdup() call in prism2sta_inf_hostscanresults()
-Message-Id: <cd77c9fd-47dd-28ae-33b3-c9b36bea078b@web.de>
+From: Vinod Koul <vkoul@kernel.org>
+Date: Mon, 14 Oct 2019 07:51:52 +0000
+Subject: Re: [PATCH] dmaengine: k3dma: Use devm_platform_ioremap_resource() in k3_dma_probe()
+Message-Id: <20191014075136.GE2654@vkoul-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <aaed7862-49bb-e368-3e7b-5cc2c3d915b1@web.de>
+In-Reply-To: <aaed7862-49bb-e368-3e7b-5cc2c3d915b1@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "J. Bruce Fields" <bfields@redhat.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello,
+On 22-09-19, 12:09, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Sep 2019 11:36:18 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
 
-I have tried another script for the semantic patch language out.
-This source code analysis approach points out that the implementation
-of the function “prism2sta_inf_hostscanresults” contains still
-an unchecked call of the function “kmemdup”.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/staging/wlan-ng/prism2sta.c?id=26a7ae2949a86e1b74e2485d725efb528e2a81bb#n1086
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/staging/wlan-ng/prism2sta.c#L1086
+Applied, thanks
 
-How do you think about to improve it?
-
-Regards,
-Markus
+-- 
+~Vinod
