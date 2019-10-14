@@ -1,39 +1,25 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 27 Oct 2019 20:40:21 +0000
-Subject: Re: [PATCH] ALSA: pci: Fix memory leak in snd_korg1212_create
-Message-Id: <47c90b48-8706-7860-3b87-30a7bbb726c0@web.de>
+From: Vinod Koul <vkoul@kernel.org>
+Date: Mon, 14 Oct 2019 07:53:41 +0000
+Subject: Re: [PATCH] dmaengine: owl: Use devm_platform_ioremap_resource() in owl_dma_probe()
+Message-Id: <20191014075242.GH2654@vkoul-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191027191206.30820-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191027191206.30820-1-navid.emamdoost@gmail.com>
+References: <d36b6a6c-2e3d-8d68-6ddc-969a377ca3b2@web.de>
+In-Reply-To: <d36b6a6c-2e3d-8d68-6ddc-969a377ca3b2@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>, Takashi Iwai <tiwai@suse.com>, Richard Fontana <rfontana@redhat.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Dan Williams <dan.j.williams@intel.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-…
-> +++ b/sound/pci/korg1212/korg1212.c
-…
-> @@ -2398,8 +2403,10 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
->
->          for (i = 0; i < ARRAY_SIZE(snd_korg1212_controls); i++) {
->                  err = snd_ctl_add(korg1212->card, snd_ctl_new1(&snd_korg1212_controls[i], korg1212));
-> -                if (err < 0)
-> +		if (err < 0) {
-> +			snd_korg1212_free(korg1212);
->                          return err;
-> +		}
+On 22-09-19, 13:30, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Sep 2019 13:23:54 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
 
-I suggest to add a jump target according to the Linux coding style
-so that duplicate exception handling code can be reduced.
+Applied, thanks
 
- 	return 0;
-
-+free_korg:
-+	snd_korg1212_free(korg1212);
-+	return err;
- }
-
-
-Regards,
-Markus
+-- 
+~Vinod
