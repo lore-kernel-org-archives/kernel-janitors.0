@@ -1,45 +1,26 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 09 Oct 2019 08:29:00 +0000
-Subject: Re: [PATCH] rtl8xxxu: make arrays static, makes object smaller
-Message-Id: <20191009082900.9AF8D61A2A@smtp.codeaurora.org>
+From: Vinod Koul <vkoul@kernel.org>
+Date: Mon, 14 Oct 2019 07:53:40 +0000
+Subject: Re: [PATCH] dmaengine: mediatek: Use devm_platform_ioremap_resource() in mtk_cqdma_probe()
+Message-Id: <20191014075209.GF2654@vkoul-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191007135313.8443-1-colin.king@canonical.com>
-In-Reply-To: <20191007135313.8443-1-colin.king@canonical.com>
+References: <c7e3bbae-44fa-9019-18ee-c6cdfd7c2a14@web.de>
+In-Reply-To: <c7e3bbae-44fa-9019-18ee-c6cdfd7c2a14@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jes Sorensen <Jes.Sorensen@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, Shun-Chih Yu <shun-chih.yu@mediatek.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+On 22-09-19, 13:00, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Sep 2019 12:52:25 +0200
+> 
+> Simplify this function implementation a bit by using
+> a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrays on the stack but instead make them
-> static. Makes the object code smaller by 60 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   15133	   8768	      0	  23901	   5d5d	realtek/rtl8xxxu/rtl8xxxu_8192e.o
->   15209	   6392	      0	  21601	   5461	realtek/rtl8xxxu/rtl8xxxu_8723b.o
->  103254	  31202	    576	 135032	  20f78	realtek/rtl8xxxu/rtl8xxxu_core.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   14861	   9024	      0	  23885	   5d4d	realtek/rtl8xxxu/rtl8xxxu_8192e.o
->   14953	   6616	      0	  21569	   5441	realtek/rtl8xxxu/rtl8xxxu_8723b.o
->  102986	  31458	    576	 135020	  20f6c	realtek/rtl8xxxu/rtl8xxxu_core.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Chris Chiu <chiu@endlessm.com>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-314bf64d1266 rtl8xxxu: make arrays static, makes object smaller
+Applied, thanks
 
 -- 
-https://patchwork.kernel.org/patch/11177577/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+~Vinod
