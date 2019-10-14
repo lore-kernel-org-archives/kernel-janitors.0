@@ -1,35 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 22 Oct 2019 07:30:34 +0000
-Subject: Re: [PATCH] drm/v3d: Fix memory leak in v3d_submit_cl_ioctl
-Message-Id: <f5c228b6-eb9b-445d-3055-bb966e1c5deb@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Oct 2019 12:56:28 +0000
+Subject: [PATCH] scsi: aic7xxx: fix unintended sign extension on left shifts
+Message-Id: <20191014125628.30856-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191021185250.26130-1-navid.emamdoost@gmail.com>
- <a28f12a8-49c4-30f0-cc86-6a41ded96ab2@web.de>
-In-Reply-To: <a28f12a8-49c4-30f0-cc86-6a41ded96ab2@web.de>
+References: <20181025151334.15622-1-colin.king@canonical.com>
+In-Reply-To: <20181025151334.15622-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, Iago Toral Quiroga <itoral@igalia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> …
->> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
->> @@ -557,13 +557,16 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
-> …
->>  		if (ret) {
->>  			v3d_job_put(&render->base);
->> +			kfree(bin);
-> …
->
-> Can it be helpful to move the added function call before the other
-> in this if branch (if you prefer to avoid the addition of a jump target here)?
+From: Colin Ian King <colin.king@canonical.com>
 
-I got into the mood to take another look at these implementation details.
-I suggest then to look at the commit 0d352a3a8a1f26168d09f7073e61bb4b328e3bb9
-("drm/v3d: don't leak bin job if v3d_job_init fails." from 2019-09-18)
-once more.
+Shifting a u8 left will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an u64 will
+sign extend the value causing the upper 32 bits to be set in the result.
 
-With which software versions did you perform your source code analysis?
+Fix this by casting the u8 value to a u64 before the shift.  The commit
+this fixes is pre-git history.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aic7xxx/aic79xx_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 7e5044bf05c0..fa440c1b9baa 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -622,7 +622,7 @@ ahd_inq(struct ahd_softc *ahd, u_int port)
+ 	return ((ahd_inb(ahd, port))
+ 	      | (ahd_inb(ahd, port+1) << 8)
+ 	      | (ahd_inb(ahd, port+2) << 16)
+-	      | (ahd_inb(ahd, port+3) << 24)
++	      | (((uint64_t)ahd_inb(ahd, port+3)) << 24)
+ 	      | (((uint64_t)ahd_inb(ahd, port+4)) << 32)
+ 	      | (((uint64_t)ahd_inb(ahd, port+5)) << 40)
+ 	      | (((uint64_t)ahd_inb(ahd, port+6)) << 48)
+-- 
+2.20.1
