@@ -1,45 +1,38 @@
-From: Peter Chen <peter.chen@nxp.com>
-Date: Wed, 30 Oct 2019 08:11:12 +0000
-Subject: Re: [PATCH -next] usb: gadget: configfs: Fix missing spin_lock_init()
-Message-Id: <20191030081101.GF26815@b29397-desktop>
+From: Vinod Koul <vkoul@kernel.org>
+Date: Mon, 14 Oct 2019 07:26:00 +0000
+Subject: Re: [PATCH] dmaengine: jz4780: Use devm_platform_ioremap_resource() in jz4780_dma_probe()
+Message-Id: <20191014071400.GD2654@vkoul-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191030034046.188808-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191030034046.188808-1-weiyongjun1@huawei.com>
+References: <5dd19f28-349a-4957-ea3a-6aebbd7c97e2@web.de>
+ <1569353552.1911.0@crapouillou.net>
+In-Reply-To: <1569353552.1911.0@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Alex Smith <alex.smith@imgtec.com>
 
-On 19-10-30 03:40:46, Wei Yongjun wrote:
-> The driver allocates the spinlock but not initialize it.
-> Use spin_lock_init() on it to initialize it correctly.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> Fixes: 1a1c851bbd70 ("usb: gadget: configfs: fix concurrent issue between composite APIs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/usb/gadget/configfs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-> index 33852c2b29d1..ab9ac48a751a 100644
-> --- a/drivers/usb/gadget/configfs.c
-> +++ b/drivers/usb/gadget/configfs.c
-> @@ -1544,6 +1544,7 @@ static struct config_group *gadgets_make(
->  	gi->composite.resume = NULL;
->  	gi->composite.max_speed = USB_SPEED_SUPER;
->  
-> +	spin_lock_init(&gi->spinlock);
->  	mutex_init(&gi->lock);
->  	INIT_LIST_HEAD(&gi->string_list);
->  	INIT_LIST_HEAD(&gi->available_func);
-> 
+On 24-09-19, 21:32, Paul Cercueil wrote:
+> Hi Markus,
+>=20
+>=20
+> Le dim. 22 sept. 2019 =E0 11:25, Markus Elfring <Markus.Elfring@web.de> a
+> =E9crit :
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Sun, 22 Sep 2019 11:18:27 +0200
+> >=20
+> > Simplify this function implementation a bit by using
+> > a known wrapper function.
+> >=20
+> > This issue was detected by using the Coccinelle software.
+> >=20
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>=20
+> Looks good to me.
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-Reviewed-by: Peter Chen <peter.chen@nxp.com>
+Did you mean Acked or Reviewed ...??
 
--- 
-
-Thanks,
-Peter Chen
+--=20
+~Vinod
