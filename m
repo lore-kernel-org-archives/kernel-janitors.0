@@ -1,47 +1,21 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Tue, 15 Oct 2019 14:49:39 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 15 Oct 2019 17:55:18 +0000
 Subject: Re: clk: samsung: Checking a kmemdup() call in _samsung_clk_register_pll()
-Message-Id: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
+Message-Id: <cd91c7eb-7f14-e029-e495-6591987acf7c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
-In-Reply-To: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
+ <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
+In-Reply-To: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, LKML <linux-kernel@vger.kernel.org>
 
-Hi Markus,
+> That said, there is no need to print any warnings or error messages on
+> allocation failure, so technically they could be removed.
 
-2019年10月12日(土) 23:17 Markus Elfring <Markus.Elfring@web.de>:
->
-> Hello,
->
-> I tried another script for the semantic patch language out.
-> This source code analysis approach points out that the implementation
-> of the function “_samsung_clk_register_pll” contains also a call
-> of the function “kmemdup”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1275
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/samsung/clk-pll.c#L1275
+Do you find information sufficient from the Linux allocation failure report?
 
-Thanks for the report.
-
->
-> * Do you find the usage of the format string “%s: could not allocate
->   rate table for %s\n” still appropriate at this place?
-
-Yes, AFAICT there is nothing wrong with that format string.
-
->
-> * Is there a need to adjust the error handling here?
-
-No, there isn't much that can be done if we fail the allocation at
-such an early stage.
-
-That said, there is no need to print any warnings or error messages on
-allocation failure, so technically they could be removed. It doesn't
-really give us anything in case of existing code, though, and only
-makes a potential for merge conflicts, so I'd just leave it alone.
-
-Best regards,
-Tomasz
+Regards,
+Markus
