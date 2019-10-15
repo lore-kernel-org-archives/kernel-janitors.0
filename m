@@ -1,36 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Oct 2019 08:38:38 +0000
-Subject: [PATCH] platform/x86: huawei-wmi: make validation stricter in huawei_wmi_battery_set()
-Message-Id: <20191015083837.GA29104@mwanda>
+Date: Tue, 15 Oct 2019 12:46:23 +0000
+Subject: Re: [PATCH] platform/x86: huawei-wmi: make validation stricter in huawei_wmi_battery_set()
+Message-Id: <20191015124623.GF21344@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191015083837.GA29104@mwanda>
+ <CAB3uXr63uUwxBjkeeoftZ6HYm_hmN+E5EUhu15_Mta2qruOugA@mail.gmail.com>
+In-Reply-To: <CAB3uXr63uUwxBjkeeoftZ6HYm_hmN+E5EUhu15_Mta2qruOugA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Darren Hart <dvhart@infradead.org>, Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc: Andy Shevchenko <andy@infradead.org>, Takashi Iwai <tiwai@suse.de>, Mattias Jacobsson <2pi@mok.nu>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Takashi Iwai <tiwai@suse.de>, Mattias Jacobsson <2pi@mok.nu>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I don't think it makes sense for "end" to be negative or for even for it
-to be less than "start".  That also means that "start" can't be more
-than 100 which is good.
-
-Fixes: b7527d0f4502 ("platform/x86: huawei-wmi: Add battery charging thresholds")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/platform/x86/huawei-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 6720f78c60c2..02a505a72172 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -343,7 +343,7 @@ static int huawei_wmi_battery_set(int start, int end)
- 	union hwmi_arg arg;
- 	int err;
- 
--	if (start < 0 || end > 100)
-+	if (start < 0 || end < start || end > 100)
- 		return -EINVAL;
- 
- 	arg.cmd = BATTERY_THRESH_SET;
--- 
-2.20.1
+T24gVHVlLCBPY3QgMTUsIDIwMTkgYXQgMDg6MjE6NTlBTSAtMDQwMCwgQXltYW4gQmFnYWJhcyB3
+cm90ZToKPiBIaSBEYW4KPiAKPiBPbiBUdWUsIE9jdCAxNSwgMjAxOSwgNDozOSBBTSBEYW4gQ2Fy
+cGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+Cj4gd3JvdGU6Cj4gCj4gPiBJIGRvbid0
+IHRoaW5rIGl0IG1ha2VzIHNlbnNlIGZvciAiZW5kIiB0byBiZSBuZWdhdGl2ZSBvciBmb3IgZXZl
+biBmb3IgaXQKPiA+IHRvIGJlIGxlc3MgdGhhbiAic3RhcnQiLiAgVGhhdCBhbHNvIG1lYW5zIHRo
+YXQgInN0YXJ0IiBjYW4ndCBiZSBtb3JlCj4gPiB0aGFuIDEwMCB3aGljaCBpcyBnb29kLgo+ID4K
+PiAKPiBXaGlsZSB0aGlzIG1ha2VzIHNlbnNlLCB5b3UgcnVuIGludG8gaXNzdWVzIHdoZXJlIHlv
+dSBjYW5ub3Qgc2V0ICJzdGFydCIKPiBiZWZvcmUgImVuZCIgYW5kIHZpY2UgdmVyc2EuCj4gCj4g
+VGFrZSB0aGlzIHNjZW5hcmlvLCB5b3UgaGF2ZSBzdGFydHAgYW5kIGVuZJAsIG5vdyB5b3Ugd2Fu
+dCB0byBzZXQgdGhlc2UKPiB0byBzdGFydEAgYW5kIGVuZGAsIHlvdSB3b3VsZCBoYXZlIHRvIHNl
+dCAic3RhcnQiIGZpcnN0IGJlZm9yZSB5b3UgY2FuCj4gY2hhbmdlIHRoZSB2YWx1ZSBvZiAiZW5k
+IiBvdGhlcndpc2UgeW91IHdpbGwgcnVuIGludG8gRUlOVkFMLiBOb3cgaW1hZ2luZQo+IHlvdSB3
+YW5uYSBnbyB0aGUgb3Bwb3NpdGUgZGlyZWN0aW9uLCB5b3Ugd291bGQgaGF2ZSB0byBzZXQgImVu
+ZCIgYmVmb3JlIHlvdQo+IGNhbiBjaGFuZ2UgInN0YXJ0Ii4KPiBJIHRoaW5rIGhhdmluZyBhIGxp
+dHRsZSB3aWdnbGUgcm9vbSBpcyBmaW5lIGZvciBzdWNoIHNjZW5hcmlvcy4KPiAKCkkgaGF2ZW4n
+dCB0ZXN0ZWQgdGhpcyBjb2RlLi4uICBXaGF0IHlvdSdyZSBkZXNjcmliaW5nIHNvdW5kcyByZWFs
+bHkKdmVyeSB3ZWlyZCB0byBtZSwgYnV0IEkgd2lsbCBhY2NlcHQgdGhhdCB5b3Uga25vdyBtb3Jl
+IGFib3V0IHlvdXIKdXNlIGNhc2VzIHRoYW4gSSBkby4KCk15IG90aGVyIGNvbmNlcm4gaXMgdGhh
+dCByaWdodCBub3cgeW91IGNhbiBzZXQgc3RhcnQgPiAxMDAgb3IgZW5kIDwgMC4KCnJlZ2FyZHMs
+CmRhbiBjYXJwZW50ZXIK
