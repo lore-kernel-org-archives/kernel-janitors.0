@@ -1,37 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 02 Oct 2019 10:15:17 +0000
-Subject: [PATCH] libertas: remove redundant assignment to variable ret
-Message-Id: <20191002101517.10836-1-colin.king@canonical.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 16 Oct 2019 18:19:41 +0000
+Subject: [PATCH 07/10] [SCSI] Buslogic: Remove unneeded conversions to bool
+Message-Id: <20191016181944.25106-4-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191016181944.25106-1-afd@ti.com>
+In-Reply-To: <20191016181944.25106-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-The variable ret is being assigned a value that is never read and is
-being re-assigned a little later on. The assignment is redundant and hence
-can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/net/wireless/marvell/libertas/mesh.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/BusLogic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/mesh.c b/drivers/net/wireless/marvell/libertas/mesh.c
-index 2747c957d18c..44c8a550da4c 100644
---- a/drivers/net/wireless/marvell/libertas/mesh.c
-+++ b/drivers/net/wireless/marvell/libertas/mesh.c
-@@ -1003,7 +1003,6 @@ static int lbs_add_mesh(struct lbs_private *priv)
- 	if (priv->mesh_tlv) {
- 		sprintf(mesh_wdev->ssid, "mesh");
- 		mesh_wdev->mesh_id_up_len = 4;
--		ret = 1;
+diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+index c25e8a54e869..6a0a74e9edc9 100644
+--- a/drivers/scsi/BusLogic.c
++++ b/drivers/scsi/BusLogic.c
+@@ -2236,7 +2236,7 @@ static bool __init blogic_inquiry(struct blogic_adapter *adapter)
+ 					"INQUIRE INSTALLED DEVICES ID 0 TO 7");
+ 		for (tgt_id = 0; tgt_id < 8; tgt_id++)
+ 			adapter->tgt_flags[tgt_id].tgt_exists -				(installed_devs0to7[tgt_id] != 0 ? true : false);
++				(installed_devs0to7[tgt_id] != 0);
  	}
- 
- 	mesh_wdev->netdev = mesh_dev;
+ 	/*
+ 	   Issue the Inquire Setup Information command.
 -- 
-2.20.1
+2.17.1
