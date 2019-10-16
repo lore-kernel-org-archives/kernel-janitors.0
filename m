@@ -1,40 +1,49 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 06 Oct 2019 07:00:40 +0000
-Subject: Re: scripts: add_namespace: Fix coccicheck failed
-Message-Id: <fd7a2ab6-3fd3-e967-1959-04a828331884@web.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 16 Oct 2019 21:51:43 +0000
+Subject: [PATCH 5.3 111/112] efi/tpm: Fix sanity check of unsigned tbl_size being less than zero
+Message-Id: <20191016214907.521785772@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
- <20191006044456.57608-1-yuehaibing@huawei.com>
- <f9862128-8fa2-812e-cfb3-c9953b9e98a2@web.de>
- <alpine.DEB.2.21.1910060843030.4623@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1910060843030.4623@hadrien>
+References: <20191016214844.038848564@linuxfoundation.org>
+In-Reply-To: <20191016214844.038848564@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>, YueHaibing <yuehaibing@huawei.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
-Cc: Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Jessica Yu <jeyu@kernel.org>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Jerry Snitselaar <jsnitsel@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
->> I would find a commit subject like “scripts: add_namespace:
->> Add support for the default coccicheck operation mode” more appropriate
->> (if this software development will be clarified further in the shown direction
->> at all).
->
-> Please let this go.
+From: Colin Ian King <colin.king@canonical.com>
 
-This will not happen for a while.
+commit be59d57f98065af0b8472f66a0a969207b168680 upstream.
 
+Currently the check for tbl_size being less than zero is always false
+because tbl_size is unsigned. Fix this by making it a signed int.
 
-> Please stop criticizing the English of others.
+Addresses-Coverity: ("Unsigned compared against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-efi@vger.kernel.org
+Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size' after successful event log parsing")
+Link: https://lkml.kernel.org/r/20191008100153.8499-1-colin.king@canonical.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I am occasionally trying to provide some code review.
+---
+ drivers/firmware/efi/tpm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Chances for further improvements will eventually be lost, if you do not
-get informed about corresponding update candidates.
-
-
-> The message is understandable, and even more informative than what you propose.
-
-I would appreciate the selection of a better wording also in this case.
-
-Regards,
-Markus
+--- a/drivers/firmware/efi/tpm.c
++++ b/drivers/firmware/efi/tpm.c
+@@ -40,7 +40,7 @@ int __init efi_tpm_eventlog_init(void)
+ {
+ 	struct linux_efi_tpm_eventlog *log_tbl;
+ 	struct efi_tcg2_final_events_table *final_tbl;
+-	unsigned int tbl_size;
++	int tbl_size;
+ 	int ret = 0;
+ 
+ 	if (efi.tpm_log = EFI_INVALID_TABLE_ADDR) {
