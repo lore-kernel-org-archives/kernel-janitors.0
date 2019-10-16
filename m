@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Oct 2019 17:48:08 +0000
-Subject: Re: [PATCH][next] net: aquantia: fix spelling mistake: tx_queus -> tx_queues
-Message-Id: <20191029.104808.1135935798148200898.davem@davemloft.net>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 16 Oct 2019 18:19:44 +0000
+Subject: [PATCH 10/10] ath5k: Remove unneeded conversions to bool
+Message-Id: <20191016181944.25106-7-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191025113828.19710-1-colin.king@canonical.com>
-In-Reply-To: <20191025113828.19710-1-colin.king@canonical.com>
+References: <20191016181944.25106-1-afd@ti.com>
+In-Reply-To: <20191016181944.25106-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: epomozov@marvell.com, igor.russkikh@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 25 Oct 2019 12:38:28 +0100
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a netdev_err error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/net/wireless/ath/ath5k/ani.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/net/wireless/ath/ath5k/ani.c b/drivers/net/wireless/ath/ath5k/ani.c
+index 0624333f5430..850c608b43a3 100644
+--- a/drivers/net/wireless/ath/ath5k/ani.c
++++ b/drivers/net/wireless/ath/ath5k/ani.c
+@@ -501,7 +501,7 @@ ath5k_ani_calibration(struct ath5k_hw *ah)
+ 
+ 	if (as->ofdm_errors > ofdm_high || as->cck_errors > cck_high) {
+ 		/* too many PHY errors - we have to raise immunity */
+-		bool ofdm_flag = as->ofdm_errors > ofdm_high ? true : false;
++		bool ofdm_flag = as->ofdm_errors > ofdm_high;
+ 		ath5k_ani_raise_immunity(ah, as, ofdm_flag);
+ 		ath5k_ani_period_restart(as);
+ 
+-- 
+2.17.1
