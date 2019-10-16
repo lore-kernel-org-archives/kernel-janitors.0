@@ -1,54 +1,57 @@
-From: maowenan <maowenan@huawei.com>
-Date: Wed, 16 Oct 2019 00:54:53 +0000
-Subject: Re: [PATCH -next] usb: typec: add dependency for TYPEC_HD3SS3220
-Message-Id: <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
+From: Biju Das <biju.das@bp.renesas.com>
+Date: Wed, 16 Oct 2019 06:39:09 +0000
+Subject: RE: [PATCH -next] usb: typec: add dependency for TYPEC_HD3SS3220
+Message-Id: <OSBPR01MB2103364C0A4E7150C10DC624B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191009014707.38716-1-maowenan@huawei.com>
-In-Reply-To: <20191009014707.38716-1-maowenan@huawei.com>
+ <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
+In-Reply-To: <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, biju.das@bp.renesas.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: maowenan <maowenan@huawei.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
 
-kindly ping.
-
-On 2019/10/9 9:47, Mao Wenan wrote:
-> If CONFIG_TYPEC_HD3SS3220=y, CONFIG_USB_ROLE_SWITCH=m, below errors
-> can be found:
-> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_remove':
-> hd3ss3220.c:(.text+0x64): undefined reference to `usb_role_switch_put'
-> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_dr_set':
-> hd3ss3220.c:(.text+0x154): undefined reference to `usb_role_switch_set_role'
-> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_set_role':
-> hd3ss3220.c:(.text+0x294): undefined reference to `usb_role_switch_set_role'
-> hd3ss3220.c:(.text+0x2f4): undefined reference to `usb_role_switch_set_role'
-> hd3ss3220.c:(.text+0x348): undefined reference to `usb_role_switch_set_role'
-> hd3ss3220.c:(.text+0x390): undefined reference to `usb_role_switch_set_role'
-> drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_probe':
-> hd3ss3220.c:(.text+0x5e8): undefined reference to `fwnode_usb_role_switch_get'
-> hd3ss3220.c:(.text+0x8a4): undefined reference to `usb_role_switch_put'
-> make: *** [vmlinux] Error 1
-> 
-> This patch add dependency USB_ROLE_SWITCH for TYPEC_HD3SS3220.
-> 
-> Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/usb/typec/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-> index aceb2af..b4f2aac 100644
-> --- a/drivers/usb/typec/Kconfig
-> +++ b/drivers/usb/typec/Kconfig
-> @@ -53,6 +53,7 @@ source "drivers/usb/typec/ucsi/Kconfig"
->  config TYPEC_HD3SS3220
->  	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
->  	depends on I2C
-> +	depends on USB_ROLE_SWITCH
->  	help
->  	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
->  	  controller driver.
-> 
+DQogVGhpcyBwYXRjaCBpcyBwcmVzZW50IGluIGJvdGggdXNiLW5leHQgYW5kIExpbnV4LW5leHQu
+DQoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2dyZWdr
+aC91c2IuZ2l0L2NvbW1pdC8/aD11c2ItbmV4dCZpZD1kYTRiNWQxOGRkOTQ5YWJkZGE3YzhlYTc2
+Yzk0ODNiNWVkZDQ5NjE2DQoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
+ZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQvY29tbWl0Lz9oPW5leHQtMjAxOTEwMTYmaWQ9
+ZGE0YjVkMThkZDk0OWFiZGRhN2M4ZWE3NmM5NDgzYjVlZGQ0OTYxNg0KDQpDaGVlcnMsDQpCaWp1
+DQoNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIC1uZXh0XSB1c2I6IHR5cGVjOiBhZGQgZGVwZW5k
+ZW5jeSBmb3INCj4gVFlQRUNfSEQzU1MzMjIwDQo+IA0KPiBraW5kbHkgcGluZy4NCj4gDQo+IE9u
+IDIwMTkvMTAvOSA5OjQ3LCBNYW8gV2VuYW4gd3JvdGU6DQo+ID4gSWYgQ09ORklHX1RZUEVDX0hE
+M1NTMzIyMD15LCBDT05GSUdfVVNCX1JPTEVfU1dJVENIPW0sIGJlbG93DQo+IGVycm9ycw0KPiA+
+IGNhbiBiZSBmb3VuZDoNCj4gPiBkcml2ZXJzL3VzYi90eXBlYy9oZDNzczMyMjAubzogSW4gZnVu
+Y3Rpb24gYGhkM3NzMzIyMF9yZW1vdmUnOg0KPiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDY0KTog
+dW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgdXNiX3JvbGVfc3dpdGNoX3B1dCcNCj4gPiBkcml2ZXJz
+L3VzYi90eXBlYy9oZDNzczMyMjAubzogSW4gZnVuY3Rpb24gYGhkM3NzMzIyMF9kcl9zZXQnOg0K
+PiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDE1NCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8NCj4g
+YHVzYl9yb2xlX3N3aXRjaF9zZXRfcm9sZScNCj4gPiBkcml2ZXJzL3VzYi90eXBlYy9oZDNzczMy
+MjAubzogSW4gZnVuY3Rpb24gYGhkM3NzMzIyMF9zZXRfcm9sZSc6DQo+ID4gaGQzc3MzMjIwLmM6
+KC50ZXh0KzB4Mjk0KTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0bw0KPiBgdXNiX3JvbGVfc3dpdGNo
+X3NldF9yb2xlJw0KPiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDJmNCk6IHVuZGVmaW5lZCByZWZl
+cmVuY2UgdG8NCj4gYHVzYl9yb2xlX3N3aXRjaF9zZXRfcm9sZScNCj4gPiBoZDNzczMyMjAuYzoo
+LnRleHQrMHgzNDgpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvDQo+IGB1c2Jfcm9sZV9zd2l0Y2hf
+c2V0X3JvbGUnDQo+ID4gaGQzc3MzMjIwLmM6KC50ZXh0KzB4MzkwKTogdW5kZWZpbmVkIHJlZmVy
+ZW5jZSB0bw0KPiBgdXNiX3JvbGVfc3dpdGNoX3NldF9yb2xlJw0KPiA+IGRyaXZlcnMvdXNiL3R5
+cGVjL2hkM3NzMzIyMC5vOiBJbiBmdW5jdGlvbiBgaGQzc3MzMjIwX3Byb2JlJzoNCj4gPiBoZDNz
+czMyMjAuYzooLnRleHQrMHg1ZTgpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvDQo+IGBmd25vZGVf
+dXNiX3JvbGVfc3dpdGNoX2dldCcNCj4gPiBoZDNzczMyMjAuYzooLnRleHQrMHg4YTQpOiB1bmRl
+ZmluZWQgcmVmZXJlbmNlIHRvIGB1c2Jfcm9sZV9zd2l0Y2hfcHV0Jw0KPiA+IG1ha2U6ICoqKiBb
+dm1saW51eF0gRXJyb3IgMQ0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGQgZGVwZW5kZW5jeSBVU0Jf
+Uk9MRV9TV0lUQ0ggZm9yIFRZUEVDX0hEM1NTMzIyMC4NCj4gPg0KPiA+IEZpeGVzOiAxYzQ4Yzc1
+OWVmNGIgKCJ1c2I6IHR5cGVjOiBkcml2ZXIgZm9yIFRJIEhEM1NTMzIyMCBVU0IgVHlwZS1DDQo+
+ID4gRFJQIHBvcnQgY29udHJvbGxlciIpDQo+ID4gUmVwb3J0ZWQtYnk6IEh1bGsgUm9ib3QgPGh1
+bGtjaUBodWF3ZWkuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hbyBXZW5hbiA8bWFvd2VuYW5A
+aHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy91c2IvdHlwZWMvS2NvbmZpZyB8IDEg
+Kw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gPg0KPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL3VzYi90eXBlYy9LY29uZmlnIGIvZHJpdmVycy91c2IvdHlwZWMvS2NvbmZp
+Zw0KPiA+IGluZGV4IGFjZWIyYWYuLmI0ZjJhYWMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy91
+c2IvdHlwZWMvS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvdXNiL3R5cGVjL0tjb25maWcNCj4g
+PiBAQCAtNTMsNiArNTMsNyBAQCBzb3VyY2UgImRyaXZlcnMvdXNiL3R5cGVjL3Vjc2kvS2NvbmZp
+ZyINCj4gPiAgY29uZmlnIFRZUEVDX0hEM1NTMzIyMA0KPiA+ICAJdHJpc3RhdGUgIlRJIEhEM1NT
+MzIyMCBUeXBlLUMgRFJQIFBvcnQgY29udHJvbGxlciBkcml2ZXIiDQo+ID4gIAlkZXBlbmRzIG9u
+IEkyQw0KPiA+ICsJZGVwZW5kcyBvbiBVU0JfUk9MRV9TV0lUQ0gNCj4gPiAgCWhlbHANCj4gPiAg
+CSAgU2F5IFkgb3IgTSBoZXJlIGlmIHlvdXIgc3lzdGVtIGhhcyBUSSBIRDNTUzMyMjAgVHlwZS1D
+IERSUCBQb3J0DQo+ID4gIAkgIGNvbnRyb2xsZXIgZHJpdmVyLg0KPiA+DQoNCg=
