@@ -1,46 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Oct 2019 09:52:40 +0000
-Subject: [PATCH] media: cx18: make array mapping static, makes object smaller
-Message-Id: <20191007095240.29540-1-colin.king@canonical.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 16 Oct 2019 18:19:42 +0000
+Subject: [PATCH 08/10] i40e: Remove unneeded conversions to bool
+Message-Id: <20191016181944.25106-5-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191016181944.25106-1-afd@ti.com>
+In-Reply-To: <20191016181944.25106-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Don't populate the array mapping on the stack but instead make it
-static. Makes the object code smaller by 79 bytes.
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  27572	   2096	      0	  29668	   73e4	drivers/media/pci/cx18/cx18-ioctl.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  27429	   2160	      0	  29589	   7395	drivers/media/pci/cx18/cx18-ioctl.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/media/pci/cx18/cx18-ioctl.c | 2 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx18/cx18-ioctl.c b/drivers/media/pci/cx18/cx18-ioctl.c
-index 85f3e7307538..fa57e12f2ac8 100644
---- a/drivers/media/pci/cx18/cx18-ioctl.c
-+++ b/drivers/media/pci/cx18/cx18-ioctl.c
-@@ -664,7 +664,7 @@ static int _cx18_process_idx_data(struct cx18_buffer *buf,
- 	struct cx18_enc_idx_entry *e_buf;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 6031223eafab..87a9f2b586d5 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -11435,7 +11435,7 @@ static int i40e_get_rss_aq(struct i40e_vsi *vsi, const u8 *seed,
+ 	}
  
- 	/* Frame type lookup: 1=I, 2=P, 4=B */
--	const int mapping[8] = {
-+	static const int mapping[8] = {
- 		-1, V4L2_ENC_IDX_FRAME_I, V4L2_ENC_IDX_FRAME_P,
- 		-1, V4L2_ENC_IDX_FRAME_B, -1, -1, -1
- 	};
+ 	if (lut) {
+-		bool pf_lut = vsi->type = I40E_VSI_MAIN ? true : false;
++		bool pf_lut = vsi->type = I40E_VSI_MAIN;
+ 
+ 		ret = i40e_aq_get_rss_lut(hw, vsi->id, pf_lut, lut, lut_size);
+ 		if (ret) {
 -- 
-2.20.1
+2.17.1
