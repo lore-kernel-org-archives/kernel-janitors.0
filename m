@@ -1,48 +1,43 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 27 Oct 2019 20:59:25 +0000
-Subject: [PATCH 5.3 047/197] mips: Loongson: Fix the link time qualifier of serial_exit()
-Message-Id: <20191027203354.239642675@linuxfoundation.org>
+From: Marc Zyngier <maz@kernel.org>
+Date: Thu, 17 Oct 2019 16:13:47 +0000
+Subject: Re: [PATCH] coccinelle: =?UTF-8?Q?api/devm=5Fplatform=5Fioremap?=  =?UTF-8?Q?=5Fresource=3A=20remove
+Message-Id: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191027203351.684916567@linuxfoundation.org>
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20191017142237.9734-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Himanshu Jha <himanshujha199640@gmail.com>, Linus Torvalds <torvalds@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, tglx@linutronix.de, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 2019-10-17 15:22, Alexandre Belloni wrote:
+> While it is useful for new drivers to use 
+> devm_platform_ioremap_resource,
+> this script is currently used to spam maintainers, often updating 
+> very old
+> drivers. The net benefit is the removal of 2 lines of code in the 
+> driver
+> but the review load for the maintainers is huge. As of now, more that 
+> 560
+> patches have been sent, some of them obviously broken, as in:
+>
+> 
+> https://lore.kernel.org/lkml/9bbcce19c777583815c92ce3c2ff2586@www.loen.fr/
+>
+> Remove the script to reduce the spam.
+>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
+I think part of the issue is that the script reports a WARNING for 
+something
+that is definitely correct code, and could instead be simply toned 
+down.
 
-'exit' functions should be marked as __exit, not __init.
+Anyway, FWIW:
 
-Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: chenhc@lemote.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/loongson64/common/serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
-index ffefc1cb26121..98c3a7feb10f8 100644
---- a/arch/mips/loongson64/common/serial.c
-+++ b/arch/mips/loongson64/common/serial.c
-@@ -110,7 +110,7 @@ static int __init serial_init(void)
- }
- module_init(serial_init);
- 
--static void __init serial_exit(void)
-+static void __exit serial_exit(void)
- {
- 	platform_device_unregister(&uart8250_device);
- }
+         M.
 -- 
-2.20.1
+Jazz is not dead. It just smells funny...
