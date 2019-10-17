@@ -1,137 +1,51 @@
-From: Steven Price <steven.price@arm.com>
-Date: Thu, 24 Oct 2019 11:22:08 +0000
-Subject: Re: [PATCH] KVM: arm64: Select SCHED_INFO before SCHEDSTATS
-Message-Id: <6d037fa1-5e8b-38cd-e947-7547c1e8dd15@arm.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 17 Oct 2019 03:53:51 +0000
+Subject: [PATCH -next] CIFS: remove set but not used variables 'cinode' and 'netfid'
+Message-Id: <20191017035351.125013-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191023032254.159510-1-maowenan@huawei.com>
- <26ee413334937b9530bc8f033fe378ec@www.loen.fr>
-In-Reply-To: <26ee413334937b9530bc8f033fe378ec@www.loen.fr>
+References: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1536198643-6123-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Marc Zyngier <maz@kernel.org>, Mao Wenan <maowenan@huawei.com>
-Cc: catalin.marinas@arm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, will@kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench@samba.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On 23/10/2019 17:51, Marc Zyngier wrote:
-> On 2019-10-23 04:22, Mao Wenan wrote:
->> If KVM=y, it will select SCHEDSTATS, below erros can
->> be seen:
->> kernel/sched/stats.h: In function rq_sched_info_arrive:
->> kernel/sched/stats.h:12:20: error: struct sched_info
->> has no member named run_delay
->>    rq->rq_sched_info.run_delay += delta;
->>                     ^
->> kernel/sched/stats.h:13:20: error: struct sched_info
->> has no member named pcount
->>    rq->rq_sched_info.pcount++;
->>                     ^
->> kernel/sched/stats.h: In function rq_sched_info_dequeued:
->> kernel/sched/stats.h:31:20: error: struct sched_info has
->> no member named run_delay
->>    rq->rq_sched_info.run_delay += delta;
->>
->> These are because CONFIG_SCHED_INFO is not set, This patch
->> is to select SCHED_INFO before SCHEDSTATS.
->>
->> Fixes: 8564d6372a7d ("KVM: arm64: Support stolen time reporting via
->> shared structure")
->> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->> ---
->>  arch/arm64/kvm/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
->> index d8b88e4..3c46eac 100644
->> --- a/arch/arm64/kvm/Kconfig
->> +++ b/arch/arm64/kvm/Kconfig
->> @@ -39,6 +39,7 @@ config KVM
->>      select IRQ_BYPASS_MANAGER
->>      select HAVE_KVM_IRQ_BYPASS
->>      select HAVE_KVM_VCPU_RUN_PID_CHANGE
->> +    select SCHED_INFO
->>      select SCHEDSTATS
->>      ---help---
->>        Support hosting virtualized guest machines.
-> 
-> SCHEDSTATS is really an odd choice. Here's what I get after disabling
-> DEBUG_KERNEL (from defconfig):
-> 
-> WARNING: unmet direct dependencies detected for SCHEDSTATS
->   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
->   Selected by [y]:
->   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
-> 
-> WARNING: unmet direct dependencies detected for SCHEDSTATS
->   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
->   Selected by [y]:
->   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
-> 
-> WARNING: unmet direct dependencies detected for SCHEDSTATS
->   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
->   Selected by [y]:
->   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
-> 
-> So clearly SCHEDSTATS isn't meant to be selected on its own.
-> 
-> We can either just select SCHED_INFO (which *nobody else does*), or go
-> the full x86 way which selects TASK_DELAY_ACCT (and thus depends on
-> NET && MULTIUSER). My gut feeling is that we shouldn't deviate too much
-> from x86...
-> 
-> Thoughts?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I suspect you're right - TASK_DELAY_ACCT seems to be the closest to what
-we need. SCHEDSTATS has the "advantage" of forcing sched_info_on() to
-return true - preventing it from being disabled. But we clearly don't
-want to require CONFIG_DEBUG_KERNEL for CONFIG_KVM.
+fs/cifs/file.c: In function 'cifs_flock':
+fs/cifs/file.c:1704:8: warning:
+ variable 'netfid' set but not used [-Wunused-but-set-variable]
 
-The next best is CONFIG_TASK_DELAY_ACCT which enables sched_info_on()
-unless "nodelayacct" is specified on the cmdline. It seems reasonable
-that the cmdline option might break stolen time.
+fs/cifs/file.c:1702:24: warning:
+ variable 'cinode' set but not used [-Wunused-but-set-variable]
 
-So let's just copy x86:
-
------8<-----
-From 915893f5c57241cc29d90769b3f720a6135277d7 Mon Sep 17 00:00:00 2001
-From: Steven Price <steven.price@arm.com>
-Date: Thu, 24 Oct 2019 12:14:36 +0100
-Subject: [PATCH] KVM: arm64: Select TASK_DELAY_ACCT rather than SCHEDSTATS
-
-SCHEDSTATS requires DEBUG_KERNEL (and PROC_FS) and therefore isn't a
-good choice for enabling the scheduling statistics required for stolen
-time.
-
-Instead match the x86 configuration and select TASK_DELAY_ACCT. This
-adds the dependencies of NET && MULTIUSER for arm64 KVM.
-
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Fixes: 8564d6372a7d ("KVM: arm64: Support stolen time reporting via shared structure")
-Signed-off-by: Steven Price <steven.price@arm.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/arm64/kvm/Kconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/file.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-index d8b88e40d223..1ffb300e2d92 100644
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -21,6 +21,8 @@ if VIRTUALIZATION
- config KVM
- 	bool "Kernel-based Virtual Machine (KVM) support"
- 	depends on OF
-+	# for TASKSTATS/TASK_DELAY_ACCT:
-+	depends on NET && MULTIUSER
- 	select MMU_NOTIFIER
- 	select PREEMPT_NOTIFIERS
- 	select HAVE_KVM_CPU_RELAX_INTERCEPT
-@@ -39,7 +41,7 @@ config KVM
- 	select IRQ_BYPASS_MANAGER
- 	select HAVE_KVM_IRQ_BYPASS
- 	select HAVE_KVM_VCPU_RUN_PID_CHANGE
--	select SCHEDSTATS
-+	select TASK_DELAY_ACCT
- 	---help---
- 	  Support hosting virtualized guest machines.
- 	  We don't support KVM with 16K page tables yet, due to the multiple
--- 
-2.20.1
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 936e03892e2a..02a81dc6861a 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1699,9 +1699,7 @@ int cifs_flock(struct file *file, int cmd, struct file_lock *fl)
+ 	bool posix_lck = false;
+ 	struct cifs_sb_info *cifs_sb;
+ 	struct cifs_tcon *tcon;
+-	struct cifsInodeInfo *cinode;
+ 	struct cifsFileInfo *cfile;
+-	__u16 netfid;
+ 	__u32 type;
+ 
+ 	rc = -EACCES;
+@@ -1716,8 +1714,6 @@ int cifs_flock(struct file *file, int cmd, struct file_lock *fl)
+ 	cifs_read_flock(fl, &type, &lock, &unlock, &wait_flag,
+ 			tcon->ses->server);
+ 	cifs_sb = CIFS_FILE_SB(file);
+-	netfid = cfile->fid.netfid;
+-	cinode = CIFS_I(file_inode(file));
+ 
+ 	if (cap_unix(tcon->ses) &&
+ 	    (CIFS_UNIX_FCNTL_CAP & le64_to_cpu(tcon->fsUnixInfo.Capability)) &&
