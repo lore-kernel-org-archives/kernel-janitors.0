@@ -1,77 +1,35 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Tue, 01 Oct 2019 20:04:10 +0000
-Subject: Re: [PATCH][next] can: fix resource leak of skb on error return paths
-Message-Id: <720cf73f-8df0-6cee-33bd-41aa8b72dd8d@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="CTyUqY7dF4NYv8qQMfCoH5TKwo74Fmcw4"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Oct 2019 08:15:08 +0000
+Subject: [PATCH][next] drm/amdgpu/psp: fix spelling mistake "initliaze" -> "initialize"
+Message-Id: <20191018081508.11028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190918101156.24370-1-colin.king@canonical.com>
-In-Reply-To: <20190918101156.24370-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Robin van der Gracht <robin@protonic.nl>, Oleksij Rempel <linux@rempel-privat.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Oliver Hartkopp <socketcan@hartkopp.net>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CTyUqY7dF4NYv8qQMfCoH5TKwo74Fmcw4
-Content-Type: multipart/mixed; boundary="iTitcsbzqupLWeTCytjwOQ2RGKHJiXriV";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Colin King <colin.king@canonical.com>,
- Robin van der Gracht <robin@protonic.nl>,
- Oleksij Rempel <linux@rempel-privat.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Oliver Hartkopp <socketcan@hartkopp.net>,
- "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <720cf73f-8df0-6cee-33bd-41aa8b72dd8d@pengutronix.de>
-Subject: Re: [PATCH][next] can: fix resource leak of skb on error return paths
-References: <20190918101156.24370-1-colin.king@canonical.com>
-In-Reply-To: <20190918101156.24370-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
---iTitcsbzqupLWeTCytjwOQ2RGKHJiXriV
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+There is a spelling mistake in a DRM_ERROR error message. Fix it.
 
-On 9/18/19 12:11 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the error return paths do not free skb and this results
-> in a memory leak. Fix this by freeing them before the return.
->=20
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Added to can.
-
-tnx.
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---iTitcsbzqupLWeTCytjwOQ2RGKHJiXriV--
-
---CTyUqY7dF4NYv8qQMfCoH5TKwo74Fmcw4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEmvEkXzgOfc881GuFWsYho5HknSAFAl2TsToACgkQWsYho5Hk
-nSDMAQgAmSfPZWyQfnRGyicy3zeAXVdnUuYYS+3L81Gh7rpek12D4bHy9KAepag7
-M+FhBQySmrmYNu+dx3j8OzszIcSF0ad+JWU06ZarPaHQAuCX6Q8y/FJ3gPyy6VJv
-pa8xV6Nq1SbklDsdeeaXBZmQvMeoXAafDJlfIvZ7Wx9oKn8aoUcL7meAOIZoeGwc
-Ttpx2tjnWNYTtz+lG+3p20aV7WqSGKUXWERhjZ/AUSyADFfViA+1a+3ytO0ynWSm
-QFAxmu+2kNpiYwoPG8qaZQ0gJv1IRdiURoNz3Lik+MwGJsBWn4Z0nzUtrfxJuNJi
-M1B/Uwwfhs10MCWZc8ynWHRLcFO+iQ==
-=sDnQ
------END PGP SIGNATURE-----
-
---CTyUqY7dF4NYv8qQMfCoH5TKwo74Fmcw4--
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+index b996b5bc5804..fd7a73f4fa70 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -90,7 +90,7 @@ static int psp_sw_init(void *handle)
+ 
+ 	ret = psp_mem_training_init(psp);
+ 	if (ret) {
+-		DRM_ERROR("Failed to initliaze memory training!\n");
++		DRM_ERROR("Failed to initialize memory training!\n");
+ 		return ret;
+ 	}
+ 	ret = psp_mem_training(psp, PSP_MEM_TRAIN_COLD_BOOT);
+-- 
+2.20.1
