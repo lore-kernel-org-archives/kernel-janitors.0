@@ -1,31 +1,30 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 06 Oct 2019 05:39:30 +0000
-Subject: Re: staging: vt6655: Fix memory leak in vt6655_probe
-Message-Id: <ea5e4945-b48f-0955-ba52-071ef1bb0e57@web.de>
+Date: Fri, 18 Oct 2019 18:42:27 +0000
+Subject: clk: bcm2835: Checking a clk_register() call in bcm2835_clk_probe()
+Message-Id: <522fb1f3-d710-2f86-60b1-4224b8d3d17a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004200319.22394-1-navid.emamdoost@gmail.com>
- <1d0ba4c6-99ed-e2c9-48a2-ce34b0042876@web.de>
- <20191005184035.GA2062613@kroah.com>
-In-Reply-To: <20191005184035.GA2062613@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Navid Emamdoost <navid.emamdoost@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
-Cc: Malcolm Priestley <tvboxspy@gmail.com>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Madhumitha Prabakaran <madhumithabiw@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Forest Bond <forest@alittletooquiet.net>, Stephen McCamant <smccaman@umn.edu>
+To: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Matthias Brugger <mbrugger@suse.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
->>> In vt6655_probe, if vnt_init() fails the cleanup code needs to be called
->>> like other error handling cases. The call to device_free_info() is
->>> added.
->>
->> Please improve this change description.
->
-> It is fine as-is, please do not confuse people.
+Hello,
 
-Would you like to clarify a known guideline once more?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=43b815c6a8e7dbccb5b8bd9c4b099c24bc22d135#n151
-“…
-Describe your changes in imperative mood,
-…”
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “bcm2835_clk_probe” contains still
+an unchecked call of the member function “clk_register”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/bcm/clk-bcm2835.c?id=7571438a4868e7cb09d698ab52e54f9722020eef#n2243
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/bcm/clk-bcm2835.c#L2243
+
+How do you think about to improve it?
+
+* Which error code would you like to return for a failed
+  clock registration at this place?
+
+* Will it be needed to delete any information about clocks
+  as exception handling?
 
 Regards,
 Markus
