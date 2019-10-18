@@ -1,33 +1,48 @@
-From: Andy Duan <fugang.duan@nxp.com>
-Date: Sat, 26 Oct 2019 04:54:43 +0000
-Subject: RE: [EXT] [PATCH] net: fec: remove redundant assignment to pointer bdp
-Message-Id: <VI1PR0402MB3600328E75600B583331C2C2FF640@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+From: "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
+Date: Fri, 18 Oct 2019 07:51:10 +0000
+Subject: MOTHERLESS CHILDREN IN YOUR CITY !!
+Message-Id: <5621ej$0s4-7a@kh0.i.rsr.r9>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="EFA7_FB09FAD2"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191025172255.4742-1-colin.king@canonical.com>
-In-Reply-To: <20191025172255.4742-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-RnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiBTZW50OiBTYXR1cmRh
-eSwgT2N0b2JlciAyNiwgMjAxOSAxOjIzIEFNDQo+IFRoZSBwb2ludGVyIGJkcCBpcyBiZWluZyBh
-c3NpZ25lZCB3aXRoIGEgdmFsdWUgdGhhdCBpcyBuZXZlciByZWFkLCBzbyB0aGUNCj4gYXNzaWdu
-bWVudCBpcyByZWR1bmRhbnQgYW5kIGhlbmNlIGNhbiBiZSByZW1vdmVkLg0KPiANCj4gQWRkcmVz
-c2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
-biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQpUaGFua3MuDQoNCkFja2VkLWJ5OiBG
-dWdhbmcgRHVhbiA8ZnVnYW5nLmR1YW5AbnhwLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9l
-dGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYyB8IDEgLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEg
-ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVl
-c2NhbGUvZmVjX21haW4uYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNf
-bWFpbi5jDQo+IGluZGV4IGQ0ZDRjNzJhZGY0OS4uNjA4MTk2YmRkODkyIDEwMDY0NA0KPiAtLS0g
-YS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYw0KPiArKysgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYw0KPiBAQCAtMjcwNiw3ICsyNzA2
-LDYgQEAgc3RhdGljIHZvaWQgZmVjX2VuZXRfZnJlZV9idWZmZXJzKHN0cnVjdA0KPiBuZXRfZGV2
-aWNlICpuZGV2KQ0KPiANCj4gICAgICAgICBmb3IgKHEgPSAwOyBxIDwgZmVwLT5udW1fdHhfcXVl
-dWVzOyBxKyspIHsNCj4gICAgICAgICAgICAgICAgIHR4cSA9IGZlcC0+dHhfcXVldWVbcV07DQo+
-IC0gICAgICAgICAgICAgICBiZHAgPSB0eHEtPmJkLmJhc2U7DQo+ICAgICAgICAgICAgICAgICBm
-b3IgKGkgPSAwOyBpIDwgdHhxLT5iZC5yaW5nX3NpemU7IGkrKykgew0KPiAgICAgICAgICAgICAg
-ICAgICAgICAgICBrZnJlZSh0eHEtPnR4X2JvdW5jZVtpXSk7DQo+ICAgICAgICAgICAgICAgICAg
-ICAgICAgIHR4cS0+dHhfYm91bmNlW2ldID0gTlVMTDsNCj4gLS0NCj4gMi4yMC4xDQoNCg=
+
+--EFA7_FB09FAD2
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
+
+Dear Sir / Madam
+
+
+
+Since ever we left your country back to Canada , we have gotten Government=
+ approval and we have been busying planning for the less privilege Childre=
+n projects.
+
+We are planning to release first batch of the funds $2,990,000.00 within 1=
+4 days for building an estate for motherless children in your city.
+
+I want you to use my mother;s company name to register this charity projec=
+t in your country after receiving the project funds.
+
+It must be registered as { Bayraktar Group Homeless Children Ltd }.
+
+
+Can you handle and supervise this big project ?
+Can you manager all the workers as a senior supervisor ?
+We want to be sure you can handle it before we proceed with this project.
+
+
+Please call me if you want to hear from us + 1-917 580 4919.
+Please can you manage such project please Kindly reply for further details=
+.
+
+Your full names-----------
+
+
+
+Ekrem Bayraktar.
+Bayraktar Shipping Group
+
+--EFA7_FB09FAD2--
