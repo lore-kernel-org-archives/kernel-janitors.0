@@ -1,30 +1,27 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sun, 06 Oct 2019 07:43:24 +0000
-Subject: [PATCH -next] media: cx231xx: remove duplicated include from cx231xx-417.c
-Message-Id: <20191006074324.48283-1-yuehaibing@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 18 Oct 2019 07:00:14 +0000
+Subject: iommu/rockchip: Checking a device_link_add() call in rk_iommu_add_device()
+Message-Id: <c4a1fdd2-4383-dd0f-1d4b-f27ab62b383e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, Kate Stewart <kstewart@linuxfoundation.org>, Wenwen Wang <wenwen@cs.uga.edu>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org, Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Aditya Pakki <pakki001@umn.edu>
 
-Remove duplicated include.
+Hello,
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/media/usb/cx231xx/cx231xx-417.c | 1 -
- 1 file changed, 1 deletion(-)
+I tried another script for the semantic patch language out.
+This source code analysis approach points out that the implementation
+of the function “rk_iommu_add_device” contains still
+an unchecked call of the function “device_link_add”.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/iommu/rockchip-iommu.c?id=3ef845da3c3b180ddd386e228ac3228d84a522d3#n1075
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/iommu/rockchip-iommu.c#L1071
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index 46d0215deee6..1aec4459f50a 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -22,7 +22,6 @@
- #include <linux/firmware.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
--#include <linux/slab.h>
- #include <media/v4l2-common.h>
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-event.h>
+How do you think about to improve it?
+
+Which error code would you like to return for a failed
+device link addition at this place?
+
+Regards,
+Markus
