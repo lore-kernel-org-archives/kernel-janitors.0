@@ -1,25 +1,44 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 14 Oct 2019 07:53:43 +0000
-Subject: Re: [PATCH] dmaengine: at_xdmac: Use devm_platform_ioremap_resource() in at_xdmac_probe()
-Message-Id: <20191014075332.GK2654@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 19 Oct 2019 11:35:49 +0000
+Subject: Re: coccinelle: api/devm_platform_ioremap_resource: remove useless script
+Message-Id: <693a3b68-a0f1-81fe-40ce-2b6ba189450c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
-In-Reply-To: <377247f3-b53a-a9d9-66c7-4b8515de3809@web.de>
+References: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
+In-Reply-To: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Marc Zyngier <maz@kernel.org>, Himanshu Jha <himanshujha199640@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Michal Marek <michal.lkml@markovi.net>, YueHaibing <yuehaibing@huawei.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Torvalds <torvalds@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 22-09-19, 10:48, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 10:37:31 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
+> I think part of the issue is that the script reports a WARNING
 
-Applied, thanks
+How much does this information influence really the stress tolerance
+and change resistance (or acceptance) for the presented collateral evolution?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
 
--- 
-~Vinod
+
+> for something that is definitely correct code,
+
+Can related software improvement possibilities be taken into account
+again under other circumstances?
+
+
+> and could instead be simply toned down.
+
+Does this view mean that the mentioned script for the semantic patch language
+should get another chance for integration?
+
+
+> Anyway, FWIW:
+>
+> Acked-by: Marc Zyngier <maz@kernel.org>
+
+Would you like to share any more constructive feedback?
+
+
+Will similar source file mass updates be better picked up
+by other well-known Linux developers?
+
+Regards,
+Markus
