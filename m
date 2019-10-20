@@ -1,45 +1,44 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Fri, 04 Oct 2019 16:04:45 +0000
-Subject: Re: [PATCH] drm/i810: Prevent underflow in ioctl
-Message-Id: <157020508581.18712.9108329337994387428@skylake-alporthouse-com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 20 Oct 2019 14:16:19 +0000
+Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
+Message-Id: <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004102251.GC823@mwanda>
- <157019813720.18712.6286079822254824652@skylake-alporthouse-com>
-In-Reply-To: <157019813720.18712.6286079822254824652@skylake-alporthouse-com>
+References: <20191017014619.26708-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191017014619.26708-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: Sam Ravnborg <sam@ravnborg.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Emil Velikov <emil.velikov@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, James Morris <jmorris@namei.org>, John Johansen <john.johansen@canonical.com>, "Serge E. Hallyn" <serge@hallyn.com>, Tyler Hicks <tyhicks@canonical.com>
 
-Quoting Chris Wilson (2019-10-04 15:08:57)
-> Quoting Dan Carpenter (2019-10-04 11:22:51)
-> > The "used" variables here come from the user in the ioctl and it can be
-> > negative.  It could result in an out of bounds write.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/gpu/drm/i810/i810_dma.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i810/i810_dma.c b/drivers/gpu/drm/i810/i810_dma.c
-> > index 2a77823b8e9a..e66c38332df4 100644
-> > --- a/drivers/gpu/drm/i810/i810_dma.c
-> > +++ b/drivers/gpu/drm/i810/i810_dma.c
-> > @@ -728,7 +728,7 @@ static void i810_dma_dispatch_vertex(struct drm_device *dev,
-> >         if (nbox > I810_NR_SAREA_CLIPRECTS)
-> >                 nbox = I810_NR_SAREA_CLIPRECTS;
-> >  
-> > -       if (used > 4 * 1024)
-> > +       if (used < 0 || used > 4 * 1024)
-> >                 used = 0;
-> 
-> Yes, as passed to the GPU instruction, negative used is invalid.
-> 
-> Then it is used as an offset into a memblock, where a negative offset
-> would be very bad.
-> 
-> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+> … But after this release the the return statement
+> tries to access the label field of the rule which results in
+> use-after-free. Before releaseing the rule, copy errNo and return it
+> after releasing rule.
 
-Applied to drm-misc-next with cc'ed stable.
--Chris
+Please avoid a duplicate word and a typo in this change description.
+
+
+…
+> +++ b/security/apparmor/audit.c
+…
+> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+>  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+>  				     GFP_KERNEL, true, false);
+>  	if (IS_ERR(rule->label)) {
+> +		err = rule->label;
+
+How do you think about to define the added local variable in this if branch directly?
+
++		int err = rule->label;
+
+>  		aa_audit_rule_free(rule);
+> -		return PTR_ERR(rule->label);
+> +		return PTR_ERR(err);
+>  	}
+>
+>  	*vrule = rule;
+
+
+Regards,
+Markus
