@@ -1,85 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 20 Oct 2019 05:45:50 +0000
+From: Marc Zyngier <maz@kernel.org>
+Date: Sun, 20 Oct 2019 09:34:52 +0000
 Subject: Re: coccinelle: api/devm_platform_ioremap_resource: remove useless script
-Message-Id: <36f29ea7-7d08-fde4-daa9-e75675191e50@web.de>
+Message-Id: <867e4zzrnn.wl-maz@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e895d04ef5a282b5b48fcb21cbc175d2@www.loen.fr>
- <693a3b68-a0f1-81fe-40ce-2b6ba189450c@web.de> <868spgzcti.wl-maz@kernel.org>
-In-Reply-To: <868spgzcti.wl-maz@kernel.org>
+ <693a3b68-a0f1-81fe-40ce-2b6ba189450c@web.de>
+ <868spgzcti.wl-maz@kernel.org>
+ <alpine.DEB.2.21.1910200735400.3689@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1910200735400.3689@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Marc Zyngier <maz@kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Michal Marek <michal.lkml@markovi.net>, YueHaibing <yuehaibing@huawei.com>, Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Michal Marek <michal.lkml@markovi.net>, YueHaibing <yuehaibing@huawei.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Torvalds <torvalds@linuxfoundation.org>, Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Coccinelle <cocci@systeme.lip6.fr>
 
->>> I think part of the issue is that the script reports a WARNING
+On Sun, 20 Oct 2019 06:38:30 +0100,
+Julia Lawall <julia.lawall@lip6.fr> wrote:
+> 
+> > If said script was providing a correct semantic patch instead of being
+> > an incentive for people to churn untested patches that span the whole
+> > tree, that'd be a different story. But that's not what this is about.
+> 
+> What is the actual incorrectness with the script?
 
-Would anybody like to change this category to “INFO”?
+The first thing is that it spits out a "WARNING", which is almost
+universally interpreted as something that needs addressing. In this
+case, it really doesn't. The suggested helper is only icing sugar, and
+the original code is perfectly fine.
 
+The second thing is that it results in people posting patches they
+don't even compile, let alone test. There would be a good chance for
+these patches to be correct if the script was directly generating
+them, but that's unfortunately not the case.
 
->> How much does this information influence really the stress tolerance
->> and change resistance (or acceptance) for the presented collateral evolution?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
->
-> -ENOPARSE.
+> An option could be to adjust the rule such that it can be run with an
+> extra command line option, like -D developer but is not run by default by
+> make coccicheck.
 
-* Automated processes can trigger also big amounts of possible adjustments.
+Maybe. I'm not sure this will deter people from running these scripts
+and sending broken patches anyway. No matter how many safeguards you
+put, people will still post broken patches just because they can.
 
-* The software development capacity will vary for affected components
-  during the years.
+	M.
 
-* Implementing changes is a recurring project management task, isn't it?
-
-
->>> for something that is definitely correct code,
->>
->> Can related software improvement possibilities be taken into account
->> again under other circumstances?
->
-> These patches provide no improvement whatsoever.
-
-* Do you find information from the description of a corresponding
-  commit 7945f929f1a77a1c8887a97ca07f87626858ff42
-  ("drivers: provide devm_platform_ioremap_resource()") reasonable?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/drivers/base/platform.c
-
-* How do you think about to compare any differences with
-  software build results?
-
-
-> As pointed out, they mostly introduce bugs.
-
-Would you like to check any error statistics in more detail?
-
-
-> Providing Coccinelle scripts that scream about perfectly valid code is pointless,
-
-They usually point opportunities out for further collateral evolution,
-don't they?
-
-
-> and the result is actively harmful.
-
-You might not like some changes for a while.
-
-
-> If said script was providing a correct semantic patch
-
-I got the impression that this can also happen often enough.
-Would you like to check the concrete transformation failure rate once more?
-
-
-> instead of being an incentive for people to churn untested patches
-> that span the whole tree, that'd be a different story.
-
-Various developers got motivated to achieve something (possible improvements?)
-also by the means of available software analysis tools.
-Mistakes can then happen as usual during such adjustment attempts.
-
-
-> But that's not what this is about.
-
-I guess that your software development concerns can be clarified a bit more.
-
-Regards,
-Markus
+-- 
+Jazz is not dead, it just smells funny.
