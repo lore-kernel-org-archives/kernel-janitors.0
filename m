@@ -1,61 +1,40 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Sat, 12 Oct 2019 10:24:29 +0000
-Subject: Re: [PATCH -next] ASoC: atmel: select SND_ATMEL_SOC_DMA for SND_ATMEL_SOC_SSC
-Message-Id: <20191012102429.GH3125@piout.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 21 Oct 2019 20:40:22 +0000
+Subject: Re: [PATCH] drm/v3d: Fix memory leak in v3d_submit_cl_ioctl
+Message-Id: <a28f12a8-49c4-30f0-cc86-6a41ded96ab2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191012024230.159371-1-maowenan@huawei.com>
-In-Reply-To: <20191012024230.159371-1-maowenan@huawei.com>
+References: <20191021185250.26130-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191021185250.26130-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, mirq-linux@rere.qmqm.pl, kernel-janitors@vger.kernel.org, nicolas.ferre@microchip.com, tiwai@suse.com, ludovic.desroches@microchip.com, broonie@kernel.org, codrin.ciubotariu@microchip.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>
 
-On 12/10/2019 10:42:30+0800, Mao Wenan wrote:
-> If SND_ATMEL_SOC_SSC_PDC=y and SND_ATMEL_SOC_SSC_DMA=m,
-> below errors can be found:
-> sound/soc/atmel/atmel_ssc_dai.o: In function
-> `atmel_ssc_set_audio':
-> atmel_ssc_dai.c:(.text+0x6fe): undefined reference to
-> `atmel_pcm_dma_platform_register'
-> make: *** [vmlinux] Error 1
-> 
-> After commit 18291410557f ("ASoC: atmel: enable
-> SOC_SSC_PDC and SOC_SSC_DMA in Kconfig"), SND_ATMEL_SOC_DMA
-> and SND_ATMEL_SOC_SSC are selected by SND_ATMEL_SOC_SSC_DMA,
-> SND_ATMEL_SOC_SSC is also selected by SND_ATMEL_SOC_SSC_PDC,
-> the results are SND_ATMEL_SOC_DMA=m but SND_ATMEL_SOC_SSC=y,
-> so the errors happen.
-> 
-> This patch make SND_ATMEL_SOC_SSC select SND_ATMEL_SOC_DMA.
-> 
-> Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  sound/soc/atmel/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
-> index f118c22..2938f6b 100644
-> --- a/sound/soc/atmel/Kconfig
-> +++ b/sound/soc/atmel/Kconfig
-> @@ -19,6 +19,7 @@ config SND_ATMEL_SOC_DMA
->  
->  config SND_ATMEL_SOC_SSC
->  	tristate
-> +	select SND_ATMEL_SOC_DMA
->  
+> In the impelementation of v3d_submit_cl_ioctl() there are two memory leaks.
 
-This is not the solution because this doesn't allow to compile out DMA
-and use only PDC. I think Arnd already submitted a proper patch.
+Please avoid another typo also in this change description.
 
->  config SND_ATMEL_SOC_SSC_PDC
->  	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
-> -- 
-> 2.7.4
-> 
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> … If kcalloc fails to allocate memory for bin then
+> render->base should be put. Also, if v3d_job_init() fails to initialize
+> bin->base then allocated memory for bin should be released.
+
+Will an “imperative mood” be more appropriate for such wordings?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=7d194c2100ad2a6dded545887d02754948ca5241#n151
+
+
+…
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -557,13 +557,16 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+…
+>  		if (ret) {
+>  			v3d_job_put(&render->base);
+> +			kfree(bin);
+…
+
+Can it be helpful to move the added function call before the other
+in this if branch (if you prefer to avoid the addition of a jump target here)?
+
+Regards,
+Markus
