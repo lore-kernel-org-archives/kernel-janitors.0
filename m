@@ -1,47 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 29 Oct 2019 06:15:30 +0000
-Subject: [PATCH -next] scsi: csiostor: Remove set but not used variable 'rln'
-Message-Id: <20191029061530.98197-1-yuehaibing@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 22 Oct 2019 09:12:39 +0000
+Subject: Re: [PATCH] clocksource/drivers/davinci: Fix memory leak in davinci_timer_register
+Message-Id: <1d9f02d3-45ac-1d2f-457b-91cae123383d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1548381439-97080-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1548381439-97080-1-git-send-email-yuehaibing@huawei.com>
+References: <20191021202626.5246-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191021202626.5246-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+> In the impelementation of davinci_timer_register() the allocated memory
+> for clockevent should be released if request_irq() fails.
 
-drivers/scsi/csiostor/csio_lnode.c: In function 'csio_ln_init':
-drivers/scsi/csiostor/csio_lnode.c:1995:21: warning:
- variable 'rln' set but not used [-Wunused-but-set-variable]
+* Please avoid the copying of typos from previous change descriptions.
 
-It is never used since introduction, so remove it.
+* Under which circumstances will an “imperative mood” matter for you here?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=7d194c2100ad2a6dded545887d02754948ca5241#n151
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/csiostor/csio_lnode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
-index 23cbe4cda760..74ff8adc41f7 100644
---- a/drivers/scsi/csiostor/csio_lnode.c
-+++ b/drivers/scsi/csiostor/csio_lnode.c
-@@ -1992,7 +1992,7 @@ static int
- csio_ln_init(struct csio_lnode *ln)
- {
- 	int rv = -EINVAL;
--	struct csio_lnode *rln, *pln;
-+	struct csio_lnode *pln;
- 	struct csio_hw *hw = csio_lnode_to_hw(ln);
- 
- 	csio_init_state(&ln->sm, csio_lns_uninit);
-@@ -2022,7 +2022,6 @@ csio_ln_init(struct csio_lnode *ln)
- 		 * THe rest is common for non-root physical and NPIV lnodes.
- 		 * Just get references to all other modules
- 		 */
--		rln = csio_root_lnode(ln);
- 
- 		if (csio_is_npiv_ln(ln)) {
- 			/* NPIV */
+> +++ b/drivers/clocksource/timer-davinci.c
+> @@ -299,6 +299,7 @@ int __init davinci_timer_register(struct clk *clk,
+>  			 "clockevent/tim12", clockevent);
+>  	if (rv) {
+>  		pr_err("Unable to request the clockevent interrupt");
+> +		kfree(clockevent);
+>  		return rv;
+>  	}
+
+* Should a complete source code analysis point out that a similar fix
+  will be needed also in the if branch after a failed call of
+  the function “clocksource_register_hz”?
+
+* Can any more exception handling become relevant because of previous
+  resource allocations in this function implementation?
+
+Regards,
+Markus
