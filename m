@@ -1,30 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 04 Oct 2019 21:09:33 +0000
-Subject: Re: [PATCH] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
-Message-Id: <CACRpkdbQBaZgYBGAAfi7mg+4RMfWovi9io28q4u7KAW44bJ6WQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Oct 2019 10:23:24 +0000
+Subject: [PATCH] [SCSI] esas2r: unlock on error in esas2r_nvram_read_direct()
+Message-Id: <20191022102324.GA27540@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190920122030.14340-1-colin.king@canonical.com>
-In-Reply-To: <20190920122030.14340-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Tony Lindgren <tony@atomide.com>, YueHaibing <yuehaibing@huawei.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bradley Grove <linuxdrivers@attotech.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 2:20 PM Colin King <colin.king@canonical.com> wrote:
+This error path is missing an unlock.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The call to pinctrl_count_index_with_args checks for a -EINVAL return
-> however this function calls pinctrl_get_list_and_count and this can
-> return -ENOENT. Rather than check for a specific error, fix this by
-> checking for any error return to catch the -ENOENT case.
->
-> Addresses-Coverity: ("Improper use of negative")
-> Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/esas2r/esas2r_flash.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied with Tony's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
+index 7bd376d95ed5..b02ac389e6c6 100644
+--- a/drivers/scsi/esas2r/esas2r_flash.c
++++ b/drivers/scsi/esas2r/esas2r_flash.c
+@@ -1197,6 +1197,7 @@ bool esas2r_nvram_read_direct(struct esas2r_adapter *a)
+ 	if (!esas2r_read_flash_block(a, a->nvram, FLS_OFFSET_NVR,
+ 				     sizeof(struct esas2r_sas_nvram))) {
+ 		esas2r_hdebug("NVRAM read failed, using defaults");
++		up(&a->nvram_semaphore);
+ 		return false;
+ 	}
+ 
+-- 
+2.20.1
