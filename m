@@ -1,36 +1,33 @@
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Date: Sat, 05 Oct 2019 19:00:24 +0000
-Subject: Re: [PATCH] rtlwifi: fix memory leak in rtl_usb_probe
-Message-Id: <CAEkB2ERipLQRV3CsZ6L3EV0jXtS0HMc8yM6g5sNqJG0NThBsmw@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 22 Oct 2019 11:18:56 +0000
+Subject: [PATCH -next] power: supply: ab8500_charger: Fix wrong pointer passed to PTR_ERR()
+Message-Id: <20191022111856.44118-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191004195315.21168-1-navid.emamdoost@gmail.com> <037d04e8-4651-a657-6be6-b1eca072bb81@web.de>
-In-Reply-To: <037d04e8-4651-a657-6be6-b1eca072bb81@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Oh! It's duplicate, thanks for catching that.
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
-On Sat, Oct 5, 2019 at 11:08 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > In rtl_usb_probe, a new hw is allocated via ieee80211_alloc_hw(). This
-> > allocation should be released in case of allocation failure for
-> > rtlpriv->usb_data.
-> >
-> > Fixes: a7959c1394d4 ("rtlwifi: Preallocate USB read buffers and eliminate kalloc in read routine")
->
-> Which event did trigger the sending of this patch variant
-> after a similar change was integrated already?
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id?93616951138a598d930dcaec40f2bfd9ce43bb
-> https://lore.kernel.org/lkml/20191001092047.71E8460A30@smtp.codeaurora.org/
-> https://lore.kernel.org/patchwork/comment/1331936/
->
-> Regards,
-> Markus
+Fixes: 97ab78bac5d0 ("power: supply: ab8500_charger: Convert to IIO ADC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/power/supply/ab8500_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
--- 
-Navid.
+diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
+index ff2bb4411a22..8a0f9d769690 100644
+--- a/drivers/power/supply/ab8500_charger.c
++++ b/drivers/power/supply/ab8500_charger.c
+@@ -3393,7 +3393,7 @@ static int ab8500_charger_probe(struct platform_device *pdev)
+ 		if (PTR_ERR(di->adc_main_charger_c) = -ENODEV)
+ 			return -EPROBE_DEFER;
+ 		dev_err(&pdev->dev, "failed to get ADC main charger current\n");
+-		return PTR_ERR(di->adc_main_charger_v);
++		return PTR_ERR(di->adc_main_charger_c);
+ 	}
+ 	di->adc_vbus_v = devm_iio_channel_get(&pdev->dev, "vbus_v");
+ 	if (IS_ERR(di->adc_vbus_v)) {
