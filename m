@@ -1,28 +1,34 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 01 Oct 2019 11:12:09 +0000
-Subject: Re: [PATCH] ath9k: remove unused including <linux/version.h>
-Message-Id: <20191001111209.7514F6087B@smtp.codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 22 Oct 2019 09:40:38 +0000
+Subject: Re: [PATCH] drm/nouveau: Fix memory leak in nouveau_bo_alloc
+Message-Id: <b523c3a1-75a7-d94a-6cc6-58e8a1ad73cd@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190923135632.145051-1-yuehaibing@huawei.com>
-In-Reply-To: <20190923135632.145051-1-yuehaibing@huawei.com>
+References: <20191021211449.9104-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191021211449.9104-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: ath9k-devel@qca.qualcomm.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org, linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Thierry Reding <treding@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>, Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+> @@ -276,8 +276,10 @@ nouveau_bo_alloc(struct nouveau_cli *cli, u64 *size, int *align, u32 flags,
+>  			break;
+>  	}
+>
+> -	if (WARN_ON(pi < 0))
+> +	if (WARN_ON(pi < 0)) {
+> +		kfree(nvbo);
+>  		return ERR_PTR(-EINVAL);
+> +	}
+>
+>  	/* Disable compression if suitable settings couldn't be found. */
+>  	if (nvbo->comp && !vmm->page[pi].comp) {
 
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This addition looks correct.
+But I would prefer to move such exception handling code to the end of
+this function implementation so that duplicate source code will be reduced.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=7d194c2100ad2a6dded545887d02754948ca5241#n450
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-6aff90c5bab7 ath9k: remove unused including <linux/version.h>
-
--- 
-https://patchwork.kernel.org/patch/11156945/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Regards,
+Markus
