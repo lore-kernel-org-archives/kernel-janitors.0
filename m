@@ -1,46 +1,38 @@
-From: LABBE Corentin <clabbe@baylibre.com>
-Date: Tue, 29 Oct 2019 12:31:52 +0000
-Subject: Re: [PATCH][next] crypto: amlogic: ensure error variable err is set before returning it
-Message-Id: <20191029123152.GA18754@Red>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 22 Oct 2019 08:26:41 +0000
+Subject: Re: [PATCH] clocksource/drivers: Fix memory leak in ttc_setup_clockevent
+Message-Id: <fb5d5331-9a89-8370-1e61-396dd05f291a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029113230.7050-1-colin.king@canonical.com>
-In-Reply-To: <20191029113230.7050-1-colin.king@canonical.com>
+References: <20191021201848.4231-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191021201848.4231-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Neil Armstrong <narmstrong@baylibre.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Oct 29, 2019 at 11:32:30AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to crypto_engine_alloc_init fails the error
-> return path returns an uninitialized value in the variable err. Fix
-> this by setting err to -ENOMEM.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/amlogic/amlogic-gxl-core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/crypto/amlogic/amlogic-gxl-core.c b/drivers/crypto/amlogic/amlogic-gxl-core.c
-> index db5b421e88d8..fa05fce1c0de 100644
-> --- a/drivers/crypto/amlogic/amlogic-gxl-core.c
-> +++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
-> @@ -162,6 +162,7 @@ static int meson_allocate_chanlist(struct meson_dev *mc)
->  		if (!mc->chanlist[i].engine) {
->  			dev_err(mc->dev, "Cannot allocate engine\n");
->  			i--;
-> +			err = -ENOMEM;
->  			goto error_engine;
->  		}
->  		err = crypto_engine_start(mc->chanlist[i].engine);
-> -- 
-> 2.20.1
-> 
+> In the impelementation of ttc_setup_clockevent() the allocated memory
+> for ttcce should be released if clk_notifier_register() fails.
 
-Acked-by: Corentin Labbe <clabbe@baylibre.com>
+* Please avoid the copying of typos from previous change descriptions.
 
-Thanks
+* Under which circumstances will an “imperative mood” matter for you here?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=7d194c2100ad2a6dded545887d02754948ca5241#n151
+
+
+> +++ b/drivers/clocksource/timer-cadence-ttc.c
+> @@ -424,6 +424,7 @@ static int __init ttc_setup_clockevent(struct clk *clk,
+>  				    &ttcce->ttc.clk_rate_change_nb);
+>  	if (err) {
+>  		pr_warn("Unable to register clock notifier.\n");
+> +		kfree(ttcce);
+>  		return err;
+>  	}
+
+This addition looks correct.
+But I would prefer to move such exception handling code to the end of
+this function implementation so that duplicate source code will be reduced.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=7d194c2100ad2a6dded545887d02754948ca5241#n450
+
+Regards,
+Markus
