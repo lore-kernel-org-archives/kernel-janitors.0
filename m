@@ -1,69 +1,41 @@
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Date: Mon, 21 Oct 2019 15:25:41 +0000
-Subject: Re: [PATCH] apparmor: Fix use-after-free in aa_audit_rule_init
-Message-Id: <CAEkB2EQgv9_niKU0dagjZH-wRoHc=6+X4O7nGoVbaz9LWPwy6g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 Oct 2019 11:18:06 +0000
+Subject: [PATCH][next] thermal: qcom: tsens-v1: fix kfree of a non-pointer value
+Message-Id: <20191022111806.23143-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191017014619.26708-1-navid.emamdoost@gmail.com>
- <83dcacc2-a820-fe63-a1b9-1809e8f14f2f@web.de> <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
-In-Reply-To: <57b61298-cbeb-f0ff-c6ba-b8f64d5d0287@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: John Johansen <john.johansen@canonical.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Tyler Hicks <tyhicks@canonical.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Amit Kucheria <amit.kucheria@linaro.org>, Andy Gross <agross@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, AngeloGioacchino Del Regno <kholk11@gmail.com>, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 20, 2019 at 1:51 PM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 10/20/19 7:16 AM, Markus Elfring wrote:
-> >> … But after this release the the return statement
-> >> tries to access the label field of the rule which results in
-> >> use-after-free. Before releaseing the rule, copy errNo and return it
-> >> after releasing rule.
-> >
-> Navid thanks for finding this, and Markus thanks for the review
->
-> > Please avoid a duplicate word and a typo in this change description.
-> > My preference would be a v2 version of the patch with the small clean-ups
-> that Markus has pointed out.
+From: Colin Ian King <colin.king@canonical.com>
 
-John and Markus, I updated and submitted v2.
+Currently the kfree of pointer qfprom_cdata is kfreeing an
+error value that has been cast to a pointer rather than a
+valid address.  Fix this by removing the kfree.
 
->
-> If I don't see a v2 this week I can pull this one in and do the revisions
-> myself adding a little fix-up note.
->
-> >
-> > …
-> >> +++ b/security/apparmor/audit.c
-> > …
-> >> @@ -197,8 +198,9 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
-> >>      rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
-> >>                                   GFP_KERNEL, true, false);
-> >>      if (IS_ERR(rule->label)) {
-> >> +            err = rule->label;
-> >
-> > How do you think about to define the added local variable in this if branch directly?
-> >
-> > +             int err = rule->label;
-> >
->
-> yes, since err isn't defined or in use else where this would be preferable
->
-> >>              aa_audit_rule_free(rule);
-> >> -            return PTR_ERR(rule->label);
-> >> +            return PTR_ERR(err);
-> >>      }
-> >>
-> >>      *vrule = rule;
-> >
-> >
-> > Regards,
-> > Markus
-> >
->
+Fixes: 95ededc17e4e ("thermal: qcom: tsens-v1: Add support for MSM8956 and MSM8976")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/qcom/tsens-v1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
+diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
+index 2d1077b64887..bd2ddb684a45 100644
+--- a/drivers/thermal/qcom/tsens-v1.c
++++ b/drivers/thermal/qcom/tsens-v1.c
+@@ -240,10 +240,8 @@ static int calibrate_8976(struct tsens_priv *priv)
+ 	u32 *qfprom_cdata;
+ 
+ 	qfprom_cdata = (u32 *)qfprom_read(priv->dev, "calib");
+-	if (IS_ERR(qfprom_cdata)) {
+-		kfree(qfprom_cdata);
++	if (IS_ERR(qfprom_cdata))
+ 		return PTR_ERR(qfprom_cdata);
+-	}
+ 
+ 	mode = (qfprom_cdata[4] & MSM8976_CAL_SEL_MASK);
+ 	dev_dbg(priv->dev, "calibration mode is %d\n", mode);
 -- 
-Thanks,
-Navid.
+2.20.1
