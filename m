@@ -1,30 +1,32 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sun, 06 Oct 2019 07:44:04 +0000
-Subject: [PATCH -next] drm/amdgpu: remove duplicated include from mmhub_v1_0.c
-Message-Id: <20191006074404.48416-1-yuehaibing@huawei.com>
+Date: Wed, 23 Oct 2019 06:18:31 +0000
+Subject: [PATCH -next] KVM: arm/arm64: Remove duplicated include from arm.c
+Message-Id: <20191023061831.196298-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, le.ma@amd.com, Yong.Zhao@amd.com, Trigger.Huang@amd.com, tao.zhou1@amd.com, Hawking.Zhang@amd.com, Felix.Kuehling@amd.com
-Cc: YueHaibing <yuehaibing@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>, Julien
+ Thierry <julien.thierry.kdev@gmail.com>, Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Remove duplicated include.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c | 1 -
- 1 file changed, 1 deletion(-)
+ virt/kvm/arm/arm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-index 4c7e8c64a94e..6965e1e6fa9e 100644
---- a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-@@ -31,7 +31,6 @@
- #include "vega10_enum.h"
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index c11d6613f4ee..db508786ad6b 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -41,8 +41,6 @@
+ #include <asm/sections.h>
  
- #include "soc15_common.h"
--#include "amdgpu_ras.h"
+ #include <kvm/arm_hypercalls.h>
+-#include <kvm/arm_pmu.h>
+-#include <kvm/arm_psci.h>
  
- #define mmDAGB0_CNTL_MISC2_RV 0x008f
- #define mmDAGB0_CNTL_MISC2_RV_BASE_IDX 0
+ #ifdef REQUIRES_VIRT
+ __asm__(".arch_extension	virt");
