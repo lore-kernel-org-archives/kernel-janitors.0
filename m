@@ -1,7 +1,7 @@
 From: Tzung-Bi Shih <tzungbi@google.com>
-Date: Wed, 23 Oct 2019 08:03:07 +0000
+Date: Wed, 23 Oct 2019 08:32:46 +0000
 Subject: Re: [PATCH] ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency
-Message-Id: <CA+Px+wU5UrVC0pk5pbfGTdVsh7OHcBx_MhbC3Bjmj_+zgn54PQ@mail.gmail.com>
+Message-Id: <CA+Px+wX7-tn-rXeKqnPtp74tU5cLxhJwF6XZ_jeQX-tnAfvO5g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191023063103.44941-1-maowenan@huawei.com>
 In-Reply-To: <20191023063103.44941-1-maowenan@huawei.com>
@@ -25,7 +25,27 @@ On Wed, Oct 23, 2019 at 2:31 PM Mao Wenan <maowenan@huawei.com> wrote:
 >
 > Fixes: 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV")
 > Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  sound/soc/mediatek/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+> index 8b29f39..a656d20 100644
+> --- a/sound/soc/mediatek/Kconfig
+> +++ b/sound/soc/mediatek/Kconfig
+> @@ -125,7 +125,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
+>         select SND_SOC_MAX98357A
+>         select SND_SOC_BT_SCO
+>         select SND_SOC_TS3A227E
+> -       select SND_SOC_CROS_EC_CODEC
+> +       select SND_SOC_CROS_EC_CODEC if CROS_EC
+>         help
+>           This adds ASoC driver for Mediatek MT8183 boards
+>           with the MT6358 TS3A227E MAX98357A audio codec.
+> --
+> 2.7.4
+>
 
-Acked-by: Tzung-Bi Shih <tzungbi@google.com>
-
-Thanks for the catching.
+Just realized your patch seems not showing in the list
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-October/thread.html).
+I have no idea why.
