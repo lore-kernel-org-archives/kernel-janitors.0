@@ -1,29 +1,42 @@
-From: Curtis Malainey <cujomalainey@google.com>
-Date: Thu, 24 Oct 2019 17:15:48 +0000
-Subject: Re: [PATCH][next] ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp
-Message-Id: <CAOReqxhzYnN4vkoiJ1vDN3UwmkJs--u7cUgpoSDtMr1dSThR3Q@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 23 Oct 2019 06:31:03 +0000
+Subject: [PATCH] ASoC: mediatek: Check SND_SOC_CROS_EC_CODEC dependency
+Message-Id: <20191023063103.44941-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191024124610.18182-1-colin.king@canonical.com>
-In-Reply-To: <20191024124610.18182-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, ALSA development <alsa-devel@alsa-project.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Ben Zhang <benzh@chromium.org>, Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Curtis Malainey <cujomalainey@chromium.org>
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com, tzungbi@google.com, shunli.wang@mediatek.com, yuehaibing@huawei.com, gregkh@linuxfoundation.org, tglx@linutronix.de, kaichieh.chuang@mediatek.com
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Oct 24, 2019 at 5:46 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The allocation of rt5677_dsp can potentially fail and return null, so add
-> a null check and return -ENOMEM on a memory allocation failure.
->
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: a0e0d135427c ("ASoC: rt5677: Add a PCM device for streaming hotword via SPI")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Thanks
+If SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A=y,
+below errors can be seen:
+sound/soc/codecs/cros_ec_codec.o: In function `send_ec_host_command':
+cros_ec_codec.c:(.text+0x534): undefined reference to `cros_ec_cmd_xfer_status'
+cros_ec_codec.c:(.text+0x101c): undefined reference to `cros_ec_get_host_event'
 
-Acked-by Curtis Malainey <cujomalainey@chromium.org>
-> ---
->  sound/soc/codecs/rt5677-spi.c | 2 ++
->  1 file changed, 2 insertions(+)
+This is because it will select SND_SOC_CROS_EC_CODEC
+after commit 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV"),
+but SND_SOC_CROS_EC_CODEC depends on CROS_EC.
+
+Fixes: 2cc3cd5fdc8b ("ASoC: mediatek: mt8183: support WoV")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ sound/soc/mediatek/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index 8b29f39..a656d20 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -125,7 +125,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
+ 	select SND_SOC_MAX98357A
+ 	select SND_SOC_BT_SCO
+ 	select SND_SOC_TS3A227E
+-	select SND_SOC_CROS_EC_CODEC
++	select SND_SOC_CROS_EC_CODEC if CROS_EC
+ 	help
+ 	  This adds ASoC driver for Mediatek MT8183 boards
+ 	  with the MT6358 TS3A227E MAX98357A audio codec.
+-- 
+2.7.4
