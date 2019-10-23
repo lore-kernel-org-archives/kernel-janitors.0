@@ -1,33 +1,22 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 23 Oct 2019 07:24:00 +0000
+Date: Wed, 23 Oct 2019 08:20:12 +0000
 Subject: Re: [PATCH] clocksource/drivers: Fix error handling in ttc_setup_clocksource
-Message-Id: <2cd566ee-0467-1e06-98dd-aacb3ca42e76@web.de>
+Message-Id: <5913e1b8-b292-de06-e47f-d5f982db2b10@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191023044737.2824-1-navid.emamdoost@gmail.com>
+References: <2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com>
+ <20191023044737.2824-1-navid.emamdoost@gmail.com>
 In-Reply-To: <20191023044737.2824-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
 
-> In the implementation of ttc_setup_clocksource() when
-> clk_notifier_register() fails the execution should go to error handling.
-> Additionally, to avoid memory leak the allocated memory for ttccs should
-> be released, too.
+> Fixes: e932900a3279 ("arm: zynq: Use standard timer binding")
 
-I got other wording preferences. Thus I imagine that such a change
-description can still be improved another bit.
-
-How do you think about to omit the word “should” for describing
-the previous software situation?
-
-
-> So, goto error handling to release the memory and return.
-
-Would you like to express the addition of a jump target (according to
-the Linux coding style) for the completion of desired exception handling
-in a different way?
+How do you think about to add the tag “Reported-by” for Michal Simek?
+https://lore.kernel.org/linux-arm-kernel/2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com/
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=3b7c59a1950c75f2c0152e5a9cd77675b09233d6#n584
 
 Regards,
 Markus
