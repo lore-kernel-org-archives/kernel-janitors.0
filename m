@@ -1,47 +1,50 @@
-From: Benoit Parrot <bparrot@ti.com>
-Date: Fri, 11 Oct 2019 14:18:23 +0000
-Subject: Re: [PATCH][next] media: ti-vpe: vpe: use r2y instead of y2r, copy-paste error
-Message-Id: <20191011141823.kyxz32c2p24rr3d3@ti.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 23 Oct 2019 03:22:54 +0000
+Subject: [PATCH] KVM: arm64: Select SCHED_INFO before SCHEDSTATS
+Message-Id: <20191023032254.159510-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191011132940.8995-1-colin.king@canonical.com>
-In-Reply-To: <20191011132940.8995-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: maz@kernel.org, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, steven.price@arm.com
+Cc: Mao Wenan <maowenan@huawei.com>, kernel-janitors@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote on Fri [2019-Oct-11 14:29:40 +0100]:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There appears to be a copy-paste error on the access of
-> csc_coeffs.y2r.r601.full.coeff, I believe csc_coeffs.2yr.r601.full.coeff
-> should be used instead. This is a moot point as the code is never
-> reached, but at least use the correct structure element.
-> 
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: 3ff3a712a9ea ("media: ti-vpe: vpe: don't rely on colorspace member for conversion")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/platform/ti-vpe/csc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/ti-vpe/csc.c b/drivers/media/platform/ti-vpe/csc.c
-> index bd923bee4a31..834114a4eebe 100644
-> --- a/drivers/media/platform/ti-vpe/csc.c
-> +++ b/drivers/media/platform/ti-vpe/csc.c
-> @@ -238,7 +238,7 @@ void csc_set_coeff(struct csc_data *csc, u32 *csc_reg0,
->  				coeff = csc_coeffs.r2y.r709.limited.coeff;
->  		} else {
->  			/* Should never reach this, but it keeps gcc happy */
-> -			coeff = csc_coeffs.y2r.r601.full.coeff;
-> +			coeff = csc_coeffs.r2y.r601.full.coeff;
->  		}
->  	} else {
->  		*csc_reg5 |= CSC_BYPASS;
+If KVM=y, it will select SCHEDSTATS, below erros can
+be seen:
+kernel/sched/stats.h: In function rq_sched_info_arrive:
+kernel/sched/stats.h:12:20: error: struct sched_info
+has no member named run_delay
+   rq->rq_sched_info.run_delay += delta;
+                    ^
+kernel/sched/stats.h:13:20: error: struct sched_info
+has no member named pcount
+   rq->rq_sched_info.pcount++;
+                    ^
+kernel/sched/stats.h: In function rq_sched_info_dequeued:
+kernel/sched/stats.h:31:20: error: struct sched_info has
+no member named run_delay
+   rq->rq_sched_info.run_delay += delta;
 
-Reviewed-by: Benoit Parrot <bparrot.ti.com>
+These are because CONFIG_SCHED_INFO is not set, This patch 
+is to select SCHED_INFO before SCHEDSTATS.
 
-> -- 
-> 2.20.1
-> 
+Fixes: 8564d6372a7d ("KVM: arm64: Support stolen time reporting via shared structure")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ arch/arm64/kvm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+index d8b88e4..3c46eac 100644
+--- a/arch/arm64/kvm/Kconfig
++++ b/arch/arm64/kvm/Kconfig
+@@ -39,6 +39,7 @@ config KVM
+ 	select IRQ_BYPASS_MANAGER
+ 	select HAVE_KVM_IRQ_BYPASS
+ 	select HAVE_KVM_VCPU_RUN_PID_CHANGE
++	select SCHED_INFO
+ 	select SCHEDSTATS
+ 	---help---
+ 	  Support hosting virtualized guest machines.
+-- 
+2.7.4
