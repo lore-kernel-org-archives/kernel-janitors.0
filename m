@@ -1,35 +1,38 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 16 Oct 2019 18:19:42 +0000
-Subject: [PATCH 08/10] i40e: Remove unneeded conversions to bool
-Message-Id: <20191016181944.25106-5-afd@ti.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 23 Oct 2019 08:00:24 +0000
+Subject: Re: [PATCH v2] clocksource/drivers: Fix memory leak in ttc_setup_clockevent
+Message-Id: <3785f6cf-e8ea-9cd8-80b3-e88b2c4d085f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191016181944.25106-1-afd@ti.com>
-In-Reply-To: <20191016181944.25106-1-afd@ti.com>
+References: <2a6cdb63-397b-280a-7379-740e8f43ddf6@xilinx.com>
+ <20191023043139.31183-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191023043139.31183-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+> In the implementation of ttc_setup_clockevent() release the allocated
+> memory for ttcce if clk_notifier_register() fails.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I got other wording preferences. Thus I imagine that such a change
+description can still be improved another bit.
+Would you like to express the addition of a jump target (according to
+the Linux coding style) for the completion of desired exception handling
+in a different way?
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 6031223eafab..87a9f2b586d5 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -11435,7 +11435,7 @@ static int i40e_get_rss_aq(struct i40e_vsi *vsi, const u8 *seed,
- 	}
- 
- 	if (lut) {
--		bool pf_lut = vsi->type = I40E_VSI_MAIN ? true : false;
-+		bool pf_lut = vsi->type = I40E_VSI_MAIN;
- 
- 		ret = i40e_aq_get_rss_lut(hw, vsi->id, pf_lut, lut, lut_size);
- 		if (ret) {
--- 
-2.17.1
+
+…
+> +++ b/drivers/clocksource/timer-cadence-ttc.c
+…
+> @@ -453,15 +451,18 @@ static int __init ttc_setup_clockevent(struct clk *clk,
+…
+> +release_ttcce:
+> +
+> +	kfree(ttcce);
+…
+
+I would prefer that a blank line will not be added directly after such a label.
+
+Regards,
+Markus
