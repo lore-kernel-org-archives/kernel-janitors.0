@@ -1,25 +1,24 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 01 Oct 2019 02:41:43 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: remove redundant assignment to pointer host
-Message-Id: <yq1imp9yyoo.fsf@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 23 Oct 2019 13:20:32 +0000
+Subject: Re: [PATCH] coccicheck: Configuring COCCI parameter for supporting a directory search
+Message-Id: <6cab41a2-b775-7127-9d71-9b08f27111c3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190905134229.21194-1-colin.king@canonical.com>
-In-Reply-To: <20190905134229.21194-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 5 Sep 2019 14:42:29 +0100")
+References: <1571819563-18118-1-git-send-email-zhong.shiqi@zte.com.cn>
+In-Reply-To: <1571819563-18118-1-git-send-email-zhong.shiqi@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: zhongshiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
 
+> This patch puts a modification in scripts/coccicheck which supports users
+> in configuring COCCI parameter as a directory to traverse files in directory.
 
-Colin,
+* I suggest to improve this change description according to a recommended
+  “imperative mood”.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=13b86bc4cd648eae69fdcf3d04b2750c76350053#n151
 
-> The pointer host is being initialized with a value that is never read
-> and is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
+* Please fix your patch subject.
 
-Applied to 5.5/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
