@@ -1,59 +1,40 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 09 Oct 2019 16:22:16 +0000
-Subject: Re: [PATCH] gpio: 104-idi-48e: make array register_offset static, makes object smaller
-Message-Id: <CAMpxmJWHiFF-525GHf-5RzSkxafAuQmTXvcCuvSJ+NVb_D8-hg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 23 Oct 2019 11:28:09 +0000
+Subject: [PATCH] clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18
+Message-Id: <20191023112809.27595-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191006144256.23733-1-colin.king@canonical.com> <20191006150759.GA68457@icarus>
-In-Reply-To: <20191006150759.GA68457@icarus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-niedz., 6 paź 2019 o 17:08 William Breathitt Gray
-<vilhelm.gray@gmail.com> napisał(a):
->
-> On Sun, Oct 06, 2019 at 03:42:56PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Don't populate the array register_offset on the stack but instead make it
-> > static. Makes the object code smaller by 63 bytes.  Also add the int type
-> > specifier to clean up a checkpatch warning.
-> >
-> > Before:
-> >    text          data     bss     dec     hex filename
-> >    9212          5712    1408   16332    3fcc drivers/gpio/gpio-104-idi-48.o
-> >
-> > After:
-> >    text          data     bss     dec     hex filename
-> >    9085          5776    1408   16269    3f8d drivers/gpio/gpio-104-idi-48.o
-> >
-> > (gcc version 9.2.1, amd64)
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/gpio/gpio-104-idi-48.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-> > index ff53887bdaa8..c95c93ec0bd7 100644
-> > --- a/drivers/gpio/gpio-104-idi-48.c
-> > +++ b/drivers/gpio/gpio-104-idi-48.c
-> > @@ -65,7 +65,7 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
-> >  {
-> >       struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
-> >       unsigned i;
-> > -     const unsigned register_offset[6] = { 0, 1, 2, 4, 5, 6 };
-> > +     static const unsigned int register_offset[6] = { 0, 1, 2, 4, 5, 6 };
-> >       unsigned base_offset;
-> >       unsigned mask;
-> >
-> > --
-> > 2.20.1
->
-> Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for next.
+The zero'ing of bits 16 and 18 is incorrect. Currently the code
+is masking with the bitwise-and of BIT(16) & BIT(18) which is
+0, so the updated value for val is always zero. Fix this by bitwise
+and-ing value with the correct mask that will zero bits 16 and 18.
 
-Bart
+Addresses-Coverity: (" Suspicious &= or |= constant expression")
+Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index dcac1391767f..ef29582676f6 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -1224,7 +1224,7 @@ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
+ 
+ 	/* Enforce d1 = 0, d2 = 0 for Audio PLL */
+ 	val = readl(reg + SUN9I_A80_PLL_AUDIO_REG);
+-	val &= (BIT(16) & BIT(18));
++	val &= ~(BIT(16) | BIT(18));
+ 	writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
+ 
+ 	/* Enforce P = 1 for both CPU cluster PLLs */
+-- 
+2.20.1
