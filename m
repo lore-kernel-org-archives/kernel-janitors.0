@@ -1,50 +1,83 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 02 Oct 2019 13:30:29 +0000
-Subject: Re: [PATCH] pwm: sun4i: redundant assignment to variable pval
-Message-Id: <d67c2091-3029-1cf1-5548-b9f3116cd139@canonical.com>
+From: Marc Zyngier <maz@kernel.org>
+Date: Wed, 23 Oct 2019 16:51:14 +0000
+Subject: Re: [PATCH] KVM: arm64: Select =?UTF-8?Q?SCHED=5FINFO=20before=20?=  =?UTF-8?Q?SCHEDSTATS?=
+Message-Id: <26ee413334937b9530bc8f033fe378ec@www.loen.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191002100844.10490-1-colin.king@canonical.com>
- <20191002132506.GO22609@kadam> <20191002132933.GO29696@kadam>
-In-Reply-To: <20191002132933.GO29696@kadam>
+References: <20191023032254.159510-1-maowenan@huawei.com>
+In-Reply-To: <20191023032254.159510-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Mao Wenan <maowenan@huawei.com>, steven.price@arm.com
+Cc: catalin.marinas@arm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, will@kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
 
-On 02/10/2019 14:29, Dan Carpenter wrote:
-> On Wed, Oct 02, 2019 at 04:25:06PM +0300, Dan Carpenter wrote:
->> On Wed, Oct 02, 2019 at 11:08:44AM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Variable pval is being assigned a value that is never read. The
->>> assignment is redundant and hence can be removed.
->>>
->>> Addresses-Coverity: ("Unused value")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/pwm/pwm-sun4i.c | 1 -
->>>  1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
->>> index 6f5840a1a82d..53970d4ba695 100644
->>> --- a/drivers/pwm/pwm-sun4i.c
->>> +++ b/drivers/pwm/pwm-sun4i.c
->>> @@ -156,7 +156,6 @@ static int sun4i_pwm_calculate(struct sun4i_pwm_chip *sun4i_pwm,
->>>  	if (sun4i_pwm->data->has_prescaler_bypass) {
->>>  		/* First, test without any prescaler when available */
->>>  		prescaler = PWM_PRESCAL_MASK;
->>> -		pval = 1;
->>>  		/*
->>>  		 * When not using any prescaler, the clock period in nanoseconds
->>>  		 * is not an integer so round it half up instead of
->>
->> Are you sure?  It looks used to me.
-> 
-> Ah.  Never mind.  My tree was out of date.
+On 2019-10-23 04:22, Mao Wenan wrote:
+> If KVM=y, it will select SCHEDSTATS, below erros can
+> be seen:
+> kernel/sched/stats.h: In function rq_sched_info_arrive:
+> kernel/sched/stats.h:12:20: error: struct sched_info
+> has no member named run_delay
+>    rq->rq_sched_info.run_delay += delta;
+>                     ^
+> kernel/sched/stats.h:13:20: error: struct sched_info
+> has no member named pcount
+>    rq->rq_sched_info.pcount++;
+>                     ^
+> kernel/sched/stats.h: In function rq_sched_info_dequeued:
+> kernel/sched/stats.h:31:20: error: struct sched_info has
+> no member named run_delay
+>    rq->rq_sched_info.run_delay += delta;
+>
+> These are because CONFIG_SCHED_INFO is not set, This patch
+> is to select SCHED_INFO before SCHEDSTATS.
+>
+> Fixes: 8564d6372a7d ("KVM: arm64: Support stolen time reporting via
+> shared structure")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  arch/arm64/kvm/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+> index d8b88e4..3c46eac 100644
+> --- a/arch/arm64/kvm/Kconfig
+> +++ b/arch/arm64/kvm/Kconfig
+> @@ -39,6 +39,7 @@ config KVM
+>  	select IRQ_BYPASS_MANAGER
+>  	select HAVE_KVM_IRQ_BYPASS
+>  	select HAVE_KVM_VCPU_RUN_PID_CHANGE
+> +	select SCHED_INFO
+>  	select SCHEDSTATS
+>  	---help---
+>  	  Support hosting virtualized guest machines.
 
-No problem. I appreciated you eyeballing my fixes.
-> 
-> regards,
-> dan carpenter
-> 
+SCHEDSTATS is really an odd choice. Here's what I get after disabling
+DEBUG_KERNEL (from defconfig):
+
+WARNING: unmet direct dependencies detected for SCHEDSTATS
+   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
+   Selected by [y]:
+   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
+
+WARNING: unmet direct dependencies detected for SCHEDSTATS
+   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
+   Selected by [y]:
+   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
+
+WARNING: unmet direct dependencies detected for SCHEDSTATS
+   Depends on [n]: DEBUG_KERNEL [=n] && PROC_FS [=y]
+   Selected by [y]:
+   - KVM [=y] && VIRTUALIZATION [=y] && OF [=y]
+
+So clearly SCHEDSTATS isn't meant to be selected on its own.
+
+We can either just select SCHED_INFO (which *nobody else does*), or go
+the full x86 way which selects TASK_DELAY_ACCT (and thus depends on
+NET && MULTIUSER). My gut feeling is that we shouldn't deviate too much
+from x86...
+
+Thoughts?
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
