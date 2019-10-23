@@ -1,77 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2019 11:40:47 +0000
-Subject: Applied "ASoC: wcd9335: clean up indentation issue" to the asoc tree
-Message-Id: <20191001114047.6CF3527429C0@ypsilon.sirena.org.uk>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Date: Wed, 23 Oct 2019 05:37:12 +0000
+Subject: Re: [PATCH] phy-mvebu-a3700-utmi: Use devm_platform_ioremap_resource() in mvebu_a3700_utmi_phy_probe
+Message-Id: <5e5cfafa-ade8-6f26-9989-d949c6d5c388@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20190925111023.7771-1-colin.king@canonical.com>
+References: <5403540b-d3de-4a29-ec84-7ce5bb8d6d9f@web.de>
+In-Reply-To: <5403540b-d3de-4a29-ec84-7ce5bb8d6d9f@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org, Igal Liberman <igall@marvell.com>, Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The patch
 
-   ASoC: wcd9335: clean up indentation issue
+On 26/09/19 9:50 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Sep 2019 18:15:23 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-has been applied to the asoc tree at
+merged, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+-Kishon
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 944eedd8c021893d08d02a8eec8e5161327316cd Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 12:10:23 +0100
-Subject: [PATCH] ASoC: wcd9335: clean up indentation issue
-
-There is an if statement that is indented one level too deeply,
-remove the extraneous tabs.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190925111023.7771-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wcd9335.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-index f318403133e9..f11ffa28683b 100644
---- a/sound/soc/codecs/wcd9335.c
-+++ b/sound/soc/codecs/wcd9335.c
-@@ -2837,11 +2837,11 @@ static int wcd9335_codec_enable_dec(struct snd_soc_dapm_widget *w,
- 				   TX_HPF_CUT_OFF_FREQ_MASK) >> 5;
- 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x10);
- 		snd_soc_component_update_bits(comp, dec_cfg_reg, 0x08, 0x00);
--			if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
--				snd_soc_component_update_bits(comp, dec_cfg_reg,
--						    TX_HPF_CUT_OFF_FREQ_MASK,
--						    hpf_coff_freq << 5);
--			}
-+		if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
-+			snd_soc_component_update_bits(comp, dec_cfg_reg,
-+						      TX_HPF_CUT_OFF_FREQ_MASK,
-+						      hpf_coff_freq << 5);
-+		}
- 		break;
- 	case SND_SOC_DAPM_POST_PMD:
- 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x00);
--- 
-2.20.1
+> ---
+>  drivers/phy/marvell/phy-mvebu-a3700-utmi.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
+> index ded900b06f5a..23bc3bf5c4c0 100644
+> --- a/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
+> +++ b/drivers/phy/marvell/phy-mvebu-a3700-utmi.c
+> @@ -216,20 +216,13 @@ static int mvebu_a3700_utmi_phy_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct mvebu_a3700_utmi *utmi;
+>  	struct phy_provider *provider;
+> -	struct resource *res;
+> 
+>  	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
+>  	if (!utmi)
+>  		return -ENOMEM;
+> 
+>  	/* Get UTMI memory region */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		dev_err(dev, "Missing UTMI PHY memory resource\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	utmi->regs = devm_ioremap_resource(dev, res);
+> +	utmi->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(utmi->regs))
+>  		return PTR_ERR(utmi->regs);
+> 
+> --
+> 2.23.0
+> 
