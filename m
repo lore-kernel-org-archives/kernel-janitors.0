@@ -1,26 +1,33 @@
-From: Vivien Didelot <vivien.didelot@gmail.com>
-Date: Thu, 24 Oct 2019 16:47:16 +0000
-Subject: Re: [PATCH][next] net: dsa: fix dereference on ds->dev before null check error
-Message-Id: <20191024124716.GB1210163@t480s.localdomain>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 24 Oct 2019 07:06:27 +0000
+Subject: Re: [PATCH v2] coccicheck: support $COCCI being defined as a directory
+Message-Id: <5762844f-2c39-2106-21fa-65e8297d4235@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191024103218.2592-1-colin.king@canonical.com>
-In-Reply-To: <20191024103218.2592-1-colin.king@canonical.com>
+References: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
+In-Reply-To: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
 
-On Thu, 24 Oct 2019 11:32:18 +0100, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently ds->dev is dereferenced on the assignments of pdata and
-> np before ds->dev is null checked, hence there is a potential null
-> pointer dereference on ds->dev.  Fix this by assigning pdata and
-> np after the ds->dev null pointer sanity check.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 7e99e3470172 ("net: dsa: remove dsa_switch_alloc helper")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I find that the commit message should still be considerably improved.
+How do you think about to use the subject “[PATCH] coccicheck:
+Support search for SmPL scripts within selected directory hierarchy”?
 
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+
+> Put a modification in scripts/coccicheck which supports users in
+> configuring COCCI parameter as a directory to traverse files in
+> directory whose next level directory contains rule files with Suffix of cocci.
+
+* Please avoid a typo in this change description.
+
+* Would you like to integrate a wording approach like the following?
+
+  A search can be performed for SmPL scripts within a directory hierarchy.
+  Start a corresponding file determination if the environment variable “COCCI”
+  contains an acceptable path.
+
+
+Regards,
+Markus
