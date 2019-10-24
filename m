@@ -1,43 +1,38 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 11 Oct 2019 14:23:09 +0000
-Subject: Re: [PATCH v2] USB: legousbtower: fix a signedness bug in tower_probe()
-Message-Id: <20191011142309.GK13531@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 24 Oct 2019 12:46:10 +0000
+Subject: [PATCH][next] ASoC: rt5677: Add missing null check for failed allocation of rt5677_dsp
+Message-Id: <20191024124610.18182-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5DA088DE.5040902@bfs.de>
- <20191011141115.GA4521@mwanda>
-In-Reply-To: <20191011141115.GA4521@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Juergen Stuber <starblue@users.sourceforge.net>, Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, legousb-devel@lists.sourceforge.net, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Curtis Malainey <cujomalainey@chromium.org>, Ben Zhang <benzh@chromium.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 05:11:15PM +0300, Dan Carpenter wrote:
-> The problem is that sizeof() is unsigned long so negative error codes
-> are type promoted to high positive values and the condition becomes
-> false.
-> 
-> Fixes: 1d427be4a39d ("USB: legousbtower: fix slab info leak at probe")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Johan Hovold <johan@kernel.org>
+The allocation of rt5677_dsp can potentially fail and return null, so add
+a null check and return -ENOMEM on a memory allocation failure.
 
-> ---
-> v2: style improvement suggested by Walter Harms.
-> 
->  drivers/usb/misc/legousbtower.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/misc/legousbtower.c b/drivers/usb/misc/legousbtower.c
-> index 9d4c52a7ebe0..9bd240df8f4c 100644
-> --- a/drivers/usb/misc/legousbtower.c
-> +++ b/drivers/usb/misc/legousbtower.c
-> @@ -881,7 +881,7 @@ static int tower_probe (struct usb_interface *interface, const struct usb_device
->  				  get_version_reply,
->  				  sizeof(*get_version_reply),
->  				  1000);
-> -	if (result < sizeof(*get_version_reply)) {
-> +	if (result != sizeof(*get_version_reply)) {
->  		if (result >= 0)
->  			result = -EIO;
->  		dev_err(idev, "get version request failed: %d\n", result);
+Addresses-Coverity: ("Dereference null return")
+Fixes: a0e0d135427c ("ASoC: rt5677: Add a PCM device for streaming hotword via SPI")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/rt5677-spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/codecs/rt5677-spi.c b/sound/soc/codecs/rt5677-spi.c
+index 36c02d200cfc..3a17643fcd9f 100644
+--- a/sound/soc/codecs/rt5677-spi.c
++++ b/sound/soc/codecs/rt5677-spi.c
+@@ -376,6 +376,8 @@ static int rt5677_spi_pcm_probe(struct snd_soc_component *component)
+ 
+ 	rt5677_dsp = devm_kzalloc(component->dev, sizeof(*rt5677_dsp),
+ 			GFP_KERNEL);
++	if (!rt5677_dsp)
++		return -ENOMEM;
+ 	rt5677_dsp->dev = &g_spi->dev;
+ 	mutex_init(&rt5677_dsp->dma_lock);
+ 	INIT_DELAYED_WORK(&rt5677_dsp->copy_work, rt5677_spi_copy_work);
+-- 
+2.20.1
