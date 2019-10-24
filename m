@@ -1,33 +1,34 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 24 Oct 2019 07:06:27 +0000
+Date: Thu, 24 Oct 2019 07:55:34 +0000
 Subject: Re: [PATCH v2] coccicheck: support $COCCI being defined as a directory
-Message-Id: <5762844f-2c39-2106-21fa-65e8297d4235@web.de>
+Message-Id: <37ad0bcd-941d-e02e-ae99-e89f2ce98ff0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
-In-Reply-To: <1571897060-32374-1-git-send-email-zhong.shiqi@zte.com.cn>
+References: <alpine.DEB.2.21.1910240816040.2771@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1910240816040.2771@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
+To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, Zhong Shiqi <zhong.shiqi@zte.com.cn>
 
-I find that the commit message should still be considerably improved.
-How do you think about to use the subject “[PATCH] coccicheck:
-Support search for SmPL scripts within selected directory hierarchy”?
+> Second the commit log could be more concise as:
+
+I like your desire for choosing a more appropriate commit message.
 
 
-> Put a modification in scripts/coccicheck which supports users in
-> configuring COCCI parameter as a directory to traverse files in
-> directory whose next level directory contains rule files with Suffix of cocci.
+> Allow defining COCCI as a directory that contains .cocci files.
 
-* Please avoid a typo in this change description.
+I would prefer to concentrate the patch subject on other information.
 
-* Would you like to integrate a wording approach like the following?
 
-  A search can be performed for SmPL scripts within a directory hierarchy.
-  Start a corresponding file determination if the environment variable “COCCI”
-  contains an acceptable path.
+> In general, at least in simple cases, it is not necessary to mention the
+> name of the file you are modifying in the comit log, because one can see
+> that just below from looking at the diffstat and the patch.
 
+This view can be reasonable. - How does it fit to the usual requirement
+for the specification of a “subsystem” (or “prefix”) according to the
+canonical patch format?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=13b86bc4cd648eae69fdcf3d04b2750c76350053#n656
 
 Regards,
 Markus
