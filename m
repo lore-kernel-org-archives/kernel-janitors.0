@@ -1,54 +1,46 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 08 Oct 2019 16:24:45 +0000
-Subject: Re: [PATCH][next] efi/tpm: fix sanity check of unsigned tbl_size being less than zero
-Message-Id: <37d9c70e-12e0-f0a1-b3ff-b2aefb39c223@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Oct 2019 20:53:06 +0000
+Subject: [PATCH] drm/v3d: Fix double free in v3d_submit_cl_ioctl()
+Message-Id: <20191024205306.GA14416@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191008100153.8499-1-colin.king@canonical.com>
- <20191008114559.GD25098@kadam> <20191008161553.qls5lbyaxlasw25v@cantor>
-In-Reply-To: <20191008161553.qls5lbyaxlasw25v@cantor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Anholt <eric@anholt.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 08/10/2019 17:15, Jerry Snitselaar wrote:
-> On Tue Oct 08 19, Dan Carpenter wrote:
->> On Tue, Oct 08, 2019 at 11:01:53AM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently the check for tbl_size being less than zero is always false
->>> because tbl_size is unsigned. Fix this by making it a signed int.
->>>
->>> Addresses-Coverity: ("Unsigned compared against 0")
->>> Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size'
->>> after successful event log parsing")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>> =A0drivers/firmware/efi/tpm.c | 2 +-
->>> =A01 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
->>> index 703469c1ab8e..ebd7977653a8 100644
->>> --- a/drivers/firmware/efi/tpm.c
->>> +++ b/drivers/firmware/efi/tpm.c
->>> @@ -40,7 +40,7 @@ int __init efi_tpm_eventlog_init(void)
->>> =A0{
->>> =A0=A0=A0=A0 struct linux_efi_tpm_eventlog *log_tbl;
->>> =A0=A0=A0=A0 struct efi_tcg2_final_events_table *final_tbl;
->>> -=A0=A0=A0 unsigned int tbl_size;
->>> +=A0=A0=A0 int tbl_size;
->>> =A0=A0=A0=A0 int ret =3D 0;
->>
->>
->> Do we need to do a "ret =3D tbl_size;"?=A0 Currently we return success.
->> It's a pitty that tpm2_calc_event_log_size() returns a -1 instead of
->> -EINVAL.
->>
->> regards,
->> dan carpenter
->>
->=20
-> perhaps "ret =3D -EINVAL;"? Currently nothing checks the return value of
-> efi_tpm_eventlog_init though.
+Originally this error path used to leak "bin" but then we accidentally
+applied two separate commits to fix it and ended up with a double free.
 
-I doubt I'll fix that for my current fix as a V2.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Hi Stephen,
+
+I think this one is actually just a linux-next issue and the Fixes tag
+would point to commit f8593384f83f ("Merge remote-tracking branch
+'drm/drm-next'").
+
+The original commits are 0d352a3a8a1f ("drm/v3d: don't leak bin job if
+v3d_job_init fails.") and commit 29cd13cfd762 ("drm/v3d: Fix memory leak
+in v3d_submit_cl_ioctl").
+
+I'm not totally sure how you guys address this normally but presumably
+you are experts at dealing with merge issues.  :)
+
+ drivers/gpu/drm/v3d/v3d_gem.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index 549dde83408b..37515e47b47e 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 		ret = v3d_job_init(v3d, file_priv, &bin->base,
+ 				   v3d_job_free, args->in_sync_bcl);
+ 		if (ret) {
+-			kfree(bin);
+ 			v3d_job_put(&render->base);
+ 			kfree(bin);
+ 			return ret;
+-- 
+2.20.1
