@@ -1,44 +1,41 @@
-From: LABBE Corentin <clabbe@baylibre.com>
-Date: Tue, 29 Oct 2019 12:42:03 +0000
-Subject: Re: [PATCH -next] crypto: amlogic - Use kmemdup in meson_aes_setkey()
-Message-Id: <20191029124203.GB18754@Red>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Oct 2019 11:58:11 +0000
+Subject: [PATCH][next] net: aquantia: fix unintention integer overflow on left shift
+Message-Id: <20191025115811.20433-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029015523.126987-1-yuehaibing@huawei.com>
-In-Reply-To: <20191029015523.126987-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Egor Pomozov <epomozov@marvell.com>, Igor Russkikh <igor.russkikh@aquantia.com>, "David S . Miller" <davem@davemloft.net>, Dmitry Bezrukov <dmitry.bezrukov@aquantia.com>, Sergey Samoilenko <sergey.samoilenko@aquantia.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 01:55:23AM +0000, YueHaibing wrote:
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/amlogic/amlogic-gxl-cipher.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/crypto/amlogic/amlogic-gxl-cipher.c b/drivers/crypto/amlogic/amlogic-gxl-cipher.c
-> index e9283ffdbd23..78e776c58705 100644
-> --- a/drivers/crypto/amlogic/amlogic-gxl-cipher.c
-> +++ b/drivers/crypto/amlogic/amlogic-gxl-cipher.c
-> @@ -372,10 +372,9 @@ int meson_aes_setkey(struct crypto_skcipher *tfm, const u8 *key,
->  		kfree(op->key);
->  	}
->  	op->keylen = keylen;
-> -	op->key = kmalloc(keylen, GFP_KERNEL | GFP_DMA);
-> +	op->key = kmemdup(key, keylen, GFP_KERNEL | GFP_DMA);
->  	if (!op->key)
->  		return -ENOMEM;
-> -	memcpy(op->key, key, keylen);
->  
->  	return crypto_sync_skcipher_setkey(op->fallback_tfm, key, keylen);
->  }
-> 
-> 
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Corentin Labbe <clabbe@baylibre.com>
+Shifting the integer value 1 is evaluated using 32-bit
+arithmetic and then used in an expression that expects a 64-bit
+value, so there is potentially an integer overflow. Fix this
+by using the BIT_ULL macro to perform the shift and avoid the
+overflow.
 
-Thanks
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 04a1839950d9 ("net: aquantia: implement data PTP datapath")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
+index 232df785488c..3eb9d22f7402 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
+@@ -713,7 +713,7 @@ static int aq_ptp_poll(struct napi_struct *napi, int budget)
+ 	if (work_done < budget) {
+ 		napi_complete_done(napi, work_done);
+ 		aq_nic->aq_hw_ops->hw_irq_enable(aq_nic->aq_hw,
+-					1 << aq_ptp->ptp_ring_param.vec_idx);
++					BIT_ULL(aq_ptp->ptp_ring_param.vec_idx));
+ 	}
+ 
+ err_exit:
+-- 
+2.20.1
