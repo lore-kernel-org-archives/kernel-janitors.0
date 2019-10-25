@@ -1,118 +1,40 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 01 Oct 2019 14:30:53 +0000
-Subject: [PATCH v2] Coccinelle: Add a SmPL script for the reconsideration of specific combinations of assignm
-Message-Id: <c45c4435-581b-d137-255c-c21db7ccef78@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Oct 2019 13:33:39 +0000
+Subject: [PATCH] media: flexcop-usb: ensure -EIO is returned on error condition
+Message-Id: <20191025133339.26666-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e07ce253-8a13-0f90-3ee0-79c1a0e78b38@web.de>
- <alpine.DEB.2.21.1909231058380.2283@hadrien>
- <4977fb04-cc29-3861-0aaf-cd93a0b0b1c7@web.de>
-In-Reply-To: <4977fb04-cc29-3861-0aaf-cd93a0b0b1c7@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Allison Randal <allison@lohutok.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 1 Oct 2019 15:50:10 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Values from expressions were occasionally assigned to local variables
-before they will be returned by the subsequent statement.
-Such expressions can be directly specified in the return statement instead.
+An earlier commit hard coded a return 0 to function flexcop_usb_i2c_req
+even though the an -EIO was intended to be returned in the case where
+ret != buflen.  Fix this by replacing the return 0 with the return of
+ret to return the error return code
 
-Adjust affected source code by the means of the semantic patch language
-(Coccinelle software).
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Addresses-Coverity: ("Unused value")
+Fixes: b430eaba0be5 ("[media] flexcop-usb: don't use stack for DMA")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/media/usb/b2c2/flexcop-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-* Application of the SmPL construct “<+... … ...+>”
-* Addition of a hint for the supported coccicheck operation modes
-
-
- .../coccinelle/misc/move_code_to_return.cocci | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 scripts/coccinelle/misc/move_code_to_return.cocci
-
-diff --git a/scripts/coccinelle/misc/move_code_to_return.cocci b/scripts/coccinelle/misc/move_code_to_return.cocci
-new file mode 100644
-index 000000000000..22ce7c9d0fd2
---- /dev/null
-+++ b/scripts/coccinelle/misc/move_code_to_return.cocci
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Return expressions directly instead of assigning them to
-+/// local variables immediately before affected statements.
-+//
-+// Keywords: return statements variable assignments coding style
-+// Confidence: Medium
-+
-+virtual patch
-+virtual report
-+
-+@replacement1 depends on patch@
-+expression x;
-+identifier f, rc;
-+local idexpression lrc;
-+type rt;
-+@@
-+ rt f(...)
-+ {
-+ <+...
-+ if (...)
-+-{
-+-lrc@rc = x;
-+ return
-+-       rc
-++       x
-+ ;
-+-}
-+ ...+>
-+ }
-+
-+@replacement2 depends on patch@
-+expression x;
-+identifier f, rc;
-+local idexpression lrc;
-+type rt;
-+@@
-+ rt f(...)
-+ {
-+ <+...
-+-lrc@rc = x;
-+ return
-+-       rc
-++       x
-+ ;
-+ ...+>
-+ }
-+
-+@deletion2 depends on patch@
-+identifier replacement2.f, replacement2.rc;
-+type replacement2.rt, t;
-+@@
-+ rt f(...)
-+ {
-+ ... when any
-+-t rc;
-+ ... when != rc
-+ }
-+
-+@deletion1 depends on patch@
-+identifier replacement1.f, replacement1.rc;
-+type replacement1.rt, t;
-+@@
-+ rt f(...)
-+ {
-+ ... when any
-+-t rc;
-+ ... when != rc
-+ }
-+
-+@script:python info depends on report@
-+@@
-+import sys
-+sys.stderr.write("INFO: Unfortunately, specific software limitations have got the consequence that only the operation mode “patch” can be supported by this SmPL script so far as expected.\n")
---
-2.23.0
+diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
+index 4bf85e9b78b8..917cf4bc08ec 100644
+--- a/drivers/media/usb/b2c2/flexcop-usb.c
++++ b/drivers/media/usb/b2c2/flexcop-usb.c
+@@ -295,7 +295,7 @@ static int flexcop_usb_i2c_req(struct flexcop_i2c_adapter *i2c,
+ 
+ 	mutex_unlock(&fc_usb->data_mutex);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /* actual bus specific access functions,
+-- 
+2.20.1
