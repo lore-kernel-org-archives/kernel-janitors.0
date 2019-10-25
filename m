@@ -1,40 +1,41 @@
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date: Tue, 08 Oct 2019 19:14:57 +0000
-Subject: Re: [PATCH][next] netdevsim: fix spelling mistake "forbidded" -> "forbid"
-Message-Id: <20191008121457.34b570be@cakuba.netronome.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Oct 2019 11:30:56 +0000
+Subject: [PATCH][next] rtw88: remove redundant null pointer check on arrays
+Message-Id: <20191025113056.19167-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191008081747.19431-1-colin.king@canonical.com>
-        <alpine.LFD.2.21.1910080921350.25653@eddie.linux-mips.org>
-In-Reply-To: <alpine.LFD.2.21.1910080921350.25653@eddie.linux-mips.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Maciej W. Rozycki" <macro@linux-mips.org>, Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Chris Chiu <chiu@endlessm.com>, Tzu-En Huang <tehuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 8 Oct 2019 09:29:58 +0100 (BST), Maciej W. Rozycki wrote:
-> On Tue, 8 Oct 2019, Colin King wrote:
-> 
-> > diff --git a/drivers/net/netdevsim/dev.c b/drivers/net/netdevsim/dev.c
-> > index a3d7d39f231a..ff6ced5487b6 100644
-> > --- a/drivers/net/netdevsim/dev.c
-> > +++ b/drivers/net/netdevsim/dev.c
-> > @@ -486,7 +486,7 @@ static int nsim_dev_reload_down(struct devlink *devlink, bool netns_change,
-> >  		/* For testing purposes, user set debugfs dont_allow_reload
-> >  		 * value to true. So forbid it.
-> >  		 */
-> > -		NL_SET_ERR_MSG_MOD(extack, "User forbidded reload for testing purposes");
-> > +		NL_SET_ERR_MSG_MOD(extack, "User forbid the reload for testing purposes");  
-> 
->  If nitpicking about grammar, then FWIW I believe it should actually be:
-> 
-> 		NL_SET_ERR_MSG_MOD(extack, "User forbade the reload for testing purposes");
-> 
-> (and then:
-> 
-> 		NL_SET_ERR_MSG_MOD(extack, "User set up the reload to fail for testing purposes");
-> 
-> elsewhere).
+From: Colin Ian King <colin.king@canonical.com>
 
-So I consulted with someone vaguely British, and they said they'd use
-"forbid" here, therefore I've applied the patch to net-next.
+The checks to see if swing_table->n or swing_table->p are null are
+redundant since n and p are arrays and can never be null if
+swing_table is non-null.  I believe these are redundant checks
+and can be safely removed, especially the checks implies that these
+are not arrays which can lead to confusion.
+
+Addresses-Coverity: ("Array compared against 0")
+Fixes: c97ee3e0bea2 ("rtw88: add power tracking support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtw88/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wireless/realtek/rtw88/phy.c
+index 69e7edb629f4..11893ec73376 100644
+--- a/drivers/net/wireless/realtek/rtw88/phy.c
++++ b/drivers/net/wireless/realtek/rtw88/phy.c
+@@ -2071,7 +2071,7 @@ s8 rtw_phy_pwrtrack_get_pwridx(struct rtw_dev *rtwdev,
+ 		return 0;
+ 	}
+ 
+-	if (!swing_table || !swing_table->n || !swing_table->p) {
++	if (!swing_table) {
+ 		rtw_warn(rtwdev, "swing table not configured\n");
+ 		return 0;
+ 	}
+-- 
+2.20.1
