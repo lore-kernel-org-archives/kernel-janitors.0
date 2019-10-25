@@ -1,69 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2019 11:41:05 +0000
-Subject: Applied "spi: fsl-lpspi: clean up indentation issue" to the spi tree
-Message-Id: <20191001114105.4111927429C0@ypsilon.sirena.org.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Oct 2019 13:46:12 +0000
+Subject: [PATCH] media: zr364xx: remove redundant assigmnent to idx, clean up code
+Message-Id: <20191025134612.30703-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190926113701.26986-1-colin.king@canonical.com>
-In-Reply-To: <20190926113701.26986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
-
-   spi: fsl-lpspi: clean up indentation issue
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1b0a2b2d3ccb98cf998816d87f7193139d54579e Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 26 Sep 2019 12:37:01 +0100
-Subject: [PATCH] spi: fsl-lpspi: clean up indentation issue
 
-The complete call is indented incorrectly, remove the extraneous tabs.
+The variable cable_type is being initialized with a value that
+is never read and is being re-assigned a little later on. Replace
+the redundant initializtion with the assignment that occurs a little
+later. Also initialize frm too rather than have a later assignment.
 
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190926113701.26986-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-fsl-lpspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/zr364xx/zr364xx.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index d08e9324140e..5efd73cd0ead 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -779,7 +779,7 @@ static irqreturn_t fsl_lpspi_isr(int irq, void *dev_id)
+diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
+index aff78d63b869..57dbcc8083bf 100644
+--- a/drivers/media/usb/zr364xx/zr364xx.c
++++ b/drivers/media/usb/zr364xx/zr364xx.c
+@@ -555,14 +555,12 @@ static int zr364xx_read_video_callback(struct zr364xx_camera *cam,
+ {
+ 	unsigned char *pdest;
+ 	unsigned char *psrc;
+-	s32 idx = -1;
+-	struct zr364xx_framei *frm;
++	s32 idx = cam->cur_frame;
++	struct zr364xx_framei *frm = &cam->buffer.frame[idx];
+ 	int i = 0;
+ 	unsigned char *ptr = NULL;
  
- 	if (temp_SR & SR_FCF && (temp_IER & IER_FCIE)) {
- 		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
--			complete(&fsl_lpspi->xfer_done);
-+		complete(&fsl_lpspi->xfer_done);
- 		return IRQ_HANDLED;
- 	}
+ 	_DBG("buffer to user\n");
+-	idx = cam->cur_frame;
+-	frm = &cam->buffer.frame[idx];
  
+ 	/* swap bytes if camera needs it */
+ 	if (cam->method = METHOD0) {
 -- 
 2.20.1
