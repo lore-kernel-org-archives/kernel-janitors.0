@@ -1,24 +1,31 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 31 Oct 2019 12:57:06 +0000
-Subject: Re: [PATCH] io_uring: signedness bug in io_async_cancel()
-Message-Id: <a697c16b-92bb-52a3-e2e8-5f24d75f580d@kernel.dk>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 26 Oct 2019 14:12:54 +0000
+Subject: Re: [PATCH v4] coccicheck: Support search for SmPL scripts within selected directory hierarchy
+Message-Id: <4905e8f0-6266-99b4-c3c4-9a9d29170bfc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191031105547.GC26612@mwanda>
-In-Reply-To: <20191031105547.GC26612@mwanda>
+References: <1572076248-43770-1-git-send-email-zhong.shiqi@zte.com.cn>
+In-Reply-To: <1572076248-43770-1-git-send-email-zhong.shiqi@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
 
-On 10/31/19 4:55 AM, Dan Carpenter wrote:
-> The problem is that this enum is unsigned, and we do use "ret" for the
-> enum values, but we also use it for negative error codes.  If it's not
-> signed then it causes a problem in the error handling.
+> Allow defining the environment variable “COCCI” as a directory
+> to search SmPL scripts. Start a corresponding file determination
+> if it contains an acceptable path.
 
-I noticed this one the other day, merged in a fix for it then. Not
-an issue in the current tree, though linux-next may still have the
-older one.
+Would the paragraph formatting be nicer as an enumeration
+as I suggested it previously?
 
--- 
-Jens Axboe
+
+Would you like to update the provided software documentation together with
+the small extension of this bash script?
+
+Update candidates:
+*
+
+* https://bottest.wiki.kernel.org/coccicheck#controlling_which_files_are_processed_by_coccinelle
+
+Regards,
+Markus
