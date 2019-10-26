@@ -1,181 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 21 Oct 2019 17:29:30 +0000
-Subject: [RESEND trivial] fs: Fix Kconfig indentation
-Message-Id: <20191021172930.27175-1-krzk@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 26 Oct 2019 18:08:29 +0000
+Subject: Re: [PATCH] wimax: i2400: Fix memory leak in i2400m_op_rfkill_sw_toggle
+Message-Id: <fa90b9ac-9ff9-7b08-f31f-f349a9fb0a58@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191026045331.1097-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191026045331.1097-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-wimax@intel.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-    $ sed -e 's/^        /\t/' -i */Kconfig
+> Move kfree(cmd) before return to be reached by all execution paths.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- fs/9p/Kconfig     | 20 ++++++++++----------
- fs/Kconfig        |  4 ++--
- fs/Kconfig.binfmt |  4 ++--
- fs/fuse/Kconfig   |  4 ++--
- fs/nfs/Kconfig    |  6 +++---
- fs/proc/Kconfig   |  8 ++++----
- fs/qnx6/Kconfig   |  2 +-
- fs/ufs/Kconfig    |  4 ++--
- 8 files changed, 26 insertions(+), 26 deletions(-)
+I suggest to reconsider this change suggestion once more.
 
-diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
-index ac2ec4543fe1..09fd4a185fd2 100644
---- a/fs/9p/Kconfig
-+++ b/fs/9p/Kconfig
-@@ -32,13 +32,13 @@ endif
- 
- 
- config 9P_FS_SECURITY
--        bool "9P Security Labels"
--        depends on 9P_FS
--        help
--          Security labels support alternative access control models
--          implemented by security modules like SELinux.  This option
--          enables an extended attribute handler for file security
--          labels in the 9P filesystem.
--
--          If you are not using a security module that requires using
--          extended attributes for file security labels, say N.
-+	bool "9P Security Labels"
-+	depends on 9P_FS
-+	help
-+	  Security labels support alternative access control models
-+	  implemented by security modules like SELinux.  This option
-+	  enables an extended attribute handler for file security
-+	  labels in the 9P filesystem.
-+
-+	  If you are not using a security module that requires using
-+	  extended attributes for file security labels, say N.
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 2501e6f1f965..e65289487732 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -97,8 +97,8 @@ config FILE_LOCKING
- 	default y
- 	help
- 	  This option enables standard file locking support, required
--          for filesystems like NFS and for the flock() system
--          call. Disabling this option saves about 11k.
-+	  for filesystems like NFS and for the flock() system
-+	  call. Disabling this option saves about 11k.
- 
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index 62dc4f577ba1..8d0d16b90039 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -191,9 +191,9 @@ config BINFMT_MISC
- 	  <file:Documentation/admin-guide/binfmt-misc.rst> to learn how to use this
- 	  feature, <file:Documentation/admin-guide/java.rst> for information about how
- 	  to include Java support. and <file:Documentation/admin-guide/mono.rst> for
--          information about how to include Mono-based .NET support.
-+	  information about how to include Mono-based .NET support.
- 
--          To use binfmt_misc, you will need to mount it:
-+	  To use binfmt_misc, you will need to mount it:
- 		mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
- 
- 	  You may say M here for module support and later load the module when
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index 0635cba19971..eb2a585572dc 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -34,7 +34,7 @@ config VIRTIO_FS
- 	select VIRTIO
- 	help
- 	  The Virtio Filesystem allows guests to mount file systems from the
--          host.
-+	  host.
- 
- 	  If you want to share files between guests or with the host, answer Y
--          or M.
-+	  or M.
-diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
-index 295a7a21b774..3edf122b8044 100644
---- a/fs/nfs/Kconfig
-+++ b/fs/nfs/Kconfig
-@@ -147,10 +147,10 @@ config NFS_V4_1_MIGRATION
- 	default n
- 	help
- 	  This option makes the NFS client advertise to NFSv4.1 servers that
--          it can support NFSv4 migration.
-+	  it can support NFSv4 migration.
- 
--          The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
--          still experimental.  If you are not an NFSv4 developer, say N here.
-+	  The NFSv4.1 pieces of the Linux NFSv4 migration implementation are
-+	  still experimental.  If you are not an NFSv4 developer, say N here.
- 
- config NFS_V4_SECURITY_LABEL
- 	bool
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cb5629bd5fff..af2c0af60269 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -42,8 +42,8 @@ config PROC_VMCORE
- 	bool "/proc/vmcore support"
- 	depends on PROC_FS && CRASH_DUMP
- 	default y
--        help
--        Exports the dump image of crashed kernel in ELF format.
-+	help
-+	Exports the dump image of crashed kernel in ELF format.
- 
- config PROC_VMCORE_DEVICE_DUMP
- 	bool "Device Hardware/Firmware Log Collection"
-@@ -72,7 +72,7 @@ config PROC_SYSCTL
- 	  a recompile of the kernel or reboot of the system.  The primary
- 	  interface is through /proc/sys.  If you say Y here a tree of
- 	  modifiable sysctl entries will be generated beneath the
--          /proc/sys directory. They are explained in the files
-+	  /proc/sys directory. They are explained in the files
- 	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
- 	  option will enlarge the kernel by at least 8 KB.
- 
-@@ -88,7 +88,7 @@ config PROC_PAGE_MONITOR
- 	  Various /proc files exist to monitor process memory utilization:
- 	  /proc/pid/smaps, /proc/pid/clear_refs, /proc/pid/pagemap,
- 	  /proc/kpagecount, and /proc/kpageflags. Disabling these
--          interfaces will reduce the size of the kernel by approximately 4kb.
-+	  interfaces will reduce the size of the kernel by approximately 4kb.
- 
- config PROC_CHILDREN
- 	bool "Include /proc/<pid>/task/<tid>/children file"
-diff --git a/fs/qnx6/Kconfig b/fs/qnx6/Kconfig
-index 6a9d6bce1586..5ef679e51ba1 100644
---- a/fs/qnx6/Kconfig
-+++ b/fs/qnx6/Kconfig
-@@ -7,7 +7,7 @@ config QNX6FS_FS
- 	  QNX 6 (also called QNX RTP).
- 	  Further information is available at <http://www.qnx.com/>.
- 	  Say Y if you intend to mount QNX hard disks or floppies formatted
--          with a mkqnx6fs.
-+	  with a mkqnx6fs.
- 	  However, keep in mind that this currently is a readonly driver!
- 
- 	  To compile this file system support as a module, choose M here: the
-diff --git a/fs/ufs/Kconfig b/fs/ufs/Kconfig
-index 6d30adb6b890..f1f725c5a28c 100644
---- a/fs/ufs/Kconfig
-+++ b/fs/ufs/Kconfig
-@@ -11,8 +11,8 @@ config UFS_FS
- 	  experimental "UFS file system write support", below. Please read the
- 	  file <file:Documentation/admin-guide/ufs.rst> for more information.
- 
--          The recently released UFS2 variant (used in FreeBSD 5.x) is
--          READ-ONLY supported.
-+	  The recently released UFS2 variant (used in FreeBSD 5.x) is
-+	  READ-ONLY supported.
- 
- 	  Note that this option is generally not needed for floppies, since a
- 	  good portable way to transport files and directories between unixes
--- 
-2.17.1
+
+> Fixes: 2507e6ab7a9a ("wimax: i2400: fix memory leak")
+
+I find it interesting that you would like to fix your commit from 2019-09-10.
+https://lore.kernel.org/patchwork/patch/1126399/
+
+Will it be helpful to refer also to the commit 024f7f31ed15c471f80408d8b5045497e27e1135
+("i2400m: Generic probe/disconnect, reset and message passing" from 2009-01-07)?
+
+
+> +++ b/drivers/net/wimax/i2400m/op-rfkill.c
+> @@ -127,12 +127,12 @@ int i2400m_op_rfkill_sw_toggle(struct wimax_dev *wimax_dev,
+>  			"%d\n", result);
+>  	result = 0;
+>  error_cmd:
+> -	kfree(cmd);
+>  	kfree_skb(ack_skb);
+>  error_msg_to_dev:
+>  error_alloc:
+>  	d_fnend(4, dev, "(wimax_dev %p state %d) = %d\n",
+>  		wimax_dev, state, result);
+> +	kfree(cmd);
+>  	return result;
+>  }
+
+
+I would prefer to improve the exception handling like the following.
+(Would you like to avoid passing a null pointer at the end?)
+
+-error_cmd:
++free_skb:
+-	kfree(cmd);
+ 	kfree_skb(ack_skb);
+-error_msg_to_dev:
++free_cmd:
++	kfree(cmd);
+-error_alloc:
++exit:
+
+
+How do you think about this update variant?
+
+Regards,
+Markus
