@@ -1,89 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2019 11:41:06 +0000
-Subject: Applied "spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_probe()" to the spi tree
-Message-Id: <20191001114106.2FA1C2742A10@ypsilon.sirena.org.uk>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 26 Oct 2019 02:07:38 +0000
+Subject: [PATCH -next] net: aquantia: make two symbols be static
+Message-Id: <20191026020738.130606-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de>
-References: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
-In-Reply-To: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Leilk Liu <leilk.liu@mediatek.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: epomozov@marvell.com, igor.russkikh@aquantia.com, davem@davemloft.net, pavel.belous@aquantia.com, dmitry.bezrukov@aquantia.com, dmitry.bogdanov@aquantia.com, ndanilov@aquantia.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-The patch
+When using ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+to build drivers/net/ethernet/aquantia/atlantic/aq_ptp.o
+and drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.o,
+below errors can be seen:
+drivers/net/ethernet/aquantia/atlantic/aq_ptp.c:1378:6:
+warning: symbol 'aq_ptp_poll_sync_work_cb' was not declared.
+Should it be static?
 
-   spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_probe()
+drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c:1155:5:
+warning: symbol 'hw_atl_b0_ts_to_sys_clock' was not declared.
+Should it be static?
 
-has been applied to the spi tree at
+This patch to make aq_ptp_poll_sync_work_cb and hw_atl_b0_ts_to_sys_clock
+be static to fix these warnings.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 5dd381e71994ab554f711afe89b5a6157bdcd19d Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 14:45:40 +0200
-Subject: [PATCH] spi: mediatek: Use devm_platform_ioremap_resource() in
- mtk_spi_probe()
-
-Simplify this function implementation by using a known wrapper function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Link: https://lore.kernel.org/r/478e0df1-e800-8cf1-f9b3-d72f8e26aa0b@web.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 9c477032f7d0 ("net: aquantia: add support for PIN funcs")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 ---
- drivers/spi/spi-mt65xx.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_ptp.c           | 2 +-
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 6888a4dcff6d..25fe149a8d9a 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -619,7 +619,6 @@ static int mtk_spi_probe(struct platform_device *pdev)
- 	struct spi_master *master;
- 	struct mtk_spi *mdata;
- 	const struct of_device_id *of_id;
--	struct resource *res;
- 	int i, irq, ret, addr_bits;
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
+index 3ec0841..d92d119 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
+@@ -1375,7 +1375,7 @@ static int aq_ptp_check_sync1588(struct aq_ptp_s *aq_ptp)
+ 	return 0;
+ }
  
- 	master = spi_alloc_master(&pdev->dev, sizeof(*mdata));
-@@ -682,15 +681,7 @@ static int mtk_spi_probe(struct platform_device *pdev)
- 	}
+-void aq_ptp_poll_sync_work_cb(struct work_struct *w)
++static void aq_ptp_poll_sync_work_cb(struct work_struct *w)
+ {
+ 	struct delayed_work *dw = to_delayed_work(w);
+ 	struct aq_ptp_s *aq_ptp = container_of(dw, struct aq_ptp_s, poll_sync);
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 51ecf87..8f866c7 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -1152,7 +1152,7 @@ static int hw_atl_b0_set_sys_clock(struct aq_hw_s *self, u64 time, u64 ts)
+ 	return hw_atl_b0_adj_sys_clock(self, delta);
+ }
  
- 	platform_set_drvdata(pdev, master);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		ret = -ENODEV;
--		dev_err(&pdev->dev, "failed to determine base address\n");
--		goto err_put_master;
--	}
--
--	mdata->base = devm_ioremap_resource(&pdev->dev, res);
-+	mdata->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mdata->base)) {
- 		ret = PTR_ERR(mdata->base);
- 		goto err_put_master;
+-int hw_atl_b0_ts_to_sys_clock(struct aq_hw_s *self, u64 ts, u64 *time)
++static int hw_atl_b0_ts_to_sys_clock(struct aq_hw_s *self, u64 ts, u64 *time)
+ {
+ 	*time = self->ptp_clk_offset + ts;
+ 	return 0;
 -- 
-2.20.1
+2.7.4
