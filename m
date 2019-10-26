@@ -1,105 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Oct 2019 10:22:09 +0000
-Subject: [PATCH] ASoC: fsl_mqs: Fix error handling in probe
-Message-Id: <20191004102208.GB823@mwanda>
+From: Andy Duan <fugang.duan@nxp.com>
+Date: Sat, 26 Oct 2019 04:54:43 +0000
+Subject: RE: [EXT] [PATCH] net: fec: remove redundant assignment to pointer bdp
+Message-Id: <VI1PR0402MB3600328E75600B583331C2C2FF640@VI1PR0402MB3600.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191025172255.4742-1-colin.king@canonical.com>
+In-Reply-To: <20191025172255.4742-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: alsa-devel@alsa-project.org, Xiubo Li <Xiubo.Lee@gmail.com>, linuxppc-dev@lists.ozlabs.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-There are several problems in the error handling in fsl_mqs_probe().
-
-1) "ret" isn't initialized on some paths.  GCC has a feature which
-   warns about uninitialized variables but the code initializes "ret"
-   to zero at the start of the function so the checking is turned off.
-2) "gpr_np" is a pointer so initializing it to zero is confusing and
-   generates a Sparse warning.
-3) of_parse_phandle() doesn't return error pointers on error, it returns
-   NULL.
-4) If devm_snd_soc_register_component() fails then the function should
-   free the "gpr_np".
-
-Fixes: 9e28f6532c61 ("ASoC: fsl_mqs: Add MQS component driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- sound/soc/fsl/fsl_mqs.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
-index c1619a553514..f5f2f659bcbf 100644
---- a/sound/soc/fsl/fsl_mqs.c
-+++ b/sound/soc/fsl/fsl_mqs.c
-@@ -179,10 +179,10 @@ static const struct regmap_config fsl_mqs_regmap_config = {
- static int fsl_mqs_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct device_node *gpr_np = 0;
-+	struct device_node *gpr_np = NULL;
- 	struct fsl_mqs *mqs_priv;
- 	void __iomem *regs;
--	int ret = 0;
-+	int ret;
- 
- 	mqs_priv = devm_kzalloc(&pdev->dev, sizeof(*mqs_priv), GFP_KERNEL);
- 	if (!mqs_priv)
-@@ -199,17 +199,16 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 
- 	if (mqs_priv->use_gpr) {
- 		gpr_np = of_parse_phandle(np, "gpr", 0);
--		if (IS_ERR(gpr_np)) {
-+		if (!gpr_np) {
- 			dev_err(&pdev->dev, "failed to get gpr node by phandle\n");
--			ret = PTR_ERR(gpr_np);
--			goto out;
-+			return -EINVAL;
- 		}
- 
- 		mqs_priv->regmap = syscon_node_to_regmap(gpr_np);
- 		if (IS_ERR(mqs_priv->regmap)) {
- 			dev_err(&pdev->dev, "failed to get gpr regmap\n");
- 			ret = PTR_ERR(mqs_priv->regmap);
--			goto out;
-+			goto err_free_gpr_np;
- 		}
- 	} else {
- 		regs = devm_platform_ioremap_resource(pdev, 0);
-@@ -230,7 +229,7 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 		if (IS_ERR(mqs_priv->ipg)) {
- 			dev_err(&pdev->dev, "failed to get the clock: %ld\n",
- 				PTR_ERR(mqs_priv->ipg));
--			goto out;
-+			return PTR_ERR(mqs_priv->ipg);
- 		}
- 	}
- 
-@@ -238,17 +237,21 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 	if (IS_ERR(mqs_priv->mclk)) {
- 		dev_err(&pdev->dev, "failed to get the clock: %ld\n",
- 			PTR_ERR(mqs_priv->mclk));
--		goto out;
-+		ret = PTR_ERR(mqs_priv->mclk);
-+		goto err_free_gpr_np;
- 	}
- 
- 	dev_set_drvdata(&pdev->dev, mqs_priv);
- 	pm_runtime_enable(&pdev->dev);
- 
--	return devm_snd_soc_register_component(&pdev->dev, &soc_codec_fsl_mqs,
-+	ret = devm_snd_soc_register_component(&pdev->dev, &soc_codec_fsl_mqs,
- 			&fsl_mqs_dai, 1);
--out:
--	if (!IS_ERR(gpr_np))
--		of_node_put(gpr_np);
-+	if (ret)
-+		goto err_free_gpr_np;
-+	return 0;
-+
-+err_free_gpr_np:
-+	of_node_put(gpr_np);
- 
- 	return ret;
- }
--- 
-2.20.1
+RnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiBTZW50OiBTYXR1cmRh
+eSwgT2N0b2JlciAyNiwgMjAxOSAxOjIzIEFNDQo+IFRoZSBwb2ludGVyIGJkcCBpcyBiZWluZyBh
+c3NpZ25lZCB3aXRoIGEgdmFsdWUgdGhhdCBpcyBuZXZlciByZWFkLCBzbyB0aGUNCj4gYXNzaWdu
+bWVudCBpcyByZWR1bmRhbnQgYW5kIGhlbmNlIGNhbiBiZSByZW1vdmVkLg0KPiANCj4gQWRkcmVz
+c2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2YWx1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQpUaGFua3MuDQoNCkFja2VkLWJ5OiBG
+dWdhbmcgRHVhbiA8ZnVnYW5nLmR1YW5AbnhwLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9l
+dGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYyB8IDEgLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEg
+ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVl
+c2NhbGUvZmVjX21haW4uYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNf
+bWFpbi5jDQo+IGluZGV4IGQ0ZDRjNzJhZGY0OS4uNjA4MTk2YmRkODkyIDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYw0KPiArKysgYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21haW4uYw0KPiBAQCAtMjcwNiw3ICsyNzA2
+LDYgQEAgc3RhdGljIHZvaWQgZmVjX2VuZXRfZnJlZV9idWZmZXJzKHN0cnVjdA0KPiBuZXRfZGV2
+aWNlICpuZGV2KQ0KPiANCj4gICAgICAgICBmb3IgKHEgPSAwOyBxIDwgZmVwLT5udW1fdHhfcXVl
+dWVzOyBxKyspIHsNCj4gICAgICAgICAgICAgICAgIHR4cSA9IGZlcC0+dHhfcXVldWVbcV07DQo+
+IC0gICAgICAgICAgICAgICBiZHAgPSB0eHEtPmJkLmJhc2U7DQo+ICAgICAgICAgICAgICAgICBm
+b3IgKGkgPSAwOyBpIDwgdHhxLT5iZC5yaW5nX3NpemU7IGkrKykgew0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICBrZnJlZSh0eHEtPnR4X2JvdW5jZVtpXSk7DQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIHR4cS0+dHhfYm91bmNlW2ldID0gTlVMTDsNCj4gLS0NCj4gMi4yMC4xDQoNCg=
