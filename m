@@ -1,21 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Oct 2019 23:18:31 +0000
-Subject: Re: [PATCH net-next] net: aquantia: remove unused including <linux/version.h>
-Message-Id: <20191029.161831.1560929325628369179.davem@davemloft.net>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 26 Oct 2019 02:21:39 +0000
+Subject: [PATCH -next] net: dsa: LAN9303: select REGMAP when LAN9303 enable
+Message-Id: <20191026022139.179166-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191026025109.75721-1-yuehaibing@huawei.com>
-In-Reply-To: <20191026025109.75721-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: epomozov@marvell.com, igor.russkikh@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, davem@davemloft.net, jbe@pengutronix.de, robh@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 26 Oct 2019 02:51:09 +0000
+When NET_DSA_SMSC_LAN9303=y and NET_DSA_SMSC_LAN9303_MDIO=y,
+below errors can be seen:
+drivers/net/dsa/lan9303_mdio.c:87:23: error: REGMAP_ENDIAN_LITTLE
+undeclared here (not in a function)
+  .reg_format_endian = REGMAP_ENDIAN_LITTLE,
+drivers/net/dsa/lan9303_mdio.c:93:3: error: const struct regmap_config
+has no member named reg_read
+  .reg_read = lan9303_mdio_read,
 
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+It should select REGMAP in config NET_DSA_SMSC_LAN9303.
 
-Applied.
+Fixes: dc7005831523 ("net: dsa: LAN9303: add MDIO managed mode support")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/dsa/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
+index f6232ce..685e12b 100644
+--- a/drivers/net/dsa/Kconfig
++++ b/drivers/net/dsa/Kconfig
+@@ -77,6 +77,7 @@ config NET_DSA_REALTEK_SMI
+ config NET_DSA_SMSC_LAN9303
+ 	tristate
+ 	select NET_DSA_TAG_LAN9303
++	select REGMAP
+ 	---help---
+ 	  This enables support for the SMSC/Microchip LAN9303 3 port ethernet
+ 	  switch chips.
+-- 
+2.7.4
