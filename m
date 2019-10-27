@@ -1,50 +1,48 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 02 Oct 2019 05:47:37 +0000
-Subject: Re: [PATCH v4] drm/amdgpu: fix multiple memory leaks in acp_hw_init
-Message-Id: <c03a8983-3f83-0596-96fa-a1a9312e82f8@web.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 27 Oct 2019 21:00:47 +0000
+Subject: [PATCH 4.9 09/49] mips: Loongson: Fix the link time qualifier of serial_exit()
+Message-Id: <20191027203124.984763077@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191002034612.26607-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191002034612.26607-1-navid.emamdoost@gmail.com>
+References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-> ---
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Why did you omit the patch change log at this place?
+[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
 
+'exit' functions should be marked as __exit, not __init.
 
->  drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c | 34 ++++++++++++++++---------
+Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: chenhc@lemote.com
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/loongson64/common/serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-> @@ -189,7 +189,7 @@ static int acp_hw_init(void *handle)
-…
-> +	struct i2s_platform_data *i2s_pdata = NULL;
-…
-
-I propose to reconsider this update suggestion once more.
-
-
-> @@ -393,6 +396,13 @@ static int acp_hw_init(void *handle)
->  	val &= ~ACP_SOFT_RESET__SoftResetAud_MASK;
->  	cgs_write_register(adev->acp.cgs_device, mmACP_SOFT_RESET, val);
->  	return 0;
-> +
-> +failure:
-> +	kfree(i2s_pdata);
-> +	kfree(adev->acp.acp_res);
-> +	kfree(adev->acp.acp_cell);
-> +	kfree(adev->acp.acp_genpd);
-> +	return r;
->  }
->
->  /**
-
-Are you going to follow a known programming guideline?
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources#MEM12-C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandreleasingresources-CompliantSolution%28copy_process%28%29fromLinuxkernel%29
-
-Regards,
-Markus
+diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
+index ffefc1cb26121..98c3a7feb10f8 100644
+--- a/arch/mips/loongson64/common/serial.c
++++ b/arch/mips/loongson64/common/serial.c
+@@ -110,7 +110,7 @@ static int __init serial_init(void)
+ }
+ module_init(serial_init);
+ 
+-static void __init serial_exit(void)
++static void __exit serial_exit(void)
+ {
+ 	platform_device_unregister(&uart8250_device);
+ }
+-- 
+2.20.1
