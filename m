@@ -1,25 +1,20 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 02 Oct 2019 05:07:43 +0000
-Subject: Re: [v2] spi: gpio: prevent memory leak in spi_gpio_probe
-Message-Id: <2a5f9775-6cff-4246-435f-9908bfe5b07b@web.de>
+Date: Sun, 27 Oct 2019 21:10:11 +0000
+Subject: Re: [PATCH] ALSA: lx6464es: Fix memory leaks in snd_lx6464es_create
+Message-Id: <626ec93d-02bf-32ee-e4ad-011e2768d8e3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190930205241.5483-1-navid.emamdoost@gmail.com>
- <6b55e753-5797-2bdc-fae6-f575a0ef8186@web.de>
- <CAEkB2ES3-gotqS9184izf0fKOigFaFUetBiqekmYJPBgPWbSBQ@mail.gmail.com>
-In-Reply-To: <CAEkB2ES3-gotqS9184izf0fKOigFaFUetBiqekmYJPBgPWbSBQ@mail.gmail.com>
+References: <20191027192415.32743-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191027192415.32743-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-spi@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, alsa-devel@alsa-project.org
+Cc: Hariprasad Kelam <hariprasad.kelam@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Takashi Iwai <tiwai@suse.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Tim Blechmann <tim@klingt.org>, Thomas Gleixner <tglx@linutronix.de>, Allison Randal <allison@lohutok.net>
 
-> Hi Markus, thanks for your suggestions for improving the quality of
-> the patch. At the moment I prefer first get a confirmation from
-> contributors about the leak and then work on any possible improvements
-> for the patch.
+> In the implementation of snd_lx6464es_create() it there are memory leaks
+> when error happens. Go to error path if any of these calls fail:
 
-Please fix this patch as soon as possible if you care for the correctness
-of the provided information.
+Please improve the wording for such a change description.
 
 Regards,
 Markus
