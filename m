@@ -1,10 +1,10 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 27 Oct 2019 21:00:47 +0000
-Subject: [PATCH 4.9 09/49] mips: Loongson: Fix the link time qualifier of serial_exit()
-Message-Id: <20191027203124.984763077@linuxfoundation.org>
+Date: Sun, 27 Oct 2019 20:59:49 +0000
+Subject: [PATCH 4.14 012/119] mips: Loongson: Fix the link time qualifier of serial_exit()
+Message-Id: <20191027203303.052992308@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191027203119.468466356@linuxfoundation.org>
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
