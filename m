@@ -1,47 +1,48 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 07 Oct 2019 16:05:48 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove duplicated include from mmhub_v1_0.c
-Message-Id: <CADnq5_Pjh2xXFHOSHg2NVQfYju21LUnWeAC4+rv-G2_hJVmOYw@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 27 Oct 2019 20:59:25 +0000
+Subject: [PATCH 5.3 047/197] mips: Loongson: Fix the link time qualifier of serial_exit()
+Message-Id: <20191027203354.239642675@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191006074404.48416-1-yuehaibing@huawei.com>
-In-Reply-To: <20191006074404.48416-1-yuehaibing@huawei.com>
+References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian Koenig <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "Le.Ma" <le.ma@amd.com>, Yong Zhao <Yong.Zhao@amd.com>, Trigger Huang <Trigger.Huang@amd.com>, Tao Zhou <tao.zhou1@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, "Kuehling, Felix" <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-Applied.  thanks!
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Alex
+[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
 
-On Sun, Oct 6, 2019 at 11:05 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Remove duplicated include.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-> index 4c7e8c64a94e..6965e1e6fa9e 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
-> @@ -31,7 +31,6 @@
->  #include "vega10_enum.h"
->
->  #include "soc15_common.h"
-> -#include "amdgpu_ras.h"
->
->  #define mmDAGB0_CNTL_MISC2_RV 0x008f
->  #define mmDAGB0_CNTL_MISC2_RV_BASE_IDX 0
->
->
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+'exit' functions should be marked as __exit, not __init.
+
+Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: chenhc@lemote.com
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/loongson64/common/serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
+index ffefc1cb26121..98c3a7feb10f8 100644
+--- a/arch/mips/loongson64/common/serial.c
++++ b/arch/mips/loongson64/common/serial.c
+@@ -110,7 +110,7 @@ static int __init serial_init(void)
+ }
+ module_init(serial_init);
+ 
+-static void __init serial_exit(void)
++static void __exit serial_exit(void)
+ {
+ 	platform_device_unregister(&uart8250_device);
+ }
+-- 
+2.20.1
