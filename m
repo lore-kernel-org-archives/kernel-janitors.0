@@ -1,33 +1,19 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 16 Oct 2019 18:08:12 +0000
-Subject: [PATCH 01/10] drm/nouveau: remove unneeded conversions to bool
-Message-Id: <20191016180821.24036-1-afd@ti.com>
+From: Igor Russkikh <irusskikh@marvell.com>
+Date: Mon, 28 Oct 2019 09:44:58 +0000
+Subject: Re: [EXT] [PATCH][next] net: aquantia: fix spelling mistake: tx_queus -> tx_queues
+Message-Id: <c66134a5-c943-de24-a64b-a96a73d81a98@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191025113828.19710-1-colin.king@canonical.com>
+In-Reply-To: <20191025113828.19710-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: Colin King <colin.king@canonical.com>, Egor Pomozov <epomozov@marvell.com>, Igor Russkikh <Igor.Russkikh@aquantia.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
-
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/gpu/drm/nouveau/nouveau_ttm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
-index f0daf958e03a..e2fe2608193e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
-@@ -236,7 +236,7 @@ nouveau_ttm_init(struct nouveau_drm *drm)
- 	ret = ttm_bo_device_init(&drm->ttm.bdev,
- 				  &nouveau_bo_driver,
- 				  dev->anon_inode->i_mapping,
--				  drm->client.mmu.dmabits <= 32 ? true : false);
-+				  drm->client.mmu.dmabits <= 32);
- 	if (ret) {
- 		NV_ERROR(drm, "error initialising bo driver, %d\n", ret);
- 		return ret;
--- 
-2.17.1
+VGhhbmtzLCBDb2xpbiENCg0KT24gMjUuMTAuMjAxOSAxNDozOCwgQ29saW4gS2luZyB3cm90ZToN
+Cg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAN
+Cj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgbmV0ZGV2X2VyciBlcnJvciBtZXNz
+YWdlLiBGaXggaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4u
+a2luZ0BjYW5vbmljYWwuY29tPg0KDQpSZXZpZXdlZC1ieTogSWdvciBSdXNza2lraCA8aXJ1c3Nr
+aWtoQG1hcnZlbGwuY29tPg0KDQo
