@@ -1,49 +1,44 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 07 Oct 2019 16:30:41 +0000
-Subject: Re: [PATCH] drm/amdkfd: Fix a && vs || typo
-Message-Id: <CADnq5_NHDwYhF+Z7Kn6a4=qp9S9==7hSjKWQWwsJT9SPTdfePg@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 28 Oct 2019 12:01:21 +0000
+Subject: [PATCH net-next] ionic: Remove set but not used variable 'sg_desc'
+Message-Id: <20191028120121.20743-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191007085210.GC3865@mwanda>
-In-Reply-To: <20191007085210.GC3865@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yong Zhao <Yong.Zhao@amd.com>, David Airlie <airlied@linux.ie>, Felix Kuehling <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Shannon Nelson <snelson@pensando.io>, Pensando Drivers <drivers@pensando.io>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 4:52 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> In the current code if "device_info" is ever NULL then the kernel will
-> Oops so probably || was intended instead of &&.
->
-> Fixes: e392c887df97 ("drm/amdkfd: Use array to probe kfd2kgd_calls")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied.  thanks!
+drivers/net/ethernet/pensando/ionic/ionic_txrx.c: In function 'ionic_rx_empty':
+drivers/net/ethernet/pensando/ionic/ionic_txrx.c:405:28: warning:
+ variable 'sg_desc' set but not used [-Wunused-but-set-variable]
 
-Alex
+It is never used, so can be removed.
 
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> index 0db273587af4..070c9b5593c9 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-> @@ -498,7 +498,7 @@ struct kfd_dev *kgd2kfd_probe(struct kgd_dev *kgd,
->         device_info = kfd_supported_devices[asic_type][vf];
->         f2g = kfd2kgd_funcs[asic_type];
->
-> -       if (!device_info && !f2g) {
-> +       if (!device_info || !f2g) {
->                 dev_err(kfd_device, "%s %s not supported in kfd\n",
->                         amdgpu_asic_name[asic_type], vf ? "VF" : "");
->                 return NULL;
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/pensando/ionic/ionic_txrx.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
+index 0aeac3157160..97e79949b359 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
+@@ -402,7 +402,6 @@ static void ionic_rx_fill_cb(void *arg)
+ 
+ void ionic_rx_empty(struct ionic_queue *q)
+ {
+-	struct ionic_rxq_sg_desc *sg_desc;
+ 	struct ionic_desc_info *cur;
+ 	struct ionic_rxq_desc *desc;
+ 	unsigned int i;
+@@ -412,7 +411,6 @@ void ionic_rx_empty(struct ionic_queue *q)
+ 		desc->addr = 0;
+ 		desc->len = 0;
+ 
+-		sg_desc = cur->sg_desc;
+ 		for (i = 0; i < cur->npages; i++) {
+ 			if (likely(cur->pages[i].page)) {
+ 				ionic_rx_page_free(q, cur->pages[i].page,
