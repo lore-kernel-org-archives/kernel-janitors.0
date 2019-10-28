@@ -1,61 +1,29 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 26 Oct 2019 18:08:29 +0000
-Subject: Re: [PATCH] wimax: i2400: Fix memory leak in i2400m_op_rfkill_sw_toggle
-Message-Id: <fa90b9ac-9ff9-7b08-f31f-f349a9fb0a58@web.de>
+Date: Mon, 28 Oct 2019 18:00:48 +0000
+Subject: Re: drm/tinydrm: Fix memory leak in hx8357d_probe
+Message-Id: <4deb2230-eabe-b817-8516-3dfad68d2065@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191026045331.1097-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191026045331.1097-1-navid.emamdoost@gmail.com>
+References: <20191027173234.6449-1-navid.emamdoost@gmail.com>
+ <85cb5ed9-66ba-3461-dd56-017b89ba70ce@web.de>
+In-Reply-To: <85cb5ed9-66ba-3461-dd56-017b89ba70ce@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-wimax@intel.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Move kfree(cmd) before return to be reached by all execution paths.
+> …
+>> +free_dbidev:
+>> +	kfree(dbidev);
+> …
+>
+> I became curious if there is a need for such a memory release at another place.
 
-I suggest to reconsider this change suggestion once more.
-
-
-> Fixes: 2507e6ab7a9a ("wimax: i2400: fix memory leak")
-
-I find it interesting that you would like to fix your commit from 2019-09-10.
-https://lore.kernel.org/patchwork/patch/1126399/
-
-Will it be helpful to refer also to the commit 024f7f31ed15c471f80408d8b5045497e27e1135
-("i2400m: Generic probe/disconnect, reset and message passing" from 2009-01-07)?
-
-
-> +++ b/drivers/net/wimax/i2400m/op-rfkill.c
-> @@ -127,12 +127,12 @@ int i2400m_op_rfkill_sw_toggle(struct wimax_dev *wimax_dev,
->  			"%d\n", result);
->  	result = 0;
->  error_cmd:
-> -	kfree(cmd);
->  	kfree_skb(ack_skb);
->  error_msg_to_dev:
->  error_alloc:
->  	d_fnend(4, dev, "(wimax_dev %p state %d) = %d\n",
->  		wimax_dev, state, result);
-> +	kfree(cmd);
->  	return result;
->  }
-
-
-I would prefer to improve the exception handling like the following.
-(Would you like to avoid passing a null pointer at the end?)
-
--error_cmd:
-+free_skb:
--	kfree(cmd);
- 	kfree_skb(ack_skb);
--error_msg_to_dev:
-+free_cmd:
-+	kfree(cmd);
--error_alloc:
-+exit:
-
-
-How do you think about this update variant?
+I have taken another look also at a related implementation detail.
+Now I have realised that the desired clean-up should usually be achieved by
+the callback function “mipi_dbi_release” for this software module.
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/gpu/drm/drm_mipi_dbi.c#L581
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/drm_mipi_dbi.c?id=0365fb6baeb1ebefbbdad9e3f48bab9b3ccb8df3#n581
 
 Regards,
 Markus
