@@ -1,48 +1,25 @@
-From: "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
-Date: Fri, 18 Oct 2019 07:51:10 +0000
-Subject: MOTHERLESS CHILDREN IN YOUR CITY !!
-Message-Id: <5621ej$0s4-7a@kh0.i.rsr.r9>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="EFA7_FB09FAD2"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 28 Oct 2019 08:19:23 +0000
+Subject: Re: ALSA: pci: Fix memory leak in snd_korg1212_create
+Message-Id: <49777a3b-1fbf-06e4-b4b0-856105c86852@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20191027191206.30820-1-navid.emamdoost@gmail.com>
+ <47c90b48-8706-7860-3b87-30a7bbb726c0@web.de>
+In-Reply-To: <47c90b48-8706-7860-3b87-30a7bbb726c0@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>, Takashi Iwai <tiwai@suse.com>, Richard Fontana <rfontana@redhat.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
 
+> I suggest to add a jump target according to the Linux coding style
+> so that duplicate exception handling code can be reduced.
 
---EFA7_FB09FAD2
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Do you find any information interesting from the update suggestion
+“ALSA: korg1212: Use common error handling code in two functions”?
+https://lore.kernel.org/alsa-devel/2165666c-69f9-c716-8ee8-f5071a41f37d@users.sourceforge.net/
+https://lore.kernel.org/patchwork/patch/851723/
+https://lkml.org/lkml/2017/11/16/193
 
-Dear Sir / Madam
-
-
-
-Since ever we left your country back to Canada , we have gotten Government=
- approval and we have been busying planning for the less privilege Childre=
-n projects.
-
-We are planning to release first batch of the funds $2,990,000.00 within 1=
-4 days for building an estate for motherless children in your city.
-
-I want you to use my mother;s company name to register this charity projec=
-t in your country after receiving the project funds.
-
-It must be registered as { Bayraktar Group Homeless Children Ltd }.
-
-
-Can you handle and supervise this big project ?
-Can you manager all the workers as a senior supervisor ?
-We want to be sure you can handle it before we proceed with this project.
-
-
-Please call me if you want to hear from us + 1-917 580 4919.
-Please can you manage such project please Kindly reply for further details=
-.
-
-Your full names-----------
-
-
-
-Ekrem Bayraktar.
-Bayraktar Shipping Group
-
---EFA7_FB09FAD2--
+Regards,
+Markus
