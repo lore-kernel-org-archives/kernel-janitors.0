@@ -1,29 +1,29 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 02 Oct 2019 04:35:08 +0000
-Subject: Re: [PATCH v2] cw1200: Fix a signedness bug in cw1200_load_firmware()
-Message-Id: <20191002043508.7A7B0602F2@smtp.codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 28 Oct 2019 21:20:25 +0000
+Subject: phy: tegra: xusb: Complete exception handling in five probe functions
+Message-Id: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191001114501.GA6550@mwanda>
-In-Reply-To: <20191001114501.GA6550@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-tegra@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Hello,
 
-> The "priv->hw_type" is an enum and in this context GCC will treat it
-> as an unsigned int so the error handling will never trigger.
-> 
-> Fixes: a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I have taken another look also at the implementations of five probe functio=
+ns.
+I have got the impression then that the exception handling is incomplete so=
+ far
+at these source code places.
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/phy/tegra/xusb-teg=
+ra124.c#L608
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/phy/tegra/xusb-tegra124.c?id=8005803a2ca0af49f36f6e9329b5ecda3df27347#=
+n608
 
-Patch applied to wireless-drivers-next.git, thanks.
+How do you think about to move kfree() calls to other jump targets
+according to the Linux coding style?
 
-4a50d454502f cw1200: Fix a signedness bug in cw1200_load_firmware()
-
--- 
-https://patchwork.kernel.org/patch/11168561/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Regards,
+Markus
