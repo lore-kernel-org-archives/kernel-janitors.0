@@ -1,46 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 06 Oct 2019 15:04:29 +0000
-Subject: [PATCH] media: vpx3220: make array input_vals static, makes object smaller
-Message-Id: <20191006150429.24311-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 29 Oct 2019 06:09:14 +0000
+Subject: [PATCH] rpmsg: char: Simplify 'rpmsg_eptdev_release()'
+Message-Id: <20191029060915.3650-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-Don't populate the array input_vals on the stack but instead make it
-static. Makes the object code smaller by 106 bytes.
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  11744	   3536	    128	  15408	   3c30	drivers/media/i2c/vpx3220.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  11574	   3600	    128	  15302	   3bc6	drivers/media/i2c/vpx3220.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/i2c/vpx3220.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/rpmsg_char.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/media/i2c/vpx3220.c b/drivers/media/i2c/vpx3220.c
-index 39f66e7a0e42..8be03fe5928c 100644
---- a/drivers/media/i2c/vpx3220.c
-+++ b/drivers/media/i2c/vpx3220.c
-@@ -375,7 +375,7 @@ static int vpx3220_s_routing(struct v4l2_subdev *sd,
- 		 input = 1: COMPOSITE  input
- 		 input = 2: SVHS       input  */
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 507bfe163883..0c3a340db7d1 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -146,7 +146,6 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+ 	struct device *dev = &eptdev->dev;
+-	struct sk_buff *skb;
  
--	const int input_vals[3][2] = {
-+	static const int input_vals[3][2] = {
- 		{0x0c, 0},
- 		{0x0d, 0},
- 		{0x0e, 1}
+ 	/* Close the endpoint, if it's not already destroyed by the parent */
+ 	mutex_lock(&eptdev->ept_lock);
+@@ -157,10 +156,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 	mutex_unlock(&eptdev->ept_lock);
+ 
+ 	/* Discard all SKBs */
+-	while (!skb_queue_empty(&eptdev->queue)) {
+-		skb = skb_dequeue(&eptdev->queue);
+-		kfree_skb(skb);
+-	}
++	skb_queue_purge(&eptdev->queue);
+ 
+ 	put_device(dev);
+ 
 -- 
 2.20.1
