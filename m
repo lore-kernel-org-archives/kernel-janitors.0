@@ -1,68 +1,37 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Fri, 18 Oct 2019 10:15:26 +0000
-Subject: Re: [PATCH] PNP: fix unintended sign extension on left shifts
-Message-Id: <7928372.mU7jdBj7dM@kreacher>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Oct 2019 14:52:47 +0000
+Subject: [bug report] vxlan: add adjacent link to limit depth level
+Message-Id: <20191029145247.GA24739@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191014131608.31335-1-colin.king@canonical.com>
-In-Reply-To: <20191014131608.31335-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Monday, October 14, 2019 3:16:08 PM CEST Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting a u8 left will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to a 64 bit
-> resource_size_t will sign extend the value causing the upper 32 bits
-> to be set in the result.
-> 
-> Fix this by casting the u8 value to a resource_size_t before the shift.
-> Original commit is pre-git history.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pnp/isapnp/core.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
-> index 179b737280e1..c947b1673041 100644
-> --- a/drivers/pnp/isapnp/core.c
-> +++ b/drivers/pnp/isapnp/core.c
-> @@ -511,10 +511,14 @@ static void __init isapnp_parse_mem32_resource(struct pnp_dev *dev,
->  	unsigned char flags;
->  
->  	isapnp_peek(tmp, size);
-> -	min = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
-> -	max = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
-> -	align = (tmp[12] << 24) | (tmp[11] << 16) | (tmp[10] << 8) | tmp[9];
-> -	len = (tmp[16] << 24) | (tmp[15] << 16) | (tmp[14] << 8) | tmp[13];
-> +	min = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
-> +              (tmp[2] << 8) | tmp[1];
-> +	max = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
-> +              (tmp[6] << 8) | tmp[5];
-> +	align = ((resource_size_t)tmp[12] << 24) | (tmp[11] << 16) |
-> +              (tmp[10] << 8) | tmp[9];
-> +	len = ((resource_size_t)tmp[16] << 24) | (tmp[15] << 16) |
-> +              (tmp[14] << 8) | tmp[13];
->  	flags = tmp[0];
->  	pnp_register_mem_resource(dev, option_flags,
->  				  min, max, align, len, flags);
-> @@ -532,8 +536,10 @@ static void __init isapnp_parse_fixed_mem32_resource(struct pnp_dev *dev,
->  	unsigned char flags;
->  
->  	isapnp_peek(tmp, size);
-> -	base = (tmp[4] << 24) | (tmp[3] << 16) | (tmp[2] << 8) | tmp[1];
-> -	len = (tmp[8] << 24) | (tmp[7] << 16) | (tmp[6] << 8) | tmp[5];
-> +	base = ((resource_size_t)tmp[4] << 24) | (tmp[3] << 16) |
-> +	       (tmp[2] << 8) | tmp[1];
-> +	len = ((resource_size_t)tmp[8] << 24) | (tmp[7] << 16) |
-> +              (tmp[6] << 8) | tmp[5];
->  	flags = tmp[0];
->  	pnp_register_mem_resource(dev, option_flags, base, base, 0, len, flags);
->  }
-> 
+Hello Taehee Yoo,
 
-Can you please respin this with a CC to linux-acpi?
+This is a semi-automatic email about new static checker warnings.
+
+The patch 0ce1822c2a08: "vxlan: add adjacent link to limit depth
+level" from Oct 21, 2019, leads to the following Smatch complaint:
+
+    drivers/net/vxlan.c:4012 vxlan_changelink()
+    error: we previously assumed 'lowerdev' could be null (see line 4009)
+
+drivers/net/vxlan.c
+  4008		netdev_adjacent_change_commit(dst->remote_dev, lowerdev, dev);
+  4009		if (lowerdev && lowerdev != dst->remote_dev)
+                    ^^^^^^^^
+The patch adds a check for NULL,
+
+  4010			dst->remote_dev = lowerdev;
+  4011	
+  4012		netdev_update_lockdep_key(lowerdev);
+                                          ^^^^^^^^
+but it also adds a new unchecked dereference (inside the function).
+
+  4013		vxlan_config_apply(dev, &conf, lowerdev, vxlan->net, true);
+  4014		return 0;
+
+regards,
+dan carpenter
