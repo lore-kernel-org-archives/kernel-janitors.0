@@ -1,57 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Oct 2019 10:07:54 +0000
+From: Igor Russkikh <irusskikh@marvell.com>
+Date: Tue, 29 Oct 2019 14:49:40 +0000
 Subject: Re: [EXT] [bug report] net: aquantia: add basic ptp_clock callbacks
-Message-Id: <20191029100754.GG1922@kadam>
+Message-Id: <46c25334-e73d-f5fc-bff7-18e0490ecf90@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
 In-Reply-To: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 09:14:33AM +0000, Igor Russkikh wrote:
->=20
-> On 28.10.2019 18:25, Egor Pomozov wrote:
-> > Hello Dan,
-> > +Igor
-> >=20
-> > Thank you for pointing the issue. We=E2=80=99ll fixed soon.
->=20
->=20
-> >>  1207          clock =3D ptp_clock_register(&aq_ptp->ptp_info, &aq_nic=
-->ndev->dev);
-> >>  1208          if (!clock || IS_ERR(clock)) {
-> >>  1209                  netdev_err(aq_nic->ndev, "ptp_clock_register fa=
-iled\n");
-> >>  1210                  err =3D PTR_ERR(clock);
-> >>  1211                  goto err_exit;
-> >>
-> >> This is a false positive in Smatch but the code is still problematic.
-> >>
-> >> The issue is that ptp_clock_register() returns error pointers if there
-> >> is an error and it returns NULL if the clock is disabled in the config.
-> >> If "clock" is NULL then this code returns PTR_ERR(NULL) which is
-> >> success but so that's a bug.
-> >>
-> >> The question is, is it really realistic for people to run this hardware
-> >> without a ptp clock?  If so then we should allow it instead of erroring
-> >> out here when clock is NULL.  If not then we should enforce that in the
-> >> Kconfig instead of waiting until runtime.
->=20
-> Hi Dan, I'd say thats a false positive.
-> There exist HW configuration where PTP is disabled or not available.
->=20
-> PTR_ERR(NULL) is 0, so eventually driver now functions correctly, allowin=
-g to
-> proceed but marking ptp functionality as disabled.
->=20
-> I agree that's a bit counterintuitive but correct.
-
-I have looked at it again and the "!clock" check should be removed
-because it is dead code.  It's not possible for it to be NULL there
-because aq_ptp_init() is a dummy function if the PTP clock is not
-enabled.
-
-regards,
-dan carpenter
+DQo+PiBIaSBEYW4sIEknZCBzYXkgdGhhdHMgYSBmYWxzZSBwb3NpdGl2ZS4NCj4+IFRoZXJlIGV4
+aXN0IEhXIGNvbmZpZ3VyYXRpb24gd2hlcmUgUFRQIGlzIGRpc2FibGVkIG9yIG5vdCBhdmFpbGFi
+bGUuDQo+Pg0KPj4gUFRSX0VSUihOVUxMKSBpcyAwLCBzbyBldmVudHVhbGx5IGRyaXZlciBub3cg
+ZnVuY3Rpb25zIGNvcnJlY3RseSwgYWxsb3dpbmcgdG8NCj4+IHByb2NlZWQgYnV0IG1hcmtpbmcg
+cHRwIGZ1bmN0aW9uYWxpdHkgYXMgZGlzYWJsZWQuDQo+Pg0KPj4gSSBhZ3JlZSB0aGF0J3MgYSBi
+aXQgY291bnRlcmludHVpdGl2ZSBidXQgY29ycmVjdC4NCj4gDQo+IEkgaGF2ZSBsb29rZWQgYXQg
+aXQgYWdhaW4gYW5kIHRoZSAiIWNsb2NrIiBjaGVjayBzaG91bGQgYmUgcmVtb3ZlZA0KPiBiZWNh
+dXNlIGl0IGlzIGRlYWQgY29kZS4gIEl0J3Mgbm90IHBvc3NpYmxlIGZvciBpdCB0byBiZSBOVUxM
+IHRoZXJlDQo+IGJlY2F1c2UgYXFfcHRwX2luaXQoKSBpcyBhIGR1bW15IGZ1bmN0aW9uIGlmIHRo
+ZSBQVFAgY2xvY2sgaXMgbm90DQo+IGVuYWJsZWQuDQoNCkhtLCBzZWVtcyB5b3UgYXJlIHJpZ2h0
+LiBJJ3ZlIGFkZGVkIGV4Y2x1c2lvbiBjb2RlIHdpdGggYSBsYXRlciBjb21taXQNCmFuZCB5ZXMs
+IHRoaXMgbWVhbnMgTlVMTCB3aWxsIG5ldmVyIGJlIGEgcmV0dmFsIGhlcmUuDQoNClRoYW5rcyBh
+Z2FpbiwgSSdsbCBjbGVhbiBpdCB1cC4NCg0KLS0gDQpSZWdhcmRzLA0KICBJZ29yDQo
