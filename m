@@ -1,40 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Oct 2019 11:28:09 +0000
-Subject: [PATCH] clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18
-Message-Id: <20191023112809.27595-1-colin.king@canonical.com>
+From: Maxime Ripard <mripard@kernel.org>
+Date: Tue, 29 Oct 2019 07:43:21 +0000
+Subject: Re: [PATCH] clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18
+Message-Id: <20191029074321.ftamn6qitkbfrucm@hendrix>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="gufwthkvpo2ckxgg"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191023112809.27595-1-colin.king@canonical.com>
+In-Reply-To: <20191023112809.27595-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The zero'ing of bits 16 and 18 is incorrect. Currently the code
-is masking with the bitwise-and of BIT(16) & BIT(18) which is
-0, so the updated value for val is always zero. Fix this by bitwise
-and-ing value with the correct mask that will zero bits 16 and 18.
+--gufwthkvpo2ckxgg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Addresses-Coverity: (" Suspicious &= or |= constant expression")
-Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 23, 2019 at 12:28:09PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The zero'ing of bits 16 and 18 is incorrect. Currently the code
+> is masking with the bitwise-and of BIT(16) & BIT(18) which is
+> 0, so the updated value for val is always zero. Fix this by bitwise
+> and-ing value with the correct mask that will zero bits 16 and 18.
+>
+> Addresses-Coverity: (" Suspicious &= or |= constant expression")
+> Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-index dcac1391767f..ef29582676f6 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-@@ -1224,7 +1224,7 @@ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
- 
- 	/* Enforce d1 = 0, d2 = 0 for Audio PLL */
- 	val = readl(reg + SUN9I_A80_PLL_AUDIO_REG);
--	val &= (BIT(16) & BIT(18));
-+	val &= ~(BIT(16) | BIT(18));
- 	writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
- 
- 	/* Enforce P = 1 for both CPU cluster PLLs */
--- 
-2.20.1
+Applied, thanks!
+Maxime
+
+--gufwthkvpo2ckxgg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbftmQAKCRDj7w1vZxhR
+xUkfAP9Z5pgiCu01sgdMtiTA28A0ugCnNsspfAqhabiBnF1uMAD/UtXwYMkvUTC7
+Eqx/KFAYrADVGg14oOUSrdk0eFxowwY=
+=j3Hb
+-----END PGP SIGNATURE-----
+
+--gufwthkvpo2ckxgg--
