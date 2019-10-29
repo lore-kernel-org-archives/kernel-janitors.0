@@ -1,35 +1,57 @@
-From: Igor Russkikh <irusskikh@marvell.com>
-Date: Tue, 29 Oct 2019 09:14:33 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Oct 2019 10:07:54 +0000
 Subject: Re: [EXT] [bug report] net: aquantia: add basic ptp_clock callbacks
-Message-Id: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
+Message-Id: <20191029100754.GG1922@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
+In-Reply-To: <2c9b7262-d259-5fb1-0f4e-6634ed687284@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-DQpPbiAyOC4xMC4yMDE5IDE4OjI1LCBFZ29yIFBvbW96b3Ygd3JvdGU6DQo+IEhlbGxvIERhbiwN
-Cj4gK0lnb3INCj4gDQo+IFRoYW5rIHlvdSBmb3IgcG9pbnRpbmcgdGhlIGlzc3VlLiBXZeKAmWxs
-IGZpeGVkIHNvb24uDQoNCg0KPj4gIDEyMDcgICAgICAgICAgY2xvY2sgPSBwdHBfY2xvY2tfcmVn
-aXN0ZXIoJmFxX3B0cC0+cHRwX2luZm8sICZhcV9uaWMtPm5kZXYtPmRldik7DQo+PiAgMTIwOCAg
-ICAgICAgICBpZiAoIWNsb2NrIHx8IElTX0VSUihjbG9jaykpIHsNCj4+ICAxMjA5ICAgICAgICAg
-ICAgICAgICAgbmV0ZGV2X2VycihhcV9uaWMtPm5kZXYsICJwdHBfY2xvY2tfcmVnaXN0ZXIgZmFp
-bGVkXG4iKTsNCj4+ICAxMjEwICAgICAgICAgICAgICAgICAgZXJyID0gUFRSX0VSUihjbG9jayk7
-DQo+PiAgMTIxMSAgICAgICAgICAgICAgICAgIGdvdG8gZXJyX2V4aXQ7DQo+Pg0KPj4gVGhpcyBp
-cyBhIGZhbHNlIHBvc2l0aXZlIGluIFNtYXRjaCBidXQgdGhlIGNvZGUgaXMgc3RpbGwgcHJvYmxl
-bWF0aWMuDQo+Pg0KPj4gVGhlIGlzc3VlIGlzIHRoYXQgcHRwX2Nsb2NrX3JlZ2lzdGVyKCkgcmV0
-dXJucyBlcnJvciBwb2ludGVycyBpZiB0aGVyZQ0KPj4gaXMgYW4gZXJyb3IgYW5kIGl0IHJldHVy
-bnMgTlVMTCBpZiB0aGUgY2xvY2sgaXMgZGlzYWJsZWQgaW4gdGhlIGNvbmZpZy4NCj4+IElmICJj
-bG9jayIgaXMgTlVMTCB0aGVuIHRoaXMgY29kZSByZXR1cm5zIFBUUl9FUlIoTlVMTCkgd2hpY2gg
-aXMNCj4+IHN1Y2Nlc3MgYnV0IHNvIHRoYXQncyBhIGJ1Zy4NCj4+DQo+PiBUaGUgcXVlc3Rpb24g
-aXMsIGlzIGl0IHJlYWxseSByZWFsaXN0aWMgZm9yIHBlb3BsZSB0byBydW4gdGhpcyBoYXJkd2Fy
-ZQ0KPj4gd2l0aG91dCBhIHB0cCBjbG9jaz8gIElmIHNvIHRoZW4gd2Ugc2hvdWxkIGFsbG93IGl0
-IGluc3RlYWQgb2YgZXJyb3JpbmcNCj4+IG91dCBoZXJlIHdoZW4gY2xvY2sgaXMgTlVMTC4gIElm
-IG5vdCB0aGVuIHdlIHNob3VsZCBlbmZvcmNlIHRoYXQgaW4gdGhlDQo+PiBLY29uZmlnIGluc3Rl
-YWQgb2Ygd2FpdGluZyB1bnRpbCBydW50aW1lLg0KDQpIaSBEYW4sIEknZCBzYXkgdGhhdHMgYSBm
-YWxzZSBwb3NpdGl2ZS4NClRoZXJlIGV4aXN0IEhXIGNvbmZpZ3VyYXRpb24gd2hlcmUgUFRQIGlz
-IGRpc2FibGVkIG9yIG5vdCBhdmFpbGFibGUuDQoNClBUUl9FUlIoTlVMTCkgaXMgMCwgc28gZXZl
-bnR1YWxseSBkcml2ZXIgbm93IGZ1bmN0aW9ucyBjb3JyZWN0bHksIGFsbG93aW5nIHRvDQpwcm9j
-ZWVkIGJ1dCBtYXJraW5nIHB0cCBmdW5jdGlvbmFsaXR5IGFzIGRpc2FibGVkLg0KDQpJIGFncmVl
-IHRoYXQncyBhIGJpdCBjb3VudGVyaW50dWl0aXZlIGJ1dCBjb3JyZWN0Lg0KDQpSZWdhcmRzLA0K
-ICBJZ29yDQo
+On Tue, Oct 29, 2019 at 09:14:33AM +0000, Igor Russkikh wrote:
+>=20
+> On 28.10.2019 18:25, Egor Pomozov wrote:
+> > Hello Dan,
+> > +Igor
+> >=20
+> > Thank you for pointing the issue. We=E2=80=99ll fixed soon.
+>=20
+>=20
+> >>  1207          clock =3D ptp_clock_register(&aq_ptp->ptp_info, &aq_nic=
+->ndev->dev);
+> >>  1208          if (!clock || IS_ERR(clock)) {
+> >>  1209                  netdev_err(aq_nic->ndev, "ptp_clock_register fa=
+iled\n");
+> >>  1210                  err =3D PTR_ERR(clock);
+> >>  1211                  goto err_exit;
+> >>
+> >> This is a false positive in Smatch but the code is still problematic.
+> >>
+> >> The issue is that ptp_clock_register() returns error pointers if there
+> >> is an error and it returns NULL if the clock is disabled in the config.
+> >> If "clock" is NULL then this code returns PTR_ERR(NULL) which is
+> >> success but so that's a bug.
+> >>
+> >> The question is, is it really realistic for people to run this hardware
+> >> without a ptp clock?  If so then we should allow it instead of erroring
+> >> out here when clock is NULL.  If not then we should enforce that in the
+> >> Kconfig instead of waiting until runtime.
+>=20
+> Hi Dan, I'd say thats a false positive.
+> There exist HW configuration where PTP is disabled or not available.
+>=20
+> PTR_ERR(NULL) is 0, so eventually driver now functions correctly, allowin=
+g to
+> proceed but marking ptp functionality as disabled.
+>=20
+> I agree that's a bit counterintuitive but correct.
+
+I have looked at it again and the "!clock" check should be removed
+because it is dead code.  It's not possible for it to be NULL there
+because aq_ptp_init() is a dummy function if the PTP clock is not
+enabled.
+
+regards,
+dan carpenter
