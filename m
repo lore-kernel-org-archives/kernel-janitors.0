@@ -1,53 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 31 Oct 2019 09:48:53 +0000
-Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
-Message-Id: <1b33ca33-a02b-1923-cbee-814e520b9700@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 29 Oct 2019 11:32:30 +0000
+Subject: [PATCH][next] crypto: amlogic: ensure error variable err is set before returning it
+Message-Id: <20191029113230.7050-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
- <c7a0b6b0-96cd-1fd3-3d98-94a3692bda38@cogentembedded.com>
-In-Reply-To: <c7a0b6b0-96cd-1fd3-3d98-94a3692bda38@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com, sgarzare@redhat.com, stefanha@redhat.com, ytht.net@gmail.com, arnd@arndb.de, tglx@linutronix.de, decui@microsoft.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Corentin Labbe <clabbe@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Neil Armstrong <narmstrong@baylibre.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 31/10/2019 à 10:36, Sergei Shtylyov a écrit :
-> Hello!
->
-> On 31.10.2019 9:47, Christophe JAILLET wrote:
->
->> Use '__skb_queue_purge()' instead of re-implementing it.
->
->    In don't see that double underscore below...
-This is a typo in the commit message.
+From: Colin Ian King <colin.king@canonical.com>
 
-There is no need for __ because skb_dequeue was used.
+Currently when the call to crypto_engine_alloc_init fails the error
+return path returns an uninitialized value in the variable err. Fix
+this by setting err to -ENOMEM.
 
-Could you fix it directly in the commit message (preferred solution for 
-me) or should I send a V2?
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/amlogic/amlogic-gxl-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-CJ
-
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   net/vmw_vsock/af_vsock.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->> index 2ab43b2bba31..2983dc92ca63 100644
->> --- a/net/vmw_vsock/af_vsock.c
->> +++ b/net/vmw_vsock/af_vsock.c
-> [...]
->> @@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int 
->> level)
->>           sock_orphan(sk);
->>           sk->sk_shutdown = SHUTDOWN_MASK;
->>   -        while ((skb = skb_dequeue(&sk->sk_receive_queue)))
->> -            kfree_skb(skb);
->> +        skb_queue_purge(&sk->sk_receive_queue);
->>             /* Clean up any sockets that never were accepted. */
->>           while ((pending = vsock_dequeue_accept(sk)) != NULL) {
->
-> MBR, Sergei
->
+diff --git a/drivers/crypto/amlogic/amlogic-gxl-core.c b/drivers/crypto/amlogic/amlogic-gxl-core.c
+index db5b421e88d8..fa05fce1c0de 100644
+--- a/drivers/crypto/amlogic/amlogic-gxl-core.c
++++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
+@@ -162,6 +162,7 @@ static int meson_allocate_chanlist(struct meson_dev *mc)
+ 		if (!mc->chanlist[i].engine) {
+ 			dev_err(mc->dev, "Cannot allocate engine\n");
+ 			i--;
++			err = -ENOMEM;
+ 			goto error_engine;
+ 		}
+ 		err = crypto_engine_start(mc->chanlist[i].engine);
+-- 
+2.20.1
