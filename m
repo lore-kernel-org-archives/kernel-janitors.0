@@ -1,25 +1,43 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 14 Oct 2019 07:53:41 +0000
-Subject: Re: [PATCH] dmaengine: mediatek: Use devm_platform_ioremap_resource() in mtk_uart_apdma_probe()
-Message-Id: <20191014075228.GG2654@vkoul-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Oct 2019 18:27:42 +0000
+Subject: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in exynos_asv_update_opps()
+Message-Id: <20191029182742.GC17569@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <366e776c-8760-eeb7-c248-7380c9f4fd34@web.de>
-In-Reply-To: <366e776c-8760-eeb7-c248-7380c9f4fd34@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Dan Williams <dan.j.williams@intel.com>, Long Cheng <long.cheng@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 22-09-19, 13:14, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 13:07:41 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
+The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
+in the config and it returns NULL if there is an error.  This code only
+checks for error pointers so it could lead to an Oops inside the
+dev_pm_opp_put_opp_table() function.
 
-Applied, thanks
+Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+When we add a new driver, could we specify the which prefix will be used
+going forward?  In other words commit 5ea428595cc5 could have the
+prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
+driver".  The "exynos-asv" bit was missing so the first person to send a
+fix has to guess what is desired.
 
+ drivers/soc/samsung/exynos-asv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
+index 8abf4dfaa5c5..30bb7b7cc769 100644
+--- a/drivers/soc/samsung/exynos-asv.c
++++ b/drivers/soc/samsung/exynos-asv.c
+@@ -93,7 +93,7 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
+ 			continue;
+ 
+ 		opp_table = dev_pm_opp_get_opp_table(cpu);
+-		if (IS_ERR(opp_table))
++		if (IS_ERR_OR_NULL(opp_table))
+ 			continue;
+ 
+ 		if (!last_opp_table || opp_table != last_opp_table) {
 -- 
-~Vinod
+2.20.1
