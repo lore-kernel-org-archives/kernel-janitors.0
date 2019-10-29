@@ -1,57 +1,38 @@
-From: Biju Das <biju.das@bp.renesas.com>
-Date: Wed, 16 Oct 2019 06:39:09 +0000
-Subject: RE: [PATCH -next] usb: typec: add dependency for TYPEC_HD3SS3220
-Message-Id: <OSBPR01MB2103364C0A4E7150C10DC624B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Oct 2019 18:23:20 +0000
+Subject: [PATCH] fbdev: potential information leak in do_fb_ioctl()
+Message-Id: <20191029182320.GA17569@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191009014707.38716-1-maowenan@huawei.com>
- <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
-In-Reply-To: <ff1837bd-d6eb-a296-f7d9-f2988d5d2256@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan <maowenan@huawei.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrea Righi <righi.andrea@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, security@kernel.org, Kees Cook <keescook@chromium.org>, kernel-janitors@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Julia Lawall <Julia.Lawall@lip6.fr>, Gerd Hoffmann <kraxel@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, Peter Rosin <peda@axentia.se>
 
-DQogVGhpcyBwYXRjaCBpcyBwcmVzZW50IGluIGJvdGggdXNiLW5leHQgYW5kIExpbnV4LW5leHQu
-DQoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2dyZWdr
-aC91c2IuZ2l0L2NvbW1pdC8/aD11c2ItbmV4dCZpZD1kYTRiNWQxOGRkOTQ5YWJkZGE3YzhlYTc2
-Yzk0ODNiNWVkZDQ5NjE2DQoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
-ZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQvY29tbWl0Lz9oPW5leHQtMjAxOTEwMTYmaWQ9
-ZGE0YjVkMThkZDk0OWFiZGRhN2M4ZWE3NmM5NDgzYjVlZGQ0OTYxNg0KDQpDaGVlcnMsDQpCaWp1
-DQoNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIC1uZXh0XSB1c2I6IHR5cGVjOiBhZGQgZGVwZW5k
-ZW5jeSBmb3INCj4gVFlQRUNfSEQzU1MzMjIwDQo+IA0KPiBraW5kbHkgcGluZy4NCj4gDQo+IE9u
-IDIwMTkvMTAvOSA5OjQ3LCBNYW8gV2VuYW4gd3JvdGU6DQo+ID4gSWYgQ09ORklHX1RZUEVDX0hE
-M1NTMzIyMD15LCBDT05GSUdfVVNCX1JPTEVfU1dJVENIPW0sIGJlbG93DQo+IGVycm9ycw0KPiA+
-IGNhbiBiZSBmb3VuZDoNCj4gPiBkcml2ZXJzL3VzYi90eXBlYy9oZDNzczMyMjAubzogSW4gZnVu
-Y3Rpb24gYGhkM3NzMzIyMF9yZW1vdmUnOg0KPiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDY0KTog
-dW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgdXNiX3JvbGVfc3dpdGNoX3B1dCcNCj4gPiBkcml2ZXJz
-L3VzYi90eXBlYy9oZDNzczMyMjAubzogSW4gZnVuY3Rpb24gYGhkM3NzMzIyMF9kcl9zZXQnOg0K
-PiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDE1NCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8NCj4g
-YHVzYl9yb2xlX3N3aXRjaF9zZXRfcm9sZScNCj4gPiBkcml2ZXJzL3VzYi90eXBlYy9oZDNzczMy
-MjAubzogSW4gZnVuY3Rpb24gYGhkM3NzMzIyMF9zZXRfcm9sZSc6DQo+ID4gaGQzc3MzMjIwLmM6
-KC50ZXh0KzB4Mjk0KTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0bw0KPiBgdXNiX3JvbGVfc3dpdGNo
-X3NldF9yb2xlJw0KPiA+IGhkM3NzMzIyMC5jOigudGV4dCsweDJmNCk6IHVuZGVmaW5lZCByZWZl
-cmVuY2UgdG8NCj4gYHVzYl9yb2xlX3N3aXRjaF9zZXRfcm9sZScNCj4gPiBoZDNzczMyMjAuYzoo
-LnRleHQrMHgzNDgpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvDQo+IGB1c2Jfcm9sZV9zd2l0Y2hf
-c2V0X3JvbGUnDQo+ID4gaGQzc3MzMjIwLmM6KC50ZXh0KzB4MzkwKTogdW5kZWZpbmVkIHJlZmVy
-ZW5jZSB0bw0KPiBgdXNiX3JvbGVfc3dpdGNoX3NldF9yb2xlJw0KPiA+IGRyaXZlcnMvdXNiL3R5
-cGVjL2hkM3NzMzIyMC5vOiBJbiBmdW5jdGlvbiBgaGQzc3MzMjIwX3Byb2JlJzoNCj4gPiBoZDNz
-czMyMjAuYzooLnRleHQrMHg1ZTgpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvDQo+IGBmd25vZGVf
-dXNiX3JvbGVfc3dpdGNoX2dldCcNCj4gPiBoZDNzczMyMjAuYzooLnRleHQrMHg4YTQpOiB1bmRl
-ZmluZWQgcmVmZXJlbmNlIHRvIGB1c2Jfcm9sZV9zd2l0Y2hfcHV0Jw0KPiA+IG1ha2U6ICoqKiBb
-dm1saW51eF0gRXJyb3IgMQ0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGQgZGVwZW5kZW5jeSBVU0Jf
-Uk9MRV9TV0lUQ0ggZm9yIFRZUEVDX0hEM1NTMzIyMC4NCj4gPg0KPiA+IEZpeGVzOiAxYzQ4Yzc1
-OWVmNGIgKCJ1c2I6IHR5cGVjOiBkcml2ZXIgZm9yIFRJIEhEM1NTMzIyMCBVU0IgVHlwZS1DDQo+
-ID4gRFJQIHBvcnQgY29udHJvbGxlciIpDQo+ID4gUmVwb3J0ZWQtYnk6IEh1bGsgUm9ib3QgPGh1
-bGtjaUBodWF3ZWkuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hbyBXZW5hbiA8bWFvd2VuYW5A
-aHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy91c2IvdHlwZWMvS2NvbmZpZyB8IDEg
-Kw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3VzYi90eXBlYy9LY29uZmlnIGIvZHJpdmVycy91c2IvdHlwZWMvS2NvbmZp
-Zw0KPiA+IGluZGV4IGFjZWIyYWYuLmI0ZjJhYWMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy91
-c2IvdHlwZWMvS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvdXNiL3R5cGVjL0tjb25maWcNCj4g
-PiBAQCAtNTMsNiArNTMsNyBAQCBzb3VyY2UgImRyaXZlcnMvdXNiL3R5cGVjL3Vjc2kvS2NvbmZp
-ZyINCj4gPiAgY29uZmlnIFRZUEVDX0hEM1NTMzIyMA0KPiA+ICAJdHJpc3RhdGUgIlRJIEhEM1NT
-MzIyMCBUeXBlLUMgRFJQIFBvcnQgY29udHJvbGxlciBkcml2ZXIiDQo+ID4gIAlkZXBlbmRzIG9u
-IEkyQw0KPiA+ICsJZGVwZW5kcyBvbiBVU0JfUk9MRV9TV0lUQ0gNCj4gPiAgCWhlbHANCj4gPiAg
-CSAgU2F5IFkgb3IgTSBoZXJlIGlmIHlvdXIgc3lzdGVtIGhhcyBUSSBIRDNTUzMyMjAgVHlwZS1D
-IERSUCBQb3J0DQo+ID4gIAkgIGNvbnRyb2xsZXIgZHJpdmVyLg0KPiA+DQoNCg=
+The "fix" struct has a 2 byte hole after ->ywrapstep and the
+"fix = info->fix;" assignment doesn't necessarily clear it.  It depends
+on the compiler.
+
+Fixes: 1f5e31d7e55a ("fbmem: don't call copy_from/to_user() with mutex held")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I have 13 more similar places to patch...  I'm not totally sure I
+understand all the issues involved.
+
+ drivers/video/fbdev/core/fbmem.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 6f6fc785b545..b4ce6a28aed9 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1109,6 +1109,7 @@ static long do_fb_ioctl(struct fb_info *info, unsigned int cmd,
+ 			ret = -EFAULT;
+ 		break;
+ 	case FBIOGET_FSCREENINFO:
++		memset(&fix, 0, sizeof(fix));
+ 		lock_fb_info(info);
+ 		fix = info->fix;
+ 		if (info->flags & FBINFO_HIDE_SMEM_START)
+-- 
+2.20.1
