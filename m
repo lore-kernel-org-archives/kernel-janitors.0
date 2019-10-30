@@ -1,41 +1,59 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 29 Oct 2019 09:40:56 +0000
-Subject: Re: phy: tegra: xusb: Complete exception handling in probe functions
-Message-Id: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+Date: Wed, 30 Oct 2019 10:44:26 +0000
+Subject: Re: drivers/phy/tegra: Completion for exception handling in probe functions with SmPL?
+Message-Id: <161bbb97-09d9-f128-bd25-ef9348534144@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
-In-Reply-To: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+ <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+In-Reply-To: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: linux-tegra@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <treding@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Coccinelle <cocci@systeme.lip6.fr>
+To: linux-tegra@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, YueHaibing <yuehaibing@huawei.com>, JC Kuo <jckuo@nvidia.com>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-> I have got the impression then that the exception handling is incomplete so far
-> at these source code places.
+> Will any search pattern variations become more interesting for corresponding
+> automatic software transformations?
 
-How do you think about to try the following small script for the semantic patch
-language out on the directory “drivers/phy/tegra”?
+I hoped to achieve something together with the semantic patch language
+by the following transformation approach.
 
-@display@
+@adjustment@
 expression object;
 identifier exit;
 @@
- ... when any
  object = kzalloc(...)
  ...
  if (...)
- {
-*kfree(object);
- goto exit;
- }
- ...
- if (...)
-*   goto unregister;
+-{  kfree(object);
+    goto
+-        exit
++        release_memory
+    ;
+-}
+ ... when any
+ device_unregister(...);
+-exit
++release_memory
+ :
++kfree(object);
+ return ERR_PTR(...);
 
 
-Will any search pattern variations become more interesting for corresponding
-automatic software transformations?
+Do you find such a change suggestion reasonable (in principle)?
+
+But I stumble on another unexpected test result.
+
+elfring@Sonne:~/Projekte/Linux/next-patched> spatch drivers/phy/tegra/xusb-tegra186.c ~/Projekte/Coccinelle/janitor/complete_exception_handling_in_probe_functions1.cocci
+init_defs_builtins: /usr/local/bin/../lib/coccinelle/standard.h
+HANDLING: drivers/phy/tegra/xusb-tegra186.c
+
+
+How would you like to clarify why diff hunks were not generated
+for functions like “tegra186_usb2_pad_probe” and “tegra186_usb3_pad_probe”
+in such an use case?
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/phy/tegra/xusb-tegra186.c#L445
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/tegra/xusb-tegra186.c?id=bbf711682cd570697086e88388a2c718da918894#n445
 
 Regards,
 Markus
