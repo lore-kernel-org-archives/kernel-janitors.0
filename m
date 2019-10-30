@@ -1,65 +1,65 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 22 Oct 2019 16:44:21 +0000
-Subject: Re: [PATCH][next] thermal: qcom: tsens-v1: fix kfree of a non-pointer value
-Message-Id: <10cbe6fb-05b8-3219-cef5-05980559f053@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 Oct 2019 14:54:57 +0000
+Subject: [PATCH][next] soc: samsung: exynos-asv: fix potential overflow in multiply
+Message-Id: <20191030145457.10120-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191022111806.23143-1-colin.king@canonical.com>
- <CAP245DXjVDJ68kmWONmWh4YB=dcVrQ4q1y3bPncDc5=FohY2Vw@mail.gmail.com>
-In-Reply-To: <CAP245DXjVDJ68kmWONmWh4YB=dcVrQ4q1y3bPncDc5=FohY2Vw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amit Kucheria <amit.kucheria@linaro.org>, Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, AngeloGioacchino Del Regno <kholk11@gmail.com>, Linux PM list <linux-pm@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The multiplication of opp_freq by MHZ is performed using unsigned int
+multiplication however the result is being passed into a function where
+the frequency is an unsigned long, so there is an expectation that the
+result won't fit into an unsigned int. Fix any potential integer overflow
+my making opp_freq an unsigned long.  Also change from %u to %lu format
+specifiers
 
-On 22/10/2019 14:06, Amit Kucheria wrote:
-> On Tue, Oct 22, 2019 at 4:48 PM Colin King <colin.king@canonical.com> wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the kfree of pointer qfprom_cdata is kfreeing an
->> error value that has been cast to a pointer rather than a
->> valid address.  Fix this by removing the kfree.
-> 
-> Hmm, we just added this to other places[1] as a fix for mem leaks
-> using the nvmem api. >
-This patch has nothing to do with the memleak fix.
-> I think we need to fix up the qfprom_read wrapper. Srini?
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/samsung/exynos-asv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-not sure how we can fix that, as the pointer returned from read is needs 
-to be freed by the caller after its done with it!
-
---srini
-
-
-> 
-> [1] https://lore.kernel.org/stable/20191010083616.685532154@linuxfoundation.org/
-
-> 
->> Fixes: 95ededc17e4e ("thermal: qcom: tsens-v1: Add support for MSM8956 and MSM8976")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   drivers/thermal/qcom/tsens-v1.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
->> index 2d1077b64887..bd2ddb684a45 100644
->> --- a/drivers/thermal/qcom/tsens-v1.c
->> +++ b/drivers/thermal/qcom/tsens-v1.c
->> @@ -240,10 +240,8 @@ static int calibrate_8976(struct tsens_priv *priv)
->>          u32 *qfprom_cdata;
->>
->>          qfprom_cdata = (u32 *)qfprom_read(priv->dev, "calib");
->> -       if (IS_ERR(qfprom_cdata)) {
->> -               kfree(qfprom_cdata);
->> +       if (IS_ERR(qfprom_cdata))
->>                  return PTR_ERR(qfprom_cdata);
->> -       }
->>
->>          mode = (qfprom_cdata[4] & MSM8976_CAL_SEL_MASK);
->>          dev_dbg(priv->dev, "calibration mode is %d\n", mode);
->> --
->> 2.20.1
->>
+diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
+index 8abf4dfaa5c5..d66fc74379a3 100644
+--- a/drivers/soc/samsung/exynos-asv.c
++++ b/drivers/soc/samsung/exynos-asv.c
+@@ -30,7 +30,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
+ {
+ 	struct exynos_asv_subsys *subsys = NULL;
+ 	struct dev_pm_opp *opp;
+-	unsigned int opp_freq;
++	unsigned long opp_freq;
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(asv->subsys); i++) {
+@@ -51,7 +51,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
+ 
+ 		opp = dev_pm_opp_find_freq_exact(cpu, opp_freq * MHZ, true);
+ 		if (IS_ERR(opp)) {
+-			dev_info(asv->dev, "cpu%d opp%d, freq: %u missing\n",
++			dev_info(asv->dev, "cpu%d opp%d, freq: %lu missing\n",
+ 				 cpu->id, i, opp_freq);
+ 
+ 			continue;
+@@ -68,11 +68,11 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
+ 						new_volt, new_volt, new_volt);
+ 		if (ret < 0)
+ 			dev_err(asv->dev,
+-				"Failed to adjust OPP %u Hz/%u uV for cpu%d\n",
++				"Failed to adjust OPP %lu Hz/%u uV for cpu%d\n",
+ 				opp_freq, new_volt, cpu->id);
+ 		else
+ 			dev_dbg(asv->dev,
+-				"Adjusted OPP %u Hz/%u -> %u uV, cpu%d\n",
++				"Adjusted OPP %lu Hz/%u -> %u uV, cpu%d\n",
+ 				opp_freq, volt, new_volt, cpu->id);
+ 	}
+ 
+-- 
+2.20.1
