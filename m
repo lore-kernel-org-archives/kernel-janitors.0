@@ -1,48 +1,53 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 27 Oct 2019 21:00:45 +0000
-Subject: [PATCH 4.4 07/41] mips: Loongson: Fix the link time qualifier of serial_exit()
-Message-Id: <20191027203104.062911000@linuxfoundation.org>
+From: John Stultz <john.stultz@linaro.org>
+Date: Wed, 30 Oct 2019 16:30:40 +0000
+Subject: [PATCH] dma-buf: heaps: Fix redundant assignment to variable ret in system_heap.c
+Message-Id: <20191030163040.70055-1-john.stultz@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191027203056.220821342@linuxfoundation.org>
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paul.burton@mips.com>, chenhc@lemote.com, ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: John Stultz <john.stultz@linaro.org>, Colin King <colin.king@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Liam Mark <lmark@codeaurora.org>, Laura Abbott <labbott@redhat.com>, Brian Starkey <brian.starkey@arm.com>, "Andrew F . Davis" <afd@ti.com>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Colin King reported a coverity error:
+ The variable ret is being assigned with a value that is never
+ read, it is being re-assigned the same value on the err0 exit
+ path. The assignment is redundant and hence can be removed.
 
-[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
+He had a fix, but Andrew Davis suggested a better solution
+(actually returning ret), so this patch implements that fix.
 
-'exit' functions should be marked as __exit, not __init.
-
-Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: chenhc@lemote.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Cc: Colin King <colin.king@canonical.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Liam Mark <lmark@codeaurora.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Brian Starkey <brian.starkey@arm.com>
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linaro-mm-sig@lists.linaro.org
 Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Addresses-Coverity: ("Unused value")
+Fixes: 47a32f9c1226 ("dma-buf: heaps: Add system heap to dmabuf heaps")
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Suggested-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- arch/mips/loongson64/common/serial.c | 2 +-
+ drivers/dma-buf/heaps/system_heap.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
-index ffefc1cb26121..98c3a7feb10f8 100644
---- a/arch/mips/loongson64/common/serial.c
-+++ b/arch/mips/loongson64/common/serial.c
-@@ -110,7 +110,7 @@ static int __init serial_init(void)
- }
- module_init(serial_init);
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index 455782efbb32..9a56393e40b4 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -98,7 +98,7 @@ static int system_heap_allocate(struct dma_heap *heap,
+ err0:
+ 	kfree(helper_buffer);
  
--static void __init serial_exit(void)
-+static void __exit serial_exit(void)
- {
- 	platform_device_unregister(&uart8250_device);
+-	return -ENOMEM;
++	return ret;
  }
+ 
+ static const struct dma_heap_ops system_heap_ops = {
 -- 
-2.20.1
+2.17.1
