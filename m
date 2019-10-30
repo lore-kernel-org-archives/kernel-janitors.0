@@ -1,40 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 09 Oct 2019 08:28:31 +0000
-Subject: Re: [PATCH] iwlegacy: make array interval static, makes object smaller
-Message-Id: <20191009082832.7B8BC61AC6@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 Oct 2019 15:02:53 +0000
+Subject: [PATCH][next] dma-buf: heaps: remove redundant assignment to variable ret
+Message-Id: <20191030150253.10596-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191007134113.5647-1-colin.king@canonical.com>
-In-Reply-To: <20191007134113.5647-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sumit Semwal <sumit.semwal@linaro.org>, "Andrew F . Davis" <afd@ti.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Liam Mark <lmark@codeaurora.org>, Laura Abbott <labbott@redhat.com>, Brian Starkey <brian.starkey@arm.com>, John Stultz <john.stultz@linaro.org>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array interval on the stack but instead make it
-> static. Makes the object code smaller by 121 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->  167797	  29676	    448	 197921	  30521	wireless/intel/iwlegacy/common.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->  167580	  29772	    448	 197800	  304a8	wireless/intel/iwlegacy/common.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The variable ret is being assigned with a value that is never
+read, it is being re-assigned the same value on the err0 exit
+path. The assignment is redundant and hence can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unused value")
+Fixes: 47a32f9c1226 ("dma-buf: heaps: Add system heap to dmabuf heaps")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma-buf/heaps/system_heap.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-55047fb783e0 iwlegacy: make array interval static, makes object smaller
-
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index 455782efbb32..817a1667bd57 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -55,10 +55,8 @@ static int system_heap_allocate(struct dma_heap *heap,
+ 	helper_buffer->pages = kmalloc_array(helper_buffer->pagecount,
+ 					     sizeof(*helper_buffer->pages),
+ 					     GFP_KERNEL);
+-	if (!helper_buffer->pages) {
+-		ret = -ENOMEM;
++	if (!helper_buffer->pages)
+ 		goto err0;
+-	}
+ 
+ 	for (pg = 0; pg < helper_buffer->pagecount; pg++) {
+ 		/*
 -- 
-https://patchwork.kernel.org/patch/11177531/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
