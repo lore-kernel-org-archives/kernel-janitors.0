@@ -1,43 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Oct 2019 18:27:42 +0000
-Subject: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in exynos_asv_update_opps()
-Message-Id: <20191029182742.GC17569@mwanda>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 30 Oct 2019 18:05:59 +0000
+Subject: Re: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in exynos_asv_update_opps()
+Message-Id: <20191030180559.GA8016@kozik-lap>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191029182742.GC17569@mwanda>
+In-Reply-To: <20191029182742.GC17569@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
-in the config and it returns NULL if there is an error.  This code only
-checks for error pointers so it could lead to an Oops inside the
-dev_pm_opp_put_opp_table() function.
+On Tue, Oct 29, 2019 at 09:27:42PM +0300, Dan Carpenter wrote:
+> The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
+> in the config and it returns NULL if there is an error.  This code only
+> checks for error pointers so it could lead to an Oops inside the
+> dev_pm_opp_put_opp_table() function.
+> 
+> Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> When we add a new driver, could we specify the which prefix will be used
+> going forward?  In other words commit 5ea428595cc5 could have the
+> prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
+> driver".  The "exynos-asv" bit was missing so the first person to send a
+> fix has to guess what is desired.
 
-Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-When we add a new driver, could we specify the which prefix will be used
-going forward?  In other words commit 5ea428595cc5 could have the
-prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
-driver".  The "exynos-asv" bit was missing so the first person to send a
-fix has to guess what is desired.
+Indeed, I usually do not add it on first commit to avoid duplication
+(prefix and later explanation) but I see that it would be helpful.
 
- drivers/soc/samsung/exynos-asv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-index 8abf4dfaa5c5..30bb7b7cc769 100644
---- a/drivers/soc/samsung/exynos-asv.c
-+++ b/drivers/soc/samsung/exynos-asv.c
-@@ -93,7 +93,7 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
- 			continue;
- 
- 		opp_table = dev_pm_opp_get_opp_table(cpu);
--		if (IS_ERR(opp_table))
-+		if (IS_ERR_OR_NULL(opp_table))
- 			continue;
- 
- 		if (!last_opp_table || opp_table != last_opp_table) {
--- 
-2.20.1
+Thanks, applied.
+
+Best regards,
+Krzysztof
