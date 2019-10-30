@@ -1,54 +1,34 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sun, 06 Oct 2019 15:34:09 +0000
-Subject: Re: [PATCH] hwmon: abituguru: make array probe_order static, makes object smaller
-Message-Id: <20191006153409.GA7882@roeck-us.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 30 Oct 2019 03:40:46 +0000
+Subject: [PATCH -next] usb: gadget: configfs: Fix missing spin_lock_init()
+Message-Id: <20191030034046.188808-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191006145231.24022-1-colin.king@canonical.com>
-In-Reply-To: <20191006145231.24022-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@nxp.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Oct 06, 2019 at 03:52:31PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array probe_order on the stack but instead make it
-> static. Makes the object code smaller by 94 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   41473	  13448	    320	  55241	   d7c9	drivers/hwmon/abituguru.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   41315	  13512	    320	  55147	   d76b	drivers/hwmon/abituguru.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-Applied.
+This is detected by Coccinelle semantic patch.
 
-Thanks,
-Guenter
+Fixes: 1a1c851bbd70 ("usb: gadget: configfs: fix concurrent issue between composite APIs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/gadget/configfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->  drivers/hwmon/abituguru.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/abituguru.c b/drivers/hwmon/abituguru.c
-> index a5cf6b2a6e49..681f0623868f 100644
-> --- a/drivers/hwmon/abituguru.c
-> +++ b/drivers/hwmon/abituguru.c
-> @@ -1264,7 +1264,7 @@ static int abituguru_probe(struct platform_device *pdev)
->  	 * El weirdo probe order, to keep the sysfs order identical to the
->  	 * BIOS and window-appliction listing order.
->  	 */
-> -	const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] = {
-> +	static const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] = {
->  		0x00, 0x01, 0x03, 0x04, 0x0A, 0x08, 0x0E, 0x02,
->  		0x09, 0x06, 0x05, 0x0B, 0x0F, 0x0D, 0x07, 0x0C };
->  
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index 33852c2b29d1..ab9ac48a751a 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1544,6 +1544,7 @@ static struct config_group *gadgets_make(
+ 	gi->composite.resume = NULL;
+ 	gi->composite.max_speed = USB_SPEED_SUPER;
+ 
++	spin_lock_init(&gi->spinlock);
+ 	mutex_init(&gi->lock);
+ 	INIT_LIST_HEAD(&gi->string_list);
+ 	INIT_LIST_HEAD(&gi->available_func);
