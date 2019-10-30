@@ -1,36 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 23 Oct 2019 14:08:45 +0000
-Subject: Re: [PATCH] coccicheck: Configuring COCCI parameter for supporting a directory search
-Message-Id: <2dc38508-b7af-b5bf-2829-52c75514e499@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 30 Oct 2019 06:36:40 +0000
+Subject: [PATCH] net: qrtr: Simplify 'qrtr_tun_release()'
+Message-Id: <20191030063640.25794-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.1910231054250.2335@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1910231054250.2335@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
-Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>, zhongshiqi <zhong.shiqi@zte.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net, navid.emamdoost@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> What is the relation between the last two if branches?
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-A small addition is proposed for this bash script.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/qrtr/tun.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-
-> If the first one fails, does that mean that $COCCI has no definition?
-
-No. - It was checked if an empty sting was passed.
-A file system check is tried then to determine if a valid directory was specified.
-This parameter could be used then for the specification of a specific start
-directory for calling the tool “find”, couldn't it?
-
-
-> In that case, is the final else useful?
-
-Hopefully, yes.
-
-Which software behaviour do you expect for a string which would not
-be recognised as an usable directory in a specific moment
-during script execution?
-
-Regards,
-Markus
+diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
+index e35869e81766..15ce9b642b25 100644
+--- a/net/qrtr/tun.c
++++ b/net/qrtr/tun.c
+@@ -111,15 +111,11 @@ static __poll_t qrtr_tun_poll(struct file *filp, poll_table *wait)
+ static int qrtr_tun_release(struct inode *inode, struct file *filp)
+ {
+ 	struct qrtr_tun *tun = filp->private_data;
+-	struct sk_buff *skb;
+ 
+ 	qrtr_endpoint_unregister(&tun->ep);
+ 
+ 	/* Discard all SKBs */
+-	while (!skb_queue_empty(&tun->queue)) {
+-		skb = skb_dequeue(&tun->queue);
+-		kfree_skb(skb);
+-	}
++	skb_queue_purge(&tun->queue);
+ 
+ 	kfree(tun);
+ 
+-- 
+2.20.1
