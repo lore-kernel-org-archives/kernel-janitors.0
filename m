@@ -1,70 +1,76 @@
-From: Sven Eckelmann <sven@narfation.org>
-Date: Thu, 31 Oct 2019 08:00:21 +0000
-Subject: Re: [PATCH] batman-adv: Simplify 'batadv_v_ogm_aggr_list_free()'
-Message-Id: <3535726.AjB5hMM71F@sven-edge>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart6722122.X2YU2N7q37"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 31 Oct 2019 21:35:58 +0000
+Subject: [PATCH] scsi: megaraid_sas: Use common error handling code in megasas_mgmt_ioctl_fw()
+Message-Id: <d5c12f05-5a07-b698-ae60-2728330dd378@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191031074255.3234-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191031074255.3234-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
---nextPart6722122.X2YU2N7q37
-Content-Transfer-Encoding: 7Bit
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, "James E. J. Bottomley" <jejb@linux.ibm.com>, Kashyap Desai <kashyap.desai@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Chandrakanth Patil <chandrakanth.patil@broadcom.com>, YueHaibing <yuehaibing@huawei.com>
 
-On Thursday, 31 October 2019 08:42:55 CET Christophe JAILLET wrote:
-> Use 'skb_queue_purge()' instead of re-implementing it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 31 Oct 2019 22:23:02 +0100
 
-Consider this patch applied. I just have to leave now and thus I will only 
-apply after my return.
+Move the same error code assignments so that such exception handling
+can be better reused at the end of this function.
 
-> ---
-> BTW, I don't really see the need of 'aggr_list_lock'. I think that the code
-> could be refactored to drop 'aggr_list_lock' and use the already existing
-> 'aggr_list.lock'.
-> This would require to use the lock-free __skb_... variants when working on
-> 'aggr_list'.
->
-> As far as I understand, the use of 'aggr_list' and 'aggr_list_lock' is
-> limited to bat_v_ogm.c'. So the impact would be limited.
-> This would avoid a useless locking that never fails, so the performance
-> gain should be really limited.
-> 
-> So, I'm not sure this would be more readable and/or future proof, so
-> I just note it here to open the discussion.
-> 
-> If interested, I have a (compiled tested only) patch that implements this
-> change.
+This issue was detected by using the Coccinelle software.
 
-Yes, please send it over.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/megaraid/megaraid_sas_base.c | 25 ++++++++++-------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-Kind regards,
-	Sven
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index c40fbea06cc5..f2f2a240e5af 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -8272,27 +8272,20 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+ 		return PTR_ERR(ioc);
 
---nextPart6722122.X2YU2N7q37
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+ 	instance = megasas_lookup_instance(ioc->host_no);
+-	if (!instance) {
+-		error = -ENODEV;
+-		goto out_kfree_ioc;
+-	}
++	if (!instance)
++		goto e_nodev;
 
------BEGIN PGP SIGNATURE-----
+ 	/* Block ioctls in VF mode */
+-	if (instance->requestorId && !allow_vf_ioctls) {
+-		error = -ENODEV;
+-		goto out_kfree_ioc;
+-	}
++	if (instance->requestorId && !allow_vf_ioctls)
++		goto e_nodev;
 
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAl26lJUACgkQXYcKB8Em
-e0YLkg//SFeu7zgzY5RZPY5HcftrEK1rjC2M7A8sCfKGM1M8vzzTA3tloEHUCNxD
-EbJLxaVmG24RWkBL6vthM2PT1lvjHRFUphtpYa5z1uyXJFEoO2YRp8hDgIOw+/+1
-OckzUOWC0Lq5OokHISYtWp673ZBLSNmshZY5eAZLec7p42UE3xnrWr7OOTGs6yTQ
-nwb734FvWvmi44PUs5DGPaW7gpUYXFY9EWyAbpJD7uuifshVIaY7ql5LAfF2VL71
-6hJ4rYPGtFN6wxMuh8QehYwiWG+Ze95uYl4oS05YdhsXGNuhFjN5Q2iOU4R4WBFD
-g+ztkU7BitUMoaZz3ICi1T31QFUFzy5OPmUo97bX7BId9aTtVMwPvW06aJU/dBZc
-pXI9vps1QPoGfTzNn+N12S5GB8ZFYJ+3ycaQjqb69uE3c8EsHVa42qoSiieaqsln
-TiYMCK67jcB+cOYR/zbsw6YRr+ZTWxPJMN9ZVEFxswbHl1H677oTBpuC0eyTil/L
-qscb04MIE0r11DJA1S4oWnidM+9zn7bGG7tVzMNsKCgvUaXkTWewahJR0ynTI/6j
-XfbztcvAlMswIcb6Mk4f5LtARZ+l3BlXll/+WMzxLSZwwWU7yAwp0QxQJwXyKafV
-PEps/jYve9O423rfIIwanNJIWi2Ab1sprc5Ka/iSmciz6hswmNk=
-=3utl
------END PGP SIGNATURE-----
+ 	if (atomic_read(&instance->adprecovery) == MEGASAS_HW_CRITICAL_ERROR) {
+ 		dev_err(&instance->pdev->dev, "Controller in crit error\n");
+-		error = -ENODEV;
+-		goto out_kfree_ioc;
++		goto e_nodev;
+ 	}
 
---nextPart6722122.X2YU2N7q37--
+-	if (instance->unload == 1) {
+-		error = -ENODEV;
+-		goto out_kfree_ioc;
+-	}
++	if (instance->unload == 1)
++		goto e_nodev;
+
+ 	if (down_interruptible(&instance->ioctl_sem)) {
+ 		error = -ERESTARTSYS;
+@@ -8311,6 +8304,10 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+ out_kfree_ioc:
+ 	kfree(ioc);
+ 	return error;
++
++e_nodev:
++	error = -ENODEV;
++	goto out_kfree_ioc;
+ }
+
+ static int megasas_mgmt_ioctl_aen(struct file *file, unsigned long arg)
+--
+2.23.0
