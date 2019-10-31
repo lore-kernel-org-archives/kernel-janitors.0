@@ -1,50 +1,42 @@
-From: Helen Koike <helen.koike@collabora.com>
-Date: Tue, 08 Oct 2019 13:22:42 +0000
-Subject: Re: [PATCH -next] media: vimc: Fix error return code in vimc_register_devices()
-Message-Id: <874313fb-a141-1762-a883-fc004bb7e043@collabora.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 31 Oct 2019 06:47:41 +0000
+Subject: [PATCH] vsock: Simplify '__vsock_release()'
+Message-Id: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191008090133.9760-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191008090133.9760-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Shuah Khan <skhan@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com, sgarzare@redhat.com, stefanha@redhat.com, ytht.net@gmail.com, arnd@arndb.de, tglx@linutronix.de, decui@microsoft.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi,
+Use '__skb_queue_purge()' instead of re-implementing it.
 
-On 10/8/19 6:01 AM, Wei Yongjun wrote:
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: f13d5f361959 ("media: vimc: Collapse component structure into a single monolithic driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/vmw_vsock/af_vsock.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Acked-by: Helen Koike <helen.koike@collabora.com>
-
-Thank you
-Helen
-
-> ---
->  drivers/media/platform/vimc/vimc-core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
-> index 6e3e5c91ae39..2d20a7c10398 100644
-> --- a/drivers/media/platform/vimc/vimc-core.c
-> +++ b/drivers/media/platform/vimc/vimc-core.c
-> @@ -202,8 +202,10 @@ static int vimc_register_devices(struct vimc_device *vimc)
->  	vimc->ent_devs = kmalloc_array(vimc->pipe_cfg->num_ents,
->  				       sizeof(*vimc->ent_devs),
->  				       GFP_KERNEL);
-> -	if (!vimc->ent_devs)
-> +	if (!vimc->ent_devs) {
-> +		ret = -ENOMEM;
->  		goto err_v4l2_unregister;
-> +	}
->  
->  	/* Invoke entity config hooks to initialize and register subdevs */
->  	ret = vimc_add_subdevs(vimc);
-> 
-> 
-> 
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 2ab43b2bba31..2983dc92ca63 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -641,7 +641,6 @@ EXPORT_SYMBOL_GPL(__vsock_create);
+ static void __vsock_release(struct sock *sk, int level)
+ {
+ 	if (sk) {
+-		struct sk_buff *skb;
+ 		struct sock *pending;
+ 		struct vsock_sock *vsk;
+ 
+@@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
+ 		sock_orphan(sk);
+ 		sk->sk_shutdown = SHUTDOWN_MASK;
+ 
+-		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+-			kfree_skb(skb);
++		skb_queue_purge(&sk->sk_receive_queue);
+ 
+ 		/* Clean up any sockets that never were accepted. */
+ 		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+-- 
+2.20.1
