@@ -1,89 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 30 Oct 2019 15:15:51 +0000
-Subject: Re: [PATCH][next] soc: samsung: exynos-asv: fix potential overflow in multiply
-Message-Id: <20191030151551.GA25718@pi3>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 31 Oct 2019 07:42:55 +0000
+Subject: [PATCH] batman-adv: Simplify 'batadv_v_ogm_aggr_list_free()'
+Message-Id: <20191031074255.3234-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191030145457.10120-1-colin.king@canonical.com>
-In-Reply-To: <20191030145457.10120-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: davem@davemloft.net, mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc, sven@narfation.org
+Cc: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Oct 30, 2019 at 02:54:57PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The multiplication of opp_freq by MHZ is performed using unsigned int
-> multiplication however the result is being passed into a function where
-> the frequency is an unsigned long, so there is an expectation that the
-> result won't fit into an unsigned int. Fix any potential integer overflow
-> my making opp_freq an unsigned long.  Also change from %u to %lu format
-> specifiers
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-Although I like the idea of using the same type as the
-dev_pm_opp_find_freq_exact() interface, but I do not agree with severity
-of this. This is currently only ARMv7 (32-bit) driver, so using long
-does not change anything. It's still 4 bytes and it is still up to 4
-GHz.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+BTW, I don't really see the need of 'aggr_list_lock'. I think that the code
+could be refactored to drop 'aggr_list_lock' and use the already existing
+'aggr_list.lock'.
+This would require to use the lock-free __skb_... variants when working on
+'aggr_list'.
 
-Therefore on ARMv7, the possibility of overflow is exactly the same as
-before. Nothing was fixed.
+As far as I understand, the use of 'aggr_list' and 'aggr_list_lock' is
+limited to bat_v_ogm.c'. So the impact would be limited.
+This would avoid a useless locking that never fails, so the performance
+gain should be really limited.
 
-If we really want to fix it, then all this should be "long long" or
-value should be checked while parsing DT.
+So, I'm not sure this would be more readable and/or future proof, so
+I just note it here to open the discussion.
 
-Semantically I agree, so I would prefer to adjust only the commit
-message.
+If interested, I have a (compiled tested only) patch that implements this
+change.
+---
+ net/batman-adv/bat_v_ogm.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Best regards,
-Krzysztof
-
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/soc/samsung/exynos-asv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-> index 8abf4dfaa5c5..d66fc74379a3 100644
-> --- a/drivers/soc/samsung/exynos-asv.c
-> +++ b/drivers/soc/samsung/exynos-asv.c
-> @@ -30,7 +30,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  {
->  	struct exynos_asv_subsys *subsys = NULL;
->  	struct dev_pm_opp *opp;
-> -	unsigned int opp_freq;
-> +	unsigned long opp_freq;
->  	int i;
->  
->  	for (i = 0; i < ARRAY_SIZE(asv->subsys); i++) {
-> @@ -51,7 +51,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  
->  		opp = dev_pm_opp_find_freq_exact(cpu, opp_freq * MHZ, true);
->  		if (IS_ERR(opp)) {
-> -			dev_info(asv->dev, "cpu%d opp%d, freq: %u missing\n",
-> +			dev_info(asv->dev, "cpu%d opp%d, freq: %lu missing\n",
->  				 cpu->id, i, opp_freq);
->  
->  			continue;
-> @@ -68,11 +68,11 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  						new_volt, new_volt, new_volt);
->  		if (ret < 0)
->  			dev_err(asv->dev,
-> -				"Failed to adjust OPP %u Hz/%u uV for cpu%d\n",
-> +				"Failed to adjust OPP %lu Hz/%u uV for cpu%d\n",
->  				opp_freq, new_volt, cpu->id);
->  		else
->  			dev_dbg(asv->dev,
-> -				"Adjusted OPP %u Hz/%u -> %u uV, cpu%d\n",
-> +				"Adjusted OPP %lu Hz/%u -> %u uV, cpu%d\n",
->  				opp_freq, volt, new_volt, cpu->id);
->  	}
->  
-> -- 
-> 2.20.1
-> 
+diff --git a/net/batman-adv/bat_v_ogm.c b/net/batman-adv/bat_v_ogm.c
+index dc4f7430cb5a..b841c83d9c3b 100644
+--- a/net/batman-adv/bat_v_ogm.c
++++ b/net/batman-adv/bat_v_ogm.c
+@@ -177,13 +177,9 @@ static bool batadv_v_ogm_queue_left(struct sk_buff *skb,
+  */
+ static void batadv_v_ogm_aggr_list_free(struct batadv_hard_iface *hard_iface)
+ {
+-	struct sk_buff *skb;
+-
+ 	lockdep_assert_held(&hard_iface->bat_v.aggr_list_lock);
+ 
+-	while ((skb = skb_dequeue(&hard_iface->bat_v.aggr_list)))
+-		kfree_skb(skb);
+-
++	skb_queue_purge(&hard_iface->bat_v.aggr_list);
+ 	hard_iface->bat_v.aggr_len = 0;
+ }
+ 
+-- 
+2.20.1
