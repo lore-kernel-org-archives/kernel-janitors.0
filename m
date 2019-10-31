@@ -1,49 +1,163 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 18 Oct 2019 20:28:50 +0000
-Subject: Re: [PATCH][next] drm/amdgpu/psp: fix spelling mistake "initliaze" -> "initialize"
-Message-Id: <CADnq5_OfwU2yuxrkW0EjqSjxeYBRA4kw1gksDEmE+pcSOuSwAg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 31 Oct 2019 08:52:40 +0000
+Subject: [PATCH] batman-adv: Axe 'aggr_list_lock'
+Message-Id: <20191031085240.7116-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191018081508.11028-1-colin.king@canonical.com>
-In-Reply-To: <20191018081508.11028-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: davem@davemloft.net, mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc, sven@narfation.org
+Cc: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Oct 18, 2019 at 4:15 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a DRM_ERROR error message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+'aggr_list.lock' can safely be used in place of another explicit spinlock
+when access to 'aggr_list' has to be guarded.
 
-Applied.  thanks!
+This avoids to take 2 locks, knowing that the 2nd one is always successful.
 
-Alex
+Now that the 'aggr_list.lock' is handled explicitly, the lock-free
+__sbk_something() variants should be used when dealing with 'aggr_list'.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> index b996b5bc5804..fd7a73f4fa70 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> @@ -90,7 +90,7 @@ static int psp_sw_init(void *handle)
->
->         ret = psp_mem_training_init(psp);
->         if (ret) {
-> -               DRM_ERROR("Failed to initliaze memory training!\n");
-> +               DRM_ERROR("Failed to initialize memory training!\n");
->                 return ret;
->         }
->         ret = psp_mem_training(psp, PSP_MEM_TRAIN_COLD_BOOT);
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ net/batman-adv/bat_v.c     |  1 -
+ net/batman-adv/bat_v_ogm.c | 30 +++++++++++++++---------------
+ net/batman-adv/types.h     |  3 ---
+ 3 files changed, 15 insertions(+), 19 deletions(-)
+
+diff --git a/net/batman-adv/bat_v.c b/net/batman-adv/bat_v.c
+index 64054edc2e3c..4ff6cf1ecae7 100644
+--- a/net/batman-adv/bat_v.c
++++ b/net/batman-adv/bat_v.c
+@@ -1085,7 +1085,6 @@ void batadv_v_hardif_init(struct batadv_hard_iface *hard_iface)
+ 
+ 	hard_iface->bat_v.aggr_len = 0;
+ 	skb_queue_head_init(&hard_iface->bat_v.aggr_list);
+-	spin_lock_init(&hard_iface->bat_v.aggr_list_lock);
+ 	INIT_DELAYED_WORK(&hard_iface->bat_v.aggr_wq,
+ 			  batadv_v_ogm_aggr_work);
+ }
+diff --git a/net/batman-adv/bat_v_ogm.c b/net/batman-adv/bat_v_ogm.c
+index b841c83d9c3b..c9a00100f199 100644
+--- a/net/batman-adv/bat_v_ogm.c
++++ b/net/batman-adv/bat_v_ogm.c
+@@ -151,7 +151,7 @@ static unsigned int batadv_v_ogm_len(struct sk_buff *skb)
+  * @skb: the OGM to check
+  * @hard_iface: the interface to use to send the OGM
+  *
+- * Caller needs to hold the hard_iface->bat_v.aggr_list_lock.
++ * Caller needs to hold the hard_iface->bat_v.aggr_list.lock.
+  *
+  * Return: True, if the given OGMv2 packet still fits, false otherwise.
+  */
+@@ -162,7 +162,7 @@ static bool batadv_v_ogm_queue_left(struct sk_buff *skb,
+ 				 BATADV_MAX_AGGREGATION_BYTES);
+ 	unsigned int ogm_len = batadv_v_ogm_len(skb);
+ 
+-	lockdep_assert_held(&hard_iface->bat_v.aggr_list_lock);
++	lockdep_assert_held(&hard_iface->bat_v.aggr_list.lock);
+ 
+ 	return hard_iface->bat_v.aggr_len + ogm_len <= max;
+ }
+@@ -173,13 +173,13 @@ static bool batadv_v_ogm_queue_left(struct sk_buff *skb,
+  *
+  * Empties the OGMv2 aggregation queue and frees all the skbs it contained.
+  *
+- * Caller needs to hold the hard_iface->bat_v.aggr_list_lock.
++ * Caller needs to hold the hard_iface->bat_v.aggr_list.lock.
+  */
+ static void batadv_v_ogm_aggr_list_free(struct batadv_hard_iface *hard_iface)
+ {
+-	lockdep_assert_held(&hard_iface->bat_v.aggr_list_lock);
++	lockdep_assert_held(&hard_iface->bat_v.aggr_list.lock);
+ 
+-	skb_queue_purge(&hard_iface->bat_v.aggr_list);
++	__skb_queue_purge(&hard_iface->bat_v.aggr_list);
+ 	hard_iface->bat_v.aggr_len = 0;
+ }
+ 
+@@ -192,7 +192,7 @@ static void batadv_v_ogm_aggr_list_free(struct batadv_hard_iface *hard_iface)
+  *
+  * The aggregation queue is empty after this call.
+  *
+- * Caller needs to hold the hard_iface->bat_v.aggr_list_lock.
++ * Caller needs to hold the hard_iface->bat_v.aggr_list.lock.
+  */
+ static void batadv_v_ogm_aggr_send(struct batadv_hard_iface *hard_iface)
+ {
+@@ -201,7 +201,7 @@ static void batadv_v_ogm_aggr_send(struct batadv_hard_iface *hard_iface)
+ 	unsigned int ogm_len;
+ 	struct sk_buff *skb;
+ 
+-	lockdep_assert_held(&hard_iface->bat_v.aggr_list_lock);
++	lockdep_assert_held(&hard_iface->bat_v.aggr_list.lock);
+ 
+ 	if (!aggr_len)
+ 		return;
+@@ -215,7 +215,7 @@ static void batadv_v_ogm_aggr_send(struct batadv_hard_iface *hard_iface)
+ 	skb_reserve(skb_aggr, ETH_HLEN + NET_IP_ALIGN);
+ 	skb_reset_network_header(skb_aggr);
+ 
+-	while ((skb = skb_dequeue(&hard_iface->bat_v.aggr_list))) {
++	while ((skb = __skb_dequeue(&hard_iface->bat_v.aggr_list))) {
+ 		hard_iface->bat_v.aggr_len -= batadv_v_ogm_len(skb);
+ 
+ 		ogm_len = batadv_v_ogm_len(skb);
+@@ -242,13 +242,13 @@ static void batadv_v_ogm_queue_on_if(struct sk_buff *skb,
+ 		return;
+ 	}
+ 
+-	spin_lock_bh(&hard_iface->bat_v.aggr_list_lock);
++	spin_lock_bh(&hard_iface->bat_v.aggr_list.lock);
+ 	if (!batadv_v_ogm_queue_left(skb, hard_iface))
+ 		batadv_v_ogm_aggr_send(hard_iface);
+ 
+ 	hard_iface->bat_v.aggr_len += batadv_v_ogm_len(skb);
+-	skb_queue_tail(&hard_iface->bat_v.aggr_list, skb);
+-	spin_unlock_bh(&hard_iface->bat_v.aggr_list_lock);
++	__skb_queue_tail(&hard_iface->bat_v.aggr_list, skb);
++	spin_unlock_bh(&hard_iface->bat_v.aggr_list.lock);
+ }
+ 
+ /**
+@@ -373,9 +373,9 @@ void batadv_v_ogm_aggr_work(struct work_struct *work)
+ 	batv = container_of(work, struct batadv_hard_iface_bat_v, aggr_wq.work);
+ 	hard_iface = container_of(batv, struct batadv_hard_iface, bat_v);
+ 
+-	spin_lock_bh(&hard_iface->bat_v.aggr_list_lock);
++	spin_lock_bh(&hard_iface->bat_v.aggr_list.lock);
+ 	batadv_v_ogm_aggr_send(hard_iface);
+-	spin_unlock_bh(&hard_iface->bat_v.aggr_list_lock);
++	spin_unlock_bh(&hard_iface->bat_v.aggr_list.lock);
+ 
+ 	batadv_v_ogm_start_queue_timer(hard_iface);
+ }
+@@ -406,9 +406,9 @@ void batadv_v_ogm_iface_disable(struct batadv_hard_iface *hard_iface)
+ {
+ 	cancel_delayed_work_sync(&hard_iface->bat_v.aggr_wq);
+ 
+-	spin_lock_bh(&hard_iface->bat_v.aggr_list_lock);
++	spin_lock_bh(&hard_iface->bat_v.aggr_list.lock);
+ 	batadv_v_ogm_aggr_list_free(hard_iface);
+-	spin_unlock_bh(&hard_iface->bat_v.aggr_list_lock);
++	spin_unlock_bh(&hard_iface->bat_v.aggr_list.lock);
+ }
+ 
+ /**
+diff --git a/net/batman-adv/types.h b/net/batman-adv/types.h
+index be7c02aa91e2..75a72d6676ec 100644
+--- a/net/batman-adv/types.h
++++ b/net/batman-adv/types.h
+@@ -126,9 +126,6 @@ struct batadv_hard_iface_bat_v {
+ 	/** @aggr_len: size of the OGM aggregate (excluding ethernet header) */
+ 	unsigned int aggr_len;
+ 
+-	/** @aggr_list_lock: protects aggr_list */
+-	spinlock_t aggr_list_lock;
+-
+ 	/**
+ 	 * @throughput_override: throughput override to disable link
+ 	 *  auto-detection
+-- 
+2.20.1
