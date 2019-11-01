@@ -1,35 +1,73 @@
-From: Igor Russkikh <irusskikh@marvell.com>
-Date: Thu, 07 Nov 2019 00:00:50 +0000
-Subject: Re: [EXT] [PATCH net-next] net: aquantia: fix return value check in aq_ptp_init()
-Message-Id: <bfca5f2b-9d37-b45f-3478-fb64d676d23a@marvell.com>
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Date: Fri, 01 Nov 2019 21:42:59 +0000
+Subject: [PATCH 3/3] staging: axis-fifo: remove unused pointer to memory resource
+Message-Id: <20191101214232.16960-4-quentin.deslandes@itdev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106145921.124814-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191106145921.124814-1-weiyongjun1@huawei.com>
+References: <20191101214232.16960-1-quentin.deslandes@itdev.co.uk>
+In-Reply-To: <20191101214232.16960-1-quentin.deslandes@itdev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Egor Pomozov <epomozov@marvell.com>, Igor Russkikh <Igor.Russkikh@aquantia.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Quentin Deslandes <quentin.deslandes@itdev.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Cristian Sicilia <sicilia.cristian@gmail.com>
 
-DQo+IEZ1bmN0aW9uIHB0cF9jbG9ja19yZWdpc3RlcigpIHJldHVybnMgRVJSX1BUUigpIGFuZCBu
-ZXZlciByZXR1cm5zDQo+IE5VTEwuIFRoZSBOVUxMIHRlc3Qgc2hvdWxkIGJlIHJlbW92ZWQuDQoN
-ClRoYW5rcywgV2VpIQ0KDQpGdW5jdGlvbiBieSBpdHNlbGYgY291bGQgcmV0dXJuIG51bGwsIGJ1
-dCB5b3UgYXJlIHJpZ2h0LCBzaW5jZSB0aGlzDQpjb2RlIGlzIG5vdyBhY3RpdmUgb25seSB3aGVu
-IFBUUF8xNTg4X0NMT0NLIGlzIG9uIC0gdGhpcyBpcyBhIHVzZWxlc3MgY2hlY2sgdGhlbi4NCg0K
-PiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNvbT4NCj4g
-LS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9hcV9wdHAuYyB8
-IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0K
-PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGlj
-L2FxX3B0cC5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvYXF1YW50aWEvYXRsYW50aWMvYXFfcHRw
-LmMNCj4gaW5kZXggM2VjMDg0MTVlNTNlLi4yNTJhODBiNmQzYjYgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX3B0cC5jDQo+ICsrKyBiL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX3B0cC5jDQo+IEBAIC0xMjA1
-LDcgKzEyMDUsNyBAQCBpbnQgYXFfcHRwX2luaXQoc3RydWN0IGFxX25pY19zICphcV9uaWMsIHVu
-c2lnbmVkIGludCBpZHhfdmVjKQ0KPiAgCWFxX3B0cC0+cHRwX2luZm8gPSBhcV9wdHBfY2xvY2s7
-DQo+ICAJYXFfcHRwX2dwaW9faW5pdCgmYXFfcHRwLT5wdHBfaW5mbywgJm1ib3guaW5mbyk7DQo+
-ICAJY2xvY2sgPSBwdHBfY2xvY2tfcmVnaXN0ZXIoJmFxX3B0cC0+cHRwX2luZm8sICZhcV9uaWMt
-Pm5kZXYtPmRldik7DQo+IC0JaWYgKCFjbG9jayB8fCBJU19FUlIoY2xvY2spKSB7DQo+ICsJaWYg
-KElTX0VSUihjbG9jaykpIHsNCj4gIAkJbmV0ZGV2X2VycihhcV9uaWMtPm5kZXYsICJwdHBfY2xv
-Y2tfcmVnaXN0ZXIgZmFpbGVkXG4iKTsNCj4gIAkJZXJyID0gUFRSX0VSUihjbG9jayk7DQo+ICAJ
-CWdvdG8gZXJyX2V4aXQ7DQoNCkFja2VkLWJ5OiBJZ29yIFJ1c3NraWtoIDxpcnVzc2tpa2hAbWFy
-dmVsbC5jb20+DQoNCi0tIA0KUmVnYXJkcywNCiAgSWdvcg0K
+Remove unused resource pointer from the device's internal structure.
+
+Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+---
+ drivers/staging/axis-fifo/axis-fifo.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+index 2e6e2f149a26..39e6c59df1e9 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -125,7 +125,6 @@ MODULE_PARM_DESC(write_timeout, "ms to wait before blocking write() timing out;
+ 
+ struct axis_fifo {
+ 	int irq; /* interrupt */
+-	struct resource *mem; /* physical memory */
+ 	void __iomem *base_addr; /* kernel space memory */
+ 
+ 	unsigned int rx_fifo_depth; /* max words in the receive fifo */
+@@ -806,10 +805,8 @@ static int axis_fifo_probe(struct platform_device *pdev)
+ 		goto err_initial;
+ 	}
+ 
+-	fifo->mem = r_mem;
+-
+ 	/* request physical memory */
+-	fifo->base_addr = devm_ioremap_resource(fifo->dt_device, fifo->mem);
++	fifo->base_addr = devm_ioremap_resource(fifo->dt_device, r_mem);
+ 	if (IS_ERR(fifo->base_addr)) {
+ 		rc = PTR_ERR(fifo->base_addr);
+ 		dev_err(fifo->dt_device, "can't remap IO resource (%d)\n", rc);
+@@ -820,7 +817,7 @@ static int axis_fifo_probe(struct platform_device *pdev)
+ 
+ 	/* create unique device name */
+ 	snprintf(device_name, sizeof(device_name), "%s_%pa",
+-		 DRIVER_NAME, &fifo->mem->start);
++		 DRIVER_NAME, &r_mem->start);
+ 
+ 	dev_dbg(fifo->dt_device, "device name [%s]\n", device_name);
+ 
+@@ -844,7 +841,7 @@ static int axis_fifo_probe(struct platform_device *pdev)
+ 	r_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!r_irq) {
+ 		dev_err(fifo->dt_device, "no IRQ found for 0x%pa\n",
+-			&fifo->mem->start);
++			&r_mem->start);
+ 		rc = -EIO;
+ 		goto err_initial;
+ 	}
+@@ -898,7 +895,7 @@ static int axis_fifo_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	dev_info(fifo->dt_device, "axis-fifo created at %pa mapped to 0x%pa, irq=%i, major=%i, minor=%i\n",
+-		 &fifo->mem->start, &fifo->base_addr, fifo->irq,
++		 &r_mem->start, &fifo->base_addr, fifo->irq,
+ 		 MAJOR(fifo->devt), MINOR(fifo->devt));
+ 
+ 	return 0;
+-- 
+2.23.0
