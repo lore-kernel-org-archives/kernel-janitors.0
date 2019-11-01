@@ -1,62 +1,57 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Date: Tue, 19 Nov 2019 12:43:52 +0000
-Subject: Re: [PATCH v3 00/13] add the latest exfat driver
-Message-Id: <CAKYAXd86mEc7fFO6TzaUm7V=dXS4HG4mMWziz_Nq=SNQ-9RWQQ@mail.gmail.com>
+From: Jeff Moyer <jmoyer@redhat.com>
+Date: Fri, 01 Nov 2019 15:39:06 +0000
+Subject: Re: [PATCH] iocost: don't nest spin_lock_irq in ioc_weight_write()
+Message-Id: <x49d0ebd2sl.fsf@segfault.boston.devel.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20191119094019epcas1p298d14fcf6e7a24bee431238279961c5b@epcas1p2.samsung.com>
- <20191119093718.3501-1-namjae.jeon@samsung.com> <2cc05215-3b44-06f0-b34a-eb841476b329@web.de>
-In-Reply-To: <2cc05215-3b44-06f0-b34a-eb841476b329@web.de>
+References: <20191031105341.GA26612@mwanda>
+In-Reply-To: <20191031105341.GA26612@mwanda> (Dan Carpenter's message of "Thu,
+        31 Oct 2019 13:53:41 +0300")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2019-11-19 21:15 GMT+09:00, Markus Elfring <Markus.Elfring@web.de>:
->> =E2=80=A6, an a random previous
+Dan Carpenter <dan.carpenter@oracle.com> writes:
+
+> This code causes a static analysis warning:
 >
-> Does this wording contain a typo?
-Yes, Will fix it on next series.
+>     block/blk-iocost.c:2113 ioc_weight_write() error: double lock 'irq'
+>
+> We disable IRQs in blkg_conf_prep() and re-enable them in
+> blkg_conf_finish().  IRQ disable/enable should not be nested because
+> that means the IRQs will be enabled at the first unlock instead of the
+> second one.
+
+Can you please also add a comment stating that irqs were disabled in
+blkg_conf_prep?  Otherwise future readers will surely be scratching
+their heads trying to figure out why we do things two different ways in
+the same function.
+
+Thanks!
+Jeff
 
 >
+> Fixes: 7caa47151ab2 ("blkcg: implement blk-iocost")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  block/blk-iocost.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
->> We plan to treat this version as the future upstream for the code base
->> once merged, and all new features and bug fixes will go upstream first.
->
-> Were the following mentioned issues occasionally reviewed already
-> by other developers before?
-https://marc.info/?l=3Dlinux-fsdevel&m=3D156985252507812&w=3D2
-
->
->
->> v3:
->>  - fix wrong sbi->s_dirt set.
->>
->> v2:
->>  - Check the bitmap count up to the total clusters.
->>  - Rename proper goto labels in seveal place.
->
-> Would you like to avoid further typos in such change descriptions?
-Will fix on next series.
->
->
->>  - Change time mode type with enumeration.
->
-> How do you think about to increase the usage of enumerations
-> at any more source code places?
-I will check.
->
->
->>  - Directly return error instead of goto at first error check.
->>  - Combine seq_printfs calls into a single one.
->
-> Please refer to the correct function name.
-Okay:)
->
->
-> Thanks for your positive feedback.
-Thanks for your review!
->
-> Regards,
-> Markus
->
+> diff --git a/block/blk-iocost.c b/block/blk-iocost.c
+> index 2a3db80c1dce..a7ed434eae03 100644
+> --- a/block/blk-iocost.c
+> +++ b/block/blk-iocost.c
+> @@ -2110,10 +2110,10 @@ static ssize_t ioc_weight_write(struct kernfs_open_file *of, char *buf,
+>  			goto einval;
+>  	}
+>  
+> -	spin_lock_irq(&iocg->ioc->lock);
+> +	spin_lock(&iocg->ioc->lock);
+>  	iocg->cfg_weight = v;
+>  	weight_updated(iocg);
+> -	spin_unlock_irq(&iocg->ioc->lock);
+> +	spin_unlock(&iocg->ioc->lock);
+>  
+>  	blkg_conf_finish(&ctx);
+>  	return nbytes;
