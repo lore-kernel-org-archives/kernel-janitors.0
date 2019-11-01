@@ -1,32 +1,41 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 01 Nov 2019 11:41:53 +0000
-Subject: Re: [PATCH -next] serial: uartlite: Missing uart_unregister_driver() on error in ulite_probe()
-Message-Id: <20191101114153.GC3657@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Nov 2019 14:26:04 +0000
+Subject: [PATCH] staging: rtl8192u: fix potential infinite loop because loop counter being too small
+Message-Id: <20191101142604.17610-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191101111950.47817-1-maowenan@huawei.com>
-In-Reply-To: <20191101111950.47817-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: jacmet@sunsite.dk, gregkh@linuxfoundation.org, jslaby@suse.com, shubhrajyoti.datta@xilinx.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 07:19:50PM +0800, Mao Wenan wrote:
-> If uart_register_driver(&ulite_uart_driver) is success,
-> but followed function is failed in ulite_probe, it needs to call
-> uart_unregister_driver to unregister.
-> 
-> Fixes: f33cf776617b ("serial-uartlite: Move the uart register")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-No, this is broken. The driver is deregistered at module unload.
+Currently the for-loop counter i is a u8 however it is being checked
+against a maximum value priv->ieee80211->LinkDetectInfo.SlotNum which is a
+u16. Hence there is a potential wrap-around of counter i back to zero if
+priv->ieee80211->LinkDetectInfo.SlotNum is greater than 255.  Fix this by
+making i a u16.
 
-That said, f33cf776617b ("serial-uartlite: Move the uart register")
-should never have been merged as I have pointed out before:
+Addresses-Coverity: ("Infinite loop")
+Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	https://lkml.kernel.org/r/20190523091839.GC568@localhost
-
-I'll see if I can find some time to revisit this and start yelling at
-Xilinx people again.
-
-Johan
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 48f1591ed5b4..fd91b7c5ca81 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -3210,7 +3210,7 @@ static void rtl819x_update_rxcounts(struct r8192_priv *priv, u32 *TotalRxBcnNum,
+ 			     u32 *TotalRxDataNum)
+ {
+ 	u16			SlotIndex;
+-	u8			i;
++	u16			i;
+ 
+ 	*TotalRxBcnNum = 0;
+ 	*TotalRxDataNum = 0;
+-- 
+2.20.1
