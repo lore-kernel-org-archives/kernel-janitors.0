@@ -1,42 +1,35 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Wed, 13 Nov 2019 04:10:26 +0000
-Subject: Re: [PATCH -next] xfs: remove duplicated include from xfs_dir2_data.c
-Message-Id: <20191113041026.GF6219@magnolia>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 01 Nov 2019 20:14:33 +0000
+Subject: Re: [PATCH net, 2/2] hv_netvsc: Fix error handling in netvsc_attach()
+Message-Id: <77a1611b-1609-ca74-39d0-3ecd16290219@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113022501.55816-1-yuehaibing@huawei.com>
-In-Reply-To: <20191113022501.55816-1-yuehaibing@huawei.com>
+References: <1572449471-5219-3-git-send-email-haiyangz@microsoft.com>
+In-Reply-To: <1572449471-5219-3-git-send-email-haiyangz@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Eric Sandeen <sandeen@sandeen.net>, Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, "K. Y. Srinivasan" <kys@microsoft.com>, Olaf Hering <olaf@aepfle.de>, Sasha Levin <sashal@kernel.org>, Stephen Hemminger <sthemmin@microsoft.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
 
-On Wed, Nov 13, 2019 at 02:25:01AM +0000, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+…
+> +++ b/drivers/net/hyperv/netvsc_drv.c
+> @@ -982,7 +982,7 @@ static int netvsc_attach(struct net_device *ndev,
+>  	if (netif_running(ndev)) {
+>  		ret = rndis_filter_open(nvdev);
+>  		if (ret)
+> -			return ret;
+> +			goto err;
+>
+>  		rdev = nvdev->extension;
+>  		if (!rdev->link_state)
+…
 
-Heh, oops.  Thanks for the patch!
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+I would prefer to specify the completed exception handling
+(addition of two function calls) by a compound statement in
+the shown if branch directly.
 
---D
+If you would insist to use a goto statement, I find an other label
+more appropriate according to the Linux coding style.
 
-> ---
->  fs/xfs/libxfs/xfs_dir2_data.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_dir2_data.c b/fs/xfs/libxfs/xfs_dir2_data.c
-> index 9e471a28b6c6..30293a1d03f6 100644
-> --- a/fs/xfs/libxfs/xfs_dir2_data.c
-> +++ b/fs/xfs/libxfs/xfs_dir2_data.c
-> @@ -18,7 +18,6 @@
->  #include "xfs_trans.h"
->  #include "xfs_buf_item.h"
->  #include "xfs_log.h"
-> -#include "xfs_dir2_priv.h"
->  
->  static xfs_failaddr_t xfs_dir2_data_freefind_verify(
->  		struct xfs_dir2_data_hdr *hdr, struct xfs_dir2_data_free *bf,
-> 
-> 
-> 
+Regards,
+Markus
