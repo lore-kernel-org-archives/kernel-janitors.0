@@ -1,91 +1,45 @@
-From: Zhou Wang <wangzhou1@hisilicon.com>
-Date: Wed, 06 Nov 2019 00:50:03 +0000
-Subject: Re: [PATCH -next] crypto: hisilicon: move label err to #ifdef CONFIG_NUMA
-Message-Id: <5DC218BB.3080001@hisilicon.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
+Date: Fri, 01 Nov 2019 08:08:36 +0000
+Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
+Message-Id: <20191101080836.GA4888@stefanha-x1.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="tKW2IUtsqtDRztdT"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191105143340.32950-1-maowenan@huawei.com>
- <20191105145602.GH10409@kadam>
-In-Reply-To: <20191105145602.GH10409@kadam>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mao Wenan <maowenan@huawei.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, tanshukun1@huawei.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com, sgarzare@redhat.com, ytht.net@gmail.com, arnd@arndb.de, tglx@linutronix.de, decui@microsoft.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2019/11/5 22:56, Dan Carpenter wrote:
-> The ifdefs in this function were pretty ugly before but this makes it
-> super extra ugly...  :/  There are bunch of ways to fix this nicely
-> but my favourite is this:
-> 
-> Feel free to give me a Suggested-by tag.
-> 
-> diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-> index 255b63cfbe1d..1b22f0ead56e 100644
-> --- a/drivers/crypto/hisilicon/zip/zip_main.c
-> +++ b/drivers/crypto/hisilicon/zip/zip_main.c
-> @@ -105,20 +105,27 @@ static void free_list(struct list_head *head)
->  struct hisi_zip *find_zip_device(int node)
->  {
->  	struct hisi_zip *ret = NULL;
-> -#ifdef CONFIG_NUMA
->  	struct hisi_zip_resource *res, *tmp;
->  	struct hisi_zip *hisi_zip;
->  	struct list_head *n;
->  	struct device *dev;
->  	LIST_HEAD(head);
->  
-> +	if (!IS_ENABLED(CONFIG_NUMA)) {
-> +		mutex_lock(&hisi_zip_list_lock);
-> +		ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
-> +		mutex_unlock(&hisi_zip_list_lock);
-> +		return ret;
-> +	}
-> +
->  	mutex_lock(&hisi_zip_list_lock);
->  
->  	list_for_each_entry(hisi_zip, &hisi_zip_list, list) {
->  		res = kzalloc(sizeof(*res), GFP_KERNEL);
-> -		if (!res)
-> -			goto err;
-> -
-> +		if (!res) {
-> +			ret = NULL;
-> +			goto done;
-> +		}
->  		dev = &hisi_zip->qm.pdev->dev;
->  		res->hzip = hisi_zip;
->  		res->distance = node_distance(dev->numa_node, node);
-> @@ -140,20 +147,10 @@ struct hisi_zip *find_zip_device(int node)
->  		}
->  	}
->  
-> +done:
->  	free_list(&head);
-> -#else
-> -	mutex_lock(&hisi_zip_list_lock);
-> -
-> -	ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
-> -#endif
->  	mutex_unlock(&hisi_zip_list_lock);
-> -
->  	return ret;
-> -
-> -err:
-> -	free_list(&head);
-> -	mutex_unlock(&hisi_zip_list_lock);
-> -	return NULL;
->  }
->  
->  struct hisi_zip_hw_error {
-> 
-> 
-> .
-> 
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mao and Dan,
+On Thu, Oct 31, 2019 at 07:47:41AM +0100, Christophe JAILLET wrote:
+> Use '__skb_queue_purge()' instead of re-implementing it.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  net/vmw_vsock/af_vsock.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-I already posted a patch to fix this problem:
-[PATCH] crypto: hisilicon - replace #ifdef with IS_ENABLED for CONFIG_NUMA
+Modulo the comment about double-underscore:
 
-Many thanks for your help,
-Zhou
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl276AIACgkQnKSrs4Gr
+c8hfmgf+INURpFV1u1GE48Cf2ihsC6QhHVe3MTzVVV3eQztp78fDvWBPuRqFZP7U
+HjbZNkqJ92U4xAhO9Z+biLTYUKeLb1IIueXXUgZsrELr3zfdAL9fybIGln7c42Nx
+yJvwDFHAbgT1fFlnoaYE22ZUeALajF/AiBdIjwoqWmRYN2iYDHjzZzncuoaEVjuN
+RueUQUVdjdCLcIbAaLf460N2ksM511vXRJ8BjTSkQL6154steJgibuT2PwluMNhp
+FKEIavD0NT/tjZRuS7IkmXl+ZTENDEPuUeRaRsxk9KXhG1/MlcyHGVhgdDvk5irL
+BG3X708iLUI2gdg+CkotgwzgFMiT4A==
+=C+k4
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
