@@ -1,32 +1,69 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 08 Nov 2019 15:11:27 +0000
-Subject: Re: [PATCH][next] crypto: amlogic: ensure error variable err is set before returning it
-Message-Id: <20191108151127.uysbqg2yt2ovscfa@gondor.apana.org.au>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 01 Nov 2019 11:19:50 +0000
+Subject: [PATCH -next] serial: uartlite: Missing uart_unregister_driver() on error in ulite_probe()
+Message-Id: <20191101111950.47817-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029113230.7050-1-colin.king@canonical.com>
-In-Reply-To: <20191029113230.7050-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Corentin Labbe <clabbe@baylibre.com>, "David S . Miller" <davem@davemloft.net>, Neil Armstrong <narmstrong@baylibre.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jacmet@sunsite.dk, gregkh@linuxfoundation.org, jslaby@suse.com, shubhrajyoti.datta@xilinx.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Tue, Oct 29, 2019 at 11:32:30AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to crypto_engine_alloc_init fails the error
-> return path returns an uninitialized value in the variable err. Fix
-> this by setting err to -ENOMEM.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/amlogic/amlogic-gxl-core.c | 1 +
->  1 file changed, 1 insertion(+)
+If uart_register_driver(&ulite_uart_driver) is success,
+but followed function is failed in ulite_probe, it needs to call
+uart_unregister_driver to unregister.
 
-Patch applied.  Thanks.
+Fixes: f33cf776617b ("serial-uartlite: Move the uart register")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/tty/serial/uartlite.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
+index 06e79c1..2edae76 100644
+--- a/drivers/tty/serial/uartlite.c
++++ b/drivers/tty/serial/uartlite.c
+@@ -813,21 +813,29 @@ static int ulite_probe(struct platform_device *pdev)
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(struct uartlite_data),
+ 			     GFP_KERNEL);
+-	if (!pdata)
++	if (!pdata) {
++		uart_unregister_driver(&ulite_uart_driver);
+ 		return -ENOMEM;
++	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
++	if (!res) {
++		uart_unregister_driver(&ulite_uart_driver);
+ 		return -ENODEV;
++	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
++	if (irq <= 0) {
++		uart_unregister_driver(&ulite_uart_driver);
+ 		return -ENXIO;
++	}
+ 
+ 	pdata->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
+ 	if (IS_ERR(pdata->clk)) {
+-		if (PTR_ERR(pdata->clk) != -ENOENT)
++		if (PTR_ERR(pdata->clk) != -ENOENT) {
++			uart_unregister_driver(&ulite_uart_driver);
+ 			return PTR_ERR(pdata->clk);
++		}
+ 
+ 		/*
+ 		 * Clock framework support is optional, continue on
+@@ -840,6 +848,7 @@ static int ulite_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(pdata->clk);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to prepare clock\n");
++		uart_unregister_driver(&ulite_uart_driver);
+ 		return ret;
+ 	}
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
