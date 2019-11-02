@@ -1,46 +1,49 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Fri, 22 Nov 2019 14:57:10 +0000
-Subject: [PATCH 25/26] perf probe: Fix spelling mistake "addrees" -> "address"
-Message-Id: <20191122145711.3171-26-acme@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Nov 2019 11:39:54 +0000
+Subject: [PATCH] drm/nouveau/bios/init: make const arrays probe_order static, makes object smaller
+Message-Id: <20191102113954.25555-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122145711.3171-1-acme@kernel.org>
-In-Reply-To: <20191122145711.3171-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Masami Hiramatsu <mhiramat@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a pr_warning message. Fix it.
+Don't populate const arrays on the stack but instead make them
+static. Makes the object code smaller by 6 bytes.
 
-Signed-off-by: Colin King <colin.king@canonical.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20191121092623.374896-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 103075	   9692	      0	 112767	  1b87f	nvkm/subdev/bios/init.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 102909	   9852	      0	 112761	  1b879	nvkm/subdev/bios/init.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/perf/util/probe-finder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 38d6cd22779f..c470c49a804f 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -812,7 +812,7 @@ static int verify_representive_line(struct probe_finder *pf, const char *fname,
- 	if (strcmp(fname, __fname) || lineno = __lineno)
- 		return 0;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+index 9de74f41dcd2..dc8625eff20a 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+@@ -546,9 +546,9 @@ init_tmds_reg(struct nvbios_init *init, u8 tmds)
+ 	 * CR58 for CR57 = 0 to index a table of offsets to the basic
+ 	 * 0x6808b0 address, and then flip the offset by 8.
+ 	 */
+-	const int pramdac_offset[13] = {
++	static const int pramdac_offset[13] = {
+ 		0, 0, 0x8, 0, 0x2000, 0, 0, 0, 0x2008, 0, 0, 0, 0x2000 };
+-	const u32 pramdac_table[4] = {
++	static const u32 pramdac_table[4] = {
+ 		0x6808b0, 0x6808b8, 0x6828b0, 0x6828b8 };
  
--	pr_warning("This line is sharing the addrees with other lines.\n");
-+	pr_warning("This line is sharing the address with other lines.\n");
- 
- 	if (pf->pev->point.function) {
- 		/* Find best match function name and lines */
+ 	if (tmds >= 0x80) {
 -- 
-2.21.0
+2.20.1
