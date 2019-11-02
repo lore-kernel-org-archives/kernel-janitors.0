@@ -1,40 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 11 Nov 2019 13:23:02 +0000
-Subject: Re: [PATCH][next] xen/gntdev: remove redundant non-zero check on ret
-Message-Id: <ffbba901-006c-4ecf-c5cd-fdd5bca91bc3@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 02 Nov 2019 15:59:45 +0000
+Subject: [PATCH v2] staging: wfx: Fix a memory leak in 'wfx_upload_beacon'
+Message-Id: <20191102155945.20205-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191111122009.67789-1-colin.king@canonical.com>
- <04efe197-2914-ab1d-918b-8899aa0354af@suse.com>
- <ec4ffabf-9cfa-2db6-7e23-60f84947d0a9@canonical.com>
- <767fe18a-c3d6-4200-9eb5-31e1665811a0@suse.com>
-In-Reply-To: <767fe18a-c3d6-4200-9eb5-31e1665811a0@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, xen-devel@lists.xenproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jerome.pouiller@silabs.com, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/11/2019 13:17, Jürgen Groß wrote:
-> On 11.11.19 13:31, Colin Ian King wrote:
->> On 11/11/2019 12:25, Jürgen Groß wrote:
->>> On 11.11.19 13:20, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> The non-zero check on ret is always going to be false because
->>>> ret was initialized as zero and the only place it is set to
->>>> non-zero contains a return path before the non-zero check. Hence
->>>> the check is redundant and can be removed.
->>>
->>> Which version did you patch against? In current master the above
->>> statement is not true.
->>
->> against today's linux-next
-> 
-> Ah, okay, this is likely the result of the recent mm-notifier patch
-> series. I'll put this patch on hold until the recent patches have
-> hit master.
+The current code is a no-op, because all it can do is 'dev_kfree_skb(NULL)'
+Remove the test before 'dev_kfree_skb()'
 
-Cool, thanks!
-> 
-> 
-> Juergen
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: remove the 'if(...)', 'dev_kfree_skb()' can handle NULL.
+---
+ drivers/staging/wfx/sta.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
+index 688586e823c0..93f3739b5f3a 100644
+--- a/drivers/staging/wfx/sta.c
++++ b/drivers/staging/wfx/sta.c
+@@ -906,8 +906,7 @@ static int wfx_upload_beacon(struct wfx_vif *wvif)
+ 	wfx_fwd_probe_req(wvif, false);
+ 
+ done:
+-	if (!skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(skb);
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
