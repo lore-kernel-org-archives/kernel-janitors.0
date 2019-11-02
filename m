@@ -1,55 +1,114 @@
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Mon, 04 Nov 2019 06:27:22 +0000
-Subject: Re: [PATCH][next][V2] drivers: thermal: tsens: fix potential integer overflow on multiply
-Message-Id: <CAHLCerPX5WPvVRxfgAQyAguomBaEsCyncJUuOafkY2cMjQmsaQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 02 Nov 2019 22:33:23 +0000
+Subject: [PATCH] drm/amd/powerplay: fix spelling mistake "Attemp" -> "Attempt"
+Message-Id: <20191102223323.8453-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191101100035.25502-1-colin.king@canonical.com>
-In-Reply-To: <20191101100035.25502-1-colin.king@canonical.com>
+References: <20180428222155.20242-1-colin.king@canonical.com>
+In-Reply-To: <20180428222155.20242-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd <swboyd@chromium.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 3:30 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently a multiply operation is being performed on two int values
-> and the result is being assigned to a u64, presumably because the
-> end result is expected to be probably larger than an int. However,
-> because the multiply is an int multiply one can get overflow. Avoid
-> the overflow by casting degc to a u64 to force a u64 multiply.
->
-> Also use div_u64 for the divide as suggested by Daniel Lezcano.
->
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: fbfe1a042cfd ("drivers: thermal: tsens: Add interrupt support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+There are spelling mistakes in assert messages, fix these.
 
-> ---
->
-> V2: use div_u64 for the divide as suggested by Daniel Lezcano.
->
-> ---
->  drivers/thermal/qcom/tsens-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index 03bf1b8133ea..c6b551ec7323 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -92,7 +92,7 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *p1,
->
->  static inline u32 degc_to_code(int degc, const struct tsens_sensor *s)
->  {
-> -       u64 code = (degc * s->slope + s->offset) / SLOPE_FACTOR;
-> +       u64 code = div_u64(((u64)degc * s->slope + s->offset), SLOPE_FACTOR);
->
->         pr_debug("%s: raw_code: 0x%llx, degc:%d\n", __func__, code, degc);
->         return clamp_val(code, THRESHOLD_MIN_ADC_CODE, THRESHOLD_MAX_ADC_CODE);
-> --
-> 2.20.1
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c | 12 ++++++------
+ drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c | 12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
+index 90c782c132d2..43190fa2bb33 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
+@@ -125,20 +125,20 @@ int vega12_enable_smc_features(struct pp_hwmgr *hwmgr,
+ 	if (enable) {
+ 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
++				"[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
+ 				return -EINVAL);
+ 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
++				"[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
+ 				return -EINVAL);
+ 	} else {
+ 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
++				"[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
+ 				return -EINVAL);
+ 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
++				"[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
+ 				return -EINVAL);
+ 	}
+ 
+@@ -155,13 +155,13 @@ int vega12_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
+ 
+ 	PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
+ 			PPSMC_MSG_GetEnabledSmuFeaturesLow) = 0,
+-			"[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
++			"[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
+ 			return -EINVAL);
+ 	smc_features_low = smu9_get_argument(hwmgr);
+ 
+ 	PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
+ 			PPSMC_MSG_GetEnabledSmuFeaturesHigh) = 0,
+-			"[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
++			"[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
+ 			return -EINVAL);
+ 	smc_features_high = smu9_get_argument(hwmgr);
+ 
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
+index f604612f411f..562cb221f186 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
+@@ -310,20 +310,20 @@ int vega20_enable_smc_features(struct pp_hwmgr *hwmgr,
+ 	if (enable) {
+ 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low)) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
++				"[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
+ 				return ret);
+ 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high)) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
++				"[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
+ 				return ret);
+ 	} else {
+ 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low)) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
++				"[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
+ 				return ret);
+ 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
+ 				PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high)) = 0,
+-				"[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
++				"[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
+ 				return ret);
+ 	}
+ 
+@@ -341,12 +341,12 @@ int vega20_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
+ 
+ 	PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
+ 			PPSMC_MSG_GetEnabledSmuFeaturesLow)) = 0,
+-			"[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
++			"[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
+ 			return ret);
+ 	smc_features_low = vega20_get_argument(hwmgr);
+ 	PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
+ 			PPSMC_MSG_GetEnabledSmuFeaturesHigh)) = 0,
+-			"[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
++			"[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
+ 			return ret);
+ 	smc_features_high = vega20_get_argument(hwmgr);
+ 
+-- 
+2.20.1
