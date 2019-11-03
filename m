@@ -1,23 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 11 Nov 2019 13:47:48 +0000
-Subject: Re: [PATCH 4/4] pwm: omap-dmtimer: Allow compiling with COMPILE_TEST
-Message-Id: <7edadbe3-1f79-91ce-fafa-f3ad78c22c2c@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 03 Nov 2019 06:11:11 +0000
+Subject: [PATCH v2] vsock: Simplify '__vsock_release()'
+Message-Id: <20191103061111.22003-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191111071952.6pbswbboqreen6im@pengutronix.de>
- <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
- <20191111090357.13903-4-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20191111090357.13903-4-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, Neil Brown <neilb@suse.de>, Neil Armstrong <narmstrong@baylibre.com>, kernel@pengutronix.de, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net, stefanha@redhat.com, ytht.net@gmail.com, sunilmut@microsoft.com, willemb@google.com, arnd@arndb.de, tglx@linutronix.de, decui@microsoft.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Stefano Garzarella <sgarzare@redhat.com>
 
-> The dependency on OMAP_DM_TIMER is only a runtime dependency. Also
-> OMAP_DM_TIMER cannot be enabled without ARCH_OMAP being enabled.
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-Will a more “imperative mood” become relevant also for this change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n151
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+V2: fix a typo in the commit message
+    Add R-b tags
+---
+ net/vmw_vsock/af_vsock.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Regards,
-Markus
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 2ab43b2bba31..2983dc92ca63 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -641,7 +641,6 @@ EXPORT_SYMBOL_GPL(__vsock_create);
+ static void __vsock_release(struct sock *sk, int level)
+ {
+ 	if (sk) {
+-		struct sk_buff *skb;
+ 		struct sock *pending;
+ 		struct vsock_sock *vsk;
+ 
+@@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
+ 		sock_orphan(sk);
+ 		sk->sk_shutdown = SHUTDOWN_MASK;
+ 
+-		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+-			kfree_skb(skb);
++		skb_queue_purge(&sk->sk_receive_queue);
+ 
+ 		/* Clean up any sockets that never were accepted. */
+ 		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+-- 
+2.20.1
