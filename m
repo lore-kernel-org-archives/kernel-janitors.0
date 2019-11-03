@@ -1,50 +1,51 @@
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 27 Nov 2019 17:35:09 +0000
-Subject: Re: [PATCH] CIFS: fix a white space issue in cifs_get_inode_info()
-Message-Id: <CAH2r5mvtC4Dt3XDigxp5cqwEtjYCnSK3_aATiW0Dt0s9kBtTuA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Nov 2019 13:15:38 +0000
+Subject: [PATCH] net: hns3: remove unused macros
+Message-Id: <20191103131538.25234-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126071650.c76un267i4v6vuoz@kili.mountain>
-In-Reply-To: <20191126071650.c76un267i4v6vuoz@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>, CIFS <linux-cifs@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Nov 26, 2019 at 6:14 AM Dan Carpenter via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> We accidentally messed up the indenting on this if statement.
->
-> Fixes: 16c696a6c300 ("CIFS: refactor cifs_get_inode_info()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/cifs/inode.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> index 1fec2e7d796a..8a76195e8a69 100644
-> --- a/fs/cifs/inode.c
-> +++ b/fs/cifs/inode.c
-> @@ -967,7 +967,8 @@ cifs_get_inode_info(struct inode **inode,
->                 }
->         } else if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_CIFS_ACL) {
->                 rc = cifs_acl_to_fattr(cifs_sb, &fattr, *inode, false,
-> -                                      full_path, fid);         if (rc) {
-> +                                      full_path, fid);
-> +               if (rc) {
->                         cifs_dbg(FYI, "%s: Getting ACL failed with error: %d\n",
->                                  __func__, rc);
->                         goto out;
-> --
-> 2.11.0
->
->
+The macros HCLGE_MPF_ENBALE and HCLGEVF_MPF_ENBALE are defined but never
+used.  I was going to fix the spelling mistake "ENBALE" -> "ENABLE" but
+found these macros are not used, so they can be removed.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h   | 2 --
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h | 2 --
+ 2 files changed, 4 deletions(-)
 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 9e59f0e074be..0b20b42f8ceb 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -226,8 +226,6 @@ enum hclge_evt_cause {
+ 	HCLGE_VECTOR0_EVENT_OTHER,
+ };
+ 
+-#define HCLGE_MPF_ENBALE 1
+-
+ enum HCLGE_MAC_SPEED {
+ 	HCLGE_MAC_SPEED_UNKNOWN = 0,		/* unknown */
+ 	HCLGE_MAC_SPEED_10M	= 10,		/* 10 Mbps */
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+index ef86155de9e0..2f4c81bf4169 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+@@ -150,8 +150,6 @@ enum hclgevf_states {
+ 	HCLGEVF_STATE_CMD_DISABLE,
+ };
+ 
+-#define HCLGEVF_MPF_ENBALE 1
+-
+ struct hclgevf_mac {
+ 	u8 media_type;
+ 	u8 module_type;
 -- 
-Thanks,
-
-Steve
+2.20.1
