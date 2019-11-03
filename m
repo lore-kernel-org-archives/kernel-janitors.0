@@ -1,36 +1,28 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 06 Nov 2019 15:39:16 +0000
-Subject: [PATCH -next] usb: gadget: mass_storage: fix error return code in msg_bind()
-Message-Id: <20191106153916.76654-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 03 Nov 2019 21:00:58 +0000
+Subject: Re: Coccinelle: zalloc-simple: Adjust a message construction
+Message-Id: <8c92e3e6-83bd-7416-d15a-dee36521c69e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <042136cf-4e58-02bd-4d49-5d5055f22c65@web.de>
+ <alpine.DEB.2.21.1911032039150.2557@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1911032039150.2557@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhengbin <zhengbin13@huawei.com>, Li Jun <jun.li@freescale.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Michal Marek <michal.lkml@markovi.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Christoph Hellwig <hch@lst.de>
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+>> * Simplify a message construction in a Python script rule
+>>   for the semantic patch language.
+>
+> The benefit is what?
 
-Fixes: d86788979761 ("usb: gadget: mass_storage: allocate and init otg descriptor by otg capabilities")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/usb/gadget/legacy/mass_storage.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The avoidance to store the shown string in the extra Python variable “msg”.
 
-diff --git a/drivers/usb/gadget/legacy/mass_storage.c b/drivers/usb/gadget/legacy/mass_storage.c
-index f18f77584fc2..6a1e055c0e6c 100644
---- a/drivers/usb/gadget/legacy/mass_storage.c
-+++ b/drivers/usb/gadget/legacy/mass_storage.c
-@@ -175,8 +175,10 @@ static int msg_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
- 
- 		usb_desc = usb_otg_descriptor_alloc(cdev->gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail_string_ids;
-+		}
- 		usb_otg_descriptor_init(cdev->gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
+
+>> * Delete also a duplicate space character then.
+
+I find the proposed wording a bit nicer, don't you?
+
+Regards,
+Markus
