@@ -1,25 +1,35 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 08 Nov 2019 16:27:46 +0000
-Subject: Re: [PATCH] block: drbd: remove a stay unlock in __drbd_send_protocol()
-Message-Id: <26822f67-1cd7-eeda-2caa-2bc7d420f173@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Nov 2019 21:22:04 +0000
+Subject: [PATCH] i2c: qcom-geni: fix spelling mistake "unepxected" -> "unexpected"
+Message-Id: <20191103212204.13606-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191107074847.GA11695@mwanda>
- <3a2d491f-3d24-3673-07f3-f601d5fafc97@acm.org>
-In-Reply-To: <3a2d491f-3d24-3673-07f3-f601d5fafc97@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <bvanassche@acm.org>, Dan Carpenter <dan.carpenter@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@tron.linbit.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alok Chauhan <alokc@codeaurora.org>, Andy Gross <agross@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/8/19 9:26 AM, Bart Van Assche wrote:
-> On 11/6/19 11:48 PM, Dan Carpenter wrote:
->> There are two callers of this function and they both unlock the mutex so
->> this ends up being a double unlock.
-> 
-> Is there a typo in the patch subject (stay -> stray)?
+From: Colin Ian King <colin.king@canonical.com>
 
-I fixed that up while applying, fwiw.
+There is a spelling mistake in an error message string, fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-qcom-geni.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index 17abf60c94ae..387fb5a83471 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -98,7 +98,7 @@ static const struct geni_i2c_err_log gi2c_log[] = {
+ 	[GP_IRQ0] = {-EIO, "Unknown I2C err GP_IRQ0"},
+ 	[NACK] = {-ENXIO, "NACK: slv unresponsive, check its power/reset-ln"},
+ 	[GP_IRQ2] = {-EIO, "Unknown I2C err GP IRQ2"},
+-	[BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unepxected start/stop"},
++	[BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unexpected start/stop"},
+ 	[ARB_LOST] = {-EAGAIN, "Bus arbitration lost, clock line undriveable"},
+ 	[GP_IRQ5] = {-EIO, "Unknown I2C err GP IRQ5"},
+ 	[GENI_OVERRUN] = {-EIO, "Cmd overrun, check GENI cmd-state machine"},
 -- 
-Jens Axboe
+2.20.1
