@@ -1,40 +1,44 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 20 Nov 2019 12:36:05 +0000
-Subject: Re: [PATCH v3 10/13] exfat: add nls operations
-Message-Id: <cb82f263-4374-c483-7093-03de81618399@web.de>
+Date: Sun, 03 Nov 2019 19:30:08 +0000
+Subject: [PATCH] Coccinelle: zalloc-simple: Adjust a message construction
+Message-Id: <042136cf-4e58-02bd-4d49-5d5055f22c65@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
- <20191119093718.3501-11-namjae.jeon@samsung.com>
- <705cb02b-7707-af52-c2b5-70660debc619@web.de>
- <00b701d59f81$319c1d90$94d458b0$@samsung.com>
-In-Reply-To: <00b701d59f81$319c1d90$94d458b0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Enrico Weigelt <lkml@metux.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Kate Stewart <kstewart@linuxfoundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
->> …
->>> +++ b/fs/exfat/nls.c
->> …
->>> +static int exfat_load_upcase_table(struct super_block *sb,
->>> +		sector_t sector, unsigned long long num_sectors,
->>> +		unsigned int utbl_checksum)
->>> +{
->> …
->>> +error:
->>> +	if (bh)
->>> +		brelse(bh);
-…
->> Can the label “release_bh” be more helpful?
-…
-> I checked not only review point but also your review points in
-> other patches, I will fix them on v4.
-…
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Nov 2019 20:00:30 +0100
 
-Another software design alternative would be to use a jump target
-like “free_table” instead at this source code place, wouldn't it?
+* Simplify a message construction in a Python script rule
+  for the semantic patch language.
 
-Regards,
-Markus
+* Delete also a duplicate space character then.
+
+Fixes: dfd32cad146e3624970eee9329e99d2c6ef751b3 ("dma-mapping: remove dma_zalloc_coherent()")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ scripts/coccinelle/api/alloc/zalloc-simple.cocci | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/coccinelle/api/alloc/zalloc-simple.cocci b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
+index 26cda3f48f01..c14eae1f3010 100644
+--- a/scripts/coccinelle/api/alloc/zalloc-simple.cocci
++++ b/scripts/coccinelle/api/alloc/zalloc-simple.cocci
+@@ -217,8 +217,10 @@ p << r2.p;
+ x << r2.x;
+ @@
+
+-msg="WARNING: dma_alloc_coherent use in %s already zeroes out memory,  so memset is not needed" % (x)
+-coccilib.report.print_report(p[0], msg)
++coccilib.report.print_report(p[0],
++                             "WARNING: dma_alloc_coherent use in "
++                             + x
++                             + " already zeroes out memory. Thus memset is not needed.")
+
+ //-----------------------------------------------------------------
+ @r3 depends on org || report@
+--
+2.23.0
