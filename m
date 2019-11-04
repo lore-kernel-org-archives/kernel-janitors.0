@@ -1,30 +1,75 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 19 Nov 2019 14:40:17 +0000
-Subject: Re: [PATCH v3 08/13] exfat: add exfat cache
-Message-Id: <c1db28a9-7905-be5e-68fa-21e23400b4a5@web.de>
+Date: Mon, 04 Nov 2019 15:40:31 +0000
+Subject: Re: [PATCH v6] coccicheck: Support search for SmPL scripts within selected directory hierarchy
+Message-Id: <583d2524-6b29-487b-a000-9a764b5ecdec@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094024epcas1p1be385d521ef64ae0e62da3f6f9bf3401@epcas1p1.samsung.com>
- <20191119093718.3501-9-namjae.jeon@samsung.com>
-In-Reply-To: <20191119093718.3501-9-namjae.jeon@samsung.com>
+References: <1572838555-12101-1-git-send-email-zhong.shiqi@zte.com.cn>
+In-Reply-To: <1572838555-12101-1-git-send-email-zhong.shiqi@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+To: Zhong Shiqi <zhong.shiqi@zte.com.cn>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Yi Wang <wang.yi59@zte.com.cn>, Michal Marek <michal.lkml@markovi.net>, Jonathan Corbet <corbet@lwn.net>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>, Cheng Shengyu <cheng.shengyu@zte.com.cn>
+
+> *Allow defining the environment variable “COCCI” as a directory to
+> search SmPL scripts.
+>
+> *Start a corresponding file determination if it contains an acceptable
+> path.
+>
+> *Update coccinelle.rst documents for use coccicheck with a directory
+> selection
+
+‣ Do you really insist to use an enumeration without alignment
+  in your change description?
+
+‣ Can the following third item be nicer?
+
+  * Adjust software documentation for using coccicheck with
+    a selected directory.
+
+
+> +++ b/Documentation/dev-tools/coccinelle.rst
+> @@ -100,8 +100,8 @@ Two other modes provide some common combinations of these modes.
+…
+> +Using Coccinelle with defalut value
+
+Why did you repeat a typo?
+
+How do you think about to use the section title “Using Coccinelle
+with the default configuration”?
+
 
 …
-> +++ b/fs/exfat/cache.c
+> +semantic patch. In that case, the variable must be initialized with
+> +the name of the semantic patch to apply.
+
+I prefer an other wording.
+
+…, it should be set to the file name of the semantic patch to apply.
+
+
 …
-> +static void exfat_cache_add(struct inode *inode,
-> +		struct exfat_cache_id *new)
-> +{
+> +directory. In that case, the variable must be initialized with the name of
+
+…, it should be set to the …
+
+
+Will the presented case distinction need another adjustment
+for the document outline?
+
+
 …
-> +out:
-> +	spin_unlock(&ei->cache_lru_lock);
+>  Controlling Which Files are Processed by Coccinelle
 …
 
-Can the label “unlock” be more helpful?
+Did you overlook another update candidate (which I tried to point out before)?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?id=a99d8080aaf358d5d23581244e5da23b35e340b9#n189
+“…
+COCCI variable may additionally be used to only apply a single
+semantic patch as shown in the previous section.
+…”
+
 
 Regards,
 Markus
