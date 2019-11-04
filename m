@@ -1,58 +1,38 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 14 Nov 2019 15:34:42 +0000
-Subject: Re: [PATCH][V2] ovl: fix lookup failure on multi lower squashfs
-Message-Id: <CAJfpegvKnWR6_aPFwjcP8E7CRPesHPc3Svk=n9=39CnM=Mjfvg@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 04 Nov 2019 14:48:50 +0000
+Subject: [PATCH -next] usb: roles: Hide option USB_ROLE_SWITCH
+Message-Id: <20191104144850.91305-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191107104957.306383-1-colin.king@canonical.com>
- <CAJfpegtr_xg_VG2npTfaxC+vD7B8bKa_0n9pu5vyfU-XQ9oV9Q@mail.gmail.com>
- <CAOQ4uxhnpeyK6xW-c5NOQZ_h1uhAOUn_BbVVVYhUgZ74KSKDKQ@mail.gmail.com>
- <CAJfpegu7egxf=BVyVQKKW_icjMbjdLcLdd1FEw5hXLvDaiLNVQ@mail.gmail.com> <CAOQ4uxh8n-QW+zTe3Y56suyaQf8Tcascj337AbMmKF7jf9=sjw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh8n-QW+zTe3Y56suyaQf8Tcascj337AbMmKF7jf9=sjw@mail.gmail.com>
+References: <20191104135312.GD996639@ulmo>
+In-Reply-To: <20191104135312.GD996639@ulmo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Miklos Szeredi <mszeredi@redhat.com>, overlayfs <linux-unionfs@vger.kernel.org>, stable <stable@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, maowenan@huawei.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 3:37 PM Amir Goldstein <amir73il@gmail.com> wrote:
+The USB role switch class is, after all,
+not useful by itself. Hiding USB_ROLE_SWITCH
+so we can avoid any of the pitfalls associated
+with user-visible symbols and "select".
 
-> What Colin has now reported brings to light the fact that
-> decoding lower file handles was also required for making inode
-> numbers persistent.
->
-> So the bad_uuid condition is required for all of the above, not
-> just for decoding origin.
->
-> > Can we do a message that makes
-> > that somewhat more clearer?
-> >
->
-> What about the logs:
->
->                 pr_warn("overlayfs: upper fs does not support xattr,
-> falling back to index=off and metacopy=off.\n");
->                 pr_warn("overlayfs: upper fs does not support file
-> handles, falling back to index=off.\n");
->                 pr_warn("overlayfs: fs on '%s' does not support file
-> handles, falling back to index=off,nfs_export=off.\n",
->
-> Should we also change them to reflect the fact the decoding origin
-> is not supported???
->
-> Seems like a lot of hassle that will end up writing too much information
-> that most people won't understand.
->
-> IIRC, we also do not guaranty persistent inode numbers for hardlinks
-> when index=off.
->
-> As for the change in question (falling back => enforcing), if that bothers you,
-> we can get rid of this change by testing emitting the print only if
-> (ofs->config.nfs_export || ofs->config.index).
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/usb/roles/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That makes sense.
-
-It would also make sense to have a section about inode number
-persistence in the documentation.
-
-Thanks,
-Miklos
+diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
+index f8b31aa..1da58d4 100644
+--- a/drivers/usb/roles/Kconfig
++++ b/drivers/usb/roles/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ config USB_ROLE_SWITCH
+-	tristate "USB Role Switch Support"
++	tristate
+ 	help
+ 	  USB Role Switch is a device that can select the USB role - host or
+ 	  device - for a USB port (connector). In most cases dual-role capable
+-- 
+2.7.4
