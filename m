@@ -1,44 +1,55 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 01 Nov 2019 20:42:41 +0000
-Subject: Re: [PATCH net-next, 2/4] hv_netvsc: Fix error handling in netvsc_attach()
-Message-Id: <cdf7b308-940a-ff9c-07ae-f42b94687e24@web.de>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Mon, 04 Nov 2019 15:08:43 +0000
+Subject: RE: [PATCH net-next, 2/4] hv_netvsc: Fix error handling in netvsc_attach()
+Message-Id: <BYAPR21MB13667058A6F6C641EC973327CA7F0@BYAPR21MB1366.namprd21.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1572296801-4789-3-git-send-email-haiyangz@microsoft.com>
-In-Reply-To: <1572296801-4789-3-git-send-email-haiyangz@microsoft.com>
+ <cdf7b308-940a-ff9c-07ae-f42b94687e24@web.de>
+In-Reply-To: <cdf7b308-940a-ff9c-07ae-f42b94687e24@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, "K. Y. Srinivasan" <kys@microsoft.com>, Olaf Hering <olaf@aepfle.de>, Sasha Levin <sashal@kernel.org>, Stephen Hemminger <sthemmin@microsoft.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>, "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, KY Srinivasan <kys@microsoft.com>, Olaf Hering <olaf@aepfle.de>, Sasha Levin <sashal@kernel.org>, Stephen Hemminger <sthemmin@microsoft.com>, vkuznets <vkuznets@redhat.com>
 
-> If rndis_filter_open() fails, we need to remove the rndis device created
-> in earlier steps, before returning an error code. Otherwise, the retry of
-> netvsc_attach() from its callers will fail and hang.
-
-How do you think about to choose a more “imperative mood” for your
-change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=0dbe6cb8f7e05bc9611602ef45980a6c57b245a3#n151
-
-
-…
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -982,7 +982,7 @@ static int netvsc_attach(struct net_device *ndev,
->  	if (netif_running(ndev)) {
->  		ret = rndis_filter_open(nvdev);
->  		if (ret)
-> -			return ret;
-> +			goto err;
->
->  		rdev = nvdev->extension;
->  		if (!rdev->link_state)
-…
-
-I would prefer to specify the completed exception handling
-(addition of two function calls) by a compound statement in
-the shown if branch directly.
-
-If you would insist to use a goto statement, I find an other label
-more appropriate according to the Linux coding style.
-
-Regards,
-Markus
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFya3VzIEVsZnJpbmcg
+PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4NCj4gU2VudDogRnJpZGF5LCBOb3ZlbWJlciAxLCAyMDE5
+IDQ6NDMgUE0NCj4gVG86IEhhaXlhbmcgWmhhbmcgPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBs
+aW51eC0NCj4gaHlwZXJ2QHZnZXIua2VybmVsLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZw0K
+PiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgRGF2aWQgUy4NCj4gTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0PjsgS1kg
+U3Jpbml2YXNhbiA8a3lzQG1pY3Jvc29mdC5jb20+OyBPbGFmDQo+IEhlcmluZyA8b2xhZkBhZXBm
+bGUuZGU+OyBTYXNoYSBMZXZpbiA8c2FzaGFsQGtlcm5lbC5vcmc+OyBTdGVwaGVuDQo+IEhlbW1p
+bmdlciA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT47IHZrdXpuZXRzIDx2a3V6bmV0c0ByZWRoYXQu
+Y29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIG5ldC1uZXh0LCAyLzRdIGh2X25ldHZzYzogRml4
+IGVycm9yIGhhbmRsaW5nIGluDQo+IG5ldHZzY19hdHRhY2goKQ0KPiANCj4gPiBJZiBybmRpc19m
+aWx0ZXJfb3BlbigpIGZhaWxzLCB3ZSBuZWVkIHRvIHJlbW92ZSB0aGUgcm5kaXMgZGV2aWNlDQo+
+ID4gY3JlYXRlZCBpbiBlYXJsaWVyIHN0ZXBzLCBiZWZvcmUgcmV0dXJuaW5nIGFuIGVycm9yIGNv
+ZGUuIE90aGVyd2lzZSwNCj4gPiB0aGUgcmV0cnkgb2YNCj4gPiBuZXR2c2NfYXR0YWNoKCkgZnJv
+bSBpdHMgY2FsbGVycyB3aWxsIGZhaWwgYW5kIGhhbmcuDQo+IA0KPiBIb3cgZG8geW91IHRoaW5r
+IGFib3V0IHRvIGNob29zZSBhIG1vcmUg4oCcaW1wZXJhdGl2ZSBtb29k4oCdIGZvciB5b3VyDQo+
+IGNoYW5nZSBkZXNjcmlwdGlvbj8NCj4gaHR0cHM6Ly9uYW0wNi5zYWZlbGlua3MucHJvdGVjdGlv
+bi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJGZ2l0LmsNCj4gZXJuZWwub3JnJTJGcHVi
+JTJGc2NtJTJGbGludXglMkZrZXJuZWwlMkZnaXQlMkZ0b3J2YWxkcyUyRmxpbnV4LmdpdCUNCj4g
+MkZ0cmVlJTJGRG9jdW1lbnRhdGlvbiUyRnByb2Nlc3MlMkZzdWJtaXR0aW5nLQ0KPiBwYXRjaGVz
+LnJzdCUzRmlkJTNEMGRiZTZjYjhmN2UwNWJjOTYxMTYwMmVmNDU5ODBhNmM1N2IyNDVhMyUyM24x
+NTENCj4gJmFtcDtkYXRhPTAyJTdDMDElN0NoYWl5YW5neiU0MG1pY3Jvc29mdC5jb20lN0MxNjJh
+YTAxNmY0NWU0MjkzYw0KPiBhYmIwOGQ3NWYwYzBmZWUlN0M3MmY5ODhiZjg2ZjE0MWFmOTFhYjJk
+N2NkMDExZGI0NyU3QzElN0MwJTdDNjM3DQo+IDA4MjM3Nzc5NjI5NTE1OSZhbXA7c2RhdGE9eXRq
+eEdZVFBJMkQ0Qm9OYnNsS1B2QmJzZkdVRU03aFhqMVlBaUcNCj4gaG44SWslM0QmYW1wO3Jlc2Vy
+dmVkPTANCkFncmVlZC4gVGhhbmtzLg0KDQoNCj4gDQo+IA0KPiDigKYNCj4gPiArKysgYi9kcml2
+ZXJzL25ldC9oeXBlcnYvbmV0dnNjX2Rydi5jDQo+ID4gQEAgLTk4Miw3ICs5ODIsNyBAQCBzdGF0
+aWMgaW50IG5ldHZzY19hdHRhY2goc3RydWN0IG5ldF9kZXZpY2UgKm5kZXYsDQo+ID4gIAlpZiAo
+bmV0aWZfcnVubmluZyhuZGV2KSkgew0KPiA+ICAJCXJldCA9IHJuZGlzX2ZpbHRlcl9vcGVuKG52
+ZGV2KTsNCj4gPiAgCQlpZiAocmV0KQ0KPiA+IC0JCQlyZXR1cm4gcmV0Ow0KPiA+ICsJCQlnb3Rv
+IGVycjsNCj4gPg0KPiA+ICAJCXJkZXYgPSBudmRldi0+ZXh0ZW5zaW9uOw0KPiA+ICAJCWlmICgh
+cmRldi0+bGlua19zdGF0ZSkNCj4g4oCmDQo+IA0KPiBJIHdvdWxkIHByZWZlciB0byBzcGVjaWZ5
+IHRoZSBjb21wbGV0ZWQgZXhjZXB0aW9uIGhhbmRsaW5nIChhZGRpdGlvbiBvZiB0d28NCj4gZnVu
+Y3Rpb24gY2FsbHMpIGJ5IGEgY29tcG91bmQgc3RhdGVtZW50IGluIHRoZSBzaG93biBpZiBicmFu
+Y2ggZGlyZWN0bHkuDQo+IA0KPiBJZiB5b3Ugd291bGQgaW5zaXN0IHRvIHVzZSBhIGdvdG8gc3Rh
+dGVtZW50LCBJIGZpbmQgYW4gb3RoZXIgbGFiZWwgbW9yZQ0KPiBhcHByb3ByaWF0ZSBhY2NvcmRp
+bmcgdG8gdGhlIExpbnV4IGNvZGluZyBzdHlsZS4NCg0KSSB3aWxsIGhhdmUgbW9yZSBwYXRjaGVz
+IHRoYXQgbWFrZSBtdWx0aXBsZSBlbnRyeSBwb2ludHMgb2YgZXJyb3IgY2xlYW4gdXAgDQpzdGVw
+cyAtLSBzbyBJIHVzZWQgZ290byBpbnN0ZWFkIG9mIHB1dHRpbmcgdGhlIGZ1bmN0aW9ucyBpbiBl
+YWNoIGlmLWJyYW5jaC4NCg0KSSB3aWxsIG5hbWUgdGhlIGxhYmVscyBtb3JlIG1lYW5pbmdmdWxs
+eS4NCg0KVGhhbmtzLA0KLSBIYWl5YW5nDQo
