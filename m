@@ -1,45 +1,77 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 05 Nov 2019 14:33:40 +0000
-Subject: [PATCH -next] crypto: hisilicon: move label err to #ifdef CONFIG_NUMA
-Message-Id: <20191105143340.32950-1-maowenan@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Nov 2019 14:56:02 +0000
+Subject: Re: [PATCH -next] crypto: hisilicon: move label err to #ifdef CONFIG_NUMA
+Message-Id: <20191105145602.GH10409@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191105143340.32950-1-maowenan@huawei.com>
+In-Reply-To: <20191105143340.32950-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wangzhou1@hisilicon.com, herbert@gondor.apana.org.au, davem@davemloft.net, tanshukun1@huawei.com
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+To: Mao Wenan <maowenan@huawei.com>
+Cc: wangzhou1@hisilicon.com, herbert@gondor.apana.org.au, davem@davemloft.net, tanshukun1@huawei.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If CONFIG_NUMA is not set, there is error in function
-find_zip_device:
-drivers/crypto/hisilicon/zip/zip_main.c:154:13: error:
-head undeclared (first use in this function)
-  free_list(&head);
+The ifdefs in this function were pretty ugly before but this makes it
+super extra ugly...  :/  There are bunch of ways to fix this nicely
+but my favourite is this:
 
-This is because CONFIG_NUMA is not defined, it should move
-label err to #ifdef CONFIG_NUMA.
-
-Fixes: 700f7d0d29c7 ("crypto: hisilicon - fix to return sub-optimal device when best device has no qps")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/crypto/hisilicon/zip/zip_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+Feel free to give me a Suggested-by tag.
 
 diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 255b63c..0504fb2 100644
+index 255b63cfbe1d..1b22f0ead56e 100644
 --- a/drivers/crypto/hisilicon/zip/zip_main.c
 +++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -150,10 +150,12 @@ struct hisi_zip *find_zip_device(int node)
+@@ -105,20 +105,27 @@ static void free_list(struct list_head *head)
+ struct hisi_zip *find_zip_device(int node)
+ {
+ 	struct hisi_zip *ret = NULL;
+-#ifdef CONFIG_NUMA
+ 	struct hisi_zip_resource *res, *tmp;
+ 	struct hisi_zip *hisi_zip;
+ 	struct list_head *n;
+ 	struct device *dev;
+ 	LIST_HEAD(head);
  
- 	return ret;
++	if (!IS_ENABLED(CONFIG_NUMA)) {
++		mutex_lock(&hisi_zip_list_lock);
++		ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
++		mutex_unlock(&hisi_zip_list_lock);
++		return ret;
++	}
++
+ 	mutex_lock(&hisi_zip_list_lock);
  
-+#ifdef CONFIG_NUMA
- err:
+ 	list_for_each_entry(hisi_zip, &hisi_zip_list, list) {
+ 		res = kzalloc(sizeof(*res), GFP_KERNEL);
+-		if (!res)
+-			goto err;
+-
++		if (!res) {
++			ret = NULL;
++			goto done;
++		}
+ 		dev = &hisi_zip->qm.pdev->dev;
+ 		res->hzip = hisi_zip;
+ 		res->distance = node_distance(dev->numa_node, node);
+@@ -140,20 +147,10 @@ struct hisi_zip *find_zip_device(int node)
+ 		}
+ 	}
+ 
++done:
  	free_list(&head);
+-#else
+-	mutex_lock(&hisi_zip_list_lock);
+-
+-	ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
+-#endif
  	mutex_unlock(&hisi_zip_list_lock);
- 	return NULL;
-+#endif
+-
+ 	return ret;
+-
+-err:
+-	free_list(&head);
+-	mutex_unlock(&hisi_zip_list_lock);
+-	return NULL;
  }
  
  struct hisi_zip_hw_error {
--- 
-2.7.4
