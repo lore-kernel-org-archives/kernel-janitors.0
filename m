@@ -1,33 +1,37 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Date: Tue, 12 Nov 2019 07:08:24 +0000
-Subject: Re: [PATCH -next] crypto: sun8i-ss - Fix memdup.cocci warnings
-Message-Id: <43dff5e6-dc85-a631-2e6a-1dc07540e5a4@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Nov 2019 14:54:16 +0000
+Subject: [PATCH][next] net/mlx5: fix spelling mistake "metdata" -> "metadata"
+Message-Id: <20191105145416.60451-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191109024403.47106-1-yuehaibing@huawei.com>
- <20191112070309.GA18647@Red>
-In-Reply-To: <20191112070309.GA18647@Red>
+References: <20190904193841.20138-1-colin.king@canonical.com>
+In-Reply-To: <20190904193841.20138-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019/11/12 15:03, Corentin Labbe wrote:
-> On Sat, Nov 09, 2019 at 02:44:03AM +0000, YueHaibing wrote:
->> Use kmemdup rather than duplicating its implementation
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
-> 
-> Hello
-> 
-> Thanks but the patch was already sent by kbuild robot and merged.
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, this patch title should be "sun8i-ce" instead of "sun8i-ss",
+There is a spelling mistake in a esw_warn warning message. Fix it.
 
-kbuild robot indeed fix 'sun8i-ss' warning,  will resend v2.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Regards
-> 
-> 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+index bd9fd59d8233..1c3fdee87588 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@ -1877,7 +1877,7 @@ static int esw_vport_create_ingress_acl_group(struct mlx5_eswitch *esw,
+ 	if (IS_ERR(g)) {
+ 		ret = PTR_ERR(g);
+ 		esw_warn(esw->dev,
+-			 "Failed to create vport[%d] ingress metdata group, err(%d)\n",
++			 "Failed to create vport[%d] ingress metadata group, err(%d)\n",
+ 			 vport->vport, ret);
+ 		goto grp_err;
+ 	}
+-- 
+2.20.1
