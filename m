@@ -1,35 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 03 Nov 2019 21:22:04 +0000
-Subject: [PATCH] i2c: qcom-geni: fix spelling mistake "unepxected" -> "unexpected"
-Message-Id: <20191103212204.13606-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 05 Nov 2019 18:56:23 +0000
+Subject: [PATCH 2/2] misc: xilinx_sdfec: Combine three condition checks into one statement in xsdfec_add_ldpc
+Message-Id: <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
+In-Reply-To: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alok Chauhan <alokc@codeaurora.org>, Andy Gross <agross@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Nov 2019 19:32:25 +0100
 
-There is a spelling mistake in an error message string, fix it.
+The same return code was set after three condition checks.
+Thus use a single statement instead.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 20ec628e8007ec75c2f884e00004f39eab6289b5 ("misc: xilinx_sdfec: Add ability to configure LDPC")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-qcom-geni.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/xilinx_sdfec.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 17abf60c94ae..387fb5a83471 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -98,7 +98,7 @@ static const struct geni_i2c_err_log gi2c_log[] = {
- 	[GP_IRQ0] = {-EIO, "Unknown I2C err GP_IRQ0"},
- 	[NACK] = {-ENXIO, "NACK: slv unresponsive, check its power/reset-ln"},
- 	[GP_IRQ2] = {-EIO, "Unknown I2C err GP IRQ2"},
--	[BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unepxected start/stop"},
-+	[BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unexpected start/stop"},
- 	[ARB_LOST] = {-EAGAIN, "Bus arbitration lost, clock line undriveable"},
- 	[GP_IRQ5] = {-EIO, "Unknown I2C err GP IRQ5"},
- 	[GENI_OVERRUN] = {-EIO, "Cmd overrun, check GENI cmd-state machine"},
--- 
-2.20.1
+diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+index a622fcf4954a..322d5c6e6d12 100644
+--- a/drivers/misc/xilinx_sdfec.c
++++ b/drivers/misc/xilinx_sdfec.c
+@@ -653,18 +653,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
+ 	if (IS_ERR(ldpc))
+ 		return PTR_ERR(ldpc);
+
+-	if (xsdfec->config.code == XSDFEC_TURBO_CODE) {
+-		ret = -EIO;
+-		goto err_out;
+-	}
+-
+-	/* Verify Device has not started */
+-	if (xsdfec->state == XSDFEC_STARTED) {
+-		ret = -EIO;
+-		goto err_out;
+-	}
+-
+-	if (xsdfec->config.code_wr_protect) {
++	if (xsdfec->config.code == XSDFEC_TURBO_CODE ||
++	    /* Verify device has not started */
++	    xsdfec->state == XSDFEC_STARTED ||
++	    xsdfec->config.code_wr_protect) {
+ 		ret = -EIO;
+ 		goto err_out;
+ 	}
+--
+2.24.0
