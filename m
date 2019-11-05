@@ -1,23 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 Nov 2019 22:38:37 +0000
-Subject: Re: [PATCH net-next] cxgb4: Fix an error code in cxgb4_mqprio_alloc_hw_resources()
-Message-Id: <20191113.143837.1464059114762484823.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 05 Nov 2019 21:38:15 +0000
+Subject: [PATCH 0/2] CIFS: Adjustments for smb2_ioctl_query_info()
+Message-Id: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113182548.vtmyryulik4gxnrv@kili.mountain>
-In-Reply-To: <20191113182548.vtmyryulik4gxnrv@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vishal@chelsio.com, rahul.lakkireddy@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Ronnie Sahlberg <lsahlber@redhat.com>Ronnie Sahlberg <lsahlber@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2019 21:25:48 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Nov 2019 22:32:23 +0100
 
-> "ret" is zero or possibly uninitialized on this error path.  It
-> should be a negative error code instead.
-> 
-> Fixes: 2d0cb84dd973 ("cxgb4: add ETHOFLD hardware queue support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Applied.
+Markus Elfring (2):
+  Use memdup_user() rather than duplicating its implementation
+  Use common error handling code in smb2_ioctl_query_info()
+
+ fs/cifs/smb2ops.c | 58 ++++++++++++++++++++++-------------------------
+ 1 file changed, 27 insertions(+), 31 deletions(-)
+
+--
+2.24.0
