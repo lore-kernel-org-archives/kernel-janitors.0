@@ -1,35 +1,26 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 20 Nov 2019 14:00:44 +0000
-Subject: [RESEND PATCH] qnx6: Fix Kconfig indentation
-Message-Id: <20191120140044.19003-1-krzk@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 05 Nov 2019 18:52:18 +0000
+Subject: [PATCH 0/2] misc: xilinx_sdfec: Adjustments for xsdfec_add_ldpc()
+Message-Id: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Nov 2019 19:45:05 +0100
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- fs/qnx6/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Two update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/fs/qnx6/Kconfig b/fs/qnx6/Kconfig
-index 6a9d6bce1586..5ef679e51ba1 100644
---- a/fs/qnx6/Kconfig
-+++ b/fs/qnx6/Kconfig
-@@ -7,7 +7,7 @@ config QNX6FS_FS
- 	  QNX 6 (also called QNX RTP).
- 	  Further information is available at <http://www.qnx.com/>.
- 	  Say Y if you intend to mount QNX hard disks or floppies formatted
--          with a mkqnx6fs.
-+	  with a mkqnx6fs.
- 	  However, keep in mind that this currently is a readonly driver!
- 
- 	  To compile this file system support as a module, choose M here: the
--- 
-2.17.1
+Markus Elfring (2):
+  Use memdup_user() rather than duplicating its implementation
+  Combine three condition checks into one statement
+
+ drivers/misc/xilinx_sdfec.c | 29 ++++++++---------------------
+ 1 file changed, 8 insertions(+), 21 deletions(-)
+
+--
+2.24.0
