@@ -1,25 +1,49 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 06 Nov 2019 08:45:33 +0000
-Subject: Re: [0/2] CIFS: Adjustments for smb2_ioctl_query_info()
-Message-Id: <99299a4c-6cda-8d92-a851-e154a0e6bb79@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Nov 2019 14:58:45 +0000
+Subject: [PATCH][next] crypto: allwinner: fix spelling mistake "recommandation" -> "recommendation"
+Message-Id: <20191105145845.60786-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
- <CAH2r5mvWXtSdKb3RcSR_Z6LwsGhDmR0wBeKekwkS-VG4YnFNpQ@mail.gmail.com>
-In-Reply-To: <CAH2r5mvWXtSdKb3RcSR_Z6LwsGhDmR0wBeKekwkS-VG4YnFNpQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>, Ronnie Sahlberg <lsahlber@redhat.com>, Steve French <stfrench@microsoft.com>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your positive feedback.
+There are spelling mistakes in dev_warn messages. Fix these.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 2 +-
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-How are the chances to take another look at any more update suggestions
-also from my selection of change possibilities?
-https://lkml.org/lkml/2017/8/20/104
-
-Regards,
-Markus
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+index 8e4eddbcc814..bc7ee265c51f 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+@@ -469,7 +469,7 @@ static int sun8i_ce_get_clks(struct sun8i_ce_dev *ce)
+ 		}
+ 		if (ce->variant->ce_clks[i].max_freq > 0 &&
+ 		    cr > ce->variant->ce_clks[i].max_freq)
+-			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
++			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+ 				 ce->variant->ce_clks[i].name, cr,
+ 				 ce->variant->ce_clks[i].max_freq);
+ 	}
+diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+index e58407ac256b..04b5b90ba965 100644
+--- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
++++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+@@ -502,7 +502,7 @@ static int sun8i_ss_get_clks(struct sun8i_ss_dev *ss)
+ 		}
+ 		if (ss->variant->ss_clks[i].max_freq > 0 &&
+ 		    cr > ss->variant->ss_clks[i].max_freq)
+-			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
++			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+ 				 ss->variant->ss_clks[i].name, cr,
+ 				 ss->variant->ss_clks[i].max_freq);
+ 	}
+-- 
+2.20.1
