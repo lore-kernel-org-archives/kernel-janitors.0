@@ -1,44 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 20 Nov 2019 13:54:15 +0000
-Subject: [RESEND PATCH] arch: Fix Kconfig indentation
-Message-Id: <20191120135415.18013-1-krzk@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 05 Nov 2019 15:00:22 +0000
+Subject: NAK: [PATCH][next] crypto: allwinner: fix spelling mistake "recommandation" -> "recommendation"
+Message-Id: <ef3924ad-7534-bb14-7a71-8c60f03aa8d6@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191105145845.60786-1-colin.king@canonical.com>
+In-Reply-To: <20191105145845.60786-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+NACK, I've found some more mistakes, I'll send a V2.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 3c6ec65596da..f6463f8b142f 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -76,7 +76,7 @@ config JUMP_LABEL
-        depends on HAVE_ARCH_JUMP_LABEL
-        depends on CC_HAS_ASM_GOTO
-        help
--         This option enables a transparent branch optimization that
-+	 This option enables a transparent branch optimization that
- 	 makes certain almost-always-true or almost-always-false branch
- 	 conditions even cheaper to execute within the kernel.
- 
-@@ -84,7 +84,7 @@ config JUMP_LABEL
- 	 scheduler functionality, networking code and KVM have such
- 	 branches and include support for this optimization technique.
- 
--         If it is detected that the compiler has support for "asm goto",
-+	 If it is detected that the compiler has support for "asm goto",
- 	 the kernel will compile such branches with just a nop
- 	 instruction. When the condition flag is toggled to true, the
- 	 nop will be converted to a jump instruction to execute the
--- 
-2.17.1
+On 05/11/2019 14:58, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are spelling mistakes in dev_warn messages. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 2 +-
+>  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> index 8e4eddbcc814..bc7ee265c51f 100644
+> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> @@ -469,7 +469,7 @@ static int sun8i_ce_get_clks(struct sun8i_ce_dev *ce)
+>  		}
+>  		if (ce->variant->ce_clks[i].max_freq > 0 &&
+>  		    cr > ce->variant->ce_clks[i].max_freq)
+> -			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
+> +			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+>  				 ce->variant->ce_clks[i].name, cr,
+>  				 ce->variant->ce_clks[i].max_freq);
+>  	}
+> diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> index e58407ac256b..04b5b90ba965 100644
+> --- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> +++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> @@ -502,7 +502,7 @@ static int sun8i_ss_get_clks(struct sun8i_ss_dev *ss)
+>  		}
+>  		if (ss->variant->ss_clks[i].max_freq > 0 &&
+>  		    cr > ss->variant->ss_clks[i].max_freq)
+> -			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
+> +			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+>  				 ss->variant->ss_clks[i].name, cr,
+>  				 ss->variant->ss_clks[i].max_freq);
+>  	}
+> 
