@@ -1,40 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Nov 2019 18:27:40 +0000
-Subject: [PATCH][next] net/mlx5: fix kvfree of uninitialized pointer spec
-Message-Id: <20191105182740.87146-1-colin.king@canonical.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
+Date: Wed, 06 Nov 2019 06:24:25 +0000
+Subject: Re: [PATCH][next] net/mlx5: fix kvfree of uninitialized pointer spec
+Message-Id: <d6854c959a2ff5d8493e97982cd3bb8ee5ec7789.camel@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191105182740.87146-1-colin.king@canonical.com>
+In-Reply-To: <20191105182740.87146-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Parav Pandit <parav@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Parav Pandit <parav@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently when a call to  esw_vport_create_legacy_ingress_acl_group
-fails the error exit path to label 'out' will cause a kvfree on the
-uninitialized pointer spec.  Fix this by ensuring pointer spec is
-initialized to NULL to avoid this issue.
-
-Addresses-Coverity: ("Uninitialized pointer read")
-Fixes: 10652f39943e ("net/mlx5: Refactor ingress acl configuration")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index 7baade9e62b7..f2e400a23a59 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1253,7 +1253,7 @@ static int esw_vport_ingress_config(struct mlx5_eswitch *esw,
- 	struct mlx5_flow_destination drop_ctr_dst = {0};
- 	struct mlx5_flow_destination *dst = NULL;
- 	struct mlx5_flow_act flow_act = {0};
--	struct mlx5_flow_spec *spec;
-+	struct mlx5_flow_spec *spec = NULL;
- 	int dest_num = 0;
- 	int err = 0;
- 	u8 *smac_v;
--- 
-2.20.1
+T24gVHVlLCAyMDE5LTExLTA1IGF0IDE4OjI3ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gQ3Vy
+cmVudGx5IHdoZW4gYSBjYWxsIHRvICBlc3dfdnBvcnRfY3JlYXRlX2xlZ2FjeV9pbmdyZXNzX2Fj
+bF9ncm91cA0KPiBmYWlscyB0aGUgZXJyb3IgZXhpdCBwYXRoIHRvIGxhYmVsICdvdXQnIHdpbGwg
+Y2F1c2UgYSBrdmZyZWUgb24gdGhlDQo+IHVuaW5pdGlhbGl6ZWQgcG9pbnRlciBzcGVjLiAgRml4
+IHRoaXMgYnkgZW5zdXJpbmcgcG9pbnRlciBzcGVjIGlzDQo+IGluaXRpYWxpemVkIHRvIE5VTEwg
+dG8gYXZvaWQgdGhpcyBpc3N1ZS4NCj4gDQo+IEFkZHJlc3Nlcy1Db3Zlcml0eTogKCJVbmluaXRp
+YWxpemVkIHBvaW50ZXIgcmVhZCIpDQo+IEZpeGVzOiAxMDY1MmYzOTk0M2UgKCJuZXQvbWx4NTog
+UmVmYWN0b3IgaW5ncmVzcyBhY2wgY29uZmlndXJhdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IENv
+bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYyB8IDIgKy0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMN
+Cj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+
+IGluZGV4IDdiYWFkZTllNjJiNy4uZjJlNDAwYTIzYTU5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+ICsrKyBiL2RyaXZl
+cnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMNCj4gQEAgLTEyNTMs
+NyArMTI1Myw3IEBAIHN0YXRpYyBpbnQgZXN3X3Zwb3J0X2luZ3Jlc3NfY29uZmlnKHN0cnVjdA0K
+PiBtbHg1X2Vzd2l0Y2ggKmVzdywNCj4gIAlzdHJ1Y3QgbWx4NV9mbG93X2Rlc3RpbmF0aW9uIGRy
+b3BfY3RyX2RzdCA9IHswfTsNCj4gIAlzdHJ1Y3QgbWx4NV9mbG93X2Rlc3RpbmF0aW9uICpkc3Qg
+PSBOVUxMOw0KPiAgCXN0cnVjdCBtbHg1X2Zsb3dfYWN0IGZsb3dfYWN0ID0gezB9Ow0KPiAtCXN0
+cnVjdCBtbHg1X2Zsb3dfc3BlYyAqc3BlYzsNCj4gKwlzdHJ1Y3QgbWx4NV9mbG93X3NwZWMgKnNw
+ZWMgPSBOVUxMOw0KPiAgCWludCBkZXN0X251bSA9IDA7DQo+ICAJaW50IGVyciA9IDA7DQo+ICAJ
+dTggKnNtYWNfdjsNCg0KDQpBcHBsaWVkIHRvIG1seDUtbmV4dC4NClRoYW5rcyENCg=
