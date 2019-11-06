@@ -1,35 +1,30 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 06 Nov 2019 11:53:08 +0000
-Subject: [PATCH -next] ptp: Fix missing unlock on error in idtcm_probe()
-Message-Id: <20191106115308.112645-1-weiyongjun1@huawei.com>
+From: Vincent Cheng <vincent.cheng.xh@renesas.com>
+Date: Wed, 06 Nov 2019 14:02:43 +0000
+Subject: Re: [PATCH -next] ptp: Fix missing unlock on error in idtcm_probe()
+Message-Id: <20191106140228.GA28081@renesas.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191106115308.112645-1-weiyongjun1@huawei.com>
+In-Reply-To: <20191106115308.112645-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Cochran <richardcochran@gmail.com>, Vincent Cheng <vincent.cheng.xh@renesas.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Richard Cochran <richardcochran@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Add the missing unlock before return from function idtcm_probe()
-in the error handling case.
-
-Fixes: 3a6ba7dc7799 ("ptp: Add a ptp clock driver for IDT ClockMatrix.")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/ptp/ptp_clockmatrix.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ptp/ptp_clockmatrix.c b/drivers/ptp/ptp_clockmatrix.c
-index cf5889b7d825..a5110b7b4ece 100644
---- a/drivers/ptp/ptp_clockmatrix.c
-+++ b/drivers/ptp/ptp_clockmatrix.c
-@@ -1294,8 +1294,10 @@ static int idtcm_probe(struct i2c_client *client,
- 
- 	err = set_tod_write_overhead(idtcm);
- 
--	if (err)
-+	if (err) {
-+		mutex_unlock(&idtcm->reg_lock);
- 		return err;
-+	}
- 
- 	err = idtcm_load_firmware(idtcm, &client->dev);
+T24gV2VkLCBOb3YgMDYsIDIwMTkgYXQgMDY6NTM6MDhBTSBFU1QsIFdlaSBZb25nanVuIHdyb3Rl
+Og0KPkFkZCB0aGUgbWlzc2luZyB1bmxvY2sgYmVmb3JlIHJldHVybiBmcm9tIGZ1bmN0aW9uIGlk
+dGNtX3Byb2JlKCkNCj5pbiB0aGUgZXJyb3IgaGFuZGxpbmcgY2FzZS4NCj4NCj5GaXhlczogM2E2
+YmE3ZGM3Nzk5ICgicHRwOiBBZGQgYSBwdHAgY2xvY2sgZHJpdmVyIGZvciBJRFQgQ2xvY2tNYXRy
+aXguIikNCj5TaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNv
+bT4NCj4tLS0NCj4gZHJpdmVycy9wdHAvcHRwX2Nsb2NrbWF0cml4LmMgfCA0ICsrKy0NCj4gMSBm
+aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPg0KPmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL3B0cC9wdHBfY2xvY2ttYXRyaXguYyBiL2RyaXZlcnMvcHRwL3B0cF9jbG9j
+a21hdHJpeC5jDQo+aW5kZXggY2Y1ODg5YjdkODI1Li5hNTExMGI3YjRlY2UgMTAwNjQ0DQo+LS0t
+IGEvZHJpdmVycy9wdHAvcHRwX2Nsb2NrbWF0cml4LmMNCj4rKysgYi9kcml2ZXJzL3B0cC9wdHBf
+Y2xvY2ttYXRyaXguYw0KPkBAIC0xMjk0LDggKzEyOTQsMTAgQEAgc3RhdGljIGludCBpZHRjbV9w
+cm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPiANCj4gCWVyciA9IHNldF90b2Rfd3Jp
+dGVfb3ZlcmhlYWQoaWR0Y20pOw0KPiANCj4tCWlmIChlcnIpDQo+KwlpZiAoZXJyKSB7DQo+KwkJ
+bXV0ZXhfdW5sb2NrKCZpZHRjbS0+cmVnX2xvY2spOw0KPiAJCXJldHVybiBlcnI7DQo+Kwl9DQo+
+IA0KPiAJZXJyID0gaWR0Y21fbG9hZF9maXJtd2FyZShpZHRjbSwgJmNsaWVudC0+ZGV2KTsNCj4N
+Cg0KWWVzLCBnb29kIGNhdGNoLiAgVGhhbmsteW91IGZvciB0aGUgZml4Lg0KDQpSZXZpZXdlZC1i
+eTogVmluY2VudCBDaGVuZyAgPHZpbmNlbnQuY2hlbmcueGhAcmVuZXNhcy5jb20+DQo
