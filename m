@@ -1,39 +1,36 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 05 Nov 2019 22:26:55 +0000
-Subject: Re: [PATCH 0/2] CIFS: Adjustments for smb2_ioctl_query_info()
-Message-Id: <CAH2r5mvWXtSdKb3RcSR_Z6LwsGhDmR0wBeKekwkS-VG4YnFNpQ@mail.gmail.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Nov 2019 11:59:54 +0000
+Subject: [PATCH -next] staging: Fix error return code in vboxsf_fill_super()
+Message-Id: <20191106115954.114678-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
-In-Reply-To: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, Ronnie Sahlberg <lsahlber@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Aurelien Aptel <aaptel@suse.com>
+To: Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>
 
-merged into cifs-2.6.git for-next
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-On Tue, Nov 5, 2019 at 3:38 PM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Nov 2019 22:32:23 +0100
->
-> Two update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (2):
->   Use memdup_user() rather than duplicating its implementation
->   Use common error handling code in smb2_ioctl_query_info()
->
->  fs/cifs/smb2ops.c | 58 ++++++++++++++++++++++-------------------------
->  1 file changed, 27 insertions(+), 31 deletions(-)
->
-> --
-> 2.24.0
->
+Fixes: df4028658f9d ("staging: Add VirtualBox guest shared folder (vboxsf) support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/staging/vboxsf/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
--- 
-Thanks,
-
-Steve
+diff --git a/drivers/staging/vboxsf/super.c b/drivers/staging/vboxsf/super.c
+index 3913ffafa83b..0bf4d724aefd 100644
+--- a/drivers/staging/vboxsf/super.c
++++ b/drivers/staging/vboxsf/super.c
+@@ -176,8 +176,10 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* Turn source into a shfl_string and map the folder */
+ 	size = strlen(fc->source) + 1;
+ 	folder_name = kmalloc(SHFLSTRING_HEADER_SIZE + size, GFP_KERNEL);
+-	if (!folder_name)
++	if (!folder_name) {
++		err = -ENOMEM;
+ 		goto fail_free;
++	}
+ 	folder_name->size = size;
+ 	folder_name->length = size - 1;
+ 	strlcpy(folder_name->string.utf8, fc->source, size);
