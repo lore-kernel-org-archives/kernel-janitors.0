@@ -1,52 +1,33 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 25 Nov 2019 14:57:20 +0000
-Subject: Re: [PATCH] drm/radeon: remove redundant assignment to variable ret
-Message-Id: <CADnq5_OhXB-FC8ZGVUpv3LSk2WJ1RMymHfnv5ge0yiqErFxNUA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Nov 2019 08:34:18 +0000
+Subject: [PATCH][next] rtc: bd70528: fix module alias to autoload module
+Message-Id: <20191106083418.159045-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122231504.109948-1-colin.king@canonical.com>
-In-Reply-To: <20191122231504.109948-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alessandro Zummo <a.zummo@towertech.it>, lexandre Belloni <alexandre.belloni@bootlin.com>, Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 6:15 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable ret is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+The module alias platform tag contains a spelling mistake. Fix it.
 
-Alex
+Fixes: f33506abbcdd ("rtc: bd70528: Add MODULE ALIAS to autoload module")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-bd70528.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/radeon/si_dpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
-> index 8148a7883de4..346315b3eebe 100644
-> --- a/drivers/gpu/drm/radeon/si_dpm.c
-> +++ b/drivers/gpu/drm/radeon/si_dpm.c
-> @@ -5899,7 +5899,7 @@ static int si_patch_single_dependency_table_based_on_leakage(struct radeon_devic
->
->  static int si_patch_dependency_tables_based_on_leakage(struct radeon_device *rdev)
->  {
-> -       int ret = 0;
-> +       int ret;
->
->         ret = si_patch_single_dependency_table_based_on_leakage(rdev,
->                                                                 &rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk);
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
+index ddfef4d43bab..627037aa66a8 100644
+--- a/drivers/rtc/rtc-bd70528.c
++++ b/drivers/rtc/rtc-bd70528.c
+@@ -491,4 +491,4 @@ module_platform_driver(bd70528_rtc);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+ MODULE_DESCRIPTION("BD70528 RTC driver");
+ MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platofrm:bd70528-rtc");
++MODULE_ALIAS("platform:bd70528-rtc");
+-- 
+2.20.1
