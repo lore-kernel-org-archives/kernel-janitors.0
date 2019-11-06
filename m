@@ -1,42 +1,25 @@
-From: Parav Pandit <parav@mellanox.com>
-Date: Tue, 05 Nov 2019 15:03:55 +0000
-Subject: RE: [PATCH][next] net/mlx5: fix spelling mistake "metdata" -> "metadata"
-Message-Id: <AM0PR05MB4866F3706C26D06AD22BD975D17E0@AM0PR05MB4866.eurprd05.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 06 Nov 2019 02:35:22 +0000
+Subject: Re: [PATCH][next] net/mlx5: fix spelling mistake "metdata" -> "metadata"
+Message-Id: <20191105.183522.2155800632990290770.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191105145416.60451-1-colin.king@canonical.com>
 In-Reply-To: <20191105145416.60451-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: colin.king@canonical.com
+Cc: saeedm@mellanox.com, leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgta2VybmVsLW93
-bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgta2VybmVsLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5v
-cmc+IE9uIEJlaGFsZiBPZiBDb2xpbiBLaW5nDQo+IFNlbnQ6IFR1ZXNkYXksIE5vdmVtYmVyIDUs
-IDIwMTkgODo1NCBBTQ0KPiBUbzogU2FlZWQgTWFoYW1lZWQgPHNhZWVkbUBtZWxsYW5veC5jb20+
-OyBMZW9uIFJvbWFub3Zza3kNCj4gPGxlb25Aa2VybmVsLm9yZz47IERhdmlkIFMgLiBNaWxsZXIg
-PGRhdmVtQGRhdmVtbG9mdC5uZXQ+Ow0KPiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1y
-ZG1hQHZnZXIua2VybmVsLm9yZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRd
-IG5ldC9tbHg1OiBmaXggc3BlbGxpbmcgbWlzdGFrZSAibWV0ZGF0YSIgLT4NCj4gIm1ldGFkYXRh
-Ig0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
-Cj4gDQo+IFRoZXJlIGlzIGEgc3BlbGxpbmcgbWlzdGFrZSBpbiBhIGVzd193YXJuIHdhcm5pbmcg
-bWVzc2FnZS4gRml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNv
-bGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9t
-ZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaF9vZmZsb2Fkcy5jIHwgMiArLQ0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMu
-Yw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoX29m
-ZmxvYWRzLmMNCj4gaW5kZXggYmQ5ZmQ1OWQ4MjMzLi4xYzNmZGVlODc1ODggMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoX29mZmxv
-YWRzLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vz
-d2l0Y2hfb2ZmbG9hZHMuYw0KPiBAQCAtMTg3Nyw3ICsxODc3LDcgQEAgc3RhdGljIGludA0KPiBl
-c3dfdnBvcnRfY3JlYXRlX2luZ3Jlc3NfYWNsX2dyb3VwKHN0cnVjdCBtbHg1X2Vzd2l0Y2ggKmVz
-dywNCj4gIAlpZiAoSVNfRVJSKGcpKSB7DQo+ICAJCXJldCA9IFBUUl9FUlIoZyk7DQo+ICAJCWVz
-d193YXJuKGVzdy0+ZGV2LA0KPiAtCQkJICJGYWlsZWQgdG8gY3JlYXRlIHZwb3J0WyVkXSBpbmdy
-ZXNzIG1ldGRhdGEgZ3JvdXAsDQo+IGVyciglZClcbiIsDQo+ICsJCQkgIkZhaWxlZCB0byBjcmVh
-dGUgdnBvcnRbJWRdIGluZ3Jlc3MgbWV0YWRhdGEgZ3JvdXAsDQo+IGVyciglZClcbiIsDQo+ICAJ
-CQkgdnBvcnQtPnZwb3J0LCByZXQpOw0KPiAgCQlnb3RvIGdycF9lcnI7DQo+ICAJfQ0KPiAtLQ0K
-PiAyLjIwLjENClJldmlld2VkLWJ5OiBQYXJhdiBQYW5kaXQgPHBhcmF2QG1lbGxhbm94LmNvbT4N
-Cg0K
+From: Colin King <colin.king@canonical.com>
+Date: Tue,  5 Nov 2019 14:54:16 +0000
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a esw_warn warning message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Saeed, please pick this one up.
+
+Thank you.
