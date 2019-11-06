@@ -1,30 +1,38 @@
-From: David Miller <davem@redhat.com>
-Date: Tue, 12 Nov 2019 06:05:29 +0000
-Subject: Re: [PATCH][next] tipc: fix update of the uninitialized variable err
-Message-Id: <20191111.220529.1787748247936127753.davem@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Nov 2019 15:52:48 +0000
+Subject: [PATCH][next] xfs: remove redundant assignment to variable error
+Message-Id: <20191106155248.266489-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191111123334.68401-1-colin.king@canonical.com>
-In-Reply-To: <20191111123334.68401-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jon.maloy@ericsson.com, ying.xue@windreiver.com, tuong.t.lien@dektech.com.au, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Nov 2019 12:33:34 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable err is not uninitialized and hence can potentially contain
-> any garbage value.  This may cause an error when logical or'ing the
-> return values from the calls to functions crypto_aead_setauthsize or
-> crypto_aead_setkey.  Fix this by setting err to the return of
-> crypto_aead_setauthsize rather than or'ing in the return into the
-> uninitialized variable
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: fc1b6d6de220 ("tipc: introduce TIPC encryption & authentication")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable error is being initialized with a value that is never read
+and is being re-assigned a couple of statements later on. The
+assignment is redundant and hence can be removed.
 
-Applied.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/xfs_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b3188ea49413..2302f67d1a18 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1362,7 +1362,7 @@ xfs_fc_fill_super(
+ {
+ 	struct xfs_mount	*mp = sb->s_fs_info;
+ 	struct inode		*root;
+-	int			flags = 0, error = -ENOMEM;
++	int			flags = 0, error;
+ 
+ 	mp->m_super = sb;
+ 
+-- 
+2.20.1
