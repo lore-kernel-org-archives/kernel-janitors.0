@@ -1,30 +1,24 @@
-From: Vincent Cheng <vincent.cheng.xh@renesas.com>
-Date: Wed, 06 Nov 2019 14:02:43 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Nov 2019 14:25:42 +0000
 Subject: Re: [PATCH -next] ptp: Fix missing unlock on error in idtcm_probe()
-Message-Id: <20191106140228.GA28081@renesas.com>
+Message-Id: <20191106142542.GK10409@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191106115308.112645-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191106115308.112645-1-weiyongjun1@huawei.com>
+ <20191106140228.GA28081@renesas.com>
+In-Reply-To: <20191106140228.GA28081@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Richard Cochran <richardcochran@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Vincent Cheng <vincent.cheng.xh@renesas.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Richard Cochran <richardcochran@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-T24gV2VkLCBOb3YgMDYsIDIwMTkgYXQgMDY6NTM6MDhBTSBFU1QsIFdlaSBZb25nanVuIHdyb3Rl
-Og0KPkFkZCB0aGUgbWlzc2luZyB1bmxvY2sgYmVmb3JlIHJldHVybiBmcm9tIGZ1bmN0aW9uIGlk
-dGNtX3Byb2JlKCkNCj5pbiB0aGUgZXJyb3IgaGFuZGxpbmcgY2FzZS4NCj4NCj5GaXhlczogM2E2
-YmE3ZGM3Nzk5ICgicHRwOiBBZGQgYSBwdHAgY2xvY2sgZHJpdmVyIGZvciBJRFQgQ2xvY2tNYXRy
-aXguIikNCj5TaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNv
-bT4NCj4tLS0NCj4gZHJpdmVycy9wdHAvcHRwX2Nsb2NrbWF0cml4LmMgfCA0ICsrKy0NCj4gMSBm
-aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPg0KPmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3B0cC9wdHBfY2xvY2ttYXRyaXguYyBiL2RyaXZlcnMvcHRwL3B0cF9jbG9j
-a21hdHJpeC5jDQo+aW5kZXggY2Y1ODg5YjdkODI1Li5hNTExMGI3YjRlY2UgMTAwNjQ0DQo+LS0t
-IGEvZHJpdmVycy9wdHAvcHRwX2Nsb2NrbWF0cml4LmMNCj4rKysgYi9kcml2ZXJzL3B0cC9wdHBf
-Y2xvY2ttYXRyaXguYw0KPkBAIC0xMjk0LDggKzEyOTQsMTAgQEAgc3RhdGljIGludCBpZHRjbV9w
-cm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPiANCj4gCWVyciA9IHNldF90b2Rfd3Jp
-dGVfb3ZlcmhlYWQoaWR0Y20pOw0KPiANCj4tCWlmIChlcnIpDQo+KwlpZiAoZXJyKSB7DQo+KwkJ
-bXV0ZXhfdW5sb2NrKCZpZHRjbS0+cmVnX2xvY2spOw0KPiAJCXJldHVybiBlcnI7DQo+Kwl9DQo+
-IA0KPiAJZXJyID0gaWR0Y21fbG9hZF9maXJtd2FyZShpZHRjbSwgJmNsaWVudC0+ZGV2KTsNCj4N
-Cg0KWWVzLCBnb29kIGNhdGNoLiAgVGhhbmsteW91IGZvciB0aGUgZml4Lg0KDQpSZXZpZXdlZC1i
-eTogVmluY2VudCBDaGVuZyAgPHZpbmNlbnQuY2hlbmcueGhAcmVuZXNhcy5jb20+DQo
+The prefix should probably be "ptp: ptp_clockmatrix: Fix missing ..." or
+something.  This is a problem when we don't set a prefix when the driver
+is first merged and then the first person to send a fix has to guess
+what the maintainers are going to want to use.
+
+The only other patch to this driver is commit 3a6ba7dc7799 ("ptp: Add a
+ptp clock driver for IDT ClockMatrix.") so it's impossible to know.
+
+regards,
+dan carpenter
