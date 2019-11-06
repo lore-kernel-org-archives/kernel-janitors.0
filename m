@@ -1,54 +1,35 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 02 Nov 2019 12:50:25 +0000
-Subject: Re: [PATCH] staging: rtl8192u: fix potential infinite loop because loop counter being too small
-Message-Id: <5DBD7B91.8040309@bfs.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Nov 2019 11:53:08 +0000
+Subject: [PATCH -next] ptp: Fix missing unlock on error in idtcm_probe()
+Message-Id: <20191106115308.112645-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191101142604.17610-1-colin.king@canonical.com>
- <20191101145117.GB10409@kadam>
-In-Reply-To: <20191101145117.GB10409@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Richard Cochran <richardcochran@gmail.com>, Vincent Cheng <vincent.cheng.xh@renesas.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Add the missing unlock before return from function idtcm_probe()
+in the error handling case.
 
+Fixes: 3a6ba7dc7799 ("ptp: Add a ptp clock driver for IDT ClockMatrix.")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/ptp/ptp_clockmatrix.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Am 01.11.2019 15:51, schrieb Dan Carpenter:
-> On Fri, Nov 01, 2019 at 02:26:04PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the for-loop counter i is a u8 however it is being checked
->> against a maximum value priv->ieee80211->LinkDetectInfo.SlotNum which is a
->> u16. Hence there is a potential wrap-around of counter i back to zero if
->> priv->ieee80211->LinkDetectInfo.SlotNum is greater than 255.  Fix this by
->> making i a u16.
->>
->> Addresses-Coverity: ("Infinite loop")
->> Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/staging/rtl8192u/r8192U_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
->> index 48f1591ed5b4..fd91b7c5ca81 100644
->> --- a/drivers/staging/rtl8192u/r8192U_core.c
->> +++ b/drivers/staging/rtl8192u/r8192U_core.c
->> @@ -3210,7 +3210,7 @@ static void rtl819x_update_rxcounts(struct r8192_priv *priv, u32 *TotalRxBcnNum,
->>  			     u32 *TotalRxDataNum)
->>  {
->>  	u16			SlotIndex;
->> -	u8			i;
->> +	u16			i;
-> 
-> The iterator "i" should just be an int unless we know that it needs to
-> be an unsigned long long.
-> 
-
-+1
-
-i think we can spare the 2byte. ppl expect int and will get confused (as shown here).
-
-re,
- wh
+diff --git a/drivers/ptp/ptp_clockmatrix.c b/drivers/ptp/ptp_clockmatrix.c
+index cf5889b7d825..a5110b7b4ece 100644
+--- a/drivers/ptp/ptp_clockmatrix.c
++++ b/drivers/ptp/ptp_clockmatrix.c
+@@ -1294,8 +1294,10 @@ static int idtcm_probe(struct i2c_client *client,
+ 
+ 	err = set_tod_write_overhead(idtcm);
+ 
+-	if (err)
++	if (err) {
++		mutex_unlock(&idtcm->reg_lock);
+ 		return err;
++	}
+ 
+ 	err = idtcm_load_firmware(idtcm, &client->dev);
