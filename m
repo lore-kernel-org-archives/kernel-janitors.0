@@ -1,57 +1,37 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Date: Fri, 01 Nov 2019 15:39:06 +0000
-Subject: Re: [PATCH] iocost: don't nest spin_lock_irq in ioc_weight_write()
-Message-Id: <x49d0ebd2sl.fsf@segfault.boston.devel.redhat.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Nov 2019 15:54:49 +0000
+Subject: [PATCH net-next] net: axienet: Fix error return code in axienet_probe()
+Message-Id: <20191106155449.107672-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191031105341.GA26612@mwanda>
-In-Reply-To: <20191031105341.GA26612@mwanda> (Dan Carpenter's message of "Thu,
-        31 Oct 2019 13:53:41 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@armlinux.org.uk>, Robert
+ Hancock <hancock@sedsystems.ca>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+In the DMA memory resource get failed case, the error is not
+set and 0 will be returned. Fix it by reove redundant check
+since devm_ioremap_resource() will handle it.
 
-> This code causes a static analysis warning:
->
->     block/blk-iocost.c:2113 ioc_weight_write() error: double lock 'irq'
->
-> We disable IRQs in blkg_conf_prep() and re-enable them in
-> blkg_conf_finish().  IRQ disable/enable should not be nested because
-> that means the IRQs will be enabled at the first unlock instead of the
-> second one.
+Fixes: 28ef9ebdb64c ("net: axienet: make use of axistream-connected attribute optional")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Can you please also add a comment stating that irqs were disabled in
-blkg_conf_prep?  Otherwise future readers will surely be scratching
-their heads trying to figure out why we do things two different ways in
-the same function.
-
-Thanks!
-Jeff
-
->
-> Fixes: 7caa47151ab2 ("blkcg: implement blk-iocost")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  block/blk-iocost.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-> index 2a3db80c1dce..a7ed434eae03 100644
-> --- a/block/blk-iocost.c
-> +++ b/block/blk-iocost.c
-> @@ -2110,10 +2110,10 @@ static ssize_t ioc_weight_write(struct kernfs_open_file *of, char *buf,
->  			goto einval;
->  	}
->  
-> -	spin_lock_irq(&iocg->ioc->lock);
-> +	spin_lock(&iocg->ioc->lock);
->  	iocg->cfg_weight = v;
->  	weight_updated(iocg);
-> -	spin_unlock_irq(&iocg->ioc->lock);
-> +	spin_unlock(&iocg->ioc->lock);
->  
->  	blkg_conf_finish(&ctx);
->  	return nbytes;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 867726d696e2..8f32db6d2c45 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1788,10 +1788,6 @@ static int axienet_probe(struct platform_device *pdev)
+ 		/* Check for these resources directly on the Ethernet node. */
+ 		struct resource *res = platform_get_resource(pdev,
+ 							     IORESOURCE_MEM, 1);
+-		if (!res) {
+-			dev_err(&pdev->dev, "unable to get DMA memory resource\n");
+-			goto free_netdev;
+-		}
+ 		lp->dma_regs = devm_ioremap_resource(&pdev->dev, res);
+ 		lp->rx_irq = platform_get_irq(pdev, 1);
+ 		lp->tx_irq = platform_get_irq(pdev, 0);
