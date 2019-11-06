@@ -1,44 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Nov 2019 20:28:18 +0000
-Subject: [PATCH] iio: temperature: ltc2983: fix u32 read into a unsigned long long
-Message-Id: <20191105202818.90065-1-colin.king@canonical.com>
+From: "Sa, Nuno" <Nuno.Sa@analog.com>
+Date: Wed, 06 Nov 2019 14:19:52 +0000
+Subject: Re: [PATCH] iio: temperature: ltc2983: fix u32 read into a unsigned long long
+Message-Id: <dab9cfd93e6affa5d94f078154c3e181303bbf47.camel@analog.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191105202818.90065-1-colin.king@canonical.com>
+In-Reply-To: <20191105202818.90065-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "knaack.h@gmx.de" <knaack.h@gmx.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "lars@metafoo.de" <lars@metafoo.de>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the read of temp using of_property_read_u32_index is reading
-a u32 value into a unsigned long long.  This relies on machine endianness
-to work correctly, so fix this by reading a u32 value and setting temp
-to this value.
-
-Addresses-Coverity: ("Reliance on integer endianness")
-Fixes: f110f3188e56 ("iio: temperature: Add support for LTC2983")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iio/temperature/ltc2983.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/temperature/ltc2983.c b/drivers/iio/temperature/ltc2983.c
-index ddf47023364b..d39c0d6b77f1 100644
---- a/drivers/iio/temperature/ltc2983.c
-+++ b/drivers/iio/temperature/ltc2983.c
-@@ -444,8 +444,10 @@ static struct ltc2983_custom_sensor *__ltc2983_custom_sensor_new(
- 			else
- 				temp = __convert_to_raw(temp, resolution);
- 		} else {
--			of_property_read_u32_index(np, propname, index,
--						   (u32 *)&temp);
-+			u32 t32;
-+
-+			of_property_read_u32_index(np, propname, index, &t32);
-+			temp = t32;
- 		}
- 
- 		for (j = 0; j < n_size; j++)
--- 
-2.20.1
+T24gVHVlLCAyMDE5LTExLTA1IGF0IDIwOjI4ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiAN
+Cj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+
+IEN1cnJlbnRseSB0aGUgcmVhZCBvZiB0ZW1wIHVzaW5nIG9mX3Byb3BlcnR5X3JlYWRfdTMyX2lu
+ZGV4IGlzDQo+IHJlYWRpbmcNCj4gYSB1MzIgdmFsdWUgaW50byBhIHVuc2lnbmVkIGxvbmcgbG9u
+Zy4gIFRoaXMgcmVsaWVzIG9uIG1hY2hpbmUNCj4gZW5kaWFubmVzcw0KPiB0byB3b3JrIGNvcnJl
+Y3RseSwgc28gZml4IHRoaXMgYnkgcmVhZGluZyBhIHUzMiB2YWx1ZSBhbmQgc2V0dGluZw0KPiB0
+ZW1wDQo+IHRvIHRoaXMgdmFsdWUuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiUmVsaWFu
+Y2Ugb24gaW50ZWdlciBlbmRpYW5uZXNzIikNCj4gRml4ZXM6IGYxMTBmMzE4OGU1NiAoImlpbzog
+dGVtcGVyYXR1cmU6IEFkZCBzdXBwb3J0IGZvciBMVEMyOTgzIikNCj4gU2lnbmVkLW9mZi1ieTog
+Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2
+ZXJzL2lpby90ZW1wZXJhdHVyZS9sdGMyOTgzLmMgfCA2ICsrKystLQ0KPiAgMSBmaWxlIGNoYW5n
+ZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2lpby90ZW1wZXJhdHVyZS9sdGMyOTgzLmMNCj4gYi9kcml2ZXJzL2lpby90ZW1wZXJh
+dHVyZS9sdGMyOTgzLmMNCj4gaW5kZXggZGRmNDcwMjMzNjRiLi5kMzljMGQ2Yjc3ZjEgMTAwNjQ0
+DQo+IC0tLSBhL2RyaXZlcnMvaWlvL3RlbXBlcmF0dXJlL2x0YzI5ODMuYw0KPiArKysgYi9kcml2
+ZXJzL2lpby90ZW1wZXJhdHVyZS9sdGMyOTgzLmMNCj4gQEAgLTQ0NCw4ICs0NDQsMTAgQEAgc3Rh
+dGljIHN0cnVjdCBsdGMyOTgzX2N1c3RvbV9zZW5zb3INCj4gKl9fbHRjMjk4M19jdXN0b21fc2Vu
+c29yX25ldygNCj4gIAkJCWVsc2UNCj4gIAkJCQl0ZW1wID0gX19jb252ZXJ0X3RvX3Jhdyh0ZW1w
+LA0KPiByZXNvbHV0aW9uKTsNCj4gIAkJfSBlbHNlIHsNCj4gLQkJCW9mX3Byb3BlcnR5X3JlYWRf
+dTMyX2luZGV4KG5wLCBwcm9wbmFtZSwgaW5kZXgsDQo+IC0JCQkJCQkgICAodTMyICopJnRlbXAp
+Ow0KPiArCQkJdTMyIHQzMjsNCj4gKw0KPiArCQkJb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgo
+bnAsIHByb3BuYW1lLCBpbmRleCwNCj4gJnQzMik7DQo+ICsJCQl0ZW1wID0gdDMyOw0KPiAgCQl9
+DQo+ICANCj4gIAkJZm9yIChqID0gMDsgaiA8IG5fc2l6ZTsgaisrKQ0KDQpBY2tlZC1ieTogTnVu
+byBTw6EgPG51bm8uc2FAYW5hbG9nLmNvbT4NCg0KVGhhbmtzLA0KTnVubyBTw6ENCg=
