@@ -1,26 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 21 Nov 2019 08:55:58 +0000
-Subject: Re: [PATCH v4 00/13] add the latest exfat driver
-Message-Id: <dcbf6d35-b550-53bc-0c8a-2e54497173e2@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Nov 2019 15:39:33 +0000
+Subject: [PATCH -next] usb: gadget: fix error return code in acm_ms_bind()
+Message-Id: <20191106153933.76757-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20191121052913epcas1p1b28d2727dca5df42a6f2b8eb6b6dbcbb@epcas1p1.samsung.com>
- <20191121052618.31117-1-namjae.jeon@samsung.com>
-In-Reply-To: <20191121052618.31117-1-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhengbin <zhengbin13@huawei.com>, Li Jun <jun.li@freescale.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-…
-> v2:
-…
->  - Rename proper goto labels in several places.
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-I find an other wording more appropriate.
-A renaming would have not been needed if these identifiers were “proper” before.
+Fixes: 578aa8a2b12c ("usb: gadget: acm_ms: allocate and init otg descriptor by otg capabilities")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/gadget/legacy/acm_ms.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Were any update candidates left over according to this change pattern?
-
-Regards,
-Markus
+diff --git a/drivers/usb/gadget/legacy/acm_ms.c b/drivers/usb/gadget/legacy/acm_ms.c
+index 59be2d8417c9..e8033e5f0c18 100644
+--- a/drivers/usb/gadget/legacy/acm_ms.c
++++ b/drivers/usb/gadget/legacy/acm_ms.c
+@@ -200,8 +200,10 @@ static int acm_ms_bind(struct usb_composite_dev *cdev)
+ 		struct usb_descriptor_header *usb_desc;
+ 
+ 		usb_desc = usb_otg_descriptor_alloc(gadget);
+-		if (!usb_desc)
++		if (!usb_desc) {
++			status = -ENOMEM;
+ 			goto fail_string_ids;
++		}
+ 		usb_otg_descriptor_init(gadget, usb_desc);
+ 		otg_desc[0] = usb_desc;
+ 		otg_desc[1] = NULL;
