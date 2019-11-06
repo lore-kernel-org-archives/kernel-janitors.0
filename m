@@ -1,28 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 21 Nov 2019 13:45:11 +0000
-Subject: Re: [PATCH v4 05/13] exfat: add file operations
-Message-Id: <e648740d-1bf0-21f6-7073-f66e0947cc58@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 Nov 2019 15:39:16 +0000
+Subject: [PATCH -next] usb: gadget: mass_storage: fix error return code in msg_bind()
+Message-Id: <20191106153916.76654-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052917epcas1p1f81875dcc2d1a64dc3420bedc68fb3ba@epcas1p1.samsung.com>
- <20191121052618.31117-6-namjae.jeon@samsung.com>
-In-Reply-To: <20191121052618.31117-6-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhengbin <zhengbin13@huawei.com>, Li Jun <jun.li@freescale.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-…
-> +++ b/fs/exfat/file.c
-…
-> +void exfat_truncate(struct inode *inode, loff_t size)
-> +{
-…
-> +out:
-> +	aligned_size = i_size_read(inode);
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Can a label like “read_size” be more helpful?
+Fixes: d86788979761 ("usb: gadget: mass_storage: allocate and init otg descriptor by otg capabilities")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/gadget/legacy/mass_storage.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/usb/gadget/legacy/mass_storage.c b/drivers/usb/gadget/legacy/mass_storage.c
+index f18f77584fc2..6a1e055c0e6c 100644
+--- a/drivers/usb/gadget/legacy/mass_storage.c
++++ b/drivers/usb/gadget/legacy/mass_storage.c
+@@ -175,8 +175,10 @@ static int msg_bind(struct usb_composite_dev *cdev)
+ 		struct usb_descriptor_header *usb_desc;
+ 
+ 		usb_desc = usb_otg_descriptor_alloc(cdev->gadget);
+-		if (!usb_desc)
++		if (!usb_desc) {
++			status = -ENOMEM;
+ 			goto fail_string_ids;
++		}
+ 		usb_otg_descriptor_init(cdev->gadget, usb_desc);
+ 		otg_desc[0] = usb_desc;
+ 		otg_desc[1] = NULL;
