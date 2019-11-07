@@ -1,60 +1,81 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 14 Nov 2019 09:54:30 +0000
-Subject: [PATCH] staging: rtl8192u: fix indentation issue
-Message-Id: <20191114095430.132120-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 07 Nov 2019 20:24:55 +0000
+Subject: [PATCH] net: aquantia: Use common error handling code in aq_pci_probe()
+Message-Id: <f155464c-5cbd-5cf7-c889-dabbe0f1135e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Igor Russkikh <igor.russkikh@aquantia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 7 Nov 2019 21:17:40 +0100
 
-There is a block of statements that are indented
-too deeply, remove the extraneous tabs.
+Move the same error code assignments so that such exception handling
+can be better reused at the end of this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8192u/r819xU_cmdpkt.c | 25 ++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ .../ethernet/aquantia/atlantic/aq_pci_func.c  | 29 +++++++++----------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-index e064f43fd8b6..bc98cdaf61ec 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-@@ -169,19 +169,20 @@ static void cmdpkt_beacontimerinterrupt_819xusb(struct net_device *dev)
- {
- 	struct r8192_priv *priv = ieee80211_priv(dev);
- 	u16 tx_rate;
--		/* 87B have to S/W beacon for DTM encryption_cmn. */
--		if (priv->ieee80211->current_network.mode = IEEE_A ||
--		    priv->ieee80211->current_network.mode = IEEE_N_5G ||
--		    (priv->ieee80211->current_network.mode = IEEE_N_24G &&
--		     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
--			tx_rate = 60;
--			DMESG("send beacon frame  tx rate is 6Mbpm\n");
--		} else {
--			tx_rate = 10;
--			DMESG("send beacon frame  tx rate is 1Mbpm\n");
--		}
- 
--		rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
-+	/* 87B have to S/W beacon for DTM encryption_cmn. */
-+	if (priv->ieee80211->current_network.mode = IEEE_A ||
-+	    priv->ieee80211->current_network.mode = IEEE_N_5G ||
-+	    (priv->ieee80211->current_network.mode = IEEE_N_24G &&
-+	     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
-+		tx_rate = 60;
-+		DMESG("send beacon frame  tx rate is 6Mbpm\n");
-+	} else {
-+		tx_rate = 10;
-+		DMESG("send beacon frame  tx rate is 1Mbpm\n");
-+	}
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+index e82c96b50373..be0c018d0074 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+@@ -241,30 +241,23 @@ static int aq_pci_probe(struct pci_dev *pdev,
+ 			resource_size_t reg_sz;
+
+ 			mmio_pa = pci_resource_start(pdev, bar);
+-			if (mmio_pa == 0U) {
+-				err = -EIO;
+-				goto err_free_aq_hw;
+-			}
++			if (mmio_pa == 0U)
++				goto e_io;
+
+ 			reg_sz = pci_resource_len(pdev, bar);
+-			if ((reg_sz <= 24 /*ATL_REGS_SIZE*/)) {
+-				err = -EIO;
+-				goto err_free_aq_hw;
+-			}
++			if (reg_sz <= 24 /* ATL_REGS_SIZE */)
++				goto e_io;
+
+ 			self->aq_hw->mmio = ioremap_nocache(mmio_pa, reg_sz);
+-			if (!self->aq_hw->mmio) {
+-				err = -EIO;
+-				goto err_free_aq_hw;
+-			}
++			if (!self->aq_hw->mmio)
++				goto e_io;
 +
-+	rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
+ 			break;
+ 		}
+ 	}
+
+-	if (bar == 4) {
+-		err = -EIO;
+-		goto err_free_aq_hw;
+-	}
++	if (bar == 4)
++		goto e_io;
+
+ 	numvecs = min((u8)AQ_CFG_VECS_DEF,
+ 		      aq_nic_get_cfg(self)->aq_hw_caps->msix_irqs);
+@@ -312,6 +305,10 @@ static int aq_pci_probe(struct pci_dev *pdev,
+ err_pci_func:
+ 	pci_disable_device(pdev);
+ 	return err;
++
++e_io:
++	err = -EIO;
++	goto err_free_aq_hw;
  }
- 
- /*-----------------------------------------------------------------------------
--- 
-2.20.1
+
+ static void aq_pci_remove(struct pci_dev *pdev)
+--
+2.24.0
