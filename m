@@ -1,114 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 02 Nov 2019 22:33:23 +0000
-Subject: [PATCH] drm/amd/powerplay: fix spelling mistake "Attemp" -> "Attempt"
-Message-Id: <20191102223323.8453-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2019 07:48:47 +0000
+Subject: [PATCH] block: drbd: remove a stay unlock in __drbd_send_protocol()
+Message-Id: <20191107074847.GA11695@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180428222155.20242-1-colin.king@canonical.com>
-In-Reply-To: <20180428222155.20242-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, Jens Axboe <axboe@kernel.dk>, drbd-dev@tron.linbit.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There are two callers of this function and they both unlock the mutex so
+this ends up being a double unlock.
 
-There are spelling mistakes in assert messages, fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 44ed167da748 ("drbd: rcu_read_lock() and rcu_dereference() for tconn->net_conf")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c | 12 ++++++------
- drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c | 12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+Static analisys.  Not tested.  There is a comment about the lock next to
+the caller in drbd_nl.c that I didn't understand:
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-index 90c782c132d2..43190fa2bb33 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-@@ -125,20 +125,20 @@ int vega12_enable_smc_features(struct pp_hwmgr *hwmgr,
- 	if (enable) {
- 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low) = 0,
--				"[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
-+				"[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
- 				return -EINVAL);
- 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high) = 0,
--				"[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
-+				"[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
- 				return -EINVAL);
- 	} else {
- 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low) = 0,
--				"[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
-+				"[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
- 				return -EINVAL);
- 		PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high) = 0,
--				"[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
-+				"[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
- 				return -EINVAL);
+drivers/block/drbd/drbd_nl.c
+  2509          crypto_free_shash(connection->integrity_tfm);
+  2510          connection->integrity_tfm = crypto.integrity_tfm;
+  2511          if (connection->cstate >= C_WF_REPORT_PARAMS && connection->agreed_pro_version >= 100)
+  2512                  /* Do this without trying to take connection->data.mutex again.  */
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+What does this mean?  We're already holding that lock.  We took it near
+the start of the function.
+
+  2513                  __drbd_send_protocol(connection, P_PROTOCOL_UPDATE);
+  2514  
+  2515          crypto_free_shash(connection->cram_hmac_tfm);
+  2516          connection->cram_hmac_tfm = crypto.cram_hmac_tfm;
+  2517  
+  2518          mutex_unlock(&connection->resource->conf_update);
+  2519          mutex_unlock(&connection->data.mutex);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unlocked here.
+
+ drivers/block/drbd/drbd_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 5b248763a672..a18155cdce41 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -786,7 +786,6 @@ int __drbd_send_protocol(struct drbd_connection *connection, enum drbd_packet cm
+ 
+ 	if (nc->tentative && connection->agreed_pro_version < 92) {
+ 		rcu_read_unlock();
+-		mutex_unlock(&sock->mutex);
+ 		drbd_err(connection, "--dry-run is not supported by peer");
+ 		return -EOPNOTSUPP;
  	}
- 
-@@ -155,13 +155,13 @@ int vega12_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
- 
- 	PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
- 			PPSMC_MSG_GetEnabledSmuFeaturesLow) = 0,
--			"[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
-+			"[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
- 			return -EINVAL);
- 	smc_features_low = smu9_get_argument(hwmgr);
- 
- 	PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
- 			PPSMC_MSG_GetEnabledSmuFeaturesHigh) = 0,
--			"[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
-+			"[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
- 			return -EINVAL);
- 	smc_features_high = smu9_get_argument(hwmgr);
- 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-index f604612f411f..562cb221f186 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-@@ -310,20 +310,20 @@ int vega20_enable_smc_features(struct pp_hwmgr *hwmgr,
- 	if (enable) {
- 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low)) = 0,
--				"[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
-+				"[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
- 				return ret);
- 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high)) = 0,
--				"[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
-+				"[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
- 				return ret);
- 	} else {
- 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low)) = 0,
--				"[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
-+				"[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
- 				return ret);
- 		PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
- 				PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high)) = 0,
--				"[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
-+				"[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
- 				return ret);
- 	}
- 
-@@ -341,12 +341,12 @@ int vega20_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
- 
- 	PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
- 			PPSMC_MSG_GetEnabledSmuFeaturesLow)) = 0,
--			"[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
-+			"[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
- 			return ret);
- 	smc_features_low = vega20_get_argument(hwmgr);
- 	PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
- 			PPSMC_MSG_GetEnabledSmuFeaturesHigh)) = 0,
--			"[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
-+			"[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
- 			return ret);
- 	smc_features_high = vega20_get_argument(hwmgr);
- 
 -- 
 2.20.1
