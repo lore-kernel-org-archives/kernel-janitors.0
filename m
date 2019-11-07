@@ -1,26 +1,35 @@
-From: Ernest Groth <bpatrick799@gmail.com>
-Date: Sun, 24 Nov 2019 18:37:08 +0000
-Subject: Good day Psyborg,
-Message-Id: <CADUzNO=tJHKjc8+d5gv4SANfKnc5hQzi6C6GXabaZDVPxx_jzQ@mail.gmail.com>
+From: Igor Russkikh <irusskikh@marvell.com>
+Date: Thu, 07 Nov 2019 00:00:50 +0000
+Subject: Re: [EXT] [PATCH net-next] net: aquantia: fix return value check in aq_ptp_init()
+Message-Id: <bfca5f2b-9d37-b45f-3478-fb64d676d23a@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191106145921.124814-1-weiyongjun1@huawei.com>
+In-Reply-To: <20191106145921.124814-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>, Egor Pomozov <epomozov@marvell.com>, Igor Russkikh <Igor.Russkikh@aquantia.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Good day Psyborg,
-
-I am Mr. Ernest F.Groth from United States of America and a lawyer by
-profession.i want to use this opportunity to inform you about my late
-client whom have the same surname with you died in auto accident here
-in United States with his entire family dated 24th of June 2018 and
-this my client deposited the sum of Eighty Eight Million, Six Hundred
-Thousand Dollars (88,600,000.00 USD) in one of the bank in USA since
-his demise, none of his family members are come to claim this funds
-and i searched his relatives through CNN, VOA and other international
-media and no avail.
-
-I will like you to claims this fund and will back you up with the
-documents. Contact me now for more details.
-
-Barrister Ernest.
+DQo+IEZ1bmN0aW9uIHB0cF9jbG9ja19yZWdpc3RlcigpIHJldHVybnMgRVJSX1BUUigpIGFuZCBu
+ZXZlciByZXR1cm5zDQo+IE5VTEwuIFRoZSBOVUxMIHRlc3Qgc2hvdWxkIGJlIHJlbW92ZWQuDQoN
+ClRoYW5rcywgV2VpIQ0KDQpGdW5jdGlvbiBieSBpdHNlbGYgY291bGQgcmV0dXJuIG51bGwsIGJ1
+dCB5b3UgYXJlIHJpZ2h0LCBzaW5jZSB0aGlzDQpjb2RlIGlzIG5vdyBhY3RpdmUgb25seSB3aGVu
+IFBUUF8xNTg4X0NMT0NLIGlzIG9uIC0gdGhpcyBpcyBhIHVzZWxlc3MgY2hlY2sgdGhlbi4NCg0K
+PiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNvbT4NCj4g
+LS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9hcV9wdHAuYyB8
+IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGlj
+L2FxX3B0cC5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvYXF1YW50aWEvYXRsYW50aWMvYXFfcHRw
+LmMNCj4gaW5kZXggM2VjMDg0MTVlNTNlLi4yNTJhODBiNmQzYjYgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX3B0cC5jDQo+ICsrKyBiL2Ry
+aXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX3B0cC5jDQo+IEBAIC0xMjA1
+LDcgKzEyMDUsNyBAQCBpbnQgYXFfcHRwX2luaXQoc3RydWN0IGFxX25pY19zICphcV9uaWMsIHVu
+c2lnbmVkIGludCBpZHhfdmVjKQ0KPiAgCWFxX3B0cC0+cHRwX2luZm8gPSBhcV9wdHBfY2xvY2s7
+DQo+ICAJYXFfcHRwX2dwaW9faW5pdCgmYXFfcHRwLT5wdHBfaW5mbywgJm1ib3guaW5mbyk7DQo+
+ICAJY2xvY2sgPSBwdHBfY2xvY2tfcmVnaXN0ZXIoJmFxX3B0cC0+cHRwX2luZm8sICZhcV9uaWMt
+Pm5kZXYtPmRldik7DQo+IC0JaWYgKCFjbG9jayB8fCBJU19FUlIoY2xvY2spKSB7DQo+ICsJaWYg
+KElTX0VSUihjbG9jaykpIHsNCj4gIAkJbmV0ZGV2X2VycihhcV9uaWMtPm5kZXYsICJwdHBfY2xv
+Y2tfcmVnaXN0ZXIgZmFpbGVkXG4iKTsNCj4gIAkJZXJyID0gUFRSX0VSUihjbG9jayk7DQo+ICAJ
+CWdvdG8gZXJyX2V4aXQ7DQoNCkFja2VkLWJ5OiBJZ29yIFJ1c3NraWtoIDxpcnVzc2tpa2hAbWFy
+dmVsbC5jb20+DQoNCi0tIA0KUmVnYXJkcywNCiAgSWdvcg0K
