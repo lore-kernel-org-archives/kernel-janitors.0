@@ -1,54 +1,49 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 05 Nov 2019 18:56:23 +0000
-Subject: [PATCH 2/2] misc: xilinx_sdfec: Combine three condition checks into one statement in xsdfec_add_ldpc
-Message-Id: <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
+From: Dragan Cvetic <draganc@xilinx.com>
+Date: Thu, 07 Nov 2019 16:30:36 +0000
+Subject: RE: [PATCH 2/2] misc: xilinx_sdfec: Combine three condition checks into one statement in xsdfec_add_
+Message-Id: <CH2PR02MB635990244270C49D0716FB43CB780@CH2PR02MB6359.namprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
-In-Reply-To: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
+ <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
+In-Reply-To: <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@xilinx.com>, Dragan Cvetic <dragan.cvetic@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <dkiernan@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michals@xilinx.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Nov 2019 19:32:25 +0100
-
-The same return code was set after three condition checks.
-Thus use a single statement instead.
-
-Fixes: 20ec628e8007ec75c2f884e00004f39eab6289b5 ("misc: xilinx_sdfec: Add ability to configure LDPC")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/xilinx_sdfec.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-index a622fcf4954a..322d5c6e6d12 100644
---- a/drivers/misc/xilinx_sdfec.c
-+++ b/drivers/misc/xilinx_sdfec.c
-@@ -653,18 +653,10 @@ static int xsdfec_add_ldpc(struct xsdfec_dev *xsdfec, void __user *arg)
- 	if (IS_ERR(ldpc))
- 		return PTR_ERR(ldpc);
-
--	if (xsdfec->config.code == XSDFEC_TURBO_CODE) {
--		ret = -EIO;
--		goto err_out;
--	}
--
--	/* Verify Device has not started */
--	if (xsdfec->state == XSDFEC_STARTED) {
--		ret = -EIO;
--		goto err_out;
--	}
--
--	if (xsdfec->config.code_wr_protect) {
-+	if (xsdfec->config.code == XSDFEC_TURBO_CODE ||
-+	    /* Verify device has not started */
-+	    xsdfec->state == XSDFEC_STARTED ||
-+	    xsdfec->config.code_wr_protect) {
- 		ret = -EIO;
- 		goto err_out;
- 	}
---
-2.24.0
+DQpIaSBNYXJrdXMsDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBN
+YXJrdXMgRWxmcmluZyBbbWFpbHRvOk1hcmt1cy5FbGZyaW5nQHdlYi5kZV0NCj4gU2VudDogVHVl
+c2RheSA1IE5vdmVtYmVyIDIwMTkgMTg6NTYNCj4gVG86IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZzsgQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT47IERlcmVrIEtpZXJu
+YW4gPGRraWVybmFuQHhpbGlueC5jb20+OyBEcmFnYW4gQ3ZldGljDQo+IDxkcmFnYW5jQHhpbGlu
+eC5jb20+OyBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsg
+TWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+DQo+IENjOiBMS01MIDxsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0KPiBT
+dWJqZWN0OiBbUEFUQ0ggMi8yXSBtaXNjOiB4aWxpbnhfc2RmZWM6IENvbWJpbmUgdGhyZWUgY29u
+ZGl0aW9uIGNoZWNrcyBpbnRvIG9uZSBzdGF0ZW1lbnQgaW4geHNkZmVjX2FkZF9sZHBjKCkNCj4g
+DQo+IEZyb206IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4N
+Cj4gRGF0ZTogVHVlLCA1IE5vdiAyMDE5IDE5OjMyOjI1ICswMTAwDQo+IA0KPiBUaGUgc2FtZSBy
+ZXR1cm4gY29kZSB3YXMgc2V0IGFmdGVyIHRocmVlIGNvbmRpdGlvbiBjaGVja3MuDQo+IFRodXMg
+dXNlIGEgc2luZ2xlIHN0YXRlbWVudCBpbnN0ZWFkLg0KPiANCj4gRml4ZXM6IDIwZWM2MjhlODAw
+N2VjNzVjMmY4ODRlMDAwMDRmMzllYWI2Mjg5YjUgKCJtaXNjOiB4aWxpbnhfc2RmZWM6IEFkZCBh
+YmlsaXR5IHRvIGNvbmZpZ3VyZSBMRFBDIikNCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJp
+bmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiAtLS0NCj4gIGRyaXZlcnMvbWlz
+Yy94aWxpbnhfc2RmZWMuYyB8IDE2ICsrKystLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCA0IGluc2VydGlvbnMoKyksIDEyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbWlzYy94aWxpbnhfc2RmZWMuYyBiL2RyaXZlcnMvbWlzYy94aWxpbnhfc2RmZWMuYw0K
+PiBpbmRleCBhNjIyZmNmNDk1NGEuLjMyMmQ1YzZlNmQxMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
+cy9taXNjL3hpbGlueF9zZGZlYy5jDQo+ICsrKyBiL2RyaXZlcnMvbWlzYy94aWxpbnhfc2RmZWMu
+Yw0KPiBAQCAtNjUzLDE4ICs2NTMsMTAgQEAgc3RhdGljIGludCB4c2RmZWNfYWRkX2xkcGMoc3Ry
+dWN0IHhzZGZlY19kZXYgKnhzZGZlYywgdm9pZCBfX3VzZXIgKmFyZykNCj4gIAlpZiAoSVNfRVJS
+KGxkcGMpKQ0KPiAgCQlyZXR1cm4gUFRSX0VSUihsZHBjKTsNCj4gDQo+IC0JaWYgKHhzZGZlYy0+
+Y29uZmlnLmNvZGUgPT0gWFNERkVDX1RVUkJPX0NPREUpIHsNCj4gLQkJcmV0ID0gLUVJTzsNCj4g
+LQkJZ290byBlcnJfb3V0Ow0KPiAtCX0NCj4gLQ0KPiAtCS8qIFZlcmlmeSBEZXZpY2UgaGFzIG5v
+dCBzdGFydGVkICovDQo+IC0JaWYgKHhzZGZlYy0+c3RhdGUgPT0gWFNERkVDX1NUQVJURUQpIHsN
+Cj4gLQkJcmV0ID0gLUVJTzsNCj4gLQkJZ290byBlcnJfb3V0Ow0KPiAtCX0NCj4gLQ0KPiAtCWlm
+ICh4c2RmZWMtPmNvbmZpZy5jb2RlX3dyX3Byb3RlY3QpIHsNCj4gKwlpZiAoeHNkZmVjLT5jb25m
+aWcuY29kZSA9PSBYU0RGRUNfVFVSQk9fQ09ERSB8fA0KPiArCSAgICAvKiBWZXJpZnkgZGV2aWNl
+IGhhcyBub3Qgc3RhcnRlZCAqLw0KPiArCSAgICB4c2RmZWMtPnN0YXRlID09IFhTREZFQ19TVEFS
+VEVEIHx8DQo+ICsJICAgIHhzZGZlYy0+Y29uZmlnLmNvZGVfd3JfcHJvdGVjdCkgew0KPiAgCQly
+ZXQgPSAtRUlPOw0KPiAgCQlnb3RvIGVycl9vdXQ7DQo+ICAJfQ0KDQphcHByb3ZlZA0KDQo+IC0t
+DQo+IDIuMjQuMA0KDQo
