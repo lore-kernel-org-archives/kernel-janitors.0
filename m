@@ -1,28 +1,21 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 27 Nov 2019 05:12:31 +0000
-Subject: Re: [PATCH] crypto: hisilicon - fix a NULL vs IS_ERR() bug in sec_create_qp_ctx()
-Message-Id: <20191127051231.a3i34iawq666rbwc@gondor.apana.org.au>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Thu, 07 Nov 2019 10:46:33 +0000
+Subject: Re: [PATCH net-next] mlxsw: spectrum: Fix error return code in mlxsw_sp_port_module_info_init()
+Message-Id: <20191107104633.GD2200@nanopsycho>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126122120.vnf6mxmvf25ppyeo@kili.mountain>
-In-Reply-To: <20191126122120.vnf6mxmvf25ppyeo@kili.mountain>
+References: <20191106145231.39128-1-weiyongjun1@huawei.com>
+In-Reply-To: <20191106145231.39128-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zaibo Xu <xuzaibo@huawei.com>, "David S. Miller" <davem@davemloft.net>, Longfang Liu <liulongfang@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 03:21:20PM +0300, Dan Carpenter wrote:
-> The hisi_acc_create_sgl_pool() function returns error pointers, it never
-> returns NULL pointers.
-> 
-> Fixes: 416d82204df4 ("crypto: hisilicon - add HiSilicon SEC V2 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/hisilicon/sec2/sec_crypto.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Wed, Nov 06, 2019 at 03:52:31PM CET, weiyongjun1@huawei.com wrote:
+>Fix to return negative error code -ENOMEM from the error handling
+>case instead of 0, as done elsewhere in this function.
+>
+>Fixes: 4a7f970f1240 ("mlxsw: spectrum: Replace port_to_module array with array of structs")
+>Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
