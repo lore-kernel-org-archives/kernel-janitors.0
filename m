@@ -1,31 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Wed, 13 Nov 2019 11:32:06 +0000
-Subject: Re: [PATCH][next] backlight: qcom-wled: fix spelling mistake "trigged" -> "triggered"
-Message-Id: <20191113113206.GB3285@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Nov 2019 22:36:46 +0000
+Subject: [PATCH] rdb: fix spelling mistake "requeueing" -> "requeuing"
+Message-Id: <20191107223646.416986-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191112093025.98638-1-colin.king@canonical.com>
-In-Reply-To: <20191112093025.98638-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>, Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 12 Nov 2019, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/video/backlight/qcom-wled.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There is a spelling mistake in a debug message. Fix it.
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/rbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 39136675dae5..8e1595d09138 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -4230,7 +4230,7 @@ static void rbd_acquire_lock(struct work_struct *work)
+ 		 * lock owner acked, but resend if we don't see them
+ 		 * release the lock
+ 		 */
+-		dout("%s rbd_dev %p requeueing lock_dwork\n", __func__,
++		dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+ 		     rbd_dev);
+ 		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+ 		    msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.20.1
