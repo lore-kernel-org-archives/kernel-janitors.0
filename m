@@ -1,27 +1,22 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 08 Nov 2019 13:54:43 +0000
+From: Bart Van Assche <bvanassche@acm.org>
+Date: Fri, 08 Nov 2019 16:26:39 +0000
 Subject: Re: [PATCH] block: drbd: remove a stay unlock in __drbd_send_protocol()
-Message-Id: <17fea9d1-39f8-1d91-5509-5f520009b9c9@kernel.dk>
+Message-Id: <3a2d491f-3d24-3673-07f3-f601d5fafc97@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191107074847.GA11695@mwanda> <6906816.cRlsrm7Sor@fat-tyre>
-In-Reply-To: <6906816.cRlsrm7Sor@fat-tyre>
+References: <20191107074847.GA11695@mwanda>
+In-Reply-To: <20191107074847.GA11695@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philipp Reisner <philipp.reisner@linbit.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, Jens Axboe <axboe@kernel.dk>, drbd-dev@tron.linbit.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/8/19 3:46 AM, Philipp Reisner wrote:
-> Hi Dan,
-> 
-> yes, your patch it obviously correct. The comment you are
-> referring to is badly worded. We will remove it.
-> 
-> Jens,
-> 
-> are you taking this patch as it is?
+On 11/6/19 11:48 PM, Dan Carpenter wrote:
+> There are two callers of this function and they both unlock the mutex so
+> this ends up being a double unlock.
 
-Yep, I'll queue it up.
+Is there a typo in the patch subject (stay -> stray)?
 
--- 
-Jens Axboe
+Thanks,
+
+Bart.
