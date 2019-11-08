@@ -1,27 +1,33 @@
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Date: Tue, 26 Nov 2019 12:39:28 +0000
-Subject: Re: [PATCH] mac80211: airtime: Fix an off by one in ieee80211_calc_rx_airtime()
-Message-Id: <87wobmyfpb.fsf@toke.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2019 05:11:22 +0000
+Subject: [PATCH] xfs: remove a stray tab in xfs_remount_rw()
+Message-Id: <20191108051121.GA26279@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126120910.ftr4t7me3by32aiz@kili.mountain>
-In-Reply-To: <20191126120910.ftr4t7me3by32aiz@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Roy Luo <royluo@google.com>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Kalle Valo <kvalo@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, Ian Kent <raven@themaw.net>
+Cc: linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+The extra tab makes the code slightly confusing.
 
-> This code was copied from mt76 and inherited an off by one bug from
-> there.  The > should be >= so that we don't read one element beyond
-> the end of the array.
->
-> Fixes: db3e1c40cf2f ("mac80211: Import airtime calculation code from mt76")
-> Reported-by: Toke Høiland-Jørgensen <toke@redhat.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/xfs/xfs_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b3188ea49413..ede6fac47c56 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1599,7 +1599,7 @@ xfs_remount_rw(
+ 	if (error) {
+ 		xfs_err(mp,
+ 			"Error %d recovering leftover CoW allocations.", error);
+-			xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
++		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
+ 		return error;
+ 	}
+ 	xfs_start_block_reaping(mp);
+-- 
+2.20.1
