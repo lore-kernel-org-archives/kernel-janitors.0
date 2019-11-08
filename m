@@ -1,43 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 02 Nov 2019 10:11:19 +0000
-Subject: [bug report] caif_virtio: Introduce caif over virtio
-Message-Id: <20191102101119.GA23109@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Nov 2019 15:00:17 +0000
+Subject: [PATCH][next] drm/amd/display: fix unsigned less than 0 comparison on error check
+Message-Id: <20191108150017.125859-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Lyude Paul <lyude@redhat.com>, Mikita Lipski <mikita.lipski@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Erwan Yvin,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is a semi-automatic email about new static checker warnings.
+Currently the error check on the call to drm_dp_atomic_find_vcpi_slots
+is always false because an unsigned dm_new_connector_state->vcpi_slots
+is being checked for a less than zero. Fix this by casting this to
+an int on the comparison.
 
-The patch 0d2e1a2926b1: "caif_virtio: Introduce caif over virtio" 
-from Mar 20, 2013, leads to the following Smatch complaint:
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 5133c6241d9c ("drm/amd/display: Add MST atomic routines")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    drivers/net/caif/caif_virtio.c:190 cfv_release_used_buf()
-    warn: variable dereferenced before check 'cfv->genpool' (see line 180)
-
-drivers/net/caif/caif_virtio.c
-   179	
-   180			free_buf_info(cfv, buf_info);
-                                      ^^^
-Dereference inside the function.
-
-   181	
-   182			/* watermark_tx indicates if we previously stopped the tx
-   183			 * queues. If we have enough free stots in the virtio ring,
-   184			 * re-establish memory reserved and open up tx queues.
-   185			 */
-   186			if (cfv->vq_tx->num_free <= cfv->watermark_tx)
-   187				continue;
-   188	
-   189			/* Re-establish memory reserve */
-   190			if (cfv->reserved_mem = 0 && cfv->genpool)
-                                                      ^^^^^^^^^^^^
-Checked too late.
-
-   191				cfv->reserved_mem    192					gen_pool_alloc(cfv->genpool,
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 37c56156a116..00e730b8d98f 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4866,7 +4866,7 @@ static int dm_encoder_helper_atomic_check(struct drm_encoder *encoder,
+ 									   mst_mgr,
+ 									   mst_port,
+ 									   dm_new_connector_state->pbn);
+-	if (dm_new_connector_state->vcpi_slots < 0) {
++	if ((int)dm_new_connector_state->vcpi_slots < 0) {
+ 		DRM_DEBUG_ATOMIC("failed finding vcpi slots: %d\n", (int)dm_new_connector_state->vcpi_slots);
+ 		return dm_new_connector_state->vcpi_slots;
+ 	}
+-- 
+2.20.1
