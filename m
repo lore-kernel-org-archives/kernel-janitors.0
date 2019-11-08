@@ -1,44 +1,71 @@
-From: Parav Pandit <parav@mellanox.com>
-Date: Fri, 22 Nov 2019 07:21:22 +0000
-Subject: Re: [PATCH net] net: rtnetlink: prevent underflows in do_setvfinfo()
-Message-Id: <a3f851fb-e148-d386-e9dd-29e7d89c93fa@mellanox.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Fri, 08 Nov 2019 14:06:08 +0000
+Subject: Re: [PATCH][V2] ata: pata_artop: make arrays static const, makes object smaller
+Message-Id: <50c64370-067a-a15e-29d6-dff3fc25cc77@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191120123438.vxn2ngnxzpcaqot4@kili.mountain>
- <20191121.144429.649625073638417068.davem@davemloft.net>
-In-Reply-To: <20191121.144429.649625073638417068.davem@davemloft.net>
+References: <CGME20191006143000epcas2p168872c0c7b1e1879e31931d3244dfd4d@epcas2p1.samsung.com>
+        <20191006142956.23360-1-colin.king@canonical.com>
+In-Reply-To: <20191006142956.23360-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: Jiri Pirko <jiri@mellanox.com>, "dsahern@gmail.com" <dsahern@gmail.com>, Ido Schimmel <idosch@mellanox.com>, Petr Machata <petrm@mellanox.com>, "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>, "nikolay@cumulusnetworks.com" <nikolay@cumulusnetworks.com>, "roopa@cumulusnetworks.com" <roopa@cumulusnetworks.com>, "johannes.berg@intel.com" <johannes.berg@intel.com>, "mkubecek@suse.cz" <mkubecek@suse.cz>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMTEvMjEvMjAxOSA0OjQ0IFBNLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+IEZyb206IERhbiBD
-YXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gRGF0ZTogV2VkLCAyMCBOb3Yg
-MjAxOSAxNTozNDozOCArMDMwMA0KPg0KPj4gVGhlICJpdm0tPnZmIiB2YXJpYWJsZSBpcyBhIHUz
-MiwgYnV0IHRoZSBwcm9ibGVtIGlzIHRoYXQgYSBudW1iZXIgb2YNCj4+IGRyaXZlcnMgY2FzdCBp
-dCB0byBhbiBpbnQgYW5kIHRoZW4gZm9yZ2V0IHRvIGNoZWNrIGZvciBuZWdhdGl2ZXMuICBBbg0K
-Pj4gZXhhbXBsZSBvZiB0aGlzIGlzIGluIHRoZSBjeGdiNCBkcml2ZXIuDQo+Pg0KPj4gZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvY2hlbHNpby9jeGdiNC9jeGdiNF9tYWluLmMNCj4+ICAgMjg5MCAgc3Rh
-dGljIGludCBjeGdiNF9tZ210X2dldF92Zl9jb25maWcoc3RydWN0IG5ldF9kZXZpY2UgKmRldiwN
-Cj4+ICAgMjg5MSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IHZmLCBz
-dHJ1Y3QgaWZsYV92Zl9pbmZvICppdmkpDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIF5eXl5eXg0KPj4gICAyODkyICB7DQo+PiAgIDI4OTMgICAgICAgICAg
-c3RydWN0IHBvcnRfaW5mbyAqcGkgPSBuZXRkZXZfcHJpdihkZXYpOw0KPj4gICAyODk0ICAgICAg
-ICAgIHN0cnVjdCBhZGFwdGVyICphZGFwID0gcGktPmFkYXB0ZXI7DQo+PiAgIDI4OTUgICAgICAg
-ICAgc3RydWN0IHZmX2luZm8gKnZmaW5mbzsNCj4+ICAgMjg5NiAgDQo+PiAgIDI4OTcgICAgICAg
-ICAgaWYgKHZmID49IGFkYXAtPm51bV92ZnMpDQo+PiAgICAgICAgICAgICAgICAgICAgIF5eXl5e
-Xl5eXl5eXl5eXl5eXl4NCj4+ICAgMjg5OCAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
-Ow0KPj4gICAyODk5ICAgICAgICAgIHZmaW5mbyA9ICZhZGFwLT52ZmluZm9bdmZdOw0KPj4gICAg
-ICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eDQo+Pg0KPj4gVGhlcmUgYXJl
-IDQ4IGZ1bmN0aW9ucyBhZmZlY3RlZC4NCj4gIC4uLg0KPj4gU2lnbmVkLW9mZi1ieTogRGFuIENh
-cnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiBJJ20gZ29pbmcgdG8gYXBwbHkg
-dGhpcyBhbmQgcXVldWUgaXQgdXAgZm9yIC1zdGFibGUuDQo+DQo+IFRoZSB1MzIgY29udmVyc2lv
-biBzaG91bGQgaGFwcGVuIGluIG5leHQuDQpva2F5Lg0KV2hlbiBEYW4gcmVwb3J0ZWQsIEkgcmV2
-aWV3ZWQgYW5kIHdyb3RlIHRoZSBwYXRjaCBmb3IgdTMyLCBhbmQgc29tZSBtb3JlDQpjb2RlIGNv
-bnNvbGlkYXRpb24gd2l0aCBpdC4NCkJ1dCBoaXQgdGhlIGJsb2NrIHdpdGggdTMyIGxlYWRpbmcg
-dG8gb3ZlcmZsb3cgdG8gMCB3aGljaCBtb2RpZmllcyB0aGUNCmZpcnN0IFZGIGluY29ycmVjdGx5
-Lg0KQ2hlY2tpbmcgbnVtX3ZmcyBvZiBwY2kgZGV2LCB3aXRob3V0IGRldmljZV9sb2NrKCkgaXMg
-ZXF1YWxseSBidWdneSBhcw0KaXQgc3RhbmRzIHRvZGF5Lg0KQ3JlYXRpbmcgYSBsb2NrIGluIGVh
-Y2ggdmVuZG9yIGRyaXZlcihzKSBkb2Vzbid0IG1ha2Ugc2Vuc2UuDQpIYXZlbid0IGhhZCBjaGFu
-Y2UgeWV0IGFmdGVyIHRoYXQuDQpMZXQgbWUga25vdyBpZiBzb21lb25lIGhhcyBhIHN1Z2dlc3Rp
-b24gdGhhdCBJIHNob3VsZCBpbmNvcnBvcmF0ZS4NCg0K
+
+On 10/6/19 4:29 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the const arrays on the stack but instead make them
+> static. Makes the object code smaller by 292 bytes.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    6988	   3132	    128	  10248	   2808	drivers/ata/pata_artop.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    6536	   3292	    128	   9956	   26e4	drivers/ata/pata_artop.o
+> 
+> (gcc version 9.2.1, amd64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+> 
+> V2: fix up commit message
+> 
+> ---
+>  drivers/ata/pata_artop.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/ata/pata_artop.c b/drivers/ata/pata_artop.c
+> index 3aa006c5ed0c..6bd2228bb6ff 100644
+> --- a/drivers/ata/pata_artop.c
+> +++ b/drivers/ata/pata_artop.c
+> @@ -100,7 +100,7 @@ static void artop6210_load_piomode(struct ata_port *ap, struct ata_device *adev,
+>  {
+>  	struct pci_dev *pdev	= to_pci_dev(ap->host->dev);
+>  	int dn = adev->devno + 2 * ap->port_no;
+> -	const u16 timing[2][5] = {
+> +	static const u16 timing[2][5] = {
+>  		{ 0x0000, 0x000A, 0x0008, 0x0303, 0x0301 },
+>  		{ 0x0700, 0x070A, 0x0708, 0x0403, 0x0401 }
+>  
+> @@ -154,7 +154,7 @@ static void artop6260_load_piomode (struct ata_port *ap, struct ata_device *adev
+>  {
+>  	struct pci_dev *pdev	= to_pci_dev(ap->host->dev);
+>  	int dn = adev->devno + 2 * ap->port_no;
+> -	const u8 timing[2][5] = {
+> +	static const u8 timing[2][5] = {
+>  		{ 0x00, 0x0A, 0x08, 0x33, 0x31 },
+>  		{ 0x70, 0x7A, 0x78, 0x43, 0x41 }
+>  
