@@ -1,22 +1,43 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 04 Nov 2019 10:14:26 +0000
-Subject: Re: [PATCH] locking/lockdep: update the comment for __lock_release()
-Message-Id: <20191104101426.GD4131@hirez.programming.kicks-ass.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Nov 2019 15:55:24 +0000
+Subject: [PATCH][next] reset: npcm: check for NULL return from syscon_regmap_lookup_by_compat
+Message-Id: <20191108155524.170566-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191104091252.GA31509@mwanda>
-In-Reply-To: <20191104091252.GA31509@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, openbmc@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 12:12:52PM +0300, Dan Carpenter wrote:
-> This changes "to the list" to "from the list" and also deletes the
-> obsolete comment about the "@nested" argument.  The "nested" argument
-> was removed in commit 5facae4f3549 ("locking/lockdep: Remove unused
-> @nested argument from lock_release()").
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Dan!
+Function syscon_regmap_lookup_by_compat can return a NULL pointer, so
+the IS_ERR check on the return is incorrect. Fix this by checking for
+IS_ERR_OR_NULL and return -ENODEV if true.  This avoids a null pointer
+dereference on gcr_regmap later on.
+
+Addresses-Coverity: ("Dereference null return (stat)")
+Fixes: b3f1d036f26d ("reset: npcm: add NPCM reset controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/reset/reset-npcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+index 2ea4d3136e15..9febf8bed2f6 100644
+--- a/drivers/reset/reset-npcm.c
++++ b/drivers/reset/reset-npcm.c
+@@ -161,9 +161,9 @@ static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
+ 	of_match_device(dev->driver->of_match_table, dev)->data;
+ 
+ 	gcr_regmap = syscon_regmap_lookup_by_compatible(gcr_dt);
+-	if (IS_ERR(gcr_regmap)) {
++	if (IS_ERR_OR_NULL(gcr_regmap)) {
+ 		dev_err(&pdev->dev, "Failed to find %s\n", gcr_dt);
+-		return PTR_ERR(gcr_regmap);
++		return -ENODEV;
+ 	}
+ 
+ 	/* checking which USB device is enabled */
+-- 
+2.20.1
