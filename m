@@ -1,21 +1,37 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Fri, 08 Nov 2019 05:49:41 +0000
+From: Ian Kent <raven@themaw.net>
+Date: Fri, 08 Nov 2019 06:29:56 +0000
 Subject: Re: [PATCH] xfs: remove a stray tab in xfs_remount_rw()
-Message-Id: <20191108054941.GA25221@infradead.org>
+Message-Id: <c87e0acc9f6cbf36a2860d7bebc28df6b1dcfc97.camel@themaw.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191108051121.GA26279@mwanda>
 In-Reply-To: <20191108051121.GA26279@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, Ian Kent <raven@themaw.net>, linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 08:11:22AM +0300, Dan Carpenter wrote:
+On Fri, 2019-11-08 at 08:11 +0300, Dan Carpenter wrote:
 > The extra tab makes the code slightly confusing.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/xfs/xfs_super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index b3188ea49413..ede6fac47c56 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1599,7 +1599,7 @@ xfs_remount_rw(
+>  	if (error) {
+>  		xfs_err(mp,
+>  			"Error %d recovering leftover CoW allocations.", error);
+> -			xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
+> +		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
+>  		return error;
+>  	}
+>  	xfs_start_block_reaping(mp);
 
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Indeed, my bad.
+Reviewed-by: Ian Kent <raven@themaw.net>
