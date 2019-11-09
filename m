@@ -1,53 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 17 Nov 2019 19:02:46 +0000
-Subject: Re: [PATCH] /linux/netdevice.h: Fix checkpatch.pl comment warning
-Message-Id: <alpine.DEB.2.21.1911172002050.2553@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 09 Nov 2019 19:49:23 +0000
+Subject: [PATCH][next] drm/amd/display: fix spelling mistake "exeuction" -> "execution"
+Message-Id: <20191109194923.231655-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191117185722.GA4637@Cheese>
-In-Reply-To: <20191117185722.GA4637@Cheese>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Travis Davies <tdavies@darkphysics.net>
-Cc: akpm@linux-foundation.org, davem@davemloft.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Te subject line does not look correct.  See what other people have done
-for this file.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Sun, 17 Nov 2019, Travis Davies wrote:
+There are spelling mistakes in a DC_ERROR message and a comment.
+Fix these.
 
-> Fix checkpatch Warning:
-> '...netdevice.h:100: WARNING: Block comments use a trailing */ on a separate line'
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c    | 2 +-
+ drivers/gpu/drm/amd/display/dmub/inc/dmub_srv.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Say what you do and why, and not just Fix X.
-
-julia
-
-> Signed-off-by: Travis Davies <tdavies@darkphysics.net>
->
-> ---
->  include/linux/netdevice.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index c20f190b4c18..a2605e043fa2 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
->  #define NET_XMIT_CN		0x02	/* congestion notification	*/
->  #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
->
-> -/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
-> +/*
-> + * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
->   * indicates that the device will soon be dropping packets, or already drops
-> - * some packets of the same priority; prompting us to send less aggressively. */
-> + * some packets of the same priority; prompting us to send less aggressively.
-> + */
->  #define net_xmit_eval(e)	((e) = NET_XMIT_CN ? 0 : (e))
->  #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
->
-> --
-> 2.21.0
->
->
+diff --git a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
+index 61cefe0a3790..b65b66025267 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
++++ b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
+@@ -92,7 +92,7 @@ void dc_dmub_srv_cmd_execute(struct dc_dmub_srv *dc_dmub_srv)
+ 
+ 	status = dmub_srv_cmd_execute(dmub);
+ 	if (status != DMUB_STATUS_OK)
+-		DC_ERROR("Error starting DMUB exeuction: status=%d\n", status);
++		DC_ERROR("Error starting DMUB execution: status=%d\n", status);
+ }
+ 
+ void dc_dmub_srv_wait_idle(struct dc_dmub_srv *dc_dmub_srv)
+diff --git a/drivers/gpu/drm/amd/display/dmub/inc/dmub_srv.h b/drivers/gpu/drm/amd/display/dmub/inc/dmub_srv.h
+index aa8f0396616d..45e427d1952e 100644
+--- a/drivers/gpu/drm/amd/display/dmub/inc/dmub_srv.h
++++ b/drivers/gpu/drm/amd/display/dmub/inc/dmub_srv.h
+@@ -416,7 +416,7 @@ enum dmub_status dmub_srv_cmd_queue(struct dmub_srv *dmub,
+  * dmub_srv_cmd_execute() - Executes a queued sequence to the dmub
+  * @dmub: the dmub service
+  *
+- * Begins exeuction of queued commands on the dmub.
++ * Begins execution of queued commands on the dmub.
+  *
+  * Return:
+  *   DMUB_STATUS_OK - success
+-- 
+2.20.1
