@@ -1,53 +1,37 @@
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Tue, 19 Nov 2019 08:11:11 +0000
-Subject: Re: [PATCH -next] vsock/vmci: make vmci_vsock_cb_host_called static
-Message-Id: <20191119081111.gz2adojvsdcukvwk@steredhat.homenet.telecomitalia.it>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 09 Nov 2019 15:49:21 +0000
+Subject: [PATCH] drm/amd/display: remove duplicated comparison expression
+Message-Id: <20191109154921.223093-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119032534.52090-1-maowenan@huawei.com>
-In-Reply-To: <20191119032534.52090-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, netdev@vger.kernel.org, davem@davemloft.net
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, alexios.zavras@intel.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Charlene Liu <Charlene.Liu@amd.com>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 11:25:34AM +0800, Mao Wenan wrote:
-> When using make C=2 drivers/misc/vmw_vmci/vmci_driver.o
-> to compile, below warning can be seen:
-> drivers/misc/vmw_vmci/vmci_driver.c:33:6: warning:
-> symbol 'vmci_vsock_cb_host_called' was not declared. Should it be static?
-> 
-> This patch make symbol vmci_vsock_cb_host_called static.
-> 
-> Fixes: b1bba80a4376 ("vsock/vmci: register vmci_transport only when VMCI guest/host are active")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/misc/vmw_vmci/vmci_driver.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/vmw_vmci/vmci_driver.c b/drivers/misc/vmw_vmci/vmci_driver.c
-> index 95fed46..cbb706d 100644
-> --- a/drivers/misc/vmw_vmci/vmci_driver.c
-> +++ b/drivers/misc/vmw_vmci/vmci_driver.c
-> @@ -30,7 +30,7 @@ static bool vmci_host_personality_initialized;
->  
->  static DEFINE_MUTEX(vmci_vsock_mutex); /* protects vmci_vsock_transport_cb */
->  static vmci_vsock_cb vmci_vsock_transport_cb;
-> -bool vmci_vsock_cb_host_called;
-> +static bool vmci_vsock_cb_host_called;
->  
->  /*
->   * vmci_get_context_id() - Gets the current context ID.
-> -- 
-> 2.7.4
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Same patch already sent by "kbuild test robot" <lkp@intel.com>
-https://lkml.org/lkml/2019/11/18/609
+There is comparison expression that is duplicated and hence one
+of the expressions can be removed.  Remove it.
 
-If we want to merge this, maybe we can also add:
-Reported-by: kbuild test robot <lkp@intel.com>
+Addresses-Coverity: ("Same on both sides")
+Fixes: 12e2b2d4c65f ("drm/amd/display: add dcc programming for dual plane")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Anyway, it is my fault:
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 1fdba13b3d0f..1fa255e077d0 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -1491,7 +1491,6 @@ static enum surface_update_type get_plane_info_update_type(const struct dc_surfa
+ 	}
+ 
+ 	if (u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
+-			|| u->plane_info->plane_size.surface_pitch != u->surface->plane_size.surface_pitch
+ 			|| u->plane_info->plane_size.chroma_pitch != u->surface->plane_size.chroma_pitch) {
+ 		update_flags->bits.plane_size_change = 1;
+ 		elevate_update_type(&update_type, UPDATE_TYPE_MED);
+-- 
+2.20.1
