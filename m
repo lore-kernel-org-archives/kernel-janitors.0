@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Sat, 09 Nov 2019 09:03:15 +0000
 Subject: [PATCH 2/3] fsl/fman: Use common error handling code in mac_probe()
-Message-Id: <8af4d161-cf85-b40f-6cc1-7ccf6d505918@web.de>
+Message-Id: <38159f52-81a1-8ece-076f-da66180f4d5e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <132e8369-c4da-249f-76b8-834e394dc6d5@web.de>
 In-Reply-To: <132e8369-c4da-249f-76b8-834e394dc6d5@web.de>
