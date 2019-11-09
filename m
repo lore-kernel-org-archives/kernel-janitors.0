@@ -1,29 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 13 Nov 2019 02:29:55 +0000
-Subject: Re: [PATCH -next] scsi: csiostor: Remove set but not used variable 'rln'
-Message-Id: <yq136esqzj0.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 09 Nov 2019 15:58:36 +0000
+Subject: [PATCH] clocksource/drivers/davinci: fix memory leak on clockevent on error return
+Message-Id: <20191109155836.223635-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029061530.98197-1-yuehaibing@huawei.com>
-In-Reply-To: <20191029061530.98197-1-yuehaibing@huawei.com>
-        (yuehaibing@huawei.com's message of "Tue, 29 Oct 2019 06:15:30 +0000")
+References: <1d9f02d3-45ac-1d2f-457b-91cae123383d@web.de>
+In-Reply-To: <1d9f02d3-45ac-1d2f-457b-91cae123383d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-YueHaibing,
+In the case where request_irq fails, the return path does not kfree
+clockevent and hence we have a memory leak.  Fix this by kfree'ing
+clockevent before returning.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/scsi/csiostor/csio_lnode.c: In function 'csio_ln_init':
-> drivers/scsi/csiostor/csio_lnode.c:1995:21: warning:
->  variable 'rln' set but not used [-Wunused-but-set-variable]
->
-> It is never used since introduction, so remove it.
+Addresses-Coverity: ("Resource leak")
+Fixes: 721154f972aa ("clocksource/drivers/davinci: Add support for clockevents")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clocksource/timer-davinci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied to 5.5/scsi-queue, thanks.
-
+diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+index 62745c962049..910d4d2f0d64 100644
+--- a/drivers/clocksource/timer-davinci.c
++++ b/drivers/clocksource/timer-davinci.c
+@@ -299,6 +299,7 @@ int __init davinci_timer_register(struct clk *clk,
+ 			 "clockevent/tim12", clockevent);
+ 	if (rv) {
+ 		pr_err("Unable to request the clockevent interrupt");
++		kfree(clockevent);
+ 		return rv;
+ 	}
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
