@@ -1,100 +1,64 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Mon, 11 Nov 2019 09:03:56 +0000
-Subject: [PATCH 3/4] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
-Message-Id: <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 11 Nov 2019 13:41:58 +0000
+Subject: Re: [PATCH 3/4] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
+Message-Id: <812c95a0-7eb6-7ad6-16fa-c9e8339ff213@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191111071952.6pbswbboqreen6im@pengutronix.de>
+ <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
+ <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, Neil Brown <neilb@suse.de>, Neil Armstrong <narmstrong@baylibre.com>, kernel@pengutronix.de, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-This was found by coccicheck:
+> This was found by coccicheck:
+>
+> 	drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
+> 	call of_find_device_by_node on line 255, but without a corresponding
+> 	object release within this function.
 
-	drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
-	call of_find_device_by_node on line 255, but without a corresponding
-	object release within this function.
+How do you think about to add a wording according to “imperative mood”
+for your change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n151
 
-Reported-by: Markus Elfring <elfring@users.sourceforge.net>
-Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-omap-dmtimer.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+…
+> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+…
+> @@ -352,7 +352,14 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+…
+>  	pdata->free(dm_timer);
+> -put:
+> +err_request_timer:
+> +
+> +err_timer_property:
+> +err_platdata:
+> +
+> +	put_device(&timer_pdev->dev);
 
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index e36fcad668a6..88a3c5690fea 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -256,7 +256,7 @@ static int pwm_omap_dmtimer_probe(struct platform_devic=
-e *pdev)
- 	if (!timer_pdev) {
- 		dev_err(&pdev->dev, "Unable to find Timer pdev\n");
- 		ret =3D -ENODEV;
--		goto put;
-+		goto err_find_timer_pdev;
- 	}
-=20
- 	timer_pdata =3D dev_get_platdata(&timer_pdev->dev);
-@@ -264,7 +264,7 @@ static int pwm_omap_dmtimer_probe(struct platform_devic=
-e *pdev)
- 		dev_dbg(&pdev->dev,
- 			 "dmtimer pdata structure NULL, deferring probe\n");
- 		ret =3D -EPROBE_DEFER;
--		goto put;
-+		goto err_platdata;
- 	}
-=20
- 	pdata =3D timer_pdata->timer_ops;
-@@ -283,19 +283,19 @@ static int pwm_omap_dmtimer_probe(struct platform_dev=
-ice *pdev)
- 	    !pdata->write_counter) {
- 		dev_err(&pdev->dev, "Incomplete dmtimer pdata structure\n");
- 		ret =3D -EINVAL;
--		goto put;
-+		goto err_platdata;
- 	}
-=20
- 	if (!of_get_property(timer, "ti,timer-pwm", NULL)) {
- 		dev_err(&pdev->dev, "Missing ti,timer-pwm capability\n");
- 		ret =3D -ENODEV;
--		goto put;
-+		goto err_timer_property;
- 	}
-=20
- 	dm_timer =3D pdata->request_by_node(timer);
- 	if (!dm_timer) {
- 		ret =3D -EPROBE_DEFER;
--		goto put;
-+		goto err_request_timer;
- 	}
-=20
- 	omap =3D devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
-@@ -352,7 +352,14 @@ static int pwm_omap_dmtimer_probe(struct platform_devi=
-ce *pdev)
- err_alloc_omap:
-=20
- 	pdata->free(dm_timer);
--put:
-+err_request_timer:
-+
-+err_timer_property:
-+err_platdata:
-+
-+	put_device(&timer_pdev->dev);
-+err_find_timer_pdev:
-+
- 	of_node_put(timer);
-=20
- 	return ret;
-@@ -372,6 +379,8 @@ static int pwm_omap_dmtimer_remove(struct platform_devi=
-ce *pdev)
-=20
- 	omap->pdata->free(omap->dm_timer);
-=20
-+	put_device(&omap->dm_timer_pdev->dev);
-+
- 	mutex_destroy(&omap->mutex);
-=20
- 	return 0;
---=20
-2.23.0
+Would the use of the label “put_device” be more appropriate?
+
+
+> +err_find_timer_pdev:
+> +
+>  	of_node_put(timer);
+…
+
+Would the use of the label “put_node” be better here?
+
+
+> @@ -372,6 +379,8 @@ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+>
+>  	omap->pdata->free(omap->dm_timer);
+>
+> +	put_device(&omap->dm_timer_pdev->dev);
+> +
+>  	mutex_destroy(&omap->mutex);
+>
+>  	return 0;
+
+I suggest to omit a few blank lines.
+
+Regards,
+Markus
