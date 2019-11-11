@@ -1,49 +1,33 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Mon, 11 Nov 2019 09:03:54 +0000
-Subject: [PATCH 1/4] pwm: omap-dmtimer: remove pwmchip in .remove before making it unfunctional
-Message-Id: <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 11 Nov 2019 09:16:06 +0000
+Subject: Re: [PATCH 1/4] pwm: omap-dmtimer: remove pwmchip in .remove before making it unfunctional
+Message-Id: <20191111091606.qf7gj5gln3khfnsl@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-In the old code (e.g.) mutex_destroy() was called before
-pwmchip_remove(). Between these two calls it is possible that a pwm
-callback is used which tries to grab the mutex.
+Hello,
 
-Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-omap-dmtimer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I created a cover letter but failed to send it together with the series
+:-|
 
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index 00772fc53490..bdf94c78655f 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -351,6 +351,11 @@ static int pwm_omap_dmtimer_probe(struct platform_devi=
-ce *pdev)
- static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
- {
- 	struct pwm_omap_dmtimer_chip *omap =3D platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret =3D pwmchip_remove(&omap->chip);
-+	if (ret)
-+		return ret;
-=20
- 	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
- 		omap->pdata->stop(omap->dm_timer);
-@@ -359,7 +364,7 @@ static int pwm_omap_dmtimer_remove(struct platform_devi=
-ce *pdev)
-=20
- 	mutex_destroy(&omap->mutex);
-=20
--	return pwmchip_remove(&omap->chip);
-+	return 0;
- }
-=20
- static const struct of_device_id pwm_omap_dmtimer_of_match[] =3D {
+It said:
+
+| I promised a cleanup patch but as I found a few more issues I have four
+| patches now. The third patch replaces Markus' patch with a more complete
+| fix that also drops the reference in .remove not only the error path of
+| .probe.
+|=20
+| The last patch allows to compile the driver in more configurations, it
+| compiled successfully on amd64 and arm.
+
+Best regards
+Uwe
+
 --=20
-2.23.0
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
