@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 11 Nov 2019 08:42:18 +0000
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Mon, 11 Nov 2019 08:56:37 +0000
 Subject: Re: [v3] s390/pkey: Use memdup_user() rather than duplicating its implementation
-Message-Id: <a2dbda2a-1c2f-20f1-6b97-c59dbbcaa7a8@web.de>
+Message-Id: <6de4f605-6f74-a3b6-92d5-c5162cb54a6f@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
  <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
@@ -15,22 +15,26 @@ References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
  <040f3e18-d97a-fc32-b237-20e7553e1733@de.ibm.com>
  <c701adc9-dab2-46af-003f-d8a2c47bc0af@web.de>
  <ad1c533d-8e7f-b17e-d9cb-54dd9a7ed012@de.ibm.com>
-In-Reply-To: <ad1c533d-8e7f-b17e-d9cb-54dd9a7ed012@de.ibm.com>
+ <a2dbda2a-1c2f-20f1-6b97-c59dbbcaa7a8@web.de>
+In-Reply-To: <a2dbda2a-1c2f-20f1-6b97-c59dbbcaa7a8@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, Harald Freudenberger <freude@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Franzki <ifranzki@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Joe Perches <joe@perches.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org, Harald Freudenberger <freude@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Franzki <ifranzki@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Joe Perches <joe@perches.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-> No, I just want to have the word "fix" in the subject.
-
-How do you think about to use the preferred subject in your final commit directly?
-(Do you insist on sending a fourth patch variant?)
 
 
-> If you are OK with changing the sign-off to your web.de address
+On 11.11.19 09:42, Markus Elfring wrote:
+>> No, I just want to have the word "fix" in the subject.
+> 
+> How do you think about to use the preferred subject in your final commit directly?
+> (Do you insist on sending a fourth patch variant?)
+> 
+> 
+>> If you are OK with changing the sign-off to your web.de address
+> 
+> Does hinder you anything from continuing to use the previous known email address?
 
-Does hinder you anything from continuing to use the previous known email address?
-
-Regards,
-Markus
+Can you at least send a mail from sourceforge address with the Signed-off-by?
+The Sign-off is meant to keep track of flow. 
