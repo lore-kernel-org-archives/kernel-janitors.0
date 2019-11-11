@@ -1,51 +1,100 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 26 Nov 2019 09:23:03 +0000
-Subject: Re: [PATCH] mt76: Off by one in mt76_calc_rx_airtime()
-Message-Id: <0101016ea705771d-08dd7963-f8f7-447a-a0fb-4ad9093ec24d-000000@us-west-2.amazonses.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 11 Nov 2019 09:03:56 +0000
+Subject: [PATCH 3/4] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
+Message-Id: <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121213935.2cbgh3qmd4hv4v5a@kili.mountain>
-        <87v9r7ysg0.fsf@toke.dk> <20191126091150.GA1759@kadam>
-        <87h82ryp45.fsf@toke.dk>
-In-Reply-To: <87h82ryp45.fsf@toke.dk> ("Toke \=\?utf-8\?Q\?H\=C3\=B8iland-J\?\=
- \=\?utf-8\?Q\?\=C3\=B8rgensen\=22's\?\= message of
-        "Tue, 26 Nov 2019 10:16:10 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, Roy Luo <royluo@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Toke Høiland-Jørgensen <toke@redhat.com> writes:
+This was found by coccicheck:
 
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
->
->> On Tue, Nov 26, 2019 at 09:04:15AM +0100, Toke Høiland-Jørgensen wrote:
->>> Dan Carpenter <dan.carpenter@oracle.com> writes:
->>> 
->>> > @@ -242,7 +242,7 @@ u32 mt76_calc_rx_airtime(struct mt76_dev *dev, struct mt76_rx_status *status,
->>> >  			return 0;
->>> >  
->>> >  		sband = dev->hw->wiphy->bands[status->band];
->>> > -		if (!sband || status->rate_idx > sband->n_bitrates)
->>> > +		if (!sband || status->rate_idx >= sband->n_bitrates)
->>> >  			return 0;
->>> >  
->>> >  		rate = &sband->bitrates[status->rate_idx];
->>> 
->>> This code has recently been ported to mac80211 (net/mac80211/airtime.c).
->>> It seems that the bug is also present there; care to send a patch for
->>> that as well? :)
->>
->> Oh.  Thanks for pointing that out.  I actually saw the static checker
->> warning for that and ignored it thinking that it was the same code.
->> :P
->
-> Well, it's copy-pasted from the same code ;)
->
-> The plan is to get rid of the version inside mt76; was waiting for the
-> trees to converge, though, so I guess after the merge window?
+	drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
+	call of_find_device_by_node on line 255, but without a corresponding
+	object release within this function.
 
-Yup, as I'm not taking anything to w-d-next until -rc1 is released.
+Reported-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-omap-dmtimer.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
--- 
-Kalle Valo
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index e36fcad668a6..88a3c5690fea 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -256,7 +256,7 @@ static int pwm_omap_dmtimer_probe(struct platform_devic=
+e *pdev)
+ 	if (!timer_pdev) {
+ 		dev_err(&pdev->dev, "Unable to find Timer pdev\n");
+ 		ret =3D -ENODEV;
+-		goto put;
++		goto err_find_timer_pdev;
+ 	}
+=20
+ 	timer_pdata =3D dev_get_platdata(&timer_pdev->dev);
+@@ -264,7 +264,7 @@ static int pwm_omap_dmtimer_probe(struct platform_devic=
+e *pdev)
+ 		dev_dbg(&pdev->dev,
+ 			 "dmtimer pdata structure NULL, deferring probe\n");
+ 		ret =3D -EPROBE_DEFER;
+-		goto put;
++		goto err_platdata;
+ 	}
+=20
+ 	pdata =3D timer_pdata->timer_ops;
+@@ -283,19 +283,19 @@ static int pwm_omap_dmtimer_probe(struct platform_dev=
+ice *pdev)
+ 	    !pdata->write_counter) {
+ 		dev_err(&pdev->dev, "Incomplete dmtimer pdata structure\n");
+ 		ret =3D -EINVAL;
+-		goto put;
++		goto err_platdata;
+ 	}
+=20
+ 	if (!of_get_property(timer, "ti,timer-pwm", NULL)) {
+ 		dev_err(&pdev->dev, "Missing ti,timer-pwm capability\n");
+ 		ret =3D -ENODEV;
+-		goto put;
++		goto err_timer_property;
+ 	}
+=20
+ 	dm_timer =3D pdata->request_by_node(timer);
+ 	if (!dm_timer) {
+ 		ret =3D -EPROBE_DEFER;
+-		goto put;
++		goto err_request_timer;
+ 	}
+=20
+ 	omap =3D devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+@@ -352,7 +352,14 @@ static int pwm_omap_dmtimer_probe(struct platform_devi=
+ce *pdev)
+ err_alloc_omap:
+=20
+ 	pdata->free(dm_timer);
+-put:
++err_request_timer:
++
++err_timer_property:
++err_platdata:
++
++	put_device(&timer_pdev->dev);
++err_find_timer_pdev:
++
+ 	of_node_put(timer);
+=20
+ 	return ret;
+@@ -372,6 +379,8 @@ static int pwm_omap_dmtimer_remove(struct platform_devi=
+ce *pdev)
+=20
+ 	omap->pdata->free(omap->dm_timer);
+=20
++	put_device(&omap->dm_timer_pdev->dev);
++
+ 	mutex_destroy(&omap->mutex);
+=20
+ 	return 0;
+--=20
+2.23.0
