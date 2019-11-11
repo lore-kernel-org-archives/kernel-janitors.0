@@ -1,28 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Nov 2019 23:17:53 +0000
-Subject: Re: [PATCH net] net: dsa: silence a static checker warning
-Message-Id: <20191126.151753.744862410233394124.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 11 Nov 2019 03:34:27 +0000
+Subject: [PATCH] rtw88: remove duplicated include from ps.c
+Message-Id: <20191111033427.122443-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126121854.6omnd7upthqsrwgj@kili.mountain>
-In-Reply-To: <20191126121854.6omnd7upthqsrwgj@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, olteanv@gmail.com, vivien.didelot@gmail.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Nov 2019 15:18:54 +0300
+Remove duplicated include.
 
-> This code is harmless but it triggers a Smatch static checker warning:
-> 
->     net/dsa/tag_8021q.c:108 dsa_8021q_restore_pvid()
->     error: uninitialized symbol 'pvid'.
-> 
-> I believe that UBSan will complain at run time as well.  The solution is
-> to just re-order the conditions.
-> 
-> Fixes: c80ed84e7688 ("net: dsa: tag_8021q: Fix dsa_8021q_restore_pvid for an absent pvid")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtw88/ps.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-THis doesn't apply to the current net tree.
+diff --git a/drivers/net/wireless/realtek/rtw88/ps.c b/drivers/net/wireless/realtek/rtw88/ps.c
+index 820e0a3a141c..2226e3e7d7f8 100644
+--- a/drivers/net/wireless/realtek/rtw88/ps.c
++++ b/drivers/net/wireless/realtek/rtw88/ps.c
+@@ -9,7 +9,6 @@
+ #include "mac.h"
+ #include "coex.h"
+ #include "debug.h"
+-#include "reg.h"
+ 
+ static int rtw_ips_pwr_up(struct rtw_dev *rtwdev)
+ {
