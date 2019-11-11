@@ -1,27 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Nov 2019 22:43:23 +0000
-Subject: Re: [PATCH] net: phy: dp83869: Fix return paths to return proper values
-Message-Id: <20191126.144323.1762864682894965078.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Nov 2019 12:33:34 +0000
+Subject: [PATCH][next] tipc: fix update of the uninitialized variable err
+Message-Id: <20191111123334.68401-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126143856.26451-1-dmurphy@ti.com>
-In-Reply-To: <20191126143856.26451-1-dmurphy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmurphy@ti.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windreiver.com>, "David S . Miller" <davem@davemloft.net>, Tuong Lien <tuong.t.lien@dektech.com.au>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Murphy <dmurphy@ti.com>
-Date: Tue, 26 Nov 2019 08:38:56 -0600
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fix the return paths for all I/O operations to ensure
-> that the I/O completed successfully.  Then pass the return
-> to the caller for further processing
-> 
-> Reported-by: Andrew Lunn <andrew@lunn.ch>
-> Fixes: 01db923e8377 ("net: phy: dp83869: Add TI dp83869 phy")
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Variable err is not uninitialized and hence can potentially contain
+any garbage value.  This may cause an error when logical or'ing the
+return values from the calls to functions crypto_aead_setauthsize or
+crypto_aead_setkey.  Fix this by setting err to the return of
+crypto_aead_setauthsize rather than or'ing in the return into the
+uninitialized variable
 
-Please specify the Fixes: tag as the first tag in the future.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: fc1b6d6de220 ("tipc: introduce TIPC encryption & authentication")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/tipc/crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+index 05f7ca76e8ce..990a872cec46 100644
+--- a/net/tipc/crypto.c
++++ b/net/tipc/crypto.c
+@@ -463,7 +463,7 @@ static int tipc_aead_init(struct tipc_aead **aead, struct tipc_aead_key *ukey,
+ 			break;
+ 		}
+ 
+-		err |= crypto_aead_setauthsize(tfm, TIPC_AES_GCM_TAG_SIZE);
++		err = crypto_aead_setauthsize(tfm, TIPC_AES_GCM_TAG_SIZE);
+ 		err |= crypto_aead_setkey(tfm, ukey->key, keylen);
+ 		if (unlikely(err)) {
+ 			crypto_free_aead(tfm);
+-- 
+2.20.1
