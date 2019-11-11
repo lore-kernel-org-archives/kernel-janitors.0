@@ -1,26 +1,38 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 08 Nov 2019 15:11:09 +0000
-Subject: Re: [PATCH -next] crypto: amlogic - Use kmemdup in meson_aes_setkey()
-Message-Id: <20191108151108.axg6mblvepkcr443@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Nov 2019 12:44:13 +0000
+Subject: [PATCH][next] cxgb4: remove redundant assignment to hdr_len
+Message-Id: <20191111124413.68782-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191029015523.126987-1-yuehaibing@huawei.com>
-In-Reply-To: <20191029015523.126987-1-yuehaibing@huawei.com>
+References: <20180910121722.15524-1-colin.king@canonical.com>
+In-Reply-To: <20180910121722.15524-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Corentin Labbe <clabbe@baylibre.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vishal Kulkarni <vishal@chelsio.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 01:55:23AM +0000, YueHaibing wrote:
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/crypto/amlogic/amlogic-gxl-cipher.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Variable hdr_len is being assigned a value that is never read.
+The assignment is redundant and hence can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/sge.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+index e346830ebca9..09059adc3067 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@ -3810,7 +3810,6 @@ int cxgb4_ethofld_rx_handler(struct sge_rspq *q, const __be64 *rsp,
+ 				      eosw_txq->state =
+ 				      CXGB4_EO_STATE_FLOWC_CLOSE_REPLY) &&
+ 				     eosw_txq->cidx = eosw_txq->flowc_idx)) {
+-				hdr_len = skb->len;
+ 				flits = DIV_ROUND_UP(skb->len, 8);
+ 				if (eosw_txq->state =
+ 				    CXGB4_EO_STATE_FLOWC_OPEN_REPLY)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
