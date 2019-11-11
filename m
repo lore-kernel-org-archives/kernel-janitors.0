@@ -1,18 +1,49 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 22 Nov 2019 08:52:42 +0000
-Subject: Re: [PATCH v4 04/13] exfat: add directory operations
-Message-Id: <20191122085242.GA19926@lst.de>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 11 Nov 2019 09:03:54 +0000
+Subject: [PATCH 1/4] pwm: omap-dmtimer: remove pwmchip in .remove before making it unfunctional
+Message-Id: <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121052618.31117-1-namjae.jeon@samsung.com> <CGME20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38@epcas1p2.samsung.com> <20191121052618.31117-5-namjae.jeon@samsung.com> <498a958f-9066-09c6-7240-114234965c1a@web.de> <004901d5a0e0$f7bf1030$e73d3090$@samsung.com> <0e17c0a7-9b40-12a4-3f3f-500b9abb66de@web.de>
-In-Reply-To: <0e17c0a7-9b40-12a4-3f3f-500b9abb66de@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Markus,
+In the old code (e.g.) mutex_destroy() was called before
+pwmchip_remove(). Between these two calls it is possible that a pwm
+callback is used which tries to grab the mutex.
 
-please leave people alone with your opinions.  They actually do
-create value and don't need your personal opinion on coding style
-trolling.
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-omap-dmtimer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index 00772fc53490..bdf94c78655f 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -351,6 +351,11 @@ static int pwm_omap_dmtimer_probe(struct platform_devi=
+ce *pdev)
+ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ {
+ 	struct pwm_omap_dmtimer_chip *omap =3D platform_get_drvdata(pdev);
++	int ret;
++
++	ret =3D pwmchip_remove(&omap->chip);
++	if (ret)
++		return ret;
+=20
+ 	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
+ 		omap->pdata->stop(omap->dm_timer);
+@@ -359,7 +364,7 @@ static int pwm_omap_dmtimer_remove(struct platform_devi=
+ce *pdev)
+=20
+ 	mutex_destroy(&omap->mutex);
+=20
+-	return pwmchip_remove(&omap->chip);
++	return 0;
+ }
+=20
+ static const struct of_device_id pwm_omap_dmtimer_of_match[] =3D {
+--=20
+2.23.0
