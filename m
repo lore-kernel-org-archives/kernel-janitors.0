@@ -1,29 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 22 Nov 2019 11:01:00 +0000
-Subject: Re: [PATCH v2 -next] crypto: sun8i-ce - Fix memdup.cocci warnings
-Message-Id: <20191122110100.5ofkfpy5rxrqu5nz@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Nov 2019 09:12:36 +0000
+Subject: [PATCH][next] kselftest: arm64: fix spelling mistake "contiguos" -> "contiguous"
+Message-Id: <20191111091236.37165-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191109024403.47106-1-yuehaibing@huawei.com>
- <20191112072314.145064-1-yuehaibing@huawei.com>
-In-Reply-To: <20191112072314.145064-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, Dave Martin <Dave.Martin@arm.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 07:23:14AM +0000, YueHaibing wrote:
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: fix patch title 'sun8i-ss' -> 'sun8i-ce'
-> ---
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+There is a spelling mistake in an error message literal string. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/arm64/signal/testcases/testcases.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.c b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+index e3521949b800..61ebcdf63831 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.c
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+@@ -43,7 +43,7 @@ bool validate_extra_context(struct extra_context *extra, char **err)
+ 	else if (extra->size & 0x0fUL)
+ 		*err = "Extra SIZE misaligned";
+ 	else if (extra->datap != (uint64_t)term + sizeof(*term))
+-		*err = "Extra DATAP misplaced (not contiguos)";
++		*err = "Extra DATAP misplaced (not contiguous)";
+ 	if (*err)
+ 		return false;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
