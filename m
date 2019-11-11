@@ -1,25 +1,28 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Thu, 14 Nov 2019 17:07:31 +0000
-Subject: Re: [PATCH] bus: ti-sysc: Adjust exception handling in sysc_child_add_named_clock()
-Message-Id: <20191114170731.GU5610@atomide.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 11 Nov 2019 21:38:38 +0000
+Subject: Re: [3/4] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
+Message-Id: <d4c63704-8c4c-c1c8-ab97-ce9701cf2da4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8874d0c5-856a-809f-cba6-1b970df68d13@web.de>
-In-Reply-To: <8874d0c5-856a-809f-cba6-1b970df68d13@web.de>
+References: <20191111071952.6pbswbboqreen6im@pengutronix.de>
+ <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
+ <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
+ <812c95a0-7eb6-7ad6-16fa-c9e8339ff213@web.de>
+ <20191111200907.vclloogaiu3mqxsn@pengutronix.de>
+In-Reply-To: <20191111200907.vclloogaiu3mqxsn@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Neil Brown <neilb@suse.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de
 
-* Markus Elfring <Markus.Elfring@web.de> [191106 10:22]:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Nov 2019 19:12:30 +0100
-> 
-> Add a jump target so that a call of the function “clk_put”
-> can be better reused at the end of this function.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n151
+>
+> Are you a bot?
 
-Thanks applying into omap-for-v5.5/ti-sysc.
+I hope not.
+
+But I got used to the need to point specific suggestions out several times.
+Would you like to mention any actions in the commit message explicitly?
 
 Regards,
-
-Tony
+Markus
