@@ -1,7 +1,7 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Mon, 11 Nov 2019 09:08:03 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 11 Nov 2019 09:17:21 +0000
 Subject: Re: [v3] s390/pkey: Use memdup_user() rather than duplicating its implementation
-Message-Id: <f46d8b65-bb64-db04-aa7c-db980fce1ae1@de.ibm.com>
+Message-Id: <18026404-e3f0-f634-daad-191b18251ffe@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
  <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
@@ -18,20 +18,26 @@ References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
  <a2dbda2a-1c2f-20f1-6b97-c59dbbcaa7a8@web.de>
  <6de4f605-6f74-a3b6-92d5-c5162cb54a6f@de.ibm.com>
  <ae4cb7b4-68e7-f989-be4b-1a9df8ce51ed@web.de>
-In-Reply-To: <ae4cb7b4-68e7-f989-be4b-1a9df8ce51ed@web.de>
+ <f46d8b65-bb64-db04-aa7c-db980fce1ae1@de.ibm.com>
+In-Reply-To: <f46d8b65-bb64-db04-aa7c-db980fce1ae1@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org, Harald Freudenberger <freude@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Franzki <ifranzki@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, Harald Freudenberger <freude@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Franzki <ifranzki@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Joe Perches <joe@perches.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 
-
-
-On 11.11.19 10:06, Markus Elfring wrote:
->>> Does hinder you anything from continuing to use the previous known email address?
+>>>> Does hinder you anything from continuing to use the previous known email address?
+>>>
+>>> Can you at least send a mail from sourceforge address with the Signed-off-by?
 >>
->> Can you at least send a mail from sourceforge address with the Signed-off-by?
-> 
-> Not any more (for a while).
+>> Not any more (for a while).
+>
+> Then I will not apply that patch with that email and signoff.
 
-Then I will not apply that patch with that email and signoff.
+Why do you find the information “Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>” inappropriate
+(at the moment)?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n418
+
+Regards,
+Markus
