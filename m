@@ -1,91 +1,34 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Nov 2019 15:15:25 +0000
-Subject: Re: [PATCH] iio: temperature: ltc2983: fix u32 read into a unsigned long long
-Message-Id: <20191116151516.5c7a7555@archlinux>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 11 Nov 2019 09:03:57 +0000
+Subject: [PATCH 4/4] pwm: omap-dmtimer: Allow compiling with COMPILE_TEST
+Message-Id: <20191111090357.13903-4-u.kleine-koenig@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191105202818.90065-1-colin.king@canonical.com>
-        <dab9cfd93e6affa5d94f078154c3e181303bbf47.camel@analog.com>
-        <20191110114823.2bbe87b0@archlinux>
-In-Reply-To: <20191110114823.2bbe87b0@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Sa, Nuno" <Nuno.Sa@analog.com>
-Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "knaack.h@gmx.de" <knaack.h@gmx.de>, "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "lars@metafoo.de" <lars@metafoo.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 10 Nov 2019 11:48:23 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
+The dependency on OMAP_DM_TIMER is only a runtime dependency. Also
+OMAP_DM_TIMER cannot be enabled without ARCH_OMAP being enabled.
 
-> On Wed, 6 Nov 2019 14:19:52 +0000
-> "Sa, Nuno" <Nuno.Sa@analog.com> wrote:
-> 
-> > On Tue, 2019-11-05 at 20:28 +0000, Colin King wrote:  
-> > > 
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > Currently the read of temp using of_property_read_u32_index is
-> > > reading
-> > > a u32 value into a unsigned long long.  This relies on machine
-> > > endianness
-> > > to work correctly, so fix this by reading a u32 value and setting
-> > > temp
-> > > to this value.
-> > > 
-> > > Addresses-Coverity: ("Reliance on integer endianness")
-> > > Fixes: f110f3188e56 ("iio: temperature: Add support for LTC2983")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/iio/temperature/ltc2983.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/temperature/ltc2983.c
-> > > b/drivers/iio/temperature/ltc2983.c
-> > > index ddf47023364b..d39c0d6b77f1 100644
-> > > --- a/drivers/iio/temperature/ltc2983.c
-> > > +++ b/drivers/iio/temperature/ltc2983.c
-> > > @@ -444,8 +444,10 @@ static struct ltc2983_custom_sensor
-> > > *__ltc2983_custom_sensor_new(
-> > >  			else
-> > >  				temp = __convert_to_raw(temp,
-> > > resolution);
-> > >  		} else {
-> > > -			of_property_read_u32_index(np, propname, index,
-> > > -						   (u32 *)&temp);
-> > > +			u32 t32;
-> > > +
-> > > +			of_property_read_u32_index(np, propname, index,
-> > > &t32);
-> > > +			temp = t32;
-> > >  		}
-> > >  
-> > >  		for (j = 0; j < n_size; j++)    
-> > 
-> > Acked-by: Nuno Sá <nuno.sa@analog.com>
-> >   
-> 
-> A slight complexity around this one. I'm not sure I'll have time for a pull
-> before the merge window (as Greg will only take them to about 1 week before
-> that opens so we get some exposure in Linux next).
-> 
-> As a result I'll have to sit on this one until Linus comments on rc7, probably
-> later today.  Otherwise it'll be material for stable post release.
-> 
-> If I seem to have lost it give me a poke and we'll make sure it goes into 
-> an early rc instead of at the merge window.
-I forgot about it when I sent the final pull request out.  Sorry about that,
-will have to wait for post merge window.
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied to the fixes-togreg branch of iio.git.
-
-Thanks,
-
-Jonathan
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > Thanks,
-> > Nuno Sá  
-> 
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index e3a2518503ed..e49cbdb1ce29 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -328,7 +328,8 @@ config PWM_MXS
+=20
+ config PWM_OMAP_DMTIMER
+ 	tristate "OMAP Dual-Mode Timer PWM support"
+-	depends on OF && ARCH_OMAP && OMAP_DM_TIMER
++	depends on OF
++	depends on OMAP_DM_TIMER || COMPILE_TEST
+ 	help
+ 	  Generic PWM framework driver for OMAP Dual-Mode Timer PWM output
+=20
+--=20
+2.23.0
