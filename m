@@ -1,37 +1,18 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Nov 2019 13:07:53 +0000
-Subject: [PATCH] kdb: remove redundant assignment to pointer bp
-Message-Id: <20191128130753.181246-1-colin.king@canonical.com>
+From: william yun <williamyun6@gmail.com>
+Date: Tue, 12 Nov 2019 15:15:22 +0000
+Subject: Hallo
+Message-Id: <4TY2VBSZ-7TTB-GM8-F3KZ-8NBKV8I1O4DZ@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <daniel.thompson@linaro.org>, Douglas Anderson <dianders@chromium.org>, kgdb-bugreport@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Ich habe ein Gesch=E4ft von 24,5 Mio. USD f=FCr Sie. Bei Interesse antworte=
+n Sie bitte f=FCr weitere Details.
 
-The point bp is assigned a value that is never read, it is being
-re-assigned later to bp = &kdb_breakpoints[lowbp] in a for-loop.
-Remove the redundant assignment.
+Dankesch=F6n,
 
-Addresses-Coverity ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/debug/kdb/kdb_bp.c | 1 -
- 1 file changed, 1 deletion(-)
+Gr=FC=DFe,
 
-diff --git a/kernel/debug/kdb/kdb_bp.c b/kernel/debug/kdb/kdb_bp.c
-index 62c301ad0773..d7ebb2c79cb8 100644
---- a/kernel/debug/kdb/kdb_bp.c
-+++ b/kernel/debug/kdb/kdb_bp.c
-@@ -412,7 +412,6 @@ static int kdb_bc(int argc, const char **argv)
- 		 * assume that the breakpoint number is desired.
- 		 */
- 		if (addr < KDB_MAXBPT) {
--			bp = &kdb_breakpoints[addr];
- 			lowbp = highbp = addr;
- 			highbp++;
- 		} else {
--- 
-2.24.0
+Wilhelm.
