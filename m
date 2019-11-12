@@ -1,27 +1,51 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 18 Nov 2019 15:33:08 +0000
-Subject: Re: [PATCH -next] scsi: sd_zbc: Remove set but not used variable 'buflen'
-Message-Id: <321d25d4-2216-dae2-268b-ca225c5e5caa@kernel.dk>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 12 Nov 2019 07:23:14 +0000
+Subject: [PATCH v2 -next] crypto: sun8i-ce - Fix memdup.cocci warnings
+Message-Id: <20191112072314.145064-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191115131829.162946-1-yuehaibing@huawei.com>
-In-Reply-To: <20191115131829.162946-1-yuehaibing@huawei.com>
+References: <20191109024403.47106-1-yuehaibing@huawei.com>
+In-Reply-To: <20191109024403.47106-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Damien Le Moal <damien.lemoal@wdc.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, Maxime Ripard <mripard@kernel.org>, Chen-Yu
+ Tsai <wens@csie.org>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 11/15/19 6:18 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/scsi/sd_zbc.c: In function 'sd_zbc_check_zones':
-> drivers/scsi/sd_zbc.c:341:9: warning:
->   variable 'buflen' set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit d9dd73087a8b ("block: Enhance
-> blk_revalidate_disk_zones()")
+Use kmemdup rather than duplicating its implementation
 
-Applied, thanks.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix patch title 'sun8i-ss' -> 'sun8i-ce'
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
--- 
-Jens Axboe
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+index f0e7c1e12da6..b6e7c346c3ae 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+@@ -396,10 +396,9 @@ int sun8i_ce_aes_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 		kfree(op->key);
+ 	}
+ 	op->keylen = keylen;
+-	op->key = kmalloc(keylen, GFP_KERNEL | GFP_DMA);
++	op->key = kmemdup(key, keylen, GFP_KERNEL | GFP_DMA);
+ 	if (!op->key)
+ 		return -ENOMEM;
+-	memcpy(op->key, key, keylen);
+ 
+ 	crypto_sync_skcipher_clear_flags(op->fallback_tfm, CRYPTO_TFM_REQ_MASK);
+ 	crypto_sync_skcipher_set_flags(op->fallback_tfm, tfm->base.crt_flags & CRYPTO_TFM_REQ_MASK);
+@@ -422,10 +421,9 @@ int sun8i_ce_des3_setkey(struct crypto_skcipher *tfm, const u8 *key,
+ 		kfree(op->key);
+ 	}
+ 	op->keylen = keylen;
+-	op->key = kmalloc(keylen, GFP_KERNEL | GFP_DMA);
++	op->key = kmemdup(key, keylen, GFP_KERNEL | GFP_DMA);
+ 	if (!op->key)
+ 		return -ENOMEM;
+-	memcpy(op->key, key, keylen);
+ 
+ 	crypto_sync_skcipher_clear_flags(op->fallback_tfm, CRYPTO_TFM_REQ_MASK);
+ 	crypto_sync_skcipher_set_flags(op->fallback_tfm, tfm->base.crt_flags & CRYPTO_TFM_REQ_MASK);
