@@ -1,30 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 Nov 2019 05:25:06 +0000
-Subject: Re: [PATCH net-next] net: axienet: Fix error return code in axienet_probe()
-Message-Id: <20191106.212506.946721274328639751.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Nov 2019 13:05:23 +0000
+Subject: [PATCH][next] net: dsa: mv88e6xxx: fix broken if statement because of a stray semicolon
+Message-Id: <20191112130523.232461-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106155449.107672-1-weiyongjun1@huawei.com>
- <20191106.212441.931590542340055489.davem@davemloft.net>
-In-Reply-To: <20191106.212441.931590542340055489.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: netdev@vger.kernel.org, radhey.shyam.pandey@xilinx.com, kernel-janitors@vger.kernel.org, michal.simek@xilinx.com, linux@armlinux.org.uk, hancock@sedsystems.ca, linux-arm-kernel@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Iwan R Timmer <irtimmer@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Wed, 06 Nov 2019 21:24:41 -0800 (PST)
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> Date: Wed, 6 Nov 2019 15:54:49 +0000
-> 
->> In the DMA memory resource get failed case, the error is not
->> set and 0 will be returned. Fix it by reove redundant check
->> since devm_ioremap_resource() will handle it.
->> 
->> Fixes: 28ef9ebdb64c ("net: axienet: make use of axistream-connected attribute optional")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Fixed with the commit message typo fixed.
+There is a stray semicolon in an if statement that will cause a dev_err
+message to be printed unconditionally. Fix this by removing the stray
+semicolon.
 
-I meant "Applied with the commit message typo fixed." :-)
+Addresses-Coverity: ("Stay semicolon")
+Fixes: f0942e00a1ab ("net: dsa: mv88e6xxx: Add support for port mirroring")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/mv88e6xxx/chip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+index e8bf6ac1e0f4..3bd988529178 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -5317,7 +5317,7 @@ static void mv88e6xxx_port_mirror_del(struct dsa_switch *ds, int port,
+ 		if (chip->info->ops->set_egress_port(chip,
+ 						     direction,
+ 						     dsa_upstream_port(ds,
+-								       port)));
++								       port)))
+ 			dev_err(ds->dev, "failed to set egress port\n");
+ 	}
+ 
+-- 
+2.20.1
