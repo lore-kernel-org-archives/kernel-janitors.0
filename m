@@ -1,30 +1,45 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 20 Nov 2019 20:31:00 +0000
-Subject: Re: [PATCH v3 01/13] exfat: add in-memory and on-disk structures and headers
-Message-Id: <20191120203100.GA3109949@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Nov 2019 19:02:18 +0000
+Subject: [PATCH][next] ASoC: tas2770: clean up an indentation issue
+Message-Id: <20191112190218.282337-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094020epcas1p26de9d7e4e2ab8ad5d6ecaf23e2dfdca8@epcas1p2.samsung.com>
- <20191119093718.3501-2-namjae.jeon@samsung.com>
- <30222888-e62e-494e-269e-cb1a0746a01f@web.de>
-In-Reply-To: <30222888-e62e-494e-269e-cb1a0746a01f@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 09:21:13PM +0100, Markus Elfring wrote:
-> …
-> > +++ b/fs/exfat/exfat_fs.h
-> …
-> > +/* balloc.c */
-> > +int exfat_load_bitmap(struct super_block *sb);
-> …
-> 
-> Such function declarations were grouped according to the mentioned
-> source file.
-> How do you think about to include them from separate header files
-> for the desired programming interface?
+From: Colin Ian King <colin.king@canonical.com>
 
-No.
+There is a block that is indented too deeply, remove
+the extraneous tabs.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/tas2770.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+index ad76f22fcfac..54c8135fe43c 100644
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -761,12 +761,12 @@ static int tas2770_i2c_probe(struct i2c_client *client,
+ 	tas2770->reset_gpio = devm_gpiod_get_optional(tas2770->dev,
+ 							  "reset-gpio",
+ 						      GPIOD_OUT_HIGH);
+-		if (IS_ERR(tas2770->reset_gpio)) {
+-			if (PTR_ERR(tas2770->reset_gpio) = -EPROBE_DEFER) {
+-				tas2770->reset_gpio = NULL;
+-				return -EPROBE_DEFER;
+-			}
++	if (IS_ERR(tas2770->reset_gpio)) {
++		if (PTR_ERR(tas2770->reset_gpio) = -EPROBE_DEFER) {
++			tas2770->reset_gpio = NULL;
++			return -EPROBE_DEFER;
+ 		}
++	}
+ 
+ 	tas2770->channel_size = 0;
+ 	tas2770->slot_width = 0;
+-- 
+2.20.1
