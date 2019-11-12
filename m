@@ -1,49 +1,35 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Thu, 21 Nov 2019 08:19:30 +0000
-Subject: RE: [PATCH v4 10/13] exfat: add nls operations
-Message-Id: <000f01d5a044$65ff7b40$31fe71c0$@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Nov 2019 09:30:25 +0000
+Subject: [PATCH][next] backlight: qcom-wled: fix spelling mistake "trigged" -> "triggered"
+Message-Id: <20191112093025.98638-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121052618.31117-1-namjae.jeon@samsung.com>
-        <CGME20191121052920epcas1p3e5b6c0251e869e265d19798dbeebab4e@epcas1p3.samsung.com>
-        <20191121052618.31117-11-namjae.jeon@samsung.com>
-        <df089831-038c-3b39-6ec7-684d1f698756@web.de>
-In-Reply-To: <df089831-038c-3b39-6ec7-684d1f698756@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: 'Markus Elfring' <Markus.Elfring@web.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Christoph Hellwig' <hch@lst.de>, 'Daniel Wagner' <dwagner@suse.de>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Nikolay Borisov' <nborisov@suse.com>, 'Sungjong Seo' <sj1557.seo@samsung.com>, =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> > +	exfat_msg(sb, KERN_ERR,
-> > +			"failed to load upcase table (idx : 0x%08x, chksum :
-> 0x%08x, utbl_chksum : 0x%08x)\n",
-> > +			index, checksum, utbl_checksum);
-> > +
-> > +	ret = -EINVAL;
-> 
-> Can a blank line be omitted between the message and the error code?
-Okay.
-> 
-> 
-> > +release_bh:
-> > +	brelse(bh);
-> > +	exfat_free_upcase_table(sb);
-> > +	return ret;
-> > +}
-> 
-> I got the impression that the resource management is still questionable
-> for this function implementation.
-> 
-> 1. Now I suggest to move the call of the function “brelse” to the end
->    of the while loop. The label “release_bh” would be renamed to “free_table”
-> then.
-Okay.
-> 
-> 2. Can a variable initialisation be converted to the assignment “ret = -EIO;”
->    in an if branch?
-Okay, Will fix it on v5.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your review!
-> 
-> Regards,
-> Markus
+There is a spelling mistake in a dev_err error message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/backlight/qcom-wled.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+index 33b6007c5e55..d46052d8ff41 100644
+--- a/drivers/video/backlight/qcom-wled.c
++++ b/drivers/video/backlight/qcom-wled.c
+@@ -322,7 +322,7 @@ static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
+ 		wled->short_count = 1;
+ 
+ 	if (wled->short_count > WLED_SHORT_CNT_MAX) {
+-		dev_err(wled->dev, "Short trigged %d times, disabling WLED forever!\n",
++		dev_err(wled->dev, "Short triggered %d times, disabling WLED forever!\n",
+ 			wled->short_count);
+ 		wled->disabled_by_short = true;
+ 		goto unlock_mutex;
+-- 
+2.20.1
