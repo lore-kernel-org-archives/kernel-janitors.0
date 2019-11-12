@@ -1,37 +1,243 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Wed, 06 Nov 2019 06:24:25 +0000
-Subject: Re: [PATCH][next] net/mlx5: fix kvfree of uninitialized pointer spec
-Message-Id: <d6854c959a2ff5d8493e97982cd3bb8ee5ec7789.camel@mellanox.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Nov 2019 09:21:42 +0000
+Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+Message-Id: <20191112092142.97989-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191105182740.87146-1-colin.king@canonical.com>
-In-Reply-To: <20191105182740.87146-1-colin.king@canonical.com>
+References: <1513619372.31581.106.camel@perches.com>
+In-Reply-To: <1513619372.31581.106.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Parav Pandit <parav@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "davem@davemloft.net" <davem@davemloft.net>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTExLTA1IGF0IDE4OjI3ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gQ3Vy
-cmVudGx5IHdoZW4gYSBjYWxsIHRvICBlc3dfdnBvcnRfY3JlYXRlX2xlZ2FjeV9pbmdyZXNzX2Fj
-bF9ncm91cA0KPiBmYWlscyB0aGUgZXJyb3IgZXhpdCBwYXRoIHRvIGxhYmVsICdvdXQnIHdpbGwg
-Y2F1c2UgYSBrdmZyZWUgb24gdGhlDQo+IHVuaW5pdGlhbGl6ZWQgcG9pbnRlciBzcGVjLiAgRml4
-IHRoaXMgYnkgZW5zdXJpbmcgcG9pbnRlciBzcGVjIGlzDQo+IGluaXRpYWxpemVkIHRvIE5VTEwg
-dG8gYXZvaWQgdGhpcyBpc3N1ZS4NCj4gDQo+IEFkZHJlc3Nlcy1Db3Zlcml0eTogKCJVbmluaXRp
-YWxpemVkIHBvaW50ZXIgcmVhZCIpDQo+IEZpeGVzOiAxMDY1MmYzOTk0M2UgKCJuZXQvbWx4NTog
-UmVmYWN0b3IgaW5ncmVzcyBhY2wgY29uZmlndXJhdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IENv
-bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2guYyB8IDIgKy0NCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMN
-Cj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+
-IGluZGV4IDdiYWFkZTllNjJiNy4uZjJlNDAwYTIzYTU5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaC5jDQo+ICsrKyBiL2RyaXZl
-cnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoLmMNCj4gQEAgLTEyNTMs
-NyArMTI1Myw3IEBAIHN0YXRpYyBpbnQgZXN3X3Zwb3J0X2luZ3Jlc3NfY29uZmlnKHN0cnVjdA0K
-PiBtbHg1X2Vzd2l0Y2ggKmVzdywNCj4gIAlzdHJ1Y3QgbWx4NV9mbG93X2Rlc3RpbmF0aW9uIGRy
-b3BfY3RyX2RzdCA9IHswfTsNCj4gIAlzdHJ1Y3QgbWx4NV9mbG93X2Rlc3RpbmF0aW9uICpkc3Qg
-PSBOVUxMOw0KPiAgCXN0cnVjdCBtbHg1X2Zsb3dfYWN0IGZsb3dfYWN0ID0gezB9Ow0KPiAtCXN0
-cnVjdCBtbHg1X2Zsb3dfc3BlYyAqc3BlYzsNCj4gKwlzdHJ1Y3QgbWx4NV9mbG93X3NwZWMgKnNw
-ZWMgPSBOVUxMOw0KPiAgCWludCBkZXN0X251bSA9IDA7DQo+ICAJaW50IGVyciA9IDA7DQo+ICAJ
-dTggKnNtYWNfdjsNCg0KDQpBcHBsaWVkIHRvIG1seDUtbmV4dC4NClRoYW5rcyENCg=
+From: Colin Ian King <colin.king@canonical.com>
+
+Here are some of the more common spelling mistakes and typos that I've
+found while fixing up spelling mistakes in the kernel since July 2019.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/spelling.txt | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index de75b9feaaed..672b5931bc8d 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -87,6 +87,7 @@ algorith||algorithm
+ algorithmical||algorithmically
+ algoritm||algorithm
+ algoritms||algorithms
++algorithmn||algorithm
+ algorrithm||algorithm
+ algorritm||algorithm
+ aligment||alignment
+@@ -109,6 +110,7 @@ alredy||already
+ altough||although
+ alue||value
+ ambigious||ambiguous
++ambigous||ambiguous
+ amoung||among
+ amout||amount
+ amplifer||amplifier
+@@ -179,6 +181,7 @@ attepmpt||attempt
+ attnetion||attention
+ attruibutes||attributes
+ authentification||authentication
++authenicated||authenticated
+ automaticaly||automatically
+ automaticly||automatically
+ automatize||automate
+@@ -286,6 +289,7 @@ claread||cleared
+ clared||cleared
+ closeing||closing
+ clustred||clustered
++cnfiguration||configuration
+ coexistance||coexistence
+ colescing||coalescing
+ collapsable||collapsible
+@@ -325,9 +329,11 @@ comression||compression
+ comunication||communication
+ conbination||combination
+ conditionaly||conditionally
++conditon||condition
+ conected||connected
+ conector||connector
+ connecetd||connected
++configration||configuration
+ configuartion||configuration
+ configuation||configuration
+ configued||configured
+@@ -347,6 +353,7 @@ containts||contains
+ contaisn||contains
+ contant||contact
+ contence||contents
++contiguos||contiguous
+ continious||continuous
+ continous||continuous
+ continously||continuously
+@@ -380,6 +387,7 @@ cylic||cyclic
+ dafault||default
+ deafult||default
+ deamon||daemon
++debouce||debounce
+ decompres||decompress
+ decsribed||described
+ decription||description
+@@ -448,6 +456,7 @@ diffrent||different
+ differenciate||differentiate
+ diffrentiate||differentiate
+ difinition||definition
++digial||digital
+ dimention||dimension
+ dimesions||dimensions
+ dispalying||displaying
+@@ -489,6 +498,7 @@ droput||dropout
+ druing||during
+ dynmaic||dynamic
+ eanable||enable
++eanble||enable
+ easilly||easily
+ ecspecially||especially
+ edditable||editable
+@@ -502,6 +512,7 @@ elementry||elementary
+ eletronic||electronic
+ embeded||embedded
+ enabledi||enabled
++enbale||enable
+ enble||enable
+ enchanced||enhanced
+ encorporating||incorporating
+@@ -536,6 +547,7 @@ excellant||excellent
+ execeeded||exceeded
+ execeeds||exceeds
+ exeed||exceed
++exeuction||execution
+ existance||existence
+ existant||existent
+ exixt||exist
+@@ -601,10 +613,12 @@ frambuffer||framebuffer
+ framming||framing
+ framwork||framework
+ frequncy||frequency
++frequancy||frequency
+ frome||from
+ fucntion||function
+ fuction||function
+ fuctions||functions
++fullill||fulfill
+ funcation||function
+ funcion||function
+ functionallity||functionality
+@@ -642,6 +656,7 @@ happend||happened
+ harware||hardware
+ heirarchically||hierarchically
+ helpfull||helpful
++hexdecimal||hexadecimal
+ hybernate||hibernate
+ hierachy||hierarchy
+ hierarchie||hierarchy
+@@ -709,12 +724,14 @@ initalize||initialize
+ initation||initiation
+ initators||initiators
+ initialiazation||initialization
++initializationg||initialization
+ initializiation||initialization
+ initialze||initialize
+ initialzed||initialized
+ initialzing||initializing
+ initilization||initialization
+ initilize||initialize
++initliaze||initialize
+ inofficial||unofficial
+ inrerface||interface
+ insititute||institute
+@@ -779,6 +796,7 @@ itertation||iteration
+ itslef||itself
+ jave||java
+ jeffies||jiffies
++jumpimng||jumping
+ juse||just
+ jus||just
+ kown||known
+@@ -839,6 +857,7 @@ messags||messages
+ messgaes||messages
+ messsage||message
+ messsages||messages
++metdata||metadata
+ micropone||microphone
+ microprocesspr||microprocessor
+ migrateable||migratable
+@@ -857,6 +876,7 @@ mismactch||mismatch
+ missign||missing
+ missmanaged||mismanaged
+ missmatch||mismatch
++misssing||missing
+ miximum||maximum
+ mmnemonic||mnemonic
+ mnay||many
+@@ -912,6 +932,7 @@ occured||occurred
+ occuring||occurring
+ offser||offset
+ offet||offset
++offlaod||offload
+ offloded||offloaded
+ offseting||offsetting
+ omited||omitted
+@@ -993,6 +1014,7 @@ poiter||pointer
+ posible||possible
+ positon||position
+ possibilites||possibilities
++potocol||protocol
+ powerfull||powerful
+ pramater||parameter
+ preamle||preamble
+@@ -1061,11 +1083,13 @@ psychadelic||psychedelic
+ pwoer||power
+ queing||queuing
+ quering||querying
++queus||queues
+ randomally||randomly
+ raoming||roaming
+ reasearcher||researcher
+ reasearchers||researchers
+ reasearch||research
++receieve||receive
+ recepient||recipient
+ recevied||received
+ receving||receiving
+@@ -1166,6 +1190,7 @@ scaleing||scaling
+ scaned||scanned
+ scaning||scanning
+ scarch||search
++schdule||schedule
+ seach||search
+ searchs||searches
+ secquence||sequence
+@@ -1308,6 +1333,7 @@ taskelt||tasklet
+ teh||the
+ temorary||temporary
+ temproarily||temporarily
++temperture||temperature
+ thead||thread
+ therfore||therefore
+ thier||their
+@@ -1354,6 +1380,7 @@ uknown||unknown
+ usupported||unsupported
+ uncommited||uncommitted
+ unconditionaly||unconditionally
++undeflow||underflow
+ underun||underrun
+ unecessary||unnecessary
+ unexecpted||unexpected
+@@ -1414,6 +1441,7 @@ varible||variable
+ varient||variant
+ vaule||value
+ verbse||verbose
++veify||verify
+ verisons||versions
+ verison||version
+ verson||version
+-- 
+2.20.1
