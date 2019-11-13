@@ -1,23 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 Nov 2019 23:13:28 +0000
-Subject: Re: [PATCH net-next] mlxsw: spectrum: Fix error return code in mlxsw_sp_port_module_info_init()
-Message-Id: <20191107.151328.687483368106631813.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Nov 2019 18:31:58 +0000
+Subject: [PATCH] net: atlantic: Signedness bug in aq_vec_isr_legacy()
+Message-Id: <20191113183158.rogxsza632ppeen3@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106145231.39128-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191106145231.39128-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Igor Russkikh <irusskikh@marvell.com>, Nikita Danilov <ndanilov@marvell.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 6 Nov 2019 14:52:31 +0000
+irqreturn_t type is an enum and in this context it's unsigned, so "err"
+can't be irqreturn_t or it breaks the error handling.  In fact the "err"
+variable is only used to store integers (never irqreturn_t) so it should
+be declared as int.
 
-> Fix to return negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 4a7f970f1240 ("mlxsw: spectrum: Replace port_to_module array with array of structs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+I removed the initialization because it's not required.  Using a bogus
+initializer turns off GCC's uninitialized variable warnings.  Secondly,
+there is a GCC warning about unused assignments and we would like to
+enable that feature eventually so we have been trying to remove these
+unnecessary initializers.
 
-Applied, thank you.
+Fixes: 7b0c342f1f67 ("net: atlantic: code style cleanup")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_vec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
+index 6e19e27b6200..f40a427970dc 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
+@@ -307,8 +307,8 @@ irqreturn_t aq_vec_isr(int irq, void *private)
+ irqreturn_t aq_vec_isr_legacy(int irq, void *private)
+ {
+ 	struct aq_vec_s *self = private;
+-	irqreturn_t err = 0;
+ 	u64 irq_mask = 0U;
++	int err;
+ 
+ 	if (!self)
+ 		return IRQ_NONE;
+-- 
+2.11.0
