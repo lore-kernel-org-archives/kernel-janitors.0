@@ -1,33 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 13 Nov 2019 17:09:27 +0000
-Subject: Re: [v4] s390/pkey: Fix memory leak in error case by using memdup_user() rather than open coding
-Message-Id: <52593fb9-cfc4-e444-6657-aff6c622607d@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Nov 2019 16:42:10 +0000
+Subject: [PATCH] staging: exfat: fix indentation issue
+Message-Id: <20191113164210.103586-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
- <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
- <deb7893f-3cfe-18fc-3feb-b26b290bf3c6@web.de>
- <833d7d5e-6ede-6bdd-a2cc-2da7f0b03908@de.ibm.com>
- <1b65bc81-f47a-eefa-f1f4-d5af6a1809c0@web.de>
- <733b29df-207e-a165-ee80-46be8720c0c4@de.ibm.com>
- <8f98f9fc-57df-5993-44b5-5ea4c0de7ef9@web.de>
- <c0df9cc8-c41a-1e5d-811c-1ff045c13fcc@de.ibm.com>
- <61244676-8ac1-20af-ed94-99e19c1f95d5@web.de>
- <040f3e18-d97a-fc32-b237-20e7553e1733@de.ibm.com>
- <aca044e8-e4b2-eda8-d724-b08772a44ed9@web.de>
- <0c47ee47-35a0-65ee-4da1-e1745f882947@de.ibm.com>
-In-Reply-To: <0c47ee47-35a0-65ee-4da1-e1745f882947@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Harald Freudenberger <freude@linux.ibm.com>, Ingo Franzki <ifranzki@linux.ibm.com>, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Valdis Kletnieks <valdis.kletnieks@vt.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> applied. [...]
+From: Colin Ian King <colin.king@canonical.com>
 
-I find it interesting how the commit message was changed once more.
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-?id=8B57e7c852fc58a62e668a83c0fa8d9246131803
-("s390/pkey: use memdup_user() to simplify code")
+There is a declaration that requires indentation. Add in
+the missing tab.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/exfat/exfat_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index ee3d64178069..853c6e4374a4 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -2304,7 +2304,7 @@ static int exfat_ioctl_volume_id(struct inode *dir)
+ static long exfat_generic_ioctl(struct file *filp, unsigned int cmd,
+ 				unsigned long arg)
+ {
+-struct inode *inode = filp->f_path.dentry->d_inode;
++	struct inode *inode = filp->f_path.dentry->d_inode;
+ #ifdef CONFIG_EXFAT_KERNEL_DEBUG
+ 	unsigned int flags;
+ #endif /* CONFIG_EXFAT_KERNEL_DEBUG */
+-- 
+2.20.1
