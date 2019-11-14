@@ -1,56 +1,93 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Mon, 11 Nov 2019 20:00:05 +0000
-Subject: Re: [PATCH 1/4] pwm: omap-dmtimer: remove pwmchip in .remove before making it unfunctional
-Message-Id: <20191111200005.c37mecp44idxskjq@pengutronix.de>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 14 Nov 2019 10:33:10 +0000
+Subject: Re: [PATCH] staging: rtl8192u: fix indentation issue
+Message-Id: <5DCD2D66.2050206@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191111071952.6pbswbboqreen6im@pengutronix.de>
- <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
- <dd3fe743-ee4a-153a-c044-40587568a494@web.de>
-In-Reply-To: <dd3fe743-ee4a-153a-c044-40587568a494@web.de>
+References: <20191114095430.132120-1-colin.king@canonical.com>
+In-Reply-To: <20191114095430.132120-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Neil Brown <neilb@suse.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de, Neil Armstrong <narmstrong@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Hello Markus,
 
-On Mon, Nov 11, 2019 at 02:30:42PM +0100, Markus Elfring wrote:
-> > In the old code (e.g.) mutex_destroy() was called before
-> > pwmchip_remove(). Between these two calls it is possible that a pwm
-> > callback is used which tries to grab the mutex.
+
+Am 14.11.2019 10:54, schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> How do you think about to add a more “imperative mood” for your
-> change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id1f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n151
-
-I described the old behaviour and like my wording.
-
-> > +++ b/drivers/pwm/pwm-omap-dmtimer.c
-> > @@ -351,6 +351,11 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
-> >  static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
-> >  {
-> >  	struct pwm_omap_dmtimer_chip *omap = platform_get_drvdata(pdev);
-> > +	int ret;
-> > +
-> > +	ret = pwmchip_remove(&omap->chip);
-> > +	if (ret)
-> > +		return ret;
-> >
-> >  	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
-> >  		omap->pdata->stop(omap->dm_timer);
+> There is a block of statements that are indented
+> too deeply, remove the extraneous tabs.
 > 
-> How do you think about to use the following statement variant?
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/rtl8192u/r819xU_cmdpkt.c | 25 ++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
 > 
-> +	int ret = pwmchip_remove(&omap->chip);
+> diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> index e064f43fd8b6..bc98cdaf61ec 100644
+> --- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> +++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> @@ -169,19 +169,20 @@ static void cmdpkt_beacontimerinterrupt_819xusb(struct net_device *dev)
+>  {
+>  	struct r8192_priv *priv = ieee80211_priv(dev);
+>  	u16 tx_rate;
+> -		/* 87B have to S/W beacon for DTM encryption_cmn. */
+> -		if (priv->ieee80211->current_network.mode = IEEE_A ||
+> -		    priv->ieee80211->current_network.mode = IEEE_N_5G ||
+> -		    (priv->ieee80211->current_network.mode = IEEE_N_24G &&
+> -		     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
+> -			tx_rate = 60;
+> -			DMESG("send beacon frame  tx rate is 6Mbpm\n");
+> -		} else {
+> -			tx_rate = 10;
+> -			DMESG("send beacon frame  tx rate is 1Mbpm\n");
+> -		}
+>  
+> -		rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
+> +	/* 87B have to S/W beacon for DTM encryption_cmn. */
+> +	if (priv->ieee80211->current_network.mode = IEEE_A ||
+> +	    priv->ieee80211->current_network.mode = IEEE_N_5G ||
+> +	    (priv->ieee80211->current_network.mode = IEEE_N_24G &&
+> +	     (!priv->ieee80211->pHTInfo->bCurSuppCCK))) {
+> +		tx_rate = 60;
+> +		DMESG("send beacon frame  tx rate is 6Mbpm\n");
+> +	} else {
+> +		tx_rate = 10;
+> +		DMESG("send beacon frame  tx rate is 1Mbpm\n");
+> +	}
+> +
+> +	rtl819xusb_beacon_tx(dev, tx_rate); /* HW Beacon */
+>  }
+>  
+>  /*-----------------------------------------------------------------------------
 
-I think that between the declarations and code should be an empty line
-and between the assignment to ret and the respective check there
-shouldn't be one.
+this is hard to read in the first place.
+Maybe using switch() here is better to read (untested example below).
 
-Best regards
-Uwe
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+	switch(priv->ieee80211->current_network.mode) {
+
+	case IEEE_A:
+	case IEEE_N_5G:
+	 tx_rate = 60;
+         break;
+        IEEE_N_24G:
+	     if ( !priv->ieee80211->pHTInfo->bCurSuppCCK )
+		tx_rate = 60;
+             // fall truh
+
+        default:
+		tx_rate = 10;
+
+	}	
+
+	if (txrate = 60 )
+	     DMESG("send beacon frame  tx rate is 6Mbpm\n");
+	else if (txrate = 10 )
+	     DMESG("send beacon frame  tx rate is 1Mbpm\n");
+
+JM2C
+
+re,
+ wh
