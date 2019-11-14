@@ -1,74 +1,45 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Nov 2019 23:38:39 +0000
-Subject: [PATCH] qed: remove redundant assignments to rc
-Message-Id: <20191122233839.110620-1-colin.king@canonical.com>
+Date: Thu, 14 Nov 2019 09:57:47 +0000
+Subject: [PATCH] staging: rtl8723bs: fix indentation issue
+Message-Id: <20191114095747.132407-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Javier F . Arias" <jarias.linux@gmail.com>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable rc is assigned with a value that is never read and
-it is re-assigned a new value later on.  The assignment is redundant
-and can be removed.  Clean up multiple occurrances of this pattern.
+There is a block of statements that are indented
+too deeply, remove the extraneous tabs.
 
-Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 10 +++++-----
+ drivers/staging/rtl8723bs/core/rtw_security.c | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index 7e0b795230b2..12fc5f3b5cb4 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -331,7 +331,7 @@ int qed_sp_pf_start(struct qed_hwfn *p_hwfn,
- 	u8 sb_index = p_hwfn->p_eq->eq_sb_index;
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
- 	u8 page_cnt, i;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+index 5aa5910687d1..9c4607114cea 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_security.c
++++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+@@ -1621,12 +1621,12 @@ static sint aes_decipher(u8 *key, uint	hdrlen,
+ 				      pn_vector, i + 1,
+ 				      frtype); /*  add for CONFIG_IEEE80211W, none 11w also can use */
  
- 	/* update initial eq producer */
-@@ -447,7 +447,7 @@ int qed_sp_pf_update(struct qed_hwfn *p_hwfn)
- {
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
+-			aes128k128d(key, ctr_preload, aes_out);
+-			bitwise_xor(aes_out, &pframe[payload_index], chain_buffer);
++		aes128k128d(key, ctr_preload, aes_out);
++		bitwise_xor(aes_out, &pframe[payload_index], chain_buffer);
  
- 	/* Get SPQ entry */
- 	memset(&init_data, 0, sizeof(init_data));
-@@ -471,7 +471,7 @@ int qed_sp_pf_update_ufp(struct qed_hwfn *p_hwfn)
- {
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EOPNOTSUPP;
-+	int rc;
+-			for (j = 0; j < 16; j++)
+-				pframe[payload_index++] = chain_buffer[j];
+-		}
++		for (j = 0; j < 16; j++)
++			pframe[payload_index++] = chain_buffer[j];
++	}
  
- 	if (p_hwfn->ufp_info.pri_type = QED_UFP_PRI_UNKNOWN) {
- 		DP_INFO(p_hwfn, "Invalid priority type %d\n",
-@@ -509,7 +509,7 @@ int qed_sp_pf_update_tunn_cfg(struct qed_hwfn *p_hwfn,
- {
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
- 
- 	if (IS_VF(p_hwfn->cdev))
- 		return qed_vf_pf_tunnel_param_update(p_hwfn, p_tunn);
-@@ -546,7 +546,7 @@ int qed_sp_pf_stop(struct qed_hwfn *p_hwfn)
- {
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
- 
- 	/* Get SPQ entry */
- 	memset(&init_data, 0, sizeof(init_data));
+ 	if (payload_remainder > 0) {
+ 		/* If there is a short final block, then pad it,*/
 -- 
-2.24.0
+2.20.1
