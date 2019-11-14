@@ -1,20 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 20 Nov 2019 10:43:57 +0000
-Subject: Re: [PATCH] dma-debug: clean up put_hash_bucket()
-Message-Id: <20191120104357.GA3800@lst.de>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 14 Nov 2019 03:43:51 +0000
+Subject: [PATCH net] bpf: doc: change right arguments for JIT example code
+Message-Id: <20191114034351.162740-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119061819.k6754frfv2wj7swd@kili.mountain>
-In-Reply-To: <20191119061819.k6754frfv2wj7swd@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, davem@davemloft.net, corbet@lwn.net
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Tue, Nov 19, 2019 at 09:18:19AM +0300, Dan Carpenter wrote:
-> The put_hash_bucket() is a bit cleaner if it takes an unsigned long
-> directly instead of a pointer to unsigned long.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The example codes for JIT of x86_64, use wrong
+arguments to when call function bar().
 
-Looks reasonable to me, I'll apply it to the dma-mapping tree fo 5.5.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ Documentation/networking/filter.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
+index 319e5e0..c4a328f 100644
+--- a/Documentation/networking/filter.txt
++++ b/Documentation/networking/filter.txt
+@@ -770,10 +770,10 @@ Some core changes of the new internal format:
+     callq foo
+     mov %rax,%r13
+     mov %rbx,%rdi
+-    mov $0x2,%esi
+-    mov $0x3,%edx
+-    mov $0x4,%ecx
+-    mov $0x5,%r8d
++    mov $0x6,%esi
++    mov $0x7,%edx
++    mov $0x8,%ecx
++    mov $0x9,%r8d
+     callq bar
+     add %r13,%rax
+     mov -0x228(%rbp),%rbx
+-- 
+2.7.4
