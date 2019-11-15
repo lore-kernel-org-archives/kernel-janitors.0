@@ -1,7 +1,7 @@
 From: Peter Wong <choimj@isd.co.kr>
-Date: Sat, 09 Nov 2019 15:11:39 +0000
+Date: Fri, 15 Nov 2019 11:30:56 +0000
 Subject: Investment opportunity
-Message-Id: <437167.31777.1573312304663.JavaMail.cash@webmail.isd.co.kr>
+Message-Id: <19202491.30811.1573817458106.JavaMail.cash@webmail.isd.co.kr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <31272036.208601.1572910158293.JavaMail.cash@webmail.isd.co.kr>
 In-Reply-To: <31272036.208601.1572910158293.JavaMail.cash@webmail.isd.co.kr>
