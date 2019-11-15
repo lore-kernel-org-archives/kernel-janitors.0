@@ -1,30 +1,58 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 22 Nov 2019 20:26:58 +0000
-Subject: Re: [PATCH] IB/hfi1: remove redundant assignment to variable ret
-Message-Id: <20191122202658.GA9162@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Nov 2019 09:03:56 +0000
+Subject: [PATCH][next] ftrace/selftests: fix spelling mistake "wakeing" -> "waking"
+Message-Id: <20191115090356.39572-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122154814.87257-1-colin.king@canonical.com>
-In-Reply-To: <20191122154814.87257-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 03:48:14PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never
-> read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> ---
->  drivers/infiniband/hw/hfi1/platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+There are a few identical spelling mistakes, fix these.
 
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc | 2 +-
+ tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
+index cbc7a30c2e0f..d75a8695bc21 100644
+--- a/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
++++ b/tools/testing/selftests/ftrace/test.d/direct/ftrace-direct.tc
+@@ -11,7 +11,7 @@ fi
+ echo "Let the module run a little"
+ sleep 1
+ 
+-grep -q "my_direct_func: wakeing up" trace
++grep -q "my_direct_func: waking up" trace
+ 
+ rmmod ftrace-direct
+ 
+diff --git a/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
+index 017a7409b103..801ecb63e84c 100644
+--- a/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
++++ b/tools/testing/selftests/ftrace/test.d/direct/kprobe-direct.tc
+@@ -16,7 +16,7 @@ fi
+ echo "Let the module run a little"
+ sleep 1
+ 
+-grep -q "my_direct_func: wakeing up" trace
++grep -q "my_direct_func: waking up" trace
+ 
+ rmmod ftrace-direct
+ 
+@@ -26,7 +26,7 @@ start_direct() {
+ 	echo > trace
+ 	modprobe ftrace-direct
+ 	sleep 1
+-	grep -q "my_direct_func: wakeing up" trace
++	grep -q "my_direct_func: waking up" trace
+ }
+ 
+ stop_direct() {
+-- 
+2.20.1
