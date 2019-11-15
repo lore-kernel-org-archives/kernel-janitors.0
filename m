@@ -1,121 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 29 Nov 2019 09:03:50 +0000
-Subject: Re: [PATCH] [PATCH v2] fsi: fix bogus error returns from cfam_read and cfam_write
-Message-Id: <a5e2570f-222b-5633-af67-6cf5650a741f@canonical.com>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Date: Fri, 15 Nov 2019 21:00:20 +0000
+Subject: Re: [PATCH] RDMA/iw_cgxb4: Fix an error handling path in 'c4iw_connect()'
+Message-Id: <20191115210020.GA29581@ziepe.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122233120.110344-1-colin.king@canonical.com>
- <20191129032429.817-1-jk@ozlabs.org>
-In-Reply-To: <20191129032429.817-1-jk@ozlabs.org>
+References: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Alistar Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-fsi@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: bharat@chelsio.com, dledford@redhat.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 29/11/2019 03:24, Jeremy Kerr wrote:
-> Based on a static analysis report and original patch from Colin Ian King
-> <colin.king@canonical.com>.
+On Mon, Sep 23, 2019 at 09:07:46PM +0200, Christophe JAILLET wrote:
+> We should jump to fail3 in order to undo the 'xa_insert_irq()' call.
 > 
-> Currently, we may drop error values from cfam_read and cfam_write. This
-> change returns the actual error on failure, but a partial read/write will
-> take precedence.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: d1dcd6782576 ("fsi: Add cfam char devices")
-> Reported-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
-> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Colin: thanks for the report and patch. I think this is a more complete
-> fix, as we want to preseve any partial read/write status if a failure
-> happens mid-way through an operation. Let me know if you (or the
-> coverity analysis) have any feedback.
-
-Looks good to me. Thanks Jeremy.
-
-
-
+> Not sure which Fixes tag to use because of the many refactorings in this
+> area. So I've choosen to use none :).
+> The issue was already there in 4a740838bf44c. This commit has renamed
+> all labels because a new fail1 was introduced. I've not searched further.
 > 
+> Naming of error labels should be improved. Having nowadays a fail5
+> between fail2 and fail3 (because fail5 was the last
+> error handling path added) is not that readable.
+> However, it goes beyong the purpose of this patch.
+> 
+> Maybe, just using a fail2a, just as already done in 9f5a9632e412 (which
+> introduced fail5) would be enough.
 > ---
-> 
->  drivers/fsi/fsi-core.c | 32 ++++++++++++++++++++++----------
->  1 file changed, 22 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-> index 71c6f9fef648..3158a78c2e94 100644
-> --- a/drivers/fsi/fsi-core.c
-> +++ b/drivers/fsi/fsi-core.c
-> @@ -699,6 +699,8 @@ static ssize_t cfam_read(struct file *filep, char __user *buf, size_t count,
->  	if (off > 0xffffffff || count > 0xffffffff || off + count > 0xffffffff)
->  		return -EINVAL;
->  
-> +	rc = 0;
-> +
->  	for (total_len = 0; total_len < count; total_len += read_len) {
->  		__be32 data;
->  
-> @@ -707,18 +709,22 @@ static ssize_t cfam_read(struct file *filep, char __user *buf, size_t count,
->  
->  		rc = fsi_slave_read(slave, off, &data, read_len);
->  		if (rc)
-> -			goto fail;
-> +			break;
->  		rc = copy_to_user(buf + total_len, &data, read_len);
->  		if (rc) {
->  			rc = -EFAULT;
-> -			goto fail;
-> +			break;
->  		}
->  		off += read_len;
->  	}
-> -	rc = count;
-> - fail:
-> +
-> +	/* if we've read any data, we want that to be returned in
-> +	 * preference to an error state */
-> +	if (total_len)
-> +		rc = total_len;
-> +
->  	*offset = off;
-> -	return count;
-> +	return rc;
->  }
->  
->  static ssize_t cfam_write(struct file *filep, const char __user *buf,
-> @@ -736,6 +742,8 @@ static ssize_t cfam_write(struct file *filep, const char __user *buf,
->  	if (off > 0xffffffff || count > 0xffffffff || off + count > 0xffffffff)
->  		return -EINVAL;
->  
-> +	rc = 0;
-> +
->  	for (total_len = 0; total_len < count; total_len += write_len) {
->  		__be32 data;
->  
-> @@ -745,17 +753,21 @@ static ssize_t cfam_write(struct file *filep, const char __user *buf,
->  		rc = copy_from_user(&data, buf + total_len, write_len);
->  		if (rc) {
->  			rc = -EFAULT;
-> -			goto fail;
-> +			break;
->  		}
->  		rc = fsi_slave_write(slave, off, &data, write_len);
->  		if (rc)
-> -			goto fail;
-> +			break;
->  		off += write_len;
->  	}
-> -	rc = count;
-> - fail:
-> +
-> +	/* if we've written any data, we want to indicate that partial write
-> +	 * instead of any mid-stream error */
-> +	if (total_len)
-> +		rc = total_len;
-> +
->  	*offset = off;
-> -	return count;
-> +	return rc;
->  }
->  
->  static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
-> 
+>  drivers/infiniband/hw/cxgb4/cm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+The disaster of the error label aside, this does fix the bug, so
+applied to for-next
+
+Thanks,
+Jason
