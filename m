@@ -1,48 +1,46 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Sun, 10 Nov 2019 22:18:10 +0000
-Subject: RE: [PATCH 1/2] misc: xilinx_sdfec: Use memdup_user() rather than duplicating its implementation
-Message-Id: <CH2PR02MB63595AA5F7192DA2186EAC5CCB750@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 15 Nov 2019 13:18:29 +0000
+Subject: [PATCH -next] scsi: sd_zbc: Remove set but not used variable 'buflen'
+Message-Id: <20191115131829.162946-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
- <f6f8f94b-295f-48f5-902e-3d6d4052d76b@web.de>
-In-Reply-To: <f6f8f94b-295f-48f5-902e-3d6d4052d76b@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <dkiernan@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michals@xilinx.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, Damien Le Moal <damien.lemoal@wdc.com>, Jens Axboe <axboe@kernel.dk>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-scsi@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-SGkgTWFya3VzLA0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFy
-a3VzIEVsZnJpbmcgW21haWx0bzpNYXJrdXMuRWxmcmluZ0B3ZWIuZGVdDQo+IFNlbnQ6IFR1ZXNk
-YXkgNSBOb3ZlbWJlciAyMDE5IDE4OjU1DQo+IFRvOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
-ZnJhZGVhZC5vcmc7IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+OyBEZXJlayBLaWVybmFu
-IDxka2llcm5hbkB4aWxpbnguY29tPjsgRHJhZ2FuIEN2ZXRpYw0KPiA8ZHJhZ2FuY0B4aWxpbngu
-Y29tPjsgR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IE1p
-Y2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPg0KPiBDYzogTEtNTCA8bGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZz47IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3Vi
-amVjdDogW1BBVENIIDEvMl0gbWlzYzogeGlsaW54X3NkZmVjOiBVc2UgbWVtZHVwX3VzZXIoKSBy
-YXRoZXIgdGhhbiBkdXBsaWNhdGluZyBpdHMgaW1wbGVtZW50YXRpb24NCj4gDQo+IEZyb206IE1h
-cmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gRGF0ZTogVHVl
-LCA1IE5vdiAyMDE5IDE5OjA5OjE1ICswMTAwDQo+IA0KPiBSZXVzZSBleGlzdGluZyBmdW5jdGlv
-bmFsaXR5IGZyb20gbWVtZHVwX3VzZXIoKSBpbnN0ZWFkIG9mIGtlZXBpbmcNCj4gZHVwbGljYXRl
-IHNvdXJjZSBjb2RlLg0KPiANCj4gR2VuZXJhdGVkIGJ5OiBzY3JpcHRzL2NvY2NpbmVsbGUvYXBp
-L21lbWR1cF91c2VyLmNvY2NpDQo+IA0KPiBGaXhlczogMjBlYzYyOGU4MDA3ZWM3NWMyZjg4NGUw
-MDAwNGYzOWVhYjYyODliNSAoIm1pc2M6IHhpbGlueF9zZGZlYzogQWRkIGFiaWxpdHkgdG8gY29u
-ZmlndXJlIExEUEMiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1
-c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IC0tLQ0KPiAgZHJpdmVycy9taXNjL3hpbGlueF9zZGZl
-Yy5jIHwgMTEgKysrLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyks
-IDggZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9taXNjL3hpbGlueF9z
-ZGZlYy5jIGIvZHJpdmVycy9taXNjL3hpbGlueF9zZGZlYy5jDQo+IGluZGV4IDExODM1OTY5ZTk4
-Mi4uYTYyMmZjZjQ5NTRhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVj
-LmMNCj4gKysrIGIvZHJpdmVycy9taXNjL3hpbGlueF9zZGZlYy5jDQo+IEBAIC02NDksMTQgKzY0
-OSw5IEBAIHN0YXRpYyBpbnQgeHNkZmVjX2FkZF9sZHBjKHN0cnVjdCB4c2RmZWNfZGV2ICp4c2Rm
-ZWMsIHZvaWQgX191c2VyICphcmcpDQo+ICAJc3RydWN0IHhzZGZlY19sZHBjX3BhcmFtcyAqbGRw
-YzsNCj4gIAlpbnQgcmV0LCBuOw0KPiANCj4gLQlsZHBjID0ga3phbGxvYyhzaXplb2YoKmxkcGMp
-LCBHRlBfS0VSTkVMKTsNCj4gLQlpZiAoIWxkcGMpDQo+IC0JCXJldHVybiAtRU5PTUVNOw0KPiAt
-DQo+IC0JaWYgKGNvcHlfZnJvbV91c2VyKGxkcGMsIGFyZywgc2l6ZW9mKCpsZHBjKSkpIHsNCj4g
-LQkJcmV0ID0gLUVGQVVMVDsNCj4gLQkJZ290byBlcnJfb3V0Ow0KPiAtCX0NCj4gKwlsZHBjID0g
-bWVtZHVwX3VzZXIoYXJnLCBzaXplb2YoKmxkcGMpKTsNCj4gKwlpZiAoSVNfRVJSKGxkcGMpKQ0K
-PiArCQlyZXR1cm4gUFRSX0VSUihsZHBjKTsNCg0KQWNrZWQtYnk6IERyYWdhbiBDdmV0aWMgPGRy
-YWdhbi5jdmV0aWNAeGlsaW54LmNvbT4NCg0KPiANCj4gIAlpZiAoeHNkZmVjLT5jb25maWcuY29k
-ZSA9PSBYU0RGRUNfVFVSQk9fQ09ERSkgew0KPiAgCQlyZXQgPSAtRUlPOw0KPiAtLQ0KPiAyLjI0
-LjANCg0K
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/scsi/sd_zbc.c: In function 'sd_zbc_check_zones':
+drivers/scsi/sd_zbc.c:341:9: warning:
+ variable 'buflen' set but not used [-Wunused-but-set-variable]
+
+It is not used since commit d9dd73087a8b ("block: Enhance
+blk_revalidate_disk_zones()")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/sd_zbc.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
+index 23281825ec38..0e5ede48f045 100644
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -338,7 +338,6 @@ static int sd_zbc_check_zoned_characteristics(struct scsi_disk *sdkp,
+ static int sd_zbc_check_zones(struct scsi_disk *sdkp, unsigned char *buf,
+ 			      u32 *zblocks)
+ {
+-	size_t buflen;
+ 	u64 zone_blocks = 0;
+ 	sector_t max_lba;
+ 	unsigned char *rec;
+@@ -363,7 +362,6 @@ static int sd_zbc_check_zones(struct scsi_disk *sdkp, unsigned char *buf,
+ 	}
+ 
+ 	/* Parse REPORT ZONES header */
+-	buflen = min_t(size_t, get_unaligned_be32(&buf[0]) + 64, SD_BUF_SIZE);
+ 	rec = buf + 64;
+ 	zone_blocks = get_unaligned_be64(&rec[8]);
+ 	if (!zone_blocks || !is_power_of_2(zone_blocks)) {
