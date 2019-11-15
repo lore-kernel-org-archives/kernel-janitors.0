@@ -1,43 +1,48 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 08 Nov 2019 11:01:19 +0000
-Subject: Re: [PATCH] rdb: fix spelling mistake "requeueing" -> "requeuing"
-Message-Id: <CAOi1vP_AXiZaRUaKXxBOkoK8bh+V1oh6hxMsobCjbyNq_FGpGQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Nov 2019 09:47:54 +0000
+Subject: [PATCH][next] drm/amdgpu/powerplay: fix dereference before null check of pointer hwmgr
+Message-Id: <20191115094754.40920-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191107223646.416986-1-colin.king@canonical.com>
-In-Reply-To: <20191107223646.416986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>, Jens Axboe <axboe@kernel.dk>, Ceph Development <ceph-devel@vger.kernel.org>, linux-block <linux-block@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 11:36 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a debug message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/block/rbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 39136675dae5..8e1595d09138 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -4230,7 +4230,7 @@ static void rbd_acquire_lock(struct work_struct *work)
->                  * lock owner acked, but resend if we don't see them
->                  * release the lock
->                  */
-> -               dout("%s rbd_dev %p requeueing lock_dwork\n", __func__,
-> +               dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
->                      rbd_dev);
->                 mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
->                     msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, after fixing the spelling mistake in the title ;)
+The assignment of adev dereferences pointer hwmgr before hwmgr is null
+checked, hence there is a potential null pointer deference issue. Fix
+this by assigning adev after the null check.
 
-Thanks,
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 0896d2f7ba4d ("drm/amdgpu/powerplay: properly set PP_GFXOFF_MASK")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-                Ilya
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+index 443625c83ec9..d2909c91d65b 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -81,7 +81,7 @@ static void hwmgr_init_workload_prority(struct pp_hwmgr *hwmgr)
+ 
+ int hwmgr_early_init(struct pp_hwmgr *hwmgr)
+ {
+-	struct amdgpu_device *adev = hwmgr->adev;
++	struct amdgpu_device *adev;
+ 
+ 	if (!hwmgr)
+ 		return -EINVAL;
+@@ -96,6 +96,8 @@ int hwmgr_early_init(struct pp_hwmgr *hwmgr)
+ 	hwmgr_init_workload_prority(hwmgr);
+ 	hwmgr->gfxoff_state_changed_by_workload = false;
+ 
++	adev = hwmgr->adev;
++
+ 	switch (hwmgr->chip_family) {
+ 	case AMDGPU_FAMILY_CI:
+ 		adev->pm.pp_feature &= ~PP_GFXOFF_MASK;
+-- 
+2.20.1
