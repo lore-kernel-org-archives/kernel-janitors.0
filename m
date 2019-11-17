@@ -1,22 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 Nov 2019 05:22:22 +0000
-Subject: Re: [PATCH net-next] net: aquantia: fix return value check in aq_ptp_init()
-Message-Id: <20191106.212222.483687585896701702.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 17 Nov 2019 12:25:30 +0000
+Subject: Re: [PATCH 01/13] exfat: add in-memory and on-disk structures and headers
+Message-Id: <a4bd8e3e-fcdc-9739-5407-5345743fb0b9@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106145921.124814-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191106145921.124814-1-weiyongjun1@huawei.com>
+References: <20191113081800.7672-2-namjae.jeon@samsung.com>
+In-Reply-To: <20191113081800.7672-2-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: epomozov@marvell.com, igor.russkikh@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 6 Nov 2019 14:59:21 +0000
+…
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -0,0 +1,533 @@
+…
+> +/* time modes */
+> +#define TM_CREATE		0
+> +#define TM_MODIFY		1
+…
 
-> Function ptp_clock_register() returns ERR_PTR() and never returns
-> NULL. The NULL test should be removed.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Will it be helpful to work with more enumerations (besides “exfat_error_mode”)
+at such places?
 
-Applied.
+Regards,
+Markus
