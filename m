@@ -1,27 +1,44 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 15 Nov 2019 13:42:09 +0000
-Subject: Re: [PATCH][next] ftrace/selftests: fix spelling mistake "wakeing" -> "waking"
-Message-Id: <20191115084209.33c3e314@gandalf.local.home>
+From: Travis Davies <tdavies@darkphysics.net>
+Date: Sun, 17 Nov 2019 22:16:47 +0000
+Subject: [PATCH 1/1] net: Fix comment block per style guide
+Message-Id: <20191117221647.GA10337@Cheese>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191115090356.39572-1-colin.king@canonical.com>
-In-Reply-To: <20191115090356.39572-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2019 09:03:56 +0000
-Colin King <colin.king@canonical.com> wrote:
+This patch places /* and */ on sepperate lines for a
+multiline block comment, in order to keep code style
+consistant with majority of blocks throughout the file.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a few identical spelling mistakes, fix these.
+This will prevent a checkpatch.pl warning:
+'Block comments use a trailing */ on a separate line'
 
-At least I was consistent ;-)
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
 
--- Steve
+---
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
+ 
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) = NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
+ 
+-- 
+2.21.0
