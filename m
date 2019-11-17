@@ -1,54 +1,40 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 25 Nov 2019 14:39:21 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: remove redundant assignment to variables HiSidd and LoSidd
-Message-Id: <CADnq5_PN99cigjruAv38y2KHHdrNY2VAqKhD_K3yUoO01Q4b_w@mail.gmail.com>
+From: Travis Davies <tdavies@darkphysics.net>
+Date: Sun, 17 Nov 2019 18:57:22 +0000
+Subject: [PATCH] /linux/netdevice.h: Fix checkpatch.pl comment warning
+Message-Id: <20191117185722.GA4637@Cheese>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122230407.109636-1-colin.king@canonical.com>
-In-Reply-To: <20191122230407.109636-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Evan Quan <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: akpm@linux-foundation.org, davem@davemloft.net, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 6:04 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variables HiSidd and LoSidd are being initialized with values that
-> are never read and are being updated a little later with a new value.
-> The initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fix checkpatch Warning:
+'...netdevice.h:100: WARNING: Block comments use a trailing */ on a separate line'
 
-Applied.  Thanks!
+Signed-off-by: Travis Davies <tdavies@darkphysics.net>
 
-Alex
+---
+ include/linux/netdevice.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> index 15590fd86ef4..868e2d5f6e62 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-> @@ -653,8 +653,8 @@ static int ci_min_max_v_gnbl_pm_lid_from_bapm_vddc(struct pp_hwmgr *hwmgr)
->  static int ci_populate_bapm_vddc_base_leakage_sidd(struct pp_hwmgr *hwmgr)
->  {
->         struct ci_smumgr *smu_data = (struct ci_smumgr *)(hwmgr->smu_backend);
-> -       uint16_t HiSidd = smu_data->power_tune_table.BapmVddCBaseLeakageHiSidd;
-> -       uint16_t LoSidd = smu_data->power_tune_table.BapmVddCBaseLeakageLoSidd;
-> +       uint16_t HiSidd;
-> +       uint16_t LoSidd;
->         struct phm_cac_tdp_table *cac_table = hwmgr->dyn_state.cac_dtp_table;
->
->         HiSidd = (uint16_t)(cac_table->usHighCACLeakage / 100 * 256);
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index c20f190b4c18..a2605e043fa2 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
+ #define NET_XMIT_CN		0x02	/* congestion notification	*/
+ #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
+ 
+-/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
++/*
++ * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
+  * indicates that the device will soon be dropping packets, or already drops
+- * some packets of the same priority; prompting us to send less aggressively. */
++ * some packets of the same priority; prompting us to send less aggressively.
++ */
+ #define net_xmit_eval(e)	((e) = NET_XMIT_CN ? 0 : (e))
+ #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
+ 
+-- 
+2.21.0
