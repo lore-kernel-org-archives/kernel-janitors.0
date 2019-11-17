@@ -1,47 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2019 10:05:40 +0000
-Subject: Re: [PATCH -next] coresight: replicator: Fix missing spin_lock_init()
-Message-Id: <20191108100540.GQ10409@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 17 Nov 2019 15:01:11 +0000
+Subject: Re: [PATCH 07/13] exfat: add bitmap operations
+Message-Id: <bb89f610-3eac-6b28-1aff-265b358d22af@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106115651.113943-1-weiyongjun1@huawei.com>
- <CANLsYkxKAC9FLYkFjuehj_oFHTVyd=8_R8bAKjPxTXQyAGkwYw@mail.gmail.com>
-In-Reply-To: <CANLsYkxKAC9FLYkFjuehj_oFHTVyd=8_R8bAKjPxTXQyAGkwYw@mail.gmail.com>
+References: <20191113081800.7672-8-namjae.jeon@samsung.com>
+In-Reply-To: <20191113081800.7672-8-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Yabin Cui <yabinc@google.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-On Thu, Nov 07, 2019 at 11:47:11AM -0700, Mathieu Poirier wrote:
-> On Wed, 6 Nov 2019 at 04:57, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> >
-> > The driver allocates the spinlock but not initialize it.
-> > Use spin_lock_init() on it to initialize it correctly.
-> >
-> > This is detected by Coccinelle semantic patch.
-> >
-> > Fixes: 0093875ad129 ("coresight: Serialize enabling/disabling a link device.")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/hwtracing/coresight/coresight-replicator.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-> > index 43304196a1a6..e7dc1c31d20d 100644
-> > --- a/drivers/hwtracing/coresight/coresight-replicator.c
-> > +++ b/drivers/hwtracing/coresight/coresight-replicator.c
-> > @@ -248,6 +248,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
-> >         }
-> >         dev->platform_data = pdata;
-> >
-> > +       spin_lock_init(&drvdata->spinlock);
-> 
-> I have applied both patches but removed the "Fixes" line since the
-> commit is only visible in my local coresight next tree.
-> 
+…
+> +++ b/fs/exfat/balloc.c
+…
++int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count)
++{
+…
++	/* FIXME : abnormal bitmap count should be handled as more smart */
++	if (total_clus < count)
++		count = total_clus;
 
-Unless you rebase the tree, then the Fixes tag will still be valid.
-(Probably local implies you rebase it I guess).
+Would you like to improve any implementation details according to this comment?
 
-regards,
-dan carpenter
+Regards,
+Markus
