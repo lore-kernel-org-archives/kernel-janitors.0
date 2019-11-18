@@ -1,7 +1,7 @@
 From: Travis Davies <tdavies@darkphysics.net>
-Date: Mon, 18 Nov 2019 22:06:09 +0000
+Date: Mon, 18 Nov 2019 22:48:37 +0000
 Subject: [PATCH v2 1/1] net: Fix comment block per style guide
-Message-Id: <20191118220609.GA23999@Cheese>
+Message-Id: <20191118224837.GA5138@Cheese>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191118185724.GA32637@Cheese>
 In-Reply-To: <20191118185724.GA32637@Cheese>
@@ -18,10 +18,9 @@ consistant with majority of blocks throughout the file.
 This will prevent a checkpatch.pl warning:
 'Block comments use a trailing */ on a separate line'
 
-Signed-off-by: Travis Davies <tdavies@darkphysics.net>
 ---
 -v2: Fix commit description, and subject line as suggested by 
-     Julie Lawall
+     Julia Lawall.
 
  include/linux/netdevice.h | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
