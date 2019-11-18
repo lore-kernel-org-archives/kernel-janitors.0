@@ -1,20 +1,41 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Wed, 06 Nov 2019 23:23:18 +0000
-Subject: Re: [PATCH bpf] bpf: offload: unlock on error in bpf_offload_dev_create()
-Message-Id: <7c831580-49e5-6582-16df-86e70bad242e@iogearbox.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Nov 2019 11:40:59 +0000
+Subject: [PATCH][next] bpf: fix memory leak on object 'data'
+Message-Id: <20191118114059.37287-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191104091536.GB31509@mwanda>
-In-Reply-To: <20191104091536.GB31509@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alexei Starovoitov <ast@kernel.org>, Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/4/19 10:15 AM, Dan Carpenter wrote:
-> We need to drop the bpf_devs_lock on error before returning.
-> 
-> Fixes: 9fd7c5559165 ("bpf: offload: aggregate offloads per-device")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+The error return path on when bpf_fentry_test* tests fail does not
+kfree 'data'. Fix this by adding the missing kfree.
+
+Addresses-Coverity: ("Resource leak")
+Fixes: faeb2dce084a ("bpf: Add kernel test functions for fentry testing")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bpf/test_run.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index 62933279fbba..915c2d6f7fb9 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -161,8 +161,10 @@ static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
+ 	    bpf_fentry_test3(4, 5, 6) != 15 ||
+ 	    bpf_fentry_test4((void *)7, 8, 9, 10) != 34 ||
+ 	    bpf_fentry_test5(11, (void *)12, 13, 14, 15) != 65 ||
+-	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
++	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111) {
++		kfree(data);
+ 		return ERR_PTR(-EFAULT);
++	}
+ 	return data;
+ }
+ 
+-- 
+2.24.0
