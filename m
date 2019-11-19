@@ -1,35 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Nov 2019 22:40:04 +0000
-Subject: [PATCH] NFSv4: fix spelling mistake "requeueing" -> "requeuing"
-Message-Id: <20191107224004.417163-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 19 Nov 2019 17:28:17 +0000
+Subject: [PATCH 1/4] coccinelle: platform_get_irq: simplify context case
+Message-Id: <1574184500-29870-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
 
-From: Colin Ian King <colin.king@canonical.com>
+Simplify to just report on the first dev_err, whereever it occurs.
 
-There is a spelling mistake in a debug message. Fix it.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/nfs/nfs4renewd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/api/platform_get_irq.cocci |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/fs/nfs/nfs4renewd.c b/fs/nfs/nfs4renewd.c
-index 6ea431b067dd..396045633077 100644
---- a/fs/nfs/nfs4renewd.c
-+++ b/fs/nfs/nfs4renewd.c
-@@ -120,7 +120,7 @@ nfs4_schedule_state_renewal(struct nfs_client *clp)
- 		- (long)jiffies;
- 	if (timeout < 5 * HZ)
- 		timeout = 5 * HZ;
--	dprintk("%s: requeueing work. Lease period = %ld\n",
-+	dprintk("%s: requeuing work. Lease period = %ld\n",
- 			__func__, (timeout + HZ - 1) / HZ);
- 	mod_delayed_work(system_wq, &clp->cl_renewd, timeout);
- 	set_bit(NFS_CS_RENEWD, &clp->cl_res_state);
--- 
-2.20.1
+diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
+index 06b6a95..c6ac755 100644
+--- a/scripts/coccinelle/api/platform_get_irq.cocci
++++ b/scripts/coccinelle/api/platform_get_irq.cocci
+@@ -23,16 +23,9 @@ platform_get_irq_byname
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
+-(
+-if (ret != -EPROBE_DEFER)
+-{ ...
+-*dev_err(...);
+-... }
+-|
+ ...
+ *dev_err(...);
+-)
+-...
++... when any
+ }
+ 
+ @depends on patch@
