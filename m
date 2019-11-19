@@ -1,54 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 19 Nov 2019 17:28:18 +0000
-Subject: [PATCH 2/4] coccinelle: platform_get_irq: handle 2-statement branches
-Message-Id: <1574184500-29870-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 19 Nov 2019 21:33:37 +0000
+Subject: Re: [PATCH 2/4] coccinelle: platform_get_irq: handle 2-statement branches
+Message-Id: <75dbbf44-01ee-5d15-4b3b-1c9106fa8412@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1574184500-29870-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1574184500-29870-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+> From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Treat separately the case where there is only one other
-statement in the branch, to be able to remove the outer
-{} as well.
+I wonder about this information.
+Would you like to use the tag “Suggested-by” instead?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- scripts/coccinelle/api/platform_get_irq.cocci |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+…
+> +++ b/scripts/coccinelle/api/platform_get_irq.cocci
+> @@ -31,6 +31,25 @@ if ( \( ret < 0 \| ret <= 0 \) )
+…
+> +ret =
+> +(
+> +platform_get_irq
+> +|
+> +platform_get_irq_byname
+> +)(E, ...);
+> +
+> +if ( \( ret < 0 \| ret <= 0 \) )
+> +-{
+> +-dev_err(...);
+> +S
+> +-}
 
-diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
-index c6ac755..7ac32ee 100644
---- a/scripts/coccinelle/api/platform_get_irq.cocci
-+++ b/scripts/coccinelle/api/platform_get_irq.cocci
-@@ -31,6 +31,25 @@ if ( \( ret < 0 \| ret <= 0 \) )
- @depends on patch@
- expression ret;
- struct platform_device *E;
-+statement S;
-+@@
-+
-+ret +(
-+platform_get_irq
-+|
-+platform_get_irq_byname
+How do you think about to use the following SmPL code variant?
+
++ ret =
++(platform_get_irq
++|platform_get_irq_byname
 +)(E, ...);
 +
-+if ( \( ret < 0 \| ret <= 0 \) )
++ if ( \( ret < 0 \| ret <= 0 \) )
 +-{
 +-dev_err(...);
-+S
++ S
 +-}
-+
-+@depends on patch@
-+expression ret;
-+struct platform_device *E;
- @@
- 
- ret 
+
+Regards,
+Markus
