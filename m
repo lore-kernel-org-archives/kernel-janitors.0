@@ -1,111 +1,105 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Nov 2019 12:22:52 +0000
-Subject: [bug report] octeontx2-af: Dump current resource provisioning status
-Message-Id: <20191126122252.bayz6jfencfm4yby@kili.mountain>
+Date: Tue, 19 Nov 2019 06:18:19 +0000
+Subject: [PATCH] dma-debug: clean up put_hash_bucket()
+Message-Id: <20191119061819.k6754frfv2wj7swd@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121094419.ktgp5w4r7mhclzet@kili.mountain>
-In-Reply-To: <20191121094419.ktgp5w4r7mhclzet@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Christina Jacob,
+The put_hash_bucket() is a bit cleaner if it takes an unsigned long
+directly instead of a pointer to unsigned long.
 
-The patch 23205e6d06d4: "octeontx2-af: Dump current resource
-provisioning status" from Nov 14, 2019, leads to the following static
-checker warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This patch also makes it slightly easier for Smatch to parse the locking.
 
-	drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c:215 rvu_dbg_rsrc_attach_status()
-	warn: userbuf overflow? is 'off' <= 'count'
+ kernel/dma/debug.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-   143  static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
-   144                                            char __user *buffer,
-   145                                            size_t count, loff_t *ppos)
-                                                  ^^^^^^^^^^^^
-The user has a buffer "count" bytes large.
-
-   146  {
-   147          int index, off = 0, flag = 0, go_back = 0, off_prev;
-   148          struct rvu *rvu = filp->private_data;
-   149          int lf, pf, vf, pcifunc;
-   150          struct rvu_block block;
-   151          int bytes_not_copied;
-   152          int buf_size = 2048;
-   153          char *buf;
-   154  
-   155          /* don't allow partial reads */
-   156          if (*ppos != 0)
-   157                  return 0;
-   158  
-   159          buf = kzalloc(buf_size, GFP_KERNEL);
-   160          if (!buf)
-   161                  return -ENOSPC;
-   162          off +=  scnprintf(&buf[off], buf_size - 1 - off, "\npcifunc\t\t");
-   163          for (index = 0; index < BLK_COUNT; index++)
-   164                  if (strlen(rvu->hw->block[index].name))
-   165                          off +=  scnprintf(&buf[off], buf_size - 1 - off,
-   166                                            "%*s\t", (index - 1) * 2,
-   167                                            rvu->hw->block[index].name);
-   168          off += scnprintf(&buf[off], buf_size - 1 - off, "\n");
-   169          for (pf = 0; pf < rvu->hw->total_pfs; pf++) {
-   170                  for (vf = 0; vf <= rvu->hw->total_vfs; vf++) {
-   171                          pcifunc = pf << 10 | vf;
-   172                          if (!pcifunc)
-   173                                  continue;
-   174  
-   175                          if (vf) {
-   176                                  go_back = scnprintf(&buf[off],
-   177                                                      buf_size - 1 - off,
-   178                                                      "PF%d:VF%d\t\t", pf,
-   179                                                      vf - 1);
-   180                          } else {
-   181                                  go_back = scnprintf(&buf[off],
-   182                                                      buf_size - 1 - off,
-   183                                                      "PF%d\t\t", pf);
-   184                          }
-   185  
-   186                          off += go_back;
-   187                          for (index = 0; index < BLKTYPE_MAX; index++) {
-   188                                  block = rvu->hw->block[index];
-   189                                  if (!strlen(block.name))
-   190                                          continue;
-   191                                  off_prev = off;
-   192                                  for (lf = 0; lf < block.lf.max; lf++) {
-   193                                          if (block.fn_map[lf] != pcifunc)
-   194                                                  continue;
-   195                                          flag = 1;
-   196                                          off += scnprintf(&buf[off], buf_size - 1
-   197                                                          - off, "%3d,", lf);
-   198                                  }
-   199                                  if (flag && off_prev != off)
-   200                                          off--;
-   201                                  else
-   202                                          go_back++;
-   203                                  off += scnprintf(&buf[off], buf_size - 1 - off,
-   204                                                  "\t");
-   205                          }
-   206                          if (!flag)
-   207                                  off -= go_back;
-   208                          else
-   209                                  flag = 0;
-   210                          off--;
-   211                          off +=  scnprintf(&buf[off], buf_size - 1 - off, "\n");
-   212                  }
-   213          }
-   214  
-   215          bytes_not_copied = copy_to_user(buffer, buf, off);
-                                                             ^^^
-So we need to ensure that we don't copy more than "count" bytes into it.
-
-   216          kfree(buf);
-   217  
-   218          if (bytes_not_copied)
-   219                  return -EFAULT;
-   220  
-   221          *ppos = off;
-   222          return off;
-
-regards,
-dan carpenter
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index cd6f89aa9f9a..2031ed1ad7fa 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -255,12 +255,10 @@ static struct hash_bucket *get_hash_bucket(struct dma_debug_entry *entry,
+  * Give up exclusive access to the hash bucket
+  */
+ static void put_hash_bucket(struct hash_bucket *bucket,
+-			    unsigned long *flags)
++			    unsigned long flags)
+ 	__releases(&bucket->lock)
+ {
+-	unsigned long __flags = *flags;
+-
+-	spin_unlock_irqrestore(&bucket->lock, __flags);
++	spin_unlock_irqrestore(&bucket->lock, flags);
+ }
+ 
+ static bool exact_match(struct dma_debug_entry *a, struct dma_debug_entry *b)
+@@ -359,7 +357,7 @@ static struct dma_debug_entry *bucket_find_contain(struct hash_bucket **bucket,
+ 		/*
+ 		 * Nothing found, go back a hash bucket
+ 		 */
+-		put_hash_bucket(*bucket, flags);
++		put_hash_bucket(*bucket, *flags);
+ 		range          += (1 << HASH_FN_SHIFT);
+ 		index.dev_addr -= (1 << HASH_FN_SHIFT);
+ 		*bucket = get_hash_bucket(&index, flags);
+@@ -609,7 +607,7 @@ static void add_dma_entry(struct dma_debug_entry *entry)
+ 
+ 	bucket = get_hash_bucket(entry, &flags);
+ 	hash_bucket_add(bucket, entry);
+-	put_hash_bucket(bucket, &flags);
++	put_hash_bucket(bucket, flags);
+ 
+ 	rc = active_cacheline_insert(entry);
+ 	if (rc = -ENOMEM) {
+@@ -1002,7 +1000,7 @@ static void check_unmap(struct dma_debug_entry *ref)
+ 
+ 	if (!entry) {
+ 		/* must drop lock before calling dma_mapping_error */
+-		put_hash_bucket(bucket, &flags);
++		put_hash_bucket(bucket, flags);
+ 
+ 		if (dma_mapping_error(ref->dev, ref->dev_addr)) {
+ 			err_printk(ref->dev, NULL,
+@@ -1084,7 +1082,7 @@ static void check_unmap(struct dma_debug_entry *ref)
+ 	hash_bucket_del(entry);
+ 	dma_entry_free(entry);
+ 
+-	put_hash_bucket(bucket, &flags);
++	put_hash_bucket(bucket, flags);
+ }
+ 
+ static void check_for_stack(struct device *dev,
+@@ -1204,7 +1202,7 @@ static void check_sync(struct device *dev,
+ 	}
+ 
+ out:
+-	put_hash_bucket(bucket, &flags);
++	put_hash_bucket(bucket, flags);
+ }
+ 
+ static void check_sg_segment(struct device *dev, struct scatterlist *sg)
+@@ -1319,7 +1317,7 @@ void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ 		}
+ 	}
+ 
+-	put_hash_bucket(bucket, &flags);
++	put_hash_bucket(bucket, flags);
+ }
+ EXPORT_SYMBOL(debug_dma_mapping_error);
+ 
+@@ -1392,7 +1390,7 @@ static int get_nr_mapped_entries(struct device *dev,
+ 
+ 	if (entry)
+ 		mapped_ents = entry->sg_mapped_ents;
+-	put_hash_bucket(bucket, &flags);
++	put_hash_bucket(bucket, flags);
+ 
+ 	return mapped_ents;
+ }
+-- 
+2.11.0
