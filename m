@@ -1,35 +1,90 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 06 Nov 2019 14:52:31 +0000
-Subject: [PATCH net-next] mlxsw: spectrum: Fix error return code in mlxsw_sp_port_module_info_init()
-Message-Id: <20191106145231.39128-1-weiyongjun1@huawei.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 19 Nov 2019 17:28:20 +0000
+Subject: [PATCH 4/4] coccinelle: platform_get_irq: drop unneeded metavariable
+Message-Id: <1574184500-29870-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Fixes: 4a7f970f1240 ("mlxsw: spectrum: Replace port_to_module array with array of structs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Having E as a metavariable adds the requirement to verify its type.
+This seems like an unnecessary constraint, so drop it.
+There is currently no impact on the set of results.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ scripts/coccinelle/api/platform_get_irq.cocci |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index ea4cc2aa99e0..838c014f6ed1 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -4079,8 +4079,10 @@ static int mlxsw_sp_port_module_info_init(struct mlxsw_sp *mlxsw_sp)
- 		mlxsw_sp->port_mapping[i] = kmemdup(&port_mapping,
- 						    sizeof(port_mapping),
- 						    GFP_KERNEL);
--		if (!mlxsw_sp->port_mapping[i])
-+		if (!mlxsw_sp->port_mapping[i]) {
-+			err = -ENOMEM;
- 			goto err_port_module_info_dup;
-+		}
- 	}
- 	return 0;
+diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
+index e5d04fb..17e5895 100644
+--- a/scripts/coccinelle/api/platform_get_irq.cocci
++++ b/scripts/coccinelle/api/platform_get_irq.cocci
+@@ -11,7 +11,6 @@ virtual report
+ 
+ @depends on context@
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -19,7 +18,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
+@@ -30,7 +29,6 @@ if ( \( ret < 0 \| ret <= 0 \) )
+ 
+ @depends on patch@
+ expression ret;
+-struct platform_device *E;
+ statement S;
+ @@
+ 
+@@ -39,7 +37,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ -{
+@@ -49,7 +47,6 @@ S
+ 
+ @depends on patch@
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -57,7 +54,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
+@@ -76,7 +73,6 @@ if ( \( ret < 0 \| ret <= 0 \) )
+ @r depends on org || report@
+ position p1;
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -84,7 +80,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
