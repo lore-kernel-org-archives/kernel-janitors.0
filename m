@@ -1,49 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 02 Nov 2019 11:39:54 +0000
-Subject: [PATCH] drm/nouveau/bios/init: make const arrays probe_order static, makes object smaller
-Message-Id: <20191102113954.25555-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 19 Nov 2019 14:40:17 +0000
+Subject: Re: [PATCH v3 08/13] exfat: add exfat cache
+Message-Id: <c1db28a9-7905-be5e-68fa-21e23400b4a5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191119093718.3501-1-namjae.jeon@samsung.com>
+ <CGME20191119094024epcas1p1be385d521ef64ae0e62da3f6f9bf3401@epcas1p1.samsung.com>
+ <20191119093718.3501-9-namjae.jeon@samsung.com>
+In-Reply-To: <20191119093718.3501-9-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-From: Colin Ian King <colin.king@canonical.com>
+…
+> +++ b/fs/exfat/cache.c
+…
+> +static void exfat_cache_add(struct inode *inode,
+> +		struct exfat_cache_id *new)
+> +{
+…
+> +out:
+> +	spin_unlock(&ei->cache_lru_lock);
+…
 
-Don't populate const arrays on the stack but instead make them
-static. Makes the object code smaller by 6 bytes.
+Can the label “unlock” be more helpful?
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 103075	   9692	      0	 112767	  1b87f	nvkm/subdev/bios/init.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
- 102909	   9852	      0	 112761	  1b879	nvkm/subdev/bios/init.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-index 9de74f41dcd2..dc8625eff20a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-@@ -546,9 +546,9 @@ init_tmds_reg(struct nvbios_init *init, u8 tmds)
- 	 * CR58 for CR57 = 0 to index a table of offsets to the basic
- 	 * 0x6808b0 address, and then flip the offset by 8.
- 	 */
--	const int pramdac_offset[13] = {
-+	static const int pramdac_offset[13] = {
- 		0, 0, 0x8, 0, 0x2000, 0, 0, 0, 0x2008, 0, 0, 0, 0x2000 };
--	const u32 pramdac_table[4] = {
-+	static const u32 pramdac_table[4] = {
- 		0x6808b0, 0x6808b8, 0x6828b0, 0x6828b8 };
- 
- 	if (tmds >= 0x80) {
--- 
-2.20.1
+Regards,
+Markus
