@@ -1,80 +1,49 @@
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 07 Nov 2019 09:56:33 +0000
-Subject: Re: [PATCH] ovl: create UUIDs for file systems that do not set the superblock UUID
-Message-Id: <CAOQ4uxgj8FO-yqtHsjh2OaTGvcF3HA5OekqiUuZEFE+LGGaTCg@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Tue, 19 Nov 2019 02:51:28 +0000
+Subject: [PATCH net] net: dsa: ocelot: add dependency for NET_DSA_MSCC_FELIX
+Message-Id: <20191119025128.7393-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191106234301.283006-1-colin.king@canonical.com>
- <CAOQ4uxhT4pFzHjjKyoMOc3xVXXqyqc37zd=-pCx2+keA4e6NAg@mail.gmail.com>
- <02adb5f3-10be-1827-f48b-b621bd61783a@canonical.com> <f88a4ef7-3e2a-9e17-1573-3594288091cd@canonical.com>
- <bba96a64-a9f7-cd03-e00b-8ee369520ae7@canonical.com>
-In-Reply-To: <bba96a64-a9f7-cd03-e00b-8ee369520ae7@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, overlayfs <linux-unionfs@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com, andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Thu, Nov 7, 2019 at 11:44 AM Colin Ian King <colin.king@canonical.com> w=
-rote:
->
-> On 07/11/2019 09:12, Colin Ian King wrote:
-> > On 07/11/2019 08:45, Colin Ian King wrote:
-> >> On 07/11/2019 07:08, Amir Goldstein wrote:
-> >>> On Thu, Nov 7, 2019 at 1:43 AM Colin King <colin.king@canonical.com> =
-wrote:
-> >>>>
-> >>>> From: Colin Ian King <colin.king@canonical.com>
-> >>>>
-> >>>> Some file systems such as squashfs do not set the UUID in the
-> >>>> superblock resulting in a zero'd UUID.  In cases were two or more
-> >>>> of these file systems are overlayed on the lower layer we can hit
-> >>>> overlay corruption issues because identical zero'd overlayfs UUIDs
-> >>>> are impossible to differentiate between.  This can be fixed by
-> >>>> creating an overlayfs UUID based on the file system from the
-> >>>> superblock s_magic and s_dev fields.  (This currently seems like
-> >>>> enough information to be able create a UUID, but the could be
-> >>>> scope to use other super block fields such as the pointer s_fs_info
-> >>>> but may need some obfuscation).
-> >>>>
-> >>>
-> >>> The fix is incorrent. uuid stored in xattr needs to have persistent p=
-roperties.
-> >>> In the use case that you describe, the origin file handle should simp=
-ly be
-> >>> ignored.
-> >>>
-> >>> Please test attached patch.
-> >>
-> >> Thanks for the patch. Tested, and the error still occurs:
-> >>
-> >> [  163.959633] overlayfs: invalid origin (etc/.pwd.lock, ftype=8000,
-> >> origin ftype@00).
-> >
-> > Added debug, seems like nouuid is not being set to true, nouuid is false
-> > on the layers 0 and 1.
->
-> So nouuid is not being set in ovl_lower_uuid_ok() because the code is
-> returning early because of the following statement:
->
-> if (!ofs->config.nfs_export && !(ofs->config.index && ofs->upper_mnt))
->         return true;
->
-> ..and not getting to the following for-loop.
->
+If CONFIG_NET_DSA_MSCC_FELIX=y, and CONFIG_NET_VENDOR_MICROSEMI=n,
+below errors can be found:
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_del':
+felix.c:(.text+0x26e): undefined reference to `ocelot_vlan_del'
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_add':
+felix.c:(.text+0x352): undefined reference to `ocelot_vlan_add'
 
-Indeed. I had this bit of information in my mind for a brief moment
-and forgot about it..
+and warning as below:
+WARNING: unmet direct dependencies detected for MSCC_OCELOT_SWITCH
+Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] &&
+NET_VENDOR_MICROSEMI [=n] && NET_SWITCHDEV [=y] && HAS_IOMEM [=y]
+Selected by [y]:
+NET_DSA_MSCC_FELIX [=y] && NETDEVICES [=y] && HAVE_NET_DSA [=y]
+&& NET_DSA [=y] && PCI [=y]
 
-Please remove this optimization and change the call to:
+This patch add dependency NET_VENDOR_MICROSEMI for NET_DSA_MSCC_FELIX.
 
-       if (ofs->upper_mnt && !ovl_lower_uuid_ok(ofs, &sb->s_uuid)) {
-...
+Fixes: 56051948773e ("net: dsa: ocelot: add driver for Felix switch family")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/dsa/ocelot/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe change the language of "falling back to index=3Doff..." to
-"enforcing index=3Doff..."
-
-You may then submit the patch with my Signed-off and yours.
-Please also change the name nouuid to bad_uuid per Dan's review comment.
-
-Thanks,
-Amir.
+diff --git a/drivers/net/dsa/ocelot/Kconfig b/drivers/net/dsa/ocelot/Kconfig
+index 0031ca8..61c4ce7 100644
+--- a/drivers/net/dsa/ocelot/Kconfig
++++ b/drivers/net/dsa/ocelot/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config NET_DSA_MSCC_FELIX
+ 	tristate "Ocelot / Felix Ethernet switch support"
+-	depends on NET_DSA && PCI
++	depends on NET_DSA && PCI && NET_VENDOR_MICROSEMI
+ 	select MSCC_OCELOT_SWITCH
+ 	select NET_DSA_TAG_OCELOT
+ 	help
+-- 
+2.7.4
