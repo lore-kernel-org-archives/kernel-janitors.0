@@ -1,41 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Nov 2019 11:40:59 +0000
-Subject: [PATCH][next] bpf: fix memory leak on object 'data'
-Message-Id: <20191118114059.37287-1-colin.king@canonical.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 19 Nov 2019 03:48:58 +0000
+Subject: Re: [PATCH][next] bpf: fix memory leak on object 'data'
+Message-Id: <CAADnVQLhoHvdnJrcG0Gj128e8w0uLvRqg+p9=GJTr=1R8VLS_A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191118114059.37287-1-colin.king@canonical.com>
+In-Reply-To: <20191118114059.37287-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Nov 18, 2019 at 3:41 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The error return path on when bpf_fentry_test* tests fail does not
+> kfree 'data'. Fix this by adding the missing kfree.
+>
+> Addresses-Coverity: ("Resource leak")
+> Fixes: faeb2dce084a ("bpf: Add kernel test functions for fentry testing")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The error return path on when bpf_fentry_test* tests fail does not
-kfree 'data'. Fix this by adding the missing kfree.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: faeb2dce084a ("bpf: Add kernel test functions for fentry testing")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/bpf/test_run.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 62933279fbba..915c2d6f7fb9 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -161,8 +161,10 @@ static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
- 	    bpf_fentry_test3(4, 5, 6) != 15 ||
- 	    bpf_fentry_test4((void *)7, 8, 9, 10) != 34 ||
- 	    bpf_fentry_test5(11, (void *)12, 13, 14, 15) != 65 ||
--	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
-+	    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111) {
-+		kfree(data);
- 		return ERR_PTR(-EFAULT);
-+	}
- 	return data;
- }
- 
--- 
-2.24.0
+Applied. Thanks
