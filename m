@@ -1,40 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Nov 2019 06:22:16 +0000
-Subject: [PATCH] io-wq: remove extra space characters
-Message-Id: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Tue, 19 Nov 2019 15:45:25 +0000
+Subject: Re: [PATCH] io-wq: remove extra space characters
+Message-Id: <ac841162-db41-0c8b-6ff8-d5b956961582@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+In-Reply-To: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These lines are indented an extra space character.
+On 11/18/19 11:22 PM, Dan Carpenter wrote:
+> These lines are indented an extra space character.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-We often see this where the lines after a comment are indented one
-space extra.  I don't know if it's an editor thing maybe?
+Thanks, applied.
 
- fs/io-wq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> We often see this where the lines after a comment are indented one
+> space extra.  I don't know if it's an editor thing maybe?
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index fcb6c74209da..6d8f5e6c8167 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -333,9 +333,9 @@ static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
- 	 * If worker is moving from bound to unbound (or vice versa), then
- 	 * ensure we update the running accounting.
- 	 */
--	 worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
--	 work_bound = (work->flags & IO_WQ_WORK_UNBOUND) = 0;
--	 if (worker_bound != work_bound) {
-+	worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
-+	work_bound = (work->flags & IO_WQ_WORK_UNBOUND) = 0;
-+	if (worker_bound != work_bound) {
- 		io_wqe_dec_running(wqe, worker);
- 		if (work_bound) {
- 			worker->flags |= IO_WORKER_F_BOUND;
+I think I can explain that. I recently decided to try and use the
+vim auto-indent, to see if it'd make my life a little easier to
+save on typing. Unfortunately it has a bug where it indents that
+extra space following a comment form like:
+
+/*
+ * bla bla
+ */
+
+which is exactly what happened here. As diff doesn't show that
+as extra whitespace you can miss that it happened.
+
 -- 
-2.11.0
+Jens Axboe
