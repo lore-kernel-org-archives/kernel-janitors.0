@@ -1,32 +1,52 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 26 Nov 2019 22:14:04 +0000
-Subject: Re: [PATCH] rtc: meson: remove redundant assignment to variable retries
-Message-Id: <20191126221404.GT299836@piout.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 19 Nov 2019 12:15:17 +0000
+Subject: Re: [PATCH v3 00/13] add the latest exfat driver
+Message-Id: <2cc05215-3b44-06f0-b34a-eb841476b329@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191122225210.109172-1-colin.king@canonical.com>
-In-Reply-To: <20191122225210.109172-1-colin.king@canonical.com>
+References: <CGME20191119094019epcas1p298d14fcf6e7a24bee431238279961c5b@epcas1p2.samsung.com>
+ <20191119093718.3501-1-namjae.jeon@samsung.com>
+In-Reply-To: <20191119093718.3501-1-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Kevin Hilman <khilman@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-On 22/11/2019 22:52:10+0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable retries is being initialized with a value that is never
-> read and it is being updated later with a new value in a for-loop.
-> The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-meson.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Applied, thanks.
+> =E2=80=A6, an a random previous
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Does this wording contain a typo?
+
+
+> We plan to treat this version as the future upstream for the code base
+> once merged, and all new features and bug fixes will go upstream first.
+
+Were the following mentioned issues occasionally reviewed already
+by other developers before?
+
+
+> v3:
+>  - fix wrong sbi->s_dirt set.
+>
+> v2:
+>  - Check the bitmap count up to the total clusters.
+>  - Rename proper goto labels in seveal place.
+
+Would you like to avoid further typos in such change descriptions?
+
+
+>  - Change time mode type with enumeration.
+
+How do you think about to increase the usage of enumerations
+at any more source code places?
+
+
+>  - Directly return error instead of goto at first error check.
+>  - Combine seq_printfs calls into a single one.
+
+Please refer to the correct function name.
+
+
+Thanks for your positive feedback.
+
+Regards,
+Markus
