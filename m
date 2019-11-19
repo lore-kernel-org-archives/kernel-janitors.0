@@ -1,17 +1,19 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Mon, 18 Nov 2019 23:29:12 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 19 Nov 2019 01:23:58 +0000
 Subject: Re: [PATCH][next] net: phy: dp83869: fix return of uninitialized variable ret
-Message-Id: <20191118232912.GC15395@lunn.ch>
+Message-Id: <20191118.172358.1651088156867288729.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191118114835.39494-1-colin.king@canonical.com>
 In-Reply-To: <20191118114835.39494-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, "David S . Miller" <davem@davemloft.net>, Dan Murphy <dmurphy@ti.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, dmurphy@ti.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 11:48:35AM +0000, Colin King wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Nov 2019 11:48:35 +0000
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > In the case where the call to phy_interface_is_rgmii returns zero
@@ -23,9 +25,4 @@ On Mon, Nov 18, 2019 at 11:48:35AM +0000, Colin King wrote:
 > Fixes: 01db923e8377 ("net: phy: dp83869: Add TI dp83869 phy")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-Dan: phy_modify_mmd() could fail. You check the return value for
-phy_read and phy_write, so it would be consistent to also check
-
-	 Andrew
+Applied.
