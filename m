@@ -1,43 +1,90 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 19 Nov 2019 17:28:17 +0000
-Subject: [PATCH 1/4] coccinelle: platform_get_irq: simplify context case
-Message-Id: <1574184500-29870-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 19 Nov 2019 21:08:25 +0000
+Subject: [PATCH 4/4 v2] coccinelle: platform_get_irq: drop unneeded metavariable
+Message-Id: <1574197705-31132-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1574184500-29870-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
 
-Simplify to just report on the first dev_err, whereever it occurs.
+Having E as a metavariable adds the requirement to verify its type.
+This seems like an unnecessary constraint, so drop it.
+There is currently no impact on the set of results.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- scripts/coccinelle/api/platform_get_irq.cocci |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+v2: fix From and To (very sorry for the mistake)
+
+ scripts/coccinelle/api/platform_get_irq.cocci |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
-index 06b6a95..c6ac755 100644
+index e5d04fb..17e5895 100644
 --- a/scripts/coccinelle/api/platform_get_irq.cocci
 +++ b/scripts/coccinelle/api/platform_get_irq.cocci
-@@ -23,16 +23,9 @@ platform_get_irq_byname
+@@ -11,7 +11,6 @@ virtual report
+ 
+ @depends on context@
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -19,7 +18,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
  
  if ( \( ret < 0 \| ret <= 0 \) )
  {
--(
--if (ret != -EPROBE_DEFER)
--{ ...
--*dev_err(...);
--... }
--|
- ...
- *dev_err(...);
--)
--...
-+... when any
- }
+@@ -30,7 +29,6 @@ if ( \( ret < 0 \| ret <= 0 \) )
  
  @depends on patch@
+ expression ret;
+-struct platform_device *E;
+ statement S;
+ @@
+ 
+@@ -39,7 +37,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ -{
+@@ -49,7 +47,6 @@ S
+ 
+ @depends on patch@
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -57,7 +54,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
+@@ -76,7 +73,6 @@ if ( \( ret < 0 \| ret <= 0 \) )
+ @r depends on org || report@
+ position p1;
+ expression ret;
+-struct platform_device *E;
+ @@
+ 
+ ret @@ -84,7 +80,7 @@ ret  platform_get_irq
+ |
+ platform_get_irq_byname
+-)(E, ...);
++)(...);
+ 
+ if ( \( ret < 0 \| ret <= 0 \) )
+ {
