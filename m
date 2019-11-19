@@ -1,50 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Nov 2019 12:29:58 +0000
-Subject: [PATCH] zram: fix error return codes not being returned in writeback_store
-Message-Id: <20191128122958.178290-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 19 Nov 2019 21:08:23 +0000
+Subject: [PATCH 2/4 v2] coccinelle: platform_get_irq: handle 2-statement branches
+Message-Id: <1574197705-31132-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-block@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
 
-From: Colin Ian King <colin.king@canonical.com>
+Treat separately the case where there is only one other
+statement in the branch, to be able to remove the outer
+{} as well.
 
-Currently when an error code -EIO or -ENOSPC in the for-loop of
-writeback_store the error code is being overwritten by a ret = len
-assignment at the end of the function and the error codes are being
-lost.  Fix this by assigning ret = len at the start of the function
-and remove the assignment from the end, hence allowing ret to be
-preserved when error codes are assigned to it.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Addresses-Coverity: ("Unused value")
-Fixes: a939888ec38b ("zram: support idle/huge page writeback")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/block/zram/zram_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v2: fix From and To (very sorry for the mistake)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 4285e75e52c3..1bf4a908a0bd 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -626,7 +626,7 @@ static ssize_t writeback_store(struct device *dev,
- 	struct bio bio;
- 	struct bio_vec bio_vec;
- 	struct page *page;
--	ssize_t ret;
-+	ssize_t ret = len;
- 	int mode;
- 	unsigned long blk_idx = 0;
+ scripts/coccinelle/api/platform_get_irq.cocci |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
+index c6ac755..7ac32ee 100644
+--- a/scripts/coccinelle/api/platform_get_irq.cocci
++++ b/scripts/coccinelle/api/platform_get_irq.cocci
+@@ -31,6 +31,25 @@ if ( \( ret < 0 \| ret <= 0 \) )
+ @depends on patch@
+ expression ret;
+ struct platform_device *E;
++statement S;
++@@
++
++ret +(
++platform_get_irq
++|
++platform_get_irq_byname
++)(E, ...);
++
++if ( \( ret < 0 \| ret <= 0 \) )
++-{
++-dev_err(...);
++S
++-}
++
++@depends on patch@
++expression ret;
++struct platform_device *E;
+ @@
  
-@@ -762,7 +762,6 @@ static ssize_t writeback_store(struct device *dev,
- 
- 	if (blk_idx)
- 		free_block_bdev(zram, blk_idx);
--	ret = len;
- 	__free_page(page);
- release_init_lock:
- 	up_read(&zram->init_lock);
--- 
-2.24.0
+ ret 
