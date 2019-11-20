@@ -1,59 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 20 Nov 2019 19:47:09 +0000
-Subject: Re: [PATCH -next] usb: gadget: configfs: Fix missing spin_lock_init()
-Message-Id: <20191120194709.GA3092233@kroah.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 20 Nov 2019 01:47:22 +0000
+Subject: [PATCH net v2] net: dsa: ocelot: add dependency for NET_DSA_MSCC_FELIX
+Message-Id: <20191120014722.8075-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191030034046.188808-1-weiyongjun1@huawei.com>
- <20191030081101.GF26815@b29397-desktop>
- <CAL411-pVmtTr58YFmsotcY+w2KR3kR1hQ1bJOG9CNA-fmPQYGg@mail.gmail.com>
-In-Reply-To: <CAL411-pVmtTr58YFmsotcY+w2KR3kR1hQ1bJOG9CNA-fmPQYGg@mail.gmail.com>
+References: <20191119.154125.1492881397881625788.davem@davemloft.net>
+In-Reply-To: <20191119.154125.1492881397881625788.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Chen <hzpeterchen@gmail.com>
-Cc: Peter Chen <peter.chen@nxp.com>, Felipe Balbi <balbi@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com, andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-On Mon, Nov 18, 2019 at 05:09:39PM +0800, Peter Chen wrote:
-> BR,
-> Peter Chen
-> 
-> On Wed, Oct 30, 2019 at 4:12 PM Peter Chen <peter.chen@nxp.com> wrote:
-> >
-> > On 19-10-30 03:40:46, Wei Yongjun wrote:
-> > > The driver allocates the spinlock but not initialize it.
-> > > Use spin_lock_init() on it to initialize it correctly.
-> > >
-> > > This is detected by Coccinelle semantic patch.
-> > >
-> > > Fixes: 1a1c851bbd70 ("usb: gadget: configfs: fix concurrent issue between composite APIs")
-> > > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > > ---
-> > >  drivers/usb/gadget/configfs.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-> > > index 33852c2b29d1..ab9ac48a751a 100644
-> > > --- a/drivers/usb/gadget/configfs.c
-> > > +++ b/drivers/usb/gadget/configfs.c
-> > > @@ -1544,6 +1544,7 @@ static struct config_group *gadgets_make(
-> > >       gi->composite.resume = NULL;
-> > >       gi->composite.max_speed = USB_SPEED_SUPER;
-> > >
-> > > +     spin_lock_init(&gi->spinlock);
-> > >       mutex_init(&gi->lock);
-> > >       INIT_LIST_HEAD(&gi->string_list);
-> > >       INIT_LIST_HEAD(&gi->available_func);
-> > >
-> >
-> > Reviewed-by: Peter Chen <peter.chen@nxp.com>
-> 
-> Hi Felipe & Greg,
-> 
-> We may need this patch for usb/next and usb/linus tree, otherwise, there will
-> be kernel dump if enable lockdep:
+If CONFIG_NET_DSA_MSCC_FELIX=y, and CONFIG_NET_VENDOR_MICROSEMI=n,
+below errors can be found:
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_del':
+felix.c:(.text+0x26e): undefined reference to `ocelot_vlan_del'
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_add':
+felix.c:(.text+0x352): undefined reference to `ocelot_vlan_add'
 
-Ok, now queued up.
+and warning as below:
+WARNING: unmet direct dependencies detected for MSCC_OCELOT_SWITCH
+Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] &&
+NET_VENDOR_MICROSEMI [=n] && NET_SWITCHDEV [=y] && HAS_IOMEM [=y]
+Selected by [y]:
+NET_DSA_MSCC_FELIX [=y] && NETDEVICES [=y] && HAVE_NET_DSA [=y]
+&& NET_DSA [=y] && PCI [=y]
 
-thanks,
+This patch is to select NET_VENDOR_MICROSEMI for NET_DSA_MSCC_FELIX.
 
-greg k-h
+Fixes: 56051948773e ("net: dsa: ocelot: add driver for Felix switch family")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: modify 'depends on' to 'select'.
+ drivers/net/dsa/ocelot/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/dsa/ocelot/Kconfig b/drivers/net/dsa/ocelot/Kconfig
+index 0031ca8..652604b 100644
+--- a/drivers/net/dsa/ocelot/Kconfig
++++ b/drivers/net/dsa/ocelot/Kconfig
+@@ -2,6 +2,7 @@
+ config NET_DSA_MSCC_FELIX
+ 	tristate "Ocelot / Felix Ethernet switch support"
+ 	depends on NET_DSA && PCI
++	select NET_VENDOR_MICROSEMI
+ 	select MSCC_OCELOT_SWITCH
+ 	select NET_DSA_TAG_OCELOT
+ 	help
+-- 
+2.7.4
