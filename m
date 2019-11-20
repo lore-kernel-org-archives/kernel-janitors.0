@@ -1,84 +1,204 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Tue, 19 Nov 2019 14:23:30 +0000
-Subject: Re: [PATCH] ASoC: Intel: mrfld: fix incorrect check on p->sink
-Message-Id: <f084c578-2fd5-e090-7d90-1ddffa1e22be@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Nov 2019 12:34:38 +0000
+Subject: [PATCH net] net: rtnetlink: prevent underflows in do_setvfinfo()
+Message-Id: <20191120123438.vxn2ngnxzpcaqot4@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119113640.166940-1-colin.king@canonical.com>
-In-Reply-To: <20191119113640.166940-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org
-Cc: Sanyog Kale <sanyog.r.kale@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Jiri Pirko <jiri@mellanox.com>, David Ahern <dsahern@gmail.com>, Ido Schimmel <idosch@mellanox.com>, Petr Machata <petrm@mellanox.com>, Jakub Kicinski <jakub.kicinski@netronome.com>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>, Parav Pandit <parav@mellanox.com>, Roopa Prabhu <roopa@cumulusnetworks.com>, Johannes Berg <johannes.berg@intel.com>, Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The "ivm->vf" variable is a u32, but the problem is that a number of
+drivers cast it to an int and then forget to check for negatives.  An
+example of this is in the cxgb4 driver.
 
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+  2890  static int cxgb4_mgmt_get_vf_config(struct net_device *dev,
+  2891                                      int vf, struct ifla_vf_info *ivi)
+                                            ^^^^^^
+  2892  {
+  2893          struct port_info *pi = netdev_priv(dev);
+  2894          struct adapter *adap = pi->adapter;
+  2895          struct vf_info *vfinfo;
+  2896  
+  2897          if (vf >= adap->num_vfs)
+                    ^^^^^^^^^^^^^^^^^^^
+  2898                  return -EINVAL;
+  2899          vfinfo = &adap->vfinfo[vf];
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-On 11/19/19 5:36 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check on p->sink looks bogus, I believe it should be p->source
-> since the following code blocks are related to p->source. Fix
-> this by replacing p->sink with p->source.
-> 
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: 24c8d14192cc ("ASoC: Intel: mrfld: add DSP core controls")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> [ Note: this has not been tested ]
-> 
+There are 48 functions affected.
 
-wow, nice catch. this dates from October 2014 and was merged in Linux 3.19.
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:8435 hclge_set_vf_vlan_filter() warn: can 'vfid' underflow 's32min-2147483646'
+drivers/net/ethernet/freescale/enetc/enetc_pf.c:377 enetc_pf_set_vf_mac() warn: can 'vf' underflow 's32min-2147483646'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2899 cxgb4_mgmt_get_vf_config() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:2960 cxgb4_mgmt_set_vf_rate() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:3019 cxgb4_mgmt_set_vf_rate() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:3038 cxgb4_mgmt_set_vf_vlan() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:3086 cxgb4_mgmt_set_vf_link_state() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/chelsio/cxgb/cxgb2.c:791 get_eeprom() warn: can 'i' underflow 's32min-(-4),0,4-s32max'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:82 bnxt_set_vf_spoofchk() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:164 bnxt_set_vf_trust() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:186 bnxt_get_vf_config() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:228 bnxt_set_vf_mac() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:264 bnxt_set_vf_vlan() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:293 bnxt_set_vf_bw() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c:333 bnxt_set_vf_link_state() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:2595 bnx2x_vf_op_prep() warn: can 'vfidx' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:2595 bnx2x_vf_op_prep() warn: can 'vfidx' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2281 bnx2x_post_vf_bulletin() warn: can 'vf' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2285 bnx2x_post_vf_bulletin() warn: can 'vf' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2286 bnx2x_post_vf_bulletin() warn: can 'vf' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2292 bnx2x_post_vf_bulletin() warn: can 'vf' underflow 's32min-63'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:2297 bnx2x_post_vf_bulletin() warn: can 'vf' underflow 's32min-63'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1832 qlcnic_sriov_set_vf_mac() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1864 qlcnic_sriov_set_vf_tx_rate() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:1937 qlcnic_sriov_set_vf_vlan() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:2005 qlcnic_sriov_get_vf_config() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:2036 qlcnic_sriov_set_vf_spoofchk() warn: can 'vf' underflow 's32min-254'
+drivers/net/ethernet/emulex/benet/be_main.c:1914 be_get_vf_config() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1915 be_get_vf_config() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1922 be_set_vf_tvt() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:1951 be_clear_vf_tvt() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:2063 be_set_vf_tx_rate() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/emulex/benet/be_main.c:2091 be_set_vf_link_state() warn: can 'vf' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:2609 ice_set_vf_port_vlan() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:3050 ice_get_vf_cfg() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:3103 ice_set_vf_spoofchk() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:3181 ice_set_vf_mac() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:3237 ice_set_vf_trust() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c:3286 ice_set_vf_link_state() warn: can 'vf_id' underflow 's32min-65534'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:3919 i40e_validate_vf() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:3957 i40e_ndo_set_vf_mac() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4104 i40e_ndo_set_vf_port_vlan() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4263 i40e_ndo_set_vf_bw() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4309 i40e_ndo_get_vf_config() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4371 i40e_ndo_set_vf_link_state() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4441 i40e_ndo_set_vf_spoofchk() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4441 i40e_ndo_set_vf_spoofchk() warn: can 'vf_id' underflow 's32min-2147483646'
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4504 i40e_ndo_set_vf_trust() warn: can 'vf_id' underflow 's32min-2147483646'
 
-I did look at the entire function and indeed it does not seem logical at 
-all and rather an unintentional bad copy-paste, probably undetected 
-since changing the gains on capture is less straightforward to test.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-	if (stream = SNDRV_PCM_STREAM_PLAYBACK) {
-		dev_dbg(dai->dev, "Stream name=%s\n",
-				dai->playback_widget->name);
-		w = dai->playback_widget;
-		snd_soc_dapm_widget_for_each_sink_path(w, p) {
-			if (p->connected && !p->connected(w, p->sink))
-				continue;
-[snip]
-		}
-	} else {
-		dev_dbg(dai->dev, "Stream name=%s\n",
-				dai->capture_widget->name);
-		w = dai->capture_widget;
-		snd_soc_dapm_widget_for_each_source_path(w, p) {
-			if (p->connected && !p->connected(w, p->sink))
+I reported this bug to the linux-rdma mailing list in April and this
+patch wasn't considered very elegant.  I can see how that's true.  The
+developer offered to write a fix which would update all the drivers to
+use u32 throughout.  I reminded him in September that this bug still
+needs to be fixed.
 
-<< here it doesn't look right to use sink here.
+I think there may be security implications and this patch is easy to
+backport to stable kernels so in that sense, it might be a better
+approach.  Also this patch might prevent underflows in future drivers.
 
-				continue;
+ net/core/rtnetlink.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-This macro snd_soc_dapm_widget_for_each_source_path() is also used in 
-the skylake/skl-topology.c but without any source/sink inversion.
-
-I don't think anyone on the Intel side will have time to investigate 
-further, and unless someone from the initial contributors states this 
-was intentional (Vinod/Sanyog?), we should merge this.
-
-let's see if there's any feedback and if not I'll ack this.
-
-
-> ---
->   sound/soc/intel/atom/sst-atom-controls.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/atom/sst-atom-controls.c b/sound/soc/intel/atom/sst-atom-controls.c
-> index baef461a99f1..f883c9340eee 100644
-> --- a/sound/soc/intel/atom/sst-atom-controls.c
-> +++ b/sound/soc/intel/atom/sst-atom-controls.c
-> @@ -1333,7 +1333,7 @@ int sst_send_pipe_gains(struct snd_soc_dai *dai, int stream, int mute)
->   				dai->capture_widget->name);
->   		w = dai->capture_widget;
->   		snd_soc_dapm_widget_for_each_source_path(w, p) {
-> -			if (p->connected && !p->connected(w, p->sink))
-> +			if (p->connected && !p->connected(w, p->source))
->   				continue;
->   
->   			if (p->connect &&  p->source->power &&
-> 
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 000eddb1207d..9f7aa448bd11 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2251,6 +2251,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_MAC]) {
+ 		struct ifla_vf_mac *ivm = nla_data(tb[IFLA_VF_MAC]);
+ 
++		if (ivm->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_mac)
+ 			err = ops->ndo_set_vf_mac(dev, ivm->vf,
+@@ -2262,6 +2264,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_VLAN]) {
+ 		struct ifla_vf_vlan *ivv = nla_data(tb[IFLA_VF_VLAN]);
+ 
++		if (ivv->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_vlan)
+ 			err = ops->ndo_set_vf_vlan(dev, ivv->vf, ivv->vlan,
+@@ -2294,6 +2298,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 		if (len = 0)
+ 			return -EINVAL;
+ 
++		if (ivvl[0]->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = ops->ndo_set_vf_vlan(dev, ivvl[0]->vf, ivvl[0]->vlan,
+ 					   ivvl[0]->qos, ivvl[0]->vlan_proto);
+ 		if (err < 0)
+@@ -2304,6 +2310,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 		struct ifla_vf_tx_rate *ivt = nla_data(tb[IFLA_VF_TX_RATE]);
+ 		struct ifla_vf_info ivf;
+ 
++		if (ivt->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_get_vf_config)
+ 			err = ops->ndo_get_vf_config(dev, ivt->vf, &ivf);
+@@ -2322,6 +2330,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_RATE]) {
+ 		struct ifla_vf_rate *ivt = nla_data(tb[IFLA_VF_RATE]);
+ 
++		if (ivt->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_rate)
+ 			err = ops->ndo_set_vf_rate(dev, ivt->vf,
+@@ -2334,6 +2344,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_SPOOFCHK]) {
+ 		struct ifla_vf_spoofchk *ivs = nla_data(tb[IFLA_VF_SPOOFCHK]);
+ 
++		if (ivs->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_spoofchk)
+ 			err = ops->ndo_set_vf_spoofchk(dev, ivs->vf,
+@@ -2345,6 +2357,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_LINK_STATE]) {
+ 		struct ifla_vf_link_state *ivl = nla_data(tb[IFLA_VF_LINK_STATE]);
+ 
++		if (ivl->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_link_state)
+ 			err = ops->ndo_set_vf_link_state(dev, ivl->vf,
+@@ -2358,6 +2372,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 
+ 		err = -EOPNOTSUPP;
+ 		ivrssq_en = nla_data(tb[IFLA_VF_RSS_QUERY_EN]);
++		if (ivrssq_en->vf >= INT_MAX)
++			return -EINVAL;
+ 		if (ops->ndo_set_vf_rss_query_en)
+ 			err = ops->ndo_set_vf_rss_query_en(dev, ivrssq_en->vf,
+ 							   ivrssq_en->setting);
+@@ -2368,6 +2384,8 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_TRUST]) {
+ 		struct ifla_vf_trust *ivt = nla_data(tb[IFLA_VF_TRUST]);
+ 
++		if (ivt->vf >= INT_MAX)
++			return -EINVAL;
+ 		err = -EOPNOTSUPP;
+ 		if (ops->ndo_set_vf_trust)
+ 			err = ops->ndo_set_vf_trust(dev, ivt->vf, ivt->setting);
+@@ -2378,15 +2396,18 @@ static int do_setvfinfo(struct net_device *dev, struct nlattr **tb)
+ 	if (tb[IFLA_VF_IB_NODE_GUID]) {
+ 		struct ifla_vf_guid *ivt = nla_data(tb[IFLA_VF_IB_NODE_GUID]);
+ 
++		if (ivt->vf >= INT_MAX)
++			return -EINVAL;
+ 		if (!ops->ndo_set_vf_guid)
+ 			return -EOPNOTSUPP;
+-
+ 		return handle_vf_guid(dev, ivt, IFLA_VF_IB_NODE_GUID);
+ 	}
+ 
+ 	if (tb[IFLA_VF_IB_PORT_GUID]) {
+ 		struct ifla_vf_guid *ivt = nla_data(tb[IFLA_VF_IB_PORT_GUID]);
+ 
++		if (ivt->vf >= INT_MAX)
++			return -EINVAL;
+ 		if (!ops->ndo_set_vf_guid)
+ 			return -EOPNOTSUPP;
+ 
+-- 
+2.11.0
