@@ -1,54 +1,64 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Thu, 21 Nov 2019 11:30:35 +0000
+From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Date: Thu, 21 Nov 2019 14:44:49 +0000
 Subject: Re: [PATCH][next] perf probe: fix spelling mistake "addrees" -> "address"
-Message-Id: <20191121203035.5eae09a076f376472cd4465b@kernel.org>
+Message-Id: <20191121144449.GH5078@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191121092623.374896-1-colin.king@canonical.com>
-In-Reply-To: <20191121092623.374896-1-colin.king@canonical.com>
+ <20191121203035.5eae09a076f376472cd4465b@kernel.org>
+In-Reply-To: <20191121203035.5eae09a076f376472cd4465b@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Colin King <colin.king@canonical.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
-
-On Thu, 21 Nov 2019 09:26:23 +0000
-Colin King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+Em Thu, Nov 21, 2019 at 08:30:35PM +0900, Masami Hiramatsu escreveu:
+> Hi Colin,
 > 
-> There is a spelling mistake in a pr_warning message. Fix it.
-
-Oops, good catch! (How my finger miss-typed this...)
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
+> On Thu, 21 Nov 2019 09:26:23 +0000
+> Colin King <colin.king@canonical.com> wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/perf/util/probe-finder.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is a spelling mistake in a pr_warning message. Fix it.
 > 
-> diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-> index 38d6cd22779f..c470c49a804f 100644
-> --- a/tools/perf/util/probe-finder.c
-> +++ b/tools/perf/util/probe-finder.c
-> @@ -812,7 +812,7 @@ static int verify_representive_line(struct probe_finder *pf, const char *fname,
->  	if (strcmp(fname, __fname) || lineno = __lineno)
->  		return 0;
->  
-> -	pr_warning("This line is sharing the addrees with other lines.\n");
-> +	pr_warning("This line is sharing the address with other lines.\n");
->  
->  	if (pf->pev->point.function) {
->  		/* Find best match function name and lines */
+> Oops, good catch! (How my finger miss-typed this...)
+> 
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks, applied.
+
+- Arnaldo
+ 
+> Thank you!
+> 
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  tools/perf/util/probe-finder.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+> > index 38d6cd22779f..c470c49a804f 100644
+> > --- a/tools/perf/util/probe-finder.c
+> > +++ b/tools/perf/util/probe-finder.c
+> > @@ -812,7 +812,7 @@ static int verify_representive_line(struct probe_finder *pf, const char *fname,
+> >  	if (strcmp(fname, __fname) || lineno = __lineno)
+> >  		return 0;
+> >  
+> > -	pr_warning("This line is sharing the addrees with other lines.\n");
+> > +	pr_warning("This line is sharing the address with other lines.\n");
+> >  
+> >  	if (pf->pev->point.function) {
+> >  		/* Find best match function name and lines */
+> > -- 
+> > 2.24.0
+> > 
+> 
+> 
 > -- 
-> 2.24.0
-> 
-
+> Masami Hiramatsu <mhiramat@kernel.org>
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+
+- Arnaldo
