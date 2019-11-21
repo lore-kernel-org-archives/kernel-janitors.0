@@ -1,39 +1,90 @@
-From: "Ms.Mary Coster" <info.zennitbankplcnigerian@gmail.com>
-Date: Fri, 15 Nov 2019 15:49:07 +0000
-Subject: Goodnews, I have deposited your transfer total amount US$4.8million Dollars with Money Gram this mor
-Message-Id: <CABHzvrmypb4iEkfX0yr_sS+ZzXejHbQoznfDnH3aVoOB9wq8jA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 21 Nov 2019 03:22:53 +0000
+Subject: [PATCH] arch: Fix Kconfig indentation
+Message-Id: <1574306573-10886-1-git-send-email-krzk@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: keyrings@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 
-Attn, Dear
-Goodnews, I have deposited your transfer total amount US$4.8million
-Dollars with Money Gram this morning. we agreed you will be receiving
-it $5000.00 daily.
-Contact Mr. John Dave Director, Money Gram to pick up your first Money
-Gram payment $5000.00 today.
-Contact Person; Mr. John Dave Director, Money Gram,International
-Remittance-Benin
-Email; moneygram.1820@outlook.fr
-Telephone; +229 62619517
-Please re-confirm your address to him once again such as listed below.
-1.Your Full Name..............................
-2.Address.........................
-3.Country....................
-4.Sex.........................................
-5.Your telephone numbers..........................
-6. Copy of your ID...........................
-This is to avoid sending your funds to wrong person, He is waiting to
-hear from you urgent today.
-Let me know once you pick up your transfer $5000.00 today.
-Finally, Note I have paid for the service fees, but only money will
-send to him is $90.00 transfer fee before you can pick up the transfer
-today.
-Ask, Mr. John Dave Director, Money Gram to give you direction where to
-send your transfer fee $90.00 only to Him Immediately so that you can
-pick up $5000.00 us dollars today.
-Thanks for undrstanding.
-Mary Coster
-m.coster@aol.com
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes since v1:
+1. Fix also 7-space and tab+1 space indentation issues.
+---
+ arch/Kconfig | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 3c6ec65596da..3fd3e835f891 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -72,11 +72,11 @@ config KPROBES
+ 	  If in doubt, say "N".
+ 
+ config JUMP_LABEL
+-       bool "Optimize very unlikely/likely branches"
+-       depends on HAVE_ARCH_JUMP_LABEL
+-       depends on CC_HAS_ASM_GOTO
+-       help
+-         This option enables a transparent branch optimization that
++	bool "Optimize very unlikely/likely branches"
++	depends on HAVE_ARCH_JUMP_LABEL
++	depends on CC_HAS_ASM_GOTO
++	help
++	 This option enables a transparent branch optimization that
+ 	 makes certain almost-always-true or almost-always-false branch
+ 	 conditions even cheaper to execute within the kernel.
+ 
+@@ -84,7 +84,7 @@ config JUMP_LABEL
+ 	 scheduler functionality, networking code and KVM have such
+ 	 branches and include support for this optimization technique.
+ 
+-         If it is detected that the compiler has support for "asm goto",
++	 If it is detected that the compiler has support for "asm goto",
+ 	 the kernel will compile such branches with just a nop
+ 	 instruction. When the condition flag is toggled to true, the
+ 	 nop will be converted to a jump instruction to execute the
+@@ -151,8 +151,8 @@ config HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	  information on the topic of unaligned memory accesses.
+ 
+ config ARCH_USE_BUILTIN_BSWAP
+-       bool
+-       help
++	bool
++	help
+ 	 Modern versions of GCC (since 4.4) have builtin functions
+ 	 for handling byte-swapping. Using these, instead of the old
+ 	 inline assembler that the architecture code provides in the
+@@ -221,10 +221,10 @@ config HAVE_DMA_CONTIGUOUS
+ 	bool
+ 
+ config GENERIC_SMP_IDLE_THREAD
+-       bool
++	bool
+ 
+ config GENERIC_IDLE_POLL_SETUP
+-       bool
++	bool
+ 
+ config ARCH_HAS_FORTIFY_SOURCE
+ 	bool
+@@ -257,7 +257,7 @@ config ARCH_HAS_UNCACHED_SEGMENT
+ 
+ # Select if arch init_task must go in the __init_task_data section
+ config ARCH_TASK_STRUCT_ON_STACK
+-       bool
++	bool
+ 
+ # Select if arch has its private alloc_task_struct() function
+ config ARCH_TASK_STRUCT_ALLOCATOR
+-- 
+2.7.4
