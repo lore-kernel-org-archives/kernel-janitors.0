@@ -1,54 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 03 Nov 2019 13:07:20 +0000
-Subject: [PATCH] media: siano: fix spelling mistake "ENBALE" -> "ENABLE"
-Message-Id: <20191103130720.22459-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 21 Nov 2019 08:55:58 +0000
+Subject: Re: [PATCH v4 00/13] add the latest exfat driver
+Message-Id: <dcbf6d35-b550-53bc-0c8a-2e54497173e2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20191121052913epcas1p1b28d2727dca5df42a6f2b8eb6b6dbcbb@epcas1p1.samsung.com>
+ <20191121052618.31117-1-namjae.jeon@samsung.com>
+In-Reply-To: <20191121052618.31117-1-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-From: Colin Ian King <colin.king@canonical.com>
+…
+> v2:
+…
+>  - Rename proper goto labels in several places.
 
-Macros MSG_SMS_ENBALE_TS_INTERFACE_REQ and MSG_SMS_ENBALE_TS_INTERFACE_RES
-contain a spelling mistake. Fix these by replacing ENBALE with ENABLE.
+I find an other wording more appropriate.
+A renaming would have not been needed if these identifiers were “proper” before.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/common/siano/smscoreapi.c | 4 ++--
- drivers/media/common/siano/smscoreapi.h | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Were any update candidates left over according to this change pattern?
 
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index 0ba51dacc580..c1511094fdc7 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -230,8 +230,8 @@ static char *siano_msgs[] = {
- 	[MSG_SMS_FLASH_DL_REQ                        - MSG_TYPE_BASE_VAL] = "MSG_SMS_FLASH_DL_REQ",
- 	[MSG_SMS_EXEC_TEST_1_REQ                     - MSG_TYPE_BASE_VAL] = "MSG_SMS_EXEC_TEST_1_REQ",
- 	[MSG_SMS_EXEC_TEST_1_RES                     - MSG_TYPE_BASE_VAL] = "MSG_SMS_EXEC_TEST_1_RES",
--	[MSG_SMS_ENBALE_TS_INTERFACE_REQ             - MSG_TYPE_BASE_VAL] = "MSG_SMS_ENBALE_TS_INTERFACE_REQ",
--	[MSG_SMS_ENBALE_TS_INTERFACE_RES             - MSG_TYPE_BASE_VAL] = "MSG_SMS_ENBALE_TS_INTERFACE_RES",
-+	[MSG_SMS_ENABLE_TS_INTERFACE_REQ             - MSG_TYPE_BASE_VAL] = "MSG_SMS_ENABLE_TS_INTERFACE_REQ",
-+	[MSG_SMS_ENABLE_TS_INTERFACE_RES             - MSG_TYPE_BASE_VAL] = "MSG_SMS_ENABLE_TS_INTERFACE_RES",
- 	[MSG_SMS_SPI_SET_BUS_WIDTH_REQ               - MSG_TYPE_BASE_VAL] = "MSG_SMS_SPI_SET_BUS_WIDTH_REQ",
- 	[MSG_SMS_SPI_SET_BUS_WIDTH_RES               - MSG_TYPE_BASE_VAL] = "MSG_SMS_SPI_SET_BUS_WIDTH_RES",
- 	[MSG_SMS_SEND_EMM_REQ                        - MSG_TYPE_BASE_VAL] = "MSG_SMS_SEND_EMM_REQ",
-diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-index a2f95f4899c2..b3b793b5caf3 100644
---- a/drivers/media/common/siano/smscoreapi.h
-+++ b/drivers/media/common/siano/smscoreapi.h
-@@ -434,8 +434,8 @@ enum msg_types {
- 	MSG_SMS_FLASH_DL_REQ = 732,
- 	MSG_SMS_EXEC_TEST_1_REQ = 734,
- 	MSG_SMS_EXEC_TEST_1_RES = 735,
--	MSG_SMS_ENBALE_TS_INTERFACE_REQ = 736,
--	MSG_SMS_ENBALE_TS_INTERFACE_RES = 737,
-+	MSG_SMS_ENABLE_TS_INTERFACE_REQ = 736,
-+	MSG_SMS_ENABLE_TS_INTERFACE_RES = 737,
- 	MSG_SMS_SPI_SET_BUS_WIDTH_REQ = 738,
- 	MSG_SMS_SPI_SET_BUS_WIDTH_RES = 739,
- 	MSG_SMS_SEND_EMM_REQ = 740,
--- 
-2.20.1
+Regards,
+Markus
