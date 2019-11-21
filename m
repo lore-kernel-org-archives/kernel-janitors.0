@@ -1,72 +1,27 @@
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-Date: Tue, 19 Nov 2019 13:27:45 +0000
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 21 Nov 2019 09:13:23 +0000
 Subject: Re: [PATCH -next] KVM: x86: remove set but not used variable 'called'
-Message-Id: <877e3wgfn2.fsf@vitty.brq.redhat.com>
+Message-Id: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191119030640.25097-1-maowenan@huawei.com> <87o8x8gjr5.fsf@vitty.brq.redhat.com> <b164198f-2418-5f24-3f2f-cf8027af14b1@huawei.com>
-In-Reply-To: <b164198f-2418-5f24-3f2f-cf8027af14b1@huawei.com>
+References: <20191119030640.25097-1-maowenan@huawei.com>
+ <87o8x8gjr5.fsf@vitty.brq.redhat.com> <20191119121423.GB5604@kadam>
+In-Reply-To: <20191119121423.GB5604@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: maowenan <maowenan@huawei.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com, sean.j.christopherson@intel.com, wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Mao Wenan <maowenan@huawei.com>, rkrcmar@redhat.com, sean.j.christopherson@intel.com, wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-maowenan <maowenan@huawei.com> writes:
-
-> 在 2019/11/19 19:58, Vitaly Kuznetsov 写道:
->> Mao Wenan <maowenan@huawei.com> writes:
->> 
->>> Fixes gcc '-Wunused-but-set-variable' warning:
->>>
->>> arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
->>> arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
->>> used [-Wunused-but-set-variable]
->>>
->>> It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
->>> IOAPIC scan request to target vCPUs")
->> 
+On 19/11/19 13:14, Dan Carpenter wrote:
 >> Better expressed as 
->> 
+>>
 >> Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target vCPUs")
 >
-> This is just a cleanup, so Fixes tag is no need.
->> 
+> There is sort of a debate about this whether the Fixes tag should be
+> used if it's only a cleanup.
 
-Just a cleanup -- unless we compile with '-Werror'.
+The other debate is whether this is a cleanup, since the build is broken
+with -Werror.  I agree that code cleanups generally don't deserve Fixes
+tags, but this patch IMHO does.
 
->>>
->>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->>> ---
->>>  arch/x86/kvm/x86.c | 5 ++---
->>>  1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>> index 0d0a682..870f0bc 100644
->>> --- a/arch/x86/kvm/x86.c
->>> +++ b/arch/x86/kvm/x86.c
->>> @@ -7908,12 +7908,11 @@ void kvm_make_scan_ioapic_request_mask(struct kvm *kvm,
->>>  				       unsigned long *vcpu_bitmap)
->>>  {
->>>  	cpumask_var_t cpus;
->>> -	bool called;
->>>  
->>>  	zalloc_cpumask_var(&cpus, GFP_ATOMIC);
->>>  
->>> -	called = kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
->>> -					     vcpu_bitmap, cpus);
->>> +	kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
->>> +				    vcpu_bitmap, cpus);
->> 
->> IMHO as kvm_make_vcpus_request_mask() returns value it would probably
->> make sense to explicitly show that we're not interested in the result,
->> 
->> (void)kvm_make_vcpus_request_mask()
->
-> thanks, but I think is no need to add (void) before kvm_make_vcpus_request_mask()
-> because we are not interested in it's return value.
-
-Hm, that's exactly the reason why I suggested adding it there :-) Not a
-big deal, feel free to ignore.
-
--- 
-Vitaly
+Paolo
