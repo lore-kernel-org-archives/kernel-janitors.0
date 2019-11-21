@@ -1,45 +1,67 @@
-From: Harry Wentland <hwentlan@amd.com>
-Date: Wed, 27 Nov 2019 16:51:33 +0000
-Subject: Re: [PATCH][next] drm/amd/display: fix double assignment to msg_id field
-Message-Id: <9056b19a-f63c-8fc0-d2f7-6df3a20c95a7@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Nov 2019 09:44:19 +0000
+Subject: [bug report] octeontx2-af: Dump current resource provisioning status
+Message-Id: <20191121094419.ktgp5w4r7mhclzet@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191120172242.347072-1-colin.king@canonical.com>
-In-Reply-To: <20191120172242.347072-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, Leo Li <sunpeng.li-5C7GfCeVMHo@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, David Zhou <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-On 2019-11-20 12:22 p.m., Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The msg_id field is being assigned twice. Fix this by replacing the second
-> assignment with an assignment to msg_size.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: 11a00965d261 ("drm/amd/display: Add PSP block to verify HDCP2.2 steps")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello Christina Jacob,
 
-Reviewed-by: Harry Wentland <harry.wentland>
+The patch 23205e6d06d4: "octeontx2-af: Dump current resource
+provisioning status" from Nov 14, 2019, leads to the following static
+checker warning:
 
-Harry
+	drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c:167 rvu_dbg_rsrc_attach_status()
+	warn: was precision intended? '(index - 1) * 2'
 
-> ---
->  drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> index 2dd5feec8e6c..6791c5844e43 100644
-> --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> @@ -42,7 +42,7 @@ static void hdcp2_message_init(struct mod_hdcp *hdcp,
->  	in->process.msg2_desc.msg_id = TA_HDCP_HDCP2_MSG_ID__NULL_MESSAGE;
->  	in->process.msg2_desc.msg_size = 0;
->  	in->process.msg3_desc.msg_id = TA_HDCP_HDCP2_MSG_ID__NULL_MESSAGE;
-> -	in->process.msg3_desc.msg_id = 0;
-> +	in->process.msg3_desc.msg_size = 0;
->  }
->  enum mod_hdcp_status mod_hdcp_remove_display_topology(struct mod_hdcp *hdcp)
->  {
-> 
+drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+   143  static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
+   144                                            char __user *buffer,
+   145                                            size_t count, loff_t *ppos)
+   146  {
+   147          int index, off = 0, flag = 0, go_back = 0, off_prev;
+   148          struct rvu *rvu = filp->private_data;
+   149          int lf, pf, vf, pcifunc;
+   150          struct rvu_block block;
+   151          int bytes_not_copied;
+   152          int buf_size = 2048;
+   153          char *buf;
+   154  
+   155          /* don't allow partial reads */
+   156          if (*ppos != 0)
+   157                  return 0;
+   158  
+   159          buf = kzalloc(buf_size, GFP_KERNEL);
+   160          if (!buf)
+   161                  return -ENOSPC;
+   162          off +=  scnprintf(&buf[off], buf_size - 1 - off, "\npcifunc\t\t");
+   163          for (index = 0; index < BLK_COUNT; index++)
+   164                  if (strlen(rvu->hw->block[index].name))
+   165                          off +=  scnprintf(&buf[off], buf_size - 1 - off,
+   166                                            "%*s\t", (index - 1) * 2,
+   167                                            rvu->hw->block[index].name);
+
+This is a static checker false positive, because width is clearly
+intended but on the first iteration throught the loop the precision
+is -2 which is sort of weird.
+
+Each column here would be 2 charaters wider than the last.  That's also
+sort of weird.
+
+The other comment that I have here is that the -1 in "buf_size - 1 -
+off" is not required.  scnprintf() will always ensure that the string
+is NUL terminated.
+
+   168          off += scnprintf(&buf[off], buf_size - 1 - off, "\n");
+   169          for (pf = 0; pf < rvu->hw->total_pfs; pf++) {
+   170                  for (vf = 0; vf <= rvu->hw->total_vfs; vf++) {
+   171                          pcifunc = pf << 10 | vf;
+   172                          if (!pcifunc)
+   173                                  continue;
+   174  
+
+regards,
+dan carpenter
