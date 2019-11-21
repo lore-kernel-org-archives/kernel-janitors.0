@@ -1,50 +1,48 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Fri, 22 Nov 2019 02:39:23 +0000
-Subject: [PATCH -next v2] KVM: x86: remove set but not used variable 'called'
-Message-Id: <20191122023923.155013-1-maowenan@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 21 Nov 2019 14:10:10 +0000
+Subject: Re: [PATCH v4 06/13] exfat: add exfat entry operations
+Message-Id: <bf2e73f2-08b3-5221-2702-524ba6a07497@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
-In-Reply-To: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
+References: <20191121052618.31117-1-namjae.jeon@samsung.com>
+ <CGME20191121052918epcas1p284be629c57ced93afe88b94a35437cb2@epcas1p2.samsung.com>
+ <20191121052618.31117-7-namjae.jeon@samsung.com>
+In-Reply-To: <20191121052618.31117-7-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: pbonzini@redhat.com, rkrcmar@redhat.com, sean.j.christopherson@intel.com, vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com, nitesh@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+…
+> +++ b/fs/exfat/fatent.c
+…
+> +int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain)
+> +{
+…
+> +out:
+> +	sbi->used_clusters -= num_clusters;
 
-arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
-arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
-used [-Wunused-but-set-variable]
+Can a label like “decrement_counter” be more helpful?
 
-It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
-IOAPIC scan request to target vCPUs")
 
-Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target vCPUs")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v2: add fixes tag since Paolo and Vitaly proposal.
- arch/x86/kvm/x86.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+…
+> +int exfat_mirror_bh(struct super_block *sb, sector_t sec,
+> +		struct buffer_head *bh)
+> +{
+…
+> +		if (!c_bh) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0d0a682..870f0bc 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7908,12 +7908,11 @@ void kvm_make_scan_ioapic_request_mask(struct kvm *kvm,
- 				       unsigned long *vcpu_bitmap)
- {
- 	cpumask_var_t cpus;
--	bool called;
- 
- 	zalloc_cpumask_var(&cpus, GFP_ATOMIC);
- 
--	called = kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
--					     vcpu_bitmap, cpus);
-+	kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
-+				    vcpu_bitmap, cpus);
- 
- 	free_cpumask_var(cpus);
- }
--- 
-2.7.4
+Can it be nicer to return directly?
+
+…
+> +out:
+> +	return err;
+> +}
+
+Would you like to omit such a label for this function implementation?
+
+Regards,
+Markus
