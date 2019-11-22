@@ -1,51 +1,38 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 21 Nov 2019 18:35:59 +0000
-Subject: Re: [PATCH][next] drm/amdgpu: remove redundant assignment to pointer write_frame
-Message-Id: <CADnq5_OGNUUvixju5qJf7Q_iYu--LAD3LWhXB4pkQFpjS5HpMQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Nov 2019 23:15:04 +0000
+Subject: [PATCH] drm/radeon: remove redundant assignment to variable ret
+Message-Id: <20191122231504.109948-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121165401.405845-1-colin.king@canonical.com>
-In-Reply-To: <20191121165401.405845-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied.  thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Alex
+The variable ret is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-On Thu, Nov 21, 2019 at 11:54 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer write_frame is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> index 2a8a08aa6eaf..c02f9ffe5c6b 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-> @@ -1728,7 +1728,7 @@ int psp_ring_cmd_submit(struct psp_context *psp,
->                         int index)
->  {
->         unsigned int psp_write_ptr_reg = 0;
-> -       struct psp_gfx_rb_frame *write_frame = psp->km_ring.ring_mem;
-> +       struct psp_gfx_rb_frame *write_frame;
->         struct psp_ring *ring = &psp->km_ring;
->         struct psp_gfx_rb_frame *ring_buffer_start = ring->ring_mem;
->         struct psp_gfx_rb_frame *ring_buffer_end = ring_buffer_start +
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/radeon/si_dpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
+index 8148a7883de4..346315b3eebe 100644
+--- a/drivers/gpu/drm/radeon/si_dpm.c
++++ b/drivers/gpu/drm/radeon/si_dpm.c
+@@ -5899,7 +5899,7 @@ static int si_patch_single_dependency_table_based_on_leakage(struct radeon_devic
+ 
+ static int si_patch_dependency_tables_based_on_leakage(struct radeon_device *rdev)
+ {
+-	int ret = 0;
++	int ret;
+ 
+ 	ret = si_patch_single_dependency_table_based_on_leakage(rdev,
+ 								&rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk);
+-- 
+2.24.0
