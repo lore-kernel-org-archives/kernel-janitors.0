@@ -1,32 +1,50 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Mon, 18 Nov 2019 04:59:40 +0000
-Subject: RE: [PATCH 01/13] exfat: add in-memory and on-disk structures and headers
-Message-Id: <00ba01d59dcc$fc17e010$f447a030$@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Nov 2019 23:31:20 +0000
+Subject: [PATCH] fsi: fix bogos error returns from cfam_read and cfam_write
+Message-Id: <20191122233120.110344-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113081800.7672-2-namjae.jeon@samsung.com>
-        <CGME20191117122540epcas4p2cd0e2b9658154c81ae9d2e46882efaa0@epcas4p2.samsung.com>
-        <a4bd8e3e-fcdc-9739-5407-5345743fb0b9@web.de>
-In-Reply-To: <a4bd8e3e-fcdc-9739-5407-5345743fb0b9@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: 'Markus Elfring' <Markus.Elfring@web.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Christoph Hellwig' <hch@lst.de>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Sungjong Seo' <sj1557.seo@samsung.com>, =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Alistar Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-fsi@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> …
-> > +++ b/fs/exfat/exfat_fs.h
-> > @@ -0,0 +1,533 @@
-> …
-> > +/* time modes */
-> > +#define TM_CREATE		0
-> > +#define TM_MODIFY		1
-> …
-> 
-> Will it be helpful to work with more enumerations (besides
-> “exfat_error_mode”)
-> at such places?
-Yep, Will fix it on V2.
-Thanks for your review!
-> 
-> Regards,
-> Markus
+From: Colin Ian King <colin.king@canonical.com>
+
+In the case where errors occur in functions cfam_read and cfam_write
+the error return code in rc is not returned and a bogus non-error
+count size is returned instead. Fix this by returning the correct
+error code when an error occurs or the count size if the functions
+worked correctly.
+
+Addresses-Coverity: ("Unused value")
+Fixes: d1dcd6782576 ("fsi: Add cfam char devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/fsi/fsi-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 8244da8a7241..c3885b138ead 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -718,7 +718,7 @@ static ssize_t cfam_read(struct file *filep, char __user *buf, size_t count,
+ 	rc = count;
+  fail:
+ 	*offset = off;
+-	return count;
++	return rc;
+ }
+ 
+ static ssize_t cfam_write(struct file *filep, const char __user *buf,
+@@ -755,7 +755,7 @@ static ssize_t cfam_write(struct file *filep, const char __user *buf,
+ 	rc = count;
+  fail:
+ 	*offset = off;
+-	return count;
++	return rc;
+ }
+ 
+ static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
+-- 
+2.24.0
