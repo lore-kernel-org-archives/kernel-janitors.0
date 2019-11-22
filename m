@@ -1,49 +1,40 @@
-From: Dragan Cvetic <draganc@xilinx.com>
-Date: Thu, 07 Nov 2019 21:58:01 +0000
-Subject: RE: [PATCH 2/2] misc: xilinx_sdfec: Combine three condition checks into one statement in xsdfec_add_
-Message-Id: <CH2PR02MB63591F1841AC0E54656BDB92CB780@CH2PR02MB6359.namprd02.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Nov 2019 23:04:07 +0000
+Subject: [PATCH] drm/amd/powerplay: remove redundant assignment to variables HiSidd and LoSidd
+Message-Id: <20191122230407.109636-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <af1ff373-56c0-ca49-36dd-15666d183c95@web.de>
- <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
-In-Reply-To: <b927be91-a380-1bba-2b10-f0ca49c477b5@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <dkiernan@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michals@xilinx.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFya3VzIEVsZnJpbmcg
-W21haWx0bzpNYXJrdXMuRWxmcmluZ0B3ZWIuZGVdDQo+IFNlbnQ6IFR1ZXNkYXkgNSBOb3ZlbWJl
-ciAyMDE5IDE4OjU2DQo+IFRvOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
-IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+OyBEZXJlayBLaWVybmFuIDxka2llcm5hbkB4
-aWxpbnguY29tPjsgRHJhZ2FuIEN2ZXRpYw0KPiA8ZHJhZ2FuY0B4aWxpbnguY29tPjsgR3JlZyBL
-cm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IE1pY2hhbCBTaW1layA8
-bWljaGFsc0B4aWxpbnguY29tPg0KPiBDYzogTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZz47IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENI
-IDIvMl0gbWlzYzogeGlsaW54X3NkZmVjOiBDb21iaW5lIHRocmVlIGNvbmRpdGlvbiBjaGVja3Mg
-aW50byBvbmUgc3RhdGVtZW50IGluIHhzZGZlY19hZGRfbGRwYygpDQo+IA0KPiBGcm9tOiBNYXJr
-dXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFR1ZSwg
-NSBOb3YgMjAxOSAxOTozMjoyNSArMDEwMA0KPiANCj4gVGhlIHNhbWUgcmV0dXJuIGNvZGUgd2Fz
-IHNldCBhZnRlciB0aHJlZSBjb25kaXRpb24gY2hlY2tzLg0KPiBUaHVzIHVzZSBhIHNpbmdsZSBz
-dGF0ZW1lbnQgaW5zdGVhZC4NCj4gDQo+IEZpeGVzOiAyMGVjNjI4ZTgwMDdlYzc1YzJmODg0ZTAw
-MDA0ZjM5ZWFiNjI4OWI1ICgibWlzYzogeGlsaW54X3NkZmVjOiBBZGQgYWJpbGl0eSB0byBjb25m
-aWd1cmUgTERQQyIpDQo+IFNpZ25lZC1vZmYtYnk6IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVz
-ZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gLS0tDQo+ICBkcml2ZXJzL21pc2MveGlsaW54X3NkZmVj
-LmMgfCAxNiArKysrLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
-KCspLCAxMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21pc2MveGls
-aW54X3NkZmVjLmMgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gaW5kZXggYTYyMmZj
-ZjQ5NTRhLi4zMjJkNWM2ZTZkMTIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWlzYy94aWxpbnhf
-c2RmZWMuYw0KPiArKysgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gQEAgLTY1Mywx
-OCArNjUzLDEwIEBAIHN0YXRpYyBpbnQgeHNkZmVjX2FkZF9sZHBjKHN0cnVjdCB4c2RmZWNfZGV2
-ICp4c2RmZWMsIHZvaWQgX191c2VyICphcmcpDQo+ICAJaWYgKElTX0VSUihsZHBjKSkNCj4gIAkJ
-cmV0dXJuIFBUUl9FUlIobGRwYyk7DQo+IA0KPiAtCWlmICh4c2RmZWMtPmNvbmZpZy5jb2RlID09
-IFhTREZFQ19UVVJCT19DT0RFKSB7DQo+IC0JCXJldCA9IC1FSU87DQo+IC0JCWdvdG8gZXJyX291
-dDsNCj4gLQl9DQo+IC0NCj4gLQkvKiBWZXJpZnkgRGV2aWNlIGhhcyBub3Qgc3RhcnRlZCAqLw0K
-PiAtCWlmICh4c2RmZWMtPnN0YXRlID09IFhTREZFQ19TVEFSVEVEKSB7DQo+IC0JCXJldCA9IC1F
-SU87DQo+IC0JCWdvdG8gZXJyX291dDsNCj4gLQl9DQo+IC0NCj4gLQlpZiAoeHNkZmVjLT5jb25m
-aWcuY29kZV93cl9wcm90ZWN0KSB7DQo+ICsJaWYgKHhzZGZlYy0+Y29uZmlnLmNvZGUgPT0gWFNE
-RkVDX1RVUkJPX0NPREUgfHwNCj4gKwkgICAgLyogVmVyaWZ5IGRldmljZSBoYXMgbm90IHN0YXJ0
-ZWQgKi8NCj4gKwkgICAgeHNkZmVjLT5zdGF0ZSA9PSBYU0RGRUNfU1RBUlRFRCB8fA0KPiArCSAg
-ICB4c2RmZWMtPmNvbmZpZy5jb2RlX3dyX3Byb3RlY3QpIHsNCj4gIAkJcmV0ID0gLUVJTzsNCj4g
-IAkJZ290byBlcnJfb3V0Ow0KPiAgCX0NCj4gLS0NCj4gMi4yNC4wDQoNCkFja2VkLWJ5OiBEcmFn
-YW4gQ3ZldGljIDxkcmFnYW4uY3ZldGljQHhpbGlueC5jb20+DQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The variables HiSidd and LoSidd are being initialized with values that
+are never read and are being updated a little later with a new value.
+The initialization is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+index 15590fd86ef4..868e2d5f6e62 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+@@ -653,8 +653,8 @@ static int ci_min_max_v_gnbl_pm_lid_from_bapm_vddc(struct pp_hwmgr *hwmgr)
+ static int ci_populate_bapm_vddc_base_leakage_sidd(struct pp_hwmgr *hwmgr)
+ {
+ 	struct ci_smumgr *smu_data = (struct ci_smumgr *)(hwmgr->smu_backend);
+-	uint16_t HiSidd = smu_data->power_tune_table.BapmVddCBaseLeakageHiSidd;
+-	uint16_t LoSidd = smu_data->power_tune_table.BapmVddCBaseLeakageLoSidd;
++	uint16_t HiSidd;
++	uint16_t LoSidd;
+ 	struct phm_cac_tdp_table *cac_table = hwmgr->dyn_state.cac_dtp_table;
+ 
+ 	HiSidd = (uint16_t)(cac_table->usHighCACLeakage / 100 * 256);
+-- 
+2.24.0
