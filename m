@@ -1,44 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Nov 2019 06:22:32 +0000
-Subject: [bug report] misc: rtsx: Add support for RTS5261
-Message-Id: <20191118064150.ambybsbmnx4treko@kili.mountain>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 22 Nov 2019 02:39:23 +0000
+Subject: [PATCH -next v2] KVM: x86: remove set but not used variable 'called'
+Message-Id: <20191122023923.155013-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
+In-Reply-To: <61f534ca-7575-6716-10ec-ac5c92258452@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: pbonzini@redhat.com, rkrcmar@redhat.com, sean.j.christopherson@intel.com, vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com, nitesh@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-Hello Rui Feng,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The patch c0e5f4e73a71: "misc: rtsx: Add support for RTS5261" from
-Oct 21, 2019, leads to the following static checker warning:
+arch/x86/kvm/x86.c: In function kvm_make_scan_ioapic_request_mask:
+arch/x86/kvm/x86.c:7911:7: warning: variable called set but not
+used [-Wunused-but-set-variable]
 
-	drivers/misc/cardreader/rts5261.c:667 rts5261_pci_switch_clock()
-	warn: impossible condition '(n > 396) => (0-255 > 396)'
+It is not used since commit 7ee30bc132c6 ("KVM: x86: deliver KVM
+IOAPIC scan request to target vCPUs")
 
-drivers/misc/cardreader/rts5261.c
-   657          pcr_dbg(pcr, "Internal SSC clock: %dMHz (cur_clock = %d)\n",
-   658                  clk, pcr->cur_clock);
-   659  
-   660          if (clk = pcr->cur_clock)
-   661                  return 0;
-   662  
-   663          if (pcr->ops->conv_clk_and_div_n)
-   664                  n = (u8)pcr->ops->conv_clk_and_div_n(clk, CLK_TO_DIV_N);
-   665          else
-   666                  n = (u8)(clk - 4);
-                        ^^^^^^^^^^^^^^^^^
+Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target vCPUs")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: add fixes tag since Paolo and Vitaly proposal.
+ arch/x86/kvm/x86.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-   667          if ((clk <= 4) || (n > 396))
-                                   ^^^^^^^
-A u8 can only go up to 255.
-
-   668                  return -EINVAL;
-   669  
-   670          mcu_cnt = (u8)(125/clk + 3);
-   671          if (mcu_cnt > 15)
-   672                  mcu_cnt = 15;
-   673  
-
-regards,
-dan carpenter
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0d0a682..870f0bc 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7908,12 +7908,11 @@ void kvm_make_scan_ioapic_request_mask(struct kvm *kvm,
+ 				       unsigned long *vcpu_bitmap)
+ {
+ 	cpumask_var_t cpus;
+-	bool called;
+ 
+ 	zalloc_cpumask_var(&cpus, GFP_ATOMIC);
+ 
+-	called = kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
+-					     vcpu_bitmap, cpus);
++	kvm_make_vcpus_request_mask(kvm, KVM_REQ_SCAN_IOAPIC,
++				    vcpu_bitmap, cpus);
+ 
+ 	free_cpumask_var(cpus);
+ }
+-- 
+2.7.4
