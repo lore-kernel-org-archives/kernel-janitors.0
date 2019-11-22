@@ -1,42 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 21 Nov 2019 22:44:29 +0000
+From: Parav Pandit <parav@mellanox.com>
+Date: Fri, 22 Nov 2019 07:21:22 +0000
 Subject: Re: [PATCH net] net: rtnetlink: prevent underflows in do_setvfinfo()
-Message-Id: <20191121.144429.649625073638417068.davem@davemloft.net>
+Message-Id: <a3f851fb-e148-d386-e9dd-29e7d89c93fa@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191120123438.vxn2ngnxzpcaqot4@kili.mountain>
-In-Reply-To: <20191120123438.vxn2ngnxzpcaqot4@kili.mountain>
+ <20191121.144429.649625073638417068.davem@davemloft.net>
+In-Reply-To: <20191121.144429.649625073638417068.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@mellanox.com, dsahern@gmail.com, idosch@mellanox.com, petrm@mellanox.com, jakub.kicinski@netronome.com, nikolay@cumulusnetworks.com, parav@mellanox.com, roopa@cumulusnetworks.com, johannes.berg@intel.com, mkubecek@suse.cz, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Miller <davem@davemloft.net>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: Jiri Pirko <jiri@mellanox.com>, "dsahern@gmail.com" <dsahern@gmail.com>, Ido Schimmel <idosch@mellanox.com>, Petr Machata <petrm@mellanox.com>, "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>, "nikolay@cumulusnetworks.com" <nikolay@cumulusnetworks.com>, "roopa@cumulusnetworks.com" <roopa@cumulusnetworks.com>, "johannes.berg@intel.com" <johannes.berg@intel.com>, "mkubecek@suse.cz" <mkubecek@suse.cz>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Nov 2019 15:34:38 +0300
-
-> The "ivm->vf" variable is a u32, but the problem is that a number of
-> drivers cast it to an int and then forget to check for negatives.  An
-> example of this is in the cxgb4 driver.
-> 
-> drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
->   2890  static int cxgb4_mgmt_get_vf_config(struct net_device *dev,
->   2891                                      int vf, struct ifla_vf_info *ivi)
->                                             ^^^^^^
->   2892  {
->   2893          struct port_info *pi = netdev_priv(dev);
->   2894          struct adapter *adap = pi->adapter;
->   2895          struct vf_info *vfinfo;
->   2896  
->   2897          if (vf >= adap->num_vfs)
->                     ^^^^^^^^^^^^^^^^^^^
->   2898                  return -EINVAL;
->   2899          vfinfo = &adap->vfinfo[vf];
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> There are 48 functions affected.
- ...
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-I'm going to apply this and queue it up for -stable.
-
-The u32 conversion should happen in next.
+T24gMTEvMjEvMjAxOSA0OjQ0IFBNLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+IEZyb206IERhbiBD
+YXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gRGF0ZTogV2VkLCAyMCBOb3Yg
+MjAxOSAxNTozNDozOCArMDMwMA0KPg0KPj4gVGhlICJpdm0tPnZmIiB2YXJpYWJsZSBpcyBhIHUz
+MiwgYnV0IHRoZSBwcm9ibGVtIGlzIHRoYXQgYSBudW1iZXIgb2YNCj4+IGRyaXZlcnMgY2FzdCBp
+dCB0byBhbiBpbnQgYW5kIHRoZW4gZm9yZ2V0IHRvIGNoZWNrIGZvciBuZWdhdGl2ZXMuICBBbg0K
+Pj4gZXhhbXBsZSBvZiB0aGlzIGlzIGluIHRoZSBjeGdiNCBkcml2ZXIuDQo+Pg0KPj4gZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvY2hlbHNpby9jeGdiNC9jeGdiNF9tYWluLmMNCj4+ICAgMjg5MCAgc3Rh
+dGljIGludCBjeGdiNF9tZ210X2dldF92Zl9jb25maWcoc3RydWN0IG5ldF9kZXZpY2UgKmRldiwN
+Cj4+ICAgMjg5MSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IHZmLCBz
+dHJ1Y3QgaWZsYV92Zl9pbmZvICppdmkpDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIF5eXl5eXg0KPj4gICAyODkyICB7DQo+PiAgIDI4OTMgICAgICAgICAg
+c3RydWN0IHBvcnRfaW5mbyAqcGkgPSBuZXRkZXZfcHJpdihkZXYpOw0KPj4gICAyODk0ICAgICAg
+ICAgIHN0cnVjdCBhZGFwdGVyICphZGFwID0gcGktPmFkYXB0ZXI7DQo+PiAgIDI4OTUgICAgICAg
+ICAgc3RydWN0IHZmX2luZm8gKnZmaW5mbzsNCj4+ICAgMjg5NiAgDQo+PiAgIDI4OTcgICAgICAg
+ICAgaWYgKHZmID49IGFkYXAtPm51bV92ZnMpDQo+PiAgICAgICAgICAgICAgICAgICAgIF5eXl5e
+Xl5eXl5eXl5eXl5eXl4NCj4+ICAgMjg5OCAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
+Ow0KPj4gICAyODk5ICAgICAgICAgIHZmaW5mbyA9ICZhZGFwLT52ZmluZm9bdmZdOw0KPj4gICAg
+ICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eDQo+Pg0KPj4gVGhlcmUgYXJl
+IDQ4IGZ1bmN0aW9ucyBhZmZlY3RlZC4NCj4gIC4uLg0KPj4gU2lnbmVkLW9mZi1ieTogRGFuIENh
+cnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiBJJ20gZ29pbmcgdG8gYXBwbHkg
+dGhpcyBhbmQgcXVldWUgaXQgdXAgZm9yIC1zdGFibGUuDQo+DQo+IFRoZSB1MzIgY29udmVyc2lv
+biBzaG91bGQgaGFwcGVuIGluIG5leHQuDQpva2F5Lg0KV2hlbiBEYW4gcmVwb3J0ZWQsIEkgcmV2
+aWV3ZWQgYW5kIHdyb3RlIHRoZSBwYXRjaCBmb3IgdTMyLCBhbmQgc29tZSBtb3JlDQpjb2RlIGNv
+bnNvbGlkYXRpb24gd2l0aCBpdC4NCkJ1dCBoaXQgdGhlIGJsb2NrIHdpdGggdTMyIGxlYWRpbmcg
+dG8gb3ZlcmZsb3cgdG8gMCB3aGljaCBtb2RpZmllcyB0aGUNCmZpcnN0IFZGIGluY29ycmVjdGx5
+Lg0KQ2hlY2tpbmcgbnVtX3ZmcyBvZiBwY2kgZGV2LCB3aXRob3V0IGRldmljZV9sb2NrKCkgaXMg
+ZXF1YWxseSBidWdneSBhcw0KaXQgc3RhbmRzIHRvZGF5Lg0KQ3JlYXRpbmcgYSBsb2NrIGluIGVh
+Y2ggdmVuZG9yIGRyaXZlcihzKSBkb2Vzbid0IG1ha2Ugc2Vuc2UuDQpIYXZlbid0IGhhZCBjaGFu
+Y2UgeWV0IGFmdGVyIHRoYXQuDQpMZXQgbWUga25vdyBpZiBzb21lb25lIGhhcyBhIHN1Z2dlc3Rp
+b24gdGhhdCBJIHNob3VsZCBpbmNvcnBvcmF0ZS4NCg0K
