@@ -1,58 +1,41 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 18 Nov 2019 06:21:17 +0000
-Subject: Re: [PATCH 1/1] net: Fix comment block per style guide
-Message-Id: <alpine.DEB.2.21.1911180720340.2620@hadrien>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 22 Nov 2019 02:52:40 +0000
+Subject: [PATCH -next] enetc: make enetc_setup_tc_mqprio static
+Message-Id: <20191122025240.8226-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191117221647.GA10337@Cheese>
-In-Reply-To: <20191117221647.GA10337@Cheese>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Travis Davies <tdavies@darkphysics.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: claudiu.manoil@nxp.com, davem@davemloft.net, vladimir.oltean@nxp.com, po.liu@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-This should be v2.  Put that with the PATCH, and then explain below the
---- what changed.
+While using ARCH=mips CROSS_COMPILE=mips-linux-gnu- command to compile,
+make C=2 drivers/net/ethernet/freescale/enetc/enetc.o
 
-On Sun, 17 Nov 2019, Travis Davies wrote:
+one warning can be found:
+drivers/net/ethernet/freescale/enetc/enetc.c:1439:5:
+warning: symbol 'enetc_setup_tc_mqprio' was not declared.
+Should it be static?
 
-> This patch places /* and */ on sepperate lines for a
+This patch make symbol enetc_setup_tc_mqprio static.
+Fixes: 34c6adf1977b ("enetc: Configure the Time-Aware Scheduler via tc-taprio offload")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can fix the spelling of separate at the same time.
-
-julia
-
-> multiline block comment, in order to keep code style
-> consistant with majority of blocks throughout the file.
->
-> This will prevent a checkpatch.pl warning:
-> 'Block comments use a trailing */ on a separate line'
->
-> Signed-off-by: Travis Davies <tdavies@darkphysics.net>
->
-> ---
->  include/linux/netdevice.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index c20f190b4c18..a2605e043fa2 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -95,9 +95,11 @@ void netdev_set_default_ethtool_ops(struct net_device *dev,
->  #define NET_XMIT_CN		0x02	/* congestion notification	*/
->  #define NET_XMIT_MASK		0x0f	/* qdisc flags in net/sch_generic.h */
->
-> -/* NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
-> +/*
-> + * NET_XMIT_CN is special. It does not guarantee that this packet is lost. It
->   * indicates that the device will soon be dropping packets, or already drops
-> - * some packets of the same priority; prompting us to send less aggressively. */
-> + * some packets of the same priority; prompting us to send less aggressively.
-> + */
->  #define net_xmit_eval(e)	((e) = NET_XMIT_CN ? 0 : (e))
->  #define net_xmit_errno(e)	((e) != NET_XMIT_CN ? -ENOBUFS : 0)
->
-> --
-> 2.21.0
->
->
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index f6b00c6..27f6fd1 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -1436,7 +1436,7 @@ int enetc_close(struct net_device *ndev)
+ 	return 0;
+ }
+ 
+-int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
++static int enetc_setup_tc_mqprio(struct net_device *ndev, void *type_data)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+ 	struct tc_mqprio_qopt *mqprio = type_data;
+-- 
+2.7.4
