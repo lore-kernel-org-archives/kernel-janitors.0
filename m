@@ -1,54 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 19 Nov 2019 21:08:23 +0000
-Subject: [PATCH 2/4 v2] coccinelle: platform_get_irq: handle 2-statement branches
-Message-Id: <1574197705-31132-3-git-send-email-Julia.Lawall@lip6.fr>
+From: "Mr. Joon-Kyu Lin" <johnpfox60@gmail.com>
+Date: Sun, 24 Nov 2019 13:28:02 +0000
+Subject: Venture Capital & Private Investors
+Message-Id: <CAHLmmYMfUhtA9ktHbRfePyRD2j0yBArOW=ZhsrS_vTfqhPovgw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1574197705-31132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-Treat separately the case where there is only one other
-statement in the branch, to be able to remove the outer
-{} as well.
+Attention:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+I am an investor that can provide funding for any viable business idea or
+venture.
 
----
-v2: fix From and To (very sorry for the mistake)
+Please do let me know if you have fund management abilities, credible
+projects in need of funding or advanced stage projects requiring Bank
+Guarantees, Loans or Partnership, Joint Venture, Equity, we would be
+delighted to work with you.
 
- scripts/coccinelle/api/platform_get_irq.cocci |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
-diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
-index c6ac755..7ac32ee 100644
---- a/scripts/coccinelle/api/platform_get_irq.cocci
-+++ b/scripts/coccinelle/api/platform_get_irq.cocci
-@@ -31,6 +31,25 @@ if ( \( ret < 0 \| ret <= 0 \) )
- @depends on patch@
- expression ret;
- struct platform_device *E;
-+statement S;
-+@@
-+
-+ret +(
-+platform_get_irq
-+|
-+platform_get_irq_byname
-+)(E, ...);
-+
-+if ( \( ret < 0 \| ret <= 0 \) )
-+-{
-+-dev_err(...);
-+S
-+-}
-+
-+@depends on patch@
-+expression ret;
-+struct platform_device *E;
- @@
- 
- ret 
+Best Regards,
+Mr. Joon-Kyu Lim
+Al Faisaliah Group (AFG)
+Venture Capital & Private Investors
+
+--
+*This email and any attachments are intended for the named recipients only
+and contain confidential materials. Any unauthorized copying, reviewing,
+dissemination or other use by anyone other than the named recipients of
+this communication is strictly prohibited. If you received this email in
+error and/or are not a named recipient, please notify the sender (Al
+Faisaliah Group) and delete all copies of this email. Thank you.
