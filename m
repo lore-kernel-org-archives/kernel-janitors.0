@@ -1,51 +1,26 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 09 Nov 2019 09:06:03 +0000
-Subject: [PATCH 3/3] fsl/fman: Return directly after a failed devm_kzalloc() in mac_probe()
-Message-Id: <8ffc16a2-62cc-f948-e11b-55bae1d6aae4@web.de>
+From: Ernest Groth <bpatrick799@gmail.com>
+Date: Sun, 24 Nov 2019 18:37:08 +0000
+Subject: Good day Psyborg,
+Message-Id: <CADUzNO=tJHKjc8+d5gv4SANfKnc5hQzi6C6GXabaZDVPxx_jzQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <132e8369-c4da-249f-76b8-834e394dc6d5@web.de>
-In-Reply-To: <132e8369-c4da-249f-76b8-834e394dc6d5@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Madalin Bucur <madalin.bucur@nxp.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Nov 2019 09:26:12 +0100
+Good day Psyborg,
 
-Return directly after a call of the function “devm_kzalloc” failed
-at the beginning.
+I am Mr. Ernest F.Groth from United States of America and a lawyer by
+profession.i want to use this opportunity to inform you about my late
+client whom have the same surname with you died in auto accident here
+in United States with his entire family dated 24th of June 2018 and
+this my client deposited the sum of Eighty Eight Million, Six Hundred
+Thousand Dollars (88,600,000.00 USD) in one of the bank in USA since
+his demise, none of his family members are come to claim this funds
+and i searched his relatives through CNN, VOA and other international
+media and no avail.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/freescale/fman/mac.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+I will like you to claims this fund and will back you up with the
+documents. Contact me now for more details.
 
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 7fbd7cc24ede..75614e2ebda3 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -614,15 +614,12 @@ static int mac_probe(struct platform_device *_of_dev)
- 	mac_node = dev->of_node;
-
- 	mac_dev = devm_kzalloc(dev, sizeof(*mac_dev), GFP_KERNEL);
--	if (!mac_dev) {
--		err = -ENOMEM;
--		goto _return;
--	}
-+	if (!mac_dev)
-+		return -ENOMEM;
-+
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		err = -ENOMEM;
--		goto _return;
--	}
-+	if (!priv)
-+		return -ENOMEM;
-
- 	/* Save private information */
- 	mac_dev->priv = priv;
---
-2.24.0
+Barrister Ernest.
