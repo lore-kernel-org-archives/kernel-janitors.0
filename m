@@ -1,59 +1,55 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Mon, 18 Nov 2019 05:04:13 +0000
-Subject: RE: [PATCH 03/13] exfat: add inode operations
-Message-Id: <00bc01d59dcd$9ecbf1c0$dc63d540$@samsung.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 25 Nov 2019 12:41:10 +0000
+Subject: [PATCH net v3] net: dsa: ocelot: add dependency for NET_DSA_MSCC_FELIX
+Message-Id: <20191125124110.145595-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113081800.7672-4-namjae.jeon@samsung.com>
-        <CGME20191117141554epcas1p16bea365f1667a39e1d28a1f799396567@epcas1p1.samsung.com>
-        <82520012-9940-7f2b-3bac-bea5c2396ccd@web.de>
-In-Reply-To: <82520012-9940-7f2b-3bac-bea5c2396ccd@web.de>
+References: <3e9d6100-6965-da85-c310-6e1a9318f61d@huawei.com>
+In-Reply-To: <3e9d6100-6965-da85-c310-6e1a9318f61d@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: 'Markus Elfring' <Markus.Elfring@web.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Christoph Hellwig' <hch@lst.de>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Sungjong Seo' <sj1557.seo@samsung.com>, =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com, andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
 
-> …
-> > +++ b/fs/exfat/inode.c
-> …
-> > +static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t
-> mode,
-> > +		bool excl)
-> > +{
-> …
-> +out:
-> +	mutex_unlock(&EXFAT_SB(sb)->s_lock);
-> 
-> Can the label “unlock” be more appropriate?
-Yep, Will change it.
-> 
-> 
-> > +static struct dentry *exfat_lookup(struct inode *dir, struct dentry
-> *dentry,
-> > +		unsigned int flags)
-> > +{
-> …
-> > +error:
-> > +	mutex_unlock(&EXFAT_SB(sb)->s_lock);
-> 
-> Would you like to use the label “unlock” also at this place (and similar
-> ones)?
-Yep, Will change all ones.
+If CONFIG_NET_DSA_MSCC_FELIX=y, and CONFIG_NET_VENDOR_MICROSEMI=n,
+below errors can be found:
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_del':
+felix.c:(.text+0x26e): undefined reference to `ocelot_vlan_del'
+drivers/net/dsa/ocelot/felix.o: In function `felix_vlan_add':
+felix.c:(.text+0x352): undefined reference to `ocelot_vlan_add'
 
-> 
-> 
-> > +static int exfat_search_empty_slot(struct super_block *sb,
-> > +		struct exfat_hint_femp *hint_femp, struct exfat_chain *p_dir,
-> > +		int num_entries)
-> > +{
-> …
-> > +out:
-> > +	kfree(clu);
-> 
-> How do you think about to rename the label to “free_clu”?
-Yep, Will change it on V2.
+and warning as below:
+WARNING: unmet direct dependencies detected for MSCC_OCELOT_SWITCH
+Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] &&
+NET_VENDOR_MICROSEMI [=n] && NET_SWITCHDEV [=y] && HAS_IOMEM [=y]
+Selected by [y]:
+NET_DSA_MSCC_FELIX [=y] && NETDEVICES [=y] && HAVE_NET_DSA [=y]
+&& NET_DSA [=y] && PCI [=y]
 
-Thanks for your review!
-> 
-> Regards,
-> Markus
+This patch is to select NET_VENDOR_MICROSEMI and add dependency
+NET_SWITCHDEV, HAS_IOMEM for NET_DSA_MSCC_FELIX.
+
+Fixes: 56051948773e ("net: dsa: ocelot: add driver for Felix switch family")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v3: add depends on NET_SWITCHDEV and HAS_IOMEM.
+ v2: modify 'depends on' to 'select'.
+ drivers/net/dsa/ocelot/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/dsa/ocelot/Kconfig b/drivers/net/dsa/ocelot/Kconfig
+index 0031ca814346..1ec2dfbd76ce 100644
+--- a/drivers/net/dsa/ocelot/Kconfig
++++ b/drivers/net/dsa/ocelot/Kconfig
+@@ -2,6 +2,9 @@
+ config NET_DSA_MSCC_FELIX
+ 	tristate "Ocelot / Felix Ethernet switch support"
+ 	depends on NET_DSA && PCI
++	depends on NET_SWITCHDEV
++	depends on HAS_IOMEM
++	select NET_VENDOR_MICROSEMI
+ 	select MSCC_OCELOT_SWITCH
+ 	select NET_DSA_TAG_OCELOT
+ 	help
+-- 
+2.20.1
