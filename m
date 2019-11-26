@@ -1,33 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Nov 2019 00:47:12 +0000
-Subject: Re: [PATCH v2 1/1] net: Fix comment block per style guide
-Message-Id: <20191118.164712.488135429319455452.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Nov 2019 12:10:29 +0000
+Subject: [PATCH] drm/amdgpu: Fix a bug in jpeg_v1_0_start()
+Message-Id: <20191126121029.3tye7e3gyduxryfr@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191118220609.GA23999@Cheese>
-In-Reply-To: <20191118220609.GA23999@Cheese>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tdavies@darkphysics.net
-Cc: akpm@linux-foundation.org, julia.lawall@lip6.fr, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Leo Liu <leo.liu-5C7GfCeVMHo@public.gmane.org>
+Cc: "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Christian K??nig <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-From: Travis Davies <tdavies@darkphysics.net>
-Date: Mon, 18 Nov 2019 14:06:09 -0800
+Originally the last WREG32_SOC15() was a part of the if statement block
+but the curly braces are on the wrong line.
 
-> This patch places /* and */ on separate lines for a
-> multiline block comment, in order to keep code style
-> consistant with majority of blocks throughout the file.
-> 
-> This will prevent a checkpatch.pl warning:
-> 'Block comments use a trailing */ on a separate line'
-> 
-> Signed-off-by: Travis Davies <tdavies@darkphysics.net>
-> ---
-> -v2: Fix commit description, and subject line as suggested by 
->      Julie Lawall
+Fixes: bb0db70f3f75 ("drm/amdgpu: separate JPEG1.0 code out from VCN1.0")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis (Smatch).  Not tested.
 
-The comment style used here is so pervasive in the kernel networking,
-I'm really not thrilled to start seeing these picked away one by
-one.  So much churn...
+ drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sorry I'm not applying this...
+diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c
+index 553506df077d..a141408dfb23 100644
+--- a/drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c
+@@ -522,7 +522,8 @@ void jpeg_v1_0_start(struct amdgpu_device *adev, int mode)
+ 		WREG32_SOC15(JPEG, 0, mmUVD_LMI_JRBC_RB_64BIT_BAR_HIGH, upper_32_bits(ring->gpu_addr));
+ 		WREG32_SOC15(JPEG, 0, mmUVD_JRBC_RB_RPTR, 0);
+ 		WREG32_SOC15(JPEG, 0, mmUVD_JRBC_RB_WPTR, 0);
+-	}	WREG32_SOC15(JPEG, 0, mmUVD_JRBC_RB_CNTL, UVD_JRBC_RB_CNTL__RB_RPTR_WR_EN_MASK);
++		WREG32_SOC15(JPEG, 0, mmUVD_JRBC_RB_CNTL, UVD_JRBC_RB_CNTL__RB_RPTR_WR_EN_MASK);
++	}
+ 
+ 	/* initialize wptr */
+ 	ring->wptr = RREG32_SOC15(JPEG, 0, mmUVD_JRBC_RB_WPTR);
+-- 
+2.11.0
