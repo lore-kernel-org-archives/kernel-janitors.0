@@ -1,46 +1,35 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 08 Nov 2019 16:30:19 +0000
-Subject: Re: [PATCH][next] drm/amd/display: remove duplicated assignment to grph_obj_type
-Message-Id: <CADnq5_PdP3=gMbbcvTqf07=3mP-ZXdrvxWzmcpoFEd2_B9cTqg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Nov 2019 12:19:34 +0000
+Subject: [PATCH] Silence an uninitialized variable warning
+Message-Id: <20191126121934.kuolgbm55dirfbay@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191108144527.120927-1-colin.king@canonical.com>
-In-Reply-To: <20191108144527.120927-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 9:45 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable grph_obj_type is being assigned twice, one of these is
-> redundant so remove it.
->
-> Addresses-Coverity: ("Evaluation order violation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied.  Thanks!
+Smatch complains that "ret" could be uninitialized if we don't enter the
+loop.  I don't know if that's possible, but it's nicer to return a
+literal zero instead.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> index be6d0cfe41ae..9ba80d828876 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> @@ -365,8 +365,7 @@ bool amdgpu_atombios_get_connector_info_from_object_table(struct amdgpu_device *
->                         router.ddc_valid = false;
->                         router.cd_valid = false;
->                         for (j = 0; j < ((le16_to_cpu(path->usSize) - 8) / 2); j++) {
-> -                               uint8_t grph_obj_type> -                               grph_obj_type > +                               uint8_t grph_obj_type >                                     (le16_to_cpu(path->usGraphicObjIds[j]) &
->                                      OBJECT_TYPE_MASK) >> OBJECT_TYPE_SHIFT;
->
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/trace/trace_syscalls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 73140d80dd46..63528f458826 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -286,7 +286,7 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+ 		offset += sizeof(unsigned long);
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+-- 
+2.11.0
