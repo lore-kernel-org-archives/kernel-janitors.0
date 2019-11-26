@@ -1,25 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 Nov 2019 22:38:30 +0000
-Subject: Re: [PATCH net] net: cdc_ncm: Signedness bug in cdc_ncm_set_dgram_size()
-Message-Id: <20191113.143830.141205006149266294.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Nov 2019 13:50:26 +0000
+Subject: [PATCH] spi: pic32: Add a comment in pic32_spi_dma_prep()
+Message-Id: <20191126135025.mligekonmv2u6dcl@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113182831.yjbmhwacirh6kgzr@kili.mountain>
-In-Reply-To: <20191113182831.yjbmhwacirh6kgzr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: oliver@neukum.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2019 21:28:31 +0300
+This code triggers a static checker warning about missed error codes.
+It's slightly tricky that we fall back to PIO so let's silence the
+checker and add a comment for anyone who is confused.
 
-> This code is supposed to test for negative error codes and partial
-> reads, but because sizeof() is size_t (unsigned) type then negative
-> error codes are type promoted to high positive values and the condition
-> doesn't work as expected.
-> 
-> Fixes: 332f989a3b00 ("CDC-NCM: handle incomplete transfer of MTU")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I won't feel offended at all if people don't think it's worth applying
+this patch.
 
-Applied.
+ drivers/spi/spi-pic32.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index 156961b4ca86..835380ab8bf2 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -633,8 +633,10 @@ static int pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ 		goto out_err;
+ 	}
+ 
+-	if (pic32_spi_dma_config(pic32s, DMA_SLAVE_BUSWIDTH_1_BYTE))
++	if (pic32_spi_dma_config(pic32s, DMA_SLAVE_BUSWIDTH_1_BYTE)) {
++		ret = 0;  /* Fall back to PIO if DMA fails. */
+ 		goto out_err;
++	}
+ 
+ 	/* DMA chnls allocated and prepared */
+ 	set_bit(PIC32F_DMA_PREP, &pic32s->flags);
+-- 
+2.11.0
