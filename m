@@ -1,16 +1,44 @@
-From: linmiaohe <linmiaohe@huawei.com>
-Date: Wed, 27 Nov 2019 02:21:32 +0000
-Subject: Re: [PATCH] KVM: x86/mmu: fix comparison of u8 with -1
-Message-Id: <141f8e0da70a400282824a09bcb56501@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Nov 2019 04:49:56 +0000
+Subject: [PATCH] mt76: Off by one in mt76_calc_rx_airtime()
+Message-Id: <20191121213935.2cbgh3qmd4hv4v5a@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191126161255.323992-1-colin.king@canonical.com>
-In-Reply-To: <20191126161255.323992-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Paolo Bonzini <pbonzini@redhat.com>, =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "clang-built-linux@googlegroups.com" <clang-built-linux@googlegroups.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Felix Fietkau <nbd@nbd.name>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Roy Luo <royluo@google.com>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Kalle Valo <kvalo@codeaurora.org>
 
-DQo+IFRoZSBjb21wYXJpc29uIG9mIHRoZSB1OCB2YWx1ZSBfX2VudHJ5LT51IHdpdGggLTEgaXMg
-YWx3YXlzIGdvaW5nIHRvIGJlIGZhbHNlIGJlY2F1c2UNCj4gYSBfX2VudHJ5LXUgY2FuIG5ldmVy
-IGJlIG5lZ2F0aXZlLg0KDQpzL19fZW50cnktdS9fX2VudHJ5LT51Lw0KDQpUaGFua3MuDQo
+The sband->bitrates[] array has "sband->n_bitrates" elements so this
+check needs to be >= instead of > or we could read beyond the end of the
+array.
+
+These values come from when we call mt76_register_device():
+
+	ret = mt76_register_device(&dev->mt76, true, mt7603_rates,
+				   ARRAY_SIZE(mt7603_rates));
+
+Here sband->bitrates[] is mt7603_rates[] and ->n_bitrates is the
+ARRAY_SIZE()
+
+Fixes: 5ce09c1a7907 ("mt76: track rx airtime for airtime fairness and survey")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/mediatek/mt76/airtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/airtime.c b/drivers/net/wireless/mediatek/mt76/airtime.c
+index 55116f395f9a..a4a785467748 100644
+--- a/drivers/net/wireless/mediatek/mt76/airtime.c
++++ b/drivers/net/wireless/mediatek/mt76/airtime.c
+@@ -242,7 +242,7 @@ u32 mt76_calc_rx_airtime(struct mt76_dev *dev, struct mt76_rx_status *status,
+ 			return 0;
+ 
+ 		sband = dev->hw->wiphy->bands[status->band];
+-		if (!sband || status->rate_idx > sband->n_bitrates)
++		if (!sband || status->rate_idx >= sband->n_bitrates)
+ 			return 0;
+ 
+ 		rate = &sband->bitrates[status->rate_idx];
+-- 
+2.11.0
