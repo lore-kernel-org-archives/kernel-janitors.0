@@ -1,67 +1,43 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 18 Nov 2019 17:47:49 +0000
-Subject: Re: [PATCH][next] drm/amdgpu/powerplay: fix dereference before null check of pointer hwmgr
-Message-Id: <CADnq5_ODJOk3vV1QBQRQkMxZTa5reBqsPy-Q+1rrEBw4dJEtoQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 26 Nov 2019 16:12:55 +0000
+Subject: [PATCH] KVM: x86/mmu: fix comparison of u8 with -1
+Message-Id: <20191126161255.323992-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191115094754.40920-1-colin.king@canonical.com> <MN2PR12MB3344F8D7498FC9DA8302AD05E44D0@MN2PR12MB3344.namprd12.prod.outlook.com>
-In-Reply-To: <MN2PR12MB3344F8D7498FC9DA8302AD05E44D0@MN2PR12MB3344.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Quan, Evan" <Evan.Quan@amd.com>
-Cc: Colin King <colin.king@canonical.com>, Rex Zhu <rex.zhu@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, clang-built-linux@googlegroups.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied.  Thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Alex
+The comparison of the u8 value __entry->u with -1 is always
+going to be false because a __entry-u can never be negative.
+Fix this by casting it to a s8 integer.
 
-On Mon, Nov 18, 2019 at 1:56 AM Quan, Evan <Evan.Quan@amd.com> wrote:
->
-> Reviewed-by: Evan Quan <evan.quan@amd.com>
->
-> -----Original Message-----
-> From: Colin King <colin.king@canonical.com>
-> Sent: Friday, November 15, 2019 5:48 PM
-> To: Rex Zhu <rex.zhu@amd.com>; Quan, Evan <Evan.Quan@amd.com>; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH][next] drm/amdgpu/powerplay: fix dereference before null check of pointer hwmgr
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The assignment of adev dereferences pointer hwmgr before hwmgr is null checked, hence there is a potential null pointer deference issue. Fix this by assigning adev after the null check.
->
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 0896d2f7ba4d ("drm/amdgpu/powerplay: properly set PP_GFXOFF_MASK")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-> index 443625c83ec9..d2909c91d65b 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-> @@ -81,7 +81,7 @@ static void hwmgr_init_workload_prority(struct pp_hwmgr *hwmgr)
->
->  int hwmgr_early_init(struct pp_hwmgr *hwmgr)  {
-> -       struct amdgpu_device *adev = hwmgr->adev;
-> +       struct amdgpu_device *adev;
->
->         if (!hwmgr)
->                 return -EINVAL;
-> @@ -96,6 +96,8 @@ int hwmgr_early_init(struct pp_hwmgr *hwmgr)
->         hwmgr_init_workload_prority(hwmgr);
->         hwmgr->gfxoff_state_changed_by_workload = false;
->
-> +       adev = hwmgr->adev;
-> +
->         switch (hwmgr->chip_family) {
->         case AMDGPU_FAMILY_CI:
->                 adev->pm.pp_feature &= ~PP_GFXOFF_MASK;
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Addresses clang warning:
+arch/x86/kvm/./mmutrace.h:360:16: warning: result of comparison
+of constant -1 with expression of type 'u8' (aka 'unsigned char')
+is always false [-Wtautological-constant-out-of-range-compare]
+
+Fixes: 335e192a3fa4 ("KVM: x86: add tracepoints around __direct_map and FNAME(fetch)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kvm/mmutrace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/mmutrace.h b/arch/x86/kvm/mmutrace.h
+index 7ca8831c7d1a..3466cd528a67 100644
+--- a/arch/x86/kvm/mmutrace.h
++++ b/arch/x86/kvm/mmutrace.h
+@@ -357,7 +357,7 @@ TRACE_EVENT(
+ 		  __entry->r ? "r" : "-",
+ 		  __entry->spte & PT_WRITABLE_MASK ? "w" : "-",
+ 		  __entry->x ? "x" : "-",
+-		  __entry->u = -1 ? "" : (__entry->u ? "u" : "-"),
++		  (s8)__entry->u = -1 ? "" : (__entry->u ? "u" : "-"),
+ 		  __entry->level, __entry->sptep
+ 	)
+ );
+-- 
+2.24.0
