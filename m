@@ -1,27 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 12 Nov 2019 19:32:07 +0000
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: fix broken if statement because of a stray semicolon
-Message-Id: <20191112.113207.2302490162902408721.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Nov 2019 12:23:24 +0000
+Subject: [PATCH] spi: pic32: Fix an error code in pic32_spi_dma_prep()
+Message-Id: <20191126122324.v3rj7oscvjobhjxo@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191112130523.232461-1-colin.king@canonical.com>
-In-Reply-To: <20191112130523.232461-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, irtimmer@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Nov 2019 13:05:23 +0000
+We accidentally return success on this error path.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a stray semicolon in an if statement that will cause a dev_err
-> message to be printed unconditionally. Fix this by removing the stray
-> semicolon.
-> 
-> Addresses-Coverity: ("Stay semicolon")
-> Fixes: f0942e00a1ab ("net: dsa: mv88e6xxx: Add support for port mirroring")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: eb7e6dc6d9ff ("spi: pic32: Retire dma_request_slave_channel_compat()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/spi/spi-pic32.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index 156961b4ca86..93fb95073522 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -633,7 +633,8 @@ static int pic32_spi_dma_prep(struct pic32_spi *pic32s, struct device *dev)
+ 		goto out_err;
+ 	}
+ 
+-	if (pic32_spi_dma_config(pic32s, DMA_SLAVE_BUSWIDTH_1_BYTE))
++	ret = pic32_spi_dma_config(pic32s, DMA_SLAVE_BUSWIDTH_1_BYTE);
++	if (ret)
+ 		goto out_err;
+ 
+ 	/* DMA chnls allocated and prepared */
+-- 
+2.11.0
