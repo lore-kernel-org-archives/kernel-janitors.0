@@ -1,165 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 21 Nov 2019 03:24:30 +0000
-Subject: [PATCH] init: Fix Kconfig indentation
-Message-Id: <1574306670-30234-1-git-send-email-krzk@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 27 Nov 2019 06:20:02 +0000
+Subject: [PATCH -next] mtd: ubi: wl: remove set but not used variable 'prev_e'
+Message-Id: <20191127062002.23746-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Sascha Hauer <s.hauer@pengutronix.de>, Vignesh
+ Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+drivers/mtd/ubi/wl.c: In function 'find_wl_entry':
+drivers/mtd/ubi/wl.c:322:27: warning:
+ variable 'prev_e' set but not used [-Wunused-but-set-variable]
 
+It's not used any more now, so remove it.
+
+Fixes: f9c34bb52997 ("ubi: Fix producing anchor PEBs")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
+ drivers/mtd/ubi/wl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Changes since v1:
-1. Fix also 7-space and tab+1 space indentation issues.
----
- init/Kconfig | 76 ++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 38 insertions(+), 38 deletions(-)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index ff15a3c71176..c28cd305b496 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -146,13 +146,13 @@ config LOCALVERSION_AUTO
- 	  which is done within the script "scripts/setlocalversion".)
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 5d77a38dba54..837d690a8c60 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -319,7 +319,7 @@ static struct ubi_wl_entry *find_wl_entry(struct ubi_device *ubi,
+ 					  struct rb_root *root, int diff)
+ {
+ 	struct rb_node *p;
+-	struct ubi_wl_entry *e, *prev_e = NULL;
++	struct ubi_wl_entry *e;
+ 	int max;
  
- config BUILD_SALT
--       string "Build ID Salt"
--       default ""
--       help
--          The build ID is used to link binaries and their debug info. Setting
--          this option will use the value in the calculation of the build id.
--          This is mostly useful for distributions which want to ensure the
--          build is unique between builds. It's safe to leave the default.
-+	string "Build ID Salt"
-+	default ""
-+	help
-+	  The build ID is used to link binaries and their debug info. Setting
-+	  this option will use the value in the calculation of the build id.
-+	  This is mostly useful for distributions which want to ensure the
-+	  build is unique between builds. It's safe to leave the default.
- 
- config HAVE_KERNEL_GZIP
- 	bool
-@@ -818,7 +818,7 @@ menuconfig CGROUPS
- if CGROUPS
- 
- config PAGE_COUNTER
--       bool
-+	bool
- 
- config MEMCG
- 	bool "Memory controller"
-@@ -1311,9 +1311,9 @@ menuconfig EXPERT
- 	select DEBUG_KERNEL
- 	help
- 	  This option allows certain base kernel options and settings
--          to be disabled or tweaked. This is for specialized
--          environments which can tolerate a "non-standard" kernel.
--          Only use this if you really know what you are doing.
-+	  to be disabled or tweaked. This is for specialized
-+	  environments which can tolerate a "non-standard" kernel.
-+	  Only use this if you really know what you are doing.
- 
- config UID16
- 	bool "Enable 16-bit UID system calls" if EXPERT
-@@ -1423,11 +1423,11 @@ config BUG
- 	bool "BUG() support" if EXPERT
- 	default y
- 	help
--          Disabling this option eliminates support for BUG and WARN, reducing
--          the size of your kernel image and potentially quietly ignoring
--          numerous fatal conditions. You should only consider disabling this
--          option for embedded systems with no facilities for reporting errors.
--          Just say Y.
-+	  Disabling this option eliminates support for BUG and WARN, reducing
-+	  the size of your kernel image and potentially quietly ignoring
-+	  numerous fatal conditions. You should only consider disabling this
-+	  option for embedded systems with no facilities for reporting errors.
-+	  Just say Y.
- 
- config ELF_CORE
- 	depends on COREDUMP
-@@ -1443,8 +1443,8 @@ config PCSPKR_PLATFORM
- 	select I8253_LOCK
- 	default y
- 	help
--          This option allows to disable the internal PC-Speaker
--          support, saving some memory.
-+	  This option allows to disable the internal PC-Speaker
-+	  support, saving some memory.
- 
- config BASE_FULL
- 	default y
-@@ -1562,29 +1562,29 @@ config MEMBARRIER
- 	  If unsure, say Y.
- 
- config KALLSYMS
--	 bool "Load all symbols for debugging/ksymoops" if EXPERT
--	 default y
--	 help
--	   Say Y here to let the kernel print out symbolic crash information and
--	   symbolic stack backtraces. This increases the size of the kernel
--	   somewhat, as all symbols have to be loaded into the kernel image.
-+	bool "Load all symbols for debugging/ksymoops" if EXPERT
-+	default y
-+	help
-+	  Say Y here to let the kernel print out symbolic crash information and
-+	  symbolic stack backtraces. This increases the size of the kernel
-+	  somewhat, as all symbols have to be loaded into the kernel image.
- 
- config KALLSYMS_ALL
- 	bool "Include all symbols in kallsyms"
- 	depends on DEBUG_KERNEL && KALLSYMS
- 	help
--	   Normally kallsyms only contains the symbols of functions for nicer
--	   OOPS messages and backtraces (i.e., symbols from the text and inittext
--	   sections). This is sufficient for most cases. And only in very rare
--	   cases (e.g., when a debugger is used) all symbols are required (e.g.,
--	   names of variables from the data sections, etc).
-+	  Normally kallsyms only contains the symbols of functions for nicer
-+	  OOPS messages and backtraces (i.e., symbols from the text and inittext
-+	  sections). This is sufficient for most cases. And only in very rare
-+	  cases (e.g., when a debugger is used) all symbols are required (e.g.,
-+	  names of variables from the data sections, etc).
- 
--	   This option makes sure that all symbols are loaded into the kernel
--	   image (i.e., symbols from all sections) in cost of increased kernel
--	   size (depending on the kernel configuration, it may be 300KiB or
--	   something like this).
-+	  This option makes sure that all symbols are loaded into the kernel
-+	  image (i.e., symbols from all sections) in cost of increased kernel
-+	  size (depending on the kernel configuration, it may be 300KiB or
-+	  something like this).
- 
--	   Say N unless you really need all symbols.
-+	  Say N unless you really need all symbols.
- 
- config KALLSYMS_ABSOLUTE_PERCPU
- 	bool
-@@ -1727,12 +1727,12 @@ config DEBUG_PERF_USE_VMALLOC
- 	depends on PERF_EVENTS && DEBUG_KERNEL && !PPC
- 	select PERF_USE_VMALLOC
- 	help
--	 Use vmalloc memory to back perf mmap() buffers.
-+	  Use vmalloc memory to back perf mmap() buffers.
- 
--	 Mostly useful for debugging the vmalloc code on platforms
--	 that don't require it.
-+	  Mostly useful for debugging the vmalloc code on platforms
-+	  that don't require it.
- 
--	 Say N if unsure.
-+	  Say N if unsure.
- 
- endmenu
- 
--- 
-2.7.4
+ 	e = rb_entry(rb_first(root), struct ubi_wl_entry, u.rb);
+@@ -334,7 +334,6 @@ static struct ubi_wl_entry *find_wl_entry(struct ubi_device *ubi,
+ 			p = p->rb_left;
+ 		else {
+ 			p = p->rb_right;
+-			prev_e = e;
+ 			e = e1;
+ 		}
+ 	}
