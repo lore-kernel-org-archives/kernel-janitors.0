@@ -1,38 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 22 Nov 2019 06:33:03 +0000
-Subject: Re: [PATCH v4 03/13] exfat: add inode operations
-Message-Id: <20191122063303.GA16886@lst.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 28 Nov 2019 02:01:47 +0000
+Subject: [PATCH -next] um: vector: use GFP_ATOMIC under spin lock
+Message-Id: <20191128020147.191893-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191121052618.31117-1-namjae.jeon@samsung.com> <CGME20191121052916epcas1p3f00c8e510eb53f53f4e082848bd325d0@epcas1p3.samsung.com> <20191121052618.31117-4-namjae.jeon@samsung.com> <38716ae8-a056-4ee3-285a-a3c1ac8307a5@web.de>
-In-Reply-To: <38716ae8-a056-4ee3-285a-a3c1ac8307a5@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikolay Borisov <nborisov@suse.com>, Sungjong Seo <sj1557.seo@samsung.com>, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, linkinjeon@gmail.com
+To: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-um@lists.infradead.org, netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:40:28AM +0100, Markus Elfring wrote:
-> > +	err = exfat_map_cluster(inode, clu_offset, &cluster,
-> > +		*create & BMAP_ADD_CLUSTER);
-> 
-> I find an other indentation more appropriate.
-> Please align the last parameter below (or besides) the opening parenthesis.
+A spin lock is taken here so we should use GFP_ATOMIC.
 
-It is great that you find that, but I think we can leave this to
-the code author.  We have plenty of example for opening brace aligned,
-one or two tabs alignments in the code, and it is up to the author /
-maintainer to chose one.  No need to to nitpick their choices inside the
-boundaries of the normal coding space.
+Fixes: 9807019a62dc ("um: Loadable BPF "Firmware" for vector drivers")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ arch/um/drivers/vector_kern.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > +	if (err) {
-> > +		if (err != -ENOSPC)
-> > +			return -EIO;
-> > +		return err;
-> > +	}
-> 
-> Can such source code become more succinct?
-> 
-> +	if (err)
-> +		return err != -ENOSPC ? -EIO : err;
-
-If it sufficient but a lot harder to follow.
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index 92617e16829e..6ff0065a271d 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -1402,7 +1402,7 @@ static int vector_net_load_bpf_flash(struct net_device *dev,
+ 		kfree(vp->bpf->filter);
+ 		vp->bpf->filter = NULL;
+ 	} else {
+-		vp->bpf = kmalloc(sizeof(struct sock_fprog), GFP_KERNEL);
++		vp->bpf = kmalloc(sizeof(struct sock_fprog), GFP_ATOMIC);
+ 		if (vp->bpf = NULL) {
+ 			netdev_err(dev, "failed to allocate memory for firmware\n");
+ 			goto flash_fail;
+@@ -1414,7 +1414,7 @@ static int vector_net_load_bpf_flash(struct net_device *dev,
+ 	if (request_firmware(&fw, efl->data, &vdevice->pdev.dev))
+ 		goto flash_fail;
+ 
+-	vp->bpf->filter = kmemdup(fw->data, fw->size, GFP_KERNEL);
++	vp->bpf->filter = kmemdup(fw->data, fw->size, GFP_ATOMIC);
+ 	if (!vp->bpf->filter)
+ 		goto free_buffer;
