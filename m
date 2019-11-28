@@ -1,49 +1,50 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Nov 2019 14:58:45 +0000
-Subject: [PATCH][next] crypto: allwinner: fix spelling mistake "recommandation" -> "recommendation"
-Message-Id: <20191105145845.60786-1-colin.king@canonical.com>
+Date: Thu, 28 Nov 2019 12:29:58 +0000
+Subject: [PATCH] zram: fix error return codes not being returned in writeback_store
+Message-Id: <20191128122958.178290-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-block@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are spelling mistakes in dev_warn messages. Fix these.
+Currently when an error code -EIO or -ENOSPC in the for-loop of
+writeback_store the error code is being overwritten by a ret = len
+assignment at the end of the function and the error codes are being
+lost.  Fix this by assigning ret = len at the start of the function
+and remove the assignment from the end, hence allowing ret to be
+preserved when error codes are assigned to it.
 
+Addresses-Coverity: ("Unused value")
+Fixes: a939888ec38b ("zram: support idle/huge page writeback")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 2 +-
- drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/zram/zram_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-index 8e4eddbcc814..bc7ee265c51f 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-@@ -469,7 +469,7 @@ static int sun8i_ce_get_clks(struct sun8i_ce_dev *ce)
- 		}
- 		if (ce->variant->ce_clks[i].max_freq > 0 &&
- 		    cr > ce->variant->ce_clks[i].max_freq)
--			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
-+			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
- 				 ce->variant->ce_clks[i].name, cr,
- 				 ce->variant->ce_clks[i].max_freq);
- 	}
-diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
-index e58407ac256b..04b5b90ba965 100644
---- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
-+++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
-@@ -502,7 +502,7 @@ static int sun8i_ss_get_clks(struct sun8i_ss_dev *ss)
- 		}
- 		if (ss->variant->ss_clks[i].max_freq > 0 &&
- 		    cr > ss->variant->ss_clks[i].max_freq)
--			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
-+			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
- 				 ss->variant->ss_clks[i].name, cr,
- 				 ss->variant->ss_clks[i].max_freq);
- 	}
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 4285e75e52c3..1bf4a908a0bd 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -626,7 +626,7 @@ static ssize_t writeback_store(struct device *dev,
+ 	struct bio bio;
+ 	struct bio_vec bio_vec;
+ 	struct page *page;
+-	ssize_t ret;
++	ssize_t ret = len;
+ 	int mode;
+ 	unsigned long blk_idx = 0;
+ 
+@@ -762,7 +762,6 @@ static ssize_t writeback_store(struct device *dev,
+ 
+ 	if (blk_idx)
+ 		free_block_bdev(zram, blk_idx);
+-	ret = len;
+ 	__free_page(page);
+ release_init_lock:
+ 	up_read(&zram->init_lock);
 -- 
-2.20.1
+2.24.0
