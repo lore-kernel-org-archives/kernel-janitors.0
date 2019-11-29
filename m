@@ -1,73 +1,115 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Mon, 11 Nov 2019 20:09:07 +0000
-Subject: Re: [PATCH 3/4] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
-Message-Id: <20191111200907.vclloogaiu3mqxsn@pengutronix.de>
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Fri, 29 Nov 2019 03:24:29 +0000
+Subject: [PATCH] [PATCH v2] fsi: fix bogus error returns from cfam_read and cfam_write
+Message-Id: <20191129032429.817-1-jk@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191111071952.6pbswbboqreen6im@pengutronix.de>
- <20191111090357.13903-1-u.kleine-koenig@pengutronix.de>
- <20191111090357.13903-3-u.kleine-koenig@pengutronix.de>
- <812c95a0-7eb6-7ad6-16fa-c9e8339ff213@web.de>
-In-Reply-To: <812c95a0-7eb6-7ad6-16fa-c9e8339ff213@web.de>
+References: <20191122233120.110344-1-colin.king@canonical.com>
+In-Reply-To: <20191122233120.110344-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-pwm@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, Neil Brown <neilb@suse.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joel Stanley <joel@jms.id.au>, Alistar Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Colin King <colin.king@canonical.com>, linux-fsi@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 02:41:58PM +0100, Markus Elfring wrote:
-> > This was found by coccicheck:
-> >
-> > 	drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
-> > 	call of_find_device_by_node on line 255, but without a corresponding
-> > 	object release within this function.
-> 
-> How do you think about to add a wording according to “imperative mood”
-> for your change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id1f4f5b495a62c9a8b15b1c3581acd5efeb9af8c#n151
+Based on a static analysis report and original patch from Colin Ian King
+<colin.king@canonical.com>.
 
-Are you a bot?
+Currently, we may drop error values from cfam_read and cfam_write. This
+change returns the actual error on failure, but a partial read/write will
+take precedence.
 
-> > +++ b/drivers/pwm/pwm-omap-dmtimer.c
-> …
-> > @@ -352,7 +352,14 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
-> …
-> >  	pdata->free(dm_timer);
-> > -put:
-> > +err_request_timer:
-> > +
-> > +err_timer_property:
-> > +err_platdata:
-> > +
-> > +	put_device(&timer_pdev->dev);
-> 
-> Would the use of the label “put_device” be more appropriate?
-> 
-> 
-> > +err_find_timer_pdev:
-> > +
-> >  	of_node_put(timer);
-> …
-> 
-> Would the use of the label “put_node” be better here?
-> 
-> 
-> > @@ -372,6 +379,8 @@ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
-> >
-> >  	omap->pdata->free(omap->dm_timer);
-> >
-> > +	put_device(&omap->dm_timer_pdev->dev);
-> > +
-> >  	mutex_destroy(&omap->mutex);
-> >
-> >  	return 0;
-> 
-> I suggest to omit a few blank lines.
+Addresses-Coverity: ("Unused value")
+Fixes: d1dcd6782576 ("fsi: Add cfam char devices")
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
 
-And I like it the way it is.
+---
+Colin: thanks for the report and patch. I think this is a more complete
+fix, as we want to preseve any partial read/write status if a failure
+happens mid-way through an operation. Let me know if you (or the
+coverity analysis) have any feedback.
 
-Best regards
-Uwe
+---
 
+ drivers/fsi/fsi-core.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 71c6f9fef648..3158a78c2e94 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -699,6 +699,8 @@ static ssize_t cfam_read(struct file *filep, char __user *buf, size_t count,
+ 	if (off > 0xffffffff || count > 0xffffffff || off + count > 0xffffffff)
+ 		return -EINVAL;
+ 
++	rc = 0;
++
+ 	for (total_len = 0; total_len < count; total_len += read_len) {
+ 		__be32 data;
+ 
+@@ -707,18 +709,22 @@ static ssize_t cfam_read(struct file *filep, char __user *buf, size_t count,
+ 
+ 		rc = fsi_slave_read(slave, off, &data, read_len);
+ 		if (rc)
+-			goto fail;
++			break;
+ 		rc = copy_to_user(buf + total_len, &data, read_len);
+ 		if (rc) {
+ 			rc = -EFAULT;
+-			goto fail;
++			break;
+ 		}
+ 		off += read_len;
+ 	}
+-	rc = count;
+- fail:
++
++	/* if we've read any data, we want that to be returned in
++	 * preference to an error state */
++	if (total_len)
++		rc = total_len;
++
+ 	*offset = off;
+-	return count;
++	return rc;
+ }
+ 
+ static ssize_t cfam_write(struct file *filep, const char __user *buf,
+@@ -736,6 +742,8 @@ static ssize_t cfam_write(struct file *filep, const char __user *buf,
+ 	if (off > 0xffffffff || count > 0xffffffff || off + count > 0xffffffff)
+ 		return -EINVAL;
+ 
++	rc = 0;
++
+ 	for (total_len = 0; total_len < count; total_len += write_len) {
+ 		__be32 data;
+ 
+@@ -745,17 +753,21 @@ static ssize_t cfam_write(struct file *filep, const char __user *buf,
+ 		rc = copy_from_user(&data, buf + total_len, write_len);
+ 		if (rc) {
+ 			rc = -EFAULT;
+-			goto fail;
++			break;
+ 		}
+ 		rc = fsi_slave_write(slave, off, &data, write_len);
+ 		if (rc)
+-			goto fail;
++			break;
+ 		off += write_len;
+ 	}
+-	rc = count;
+- fail:
++
++	/* if we've written any data, we want to indicate that partial write
++	 * instead of any mid-stream error */
++	if (total_len)
++		rc = total_len;
++
+ 	*offset = off;
+-	return count;
++	return rc;
+ }
+ 
+ static loff_t cfam_llseek(struct file *file, loff_t offset, int whence)
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.20.1
