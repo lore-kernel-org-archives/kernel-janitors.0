@@ -1,41 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 21 Dec 2019 00:40:46 +0000
-Subject: [PATCH] ath11k: ensure ts.flags is initialized before bit-wise or'ing in values
-Message-Id: <20191221004046.15859-1-colin.king@canonical.com>
+From: Jieun Kim <jieun.kim4758@gmail.com>
+Date: Sun, 01 Dec 2019 05:42:57 +0000
+Subject: [PATCH 2/2] drivers: md: dm-log.c: Remove unused variable 'sz'
+Message-Id: <20191201054257.13199-1-Jieun.Kim4758@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Anilkumar Kolli <akolli@codeaurora.org>, Manikanta Pubbisetty <mpubbise@codeaurora.org>, Sven Eckelmann <seckelmann@datto.com>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Jieun Kim <Jieun.Kim4758@gmail.com>, dm-devel@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Remove unused variable 'sz' in disk_status function
+detected by coccinelle scripts(returnvar.cocci)
 
-Currently the structure ts is not inititalized and ts.flags contains
-garbage values from the stack.  This is being passed into function
-ath11k_dp_tx_status_parse that bit-wise or'ing in settings into the
-ts.flags field.  To avoid flags (and other fields) from containing
-garbage, initialize the structure to zero before use.
-
-Addresses-Coverity: ("Uninitialized scalar variable)"
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Jieun Kim <Jieun.Kim4758@gmail.com>
 ---
- drivers/net/wireless/ath/ath11k/dp_tx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-log.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath11k/dp_tx.c b/drivers/net/wireless/ath/ath11k/dp_tx.c
-index 918305dda106..04ad1a20e459 100644
---- a/drivers/net/wireless/ath/ath11k/dp_tx.c
-+++ b/drivers/net/wireless/ath/ath11k/dp_tx.c
-@@ -461,7 +461,7 @@ void ath11k_dp_tx_completion_handler(struct ath11k_base *ab, int ring_id)
- 	int hal_ring_id = dp->tx_ring[ring_id].tcl_comp_ring.ring_id;
- 	struct hal_srng *status_ring = &ab->hal.srng_list[hal_ring_id];
- 	struct sk_buff *msdu;
--	struct hal_tx_status ts;
-+	struct hal_tx_status ts = { 0 };
- 	struct dp_tx_ring *tx_ring = &dp->tx_ring[ring_id];
- 	u32 *desc;
- 	u32 msdu_id;
+diff --git a/drivers/md/dm-log.c b/drivers/md/dm-log.c
+index 8800ec1847b5..67e74362c6ac 100644
+--- a/drivers/md/dm-log.c
++++ b/drivers/md/dm-log.c
+@@ -800,7 +800,6 @@ static int core_status(struct dm_dirty_log *log, status_type_t status,
+ static int disk_status(struct dm_dirty_log *log, status_type_t status,
+ 		       char *result, unsigned int maxlen)
+ {
+-	int sz = 0;
+ 	struct log_c *lc = log->context;
+ 
+ 	switch(status) {
+@@ -818,7 +817,7 @@ static int disk_status(struct dm_dirty_log *log, status_type_t status,
+ 		DMEMIT_SYNC;
+ 	}
+ 
+-	return sz;
++	return 0;
+ }
+ 
+ static struct dm_dirty_log_type _core_type = {
 -- 
-2.24.0
+2.17.1
