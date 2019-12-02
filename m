@@ -1,29 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 15 Dec 2019 14:27:31 +0000
-Subject: Re: [PATCH] net: gemini: Fix memory leak in gmac_setup_txqs
-Message-Id: <403e8b6d-57df-e8d1-316c-150f833de842@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Dec 2019 16:54:08 +0000
+Subject: [PATCH] loop: remove redundant assignment to err
+Message-Id: <20191202165408.64510-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191215011045.15453-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191215011045.15453-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Navid Emamdoost <emamd001@umn.edu>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, "David S. Miller" <davem@davemloft.net>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> +++ b/drivers/net/ethernet/cortina/gemini.c
-> @@ -576,6 +576,8 @@ static int gmac_setup_txqs(struct net_device *netdev)
->
->  	if (port->txq_dma_base & ~DMA_Q_BASE_MASK) {
->  		dev_warn(geth->dev, "TX queue base is not aligned\n");
-> +		dma_free_coherent(geth->dev, len * sizeof(*desc_ring),
-> +				  desc_ring, port->txq_dma_base);
->  		kfree(skb_tab);
->  		return -ENOMEM;
->  	}
+From: Colin Ian King <colin.king@canonical.com>
 
-The added function call seems to be fine.
-Would you like to avoid a bit of duplicate code for the exception handling?
+The variable err is being assigned with a value that is never
+read and it is being updated later with a new value.  The assignment
+is redundant and can be removed.
 
-Regards,
-Markus
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/loop.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 739b372a5112..30f187786dae 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -2006,7 +2006,6 @@ static int loop_add(struct loop_device **l, int i)
+ 		goto out_free_dev;
+ 	i = err;
+ 
+-	err = -ENOMEM;
+ 	lo->tag_set.ops = &loop_mq_ops;
+ 	lo->tag_set.nr_hw_queues = 1;
+ 	lo->tag_set.queue_depth = 128;
+-- 
+2.24.0
