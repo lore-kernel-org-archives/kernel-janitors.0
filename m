@@ -1,36 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 21 Dec 2019 15:48:25 +0000
-Subject: [PATCH] tracing: fix indentation issue
-Message-Id: <20191221154825.33073-1-colin.king@canonical.com>
+Date: Mon, 02 Dec 2019 18:59:42 +0000
+Subject: [PATCH] cifs: remove redundant assignment to pointer pneg_ctxt
+Message-Id: <20191202185942.81854-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a declaration that is indented one level too deeply, remove
-the extraneous tab.
+The pointer pneg_ctxt is being initialized with a value that is never
+read and it is being updated later with a new value.  The assignment
+is redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/trace_seq.c | 2 +-
+ fs/cifs/smb2pdu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_seq.c b/kernel/trace/trace_seq.c
-index 344e4c1aa09c..87de6edafd14 100644
---- a/kernel/trace/trace_seq.c
-+++ b/kernel/trace/trace_seq.c
-@@ -381,7 +381,7 @@ int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
- 		       int prefix_type, int rowsize, int groupsize,
- 		       const void *buf, size_t len, bool ascii)
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index ed77f94dbf1d..be0de8a63e57 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -554,7 +554,7 @@ static void
+ assemble_neg_contexts(struct smb2_negotiate_req *req,
+ 		      struct TCP_Server_Info *server, unsigned int *total_len)
  {
--		unsigned int save_len = s->seq.len;
-+	unsigned int save_len = s->seq.len;
+-	char *pneg_ctxt = (char *)req;
++	char *pneg_ctxt;
+ 	unsigned int ctxt_len;
  
- 	if (s->full)
- 		return 0;
+ 	if (*total_len > 200) {
 -- 
 2.24.0
