@@ -1,43 +1,50 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 07 Dec 2019 11:01:57 +0000
-Subject: Re: [PATCH] iio: adc: ti-ads7950: Fix a typo in an error message
-Message-Id: <20191207110157.35dd39eb@archlinux>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 02 Dec 2019 21:38:56 +0000
+Subject: Re: [PATCH] drm/amd/display: remove redundant assignment to variable v_total
+Message-Id: <CADnq5_Mtos36z7vp92ep4hQtW3KFeGb8EbWsGbhOGXJSebdVDA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204064535.13025-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191204064535.13025-1-christophe.jaillet@wanadoo.fr>
+References: <20191202154738.56812-1-colin.king@canonical.com>
+In-Reply-To: <20191202154738.56812-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, justinpopo6@gmail.com, linus.walleij@linaro.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: David Zhou <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 
-On Wed,  4 Dec 2019 07:45:35 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Applied.  thanks!
 
-> Fix a typo:
->    s/get get/to get/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied,
+Alex
 
-Thanks,
-
-Jonathan
-
+On Mon, Dec 2, 2019 at 10:47 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable v_total is being initialized with a value that is never
+> read and it is being updated later with a new value.  The initialization
+> is redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/iio/adc/ti-ads7950.c | 2 +-
+>  drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
-> index 2e66e4d586ff..f9edc1207f75 100644
-> --- a/drivers/iio/adc/ti-ads7950.c
-> +++ b/drivers/iio/adc/ti-ads7950.c
-> @@ -602,7 +602,7 @@ static int ti_ads7950_probe(struct spi_device *spi)
->  
->  	st->reg = devm_regulator_get(&spi->dev, "vref");
->  	if (IS_ERR(st->reg)) {
-> -		dev_err(&spi->dev, "Failed get get regulator \"vref\"\n");
-> +		dev_err(&spi->dev, "Failed to get regulator \"vref\"\n");
->  		ret = PTR_ERR(st->reg);
->  		goto error_destroy_mutex;
->  	}
+>
+> diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> index 16e69bbc69aa..fa57885503d4 100644
+> --- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> +++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> @@ -122,7 +122,7 @@ static unsigned int calc_v_total_from_refresh(
+>                 const struct dc_stream_state *stream,
+>                 unsigned int refresh_in_uhz)
+>  {
+> -       unsigned int v_total = stream->timing.v_total;
+> +       unsigned int v_total;
+>         unsigned int frame_duration_in_ns;
+>
+>         frame_duration_in_ns > --
+> 2.24.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
