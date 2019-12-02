@@ -1,58 +1,51 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 03 Dec 2019 19:06:27 +0000
-Subject: Re: [PATCH v2] btrfs: Fix btrfs_find_create_tree_block() testing
-Message-Id: <20191203190627.GW2734@twin.jikos.cz>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 02 Dec 2019 22:57:15 +0000
+Subject: Re: [PATCH] cifs: remove redundant assignment to pointer pneg_ctxt
+Message-Id: <CAH2r5ms+DVGP+Wgx+cTe65sBCFskrXBNxNe1gMDr+sEQ1DbqAA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191203110408.GA30629@linux.ibm.com>
- <20191203112457.GF1787@kadam>
- <20191203184039.GU2734@twin.jikos.cz>
- <20191203184601.GI1787@kadam>
-In-Reply-To: <20191203184601.GI1787@kadam>
+References: <20191202185942.81854-1-colin.king@canonical.com>
+In-Reply-To: <20191202185942.81854-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: dsterba@suse.cz, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mike Rapoport <rppt@linux.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 03, 2019 at 09:46:01PM +0300, Dan Carpenter wrote:
-> On Tue, Dec 03, 2019 at 07:40:39PM +0100, David Sterba wrote:
-> > On Tue, Dec 03, 2019 at 02:24:58PM +0300, Dan Carpenter wrote:
-> > > The btrfs_find_create_tree_block() uses alloc_test_extent_buffer() for
-> > > testing and alloc_extent_buffer() for production.  The problem is that
-> > > the test code returns NULL and the production code returns error
-> > > pointers.  The callers only check for error pointers.
-> > > 
-> > > I have changed alloc_test_extent_buffer() to return error pointers and
-> > > updated the two callers which use it directly.
-> > > 
-> > > Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > I edited the changelog because btrfs_find_create_tree_block is
-> > misleading and seems to be unrelated to the actual fix that's just for
-> > alloc_test_extent_buffer. Patch added to misc-next, thanks.
-> 
-> The bug is in btrfs_find_create_tree_block()
-> 
-> fs/btrfs/disk-io.c
->   1046  struct extent_buffer *btrfs_find_create_tree_block(
->   1047                                                  struct btrfs_fs_info *fs_info,
->   1048                                                  u64 bytenr)
->   1049  {
->   1050          if (btrfs_is_testing(fs_info))
->   1051                  return alloc_test_extent_buffer(fs_info, bytenr);
->                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> NULL
-> 
->   1052          return alloc_extent_buffer(fs_info, bytenr);
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Error pointers.
-> 
->   1053  }
-> 
-> None of the callers of btrfs_find_create_tree_block() check for NULL.
+merged into cifs-2.6.git for-next
 
-I see, though my view is a bug in alloc_test_extent_buffer that should
-follow alloc_extent_buffer semantics, and this gets fixed. I'll update
-the changelog again, makes sense to mention that it namely affects
-btrfs_find_create_tree_block.
+On Mon, Dec 2, 2019 at 1:00 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The pointer pneg_ctxt is being initialized with a value that is never
+> read and it is being updated later with a new value.  The assignment
+> is redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/cifs/smb2pdu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index ed77f94dbf1d..be0de8a63e57 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -554,7 +554,7 @@ static void
+>  assemble_neg_contexts(struct smb2_negotiate_req *req,
+>                       struct TCP_Server_Info *server, unsigned int *total_len)
+>  {
+> -       char *pneg_ctxt = (char *)req;
+> +       char *pneg_ctxt;
+>         unsigned int ctxt_len;
+>
+>         if (*total_len > 200) {
+> --
+> 2.24.0
+>
+
+
+-- 
+Thanks,
+
+Steve
