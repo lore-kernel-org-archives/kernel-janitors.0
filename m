@@ -1,22 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 21 Dec 2019 09:30:28 +0000
-Subject: Re: string.h: Mark 34 functions with __must_check
-Message-Id: <95473676-5bb9-0104-38ac-0d196d3ded83@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Dec 2019 17:42:46 +0000
+Subject: [PATCH] i2400m/USB: fix error return when rx_size is too large
+Message-Id: <20191202174246.77305-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
-In-Reply-To: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Laight <David.Laight@ACULAB.COM>, David Sterba <dsterba@suse.cz>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Inaky Perez-Gonzalez <inaky@linux.intel.com>, linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Several functions return values with which useful data processing
-> should be performed. These values must not be ignored then.
-> Thus use the annotation “__must_check” in the shown function declarations.
+From: Colin Ian King <colin.king@canonical.com>
 
-Will such a software development topic be clarified any further?
-Would you like to continue the discussion?
+Currently when the rx_size is too large the intended error
+-EINVAL is not being returned as this is being assigned to
+result rather than rx_skb. Fix this be setting rx_skb
+to ERR_PTR(-EINVAL) so that the error is returned in rx_skb
+as originally intended.
 
-Regards,
-Markus
+Addresses-Coverity: ("Unused value")
+Fixes: a8ebf98f5414 ("i2400m/USB: TX and RX path backends")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wimax/i2400m/usb-rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wimax/i2400m/usb-rx.c b/drivers/net/wimax/i2400m/usb-rx.c
+index 5b64bda7d9e7..1a5e2178bb27 100644
+--- a/drivers/net/wimax/i2400m/usb-rx.c
++++ b/drivers/net/wimax/i2400m/usb-rx.c
+@@ -256,7 +256,7 @@ struct sk_buff *i2400mu_rx(struct i2400mu *i2400mu, struct sk_buff *rx_skb)
+ 			i2400mu->rx_size = rx_size;
+ 		else if (printk_ratelimit()) {
+ 			dev_err(dev, "BUG? rx_size up to %d\n", rx_size);
+-			result = -EINVAL;
++			rx_skb = ERR_PTR(-EINVAL);
+ 			goto out;
+ 		}
+ 		skb_put(rx_skb, read_size);
+-- 
+2.24.0
