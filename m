@@ -1,23 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 28 Dec 2019 12:25:49 +0000
-Subject: Re: nvmem: core: Checking the decrementing of reference counters
-Message-Id: <2a95fa07-dfae-54ef-9d19-682bace02e5f@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Dec 2019 09:02:15 +0000
+Subject: [PATCH][next] s390/test_unwind: fix spelling mistake "reqister" -> "register"
+Message-Id: <20191202090215.28766-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
-In-Reply-To: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Xu Wang <vulab@iscas.ac.cn>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, linux-s390@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I have taken another look at the implementation of the function “nvmem_device_release”.
-https://elixir.bootlin.com/linux/v5.5-rc3/source/drivers/nvmem/core.c#L421
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/nvmem/core.c?id=bf8d1cd4386535004c4afe7f03d37f9864c9940e#n421
+From: Colin Ian King <colin.king@canonical.com>
 
-Now I wonder why the statement “put_device(&nvmem->dev)” is performed here
-after it was also executed by the function “__nvmem_device_put” before.
-How often should the device reference count be decremented (at the end)?
+There is a spelling mistake in a pr_info message. Fix it.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/s390/lib/test_unwind.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/lib/test_unwind.c b/arch/s390/lib/test_unwind.c
+index bda7ac0ddd29..32b7a30b2485 100644
+--- a/arch/s390/lib/test_unwind.c
++++ b/arch/s390/lib/test_unwind.c
+@@ -238,7 +238,7 @@ static int test_unwind_irq(struct unwindme *u)
+ {
+ 	preempt_disable();
+ 	if (register_external_irq(EXT_IRQ_CLK_COMP, unwindme_irq_handler)) {
+-		pr_info("Couldn't reqister external interrupt handler");
++		pr_info("Couldn't register external interrupt handler");
+ 		return -1;
+ 	}
+ 	u->task = current;
+-- 
+2.24.0
