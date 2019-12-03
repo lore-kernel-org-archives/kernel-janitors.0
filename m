@@ -1,42 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Dec 2019 07:28:24 +0000
-Subject: Re: [PATCH] drivers/misc: ti-st: remove redundant assignment to variable i
-Message-Id: <20191203072824.GA1765@kadam>
+Date: Tue, 03 Dec 2019 09:36:52 +0000
+Subject: [PATCH] scsi: mpt3sas: Fix double free in attach error handling
+Message-Id: <20191203093652.gyntgvnkw2udatyc@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191202151352.55139-1-colin.king@canonical.com>
-In-Reply-To: <20191202151352.55139-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>
+Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 03:13:52PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable i is being initialized with a value that is never
-> read and it is being updated later with a new value in a for-loop.
-> The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/ti-st/st_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
-> index 2ae9948a91e1..6255d9b88122 100644
-> --- a/drivers/misc/ti-st/st_core.c
-> +++ b/drivers/misc/ti-st/st_core.c
-> @@ -736,7 +736,7 @@ static int st_tty_open(struct tty_struct *tty)
->  
->  static void st_tty_close(struct tty_struct *tty)
->  {
-> -	unsigned char i = ST_MAX_CHANNELS;
-> +	unsigned char i;
->  	unsigned long flags = 0;
+The caller also calls _base_release_memory_pools() on error so it
+leads to a number of double frees:
 
-I'm surprised that flags doesn't generate a warning as well.
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->chain_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->hpr_lookup' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->internal_lookup' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->pcie_sgl_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_free_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_post_free_array_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_post_free_dma_pool' double freed
+drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->sense_dma_pool' double freed
 
-regards,
-dan carpenter
+Fixes: 74522a92bbf0 ("scsi: mpt3sas: Optimize I/O memory consumption in driver.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 848fbec7bda6..45fd8dfb7c40 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -5248,7 +5248,6 @@ _base_allocate_memory_pools(struct MPT3SAS_ADAPTER *ioc)
+ 					&ct->chain_buffer_dma);
+ 			if (!ct->chain_buffer) {
+ 				ioc_err(ioc, "chain_lookup: pci_pool_alloc failed\n");
+-				_base_release_memory_pools(ioc);
+ 				goto out;
+ 			}
+ 		}
+-- 
+2.11.0
