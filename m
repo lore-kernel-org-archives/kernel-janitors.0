@@ -1,61 +1,82 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 19 Dec 2019 13:38:18 +0000
-Subject: Re: [PATCH -next] ath11k: add dependency for struct ath11k member debug
-Message-Id: <875zic77w5.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Dec 2019 09:33:04 +0000
+Subject: [PATCH] btrfs: Fix btrfs_find_create_tree_block() testing
+Message-Id: <20191203093036.fp4rbgm56yzbw6ku@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213012417.130719-1-maowenan@huawei.com>
-In-Reply-To: <20191213012417.130719-1-maowenan@huawei.com> (Mao Wenan's
- message of "Fri, 13 Dec 2019 09:24:17 +0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: linux-wireless@vger.kernel.org, milehu@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ath11k@lists.infradead.org, julia.lawall@lip6.fr, mpubbise@codeaurora.org, msinada@codeaurora.org, periyasa@codeaurora.org, davem@davemloft.net
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mike Rapoport <rppt@linux.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Mao Wenan <maowenan@huawei.com> writes:
+The btrfs_find_create_tree_block() uses alloc_dummy_extent_buffer() for
+testing and alloc_extent_buffer() for production.  The problem is that
+the test code returns NULL and the production code returns error
+pointers.  The callers only check for error pointers.
 
-> If CONFIG_ATH11K, CONFIG_MAC80211_DEBUGFS are set,
-> and CONFIG_ATH11K_DEBUGFS is not set, below error can be found,
-> drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function ath11k_dbg_sta_open_htt_peer_stats:
-> drivers/net/wireless/ath/ath11k/debugfs_sta.c:411:4: error: struct ath11k has no member named debug
->   ar->debug.htt_stats.stats_req = stats_req;
->
-> It is to add the dependency for the member of struct ath11k.
->
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/net/wireless/ath/ath11k/debugfs_sta.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> index 3c5f931..bcc51d7 100644
-> --- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> +++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> @@ -408,7 +408,9 @@ ath11k_dbg_sta_open_htt_peer_stats(struct inode *inode, struct file *file)
->  		return -ENOMEM;
->  
->  	mutex_lock(&ar->conf_mutex);
-> +#ifdef CONFIG_ATH11K_DEBUGFS
->  	ar->debug.htt_stats.stats_req = stats_req;
-> +#endif
+I have changed alloc_dummy_extent_buffer() to return error pointers and
+updated the two callers which use it directly.
 
-ifdefs are ugly and I don't think this is the root cause for the
-problem. I suspect (but not sure!) that ATH11K_DEBUGFS should depend on
-MAC80211_DEBUGFS, not DEBUG_FS like it does now. Or would there be a
-valid reason to have ATH11K_DEBUGFS enabled but not MAC80211_DEBUGFS?
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/btrfs/extent_io.c                   | 6 ++++--
+ fs/btrfs/tests/free-space-tree-tests.c | 4 ++--
+ fs/btrfs/tests/qgroup-tests.c          | 4 ++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-Then we could also change Makefile to this:
-
-ath11k-$(CONFIG_ATH11K_DEBUGFS) += debugfs_sta.o
-
-And hopefully get rid of an ifdef:
-
-drivers/net/wireless/ath/ath11k/debug.h:#ifdef CONFIG_MAC80211_DEBUGFS
-drivers/net/wireless/ath/ath11k/debug.h:#else /* !CONFIG_MAC80211_DEBUGFS */
-drivers/net/wireless/ath/ath11k/debug.h:#endif /* CONFIG_MAC80211_DEBUGFS*/
-
-Care to try this out?
-
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index eb8bd0258360..2f4802f405a2 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5074,12 +5074,14 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ 		return eb;
+ 	eb = alloc_dummy_extent_buffer(fs_info, start);
+ 	if (!eb)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 	eb->fs_info = fs_info;
+ again:
+ 	ret = radix_tree_preload(GFP_NOFS);
+-	if (ret)
++	if (ret) {
++		exists = ERR_PTR(ret);
+ 		goto free_eb;
++	}
+ 	spin_lock(&fs_info->buffer_lock);
+ 	ret = radix_tree_insert(&fs_info->buffer_radix,
+ 				start >> PAGE_SHIFT, eb);
+diff --git a/fs/btrfs/tests/free-space-tree-tests.c b/fs/btrfs/tests/free-space-tree-tests.c
+index 1a846bf6e197..914eea5ba6a7 100644
+--- a/fs/btrfs/tests/free-space-tree-tests.c
++++ b/fs/btrfs/tests/free-space-tree-tests.c
+@@ -452,9 +452,9 @@ static int run_test(test_func_t test_func, int bitmaps, u32 sectorsize,
+ 	root->fs_info->tree_root = root;
+ 
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_std_err(TEST_ALLOC_EXTENT_BUFFER);
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
+diff --git a/fs/btrfs/tests/qgroup-tests.c b/fs/btrfs/tests/qgroup-tests.c
+index 09aaca1efd62..ac035a6fa003 100644
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -484,9 +484,9 @@ int btrfs_test_qgroups(u32 sectorsize, u32 nodesize)
+ 	 * *cough*backref walking code*cough*
+ 	 */
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_err("couldn't allocate dummy buffer");
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
 -- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
