@@ -1,47 +1,86 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Wed, 04 Dec 2019 19:13:45 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: SOF: imx8: fix memory allocation failure check on priv->pd_dev
-Message-Id: <33fec540-e97b-25e7-83af-575f19d829d2@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Dec 2019 11:24:58 +0000
+Subject: [PATCH v2] btrfs: Fix btrfs_find_create_tree_block() testing
+Message-Id: <20191203112457.GF1787@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204124816.1415359-1-colin.king@canonical.com>
-In-Reply-To: <20191204124816.1415359-1-colin.king@canonical.com>
+In-Reply-To: <20191203110408.GA30629@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mike Rapoport <rppt@linux.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The btrfs_find_create_tree_block() uses alloc_test_extent_buffer() for
+testing and alloc_extent_buffer() for production.  The problem is that
+the test code returns NULL and the production code returns error
+pointers.  The callers only check for error pointers.
 
+I have changed alloc_test_extent_buffer() to return error pointers and
+updated the two callers which use it directly.
 
-On 12/4/19 6:48 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The memory allocation failure check for priv->pd_dev is incorrectly
-> pointer checking priv instead of priv->pd_dev. Fix this.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Correct the commit message.  alloc_test_extent_buffer() instead of
+alloc_dummy_extent_buffer().
 
-Thanks Colin
+ fs/btrfs/extent_io.c                   | 6 ++++--
+ fs/btrfs/tests/free-space-tree-tests.c | 4 ++--
+ fs/btrfs/tests/qgroup-tests.c          | 4 ++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-> ---
->   sound/soc/sof/imx/imx8.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-> index cfefcfd92798..9d926b1df0d7 100644
-> --- a/sound/soc/sof/imx/imx8.c
-> +++ b/sound/soc/sof/imx/imx8.c
-> @@ -209,7 +209,7 @@ static int imx8_probe(struct snd_sof_dev *sdev)
->   
->   	priv->pd_dev = devm_kmalloc_array(&pdev->dev, priv->num_domains,
->   					  sizeof(*priv->pd_dev), GFP_KERNEL);
-> -	if (!priv)
-> +	if (!priv->pd_dev)
->   		return -ENOMEM;
->   
->   	priv->link = devm_kmalloc_array(&pdev->dev, priv->num_domains,
-> 
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index eb8bd0258360..2f4802f405a2 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5074,12 +5074,14 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+ 		return eb;
+ 	eb = alloc_dummy_extent_buffer(fs_info, start);
+ 	if (!eb)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 	eb->fs_info = fs_info;
+ again:
+ 	ret = radix_tree_preload(GFP_NOFS);
+-	if (ret)
++	if (ret) {
++		exists = ERR_PTR(ret);
+ 		goto free_eb;
++	}
+ 	spin_lock(&fs_info->buffer_lock);
+ 	ret = radix_tree_insert(&fs_info->buffer_radix,
+ 				start >> PAGE_SHIFT, eb);
+diff --git a/fs/btrfs/tests/free-space-tree-tests.c b/fs/btrfs/tests/free-space-tree-tests.c
+index 1a846bf6e197..914eea5ba6a7 100644
+--- a/fs/btrfs/tests/free-space-tree-tests.c
++++ b/fs/btrfs/tests/free-space-tree-tests.c
+@@ -452,9 +452,9 @@ static int run_test(test_func_t test_func, int bitmaps, u32 sectorsize,
+ 	root->fs_info->tree_root = root;
+ 
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_std_err(TEST_ALLOC_EXTENT_BUFFER);
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
+diff --git a/fs/btrfs/tests/qgroup-tests.c b/fs/btrfs/tests/qgroup-tests.c
+index 09aaca1efd62..ac035a6fa003 100644
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -484,9 +484,9 @@ int btrfs_test_qgroups(u32 sectorsize, u32 nodesize)
+ 	 * *cough*backref walking code*cough*
+ 	 */
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_err("couldn't allocate dummy buffer");
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
+-- 
+2.11.0
