@@ -1,32 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 18 Dec 2019 17:55:56 +0000
-Subject: Re: [PATCH] ath11k: checking for NULL vs IS_ERR()
-Message-Id: <20191218175556.7F45EC447A4@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 03 Dec 2019 21:48:38 +0000
+Subject: [PATCH] regulator: s5m8767: Fix a warning message
+Message-Id: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213105127.kijiazxwtghmubyk@kili.mountain>
-In-Reply-To: <20191213105127.kijiazxwtghmubyk@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Venkateswara Naralasetty <vnaralas@codeaurora.org>, Muna Sinada <msinada@codeaurora.org>, Shashidhar Lakkavalli <slakkavalli@datto.com>, Miles Hu <milehu@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, lgirdwood@gmail.com, broonie@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Axe a duplicated word ("property") in a warning message.
 
-> The ath11k_ce_alloc_ring() function returns error pointers on error, not
-> NULL.  The rest of the driver assumes that "pipe->src_ring" is either
-> valid or NULL so this patch introduces a temporary varaible to avoid
-> leaving it as an error pointer.
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/regulator/s5m8767.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-c76fa846b0e1 ath11k: checking for NULL vs IS_ERR()
-
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index bdc07739e9a2..12d6b8d2e97e 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -588,7 +588,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 		if (of_property_read_u32(reg_np, "op_mode",
+ 				&rmode->mode)) {
+ 			dev_warn(iodev->dev,
+-				"no op_mode property property at %pOF\n",
++				"no op_mode property at %pOF\n",
+ 				reg_np);
+ 
+ 			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
 -- 
-https://patchwork.kernel.org/patch/11290421/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
