@@ -1,36 +1,52 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 21 Dec 2019 15:36:23 +0000
-Subject: [PATCH] firmware: turris-mox-rwtm: fix indentation issue
-Message-Id: <20191221153623.32564-1-colin.king@canonical.com>
+Date: Wed, 04 Dec 2019 15:28:47 +0000
+Subject: [PATCH] OMAP: DSS2: remove non-zero check on variable r
+Message-Id: <20191204152847.1435188-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marek Behun <marek.behun@nic.cz>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a statement that is indented one level too deeply, remove
-the extraneous tab.
+Variable r is being initialized to zero, so the check of a non-zero
+rv is redundant and can be removed.
 
+It appears that the previous case statements set r to be -EINVAL
+and the "Fallthrough" comment afterwards suggested it was going
+to fall through to this non-zero check but won't because of the
+break statement. Remove the confusion by removing the Fallthrough
+comment too.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/firmware/turris-mox-rwtm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/omapfb-main.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
-index 72be58960e54..e27f68437b56 100644
---- a/drivers/firmware/turris-mox-rwtm.c
-+++ b/drivers/firmware/turris-mox-rwtm.c
-@@ -197,7 +197,7 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
- 		rwtm->serial_number = reply->status[1];
- 		rwtm->serial_number <<= 32;
- 		rwtm->serial_number |= reply->status[0];
--			rwtm->board_version = reply->status[2];
-+		rwtm->board_version = reply->status[2];
- 		rwtm->ram_size = reply->status[3];
- 		reply_to_mac_addr(rwtm->mac_address1, reply->status[4],
- 				  reply->status[5]);
+diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+index 858c2c011d19..a2a2c1b205d9 100644
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+@@ -1154,16 +1154,12 @@ static int _setcolreg(struct fb_info *fbi, u_int regno, u_int red, u_int green,
+ 		   r = fbdev->ctrl->setcolreg(regno, red, green, blue,
+ 		   transp, update_hw_pal);
+ 		   */
+-		/* Fallthrough */
+ 		r = -EINVAL;
+ 		break;
+ 	case OMAPFB_COLOR_RGB565:
+ 	case OMAPFB_COLOR_RGB444:
+ 	case OMAPFB_COLOR_RGB24P:
+ 	case OMAPFB_COLOR_RGB24U:
+-		if (r != 0)
+-			break;
+-
+ 		if (regno < 16) {
+ 			u32 pal;
+ 			pal = ((red >> (16 - var->red.length)) <<
 -- 
 2.24.0
