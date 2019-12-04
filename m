@@ -1,31 +1,45 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 10 Dec 2019 15:44:56 +0000
-Subject: Re: [PATCH -next] rtc: mt6397: drop free_irq of devm_ allocated irq
-Message-Id: <20191210154456.GQ1463890@piout.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Dec 2019 07:59:36 +0000
+Subject: [PATCH] nfsd: unlock on error in manage_cpntf_state()
+Message-Id: <20191204075935.sgdcxib4jahd5blr@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191113021720.9527-1-weiyongjun1@huawei.com>
-In-Reply-To: <20191113021720.9527-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Josef Friedl <josef.friedl@speed.at>, Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-kernel@lists.infradead.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 13/11/2019 02:17:20+0000, Wei Yongjun wrote:
-> The devm_request_threaded_irq function allocates irq that is
-> released when a driver detaches. Thus, there is no reason to
-> explicitly call free_irq in probe function.
-> 
-> Fixes: 851b87148aa2 ("rtc: mt6397: improvements of rtc driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/rtc/rtc-mt6397.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-Applied, thanks.
+We are holding the "nn->s2s_cp_lock" so we can't return directly
+without unlocking first.
 
+Fixes: f3dee17721a0 ("NFSD check stateids against copy stateids")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/nfsd/nfs4state.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 296765e693d0..390ad454a229 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5695,13 +5695,16 @@ __be32 manage_cpntf_state(struct nfsd_net *nn, stateid_t *st,
+ 	if (cps_t) {
+ 		state = container_of(cps_t, struct nfs4_cpntf_state,
+ 				     cp_stateid);
+-		if (state->cp_stateid.sc_type != NFS4_COPYNOTIFY_STID)
+-			return nfserr_bad_stateid;
++		if (state->cp_stateid.sc_type != NFS4_COPYNOTIFY_STID) {
++			state = NULL;
++			goto unlock;
++		}
+ 		if (!clp)
+ 			refcount_inc(&state->cp_stateid.sc_count);
+ 		else
+ 			_free_cpntf_state_locked(nn, state);
+ 	}
++unlock:
+ 	spin_unlock(&nn->s2s_cp_lock);
+ 	if (!state)
+ 		return nfserr_bad_stateid;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.11.0
