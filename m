@@ -1,36 +1,38 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Fri, 13 Dec 2019 10:59:47 +0000
-Subject: Re: [PATCH] drm/i915/selftests: remove a condition
-Message-Id: <157623478741.2219.10541788661599243416@skylake-alporthouse-com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Dec 2019 12:48:16 +0000
+Subject: [PATCH] ASoC: SOF: imx8: fix memory allocation failure check on priv->pd_dev
+Message-Id: <20191204124816.1415359-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213105050.y2v5nylsuxvc44jj@kili.mountain>
-In-Reply-To: <20191213105050.y2v5nylsuxvc44jj@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Dan Carpenter (2019-12-13 10:50:50)
-> We know that "err" is non-zero so there is no need to check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/i915/selftests/i915_request.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
-> index 99c94b4f69fb..71a4ca38fbac 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_request.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_request.c
-> @@ -1086,8 +1086,7 @@ static int __live_parallel_engine1(void *arg)
->                 rq = i915_request_create(engine->kernel_context);
->                 if (IS_ERR(rq)) {
->                         err = PTR_ERR(rq);
-> -                       if (err)
-> -                               break;
-> +                       break;
+From: Colin Ian King <colin.king@canonical.com>
 
-I don't know how that got there.
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+The memory allocation failure check for priv->pd_dev is incorrectly
+pointer checking priv instead of priv->pd_dev. Fix this.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sof/imx/imx8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
+index cfefcfd92798..9d926b1df0d7 100644
+--- a/sound/soc/sof/imx/imx8.c
++++ b/sound/soc/sof/imx/imx8.c
+@@ -209,7 +209,7 @@ static int imx8_probe(struct snd_sof_dev *sdev)
+ 
+ 	priv->pd_dev = devm_kmalloc_array(&pdev->dev, priv->num_domains,
+ 					  sizeof(*priv->pd_dev), GFP_KERNEL);
+-	if (!priv)
++	if (!priv->pd_dev)
+ 		return -ENOMEM;
+ 
+ 	priv->link = devm_kmalloc_array(&pdev->dev, priv->num_domains,
+-- 
+2.24.0
