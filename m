@@ -1,32 +1,58 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 18 Dec 2019 17:53:14 +0000
-Subject: Re: [PATCH][next] ath11k: fix uninitialized variable radioup
-Message-Id: <20191218175314.21F8AC433CB@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 04 Dec 2019 05:52:35 +0000
+Subject: [PATCH] ath10k: Fix some typo in some warning messages
+Message-Id: <20191204055235.11989-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191212191044.107544-1-colin.king@canonical.com>
-In-Reply-To: <20191212191044.107544-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, Ganesh Sesetti <gseset@codeaurora.org>, Karthikeyan Periyasamy <periyasa@codeaurora.org>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kvalo@codeaurora.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, davem@davemloft.net
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-Colin King <colin.king@canonical.com> wrote:
+Fix some typo:
+  s/to to/to/
+  s/even/event/
 
-> The variable radioup is not uninitalized so it may contain a garbage
-> value and hence the detection of a radio that is not up is buggy.
-> Fix this by initializing it to zero.
-> 
-> Addresses-Coverity: ("Uninitalized scalar variable")
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/ath/ath10k/mac.c      | 2 +-
+ drivers/net/wireless/ath/ath10k/testmode.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-08cc0f44f5ed ath11k: fix uninitialized variable radioup
-
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index e8bdb2ba9b18..5faa43cd7fef 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -1098,7 +1098,7 @@ static int ath10k_monitor_vdev_stop(struct ath10k *ar)
+ 
+ 	ret = ath10k_wmi_vdev_stop(ar, ar->monitor_vdev_id);
+ 	if (ret)
+-		ath10k_warn(ar, "failed to to request monitor vdev %i stop: %d\n",
++		ath10k_warn(ar, "failed to request monitor vdev %i stop: %d\n",
+ 			    ar->monitor_vdev_id, ret);
+ 
+ 	ret = ath10k_vdev_setup_sync(ar);
+diff --git a/drivers/net/wireless/ath/ath10k/testmode.c b/drivers/net/wireless/ath/ath10k/testmode.c
+index 1bffe3fbea3f..7a9b9bbcdbfc 100644
+--- a/drivers/net/wireless/ath/ath10k/testmode.c
++++ b/drivers/net/wireless/ath/ath10k/testmode.c
+@@ -65,7 +65,7 @@ bool ath10k_tm_event_wmi(struct ath10k *ar, u32 cmd_id, struct sk_buff *skb)
+ 	ret = nla_put_u32(nl_skb, ATH10K_TM_ATTR_CMD, ATH10K_TM_CMD_WMI);
+ 	if (ret) {
+ 		ath10k_warn(ar,
+-			    "failed to to put testmode wmi event cmd attribute: %d\n",
++			    "failed to put testmode wmi event cmd attribute: %d\n",
+ 			    ret);
+ 		kfree_skb(nl_skb);
+ 		goto out;
+@@ -74,7 +74,7 @@ bool ath10k_tm_event_wmi(struct ath10k *ar, u32 cmd_id, struct sk_buff *skb)
+ 	ret = nla_put_u32(nl_skb, ATH10K_TM_ATTR_WMI_CMDID, cmd_id);
+ 	if (ret) {
+ 		ath10k_warn(ar,
+-			    "failed to to put testmode wmi even cmd_id: %d\n",
++			    "failed to put testmode wmi event cmd_id: %d\n",
+ 			    ret);
+ 		kfree_skb(nl_skb);
+ 		goto out;
 -- 
-https://patchwork.kernel.org/patch/11289309/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
