@@ -1,69 +1,80 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Wed, 04 Dec 2019 14:26:40 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Dec 2019 18:42:47 +0000
 Subject: Re: [PATCH] Silence an uninitialized variable warning
-Message-Id: <20191204092640.692c95af@gandalf.local.home>
+Message-Id: <20191204184247.GG1765@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191126121934.kuolgbm55dirfbay@kili.mountain>
-In-Reply-To: <20191126121934.kuolgbm55dirfbay@kili.mountain>
+ <20191204092640.692c95af@gandalf.local.home>
+In-Reply-To: <20191204092640.692c95af@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
 
-On Tue, 26 Nov 2019 15:19:34 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> Smatch complains that "ret" could be uninitialized if we don't enter the
-> loop.  I don't know if that's possible, but it's nicer to return a
-> literal zero instead.
+On Wed, Dec 04, 2019 at 09:26:40AM -0500, Steven Rostedt wrote:
+> On Tue, 26 Nov 2019 15:19:34 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  kernel/trace/trace_syscalls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > Smatch complains that "ret" could be uninitialized if we don't enter the
+> > loop.  I don't know if that's possible, but it's nicer to return a
+> > literal zero instead.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  kernel/trace/trace_syscalls.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+> > index 73140d80dd46..63528f458826 100644
+> > --- a/kernel/trace/trace_syscalls.c
+> > +++ b/kernel/trace/trace_syscalls.c
+> > @@ -286,7 +286,7 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+> >  		offset += sizeof(unsigned long);
+> >  	}
+> >  
+> > -	return ret;
+> > +	return 0;
+> >  }
+> >  
+> >  static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
 > 
-> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-> index 73140d80dd46..63528f458826 100644
-> --- a/kernel/trace/trace_syscalls.c
-> +++ b/kernel/trace/trace_syscalls.c
-> @@ -286,7 +286,7 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
->  		offset += sizeof(unsigned long);
->  	}
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+> The current code has this:
+> 
+> static int __init syscall_enter_define_fields(struct trace_event_call *call)
+> {
+> 	struct syscall_trace_enter trace;
+> 	struct syscall_metadata *meta = call->data;
+> 	int ret;
+> 	int i;
+> 	int offset = offsetof(typeof(trace), args);
+> 
+> 	ret = trace_define_field(call, SYSCALL_FIELD(int, nr, __syscall_nr),
+> 				 FILTER_OTHER);
 
-The current code has this:
+In linux-next this ret = trace_define_field() assignment is removed.
+That was commit 60fdad00827c ("ftrace: Rework event_create_dir()").
 
-static int __init syscall_enter_define_fields(struct trace_event_call *call)
-{
-	struct syscall_trace_enter trace;
-	struct syscall_metadata *meta = call->data;
-	int ret;
-	int i;
-	int offset = offsetof(typeof(trace), args);
+> 	if (ret)
+> 		return ret;
+> 
+> 	for (i = 0; i < meta->nb_args; i++) {
+> 		ret = trace_define_field(call, meta->types[i],
+> 					 meta->args[i], offset,
+> 					 sizeof(unsigned long), 0,
+> 					 FILTER_OTHER);
+> 		offset += sizeof(unsigned long);
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> 
+> How can ret possibly be uninitialized?
 
-	ret = trace_define_field(call, SYSCALL_FIELD(int, nr, __syscall_nr),
-				 FILTER_OTHER);
-	if (ret)
-		return ret;
+I should have written this commit more carefully and verified whether
+meta->nb_args can actually be zero instead of just assuming it was a
+false positive...
 
-	for (i = 0; i < meta->nb_args; i++) {
-		ret = trace_define_field(call, meta->types[i],
-					 meta->args[i], offset,
-					 sizeof(unsigned long), 0,
-					 FILTER_OTHER);
-		offset += sizeof(unsigned long);
-	}
-
-	return ret;
-}
-
-
-How can ret possibly be uninitialized?
-
--- Steve
+regards,
+dan carpenter
