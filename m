@@ -1,51 +1,40 @@
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 02 Dec 2019 22:57:15 +0000
-Subject: Re: [PATCH] cifs: remove redundant assignment to pointer pneg_ctxt
-Message-Id: <CAH2r5ms+DVGP+Wgx+cTe65sBCFskrXBNxNe1gMDr+sEQ1DbqAA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Dec 2019 14:11:59 +0000
+Subject: [PATCH] media: meson: add missing allocation failure check on new_buf
+Message-Id: <20191204141159.1432387-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191202185942.81854-1-colin.king@canonical.com>
-In-Reply-To: <20191202185942.81854-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Maxime Jourdan <mjourdan@baylibre.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org, devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Dec 2, 2019 at 1:00 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer pneg_ctxt is being initialized with a value that is never
-> read and it is being updated later with a new value.  The assignment
-> is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2pdu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index ed77f94dbf1d..be0de8a63e57 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -554,7 +554,7 @@ static void
->  assemble_neg_contexts(struct smb2_negotiate_req *req,
->                       struct TCP_Server_Info *server, unsigned int *total_len)
->  {
-> -       char *pneg_ctxt = (char *)req;
-> +       char *pneg_ctxt;
->         unsigned int ctxt_len;
->
->         if (*total_len > 200) {
-> --
-> 2.24.0
->
+Currently if the allocation of new_buf fails then a null pointer
+dereference occurs when assiging new_buf->vb. Avoid this by returning
+early on a memory allocation failure as there is not much more can
+be done at this point.
 
+Addresses-Coverity: ("Dereference null return")
+Fixes: 3e7f51bd9607 ("media: meson: add v4l2 m2m video decoder driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/meson/vdec/vdec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
+index 0a1a04fd5d13..8dd1396909d7 100644
+--- a/drivers/staging/media/meson/vdec/vdec.c
++++ b/drivers/staging/media/meson/vdec/vdec.c
+@@ -133,6 +133,8 @@ vdec_queue_recycle(struct amvdec_session *sess, struct vb2_buffer *vb)
+ 	struct amvdec_buffer *new_buf;
+ 
+ 	new_buf = kmalloc(sizeof(*new_buf), GFP_KERNEL);
++	if (!new_buf)
++		return;
+ 	new_buf->vb = vb;
+ 
+ 	mutex_lock(&sess->bufs_recycle_lock);
 -- 
-Thanks,
-
-Steve
+2.24.0
