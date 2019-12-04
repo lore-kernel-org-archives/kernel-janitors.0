@@ -1,60 +1,36 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sat, 07 Dec 2019 18:27:51 +0000
-Subject: [PATCH] MAINTAINERS: fix style in SAFESETID SECURITY MODULE
-Message-Id: <20191207182751.14249-1-lukas.bulwahn@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 04 Dec 2019 06:02:20 +0000
+Subject: [PATCH] drm/msm/a6xx: Fix a typo in an error message
+Message-Id: <20191204060220.12563-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Micah Morton <mortonm@chromium.org>
-Cc: linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: robdclark@gmail.com, sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch, jcrouse@codeaurora.org, dianders@chromium.org, mamtashukla555@gmail.com
+Cc: linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, freedreno@lists.freedesktop.org
 
-Commit fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
-slips in some formatting with spaces instead of tabs, which
-./scripts/checkpatch.pl -f MAINTAINERS complains about:
+'in' is duplicated in the error message. Axe one of them.
+While at it, slighly improve indentation.
 
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #14394: FILE: MAINTAINERS:14394:
-  +M:     Micah Morton <mortonm@chromium.org>
-
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #14395: FILE: MAINTAINERS:14395:
-  +S:     Supported
-
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #14396: FILE: MAINTAINERS:14396:
-  +F:     security/safesetid/
-
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #14397: FILE: MAINTAINERS:14397:
-  +F:     Documentation/admin-guide/LSM/SafeSetID.rst
-
-Fixes: fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-applies cleanly on current master (eea2d5da29e3) and next-20191207
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- MAINTAINERS | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 59d4cb7b2981..f282e5cbc40e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14391,10 +14391,10 @@ F:	drivers/media/pci/saa7146/
- F:	include/media/drv-intf/saa7146*
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 85f14feafdec..d04e631ab3dc 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1051,8 +1051,8 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
  
- SAFESETID SECURITY MODULE
--M:     Micah Morton <mortonm@chromium.org>
--S:     Supported
--F:     security/safesetid/
--F:     Documentation/admin-guide/LSM/SafeSetID.rst
-+M:	Micah Morton <mortonm@chromium.org>
-+S:	Supported
-+F:	security/safesetid/
-+F:	Documentation/admin-guide/LSM/SafeSetID.rst
- 
- SAMSUNG AUDIO (ASoC) DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
+ 		if (j = pri_count) {
+ 			DRM_DEV_ERROR(dev,
+-				"Level %u not found in in the RPMh list\n",
+-					level);
++				      "Level %u not found in the RPMh list\n",
++				      level);
+ 			DRM_DEV_ERROR(dev, "Available levels:\n");
+ 			for (j = 0; j < pri_count; j++)
+ 				DRM_DEV_ERROR(dev, "  %u\n", pri[j]);
 -- 
-2.17.1
+2.20.1
