@@ -1,28 +1,45 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Thu, 19 Dec 2019 19:43:06 +0000
-Subject: Re: [PATCH][next] drm/i915: fix uninitialized pointer reads on pointers to and from
-Message-Id: <157678458608.6469.7303602517496484124@skylake-alporthouse-com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 04 Dec 2019 07:28:26 +0000
+Subject: [PATCH v2 -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
+Message-Id: <20191204072826.117432-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191219190916.24693-1-colin.king@canonical.com>
-In-Reply-To: <20191219190916.24693-1-colin.king@canonical.com>
+References: <20191204063444.GF1765@kadam>
+In-Reply-To: <20191204063444.GF1765@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: eddie.huang@mediatek.com, sean.wang@mediatek.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, matthias.bgg@gmail.com, dan.carpenter@oracle.com
+Cc: linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-Quoting Colin King (2019-12-19 19:09:16)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointers to and from are not initialized and may contain
-> garbage values. This will cause uninitialized pointer reads in the
-> call to intel_frontbuffer_track and later checks to see if to and from
-> are null.  Fix this by ensuring to and from are initialized to NULL.
-> 
-> Addresses-Coverity: ("Uninitialised pointer read)"
-> Fixes: da42104f589d ("drm/i915: Hold reference to intel_frontbuffer as we track activity")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+rtc->irq is requested by devm_request_threaded_irq,
+and request_threaded_irq. IRQs requested with this
+function will be automatically freed on driver detach.
+This patch remove unused error label as well.
 
-"D'oh"
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: remove error label as Dan Carpenter suggest.
+ drivers/rtc/rtc-mt6397.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+index 5249fc99fd5f..14f3c4915260 100644
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -287,13 +287,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc_dev->ops = &mtk_rtc_ops;
+ 
+ 	ret = rtc_register_device(rtc->rtc_dev);
+-	if (ret)
+-		goto out_free_irq;
+-
+-	return 0;
+-
+-out_free_irq:
+-	free_irq(rtc->irq, rtc);
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
