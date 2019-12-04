@@ -1,60 +1,37 @@
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date: Thu, 19 Dec 2019 14:39:04 +0000
-Subject: Re: [PATCH][next] drm/gma500: fix null dereference of pointer fb before null check
-Message-Id: <CAMeQTsYmqJwYrAM1bGu2VyVop3sSFcp2fOMrxD4OvhH13jad9Q@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 04 Dec 2019 02:02:09 +0000
+Subject: [PATCH -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
+Message-Id: <20191204020209.10363-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191216162136.270114-1-colin.king@canonical.com>
-In-Reply-To: <20191216162136.270114-1-colin.king@canonical.com>
+References: <20191113021720.9527-1-weiyongjun1@huawei.com>
+In-Reply-To: <20191113021720.9527-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Thomas Zimmermann <tzimmermann@suse.de>
+To: eddie.huang@mediatek.com, sean.wang@mediatek.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, matthias.bgg@gmail.com
+Cc: linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 16, 2019 at 5:21 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Pointer fb is being dereferenced when assigning dev before it
-> is null checked.  Fix this by only dereferencing dev after the
-> null check.
+rtc->irq is requested by devm_request_threaded_irq,
+and request_threaded_irq. IRQs requested with this
+function will be automatically freed on driver detach.
 
-Applied to drm-misc-next
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/rtc/rtc-mt6397.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks
-Patrik
-
->
-> Fixes: 6b7ce2c4161a ("drm/gma500: Remove struct psb_fbdev")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/gma500/accel_2d.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/gma500/accel_2d.c b/drivers/gpu/drm/gma500/accel_2d.c
-> index b9e5a38632f7..adc0507545bf 100644
-> --- a/drivers/gpu/drm/gma500/accel_2d.c
-> +++ b/drivers/gpu/drm/gma500/accel_2d.c
-> @@ -228,8 +228,8 @@ static void psbfb_copyarea_accel(struct fb_info *info,
->  {
->         struct drm_fb_helper *fb_helper = info->par;
->         struct drm_framebuffer *fb = fb_helper->fb;
-> -       struct drm_device *dev = fb->dev;
-> -       struct drm_psb_private *dev_priv = dev->dev_private;
-> +       struct drm_device *dev;
-> +       struct drm_psb_private *dev_priv;
->         uint32_t offset;
->         uint32_t stride;
->         uint32_t src_format;
-> @@ -238,6 +238,8 @@ static void psbfb_copyarea_accel(struct fb_info *info,
->         if (!fb)
->                 return;
->
-> +       dev = fb->dev;
-> +       dev_priv = dev->dev_private;
->         offset = to_gtt_range(fb->obj[0])->offset;
->         stride = fb->pitches[0];
->
-> --
-> 2.24.0
->
+diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+index 5249fc99fd5f..d6a10111137a 100644
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -293,7 +293,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ out_free_irq:
+-	free_irq(rtc->irq, rtc);
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
