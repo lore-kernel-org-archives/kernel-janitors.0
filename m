@@ -1,47 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 15 Dec 2019 15:07:11 +0000
-Subject: Re: [PATCH] staging: comedi: drivers: Fix memory leak in gsc_hpdi_auto_attach
-Message-Id: <69f03714-c10e-8ff9-ae64-7b35b6a5fae9@web.de>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 04 Dec 2019 01:08:51 +0000
+Subject: [PATCH -next] MIPS: Loongson2ef: drop pointless static qualifier in loongson_suspend_enter()
+Message-Id: <20191204010851.160284-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191215013306.18880-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191215013306.18880-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, devel@driverdev.osuosl.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>, Navid Emamdoost <emamd001@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jiaxun.yang@flygoat.com, ralf@linux-mips.org, paulburton@kernel.org, jhogan@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de, maowenan@huawei.com
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-> In the implementation of gsc_hpdi_auto_attach(), the allocated dma
-> description is leaks in case of alignment error, …
+There is no need to have the 'T *v' variable static
+since new value always be assigned before use it.
 
-Please avoid a typo in this change message.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ arch/mips/loongson2ef/common/pm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-…
-+++ b/drivers/staging/comedi/drivers/gsc_hpdi.c
-…
-> @@ -660,6 +661,15 @@ static int gsc_hpdi_auto_attach(struct comedi_device *dev,
->  	s->cancel	= gsc_hpdi_cancel;
->
->  	return gsc_hpdi_init(dev);
-> +
-> +release_dma_desc:
-> +	if (devpriv->dma_desc)
-> +		dma_free_coherent(&pcidev->dev,
-> +				  sizeof(struct plx_dma_desc) *
-> +				NUM_DMA_DESCRIPTORS,
-> +				devpriv->dma_desc,
-> +				devpriv->dma_desc_phys_addr);
-> +	return retval;
->  }
->
->  static void gsc_hpdi_detach(struct comedi_device *dev)
-
-I got the impression that return values from calls of the function “dma_alloc_coherent”
-should be checked before.
-* Would you like to add null pointer checks at other source code places?
-* Should the jump targets be accordingly adjusted then for the completion
-  of the desired exception handling?
-
-Regards,
-Markus
+diff --git a/arch/mips/loongson2ef/common/pm.c b/arch/mips/loongson2ef/common/pm.c
+index 11f4cfd581fb..bcb7ae9777cf 100644
+--- a/arch/mips/loongson2ef/common/pm.c
++++ b/arch/mips/loongson2ef/common/pm.c
+@@ -91,7 +91,7 @@ static inline void stop_perf_counters(void)
+ 
+ static void loongson_suspend_enter(void)
+ {
+-	static unsigned int cached_cpu_freq;
++	unsigned int cached_cpu_freq;
+ 
+ 	/* setup wakeup events via enabling the IRQs */
+ 	setup_wakeup_events();
+-- 
+2.20.1
