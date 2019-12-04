@@ -1,35 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Dec 2019 09:02:15 +0000
-Subject: [PATCH][next] s390/test_unwind: fix spelling mistake "reqister" -> "register"
-Message-Id: <20191202090215.28766-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 04 Dec 2019 03:35:25 +0000
+Subject: [PATCH] HID: alps: Fix an error handling path in 'alps_input_configured()'
+Message-Id: <20191204033525.10871-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, linux-s390@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jkosina@suse.cz, benjamin.tissoires@redhat.com, masaki.ota@jp.alps.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+They are issues:
+   - if 'input_allocate_device()' fails and return NULL, there is no need
+     to free anything and 'input_free_device()' call is a no-op. It can
+     be axed.
+   - 'ret' is known to be 0 at this point, so we must set it to a
+     meaningful value before returning
 
-There is a spelling mistake in a pr_info message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 2562756dde55 ("HID: add Alps I2C HID Touchpad-Stick support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/s390/lib/test_unwind.c | 2 +-
+ drivers/hid/hid-alps.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/lib/test_unwind.c b/arch/s390/lib/test_unwind.c
-index bda7ac0ddd29..32b7a30b2485 100644
---- a/arch/s390/lib/test_unwind.c
-+++ b/arch/s390/lib/test_unwind.c
-@@ -238,7 +238,7 @@ static int test_unwind_irq(struct unwindme *u)
- {
- 	preempt_disable();
- 	if (register_external_irq(EXT_IRQ_CLK_COMP, unwindme_irq_handler)) {
--		pr_info("Couldn't reqister external interrupt handler");
-+		pr_info("Couldn't register external interrupt handler");
- 		return -1;
- 	}
- 	u->task = current;
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index ae79a7c66737..fa704153cb00 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -730,7 +730,7 @@ static int alps_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 	if (data->has_sp) {
+ 		input2 = input_allocate_device();
+ 		if (!input2) {
+-			input_free_device(input2);
++			ret = -ENOMEM;
+ 			goto exit;
+ 		}
+ 
 -- 
-2.24.0
+2.20.1
