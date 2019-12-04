@@ -1,30 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 18 Dec 2019 17:56:50 +0000
-Subject: Re: [PATCH] ath11k: remove an unneeded NULL check
-Message-Id: <20191218175650.44196C4479C@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Dec 2019 15:11:44 +0000
+Subject: [PATCH] net/decnet: fix -EFAULT error that is not getting returned
+Message-Id: <20191204151144.1434209-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213105219.qbpng7eut5zgty2p@kili.mountain>
-In-Reply-To: <20191213105219.qbpng7eut5zgty2p@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The list iterator is always non-NULL so it doesn't need to be checked.
-> I also removed the unnecessary initializer because the list iterator is
-> always initialized.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Currently an -EFAULT error on a memcpy_to_msg is not being returned
+because it is being overwritten when variable rv is being re-assigned
+to the number of bytes copied after breaking out of a loop. Fix this
+by instead assigning the error to variable copied so that this error
+code propegated to rv and hence is returned at the end of the function.
 
-Patch applied to ath-next branch of ath.git, thanks.
+[ This bug was was introduced before the current git history ]
 
-269663f18474 ath11k: remove an unneeded NULL check
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/decnet/af_decnet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
+index e19a92a62e14..e23d9f219597 100644
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -1759,7 +1759,7 @@ static int dn_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 			chunk = size - copied;
+ 
+ 		if (memcpy_to_msg(msg, skb->data, chunk)) {
+-			rv = -EFAULT;
++			copied = -EFAULT;
+ 			break;
+ 		}
+ 		copied += chunk;
 -- 
-https://patchwork.kernel.org/patch/11290433/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.24.0
