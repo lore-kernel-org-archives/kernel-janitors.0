@@ -1,38 +1,35 @@
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Thu, 12 Dec 2019 19:06:50 +0000
-Subject: Re: [PATCH net-next] net: Remove unused including <linux/version.h>
-Message-Id: <CAHmME9osYEbi1BDmJL=4N+A1rbb7_MPqVijogHSFhU39rRCbdw@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 04 Dec 2019 01:05:06 +0000
+Subject: [PATCH -next] power: supply: ab8500: Drop pointless static qualifier in ab8500_btemp_batctrl_volt_to
+Message-Id: <20191204010506.159128-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191212091527.35293-1-yuehaibing@huawei.com> <20191212.105258.579549471896891617.davem@davemloft.net>
-In-Reply-To: <20191212.105258.579549471896891617.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: YueHaibing <yuehaibing@huawei.com>, WireGuard mailing list <wireguard@lists.zx2c4.com>, Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
 
-Hi Dave,
+There is no need to have the 'T *v' variable static
+since new value always be assigned before use it.
 
-On Thu, Dec 12, 2019 at 7:53 PM David Miller <davem@davemloft.net> wrote:
->
-> From: YueHaibing <yuehaibing@huawei.com>
-> Date: Thu, 12 Dec 2019 09:15:27 +0000
->
-> > Remove including <linux/version.h> that don't need it.
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->
-> Appropriate subject line for this should have been:
->
->         Subject: [PATCH net-next] wireguard: Remove unused include <linux/version.h>
->
-> 'net' is too broad a subsystem prefix as it basically encompases half of the
-> entire kernel tree.  When people look at the git shortlog output you need to
-> be specific enough that people can tell what touches what.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/power/supply/ab8500_btemp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have these fixed up how you like in the wireguard-linux.git repo,
-and I'll submit these in a series to net-next next week all together.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/wireguard-linux.git/log
-
-Jason
+diff --git a/drivers/power/supply/ab8500_btemp.c b/drivers/power/supply/ab8500_btemp.c
+index 909f0242bacb..d3d4f7327d1b 100644
+--- a/drivers/power/supply/ab8500_btemp.c
++++ b/drivers/power/supply/ab8500_btemp.c
+@@ -180,7 +180,7 @@ static int ab8500_btemp_batctrl_volt_to_res(struct ab8500_btemp *di,
+ static int ab8500_btemp_read_batctrl_voltage(struct ab8500_btemp *di)
+ {
+ 	int vbtemp, ret;
+-	static int prev;
++	int prev;
+ 
+ 	ret = iio_read_channel_processed(di->bat_ctrl, &vbtemp);
+ 	if (ret < 0) {
+-- 
+2.20.1
