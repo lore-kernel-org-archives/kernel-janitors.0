@@ -1,36 +1,69 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 04 Dec 2019 11:32:04 +0000
-Subject: Re: [PATCH] i2400m/USB: fix error return when rx_size is too large
-Message-Id: <11a3e023-0b8d-ce2f-8fc0-567d0d3c1980@canonical.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Date: Wed, 04 Dec 2019 14:26:40 +0000
+Subject: Re: [PATCH] Silence an uninitialized variable warning
+Message-Id: <20191204092640.692c95af@gandalf.local.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191202174246.77305-1-colin.king@canonical.com>
- <20191202.131327.1991319206654704992.davem@davemloft.net>
-In-Reply-To: <20191202.131327.1991319206654704992.davem@davemloft.net>
+References: <20191126121934.kuolgbm55dirfbay@kili.mountain>
+In-Reply-To: <20191126121934.kuolgbm55dirfbay@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: inaky@linux.intel.com, linux-wimax@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/12/2019 21:13, David Miller wrote:
-> From: Colin King <colin.king@canonical.com>
-> Date: Mon,  2 Dec 2019 17:42:46 +0000
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently when the rx_size is too large the intended error
->> -EINVAL is not being returned as this is being assigned to
->> result rather than rx_skb. Fix this be setting rx_skb
->> to ERR_PTR(-EINVAL) so that the error is returned in rx_skb
->> as originally intended.
->>
->> Addresses-Coverity: ("Unused value")
->> Fixes: a8ebf98f5414 ("i2400m/USB: TX and RX path backends")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> This leaks rx_skb, the caller is supposed to clean up rx_skb
-> by freeing it if this function doesn't transmit it successfully.
-> 
-Oops, yes. Ignore this fix.
+On Tue, 26 Nov 2019 15:19:34 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Colin
+> Smatch complains that "ret" could be uninitialized if we don't enter the
+> loop.  I don't know if that's possible, but it's nicer to return a
+> literal zero instead.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  kernel/trace/trace_syscalls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+> index 73140d80dd46..63528f458826 100644
+> --- a/kernel/trace/trace_syscalls.c
+> +++ b/kernel/trace/trace_syscalls.c
+> @@ -286,7 +286,7 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+>  		offset += sizeof(unsigned long);
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+
+The current code has this:
+
+static int __init syscall_enter_define_fields(struct trace_event_call *call)
+{
+	struct syscall_trace_enter trace;
+	struct syscall_metadata *meta = call->data;
+	int ret;
+	int i;
+	int offset = offsetof(typeof(trace), args);
+
+	ret = trace_define_field(call, SYSCALL_FIELD(int, nr, __syscall_nr),
+				 FILTER_OTHER);
+	if (ret)
+		return ret;
+
+	for (i = 0; i < meta->nb_args; i++) {
+		ret = trace_define_field(call, meta->types[i],
+					 meta->args[i], offset,
+					 sizeof(unsigned long), 0,
+					 FILTER_OTHER);
+		offset += sizeof(unsigned long);
+	}
+
+	return ret;
+}
+
+
+How can ret possibly be uninitialized?
+
+-- Steve
