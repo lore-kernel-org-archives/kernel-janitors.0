@@ -1,39 +1,60 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 19 Dec 2019 23:45:35 +0000
-Subject: [PATCH] ice: remove redundant assignment to variable xmit_done
-Message-Id: <20191219234535.37103-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 07 Dec 2019 18:27:51 +0000
+Subject: [PATCH] MAINTAINERS: fix style in SAFESETID SECURITY MODULE
+Message-Id: <20191207182751.14249-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Micah Morton <mortonm@chromium.org>
+Cc: linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+slips in some formatting with spaces instead of tabs, which
+./scripts/checkpatch.pl -f MAINTAINERS complains about:
 
-The variable xmit_done is being initialized with a value that is never
-read and it is being updated later with a new value. The initialization
-is redundant and can be removed.
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14394: FILE: MAINTAINERS:14394:
+  +M:     Micah Morton <mortonm@chromium.org>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14395: FILE: MAINTAINERS:14395:
+  +S:     Supported
+
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14396: FILE: MAINTAINERS:14396:
+  +F:     security/safesetid/
+
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14397: FILE: MAINTAINERS:14397:
+  +F:     Documentation/admin-guide/LSM/SafeSetID.rst
+
+Fixes: fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/ethernet/intel/ice/ice_xsk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+applies cleanly on current master (eea2d5da29e3) and next-20191207
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_xsk.c b/drivers/net/ethernet/intel/ice/ice_xsk.c
-index cf9b8b22d24f..03c1e9bcf790 100644
---- a/drivers/net/ethernet/intel/ice/ice_xsk.c
-+++ b/drivers/net/ethernet/intel/ice/ice_xsk.c
-@@ -1019,8 +1019,8 @@ bool ice_clean_tx_irq_zc(struct ice_ring *xdp_ring, int budget)
- 	s16 ntc = xdp_ring->next_to_clean;
- 	struct ice_tx_desc *tx_desc;
- 	struct ice_tx_buf *tx_buf;
--	bool xmit_done = true;
- 	u32 xsk_frames = 0;
-+	bool xmit_done;
+ MAINTAINERS | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 59d4cb7b2981..f282e5cbc40e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14391,10 +14391,10 @@ F:	drivers/media/pci/saa7146/
+ F:	include/media/drv-intf/saa7146*
  
- 	tx_desc = ICE_TX_DESC(xdp_ring, ntc);
- 	tx_buf = &xdp_ring->tx_buf[ntc];
+ SAFESETID SECURITY MODULE
+-M:     Micah Morton <mortonm@chromium.org>
+-S:     Supported
+-F:     security/safesetid/
+-F:     Documentation/admin-guide/LSM/SafeSetID.rst
++M:	Micah Morton <mortonm@chromium.org>
++S:	Supported
++F:	security/safesetid/
++F:	Documentation/admin-guide/LSM/SafeSetID.rst
+ 
+ SAMSUNG AUDIO (ASoC) DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
 -- 
-2.24.0
+2.17.1
