@@ -1,49 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Dec 2019 10:48:16 +0000
-Subject: [bug report] net: emac: emac gigabit ethernet controller driver
-Message-Id: <20191203104816.qdozqfywtvtmr4ie@kili.mountain>
+From: Michael Kelley <mikelley@microsoft.com>
+Date: Sat, 07 Dec 2019 18:45:29 +0000
+Subject: RE: [PATCH][next] video: hyperv: hyperv_fb: fix indentation issue
+Message-Id: <CY4PR21MB0629CD9D4B8FFAD1AE685C10D75E0@CY4PR21MB0629.namprd21.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191114172720.322023-1-colin.king@canonical.com>
+In-Reply-To: <20191114172720.322023-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Sasha Levin <sashal@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Timur Tabi,
-
-The patch b9b17debc69d: "net: emac: emac gigabit ethernet controller
-driver" from Aug 31, 2016, leads to the following static checker
-warning:
-
-	drivers/net/ethernet/qualcomm/emac/emac-mac.c:1463 emac_mac_tx_buf_send()
-	error: dereferencing freed memory 'skb'
-
-drivers/net/ethernet/qualcomm/emac/emac-mac.c
-  1412           * so it will be freed after unmap
-  1413           */
-  1414          tpbuf->skb = skb;
-  1415  
-  1416          return;
-  1417  
-  1418  error:
-  1419          /* One of the memory mappings failed, so undo everything */
-  1420          tx_q->tpd.produce_idx = first;
-  1421  
-  1422          while (count--) {
-  1423                  tpbuf = GET_TPD_BUFFER(tx_q, first);
-  1424                  dma_unmap_page(adpt->netdev->dev.parent, tpbuf->dma_addr,
-  1425                                 tpbuf->length, DMA_TO_DEVICE);
-  1426                  tpbuf->dma_addr = 0;
-  1427                  tpbuf->length = 0;
-  1428  
-  1429                  if (++first = tx_q->tpd.count)
-  1430                          first = 0;
-  1431          }
-  1432  
-  1433          dev_kfree_skb(skb);
-                              ^^^
-The caller has no way to know if skb is freed or not.
-
-  1434  }
-
-regards,
-dan carpenter
+RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4gU2VudDogVGh1
+cnNkYXksIE5vdmVtYmVyIDE0LCAyMDE5IDk6MjcgQU0NCj4gDQo+IFRoZXJlIGlzIGEgYmxvY2sg
+b2Ygc3RhdGVtZW50cyB0aGF0IGFyZSBpbmRlbnRlZA0KPiB0b28gZGVlcGx5LCByZW1vdmUgdGhl
+IGV4dHJhbmVvdXMgdGFicy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxj
+b2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy92aWRlby9mYmRldi9o
+eXBlcnZfZmIuYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwg
+MiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2h5
+cGVydl9mYi5jIGIvZHJpdmVycy92aWRlby9mYmRldi9oeXBlcnZfZmIuYw0KPiBpbmRleCA0Y2Qy
+N2U1MTcyYTEuLjVmY2Y0YmRmODVhYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy92aWRlby9mYmRl
+di9oeXBlcnZfZmIuYw0KPiArKysgYi9kcml2ZXJzL3ZpZGVvL2ZiZGV2L2h5cGVydl9mYi5jDQo+
+IEBAIC01ODIsOCArNTgyLDggQEAgc3RhdGljIGludCBzeW50aHZpZF9nZXRfc3VwcG9ydGVkX3Jl
+c29sdXRpb24oc3RydWN0IGh2X2RldmljZQ0KPiAqaGRldikNCj4gIAl0ID0gd2FpdF9mb3JfY29t
+cGxldGlvbl90aW1lb3V0KCZwYXItPndhaXQsIFZTUF9USU1FT1VUKTsNCj4gIAlpZiAoIXQpIHsN
+Cj4gIAkJcHJfZXJyKCJUaW1lIG91dCBvbiB3YWl0aW5nIHJlc29sdXRpb24gcmVzcG9uc2VcbiIp
+Ow0KPiAtCQkJcmV0ID0gLUVUSU1FRE9VVDsNCj4gLQkJCWdvdG8gb3V0Ow0KPiArCQlyZXQgPSAt
+RVRJTUVET1VUOw0KPiArCQlnb3RvIG91dDsNCj4gIAl9DQo+IA0KPiAgCWlmIChtc2ctPnJlc29s
+dXRpb25fcmVzcC5yZXNvbHV0aW9uX2NvdW50ID09IDApIHsNCj4gLS0NCj4gMi4yMC4xDQoNClJl
+dmlld2VkLWJ5OiBNaWNoYWVsIEtlbGxleSA8bWlrZWxsZXlAbWljcm9zb2Z0LmNvbT4NCg0K
