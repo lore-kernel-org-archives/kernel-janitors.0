@@ -1,45 +1,42 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 29 Dec 2019 15:42:57 +0000
-Subject: [PATCH 3/4] vfio/spapr_tce: use mmgrab
-Message-Id: <1577634178-22530-4-git-send-email-Julia.Lawall@inria.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 07 Dec 2019 18:28:39 +0000
+Subject: [PATCH] MAINTAINERS: fix style in RESET CONTROLLER FRAMEWORK
+Message-Id: <20191207182839.14482-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Joe Perches <joe@perches.com>, kernel@pengutronix.de, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
-helper") and most of the kernel was updated to use it. Update a
-remaining file.
+Commit 37859277374d ("MAINTAINERS: add reset controller framework
+keywords") slips in some formatting with spaces instead of tabs, which
+./scripts/checkpatch.pl -f MAINTAINERS complains about:
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14047: FILE: MAINTAINERS:14047:
+  +K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
 
-<smpl>
-@@ expression e; @@
-- atomic_inc(&e->mm_count);
-+ mmgrab(e);
-</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Fixes: 37859277374d ("MAINTAINERS: add reset controller framework keywords")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/vfio/vfio_iommu_spapr_tce.c |    2 +-
+applies cleanly on current master (eea2d5da29e3) and next-20191207
+
+ MAINTAINERS | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
-index 26cef65b41e7..16b3adc508db 100644
---- a/drivers/vfio/vfio_iommu_spapr_tce.c
-+++ b/drivers/vfio/vfio_iommu_spapr_tce.c
-@@ -79,7 +79,7 @@ static long tce_iommu_mm_set(struct tce_container *container)
- 	}
- 	BUG_ON(!current->mm);
- 	container->mm = current->mm;
--	atomic_inc(&container->mm->mm_count);
-+	mmgrab(container->mm);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f282e5cbc40e..0b5cb337f78c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14044,7 +14044,7 @@ F:	include/dt-bindings/reset/
+ F:	include/linux/reset.h
+ F:	include/linux/reset/
+ F:	include/linux/reset-controller.h
+-K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
++K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
  
- 	return 0;
- }
+ RESTARTABLE SEQUENCES SUPPORT
+ M:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+-- 
+2.17.1
