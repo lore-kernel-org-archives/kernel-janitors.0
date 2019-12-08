@@ -1,29 +1,74 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 18 Dec 2019 17:54:53 +0000
-Subject: Re: [PATCH] ath11k: delete a stray unlock in ath11k_dbg_htt_stats_req()
-Message-Id: <20191218175453.3AD92C43383@smtp.codeaurora.org>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 08 Dec 2019 10:53:28 +0000
+Subject: [PATCH] drm/vmwgfx: Replace deprecated PTR_RET
+Message-Id: <20191208105328.15335-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213104754.2lwrq2qqokycjjbm@kili.mountain>
-In-Reply-To: <20191213104754.2lwrq2qqokycjjbm@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anilkumar Kolli <akolli@codeaurora.org>, Rajkumar Manoharan <rmanohar@codeaurora.org>, Miles Hu <milehu@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Hellstrom <thellstrom@vmware.com>, dri-devel@lists.freedesktop.org
+Cc: Sinclair Yeh <syeh@vmware.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Commit 508108ea2747 ("drm/vmwgfx: Don't refcount command-buffer managed
+resource lookups during command buffer validation") slips in use of
+deprecated PTR_RET. Use PTR_ERR_OR_ZERO instead.
 
-> The callers unlock this lock so this error path has a double unlock.
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+As the PTR_ERR_OR_ZERO is a bit longer than PTR_RET, we introduce
+local variable ret for proper indentation and line-length limits.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master (9455d25f4e3b) and next-20191207
+compile-tested on x86_64_defconfig + DRM_VMWGFX=y
 
-cd21c827a155 ath11k: delete a stray unlock in ath11k_dbg_htt_stats_req()
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 934ad7c0c342..73489a45decb 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2377,9 +2377,12 @@ static int vmw_cmd_dx_clear_rendertarget_view(struct vmw_private *dev_priv,
+ {
+ 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearRenderTargetView)  		container_of(header, typeof(*cmd), header);
++	struct vmw_resource *ret;
+ 
+-	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_rt,
+-					   cmd->body.renderTargetViewId));
++	ret = vmw_view_id_val_add(sw_context, vmw_view_rt,
++				  cmd->body.renderTargetViewId);
++
++	return PTR_ERR_OR_ZERO(ret);
+ }
+ 
+ /**
+@@ -2396,9 +2399,12 @@ static int vmw_cmd_dx_clear_depthstencil_view(struct vmw_private *dev_priv,
+ {
+ 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearDepthStencilView)  		container_of(header, typeof(*cmd), header);
++	struct vmw_resource *ret;
++
++	ret = vmw_view_id_val_add(sw_context, vmw_view_ds,
++				  cmd->body.depthStencilViewId);
+ 
+-	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_ds,
+-					   cmd->body.depthStencilViewId));
++	return PTR_ERR_OR_ZERO(ret);
+ }
+ 
+ static int vmw_cmd_dx_view_define(struct vmw_private *dev_priv,
+@@ -2741,9 +2747,12 @@ static int vmw_cmd_dx_genmips(struct vmw_private *dev_priv,
+ {
+ 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXGenMips)  		container_of(header, typeof(*cmd), header);
++	struct vmw_resource *ret;
++
++	ret = vmw_view_id_val_add(sw_context, vmw_view_sr,
++				  cmd->body.shaderResourceViewId);
+ 
+-	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_sr,
+-					   cmd->body.shaderResourceViewId));
++	return PTR_ERR_OR_ZERO(ret);
+ }
+ 
+ /**
 -- 
-https://patchwork.kernel.org/patch/11290409/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
