@@ -1,14 +1,14 @@
 From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 04 Dec 2019 07:18:22 +0000
+Date: Mon, 09 Dec 2019 13:08:45 +0000
 Subject: [PATCH v2 -next] NFC: port100: Convert cpu_to_le16(le16_to_cpu(E1) + E2) to use le16_add_cpu().
-Message-Id: <20191204071822.116115-1-maowenan@huawei.com>
+Message-Id: <20191209130845.47777-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204063717.102854-1-maowenan@huawei.com>
-In-Reply-To: <20191204063717.102854-1-maowenan@huawei.com>
+References: <20191204071822.116115-1-maowenan@huawei.com>
+In-Reply-To: <20191204071822.116115-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, gregkh@linuxfoundation.org, alexios.zavras@intel.com, oneukum@suse.com, tglx@linutronix.de, julia.lawall@inria.fr
+To: davem@davemloft.net, gregkh@linuxfoundation.org, alexios.zavras@intel.com, oneukum@suse.com, tglx@linutronix.de
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
 
 Convert cpu_to_le16(le16_to_cpu(frame->datalen) + len) to
