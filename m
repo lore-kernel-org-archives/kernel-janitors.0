@@ -1,102 +1,61 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Mon, 09 Dec 2019 10:21:57 +0000
+From: Thomas Hellstrom <thellstrom@vmware.com>
+Date: Mon, 09 Dec 2019 14:08:46 +0000
 Subject: Re: [PATCH] drm/vmwgfx: Replace deprecated PTR_RET
-Message-Id: <1606305704.12702713.1575886917867.JavaMail.zimbra@inria.fr>
+Message-Id: <96100f36c6fccb63afb55f6e9284c4f66282ecec.camel@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191208105328.15335-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20191208105328.15335-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, Sinclair Yeh <syeh@vmware.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-graphics-maintainer@vmware.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>
+Cc: "syeh@vmware.com" <syeh@vmware.com>, "airlied@linux.ie" <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>
 
-> De: "Lukas Bulwahn" <lukas.bulwahn@gmail.com>
-> =C0: "Thomas Hellstrom" <thellstrom@vmware.com>, dri-devel@lists.freedesk=
-top.org
-> Cc: "David Airlie" <airlied@linux.ie>, "Daniel Vetter" <daniel@ffwll.ch>,=
- "Sinclair Yeh" <syeh@vmware.com>,
-> linux-graphics-maintainer@vmware.com, kernel-janitors@vger.kernel.org, li=
-nux-kernel@vger.kernel.org, "Lukas Bulwahn"
-> <lukas.bulwahn@gmail.com>
-> Envoy=E9: Dimanche 8 D=E9cembre 2019 18:53:28
-> Objet: [PATCH] drm/vmwgfx: Replace deprecated PTR_RET
-
-> Commit 508108ea2747 ("drm/vmwgfx: Don't refcount command-buffer managed
-> resource lookups during command buffer validation") slips in use of
-> deprecated PTR_RET. Use PTR_ERR_OR_ZERO instead.
->=20
-> As the PTR_ERR_OR_ZERO is a bit longer than PTR_RET, we introduce
-> local variable ret for proper indentation and line-length limits.
-
-Is 0 actually possible?  I have the impression that it is not, but perhaps =
-I missed something.
-
-julia
-
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on current master (9455d25f4e3b) and next-20191207
-> compile-tested on x86_64_defconfig + DRM_VMWGFX=3Dy
->=20
-> drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 21 +++++++++++++++------
-> 1 file changed, 15 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index 934ad7c0c342..73489a45decb 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -2377,9 +2377,12 @@ static int vmw_cmd_dx_clear_rendertarget_view(stru=
-ct
-> vmw_private *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearRenderTargetView) > 		containe=
-r_of(header, typeof(*cmd), header);
-> +	struct vmw_resource *ret;
->=20
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_rt,
-> -					   cmd->body.renderTargetViewId));
-> +	ret =3D vmw_view_id_val_add(sw_context, vmw_view_rt,
-> +				  cmd->body.renderTargetViewId);
-> +
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
->=20
-> /**
-> @@ -2396,9 +2399,12 @@ static int vmw_cmd_dx_clear_depthstencil_view(stru=
-ct
-> vmw_private *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXClearDepthStencilView) > 		containe=
-r_of(header, typeof(*cmd), header);
-> +	struct vmw_resource *ret;
-> +
-> +	ret =3D vmw_view_id_val_add(sw_context, vmw_view_ds,
-> +				  cmd->body.depthStencilViewId);
->=20
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_ds,
-> -					   cmd->body.depthStencilViewId));
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
->=20
-> static int vmw_cmd_dx_view_define(struct vmw_private *dev_priv,
-> @@ -2741,9 +2747,12 @@ static int vmw_cmd_dx_genmips(struct vmw_private
-> *dev_priv,
-> {
-> 	VMW_DECLARE_CMD_VAR(*cmd, SVGA3dCmdDXGenMips) > 		container_of(header, t=
-ypeof(*cmd), header);
-> +	struct vmw_resource *ret;
-> +
-> +	ret =3D vmw_view_id_val_add(sw_context, vmw_view_sr,
-> +				  cmd->body.shaderResourceViewId);
->=20
-> -	return PTR_RET(vmw_view_id_val_add(sw_context, vmw_view_sr,
-> -					   cmd->body.shaderResourceViewId));
-> +	return PTR_ERR_OR_ZERO(ret);
-> }
->=20
-> /**
-> --
-> 2.17.1
+T24gU3VuLCAyMDE5LTEyLTA4IGF0IDExOjUzICswMTAwLCBMdWthcyBCdWx3YWhuIHdyb3RlOg0K
+PiBDb21taXQgNTA4MTA4ZWEyNzQ3ICgiZHJtL3Ztd2dmeDogRG9uJ3QgcmVmY291bnQgY29tbWFu
+ZC1idWZmZXINCj4gbWFuYWdlZA0KPiByZXNvdXJjZSBsb29rdXBzIGR1cmluZyBjb21tYW5kIGJ1
+ZmZlciB2YWxpZGF0aW9uIikgc2xpcHMgaW4gdXNlIG9mDQo+IGRlcHJlY2F0ZWQgUFRSX1JFVC4g
+VXNlIFBUUl9FUlJfT1JfWkVSTyBpbnN0ZWFkLg0KPiANCj4gQXMgdGhlIFBUUl9FUlJfT1JfWkVS
+TyBpcyBhIGJpdCBsb25nZXIgdGhhbiBQVFJfUkVULCB3ZSBpbnRyb2R1Y2UNCj4gbG9jYWwgdmFy
+aWFibGUgcmV0IGZvciBwcm9wZXIgaW5kZW50YXRpb24gYW5kIGxpbmUtbGVuZ3RoIGxpbWl0cy4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IEx1a2FzIEJ1bHdhaG4gPGx1a2FzLmJ1bHdhaG5AZ21haWwu
+Y29tPg0KPiAtLS0NCj4gYXBwbGllcyBjbGVhbmx5IG9uIGN1cnJlbnQgbWFzdGVyICg5NDU1ZDI1
+ZjRlM2IpIGFuZCBuZXh0LTIwMTkxMjA3DQo+IGNvbXBpbGUtdGVzdGVkIG9uIHg4Nl82NF9kZWZj
+b25maWcgKyBEUk1fVk1XR0ZYPXkNCj4gDQo+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dm
+eF9leGVjYnVmLmMgfCAyMSArKysrKysrKysrKysrKystLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxNSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2V4ZWNidWYuYw0KPiBiL2RyaXZlcnMvZ3B1L2Ry
+bS92bXdnZngvdm13Z2Z4X2V4ZWNidWYuYw0KPiBpbmRleCA5MzRhZDdjMGMzNDIuLjczNDg5YTQ1
+ZGVjYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfZXhlY2J1
+Zi5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2V4ZWNidWYuYw0KPiBA
+QCAtMjM3Nyw5ICsyMzc3LDEyIEBAIHN0YXRpYyBpbnQNCj4gdm13X2NtZF9keF9jbGVhcl9yZW5k
+ZXJ0YXJnZXRfdmlldyhzdHJ1Y3Qgdm13X3ByaXZhdGUgKmRldl9wcml2LA0KPiAgew0KPiAgCVZN
+V19ERUNMQVJFX0NNRF9WQVIoKmNtZCwgU1ZHQTNkQ21kRFhDbGVhclJlbmRlclRhcmdldFZpZXcp
+ID0NCj4gIAkJY29udGFpbmVyX29mKGhlYWRlciwgdHlwZW9mKCpjbWQpLCBoZWFkZXIpOw0KPiAr
+CXN0cnVjdCB2bXdfcmVzb3VyY2UgKnJldDsNCj4gIA0KPiAtCXJldHVybiBQVFJfUkVUKHZtd192
+aWV3X2lkX3ZhbF9hZGQoc3dfY29udGV4dCwgdm13X3ZpZXdfcnQsDQo+IC0JCQkJCSAgIGNtZC0N
+Cj4gPmJvZHkucmVuZGVyVGFyZ2V0Vmlld0lkKSk7DQo+ICsJcmV0ID0gdm13X3ZpZXdfaWRfdmFs
+X2FkZChzd19jb250ZXh0LCB2bXdfdmlld19ydCwNCj4gKwkJCQkgIGNtZC0+Ym9keS5yZW5kZXJU
+YXJnZXRWaWV3SWQpOw0KPiArDQo+ICsJcmV0dXJuIFBUUl9FUlJfT1JfWkVSTyhyZXQpOw0KPiAg
+fQ0KPiAgDQo+ICAvKioNCj4gQEAgLTIzOTYsOSArMjM5OSwxMiBAQCBzdGF0aWMgaW50DQo+IHZt
+d19jbWRfZHhfY2xlYXJfZGVwdGhzdGVuY2lsX3ZpZXcoc3RydWN0IHZtd19wcml2YXRlICpkZXZf
+cHJpdiwNCj4gIHsNCj4gIAlWTVdfREVDTEFSRV9DTURfVkFSKCpjbWQsIFNWR0EzZENtZERYQ2xl
+YXJEZXB0aFN0ZW5jaWxWaWV3KSA9DQo+ICAJCWNvbnRhaW5lcl9vZihoZWFkZXIsIHR5cGVvZigq
+Y21kKSwgaGVhZGVyKTsNCj4gKwlzdHJ1Y3Qgdm13X3Jlc291cmNlICpyZXQ7DQo+ICsNCj4gKwly
+ZXQgPSB2bXdfdmlld19pZF92YWxfYWRkKHN3X2NvbnRleHQsIHZtd192aWV3X2RzLA0KPiArCQkJ
+CSAgY21kLT5ib2R5LmRlcHRoU3RlbmNpbFZpZXdJZCk7DQo+ICANCj4gLQlyZXR1cm4gUFRSX1JF
+VCh2bXdfdmlld19pZF92YWxfYWRkKHN3X2NvbnRleHQsIHZtd192aWV3X2RzLA0KPiAtCQkJCQkg
+ICBjbWQtDQo+ID5ib2R5LmRlcHRoU3RlbmNpbFZpZXdJZCkpOw0KPiArCXJldHVybiBQVFJfRVJS
+X09SX1pFUk8ocmV0KTsNCj4gIH0NCj4gIA0KPiAgc3RhdGljIGludCB2bXdfY21kX2R4X3ZpZXdf
+ZGVmaW5lKHN0cnVjdCB2bXdfcHJpdmF0ZSAqZGV2X3ByaXYsDQo+IEBAIC0yNzQxLDkgKzI3NDcs
+MTIgQEAgc3RhdGljIGludCB2bXdfY21kX2R4X2dlbm1pcHMoc3RydWN0DQo+IHZtd19wcml2YXRl
+ICpkZXZfcHJpdiwNCj4gIHsNCj4gIAlWTVdfREVDTEFSRV9DTURfVkFSKCpjbWQsIFNWR0EzZENt
+ZERYR2VuTWlwcykgPQ0KPiAgCQljb250YWluZXJfb2YoaGVhZGVyLCB0eXBlb2YoKmNtZCksIGhl
+YWRlcik7DQo+ICsJc3RydWN0IHZtd19yZXNvdXJjZSAqcmV0Ow0KPiArDQo+ICsJcmV0ID0gdm13
+X3ZpZXdfaWRfdmFsX2FkZChzd19jb250ZXh0LCB2bXdfdmlld19zciwNCj4gKwkJCQkgIGNtZC0+
+Ym9keS5zaGFkZXJSZXNvdXJjZVZpZXdJZCk7DQo+ICANCj4gLQlyZXR1cm4gUFRSX1JFVCh2bXdf
+dmlld19pZF92YWxfYWRkKHN3X2NvbnRleHQsIHZtd192aWV3X3NyLA0KPiAtCQkJCQkgICBjbWQt
+DQo+ID5ib2R5LnNoYWRlclJlc291cmNlVmlld0lkKSk7DQo+ICsJcmV0dXJuIFBUUl9FUlJfT1Jf
+WkVSTyhyZXQpOw0KPiAgfQ0KPiAgDQo+ICAvKioNCg0KUmV2aWV3ZWQtYnk6IFRob21hcyBIZWxs
+c3Ryb20gPHRoZWxsc3Ryb21Adm13YXJlLmNvbT4NCg0KSSB3aWxsIGluY2x1ZGUgdGhpcyBpbiB2
+bXdnZngtbmV4dC4NClRoYW5rcywNClRob21hcw0KDQo
