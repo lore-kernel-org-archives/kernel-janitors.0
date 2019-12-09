@@ -1,53 +1,75 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Wed, 04 Dec 2019 17:39:24 +0000
-Subject: Re: [PATCH] net/decnet: fix -EFAULT error that is not getting returned
-Message-Id: <b75479fd-055e-3758-fc59-3385185a705b@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Dec 2019 13:16:07 +0000
+Subject: [PATCH][V2][RESEND] qed: remove redundant assignments to rc
+Message-Id: <20191209131607.71580-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204151144.1434209-1-colin.king@canonical.com>
-In-Reply-To: <20191204151144.1434209-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable rc is assigned with a value that is never read and
+it is re-assigned a new value later on.  The assignment is redundant
+and can be removed.  Clean up multiple occurrances of this pattern.
 
-On 12/4/19 7:11 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently an -EFAULT error on a memcpy_to_msg is not being returned
-> because it is being overwritten when variable rv is being re-assigned
-> to the number of bytes copied after breaking out of a loop. Fix this
-> by instead assigning the error to variable copied so that this error
-> code propegated to rv and hence is returned at the end of the function.
-> 
-> [ This bug was was introduced before the current git history ]
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/decnet/af_decnet.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
-> index e19a92a62e14..e23d9f219597 100644
-> --- a/net/decnet/af_decnet.c
-> +++ b/net/decnet/af_decnet.c
-> @@ -1759,7 +1759,7 @@ static int dn_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
->  			chunk = size - copied;
->  
->  		if (memcpy_to_msg(msg, skb->data, chunk)) {
-> -			rv = -EFAULT;
-> +			copied = -EFAULT;
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-This does not look right.
-
-We probably want :
-		if (!copied)
-			copied = -EFAULT;
-
->  			break;
->  		}
->  		copied += chunk;
-> 
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+index 7e0b795230b2..900bc603e30a 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+@@ -331,8 +331,8 @@ int qed_sp_pf_start(struct qed_hwfn *p_hwfn,
+ 	u8 sb_index = p_hwfn->p_eq->eq_sb_index;
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EINVAL;
+ 	u8 page_cnt, i;
++	int rc;
+ 
+ 	/* update initial eq producer */
+ 	qed_eq_prod_update(p_hwfn,
+@@ -447,7 +447,7 @@ int qed_sp_pf_update(struct qed_hwfn *p_hwfn)
+ {
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	/* Get SPQ entry */
+ 	memset(&init_data, 0, sizeof(init_data));
+@@ -471,7 +471,7 @@ int qed_sp_pf_update_ufp(struct qed_hwfn *p_hwfn)
+ {
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EOPNOTSUPP;
++	int rc;
+ 
+ 	if (p_hwfn->ufp_info.pri_type = QED_UFP_PRI_UNKNOWN) {
+ 		DP_INFO(p_hwfn, "Invalid priority type %d\n",
+@@ -509,7 +509,7 @@ int qed_sp_pf_update_tunn_cfg(struct qed_hwfn *p_hwfn,
+ {
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	if (IS_VF(p_hwfn->cdev))
+ 		return qed_vf_pf_tunnel_param_update(p_hwfn, p_tunn);
+@@ -546,7 +546,7 @@ int qed_sp_pf_stop(struct qed_hwfn *p_hwfn)
+ {
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+-	int rc = -EINVAL;
++	int rc;
+ 
+ 	/* Get SPQ entry */
+ 	memset(&init_data, 0, sizeof(init_data));
+-- 
+2.24.0
