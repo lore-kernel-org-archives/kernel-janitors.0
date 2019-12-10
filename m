@@ -1,39 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Dec 2019 06:35:28 +0000
-Subject: Re: [PATCH -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
-Message-Id: <20191204063444.GF1765@kadam>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Tue, 10 Dec 2019 15:44:56 +0000
+Subject: Re: [PATCH -next] rtc: mt6397: drop free_irq of devm_ allocated irq
+Message-Id: <20191210154456.GQ1463890@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204020209.10363-1-maowenan@huawei.com>
-In-Reply-To: <20191204020209.10363-1-maowenan@huawei.com>
+References: <20191113021720.9527-1-weiyongjun1@huawei.com>
+In-Reply-To: <20191113021720.9527-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com, sean.wang@mediatek.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com, eddie.huang@mediatek.com, linux-arm-kernel@lists.infradead.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Josef Friedl <josef.friedl@speed.at>, Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 04, 2019 at 10:02:09AM +0800, Mao Wenan wrote:
-> rtc->irq is requested by devm_request_threaded_irq,
-> and request_threaded_irq. IRQs requested with this
-> function will be automatically freed on driver detach.
+On 13/11/2019 02:17:20+0000, Wei Yongjun wrote:
+> The devm_request_threaded_irq function allocates irq that is
+> released when a driver detaches. Thus, there is no reason to
+> explicitly call free_irq in probe function.
 > 
+> Fixes: 851b87148aa2 ("rtc: mt6397: improvements of rtc driver")
 > Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/rtc/rtc-mt6397.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/rtc/rtc-mt6397.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 > 
-> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> index 5249fc99fd5f..d6a10111137a 100644
-> --- a/drivers/rtc/rtc-mt6397.c
-> +++ b/drivers/rtc/rtc-mt6397.c
-> @@ -293,7 +293,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  	return 0;
->  
->  out_free_irq:
-> -	free_irq(rtc->irq, rtc);
->  	return ret;
+Applied, thanks.
 
-Please get rid of the error label as well.
-
-regards,
-dan carpenter
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
