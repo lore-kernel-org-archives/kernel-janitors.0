@@ -1,26 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Dec 2019 00:59:38 +0000
-Subject: Re: [PATCH -next] NFC: port100: Convert cpu_to_le16(le16_to_cpu(E1) + E2) to use le16_add_cpu().
-Message-Id: <20191204.165938.1723521846846109078.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 12 Dec 2019 11:46:22 +0000
+Subject: [PATCH -next] dmaengine: ti: edma: Fix error return code in edma_probe()
+Message-Id: <20191212114622.127322-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204063717.102854-1-maowenan@huawei.com>
-In-Reply-To: <20191204063717.102854-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: gregkh@linuxfoundation.org, alexios.zavras@intel.com, oneukum@suse.com, tglx@linutronix.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, hulkci@huawei.com
+To: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Chuhong Yuan <hslester96@gmail.com>, Arnd Bergmann <arnd@arndb.de>, YueHaibing <yuehaibing@huawei.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 4 Dec 2019 14:37:17 +0800
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-> It is better to convert cpu_to_le16(le16_to_cpu(frame->datalen) + len) to
-> use le16_add_cpu().
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Fixes: 2a03c1314506 ("dmaengine: ti: edma: add missed operations")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/dma/ti/edma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Please resubmit when the net-next tree is open again, right now it is
-closed:
-
-	http://vger.kernel.org/~davem/net-next.html
+diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+index 0628ee4bf1b4..03a7f647f7b2 100644
+--- a/drivers/dma/ti/edma.c
++++ b/drivers/dma/ti/edma.c
+@@ -2342,8 +2342,10 @@ static int edma_probe(struct platform_device *pdev)
+ 	ecc->channels_mask = devm_kcalloc(dev,
+ 					   BITS_TO_LONGS(ecc->num_channels),
+ 					   sizeof(unsigned long), GFP_KERNEL);
+-	if (!ecc->slave_chans || !ecc->slot_inuse || !ecc->channels_mask)
++	if (!ecc->slave_chans || !ecc->slot_inuse || !ecc->channels_mask) {
++		ret = -ENOMEM;
+ 		goto err_disable_pm;
++	}
+ 
+ 	/* Mark all channels available initially */
+ 	bitmap_fill(ecc->channels_mask, ecc->num_channels);
