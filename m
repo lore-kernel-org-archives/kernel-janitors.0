@@ -1,54 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 07 Dec 2019 15:39:37 +0000
-Subject: Re: [PATCH] cpu: microcode: remove redundant check on pointer entry
-Message-Id: <c1330327-56ee-0c6f-583f-58d0560cce1f@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Dec 2019 17:36:43 +0000
+Subject: [PATCH][next] rcu: fix spelling mistake "leval" -> "level"
+Message-Id: <20191212173643.91135-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191207153343.112887-1-colin.king@canonical.com>
-In-Reply-To: <20191207153343.112887-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Paul E . McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sorry, I didn't mean to cc this to kernel-janitors. please ignore.
+From: Colin Ian King <colin.king@canonical.com>
 
-On 07/12/2019 15:33, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for a null entry is redundant as the while loop
-> also checks for this.  Remove the redundant check. Cleans
-> up cppcheck style warning:
-> 
-> src/cpu/microcode/microcode.c:203:14: style: Condition 'entry' is
-> always true [knownConditionTrueFalse]
->          if (entry &&
-> 
-> src/cpu/microcode/microcode.c:202:32: note: Assuming that condition
-> '(entry=readdir(dir))!=NULL' is not redundant
-> 
->  while ((entry = readdir(dir)) != NULL) {
-> 
-> src/cpu/microcode/microcode.c:203:14: note: Condition 'entry' is
-> always true
->          if (entry &&
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  src/cpu/microcode/microcode.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/src/cpu/microcode/microcode.c b/src/cpu/microcode/microcode.c
-> index 974fdec9..65abe50a 100644
-> --- a/src/cpu/microcode/microcode.c
-> +++ b/src/cpu/microcode/microcode.c
-> @@ -200,8 +200,7 @@ static int microcode_test1(fwts_framework *fw)
->  
->  	/* Scan and check */
->  	while ((entry = readdir(dir)) != NULL) {
-> -	        if (entry &&
-> -		    (strlen(entry->d_name) > 3) &&
-> +	        if ((strlen(entry->d_name) > 3) &&
->  		    (strncmp(entry->d_name,"cpu", 3) = 0) &&
->  		    (isdigit(entry->d_name[3]))) {
->  			char path[PATH_MAX];
-> 
+There is a spelling mistake in a pr_info message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/rcu/tree_plugin.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 4d4637c361b7..0765784012f8 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -57,7 +57,7 @@ static void __init rcu_bootup_announce_oddness(void)
+ 	if (qlowmark != DEFAULT_RCU_QLOMARK)
+ 		pr_info("\tBoot-time adjustment of callback low-water mark to %ld.\n", qlowmark);
+ 	if (qovld != DEFAULT_RCU_QOVLD)
+-		pr_info("\tBoot-time adjustment of callback overload leval to %ld.\n", qovld);
++		pr_info("\tBoot-time adjustment of callback overload level to %ld.\n", qovld);
+ 	if (jiffies_till_first_fqs != ULONG_MAX)
+ 		pr_info("\tBoot-time adjustment of first FQS scan delay to %ld jiffies.\n", jiffies_till_first_fqs);
+ 	if (jiffies_till_next_fqs != ULONG_MAX)
+-- 
+2.24.0
