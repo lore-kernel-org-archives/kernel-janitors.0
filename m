@@ -1,40 +1,43 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Nov 2019 15:00:17 +0000
-Subject: [PATCH][next] drm/amd/display: fix unsigned less than 0 comparison on error check
-Message-Id: <20191108150017.125859-1-colin.king@canonical.com>
+Date: Thu, 12 Dec 2019 19:42:51 +0000
+Subject: [PATCH] ath11k: fix missing free of skb on error return path
+Message-Id: <20191212194251.108343-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Lyude Paul <lyude@redhat.com>, Mikita Lipski <mikita.lipski@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, Ganesh Sesetti <gseset@codeaurora.org>, Karthikeyan Periyasamy <periyasa@codeaurora.org>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the error check on the call to drm_dp_atomic_find_vcpi_slots
-is always false because an unsigned dm_new_connector_state->vcpi_slots
-is being checked for a less than zero. Fix this by casting this to
-an int on the comparison.
+The error handling when the call to ath11k_hal_srng_get_entrysize fails
+leaks skb, fix this by returning via the err_free return path that will
+ensure the skb is free'd.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 5133c6241d9c ("drm/amd/display: Add MST atomic routines")
+Addresses-Coverity: ("Resource leak")
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath11k/dp_tx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 37c56156a116..00e730b8d98f 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4866,7 +4866,7 @@ static int dm_encoder_helper_atomic_check(struct drm_encoder *encoder,
- 									   mst_mgr,
- 									   mst_port,
- 									   dm_new_connector_state->pbn);
--	if (dm_new_connector_state->vcpi_slots < 0) {
-+	if ((int)dm_new_connector_state->vcpi_slots < 0) {
- 		DRM_DEBUG_ATOMIC("failed finding vcpi slots: %d\n", (int)dm_new_connector_state->vcpi_slots);
- 		return dm_new_connector_state->vcpi_slots;
- 	}
+diff --git a/drivers/net/wireless/ath/ath11k/dp_tx.c b/drivers/net/wireless/ath/ath11k/dp_tx.c
+index a8b9557c2346..7123a4fc4635 100644
+--- a/drivers/net/wireless/ath/ath11k/dp_tx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_tx.c
+@@ -645,8 +645,10 @@ int ath11k_dp_tx_htt_srng_setup(struct ath11k_base *ab, u32 ring_id,
+ 				 HAL_ADDR_MSB_REG_SHIFT;
+ 
+ 	ret = ath11k_hal_srng_get_entrysize(ring_type);
+-	if (ret < 0)
+-		return -EINVAL;
++	if (ret < 0) {
++		ret = -EINVAL;
++		goto err_free;
++	}
+ 
+ 	ring_entry_sz = ret;
+ 
 -- 
-2.20.1
+2.24.0
