@@ -1,27 +1,90 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Dec 2019 07:05:33 +0000
-Subject: Re: [PATCH] regulator: s5m8767: Fix a warning message
-Message-Id: <CAJKOXPdfdWYELkxh0HO4GhoinG55Uk7G9o6-q+A4+pPn3f+-jA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Dec 2019 18:16:57 +0000
+Subject: [PATCH][next] drm/amd/powerplay: fix various dereferences of a pointer before it is null checked
+Message-Id: <20191212181657.101381-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: sbkim73@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, lgirdwood@gmail.com, broonie@kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Evan Quan <evan.quan@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kenneth Feng <kenneth.feng@amd.com>, Yintian Tao <yttao@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019 at 10:45, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Axe a duplicated word ("property") in a warning message.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/regulator/s5m8767.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+There are several occurrances of the pointer hwmgr being dereferenced
+before it is null checked.  Fix these by performing the dereference
+of hwmgr after it has been null checked.
 
-Best regards,
-Krzysztof
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 8497d2bcdee1 ("drm/amd/powerplay: enable pp one vf mode for vega10")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/amd_powerplay.c |  6 +++---
+ drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c   | 15 +++------------
+ 2 files changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+index 5087d6bdba60..322c2015d3a0 100644
+--- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
++++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+@@ -275,12 +275,12 @@ static int pp_dpm_load_fw(void *handle)
+ {
+ 	struct pp_hwmgr *hwmgr = handle;
+ 
+-	if (!hwmgr->not_vf)
+-		return 0;
+-
+ 	if (!hwmgr || !hwmgr->smumgr_funcs || !hwmgr->smumgr_funcs->start_smu)
+ 		return -EINVAL;
+ 
++	if (!hwmgr->not_vf)
++		return 0;
++
+ 	if (hwmgr->smumgr_funcs->start_smu(hwmgr)) {
+ 		pr_err("fw load failed\n");
+ 		return -EINVAL;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+index e2b82c902948..f48fdc7f0382 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
+@@ -282,10 +282,7 @@ int hwmgr_hw_init(struct pp_hwmgr *hwmgr)
+ 
+ int hwmgr_hw_fini(struct pp_hwmgr *hwmgr)
+ {
+-	if (!hwmgr->not_vf)
+-		return 0;
+-
+-	if (!hwmgr || !hwmgr->pm_en)
++	if (!hwmgr || !hwmgr->pm_en || !hwmgr->not_vf)
+ 		return 0;
+ 
+ 	phm_stop_thermal_controller(hwmgr);
+@@ -305,10 +302,7 @@ int hwmgr_suspend(struct pp_hwmgr *hwmgr)
+ {
+ 	int ret = 0;
+ 
+-	if (!hwmgr->not_vf)
+-		return 0;
+-
+-	if (!hwmgr || !hwmgr->pm_en)
++	if (!hwmgr || !hwmgr->pm_en || !hwmgr->not_vf)
+ 		return 0;
+ 
+ 	phm_disable_smc_firmware_ctf(hwmgr);
+@@ -327,13 +321,10 @@ int hwmgr_resume(struct pp_hwmgr *hwmgr)
+ {
+ 	int ret = 0;
+ 
+-	if (!hwmgr->not_vf)
+-		return 0;
+-
+ 	if (!hwmgr)
+ 		return -EINVAL;
+ 
+-	if (!hwmgr->pm_en)
++	if (!hwmgr->not_vf || !hwmgr->pm_en)
+ 		return 0;
+ 
+ 	ret = phm_setup_asic(hwmgr);
+-- 
+2.24.0
