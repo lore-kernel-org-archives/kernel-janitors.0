@@ -1,44 +1,41 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Date: Tue, 03 Dec 2019 01:05:05 +0000
-Subject: Re: [PATCH] ocfs2/dlm: remove redundant assignment to ret
-Message-Id: <787d96be-b750-9fa2-19c6-30c1af86cc3c@linux.alibaba.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Fri, 13 Dec 2019 01:24:17 +0000
+Subject: [PATCH -next] ath11k: add dependency for struct ath11k member debug
+Message-Id: <20191213012417.130719-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191202164833.62865-1-colin.king@canonical.com>
-In-Reply-To: <20191202164833.62865-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kvalo@codeaurora.org, davem@davemloft.net, msinada@codeaurora.org, periyasa@codeaurora.org, mpubbise@codeaurora.org, julia.lawall@lip6.fr, milehu@codeaurora.org
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
 
+If CONFIG_ATH11K, CONFIG_MAC80211_DEBUGFS are set,
+and CONFIG_ATH11K_DEBUGFS is not set, below error can be found,
+drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function ath11k_dbg_sta_open_htt_peer_stats:
+drivers/net/wireless/ath/ath11k/debugfs_sta.c:411:4: error: struct ath11k has no member named debug
+  ar->debug.htt_stats.stats_req = stats_req;
 
+It is to add the dependency for the member of struct ath11k.
 
-On 19/12/3 00:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never
-> read and it is being updated later with a new value.  The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/wireless/ath/ath11k/debugfs_sta.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/dlm/dlmrecovery.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-> index 064ce5bbc3f6..2734867473a6 100644
-> --- a/fs/ocfs2/dlm/dlmrecovery.c
-> +++ b/fs/ocfs2/dlm/dlmrecovery.c
-> @@ -1668,7 +1668,7 @@ static int dlm_lockres_master_requery(struct dlm_ctxt *dlm,
->  int dlm_do_master_requery(struct dlm_ctxt *dlm, struct dlm_lock_resource *res,
->  			  u8 nodenum, u8 *real_master)
->  {
-> -	int ret = -EINVAL;
-> +	int ret;
->  	struct dlm_master_requery req;
->  	int status = DLM_LOCK_RES_OWNER_UNKNOWN;
->  
-> 
+diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
+index 3c5f931..bcc51d7 100644
+--- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
+@@ -408,7 +408,9 @@ ath11k_dbg_sta_open_htt_peer_stats(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 
+ 	mutex_lock(&ar->conf_mutex);
++#ifdef CONFIG_ATH11K_DEBUGFS
+ 	ar->debug.htt_stats.stats_req = stats_req;
++#endif
+ 	stats_req->type = ATH11K_DBG_HTT_EXT_STATS_PEER_INFO;
+ 	memcpy(stats_req->peer_addr, sta->addr, ETH_ALEN);
+ 	ret = ath11k_dbg_htt_stats_req(ar);
+-- 
+2.7.4
