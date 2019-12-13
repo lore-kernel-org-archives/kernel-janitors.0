@@ -1,23 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 28 Dec 2019 00:32:17 +0000
-Subject: Re: [PATCH net-next v2] net: dsa: qca: ar9331: drop pointless static qualifier in ar9331_sw_mbus_ini
-Message-Id: <20191227.163217.1055599246835779278.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Dec 2019 10:50:50 +0000
+Subject: [PATCH] drm/i915/selftests: remove a condition
+Message-Id: <20191213105050.y2v5nylsuxvc44jj@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191224112515.GE3395@lunn.ch>
-        <20191224115812.166927-1-maowenan@huawei.com>
-In-Reply-To: <20191224115812.166927-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, linux@rempel-privat.de, marek.behun@nic.cz, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Tue, 24 Dec 2019 19:58:12 +0800
+We know that "err" is non-zero so there is no need to check.
 
-> There is no need to set variable 'mbus' static
-> since new value always be assigned before use it.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/selftests/i915_request.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied, thank you.
+diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
+index 99c94b4f69fb..71a4ca38fbac 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_request.c
++++ b/drivers/gpu/drm/i915/selftests/i915_request.c
+@@ -1086,8 +1086,7 @@ static int __live_parallel_engine1(void *arg)
+ 		rq = i915_request_create(engine->kernel_context);
+ 		if (IS_ERR(rq)) {
+ 			err = PTR_ERR(rq);
+-			if (err)
+-				break;
++			break;
+ 		}
+ 
+ 		i915_request_get(rq);
+-- 
+2.11.0
