@@ -1,72 +1,29 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Tue, 10 Dec 2019 10:24:44 +0000
-Subject: [PATCH v2] pwm: sun4i: Narrow scope of local variable
-Message-Id: <20191210102444.26594-1-u.kleine-koenig@pengutronix.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 13 Dec 2019 17:08:45 +0000
+Subject: Re: [PATCH] pstore/ram: Fix memory leak in persistent_ram_new
+Message-Id: <8c374545-b493-3be8-3753-a6fdd574f82c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191210101229.rvqelc2hanisd2cp@pengutronix.de>
-In-Reply-To: <20191210101229.rvqelc2hanisd2cp@pengutronix.de>
+References: <20191211191353.14385-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191211191353.14385-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Thierry Reding <thierry.reding@gmail.com>, Walter Harms <wharms@bfs.de>
-Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Anton Vorontsov <anton.vorontsov@linaro.org>, Colin Cross <ccross@android.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <keescook@chromium.org>, Navid Emamdoost <emamd001@umn.edu>, Tony Luck <tony.luck@intel.com>
 
-The variable pval is only used in a single block in the function
-sun4i_pwm_calculate(). So declare it in a more local scope to simplify
-the function for humans and compilers.
+> In the implementation of persistent_ram_new(), if the allocation for prz
+> fails, "label" should be released as part of error handling.
 
-While at it also simplify assignment to pval.
+How did you come to this conclusion?
 
-While the diffstat for this patch is negative for this patch I still
-thing the advantage of having a narrower scope is beneficial.
+I suggest to reconsider this patch because the mentioned string is passed by
+a function parameter.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/pstore/ram_core.c?id7d4e84f765bb3038ddfeebdc5d1cfd7e1ef688f#n561
+https://elixir.bootlin.com/linux/v5.5-rc1/source/fs/pstore/ram_core.c#L561
 
-In my compiler / .config setup (gcc 8.2.1, arm/imx_v6_v7_defconfig +
-COMPILE_TEST + PWM_SUN4I) this change doesn't result in any binary
-changes.
+I recognise other implementation details which could be improved here.
+https://lore.kernel.org/lkml/97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net/
+https://lkml.org/lkml/2017/8/16/645
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-Hello,
-
-changes since (implicit) v1:
-
- - also simplify assignment to pval as suggested by Walter
- - verify the patch doesn't introduce binary changes
-
-Best regards
-Uwe
-
- drivers/pwm/pwm-sun4i.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-index 1fa2057419fb..4f77ebc8ae69 100644
---- a/drivers/pwm/pwm-sun4i.c
-+++ b/drivers/pwm/pwm-sun4i.c
-@@ -152,7 +152,7 @@ static int sun4i_pwm_calculate(struct sun4i_pwm_chip *s=
-un4i_pwm,
- 			       u32 *dty, u32 *prd, unsigned int *prsclr)
- {
- 	u64 clk_rate, div =3D 0;
--	unsigned int pval, prescaler =3D 0;
-+	unsigned int prescaler =3D 0;
-=20
- 	clk_rate =3D clk_get_rate(sun4i_pwm->clk);
-=20
-@@ -173,9 +173,11 @@ static int sun4i_pwm_calculate(struct sun4i_pwm_chip *=
-sun4i_pwm,
- 	if (prescaler =3D 0) {
- 		/* Go up from the first divider */
- 		for (prescaler =3D 0; prescaler < PWM_PRESCAL_MASK; prescaler++) {
-+			unsigned int pval =3D prescaler_table[prescaler];
-+
--			if (!prescaler_table[prescaler])
-+			if (!pval)
- 				continue;
--			pval =3D prescaler_table[prescaler];
-+
- 			div =3D clk_rate;
- 			do_div(div, pval);
- 			div =3D div * state->period;
---=20
-2.24.0
+Regards,
+Markus
