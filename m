@@ -1,46 +1,29 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sun, 01 Dec 2019 09:09:41 +0000
-Subject: Re: [PATCH] drm/panel: clean up indentation issue
-Message-Id: <20191201090941.GA8753@ravnborg.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 15 Dec 2019 14:27:31 +0000
+Subject: Re: [PATCH] net: gemini: Fix memory leak in gmac_setup_txqs
+Message-Id: <403e8b6d-57df-e8d1-316c-150f833de842@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190925120357.10408-1-colin.king@canonical.com>
-In-Reply-To: <20190925120357.10408-1-colin.king@canonical.com>
+References: <20191215011045.15453-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191215011045.15453-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stefan Mavrodiev <stefan@olimex.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Navid Emamdoost <emamd001@umn.edu>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, "David S. Miller" <davem@davemloft.net>
 
-Hi Colin.
+> +++ b/drivers/net/ethernet/cortina/gemini.c
+> @@ -576,6 +576,8 @@ static int gmac_setup_txqs(struct net_device *netdev)
+>
+>  	if (port->txq_dma_base & ~DMA_Q_BASE_MASK) {
+>  		dev_warn(geth->dev, "TX queue base is not aligned\n");
+> +		dma_free_coherent(geth->dev, len * sizeof(*desc_ring),
+> +				  desc_ring, port->txq_dma_base);
+>  		kfree(skb_tab);
+>  		return -ENOMEM;
+>  	}
 
-On Wed, Sep 25, 2019 at 01:03:57PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a continue statement that is indented one level too deeply,
-> remove the extraneous tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> index 2bae1db3ff34..7dd67262a2ed 100644
-> --- a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> +++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> @@ -161,7 +161,7 @@ static int lcd_olinuxino_get_modes(struct drm_panel *panel)
->  				lcd_mode->hactive,
->  				lcd_mode->vactive,
->  				lcd_mode->refresh);
-> -				continue;
-> +			continue;
->  		}
->  
->  		mode->clock = lcd_mode->pixelclock;
+The added function call seems to be fine.
+Would you like to avoid a bit of duplicate code for the exception handling?
 
-Thanks, this is the kind of issues that can fool one or take
-focus away when reading code.
-
-Applied to drm-misc-next.
-
-	Sam
+Regards,
+Markus
