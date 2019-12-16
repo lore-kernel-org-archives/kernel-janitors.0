@@ -1,54 +1,26 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 16 Dec 2019 08:43:43 +0000
-Subject: Re: [PATCH] fore200e: Fix incorrect checks of NULL pointer dereference
-Message-Id: <47757327-f6df-9146-03a1-2b32b23a37e6@web.de>
+Date: Mon, 16 Dec 2019 13:38:50 +0000
+Subject: Re: [v5] f2fs: support data compression
+Message-Id: <b1a2b133-ab92-eb14-ccfe-5d584ed8bb0c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191215161451.24221-1-pakki001@umn.edu>
-In-Reply-To: <20191215161451.24221-1-pakki001@umn.edu>
+References: <20191216062806.112361-1-yuchao0@huawei.com>
+ <0ab8c593-d043-cdf6-7805-f7bceba8e519@web.de>
+ <0677a4fd-62a5-ad98-fd02-ae7d5a9cb501@kernel.org>
+In-Reply-To: <0677a4fd-62a5-ad98-fd02-ae7d5a9cb501@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Aditya Pakki <pakki001@umn.edu>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Chas Williams <3chas3@gmail.com>, Kangjie Lu <kjlu@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> The patch fixes these issues by avoiding NULL pointer dereferences.
-
-I suggest to choose a better wording for this change description.
-
-Will the tag “Fixes” become helpful here?
-
-
-…
-> +++ b/drivers/atm/fore200e.c
-…
-> @@ -1480,9 +1482,18 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
-…
-> +    fore200e = FORE200E_DEV(vcc->dev);
-> +    fore200e_vcc = FORE200E_VCC(vcc);
-> +
-> +    if (!fore200e)
-> +        return -EINVAL;
-> +
-> +    txq = &fore200e->host_txq;
-> +    if (!fore200e_vcc)
-> +        return -EINVAL;
+>> +bool f2fs_is_compressed_page(const struct page *page);
+>>
+>>
+>> Would you like to improve const-correctness at any more source code places?
 >
->      if (!test_bit(ATM_VF_READY, &vcc->flags)) {
-…
+> I can't figure out a good reason to do that for f2fs internal functions...
 
-
-Can the following adjustment be nicer?
-
-+    fore200e_vcc = FORE200E_VCC(vcc);
-+    if (!fore200e_vcc)
-+        return -EINVAL;
-+
-+    fore200e = FORE200E_DEV(vcc->dev);
-+    if (!fore200e)
-+        return -EINVAL;
-+
-+    txq = &fore200e->host_txq;
-
+Do you insist to keep such a function parameter mutable?
 
 Regards,
 Markus
