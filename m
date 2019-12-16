@@ -1,37 +1,49 @@
-From: Chao Yu <chao@kernel.org>
-Date: Mon, 16 Dec 2019 13:28:20 +0000
-Subject: Re: [RFC PATCH v5] f2fs: support data compression
-Message-Id: <0677a4fd-62a5-ad98-fd02-ae7d5a9cb501@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Dec 2019 16:21:36 +0000
+Subject: [PATCH][next] drm/gma500: fix null dereference of pointer fb before null check
+Message-Id: <20191216162136.270114-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191216062806.112361-1-yuchao0@huawei.com>
- <0ab8c593-d043-cdf6-7805-f7bceba8e519@web.de>
-In-Reply-To: <0ab8c593-d043-cdf6-7805-f7bceba8e519@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2019-12-16 19:51, Markus Elfring wrote:
-> …
->> +++ b/fs/f2fs/f2fs.h
-> …
->> +#ifdef CONFIG_F2FS_FS_COMPRESSION
->> +bool f2fs_is_compressed_page(struct page *page);
-> …
->
-> Can the following adjustment make sense?
->
-> +bool f2fs_is_compressed_page(const struct page *page);
->
->
-> Would you like to improve const-correctness at any more source code places?
+From: Colin Ian King <colin.king@canonical.com>
 
-I can't figure out a good reason to do that for f2fs internal functions...
+Pointer fb is being dereferenced when assigning dev before it
+is null checked.  Fix this by only dereferencing dev after the
+null check.
 
-Thanks,
+Fixes: 6b7ce2c4161a ("drm/gma500: Remove struct psb_fbdev")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/gma500/accel_2d.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->
-> Regards,
-> Markus
->
+diff --git a/drivers/gpu/drm/gma500/accel_2d.c b/drivers/gpu/drm/gma500/accel_2d.c
+index b9e5a38632f7..adc0507545bf 100644
+--- a/drivers/gpu/drm/gma500/accel_2d.c
++++ b/drivers/gpu/drm/gma500/accel_2d.c
+@@ -228,8 +228,8 @@ static void psbfb_copyarea_accel(struct fb_info *info,
+ {
+ 	struct drm_fb_helper *fb_helper = info->par;
+ 	struct drm_framebuffer *fb = fb_helper->fb;
+-	struct drm_device *dev = fb->dev;
+-	struct drm_psb_private *dev_priv = dev->dev_private;
++	struct drm_device *dev;
++	struct drm_psb_private *dev_priv;
+ 	uint32_t offset;
+ 	uint32_t stride;
+ 	uint32_t src_format;
+@@ -238,6 +238,8 @@ static void psbfb_copyarea_accel(struct fb_info *info,
+ 	if (!fb)
+ 		return;
+ 
++	dev = fb->dev;
++	dev_priv = dev->dev_private;
+ 	offset = to_gtt_range(fb->obj[0])->offset;
+ 	stride = fb->pitches[0];
+ 
+-- 
+2.24.0
