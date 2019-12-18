@@ -1,41 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Dec 2019 10:52:19 +0000
-Subject: [PATCH] ath11k: remove an unneeded NULL check
-Message-Id: <20191213105219.qbpng7eut5zgty2p@kili.mountain>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 18 Dec 2019 17:56:50 +0000
+Subject: Re: [PATCH] ath11k: remove an unneeded NULL check
+Message-Id: <20191218175650.44196C4479C@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191213105219.qbpng7eut5zgty2p@kili.mountain>
+In-Reply-To: <20191213105219.qbpng7eut5zgty2p@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The list iterator is always non-NULL so it doesn't need to be checked.
-I also removed the unnecessary initializer because the list iterator is
-always initialized.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/ath/ath11k/dp_rx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The list iterator is always non-NULL so it doesn't need to be checked.
+> I also removed the unnecessary initializer because the list iterator is
+> always initialized.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
-index 1b3b65c0038c..3a3dc7680622 100644
---- a/drivers/net/wireless/ath/ath11k/dp_rx.c
-+++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
-@@ -1225,12 +1225,12 @@ static
- struct htt_ppdu_stats_info *ath11k_dp_htt_get_ppdu_desc(struct ath11k *ar,
- 							u32 ppdu_id)
- {
--	struct htt_ppdu_stats_info *ppdu_info = NULL;
-+	struct htt_ppdu_stats_info *ppdu_info;
- 
- 	spin_lock_bh(&ar->data_lock);
- 	if (!list_empty(&ar->ppdu_stats_info)) {
- 		list_for_each_entry(ppdu_info, &ar->ppdu_stats_info, list) {
--			if (ppdu_info && ppdu_info->ppdu_id = ppdu_id) {
-+			if (ppdu_info->ppdu_id = ppdu_id) {
- 				spin_unlock_bh(&ar->data_lock);
- 				return ppdu_info;
- 			}
+Patch applied to ath-next branch of ath.git, thanks.
+
+269663f18474 ath11k: remove an unneeded NULL check
+
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/11290433/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
