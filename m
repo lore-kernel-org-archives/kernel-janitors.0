@@ -1,34 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 26 Dec 2019 14:54:35 +0000
-Subject: [PATCH] HID: logitech-hidpp: avoid duplicate error handling code in 'hidpp_probe()'
-Message-Id: <20191226145435.8262-1-christophe.jaillet@wanadoo.fr>
+From: "MS. MARYANNA B. THOMASON" <info.zennitbankplcnigerian@gmail.com>
+Date: Wed, 18 Dec 2019 15:13:27 +0000
+Subject: =?UTF-8?Q?Urgent_delivery_Notification_of_your_ATM_MASTER_CARD?= =?UTF-8?Q?_Amount=2C=2415=2E800=E2=
+Message-Id: <CABHzvrnE4KwOd7FrVSooBdgKYK5Zt+jHFRRebDgeRZagfVhW0g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-'hid_hw_stop()' is already in the error handling path when branching to
-the 'hid_hw_open_fail' label.
-There is no point in calling it twice, so remove one.
+Attn Dear.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/hid/hid-logitech-hidpp.c | 1 -
- 1 file changed, 1 deletion(-)
+Urgent delivery Notification of your ATM MASTER CARD, Dhl-Benin is
+ready for delivery of your ATM Master card worth $15.800’000’00, as
+approved this morning, Date, 18/12/2019. Through the Intruction from
+INTERNATIONAL MONETARY FUNDS, I.M.F official Directors.
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index bb063e7d48df..70e1cb928bf0 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -3817,7 +3817,6 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (ret < 0) {
- 		dev_err(&hdev->dev, "%s:hid_hw_open returned error:%d\n",
- 			__func__, ret);
--		hid_hw_stop(hdev);
- 		goto hid_hw_open_fail;
- 	}
- 
--- 
-2.20.1
+REGISTRATION NO :EG58945
+PARCEL NUMBER: 140479
+Delivery Schuleded now,
+Finally all we required from you is your ATM Card Proccessing Delivery
+fees $19.00 only which you must send to this DHL service to enable us
+dispatch the parcel to your destination today.
+
+Here is our receiving payment details.
+You are advised to send it Via Money Gram Service.
+
+Receiver's Name--------Alan Ude
+Country-------Benin Republic.
+City/ Address--------Cotonou
+Test Question--------In God
+Answer-------We Trust
+Amount------------$US19.00 only
+Mtcn-------------
+Sender's Name-------
+
+Your delivery  ATM card worth $15.800’000’00,
+Is Due for delivery to your address today upon confirmation of
+required fee from you asap.
+
+Call us on this phone number for any inquiry. +229 62819378
+Awaiting your urgent response.
+
+MS. MARYANNA B. THOMASON, Shipment director, DHL Express
+Courier Company-Benin
