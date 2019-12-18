@@ -1,39 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 12 Dec 2019 19:10:44 +0000
-Subject: [PATCH][next] ath11k: fix uninitialized variable radioup
-Message-Id: <20191212191044.107544-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 18 Dec 2019 17:53:14 +0000
+Subject: Re: [PATCH][next] ath11k: fix uninitialized variable radioup
+Message-Id: <20191218175314.21F8AC433CB@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191212191044.107544-1-colin.king@canonical.com>
+In-Reply-To: <20191212191044.107544-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, Ganesh Sesetti <gseset@codeaurora.org>, Karthikeyan Periyasamy <periyasa@codeaurora.org>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, Ganesh Sesetti <gseset@codeaurora.org>, Karthikeyan Periyasamy <periyasa@codeaurora.org>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-The variable radioup is not uninitalized so it may contain a garbage
-value and hence the detection of a radio that is not up is buggy.
-Fix this by initializing it to zero.
+> The variable radioup is not uninitalized so it may contain a garbage
+> value and hence the detection of a radio that is not up is buggy.
+> Fix this by initializing it to zero.
+> 
+> Addresses-Coverity: ("Uninitalized scalar variable")
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Addresses-Coverity: ("Uninitalized scalar variable")
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath11k/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/wireless/ath/ath11k/debug.c b/drivers/net/wireless/ath/ath11k/debug.c
-index c27fffd13a5d..34b960453edc 100644
---- a/drivers/net/wireless/ath/ath11k/debug.c
-+++ b/drivers/net/wireless/ath/ath11k/debug.c
-@@ -541,7 +541,7 @@ static ssize_t ath11k_write_simulate_fw_crash(struct file *file,
- 	struct ath11k *ar = ab->pdevs[0].ar;
- 	char buf[32] = {0};
- 	ssize_t rc;
--	int i, ret, radioup;
-+	int i, ret, radioup = 0;
- 
- 	for (i = 0; i < ab->num_radios; i++) {
- 		pdev = &ab->pdevs[i];
+08cc0f44f5ed ath11k: fix uninitialized variable radioup
+
 -- 
-2.24.0
+https://patchwork.kernel.org/patch/11289309/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
