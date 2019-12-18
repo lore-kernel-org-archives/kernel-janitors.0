@@ -1,33 +1,27 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 04 Dec 2019 05:43:55 +0000
-Subject: [PATCH] rt2x00usb: Fix a warning message in 'rt2x00usb_watchdog_tx_dma()'
-Message-Id: <20191204054355.11729-1-christophe.jaillet@wanadoo.fr>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 18 Dec 2019 18:59:08 +0000
+Subject: Re: [PATCH] rt2x00usb: Fix a warning message in 'rt2x00usb_watchdog_tx_dma()'
+Message-Id: <20191218185908.49115C4479C@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191204054355.11729-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20191204054355.11729-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sgruszka@redhat.com, helmut.schaa@googlemail.com, kvalo@codeaurora.org, davem@davemloft.net
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: sgruszka@redhat.com, helmut.schaa@googlemail.com, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'forced' is duplicated in the message, axe one of them.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/ralink/rt2x00/rt2x00usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 'forced' is duplicated in the message, axe one of them.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-index bc2dfef0de22..92e9e023c349 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-@@ -522,7 +522,7 @@ EXPORT_SYMBOL_GPL(rt2x00usb_flush_queue);
- 
- static void rt2x00usb_watchdog_tx_dma(struct data_queue *queue)
- {
--	rt2x00_warn(queue->rt2x00dev, "TX queue %d DMA timed out, invoke forced forced reset\n",
-+	rt2x00_warn(queue->rt2x00dev, "TX queue %d DMA timed out, invoke forced reset\n",
- 		    queue->qid);
- 
- 	rt2x00queue_stop_queue(queue);
+Patch applied to wireless-drivers-next.git, thanks.
+
+ffc7b2826a3c rt2x00usb: Fix a warning message in 'rt2x00usb_watchdog_tx_dma()'
+
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/11272155/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
