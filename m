@@ -1,56 +1,77 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 02 Dec 2019 21:25:09 +0000
-Subject: Re: [PATCH][next] drm/amd/display: fix double assignment to msg_id field
-Message-Id: <CADnq5_NLq7HJ6OAAW6yO9G6NC9Ytpd7mzG8TrRmsLsvHbO9wWg@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 19 Dec 2019 01:33:44 +0000
+Subject: [PATCH net] af_packet: refactoring code for prb_calc_retire_blk_tmo
+Message-Id: <20191219013344.34603-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191120172242.347072-1-colin.king@canonical.com>
- <9056b19a-f63c-8fc0-d2f7-6df3a20c95a7@amd.com>
-In-Reply-To: <9056b19a-f63c-8fc0-d2f7-6df3a20c95a7@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <hwentlan@amd.com>
-Cc: David Zhou <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Colin King <colin.king@canonical.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: davem@davemloft.net, maowenan@huawei.com, edumazet@google.com, willemb@google.com, maximmi@mellanox.com, pabeni@redhat.com, yuehaibing@huawei.com, nhorman@tuxdriver.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied.  thanks!
+If __ethtool_get_link_ksettings() is failed and with
+non-zero value, prb_calc_retire_blk_tmo() should return
+DEFAULT_PRB_RETIRE_TOV firstly. Refactoring code and make
+it more readable.
 
-Alex
+Fixes: b43d1f9f7067 ("af_packet: set defaule value for tmo")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ net/packet/af_packet.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-On Wed, Nov 27, 2019 at 11:51 AM Harry Wentland <hwentlan@amd.com> wrote:
->
-> On 2019-11-20 12:22 p.m., Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The msg_id field is being assigned twice. Fix this by replacing the second
-> > assignment with an assignment to msg_size.
-> >
-> > Addresses-Coverity: ("Unused value")
-> > Fixes: 11a00965d261 ("drm/amd/display: Add PSP block to verify HDCP2.2 steps")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Reviewed-by: Harry Wentland <harry.wentland>
->
-> Harry
->
-> > ---
-> >  drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> > index 2dd5feec8e6c..6791c5844e43 100644
-> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-> > @@ -42,7 +42,7 @@ static void hdcp2_message_init(struct mod_hdcp *hdcp,
-> >       in->process.msg2_desc.msg_id = TA_HDCP_HDCP2_MSG_ID__NULL_MESSAGE;
-> >       in->process.msg2_desc.msg_size = 0;
-> >       in->process.msg3_desc.msg_id = TA_HDCP_HDCP2_MSG_ID__NULL_MESSAGE;
-> > -     in->process.msg3_desc.msg_id = 0;
-> > +     in->process.msg3_desc.msg_size = 0;
-> >  }
-> >  enum mod_hdcp_status mod_hdcp_remove_display_topology(struct mod_hdcp *hdcp)
-> >  {
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 118cd66..843ebf8 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -520,7 +520,7 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 				int blk_size_in_bytes)
+ {
+ 	struct net_device *dev;
+-	unsigned int mbits = 0, msec = 0, div = 0, tmo = 0;
++	unsigned int mbits = 0, msec = 1, div = 0, tmo = 0;
+ 	struct ethtool_link_ksettings ecmd;
+ 	int err;
+ 
+@@ -532,21 +532,17 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 	}
+ 	err = __ethtool_get_link_ksettings(dev, &ecmd);
+ 	rtnl_unlock();
+-	if (!err) {
+-		/*
+-		 * If the link speed is so slow you don't really
+-		 * need to worry about perf anyways
+-		 */
+-		if (ecmd.base.speed < SPEED_1000 ||
+-		    ecmd.base.speed = SPEED_UNKNOWN) {
+-			return DEFAULT_PRB_RETIRE_TOV;
+-		} else {
+-			msec = 1;
+-			div = ecmd.base.speed / 1000;
+-		}
+-	} else
++	if (err)
++		return DEFAULT_PRB_RETIRE_TOV;
++
++	/* If the link speed is so slow you don't really
++	 * need to worry about perf anyways
++	 */
++	if (ecmd.base.speed < SPEED_1000 ||
++	    ecmd.base.speed = SPEED_UNKNOWN)
+ 		return DEFAULT_PRB_RETIRE_TOV;
+ 
++	div = ecmd.base.speed / 1000;
+ 	mbits = (blk_size_in_bytes * 8) / (1024 * 1024);
+ 
+ 	if (div)
+@@ -555,7 +551,7 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 	tmo = mbits * msec;
+ 
+ 	if (div)
+-		return tmo+1;
++		return tmo + 1;
+ 	return tmo;
+ }
+ 
+-- 
+2.7.4
