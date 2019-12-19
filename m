@@ -1,45 +1,39 @@
-From: "MS. MARYANNA B. THOMASON" <info.zennitbankplcnigerian@gmail.com>
-Date: Wed, 18 Dec 2019 15:13:27 +0000
-Subject: =?UTF-8?Q?Urgent_delivery_Notification_of_your_ATM_MASTER_CARD?= =?UTF-8?Q?_Amount=2C=2415=2E800=E2=
-Message-Id: <CABHzvrnE4KwOd7FrVSooBdgKYK5Zt+jHFRRebDgeRZagfVhW0g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 19 Dec 2019 23:45:35 +0000
+Subject: [PATCH] ice: remove redundant assignment to variable xmit_done
+Message-Id: <20191219234535.37103-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Attn Dear.
+From: Colin Ian King <colin.king@canonical.com>
 
-Urgent delivery Notification of your ATM MASTER CARD, Dhl-Benin is
-ready for delivery of your ATM Master card worth $15.800’000’00, as
-approved this morning, Date, 18/12/2019. Through the Intruction from
-INTERNATIONAL MONETARY FUNDS, I.M.F official Directors.
+The variable xmit_done is being initialized with a value that is never
+read and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-REGISTRATION NO :EG58945
-PARCEL NUMBER: 140479
-Delivery Schuleded now,
-Finally all we required from you is your ATM Card Proccessing Delivery
-fees $19.00 only which you must send to this DHL service to enable us
-dispatch the parcel to your destination today.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ice/ice_xsk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is our receiving payment details.
-You are advised to send it Via Money Gram Service.
-
-Receiver's Name--------Alan Ude
-Country-------Benin Republic.
-City/ Address--------Cotonou
-Test Question--------In God
-Answer-------We Trust
-Amount------------$US19.00 only
-Mtcn-------------
-Sender's Name-------
-
-Your delivery  ATM card worth $15.800’000’00,
-Is Due for delivery to your address today upon confirmation of
-required fee from you asap.
-
-Call us on this phone number for any inquiry. +229 62819378
-Awaiting your urgent response.
-
-MS. MARYANNA B. THOMASON, Shipment director, DHL Express
-Courier Company-Benin
+diff --git a/drivers/net/ethernet/intel/ice/ice_xsk.c b/drivers/net/ethernet/intel/ice/ice_xsk.c
+index cf9b8b22d24f..03c1e9bcf790 100644
+--- a/drivers/net/ethernet/intel/ice/ice_xsk.c
++++ b/drivers/net/ethernet/intel/ice/ice_xsk.c
+@@ -1019,8 +1019,8 @@ bool ice_clean_tx_irq_zc(struct ice_ring *xdp_ring, int budget)
+ 	s16 ntc = xdp_ring->next_to_clean;
+ 	struct ice_tx_desc *tx_desc;
+ 	struct ice_tx_buf *tx_buf;
+-	bool xmit_done = true;
+ 	u32 xsk_frames = 0;
++	bool xmit_done;
+ 
+ 	tx_desc = ICE_TX_DESC(xdp_ring, ntc);
+ 	tx_buf = &xdp_ring->tx_buf[ntc];
+-- 
+2.24.0
