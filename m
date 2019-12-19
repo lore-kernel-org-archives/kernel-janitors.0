@@ -1,33 +1,26 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Wed, 18 Dec 2019 20:15:09 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 19 Dec 2019 23:47:47 +0000
 Subject: Re: [PATCH] scsi: lpfc: fix spelling mistakes of asynchronous
-Message-Id: <79579d2d-ea32-e529-6cf4-7a02ff955cfb@broadcom.com>
+Message-Id: <yq1zhfnando.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20191218084301.627555-1-colin.king@canonical.com>
-In-Reply-To: <20191218084301.627555-1-colin.king@canonical.com>
+In-Reply-To: <20191218084301.627555-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 18 Dec 2019 08:43:01 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+Colin,
 
-On 12/18/2019 12:43 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 >
 > There are spelling mistakes of asynchronous in a lpfc_printf_log
 > message and comments. Fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/scsi/lpfc/lpfc_init.c |  2 +-
->   drivers/scsi/lpfc/lpfc_sli.c  | 10 +++++-----
->   2 files changed, 6 insertions(+), 6 deletions(-)
->
 
-Looks good. Thanks Colin.
+Applied to 5.5/scsi-fixes, thanks!
 
-Reviewed-by: James Smart <james.smart@broadcom.com>
-
--- james
+-- 
+Martin K. Petersen	Oracle Linux Engineering
