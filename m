@@ -1,30 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 17 Dec 2019 14:24:49 +0000
-Subject: Re: [PATCH] ath10k: Fix some typo in some warning messages
-Message-Id: <20191217142449.74520C4479F@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Dec 2019 23:33:22 +0000
+Subject: [PATCH][next] io_uring: fix missing error return when percpu_ref_init fails
+Message-Id: <20191220233322.13599-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204055235.11989-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191204055235.11989-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, davem@davemloft.net, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fix some typo:
->   s/to to/to/
->   s/even/event/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Currently when the call to percpu_ref_init fails ctx->file_data is
+set to null and because there is a missing return statement the
+following statement dereferences this null pointer causing an oops.
+Fix this by adding the missing -ENOMEM return to avoid the oops.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Addresses-Coverity: ("Explicit null dereference")
+Fixes: cbb537634780 ("io_uring: avoid ring quiesce for fixed file set unregister and update")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-a67bcec3569f ath10k: Fix some typo in some warning messages
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c756b8fc44c6..1d31294f5914 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4937,6 +4937,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		kfree(ctx->file_data->table);
+ 		kfree(ctx->file_data);
+ 		ctx->file_data = NULL;
++		return -ENOMEM;
+ 	}
+ 	ctx->file_data->put_llist.first = NULL;
+ 	INIT_WORK(&ctx->file_data->ref_work, io_ring_file_ref_switch);
 -- 
-https://patchwork.kernel.org/patch/11272159/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.24.0
