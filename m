@@ -1,26 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 26 Dec 2019 23:20:16 +0000
-Subject: Re: [PATCH net-next v2] af_packet: refactoring code for prb_calc_retire_blk_tmo
-Message-Id: <20191226.152016.1920270671846157194.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Dec 2019 00:10:00 +0000
+Subject: [PATCH] serial: ucc_uart: remove redundant assignment to pointer bdp
+Message-Id: <20191220001000.39859-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+FuTScgWi905_NhGNsRzpwaQ+OPwahj6NtKgPjLZRjuqJvhXQ@mail.gmail.com>
-        <20191223104257.132354-1-maowenan@huawei.com>
-In-Reply-To: <20191223104257.132354-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: edumazet@google.com, willemb@google.com, maximmi@mellanox.com, pabeni@redhat.com, yuehaibing@huawei.com, nhorman@tuxdriver.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, willemdebruijn.kernel@gmail.com
+To: Timur Tabi <timur@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Mon, 23 Dec 2019 18:42:57 +0800
+From: Colin Ian King <colin.king@canonical.com>
 
-> If __ethtool_get_link_ksettings() is failed and with
-> non-zero value, prb_calc_retire_blk_tmo() should return
-> DEFAULT_PRB_RETIRE_TOV firstly. 
-> 
-> This patch is to refactory code and make it more readable.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+The variable bdp is being initialized with a value that is never
+read and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-Applied, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/serial/ucc_uart.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
+index afc2a5d69202..99a069ed3636 100644
+--- a/drivers/tty/serial/ucc_uart.c
++++ b/drivers/tty/serial/ucc_uart.c
+@@ -336,8 +336,6 @@ static int qe_uart_tx_pump(struct uart_qe_port *qe_port)
+ 	struct uart_port *port = &qe_port->port;
+ 	struct circ_buf *xmit = &port->state->xmit;
+ 
+-	bdp = qe_port->rx_cur;
+-
+ 	/* Handle xon/xoff */
+ 	if (port->x_char) {
+ 		/* Pick next descriptor and fill from buffer */
+-- 
+2.24.0
