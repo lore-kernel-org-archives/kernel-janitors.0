@@ -1,26 +1,36 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 16 Dec 2019 13:38:50 +0000
-Subject: Re: [v5] f2fs: support data compression
-Message-Id: <b1a2b133-ab92-eb14-ccfe-5d584ed8bb0c@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 21 Dec 2019 15:48:25 +0000
+Subject: [PATCH] tracing: fix indentation issue
+Message-Id: <20191221154825.33073-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191216062806.112361-1-yuchao0@huawei.com>
- <0ab8c593-d043-cdf6-7805-f7bceba8e519@web.de>
- <0677a4fd-62a5-ad98-fd02-ae7d5a9cb501@kernel.org>
-In-Reply-To: <0677a4fd-62a5-ad98-fd02-ae7d5a9cb501@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
->> +bool f2fs_is_compressed_page(const struct page *page);
->>
->>
->> Would you like to improve const-correctness at any more source code places?
->
-> I can't figure out a good reason to do that for f2fs internal functions...
+From: Colin Ian King <colin.king@canonical.com>
 
-Do you insist to keep such a function parameter mutable?
+There is a declaration that is indented one level too deeply, remove
+the extraneous tab.
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/trace/trace_seq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_seq.c b/kernel/trace/trace_seq.c
+index 344e4c1aa09c..87de6edafd14 100644
+--- a/kernel/trace/trace_seq.c
++++ b/kernel/trace/trace_seq.c
+@@ -381,7 +381,7 @@ int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
+ 		       int prefix_type, int rowsize, int groupsize,
+ 		       const void *buf, size_t len, bool ascii)
+ {
+-		unsigned int save_len = s->seq.len;
++	unsigned int save_len = s->seq.len;
+ 
+ 	if (s->full)
+ 		return 0;
+-- 
+2.24.0
