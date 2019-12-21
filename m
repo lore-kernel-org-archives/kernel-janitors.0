@@ -1,43 +1,22 @@
-From: Avri Altman <Avri.Altman@wdc.com>
-Date: Sun, 15 Dec 2019 06:06:32 +0000
-Subject: RE: [PATCH 2/2] scsi: ufs: Simplify a condition
-Message-Id: <MN2PR04MB6991BEAE05458E3C4B079720FC560@MN2PR04MB6991.namprd04.prod.outlook.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 21 Dec 2019 09:30:28 +0000
+Subject: Re: string.h: Mark 34 functions with __must_check
+Message-Id: <95473676-5bb9-0104-38ac-0d196d3ded83@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213104828.7i64cpoof26rc4fw@kili.mountain>
- <20191213104935.wgpq2epaz6zh5zus@kili.mountain>
-In-Reply-To: <20191213104935.wgpq2epaz6zh5zus@kili.mountain>
+References: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
+In-Reply-To: <75f70e5e-9ece-d6d1-a2c5-2f3ad79b9ccb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alim Akhtar <alim.akhtar@samsung.com>, Subhash Jadavani <subhashj@codeaurora.org>
-Cc: Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Bean Huo <beanhuo@micron.com>, Stanley Chu <stanley.chu@mediatek.com>, Can Guo <cang@codeaurora.org>, Bart Van Assche <bvanassche@acm.org>, Venkat Gopalakrishnan <venkatg@codeaurora.org>, Tomas Winkler <tomas.winkler@intel.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Laight <David.Laight@ACULAB.COM>, David Sterba <dsterba@suse.cz>, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
- 
-> 
-> We know that "check_for_bkops" is non-zero on this side of the || because it
-> was checked on the other side.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
+> Several functions return values with which useful data processing
+> should be performed. These values must not be ignored then.
+> Thus use the annotation “__must_check” in the shown function declarations.
 
-> ---
->  drivers/scsi/ufs/ufshcd.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
-> bf981f0ea74c..c299c5feaf1a 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -7684,8 +7684,7 @@ static int ufshcd_link_state_transition(struct ufs_hba
-> *hba,
->          * turning off the link would also turn off the device.
->          */
->         else if ((req_link_state == UIC_LINK_OFF_STATE) &&
-> -                  (!check_for_bkops || (check_for_bkops &&
-> -                   !hba->auto_bkops_enabled))) {
-> +                (!check_for_bkops || !hba->auto_bkops_enabled)) {
->                 /*
->                  * Let's make sure that link is in low power mode, we are doing
->                  * this currently by putting the link in Hibern8. Otherway to
-> --
-> 2.11.0
+Will such a software development topic be clarified any further?
+Would you like to continue the discussion?
+
+Regards,
+Markus
