@@ -1,46 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 23 Dec 2019 16:07:50 +0000
-Subject: Re: [PATCH] sched: Use kmem_cache_zalloc() instead of kmem_cache_alloc() with flag GFP_ZERO.
-Message-Id: <e880ee66-2d7f-be97-5600-a8a459a39feb@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 22 Dec 2019 22:22:24 +0000
+Subject: [PATCH] misc: pti: remove redundant assignments to retval
+Message-Id: <20191222222224.732340-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577065949-25631-1-git-send-email-wang.yi59@zte.com.cn>
-In-Reply-To: <1577065949-25631-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Yi Wang <wang.yi59@zte.com.cn>, Huang Zijiang <huang.zijiang@zte.com.cn>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, up2wing@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>, Wang Liang <wang.liang82@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-…
-> +++ b/kernel/sched/core.c
-> @@ -6939,7 +6939,7 @@ struct task_group *sched_create_group(struct task_group *parent)
-…
-> -    tg = kmem_cache_alloc(task_group_cache, GFP_KERNEL | __GFP_ZERO);
-> +tg = kmem_cache_zalloc(task_group_cache, GFP_KERNEL);
->      if (!tg)
-…
+From: Colin Ian King <colin.king@canonical.com>
 
-Please fix the indentation.
+The variable retval is assigned with a value that is never read and
+it is re-assigned a new value later on.  The assignment is redundant
+and can be removed.  Clean up multiple occurrances of this pattern.
 
-Would you like to apply a script for the semantic patch language
-like the following?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/pti.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-@replacement@
-expression gfp, x;
-@@
- x =
-(
--    kmalloc
-+    kzalloc
-|
--    kmem_cache_alloc
-+    kmem_cache_zalloc
-)
-            (...,
-             gfp
--            | __GFP_ZERO
-            )
-
-
-Regards,
-Markus
+diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
+index 063e4419cd7e..b7f510676cd6 100644
+--- a/drivers/misc/pti.c
++++ b/drivers/misc/pti.c
+@@ -792,7 +792,7 @@ static int pti_pci_probe(struct pci_dev *pdev,
+ 		const struct pci_device_id *ent)
+ {
+ 	unsigned int a;
+-	int retval = -EINVAL;
++	int retval;
+ 	int pci_bar = 1;
+ 
+ 	dev_dbg(&pdev->dev, "%s %s(%d): PTI PCI ID %04x:%04x\n", __FILE__,
+@@ -910,7 +910,7 @@ static struct pci_driver pti_pci_driver = {
+  */
+ static int __init pti_init(void)
+ {
+-	int retval = -EINVAL;
++	int retval;
+ 
+ 	/* First register module as tty device */
+ 
+-- 
+2.24.0
