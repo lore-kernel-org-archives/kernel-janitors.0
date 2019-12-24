@@ -1,28 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Dec 2019 07:56:36 +0000
-Subject: A couple TODO ideas
-Message-Id: <20191206075636.GI1765@kadam>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 24 Dec 2019 08:10:38 +0000
+Subject: Re: [PATCH -next] clk: bm1800: Remove set but not used variable 'fref'
+Message-Id: <20191224081039.6C9D220643@mail.kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191129033534.188257-1-yuehaibing@huawei.com>
+In-Reply-To: <20191129033534.188257-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Michael Turquette <mturquette@baylibre.com>, YueHaibing <yuehaibing@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Sudip and I have started a #syzkaller channel on OFTC irc.  The idea is
-that if people are working on bugs from the syzbot dashboard and run
-into any issues or have questions they could ask them their.
+Quoting YueHaibing (2019-11-28 19:35:34)
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/clk/clk-bm1880.c: In function 'bm1880_pll_rate_calc':
+> drivers/clk/clk-bm1880.c:477:13: warning:
+>  variable 'fref' set but not used [-Wunused-but-set-variable]
+> 
+> It is never used, so remove it.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-Another idea that is that someone could write a scripts/email_patch.sh
-script.  You could either give it a just a <commit id> or a <start> and
-<end> commit id.  Maybe there would be a --to=<email@address.com> option
-but by default it would just use get_maintainer.pl.
-
-It would be an interactive script for first timers.  It would do some
-QC like trying to run checkpatch and Sparse with --endian flags.  Stuff
-like looking at the patch prefix.  Here is what I use to send my
-patches.
-
-https://repo.or.cz/smatch.git/blob/HEAD:/smatch_scripts/kpatch.sh
-
-regards,
-dan caprenter
+Applied to clk-next
