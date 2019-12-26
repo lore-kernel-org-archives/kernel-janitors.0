@@ -1,13 +1,34 @@
-From: "Bishop Johnr" <aac-styfe@cdmx.gob.mx>
-Date: Sun, 01 Dec 2019 16:04:13 +0000
-Subject: Congratulations
-Message-Id: <20191201160420.BF3E21E2DB3@cdmx.gob.mx>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 26 Dec 2019 14:54:35 +0000
+Subject: [PATCH] HID: logitech-hidpp: avoid duplicate error handling code in 'hidpp_probe()'
+Message-Id: <20191226145435.8262-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Recipients <aac-styfe@cdmx.gob.mx>
+To: jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Money was donated to you by Mr and Mrs Allen and Violet Large, just contact them with this email for more information 
+'hid_hw_stop()' is already in the error handling path when branching to
+the 'hid_hw_open_fail' label.
+There is no point in calling it twice, so remove one.
 
-EMail: allenandvioletlargeaward@gmail.com
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/hid-logitech-hidpp.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index bb063e7d48df..70e1cb928bf0 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -3817,7 +3817,6 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	if (ret < 0) {
+ 		dev_err(&hdev->dev, "%s:hid_hw_open returned error:%d\n",
+ 			__func__, ret);
+-		hid_hw_stop(hdev);
+ 		goto hid_hw_open_fail;
+ 	}
+ 
+-- 
+2.20.1
