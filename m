@@ -1,26 +1,38 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 30 Dec 2019 10:44:53 +0000
-Subject: Re: [PATCH] ASoC: cs47l92: Simplify error handling code in 'cs47l92_probe()'
-Message-Id: <20191230104453.GG10451@ediswmail.ad.cirrus.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 26 Dec 2019 15:02:24 +0000
+Subject: [PATCH] sfc: avoid duplicate error handling code in 'efx_ef10_sriov_set_vf_mac()'
+Message-Id: <20191226150224.8701-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191226162907.9490-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191226162907.9490-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: brian.austin@cirrus.com, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, tiwai@suse.com, kernel-janitors@vger.kernel.org, lgirdwood@gmail.com, Paul.Handrigan@cirrus.com, rf@opensource.cirrus.com, broonie@kernel.org, linux-kernel@vger.kernel.org
+To: linux-net-drivers@solarflare.com, ecree@solarflare.com, mhabets@solarflare.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Dec 26, 2019 at 05:29:07PM +0100, Christophe JAILLET wrote:
-> If 'madera_init_bus_error_irq()' fails,
-> 'wm_adsp2_remove(&cs47l92->core.adsp[0])' will be called twice.
-> Once in the 'if' block, and once in the error handling path.
-> This is harmless, but one of this call can be axed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+'eth_zero_addr()' is already called in the error handling path. This is
+harmless, but there is no point in calling it twice, so remove one.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/sfc/ef10_sriov.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks,
-Charles
+diff --git a/drivers/net/ethernet/sfc/ef10_sriov.c b/drivers/net/ethernet/sfc/ef10_sriov.c
+index 52bd43f45761..14393767ef9f 100644
+--- a/drivers/net/ethernet/sfc/ef10_sriov.c
++++ b/drivers/net/ethernet/sfc/ef10_sriov.c
+@@ -522,10 +522,9 @@ int efx_ef10_sriov_set_vf_mac(struct efx_nic *efx, int vf_i, u8 *mac)
+ 
+ 	if (!is_zero_ether_addr(mac)) {
+ 		rc = efx_ef10_vport_add_mac(efx, vf->vport_id, mac);
+-		if (rc) {
+-			eth_zero_addr(vf->mac);
++		if (rc)
+ 			goto fail;
+-		}
++
+ 		if (vf->efx)
+ 			ether_addr_copy(vf->efx->net_dev->dev_addr, mac);
+ 	}
+-- 
+2.20.1
