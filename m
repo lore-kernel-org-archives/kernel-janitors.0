@@ -1,44 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Dec 2019 06:32:40 +0000
-Subject: Re: [PATCH -next] power: supply: ab8500: Drop pointless static qualifier in ab8500_btemp_batctrl_vol
-Message-Id: <20191204063240.GJ1787@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 26 Dec 2019 16:29:07 +0000
+Subject: [PATCH] ASoC: cs47l92: Simplify error handling code in 'cs47l92_probe()'
+Message-Id: <20191226162907.9490-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204010506.159128-1-maowenan@huawei.com>
- <20191204063058.GE1765@kadam>
-In-Reply-To: <20191204063058.GE1765@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: sre@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: brian.austin@cirrus.com, Paul.Handrigan@cirrus.com, ckeepax@opensource.cirrus.com, rf@opensource.cirrus.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: patches@opensource.cirrus.com, alsa-devel@alsa-project.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 09:30:58AM +0300, Dan Carpenter wrote:
-> On Wed, Dec 04, 2019 at 09:05:06AM +0800, Mao Wenan wrote:
-> > There is no need to have the 'T *v' variable static
-> > since new value always be assigned before use it.
-> > 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> > ---
-> >  drivers/power/supply/ab8500_btemp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/power/supply/ab8500_btemp.c b/drivers/power/supply/ab8500_btemp.c
-> > index 909f0242bacb..d3d4f7327d1b 100644
-> > --- a/drivers/power/supply/ab8500_btemp.c
-> > +++ b/drivers/power/supply/ab8500_btemp.c
-> > @@ -180,7 +180,7 @@ static int ab8500_btemp_batctrl_volt_to_res(struct ab8500_btemp *di,
-> >  static int ab8500_btemp_read_batctrl_voltage(struct ab8500_btemp *di)
-> >  {
-> >  	int vbtemp, ret;
-> > -	static int prev;
-> > +	int prev;
-> 
-> No.  We use it first on linux-next (yesterday).  It needs to be static.
-> 
+If 'madera_init_bus_error_irq()' fails,
+'wm_adsp2_remove(&cs47l92->core.adsp[0])' will be called twice.
+Once in the 'if' block, and once in the error handling path.
+This is harmless, but one of this call can be axed.
 
-It's surprising that your patch didn't cause an uninitialized variable
-compile warning for you.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/codecs/cs47l92.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/sound/soc/codecs/cs47l92.c b/sound/soc/codecs/cs47l92.c
+index d50f75f3b3e4..536b7d35d6b2 100644
+--- a/sound/soc/codecs/cs47l92.c
++++ b/sound/soc/codecs/cs47l92.c
+@@ -1959,10 +1959,8 @@ static int cs47l92_probe(struct platform_device *pdev)
+ 		goto error_dsp_irq;
+ 
+ 	ret = madera_init_bus_error_irq(&cs47l92->core, 0, wm_adsp2_bus_error);
+-	if (ret != 0) {
+-		wm_adsp2_remove(&cs47l92->core.adsp[0]);
++	if (ret != 0)
+ 		goto error_adsp;
+-	}
+ 
+ 	madera_init_fll(madera, 1, MADERA_FLL1_CONTROL_1 - 1,
+ 			&cs47l92->fll[0]);
+-- 
+2.20.1
