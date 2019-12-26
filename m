@@ -1,32 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 14 Dec 2019 18:10:55 +0000
-Subject: Re: [PATCH v2] mm/gup: Fix memory leak in __gup_benchmark_ioctl
-Message-Id: <b167e207-f919-be9a-08cb-1d1a56e25e37@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 26 Dec 2019 15:33:35 +0000
+Subject: [PATCH] scsi: aha1740: avoid a duplicated 'scsi_host_put()' call
+Message-Id: <20191226153335.9151-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213223751.4089-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191213223751.4089-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, Ira Weiny <ira.weiny@intel.com>, John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Keith Busch <keith.busch@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Navid Emamdoost <emamd001@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-…
-> +++ b/mm/gup_benchmark.c
-…
-> @@ -85,8 +85,9 @@  static int __gup_benchmark_ioctl(unsigned int cmd,
->  	end_time = ktime_get();
->  	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
->
-> +done:
->  	kvfree(pages);
-> -	return 0;
-> +	return ret;
->  }
->
->  static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
+If 'dma_map_single()' fails, 'scsi_host_put (shpnt)' will be called twice.
+Once in the 'if' block, and once in the error handling path.
+Axe one of this call.
 
-Can the addition of a label like “free_pages” be more appropriate here?
+Fixes: 1dc09e120c83 ("scsi: aha1740: stop using scsi_unregister")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm not sure of the commit used in the Fixes tag. This commit has made
+obvious the redundant scsi_host_put call, but it was already hidden in
+'scsi_unregister()' ('scsi_unregister()' is not part of the kernel anymore,
+but see 4.8.17 for example:
+https://elixir.bootlin.com/linux/v4.8.17/source/drivers/scsi/hosts.c#L552)
+---
+ drivers/scsi/aha1740.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/scsi/aha1740.c b/drivers/scsi/aha1740.c
+index da4150c17781..5a227c03895f 100644
+--- a/drivers/scsi/aha1740.c
++++ b/drivers/scsi/aha1740.c
+@@ -592,7 +592,6 @@ static int aha1740_probe (struct device *dev)
+ 					     DMA_BIDIRECTIONAL);
+ 	if (!host->ecb_dma_addr) {
+ 		printk (KERN_ERR "aha1740_probe: Couldn't map ECB, giving up\n");
+-		scsi_host_put (shpnt);
+ 		goto err_host_put;
+ 	}
+ 	
+-- 
+2.20.1
