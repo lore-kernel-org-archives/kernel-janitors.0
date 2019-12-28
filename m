@@ -1,59 +1,23 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sat, 07 Dec 2019 18:27:03 +0000
-Subject: [PATCH] MAINTAINERS: fix style in CADENCE I3C MASTER IP entry
-Message-Id: <20191207182703.14102-1-lukas.bulwahn@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 28 Dec 2019 12:25:49 +0000
+Subject: Re: nvmem: core: Checking the decrementing of reference counters
+Message-Id: <2a95fa07-dfae-54ef-9d19-682bace02e5f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
+In-Reply-To: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Przemyslaw Gaj <pgaj@cadence.com>, Boris Brezillon <boris.brezillon@collabora.com>
-Cc: rafalc@cadence.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, vitor.soares@synopsys.com, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-i3c@lists.infradead.org, agolec@cadence.com
+To: Xu Wang <vulab@iscas.ac.cn>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Commit ae24f2b6f828 ("MAINTAINERS: add myself as maintainer of Cadence I3C
-master controller driver") slips in some formatting with spaces instead of
-tabs, which ./scripts/checkpatch.pl -f MAINTAINERS complains about:
+I have taken another look at the implementation of the function “nvmem_device_release”.
+https://elixir.bootlin.com/linux/v5.5-rc3/source/drivers/nvmem/core.c#L421
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/nvmem/core.c?id=bf8d1cd4386535004c4afe7f03d37f9864c9940e#n421
 
-  #7838: FILE: MAINTAINERS:7838:
-  M:      Przemysław Gaj <pgaj@cadence.com>
+Now I wonder why the statement “put_device(&nvmem->dev)” is performed here
+after it was also executed by the function “__nvmem_device_put” before.
+How often should the device reference count be decremented (at the end)?
 
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #7839: FILE: MAINTAINERS:7839:
-  S:      Maintained
-
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #7840: FILE: MAINTAINERS:7840:
-  F:      Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #7841: FILE: MAINTAINERS:7841:
-  F:      drivers/i3c/master/i3c-master-cdns.c
-
-Fixes: ae24f2b6f828 ("MAINTAINERS: add myself as maintainer of Cadence I3C master controller driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on current master (eea2d5da29e3) and next-20191207
-
- MAINTAINERS | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0fd82e674cf4..59d4cb7b2981 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7835,10 +7835,10 @@ F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
- F:	drivers/i3c/master/dw*
- 
- I3C DRIVER FOR CADENCE I3C MASTER IP
--M:      Przemysław Gaj <pgaj@cadence.com>
--S:      Maintained
--F:      Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
--F:      drivers/i3c/master/i3c-master-cdns.c
-+M:	Przemysław Gaj <pgaj@cadence.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-+F:	drivers/i3c/master/i3c-master-cdns.c
- 
- IA64 (Itanium) PLATFORM
- M:	Tony Luck <tony.luck@intel.com>
--- 
-2.17.1
+Regards,
+Markus
