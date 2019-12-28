@@ -1,41 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 26 Dec 2019 15:33:35 +0000
-Subject: [PATCH] scsi: aha1740: avoid a duplicated 'scsi_host_put()' call
-Message-Id: <20191226153335.9151-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 28 Dec 2019 11:30:42 +0000
+Subject: Re: [PATCH] nvmem: core: Fix a potential use after free
+Message-Id: <278a19c4-c794-8de7-7cb4-1e1da3b80e83@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
+In-Reply-To: <1577438434-9945-1-git-send-email-vulab@iscas.ac.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Xu Wang <vulab@iscas.ac.cn>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-If 'dma_map_single()' fails, 'scsi_host_put (shpnt)' will be called twice.
-Once in the 'if' block, and once in the error handling path.
-Axe one of this call.
+> Free the nvmem structure only after we are done using it.
 
-Fixes: 1dc09e120c83 ("scsi: aha1740: stop using scsi_unregister")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I'm not sure of the commit used in the Fixes tag. This commit has made
-obvious the redundant scsi_host_put call, but it was already hidden in
-'scsi_unregister()' ('scsi_unregister()' is not part of the kernel anymore,
-but see 4.8.17 for example:
-https://elixir.bootlin.com/linux/v4.8.17/source/drivers/scsi/hosts.c#L552)
----
- drivers/scsi/aha1740.c | 1 -
- 1 file changed, 1 deletion(-)
+This information can be reasonable.
 
-diff --git a/drivers/scsi/aha1740.c b/drivers/scsi/aha1740.c
-index da4150c17781..5a227c03895f 100644
---- a/drivers/scsi/aha1740.c
-+++ b/drivers/scsi/aha1740.c
-@@ -592,7 +592,6 @@ static int aha1740_probe (struct device *dev)
- 					     DMA_BIDIRECTIONAL);
- 	if (!host->ecb_dma_addr) {
- 		printk (KERN_ERR "aha1740_probe: Couldn't map ECB, giving up\n");
--		scsi_host_put (shpnt);
- 		goto err_host_put;
- 	}
- 	
--- 
-2.20.1
+
+> This patch just moves the put_device() down a bit to avoid the
+> use after free.
+
+I suggest to reconsider such a change because a device reference count
+should eventually be decremented before decrementing the reference count
+for the module which is managed by this programming interface.
+Are you also looking for better software documentation for such an use case?
+
+Regards,
+Markus
