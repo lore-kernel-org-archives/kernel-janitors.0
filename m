@@ -1,37 +1,45 @@
-From: Andrew Donnellan <ajd@linux.ibm.com>
-Date: Sun, 29 Dec 2019 22:38:19 +0000
-Subject: Re: [PATCH 1/4] misc: cxl: use mmgrab
-Message-Id: <1d992f7f-25df-7195-14f3-a13c2dccbc96@linux.ibm.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 29 Dec 2019 15:42:56 +0000
+Subject: [PATCH 2/4] vfio: vfio_pci_nvlink2: use mmgrab
+Message-Id: <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
- <1577634178-22530-2-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577634178-22530-2-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Frederic Barrat <fbarrat@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/12/19 2:42 am, Julia Lawall wrote:
-> Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
-> helper") and most of the kernel was updated to use it. Update a
-> remaining file.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> <smpl>
-> @@ expression e; @@
-> - atomic_inc(&e->mm_count);
-> + mmgrab(e);
-> </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
+helper") and most of the kernel was updated to use it. Update a
+remaining file.
 
-Thanks!
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+<smpl>
+@@ expression e; @@
+- atomic_inc(&e->mm_count);
++ mmgrab(e);
+</smpl>
 
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/vfio/pci/vfio_pci_nvlink2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+index f2983f0f84be..43df10af7f66 100644
+--- a/drivers/vfio/pci/vfio_pci_nvlink2.c
++++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+@@ -159,7 +159,7 @@ static int vfio_pci_nvgpu_mmap(struct vfio_pci_device *vdev,
+ 	data->useraddr = vma->vm_start;
+ 	data->mm = current->mm;
+ 
+-	atomic_inc(&data->mm->mm_count);
++	mmgrab(data->mm);
+ 	ret = (int) mm_iommu_newdev(data->mm, data->useraddr,
+ 			vma_pages(vma), data->gpu_hpa, &data->mem);
+ 
