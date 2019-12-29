@@ -1,42 +1,45 @@
-From: Jieun Kim <jieun.kim4758@gmail.com>
-Date: Sun, 01 Dec 2019 05:42:57 +0000
-Subject: [PATCH 2/2] drivers: md: dm-log.c: Remove unused variable 'sz'
-Message-Id: <20191201054257.13199-1-Jieun.Kim4758@gmail.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 29 Dec 2019 15:42:57 +0000
+Subject: [PATCH 3/4] vfio/spapr_tce: use mmgrab
+Message-Id: <1577634178-22530-4-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Jieun Kim <Jieun.Kim4758@gmail.com>, dm-devel@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove unused variable 'sz' in disk_status function
-detected by coccinelle scripts(returnvar.cocci)
+Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
+helper") and most of the kernel was updated to use it. Update a
+remaining file.
 
-Signed-off-by: Jieun Kim <Jieun.Kim4758@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+<smpl>
+@@ expression e; @@
+- atomic_inc(&e->mm_count);
++ mmgrab(e);
+</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- drivers/md/dm-log.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/vfio/vfio_iommu_spapr_tce.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-log.c b/drivers/md/dm-log.c
-index 8800ec1847b5..67e74362c6ac 100644
---- a/drivers/md/dm-log.c
-+++ b/drivers/md/dm-log.c
-@@ -800,7 +800,6 @@ static int core_status(struct dm_dirty_log *log, status_type_t status,
- static int disk_status(struct dm_dirty_log *log, status_type_t status,
- 		       char *result, unsigned int maxlen)
- {
--	int sz = 0;
- 	struct log_c *lc = log->context;
- 
- 	switch(status) {
-@@ -818,7 +817,7 @@ static int disk_status(struct dm_dirty_log *log, status_type_t status,
- 		DMEMIT_SYNC;
+diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
+index 26cef65b41e7..16b3adc508db 100644
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -79,7 +79,7 @@ static long tce_iommu_mm_set(struct tce_container *container)
  	}
+ 	BUG_ON(!current->mm);
+ 	container->mm = current->mm;
+-	atomic_inc(&container->mm->mm_count);
++	mmgrab(container->mm);
  
--	return sz;
-+	return 0;
+ 	return 0;
  }
- 
- static struct dm_dirty_log_type _core_type = {
--- 
-2.17.1
