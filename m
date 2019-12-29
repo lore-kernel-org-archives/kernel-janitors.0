@@ -1,35 +1,62 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 18 Dec 2019 18:58:30 +0000
-Subject: Re: [PATCH] brcmfmac: Fix use after free in brcmf_sdio_readframes()
-Message-Id: <20191218185830.613F4C447A0@smtp.codeaurora.org>
+From: rhysperry111 <rhysperry111@gmail.com>
+Date: Sun, 29 Dec 2019 16:43:39 +0000
+Subject: [PATCH] Added AU6625 to list of supported PCI_IDs
+Message-Id: <20191229164339.7227-1-rhysperry111@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191203095855.c4fradmsixgbq7mc@kili.mountain>
-In-Reply-To: <20191203095855.c4fradmsixgbq7mc@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <frankyl@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Douglas Anderson <dianders@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Naveen Gupta <naveen.gupta@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Rhys Perry <rhysperry111@gmail.com>
 
-> The brcmu_pkt_buf_free_skb() function frees "pkt" so it leads to a
-> static checker warning:
-> 
->     drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:1974 brcmf_sdio_readframes()
->     error: dereferencing freed memory 'pkt'
-> 
-> It looks like there was supposed to be a continue after we free "pkt".
-> 
-> Fixes: 4754fceeb9a6 ("brcmfmac: streamline SDIO read frame routine")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Franky Lin <franky.lin@broadcom.com>
+This is my first kernel patch!
 
-Patch applied to wireless-drivers-next.git, thanks.
+I have added the AU6625 PCI_ID to the list of supported IDs and done some 
+general formatting to make it fit in a bit more with the code that is already 
+there. From general usage there seems to be no problems.
 
-216b44000ada brcmfmac: Fix use after free in brcmf_sdio_readframes()
+Signed-off-by: Rhys Perry <rhysperry111@gmail.com>
+---
+ drivers/misc/cardreader/alcor_pci.c | 8 +++++++-
+ include/linux/alcor_pci.h           | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
+index 259fe1dfe..cd402c891 100644
+--- a/drivers/misc/cardreader/alcor_pci.c
++++ b/drivers/misc/cardreader/alcor_pci.c
+@@ -38,12 +38,18 @@ static const struct alcor_dev_cfg au6621_cfg = {
+ 	.dma = 1,
+ };
+ 
++static const struct alcor_dev_cfg au6625_cfg = {
++	.dma = 0,
++};
++
+ static const struct pci_device_id pci_ids[] = {
+ 	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6601),
+ 		.driver_data = (kernel_ulong_t)&alcor_cfg },
+ 	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6621),
+ 		.driver_data = (kernel_ulong_t)&au6621_cfg },
+-	{ },
++	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6625),
++		.driver_data = (kernel_ulong_t)&au6625_cfg },
++	{},
+ };
+ MODULE_DEVICE_TABLE(pci, pci_ids);
+ 
+diff --git a/include/linux/alcor_pci.h b/include/linux/alcor_pci.h
+index 4416df597..8274ed525 100644
+--- a/include/linux/alcor_pci.h
++++ b/include/linux/alcor_pci.h
+@@ -17,6 +17,7 @@
+ #define PCI_ID_ALCOR_MICRO			0x1AEA
+ #define PCI_ID_AU6601				0x6601
+ #define PCI_ID_AU6621				0x6621
++#define PCI_ID_AU6625				0x6625
+ 
+ #define MHZ_TO_HZ(freq)				((freq) * 1000 * 1000)
+ 
 -- 
-https://patchwork.kernel.org/patch/11270885/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.24.1
