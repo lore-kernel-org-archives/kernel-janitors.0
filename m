@@ -1,39 +1,37 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Fri, 10 Jan 2020 11:16:14 +0000
-Subject: Re: [PATCH][next] PM: hibernate: fix spelling mistake "shapshot" -> "snapshot"
-Message-Id: <1732016.surcVlZrUL@kreacher>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:31 +0000
+Subject: [PATCH 13/16] ptp: ptp_clockmatrix: constify copied structure
+Message-Id: <1577864614-5543-14-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200110100812.236881-1-colin.king@canonical.com>
-In-Reply-To: <20200110100812.236881-1-colin.king@canonical.com>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, January 10, 2020 11:08:12 AM CET Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a pr_info message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  kernel/power/snapshot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-> index 353c5e9070ed..befe3c94767c 100644
-> --- a/kernel/power/snapshot.c
-> +++ b/kernel/power/snapshot.c
-> @@ -1841,7 +1841,7 @@ int hibernate_preallocate_memory(void)
->  
->   out:
->  	stop = ktime_get();
-> -	pr_info("Allocated %lu pages for shapshot\n", pages);
-> +	pr_info("Allocated %lu pages for snapshot\n", pages);
->  	swsusp_show_speed(start, stop, pages, "Allocated");
->  
->  	return 0;
-> 
+The idtcm_caps structure is only copied into another structure,
+so make it const.
 
-Applied, thanks!
+The opportunity for this change was found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/ptp/ptp_clockmatrix.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ptp/ptp_clockmatrix.c b/drivers/ptp/ptp_clockmatrix.c
+index a5110b7b4ece..e85836715f0b 100644
+--- a/drivers/ptp/ptp_clockmatrix.c
++++ b/drivers/ptp/ptp_clockmatrix.c
+@@ -1102,7 +1102,7 @@ static void idtcm_display_version_info(struct idtcm *idtcm)
+ 		 product_id, hw_rev_id, bond_id, csr_id, irq_id);
+ }
+ 
+-static struct ptp_clock_info idtcm_caps = {
++static const struct ptp_clock_info idtcm_caps = {
+ 	.owner		= THIS_MODULE,
+ 	.max_adj	= 244000,
+ 	.n_per_out	= 1,
