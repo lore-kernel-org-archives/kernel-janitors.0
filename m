@@ -1,33 +1,37 @@
-From: Paul Burton <paulburton@kernel.org>
-Date: Thu, 23 Jan 2020 19:44:43 +0000
-Subject: Re: [PATCH] MIPS: OCTEON: octeon-irq: fix spelling mistake "to" -> "too"
-Message-Id: <5e29f7ac.1c69fb81.34b3.880c@mx.google.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:33 +0000
+Subject: [PATCH 15/16] drm: bridge: dw-hdmi: constify copied structure
+Message-Id: <1577864614-5543-16-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123005422.2834063-1-colin.king@canonical.com>
-In-Reply-To: <20200123005422.2834063-1-colin.king@canonical.com>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, Jonas Karlman <jonas@kwiboo.se>, David Airlie <airlied@linux.ie>, Neil Armstrong <narmstrong@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 
-Hello,
+The dw_hdmi_hw structure is only copied into another structure,
+so make it const.
 
-Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
+The opportunity for this change was found using Coccinelle.
 
-Applied to mips-next.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-> commit 636e9d23dd45
-> https://git.kernel.org/mips/c/636e9d23dd45
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+index 2b7539701b42..dd56996fe9c7 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+@@ -291,7 +291,7 @@ static irqreturn_t snd_dw_hdmi_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct snd_pcm_hardware dw_hdmi_hw = {
++static const struct snd_pcm_hardware dw_hdmi_hw = {
+ 	.info = SNDRV_PCM_INFO_INTERLEAVED |
+ 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
+ 		SNDRV_PCM_INFO_MMAP |
