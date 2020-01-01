@@ -1,42 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Jan 2020 10:47:30 +0000
-Subject: [PATCH v2] drivers: net: xgene: Fix the order of the arguments of 'alloc_etherdev_mqs()'
-Message-Id: <20200126104730.15217-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:21 +0000
+Subject: [PATCH 03/16] [media] anysee: constify copied structure
+Message-Id: <1577864614-5543-4-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isubramanian@apm.com, keyur@os.amperecomputing.com, quan@os.amperecomputing.com, tinamdar@apm.com, kdinh@apm.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'alloc_etherdev_mqs()' expects first 'tx', then 'rx'. The semantic here
-looks reversed.
+The anysee_tda18212_config and anysee_tda18212_config2 structures
+are only copied into other structures, so make them const.
 
-Reorder the arguments passed to 'alloc_etherdev_mqs()' in order to keep
-the correct semantic.
+The opportunity for this change was found using Coccinelle.
 
-In fact, this is a no-op because both XGENE_NUM_[RT]X_RING are 8.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Fixes: 107dec2749fe ("drivers: net: xgene: Add support for multiple queues")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2: Fix subject
----
- drivers/net/ethernet/apm/xgene/xgene_enet_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/dvb-usb-v2/anysee.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-index d8612131c55e..cc8031ae9aa3 100644
---- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-+++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-@@ -2020,7 +2020,7 @@ static int xgene_enet_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/media/usb/dvb-usb-v2/anysee.c b/drivers/media/usb/dvb-usb-v2/anysee.c
+index fb6d99dea31a..94b8d3e5d8f7 100644
+--- a/drivers/media/usb/dvb-usb-v2/anysee.c
++++ b/drivers/media/usb/dvb-usb-v2/anysee.c
+@@ -318,14 +318,14 @@ static struct tda10023_config anysee_tda10023_tda18212_config = {
+ 	.deltaf = 0xba02,
+ };
  
- 	ndev = alloc_etherdev_mqs(sizeof(struct xgene_enet_pdata),
--				  XGENE_NUM_RX_RING, XGENE_NUM_TX_RING);
-+				  XGENE_NUM_TX_RING, XGENE_NUM_RX_RING);
- 	if (!ndev)
- 		return -ENOMEM;
+-static struct tda18212_config anysee_tda18212_config = {
++static const struct tda18212_config anysee_tda18212_config = {
+ 	.if_dvbt_6 = 4150,
+ 	.if_dvbt_7 = 4150,
+ 	.if_dvbt_8 = 4150,
+ 	.if_dvbc = 5000,
+ };
  
--- 
-2.20.1
+-static struct tda18212_config anysee_tda18212_config2 = {
++static const struct tda18212_config anysee_tda18212_config2 = {
+ 	.if_dvbt_6 = 3550,
+ 	.if_dvbt_7 = 3700,
+ 	.if_dvbt_8 = 4150,
