@@ -1,39 +1,60 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Jan 2020 12:59:25 +0000
-Subject: [PATCH][next] phy: cadence: Sierra: remove redundant initialization of pointer regmap
-Message-Id: <20200107125925.102082-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 17:49:40 +0000
+Subject: [PATCH 00/10] use resource_size
+Message-Id: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>, Anil Varughese <aniljoy@cadence.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-fbdev@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, alsa-devel@alsa-project.org, netdev@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mips@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use resource_size rather than a verbose computation on
+the end and start fields.
 
-The pointer regmap is being initialized with a value that is never
-read and it is being updated later with a new value from
-phy->regmap_common_cdb.  The initialization is redundant and can be
-removed.
+The semantic patch that makes these changes is as follows:
+(http://coccinelle.lip6.fr/)
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+<smpl>
+@@
+struct resource ptr;
+@@
+
+- ((ptr.end) - (ptr.start) + 1)
++ resource_size(&ptr)
+
+@@
+struct resource *ptr;
+@@
+
+- ((ptr->end) - (ptr->start) + 1)
++ resource_size(ptr)
+
+@@
+struct resource ptr;
+@@
+
+- ((ptr.end) + 1 - (ptr.start))
++ resource_size(&ptr)
+
+@@
+struct resource *ptr;
+@@
+
+- ((ptr->end) + 1 - (ptr->start))
++ resource_size(ptr)
+</smpl>
+
 ---
- drivers/phy/cadence/phy-cadence-sierra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
-index eb87f1a0a596..ecfb1f9de2e3 100644
---- a/drivers/phy/cadence/phy-cadence-sierra.c
-+++ b/drivers/phy/cadence/phy-cadence-sierra.c
-@@ -272,7 +272,7 @@ static int cdns_sierra_phy_init(struct phy *gphy)
- {
- 	struct cdns_sierra_inst *ins = phy_get_drvdata(gphy);
- 	struct cdns_sierra_phy *phy = dev_get_drvdata(gphy->dev.parent);
--	struct regmap *regmap = phy->regmap;
-+	struct regmap *regmap;
- 	int i, j;
- 	struct cdns_reg_pairs *cmn_vals, *ln_vals;
- 	u32 num_cmn_regs, num_ln_regs;
--- 
-2.24.0
+ arch/mips/kernel/setup.c                  |    6 ++----
+ arch/powerpc/platforms/83xx/km83xx.c      |    2 +-
+ arch/powerpc/platforms/powernv/pci-ioda.c |    4 ++--
+ arch/x86/kernel/crash.c                   |    2 +-
+ drivers/net/ethernet/freescale/fman/mac.c |    4 ++--
+ drivers/usb/gadget/udc/omap_udc.c         |    6 +++---
+ drivers/video/fbdev/cg14.c                |    3 +--
+ drivers/video/fbdev/s1d13xxxfb.c          |   16 ++++++++--------
+ sound/drivers/ml403-ac97cr.c              |    4 +---
+ sound/soc/sof/imx/imx8.c                  |    3 +--
+ 10 files changed, 22 insertions(+), 28 deletions(-)
