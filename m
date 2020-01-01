@@ -1,59 +1,37 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Sun, 26 Jan 2020 19:23:01 +0000
-Subject: Re: [RFC] Simplify flush_workqueue/destroy_workqueue pattern
-Message-Id: <alpine.DEB.2.21.2001262016340.2576@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-2016873295-1580066582=:2576"
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:22 +0000
+Subject: [PATCH 04/16] usb: gadget: udc: atmel: constify copied structure
+Message-Id: <1577864614-5543-5-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c610718c-4e98-749b-13a8-c23f57988383@wanadoo.fr>
-In-Reply-To: <c610718c-4e98-749b-13a8-c23f57988383@wanadoo.fr>
-To: kernel-janitors@vger.kernel.org
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Cristian Birsan <cristian.birsan@microchip.com>
+Cc: Felipe Balbi <balbi@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, linux-arm-kernel@lists.infradead.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The usba_gadget_template structure is only copied into another
+structure, so make it const.
 
---8323329-2016873295-1580066582=:2576
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+The opportunity for this change was found using Coccinelle.
 
-On Sun, 26 Jan 2020, Christophe JAILLET wrote:
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-> Hi,
->
-> According to description of 'destroy_workqueue()':
->    "Safely destroy a workqueue. All work currently pending will be done first"
->
-> Looking deeper at the code, it turns out that the call chain is:
->        destroy_workqueue
->    --> drain_workqueue
->    --> flush_workqueue
->
-> So, calling explicitly 'flush_workqueue()' before 'destroy_workqueue()' looks
-> redundant.
->
-> Using following coccinelle script spots ~90 occurrences, in ~80 files, which
-> can be simplified.
->
-> >>>>>>>>>>>>>>>
-> @r@
-> expression e;
-> @@
-> -    flush_workqueue(e);
->      destroy_workqueue(e);
-> >>>>>>>>>>>>>>>
->
-> This is way to much for me because my patch submission process is mainly
-> manual.
->
-> If you agree with my analysis, think that removing these redundant calls is
-> useful and have a much more automated patch submission process than me (or
-> just have time :), please feel free to submit patches.
+---
+ drivers/usb/gadget/udc/atmel_usba_udc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The Coccinelle distriubution contains a program splitpatch (make
-splitpatch in the tools subdirectory) that can be used for cutting up
-patches and sending them to their various maintainers.  There is a file
-tools/README.splitpatch that explains how to use it (although I am not
-sure that this README is completely up to date...).
-
-julia
---8323329-2016873295-1580066582=:2576--
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
+index 8a42768e3213..6e0432141c40 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.c
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
+@@ -1122,7 +1122,7 @@ static struct usb_endpoint_descriptor usba_ep0_desc = {
+ 	.bInterval = 1,
+ };
+ 
+-static struct usb_gadget usba_gadget_template = {
++static const struct usb_gadget usba_gadget_template = {
+ 	.ops		= &usba_udc_ops,
+ 	.max_speed	= USB_SPEED_HIGH,
+ 	.name		= "atmel_usba_udc",
