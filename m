@@ -1,41 +1,46 @@
-From: <Claudiu.Beznea@microchip.com>
-Date: Thu, 16 Jan 2020 11:08:50 +0000
-Subject: Re: [PATCH][next] staging: wilc1000: remove redundant assignment to variable result
-Message-Id: <a0631a12-a183-30fa-98da-036673d7f207@microchip.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:27 +0000
+Subject: [PATCH 09/16] powerpc/mpic: constify copied structure
+Message-Id: <1577864614-5543-10-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200114172720.376286-1-colin.king@canonical.com>
-In-Reply-To: <20200114172720.376286-1-colin.king@canonical.com>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, Adham.Abozaeid@microchip.com, Ajay.Kathat@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDE0LjAxLjIwMjAgMTk6MjcsIENvbGluIEtpbmcgd3JvdGU6DQo+IEVYVEVSTkFMIEVN
-QUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtu
-b3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSB2YXJpYWJsZSByZXN1bHQgaXMgYmVpbmcg
-aW5pdGlhbGl6ZWQgd2l0aCBhIHZhbHVlIHRoYXQNCj4gaXMgbmV2ZXIgcmVhZCBhbmQgaXMgYmVp
-bmcgcmUtYXNzaWduZWQgbGF0ZXIgb24uIFRoZSBhc3NpZ25tZW50DQo+IGlzIHJlZHVuZGFudCBh
-bmQgaGVuY2UgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiVW51
-c2VkIHZhbHVlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
-Y2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJl
-em5lYUBtaWNyb2NoaXAuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAw
-L3NwaS5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9z
-cGkuYyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9zcGkuYw0KPiBpbmRleCA1NWY4NzU3MzI1
-ZjAuLjg2OTRhYjVmY2IyMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAw
-L3NwaS5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9zcGkuYw0KPiBAQCAtNzMz
-LDcgKzczMyw3IEBAIHN0YXRpYyBpbnQgc3BpX2ludGVybmFsX3JlYWQoc3RydWN0IHdpbGMgKndp
-bGMsIHUzMiBhZHIsIHUzMiAqZGF0YSkNCj4gIHN0YXRpYyBpbnQgd2lsY19zcGlfd3JpdGVfcmVn
-KHN0cnVjdCB3aWxjICp3aWxjLCB1MzIgYWRkciwgdTMyIGRhdGEpDQo+ICB7DQo+ICAgICAgICAg
-c3RydWN0IHNwaV9kZXZpY2UgKnNwaSA9IHRvX3NwaV9kZXZpY2Uod2lsYy0+ZGV2KTsNCj4gLSAg
-ICAgICBpbnQgcmVzdWx0ID0gTl9PSzsNCj4gKyAgICAgICBpbnQgcmVzdWx0Ow0KPiAgICAgICAg
-IHU4IGNtZCA9IENNRF9TSU5HTEVfV1JJVEU7DQo+ICAgICAgICAgdTggY2xvY2tsZXNzID0gMDsN
-Cj4gDQo+IEBAIC03ODIsNyArNzgyLDcgQEAgc3RhdGljIGludCB3aWxjX3NwaV93cml0ZShzdHJ1
-Y3Qgd2lsYyAqd2lsYywgdTMyIGFkZHIsIHU4ICpidWYsIHUzMiBzaXplKQ0KPiAgc3RhdGljIGlu
-dCB3aWxjX3NwaV9yZWFkX3JlZyhzdHJ1Y3Qgd2lsYyAqd2lsYywgdTMyIGFkZHIsIHUzMiAqZGF0
-YSkNCj4gIHsNCj4gICAgICAgICBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpID0gdG9fc3BpX2Rldmlj
-ZSh3aWxjLT5kZXYpOw0KPiAtICAgICAgIGludCByZXN1bHQgPSBOX09LOw0KPiArICAgICAgIGlu
-dCByZXN1bHQ7DQo+ICAgICAgICAgdTggY21kID0gQ01EX1NJTkdMRV9SRUFEOw0KPiAgICAgICAg
-IHU4IGNsb2NrbGVzcyA9IDA7DQo+IA0KPiAtLQ0KPiAyLjI0LjANCj4gDQo+IA=
+The mpic_ipi_chip and mpic_irq_ht_chip structures are only copied
+into other structures, so make them const.
+
+The opportunity for this change was found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ arch/powerpc/sysdev/mpic.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/sysdev/mpic.c b/arch/powerpc/sysdev/mpic.c
+index 934a77324f6b..a3a72b780e67 100644
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@ -964,7 +964,7 @@ static struct irq_chip mpic_irq_chip = {
+ };
+ 
+ #ifdef CONFIG_SMP
+-static struct irq_chip mpic_ipi_chip = {
++static const struct irq_chip mpic_ipi_chip = {
+ 	.irq_mask	= mpic_mask_ipi,
+ 	.irq_unmask	= mpic_unmask_ipi,
+ 	.irq_eoi	= mpic_end_ipi,
+@@ -978,7 +978,7 @@ static struct irq_chip mpic_tm_chip = {
+ };
+ 
+ #ifdef CONFIG_MPIC_U3_HT_IRQS
+-static struct irq_chip mpic_irq_ht_chip = {
++static const struct irq_chip mpic_irq_ht_chip = {
+ 	.irq_startup	= mpic_startup_ht_irq,
+ 	.irq_shutdown	= mpic_shutdown_ht_irq,
+ 	.irq_mask	= mpic_mask_irq,
