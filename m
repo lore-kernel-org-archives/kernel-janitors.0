@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Jan 2020 10:05:37 +0000
-Subject: [PATCH][next] thermal: stm32: fix spelling mistake "preprare" -> "prepare"
-Message-Id: <20200130100537.18069-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:29 +0000
+Subject: [PATCH 11/16] media: cx231xx: constify copied structure
+Message-Id: <1577864614-5543-12-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amit.kucheria@verdurent.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Pascal Paillet <p.paillet@st.com>, linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The hauppauge_955q_lgdt3306a_config structure is only copied
+into another structure, so make it const.
 
-There is a spelling mistake in a dev_err error message. Fix it.
+The opportunity for this change was found using Coccinelle.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- drivers/thermal/st/stm_thermal.c | 2 +-
+ drivers/media/usb/cx231xx/cx231xx-dvb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index 1cc5e6c5709e..ad9e3bf8fdf6 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -535,7 +535,7 @@ static int stm_thermal_probe(struct platform_device *pdev)
- 	/* Configure and enable HW sensor */
- 	ret = stm_thermal_prepare(sensor);
- 	if (ret) {
--		dev_err(&pdev->dev, "Error preprare sensor: %d\n", ret);
-+		dev_err(&pdev->dev, "Error prepare sensor: %d\n", ret);
- 		return ret;
- 	}
+diff --git a/drivers/media/usb/cx231xx/cx231xx-dvb.c b/drivers/media/usb/cx231xx/cx231xx-dvb.c
+index e205f7f0a56a..0037b4b1381e 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-dvb.c
++++ b/drivers/media/usb/cx231xx/cx231xx-dvb.c
+@@ -147,7 +147,7 @@ static struct tda18271_config pv_tda18271_config = {
+ 	.small_i2c = TDA18271_03_BYTE_CHUNK_INIT,
+ };
  
--- 
-2.24.0
+-static struct lgdt3306a_config hauppauge_955q_lgdt3306a_config = {
++static const struct lgdt3306a_config hauppauge_955q_lgdt3306a_config = {
+ 	.qam_if_khz         = 4000,
+ 	.vsb_if_khz         = 3250,
+ 	.spectral_inversion = 1,
