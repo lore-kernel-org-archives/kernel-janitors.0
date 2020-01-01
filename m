@@ -1,26 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 23 Jan 2020 08:16:44 +0000
-Subject: Re: [PATCH] ALSA: cs46xx: fix spelling mistake "to" -> "too"
-Message-Id: <s5hpnfa4mfn.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:23 +0000
+Subject: [PATCH 05/16] media: isif: constify copied structure
+Message-Id: <1577864614-5543-6-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123000050.2831088-1-colin.king@canonical.com>
-In-Reply-To: <20200123000050.2831088-1-colin.king@canonical.com>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 23 Jan 2020 01:00:50 +0100,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The isif_config_defaults structure is only copied into another
+structure, so make it const.
 
-Applied, thanks.
+The opportunity for this change was found using Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Takashi
+---
+ drivers/media/platform/davinci/isif.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
+index b49378b18e5d..c98edb67cfb2 100644
+--- a/drivers/media/platform/davinci/isif.c
++++ b/drivers/media/platform/davinci/isif.c
+@@ -29,7 +29,7 @@
+ #include "ccdc_hw_device.h"
+ 
+ /* Defaults for module configuration parameters */
+-static struct isif_config_params_raw isif_config_defaults = {
++static const struct isif_config_params_raw isif_config_defaults = {
+ 	.linearize = {
+ 		.en = 0,
+ 		.corr_shft = ISIF_NO_SHIFT,
