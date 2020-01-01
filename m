@@ -1,54 +1,37 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Fri, 17 Jan 2020 23:59:07 +0000
-Subject: Re: [PATCH] tracing/boot: Fix an IS_ERR() vs NULL bug
-Message-Id: <20200118085907.639cd8d683f961bb9310239d@kernel.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:32 +0000
+Subject: [PATCH 14/16] pinctrl: qcom: ssbi-gpio: constify copied structure
+Message-Id: <1577864614-5543-15-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200117053007.5h2juv272pokqhtq@kili.mountain>
-In-Reply-To: <20200117053007.5h2juv272pokqhtq@kili.mountain>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 08:30:07 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The pm8xxx_pinctrl_desc structure is only copied into another
+structure, so make it const.
 
-> The trace_array_get_by_name() function doesn't return error pointers,
-> it returns NULL on error.
+The opportunity for this change was found using Coccinelle.
 
-Good catch! It used to use trace_array_create() which returns err_ptr,
-but trace_array_get_by_name() doesn't anymore.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
-
-> 
-> Fixes: 4f712a4d04a4 ("tracing/boot: Add instance node support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  kernel/trace/trace_boot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
-> index fa9603dc6469..cd541ac1cbc1 100644
-> --- a/kernel/trace/trace_boot.c
-> +++ b/kernel/trace/trace_boot.c
-> @@ -322,7 +322,7 @@ trace_boot_init_instances(struct xbc_node *node)
->  			continue;
->  
->  		tr = trace_array_get_by_name(p);
-> -		if (IS_ERR(tr)) {
-> +		if (!tr) {
->  			pr_err("Failed to get trace instance %s\n", p);
->  			continue;
->  		}
-> -- 
-> 2.11.0
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index dca86886b1f9..c7912135bbfb 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -439,7 +439,7 @@ static const struct pinconf_ops pm8xxx_pinconf_ops = {
+ 	.pin_config_group_set = pm8xxx_pin_config_set,
+ };
+ 
+-static struct pinctrl_desc pm8xxx_pinctrl_desc = {
++static const struct pinctrl_desc pm8xxx_pinctrl_desc = {
+ 	.name = "pm8xxx_gpio",
+ 	.pctlops = &pm8xxx_pinctrl_ops,
+ 	.pmxops = &pm8xxx_pinmux_ops,
