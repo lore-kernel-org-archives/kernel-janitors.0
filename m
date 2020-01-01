@@ -1,35 +1,37 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 15 Jan 2020 14:30:27 +0000
-Subject: [PATCH -next] ASoC: rt700: fix return value check in rt700_sdw_probe()
-Message-Id: <20200115143027.94364-1-weiyongjun1@huawei.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:30 +0000
+Subject: [PATCH 12/16] SUNRPC: constify copied structure
+Message-Id: <1577864614-5543-13-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shuming Fan <shumingf@realtek.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function devm_regmap_init() returns ERR_PTR() and
-never returns NULL. The NULL test in the return value check should be
-replaced with IS_ERR().
+The empty_iov structure is only copied into another structure,
+so make it const.
 
-Fixes: 7d2a5f9ae41e ("ASoC: rt700: add rt700 codec driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The opportunity for this change was found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- sound/soc/codecs/rt700-sdw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sunrpc/xdr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt700-sdw.c b/sound/soc/codecs/rt700-sdw.c
-index 314103601af3..a4b95425886f 100644
---- a/sound/soc/codecs/rt700-sdw.c
-+++ b/sound/soc/codecs/rt700-sdw.c
-@@ -460,8 +460,8 @@ static int rt700_sdw_probe(struct sdw_slave *slave,
+diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
+index f3104be8ff5d..e5497dc2475b 100644
+--- a/net/sunrpc/xdr.c
++++ b/net/sunrpc/xdr.c
+@@ -1079,7 +1079,7 @@ void xdr_enter_page(struct xdr_stream *xdr, unsigned int len)
+ }
+ EXPORT_SYMBOL_GPL(xdr_enter_page);
  
- 	regmap = devm_regmap_init(&slave->dev, NULL,
- 		&slave->dev, &rt700_regmap);
--	if (!regmap)
--		return -EINVAL;
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
+-static struct kvec empty_iov = {.iov_base = NULL, .iov_len = 0};
++static const struct kvec empty_iov = {.iov_base = NULL, .iov_len = 0};
  
- 	rt700_init(&slave->dev, sdw_regmap, regmap, slave);
+ void
+ xdr_buf_from_iov(struct kvec *iov, struct xdr_buf *buf)
