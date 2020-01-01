@@ -1,28 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 26 Jan 2020 14:36:51 +0000
-Subject: Re: [PATCH] ar5523: fix spelling mistake "to" -> "too"
-Message-Id: <20200126143651.7EE7AC4479C@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 17:49:45 +0000
+Subject: [PATCH 05/10] powerpc/83xx: use resource_size
+Message-Id: <1577900990-8588-6-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123001801.2831921-1-colin.king@canonical.com>
-In-Reply-To: <20200123001801.2831921-1-colin.king@canonical.com>
+References: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Pontus Fuchs <pontus.fuchs@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Scott Wood <oss@buserror.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-Colin King <colin.king@canonical.com> wrote:
+Use resource_size rather than a verbose computation on
+the end and start fields.
 
-> There is a spelling mistake in a ar5523_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Patch applied to ath-next branch of ath.git, thanks.
+<smpl>
+@@ struct resource ptr; @@
+- (ptr.end - ptr.start + 1)
++ resource_size(&ptr)
+</smpl>
 
-d92e8fa8ce88 ar5523: fix spelling mistake "to" -> "too"
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
--- 
-https://patchwork.kernel.org/patch/11346589/
+---
+ arch/powerpc/platforms/83xx/km83xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/arch/powerpc/platforms/83xx/km83xx.c b/arch/powerpc/platforms/83xx/km83xx.c
+index 3d89569e9e71..ada42f03915a 100644
+--- a/arch/powerpc/platforms/83xx/km83xx.c
++++ b/arch/powerpc/platforms/83xx/km83xx.c
+@@ -63,7 +63,7 @@ static void quirk_mpc8360e_qe_enet10(void)
+ 		return;
+ 	}
+ 
+-	base = ioremap(res.start, res.end - res.start + 1);
++	base = ioremap(res.start, resource_size(&res));
+ 
+ 	/*
+ 	 * set output delay adjustments to default values according
