@@ -1,34 +1,37 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Wed, 29 Jan 2020 05:17:30 +0000
-Subject: Re: [PATCH 10/10] powerpc/powernv: use resource_size
-Message-Id: <486sDq0d8Qz9sS3@ozlabs.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 01 Jan 2020 07:43:25 +0000
+Subject: [PATCH 07/16] video: sa1100fb: constify copied structure
+Message-Id: <1577864614-5543-8-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1577900990-8588-11-git-send-email-Julia.Lawall@inria.fr>
-References: <1577900990-8588-11-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577900990-8588-11-git-send-email-Julia.Lawall@inria.fr>
+References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Wed, 2020-01-01 at 17:49:50 UTC, Julia Lawall wrote:
-> Use resource_size rather than a verbose computation on
-> the end and start fields.
-> 
-> The semantic patch that makes these changes is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> <smpl>
-> @@ struct resource ptr; @@
-> - (ptr.end - ptr.start + 1)
-> + resource_size(&ptr)
-> </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The monspecs structure is only copied into another structure,
+so make it const.
 
-Applied to powerpc next, thanks.
+The opportunity for this change was found using Coccinelle.
 
-https://git.kernel.org/powerpc/c/552aa086944a9aeabd599892007c2c7faedb894e
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-cheers
+---
+ drivers/video/fbdev/sa1100fb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/sa1100fb.c b/drivers/video/fbdev/sa1100fb.c
+index 4680cc3efb81..c77b43dbc256 100644
+--- a/drivers/video/fbdev/sa1100fb.c
++++ b/drivers/video/fbdev/sa1100fb.c
+@@ -1053,7 +1053,7 @@ static int sa1100fb_map_video_memory(struct sa1100fb_info *fbi)
+ }
+ 
+ /* Fake monspecs to fill in fbinfo structure */
+-static struct fb_monspecs monspecs = {
++static const struct fb_monspecs monspecs = {
+ 	.hfmin	= 30000,
+ 	.hfmax	= 70000,
+ 	.vfmin	= 50,
