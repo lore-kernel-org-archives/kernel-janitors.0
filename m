@@ -1,38 +1,35 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 20 Jan 2020 11:32:28 +0000
-Subject: Re: [PATCH -next] watch_queue: Fix error return code in watch_queue_set_size()
-Message-Id: <771479.1579519948@warthog.procyon.org.uk>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 02 Jan 2020 14:02:27 +0000
+Subject: [PATCH net-next] tcp: use REXMIT_NEW instead of magic number
+Message-Id: <20200102140227.77780-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200120085411.116252-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200120085411.116252-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+REXMIT_NEW is a macro for "FRTO-style
+transmit of unsent/new packets", this patch
+makes it more readable.
 
->  	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
-> -	if (!pages)
-> +	if (!pages) {
-> +		ret = -ENOMEM;
-
-I think the preferred method would be to set ret before calling kcalloc as the
-attached.
-
-David
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 ---
+ net/ipv4/tcp_input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index 8c625cf451e6..a11724d66834 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -249,6 +249,7 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
- 	if (ret < 0)
- 		goto error;
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 88b987ca9ebb..1d1e3493965f 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3550,7 +3550,7 @@ static void tcp_xmit_recovery(struct sock *sk, int rexmit)
+ 	if (rexmit = REXMIT_NONE || sk->sk_state = TCP_SYN_SENT)
+ 		return;
  
-+	ret = -ENOMEM;
- 	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
- 	if (!pages)
- 		goto error;
+-	if (unlikely(rexmit = 2)) {
++	if (unlikely(rexmit = REXMIT_NEW)) {
+ 		__tcp_push_pending_frames(sk, tcp_current_mss(sk),
+ 					  TCP_NAGLE_OFF);
+ 		if (after(tp->snd_nxt, tp->high_seq))
+-- 
+2.20.1
