@@ -1,54 +1,26 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Jan 2020 15:24:18 +0000
-Subject: Re: [PATCH] media: hantro: remove a pointless NULL check
-Message-Id: <20200108152418.GH27042@kadam>
+Date: Fri, 03 Jan 2020 12:31:00 +0000
+Subject: Re: [PATCH 0/4] use mmgrab
+Message-Id: <20200103123059.GI3911@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108053534.6rwxk2httwoflbgv@kili.mountain>
- <1118f946572b3da0562fa1c0347fceaeda93f38f.camel@collabora.com>
- <20200108151809.GG27042@kadam>
-In-Reply-To: <20200108151809.GG27042@kadam>
+References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ezequiel Garcia <ezequiel@collabora.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, openrisc@lists.librecores.org
 
-On Wed, Jan 08, 2020 at 06:18:09PM +0300, Dan Carpenter wrote:
-> On Wed, Jan 08, 2020 at 12:08:21PM -0300, Ezequiel Garcia wrote:
-> > Hi Dan,
-> > 
-> > Thanks for the patch.
-> > 
-> > On Wed, 2020-01-08 at 08:35 +0300, Dan Carpenter wrote:
-> > > This can't be NULL and we've already dereferenced it so let's remove
-> > > the check.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >  drivers/staging/media/hantro/hantro_v4l2.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/staging/media/hantro/hantro_v4l2.c b/drivers/staging/media/hantro/hantro_v4l2.c
-> > > index 85af1b96fd34..0198bcda26b7 100644
-> > > --- a/drivers/staging/media/hantro/hantro_v4l2.c
-> > > +++ b/drivers/staging/media/hantro/hantro_v4l2.c
-> > > @@ -688,7 +688,7 @@ static int hantro_start_streaming(struct vb2_queue *q, unsigned int count)
-> > >  	return ret;
-> > >  
-> > >  err_codec_exit:
-> > > -	if (ctx->codec_ops && ctx->codec_ops->exit)
-> > > +	if (ctx->codec_ops->exit)
-> > 
-> > Since you are here, can you remove the other unneeded
-> > checks in the driver?
-> > 
-> 
-> There is only one more, but yes, I should remove it as well.
+On Sun, Dec 29, 2019 at 04:42:54PM +0100, Julia Lawall wrote:
+> Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
+> helper") and most of the kernel was updated to use it. Update a few
+> remaining files.
 
-Actually the other check is required.
-
-Let's just leave this one as well.  It doesn't hurt anything and it
-makes the code more future proof.
+I wonder if there is an automatic way to generate these kind of
+Coccinelle scripts which use inlines instead of open coding.  Like maybe
+make a list of one line functions, and then auto generate a recipe.  Or
+the mmgrab() function could have multiple lines if the first few were
+just sanity checks for NULL or something...
 
 regards,
 dan carpenter
