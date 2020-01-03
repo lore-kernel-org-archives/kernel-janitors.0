@@ -1,50 +1,46 @@
-From: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Date: Wed, 08 Jan 2020 10:17:19 +0000
-Subject: Re: [PATCH] selftests: Uninitialized variable in test_cgcore_proc_migration()
-Message-Id: <20200108101719.GA9281@blackbody.suse.cz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="UlVJffcvxoiEqYs2"
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 03 Jan 2020 03:48:56 +0000
+Subject: [PATCH net-next] ethtool: remove set but not used variable 'lsettings'
+Message-Id: <20200103034856.177906-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108054629.jtq36feyhxsfhf6u@kili.mountain>
-In-Reply-To: <20200108054629.jtq36feyhxsfhf6u@kili.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>, Alex Shi <alex.shi@linux.alibaba.com>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Michal Kubecek <mkubecek@suse.cz>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+net/ethtool/linkmodes.c: In function 'ethnl_set_linkmodes':
+net/ethtool/linkmodes.c:326:32: warning:
+ variable 'lsettings' set but not used [-Wunused-but-set-variable]
+  struct ethtool_link_settings *lsettings;
+                                ^
+It is never used, so remove it.
 
-On Wed, Jan 08, 2020 at 08:46:29AM +0300, Dan Carpenter <dan.carpenter@orac=
-le.com> wrote:
-> The "c_threads" variable is used in the error handling code before it
-> has been initialized
-Thank you for fixing this.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/ethtool/linkmodes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
-
-Michal
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl4VrCsACgkQia1+riC5
-qSgepg//at1PmnH0lpT7396h7qrWalZ4jjmOy4BAYL9bIz/HPJL3CLWMCkCC1Dmv
-Egja2j6GHvgEiOpHkOlFlgqrOyz0oFpt3p0VfBlhPNtRoy4LtjniopYgO4vQj6eM
-tr7AsHEpwaGTYSgxxs5RtSwA/Ddn7N3pnrB8VdSsJ396HffBMK4yIjYfLsGCVRst
-0l6z5pRW1eiS4BKjbk3FSJ7ga6e0+Fgb+YcLBjEQ9W1rOYTjpxOt4RC5+Dd6SosS
-P4HT80ftJw71aljyjLp5gdR3Pvc/wubw2IQf5EwFvre/k20Ct8a5osGNXlAo5a+h
-ElNvs/6fHarqR4BSrX4J+IhDv42pIvyTZtBw8oXudN0wft5li6qWzKQH18Cwrfp/
-6rSaE2ArTGRsM1A9IFGsKmi808OHEZfTcR/PcLDt2J19F918dgi8ymseOgzHFr94
-NV4sUiTq7pu7SmUGL7NeAq9yUl1gJGKFIn6qyWq5U7q9dK1Au8krQ5wmtrI65hRT
-Gs+jWygma54Vb7jdKYKC6SZGvrC2DN8iuQdzY+NoqrSNirZv9+C5O+3hib2+DX7x
-90GYj7j0jbCueAswzsAnS0o5vuPWjFffKizeTvH8m4WoN4HbcBpu/8qR7y+m+2P6
-PCvttwIx9lfv/W7MW+W0Y5xJUjD7XI1Bdnhr1YUPAguhb0sLW7k=
-=40fW
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+diff --git a/net/ethtool/linkmodes.c b/net/ethtool/linkmodes.c
+index 0b99f494ad3b..96f20be64553 100644
+--- a/net/ethtool/linkmodes.c
++++ b/net/ethtool/linkmodes.c
+@@ -323,7 +323,6 @@ int ethnl_set_linkmodes(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	struct nlattr *tb[ETHTOOL_A_LINKMODES_MAX + 1];
+ 	struct ethtool_link_ksettings ksettings = {};
+-	struct ethtool_link_settings *lsettings;
+ 	struct ethnl_req_info req_info = {};
+ 	struct net_device *dev;
+ 	bool mod = false;
+@@ -354,7 +353,6 @@ int ethnl_set_linkmodes(struct sk_buff *skb, struct genl_info *info)
+ 			GENL_SET_ERR_MSG(info, "failed to retrieve link settings");
+ 		goto out_ops;
+ 	}
+-	lsettings = &ksettings.base;
+ 
+ 	ret = ethnl_update_linkmodes(info, tb, &ksettings, &mod);
+ 	if (ret < 0)
