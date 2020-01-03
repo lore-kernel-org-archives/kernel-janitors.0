@@ -1,35 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jan 2020 00:43:28 +0000
-Subject: [PATCH] ipvs: fix spelling mistake "to" -> "too"
-Message-Id: <20200123004328.2833127-1-colin.king@canonical.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Fri, 03 Jan 2020 12:34:41 +0000
+Subject: Re: [PATCH] video: pxafb: Use devm_platform_ioremap_resource() in pxafb_probe()
+Message-Id: <0d499b49-dc8c-de58-8268-36e3cced5ff0@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20190919150135epcas3p2bf5ab33712e12edd90af2766eeaaccda@epcas3p2.samsung.com>
+ <a1b804b1-43c2-327a-d6d1-df49aebec680@web.de>
+In-Reply-To: <a1b804b1-43c2-327a-d6d1-df49aebec680@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, Daniel Mack <daniel@zonque.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, YueHaibing <yuehaibing@huawei.com>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a IP_VS_ERR_RL message. Fix it.
+On 9/19/19 5:01 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 19 Sep 2019 16:51:38 +0200
+> 
+> Simplify this function implementation by using a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/netfilter/ipvs/ip_vs_sync.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, patch queued for v5.6 (also sorry for the delay).
 
-diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
-index 8dc892a9dc91..605e0f68f8bd 100644
---- a/net/netfilter/ipvs/ip_vs_sync.c
-+++ b/net/netfilter/ipvs/ip_vs_sync.c
-@@ -1239,7 +1239,7 @@ static void ip_vs_process_message(struct netns_ipvs *ipvs, __u8 *buffer,
- 
- 			p = msg_end;
- 			if (p + sizeof(s->v4) > buffer+buflen) {
--				IP_VS_ERR_RL("BACKUP, Dropping buffer, to small\n");
-+				IP_VS_ERR_RL("BACKUP, Dropping buffer, too small\n");
- 				return;
- 			}
- 			s = (union ip_vs_sync_conn *)p;
--- 
-2.24.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/video/fbdev/pxafb.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+> index f70c9f79622e..237f8f436fdb 100644
+> --- a/drivers/video/fbdev/pxafb.c
+> +++ b/drivers/video/fbdev/pxafb.c
+> @@ -2237,7 +2237,6 @@ static int pxafb_probe(struct platform_device *dev)
+>  {
+>  	struct pxafb_info *fbi;
+>  	struct pxafb_mach_info *inf, *pdata;
+> -	struct resource *r;
+>  	int i, irq, ret;
+> 
+>  	dev_dbg(&dev->dev, "pxafb_probe\n");
+> @@ -2303,14 +2302,7 @@ static int pxafb_probe(struct platform_device *dev)
+>  		fbi->lcd_supply = NULL;
+>  	}
+> 
+> -	r = platform_get_resource(dev, IORESOURCE_MEM, 0);
+> -	if (r = NULL) {
+> -		dev_err(&dev->dev, "no I/O memory resource defined\n");
+> -		ret = -ENODEV;
+> -		goto failed;
+> -	}
+> -
+> -	fbi->mmio_base = devm_ioremap_resource(&dev->dev, r);
+> +	fbi->mmio_base = devm_platform_ioremap_resource(dev, 0);
+>  	if (IS_ERR(fbi->mmio_base)) {
+>  		dev_err(&dev->dev, "failed to get I/O memory\n");
+>  		ret = -EBUSY;
+> --
+> 2.23.0
