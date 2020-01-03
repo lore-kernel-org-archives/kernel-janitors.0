@@ -1,29 +1,99 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 09 Jan 2020 13:42:41 +0000
-Subject: Re: [PATCH] selinuxfs: use scnprintf to get real length in sel_read_class
-Message-Id: <0f920e15-2462-2a0b-ced2-40ee60132839@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Jan 2020 11:26:41 +0000
+Subject: Re: [PATCH][next] staging: wfx: check for memory allocation failures from wfx_alloc_hif
+Message-Id: <20200103112641.GH3911@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ba3290e18f9867e110b77d058c3f8c7015bd868b.1578274288.git.liuyang34@xiaomi.com>
-In-Reply-To: <ba3290e18f9867e110b77d058c3f8c7015bd868b.1578274288.git.liuyang34@xiaomi.com>
+References: <20191221001543.15255-1-colin.king@canonical.com>
+In-Reply-To: <20191221001543.15255-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: yangliuxm34@gmail.com, selinux@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, liuyang34@xiaomi.com, Eric Paris <eparis@parisplace.org>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> as the return value of snprintf maybe over the size of TMPBUFLEN,
-> use scnprintf to instead of it
+On Sat, Dec 21, 2019 at 12:15:43AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently calls to wfx_alloc_hif are not checking for a null return
+> when a memory allocation fails and this leads to null pointer
+> dereferencing issues.  Fix this by adding null pointer checks and
+> returning passing down -ENOMEM errors where necessary. The error
+> checking in the current driver is a bit sparse, so this may need
+> some extra attention later if required.
+> 
+> Fixes: f95a29d40782 ("staging: wfx: add HIF commands helpers")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/wfx/hif_tx.c |  6 ++++++
+>  drivers/staging/wfx/sta.c    | 13 +++++++------
+>  2 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/wfx/hif_tx.c b/drivers/staging/wfx/hif_tx.c
+> index 8a34a52dd5b9..d8e159670eae 100644
+> --- a/drivers/staging/wfx/hif_tx.c
+> +++ b/drivers/staging/wfx/hif_tx.c
+> @@ -366,6 +366,9 @@ int hif_set_edca_queue_params(struct wfx_vif *wvif, u16 queue,
+>  	struct hif_req_edca_queue_params *body = wfx_alloc_hif(sizeof(*body),
+>  							       &hif);
+>  
 
-Please improve your commit message.
+I hate allocations in declaration block.  It's way more likely to have
+a bug like this where it's missing the NULL check.
 
+> +	if (!body)
+> +		return -ENOMEM;
+> +
+>  	WARN_ON(arg->aifs > 255);
+>  	body->aifsn = arg->aifs;
+>  	body->cw_min = cpu_to_le16(arg->cw_min);
+> @@ -390,6 +393,9 @@ int hif_set_pm(struct wfx_vif *wvif, bool ps, int dynamic_ps_timeout)
+>  	struct hif_msg *hif;
+>  	struct hif_req_set_pm_mode *body = wfx_alloc_hif(sizeof(*body), &hif);
+>  
+> +	if (!body)
+> +		return -ENOMEM;
+> +
+>  	if (ps) {
+>  		body->pm_mode.enter_psm = 1;
+>  		// Firmware does not support more than 128ms
+> diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
+> index 9a61478d98f8..c08d691fe870 100644
+> --- a/drivers/staging/wfx/sta.c
+> +++ b/drivers/staging/wfx/sta.c
+> @@ -316,6 +316,7 @@ int wfx_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+>  {
+>  	struct wfx_dev *wdev = hw->priv;
+>  	struct wfx_vif *wvif = (struct wfx_vif *) vif->drv_priv;
+> +	int ret = 0;
+>  
+>  	WARN_ON(queue >= hw->queues);
+>  
+> @@ -326,10 +327,10 @@ int wfx_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+>  	if (wvif->vif->type = NL80211_IFTYPE_STATION) {
+>  		hif_set_uapsd_info(wvif, wvif->uapsd_mask);
+>  		if (wvif->setbssparams_done && wvif->state = WFX_STATE_STA)
+> -			wfx_update_pm(wvif);
+> +			ret = wfx_update_pm(wvif);
+>  	}
+>  	mutex_unlock(&wdev->conf_mutex);
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  int wfx_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
+> @@ -1322,7 +1323,7 @@ int wfx_config(struct ieee80211_hw *hw, u32 changed)
+>  	if (changed & IEEE80211_CONF_CHANGE_PS) {
+>  		wvif = NULL;
+>  		while ((wvif = wvif_iterate(wdev, wvif)) != NULL)
+> -			wfx_update_pm(wvif);
+> +			ret = wfx_update_pm(wvif);
 
-> Signed-off-by: liuyang34 =E2=80=A6
+We reset "ret" on every iteration through the loop and only use the
+last value.  Probably we should break out of the loop on failure.
 
-Will this information need also an adjustment for the desired specification
-of a real name?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/process/submitting-patches.rst?id=3Db07f636fca1c8fbba124b0082487=
-c0b3890a0e0c#n458
+>  		wvif = wdev_to_wvif(wdev, 0);
+>  	}
+>  
 
-Regards,
-Markus
+regards,
+dan carpenter
