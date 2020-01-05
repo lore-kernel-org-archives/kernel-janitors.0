@@ -1,42 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jan 2020 10:00:09 +0000
-Subject: Re: Open tasks?
-Message-Id: <20200130100009.GD1778@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Jan 2020 10:33:41 +0000
+Subject: Re: [PATCH] coccinelle: semantic patch to check for inappropriate do_div() calls
+Message-Id: <21e9861a-5afc-fd66-cfd1-a9b5b92b230b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAHM57JSf8XXOKzyjBWD3m7PPUaEC7Oa_XYyOjbcEfJj5Swxu7Q@mail.gmail.com>
-In-Reply-To: <CAHM57JSf8XXOKzyjBWD3m7PPUaEC7Oa_XYyOjbcEfJj5Swxu7Q@mail.gmail.com>
+References: <20200104064448.24314-1-wenyang@linux.alibaba.com>
+In-Reply-To: <20200104064448.24314-1-wenyang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wenyang@linux.alibaba.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Julia Lawall <Julia.Lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, Jan 20, 2020 at 08:36:32PM -0800, Raymond Deng wrote:
-> Hi, are there open tasks for reasonably new people to do? Thanks.
+> +virtual context
+> +virtual org
+> +virtual report
 
-The new hotest idea is to sign up for te syzbot mailing list and fix
-bugs.
+The operation mode “patch” is not supported here.
+Should the term “semantic code search” be used instead in the subject again?
 
-For example:
-https://syzkaller.appspot.com/bug?extid=C37a14770d51a085a520
 
-It has a c reproducer.  It has been bisected but if it's a race
-condition, the git bisection could be suspect.  It affects v5.5-rc7
-(It's in the dmesg, you need the version information for the lines to
-match up).
+> +@@
+> +(
+> +* do_div(f, l);
+> +|
+> +* do_div(f, ul);
+> +|
+> +* do_div(f, ul64);
+> +|
+> +* do_div(f, sl64);
+> +)
 
-My first thought was that it is an integer overflow but I can't see how
-that would be possible.  Smatch said it was possible, but Smatch assumed
-that we had set vc->vc_cols to an invalid number before the start.
-Btw, using the Smatch `smdb.py where vc_cols` command is super helpful
-for debugging these bugs.
+I suggest to avoid the specification of duplicate SmPL code.
 
-Then my next thought was that it is a race condition but we're always
-holding the console_lock() so I can't see how that works either...
-Again for these things `smdb.py` really helps for examining the callers.
-I'm working on recording when the caller is holding a lock but it's a
-bit complicated and I'm not ready to push that code yet.
++@@
++*do_div(f, \( l \| ul \| ul64 \| sl64 \) );
 
-It's a mystery.
 
-regards,
-dan carpenter
+Will any more case distinctions become helpful?
+
+
+> +@script:python depends on report@
+> +p << r.p;
+> +@@
+> +
+> +msg="WARNING: WARNING: do_div() does a 64-by-32 division, which may truncation the divisor to 32-bit"
+> +coccilib.report.print_report(p[0], msg)
+
+Please improve the message construction.
+
+Regards,
+Markus
