@@ -1,71 +1,55 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Sun, 05 Jan 2020 10:41:00 +0000
-Subject: Re: [PATCH] coccinelle: semantic patch to check for inappropriate do_div() calls
-Message-Id: <alpine.DEB.2.21.2001051139010.2579@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-2099431970-1578220860=:2579"
+From: Stafford Horne <shorne@gmail.com>
+Date: Mon, 06 Jan 2020 14:53:47 +0000
+Subject: Re: [PATCH 4/4] openrisc: use mmgrab
+Message-Id: <20200106145347.GT24874@lianli.shorne-pla.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200104064448.24314-1-wenyang@linux.alibaba.com>
- <21e9861a-5afc-fd66-cfd1-a9b5b92b230b@web.de>
-In-Reply-To: <21e9861a-5afc-fd66-cfd1-a9b5b92b230b@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Wen Yang <wenyang@linux.alibaba.com>, Gilles Muller <Gilles.Muller@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?Matthias_M=E4nnich?= <maennich@google.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Thomas Gleixner <tglx@linutronix.de>, cocci@systeme.lip6.fr
+References: <1577634178-22530-5-git-send-email-Julia.Lawall@inria.fr>
+ <201912301238.xfn6pKut%lkp@intel.com>
+In-Reply-To: <201912301238.xfn6pKut%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kbuild test robot <lkp@intel.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, kbuild-all@lists.01.org, Jonas Bonn <jonas@southpole.se>, kernel-janitors@vger.kernel.org, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, openrisc@lists.librecores.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-2099431970-1578220860=:2579
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-On Sun, 5 Jan 2020, Markus Elfring wrote:
-
-> > +virtual context
-> > +virtual org
-> > +virtual report
+On Mon, Dec 30, 2019 at 12:49:19PM +0800, kbuild test robot wrote:
+> Hi Julia,
+> 
+> I love your patch! Yet something to improve:
 >
-> The operation mode “patch” is not supported here.
-> Should the term “semantic code search” be used instead in the subject again?
+> [auto build test ERROR on vfio/next]
+> [also build test ERROR on char-misc/char-misc-testing v5.5-rc3 next-20191220]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Julia-Lawall/use-mmgrab/20191230-011611
+> base:   https://github.com/awilliam/linux-vfio.git next
+> config: openrisc-simple_smp_defconfig (attached as .config)
+> compiler: or1k-linux-gcc (GCC) 9.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=9.2.0 make.cross ARCH=openrisc 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    arch/openrisc/kernel/smp.c: In function 'secondary_start_kernel':
+> >> arch/openrisc/kernel/smp.c:116:2: error: implicit declaration of function 'mmgrab'; did you mean 'igrab'? [-Werror=implicit-function-declaration]
+>      116 |  mmgrab(mm);
+>          |  ^~~~~~
+>          |  igrab
+>    cc1: some warnings being treated as errors
 
-Doesn't matter,
+Hi Julia,
 
->
->
-> > +@@
-> > +(
-> > +* do_div(f, l);
-> > +|
-> > +* do_div(f, ul);
-> > +|
-> > +* do_div(f, ul64);
-> > +|
-> > +* do_div(f, sl64);
-> > +)
->
-> I suggest to avoid the specification of duplicate SmPL code.
->
-> +@@
-> +*do_div(f, \( l \| ul \| ul64 \| sl64 \) );
+It looks like this is just an include issue, do you want to revise the patch?
 
-I don't se any point to this.  The code matched will be the same in both
-cases.  The original code is quite readable, without the ugly \( etc.
+Once fixed, how do you plan to get this patch series merged?  I can add the
+OpenRISC part to my queue or do you have a cleanups queue you can manage?
 
->
-> Will any more case distinctions become helpful?
->
->
-> > +@script:python depends on report@
-> > +p << r.p;
-> > +@@
-> > +
-> > +msg="WARNING: WARNING: do_div() does a 64-by-32 division, which may truncation the divisor to 32-bit"
-> > +coccilib.report.print_report(p[0], msg)
->
-> Please improve the message construction.
-
-Please make more precise comments (I already made some suggestions, so it
-doesn't matter much here, but "please improve" does not provide any
-concrete guidance).
-
-julia
---8323329-2099431970-1578220860=:2579--
+-Stafford
