@@ -1,34 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Jan 2020 05:03:26 +0000
-Subject: [PATCH net] qed: Fix a error code in qed_hw_init()
-Message-Id: <20200131050326.n3axoo7axxvzcrv3@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jan 2020 13:17:34 +0000
+Subject: [PATCH][next] NFS: Add missing null check for failed allocation
+Message-Id: <20200106131734.51759-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ariel Elior <ariel.elior@marvell.com>, Michal Kalderon <michal.kalderon@marvell.com>
-Cc: GR-everest-linux-l2@marvell.com, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Scott Mayhew <smayhew@redhat.com>, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If the qed_fw_overlay_mem_alloc() then we should return -ENOMEM instead
-of success.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 30d5f85895fa ("qed: FW 8.42.2.0 Add fw overlay feature")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently the allocation of buf is not being null checked and
+a null pointer dereference can occur when the memory allocation fails.
+Fix this by adding a check and returning -ENOMEM.
+
+Addresses-Coverity: ("Dereference null return")
+Fixes: 6d972518b821 ("NFS: Add fs_context support.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/nfs4namespace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index 7912911337d4..03bdd2e26329 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -3114,6 +3114,7 @@ int qed_hw_init(struct qed_dev *cdev, struct qed_hw_init_params *p_params)
- 		if (!p_hwfn->fw_overlay_mem) {
- 			DP_NOTICE(p_hwfn,
- 				  "Failed to allocate fw overlay memory\n");
-+			rc = -ENOMEM;
- 			goto load_err;
- 		}
+diff --git a/fs/nfs/nfs4namespace.c b/fs/nfs/nfs4namespace.c
+index 10e9e1887841..de6875a9b391 100644
+--- a/fs/nfs/nfs4namespace.c
++++ b/fs/nfs/nfs4namespace.c
+@@ -137,6 +137,9 @@ static int nfs4_validate_fspath(struct dentry *dentry,
+ 	int n;
  
+ 	buf = kmalloc(4096, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
+ 	path = nfs4_path(dentry, buf, 4096);
+ 	if (IS_ERR(path)) {
+ 		kfree(buf);
 -- 
-2.11.0
+2.24.0
