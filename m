@@ -1,47 +1,58 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 17 Jan 2020 00:35:23 +0000
-Subject: Re: [PATCH]  EDAC/sifive: fix return value check in ecc_register()
-Message-Id: <20200117003523.GK27148@zn.tnic>
+From: Alex Williamson <alex.williamson@redhat.com>
+Date: Mon, 06 Jan 2020 23:05:05 +0000
+Subject: Re: [PATCH 2/4] vfio: vfio_pci_nvlink2: use mmgrab
+Message-Id: <20200106160505.2f962d38@w520.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200115150303.112627-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200115150303.112627-1-weiyongjun1@huawei.com>
+References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
+        <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Yash Shah <yash.shah@sifive.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Robert Richter <rrichter@marvell.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, linux-edac@vger.kernel.org, linux-riscv@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 03:03:03PM +0000, Wei Yongjun wrote:
-> In case of error, the function edac_device_alloc_ctl_info() returns NULL
-> pointer not ERR_PTR(). The IS_ERR() test in the return value check
-> should be replaced with NULL test.
+On Sun, 29 Dec 2019 16:42:56 +0100
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
+
+> Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
+> helper") and most of the kernel was updated to use it. Update a
+> remaining file.
 > 
-> Fixes: 91abaeaaff35 ("EDAC/sifive: Add EDAC platform driver for SiFive SoCs")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> <smpl>
+> @@ expression e; @@
+> - atomic_inc(&e->mm_count);
+> + mmgrab(e);
+> </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
 > ---
->  drivers/edac/sifive_edac.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/vfio/pci/vfio_pci_nvlink2.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/edac/sifive_edac.c b/drivers/edac/sifive_edac.c
-> index c0cc72a3b2be..3a3dcb14ed99 100644
-> --- a/drivers/edac/sifive_edac.c
-> +++ b/drivers/edac/sifive_edac.c
-> @@ -54,8 +54,8 @@ static int ecc_register(struct platform_device *pdev)
->  	p->dci = edac_device_alloc_ctl_info(0, "sifive_ecc", 1, "sifive_ecc",
->  					    1, 1, NULL, 0,
->  					    edac_device_alloc_index());
-> -	if (IS_ERR(p->dci))
-> -		return PTR_ERR(p->dci);
-> +	if (!p->dci)
-> +		return -ENOMEM;
+> diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> index f2983f0f84be..43df10af7f66 100644
+> --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
+> +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> @@ -159,7 +159,7 @@ static int vfio_pci_nvgpu_mmap(struct vfio_pci_device *vdev,
+>  	data->useraddr = vma->vm_start;
+>  	data->mm = current->mm;
 >  
->  	p->dci->dev = &pdev->dev;
->  	p->dci->mod_name = "Sifive ECC Manager";
+> -	atomic_inc(&data->mm->mm_count);
+> +	mmgrab(data->mm);
+>  	ret = (int) mm_iommu_newdev(data->mm, data->useraddr,
+>  			vma_pages(vma), data->gpu_hpa, &data->mem);
+>  
+> 
 
-Applied, thanks.
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks!  I'm assuming these will be routed via janitors tree, please
+let me know if you intend me to grab these two vfio patches from the
+series.  Thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Alex
