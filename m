@@ -1,27 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Jan 2020 05:51:26 +0000
+From: Cornelia Huck <cohuck@redhat.com>
+Date: Tue, 07 Jan 2020 09:14:04 +0000
 Subject: Re: [PATCH 2/4] vfio: vfio_pci_nvlink2: use mmgrab
-Message-Id: <20200107055126.GM3911@kadam>
+Message-Id: <20200107101404.340a3442.cohuck@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr>
- <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
- <20200106160505.2f962d38@w520.home>
-In-Reply-To: <20200106160505.2f962d38@w520.home>
+        <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577634178-22530-3-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Alex Williamson <alex.williamson@redhat.com>, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 04:05:05PM -0700, Alex Williamson wrote:
+On Sun, 29 Dec 2019 16:42:56 +0100
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
+
+> Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
+> helper") and most of the kernel was updated to use it. Update a
+> remaining file.
 > 
-> Acked-by: Alex Williamson <alex.williamson@redhat.com>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
-> Thanks!  I'm assuming these will be routed via janitors tree, please
-> let me know if you intend me to grab these two vfio patches from the
-> series.  Thanks,
+> <smpl>
+> @@ expression e; @@
+> - atomic_inc(&e->mm_count);
+> + mmgrab(e);
+> </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/vfio/pci/vfio_pci_nvlink2.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-There isn't a janitors tree.
-
-regards,
-dan carpenter
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
