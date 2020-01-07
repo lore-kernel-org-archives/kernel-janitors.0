@@ -1,76 +1,52 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Date: Wed, 08 Jan 2020 12:04:31 +0000
-Subject: Re: Improving documentation for programming interfaces
-Message-Id: <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Jan 2020 17:52:34 +0000
+Subject: [PATCH] misc: tsl2550: remove redundant initialization to variable r
+Message-Id: <20200107175234.121298-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
- <20191220151945.GD59959@mit.edu>
-In-Reply-To: <20191220151945.GD59959@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20.12.19 16:19, Theodore Y. Ts'o wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi folks,
+The variable r is being initialized with a value that is never
+read and it is being updated later with a new value. Remove
+the redundant initialization and move the declaration into a
+deeper code block.
 
-> On Fri, Dec 20, 2019 at 02:30:10PM +0100, Markus Elfring wrote:
->> Linux supports some programming interfaces. Several functions are provided
->> as usual. Their application documentation is an ongoing development challenge.
->>
->> Now I would like to clarify possibilities for the specification of desired
->> information together with data types besides properties which are handled by
->> the programming language “C” so far.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/tsl2550.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-@Markus:
-
-hmm, maybe we could add some kinda-OOP-style metadata into the type
-documentation ? Or maybe extend doxygen to crossref types vs functions
-operating on them.
-
->> It seems that no customised attributes are supported at the moment.
->> Thus I imagine to specify helpful annotations as macros.
-
-Do you mean _attribute__(...) or comments ?
-
-<snip>
-
-> It's unclear to me what you are requesting/proposing?  Can you be a
-> bit more concrete?
-
-@Ted:
-
-I guess he's thinking about some kind of meta-language for expressing
-common things we know from oop-world, like ctors, dtors, getters, etc.
-
-
-Maybe some doxygen experts here, who could tell what we already could
-extract from existing sources ?
-
-
-For start, I'd like to propose a few rules:
-
-* consistent naming of 'release' functions (AFAIK, many of them are
-  already named <foo>_put()).
-* for each non-trivial (non-private) object/struct, there should be
-  a corresponding release function (even if it's just an alias to
-  kfree()
-* consistent nameing of list-type structs, so generic macros can
-  be used on the struct itself (instead just a container list header
-  struct)
-
-
-
---mtx
-
+diff --git a/drivers/misc/tsl2550.c b/drivers/misc/tsl2550.c
+index 09db397df287..6d71865c8042 100644
+--- a/drivers/misc/tsl2550.c
++++ b/drivers/misc/tsl2550.c
+@@ -148,16 +148,14 @@ static int tsl2550_calculate_lux(u8 ch0, u8 ch1)
+ 	u16 c0 = count_lut[ch0];
+ 	u16 c1 = count_lut[ch1];
+ 
+-	/*
+-	 * Calculate ratio.
+-	 * Note: the "128" is a scaling factor
+-	 */
+-	u8 r = 128;
+-
+ 	/* Avoid division by 0 and count 1 cannot be greater than count 0 */
+ 	if (c1 <= c0)
+ 		if (c0) {
+-			r = c1 * 128 / c0;
++			/*
++			 * Calculate ratio.
++			 * Note: the "128" is a scaling factor
++			 */
++			u8 r = c1 * 128 / c0;
+ 
+ 			/* Calculate LUX */
+ 			lux = ((c0 - c1) * ratio_lut[r]) / 256;
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.24.0
