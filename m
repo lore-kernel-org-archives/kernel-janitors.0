@@ -1,31 +1,41 @@
-From: Martin Lau <kafai@fb.com>
-Date: Tue, 14 Jan 2020 00:32:35 +0000
-Subject: Re: [bug report] bpf: Introduce BPF_MAP_TYPE_STRUCT_OPS
-Message-Id: <20200114003232.pmpq3i4jwgfoi6n7@kafai-mbp.dhcp.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Jan 2020 14:02:06 +0000
+Subject: [PATCH][next] media: v4l2-core: fix uninitialized structure fields being returned to userspace
+Message-Id: <20200107140206.103711-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200113130617.7ecdrglwlmofhvrx@kili.mountain>
-In-Reply-To: <20200113130617.7ecdrglwlmofhvrx@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 04:06:17PM +0300, Dan Carpenter wrote:
-> Hello Martin KaFai Lau,
-> 
-> The patch 85d33df357b6: "bpf: Introduce BPF_MAP_TYPE_STRUCT_OPS" from
-> Jan 8, 2020, leads to the following static checker warning:
-> 
-> 	kernel/bpf/bpf_struct_ops.c:501 bpf_struct_ops_map_seq_show_elem()
-> 	warn: 'value' is an error pointer or valid
-> 
-> kernel/bpf/bpf_struct_ops.c
->    495  static void bpf_struct_ops_map_seq_show_elem(struct bpf_map *map, void *key,
->    496                                               struct seq_file *m)
->    497  {
->    498          void *value;
->    499  
->    500          value = bpf_struct_ops_map_lookup_elem(map, key);
->                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> This is just a dummy function that only returns -EINVAL.
-Thanks for the report. I will post a fix.
+From: Colin Ian King <colin.king@canonical.com>
+
+In the case where v4l2_event_dequeue fails the structure ev is not
+being filled and this garbage data from the stack is being copied
+to the ev32 structure and being copied back to userspace on the
+VIDIOC_DQEVENT_TIME32 ioctl.  Fix this by ensuring the ev structure
+is zero'd to ensure uninitialized data is not leaked back.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 1a6c0b36dd19 ("media: v4l2-core: fix VIDIOC_DQEVENT for time64 ABI")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/v4l2-core/v4l2-subdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index de926e311348..a376b351135f 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -394,7 +394,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
+ 
+ 	case VIDIOC_DQEVENT_TIME32: {
+ 		struct v4l2_event_time32 *ev32 = arg;
+-		struct v4l2_event ev;
++		struct v4l2_event ev = { };
+ 
+ 		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
+ 			return -ENOIOCTLCMD;
+-- 
+2.24.0
