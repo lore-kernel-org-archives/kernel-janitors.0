@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 Jan 2020 00:31:30 +0000
-Subject: Re: [PATCH 13/16] ptp: ptp_clockmatrix: constify copied structure
-Message-Id: <20200102.163130.2142256837162342774.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Jan 2020 13:04:41 +0000
+Subject: [PATCH 1/2] cmd64x: potential buffer overflow in cmd64x_program_timings()
+Message-Id: <20200107130441.y3owvcnxdljailt5@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
-        <1577864614-5543-14-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-14-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@inria.fr
-Cc: richardcochran@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Wed,  1 Jan 2020 08:43:31 +0100
+The "drive->dn" value is a u8 and it is controlled by root only, but
+it could be out of bounds here so let's check.
 
-> The idtcm_caps structure is only copied into another structure,
-> so make it const.
-> 
-> The opportunity for this change was found using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/ide/cmd64x.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Applied to net-next.
+diff --git a/drivers/ide/cmd64x.c b/drivers/ide/cmd64x.c
+index a1898e11b04e..943bf944bf72 100644
+--- a/drivers/ide/cmd64x.c
++++ b/drivers/ide/cmd64x.c
+@@ -66,6 +66,9 @@ static void cmd64x_program_timings(ide_drive_t *drive, u8 mode)
+ 	struct ide_timing t;
+ 	u8 arttim = 0;
+ 
++	if (drive->dn >= ARRAY_SIZE(drwtim_regs))
++		return;
++
+ 	ide_timing_compute(drive, mode, &t, T, 0);
+ 
+ 	/*
+-- 
+2.11.0
