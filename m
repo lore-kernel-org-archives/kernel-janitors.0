@@ -1,30 +1,36 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Fri, 10 Jan 2020 07:16:26 +0000
-Subject: Re: [PATCH -next] pwm: sun4i: Fix wrong pointer passed to PTR_ERR()
-Message-Id: <20200110071626.5xmthg43j24p5ha2@pengutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Jan 2020 13:03:22 +0000
+Subject: [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
+Message-Id: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200110012515.32965-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200110012515.32965-1-weiyongjun1@huawei.com>
+References: <20190325092349.GF16023@kadam>
+In-Reply-To: <20190325092349.GF16023@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-pwm@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>, kernel-janitors@vger.kernel.org, mripard@kernel.org, wens@csie.org, thierry.reding@gmail.com, p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Manasi Navare <manasi.d.navare@intel.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org
 
-On Fri, Jan 10, 2020 at 01:25:15AM +0000, Wei Yongjun wrote:
-> PTR_ERR should access the value just tested by IS_ERR, otherwise
-> the wrong error code will be returned.
->=20
-> Fixes: 5b090b430d75 ("pwm: sun4i: Add an optional probe for bus clock")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+There is a cut and paste bug so we return the wrong error code.
 
-there is already a patch, see
+Fixes: a603f5bd1691 ("drm/i915/dp: Make sure all tiled connectors get added to the state with full modeset")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/display/intel_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	https://patchwork.ozlabs.org/patch/1220206/
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
+index da5266e76738..a96bee699a5e 100644
+--- a/drivers/gpu/drm/i915/display/intel_display.c
++++ b/drivers/gpu/drm/i915/display/intel_display.c
+@@ -14424,7 +14424,7 @@ intel_modeset_all_tiles(struct intel_atomic_state *state, int tile_grp_id)
+ 		crtc_state = drm_atomic_get_crtc_state(&state->base,
+ 						       conn_state->crtc);
+ 		if (IS_ERR(crtc_state)) {
+-			ret = PTR_ERR(conn_state);
++			ret = PTR_ERR(crtc_state);
+ 			break;
+ 		}
+ 		crtc_state->mode_changed = true;
+-- 
+2.11.0
