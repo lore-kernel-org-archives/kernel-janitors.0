@@ -1,43 +1,45 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 10 Jan 2020 06:26:12 +0000
-Subject: Re: [PATCH] regulator: mp8859: tidy up white space in probe
-Message-Id: <845b26cae6396b50f78df45504a6014780b1d3a1.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Jan 2020 13:06:07 +0000
+Subject: [PATCH 2/2] ide: serverworks: potential overflow in svwks_set_pio_mode()
+Message-Id: <20200107130607.tv3uosduwkw3yka6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
-In-Reply-To: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
+In-Reply-To: <20200107130441.y3owvcnxdljailt5@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2020-01-10 at 08:52 +0300, Dan Carpenter wrote:
-> drivers/regulator/mp8859.c
+The "drive->dn" variable is a u8 controlled by root.
 
-I suggest also removing the blank line before this
-block and adding a blank line after...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/regulator/mp8859.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/ide/serverworks.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
-index e804a5..87986d 100644
---- a/drivers/regulator/mp8859.c
-+++ b/drivers/regulator/mp8859.c
-@@ -118,13 +118,13 @@ static int mp8859_i2c_probe(struct i2c_client *i2c)
- 	}
- 	rdev = devm_regulator_register(&i2c->dev, &mp8859_regulators[0],
- 					&config);
--
- 	if (IS_ERR(rdev)) {
- 		ret = PTR_ERR(rdev);
- 		dev_err(&i2c->dev, "failed to register %s: %d\n",
- 			mp8859_regulators[0].name, ret);
--			return ret;
--		}
-+		return ret;
-+	}
-+
- 	return 0;
- }
+diff --git a/drivers/ide/serverworks.c b/drivers/ide/serverworks.c
+index ac6fc3fffa0d..458e72e034b0 100644
+--- a/drivers/ide/serverworks.c
++++ b/drivers/ide/serverworks.c
+@@ -115,6 +115,9 @@ static void svwks_set_pio_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 	struct pci_dev *dev = to_pci_dev(hwif->dev);
+ 	const u8 pio = drive->pio_mode - XFER_PIO_0;
  
++	if (drive->dn >= ARRAY_SIZE(drive_pci))
++		return;
++
+ 	pci_write_config_byte(dev, drive_pci[drive->dn], pio_modes[pio]);
+ 
+ 	if (svwks_csb_check(dev)) {
+@@ -141,6 +144,9 @@ static void svwks_set_dma_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 
+ 	u8 ultra_enable	 = 0, ultra_timing = 0, dma_timing = 0;
+ 
++	if (drive->dn >= ARRAY_SIZE(drive_pci2))
++		return;
++
+ 	pci_read_config_byte(dev, (0x56|hwif->channel), &ultra_timing);
+ 	pci_read_config_byte(dev, 0x54, &ultra_enable);
+ 
+-- 
+2.11.0
