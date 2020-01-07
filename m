@@ -1,70 +1,27 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 10 Jan 2020 13:38:14 +0000
-Subject: Applied "regulator: mp8859: tidy up white space in probe" to the regulator tree
-Message-Id: <applied-20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Tue, 07 Jan 2020 14:05:26 +0000
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
+Message-Id: <157840592663.2273.15929240102084093971@skylake-alporthouse-com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
+References: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
+ <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
+In-Reply-To: <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Markus Reichl <m.reichl@fivetechno.de>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: "Souza, Jose" <jose.souza@intel.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The patch
+Quoting Souza, Jose (2020-01-07 14:01:40)
+> On Tue, 2020-01-07 at 16:03 +0300, Dan Carpenter wrote:
+> > There is a cut and paste bug so we return the wrong error code.
+> >=20
+> > Fixes: a603f5bd1691 ("drm/i915/dp: Make sure all tiled connectors get
+> > added to the state with full modeset")
+>=20
+> Reviewed-by: Jos=C3=A9 Roberto de Souza <jose.souza@intel.com>
+>=20
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-   regulator: mp8859: tidy up white space in probe
-
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b83380512e955f538366c33dd79d660cdac2875c Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 10 Jan 2020 08:52:52 +0300
-Subject: [PATCH] regulator: mp8859: tidy up white space in probe
-
-These two lines are indented an extra tab.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20200110055252.rvelu4ysvoxsbmlg@kili.mountain
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/mp8859.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
-index e804a5267301..1d26b506ee5b 100644
---- a/drivers/regulator/mp8859.c
-+++ b/drivers/regulator/mp8859.c
-@@ -123,8 +123,8 @@ static int mp8859_i2c_probe(struct i2c_client *i2c)
- 		ret = PTR_ERR(rdev);
- 		dev_err(&i2c->dev, "failed to register %s: %d\n",
- 			mp8859_regulators[0].name, ret);
--			return ret;
--		}
-+		return ret;
-+	}
- 	return 0;
- }
- 
--- 
-2.20.1
+Pushed. Thanks for the patch,
+-Chris
