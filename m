@@ -1,36 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Jan 2020 13:03:22 +0000
-Subject: [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
-Message-Id: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
+From: "Souza, Jose" <jose.souza@intel.com>
+Date: Tue, 07 Jan 2020 14:01:40 +0000
+Subject: Re: [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
+Message-Id: <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190325092349.GF16023@kadam>
-In-Reply-To: <20190325092349.GF16023@kadam>
+References: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
+In-Reply-To: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Manasi Navare <manasi.d.navare@intel.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There is a cut and paste bug so we return the wrong error code.
-
-Fixes: a603f5bd1691 ("drm/i915/dp: Make sure all tiled connectors get added to the state with full modeset")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/i915/display/intel_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-index da5266e76738..a96bee699a5e 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -14424,7 +14424,7 @@ intel_modeset_all_tiles(struct intel_atomic_state *state, int tile_grp_id)
- 		crtc_state = drm_atomic_get_crtc_state(&state->base,
- 						       conn_state->crtc);
- 		if (IS_ERR(crtc_state)) {
--			ret = PTR_ERR(conn_state);
-+			ret = PTR_ERR(crtc_state);
- 			break;
- 		}
- 		crtc_state->mode_changed = true;
--- 
-2.11.0
+T24gVHVlLCAyMDIwLTAxLTA3IGF0IDE2OjAzICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGVyZSBpcyBhIGN1dCBhbmQgcGFzdGUgYnVnIHNvIHdlIHJldHVybiB0aGUgd3JvbmcgZXJy
+b3IgY29kZS4NCj4gDQo+IEZpeGVzOiBhNjAzZjViZDE2OTEgKCJkcm0vaTkxNS9kcDogTWFrZSBz
+dXJlIGFsbCB0aWxlZCBjb25uZWN0b3JzIGdldA0KPiBhZGRlZCB0byB0aGUgc3RhdGUgd2l0aCBm
+dWxsIG1vZGVzZXQiKQ0KDQpSZXZpZXdlZC1ieTogSm9zw6kgUm9iZXJ0byBkZSBTb3V6YSA8am9z
+ZS5zb3V6YUBpbnRlbC5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFu
+LmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2Rp
+c3BsYXkvaW50ZWxfZGlzcGxheS5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2k5MTUvZGlzcGxheS9pbnRlbF9kaXNwbGF5LmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9k
+aXNwbGF5L2ludGVsX2Rpc3BsYXkuYw0KPiBpbmRleCBkYTUyNjZlNzY3MzguLmE5NmJlZTY5OWE1
+ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9kaXNw
+bGF5LmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9kaXNwbGF5
+LmMNCj4gQEAgLTE0NDI0LDcgKzE0NDI0LDcgQEAgaW50ZWxfbW9kZXNldF9hbGxfdGlsZXMoc3Ry
+dWN0DQo+IGludGVsX2F0b21pY19zdGF0ZSAqc3RhdGUsIGludCB0aWxlX2dycF9pZCkNCj4gIAkJ
+Y3J0Y19zdGF0ZSA9IGRybV9hdG9taWNfZ2V0X2NydGNfc3RhdGUoJnN0YXRlLT5iYXNlLA0KPiAg
+CQkJCQkJICAgICAgIGNvbm5fc3RhdGUtDQo+ID5jcnRjKTsNCj4gIAkJaWYgKElTX0VSUihjcnRj
+X3N0YXRlKSkgew0KPiAtCQkJcmV0ID0gUFRSX0VSUihjb25uX3N0YXRlKTsNCj4gKwkJCXJldCA9
+IFBUUl9FUlIoY3J0Y19zdGF0ZSk7DQo+ICAJCQlicmVhazsNCj4gIAkJfQ0KPiAgCQljcnRjX3N0
+YXRlLT5tb2RlX2NoYW5nZWQgPSB0cnVlOw0K
