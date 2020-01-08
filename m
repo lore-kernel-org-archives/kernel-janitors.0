@@ -1,23 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 09 Jan 2020 00:03:55 +0000
-Subject: Re: [PATCH net-next] ethtool: fix a memory leak in ethnl_default_start()
-Message-Id: <20200108.160355.2056120405467352285.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 08 Jan 2020 01:58:49 +0000
+Subject: [PATCH -next] power: avs: qcom-cpr: remove duplicated include from qcom-cpr.c
+Message-Id: <20200108015849.54289-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108053947.776s3sp3op6v7a6r@kili.mountain>
-In-Reply-To: <20200108053947.776s3sp3op6v7a6r@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: mkubecek@suse.cz, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Niklas Cassel <nks@flawful.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Nishanth Menon <nm@ti.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 8 Jan 2020 08:39:48 +0300
+Remove duplicated include.
 
-> If ethnl_default_parse() fails then we need to free a couple
-> memory allocations before returning.
-> 
-> Fixes: 728480f12442 ("ethtool: default handlers for GET requests")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/power/avs/qcom-cpr.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Applied.
+diff --git a/drivers/power/avs/qcom-cpr.c b/drivers/power/avs/qcom-cpr.c
+index 9247f53550b3..9b1d7d919ee9 100644
+--- a/drivers/power/avs/qcom-cpr.c
++++ b/drivers/power/avs/qcom-cpr.c
+@@ -25,7 +25,6 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/clk.h>
+ #include <linux/nvmem-consumer.h>
+-#include <linux/bitops.h>
+ 
+ /* Register Offsets for RB-CPR and Bit Definitions */
