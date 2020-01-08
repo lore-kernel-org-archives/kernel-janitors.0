@@ -1,52 +1,41 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Mon, 06 Jan 2020 14:40:09 +0000
-Subject: Re: [PATCH 15/16] drm: bridge: dw-hdmi: constify copied structure
-Message-Id: <6fe74afe-6fc3-b1e5-56a3-dd5b9e3c2d62@baylibre.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 08 Jan 2020 12:40:45 +0000
+Subject: Re: Improving documentation for programming interfaces
+Message-Id: <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
- <1577864614-5543-16-git-send-email-Julia.Lawall@inria.fr>
- <20200101145242.GA4855@pendragon.ideasonboard.com>
-In-Reply-To: <20200101145242.GA4855@pendragon.ideasonboard.com>
+References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
+ <20191220151945.GD59959@mit.edu>
+ <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
+In-Reply-To: <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>, Jonas Karlman <jonas@kwiboo.se>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Enrico Weigelt <lkml@metux.net>, "Theodore Y. Ts'o" <tytso@mit.edu>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 01/01/2020 15:52, Laurent Pinchart wrote:
-> Hi Julia,
-> 
-> Thank you for the patch.
-> 
-> On Wed, Jan 01, 2020 at 08:43:33AM +0100, Julia Lawall wrote:
->> The dw_hdmi_hw structure is only copied into another structure,
->> so make it const.
->>
->> The opportunity for this change was found using Coccinelle.
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
->> index 2b7539701b42..dd56996fe9c7 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
->> @@ -291,7 +291,7 @@ static irqreturn_t snd_dw_hdmi_irq(int irq, void *data)
->>  	return IRQ_HANDLED;
->>  }
->>  
->> -static struct snd_pcm_hardware dw_hdmi_hw = {
->> +static const struct snd_pcm_hardware dw_hdmi_hw = {
->>  	.info = SNDRV_PCM_INFO_INTERLEAVED |
->>  		SNDRV_PCM_INFO_BLOCK_TRANSFER |
->>  		SNDRV_PCM_INFO_MMAP |
-> 
+> hmm, maybe we could add some kinda-OOP-style metadata into the type documentation ?
 
-Applied to drm-misc-next
+I hope so.
 
-Neil
+
+> Or maybe extend doxygen to crossref types vs functions operating on them.
+
+An advanced cross-reference variant would be nice (besides the “Elixir”).
+
+
+>>> It seems that no customised attributes are supported at the moment.
+>>> Thus I imagine to specify helpful annotations as macros.
+>
+> Do you mean _attribute__(...) or comments ?
+
+I propose to encode helpful information into macro calls as needed
+for the C programming language.
+
+
+> I guess he's thinking about some kind of meta-language for expressing
+> common things we know from oop-world, like ctors, dtors, getters, etc.
+
+This feedback fits also to my imaginations for a better taxonomy.
+
+Regards,
+Markus
