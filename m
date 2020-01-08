@@ -1,38 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Jan 2020 05:42:36 +0000
-Subject: [PATCH] ethtool: potential NULL dereference in strset_prepare_data()
-Message-Id: <20200108054236.ult5qxiiwpw2wamk@kili.mountain>
+From: Michal Kubecek <mkubecek@suse.cz>
+Date: Wed, 08 Jan 2020 09:17:52 +0000
+Subject: Re: [PATCH] ethtool: potential NULL dereference in strset_prepare_data()
+Message-Id: <20200108091752.GL22387@unicorn.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200108054236.ult5qxiiwpw2wamk@kili.mountain>
+In-Reply-To: <20200108054236.ult5qxiiwpw2wamk@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Michal Kubecek <mkubecek@suse.cz>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, kernel-janitors@vger.kernel.org
 
-Smatch complains that the NULL checking isn't done consistently:
+On Wed, Jan 08, 2020 at 08:42:36AM +0300, Dan Carpenter wrote:
+> Smatch complains that the NULL checking isn't done consistently:
+> 
+>     net/ethtool/strset.c:253 strset_prepare_data()
+>     error: we previously assumed 'dev' could be null (see line 233)
+> 
+> It looks like there is a missing return on this path.
 
-    net/ethtool/strset.c:253 strset_prepare_data()
-    error: we previously assumed 'dev' could be null (see line 233)
+I believe this is a false positive as the first loop makes sure no
+explicitly requested set is per device if dev is NULL so that we would
+never actually call strset_prepare_set() with null dev.
 
-It looks like there is a missing return on this path.
+But there is no point to go through the second part of the function if
+it is not going to do anything and the fact that it took me few minutes
+to make sure the null pointer dereference is not possible clearly
+indicates the code is cleaner with the explicit return.
 
-Fixes: 71921690f974 ("ethtool: provide string sets with STRSET_GET request")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- net/ethtool/strset.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
 
-diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c
-index 9f2243329015..82a059c13c1c 100644
---- a/net/ethtool/strset.c
-+++ b/net/ethtool/strset.c
-@@ -239,6 +239,7 @@ static int strset_prepare_data(const struct ethnl_req_info *req_base,
- 				return -EINVAL;
- 			}
- 		}
-+		return 0;
- 	}
- 
- 	ret = ethnl_ops_begin(dev);
--- 
-2.11.0
+> Fixes: 71921690f974 ("ethtool: provide string sets with STRSET_GET request")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  net/ethtool/strset.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c
+> index 9f2243329015..82a059c13c1c 100644
+> --- a/net/ethtool/strset.c
+> +++ b/net/ethtool/strset.c
+> @@ -239,6 +239,7 @@ static int strset_prepare_data(const struct ethnl_req_info *req_base,
+>  				return -EINVAL;
+>  			}
+>  		}
+> +		return 0;
+>  	}
+>  
+>  	ret = ethnl_ops_begin(dev);
+> -- 
+> 2.11.0
+> 
