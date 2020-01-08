@@ -1,48 +1,52 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Thu, 23 Jan 2020 15:24:43 +0000
-Subject: Re: [PATCH][next] drm/i915/gem: fix null pointer dereference on vm
-Message-Id: <157979308341.19995.6106728840274572701@skylake-alporthouse-com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 08 Jan 2020 03:45:14 +0000
+Subject: [PATCH -next] hwmon: (w83627ehf) Remove set but not used variable 'fan4min'
+Message-Id: <20200108034514.50130-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123151406.51679-1-colin.king@canonical.com>
-In-Reply-To: <20200123151406.51679-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael J . Ruhl" <michael.j.ruhl@intel.com>, Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>, "Dr . David Alan Gilbert" <linux@treblig.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-Quoting Colin King (2020-01-23 15:14:06)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if the call to function context_get_vm_rcu returns
-> a null pointer for vm then the error exit path via label err_put
-> will call i915_vm_put on the null vm, causing a null pointer
-> dereference.  Fix this by adding a null check on vm and returning
-> without calling the i915_vm_put.
-> 
-> Fixes: 5dbd2b7be61e ("drm/i915/gem: Convert vm idr to xarray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Hmm. Actually, we can drop the rcu_read_lock as soon as we've acquire
-the local ref to ctx->vm. So something like,
+drivers/hwmon/w83627ehf.c: In function 'w83627ehf_check_fan_inputs':
+drivers/hwmon/w83627ehf.c:1296:24: warning:
+ variable 'fan4min' set but not used [-Wunused-but-set-variable]
 
-        if (!rcu_access_pointer(ctx->vm))
-                return -ENODEV;
+commit 62000264cfa8 ("hwmon: (w83627ehf) remove nct6775 and nct6776 support")
+left behind this unused variable.
 
--       err = -ENODEV;
-        rcu_read_lock();
-        vm = context_get_vm_rcu(ctx);
--       if (vm)
--               err = xa_alloc(&file_priv->vm_xa, &id, vm,
--                              xa_limit_32b, GFP_KERNEL);
-        rcu_read_unlock();
-+       if (!vm)
-+               return -ENODEV;
-+
-+       err = xa_alloc(&file_priv->vm_xa, &id, vm,
-+                      xa_limit_32b, GFP_KERNEL);
-        if (err)
-                goto err_put;
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/hwmon/w83627ehf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-would work.
--Chris
+diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
+index 5a7239eb1c15..7ffadc2da57b 100644
+--- a/drivers/hwmon/w83627ehf.c
++++ b/drivers/hwmon/w83627ehf.c
+@@ -1293,7 +1293,7 @@ static void
+ w83627ehf_check_fan_inputs(const struct w83627ehf_sio_data *sio_data,
+ 			   struct w83627ehf_data *data)
+ {
+-	int fan3pin, fan4pin, fan4min, fan5pin, regval;
++	int fan3pin, fan4pin, fan5pin, regval;
+ 
+ 	/* The W83627UHG is simple, only two fan inputs, no config */
+ 	if (sio_data->kind = w83627uhg) {
+@@ -1307,12 +1307,10 @@ w83627ehf_check_fan_inputs(const struct w83627ehf_sio_data *sio_data,
+ 		fan3pin = 1;
+ 		fan4pin = superio_inb(sio_data->sioreg, 0x27) & 0x40;
+ 		fan5pin = superio_inb(sio_data->sioreg, 0x27) & 0x20;
+-		fan4min = fan4pin;
+ 	} else {
+ 		fan3pin = 1;
+ 		fan4pin = !(superio_inb(sio_data->sioreg, 0x29) & 0x06);
+ 		fan5pin = !(superio_inb(sio_data->sioreg, 0x24) & 0x02);
+-		fan4min = fan4pin;
+ 	}
+ 
+ 	data->has_fan = data->has_fan_min = 0x03; /* fan1 and fan2 */
