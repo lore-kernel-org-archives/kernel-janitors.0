@@ -1,35 +1,34 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 08 Jan 2020 20:48:09 +0000
-Subject: Re: [PATCH -next] Bluetooth: hci_qca: Remove set but not used variable 'opcode'
-Message-Id: <ED15472A-FD5F-4D10-90F3-E6932CA28BA7@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Jan 2020 05:35:34 +0000
+Subject: [PATCH] media: hantro: remove a pointless NULL check
+Message-Id: <20200108053534.6rwxk2httwoflbgv@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108015431.51996-1-yuehaibing@huawei.com>
-In-Reply-To: <20200108015431.51996-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, BlueZ devel list <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Ezequiel Garcia <ezequiel@collabora.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org
 
-Hi Yue,
+This can't be NULL and we've already dereferenced it so let's remove
+the check.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/bluetooth/hci_qca.c: In function 'qca_controller_memdump':
-> drivers/bluetooth/hci_qca.c:980:6: warning:
-> variable 'opcode' set but not used [-Wunused-but-set-variable]
-> 
-> It is never used since commit d841502c79e3 ("Bluetooth: hci_qca: Collect
-> controller memory dump during SSR"), so remove it.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> drivers/bluetooth/hci_qca.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/media/hantro/hantro_v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
+diff --git a/drivers/staging/media/hantro/hantro_v4l2.c b/drivers/staging/media/hantro/hantro_v4l2.c
+index 85af1b96fd34..0198bcda26b7 100644
+--- a/drivers/staging/media/hantro/hantro_v4l2.c
++++ b/drivers/staging/media/hantro/hantro_v4l2.c
+@@ -688,7 +688,7 @@ static int hantro_start_streaming(struct vb2_queue *q, unsigned int count)
+ 	return ret;
+ 
+ err_codec_exit:
+-	if (ctx->codec_ops && ctx->codec_ops->exit)
++	if (ctx->codec_ops->exit)
+ 		ctx->codec_ops->exit(ctx);
+ 	return ret;
+ }
+-- 
+2.11.0
