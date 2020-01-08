@@ -1,48 +1,34 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 08 Jan 2020 18:51:25 +0000
-Subject: Re: [PATCH] gpu/drm: clean up white space in drm_legacy_lock_master_cleanup()
-Message-Id: <20200108185125.GJ43062@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Jan 2020 05:34:18 +0000
+Subject: [PATCH] power: avs: qcom-cpr: Fix error code in cpr_fuse_corner_init()
+Message-Id: <20200108053418.tjc62uppube6q4q3@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108054312.yzlj5wmbdktejgob@kili.mountain>
-In-Reply-To: <20200108054312.yzlj5wmbdktejgob@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Andy Gross <agross@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 08:43:12AM +0300, Dan Carpenter wrote:
-> We moved this code to a different file and accidentally deleted a
-> newline.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We're returning the wrong variable.  "ret" isn't initialized.
 
-Oops, thanks for catching, patch applied!
--Daniel
+Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/power/avs/qcom-cpr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/drm_lock.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_lock.c b/drivers/gpu/drm/drm_lock.c
-> index 2e8ce99d0baa..2c79e8199e3c 100644
-> --- a/drivers/gpu/drm/drm_lock.c
-> +++ b/drivers/gpu/drm/drm_lock.c
-> @@ -360,7 +360,8 @@ void drm_legacy_lock_master_cleanup(struct drm_device *dev, struct drm_master *m
->  	/*
->  	 * Since the master is disappearing, so is the
->  	 * possibility to lock.
-> -	 */	mutex_lock(&dev->struct_mutex);
-> +	 */
-> +	mutex_lock(&dev->struct_mutex);
->  	if (master->lock.hw_lock) {
->  		if (dev->sigdata.lock = master->lock.hw_lock)
->  			dev->sigdata.lock = NULL;
-> -- 
-> 2.11.0
-> 
-
+diff --git a/drivers/power/avs/qcom-cpr.c b/drivers/power/avs/qcom-cpr.c
+index 9247f53550b3..0321729431a5 100644
+--- a/drivers/power/avs/qcom-cpr.c
++++ b/drivers/power/avs/qcom-cpr.c
+@@ -922,7 +922,7 @@ static int cpr_fuse_corner_init(struct cpr_drv *drv)
+ 		uV = cpr_read_fuse_uV(desc, fdata, fuses->init_voltage,
+ 				      step_volt, drv);
+ 		if (uV < 0)
+-			return ret;
++			return uV;
+ 
+ 		fuse->min_uV = fdata->min_uV;
+ 		fuse->max_uV = fdata->max_uV;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.11.0
