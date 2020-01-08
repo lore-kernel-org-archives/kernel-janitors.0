@@ -1,126 +1,34 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 27 Jan 2020 20:15:20 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: fix spelling mistake "Attemp" -> "Attempt"
-Message-Id: <CADnq5_Md7yW+QXhoLVT-HUvjap7YPYe4xp6gRAuBpt-9+EHVzw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Jan 2020 05:37:06 +0000
+Subject: [PATCH] ALSA: control: potential uninitialized return value
+Message-Id: <20200108053706.h3hcnvmnf62wkjac@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200125202613.13448-1-colin.king@canonical.com>
-In-Reply-To: <20200125202613.13448-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Evan Quan <evan.quan@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>, Allison Randal <allison@lohutok.net>
 
-Applied.  Thanks!
+Smatch complains that "ret" might be uninitialized.
 
-Alex
+Fixes: fbd3eb7f66c5 ("ALSA: control: Add verification for kctl accesses")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/core/control.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sat, Jan 25, 2020 at 3:26 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are several spelling mistakes in PP_ASSERT_WITH_CODE messages.
-> Fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c | 12 ++++++------
->  drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c | 12 ++++++------
->  2 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-> index a3915bfcce81..275dbf65f1a0 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega12_smumgr.c
-> @@ -128,20 +128,20 @@ int vega12_enable_smc_features(struct pp_hwmgr *hwmgr,
->         if (enable) {
->                 PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
->                                 return -EINVAL);
->                 PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
->                                 return -EINVAL);
->         } else {
->                 PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
->                                 return -EINVAL);
->                 PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
->                                 return -EINVAL);
->         }
->
-> @@ -158,13 +158,13 @@ int vega12_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
->
->         PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
->                         PPSMC_MSG_GetEnabledSmuFeaturesLow) = 0,
-> -                       "[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
-> +                       "[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
->                         return -EINVAL);
->         smc_features_low = smu9_get_argument(hwmgr);
->
->         PP_ASSERT_WITH_CODE(smu9_send_msg_to_smc(hwmgr,
->                         PPSMC_MSG_GetEnabledSmuFeaturesHigh) = 0,
-> -                       "[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
-> +                       "[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
->                         return -EINVAL);
->         smc_features_high = smu9_get_argument(hwmgr);
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-> index 0db57fb83d30..49e5ef3e3876 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vega20_smumgr.c
-> @@ -316,20 +316,20 @@ int vega20_enable_smc_features(struct pp_hwmgr *hwmgr,
->         if (enable) {
->                 PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_EnableSmuFeaturesLow, smu_features_low)) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to enable SMU features Low failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to enable SMU features Low failed!",
->                                 return ret);
->                 PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_EnableSmuFeaturesHigh, smu_features_high)) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to enable SMU features High failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to enable SMU features High failed!",
->                                 return ret);
->         } else {
->                 PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_DisableSmuFeaturesLow, smu_features_low)) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to disable SMU features Low failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to disable SMU features Low failed!",
->                                 return ret);
->                 PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc_with_parameter(hwmgr,
->                                 PPSMC_MSG_DisableSmuFeaturesHigh, smu_features_high)) = 0,
-> -                               "[EnableDisableSMCFeatures] Attemp to disable SMU features High failed!",
-> +                               "[EnableDisableSMCFeatures] Attempt to disable SMU features High failed!",
->                                 return ret);
->         }
->
-> @@ -347,12 +347,12 @@ int vega20_get_enabled_smc_features(struct pp_hwmgr *hwmgr,
->
->         PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
->                         PPSMC_MSG_GetEnabledSmuFeaturesLow)) = 0,
-> -                       "[GetEnabledSMCFeatures] Attemp to get SMU features Low failed!",
-> +                       "[GetEnabledSMCFeatures] Attempt to get SMU features Low failed!",
->                         return ret);
->         smc_features_low = vega20_get_argument(hwmgr);
->         PP_ASSERT_WITH_CODE((ret = vega20_send_msg_to_smc(hwmgr,
->                         PPSMC_MSG_GetEnabledSmuFeaturesHigh)) = 0,
-> -                       "[GetEnabledSMCFeatures] Attemp to get SMU features High failed!",
-> +                       "[GetEnabledSMCFeatures] Attempt to get SMU features High failed!",
->                         return ret);
->         smc_features_high = vega20_get_argument(hwmgr);
->
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/sound/core/control.c b/sound/core/control.c
+index d06033d418a8..aa0c0cf182af 100644
+--- a/sound/core/control.c
++++ b/sound/core/control.c
+@@ -896,7 +896,7 @@ static int sanity_check_elem_value(struct snd_card *card,
+ 				   u32 pattern)
+ {
+ 	size_t offset;
+-	int i, ret;
++	int i, ret = 0;
+ 	u32 *p;
+ 
+ 	switch (info->type) {
+-- 
+2.11.0
