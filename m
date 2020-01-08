@@ -1,41 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 08 Jan 2020 12:40:45 +0000
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Date: Wed, 08 Jan 2020 16:14:28 +0000
 Subject: Re: Improving documentation for programming interfaces
-Message-Id: <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
+Message-Id: <20200108161428.GA263696@mit.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
  <20191220151945.GD59959@mit.edu>
  <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
-In-Reply-To: <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
+ <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
+In-Reply-To: <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Enrico Weigelt <lkml@metux.net>, "Theodore Y. Ts'o" <tytso@mit.edu>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Enrico Weigelt <lkml@metux.net>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> hmm, maybe we could add some kinda-OOP-style metadata into the type documentation ?
+On Wed, Jan 08, 2020 at 01:40:45PM +0100, Markus Elfring wrote:
+> 
+> I propose to encode helpful information into macro calls as needed
+> for the C programming language.
 
-I hope so.
+Perhaps it would be useful to for you to express what you are
+proposing in the form of a patch?  That way people can see how
+disruptive such changes might be, and how hard it might be to maintain
+them.  That's on the "cost" side of the equation.
 
+On the "benefits" side of the equation, is there are ways in which it
+will directly benefit the kernel developers who will need to review
+the patches and review the annotations, that can be demonstrated
+immediately?  Not in some abstract way, or "when I my research work is
+completed", but a very concrete way that will be obvious to those of
+us who are still not completely convinced?
 
-> Or maybe extend doxygen to crossref types vs functions operating on them.
+If the costs are very small, then the requirement for demonstrating
+great benefits will also be small.  But if the costs are large (e.g.,
+widespread renaming of huge numbers of functions, adding a lot of
+extra complexity into code paths, use of silly/stupid names such as
+"TransactionAwarePersistenceManagerFactoryProxy"), then need to show
+benefits commensurate with such costs will also be great.
 
-An advanced cross-reference variant would be nice (besides the “Elixir”).
-
-
->>> It seems that no customised attributes are supported at the moment.
->>> Thus I imagine to specify helpful annotations as macros.
->
-> Do you mean _attribute__(...) or comments ?
-
-I propose to encode helpful information into macro calls as needed
-for the C programming language.
-
-
-> I guess he's thinking about some kind of meta-language for expressing
-> common things we know from oop-world, like ctors, dtors, getters, etc.
-
-This feedback fits also to my imaginations for a better taxonomy.
-
-Regards,
-Markus
+	 	      	   	      - Ted
