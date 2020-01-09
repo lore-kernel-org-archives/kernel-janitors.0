@@ -1,33 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Jan 2020 15:28:28 +0000
-Subject: Re: [PATCH][next] iio: st_sensors: handle memory allocation failure to fix null pointer dereference
-Message-Id: <CACRpkdYzd13xu9ETj_a4eWrm4FMrVnF1NQ5G+=d_Ch=6SzRoxA@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 09 Jan 2020 13:16:46 +0000
+Subject: Re: [PATCH] trace: code optimization
+Message-Id: <4f4bed1d-9dc0-0665-4b61-8afc9ebf8201@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200121161757.1498082-1-colin.king@canonical.com>
-In-Reply-To: <20200121161757.1498082-1-colin.king@canonical.com>
+References: <27225bf0ec9b4e2f3d313456aee75e294361d550.1578561009.git.liuyang34@xiaomi.com>
+In-Reply-To: <27225bf0ec9b4e2f3d313456aee75e294361d550.1578561009.git.liuyang34@xiaomi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: yangliuxm34@gmail.com, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, liuyang34@xiaomi.com, Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
 
-On Tue, Jan 21, 2020 at 5:18 PM Colin King <colin.king@canonical.com> wrote:
+> use scnprintf instead of snprinr and no need to check
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> A null pointer deference on pdata can occur if the allocation of
-> pdata fails.  Fix this by adding a null pointer check and handle
-> the -ENOMEM failure in the caller.
->
-> Addresses-Coverity: ("Dereference null return value")
+Will a typo be avoided in the final change description?
 
-That's a weirdo tag, but I suppose you have aligned with the maintainers
-about this.
 
-> Fixes: 3ce85cc4fbb7 ("iio: st_sensors: get platform data from device tree")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: liuyang34 =E2=80=A6
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Will this information need also an adjustment for the desired specification
+of a real name?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
+umentation/process/submitting-patches.rst?id=3Db07f636fca1c8fbba124b0082487=
+c0b3890a0e0c#n458
 
-Yours,
-Linus Walleij
+Regards,
+Markus
