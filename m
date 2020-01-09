@@ -1,35 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jan 2020 00:14:29 +0000
-Subject: [PATCH] i40e: fix spelling mistake "to" -> "too"
-Message-Id: <20200123001429.2831701-1-colin.king@canonical.com>
+From: Paul Burton <paulburton@kernel.org>
+Date: Thu, 09 Jan 2020 18:52:49 +0000
+Subject: Re: [PATCH -next] MIPS: Loongson2ef: drop pointless static qualifier in  loongson_suspend_enter()
+Message-Id: <5e177682.1c69fb81.b79ec.61f3@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191204010851.160284-1-maowenan@huawei.com>
+In-Reply-To: <20191204010851.160284-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mao Wenan <maowenan@huawei.com>
+Cc: jiaxun.yang@flygoat.com, ralf@linux-mips.org, paulburton@kernel.org, jhogan@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-There is a spelling mistake in a hw_dbg message. Fix it.
+Mao Wenan wrote:
+> There is no need to have the 'T *v' variable static
+> since new value always be assigned before use it.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/i40e/i40e_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to mips-next.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_common.c b/drivers/net/ethernet/intel/i40e/i40e_common.c
-index d4055037af89..45b90eb11adb 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_common.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_common.c
-@@ -1113,7 +1113,7 @@ i40e_status i40e_read_pba_string(struct i40e_hw *hw, u8 *pba_num,
- 	 */
- 	pba_size--;
- 	if (pba_num_size < (((u32)pba_size * 2) + 1)) {
--		hw_dbg(hw, "Buffer to small for PBA data.\n");
-+		hw_dbg(hw, "Buffer too small for PBA data.\n");
- 		return I40E_ERR_PARAM;
- 	}
- 
--- 
-2.24.0
+> commit 11d06df7b9f2
+> https://git.kernel.org/mips/c/11d06df7b9f2
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
+
+Thanks,
+    Paul
+
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
