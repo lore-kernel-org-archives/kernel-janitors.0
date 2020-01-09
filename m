@@ -1,22 +1,38 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Thu, 23 Jan 2020 11:45:57 +0000
-Subject: Re: [PATCH][next] dmaengine: ti: k3-udma: fix spelling mistake "limted" -> "limited"
-Message-Id: <20200123113357.GW2841@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 09 Jan 2020 10:35:33 +0000
+Subject: Re: [PATCH v2] coccinelle: semantic patch to check for inappropriate do_div() calls
+Message-Id: <9a2b7d00-442e-0c1b-73cc-aed2bbecd13a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200122093818.2800743-1-colin.king@canonical.com>
-In-Reply-To: <20200122093818.2800743-1-colin.king@canonical.com>
+References: <20200107170240.47207-1-wenyang@linux.alibaba.com>
+In-Reply-To: <20200107170240.47207-1-wenyang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wenyang@linux.alibaba.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Julia Lawall <Julia.Lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On 22-01-20, 09:38, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are spelling mistakes in dev_err messages. Fix them.
+> - fix 'WARNING:' twice in each case.
 
-Applied, thanks
+A duplicate text was removed.
 
--- 
-~Vinod
+
+> +@script:python depends on org@
+> +p << r.p;
+> +ul << r.ul;
+
+I interpret this variable assignment in the way that it will work only
+if the corresponding branch of the SmPL disjunction was actually matched
+by the referenced SmPL rule.
+Thus I suggest now to split the source code search pattern into
+four separate rules.
+
+
+> +warnings = construct_warnings(ul, "div64_ul")
+
+* Can two identifiers be nicer without an “s”?
+
+* Would it be sufficient to pass a shorter identification
+  (without the prefix “div64_”)?
+
+Regards,
+Markus
