@@ -1,38 +1,37 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Tue, 21 Jan 2020 11:18:14 +0000
-Subject: Re: Re: [PATCH 2/2] ide: serverworks: potential overflow in svwks_set_pio_mode()
-Message-Id: <6c4a2070-043f-d26c-69dc-0a294d5f6768@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jan 2020 05:51:27 +0000
+Subject: [PATCH] btrfs: Fix error code in btrfs_sysfs_add_mounted()
+Message-Id: <20200110055126.4rhhfsotll6puma7@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200107130441.y3owvcnxdljailt5@kili.mountain>
-        <20200107130607.tv3uosduwkw3yka6@kili.mountain>
-        <20200120.144047.202754056310659523.davem@davemloft.net>
-        <CGME20200121111816eucas1p246ca07e30a984c51d8281a161978d3ea@eucas1p2.samsung.com>
-In-Reply-To: <20200120.144047.202754056310659523.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, dan.carpenter@oracle.com
-Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Dennis Zhou <dennis@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The error code wasn't set on this error path.
 
-On 1/20/20 2:40 PM, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Tue, 7 Jan 2020 16:06:07 +0300
-> 
->> The "drive->dn" variable is a u8 controlled by root.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: e12ebce8a4a8 ("btrfs: sysfs: make UUID/debug have its own kobject")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/btrfs/sysfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-drive->dn should not be root controllable, please point me where it
-happens as this may need fixing instead of serverworks driver.
-
-[ IDE core makes sure that drive->dn is never > 3 and a lot of code
-  assumes it. ]
-
-> Applied.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 58486229be95..55e4ed1af29c 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -1288,8 +1288,10 @@ int btrfs_sysfs_add_mounted(struct btrfs_fs_info *fs_info)
+ 
+ #ifdef CONFIG_BTRFS_DEBUG
+ 	fs_info->debug_kobj = kobject_create_and_add("debug", fsid_kobj);
+-	if (!fs_info->debug_kobj)
++	if (!fs_info->debug_kobj) {
++		error = -ENOMEM;
+ 		goto failure;
++	}
+ 
+ 	error = sysfs_create_files(fs_info->debug_kobj, btrfs_debug_mount_attrs);
+ 	if (error)
+-- 
+2.11.0
