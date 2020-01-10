@@ -1,33 +1,43 @@
-From: "Souza, Jose" <jose.souza@intel.com>
-Date: Tue, 07 Jan 2020 14:01:40 +0000
-Subject: Re: [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
-Message-Id: <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 10 Jan 2020 06:09:08 +0000
+Subject: [PATCH net-next] sfc: remove set but not used variable 'nic_data'
+Message-Id: <20200110060908.124241-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
-In-Reply-To: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, Alex Maftei <amaftei@solarflare.com>, Edward Cree <ecree@solarflare.com>, Martin Habets <mhabets@solarflare.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-T24gVHVlLCAyMDIwLTAxLTA3IGF0IDE2OjAzICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGVyZSBpcyBhIGN1dCBhbmQgcGFzdGUgYnVnIHNvIHdlIHJldHVybiB0aGUgd3JvbmcgZXJy
-b3IgY29kZS4NCj4gDQo+IEZpeGVzOiBhNjAzZjViZDE2OTEgKCJkcm0vaTkxNS9kcDogTWFrZSBz
-dXJlIGFsbCB0aWxlZCBjb25uZWN0b3JzIGdldA0KPiBhZGRlZCB0byB0aGUgc3RhdGUgd2l0aCBm
-dWxsIG1vZGVzZXQiKQ0KDQpSZXZpZXdlZC1ieTogSm9zw6kgUm9iZXJ0byBkZSBTb3V6YSA8am9z
-ZS5zb3V6YUBpbnRlbC5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFu
-LmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2Rp
-c3BsYXkvaW50ZWxfZGlzcGxheS5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
-aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2k5MTUvZGlzcGxheS9pbnRlbF9kaXNwbGF5LmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9k
-aXNwbGF5L2ludGVsX2Rpc3BsYXkuYw0KPiBpbmRleCBkYTUyNjZlNzY3MzguLmE5NmJlZTY5OWE1
-ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9kaXNw
-bGF5LmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9kaXNwbGF5
-LmMNCj4gQEAgLTE0NDI0LDcgKzE0NDI0LDcgQEAgaW50ZWxfbW9kZXNldF9hbGxfdGlsZXMoc3Ry
-dWN0DQo+IGludGVsX2F0b21pY19zdGF0ZSAqc3RhdGUsIGludCB0aWxlX2dycF9pZCkNCj4gIAkJ
-Y3J0Y19zdGF0ZSA9IGRybV9hdG9taWNfZ2V0X2NydGNfc3RhdGUoJnN0YXRlLT5iYXNlLA0KPiAg
-CQkJCQkJICAgICAgIGNvbm5fc3RhdGUtDQo+ID5jcnRjKTsNCj4gIAkJaWYgKElTX0VSUihjcnRj
-X3N0YXRlKSkgew0KPiAtCQkJcmV0ID0gUFRSX0VSUihjb25uX3N0YXRlKTsNCj4gKwkJCXJldCA9
-IFBUUl9FUlIoY3J0Y19zdGF0ZSk7DQo+ICAJCQlicmVhazsNCj4gIAkJfQ0KPiAgCQljcnRjX3N0
-YXRlLT5tb2RlX2NoYW5nZWQgPSB0cnVlOw0K
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/ethernet/sfc/mcdi_functions.c: In function 'efx_mcdi_ev_init':
+drivers/net/ethernet/sfc/mcdi_functions.c:79:28: warning:
+ variable 'nic_data' set but not used [-Wunused-but-set-variable]
+
+commit 4438b587fe4b ("sfc: move MCDI event queue management code")
+introduces this unused variable.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/sfc/mcdi_functions.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/sfc/mcdi_functions.c b/drivers/net/ethernet/sfc/mcdi_functions.c
+index f022e2b9e975..8cd9e0d76e85 100644
+--- a/drivers/net/ethernet/sfc/mcdi_functions.c
++++ b/drivers/net/ethernet/sfc/mcdi_functions.c
+@@ -76,13 +76,10 @@ int efx_mcdi_ev_init(struct efx_channel *channel, bool v1_cut_thru, bool v2)
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_INIT_EVQ_V2_OUT_LEN);
+ 	size_t entries = channel->eventq.buf.len / EFX_BUF_SIZE;
+ 	struct efx_nic *efx = channel->efx;
+-	struct efx_ef10_nic_data *nic_data;
+ 	size_t inlen, outlen;
+ 	dma_addr_t dma_addr;
+ 	int rc, i;
+ 
+-	nic_data = efx->nic_data;
+-
+ 	/* Fill event queue with all ones (i.e. empty events) */
+ 	memset(channel->eventq.buf.addr, 0xff, channel->eventq.buf.len);
