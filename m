@@ -1,70 +1,32 @@
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 16 Jan 2020 15:09:28 +0000
-Subject: Re: [PATCH] selftests: fix spelling mistaked "chaigned" -> "chained"
-Message-Id: <20200116150928.jimqz3gjppoirokc@yavin>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="whi5vyhgqsw2uity"
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 10 Jan 2020 01:25:23 +0000
+Subject: [PATCH -next] drm/mgag200: Fix typo in parameter description
+Message-Id: <20200110012523.33053-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200116092903.52690-1-colin.king@canonical.com>
-In-Reply-To: <20200116092903.52690-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Shuah Khan <shuah@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Thomas Gleixner <tglx@linutronix.de>, Thomas Zimmermann <tzimmermann@suse.de>, Gerd Hoffmann <kraxel@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, Kate Stewart <kstewart@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+Fix typo in parameter description.
 
---whi5vyhgqsw2uity
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2020-01-16, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There is a spelling mistake in a literal string, fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Yup, sure.
-
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-
-> ---
->  tools/testing/selftests/openat2/resolve_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/testing/selftests/openat2/resolve_test.c b/tools/testi=
-ng/selftests/openat2/resolve_test.c
-> index 7a94b1da8e7b..bbafad440893 100644
-> --- a/tools/testing/selftests/openat2/resolve_test.c
-> +++ b/tools/testing/selftests/openat2/resolve_test.c
-> @@ -230,7 +230,7 @@ void test_openat2_opath_tests(void)
->  		{ .name =3D "[in_root] garbage link to /root",
->  		  .path =3D "cheeky/garbageself",	.how.resolve =3D RESOLVE_IN_ROOT,
->  		  .out.path =3D "root",		.pass =3D true },
-> -		{ .name =3D "[in_root] chainged garbage links to /root",
-> +		{ .name =3D "[in_root] chained garbage links to /root",
->  		  .path =3D "abscheeky/garbageself", .how.resolve =3D RESOLVE_IN_ROOT,
->  		  .out.path =3D "root",		.pass =3D true },
->  		{ .name =3D "[in_root] relative path to 'root'",
-> --=20
-> 2.24.0
->=20
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---whi5vyhgqsw2uity
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXiB8owAKCRCdlLljIbnQ
-EgelAQCi7ehRRjMXxgaesk3ZbZTuR2HRlfXzCU49y/hQWWZbpAD+J2chJFoEBKQ2
-tl0+P3uEiMVf47pvNnprKM/+N7nnjwA=
-=pquf
------END PGP SIGNATURE-----
-
---whi5vyhgqsw2uity--
+diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
+index 7a5bad2f57d7..2236f8ef20a4 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_drv.c
++++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
+@@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, mgag200_modeset, int, 0400);
+ 
+ int mgag200_hw_bug_no_startadd = -1;
+-MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start address correctly");
++MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-buffer start address correctly");
+ module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int, 0400);
+ 
+ static struct drm_driver driver;
