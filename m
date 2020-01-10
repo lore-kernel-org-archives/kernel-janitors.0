@@ -1,43 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 16 Jan 2020 06:24:38 +0000
-Subject: Re: [PATCH] iio: accel: bma400: integer underflow setting accel scale
-Message-Id: <20200116061916.GH9562@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 10 Jan 2020 16:35:21 +0000
+Subject: Re: [PATCH v3] coccinelle: semantic patch to check for inappropriate do_div() calls
+Message-Id: <91abb141-57b8-7659-25ec-8080e290d846@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200115174531.p623ukjibn6kg6zz@kili.mountain>
- <20200115181717.GA22797@nessie>
-In-Reply-To: <20200115181717.GA22797@nessie>
+References: <20200110131526.60180-1-wenyang@linux.alibaba.com>
+In-Reply-To: <20200110131526.60180-1-wenyang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Robertson <dan@dlrobertson.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wen Yang <wenyang@linux.alibaba.com>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>, Julia Lawall <Julia.Lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On Wed, Jan 15, 2020 at 06:17:17PM +0000, Dan Robertson wrote:
-> On Wed, Jan 15, 2020 at 08:45:31PM +0300, Dan Carpenter wrote:
-> > We put an upper bound on "val2" but we also need to prevent negative
-> > values.
-> > 
-> > Fixes: 465c811f1f20 ("iio: accel: Add driver for the BMA400")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/iio/accel/bma400_core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/accel/bma400_core.c b/drivers/iio/accel/bma400_core.c
-> > index ab4a158b35af..ffc7b146bbfc 100644
-> > --- a/drivers/iio/accel/bma400_core.c
-> > +++ b/drivers/iio/accel/bma400_core.c
-> > @@ -752,7 +752,7 @@ static int bma400_write_raw(struct iio_dev *indio_dev,
-> >  		mutex_unlock(&data->mutex);
-> >  		return ret;
-> >  	case IIO_CHAN_INFO_SCALE:
-> > -		if (val != 0 || val2 > BMA400_SCALE_MAX)
-> > +		if (val != 0 || val2 < 0 || val2 > BMA400_SCALE_MAX)
-> 
-> AFAIK if val2 is less than BMA400_SCALE_MIN we should return -EINVAL.
-> 
+> +@initialize:python@
+…
+> +def filter_out_safe_constants(str):
+…
+> +def construct_warnings(str, suggested_fun):
 
-Ah.  Thanks.  Let me resend.
+* I suggest once more to adjust the dependency specifications for the usage
+  of these functions by SmPL rules.
 
-regards,
-dan carpenter
+* Can the local variable “msg” be omitted?
+
+
+> +coccilib.org.print_todo(p[0], construct_warnings("div64_ul"))
+
+I suggest again to move the prefix “div64_” into the string literal
+of the function implementation.
+
+
+The SmPL code for two disjunctions could become shorter.
+
+Regards,
+Markus
