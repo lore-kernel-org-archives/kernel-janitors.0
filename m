@@ -1,37 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Dec 2019 16:54:08 +0000
-Subject: [PATCH] loop: remove redundant assignment to err
-Message-Id: <20191202165408.64510-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 10 Jan 2020 01:25:15 +0000
+Subject: [PATCH -next] pwm: sun4i: Fix wrong pointer passed to PTR_ERR()
+Message-Id: <20200110012515.32965-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de, mripard@kernel.org, wens@csie.org, p.zabel@pengutronix.de, Jernej
+ Skrabec <jernej.skrabec@siol.net>
+Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
-The variable err is being assigned with a value that is never
-read and it is being updated later with a new value.  The assignment
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 5b090b430d75 ("pwm: sun4i: Add an optional probe for bus clock")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/block/loop.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pwm/pwm-sun4i.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 739b372a5112..30f187786dae 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2006,7 +2006,6 @@ static int loop_add(struct loop_device **l, int i)
- 		goto out_free_dev;
- 	i = err;
+diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+index 1afd41ebd3fd..a805c347ee84 100644
+--- a/drivers/pwm/pwm-sun4i.c
++++ b/drivers/pwm/pwm-sun4i.c
+@@ -423,7 +423,7 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
+ 	 */
+ 	pwm->clk = devm_clk_get_optional(&pdev->dev, "mod");
+ 	if (IS_ERR(pwm->clk)) {
+-		if (PTR_ERR(pwm->rst) != -EPROBE_DEFER)
++		if (PTR_ERR(pwm->clk) != -EPROBE_DEFER)
+ 			dev_err(&pdev->dev, "get mod clock failed %pe\n",
+ 				pwm->clk);
+ 		return PTR_ERR(pwm->clk);
+@@ -432,7 +432,7 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
+ 	if (!pwm->clk) {
+ 		pwm->clk = devm_clk_get(&pdev->dev, NULL);
+ 		if (IS_ERR(pwm->clk)) {
+-			if (PTR_ERR(pwm->rst) != -EPROBE_DEFER)
++			if (PTR_ERR(pwm->clk) != -EPROBE_DEFER)
+ 				dev_err(&pdev->dev, "get unnamed clock failed %pe\n",
+ 					pwm->clk);
+ 			return PTR_ERR(pwm->clk);
+@@ -441,7 +441,7 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
  
--	err = -ENOMEM;
- 	lo->tag_set.ops = &loop_mq_ops;
- 	lo->tag_set.nr_hw_queues = 1;
- 	lo->tag_set.queue_depth = 128;
--- 
-2.24.0
+ 	pwm->bus_clk = devm_clk_get_optional(&pdev->dev, "bus");
+ 	if (IS_ERR(pwm->bus_clk)) {
+-		if (PTR_ERR(pwm->rst) != -EPROBE_DEFER)
++		if (PTR_ERR(pwm->bus_clk) != -EPROBE_DEFER)
+ 			dev_err(&pdev->dev, "get bus clock failed %pe\n",
+ 				pwm->bus_clk);
+ 		return PTR_ERR(pwm->bus_clk);
