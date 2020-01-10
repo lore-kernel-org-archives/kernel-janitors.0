@@ -1,49 +1,35 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 23 Jan 2020 21:38:57 +0000
-Subject: Re: [PATCH] drm/amd/amdgpu: fix spelling mistake "to" -> "too"
-Message-Id: <CADnq5_PxfM2i0BxpKtOUeL2+hxLUbwocyWNmd9qzXnOesJfuWg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jan 2020 05:52:52 +0000
+Subject: [PATCH] regulator: mp8859: tidy up white space in probe
+Message-Id: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123002216.2832146-1-colin.king@canonical.com>
-In-Reply-To: <20200123002216.2832146-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 7:22 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a DRM_ERROR message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+These two lines are indented an extra tab.
 
-Applied.  thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/regulator/mp8859.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-> index ceb0dbf685f1..59ddba137946 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-> @@ -652,7 +652,7 @@ static int amdgpu_vce_cs_reloc(struct amdgpu_cs_parser *p, uint32_t ib_idx,
->
->         if ((addr + (uint64_t)size) >
->             (mapping->last + 1) * AMDGPU_GPU_PAGE_SIZE) {
-> -               DRM_ERROR("BO to small for addr 0x%010Lx %d %d\n",
-> +               DRM_ERROR("BO too small for addr 0x%010Lx %d %d\n",
->                           addr, lo, hi);
->                 return -EINVAL;
->         }
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
+index e804a5267301..1d26b506ee5b 100644
+--- a/drivers/regulator/mp8859.c
++++ b/drivers/regulator/mp8859.c
+@@ -123,8 +123,8 @@ static int mp8859_i2c_probe(struct i2c_client *i2c)
+ 		ret = PTR_ERR(rdev);
+ 		dev_err(&i2c->dev, "failed to register %s: %d\n",
+ 			mp8859_regulators[0].name, ret);
+-			return ret;
+-		}
++		return ret;
++	}
+ 	return 0;
+ }
+ 
+-- 
+2.11.0
