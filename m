@@ -1,63 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Jan 2020 04:57:39 +0000
-Subject: [PATCH] drm/amd/display: Possible divide by zero in set_speed()
-Message-Id: <20200131045739.ault4d6yk2lqlbed@kili.mountain>
+From: Rick Schaech <cathben72@gmail.com>
+Date: Fri, 10 Jan 2020 06:00:30 +0000
+Subject: I wait for your swift response
+Message-Id: <CAEcBxOmGvEZMaVJR7q6yOesCqXsvtm18wH+RSPqDXJP2S_3GEg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Lewis Huang <Lewis.Huang@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Derek Lai <Derek.Lai@amd.com>, Charlene Liu <charlene.liu@amd.com>, Leo Li <sunpeng.li@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Jun Lei <Jun.Lei@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+To: kernel-janitors@vger.kernel.org
 
-If "speed" is zero then we use it as a divisor to find "prescale".  It's
-better to move the check for zero to the very start of the function.
+Dear, I'm Mr Rick Schaech, I am the General Account Auditor, Though i
+know we have not meet each other before but sometimes in life God have
+a reason of bringing two people from two different countries together
+as business partners or life partners.
 
-Fixes: 9eeec26a1339 ("drm/amd/display: Refine i2c frequency calculating sequence")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+My dear friend, I have the sum of 15.7 Million USD i wish to put in
+your name due to the death of my late client who died several years
+ago as his next of kin column still remain blank. Though the internet
+medium is highly abuse these days but am assuring you that this
+transaction is legitimate and I am contacting you that we may have a
+deal, note for your cooperation and collaboration 40% of the sum will
+be for you while the other 60% will be for me as well. I wait for your
+swift response for more details. please forward your response to my
+personal E-mail: rickschaech@gmail.com
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c b/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
-index 066188ba7949..24adec407972 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
-@@ -267,6 +267,9 @@ static void set_speed(
- 	uint32_t xtal_ref_div = 0;
- 	uint32_t prescale = 0;
- 
-+	if (speed = 0)
-+		return;
-+
- 	REG_GET(MICROSECOND_TIME_BASE_DIV, XTAL_REF_DIV, &xtal_ref_div);
- 
- 	if (xtal_ref_div = 0)
-@@ -274,17 +277,15 @@ static void set_speed(
- 
- 	prescale = ((dce_i2c_hw->reference_frequency * 2) / xtal_ref_div) / speed;
- 
--	if (speed) {
--		if (dce_i2c_hw->masks->DC_I2C_DDC1_START_STOP_TIMING_CNTL)
--			REG_UPDATE_N(SPEED, 3,
--				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
--				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2,
--				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_START_STOP_TIMING_CNTL), speed > 50 ? 2:1);
--		else
--			REG_UPDATE_N(SPEED, 2,
--				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
--				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2);
--	}
-+	if (dce_i2c_hw->masks->DC_I2C_DDC1_START_STOP_TIMING_CNTL)
-+		REG_UPDATE_N(SPEED, 3,
-+			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
-+			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2,
-+			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_START_STOP_TIMING_CNTL), speed > 50 ? 2:1);
-+	else
-+		REG_UPDATE_N(SPEED, 2,
-+			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
-+			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2);
- }
- 
- static bool setup_engine(
--- 
-2.11.0
+Yours sincerely,
+Rick Schaech.
