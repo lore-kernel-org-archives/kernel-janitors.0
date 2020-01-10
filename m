@@ -1,36 +1,70 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 15 Jan 2020 09:19:03 +0000
-Subject: Re: [PATCH] ath11k: fix up some error paths
-Message-Id: <20200115091903.7EC3FC4479C@smtp.codeaurora.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 10 Jan 2020 13:38:14 +0000
+Subject: Applied "regulator: mp8859: tidy up white space in probe" to the regulator tree
+Message-Id: <applied-20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191213105448.b7lic5ddih6c3sqy@kili.mountain>
-In-Reply-To: <20191213105448.b7lic5ddih6c3sqy@kili.mountain>
+In-Reply-To: <20200110055252.rvelu4ysvoxsbmlg@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: John Crispin <john@phrozen.org>, Vasanthakumar Thiagarajan <vthiagar@codeaurora.org>, Anilkumar Kolli <akolli@codeaurora.org>, Bhagavathi Perumal S <bperumal@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Markus Reichl <m.reichl@fivetechno.de>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The patch
 
-> There are two error paths where "ret" wasn't set.  Ideally the compiler
-> would have warned about these bugs, but we initialized "ret" to zero so
-> it silenced the warning.  I have removed that.  Also if
-> ath11k_hal_srng_get_entrysize() fails then we need to free some
-> resources before returning.
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   regulator: mp8859: tidy up white space in probe
 
-Failed to apply:
+has been applied to the regulator tree at
 
-error: patch failed: drivers/net/wireless/ath/ath11k/dp_tx.c:646
-error: drivers/net/wireless/ath/ath11k/dp_tx.c: patch does not apply
-stg import: Diff does not apply cleanly
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
 
-Patch set to Changes Requested.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b83380512e955f538366c33dd79d660cdac2875c Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jan 2020 08:52:52 +0300
+Subject: [PATCH] regulator: mp8859: tidy up white space in probe
+
+These two lines are indented an extra tab.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200110055252.rvelu4ysvoxsbmlg@kili.mountain
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/mp8859.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/mp8859.c b/drivers/regulator/mp8859.c
+index e804a5267301..1d26b506ee5b 100644
+--- a/drivers/regulator/mp8859.c
++++ b/drivers/regulator/mp8859.c
+@@ -123,8 +123,8 @@ static int mp8859_i2c_probe(struct i2c_client *i2c)
+ 		ret = PTR_ERR(rdev);
+ 		dev_err(&i2c->dev, "failed to register %s: %d\n",
+ 			mp8859_regulators[0].name, ret);
+-			return ret;
+-		}
++		return ret;
++	}
+ 	return 0;
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/11290443/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
