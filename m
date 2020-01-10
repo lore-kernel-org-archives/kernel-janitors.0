@@ -1,32 +1,28 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 10 Jan 2020 01:25:23 +0000
-Subject: [PATCH -next] drm/mgag200: Fix typo in parameter description
-Message-Id: <20200110012523.33053-1-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jan 2020 03:49:49 +0000
+Subject: Re: [PATCH -next] drm/mgag200: Fix typo in parameter description
+Message-Id: <20200110034949.GA1792@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200110012523.33053-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Thomas Gleixner <tglx@linutronix.de>, Thomas Zimmermann <tzimmermann@suse.de>, Gerd Hoffmann <kraxel@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, Kate Stewart <kstewart@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Gerd Hoffmann <kraxel@redhat.com>, Thomas Zimmermann <tzimmermann@suse.de>, Dave Airlie <airlied@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Sam Ravnborg <sam@ravnborg.org>
 
-Fix typo in parameter description.
+On Fri, Jan 10, 2020 at 01:25:23AM +0000, Wei Yongjun wrote:
+> Fix typo in parameter description.
+> 
 
-Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This commit message isn't totally clear.  Maybe say something like:
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index 7a5bad2f57d7..2236f8ef20a4 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
- module_param_named(modeset, mgag200_modeset, int, 0400);
- 
- int mgag200_hw_bug_no_startadd = -1;
--MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start address correctly");
-+MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-buffer start address correctly");
- module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int, 0400);
- 
- static struct drm_driver driver;
+There was a typo in the MODULE_PARM_DESC().  It said that the module
+parameter was "modeset" but it's actually the description for
+"hw_bug_no_startadd".
+
+> Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+regards,
+dan carpenter
