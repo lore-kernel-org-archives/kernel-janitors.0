@@ -1,50 +1,21 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Date: Sat, 11 Jan 2020 01:56:52 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sat, 11 Jan 2020 07:11:33 +0000
 Subject: Re: [PATCH net-next] sfc: remove duplicated include from ef10.c
-Message-Id: <db6af9a7-3229-edf0-d650-af4287e32661@huawei.com>
+Message-Id: <20200110.231133.366069857384555250.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200110013517.37685-1-yuehaibing@huawei.com>
- <422eff3d-05ea-d967-ff1b-448b6dc9dcb5@solarflare.com>
-In-Reply-To: <422eff3d-05ea-d967-ff1b-448b6dc9dcb5@solarflare.com>
+In-Reply-To: <20200110013517.37685-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Edward Cree <ecree@solarflare.com>, "David S . Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yuehaibing@huawei.com
+Cc: ast@kernel.org, daniel@iogearbox.net, jakub.kicinski@netronome.com, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2020/1/10 19:57, Edward Cree wrote:
-> On 10/01/2020 01:35, YueHaibing wrote:
->> Remove duplicated include.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Edward Cree <ecree@solarflare.com>
-> but you seem to have come up with a strange CC list, full of bpf maintainers
->  rather than sfc driver maintainers; check your submission scripts?  (AFAIK
->  the MAINTAINERS file has the right things in.)
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 10 Jan 2020 01:35:17 +0000
 
-Thanks, I will check this.
+> Remove duplicated include.
 > 
-> -Ed
->> ---
->>  drivers/net/ethernet/sfc/ef10.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
->> index dc037dd927f8..fa460831af7d 100644
->> --- a/drivers/net/ethernet/sfc/ef10.c
->> +++ b/drivers/net/ethernet/sfc/ef10.c
->> @@ -16,7 +16,6 @@
->>  #include "workarounds.h"
->>  #include "selftest.h"
->>  #include "ef10_sriov.h"
->> -#include "rx_common.h"
->>  #include <linux/in.h>
->>  #include <linux/jhash.h>
->>  #include <linux/wait.h>
->>
->>
->>
-> 
-> 
-> .
-> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Applied, thanks.
