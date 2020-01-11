@@ -1,22 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 10 Jan 2020 15:46:14 +0000
-Subject: Re: [v2] coccinelle: semantic code search for inappropriate do_div() calls
-Message-Id: <a5a88792-5aec-caa8-d355-75f3f7dc1742@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 11 Jan 2020 07:42:06 +0000
+Subject: [PATCH -next v2] drm/mgag200: Fix typo in module parameter description
+Message-Id: <20200111074206.68290-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200107170240.47207-1-wenyang@linux.alibaba.com>
- <b6e7b8ac-4de8-00a0-d12c-ebf727af3e26@web.de>
- <alpine.DEB.2.21.2001101334160.2897@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2001101334160.2897@hadrien>
+References: <20200110012523.33053-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200110012523.33053-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>, Wen Yang <wenyang@linux.alibaba.com>, cocci@systeme.lip6.fr
-Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Thomas Gleixner <tglx@linutronix.de>, Thomas Zimmermann <tzimmermann@suse.de>, Gerd Hoffmann <kraxel@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, Kate Stewart <kstewart@linuxfoundation.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-> The code is fine as it is in these respects.
+There was a typo in the MODULE_PARM_DESC(). It said that the
+module parameter was "modeset" but it's actually the description
+for "hw_bug_no_startadd".
 
-I have noticed additional software development opportunities.
-Thus I became curious if further collateral evolution will happen.
+Fixes: 3cacb2086e41 ("drm/mgag200: Add module parameter to pin all buffers at offset 0")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: Fix the description
+---
+ drivers/gpu/drm/mgag200/mgag200_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
+index 7a5bad2f57d7..2236f8ef20a4 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_drv.c
++++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
+@@ -28,7 +28,7 @@ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, mgag200_modeset, int, 0400);
+ 
+ int mgag200_hw_bug_no_startadd = -1;
+-MODULE_PARM_DESC(modeset, "HW does not interpret scanout-buffer start address correctly");
++MODULE_PARM_DESC(hw_bug_no_startadd, "HW does not interpret scanout-buffer start address correctly");
+ module_param_named(hw_bug_no_startadd, mgag200_hw_bug_no_startadd, int, 0400);
+ 
+ static struct drm_driver driver;
