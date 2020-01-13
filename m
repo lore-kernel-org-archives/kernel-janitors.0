@@ -1,36 +1,33 @@
-From: Benjamin Poirier <benjamin.poirier@gmail.com>
-Date: Thu, 23 Jan 2020 05:19:31 +0000
-Subject: Re: [PATCH] staging: qlge: fix spelling mistake "to" -> "too"
-Message-Id: <20200123051931.GA419949@f3>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2020 13:23:07 +0000
+Subject: [PATCH] nfsd4: fix double free in nfsd4_do_async_copy()
+Message-Id: <20200113132307.frp6ur5zhzolu5ys@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123000707.2831321-1-colin.king@canonical.com>
-In-Reply-To: <20200123000707.2831321-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, GR-Linux-NIC-Dev@marvell.com, Manish Chopra <manishc@marvell.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, Olga Kornievskaia <kolga@netapp.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2020/01/23 00:07 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a netif_printk message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/qlge/qlge_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
-> index ef8037d0b52e..115dfa2ffabd 100644
-> --- a/drivers/staging/qlge/qlge_main.c
-> +++ b/drivers/staging/qlge/qlge_main.c
-> @@ -1758,7 +1758,7 @@ static struct sk_buff *ql_build_rx_skb(struct ql_adapter *qdev,
->  	} else if (ib_mac_rsp->flags3 & IB_MAC_IOCB_RSP_DL) {
->  		if (ib_mac_rsp->flags4 & IB_MAC_IOCB_RSP_HS) {
->  			netif_printk(qdev, rx_status, KERN_DEBUG, qdev->ndev,
-> -				     "Header in small, %d bytes in large. Chain large to small!\n",
-> +				     "Header in small, %d bytes in large. Chain large too small!\n",
+This frees "copy->nf_src" before and again after the goto.
 
-The "to" is correct here.
-~chaining a large buffer to a small buffer~
+Fixes: ce0887ac96d3 ("NFSD add nfs4 inter ssc to nfsd4_copy")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/nfsd/nfs4proc.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 1e14b3ed5674..c90c24c35b2e 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1469,7 +1469,6 @@ static int nfsd4_do_async_copy(void *data)
+ 		copy->nf_src->nf_file = nfs42_ssc_open(copy->ss_mnt, &copy->c_fh,
+ 					      &copy->stateid);
+ 		if (IS_ERR(copy->nf_src->nf_file)) {
+-			kfree(copy->nf_src);
+ 			copy->nfserr = nfserr_offload_denied;
+ 			nfsd4_interssc_disconnect(copy->ss_mnt);
+ 			goto do_callback;
+-- 
+2.11.0
