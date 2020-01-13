@@ -1,64 +1,77 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Date: Wed, 08 Jan 2020 23:58:04 +0000
-Subject: Re: [PATCH] nouveau/secboot/gm20b: initialize pointer in gm20b_secboot_new()
-Message-Id: <CACAvsv4ifPYma15xDfu43yanyznpNFyN1vgFrYmao=tdhE6Qjg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 13 Jan 2020 14:46:27 +0000
+Subject: [PATCH] video: fbdev: nvidia: clean up indentation issues and comment block
+Message-Id: <20200113144627.219967-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108054601.mdwwtcqqpge2iwca@kili.mountain>
-In-Reply-To: <20200108054601.mdwwtcqqpge2iwca@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, ML nouveau <nouveau@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>, Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>
+To: Antonino Daplas <adaplas@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 8 Jan 2020 at 15:46, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We accidentally set "psb" which is a no-op instead of "*psb" so it
-> generates a static checker warning.  We should probably set it before
-> the first error return so that it's always initialized.
-You actually don't need to do either, *psb will be NULL already on
-entry to the function.  But removing the assignment in the error path
-should be done still.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ben.
+There is a hunk of code that is incorrectly indented, clean up the
+indentation and a comment block. Also remove block braces around a
+one line statement on an if condition and add missing spaces after
+if keywords.
 
->
-> Fixes: 923f1bd27bf1 ("drm/nouveau/secboot/gm20b: add secure boot support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analysis.  I'm not sure how this is called.
->
->  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> index df8b919dcf09..ace6fefba428 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> @@ -108,6 +108,7 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
->         struct gm200_secboot *gsb;
->         struct nvkm_acr *acr;
->
-> +       *psb = NULL;
->         acr = acr_r352_new(BIT(NVKM_SECBOOT_FALCON_FECS) |
->                            BIT(NVKM_SECBOOT_FALCON_PMU));
->         if (IS_ERR(acr))
-> @@ -116,10 +117,8 @@ gm20b_secboot_new(struct nvkm_device *device, int index,
->         acr->optional_falcons = BIT(NVKM_SECBOOT_FALCON_PMU);
->
->         gsb = kzalloc(sizeof(*gsb), GFP_KERNEL);
-> -       if (!gsb) {
-> -               psb = NULL;
-> +       if (!gsb)
->                 return -ENOMEM;
-> -       }
->         *psb = &gsb->base;
->
->         ret = nvkm_secboot_ctor(&gm20b_secboot, acr, device, index, &gsb->base);
-> --
-> 2.11.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/nvidia/nvidia.c | 41 ++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
+index c583c018304d..c24de9107958 100644
+--- a/drivers/video/fbdev/nvidia/nvidia.c
++++ b/drivers/video/fbdev/nvidia/nvidia.c
+@@ -168,27 +168,26 @@ static int nvidia_panel_tweak(struct nvidia_par *par,
+ {
+ 	int tweak = 0;
+ 
+-   if (par->paneltweak) {
+-	   tweak = par->paneltweak;
+-   } else {
+-	   /* begin flat panel hacks */
+-	   /* This is unfortunate, but some chips need this register
+-	      tweaked or else you get artifacts where adjacent pixels are
+-	      swapped.  There are no hard rules for what to set here so all
+-	      we can do is experiment and apply hacks. */
+-
+-	   if(((par->Chipset & 0xffff) = 0x0328) && (state->bpp = 32)) {
+-		   /* At least one NV34 laptop needs this workaround. */
+-		   tweak = -1;
+-	   }
+-
+-	   if((par->Chipset & 0xfff0) = 0x0310) {
+-		   tweak = 1;
+-	   }
+-	   /* end flat panel hacks */
+-   }
+-
+-   return tweak;
++	if (par->paneltweak) {
++		tweak = par->paneltweak;
++	} else {
++		/* Begin flat panel hacks.
++		 * This is unfortunate, but some chips need this register
++		 * tweaked or else you get artifacts where adjacent pixels are
++		 * swapped.  There are no hard rules for what to set here so all
++		 * we can do is experiment and apply hacks.
++		 */
++		if (((par->Chipset & 0xffff) = 0x0328) && (state->bpp = 32)) {
++			/* At least one NV34 laptop needs this workaround. */
++			tweak = -1;
++		}
++
++		if ((par->Chipset & 0xfff0) = 0x0310)
++			tweak = 1;
++		/* end flat panel hacks */
++	}
++
++	return tweak;
+ }
+ 
+ static void nvidia_screen_off(struct nvidia_par *par, int on)
+-- 
+2.24.0
