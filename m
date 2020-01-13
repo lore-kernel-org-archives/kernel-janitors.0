@@ -1,33 +1,37 @@
-From: Paul Burton <paulburton@kernel.org>
-Date: Thu, 09 Jan 2020 18:52:49 +0000
-Subject: Re: [PATCH -next] MIPS: Loongson2ef: drop pointless static qualifier in  loongson_suspend_enter()
-Message-Id: <5e177682.1c69fb81.b79ec.61f3@mx.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2020 12:59:33 +0000
+Subject: [PATCH] regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()
+Message-Id: <20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204010851.160284-1-maowenan@huawei.com>
-In-Reply-To: <20191204010851.160284-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: jiaxun.yang@flygoat.com, ralf@linux-mips.org, paulburton@kernel.org, jhogan@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+There is a typo in the error checking.  We should be checking
+"->rdev[i]" instead of just "->rdev".
 
-Mao Wenan wrote:
-> There is no need to have the 'T *v' variable static
-> since new value always be assigned before use it.
+Fixes: 6501c1f54a17 ("regulator: mpq7920: add mpq7920 regulator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/regulator/mpq7920.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to mips-next.
-
-> commit 11d06df7b9f2
-> https://git.kernel.org/mips/c/11d06df7b9f2
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
-
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
+index ab1b847c57e5..80f3131f0d1b 100644
+--- a/drivers/regulator/mpq7920.c
++++ b/drivers/regulator/mpq7920.c
+@@ -274,8 +274,8 @@ static inline int mpq7920_regulator_register(
+ 
+ 		info->rdev[i] = devm_regulator_register(info->dev, rdesc,
+ 					 config);
+-		if (IS_ERR(info->rdev))
+-			return PTR_ERR(info->rdev);
++		if (IS_ERR(info->rdev[i]))
++			return PTR_ERR(info->rdev[i]);
+ 	}
+ 
+ 	return 0;
+-- 
+2.11.0
