@@ -1,48 +1,47 @@
-From: "Prof, William Roberts" <eco.bank1204@gmail.com>
-Date: Mon, 20 Jan 2020 19:31:27 +0000
-Subject: Contact Diplomatic Agent, Mr. Mcclaine John to receive your ATM CARD valued the sum of $12.8Million 
-Message-Id: <CAOE+jACYN-9AiP3uaE8Ut4Rjk53mzxareAyVj45HaD3RqW0fqg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 13 Jan 2020 14:05:34 +0000
+Subject: [PATCH][next] drm/gma500: clean up two indentation issues
+Message-Id: <20200113140534.209440-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Attn: Dear Beneficiary,
+From: Colin Ian King <colin.king@canonical.com>
 
-I wish to inform you that the diplomatic agent conveying your ATM CARD
-valued the sum of $12.8Million United States Dollars has misplaced
-your address and he is currently stranded at (George Bush
-International Airport) Houston Texas USA now
-We required you to reconfirm the following information's below to him
-so that he can deliver your Payment CARD to you today or tomorrow
-morning as information provided with open communications via email and
-telephone for security reasons.
-HERE IS THE DETAILS  HE NEED FROM YOU URGENT
-YOUR FULL NAME:====
-ADDRESS:====
-MOBILE NO:====
-NAME OF YOUR NEAREST AIRPORT:====
-A COPY OF YOUR IDENTIFICATION :====
+There are a couple of statements that are indented too deeply,
+clean these up by removing the extraneous tabs. Also remove an
+empty line.
 
-Note; do contact the diplomatic agent immediately through the
-information's listed below
-Contact Person: Diplomatic Agent, Mr. Mcclaine John
-EMAIL: mcclainejohn.13@gmail.com
-Tel:(223) 777-7518
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Contact the diplomatic agent immediately
-because he is waiting to hear from you today with the needed information's.
-
-NOTE: The Diplomatic agent does not know that the content of the
-consignment box is $12.800,000,00 Million United States Dollars and on
-no circumstances should you let him know the content. The consignment
-was moved from here as family treasures, so never allow him to open
-the box. Please I have paid delivery fees for you but the only money
-you must send to Mcclaine John is your ATM CARD delivery fee $25.00
-only. text Him as you contact Him Immediately
-
-Thanks,
-with Regards.
-Prof, William Roberts
-Director DHL COURIER SERVICES-Benin
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index 5772b2dce0d6..b5360bd405c5 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1529,8 +1529,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
+ 	clock_recovery = false;
+ 
+ 	DRM_DEBUG_KMS("Start train\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_1;
+-
++	reg = DP | DP_LINK_TRAIN_PAT_1;
+ 
+ 	for (;;) {
+ 		/* Use intel_dp->train_set[0] to set the voltage and pre emphasis values */
+@@ -1603,7 +1602,7 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
+ 	cr_tries = 0;
+ 
+ 	DRM_DEBUG_KMS("\n");
+-		reg = DP | DP_LINK_TRAIN_PAT_2;
++	reg = DP | DP_LINK_TRAIN_PAT_2;
+ 
+ 	for (;;) {
+ 
+-- 
+2.24.0
