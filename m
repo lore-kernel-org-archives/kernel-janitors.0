@@ -1,47 +1,73 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Jan 2020 17:11:07 +0000
-Subject: [PATCH] media: drxj: remove redundant assignments to variable rc
-Message-Id: <20200107171107.120294-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 13 Jan 2020 15:13:22 +0000
+Subject: Applied "regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()" to the regu
+Message-Id: <applied-20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Saravanan Sekar <sravanhome@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-The variable rc is being initialized with a value that is never
-read and it is being updated later with a new value.  The initialization
-is redundant and can be removed.
+   regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7eec67869893bc34bd3a3126e5124a4ef017e0cd Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2020 15:59:33 +0300
+Subject: [PATCH] regulator: mpq7920: Check the correct variable in
+ mpq7920_regulator_register()
+
+There is a typo in the error checking.  We should be checking
+"->rdev[i]" instead of just "->rdev".
+
+Fixes: 6501c1f54a17 ("regulator: mpq7920: add mpq7920 regulator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200113125805.xri6jqoxy2ldzqyg@kili.mountain
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/dvb-frontends/drx39xyj/drxj.c | 4 ++--
+ drivers/regulator/mpq7920.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-index ac7be872f460..5de016412c42 100644
---- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-+++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-@@ -2182,7 +2182,7 @@ int drxj_dap_atomic_read_reg32(struct i2c_device_addr *dev_addr,
- 				     u32 *data, u32 flags)
- {
- 	u8 buf[sizeof(*data)] = { 0 };
--	int rc = -EIO;
-+	int rc;
- 	u32 word = 0;
+diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
+index ab1b847c57e5..80f3131f0d1b 100644
+--- a/drivers/regulator/mpq7920.c
++++ b/drivers/regulator/mpq7920.c
+@@ -274,8 +274,8 @@ static inline int mpq7920_regulator_register(
  
- 	if (!data)
-@@ -4229,7 +4229,7 @@ int drxj_dap_scu_atomic_write_reg16(struct i2c_device_addr *dev_addr,
- 					  u16 data, u32 flags)
- {
- 	u8 buf[2];
--	int rc = -EIO;
-+	int rc;
+ 		info->rdev[i] = devm_regulator_register(info->dev, rdesc,
+ 					 config);
+-		if (IS_ERR(info->rdev))
+-			return PTR_ERR(info->rdev);
++		if (IS_ERR(info->rdev[i]))
++			return PTR_ERR(info->rdev[i]);
+ 	}
  
- 	buf[0] = (u8) (data & 0xff);
- 	buf[1] = (u8) ((data >> 8) & 0xff);
+ 	return 0;
 -- 
-2.24.0
+2.20.1
