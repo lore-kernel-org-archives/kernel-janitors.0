@@ -1,37 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 08 Jan 2020 03:59:54 +0000
-Subject: [PATCH -next]  ASoC: amd: acp3x: Fix return value check in acp3x_dai_probe()
-Message-Id: <20200108035954.51317-1-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 13 Jan 2020 12:31:49 +0000
+Subject: [PATCH][next][V2] drivers/misc: ti-st: remove redundant assignment to variables i and flags
+Message-Id: <20200113123149.187555-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Ravulapati
- Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c9fe7db6e884 ("ASoC: amd: Refactoring of DAI from DMA driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The variables i and flags are being initialized with values that are
+never read.  The initializations are redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/amd/raven/acp3x-i2s.c | 4 ++--
+
+V2: remove assignment to flags too, thanks to Dan Carpenter for spotting that.
+
+---
+ drivers/misc/ti-st/st_core.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x-i2s.c b/sound/soc/amd/raven/acp3x-i2s.c
-index d9b287b8396c..bf51cadf8682 100644
---- a/sound/soc/amd/raven/acp3x-i2s.c
-+++ b/sound/soc/amd/raven/acp3x-i2s.c
-@@ -321,8 +321,8 @@ static int acp3x_dai_probe(struct platform_device *pdev)
- 	}
- 	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
- 						resource_size(res));
--	if (IS_ERR(adata->acp3x_base))
--		return PTR_ERR(adata->acp3x_base);
-+	if (!adata->acp3x_base)
-+		return -ENOMEM;
+diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+index 2ae9948a91e1..14136d2cc8f9 100644
+--- a/drivers/misc/ti-st/st_core.c
++++ b/drivers/misc/ti-st/st_core.c
+@@ -736,8 +736,8 @@ static int st_tty_open(struct tty_struct *tty)
  
- 	adata->i2s_irq = res->start;
- 	dev_set_drvdata(&pdev->dev, adata);
+ static void st_tty_close(struct tty_struct *tty)
+ {
+-	unsigned char i = ST_MAX_CHANNELS;
+-	unsigned long flags = 0;
++	unsigned char i;
++	unsigned long flags;
+ 	struct	st_data_s *st_gdata = tty->disc_data;
+ 
+ 	pr_info("%s ", __func__);
+-- 
+2.24.0
