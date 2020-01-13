@@ -1,75 +1,103 @@
-From: Jacopo Mondi <jacopo@jmondi.org>
-Date: Thu, 02 Jan 2020 08:11:39 +0000
-Subject: Re: [PATCH 06/16] media: mt9v111: constify copied structure
-Message-Id: <20200102081139.omdtomdecbbl4l42@uno.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cyu25jnciggoxa63"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2020 13:23:46 +0000
+Subject: [PATCH] ubi: Fix an error pointer dereference in error handling code
+Message-Id: <20200113132346.rmeamdmbxwvo7kgj@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
- <1577864614-5543-7-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-7-git-send-email-Julia.Lawall@inria.fr>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Richard Weinberger <richard@nod.at>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-stm32@st-md-mailman.stormreply.com, Vignesh Raghavendra <vigneshr@ti.com>
 
+If "seen_pebs = init_seen(ubi);" fails then "seen_pebs" is an error pointer
+and we try to kfree() it which results in an Oops.
 
---cyu25jnciggoxa63
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This patch re-arranges the error handling so now it only frees things
+which have been allocated successfully.
 
-Hi Julia,
-   thanks for the patch
+Fixes: daef3dd1f0ae ("UBI: Fastmap: Add self check to detect absent PEBs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/ubi/fastmap.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+---
+ drivers/mtd/ubi/fastmap.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-On Wed, Jan 01, 2020 at 08:43:24AM +0100, Julia Lawall wrote:
-> The mt9v111_def_fmt structure is only copied into another structure,
-> so make it const.
->
-> The opportunity for this change was found using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Thanks
-   j
-
->
-> ---
->  drivers/media/i2c/mt9v111.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c
-> index bb41bea950ac..61ae6a0d5679 100644
-> --- a/drivers/media/i2c/mt9v111.c
-> +++ b/drivers/media/i2c/mt9v111.c
-> @@ -103,7 +103,7 @@
->  #define MT9V111_MAX_CLKIN				27000000
->
->  /* The default sensor configuration at startup time. */
-> -static struct v4l2_mbus_framefmt mt9v111_def_fmt = {
-> +static const struct v4l2_mbus_framefmt mt9v111_def_fmt = {
->  	.width		= 640,
->  	.height		= 480,
->  	.code		= MEDIA_BUS_FMT_UYVY8_2X8,
->
-
---cyu25jnciggoxa63
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl4NpbsACgkQcjQGjxah
-VjxWAw/7BXbE2ajrCEdQEVdH+Mvd31VIHw+dUwHxWlz68PxEH4fwHbZmTdNX3AJ4
-lXqW/E/YpeuKv/4PkuKdU5Sm6mrIC4AoEU0Mxkac9ih1Zhr1xTNudhgmoeytOrH3
-vcA5Qx+3feHHvebZ8gZWAOaRnSo0C1YAOgW0Yy9lGFY40suxHABQ8h37Mss2hh/Q
-0IZTa/nQIUUzNDFvJM2lxrm3Di8z9yqFFVrmiVZKbPuUc+t6LjqlB9LrX7X2NJny
-JQLBM6jHmZ7/WJjZDGc5asREk0LP19VgfOgeibW+EjQ1FwPVnsg1K6KY0RcZ3wtW
-qXwSa/6yeYXJFxX3igNhLgrTzy+lzMedKnijf/g4A0XjA9rOzjW6qpZQAIEybFvb
-5YQuIScZ83ZG0Hlkfus1rMrHhccRv6aXIjVc4dre/1Dr+iFWCEgDLsPC+iOdXqxC
-UrSejcypZBx/kMs+F6sgAdeyxKhwYaKnX+mNZbTodMPffSrdSPdc8JpgXeEMPQtQ
-T+VbHJ+ZP4U9Ey8QzWbMV6SJa3g923kBN2BY1hU8f7vpStM8H/w/Yz5AEkLLjJS7
-jWtuy3ad+CHh5i0ud47cS5iXXsVJZCoFe/fpZKFIUJHexX4PBXYNA4j1sLDALLt/
-zrU0yg/3adK03trBxx2JOheLIgx2uq/U/Ys+pQ27NeSjZoZPWa8=
-=xj3Z
------END PGP SIGNATURE-----
-
---cyu25jnciggoxa63--
+diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
+index 1c7be4eb3ba6..6b544665318a 100644
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -1137,7 +1137,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 	struct rb_node *tmp_rb;
+ 	int ret, i, j, free_peb_count, used_peb_count, vol_count;
+ 	int scrub_peb_count, erase_peb_count;
+-	unsigned long *seen_pebs = NULL;
++	unsigned long *seen_pebs;
+ 
+ 	fm_raw = ubi->fm_buf;
+ 	memset(ubi->fm_buf, 0, ubi->fm_size);
+@@ -1151,7 +1151,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 	dvbuf = new_fm_vbuf(ubi, UBI_FM_DATA_VOLUME_ID);
+ 	if (!dvbuf) {
+ 		ret = -ENOMEM;
+-		goto out_kfree;
++		goto out_free_avbuf;
+ 	}
+ 
+ 	avhdr = ubi_get_vid_hdr(avbuf);
+@@ -1160,7 +1160,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 	seen_pebs = init_seen(ubi);
+ 	if (IS_ERR(seen_pebs)) {
+ 		ret = PTR_ERR(seen_pebs);
+-		goto out_kfree;
++		goto out_free_dvbuf;
+ 	}
+ 
+ 	spin_lock(&ubi->volumes_lock);
+@@ -1328,7 +1328,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 	ret = ubi_io_write_vid_hdr(ubi, new_fm->e[0]->pnum, avbuf);
+ 	if (ret) {
+ 		ubi_err(ubi, "unable to write vid_hdr to fastmap SB!");
+-		goto out_kfree;
++		goto out_free_seen;
+ 	}
+ 
+ 	for (i = 0; i < new_fm->used_blocks; i++) {
+@@ -1350,7 +1350,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 		if (ret) {
+ 			ubi_err(ubi, "unable to write vid_hdr to PEB %i!",
+ 				new_fm->e[i]->pnum);
+-			goto out_kfree;
++			goto out_free_seen;
+ 		}
+ 	}
+ 
+@@ -1360,7 +1360,7 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 		if (ret) {
+ 			ubi_err(ubi, "unable to write fastmap to PEB %i!",
+ 				new_fm->e[i]->pnum);
+-			goto out_kfree;
++			goto out_free_seen;
+ 		}
+ 	}
+ 
+@@ -1370,10 +1370,13 @@ static int ubi_write_fastmap(struct ubi_device *ubi,
+ 	ret = self_check_seen(ubi, seen_pebs);
+ 	dbg_bld("fastmap written!");
+ 
+-out_kfree:
+-	ubi_free_vid_buf(avbuf);
+-	ubi_free_vid_buf(dvbuf);
++out_free_seen:
+ 	free_seen(seen_pebs);
++out_free_dvbuf:
++	ubi_free_vid_buf(dvbuf);
++out_free_avbuf:
++	ubi_free_vid_buf(avbuf);
++
+ out:
+ 	return ret;
+ }
+-- 
+2.11.0
