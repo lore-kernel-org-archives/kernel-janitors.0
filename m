@@ -1,32 +1,39 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Sun, 12 Jan 2020 08:42:12 +0000
-Subject: Re: [PATCH v3] coccinelle: semantic patch to check for inappropriate do_div() calls
-Message-Id: <alpine.DEB.2.21.2001120941270.2552@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1467652441-1578818533=:2552"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Jan 2020 14:40:31 +0000
+Subject: [PATCH][next] drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write
+Message-Id: <20200114144031.358003-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200110131526.60180-1-wenyang@linux.alibaba.com>
- <6cc0c851-7a32-d82a-1c0c-51a08538b445@web.de>
-In-Reply-To: <6cc0c851-7a32-d82a-1c0c-51a08538b445@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Wen Yang <wenyang@linux.alibaba.com>, Gilles Muller <Gilles.Muller@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?Matthias_M=E4nnich?= <maennich@google.com>, Thomas Gleixner <tglx@linutronix.de>, cocci@systeme.lip6.fr
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Corey Minyard <cminyard@mvista.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, vadimp@mellanox.com, Asmaa Mnebhi <Asmaa@mellanox.com>, openipmi-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-1467652441-1578818533=:2552
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+The end of buffer check is off-by-one since the check is against
+an index that is pre-incremented before a store to buf[]. Fix this
+adjusting the bounds check appropriately.
 
+Addresses-Coverity: ("Out-of-bounds write")
+Fixes: 51bd6f291583 ("Add support for IPMB driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/ipmi/ipmb_dev_int.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, 12 Jan 2020, Markus Elfring wrote:
-
-> > This semantic patch is inspired by Mateusz Guzik's patch:
->
-> Does such a wording mean also that you would like to support the operation mode “patch”
-> by this SmPL script?
-
-I see no reason why such a wording would imply such a thing.
-
-julia
---8323329-1467652441-1578818533=:2552--
+diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+index 9fdae83e59e0..382b28f1cf2f 100644
+--- a/drivers/char/ipmi/ipmb_dev_int.c
++++ b/drivers/char/ipmi/ipmb_dev_int.c
+@@ -279,7 +279,7 @@ static int ipmb_slave_cb(struct i2c_client *client,
+ 		break;
+ 
+ 	case I2C_SLAVE_WRITE_RECEIVED:
+-		if (ipmb_dev->msg_idx >= sizeof(struct ipmb_msg))
++		if (ipmb_dev->msg_idx >= sizeof(struct ipmb_msg) - 1)
+ 			break;
+ 
+ 		buf[++ipmb_dev->msg_idx] = *val;
+-- 
+2.24.0
