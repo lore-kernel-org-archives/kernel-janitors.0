@@ -1,34 +1,47 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Date: Tue, 14 Jan 2020 08:33:36 +0000
-Subject: Re: [PATCH] media: c8sectpfe: clean up some indenting
-Message-Id: <5eba4701-3460-5b2b-6fc7-f4f75481fae4@st.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Jan 2020 17:27:20 +0000
+Subject: [PATCH][next] staging: wilc1000: remove redundant assignment to variable result
+Message-Id: <20200114172720.376286-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200114051005.njxf5d6s6ycyxhfi@kili.mountain>
-In-Reply-To: <20200114051005.njxf5d6s6ycyxhfi@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgRGFuDQoNCk9uIDEvMTQvMjAgNjoxMCBBTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gVGhl
-ICJzZWdfbnVtLCIgbGluZSB3YXNuJ3QgaW5kZW50ZWQuICBBbGwgdGhlIGFyZ3VtZW50cyBjYW4g
-Zml0IG5pY2VseQ0KPiBvbiB0d28gbGluZXMuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJw
-ZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21lZGlh
-L3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUuYyB8IDUgKystLS0NCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNv
-cmUuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2M4c2VjdHBmZS9jOHNlY3RwZmUtY29y
-ZS5jDQo+IGluZGV4IDViYWFkYTRmNjVlNS4uZDE1MThhNjc3MGZhIDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUuYw0KPiAr
-KysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUu
-Yw0KPiBAQCAtMTAzNCw5ICsxMDM0LDggQEAgc3RhdGljIHZvaWQgbG9hZF9pbWVtX3NlZ21lbnQo
-c3RydWN0IGM4c2VjdHBmZWkgKmZlaSwgRWxmMzJfUGhkciAqcGhkciwNCj4gIA0KPiAgCWRldl9k
-YmcoZmVpLT5kZXYsDQo+ICAJCSJMb2FkaW5nIElNRU0gc2VnbWVudCAlZCAweCUwOHhcblx0ICgw
-eCV4IGJ5dGVzKSAtPiAweCVwICgweCV4IGJ5dGVzKVxuIiwNCj4gLXNlZ19udW0sDQo+IC0JCXBo
-ZHItPnBfcGFkZHIsIHBoZHItPnBfZmlsZXN6LA0KPiAtCQlkZXN0LCBwaGRyLT5wX21lbXN6ICsg
-cGhkci0+cF9tZW1zeiAvIDMpOw0KPiArCQlzZWdfbnVtLCBwaGRyLT5wX3BhZGRyLCBwaGRyLT5w
-X2ZpbGVzeiwgZGVzdCwNCj4gKwkJcGhkci0+cF9tZW1zeiArIHBoZHItPnBfbWVtc3ogLyAzKTsN
-Cj4gIA0KPiAgCWZvciAoaSA9IDA7IGkgPCBwaGRyLT5wX2ZpbGVzejsgaSsrKSB7DQo+ICANCg0K
-UmV2aWV3ZWQtYnk6IFBhdHJpY2UgQ2hvdGFyZCA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4NCg0K
-VGhhbmtzDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable result is being initialized with a value that
+is never read and is being re-assigned later on. The assignment
+is redundant and hence can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wilc1000/spi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/spi.c b/drivers/staging/wilc1000/spi.c
+index 55f8757325f0..8694ab5fcb22 100644
+--- a/drivers/staging/wilc1000/spi.c
++++ b/drivers/staging/wilc1000/spi.c
+@@ -733,7 +733,7 @@ static int spi_internal_read(struct wilc *wilc, u32 adr, u32 *data)
+ static int wilc_spi_write_reg(struct wilc *wilc, u32 addr, u32 data)
+ {
+ 	struct spi_device *spi = to_spi_device(wilc->dev);
+-	int result = N_OK;
++	int result;
+ 	u8 cmd = CMD_SINGLE_WRITE;
+ 	u8 clockless = 0;
+ 
+@@ -782,7 +782,7 @@ static int wilc_spi_write(struct wilc *wilc, u32 addr, u8 *buf, u32 size)
+ static int wilc_spi_read_reg(struct wilc *wilc, u32 addr, u32 *data)
+ {
+ 	struct spi_device *spi = to_spi_device(wilc->dev);
+-	int result = N_OK;
++	int result;
+ 	u8 cmd = CMD_SINGLE_READ;
+ 	u8 clockless = 0;
+ 
+-- 
+2.24.0
