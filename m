@@ -1,37 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Jan 2020 05:10:05 +0000
-Subject: [PATCH] media: c8sectpfe: clean up some indenting
-Message-Id: <20200114051005.njxf5d6s6ycyxhfi@kili.mountain>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Date: Tue, 14 Jan 2020 08:33:36 +0000
+Subject: Re: [PATCH] media: c8sectpfe: clean up some indenting
+Message-Id: <5eba4701-3460-5b2b-6fc7-f4f75481fae4@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200114051005.njxf5d6s6ycyxhfi@kili.mountain>
+In-Reply-To: <20200114051005.njxf5d6s6ycyxhfi@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Patrice Chotard <patrice.chotard@st.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The "seg_num," line wasn't indented.  All the arguments can fit nicely
-on two lines.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-index 5baada4f65e5..d1518a6770fa 100644
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-@@ -1034,9 +1034,8 @@ static void load_imem_segment(struct c8sectpfei *fei, Elf32_Phdr *phdr,
- 
- 	dev_dbg(fei->dev,
- 		"Loading IMEM segment %d 0x%08x\n\t (0x%x bytes) -> 0x%p (0x%x bytes)\n",
--seg_num,
--		phdr->p_paddr, phdr->p_filesz,
--		dest, phdr->p_memsz + phdr->p_memsz / 3);
-+		seg_num, phdr->p_paddr, phdr->p_filesz, dest,
-+		phdr->p_memsz + phdr->p_memsz / 3);
- 
- 	for (i = 0; i < phdr->p_filesz; i++) {
- 
--- 
-2.11.0
+SGkgRGFuDQoNCk9uIDEvMTQvMjAgNjoxMCBBTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gVGhl
+ICJzZWdfbnVtLCIgbGluZSB3YXNuJ3QgaW5kZW50ZWQuICBBbGwgdGhlIGFyZ3VtZW50cyBjYW4g
+Zml0IG5pY2VseQ0KPiBvbiB0d28gbGluZXMuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJw
+ZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21lZGlh
+L3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUuYyB8IDUgKystLS0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNv
+cmUuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2M4c2VjdHBmZS9jOHNlY3RwZmUtY29y
+ZS5jDQo+IGluZGV4IDViYWFkYTRmNjVlNS4uZDE1MThhNjc3MGZhIDEwMDY0NA0KPiAtLS0gYS9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUuYw0KPiAr
+KysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jOHNlY3RwZmUvYzhzZWN0cGZlLWNvcmUu
+Yw0KPiBAQCAtMTAzNCw5ICsxMDM0LDggQEAgc3RhdGljIHZvaWQgbG9hZF9pbWVtX3NlZ21lbnQo
+c3RydWN0IGM4c2VjdHBmZWkgKmZlaSwgRWxmMzJfUGhkciAqcGhkciwNCj4gIA0KPiAgCWRldl9k
+YmcoZmVpLT5kZXYsDQo+ICAJCSJMb2FkaW5nIElNRU0gc2VnbWVudCAlZCAweCUwOHhcblx0ICgw
+eCV4IGJ5dGVzKSAtPiAweCVwICgweCV4IGJ5dGVzKVxuIiwNCj4gLXNlZ19udW0sDQo+IC0JCXBo
+ZHItPnBfcGFkZHIsIHBoZHItPnBfZmlsZXN6LA0KPiAtCQlkZXN0LCBwaGRyLT5wX21lbXN6ICsg
+cGhkci0+cF9tZW1zeiAvIDMpOw0KPiArCQlzZWdfbnVtLCBwaGRyLT5wX3BhZGRyLCBwaGRyLT5w
+X2ZpbGVzeiwgZGVzdCwNCj4gKwkJcGhkci0+cF9tZW1zeiArIHBoZHItPnBfbWVtc3ogLyAzKTsN
+Cj4gIA0KPiAgCWZvciAoaSA9IDA7IGkgPCBwaGRyLT5wX2ZpbGVzejsgaSsrKSB7DQo+ICANCg0K
+UmV2aWV3ZWQtYnk6IFBhdHJpY2UgQ2hvdGFyZCA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4NCg0K
+VGhhbmtzDQo
