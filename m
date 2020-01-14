@@ -1,67 +1,67 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 03 Jan 2020 12:34:41 +0000
-Subject: Re: [PATCH] video: pxafb: Use devm_platform_ioremap_resource() in pxafb_probe()
-Message-Id: <0d499b49-dc8c-de58-8268-36e3cced5ff0@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 14 Jan 2020 16:09:11 +0000
+Subject: Applied "ASoC: rt700: remove unused including <linux/version.h>" to the asoc tree
+Message-Id: <applied-20200114011319.173401-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190919150135epcas3p2bf5ab33712e12edd90af2766eeaaccda@epcas3p2.samsung.com>
- <a1b804b1-43c2-327a-d6d1-df49aebec680@web.de>
-In-Reply-To: <a1b804b1-43c2-327a-d6d1-df49aebec680@web.de>
+In-Reply-To: <20200114011319.173401-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, Daniel Mack <daniel@zonque.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, YueHaibing <yuehaibing@huawei.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>
 
+The patch
 
-On 9/19/19 5:01 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 19 Sep 2019 16:51:38 +0200
-> 
-> Simplify this function implementation by using a known wrapper function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   ASoC: rt700: remove unused including <linux/version.h>
 
-Thanks, patch queued for v5.6 (also sorry for the delay).
+has been applied to the asoc tree at
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
 
-> ---
->  drivers/video/fbdev/pxafb.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-> index f70c9f79622e..237f8f436fdb 100644
-> --- a/drivers/video/fbdev/pxafb.c
-> +++ b/drivers/video/fbdev/pxafb.c
-> @@ -2237,7 +2237,6 @@ static int pxafb_probe(struct platform_device *dev)
->  {
->  	struct pxafb_info *fbi;
->  	struct pxafb_mach_info *inf, *pdata;
-> -	struct resource *r;
->  	int i, irq, ret;
-> 
->  	dev_dbg(&dev->dev, "pxafb_probe\n");
-> @@ -2303,14 +2302,7 @@ static int pxafb_probe(struct platform_device *dev)
->  		fbi->lcd_supply = NULL;
->  	}
-> 
-> -	r = platform_get_resource(dev, IORESOURCE_MEM, 0);
-> -	if (r = NULL) {
-> -		dev_err(&dev->dev, "no I/O memory resource defined\n");
-> -		ret = -ENODEV;
-> -		goto failed;
-> -	}
-> -
-> -	fbi->mmio_base = devm_ioremap_resource(&dev->dev, r);
-> +	fbi->mmio_base = devm_platform_ioremap_resource(dev, 0);
->  	if (IS_ERR(fbi->mmio_base)) {
->  		dev_err(&dev->dev, "failed to get I/O memory\n");
->  		ret = -EBUSY;
-> --
-> 2.23.0
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 5615b7a2784331d115e5774e80c1fb0c1ce80644 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 14 Jan 2020 01:13:19 +0000
+Subject: [PATCH] ASoC: rt700: remove unused including <linux/version.h>
+
+Remove including <linux/version.h> that don't need it.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20200114011319.173401-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/rt700.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt700.c b/sound/soc/codecs/rt700.c
+index b1830c1ebf8a..ff68f0e4f629 100644
+--- a/sound/soc/codecs/rt700.c
++++ b/sound/soc/codecs/rt700.c
+@@ -8,7 +8,6 @@
+ 
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/version.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
+-- 
+2.20.1
