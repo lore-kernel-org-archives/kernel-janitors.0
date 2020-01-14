@@ -1,99 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Jan 2020 11:26:41 +0000
-Subject: Re: [PATCH][next] staging: wfx: check for memory allocation failures from wfx_alloc_hif
-Message-Id: <20200103112641.GH3911@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Jan 2020 17:11:45 +0000
+Subject: [PATCH][next] staging: vt6655: remove redundant assignment to variable ret
+Message-Id: <20200114171145.375356-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191221001543.15255-1-colin.king@canonical.com>
-In-Reply-To: <20191221001543.15255-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Dec 21, 2019 at 12:15:43AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently calls to wfx_alloc_hif are not checking for a null return
-> when a memory allocation fails and this leads to null pointer
-> dereferencing issues.  Fix this by adding null pointer checks and
-> returning passing down -ENOMEM errors where necessary. The error
-> checking in the current driver is a bit sparse, so this may need
-> some extra attention later if required.
-> 
-> Fixes: f95a29d40782 ("staging: wfx: add HIF commands helpers")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/wfx/hif_tx.c |  6 ++++++
->  drivers/staging/wfx/sta.c    | 13 +++++++------
->  2 files changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/staging/wfx/hif_tx.c b/drivers/staging/wfx/hif_tx.c
-> index 8a34a52dd5b9..d8e159670eae 100644
-> --- a/drivers/staging/wfx/hif_tx.c
-> +++ b/drivers/staging/wfx/hif_tx.c
-> @@ -366,6 +366,9 @@ int hif_set_edca_queue_params(struct wfx_vif *wvif, u16 queue,
->  	struct hif_req_edca_queue_params *body = wfx_alloc_hif(sizeof(*body),
->  							       &hif);
->  
+From: Colin Ian King <colin.king@canonical.com>
 
-I hate allocations in declaration block.  It's way more likely to have
-a bug like this where it's missing the NULL check.
+The variable ret is being initialized with a value that
+is never read and is being re-assigned later on. The
+assignment is redundant and hence can be removed.
 
-> +	if (!body)
-> +		return -ENOMEM;
-> +
->  	WARN_ON(arg->aifs > 255);
->  	body->aifsn = arg->aifs;
->  	body->cw_min = cpu_to_le16(arg->cw_min);
-> @@ -390,6 +393,9 @@ int hif_set_pm(struct wfx_vif *wvif, bool ps, int dynamic_ps_timeout)
->  	struct hif_msg *hif;
->  	struct hif_req_set_pm_mode *body = wfx_alloc_hif(sizeof(*body), &hif);
->  
-> +	if (!body)
-> +		return -ENOMEM;
-> +
->  	if (ps) {
->  		body->pm_mode.enter_psm = 1;
->  		// Firmware does not support more than 128ms
-> diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
-> index 9a61478d98f8..c08d691fe870 100644
-> --- a/drivers/staging/wfx/sta.c
-> +++ b/drivers/staging/wfx/sta.c
-> @@ -316,6 +316,7 @@ int wfx_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
->  {
->  	struct wfx_dev *wdev = hw->priv;
->  	struct wfx_vif *wvif = (struct wfx_vif *) vif->drv_priv;
-> +	int ret = 0;
->  
->  	WARN_ON(queue >= hw->queues);
->  
-> @@ -326,10 +327,10 @@ int wfx_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
->  	if (wvif->vif->type = NL80211_IFTYPE_STATION) {
->  		hif_set_uapsd_info(wvif, wvif->uapsd_mask);
->  		if (wvif->setbssparams_done && wvif->state = WFX_STATE_STA)
-> -			wfx_update_pm(wvif);
-> +			ret = wfx_update_pm(wvif);
->  	}
->  	mutex_unlock(&wdev->conf_mutex);
-> -	return 0;
-> +	return ret;
->  }
->  
->  int wfx_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
-> @@ -1322,7 +1323,7 @@ int wfx_config(struct ieee80211_hw *hw, u32 changed)
->  	if (changed & IEEE80211_CONF_CHANGE_PS) {
->  		wvif = NULL;
->  		while ((wvif = wvif_iterate(wdev, wvif)) != NULL)
-> -			wfx_update_pm(wvif);
-> +			ret = wfx_update_pm(wvif);
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vt6655/rf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We reset "ret" on every iteration through the loop and only use the
-last value.  Probably we should break out of the loop on failure.
-
->  		wvif = wdev_to_wvif(wdev, 0);
->  	}
->  
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/vt6655/rf.c b/drivers/staging/vt6655/rf.c
+index fb2855e686a7..d6ca6e5551a7 100644
+--- a/drivers/staging/vt6655/rf.c
++++ b/drivers/staging/vt6655/rf.c
+@@ -758,7 +758,7 @@ bool RFvWriteWakeProgSyn(struct vnt_private *priv, unsigned char byRFType,
+  */
+ bool RFbSetPower(struct vnt_private *priv, unsigned int rate, u16 uCH)
+ {
+-	bool ret = true;
++	bool ret;
+ 	unsigned char byPwr = 0;
+ 	unsigned char byDec = 0;
+ 
+-- 
+2.24.0
