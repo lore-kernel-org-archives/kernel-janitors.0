@@ -1,27 +1,39 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Tue, 07 Jan 2020 14:05:26 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: fix an error code in intel_modeset_all_tiles()
-Message-Id: <157840592663.2273.15929240102084093971@skylake-alporthouse-com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Jan 2020 05:09:02 +0000
+Subject: [PATCH] zswap: potential NULL dereference on error in init_zswap()
+Message-Id: <20200114050902.og32fkllkod5ycf5@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200107130322.gdk5b6jurifr26c2@kili.mountain>
- <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
-In-Reply-To: <04c2960a11f5361288d7d3a8a3bd16301b05c5e5.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "Souza, Jose" <jose.souza@intel.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Seth Jennings <sjenning@redhat.com>, Vitaly Wool <vitaly.wool@konsulko.com>
+Cc: Dan Streetman <ddstreet@ieee.org>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-Quoting Souza, Jose (2020-01-07 14:01:40)
-> On Tue, 2020-01-07 at 16:03 +0300, Dan Carpenter wrote:
-> > There is a cut and paste bug so we return the wrong error code.
-> >=20
-> > Fixes: a603f5bd1691 ("drm/i915/dp: Make sure all tiled connectors get
-> > added to the state with full modeset")
->=20
-> Reviewed-by: Jos=C3=A9 Roberto de Souza <jose.souza@intel.com>
->=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The "pool" pointer can be NULL at the end of the init_zswap().  (We
+would allocate a new pool later in that situation.)  So in the error
+handling then we need to make sure pool is a valid pointer before
+calling "zswap_pool_destroy(pool);" because that function dereferences
+the argument.
 
-Pushed. Thanks for the patch,
--Chris
+Fixes: 93d4dfa9fbd0 ("mm/zswap.c: add allocation hysteresis if pool limit is hit")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ mm/zswap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 7ec8bd912d13..55094e63b72d 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1359,7 +1359,8 @@ static int __init init_zswap(void)
+ 	return 0;
+ 
+ fallback_fail:
+-	zswap_pool_destroy(pool);
++	if (pool)
++		zswap_pool_destroy(pool);
+ hp_fail:
+ 	cpuhp_remove_state(CPUHP_MM_ZSWP_MEM_PREPARE);
+ dstmem_fail:
+-- 
+2.11.0
