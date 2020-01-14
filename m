@@ -1,35 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 22 Jan 2020 23:55:47 +0000
-Subject: [PATCH] media: rc: fix spelling mistake "to" -> "too"
-Message-Id: <20200122235547.2830605-1-colin.king@canonical.com>
+Date: Tue, 14 Jan 2020 18:16:04 +0000
+Subject: [PATCH] staging: wlan-ng: ensure error return is actually returned
+Message-Id: <20200114181604.390235-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+Currently when the call to prism2sta_ifst fails a netdev_err error
+is reported, error return variable result is set to -1 but the
+function always returns 0 for success.  Fix this by returning
+the error value in variable result rather than 0.
 
+Addresses-Coverity: ("Unused value")
+Fixes: 00b3ed168508 ("Staging: add wlan-ng prism2 usb driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/rc/ir-xmp-decoder.c | 2 +-
+ drivers/staging/wlan-ng/prism2mgmt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/ir-xmp-decoder.c b/drivers/media/rc/ir-xmp-decoder.c
-index 74a1d30fae6e..4c3d03876200 100644
---- a/drivers/media/rc/ir-xmp-decoder.c
-+++ b/drivers/media/rc/ir-xmp-decoder.c
-@@ -166,7 +166,7 @@ static int ir_xmp_decode(struct rc_dev *dev, struct ir_raw_event ev)
- 		} else if (geq_margin(ev.duration, XMP_NIBBLE_PREFIX, XMP_UNIT)) {
- 			/* store nibble raw data, decode after trailer */
- 			if (data->count = 16) {
--				dev_dbg(&dev->dev, "to many pulses (%d) ignoring: %u\n",
-+				dev_dbg(&dev->dev, "too many pulses (%d) ignoring: %u\n",
- 					data->count, ev.duration);
- 				data->state = STATE_INACTIVE;
- 				return -EINVAL;
+diff --git a/drivers/staging/wlan-ng/prism2mgmt.c b/drivers/staging/wlan-ng/prism2mgmt.c
+index 7350fe5d96a3..a8860d2aee68 100644
+--- a/drivers/staging/wlan-ng/prism2mgmt.c
++++ b/drivers/staging/wlan-ng/prism2mgmt.c
+@@ -959,7 +959,7 @@ int prism2mgmt_flashdl_state(struct wlandevice *wlandev, void *msgp)
+ 		}
+ 	}
+ 
+-	return 0;
++	return result;
+ }
+ 
+ /*----------------------------------------------------------------
 -- 
 2.24.0
