@@ -1,33 +1,67 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Mon, 06 Jan 2020 16:06:06 +0000
-Subject: Re: [PATCH] usb: ohci-da8xx: ensure error return on variable error is set
-Message-Id: <2c3b944c-6d31-ec50-234b-c203460ea06a@cogentembedded.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Jan 2020 16:27:36 +0000
+Subject: syzbot is quite fun
+Message-Id: <20200114162736.GD3719@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200106130609.51174-1-colin.king@canonical.com>
-In-Reply-To: <20200106130609.51174-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On 01/06/2020 04:06 PM, Colin King wrote:
+Hi Everyone,
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when an error in da8xx_ohci->oc_gpi occurs causes an
+I joined the syzbot mailing list last week.  It seems quite fun.
 
-   s/gpi/gpio/. And you missed a noun between 2 verbs.
+I'm puzzling over this one right now.
 
-> uninitialized error value in variable 'error' to be returned. 
-> Fix this by ensuring the error variable is set to the error value
-> in da8xx_ohci->oc_gpi.
+https://syzkaller.appspot.com/bug?extid=9A48339b077c5a80b869
 
-   oc_gpio again.
+Notice the kernel is 5.5.0-rc3-syzkaller (git checkout v5.5-rc3).
 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: d193abf1c913 ("usb: ohci-da8xx: add vbus and overcurrent gpios")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-[...]
+  1801  static int uvc_scan_device(struct uvc_device *dev)
+  1802  {
+  1803          struct uvc_video_chain *chain;
+  1804          struct uvc_entity *term;
+  1805 =20
+  1806          list_for_each_entry(term, &dev->entities, list) {
+  1807                  if (!UVC_ENTITY_IS_OTERM(term))
+  1808                          continue;
+  1809 =20
+  1810                  /* If the terminal is already included in a chain, =
+skip it.
+  1811                   * This can happen for chains that have multiple ou=
+tput
+  1812                   * terminals, where all output terminals beside the=
+ first one
+  1813                   * will be inserted in the chain in forward scans.
+  1814                   */
+  1815                  if (term->chain.next || term->chain.prev)
+  1816                          continue;
+  1817 =20
+  1818                  chain =3D uvc_alloc_chain(dev);
+  1819                  if (chain =3D NULL)
+  1820                          return -ENOMEM;
+  1821 =20
+  1822                  term->flags |=3D UVC_ENTITY_FLAG_DEFAULT;
+  1823 =20
+  1824                  if (uvc_scan_chain(chain, term) < 0) {
+  1825                          kfree(chain);
+                                      ^^^^^
+Somehow this "chain" is used after it has been freed.  That doesn't
+seem possible because uvc_scan_chain() doesn't store any reference to
+it.
 
-MBR, Sergei
+  1826                          continue;
+  1827                  }
+  1828 =20
+  1829                  uvc_trace(UVC_TRACE_PROBE, "Found a valid video cha=
+in (%s).\n",
+  1830                            uvc_print_chain(chain));
+  1831 =20
+  1832                  list_add_tail(&chain->list, &dev->chains);
+  1833          }
+
+Its like solving a puzzle.  Reviewing code skills etc.
+
+regards,
+dan carpenter
