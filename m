@@ -1,39 +1,47 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 08 Jan 2020 22:29:24 +0000
-Subject: Re: [PATCH] power: avs: qcom-cpr: Fix error code in cpr_fuse_corner_init()
-Message-Id: <CAJZ5v0hwo_NzspnM551DjJOKsJNV8ssT_FKwpj3qfhZ+r-ebJg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Jan 2020 15:44:12 +0000
+Subject: [PATCH] ALSA: hda - fix out of bounds read on spec->smux_paths
+Message-Id: <20200114154412.365395-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108053418.tjc62uppube6q4q3@kili.mountain>
-In-Reply-To: <20200108053418.tjc62uppube6q4q3@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Gross <agross@kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux PM <linux-pm@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 6:34 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We're returning the wrong variable.  "ret" isn't initialized.
->
-> Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/power/avs/qcom-cpr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/power/avs/qcom-cpr.c b/drivers/power/avs/qcom-cpr.c
-> index 9247f53550b3..0321729431a5 100644
-> --- a/drivers/power/avs/qcom-cpr.c
-> +++ b/drivers/power/avs/qcom-cpr.c
-> @@ -922,7 +922,7 @@ static int cpr_fuse_corner_init(struct cpr_drv *drv)
->                 uV = cpr_read_fuse_uV(desc, fdata, fuses->init_voltage,
->                                       step_volt, drv);
->                 if (uV < 0)
-> -                       return ret;
-> +                       return uV;
->
->                 fuse->min_uV = fdata->min_uV;
->                 fuse->max_uV = fdata->max_uV;
-> --
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the fix, but this issue has been fixed already.
+It is possible for the call to snd_hda_get_num_conns to fail and return
+a negative error code that gets assigned to num_conns. In that specific
+case, the check of very large values of val against num_conns will not
+fail the -EINVAL check and later on an out of bounds array read on
+spec->smux_paths will occur.  Fix this by sanity checking for an error
+return from the call to snd_hda_get_num_conns.
+
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: 272f3ea31776 ("ALSA: hda - Add SPDIF mux control to AD codec auto-parser")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/hda/patch_analog.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/hda/patch_analog.c b/sound/pci/hda/patch_analog.c
+index 88c46b051d14..399561369495 100644
+--- a/sound/pci/hda/patch_analog.c
++++ b/sound/pci/hda/patch_analog.c
+@@ -756,9 +756,11 @@ static int ad1988_auto_smux_enum_put(struct snd_kcontrol *kcontrol,
+ 	struct ad198x_spec *spec = codec->spec;
+ 	unsigned int val = ucontrol->value.enumerated.item[0];
+ 	struct nid_path *path;
+-	int num_conns = snd_hda_get_num_conns(codec, 0x0b) + 1;
++	int num_conns = snd_hda_get_num_conns(codec, 0x0b);
+ 
+-	if (val >= num_conns)
++	if (num_conns < 0)
++		return num_conns;
++	if (val >= num_conns + 1)
+ 		return -EINVAL;
+ 	if (spec->cur_smux = val)
+ 		return 0;
+-- 
+2.24.0
