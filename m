@@ -1,34 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Fri, 10 Jan 2020 01:25:33 +0000
-Subject: [PATCH -next] phy: ti: j721e-wiz: Fix return value check in wiz_probe()
-Message-Id: <20200110012533.33143-1-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>, syzbot <syzbot+784ccb935f9900cc7c9e@sy
+Date: Wed, 15 Jan 2020 17:46:28 +0000
+Subject: [PATCH] HID: hiddev: Fix race in in hiddev_disconnect()
+Message-Id: <20200115174628.zxpxbpa6bwspjajg@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.2001141100290.1593-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>, Jyri Sarha <jsarha@ti.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, andreyknvl@google.com, syzkaller-bugs@googlegroups.com
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+Syzbot reports that "hiddev" is used after it's free in hiddev_disconnect().
+The hiddev_disconnect() function sets "hiddev->exist = 0;" so
+hiddev_release() can free it as soon as we drop the "existancelock"
+lock.  This patch moves the mutex_unlock(&hiddev->existancelock) until
+after we have finished using it.
 
-Fixes: b46f531313a4 ("phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reported-by: syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com
+Fixes: 7f77897ef2b6 ("HID: hiddev: fix potential use-after-free")
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/phy/ti/phy-j721e-wiz.c | 2 +-
+ drivers/hid/usbhid/hiddev.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
-index b86ebdd68302..b9654ec89662 100644
---- a/drivers/phy/ti/phy-j721e-wiz.c
-+++ b/drivers/phy/ti/phy-j721e-wiz.c
-@@ -762,7 +762,7 @@ static int wiz_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
+index a970b809d778..4140dea693e9 100644
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -932,9 +932,9 @@ void hiddev_disconnect(struct hid_device *hid)
+ 	hiddev->exist = 0;
  
- 	base = devm_ioremap(dev, res.start, resource_size(&res));
--	if (IS_ERR(base))
-+	if (!base)
- 		goto err_addr_to_resource;
- 
- 	regmap = devm_regmap_init_mmio(dev, base, &wiz_regmap_config);
+ 	if (hiddev->open) {
+-		mutex_unlock(&hiddev->existancelock);
+ 		hid_hw_close(hiddev->hid);
+ 		wake_up_interruptible(&hiddev->wait);
++		mutex_unlock(&hiddev->existancelock);
+ 	} else {
+ 		mutex_unlock(&hiddev->existancelock);
+ 		kfree(hiddev);
+-- 
+2.11.0
