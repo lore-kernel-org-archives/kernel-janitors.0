@@ -1,41 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 14 Jan 2020 14:54:48 +0000
-Subject: [PATCH] net/wan/fsl_ucc_hdlc: fix out of bounds write on array utdm_info
-Message-Id: <20200114145448.361888-1-colin.king@canonical.com>
+From: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Date: Wed, 15 Jan 2020 17:29:02 +0000
+Subject: Re: [PATCH] net/wan/fsl_ucc_hdlc: fix out of bounds write on array utdm_info
+Message-Id: <335a44aa9bfbec197385c1e0a9cc35cc29fb307d.camel@infinera.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200114145448.361888-1-colin.king@canonical.com>
+In-Reply-To: <20200114145448.361888-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhao Qiang <qiang.zhao@nxp.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "qiang.zhao@nxp.com" <qiang.zhao@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Array utdm_info is declared as an array of MAX_HDLC_NUM (4) elements
-however up to UCC_MAX_NUM (8) elements are potentially being written
-to it.  Currently we have an array out-of-bounds write error on the
-last 4 elements. Fix this by making utdm_info UCC_MAX_NUM elements in
-size.
-
-Addresses-Coverity: ("Out-of-bounds write")
-Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wan/fsl_ucc_hdlc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
-index 94e870f48e21..9edd94679283 100644
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -73,7 +73,7 @@ static struct ucc_tdm_info utdm_primary_info = {
- 	},
- };
- 
--static struct ucc_tdm_info utdm_info[MAX_HDLC_NUM];
-+static struct ucc_tdm_info utdm_info[UCC_MAX_NUM];
- 
- static int uhdlc_init(struct ucc_hdlc_private *priv)
- {
--- 
-2.24.0
+T24gVHVlLCAyMDIwLTAxLTE0IGF0IDE0OjU0ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiAN
+Cj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+
+IEFycmF5IHV0ZG1faW5mbyBpcyBkZWNsYXJlZCBhcyBhbiBhcnJheSBvZiBNQVhfSERMQ19OVU0g
+KDQpIGVsZW1lbnRzDQo+IGhvd2V2ZXIgdXAgdG8gVUNDX01BWF9OVU0gKDgpIGVsZW1lbnRzIGFy
+ZSBwb3RlbnRpYWxseSBiZWluZyB3cml0dGVuDQo+IHRvIGl0LiAgQ3VycmVudGx5IHdlIGhhdmUg
+YW4gYXJyYXkgb3V0LW9mLWJvdW5kcyB3cml0ZSBlcnJvciBvbiB0aGUNCj4gbGFzdCA0IGVsZW1l
+bnRzLiBGaXggdGhpcyBieSBtYWtpbmcgdXRkbV9pbmZvIFVDQ19NQVhfTlVNIGVsZW1lbnRzIGlu
+DQo+IHNpemUuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiT3V0LW9mLWJvdW5kcyB3cml0
+ZSIpDQo+IEZpeGVzOiBjMTliNmQyNDZhMzUgKCJkcml2ZXJzL25ldDogc3VwcG9ydCBoZGxjIGZ1
+bmN0aW9uIGZvciBRRS1VQ0MiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
+aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpUaGlzIHNob3VsZCBiZSBzZW50IHRvIHN0YWJsZSBh
+cyB3ZWxsDQpDYzogPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+ICMgNC4xOS54Kw0KDQo+IC0tLQ0K
+PiAgZHJpdmVycy9uZXQvd2FuL2ZzbF91Y2NfaGRsYy5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9uZXQvd2FuL2ZzbF91Y2NfaGRsYy5jIGIvZHJpdmVycy9uZXQvd2FuL2ZzbF91Y2NfaGRs
+Yy5jDQo+IGluZGV4IDk0ZTg3MGY0OGUyMS4uOWVkZDk0Njc5MjgzIDEwMDY0NA0KPiAtLS0gYS9k
+cml2ZXJzL25ldC93YW4vZnNsX3VjY19oZGxjLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2FuL2Zz
+bF91Y2NfaGRsYy5jDQo+IEBAIC03Myw3ICs3Myw3IEBAIHN0YXRpYyBzdHJ1Y3QgdWNjX3RkbV9p
+bmZvIHV0ZG1fcHJpbWFyeV9pbmZvID0gew0KPiAgICAgICAgIH0sDQo+ICB9Ow0KPiANCj4gLXN0
+YXRpYyBzdHJ1Y3QgdWNjX3RkbV9pbmZvIHV0ZG1faW5mb1tNQVhfSERMQ19OVU1dOw0KPiArc3Rh
+dGljIHN0cnVjdCB1Y2NfdGRtX2luZm8gdXRkbV9pbmZvW1VDQ19NQVhfTlVNXTsNCj4gDQo+ICBz
+dGF0aWMgaW50IHVoZGxjX2luaXQoc3RydWN0IHVjY19oZGxjX3ByaXZhdGUgKnByaXYpDQo+ICB7
+DQo+IC0tDQo+IDIuMjQuMA0KPiANCg0K
