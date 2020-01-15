@@ -1,73 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 17 Jan 2020 15:44:12 +0000
-Subject: Applied "ASoC: rt700: fix return value check in rt700_sdw_probe()" to the asoc tree
-Message-Id: <applied-20200115143027.94364-1-weiyongjun1@huawei.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 15 Jan 2020 09:18:20 +0000
+Subject: Re: [PATCH -next] ath11k: add dependency for struct ath11k member debug
+Message-Id: <20200115091820.1A5C0C43383@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200115143027.94364-1-weiyongjun1@huawei.com>
+References: <20191213012417.130719-1-maowenan@huawei.com>
+In-Reply-To: <20191213012417.130719-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>, Bard Liao <bardliao@realtek.com>
+To: Mao Wenan <maowenan@huawei.com>
+Cc: davem@davemloft.net, msinada@codeaurora.org, periyasa@codeaurora.org, mpubbise@codeaurora.org, julia.lawall@lip6.fr, milehu@codeaurora.org, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The patch
+Mao Wenan <maowenan@huawei.com> wrote:
 
-   ASoC: rt700: fix return value check in rt700_sdw_probe()
+> If CONFIG_ATH11K, CONFIG_MAC80211_DEBUGFS are set,
+> and CONFIG_ATH11K_DEBUGFS is not set, below error can be found,
+> drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function ath11k_dbg_sta_open_htt_peer_stats:
+> drivers/net/wireless/ath/ath11k/debugfs_sta.c:411:4: error: struct ath11k has no member named debug
+>   ar->debug.htt_stats.stats_req = stats_req;
+> 
+> It is to add the dependency for the member of struct ath11k.
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
 
-has been applied to the asoc tree at
+Arnd already did something what I proposed:
+https://patchwork.kernel.org/patch/11321921/
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+Patch set to Superseded.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 20435df1c1d708b44f58da17653f2ea609aee790 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 15 Jan 2020 14:30:27 +0000
-Subject: [PATCH] ASoC: rt700: fix return value check in rt700_sdw_probe()
-
-In case of error, the function devm_regmap_init() returns ERR_PTR() and
-never returns NULL. The NULL test in the return value check should be
-replaced with IS_ERR().
-
-Fixes: 7d2a5f9ae41e ("ASoC: rt700: add rt700 codec driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Link: https://lore.kernel.org/r/20200115143027.94364-1-weiyongjun1@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/rt700-sdw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/rt700-sdw.c b/sound/soc/codecs/rt700-sdw.c
-index 314103601af3..a4b95425886f 100644
---- a/sound/soc/codecs/rt700-sdw.c
-+++ b/sound/soc/codecs/rt700-sdw.c
-@@ -460,8 +460,8 @@ static int rt700_sdw_probe(struct sdw_slave *slave,
- 
- 	regmap = devm_regmap_init(&slave->dev, NULL,
- 		&slave->dev, &rt700_regmap);
--	if (!regmap)
--		return -EINVAL;
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
- 
- 	rt700_init(&slave->dev, sdw_regmap, regmap, slave);
- 
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/11289709/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
