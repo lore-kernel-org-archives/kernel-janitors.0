@@ -1,30 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 08 Jan 2020 17:06:11 +0000
-Subject: Re: [PATCH -next] leds: leds-bd2802: remove set but not used variable 'pdata'
-Message-Id: <CACRpkdYz0UwAj0Ncs9SKWbN8vN-5E14GHL2KkANMb6H5OqEW7A@mail.gmail.com>
+From: Dan Robertson <dan@dlrobertson.com>
+Date: Wed, 15 Jan 2020 17:43:24 +0000
+Subject: Re: [PATCH] iio: accel: bma400: integer underflow setting accel scale
+Message-Id: <20200115174324.GA29555@nessie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108015322.51103-1-yuehaibing@huawei.com>
-In-Reply-To: <20200108015322.51103-1-yuehaibing@huawei.com>
+References: <20200115174531.p623ukjibn6kg6zz@kili.mountain>
+In-Reply-To: <20200115174531.p623ukjibn6kg6zz@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 2:57 AM YueHaibing <yuehaibing@huawei.com> wrote:
+Thanks for taking a look at the code and your feedback on the driver!
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/leds/leds-bd2802.c: In function 'bd2802_probe':
-> drivers/leds/leds-bd2802.c:663:35: warning:
->  variable 'pdata' set but not used [-Wunused-but-set-variable]
->
-> commit 4c3718f9d6a6 ("leds: bd2802: Convert to use GPIO descriptors")
-> left behind this unused variable.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Jan 15, 2020 at 08:45:31PM +0300, Dan Carpenter wrote:
+> We put an upper bound on "val2" but we also need to prevent negative
+> values.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+"val" is not used past the invalid value check. We only use "val" to make sure
+that it is in fact 0. AFAIK there is no "upper bound" on "val", it should be
+zero or we return -EINVAL. Am I missing something?
 
-Yours,
-Linus Walleij
+Cheers,
+
+ - Dan
