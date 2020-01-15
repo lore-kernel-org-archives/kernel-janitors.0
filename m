@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 Jan 2020 04:25:07 +0000
+From: Borislav Petkov <bp@alien8.de>
+Date: Wed, 15 Jan 2020 12:42:52 +0000
 Subject: Re: [PATCH] x86/microcode/amd: fix uninitalized structure cp
-Message-Id: <20200115042507.GE3719@kadam>
+Message-Id: <20200115124252.GD20975@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200114111505.320186-1-colin.king@canonical.com>
  <20200114113834.GE31032@zn.tnic>
@@ -11,33 +11,29 @@ References: <20200114111505.320186-1-colin.king@canonical.com>
  <20200114121000.GH31032@zn.tnic>
  <fcbb34b0-203e-0c7c-66cc-a3ae6fa3680c@canonical.com>
  <20200114150153.GJ31032@zn.tnic>
-In-Reply-To: <20200114150153.GJ31032@zn.tnic>
+ <20200115042507.GE3719@kadam>
+In-Reply-To: <20200115042507.GE3719@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Borislav Petkov <bp@alien8.de>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 04:01:53PM +0100, Borislav Petkov wrote:
-> On Tue, Jan 14, 2020 at 02:08:50PM +0000, Colin Ian King wrote:
-> > If I understand the question, it seems that get_builtin_microcode()
-> > tries to load in the appropriate amd microcode binary from the cpio data
-> > and this can potentially fail if the microcode is not provided for the
-> > specific processor family, so I believe this is a legitimate fix.
+On Wed, Jan 15, 2020 at 07:25:07AM +0300, Dan Carpenter wrote:
+> It's probably complaining that cp.name[] isn't initialized.
+
+That is possible.
+
+> UBSan will probably generate a warning at runtime when we do:
 > 
-> If the microcode for the specific processor family is not provided,
-> get_builtin_firmware() will return false and then we'll call
-> find_microcode_in_initrd() which will definitely return either a proper
-> pointer or a NULL-initialized cpio_data struct.
+> 	*ret = cp;
 > 
-> So I still don't see it.
+> But otherwise it's harmless.
 
-It's probably complaining that cp.name[] isn't initialized.  UBSan will
-probably generate a warning at runtime when we do:
+Yes, because we don't do anything with cpio_data.name.
 
-	*ret = cp;
+-- 
+Regards/Gruss,
+    Boris.
 
-But otherwise it's harmless.
-
-regards,
-dan carpenter
+https://people.kernel.org/tglx/notes-about-netiquette
