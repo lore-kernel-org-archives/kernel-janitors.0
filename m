@@ -1,32 +1,35 @@
-From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-Date: Wed, 22 Jan 2020 09:59:59 +0000
-Subject: RE: [EXT] [PATCH][next] scsi: ufs: fix spelling mistake "initilized" -> "initialized"
-Message-Id: <BN7PR08MB56844ADA4B5C9AC21230BC18DB0C0@BN7PR08MB5684.namprd08.prod.outlook.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 15 Jan 2020 14:30:34 +0000
+Subject: [PATCH -next] ASoC: rt711: fix return value check in rt711_sdw_probe()
+Message-Id: <20200115143034.94492-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200122091250.2777221-1-colin.king@canonical.com>
-In-Reply-To: <20200122091250.2777221-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shuming Fan <shumingf@realtek.com>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-SGksIENvbGluDQpUaGFua3MsIHRoaXMgdHlwbyByZXN1bHQgZnJvbSBteSBwYXRjaCwgYW5kIEkg
-c2VlIE1hcnRpbiBoYXMgbWFpbmxpbmVkIGluIGZvci1uZXh0IGJyYW5jaCwgaWYgbWFydGluIGRv
-ZXNuJ3QgbmVlZCBteSB1cGRhdGUgcGF0Y2hlcywNCkFkZCBteSByZXZpZXdlZC1ieSB0YWcsIHRo
-YW5rcyBhZ2Fpbi4NCg0KUmV2aWV3ZWQtYnk6IEJlYW4gSHVvIDxiZWFuaHVvQG1pY3Jvbi5jb20+
-DQoNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+
-DQo+IA0KPiBUaGVyZSBpcyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBwcl9lcnIgbWVzc2FnZS4g
-Rml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
-Y2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3Njc2kvdWZzL3Vmcy5oIHwgMiArLQ0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9zY3NpL3Vmcy91ZnMuaCBiL2RyaXZlcnMvc2NzaS91ZnMvdWZz
-LmggaW5kZXgNCj4gZGRlMmViMDJmNzZmLi5jZmUzODAzNDhiZjAgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvc2NzaS91ZnMvdWZzLmgNCj4gKysrIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnMuaA0KPiBA
-QCAtNTQ2LDcgKzU0Niw3IEBAIHN0YXRpYyBpbmxpbmUgYm9vbCB1ZnNfaXNfdmFsaWRfdW5pdF9k
-ZXNjX2x1bihzdHJ1Y3QNCj4gdWZzX2Rldl9pbmZvICpkZXZfaW5mbywNCj4gIAkJdTggbHVuKQ0K
-PiAgew0KPiAgCWlmICghZGV2X2luZm8gfHwgIWRldl9pbmZvLT5tYXhfbHVfc3VwcG9ydGVkKSB7
-DQo+IC0JCXByX2VycigiTWF4IEdlbmVyYWwgTFUgc3VwcG9ydGVkIGJ5IFVGUyBpc24ndCBpbml0
-aWxpemVkXG4iKTsNCj4gKwkJcHJfZXJyKCJNYXggR2VuZXJhbCBMVSBzdXBwb3J0ZWQgYnkgVUZT
-IGlzbid0IGluaXRpYWxpemVkXG4iKTsNCj4gIAkJcmV0dXJuIGZhbHNlOw0KPiAgCX0NCj4gDQo+
-IC0tDQo+IDIuMjQuMA0KDQo
+In case of error, the function devm_regmap_init() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
+
+Fixes: 320b8b0d13b8 ("ASoC: rt711: add rt711 codec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/rt711-sdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/rt711-sdw.c b/sound/soc/codecs/rt711-sdw.c
+index e28dc84ede5b..85e62e1059cd 100644
+--- a/sound/soc/codecs/rt711-sdw.c
++++ b/sound/soc/codecs/rt711-sdw.c
+@@ -460,8 +460,8 @@ static int rt711_sdw_probe(struct sdw_slave *slave,
+ 
+ 	regmap = devm_regmap_init(&slave->dev, NULL,
+ 		&slave->dev, &rt711_regmap);
+-	if (!regmap)
+-		return -EINVAL;
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
+ 
+ 	rt711_init(&slave->dev, sdw_regmap, regmap, slave);
