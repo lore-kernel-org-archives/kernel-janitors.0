@@ -1,29 +1,27 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 03 Jan 2020 12:33:54 +0000
-Subject: Re: [PATCH] video: ocfb: Use devm_platform_ioremap_resource() in ocfb_probe()
-Message-Id: <94a71d4e-25c2-5aa4-208f-70e46b6a964e@samsung.com>
+Date: Wed, 15 Jan 2020 14:36:10 +0000
+Subject: Re: [PATCH][next] video: hyperv: hyperv_fb: fix indentation issue
+Message-Id: <060a65e9-1880-0356-f8f3-447cb391b4e7@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20190919143339epcas5p2ca00bc034be8e478353a40475683de13@epcas5p2.samsung.com>
- <61b75aa6-ff92-e0ed-53f2-50a95d93d1f6@web.de>
-In-Reply-To: <61b75aa6-ff92-e0ed-53f2-50a95d93d1f6@web.de>
+References: <CGME20191114172730eucas1p1206011eed67d59f39fbbcf0b9ad1bbca@eucas1p1.samsung.com>
+ <20191114172720.322023-1-colin.king@canonical.com>
+In-Reply-To: <20191114172720.322023-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Himanshu Jha <himanshujha199640@gmail.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>
 
 
-On 9/19/19 4:33 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 19 Sep 2019 16:26:56 +0200
+On 11/14/19 6:27 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Simplify this function implementation by using a known wrapper function.
+> There is a block of statements that are indented
+> too deeply, remove the extraneous tabs.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks, patch queued for v5.6 (also sorry for the delay).
+Patch queued for v5.6, thanks.
 
 Best regards,
 --
@@ -32,35 +30,22 @@ Samsung R&D Institute Poland
 Samsung Electronics
 
 > ---
->  drivers/video/fbdev/ocfb.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
+>  drivers/video/fbdev/hyperv_fb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/video/fbdev/ocfb.c b/drivers/video/fbdev/ocfb.c
-> index a970edc2a6f8..be308b4dc91d 100644
-> --- a/drivers/video/fbdev/ocfb.c
-> +++ b/drivers/video/fbdev/ocfb.c
-> @@ -297,7 +297,6 @@ static int ocfb_probe(struct platform_device *pdev)
->  {
->  	int ret = 0;
->  	struct ocfb_dev *fbdev;
-> -	struct resource *res;
->  	int fbsize;
+> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
+> index 4cd27e5172a1..5fcf4bdf85ab 100644
+> --- a/drivers/video/fbdev/hyperv_fb.c
+> +++ b/drivers/video/fbdev/hyperv_fb.c
+> @@ -582,8 +582,8 @@ static int synthvid_get_supported_resolution(struct hv_device *hdev)
+>  	t = wait_for_completion_timeout(&par->wait, VSP_TIMEOUT);
+>  	if (!t) {
+>  		pr_err("Time out on waiting resolution response\n");
+> -			ret = -ETIMEDOUT;
+> -			goto out;
+> +		ret = -ETIMEDOUT;
+> +		goto out;
+>  	}
+>  
+>  	if (msg->resolution_resp.resolution_count = 0) {
 > 
->  	fbdev = devm_kzalloc(&pdev->dev, sizeof(*fbdev), GFP_KERNEL);
-> @@ -319,13 +318,7 @@ static int ocfb_probe(struct platform_device *pdev)
->  	ocfb_init_var(fbdev);
->  	ocfb_init_fix(fbdev);
-> 
-> -	/* Request I/O resource */
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "I/O resource request failed\n");
-> -		return -ENXIO;
-> -	}
-> -	fbdev->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	fbdev->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(fbdev->regs))
->  		return PTR_ERR(fbdev->regs);
-> 
-> --
-> 2.23.0
