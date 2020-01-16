@@ -1,30 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 26 Jan 2020 15:48:17 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: fix spelling mistake "initilized" -> "initialized"
-Message-Id: <20200126154817.F08E5C4479C@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Jan 2020 17:57:58 +0000
+Subject: [PATCH][next] driver core: platform: fix u32 greater or equal to zero comparison
+Message-Id: <20200116175758.88396-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200122093340.2800226-1-colin.king@canonical.com>
-In-Reply-To: <20200122093340.2800226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Simon Schwartz <kern.simon@theschwartz.xyz>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in one of the fields in the btc_coexist struct,
-> fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Currently the check that a u32 variable i is >= 0 is always true because
+the unsigned variable will never be negative, causing the loop to run
+forever.  Fix this by changing the pre-decrement check to a zero check on
+i followed by a decrement of i.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 39cc539f90d0 ("driver core: platform: Prevent resouce overflow from causing infinite loops")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/base/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-f76c34082b24 rtlwifi: btcoex: fix spelling mistake "initilized" -> "initialized"
-
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 864b53b3d598..7fa654f1288b 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -571,7 +571,7 @@ int platform_device_add(struct platform_device *pdev)
+ 		pdev->id = PLATFORM_DEVID_AUTO;
+ 	}
+ 
+-	while (--i >= 0) {
++	while (i--) {
+ 		struct resource *r = &pdev->resource[i];
+ 		if (r->parent)
+ 			release_resource(r);
 -- 
-https://patchwork.kernel.org/patch/11345405/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.24.0
