@@ -1,56 +1,46 @@
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Date: Fri, 31 Jan 2020 10:15:43 +0000
-Subject: Re: [PATCH net] ice: Fix a couple off by one bugs
-Message-Id: <20200131101543.GA4872@ranger.igk.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Jan 2020 15:48:52 +0000
+Subject: [PATCH][next][V2] tee: fix memory allocation failure checks on drv_data and amdtee
+Message-Id: <20200116154852.84532-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200131045658.ahliv7jvubpwoeru@kili.mountain>
-In-Reply-To: <20200131045658.ahliv7jvubpwoeru@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, Henry Tieman <henry.w.tieman@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Wiklander <jens.wiklander@linaro.org>, Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>, Gary R Hook <gary.hook@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, Rijo Thomas <Rijo-john.Thomas@amd.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 07:56:59AM +0300, Dan Carpenter wrote:
-> The hw->blk[blk]->es.ref_count[] array has hw->blk[blk].es.count
-> elements.  It gets allocated in ice_init_hw_tbls().  So the > should be
-> >= to prevent accessing one element beyond the end of the array.
-> 
-> Fixes: 2c61054c5fda ("ice: Optimize table usage")
+From: Colin Ian King <colin.king@canonical.com>
 
-You should also provide:
-Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
+Currently the memory allocation failure checks on drv_data and
+amdtee are using IS_ERR rather than checking for a null pointer.
+Fix these checks to use the conventional null pointer check.
 
-prof_id can be 0 so thanks for catching this. You can take my:
-Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Addresses-Coverity: ("Dereference null return")
+Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: update to apply against cryptodev-2.6 tree tip
+---
+ drivers/tee/amdtee/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-> index 99208946224c..38a7041fe774 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-> @@ -1950,7 +1950,7 @@ ice_free_prof_id(struct ice_hw *hw, enum ice_block blk, u8 prof_id)
->  static enum ice_status
->  ice_prof_inc_ref(struct ice_hw *hw, enum ice_block blk, u8 prof_id)
->  {
-> -	if (prof_id > hw->blk[blk].es.count)
-> +	if (prof_id >= hw->blk[blk].es.count)
->  		return ICE_ERR_PARAM;
->  
->  	hw->blk[blk].es.ref_count[prof_id]++;
-> @@ -1991,7 +1991,7 @@ ice_write_es(struct ice_hw *hw, enum ice_block blk, u8 prof_id,
->  static enum ice_status
->  ice_prof_dec_ref(struct ice_hw *hw, enum ice_block blk, u8 prof_id)
->  {
-> -	if (prof_id > hw->blk[blk].es.count)
-> +	if (prof_id >= hw->blk[blk].es.count)
->  		return ICE_ERR_PARAM;
->  
->  	if (hw->blk[blk].es.ref_count[prof_id] > 0) {
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+index be8937eb5d43..6370bb55f512 100644
+--- a/drivers/tee/amdtee/core.c
++++ b/drivers/tee/amdtee/core.c
+@@ -446,11 +446,11 @@ static int __init amdtee_driver_init(void)
+ 	}
+ 
+ 	drv_data = kzalloc(sizeof(*drv_data), GFP_KERNEL);
+-	if (IS_ERR(drv_data))
++	if (!drv_data)
+ 		return -ENOMEM;
+ 
+ 	amdtee = kzalloc(sizeof(*amdtee), GFP_KERNEL);
+-	if (IS_ERR(amdtee)) {
++	if (!amdtee) {
+ 		rc = -ENOMEM;
+ 		goto err_kfree_drv_data;
+ 	}
+-- 
+2.24.0
