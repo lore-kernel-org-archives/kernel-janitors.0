@@ -1,47 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 14 Jan 2020 17:27:20 +0000
-Subject: [PATCH][next] staging: wilc1000: remove redundant assignment to variable result
-Message-Id: <20200114172720.376286-1-colin.king@canonical.com>
+From: <Claudiu.Beznea@microchip.com>
+Date: Thu, 16 Jan 2020 11:08:50 +0000
+Subject: Re: [PATCH][next] staging: wilc1000: remove redundant assignment to variable result
+Message-Id: <a0631a12-a183-30fa-98da-036673d7f207@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200114172720.376286-1-colin.king@canonical.com>
+In-Reply-To: <20200114172720.376286-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adham Abozaeid <adham.abozaeid@microchip.com>, Ajay Singh <ajay.kathat@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+To: colin.king@canonical.com, Adham.Abozaeid@microchip.com, Ajay.Kathat@microchip.com, gregkh@linuxfoundation.org, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The variable result is being initialized with a value that
-is never read and is being re-assigned later on. The assignment
-is redundant and hence can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/spi.c b/drivers/staging/wilc1000/spi.c
-index 55f8757325f0..8694ab5fcb22 100644
---- a/drivers/staging/wilc1000/spi.c
-+++ b/drivers/staging/wilc1000/spi.c
-@@ -733,7 +733,7 @@ static int spi_internal_read(struct wilc *wilc, u32 adr, u32 *data)
- static int wilc_spi_write_reg(struct wilc *wilc, u32 addr, u32 data)
- {
- 	struct spi_device *spi = to_spi_device(wilc->dev);
--	int result = N_OK;
-+	int result;
- 	u8 cmd = CMD_SINGLE_WRITE;
- 	u8 clockless = 0;
- 
-@@ -782,7 +782,7 @@ static int wilc_spi_write(struct wilc *wilc, u32 addr, u8 *buf, u32 size)
- static int wilc_spi_read_reg(struct wilc *wilc, u32 addr, u32 *data)
- {
- 	struct spi_device *spi = to_spi_device(wilc->dev);
--	int result = N_OK;
-+	int result;
- 	u8 cmd = CMD_SINGLE_READ;
- 	u8 clockless = 0;
- 
--- 
-2.24.0
+DQoNCk9uIDE0LjAxLjIwMjAgMTk6MjcsIENvbGluIEtpbmcgd3JvdGU6DQo+IEVYVEVSTkFMIEVN
+QUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtu
+b3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
+LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSB2YXJpYWJsZSByZXN1bHQgaXMgYmVpbmcg
+aW5pdGlhbGl6ZWQgd2l0aCBhIHZhbHVlIHRoYXQNCj4gaXMgbmV2ZXIgcmVhZCBhbmQgaXMgYmVp
+bmcgcmUtYXNzaWduZWQgbGF0ZXIgb24uIFRoZSBhc3NpZ25tZW50DQo+IGlzIHJlZHVuZGFudCBh
+bmQgaGVuY2UgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiVW51
+c2VkIHZhbHVlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJl
+em5lYUBtaWNyb2NoaXAuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAw
+L3NwaS5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRl
+bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9z
+cGkuYyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9zcGkuYw0KPiBpbmRleCA1NWY4NzU3MzI1
+ZjAuLjg2OTRhYjVmY2IyMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAw
+L3NwaS5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC9zcGkuYw0KPiBAQCAtNzMz
+LDcgKzczMyw3IEBAIHN0YXRpYyBpbnQgc3BpX2ludGVybmFsX3JlYWQoc3RydWN0IHdpbGMgKndp
+bGMsIHUzMiBhZHIsIHUzMiAqZGF0YSkNCj4gIHN0YXRpYyBpbnQgd2lsY19zcGlfd3JpdGVfcmVn
+KHN0cnVjdCB3aWxjICp3aWxjLCB1MzIgYWRkciwgdTMyIGRhdGEpDQo+ICB7DQo+ICAgICAgICAg
+c3RydWN0IHNwaV9kZXZpY2UgKnNwaSA9IHRvX3NwaV9kZXZpY2Uod2lsYy0+ZGV2KTsNCj4gLSAg
+ICAgICBpbnQgcmVzdWx0ID0gTl9PSzsNCj4gKyAgICAgICBpbnQgcmVzdWx0Ow0KPiAgICAgICAg
+IHU4IGNtZCA9IENNRF9TSU5HTEVfV1JJVEU7DQo+ICAgICAgICAgdTggY2xvY2tsZXNzID0gMDsN
+Cj4gDQo+IEBAIC03ODIsNyArNzgyLDcgQEAgc3RhdGljIGludCB3aWxjX3NwaV93cml0ZShzdHJ1
+Y3Qgd2lsYyAqd2lsYywgdTMyIGFkZHIsIHU4ICpidWYsIHUzMiBzaXplKQ0KPiAgc3RhdGljIGlu
+dCB3aWxjX3NwaV9yZWFkX3JlZyhzdHJ1Y3Qgd2lsYyAqd2lsYywgdTMyIGFkZHIsIHUzMiAqZGF0
+YSkNCj4gIHsNCj4gICAgICAgICBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpID0gdG9fc3BpX2Rldmlj
+ZSh3aWxjLT5kZXYpOw0KPiAtICAgICAgIGludCByZXN1bHQgPSBOX09LOw0KPiArICAgICAgIGlu
+dCByZXN1bHQ7DQo+ICAgICAgICAgdTggY21kID0gQ01EX1NJTkdMRV9SRUFEOw0KPiAgICAgICAg
+IHU4IGNsb2NrbGVzcyA9IDA7DQo+IA0KPiAtLQ0KPiAyLjI0LjANCj4gDQo+IA=
