@@ -1,43 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 13 Jan 2020 12:31:49 +0000
-Subject: [PATCH][next][V2] drivers/misc: ti-st: remove redundant assignment to variables i and flags
-Message-Id: <20200113123149.187555-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 17 Jan 2020 02:41:49 +0000
+Subject: [PATCH -next] ASoC: rt715: fix return value check in rt715_sdw_probe()
+Message-Id: <20200117024149.75515-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jack Yu <jack.yu@realtek.com>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In case of error, the function devm_regmap_init() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-The variables i and flags are being initialized with values that are
-never read.  The initializations are redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d1ede0641b05 ("ASoC: rt715: add RT715 codec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-
-V2: remove assignment to flags too, thanks to Dan Carpenter for spotting that.
-
----
- drivers/misc/ti-st/st_core.c | 4 ++--
+ sound/soc/codecs/rt715-sdw.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
-index 2ae9948a91e1..14136d2cc8f9 100644
---- a/drivers/misc/ti-st/st_core.c
-+++ b/drivers/misc/ti-st/st_core.c
-@@ -736,8 +736,8 @@ static int st_tty_open(struct tty_struct *tty)
+diff --git a/sound/soc/codecs/rt715-sdw.c b/sound/soc/codecs/rt715-sdw.c
+index 18868e4ae6e8..6d892c44c522 100644
+--- a/sound/soc/codecs/rt715-sdw.c
++++ b/sound/soc/codecs/rt715-sdw.c
+@@ -535,8 +535,8 @@ static int rt715_sdw_probe(struct sdw_slave *slave,
  
- static void st_tty_close(struct tty_struct *tty)
- {
--	unsigned char i = ST_MAX_CHANNELS;
--	unsigned long flags = 0;
-+	unsigned char i;
-+	unsigned long flags;
- 	struct	st_data_s *st_gdata = tty->disc_data;
+ 	regmap = devm_regmap_init(&slave->dev, NULL, &slave->dev,
+ 		&rt715_regmap);
+-	if (!regmap)
+-		return -EINVAL;
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
  
- 	pr_info("%s ", __func__);
--- 
-2.24.0
+ 	rt715_init(&slave->dev, sdw_regmap, regmap, slave);
