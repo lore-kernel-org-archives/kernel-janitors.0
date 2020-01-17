@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Jan 2020 04:46:30 +0000
+Date: Fri, 17 Jan 2020 05:06:09 +0000
 Subject: Re: [PATCH][next] driver core: platform: fix u32 greater or equal to zero comparison
-Message-Id: <20200117044629.GC19765@kadam>
+Message-Id: <20200117050609.GD19765@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200116175758.88396-1-colin.king@canonical.com>
  <20200117044216.GC21151@kadam>
@@ -24,14 +24,19 @@ On Fri, Jan 17, 2020 at 07:42:16AM +0300, Dan Carpenter wrote:
 > > Addresses-Coverity: ("Unsigned compared against 0")
 > > Fixes: 39cc539f90d0 ("driver core: platform: Prevent resouce overflow from causing infinite loops")
 > 
-> A better fix would be to revert this patch.  It doesn't fix a real bug.
-> The ->num_resources is typically under 5.  It's not going to overflow
-> INT_MAX any time soon.  There are "architectures with smaller ints."
 
-I left out a word.  There are *no* "architectures with smaller ints."...
+Also by the way say you have:
 
-I mean there used to be systems with 16 bit int but that was before I
-was born.  You could never run linux on them.
+	unsigned int limit = (unsigned)INT_MAX + 4;
+	int i;
+
+	for (i = 0; i < limit; i++)
+		;
+	printf("%d\n", i);
+
+
+The loop will work the same way regardless of if int is signed or not
+because of type promotion.
 
 regards,
 dan carpenter
