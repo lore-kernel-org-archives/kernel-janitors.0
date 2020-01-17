@@ -1,37 +1,73 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Wed, 01 Jan 2020 07:43:30 +0000
-Subject: [PATCH 12/16] SUNRPC: constify copied structure
-Message-Id: <1577864614-5543-13-git-send-email-Julia.Lawall@inria.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 17 Jan 2020 15:44:12 +0000
+Subject: Applied "ASoC: rt700: fix return value check in rt700_sdw_probe()" to the asoc tree
+Message-Id: <applied-20200115143027.94364-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <20200115143027.94364-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: kernel-janitors@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>, Bard Liao <bardliao@realtek.com>
 
-The empty_iov structure is only copied into another structure,
-so make it const.
+The patch
 
-The opportunity for this change was found using Coccinelle.
+   ASoC: rt700: fix return value check in rt700_sdw_probe()
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 20435df1c1d708b44f58da17653f2ea609aee790 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 15 Jan 2020 14:30:27 +0000
+Subject: [PATCH] ASoC: rt700: fix return value check in rt700_sdw_probe()
+
+In case of error, the function devm_regmap_init() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
+
+Fixes: 7d2a5f9ae41e ("ASoC: rt700: add rt700 codec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Link: https://lore.kernel.org/r/20200115143027.94364-1-weiyongjun1@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/sunrpc/xdr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt700-sdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
-index f3104be8ff5d..e5497dc2475b 100644
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -1079,7 +1079,7 @@ void xdr_enter_page(struct xdr_stream *xdr, unsigned int len)
- }
- EXPORT_SYMBOL_GPL(xdr_enter_page);
+diff --git a/sound/soc/codecs/rt700-sdw.c b/sound/soc/codecs/rt700-sdw.c
+index 314103601af3..a4b95425886f 100644
+--- a/sound/soc/codecs/rt700-sdw.c
++++ b/sound/soc/codecs/rt700-sdw.c
+@@ -460,8 +460,8 @@ static int rt700_sdw_probe(struct sdw_slave *slave,
  
--static struct kvec empty_iov = {.iov_base = NULL, .iov_len = 0};
-+static const struct kvec empty_iov = {.iov_base = NULL, .iov_len = 0};
+ 	regmap = devm_regmap_init(&slave->dev, NULL,
+ 		&slave->dev, &rt700_regmap);
+-	if (!regmap)
+-		return -EINVAL;
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
  
- void
- xdr_buf_from_iov(struct kvec *iov, struct xdr_buf *buf)
+ 	rt700_init(&slave->dev, sdw_regmap, regmap, slave);
+ 
+-- 
+2.20.1
