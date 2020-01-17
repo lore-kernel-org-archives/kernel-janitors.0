@@ -1,29 +1,35 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Sat, 25 Jan 2020 16:32:51 +0000
-Subject: Re: [PATCH] fs/adfs: bigdir: Fix an error code in adfs_fplus_read()
-Message-Id: <20200125163251.GL23230@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Jan 2020 05:30:07 +0000
+Subject: [PATCH] tracing/boot: Fix an IS_ERR() vs NULL bug
+Message-Id: <20200117053007.5h2juv272pokqhtq@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200124101537.z6n242eovocfbdha@kili.mountain>
- <20200125092930.GQ25745@shell.armlinux.org.uk>
-In-Reply-To: <20200125092930.GQ25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Kate Stewart <kstewart@linuxfoundation.org>, Enrico Weigelt <info@metux.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 25, 2020 at 09:29:30AM +0000, Russell King - ARM Linux admin wrote:
-> On Fri, Jan 24, 2020 at 01:15:37PM +0300, Dan Carpenter wrote:
-> > This code accidentally returns success, but it should return the
-> > -EIO error code from adfs_fplus_validate_header().
-> > 
-> > Fixes: d79288b4f61b ("fs/adfs: bigdir: calculate and validate directory checkbyte")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Good catch.
-> 
-> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
-> 
-> Al, please apply, thanks.
+The trace_array_get_by_name() function doesn't return error pointers,
+it returns NULL on error.
 
-Applied and pushed out.
+Fixes: 4f712a4d04a4 ("tracing/boot: Add instance node support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/trace/trace_boot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
+index fa9603dc6469..cd541ac1cbc1 100644
+--- a/kernel/trace/trace_boot.c
++++ b/kernel/trace/trace_boot.c
+@@ -322,7 +322,7 @@ trace_boot_init_instances(struct xbc_node *node)
+ 			continue;
+ 
+ 		tr = trace_array_get_by_name(p);
+-		if (IS_ERR(tr)) {
++		if (!tr) {
+ 			pr_err("Failed to get trace instance %s\n", p);
+ 			continue;
+ 		}
+-- 
+2.11.0
