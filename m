@@ -1,51 +1,35 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Wed, 29 Jan 2020 20:54:21 +0000
-Subject: Re: [PATCH][next][V3] i2c: xiic: fix indentation issue
-Message-Id: <20200129205421.GB7586@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="BwCQnh7xodEAoBMC"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Jan 2020 09:28:19 +0000
+Subject: [PATCH][next] crypto: hisilicon: fix spelling mistake "disgest" -> "digest"
+Message-Id: <20200117092819.97640-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200127111336.114501-1-colin.king@canonical.com>
-In-Reply-To: <20200127111336.114501-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zaibo Xu <xuzaibo@huawei.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---BwCQnh7xodEAoBMC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a spelling mistake in an error message. Fix it.
 
-On Mon, Jan 27, 2020 at 11:13:36AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There is a statement that is indented one level too deeply, remove
-> the extraneous tab.
->=20
-> Fixes: b4c119dbc300 ("i2c: xiic: Add timeout to the rx fifo wait loop")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/hisilicon/sec2/sec_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to for-next, thanks!
-
-
---BwCQnh7xodEAoBMC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4x8P0ACgkQFA3kzBSg
-Kbbg2A/9FJqyn9ks99JLD7qHs0n9X2XQCLXkv5Cw1HMad+934DZIfm3o9v7ABgoS
-hLQnxGCFOxBr4BrCehiPc+WKCOw455ux7yqt8enFpMZ9nEBPBBsAuwJmPwfTH/jP
-R5xBosv1l9uRHQWEDeExsmWZpv5gHgJVPDd+I2S7aES4kBAj8uUOUmfTvF0ofMLV
-8cabXa9AGG3ZTKt51aad0PIMGphQVtDNlmDYe7wqVMqymjDGX/RbDstNsKvxoG2D
-GVNm2KqsYGveZX5vHZRjlzNSfMUpnN79Py6YouzOVgomZjLUY3+3DWbu2BH3gs7R
-Z1DgmjPSbvWyQw3ktka9D0WHPG6rq4lX5YuJcxksBN77C+LMXyAWo2eH50ZBLSB5
-MsVMXsb1eEP8gWs54y+emDngVadIk8ui8Q2kCEoEtHmnWFkfOteUocDWOHbrA0ax
-duju7H9Wx7iHAVxStVFOAigBzDEZRQv3YwaOSu1E+MCyGjR5UEDKC4Z6wnOQ/WGd
-JehJLyp0h9VZOYbAY4HUfYv5WETtD1iPDAD1aWTvihs1oA/47HHzAgEQ1opfZ4Ax
-Q0WwNCEjXcvoUSPFJzX5k3uJpm61Gv4gFaY2JLNPz9jOUI1E/6rik+gY+DxC07qP
-JaDdL1LcipBrT+r6Hof6p4k9+5aY8GhB9/t72trlO2RDXkTqVis=
-=t8lY
------END PGP SIGNATURE-----
-
---BwCQnh7xodEAoBMC--
+diff --git a/drivers/crypto/hisilicon/sec2/sec_crypto.c b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+index a0a35685e838..a2cfcc9ccd94 100644
+--- a/drivers/crypto/hisilicon/sec2/sec_crypto.c
++++ b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+@@ -690,7 +690,7 @@ static int sec_aead_auth_set_key(struct sec_auth_ctx *ctx,
+ 		ret = crypto_shash_digest(shash, keys->authkey,
+ 					  keys->authkeylen, ctx->a_key);
+ 		if (ret) {
+-			pr_err("hisi_sec2: aead auth disgest error!\n");
++			pr_err("hisi_sec2: aead auth digest error!\n");
+ 			return -EINVAL;
+ 		}
+ 		ctx->a_key_len = blocksize;
+-- 
+2.24.0
