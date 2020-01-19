@@ -1,27 +1,35 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Wed, 29 Jan 2020 05:17:29 +0000
-Subject: Re: [PATCH 09/16] powerpc/mpic: constify copied structure
-Message-Id: <486sDn3g1Bz9sRp@ozlabs.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sun, 19 Jan 2020 02:30:03 +0000
+Subject: [PATCH -next] PCI: brcmstb: Fix missing mutex_init()
+Message-Id: <20200119023003.100987-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1577864614-5543-10-git-send-email-Julia.Lawall@inria.fr>
-References: <1577864614-5543-10-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-10-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Murray <andrew.murray@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Florian
+ Fainelli <f.fainelli@gmail.com>, Jim Quinlan <james.quinlan@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 
-On Wed, 2020-01-01 at 07:43:27 UTC, Julia Lawall wrote:
-> The mpic_ipi_chip and mpic_irq_ht_chip structures are only copied
-> into other structures, so make them const.
-> 
-> The opportunity for this change was found using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The driver allocates the mutex but not initialize it.
+Use mutex_init() on it to initialize it correctly.
 
-Applied to powerpc next, thanks.
+This is detected by Coccinelle semantic patch.
 
-https://git.kernel.org/powerpc/c/5084ff33cac0988c1b979814501dcc2e1ecbf9c0
+Fixes: 72af6f6f0d13 ("PCI: brcmstb: Add MSI support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pci/controller/pcie-brcmstb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-cheers
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index 43cba76c0e1e..065bada9cfad 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -528,6 +528,7 @@ static int brcm_pcie_enable_msi(struct brcm_pcie *pcie)
+ 	if (!msi)
+ 		return -ENOMEM;
+ 
++	mutex_init(&msi->lock);
+ 	msi->dev = dev;
+ 	msi->base = pcie->base;
+ 	msi->np = pcie->np;
