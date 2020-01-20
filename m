@@ -1,35 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 17 Jan 2020 09:31:24 +0000
-Subject: [PATCH][next] usb: musb: fix spelling mistake: "periperal" -> "peripheral"
-Message-Id: <20200117093124.97965-1-colin.king@canonical.com>
+From: Bin Liu <b-liu@ti.com>
+Date: Mon, 20 Jan 2020 14:04:06 +0000
+Subject: Re: [PATCH][next] usb: musb: fix spelling mistake: "periperal" -> "peripheral"
+Message-Id: <20200120140406.GA9789@iaqt7>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200117093124.97965-1-colin.king@canonical.com>
+In-Reply-To: <20200117093124.97965-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Greg,
 
-There is a spelling mistake in a dev_err error message. Fix it.
+On Fri, Jan 17, 2020 at 09:31:24AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a dev_err error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/musb/musb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do you mind to take this directly? Here is my Acked-by:
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index 71691a1f8ae3..f616fb489542 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -540,7 +540,7 @@ int musb_set_peripheral(struct musb *musb)
- 				   devctl & MUSB_DEVCTL_BDEVICE, 5000,
- 				   1000000);
- 	if (error) {
--		dev_err(musb->controller, "%s: could not set periperal: %02x\n",
-+		dev_err(musb->controller, "%s: could not set peripheral: %02x\n",
- 			__func__, devctl);
- 
- 		return error;
--- 
-2.24.0
+Acked-by: Bin Liu <b-liu@ti.com>
+
+Thanks,
+-Bin.
