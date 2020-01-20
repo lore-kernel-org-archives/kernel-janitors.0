@@ -1,55 +1,38 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 20 Jan 2020 08:54:11 +0000
-Subject: [PATCH -next] watch_queue: Fix error return code in watch_queue_set_size()
-Message-Id: <20200120085411.116252-1-weiyongjun1@huawei.com>
+From: David Howells <dhowells@redhat.com>
+Date: Mon, 20 Jan 2020 11:32:28 +0000
+Subject: Re: [PATCH -next] watch_queue: Fix error return code in watch_queue_set_size()
+Message-Id: <771479.1579519948@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200120085411.116252-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200120085411.116252-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code from the error handling
-case instead of 0, as done elsewhere in this function.
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-Fixes: d9a34f010efd ("pipe: Add general notification queue support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>  	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
+> -	if (!pages)
+> +	if (!pages) {
+> +		ret = -ENOMEM;
+
+I think the preferred method would be to set ret before calling kcalloc as the
+attached.
+
+David
 ---
- kernel/watch_queue.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index f195cbbbb3d3..3051cf4e35c6 100644
+index 8c625cf451e6..a11724d66834 100644
 --- a/kernel/watch_queue.c
 +++ b/kernel/watch_queue.c
-@@ -252,21 +252,27 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
+@@ -249,6 +249,7 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
+ 	if (ret < 0)
  		goto error;
  
++	ret = -ENOMEM;
  	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
--	if (!pages)
-+	if (!pages) {
-+		ret = -ENOMEM;
+ 	if (!pages)
  		goto error;
-+	}
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		pages[i] = alloc_page(GFP_KERNEL);
--		if (!pages[i])
-+		if (!pages[i]) {
-+			ret = -ENOMEM;
- 			goto error_p;
-+		}
- 		pages[i]->index = i * WATCH_QUEUE_NOTES_PER_PAGE;
- 	}
- 
- 	bmsize = (nr_notes + BITS_PER_LONG - 1) / BITS_PER_LONG;
- 	bmsize *= sizeof(unsigned long);
- 	bitmap = kmalloc(bmsize, GFP_KERNEL);
--	if (!bitmap)
-+	if (!bitmap) {
-+		ret = -ENOMEM;
- 		goto error_p;
-+	}
- 
- 	memset(bitmap, 0xff, bmsize);
- 	wqueue->notes = pages;
