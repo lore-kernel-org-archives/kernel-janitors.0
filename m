@@ -1,49 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sat, 11 Jan 2020 20:01:36 +0000
-Subject: Re: [PATCH] drivers/misc: ti-st: remove redundant assignment to variable i
-Message-Id: <20200111200136.GC438314@kroah.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 20 Jan 2020 08:54:11 +0000
+Subject: [PATCH -next] watch_queue: Fix error return code in watch_queue_set_size()
+Message-Id: <20200120085411.116252-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191202151352.55139-1-colin.king@canonical.com>
- <20191203072824.GA1765@kadam>
-In-Reply-To: <20191203072824.GA1765@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 10:28:24AM +0300, Dan Carpenter wrote:
-> On Mon, Dec 02, 2019 at 03:13:52PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The variable i is being initialized with a value that is never
-> > read and it is being updated later with a new value in a for-loop.
-> > The initialization is redundant and can be removed.
-> > 
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/misc/ti-st/st_core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
-> > index 2ae9948a91e1..6255d9b88122 100644
-> > --- a/drivers/misc/ti-st/st_core.c
-> > +++ b/drivers/misc/ti-st/st_core.c
-> > @@ -736,7 +736,7 @@ static int st_tty_open(struct tty_struct *tty)
-> >  
-> >  static void st_tty_close(struct tty_struct *tty)
-> >  {
-> > -	unsigned char i = ST_MAX_CHANNELS;
-> > +	unsigned char i;
-> >  	unsigned long flags = 0;
-> 
-> I'm surprised that flags doesn't generate a warning as well.
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Yes, flags should be not initialized as well.
+Fixes: d9a34f010efd ("pipe: Add general notification queue support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ kernel/watch_queue.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Colin, can you resend a v2 with that added?
-
-thanks,
-
-greg k-h
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index f195cbbbb3d3..3051cf4e35c6 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -252,21 +252,27 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
+ 		goto error;
+ 
+ 	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
+-	if (!pages)
++	if (!pages) {
++		ret = -ENOMEM;
+ 		goto error;
++	}
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		pages[i] = alloc_page(GFP_KERNEL);
+-		if (!pages[i])
++		if (!pages[i]) {
++			ret = -ENOMEM;
+ 			goto error_p;
++		}
+ 		pages[i]->index = i * WATCH_QUEUE_NOTES_PER_PAGE;
+ 	}
+ 
+ 	bmsize = (nr_notes + BITS_PER_LONG - 1) / BITS_PER_LONG;
+ 	bmsize *= sizeof(unsigned long);
+ 	bitmap = kmalloc(bmsize, GFP_KERNEL);
+-	if (!bitmap)
++	if (!bitmap) {
++		ret = -ENOMEM;
+ 		goto error_p;
++	}
+ 
+ 	memset(bitmap, 0xff, bmsize);
+ 	wqueue->notes = pages;
