@@ -1,41 +1,56 @@
-From: Asmaa Mnebhi <Asmaa@mellanox.com>
-Date: Tue, 14 Jan 2020 15:50:22 +0000
-Subject: RE: [PATCH][next] drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write
-Message-Id: <DB6PR0501MB2712BEBCF959566EAB063769DA340@DB6PR0501MB2712.eurprd05.prod.outlook.com>
+From: Corey Minyard <cminyard@mvista.com>
+Date: Mon, 20 Jan 2020 17:01:32 +0000
+Subject: Re: [PATCH][next] drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write
+Message-Id: <20200120170132.GT2886@minyard.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200114144031.358003-1-colin.king@canonical.com>
-In-Reply-To: <20200114144031.358003-1-colin.king@canonical.com>
+ <DB6PR0501MB2712BEBCF959566EAB063769DA340@DB6PR0501MB2712.eurprd05.prod.outlook.com>
+In-Reply-To: <DB6PR0501MB2712BEBCF959566EAB063769DA340@DB6PR0501MB2712.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Corey Minyard <cminyard@mvista.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vadim Pasternak <vadimp@mellanox.com>, "openipmi-developer@lists.sourceforge.net" <openipmi-developer@lists.sourceforge.net>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Asmaa Mnebhi <Asmaa@mellanox.com>
+Cc: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vadim Pasternak <vadimp@mellanox.com>, "openipmi-developer@lists.sourceforge.net" <openipmi-developer@lists.sourceforge.net>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-UmV2aWV3ZWQtYnk6IEFzbWFhIE1uZWJoaSA8YXNtYWFAbWVsbGFub3guY29tPg0KDQotLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmlj
-YWwuY29tPiANClNlbnQ6IFR1ZXNkYXksIEphbnVhcnkgMTQsIDIwMjAgOTo0MSBBTQ0KVG86IENv
-cmV5IE1pbnlhcmQgPGNtaW55YXJkQG12aXN0YS5jb20+OyBBcm5kIEJlcmdtYW5uIDxhcm5kQGFy
-bmRiLmRlPjsgR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47
-IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1lbGxhbm94LmNvbT47IEFzbWFhIE1uZWJoaSA8QXNt
-YWFAbWVsbGFub3guY29tPjsgb3BlbmlwbWktZGV2ZWxvcGVyQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dA0KQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmcNClN1YmplY3Q6IFtQQVRDSF1bbmV4dF0gZHJpdmVyczogaXBtaTogZml4IG9m
-Zi1ieS1vbmUgYm91bmRzIGNoZWNrIHRoYXQgbGVhZHMgdG8gYSBvdXQtb2YtYm91bmRzIHdyaXRl
-DQoNCkZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClRo
-ZSBlbmQgb2YgYnVmZmVyIGNoZWNrIGlzIG9mZi1ieS1vbmUgc2luY2UgdGhlIGNoZWNrIGlzIGFn
-YWluc3QgYW4gaW5kZXggdGhhdCBpcyBwcmUtaW5jcmVtZW50ZWQgYmVmb3JlIGEgc3RvcmUgdG8g
-YnVmW10uIEZpeCB0aGlzIGFkanVzdGluZyB0aGUgYm91bmRzIGNoZWNrIGFwcHJvcHJpYXRlbHku
-DQoNCkFkZHJlc3Nlcy1Db3Zlcml0eTogKCJPdXQtb2YtYm91bmRzIHdyaXRlIikNCkZpeGVzOiA1
-MWJkNmYyOTE1ODMgKCJBZGQgc3VwcG9ydCBmb3IgSVBNQiBkcml2ZXIiKQ0KU2lnbmVkLW9mZi1i
-eTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0tLQ0KIGRyaXZl
-cnMvY2hhci9pcG1pL2lwbWJfZGV2X2ludC5jIHwgMiArLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL2lw
-bWkvaXBtYl9kZXZfaW50LmMgYi9kcml2ZXJzL2NoYXIvaXBtaS9pcG1iX2Rldl9pbnQuYw0KaW5k
-ZXggOWZkYWU4M2U1OWUwLi4zODJiMjhmMWNmMmYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2NoYXIv
-aXBtaS9pcG1iX2Rldl9pbnQuYw0KKysrIGIvZHJpdmVycy9jaGFyL2lwbWkvaXBtYl9kZXZfaW50
-LmMNCkBAIC0yNzksNyArMjc5LDcgQEAgc3RhdGljIGludCBpcG1iX3NsYXZlX2NiKHN0cnVjdCBp
-MmNfY2xpZW50ICpjbGllbnQsDQogCQlicmVhazsNCiANCiAJY2FzZSBJMkNfU0xBVkVfV1JJVEVf
-UkVDRUlWRUQ6DQotCQlpZiAoaXBtYl9kZXYtPm1zZ19pZHggPj0gc2l6ZW9mKHN0cnVjdCBpcG1i
-X21zZykpDQorCQlpZiAoaXBtYl9kZXYtPm1zZ19pZHggPj0gc2l6ZW9mKHN0cnVjdCBpcG1iX21z
-ZykgLSAxKQ0KIAkJCWJyZWFrOw0KIA0KIAkJYnVmWysraXBtYl9kZXYtPm1zZ19pZHhdID0gKnZh
-bDsNCi0tDQoyLjI0LjANCg0K
+On Tue, Jan 14, 2020 at 03:50:22PM +0000, Asmaa Mnebhi wrote:
+> Reviewed-by: Asmaa Mnebhi <asmaa@mellanox.com>
+
+Thanks, I've picked this up in my next tree.
+
+-corey
+
+> 
+> -----Original Message-----
+> From: Colin King <colin.king@canonical.com> 
+> Sent: Tuesday, January 14, 2020 9:41 AM
+> To: Corey Minyard <cminyard@mvista.com>; Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Vadim Pasternak <vadimp@mellanox.com>; Asmaa Mnebhi <Asmaa@mellanox.com>; openipmi-developer@lists.sourceforge.net
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH][next] drivers: ipmi: fix off-by-one bounds check that leads to a out-of-bounds write
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The end of buffer check is off-by-one since the check is against an index that is pre-incremented before a store to buf[]. Fix this adjusting the bounds check appropriately.
+> 
+> Addresses-Coverity: ("Out-of-bounds write")
+> Fixes: 51bd6f291583 ("Add support for IPMB driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/char/ipmi/ipmb_dev_int.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+> index 9fdae83e59e0..382b28f1cf2f 100644
+> --- a/drivers/char/ipmi/ipmb_dev_int.c
+> +++ b/drivers/char/ipmi/ipmb_dev_int.c
+> @@ -279,7 +279,7 @@ static int ipmb_slave_cb(struct i2c_client *client,
+>  		break;
+>  
+>  	case I2C_SLAVE_WRITE_RECEIVED:
+> -		if (ipmb_dev->msg_idx >= sizeof(struct ipmb_msg))
+> +		if (ipmb_dev->msg_idx >= sizeof(struct ipmb_msg) - 1)
+>  			break;
+>  
+>  		buf[++ipmb_dev->msg_idx] = *val;
+> --
+> 2.24.0
+> 
