@@ -1,37 +1,48 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Wed, 01 Jan 2020 07:43:28 +0000
-Subject: [PATCH 10/16] ASoC: qdsp6: q6asm-dai: constify copied structure
-Message-Id: <1577864614-5543-11-git-send-email-Julia.Lawall@inria.fr>
+From: "Prof, William Roberts" <eco.bank1204@gmail.com>
+Date: Mon, 20 Jan 2020 19:31:27 +0000
+Subject: Contact Diplomatic Agent, Mr. Mcclaine John to receive your ATM CARD valued the sum of $12.8Million 
+Message-Id: <CAOE+jACYN-9AiP3uaE8Ut4Rjk53mzxareAyVj45HaD3RqW0fqg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-The q6asm_dai_hardware_capture structure is only copied into another
-structure, so make it const.
+Attn: Dear Beneficiary,
 
-The opportunity for this change was found using Coccinelle.
+I wish to inform you that the diplomatic agent conveying your ATM CARD
+valued the sum of $12.8Million United States Dollars has misplaced
+your address and he is currently stranded at (George Bush
+International Airport) Houston Texas USA now
+We required you to reconfirm the following information's below to him
+so that he can deliver your Payment CARD to you today or tomorrow
+morning as information provided with open communications via email and
+telephone for security reasons.
+HERE IS THE DETAILS  HE NEED FROM YOU URGENT
+YOUR FULL NAME:====
+ADDRESS:====
+MOBILE NO:====
+NAME OF YOUR NEAREST AIRPORT:====
+A COPY OF YOUR IDENTIFICATION :====
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Note; do contact the diplomatic agent immediately through the
+information's listed below
+Contact Person: Diplomatic Agent, Mr. Mcclaine John
+EMAIL: mcclainejohn.13@gmail.com
+Tel:(223) 777-7518
 
----
- sound/soc/qcom/qdsp6/q6asm-dai.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Contact the diplomatic agent immediately
+because he is waiting to hear from you today with the needed information's.
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 5e2327708772..c0d422d0ab94 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -72,7 +72,7 @@ struct q6asm_dai_data {
- 	long long int sid;
- };
- 
--static struct snd_pcm_hardware q6asm_dai_hardware_capture = {
-+static const struct snd_pcm_hardware q6asm_dai_hardware_capture = {
- 	.info =                 (SNDRV_PCM_INFO_MMAP |
- 				SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 				SNDRV_PCM_INFO_MMAP_VALID |
+NOTE: The Diplomatic agent does not know that the content of the
+consignment box is $12.800,000,00 Million United States Dollars and on
+no circumstances should you let him know the content. The consignment
+was moved from here as family treasures, so never allow him to open
+the box. Please I have paid delivery fees for you but the only money
+you must send to Mcclaine John is your ATM CARD delivery fee $25.00
+only. text Him as you contact Him Immediately
+
+Thanks,
+with Regards.
+Prof, William Roberts
+Director DHL COURIER SERVICES-Benin
