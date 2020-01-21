@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Jan 2020 11:55:14 +0000
+Date: Tue, 21 Jan 2020 12:07:25 +0000
 Subject: Re: Re: [PATCH 1/2] cmd64x: potential buffer overflow in cmd64x_program_timings()
-Message-Id: <20200121115514.GA1870@kadam>
+Message-Id: <20200121120724.GC1847@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200107130441.y3owvcnxdljailt5@kili.mountain>
  <20200120.144042.1810086369376110530.davem@davemloft.net>
@@ -52,10 +52,30 @@ On Tue, Jan 21, 2020 at 02:48:35PM +0300, Dan Carpenter wrote:
 >    215          IDE_PROC_DEVSET(keepsettings, 0, 1),
 >    216          IDE_PROC_DEVSET(nice1, 0, 1),
 >    217          IDE_PROC_DEVSET(number, 0, 3),
-                                          ^^^^
-Argh...  This clamps it to 0-3 doesn't it.
+>    218          IDE_PROC_DEVSET(pio_mode, 0, 255),
+>    219          IDE_PROC_DEVSET(unmaskirq, 0, 1),
+>    220          IDE_PROC_DEVSET(using_dma, 0, 1),
+>    221          { NULL },
+>    222  };
+> 
+> drivers/ide/ide-devsets.c
+>    159  int ide_devset_execute(ide_drive_t *drive, const struct ide_devset *setting,
+>    160                         int arg)
+>    161  {
+>    162          struct request_queue *q = drive->queue;
+>    163          struct request *rq;
+>    164          int ret = 0;
+>    165  
+>    166          if (!(setting->flags & DS_SYNC))
+>    167                  return setting->set(drive, arg);
+>                                ^^^^^^^^^^^^^^^^^^^^^^^^
+> Called from here according to Smatch.
+> 
 
-Sorry, I didn't see that.
+Actually this is where I went wrong.  The function is never called from
+here.
+
+Sorry for the noise.  These patches are not required.
 
 regards,
 dan carpenter
