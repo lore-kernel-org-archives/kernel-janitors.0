@@ -1,46 +1,48 @@
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 09 Jan 2020 07:13:30 +0000
-Subject: Re: [PATCH 05/16] media: isif: constify copied structure
-Message-Id: <CA+V-a8unNHBPLNH2m8Fw98ASJR5vp64+OZHGq-YYc9=BnonDsA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Jan 2020 16:17:57 +0000
+Subject: [PATCH][next] iio: st_sensors: handle memory allocation failure to fix null pointer dereference
+Message-Id: <20200121161757.1498082-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr> <1577864614-5543-6-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-6-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media <linux-media@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 1, 2020 at 8:20 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> The isif_config_defaults structure is only copied into another
-> structure, so make it const.
->
-> The opportunity for this change was found using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+A null pointer deference on pdata can occur if the allocation of
+pdata fails.  Fix this by adding a null pointer check and handle
+the -ENOMEM failure in the caller.
 
-Cheers,
---Prabhakar Lad
+Addresses-Coverity: ("Dereference null return value")
+Fixes: 3ce85cc4fbb7 ("iio: st_sensors: get platform data from device tree")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/common/st_sensors/st_sensors_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> ---
->  drivers/media/platform/davinci/isif.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
-> index b49378b18e5d..c98edb67cfb2 100644
-> --- a/drivers/media/platform/davinci/isif.c
-> +++ b/drivers/media/platform/davinci/isif.c
-> @@ -29,7 +29,7 @@
->  #include "ccdc_hw_device.h"
->
->  /* Defaults for module configuration parameters */
-> -static struct isif_config_params_raw isif_config_defaults = {
-> +static const struct isif_config_params_raw isif_config_defaults = {
->         .linearize = {
->                 .en = 0,
->                 .corr_shft = ISIF_NO_SHIFT,
->
+diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
+index e051edbc43c1..0e35ff06f9af 100644
+--- a/drivers/iio/common/st_sensors/st_sensors_core.c
++++ b/drivers/iio/common/st_sensors/st_sensors_core.c
+@@ -328,6 +328,8 @@ static struct st_sensors_platform_data *st_sensors_dev_probe(struct device *dev,
+ 		return NULL;
+ 
+ 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return ERR_PTR(-ENOMEM);
+ 	if (!device_property_read_u32(dev, "st,drdy-int-pin", &val) && (val <= 2))
+ 		pdata->drdy_int_pin = (u8) val;
+ 	else
+@@ -371,6 +373,8 @@ int st_sensors_init_sensor(struct iio_dev *indio_dev,
+ 
+ 	/* If OF/DT pdata exists, it will take precedence of anything else */
+ 	of_pdata = st_sensors_dev_probe(indio_dev->dev.parent, pdata);
++	if (IS_ERR(of_pdata))
++		return PTR_ERR(of_pdata);
+ 	if (of_pdata)
+ 		pdata = of_pdata;
+ 
+-- 
+2.24.0
