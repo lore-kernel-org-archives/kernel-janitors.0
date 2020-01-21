@@ -1,38 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Jan 2020 12:07:25 +0000
-Subject: Re: Re: [PATCH 1/2] cmd64x: potential buffer overflow in cmd64x_program_timings()
-Message-Id: <20200121120724.GC1847@kadam>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Tue, 21 Jan 2020 12:21:02 +0000
+Subject: Re: [PATCH 1/2] cmd64x: potential buffer overflow in cmd64x_program_timings()
+Message-Id: <02ea0fe7-fedd-66ac-ac60-0cdcb8802076@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200107130441.y3owvcnxdljailt5@kili.mountain>
- <20200120.144042.1810086369376110530.davem@davemloft.net>
- <CGME20200121111555eucas1p2d26b5230ab428f40ee3fc76d687e601f@eucas1p2.samsung.com>
- <faf4b367-29b3-474c-73bc-400f6ab36758@samsung.com>
- <20200121114835.GB1847@kadam>
+        <20200120.144042.1810086369376110530.davem@davemloft.net>
+        <CGME20200121111555eucas1p2d26b5230ab428f40ee3fc76d687e601f@eucas1p2.samsung.com>
+        <faf4b367-29b3-474c-73bc-400f6ab36758@samsung.com>
+        <20200121114835.GB1847@kadam>
 In-Reply-To: <20200121114835.GB1847@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: David Miller <davem@davemloft.net>, linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 02:48:35PM +0300, Dan Carpenter wrote:
+
+On 1/21/20 12:48 PM, Dan Carpenter wrote:
 > On Tue, Jan 21, 2020 at 12:15:54PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On 1/20/20 2:40 PM, David Miller wrote:
-> > > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Date: Tue, 7 Jan 2020 16:04:41 +0300
-> > > 
-> > >> The "drive->dn" value is a u8 and it is controlled by root only, but
-> > >> it could be out of bounds here so let's check.
-> > 
-> > drive->dn should not be root controllable, please point me where it
-> > happens as this may need fixing instead of cmd64x driver.
-> > 
-> > [ IDE core makes sure that drive->dn is never > 3 and a lot of code
-> >   assumes it. ]
-> > 
+>>
+>> Hi,
+>>
+>> On 1/20/20 2:40 PM, David Miller wrote:
+>>> From: Dan Carpenter <dan.carpenter@oracle.com>
+>>> Date: Tue, 7 Jan 2020 16:04:41 +0300
+>>>
+>>>> The "drive->dn" value is a u8 and it is controlled by root only, but
+>>>> it could be out of bounds here so let's check.
+>>
+>> drive->dn should not be root controllable, please point me where it
+>> happens as this may need fixing instead of cmd64x driver.
+>>
+>> [ IDE core makes sure that drive->dn is never > 3 and a lot of code
+>>   assumes it. ]
+>>
 > 
 > It's a marked as a setable field in ide-proc.c
 > 
@@ -43,7 +44,21 @@ On Tue, Jan 21, 2020 at 02:48:35PM +0300, Dan Carpenter wrote:
 >    209  ide_devset_rw_field(number, dn);
 >                             ^^^^^^^^^^
 > Sets ->dn
-> 
+
+It is a bug.
+
+We should add:
+
+#define ide_devset_ro_field(_name, _field) \
+ide_devset_get(_name, _field); \
+IDE_DEVSET(_name, 0, get_##_name, NULL)
+
+in <linux/ide.h> (just after ide_devset_rw_field())
+
+and use it instead.
+
+Care to make a patch?
+
 >    210  
 >    211  static const struct ide_proc_devset ide_generic_settings[] = {
 >    212          IDE_PROC_DEVSET(current_speed, 0, 70),
@@ -52,6 +67,24 @@ On Tue, Jan 21, 2020 at 02:48:35PM +0300, Dan Carpenter wrote:
 >    215          IDE_PROC_DEVSET(keepsettings, 0, 1),
 >    216          IDE_PROC_DEVSET(nice1, 0, 1),
 >    217          IDE_PROC_DEVSET(number, 0, 3),
+
+Please note the minimum and maximum values above and look at code in
+ide_write_setting():
+
+	if ((ds->flags & DS_SYNC)
+	    && (val < setting->min || val > setting->max))
+		return -EINVAL;
+
+[ DS_SYNC flag is set by ide_devset_rw_field() macro. ]
+
+Thus even without fixing ide-proc.c both your patches are superfluous.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
 >    218          IDE_PROC_DEVSET(pio_mode, 0, 255),
 >    219          IDE_PROC_DEVSET(unmaskirq, 0, 1),
 >    220          IDE_PROC_DEVSET(using_dma, 0, 1),
@@ -71,11 +104,8 @@ On Tue, Jan 21, 2020 at 02:48:35PM +0300, Dan Carpenter wrote:
 >                                ^^^^^^^^^^^^^^^^^^^^^^^^
 > Called from here according to Smatch.
 > 
-
-Actually this is where I went wrong.  The function is never called from
-here.
-
-Sorry for the noise.  These patches are not required.
-
-regards,
-dan carpenter
+>    168  
+>    169          rq = blk_get_request(q, REQ_OP_DRV_IN, 0);
+> 
+> regards,
+> dan carpenter
