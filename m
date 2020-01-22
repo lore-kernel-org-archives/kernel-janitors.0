@@ -1,35 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 26 Jan 2020 10:51:41 +0000
-Subject: Re: [PATCH v2] ath11k: fix up some error paths
-Message-Id: <20200126105141.F0F6DC433CB@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Jan 2020 23:44:37 +0000
+Subject: [PATCH] usb: cdns3: fix spelling mistake and rework grammar in text
+Message-Id: <20200122234437.2829803-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200115174652.dvkmznhfvjaoc47l@kili.mountain>
-In-Reply-To: <20200115174652.dvkmznhfvjaoc47l@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, John Crispin <john@phrozen.org>, Vasanthakumar Thiagarajan <vthiagar@codeaurora.org>, Anilkumar Kolli <akolli@codeaurora.org>, Bhagavathi Perumal S <bperumal@codeaurora.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There are two error paths where "ret" wasn't set.  Also one error path
-> we set the error code to -EINVAL but we should just preserve the error
-> code from ath11k_hal_srng_get_entrysize().  That function only returns
-> -EINVAL so this doesn't change anything.
-> 
-> I removed the "ret = 0;" initializers so that hopefully GCC will be able
-> to detect these sorts of bugs in the future.
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The text contains a spelling mistake, "to" should be "too"
+so fix this and re-work the grammar to make it more readable.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/debug.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-7195c8747e87 ath11k: fix up some error paths
-
+diff --git a/drivers/usb/cdns3/debug.h b/drivers/usb/cdns3/debug.h
+index 2c9afbfe988b..a5c6a29e1340 100644
+--- a/drivers/usb/cdns3/debug.h
++++ b/drivers/usb/cdns3/debug.h
+@@ -140,7 +140,7 @@ static inline char *cdns3_dbg_ring(struct cdns3_endpoint *priv_ep,
+ 		trb_per_sector = TRBS_PER_SEGMENT;
+ 
+ 	if (trb_per_sector > TRBS_PER_SEGMENT) {
+-		sprintf(str + ret, "\t\tTo big transfer ring %d\n",
++		sprintf(str + ret, "\t\tTransfer ring %d too big\n",
+ 			trb_per_sector);
+ 		return str;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/11335489/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.24.0
