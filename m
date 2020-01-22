@@ -1,24 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Jan 2020 21:47:11 +0000
-Subject: Re: [PATCH net-next] enetc: Fix an off by one in enetc_setup_tc_txtime()
-Message-Id: <20200107.134711.1860200595614980441.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Jan 2020 09:33:40 +0000
+Subject: [PATCH] rtlwifi: btcoex: fix spelling mistake "initilized" -> "initialized"
+Message-Id: <20200122093340.2800226-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200107131143.jqytedvewberqp5c@kili.mountain>
-In-Reply-To: <20200107131143.jqytedvewberqp5c@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: claudiu.manoil@nxp.com, po.liu@nxp.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 7 Jan 2020 16:11:43 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> The priv->tx_ring[] has 16 elements but only priv->num_tx_rings are
-> set up, the rest are NULL.  This ">" comparison should be ">=" to avoid
-> a potential crash.
-> 
-> Fixes: 0d08c9ec7d6e ("enetc: add support time specific departure base on the qos etf")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in one of the fields in the btc_coexist struct,
+fix it.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c   | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+index 3c96c320236c..658ff425c256 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+@@ -862,7 +862,7 @@ static void btc8192e2ant_set_sw_rf_rx_lpf_corner(struct btc_coexist *btcoexist,
+ 		/* Resume RF Rx LPF corner
+ 		 * After initialized, we can use coex_dm->btRf0x1eBackup
+ 		 */
+-		if (btcoexist->initilized) {
++		if (btcoexist->initialized) {
+ 			RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+ 				 "[BTCoex], Resume RF Rx LPF corner!!\n");
+ 			btcoexist->btc_set_rf_reg(btcoexist, BTC_RF_A, 0x1e,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index 191dafd03189..a4940a3842de 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1461,7 +1461,7 @@ void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist)
+ 			ex_btc8192e2ant_init_coex_dm(btcoexist);
+ 	}
+ 
+-	btcoexist->initilized = true;
++	btcoexist->initialized = true;
+ }
+ 
+ void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+index 8c0a7fdbf200..a96a995dd850 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+@@ -679,7 +679,7 @@ struct btc_coexist {
+ 	bool auto_report_2ant;
+ 	bool dbg_mode_1ant;
+ 	bool dbg_mode_2ant;
+-	bool initilized;
++	bool initialized;
+ 	bool stop_coex_dm;
+ 	bool manual_control;
+ 	struct btc_statistics statistics;
+-- 
+2.24.0
