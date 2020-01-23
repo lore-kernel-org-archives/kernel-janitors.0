@@ -1,51 +1,35 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 15 Jan 2020 14:36:10 +0000
-Subject: Re: [PATCH][next] video: hyperv: hyperv_fb: fix indentation issue
-Message-Id: <060a65e9-1880-0356-f8f3-447cb391b4e7@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 00:14:29 +0000
+Subject: [PATCH] i40e: fix spelling mistake "to" -> "too"
+Message-Id: <20200123001429.2831701-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20191114172730eucas1p1206011eed67d59f39fbbcf0b9ad1bbca@eucas1p1.samsung.com>
- <20191114172720.322023-1-colin.king@canonical.com>
-In-Reply-To: <20191114172720.322023-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 11/14/19 6:27 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a block of statements that are indented
-> too deeply, remove the extraneous tabs.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is a spelling mistake in a hw_dbg message. Fix it.
 
-Patch queued for v5.6, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> ---
->  drivers/video/fbdev/hyperv_fb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
-> index 4cd27e5172a1..5fcf4bdf85ab 100644
-> --- a/drivers/video/fbdev/hyperv_fb.c
-> +++ b/drivers/video/fbdev/hyperv_fb.c
-> @@ -582,8 +582,8 @@ static int synthvid_get_supported_resolution(struct hv_device *hdev)
->  	t = wait_for_completion_timeout(&par->wait, VSP_TIMEOUT);
->  	if (!t) {
->  		pr_err("Time out on waiting resolution response\n");
-> -			ret = -ETIMEDOUT;
-> -			goto out;
-> +		ret = -ETIMEDOUT;
-> +		goto out;
->  	}
->  
->  	if (msg->resolution_resp.resolution_count = 0) {
-> 
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_common.c b/drivers/net/ethernet/intel/i40e/i40e_common.c
+index d4055037af89..45b90eb11adb 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_common.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_common.c
+@@ -1113,7 +1113,7 @@ i40e_status i40e_read_pba_string(struct i40e_hw *hw, u8 *pba_num,
+ 	 */
+ 	pba_size--;
+ 	if (pba_num_size < (((u32)pba_size * 2) + 1)) {
+-		hw_dbg(hw, "Buffer to small for PBA data.\n");
++		hw_dbg(hw, "Buffer too small for PBA data.\n");
+ 		return I40E_ERR_PARAM;
+ 	}
+ 
+-- 
+2.24.0
