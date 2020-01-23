@@ -1,55 +1,38 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 02 Jan 2020 15:13:21 +0000
-Subject: Re: [PATCH 02/10] ALSA: ml403-ac97cr: use resource_size
-Message-Id: <s5hd0c1opri.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 09:19:54 +0000
+Subject: [PATCH][V2] iio: ad5755: fix spelling mistake "to" -> "too" and grammar
+Message-Id: <20200123091954.10506-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
- <1577900990-8588-3-git-send-email-Julia.Lawall@inria.fr>
- <s5hmub72dh3.wl-tiwai@suse.de>
- <alpine.DEB.2.21.2001012022380.3262@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2001012022380.3262@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 01 Jan 2020 20:23:24 +0100,
-Julia Lawall wrote:
-> 
-> On Wed, 1 Jan 2020, Takashi Iwai wrote:
-> 
-> > On Wed, 01 Jan 2020 18:49:42 +0100,
-> > Julia Lawall wrote:
-> > >
-> > > Use resource_size rather than a verbose computation on
-> > > the end and start fields.
-> > >
-> > > The semantic patch that makes this change is as follows:
-> > > (http://coccinelle.lip6.fr/)
-> > >
-> > > <smpl>
-> > > @@ struct resource *ptr; @@
-> > > - ((ptr->end) - (ptr->start) + 1)
-> > > + resource_size(ptr)
-> > > </smpl>
-> > >
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > Unfortunately this doesn't apply cleanly on my tree.  I guess you
-> > worked on linux-next which contains a change outside the sound git
-> > tree that converts ioremap_nocache() to ioremap().
-> >
-> > We may apply it in sound git tree and let conflicts resolved at the
-> > merge time.  OTOH, it's no urgent fix at all and can be postponed
-> > after 5.6-rc1 merge, too -- then everything can be applied in a
-> > cleaner way.
-> >
-> > Let me know your preference.
-> 
-> It's from linux-next.  No hurry.  Postponing it is fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, let's postpone this.  Thanks.
+There is a spelling mistake and grammar mistake in a dev_err
+message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: fix grammar too, thanks to Alexandru Ardelean for spotting this.
+---
+ drivers/iio/dac/ad5755.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/drivers/iio/dac/ad5755.c b/drivers/iio/dac/ad5755.c
+index b9175fb4c8ab..1359a1a92fdc 100644
+--- a/drivers/iio/dac/ad5755.c
++++ b/drivers/iio/dac/ad5755.c
+@@ -655,7 +655,7 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct device *dev)
+ 	for_each_child_of_node(np, pp) {
+ 		if (devnr >= AD5755_NUM_CHANNELS) {
+ 			dev_err(dev,
+-				"There is to many channels defined in DT\n");
++				"There are too many channels defined in DT\n");
+ 			goto error_out;
+ 		}
+ 
+-- 
+2.24.0
