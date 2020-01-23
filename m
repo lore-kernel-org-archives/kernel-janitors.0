@@ -1,22 +1,35 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Thu, 23 Jan 2020 11:47:22 +0000
-Subject: Re: [PATCH] dmaengine: fix spelling mistake "to" -> "too"
-Message-Id: <20200123113522.GY2841@vkoul-mobl>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 01:06:43 +0000
+Subject: [PATCH] media: allegro: fix spelling mistake "to" -> "too"
+Message-Id: <20200123010643.2834801-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200123092359.10714-1-colin.king@canonical.com>
-In-Reply-To: <20200123092359.10714-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Tretter <m.tretter@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 23-01-20, 09:23, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
+From: Colin Ian King <colin.king@canonical.com>
 
-You had sent this earlier, I have picked that one already!
+There is a spelling mistake in a v4l2_err message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/allegro-dvt/allegro-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
+index 3be41698df4c..9908d851d4be 100644
+--- a/drivers/staging/media/allegro-dvt/allegro-core.c
++++ b/drivers/staging/media/allegro-dvt/allegro-core.c
+@@ -781,7 +781,7 @@ static int allegro_mbox_write(struct allegro_dev *dev,
+ 
+ 	if (size > mbox->size) {
+ 		v4l2_err(&dev->v4l2_dev,
+-			 "message (%zu bytes) to large for mailbox (%zu bytes)\n",
++			 "message (%zu bytes) too large for mailbox (%zu bytes)\n",
+ 			 size, mbox->size);
+ 		return -EINVAL;
+ 	}
 -- 
-~Vinod
+2.24.0
