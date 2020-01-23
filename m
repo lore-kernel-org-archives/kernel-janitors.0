@@ -1,23 +1,35 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Thu, 23 Jan 2020 08:17:26 +0000
-Subject: Re: [PATCH] USB: serial: cyberjack: fix spelling mistake "To" -> "Too"
-Message-Id: <20200123081726.GG8375@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 00:18:01 +0000
+Subject: [PATCH] ar5523: fix spelling mistake "to" -> "too"
+Message-Id: <20200123001801.2831921-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200122233955.2829493-1-colin.king@canonical.com>
-In-Reply-To: <20200122233955.2829493-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pontus Fuchs <pontus.fuchs@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:39:55PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_dbg message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+There is a spelling mistake in a ar5523_err message. Fix it.
 
-Johan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ar5523/ar5523.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ar5523/ar5523.c b/drivers/net/wireless/ath/ar5523/ar5523.c
+index da2d179430ca..f4a04d88bd3f 100644
+--- a/drivers/net/wireless/ath/ar5523/ar5523.c
++++ b/drivers/net/wireless/ath/ar5523/ar5523.c
+@@ -74,7 +74,7 @@ static void ar5523_read_reply(struct ar5523 *ar, struct ar5523_cmd_hdr *hdr,
+ 
+ 	if (cmd->odata) {
+ 		if (cmd->olen < olen) {
+-			ar5523_err(ar, "olen to small %d < %d\n",
++			ar5523_err(ar, "olen too small %d < %d\n",
+ 				   cmd->olen, olen);
+ 			cmd->olen = 0;
+ 			cmd->res = -EOVERFLOW;
+-- 
+2.24.0
