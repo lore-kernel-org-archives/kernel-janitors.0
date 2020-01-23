@@ -1,45 +1,35 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Wed, 01 Jan 2020 17:49:46 +0000
-Subject: [PATCH 06/10] ASoC: SOF: imx8: use resource_size
-Message-Id: <1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 00:43:28 +0000
+Subject: [PATCH] ipvs: fix spelling mistake "to" -> "too"
+Message-Id: <20200123004328.2833127-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use resource_size rather than a verbose computation on
-the end and start fields.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+There is a spelling mistake in a IP_VS_ERR_RL message. Fix it.
 
-<smpl>
-@@ struct resource ptr; @@
-- (ptr.end - ptr.start + 1)
-+ resource_size(&ptr)
-</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/sof/imx/imx8.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/netfilter/ipvs/ip_vs_sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index cfefcfd92798..1fc48abfd46c 100644
---- a/sound/soc/sof/imx/imx8.c
-+++ b/sound/soc/sof/imx/imx8.c
-@@ -294,8 +294,7 @@ static int imx8_probe(struct snd_sof_dev *sdev)
- 	}
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index 8dc892a9dc91..605e0f68f8bd 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1239,7 +1239,7 @@ static void ip_vs_process_message(struct netns_ipvs *ipvs, __u8 *buffer,
  
- 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
--							  res.end - res.start +
--							  1);
-+							  resource_size(&res));
- 	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
- 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
- 			base, size);
+ 			p = msg_end;
+ 			if (p + sizeof(s->v4) > buffer+buflen) {
+-				IP_VS_ERR_RL("BACKUP, Dropping buffer, to small\n");
++				IP_VS_ERR_RL("BACKUP, Dropping buffer, too small\n");
+ 				return;
+ 			}
+ 			s = (union ip_vs_sync_conn *)p;
+-- 
+2.24.0
