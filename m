@@ -1,61 +1,37 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sat, 11 Jan 2020 03:44:39 +0000
-Subject: Re: [PATCH -next] hwmon: (w83627ehf) Remove set but not used variable 'fan4min'
-Message-Id: <20200111034438.GA15669@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 09:27:30 +0000
+Subject: [PATCH][V2] net/rose: fix spelling mistake "to" -> "too"
+Message-Id: <20200123092730.10909-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200108034514.50130-1-yuehaibing@huawei.com>
-In-Reply-To: <20200108034514.50130-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Jean Delvare <jdelvare@suse.com>, "Dr . David Alan Gilbert" <linux@treblig.org>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Ralf Baechle <ralf@linux-mips.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-hams@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 03:45:14AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/hwmon/w83627ehf.c: In function 'w83627ehf_check_fan_inputs':
-> drivers/hwmon/w83627ehf.c:1296:24: warning:
->  variable 'fan4min' set but not used [-Wunused-but-set-variable]
-> 
-> commit 62000264cfa8 ("hwmon: (w83627ehf) remove nct6775 and nct6776 support")
-> left behind this unused variable.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+There is a spelling mistake in a printk message. Fix it.
 
-Thanks,
-Guenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: split the patch, the V1 included another fix.
+---
+ net/rose/af_rose.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/hwmon/w83627ehf.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
-> index 5a7239eb1c15..7ffadc2da57b 100644
-> --- a/drivers/hwmon/w83627ehf.c
-> +++ b/drivers/hwmon/w83627ehf.c
-> @@ -1293,7 +1293,7 @@ static void
->  w83627ehf_check_fan_inputs(const struct w83627ehf_sio_data *sio_data,
->  			   struct w83627ehf_data *data)
->  {
-> -	int fan3pin, fan4pin, fan4min, fan5pin, regval;
-> +	int fan3pin, fan4pin, fan5pin, regval;
->  
->  	/* The W83627UHG is simple, only two fan inputs, no config */
->  	if (sio_data->kind = w83627uhg) {
-> @@ -1307,12 +1307,10 @@ w83627ehf_check_fan_inputs(const struct w83627ehf_sio_data *sio_data,
->  		fan3pin = 1;
->  		fan4pin = superio_inb(sio_data->sioreg, 0x27) & 0x40;
->  		fan5pin = superio_inb(sio_data->sioreg, 0x27) & 0x20;
-> -		fan4min = fan4pin;
->  	} else {
->  		fan3pin = 1;
->  		fan4pin = !(superio_inb(sio_data->sioreg, 0x29) & 0x06);
->  		fan5pin = !(superio_inb(sio_data->sioreg, 0x24) & 0x02);
-> -		fan4min = fan4pin;
->  	}
->  
->  	data->has_fan = data->has_fan_min = 0x03; /* fan1 and fan2 */
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index 46b8ff24020d..1e8eeb044b07 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -1475,7 +1475,7 @@ static int __init rose_proto_init(void)
+ 	int rc;
+ 
+ 	if (rose_ndevs > 0x7FFFFFFF/sizeof(struct net_device *)) {
+-		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter to large\n");
++		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter too large\n");
+ 		rc = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.24.0
