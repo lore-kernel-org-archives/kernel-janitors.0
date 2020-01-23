@@ -1,35 +1,35 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Fri, 03 Jan 2020 12:47:49 +0000
-Subject: Re: [PATCH 0/4] use mmgrab
-Message-Id: <alpine.DEB.2.21.2001031344480.2982@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jan 2020 00:54:22 +0000
+Subject: [PATCH] MIPS: OCTEON: octeon-irq: fix spelling mistake "to" -> "too"
+Message-Id: <20200123005422.2834063-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577634178-22530-1-git-send-email-Julia.Lawall@inria.fr> <20200103123059.GI3911@kadam>
-In-Reply-To: <20200103123059.GI3911@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, openrisc@lists.librecores.org
+To: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a spelling mistake in a dev_err message. Fix it.
 
-On Fri, 3 Jan 2020, Dan Carpenter wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/cavium-octeon/octeon-irq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Sun, Dec 29, 2019 at 04:42:54PM +0100, Julia Lawall wrote:
-> > Mmgrab was introduced in commit f1f1007644ff ("mm: add new mmgrab()
-> > helper") and most of the kernel was updated to use it. Update a few
-> > remaining files.
->
-> I wonder if there is an automatic way to generate these kind of
-> Coccinelle scripts which use inlines instead of open coding.  Like maybe
-> make a list of one line functions, and then auto generate a recipe.  Or
-> the mmgrab() function could have multiple lines if the first few were
-> just sanity checks for NULL or something...
-
-I tried this at one point (10 years ago!):
-
-https://pages.lip6.fr/Julia.Lawall/acp4is09-lawall.pdf
-
-Perhaps it is worth reviving.
-
-julia
+diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
+index f97be32bf699..6bd1e97effdf 100644
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2193,7 +2193,7 @@ static int octeon_irq_cib_map(struct irq_domain *d,
+ 	struct octeon_irq_cib_chip_data *cd;
+ 
+ 	if (hw >= host_data->max_bits) {
+-		pr_err("ERROR: %s mapping %u is to big!\n",
++		pr_err("ERROR: %s mapping %u is too big!\n",
+ 		       irq_domain_get_of_node(d)->name, (unsigned)hw);
+ 		return -EINVAL;
+ 	}
+-- 
+2.24.0
