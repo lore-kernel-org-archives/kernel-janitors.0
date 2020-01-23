@@ -1,37 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Jan 2020 06:56:47 +0000
-Subject: [PATCH net] net: sched: prevent a use after free
-Message-Id: <20200131065647.joonbg3wzcw26x3b@kili.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 23 Jan 2020 21:38:57 +0000
+Subject: Re: [PATCH] drm/amd/amdgpu: fix spelling mistake "to" -> "too"
+Message-Id: <CADnq5_PxfM2i0BxpKtOUeL2+hxLUbwocyWNmd9qzXnOesJfuWg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200123002216.2832146-1-colin.king@canonical.com>
+In-Reply-To: <20200123002216.2832146-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Mohit Bhasi <mohitbhasi1998@gmail.com>, "Mohit P. Tahiliani" <tahiliani@nitk.edu.in>, "V. Saicharan" <vsaicharan1998@gmail.com>, Gautam Ramakrishnan <gautamramk@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 
-The code calls kfree_skb(skb); and then re-uses "skb" on the next line.
-Let's re-order these lines to solve the problem.
+On Wed, Jan 22, 2020 at 7:22 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a DRM_ERROR message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- net/sched/sch_fq_pie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied.  thanks!
 
-diff --git a/net/sched/sch_fq_pie.c b/net/sched/sch_fq_pie.c
-index bbd0dea6b6b9..78472e0773e9 100644
---- a/net/sched/sch_fq_pie.c
-+++ b/net/sched/sch_fq_pie.c
-@@ -349,9 +349,9 @@ static int fq_pie_change(struct Qdisc *sch, struct nlattr *opt,
- 	while (sch->q.qlen > sch->limit) {
- 		struct sk_buff *skb = fq_pie_qdisc_dequeue(sch);
- 
--		kfree_skb(skb);
- 		len_dropped += qdisc_pkt_len(skb);
- 		num_dropped += 1;
-+		kfree_skb(skb);
- 	}
- 	qdisc_tree_reduce_backlog(sch, num_dropped, len_dropped);
- 
--- 
-2.11.0
+Alex
+
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+> index ceb0dbf685f1..59ddba137946 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+> @@ -652,7 +652,7 @@ static int amdgpu_vce_cs_reloc(struct amdgpu_cs_parser *p, uint32_t ib_idx,
+>
+>         if ((addr + (uint64_t)size) >
+>             (mapping->last + 1) * AMDGPU_GPU_PAGE_SIZE) {
+> -               DRM_ERROR("BO to small for addr 0x%010Lx %d %d\n",
+> +               DRM_ERROR("BO too small for addr 0x%010Lx %d %d\n",
+>                           addr, lo, hi);
+>                 return -EINVAL;
+>         }
+> --
+> 2.24.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
