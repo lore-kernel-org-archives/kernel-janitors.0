@@ -1,24 +1,36 @@
-From: David Miller <davem@redhat.com>
-Date: Mon, 06 Jan 2020 21:39:54 +0000
-Subject: Re: [PATCH] gtp: simplify error handling code in 'gtp_encap_enable()'
-Message-Id: <20200106.133954.516759492863458363.davem@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 24 Jan 2020 10:15:37 +0000
+Subject: [PATCH] fs/adfs: bigdir: Fix an error code in adfs_fplus_read()
+Message-Id: <20200124101537.z6n242eovocfbdha@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200105173607.5456-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200105173607.5456-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: pablo@netfilter.org, laforge@gnumonks.org, osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Kate Stewart <kstewart@linuxfoundation.org>, Enrico Weigelt <info@metux.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun,  5 Jan 2020 18:36:07 +0100
+This code accidentally returns success, but it should return the
+-EIO error code from adfs_fplus_validate_header().
 
-> 'gtp_encap_disable_sock(sk)' handles the case where sk is NULL, so there
-> is no need to test it before calling the function.
-> 
-> This saves a few line of code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: d79288b4f61b ("fs/adfs: bigdir: calculate and validate directory checkbyte")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/adfs/dir_fplus.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied to net-next.
+diff --git a/fs/adfs/dir_fplus.c b/fs/adfs/dir_fplus.c
+index 48ea299b6ece..4a15924014da 100644
+--- a/fs/adfs/dir_fplus.c
++++ b/fs/adfs/dir_fplus.c
+@@ -114,7 +114,8 @@ static int adfs_fplus_read(struct super_block *sb, u32 indaddr,
+ 		return ret;
+ 
+ 	dir->bighead = h = (void *)dir->bhs[0]->b_data;
+-	if (adfs_fplus_validate_header(h)) {
++	ret = adfs_fplus_validate_header(h);
++	if (ret) {
+ 		adfs_error(sb, "dir %06x has malformed header", indaddr);
+ 		goto out;
+ 	}
+-- 
+2.11.0
