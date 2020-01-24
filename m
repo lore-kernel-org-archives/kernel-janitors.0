@@ -1,33 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 26 Jan 2020 15:45:32 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to variable cond
-Message-Id: <20200126154532.C28D2C447A2@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 24 Jan 2020 10:13:12 +0000
+Subject: [PATCH] dma-buf: fix locking in sync_print_obj()
+Message-Id: <20200124101311.drryaegcdc7d4x7e@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200114165601.374597-1-colin.king@canonical.com>
-In-Reply-To: <20200114165601.374597-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sumit Semwal <sumit.semwal@linaro.org>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Gustavo Padovan <gustavo.padovan@collabora.com>, Sean Paul <seanpaul@chromium.org>, linux-media@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+This is always called with IRQs disabled and we don't actually want to
+enable IRQs at the end.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable cond is being assigned with a value that is never
-> read, it is assigned a new value later on. The assignment is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Fixes: a6aa8fca4d79 ("dma-buf/sw-sync: Reduce irqsave/irqrestore from known context")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/dma-buf/sync_debug.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-c3a913357c3e rtlwifi: rtl8188ee: remove redundant assignment to variable cond
-
+diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+index 101394f16930..952331344b1c 100644
+--- a/drivers/dma-buf/sync_debug.c
++++ b/drivers/dma-buf/sync_debug.c
+@@ -107,15 +107,16 @@ static void sync_print_fence(struct seq_file *s,
+ static void sync_print_obj(struct seq_file *s, struct sync_timeline *obj)
+ {
+ 	struct list_head *pos;
++	unsigned long flags;
+ 
+ 	seq_printf(s, "%s: %d\n", obj->name, obj->value);
+ 
+-	spin_lock_irq(&obj->lock);
++	spin_lock_irqsave(&obj->lock, flags);
+ 	list_for_each(pos, &obj->pt_list) {
+ 		struct sync_pt *pt = container_of(pos, struct sync_pt, link);
+ 		sync_print_fence(s, &pt->base, false);
+ 	}
+-	spin_unlock_irq(&obj->lock);
++	spin_unlock_irqrestore(&obj->lock, flags);
+ }
+ 
+ static void sync_print_sync_file(struct seq_file *s,
 -- 
-https://patchwork.kernel.org/patch/11332689/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
