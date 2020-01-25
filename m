@@ -1,28 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 07 Jan 2020 10:43:44 +0000
-Subject: Re: [PATCH 08/16] pinctrl: ssbi-mpp: constify copied structure
-Message-Id: <CACRpkdYQfiuziMyu+oCyh-8wmgpzVY7V5+CPNqoSLm3+ZEFmVA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 25 Jan 2020 20:20:20 +0000
+Subject: [PATCH] i2c: parport: fix spelling mistake: "Atmost" -> "At most"
+Message-Id: <20200125202020.12861-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr> <1577864614-5543-9-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-9-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Andy Gross <agross@kernel.org>, kernel-janitors@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 1, 2020 at 9:20 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The pm8xxx_pinctrl_desc structure is only copied into another structure,
-> so make it const.
->
-> The opportunity for this change was found using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+There is a spelling mistake in a module parameter description.
+Fix it.
 
-That's a pretty cool semantic check finding things like this!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-parport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/i2c/busses/i2c-parport.c b/drivers/i2c/busses/i2c-parport.c
+index f8f94a25af26..81eb441b2387 100644
+--- a/drivers/i2c/busses/i2c-parport.c
++++ b/drivers/i2c/busses/i2c-parport.c
+@@ -129,7 +129,7 @@ static int parport[MAX_DEVICE] = {0, -1, -1, -1};
+ module_param_array(parport, int, NULL, 0);
+ MODULE_PARM_DESC(parport,
+ 		 "List of parallel ports to bind to, by index.\n"
+-		 " Atmost " __stringify(MAX_DEVICE) " devices are supported.\n"
++		 " At most " __stringify(MAX_DEVICE) " devices are supported.\n"
+ 		 " Default is one device connected to parport0.\n"
+ );
+ 
+-- 
+2.24.0
