@@ -1,42 +1,40 @@
-From: Paul Burton <paulburton@kernel.org>
-Date: Fri, 10 Jan 2020 19:36:06 +0000
-Subject: Re: [PATCH 08/10] MIPS: use resource_size
-Message-Id: <5e18d227.1c69fb81.44066.9d0d@mx.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 26 Jan 2020 15:17:47 +0000
+Subject: [PATCH] scsi: mvsas: ensure loop counter phy_no  does not wrap and cause an infinite loop
+Message-Id: <20200126151747.33320-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577900990-8588-9-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577900990-8588-9-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-Julia Lawall wrote:
-> Use resource_size rather than a verbose computation on
-> the end and start fields.
->=20
-> The semantic patch that makes these changes is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> <smpl>
-> @@ struct resource ptr; @@
-> - (ptr.end - ptr.start + 1)
-> + resource_size(&ptr)
-> </smpl>
+The loop counter phy_no is a u8 where as the upper limit of the loop
+is a u32. In the event that upper limit is greater than 255 we end
+up with an infinite loop since phy_no will wrap around an never reach
+upper loop limit. Fix this by making phy_no a u32.
 
-Applied to mips-next.
+Addresses-Coverity: ("Infinite loop")
+Fixes: 20b09c2992fe ("[SCSI] mvsas: add support for 94xx; layout change; bug fixes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mvsas/mv_sas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> commit ecb983790fe8
-> https://git.kernel.org/mips/c/ecb983790fe8
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> Reviewed-by: Philippe Mathieu-Daud=C3=A9 <f4bug@amsat.org>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
-
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+diff --git a/drivers/scsi/mvsas/mv_sas.c b/drivers/scsi/mvsas/mv_sas.c
+index a920eced92ec..9c03f23bde54 100644
+--- a/drivers/scsi/mvsas/mv_sas.c
++++ b/drivers/scsi/mvsas/mv_sas.c
+@@ -1940,7 +1940,7 @@ static void mvs_sig_time_out(struct timer_list *t)
+ {
+ 	struct mvs_phy *phy = from_timer(phy, t, timer);
+ 	struct mvs_info *mvi = phy->mvi;
+-	u8 phy_no;
++	u32 phy_no;
+ 
+ 	for (phy_no = 0; phy_no < mvi->chip->n_phy; phy_no++) {
+ 		if (&mvi->phy[phy_no] = phy) {
+-- 
+2.24.0
