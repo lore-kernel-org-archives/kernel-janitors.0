@@ -1,43 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>, syzbot <syzbot+784ccb935f9900cc7c9e@sy
-Date: Wed, 15 Jan 2020 17:46:28 +0000
-Subject: [PATCH] HID: hiddev: Fix race in in hiddev_disconnect()
-Message-Id: <20200115174628.zxpxbpa6bwspjajg@kili.mountain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Jan 2020 10:47:30 +0000
+Subject: [PATCH v2] drivers: net: xgene: Fix the order of the arguments of 'alloc_etherdev_mqs()'
+Message-Id: <20200126104730.15217-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.2001141100290.1593-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, andreyknvl@google.com, syzkaller-bugs@googlegroups.com
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: isubramanian@apm.com, keyur@os.amperecomputing.com, quan@os.amperecomputing.com, tinamdar@apm.com, kdinh@apm.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Syzbot reports that "hiddev" is used after it's free in hiddev_disconnect().
-The hiddev_disconnect() function sets "hiddev->exist = 0;" so
-hiddev_release() can free it as soon as we drop the "existancelock"
-lock.  This patch moves the mutex_unlock(&hiddev->existancelock) until
-after we have finished using it.
+'alloc_etherdev_mqs()' expects first 'tx', then 'rx'. The semantic here
+looks reversed.
 
-Reported-by: syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com
-Fixes: 7f77897ef2b6 ("HID: hiddev: fix potential use-after-free")
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reorder the arguments passed to 'alloc_etherdev_mqs()' in order to keep
+the correct semantic.
+
+In fact, this is a no-op because both XGENE_NUM_[RT]X_RING are 8.
+
+Fixes: 107dec2749fe ("drivers: net: xgene: Add support for multiple queues")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hid/usbhid/hiddev.c | 2 +-
+v2: Fix subject
+---
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
-index a970b809d778..4140dea693e9 100644
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -932,9 +932,9 @@ void hiddev_disconnect(struct hid_device *hid)
- 	hiddev->exist = 0;
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+index d8612131c55e..cc8031ae9aa3 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -2020,7 +2020,7 @@ static int xgene_enet_probe(struct platform_device *pdev)
+ 	int ret;
  
- 	if (hiddev->open) {
--		mutex_unlock(&hiddev->existancelock);
- 		hid_hw_close(hiddev->hid);
- 		wake_up_interruptible(&hiddev->wait);
-+		mutex_unlock(&hiddev->existancelock);
- 	} else {
- 		mutex_unlock(&hiddev->existancelock);
- 		kfree(hiddev);
+ 	ndev = alloc_etherdev_mqs(sizeof(struct xgene_enet_pdata),
+-				  XGENE_NUM_RX_RING, XGENE_NUM_TX_RING);
++				  XGENE_NUM_TX_RING, XGENE_NUM_RX_RING);
+ 	if (!ndev)
+ 		return -ENOMEM;
+ 
 -- 
-2.11.0
+2.20.1
