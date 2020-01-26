@@ -1,35 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 22 Jan 2020 23:37:49 +0000
-Subject: [PATCH] leds: lm3697: fix spelling mistake "To" -> "Too"
-Message-Id: <20200122233749.2829246-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sun, 26 Jan 2020 10:45:45 +0000
+Subject: Re: [PATCH] ath11k: ensure ts.flags is initialized before bit-wise or'ing in values
+Message-Id: <20200126104545.83226C447A2@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191221004046.15859-1-colin.king@canonical.com>
+In-Reply-To: <20191221004046.15859-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Anilkumar Kolli <akolli@codeaurora.org>, Manikanta Pubbisetty <mpubbise@codeaurora.org>, Sven Eckelmann <seckelmann@datto.com>, Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in a dev_err message. Fix it.
+> Currently the structure ts is not inititalized and ts.flags contains
+> garbage values from the stack.  This is being passed into function
+> ath11k_dp_tx_status_parse that bit-wise or'ing in settings into the
+> ts.flags field.  To avoid flags (and other fields) from containing
+> garbage, initialize the structure to zero before use.
+> 
+> Addresses-Coverity: ("Uninitialized scalar variable)"
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/leds/leds-lm3697.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-index b71711aff8a3..872d26f9706a 100644
---- a/drivers/leds/leds-lm3697.c
-+++ b/drivers/leds/leds-lm3697.c
-@@ -246,7 +246,7 @@ static int lm3697_probe_dt(struct lm3697 *priv)
- 
- 		led->num_leds = fwnode_property_count_u32(child, "led-sources");
- 		if (led->num_leds > LM3697_MAX_LED_STRINGS) {
--			dev_err(&priv->client->dev, "To many LED strings defined\n");
-+			dev_err(&priv->client->dev, "Too many LED strings defined\n");
- 			continue;
- 		}
- 
+eefca584140b ath11k: ensure ts.flags is initialized before bit-wise or'ing in values
+
 -- 
-2.24.0
+https://patchwork.kernel.org/patch/11306545/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
