@@ -1,48 +1,57 @@
-From: bfields@fieldses.org (J. Bruce Fields)
-Date: Thu, 30 Jan 2020 14:56:11 +0000
-Subject: Re: [PATCH] nfsd4: fix double free in nfsd4_do_async_copy()
-Message-Id: <20200130145611.GA18127@fieldses.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Jan 2020 09:20:28 +0000
+Subject: [PATCH] gianfar: Allocate the correct number of rx queues in 'gfar_of_init()'
+Message-Id: <20200126092028.14246-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200113132307.frp6ur5zhzolu5ys@kili.mountain>
- <CAN-5tyEEPq6JX7mMRwX+7DTJJ3zy3-=SVqfqQyXvvbOQxqgDJQ@mail.gmail.com>
-In-Reply-To: <CAN-5tyEEPq6JX7mMRwX+7DTJJ3zy3-=SVqfqQyXvvbOQxqgDJQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Olga Kornievskaia <aglo@umich.edu>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "J. Bruce Fields" <bfields@redhat.com>, Olga Kornievskaia <kolga@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: claudiu.manoil@nxp.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Jan 21, 2020 at 04:56:31PM -0500, Olga Kornievskaia wrote:
-> On Mon, Jan 13, 2020 at 8:24 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > This frees "copy->nf_src" before and again after the goto.
-> >
-> > Fixes: ce0887ac96d3 ("NFSD add nfs4 inter ssc to nfsd4_copy")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  fs/nfsd/nfs4proc.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> > index 1e14b3ed5674..c90c24c35b2e 100644
-> > --- a/fs/nfsd/nfs4proc.c
-> > +++ b/fs/nfsd/nfs4proc.c
-> > @@ -1469,7 +1469,6 @@ static int nfsd4_do_async_copy(void *data)
-> >                 copy->nf_src->nf_file = nfs42_ssc_open(copy->ss_mnt, &copy->c_fh,
-> >                                               &copy->stateid);
-> >                 if (IS_ERR(copy->nf_src->nf_file)) {
-> > -                       kfree(copy->nf_src);
-> >                         copy->nfserr = nfserr_offload_denied;
-> >                         nfsd4_interssc_disconnect(copy->ss_mnt);
-> >                         goto do_callback;
-> > --
-> > 2.11.0
-> >
-> 
-> Reviewed-by: Olga Kornievskaia <kolga@netapp.com>
-> 
-> Bruce, can you add this to your nfsd-next?
+We can get values for rx and tx queues from "fsl,num_rx_queues" and
+"fsl,num_tx_queues". However, when 'alloc_etherdev_mq()' is called, the
+value for "tx" is used for both.
 
-Done, thanks for the reminder.
+Use 'alloc_etherdev_mqs()' instead.
 
---b.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+WARNING: This patch is purely speculative!
+
+I don't fully understand the code, and tx and rx queues seem to be
+allocated by 'gfar_alloc_[rt]x_queues()' and handled with priv-> fields.
+I don't know the relationship between queues provided by the core, and the
+ones specificly handled in this driver.
+
+'netif_set_real_num_rx_queues()' a few lines below is also spurious to me.
+If "fsl,num_rx_queues" > "fsl,num_tx_queues" it will return an error and
+things then look out of synch (i.e. 'priv->num_rx_queues' is set to a value
+bigger than what is allocated by core, that is to say the one from
+'priv->num_tx_queues')
+
+If my assumptions are correct, I guess that the call to
+'netif_set_real_num_rx_queues()' is useless
+
+
+Sorry for the noise if I'm completly wrong.
+In such a case, some explanation would be appreciated.
+---
+ drivers/net/ethernet/freescale/gianfar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 72868a28b621..5e934069682e 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -708,7 +708,7 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	*pdev = alloc_etherdev_mq(sizeof(*priv), num_tx_qs);
++	*pdev = alloc_etherdev_mqs(sizeof(*priv), num_tx_qs, num_rx_qs);
+ 	dev = *pdev;
+ 	if (NULL = dev)
+ 		return -ENOMEM;
+-- 
+2.20.1
