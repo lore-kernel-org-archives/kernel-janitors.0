@@ -1,28 +1,44 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 01 Jan 2020 11:39:11 +0000
-Subject: Re: [PATCH 02/16] ALSA: constify copied structure
-Message-Id: <s5htv5f2yow.wl-tiwai@suse.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Jan 2020 10:25:40 +0000
+Subject: [PATCH] ionic: Fix rx queue allocation in 'ionic_lif_alloc()'
+Message-Id: <20200126102540.14812-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
- <1577864614-5543-3-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1577864614-5543-3-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: snelson@pensando.io, drivers@pensando.io, jakub.kicinski@netronome.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 01 Jan 2020 08:43:20 +0100,
-Julia Lawall wrote:
-> 
-> The azx_pcm_hw structure is only copied into another structure,
-> so make it const.
-> 
-> The opportunity for this change was found using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The 'struct ionic' has a 'nrxqs_per_lif' field. So use it instead of
+using two times the value of 'ntxqs_per_lif'.
 
-Applied now.  Thanks.
+Note that with the current implementation, this patch is a no-op because
+both fields are set to the same value in 'ionic_lifs_size()' which
+is called before reaching 'ionic_lif_alloc()'.
 
+However, it is more future-proof.
 
-Takashi
+Fixes: 1a58e196467f ("ionic: Add basic lif support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Another alternative could be to use 'alloc_etherdev_mq()' if really using
+the same value for both fields is what is expected.
+---
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+index 60fd14df49d7..96d3b3e993ad 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -1663,7 +1663,7 @@ static struct ionic_lif *ionic_lif_alloc(struct ionic *ionic, unsigned int index
+ 	int err;
+ 
+ 	netdev = alloc_etherdev_mqs(sizeof(*lif),
+-				    ionic->ntxqs_per_lif, ionic->ntxqs_per_lif);
++				    ionic->ntxqs_per_lif, ionic->nrxqs_per_lif);
+ 	if (!netdev) {
+ 		dev_err(dev, "Cannot allocate netdev, aborting\n");
+ 		return ERR_PTR(-ENOMEM);
+-- 
+2.20.1
