@@ -1,35 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jan 2020 00:18:01 +0000
-Subject: [PATCH] ar5523: fix spelling mistake "to" -> "too"
-Message-Id: <20200123001801.2831921-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sun, 26 Jan 2020 14:36:51 +0000
+Subject: Re: [PATCH] ar5523: fix spelling mistake "to" -> "too"
+Message-Id: <20200126143651.7EE7AC4479C@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200123001801.2831921-1-colin.king@canonical.com>
+In-Reply-To: <20200123001801.2831921-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pontus Fuchs <pontus.fuchs@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Pontus Fuchs <pontus.fuchs@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in a ar5523_err message. Fix it.
+> There is a spelling mistake in a ar5523_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ar5523/ar5523.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/wireless/ath/ar5523/ar5523.c b/drivers/net/wireless/ath/ar5523/ar5523.c
-index da2d179430ca..f4a04d88bd3f 100644
---- a/drivers/net/wireless/ath/ar5523/ar5523.c
-+++ b/drivers/net/wireless/ath/ar5523/ar5523.c
-@@ -74,7 +74,7 @@ static void ar5523_read_reply(struct ar5523 *ar, struct ar5523_cmd_hdr *hdr,
- 
- 	if (cmd->odata) {
- 		if (cmd->olen < olen) {
--			ar5523_err(ar, "olen to small %d < %d\n",
-+			ar5523_err(ar, "olen too small %d < %d\n",
- 				   cmd->olen, olen);
- 			cmd->olen = 0;
- 			cmd->res = -EOVERFLOW;
+d92e8fa8ce88 ar5523: fix spelling mistake "to" -> "too"
+
 -- 
-2.24.0
+https://patchwork.kernel.org/patch/11346589/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
