@@ -1,27 +1,40 @@
-From: James Bottomley <jejb@linux.ibm.com>
-Date: Sun, 26 Jan 2020 16:18:24 +0000
-Subject: Re: [PATCH] scsi: mvsas: ensure loop counter phy_no  does not wrap and cause an infinite loop
-Message-Id: <1580055504.4964.2.camel@linux.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Jan 2020 10:44:29 +0000
+Subject: [PATCH] drivers: net: xgene: Fix the order
+Message-Id: <20200126104429.15156-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200126151747.33320-1-colin.king@canonical.com>
-In-Reply-To: <20200126151747.33320-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: isubramanian@apm.com, keyur@os.amperecomputing.com, quan@os.amperecomputing.com, tinamdar@apm.com, kdinh@apm.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, 2020-01-26 at 15:17 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The loop counter phy_no is a u8 where as the upper limit of the loop
-> is a u32. In the event that upper limit is greater than 255 we end
-> up with an infinite loop since phy_no will wrap around an never reach
-> upper loop limit. Fix this by making phy_no a u32.
+'alloc_etherdev_mqs()' expects first 'tx', then 'rx'. The semantic here
+looks reversed.
 
-This value is limited to MVS_MAX_PHYS (i.e. 8) so I don't see where the
-concern comes from.  If we were ever to overrun that, we'd corrupt the
-chip info structure, because it only allows MVS_MAX_PHYS for the amount
-of space.
+Reorder the arguments passed to 'alloc_etherdev_mqs()' in order to keep
+the correct semantic.
 
-James
+In fact, this is a no-op because both XGENE_NUM_[RT]X_RING are 8.
+
+Fixes: 107dec2749fe ("drivers: net: xgene: Add support for multiple queues")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+index d8612131c55e..cc8031ae9aa3 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -2020,7 +2020,7 @@ static int xgene_enet_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	ndev = alloc_etherdev_mqs(sizeof(struct xgene_enet_pdata),
+-				  XGENE_NUM_RX_RING, XGENE_NUM_TX_RING);
++				  XGENE_NUM_TX_RING, XGENE_NUM_RX_RING);
+ 	if (!ndev)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
