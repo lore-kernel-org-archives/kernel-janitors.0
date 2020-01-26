@@ -1,28 +1,33 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 22 Jan 2020 10:15:32 +0000
-Subject: Re: [PATCH][next] crypto: hisilicon: fix spelling mistake "disgest" -> "digest"
-Message-Id: <20200122101532.lz7i3wa7htkrv3gv@gondor.apana.org.au>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Jan 2020 17:51:04 +0000
+Subject: [PATCH] net/mlx5: Remove a useless 'drain_workqueue()' call in 'mlx5e_ipsec_cleanup()'
+Message-Id: <20200126175104.17948-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200117092819.97640-1-colin.king@canonical.com>
-In-Reply-To: <20200117092819.97640-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Zaibo Xu <xuzaibo@huawei.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: borisp@mellanox.com, saeedm@mellanox.com, leon@kernel.org, davem@davemloft.net
+Cc: linux-rdma@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Jan 17, 2020 at 09:28:19AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in an error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/hisilicon/sec2/sec_crypto.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+'destroy_workqueue()' already calls 'drain_workqueue()', there is no need
+to call it explicitly.
 
-Patch applied.  Thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
+index cf58c9637904..29626c6c9c25 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
+@@ -433,7 +433,6 @@ void mlx5e_ipsec_cleanup(struct mlx5e_priv *priv)
+ 	if (!ipsec)
+ 		return;
+ 
+-	drain_workqueue(ipsec->wq);
+ 	destroy_workqueue(ipsec->wq);
+ 
+ 	ida_destroy(&ipsec->halloc);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
