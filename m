@@ -1,36 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Mon, 13 Jan 2020 17:46:03 +0000
-Subject: Re: [PATCH][next][V2] dmaengine: ti: omap-dma: don't allow a null od->plat pointer to be dereference
-Message-Id: <20200113174603.GK5885@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 26 Jan 2020 00:09:54 +0000
+Subject: [PATCH][next] iwlegacy: ensure loop counter addr does not wrap and cause an infinite loop
+Message-Id: <20200126000954.22807-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200109131953.157154-1-colin.king@canonical.com>
- <20200110074605.GD2818@vkoul-mobl>
- <f2116091-3023-ee5d-f3f7-07ec02425da0@canonical.com>
-In-Reply-To: <f2116091-3023-ee5d-f3f7-07ec02425da0@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <stf_xl@wp.pl>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Meenakshi Venkataraman <meenakshi.venkataraman@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Colin Ian King <colin.king@canonical.com> [200110 09:22]:
-> On 10/01/2020 07:46, Vinod Koul wrote:
-> > On 09-01-20, 13:19, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> Currently when the call to dev_get_platdata returns null the driver issues
-> >> a warning and then later dereferences the null pointer.  Avoid this issue
-> >> by returning -ENODEV errror rather when the platform data is null and
-> > 
-> > s/errror/error :) never thought would correct Colin on spelling :)
-> 
-> Doh, I need to add that to the checkpatch dictionary ;-)
-> 
-> If this can be fixed up before it's applied then this would be
-> appreciated rather than me sending a V3.
+From: Colin Ian King <colin.king@canonical.com>
 
-I've fixed i up and pushed out into omap-for-v5.6/sdma.
+The loop counter addr is a u16 where as the upper limit of the loop
+is a an int. In the unlikely event that the il->cfg->eeprom_size is
+greater than 64K then we end up with an infinite loop since addr will
+wrap around an never reach upper loop limit. Fix this by making addr
+an int.
 
-Thanks,
+Addresses-Coverity: ("Infinite loop")
+Fixes: be663ab67077 ("iwlwifi: split the drivers for agn and legacy devices 3945/4965")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlegacy/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tony
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
+index d966b29b45ee..348c17ce72f5 100644
+--- a/drivers/net/wireless/intel/iwlegacy/common.c
++++ b/drivers/net/wireless/intel/iwlegacy/common.c
+@@ -699,7 +699,7 @@ il_eeprom_init(struct il_priv *il)
+ 	u32 gp = _il_rd(il, CSR_EEPROM_GP);
+ 	int sz;
+ 	int ret;
+-	u16 addr;
++	int addr;
+ 
+ 	/* allocate eeprom */
+ 	sz = il->cfg->eeprom_size;
+-- 
+2.24.0
