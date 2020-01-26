@@ -1,35 +1,33 @@
-From: Pkshih <pkshih@realtek.com>
-Date: Wed, 15 Jan 2020 01:46:30 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sun, 26 Jan 2020 15:45:32 +0000
 Subject: Re: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to variable cond
-Message-Id: <1579052789.2871.0.camel@realtek.com>
+Message-Id: <20200126154532.C28D2C447A2@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200114165601.374597-1-colin.king@canonical.com>
 In-Reply-To: <20200114165601.374597-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTAxLTE0IGF0IDE2OjU2ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVmFy
-aWFibGUgY29uZCBpcyBiZWluZyBhc3NpZ25lZCB3aXRoIGEgdmFsdWUgdGhhdCBpcyBuZXZlcg0K
-PiByZWFkLCBpdCBpcyBhc3NpZ25lZCBhIG5ldyB2YWx1ZSBsYXRlciBvbi4gVGhlIGFzc2lnbm1l
-bnQgaXMNCj4gcmVkdW5kYW50IGFuZCBjYW4gYmUgcmVtb3ZlZC4NCj4gDQo+IEFkZHJlc3Nlcy1D
-b3Zlcml0eTogKCJVbnVzZWQgdmFsdWUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2lu
-ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxw
-a3NoaWhAcmVhbHRlay5jb20+DQoNClRoYW5rIHlvdSEhDQoNCj4gLS0tDQo+IMKgZHJpdmVycy9u
-ZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9waHkuYyB8IDIgKy0NCj4gwqAx
-IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE4OGVlL3Bo
-eS5jDQo+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9w
-aHkuYw0KPiBpbmRleCA1Y2E5MDBmOTdkNjYuLmQxMzk4M2VjMDlhZCAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9waHkuYw0KPiAr
-KysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE4OGVlL3BoeS5j
-DQo+IEBAIC0yNjQsNyArMjY0LDcgQEAgc3RhdGljIGJvb2wgX3J0bDg4ZV9jaGVja19jb25kaXRp
-b24oc3RydWN0IGllZWU4MDIxMV9odw0KPiAqaHcsDQo+IMKgCXUzMiBfYm9hcmQgPSBydGxlZnVz
-ZS0+Ym9hcmRfdHlwZTsgLypuZWVkIGVmdXNlIGRlZmluZSovDQo+IMKgCXUzMiBfaW50ZXJmYWNl
-ID0gcnRsaGFsLT5pbnRlcmZhY2U7DQo+IMKgCXUzMiBfcGxhdGZvcm0gPSAweDA4Oy8qU3VwcG9y
-dFBsYXRmb3JtICovDQo+IC0JdTMyIGNvbmQgPSBjb25kaXRpb247DQo+ICsJdTMyIGNvbmQ7DQo+
-IMKgDQo+IMKgCWlmIChjb25kaXRpb24gPT0gMHhDRENEQ0RDRCkNCj4gwqAJCXJldHVybiB0cnVl
-Ow0K
+Colin King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable cond is being assigned with a value that is never
+> read, it is assigned a new value later on. The assignment is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+c3a913357c3e rtlwifi: rtl8188ee: remove redundant assignment to variable cond
+
+-- 
+https://patchwork.kernel.org/patch/11332689/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
