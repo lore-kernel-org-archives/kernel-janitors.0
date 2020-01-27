@@ -1,22 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 12 Jan 2020 08:49:12 +0000
-Subject: Re: [v3] coccinelle: semantic patch to check for inappropriate do_div() calls
-Message-Id: <e9adf168-0833-730d-485e-354562e13f8f@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Jan 2020 22:36:09 +0000
+Subject: [PATCH] Bluetooth: SMP: Fix SALT value in some comments
+Message-Id: <20200127223609.15066-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200110131526.60180-1-wenyang@linux.alibaba.com>
- <6cc0c851-7a32-d82a-1c0c-51a08538b445@web.de>
- <alpine.DEB.2.21.2001120941270.2552@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2001120941270.2552@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>, Wen Yang <wenyang@linux.alibaba.com>, cocci@systeme.lip6.fr
-Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Palix <nicolas.palix@imag.fr>, =?UTF-8?Q?Matthias_M=c3=a4nnich?= <maennich@google.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: marcel@holtmann.org, johan.hedberg@gmail.com, kuba@kernel.org, davem@davemloft.net
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> I see no reason why such a wording would imply such a thing.
+Salts are 16 bytes long.
+Remove some extra and erroneous '0' in the human readable format used
+in comments.
 
-Thus I suggest once more to improve the distinction between patching
-and the description of source code searches in the commit message.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/bluetooth/smp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+index 4ece170c518e..a2e9492391fe 100644
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -1145,7 +1145,7 @@ static void sc_generate_link_key(struct smp_chan *smp)
+ 		return;
+ 
+ 	if (test_bit(SMP_FLAG_CT2, &smp->flags)) {
+-		/* SALT = 0x00000000000000000000000000000000746D7031 */
++		/* SALT = 0x000000000000000000000000746D7031 */
+ 		const u8 salt[16] = { 0x31, 0x70, 0x6d, 0x74 };
+ 
+ 		if (smp_h7(smp->tfm_cmac, smp->tk, salt, smp->link_key)) {
+@@ -1203,7 +1203,7 @@ static void sc_generate_ltk(struct smp_chan *smp)
+ 		set_bit(SMP_FLAG_DEBUG_KEY, &smp->flags);
+ 
+ 	if (test_bit(SMP_FLAG_CT2, &smp->flags)) {
+-		/* SALT = 0x00000000000000000000000000000000746D7032 */
++		/* SALT = 0x000000000000000000000000746D7032 */
+ 		const u8 salt[16] = { 0x32, 0x70, 0x6d, 0x74 };
+ 
+ 		if (smp_h7(smp->tfm_cmac, key->val, salt, smp->tk))
+-- 
+2.20.1
