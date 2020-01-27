@@ -1,51 +1,38 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Mon, 20 Jan 2020 15:56:21 +0000
-Subject: Re: [PATCH] crypto: rng - Fix a refcounting bug in crypto_rng_reset()
-Message-Id: <20200120155621.GA22044@hmswarspite.think-freely.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Jan 2020 10:23:03 +0000
+Subject: [PATCH][next][V2] i2c: xiic: fix indentation issue
+Message-Id: <20200127102303.44133-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
-In-Reply-To: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Corentin Labbe <clabbe@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 05:38:04PM +0300, Dan Carpenter wrote:
-> We need to decrement this refcounter on these error paths.
-> 
-> Fixes: f7d76e05d058 ("crypto: user - fix use_after_free of struct xxx_request")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  crypto/rng.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/crypto/rng.c b/crypto/rng.c
-> index 1e21231f71c9..1490d210f1a1 100644
-> --- a/crypto/rng.c
-> +++ b/crypto/rng.c
-> @@ -37,12 +37,16 @@ int crypto_rng_reset(struct crypto_rng *tfm, const u8 *seed, unsigned int slen)
->  	crypto_stats_get(alg);
->  	if (!seed && slen) {
->  		buf = kmalloc(slen, GFP_KERNEL);
-> -		if (!buf)
-> +		if (!buf) {
-> +			crypto_alg_put(alg);
->  			return -ENOMEM;
-> +		}
->  
->  		err = get_random_bytes_wait(buf, slen);
-> -		if (err)
-> +		if (err) {
-> +			crypto_alg_put(alg);
->  			goto out;
-> +		}
->  		seed = buf;
->  	}
->  
-> -- 
-> 2.11.0
-> 
-> 
-LGTM
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a statement that is indented one level too deeply, remove
+the extraneous tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: fix type in commit message
+---
+ drivers/i2c/busses/i2c-xiic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index b17d30c9ab40..90c1c362394d 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
+ 		xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
+ 		if (time_after(jiffies, timeout)) {
+ 			dev_err(i2c->dev, "Failed to clear rx fifo\n");
+-				return -ETIMEDOUT;
++			return -ETIMEDOUT;
+ 		}
+ 	}
+ 
+-- 
+2.24.0
