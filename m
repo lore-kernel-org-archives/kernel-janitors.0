@@ -1,40 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 27 Jan 2020 11:13:36 +0000
-Subject: [PATCH][next][V3] i2c: xiic: fix indentation issue
-Message-Id: <20200127111336.114501-1-colin.king@canonical.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Wed, 29 Jan 2020 20:54:21 +0000
+Subject: Re: [PATCH][next][V3] i2c: xiic: fix indentation issue
+Message-Id: <20200129205421.GB7586@ninjato>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="BwCQnh7xodEAoBMC"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Michal Simek <michal.simek@xilinx.com>, Wolfram Sang <wsa@the-dreams.de>, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200127111336.114501-1-colin.king@canonical.com>
+In-Reply-To: <20200127111336.114501-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a statement that is indented one level too deeply, remove
-the extraneous tab.
+--BwCQnh7xodEAoBMC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: b4c119dbc300 ("i2c: xiic: Add timeout to the rx fifo wait loop")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-V2: fix type in commit message
-V3: add fixes tag
----
- drivers/i2c/busses/i2c-xiic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jan 27, 2020 at 11:13:36AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is a statement that is indented one level too deeply, remove
+> the extraneous tab.
+>=20
+> Fixes: b4c119dbc300 ("i2c: xiic: Add timeout to the rx fifo wait loop")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-index b17d30c9ab40..90c1c362394d 100644
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
- 		xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
- 		if (time_after(jiffies, timeout)) {
- 			dev_err(i2c->dev, "Failed to clear rx fifo\n");
--				return -ETIMEDOUT;
-+			return -ETIMEDOUT;
- 		}
- 	}
- 
--- 
-2.24.0
+Applied to for-next, thanks!
+
+
+--BwCQnh7xodEAoBMC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4x8P0ACgkQFA3kzBSg
+Kbbg2A/9FJqyn9ks99JLD7qHs0n9X2XQCLXkv5Cw1HMad+934DZIfm3o9v7ABgoS
+hLQnxGCFOxBr4BrCehiPc+WKCOw455ux7yqt8enFpMZ9nEBPBBsAuwJmPwfTH/jP
+R5xBosv1l9uRHQWEDeExsmWZpv5gHgJVPDd+I2S7aES4kBAj8uUOUmfTvF0ofMLV
+8cabXa9AGG3ZTKt51aad0PIMGphQVtDNlmDYe7wqVMqymjDGX/RbDstNsKvxoG2D
+GVNm2KqsYGveZX5vHZRjlzNSfMUpnN79Py6YouzOVgomZjLUY3+3DWbu2BH3gs7R
+Z1DgmjPSbvWyQw3ktka9D0WHPG6rq4lX5YuJcxksBN77C+LMXyAWo2eH50ZBLSB5
+MsVMXsb1eEP8gWs54y+emDngVadIk8ui8Q2kCEoEtHmnWFkfOteUocDWOHbrA0ax
+duju7H9Wx7iHAVxStVFOAigBzDEZRQv3YwaOSu1E+MCyGjR5UEDKC4Z6wnOQ/WGd
+JehJLyp0h9VZOYbAY4HUfYv5WETtD1iPDAD1aWTvihs1oA/47HHzAgEQ1opfZ4Ax
+Q0WwNCEjXcvoUSPFJzX5k3uJpm61Gv4gFaY2JLNPz9jOUI1E/6rik+gY+DxC07qP
+JaDdL1LcipBrT+r6Hof6p4k9+5aY8GhB9/t72trlO2RDXkTqVis=
+=t8lY
+-----END PGP SIGNATURE-----
+
+--BwCQnh7xodEAoBMC--
