@@ -1,18 +1,18 @@
-From: Scott Wood <oss@buserror.net>
-Date: Mon, 06 Jan 2020 18:06:31 +0000
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Wed, 29 Jan 2020 05:17:30 +0000
 Subject: Re: [PATCH 05/10] powerpc/83xx: use resource_size
-Message-Id: <88cb950e3ad4040a368d946909d8818c4372894f.camel@buserror.net>
+Message-Id: <486sDp3hCcz9sSG@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1577900990-8588-1-git-send-email-Julia.Lawall@inria.fr>
- <1577900990-8588-6-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1577900990-8588-6-git-send-email-Julia.Lawall@inria.fr>
+References: <1577900990-8588-6-git-send-email-Julia.Lawall@inria.fr>
 In-Reply-To: <1577900990-8588-6-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Julia Lawall <Julia.Lawall@inria.fr>, Scott Wood <oss@buserror.net>
+Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2020-01-01 at 18:49 +0100, Julia Lawall wrote:
+On Wed, 2020-01-01 at 17:49:45 UTC, Julia Lawall wrote:
 > Use resource_size rather than a verbose computation on
 > the end and start fields.
 > 
@@ -26,11 +26,9 @@ On Wed, 2020-01-01 at 18:49 +0100, Julia Lawall wrote:
 > </smpl>
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  arch/powerpc/platforms/83xx/km83xx.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Scott Wood <oss@buserror.net>
+Applied to powerpc next, thanks.
 
--Scott
+https://git.kernel.org/powerpc/c/bfbe37f0ce994e7a9945653d7624fadc5c500a9f
+
+cheers
