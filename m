@@ -1,67 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 13 Jan 2020 15:13:16 +0000
-Subject: Applied "ASoC: rt711: remove unused including <linux/version.h>" to the asoc tree
-Message-Id: <applied-20200113013123.47561-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Jan 2020 10:05:37 +0000
+Subject: [PATCH][next] thermal: stm32: fix spelling mistake "preprare" -> "prepare"
+Message-Id: <20200130100537.18069-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200113013123.47561-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>
+To: Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amit.kucheria@verdurent.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Pascal Paillet <p.paillet@st.com>, linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: rt711: remove unused including <linux/version.h>
+There is a spelling mistake in a dev_err error message. Fix it.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 62d28dcb65fd5ca12994207f17187545923d4f3d Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 13 Jan 2020 01:31:23 +0000
-Subject: [PATCH] ASoC: rt711: remove unused including <linux/version.h>
-
-Remove including <linux/version.h> that don't need it.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20200113013123.47561-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/rt711.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/thermal/st/stm_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt711.c b/sound/soc/codecs/rt711.c
-index 3bebba7a63be..2daed7692a3b 100644
---- a/sound/soc/codecs/rt711.c
-+++ b/sound/soc/codecs/rt711.c
-@@ -8,7 +8,6 @@
+diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+index 1cc5e6c5709e..ad9e3bf8fdf6 100644
+--- a/drivers/thermal/st/stm_thermal.c
++++ b/drivers/thermal/st/stm_thermal.c
+@@ -535,7 +535,7 @@ static int stm_thermal_probe(struct platform_device *pdev)
+ 	/* Configure and enable HW sensor */
+ 	ret = stm_thermal_prepare(sensor);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Error preprare sensor: %d\n", ret);
++		dev_err(&pdev->dev, "Error prepare sensor: %d\n", ret);
+ 		return ret;
+ 	}
  
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/version.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/delay.h>
 -- 
-2.20.1
+2.24.0
