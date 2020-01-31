@@ -1,7 +1,7 @@
 From: Stafford Horne <shorne@gmail.com>
-Date: Mon, 06 Jan 2020 14:53:47 +0000
+Date: Fri, 31 Jan 2020 13:25:42 +0000
 Subject: Re: [PATCH 4/4] openrisc: use mmgrab
-Message-Id: <20200106145347.GT24874@lianli.shorne-pla.net>
+Message-Id: <20200131132542.GY24874@lianli.shorne-pla.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1577634178-22530-5-git-send-email-Julia.Lawall@inria.fr>
  <201912301238.xfn6pKut%lkp@intel.com>
@@ -16,7 +16,7 @@ On Mon, Dec 30, 2019 at 12:49:19PM +0800, kbuild test robot wrote:
 > Hi Julia,
 > 
 > I love your patch! Yet something to improve:
->
+> 
 > [auto build test ERROR on vfio/next]
 > [also build test ERROR on char-misc/char-misc-testing v5.5-rc3 next-20191220]
 > [if your patch is applied to the wrong git tree, please drop us a note to help
@@ -44,12 +44,48 @@ On Mon, Dec 30, 2019 at 12:49:19PM +0800, kbuild test robot wrote:
 >          |  ^~~~~~
 >          |  igrab
 >    cc1: some warnings being treated as errors
+> 
+> vim +116 arch/openrisc/kernel/smp.c
+> 
+>    107	
+>    108	asmlinkage __init void secondary_start_kernel(void)
+>    109	{
+>    110		struct mm_struct *mm = &init_mm;
+>    111		unsigned int cpu = smp_processor_id();
+>    112		/*
+>    113		 * All kernel threads share the same mm context; grab a
+>    114		 * reference and switch to it.
+>    115		 */
+>  > 116		mmgrab(mm);
+>    117		current->active_mm = mm;
+>    118		cpumask_set_cpu(cpu, mm_cpumask(mm));
+>    119	
+>    120		pr_info("CPU%u: Booted secondary processor\n", cpu);
+>    121	
+>    122		setup_cpuinfo();
+>    123		openrisc_clockevent_init();
+>    124	
+>    125		notify_cpu_starting(cpu);
+>    126	
+>    127		/*
+>    128		 * OK, now it's safe to let the boot CPU continue
+>    129		 */
+>    130		complete(&cpu_running);
+>    131	
+>    132		synchronise_count_slave(cpu);
+>    133		set_cpu_online(cpu, true);
+>    134	
+>    135		local_irq_enable();
+>    136	
+>    137		preempt_disable();
+>    138		/*
+>    139		 * OK, it's off to the idle thread for us
+>    140		 */
+>    141		cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+>    142	}
+>    143	
+> 
 
-Hi Julia,
-
-It looks like this is just an include issue, do you want to revise the patch?
-
-Once fixed, how do you plan to get this patch series merged?  I can add the
-OpenRISC part to my queue or do you have a cleanups queue you can manage?
+Hello,  FYI I have fixed this commit and queued it on my 5.7 branch.
 
 -Stafford
