@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 Jan 2020 00:37:44 +0000
-Subject: Re: [PATCH net-next] tcp: use REXMIT_NEW instead of magic number
-Message-Id: <20200102.163744.410305299962714453.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Jan 2020 06:56:47 +0000
+Subject: [PATCH net] net: sched: prevent a use after free
+Message-Id: <20200131065647.joonbg3wzcw26x3b@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200102140227.77780-1-maowenan@huawei.com>
-In-Reply-To: <20200102140227.77780-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maowenan@huawei.com
-Cc: edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Mohit Bhasi <mohitbhasi1998@gmail.com>, "Mohit P. Tahiliani" <tahiliani@nitk.edu.in>, "V. Saicharan" <vsaicharan1998@gmail.com>, Gautam Ramakrishnan <gautamramk@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
-Date: Thu, 2 Jan 2020 22:02:27 +0800
+The code calls kfree_skb(skb); and then re-uses "skb" on the next line.
+Let's re-order these lines to solve the problem.
 
-> REXMIT_NEW is a macro for "FRTO-style
-> transmit of unsent/new packets", this patch
-> makes it more readable.
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/sched/sch_fq_pie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/net/sched/sch_fq_pie.c b/net/sched/sch_fq_pie.c
+index bbd0dea6b6b9..78472e0773e9 100644
+--- a/net/sched/sch_fq_pie.c
++++ b/net/sched/sch_fq_pie.c
+@@ -349,9 +349,9 @@ static int fq_pie_change(struct Qdisc *sch, struct nlattr *opt,
+ 	while (sch->q.qlen > sch->limit) {
+ 		struct sk_buff *skb = fq_pie_qdisc_dequeue(sch);
+ 
+-		kfree_skb(skb);
+ 		len_dropped += qdisc_pkt_len(skb);
+ 		num_dropped += 1;
++		kfree_skb(skb);
+ 	}
+ 	qdisc_tree_reduce_backlog(sch, num_dropped, len_dropped);
+ 
+-- 
+2.11.0
