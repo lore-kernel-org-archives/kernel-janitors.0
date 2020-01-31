@@ -1,35 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jan 2020 00:48:07 +0000
-Subject: [PATCH] ARM: rockchip: fix spelling mistake "to" -> "too"
-Message-Id: <20200123004807.2833556-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Jan 2020 05:03:26 +0000
+Subject: [PATCH net] qed: Fix a error code in qed_hw_init()
+Message-Id: <20200131050326.n3axoo7axxvzcrv3@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ariel Elior <ariel.elior@marvell.com>, Michal Kalderon <michal.kalderon@marvell.com>
+Cc: GR-everest-linux-l2@marvell.com, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If the qed_fw_overlay_mem_alloc() then we should return -ENOMEM instead
+of success.
 
-There is a spelling mistake in a pr_err message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 30d5f85895fa ("qed: FW 8.42.2.0 Add fw overlay feature")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/arm/mach-rockchip/platsmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_dev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-rockchip/platsmp.c b/arch/arm/mach-rockchip/platsmp.c
-index 649e0a54784c..d60856898d97 100644
---- a/arch/arm/mach-rockchip/platsmp.c
-+++ b/arch/arm/mach-rockchip/platsmp.c
-@@ -180,7 +180,7 @@ static int __init rockchip_smp_prepare_sram(struct device_node *node)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+index 7912911337d4..03bdd2e26329 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -3114,6 +3114,7 @@ int qed_hw_init(struct qed_dev *cdev, struct qed_hw_init_params *p_params)
+ 		if (!p_hwfn->fw_overlay_mem) {
+ 			DP_NOTICE(p_hwfn,
+ 				  "Failed to allocate fw overlay memory\n");
++			rc = -ENOMEM;
+ 			goto load_err;
+ 		}
  
- 	rsize = resource_size(&res);
- 	if (rsize < trampoline_sz) {
--		pr_err("%s: reserved block with size 0x%x is to small for trampoline size 0x%x\n",
-+		pr_err("%s: reserved block with size 0x%x is too small for trampoline size 0x%x\n",
- 		       __func__, rsize, trampoline_sz);
- 		return -EINVAL;
- 	}
 -- 
-2.24.0
+2.11.0
