@@ -1,38 +1,38 @@
-From: JieunKim <jieun.kim4758@gmail.com>
-Date: Mon, 27 Jan 2020 12:03:59 +0000
-Subject: [PATCH] iio: imu: st_lsm6dsx: Fix mismatched comments
-Message-Id: <20200127120359.3955-1-jieun.kim4758@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Jan 2020 05:02:41 +0000
+Subject: [PATCH net] octeontx2-pf: Fix an IS_ERR() vs NULL bug
+Message-Id: <20200131050241.aoqatlxubobkmi4y@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lorenzo.bianconi83@gmail.com
-Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, JieunKim <jieun.kim4758@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>
+Cc: Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>, "David S. Miller" <davem@davemloft.net>, Tomasz Duszynski <tduszynski@marvell.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-odr to odr_table
-gain to fs_table
+The otx2_mbox_get_rsp() function never returns NULL, it returns error
+pointers on error.
 
-'gain' is actually in 'st_lsm6dsx_fs' structure of 'fs_table'
-
-Signed-off-by: JieunKim <jieun.kim4758@gmail.com>
+Fixes: 34bfe0ebedb7 ("octeontx2-pf: MTU, MAC and RX mode config support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 4 ++--
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-index 9c3486a8134f..f2113a63721a 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-@@ -230,8 +230,8 @@ enum st_lsm6dsx_ext_sensor_id {
-  * @i2c_addr: I2c slave address list.
-  * @wai: Wai address info.
-  * @id: external sensor id.
-- * @odr: Output data rate of the sensor [Hz].
-- * @gain: Configured sensor sensitivity.
-+ * @odr_table: Output data rate of the sensor [Hz].
-+ * @fs_table: Configured sensor sensitivity table depending on full scale.
-  * @temp_comp: Temperature compensation register info (addr + mask).
-  * @pwr_table: Power on register info (addr + mask).
-  * @off_canc: Offset cancellation register info (addr + mask).
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index 8247d21d0432..b945bd3d5d88 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -171,9 +171,9 @@ static int otx2_hw_get_mac_addr(struct otx2_nic *pfvf,
+ 	}
+ 
+ 	msghdr = otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
+-	if (!msghdr) {
++	if (IS_ERR(msghdr)) {
+ 		otx2_mbox_unlock(&pfvf->mbox);
+-		return -ENOMEM;
++		return PTR_ERR(msghdr);
+ 	}
+ 	rsp = (struct nix_get_mac_addr_rsp *)msghdr;
+ 	ether_addr_copy(netdev->dev_addr, rsp->mac_addr);
 -- 
-2.17.1
+2.11.0
