@@ -1,73 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 13 Jan 2020 15:13:22 +0000
-Subject: Applied "regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()" to the regu
-Message-Id: <applied-20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Jan 2020 04:57:39 +0000
+Subject: [PATCH] drm/amd/display: Possible divide by zero in set_speed()
+Message-Id: <20200131045739.ault4d6yk2lqlbed@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200113125805.xri6jqoxy2ldzqyg@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Saravanan Sekar <sravanhome@gmail.com>
+To: Harry Wentland <harry.wentland@amd.com>, Lewis Huang <Lewis.Huang@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Derek Lai <Derek.Lai@amd.com>, Charlene Liu <charlene.liu@amd.com>, Leo Li <sunpeng.li@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Jun Lei <Jun.Lei@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-The patch
+If "speed" is zero then we use it as a divisor to find "prescale".  It's
+better to move the check for zero to the very start of the function.
 
-   regulator: mpq7920: Check the correct variable in mpq7920_regulator_register()
-
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7eec67869893bc34bd3a3126e5124a4ef017e0cd Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Jan 2020 15:59:33 +0300
-Subject: [PATCH] regulator: mpq7920: Check the correct variable in
- mpq7920_regulator_register()
-
-There is a typo in the error checking.  We should be checking
-"->rdev[i]" instead of just "->rdev".
-
-Fixes: 6501c1f54a17 ("regulator: mpq7920: add mpq7920 regulator driver")
+Fixes: 9eeec26a1339 ("drm/amd/display: Refine i2c frequency calculating sequence")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20200113125805.xri6jqoxy2ldzqyg@kili.mountain
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mpq7920.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/regulator/mpq7920.c b/drivers/regulator/mpq7920.c
-index ab1b847c57e5..80f3131f0d1b 100644
---- a/drivers/regulator/mpq7920.c
-+++ b/drivers/regulator/mpq7920.c
-@@ -274,8 +274,8 @@ static inline int mpq7920_regulator_register(
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c b/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
+index 066188ba7949..24adec407972 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_i2c_hw.c
+@@ -267,6 +267,9 @@ static void set_speed(
+ 	uint32_t xtal_ref_div = 0;
+ 	uint32_t prescale = 0;
  
- 		info->rdev[i] = devm_regulator_register(info->dev, rdesc,
- 					 config);
--		if (IS_ERR(info->rdev))
--			return PTR_ERR(info->rdev);
-+		if (IS_ERR(info->rdev[i]))
-+			return PTR_ERR(info->rdev[i]);
- 	}
++	if (speed = 0)
++		return;
++
+ 	REG_GET(MICROSECOND_TIME_BASE_DIV, XTAL_REF_DIV, &xtal_ref_div);
  
- 	return 0;
+ 	if (xtal_ref_div = 0)
+@@ -274,17 +277,15 @@ static void set_speed(
+ 
+ 	prescale = ((dce_i2c_hw->reference_frequency * 2) / xtal_ref_div) / speed;
+ 
+-	if (speed) {
+-		if (dce_i2c_hw->masks->DC_I2C_DDC1_START_STOP_TIMING_CNTL)
+-			REG_UPDATE_N(SPEED, 3,
+-				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
+-				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2,
+-				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_START_STOP_TIMING_CNTL), speed > 50 ? 2:1);
+-		else
+-			REG_UPDATE_N(SPEED, 2,
+-				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
+-				     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2);
+-	}
++	if (dce_i2c_hw->masks->DC_I2C_DDC1_START_STOP_TIMING_CNTL)
++		REG_UPDATE_N(SPEED, 3,
++			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
++			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2,
++			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_START_STOP_TIMING_CNTL), speed > 50 ? 2:1);
++	else
++		REG_UPDATE_N(SPEED, 2,
++			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_PRESCALE), prescale,
++			     FN(DC_I2C_DDC1_SPEED, DC_I2C_DDC1_THRESHOLD), 2);
+ }
+ 
+ static bool setup_engine(
 -- 
-2.20.1
+2.11.0
