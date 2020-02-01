@@ -1,52 +1,40 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Mon, 10 Feb 2020 14:09:26 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: mrfld: return error codes when an error occurs
-Message-Id: <96b4d153-2ee5-ea88-7176-a2d9ebf19982@linux.intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Sat, 01 Feb 2020 19:38:43 +0000
+Subject: Re: [PATCH net] net: sched: prevent a use after free
+Message-Id: <CAM_iQpUYv9vEVpYc-WfMNfCc9QaBzmTYs66-GEfwOKiqOXHxew@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200208220720.36657-1-colin.king@canonical.com>
-In-Reply-To: <20200208220720.36657-1-colin.king@canonical.com>
+References: <20200131065647.joonbg3wzcw26x3b@kili.mountain>
+In-Reply-To: <20200131065647.joonbg3wzcw26x3b@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Mohit Bhasi <mohitbhasi1998@gmail.com>, "Mohit P. Tahiliani" <tahiliani@nitk.edu.in>, "V. Saicharan" <vsaicharan1998@gmail.com>, Gautam Ramakrishnan <gautamramk@gmail.com>, Linux Kernel Network Developers <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
-
-On 2/8/20 4:07 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently function sst_platform_get_resources always returns zero and
-> error return codes set by the function are never returned. Fix this
-> by returning the error return code in variable ret rather than the
-> hard coded zero.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: f533a035e4da ("ASoC: Intel: mrfld - create separate module for pci part")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Yes, it's clearly bad.
-
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-I don't think this impacts anyone though, the code can only be used for 
-Merrifield/Tangier.
-
+On Thu, Jan 30, 2020 at 10:57 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The code calls kfree_skb(skb); and then re-uses "skb" on the next line.
+> Let's re-order these lines to solve the problem.
+>
+> Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->   sound/soc/intel/atom/sst/sst_pci.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/atom/sst/sst_pci.c b/sound/soc/intel/atom/sst/sst_pci.c
-> index d952719bc098..5862fe968083 100644
-> --- a/sound/soc/intel/atom/sst/sst_pci.c
-> +++ b/sound/soc/intel/atom/sst/sst_pci.c
-> @@ -99,7 +99,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
->   	dev_dbg(ctx->dev, "DRAM Ptr %p\n", ctx->dram);
->   do_release_regions:
->   	pci_release_regions(pci);
-> -	return 0;
-> +	return ret;
->   }
->   
->   /*
-> 
+>  net/sched/sch_fq_pie.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/sched/sch_fq_pie.c b/net/sched/sch_fq_pie.c
+> index bbd0dea6b6b9..78472e0773e9 100644
+> --- a/net/sched/sch_fq_pie.c
+> +++ b/net/sched/sch_fq_pie.c
+> @@ -349,9 +349,9 @@ static int fq_pie_change(struct Qdisc *sch, struct nlattr *opt,
+>         while (sch->q.qlen > sch->limit) {
+>                 struct sk_buff *skb = fq_pie_qdisc_dequeue(sch);
+>
+> -               kfree_skb(skb);
+>                 len_dropped += qdisc_pkt_len(skb);
+>                 num_dropped += 1;
+> +               kfree_skb(skb);
+
+Or even better: use rtnl_kfree_skbs().
+
+Thanks.
