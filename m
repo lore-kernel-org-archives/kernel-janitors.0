@@ -1,22 +1,46 @@
-From: santosh.shilimkar@oracle.com
-Date: Mon, 24 Feb 2020 17:52:30 +0000
-Subject: Re: [PATCH] net/rds: Fix a debug message
-Message-Id: <d5188793-68c3-b2a3-d4d8-fbf8d5d9ff88@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Feb 2020 20:19:22 +0000
+Subject: [PATCH] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224103215.utw3zaa6nmcb5vrz@kili.mountain>
-In-Reply-To: <20200224103215.utw3zaa6nmcb5vrz@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>, Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
+To: ralf@linux-mips.org, paulburton@kernel.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 2/24/20 2:32 AM, Dan Carpenter wrote:
-> This should display the error code but instead it just prints "1".
-> 
-> Fixes: 2eafa1746f17 ("net/rds: Handle ODP mr registration/unregistration")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-Right.
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
 
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-tested
+
+The 'if (v->load_addr)' looks also redundant, but, well, the code is old
+and I feel lazy tonight to send another patch for only that.
+---
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 6176b9acba95..d0d832ab3d3b 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
+-- 
+2.20.1
