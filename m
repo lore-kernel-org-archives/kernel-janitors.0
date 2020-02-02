@@ -1,39 +1,45 @@
-From: Paul Burton <paulburton@kernel.org>
-Date: Sat, 15 Feb 2020 22:56:00 +0000
-Subject: Re: [PATCH] MIPS: VPE: Fix a double free and a memory leak in  'release_vpe()'
-Message-Id: <5e487701.1c69fb81.107e8.b7f9@mx.google.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 02 Feb 2020 16:25:02 +0000
+Subject: Re: [PATCH][next] iio: st_sensors: handle memory allocation failure to fix null pointer dereference
+Message-Id: <20200202162502.0ab50117@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
+References: <20200121161757.1498082-1-colin.king@canonical.com>
+        <CACRpkdYzd13xu9ETj_a4eWrm4FMrVnF1NQ5G+=d_Ch=6SzRoxA@mail.gmail.com>
+In-Reply-To: <CACRpkdYzd13xu9ETj_a4eWrm4FMrVnF1NQ5G+=d_Ch=6SzRoxA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: ralf@linux-mips.org, paulburton@kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Colin King <colin.king@canonical.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello,
+On Thu, 23 Jan 2020 16:28:28 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Christophe JAILLET wrote:
-> Pointer on the memory allocated by 'alloc_progmem()' is stored in
-> 'v->load_addr'. So this is this memory that should be freed by
-> 'release_progmem()'.
+> On Tue, Jan 21, 2020 at 5:18 PM Colin King <colin.king@canonical.com> wrote:
 > 
-> 'release_progmem()' is only a call to 'kfree()'.
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > A null pointer deference on pdata can occur if the allocation of
+> > pdata fails.  Fix this by adding a null pointer check and handle
+> > the -ENOMEM failure in the caller.
+> >
+> > Addresses-Coverity: ("Dereference null return value")  
 > 
-> With the current code, there is both a double free and a memory leak.
-> Fix it by passing the correct pointer to 'release_progmem()'.
-
-Applied to mips-fixes.
-
-> commit bef8e2dfceed
-> https://git.kernel.org/mips/c/bef8e2dfceed
+> That's a weirdo tag, but I suppose you have aligned with the maintainers
+> about this.
 > 
-> Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> > Fixes: 3ce85cc4fbb7 ("iio: st_sensors: get platform data from device tree")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
 Thanks,
-    Paul
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+Jonathan
+
+> 
+> Yours,
+> Linus Walleij
