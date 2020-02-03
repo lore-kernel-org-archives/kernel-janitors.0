@@ -1,43 +1,32 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Tue, 11 Feb 2020 13:18:23 +0000
-Subject: Re: [PATCH] gpio: siox: potentially enabling IRQs too early
-Message-Id: <87d0al4600.fsf@nanos.tec.linutronix.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 03 Feb 2020 02:48:01 +0000
+Subject: [PATCH net-next] rtw88: use kfree_skb() instead of kfree()
+Message-Id: <20200203024801.177044-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200211073511.r24n3bygyjxrsuez@kili.mountain> <20200211080138.6bm5toge74wjncxw@pengutronix.de> <87r1z14hzh.fsf@nanos.tec.linutronix.de> <20200211121748.woeix5ovpeo3gfc7@pengutronix.de>
-In-Reply-To: <20200211121748.woeix5ovpeo3gfc7@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thorsten Scherer <t.scherer@eckelmann.de>, Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, Chin-Yen Lee <timlee@realtek.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Uwe,
+Use kfree_skb() instead of kfree() to free sk_buff.
 
-Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
-> On Tue, Feb 11, 2020 at 09:59:30AM +0100, Thomas Gleixner wrote:
->> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
->> Indeed. Looking at the driver, all of the spin_lock_irq() usage in the
->> irqchip callbacks is broken.
->> 
->> So this needs two changes:
->> 
->>    1) Convert to raw spin lock, as this won't work on RT otherwise
->> 
->>    2) s/lock_irq/lock/ for all irqchip callbacks.
->
-> Are you sure about the calls in gpio_siox_get_data()? This is only
-> called by siox_poll() which doesn't disable irqs.
+Fixes: b6c12908a33e ("rtw88: Add wowlan net-detect support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/realtek/rtw88/fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I explicitely said: "for all irqchip callbacks".
-
-gpio_siox_get_data() is not a irq chip callback, right? So obviously it
-has to stay there.
-
-Thanks,
-
-        tglx
-
-
-
-
-  
+diff --git a/drivers/net/wireless/realtek/rtw88/fw.c b/drivers/net/wireless/realtek/rtw88/fw.c
+index 243441453ead..5bdfc70c4529 100644
+--- a/drivers/net/wireless/realtek/rtw88/fw.c
++++ b/drivers/net/wireless/realtek/rtw88/fw.c
+@@ -745,7 +745,7 @@ static struct sk_buff *rtw_nlo_info_get(struct ieee80211_hw *hw)
+ 		loc  = rtw_get_rsvd_page_probe_req_location(rtwdev, ssid);
+ 		if (!loc) {
+ 			rtw_err(rtwdev, "failed to get probe req rsvd loc\n");
+-			kfree(skb);
++			kfree_skb(skb);
+ 			return NULL;
+ 		}
+ 		nlo_hdr->location[i] = loc;
