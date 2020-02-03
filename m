@@ -1,38 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 28 Feb 2020 23:44:14 +0000
-Subject: [PATCH] SUNRPC: remove redundant assignments to variable status
-Message-Id: <20200228234414.112359-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Feb 2020 10:58:16 +0000
+Subject: [bug report] x86/intel_pstate: Handle runtime turbo disablement/enablement in frequency invariance
+Message-Id: <20200203105816.4tplbgmyr6wmunou@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Giovanni Gherdovich,
 
-The variable status is being initialized with a value that is never
-read and it is being updated later with a new value.  The initialization
-is redundant and can be removed.
+The patch 918229cdd5ab: "x86/intel_pstate: Handle runtime turbo
+disablement/enablement in frequency invariance" from Jan 22, 2020,
+leads to the following static checker warning:
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/sunrpc/xprtsock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	arch/x86/kernel/smpboot.c:1988 intel_set_max_freq_ratio()
+	error: uninitialized symbol 'turbo_freq'.
 
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index d86c664ea6af..c9e039961e29 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -1970,7 +1970,7 @@ static int xs_local_setup_socket(struct sock_xprt *transport)
- 	struct rpc_xprt *xprt = &transport->xprt;
- 	struct file *filp;
- 	struct socket *sock;
--	int status = -EIO;
-+	int status;
- 
- 	status = __sock_create(xprt->xprt_net, AF_LOCAL,
- 					SOCK_STREAM, 0, &sock, 1);
--- 
-2.25.0
+arch/x86/kernel/smpboot.c
+  1964  static bool intel_set_max_freq_ratio(void)
+  1965  {
+  1966          u64 base_freq, turbo_freq;
+  1967  
+  1968          if (slv_set_max_freq_ratio(&base_freq, &turbo_freq))
+  1969                  goto out;
+  1970  
+  1971          if (x86_match_cpu(has_glm_turbo_ratio_limits) &&
+  1972              skx_set_max_freq_ratio(&base_freq, &turbo_freq, 1))
+  1973                  goto out;
+  1974  
+  1975          if (knl_set_max_freq_ratio(&base_freq, &turbo_freq, 1))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The last return here should be "false" instead of "true".  Otherwise we
+use "turbo_freq" without initializing it.
+
+  1976                  goto out;
+  1977  
+  1978          if (x86_match_cpu(has_skx_turbo_ratio_limits) &&
+  1979              skx_set_max_freq_ratio(&base_freq, &turbo_freq, 4))
+  1980                  goto out;
+  1981  
+  1982          if (core_set_max_freq_ratio(&base_freq, &turbo_freq))
+  1983                  goto out;
+  1984  
+  1985          return false;
+  1986  
+  1987  out:
+  1988          arch_turbo_freq_ratio = div_u64(turbo_freq * SCHED_CAPACITY_SCALE,
+  1989                                          base_freq);
+  1990          arch_set_max_freq_ratio(turbo_disabled());
+  1991          return true;
+  1992  }
+
+regards,
+dan carpenter
