@@ -1,40 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Feb 2020 10:33:25 +0000
-Subject: [PATCH] staging: kpc2000: prevent underflow in cpld_reconfigure()
-Message-Id: <20200224103325.hrxdnaeqsthplu42@kili.mountain>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 03 Feb 2020 15:39:21 +0000
+Subject: [PATCH -next] crypto: ccree - remove set but not used variable 'du_size'
+Message-Id: <20200203153921.45273-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
+To: Ofir Drang <ofir.drang@arm.com>, Gilad Ben-Yossef <gilad@benyossef.com>, Herbert Xu <herbert@gondor.apana.org.au>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Hulk Robot <hulkci@huawei.com>, linux-crypto@vger.kernel.org, linux-media@vger.kernel.org
 
-This function should not allow negative values of "wr_val".  If
-negatives are allowed then capping the upper bound at 7 is
-meaningless.  Let's make it unsigned.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/crypto/ccree/cc_cipher.c: In function 'cc_setup_state_desc':
+drivers/crypto/ccree/cc_cipher.c:536:15: warning:
+ variable 'du_size' set but not used [-Wunused-but-set-variable]
+
+commit 5c83e8ec4d51 ("crypto: ccree - fix FDE descriptor sequence")
+involved this unused variable, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/staging/kpc2000/kpc2000/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_cipher.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
-index 93cf28febdf6..7b00d7069e21 100644
---- a/drivers/staging/kpc2000/kpc2000/core.c
-+++ b/drivers/staging/kpc2000/kpc2000/core.c
-@@ -110,10 +110,10 @@ static ssize_t cpld_reconfigure(struct device *dev,
- 				const char *buf, size_t count)
- {
- 	struct kp2000_device *pcard = dev_get_drvdata(dev);
--	long wr_val;
-+	unsigned long wr_val;
- 	int rv;
+diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
+index 7d6252d892d7..b5133f57bc87 100644
+--- a/drivers/crypto/ccree/cc_cipher.c
++++ b/drivers/crypto/ccree/cc_cipher.c
+@@ -533,14 +533,6 @@ static void cc_setup_state_desc(struct crypto_tfm *tfm,
+ 	int flow_mode = ctx_p->flow_mode;
+ 	int direction = req_ctx->gen_ctx.op_type;
+ 	dma_addr_t iv_dma_addr = req_ctx->gen_ctx.iv_dma_addr;
+-	unsigned int du_size = nbytes;
+-
+-	struct cc_crypto_alg *cc_alg -		container_of(tfm->__crt_alg, struct cc_crypto_alg,
+-			     skcipher_alg.base);
+-
+-	if (cc_alg->data_unit)
+-		du_size = cc_alg->data_unit;
  
--	rv = kstrtol(buf, 0, &wr_val);
-+	rv = kstrtoul(buf, 0, &wr_val);
- 	if (rv < 0)
- 		return rv;
- 	if (wr_val > 7)
--- 
-2.11.0
+ 	switch (cipher_mode) {
+ 	case DRV_CIPHER_ECB:
