@@ -1,43 +1,48 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 07 Feb 2020 04:37:32 +0000
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: use after free in gb_audio_manager_remove_all()
-Message-Id: <20200207042532.wwd6jh6cfuptr7tz@vireshk-i7>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 03 Feb 2020 22:37:36 +0000
+Subject: [PATCH][next] clk: ls1028a: fix a dereference of pointer 'parent' before a null check
+Message-Id: <20200203223736.99645-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200205123217.jreendkyxulqsool@kili.mountain>
-In-Reply-To: <20200205123217.jreendkyxulqsool@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Vaibhav Agarwal <vaibhav.sr@gmail.com>, kernel-janitors@vger.kernel.org, Johan Hovold <johan@kernel.org>, Dinko Mironov <dmironov@mm-sol.com>, greybus-dev@lists.linaro.org, Greg Kroah-Hartman <gregkh@google.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Wen He <wen.he_1@nxp.com>, Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05-02-20, 15:32, Dan Carpenter wrote:
-> When we call kobject_put() and it's the last reference to the kobject
-> then it calls gb_audio_module_release() and frees module.  We dereference
-> "module" on the next line which is a use after free.
-> 
-> Fixes: c77f85bbc91a ("greybus: audio: Fix incorrect counting of 'ida'")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/staging/greybus/audio_manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/audio_manager.c b/drivers/staging/greybus/audio_manager.c
-> index 9b19ea9d3fa1..9a3f7c034ab4 100644
-> --- a/drivers/staging/greybus/audio_manager.c
-> +++ b/drivers/staging/greybus/audio_manager.c
-> @@ -92,8 +92,8 @@ void gb_audio_manager_remove_all(void)
->  
->  	list_for_each_entry_safe(module, next, &modules_list, list) {
->  		list_del(&module->list);
-> -		kobject_put(&module->kobj);
->  		ida_simple_remove(&module_id, module->id);
-> +		kobject_put(&module->kobj);
->  	}
->  
->  	is_empty = list_empty(&modules_list);
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Currently the pointer 'parent' is being dereferenced before it is
+being null checked. Fix this by performing the null check before
+it is dereferenced.
 
+Addresses-Coverity: ("Dereference before null check")
+Fixes: d37010a3c162 ("clk: ls1028a: Add clock driver for Display output interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-plldig.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
+index a5da08f98d01..f7c349d9c2dc 100644
+--- a/drivers/clk/clk-plldig.c
++++ b/drivers/clk/clk-plldig.c
+@@ -187,7 +187,7 @@ static int plldig_init(struct clk_hw *hw)
+ {
+ 	struct clk_plldig *data = to_clk_plldig(hw);
+ 	struct clk_hw *parent = clk_hw_get_parent(hw);
+-	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long parent_rate;
+ 	unsigned long val;
+ 	unsigned long long lltmp;
+ 	unsigned int mfd, fracdiv = 0;
+@@ -195,6 +195,8 @@ static int plldig_init(struct clk_hw *hw)
+ 	if (!parent)
+ 		return -EINVAL;
+ 
++	parent_rate = clk_hw_get_rate(parent);
++
+ 	if (data->vco_freq) {
+ 		mfd = data->vco_freq / parent_rate;
+ 		lltmp = data->vco_freq % parent_rate;
 -- 
-viresh
+2.24.0
