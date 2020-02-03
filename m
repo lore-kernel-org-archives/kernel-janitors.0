@@ -1,32 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 06 Feb 2020 13:01:37 +0000
-Subject: Re: [PATCH v2 net] net: sched: prevent a use after free
-Message-Id: <20200206.140137.826534991746807346.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 03 Feb 2020 15:27:24 +0000
+Subject: [PATCH -next] drm/panfrost: Remove set but not used variable 'bo'
+Message-Id: <20200203152724.42611-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAM_iQpVrckjFViizKZH+S=8GC_3T5Gm1vTAUeFkpmqJ_A66x1Q@mail.gmail.com>
-        <20200205115330.7x2qgaks7racy5wj@kili.mountain>
-In-Reply-To: <20200205115330.7x2qgaks7racy5wj@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, kuba@kernel.org, mohitbhasi1998@gmail.com, vsaicharan1998@gmail.com, lesliemonis@gmail.com, sdp.sachin@gmail.com, gautamramk@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Steven Price <steven.price@arm.com>, Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>, David Airlie <airlied@linux.ie>, Daniel
+ Vetter <daniel@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Hulk Robot <hulkci@huawei.com>, linux-media@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 5 Feb 2020 14:53:30 +0300
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> The bug is that we call kfree_skb(skb) and then pass "skb" to
-> qdisc_pkt_len(skb) on the next line, which is a use after free.
-> Also Cong Wang points out that it's better to delay the actual
-> frees until we drop the rtnl lock so we should use rtnl_kfree_skbs()
-> instead of kfree_skb().
-> 
-> Cc: Cong Wang <xiyou.wangcong@gmail.com>
-> Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Use rtnl_kfree_skbs() instead of kfree_skb().  From static analysis.
->     Not tested, but I have audited the code pretty close and I think
->     switing to rtnl_kfree_skbs() is harmless.
+drivers/gpu/drm/panfrost/panfrost_job.c: In function 'panfrost_job_cleanup':
+drivers/gpu/drm/panfrost/panfrost_job.c:278:31: warning:
+ variable 'bo' set but not used [-Wunused-but-set-variable]
 
-Applied, thanks Dan.
+commit bdefca2d8dc0 ("drm/panfrost: Add the panfrost_gem_mapping concept")
+involved this unused variable.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_job.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+index 7c36ec675b73..ccb8546a9342 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_job.c
++++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+@@ -275,12 +275,8 @@ static void panfrost_job_cleanup(struct kref *ref)
+ 	}
+ 
+ 	if (job->bos) {
+-		struct panfrost_gem_object *bo;
+-
+-		for (i = 0; i < job->bo_count; i++) {
+-			bo = to_panfrost_bo(job->bos[i]);
++		for (i = 0; i < job->bo_count; i++)
+ 			drm_gem_object_put_unlocked(job->bos[i]);
+-		}
+ 
+ 		kvfree(job->bos);
+ 	}
