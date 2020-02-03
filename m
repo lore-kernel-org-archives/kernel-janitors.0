@@ -1,7 +1,7 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Date: Sun, 02 Feb 2020 19:12:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Feb 2020 09:55:53 +0000
 Subject: Re: [PATCH] defxx: Fix a sentinel at the end of a 'eisa_device_id' structure
-Message-Id: <alpine.LFD.2.21.2002021858330.683661@eddie.linux-mips.org>
+Message-Id: <20200203095553.GN1778@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
@@ -9,21 +9,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: macro@linux-mips.org, ralf@linux-mips.org, davem@davemloft.net, akpm@linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2 Feb 2020, Christophe JAILLET wrote:
-
+On Sun, Feb 02, 2020 at 03:23:41PM +0100, Christophe JAILLET wrote:
 > 'struct eisa_device_id' must be ended by an empty string, not a NULL
 > pointer. Otherwise, a NULL pointer dereference may occur in
 > 'eisa_bus_match()'.
+> 
+> Also convert some spaces to tab to please 'checkpatch.pl'.
+> 
+> Fixes: e89a2cfb7d7b ("[TC] defxx: TURBOchannel support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/fddi/defxx.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/fddi/defxx.c b/drivers/net/fddi/defxx.c
+> index 077c68498f04..7ef0c57f07c6 100644
+> --- a/drivers/net/fddi/defxx.c
+> +++ b/drivers/net/fddi/defxx.c
+> @@ -3768,11 +3768,11 @@ static void dfx_pci_unregister(struct pci_dev *pdev)
+>  
+>  #ifdef CONFIG_EISA
+>  static const struct eisa_device_id dfx_eisa_table[] = {
+> -        { "DEC3001", DEFEA_PROD_ID_1 },
+> -        { "DEC3002", DEFEA_PROD_ID_2 },
+> -        { "DEC3003", DEFEA_PROD_ID_3 },
+> -        { "DEC3004", DEFEA_PROD_ID_4 },
+> -        { }
+> +	{ "DEC3001", DEFEA_PROD_ID_1 },
+> +	{ "DEC3002", DEFEA_PROD_ID_2 },
+> +	{ "DEC3003", DEFEA_PROD_ID_3 },
+> +	{ "DEC3004", DEFEA_PROD_ID_4 },
+> +	{ "" }
 
- Umm, that's weird code there in `eisa_bus_match' (I do hope at least GCC 
-optimises the `strlen' away nowadays and checks for the character pointed 
-being null instead), but as usually with old stuff let's keep changes to 
-the minimum.  So:
+You haven't changed runtime at all.  :P (struct eisa_device_id)->sig[]
+is an array, not a pointer.  There is no NULL dereference because an
+array in the middle of another array can't be NULL.
 
-Acked-by: Maciej W. Rozycki <macro@linux-mips.org>
-
- Thanks for the fix!
-
-  Maciej
+regards,
+dan carpenter
