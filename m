@@ -1,38 +1,61 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 08 Feb 2020 22:15:29 +0000
-Subject: [PATCH] ASoC: rt5659: remove redundant assignment to variable idx
-Message-Id: <20200208221529.37105-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 04 Feb 2020 04:04:34 +0000
+Subject: [PATCH SECOND RESEND] MAINTAINERS: fix style in SAFESETID SECURITY MODULE
+Message-Id: <20200204040434.7173-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Micah Morton <mortonm@chromium.org>
+Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+slips in some formatting with spaces instead of tabs, which
+./scripts/checkpatch.pl -f MAINTAINERS complains about:
 
-Variable idx is being assigned with a value that is never idx, it is
-assigned a new value a couple of statements later. The assignment is
-redundant and can be removed.
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14394: FILE: MAINTAINERS:14394:
+  +M:     Micah Morton <mortonm@chromium.org>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14395: FILE: MAINTAINERS:14395:
+  +S:     Supported
+
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14396: FILE: MAINTAINERS:14396:
+  +F:     security/safesetid/
+
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14397: FILE: MAINTAINERS:14397:
+  +F:     Documentation/admin-guide/LSM/SafeSetID.rst
+
+Fixes: fc5b34a35458 ("Add entry in MAINTAINERS file for SafeSetID LSM")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- sound/soc/codecs/rt5659.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+applies cleanly on current master and next-20200203
+Micah, please pick this patch.
 
-diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
-index e66d08398f74..f427b1359594 100644
---- a/sound/soc/codecs/rt5659.c
-+++ b/sound/soc/codecs/rt5659.c
-@@ -1604,7 +1604,7 @@ static int set_dmic_clk(struct snd_soc_dapm_widget *w,
- {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	struct rt5659_priv *rt5659 = snd_soc_component_get_drvdata(component);
--	int pd, idx = -EINVAL;
-+	int pd, idx;
+ MAINTAINERS | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1f77fb8cdde3..83c7879aa4b2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14578,10 +14578,10 @@ F:	drivers/media/pci/saa7146/
+ F:	include/media/drv-intf/saa7146*
  
- 	pd = rl6231_get_pre_div(rt5659->regmap,
- 		RT5659_ADDA_CLK_1, RT5659_I2S_PD1_SFT);
+ SAFESETID SECURITY MODULE
+-M:     Micah Morton <mortonm@chromium.org>
+-S:     Supported
+-F:     security/safesetid/
+-F:     Documentation/admin-guide/LSM/SafeSetID.rst
++M:	Micah Morton <mortonm@chromium.org>
++S:	Supported
++F:	security/safesetid/
++F:	Documentation/admin-guide/LSM/SafeSetID.rst
+ 
+ SAMSUNG AUDIO (ASoC) DRIVERS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
 -- 
-2.25.0
+2.17.1
