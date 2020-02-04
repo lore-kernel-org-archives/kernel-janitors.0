@@ -1,50 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 28 Feb 2020 13:35:05 +0000
-Subject: Re: [1/2] Documentation: bootconfig: Update boot configuration documentation
-Message-Id: <44efe433-c1f5-9131-4b0e-50cc5897a4f3@web.de>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 04 Feb 2020 02:24:41 +0000
+Subject: [PATCH net-next] qed: Remove set but not used variable 'p_link'
+Message-Id: <20200204022442.109809-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <158278834245.14966.6179457011671073018.stgit@devnote2>
- <158278835238.14966.16157216423901327777.stgit@devnote2>
- <8514c830-319b-33e9-025a-79d399674fb3@web.de>
- <20200228143528.209db45e5f0f78474ef83387@kernel.org>
- <efe38d09-e73d-97b3-d4be-79194ab2685f@web.de>
- <20200228221108.ff392be76fee6925f27103e6@kernel.org>
-In-Reply-To: <20200228221108.ff392be76fee6925f27103e6@kernel.org>
+References: <1538030706-138186-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1538030706-138186-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ariel Elior <aelior@marvell.com>, Michal Kalderon <michal.kalderon@marvell.com>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
->>>> How do you think about to add a link to a formal file format description?
->>>
->>> Oh, nice idea. Please contribute it :)
->>
->> Did you provide it (according to a RST include directive in the subsequent
->> update step)?
->
-> No I didn't.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I hope that more progress can be achieved around the published suggestion
-“bootconfig: Add EBNF syntax file”.
-https://lore.kernel.org/linux-doc/158278836196.14966.3881489301852781521.stgit@devnote2/
-https://lore.kernel.org/patchwork/patch/1200987/
-https://lkml.org/lkml/2020/2/27/72
+drivers/net/ethernet/qlogic/qed/qed_cxt.c: In function 'qed_qm_init_pf':
+drivers/net/ethernet/qlogic/qed/qed_cxt.c:1401:29: warning:
+ variable 'p_link' set but not used [-Wunused-but-set-variable]
 
+commit 92fae6fb231f ("qed: FW 8.42.2.0 Queue Manager changes")
+leave behind this unused variable.
 
-> I you think that is important, feel free to write up.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-I am curious how the software development attention will evolve further.
-
-
-> You have a parser code in the kernel already.
-
-This software component is useful there.
-
-
-> It might be not hard for you. :)
-
-Some challenges are waiting on corresponding solutions.
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+index fbfff2b1dc93..1a636bad717d 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -1398,14 +1398,11 @@ void qed_qm_init_pf(struct qed_hwfn *p_hwfn,
+ {
+ 	struct qed_qm_info *qm_info = &p_hwfn->qm_info;
+ 	struct qed_qm_pf_rt_init_params params;
+-	struct qed_mcp_link_state *p_link;
+ 	struct qed_qm_iids iids;
+ 
+ 	memset(&iids, 0, sizeof(iids));
+ 	qed_cxt_qm_iids(p_hwfn, &iids);
+ 
+-	p_link = &QED_LEADING_HWFN(p_hwfn->cdev)->mcp_info->link_output;
+-
+ 	memset(&params, 0, sizeof(params));
+ 	params.port_id = p_hwfn->port_id;
+ 	params.pf_id = p_hwfn->rel_pf_id;
