@@ -1,75 +1,36 @@
-From: Lauri Jakku <ljakku77@gmail.com>
-Date: Tue, 04 Feb 2020 04:27:45 +0000
-Subject: [PATCH] USB HID random timeout failures fixed by trying 20 times
-Message-Id: <d15b7fa7-596c-96f8-dd07-7831a9fa2f0e@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 04 Feb 2020 06:27:49 +0000
+Subject: Re: [PATCH] USB HID random timeout failures fixed by trying 20 times
+Message-Id: <20200204062749.GP1778@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d15b7fa7-596c-96f8-dd07-7831a9fa2f0e@gmail.com>
+In-Reply-To: <d15b7fa7-596c-96f8-dd07-7831a9fa2f0e@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-send, 20ms apart, control messages, if error is timeout.
+Hi Lauri,
 
-Signed-off-by: Lauri Jakku <lja@iki.fi>
----
-drivers/usb/core/message.c | 30 +++++++++++++++++++++++++-----
-1 file changed, 25 insertions(+), 5 deletions(-)
+There are a bunch of issues with this patch.
 
-diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index 5adf489428aa..5d615b2f92d8 100644
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -20,6 +20,7 @@
-#include <linux/usb/hcd.h> /* for usbcore internals */
-#include <linux/usb/of.h>
-#include <asm/byteorder.h>
-+#include <linux/errno.h>
+1)  There is no way we're going to add a retry loop to
+    usb_control_msg().  We might add it to a driver, but probably we
+    would suspect that the hardware is bad.  Maybe the cable is faulty?
+    Or I could be wrong on that...
 
-#include "usb.h"
+2)  You would need to send this to a different list.  Use
+    ./scripts/get_maintainer.pl to find out who.  The
+    linux-usb@vger.kernel.org is the main USB list.
 
-@@ -137,7 +138,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
-__u16 size, int timeout)
-{
-struct usb_ctrlrequest *dr;
-- int ret;
-+ int ret = -ETIMEDOUT;
-+
-+ /* retry_cnt * 10ms, max retry time set to 400ms */
-+ int retry_cnt = 20;
+3)  The patch doesn't apply.  Read the first paragraph of
+    Documentation/process/email-clients.rst
 
-dr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_NOIO);
-if (!dr)
-@@ -149,11 +153,27 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
-dr->wIndex = cpu_to_le16(index);
-dr->wLength = cpu_to_le16(size);
+4) The subject needs to be formatted slightly differently.
+    [PATCH] USB: HID: Fix timeout by adding retry loop
 
-- ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
-+ do {
-+ ret = usb_internal_control_msg(dev,
-+ pipe,
-+ dr,
-+ data,
-+ size,
-+ timeout);
-+
-+ /*
-+ * Linger a bit, prior to the next control message
-+ * or if return value is timeout, but do try few
-+ * times (max 200ms) before quitting.
-+ */
-+ if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+ msleep(200);
-+ else if (ret = -ETIMEDOUT)
-+ msleep(20);
-+
-+ /* Loop while timeout, max retry_cnt times. */
-+ } while ((retry_cnt-- > 0) && (ret = -ETIMEDOUT));
+5) The commit message should be more clear what was affected.  Don't
+   start the commit message in the middle of a sentence.
 
-- /* Linger a bit, prior to the next control message. */
-- if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-- msleep(200);
-
-kfree(dr);
-
--- 
-2.25.0
+regards,
+dan carpenter
