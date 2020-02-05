@@ -1,45 +1,65 @@
-From: Steve Longerbeam <slongerbeam@gmail.com>
-Date: Tue, 11 Feb 2020 18:10:57 +0000
-Subject: Re: [PATCH] media: staging/imx: Missing assignment in imx_media_capture_device_register()
-Message-Id: <8cafab51-93d9-9596-bf4d-d8990df7ccda@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Feb 2020 18:38:27 +0000
+Subject: [PATCH] drm/amd/display: Fix some use after free bugs
+Message-Id: <20200205183714.6t5c7ewyovwjicm6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200211073522.jobdu256d22c3y32@kili.mountain>
-In-Reply-To: <20200211073522.jobdu256d22c3y32@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, kernel-janitors@vger.kernel.org, Leo Li <sunpeng.li@amd.com>, Zhan Liu <zhan.liu@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, zhengbin <zhengbin13@huawei.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-Thanks for catching. Tested on a imx6 sabreauto and it's fine.
+These frees need to be re-ordered so that we don't dereference "hdcp_work"
+right after it's freed.  Also in hdcp_create_workqueue() there is a
+problem that "hdcp_work" can be NULL if the allocation fails so it would
+lead to a NULL dereference in the cleanup code.
 
-On 2/10/20 11:35 PM, Dan Carpenter wrote:
-> There was supposed to be a "ret = " assignment here, otherwise the
-> error handling on the next line won't work.
->
-> Fixes: 64b5a49df486 ("[media] media: imx: Add Capture Device Interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 9aeb8a134a0a ("drm/amd/display: Add sysfs interface for set/get srm")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Reviewed-by: Steve Longerbeam <slongerbeam@gmail.com>
-
-> ---
-> Not tested.  Sometimes in these situations the function could be
-> returning something bogus but no one knew because the assignment wasn't
-> there.  So it's best to test these.
->
->   drivers/staging/media/imx/imx-media-capture.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-> index 7712e7be8625..df0bf680721b 100644
-> --- a/drivers/staging/media/imx/imx-media-capture.c
-> +++ b/drivers/staging/media/imx/imx-media-capture.c
-> @@ -778,7 +778,7 @@ int imx_media_capture_device_register(struct imx_media_video_dev *vdev)
->   	/* setup default format */
->   	fmt_src.pad = priv->src_sd_pad;
->   	fmt_src.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-> -	v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt_src);
-> +	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt_src);
->   	if (ret) {
->   		v4l2_err(sd, "failed to get src_sd format\n");
->   		goto unreg;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c
+index 1768a33b1dc3..f3330df782a4 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_hdcp.c
+@@ -380,9 +380,9 @@ void hdcp_destroy(struct hdcp_workqueue *hdcp_work)
+ 		cancel_delayed_work_sync(&hdcp_work[i].watchdog_timer_dwork);
+ 	}
+ 
+-	kfree(hdcp_work);
+ 	kfree(hdcp_work->srm);
+ 	kfree(hdcp_work->srm_temp);
++	kfree(hdcp_work);
+ }
+ 
+ static void update_config(void *handle, struct cp_psp_stream_config *config)
+@@ -555,11 +555,12 @@ struct hdcp_workqueue *hdcp_create_workqueue(struct amdgpu_device *adev, struct
+ {
+ 
+ 	int max_caps = dc->caps.max_links;
+-	struct hdcp_workqueue *hdcp_work = kzalloc(max_caps*sizeof(*hdcp_work), GFP_KERNEL);
++	struct hdcp_workqueue *hdcp_work;
+ 	int i = 0;
+ 
++	hdcp_work = kcalloc(max_caps, sizeof(*hdcp_work), GFP_KERNEL);
+ 	if (hdcp_work = NULL)
+-		goto fail_alloc_context;
++		return NULL;
+ 
+ 	hdcp_work->srm = kcalloc(PSP_HDCP_SRM_FIRST_GEN_MAX_SIZE, sizeof(*hdcp_work->srm), GFP_KERNEL);
+ 
+@@ -602,9 +603,9 @@ struct hdcp_workqueue *hdcp_create_workqueue(struct amdgpu_device *adev, struct
+ 	return hdcp_work;
+ 
+ fail_alloc_context:
+-	kfree(hdcp_work);
+ 	kfree(hdcp_work->srm);
+ 	kfree(hdcp_work->srm_temp);
++	kfree(hdcp_work);
+ 
+ 	return NULL;
+ 
+-- 
+2.11.0
