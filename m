@@ -1,22 +1,49 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Mon, 03 Feb 2020 17:38:14 +0000
-Subject: Re: [PATCH] defxx: Fix a sentinel at the end of a 'eisa_device_id' structure
-Message-Id: <20200203093814.69d33a2a@cakuba.hsd1.ca.comcast.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Feb 2020 05:11:30 +0000
+Subject: [bug report] node: Add memory-side caching attributes
+Message-Id: <20200205051130.iiieepxhebjo76di@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
-        <20200203095553.GN1778@kadam>
-        <alpine.LFD.2.21.2002031015530.752735@eddie.linux-mips.org>
-In-Reply-To: <alpine.LFD.2.21.2002031015530.752735@eddie.linux-mips.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 3 Feb 2020 10:20:46 +0000 (GMT), Maciej W. Rozycki wrote:
->  Right, the code is good as it stands (I should have more faith in my past 
-> achievements ;) ).  Except for the whitespace issue, which I suppose might 
-> not be worth bothering to fix.  Thanks for your meticulousness!
+Hello Keith Busch,
 
-For the white space clean up please resend after the merge window
-(if you care), networking trees are only taking fixes fixes now :)
+The patch acc02a109b04: "node: Add memory-side caching attributes"
+from Mar 11, 2019, leads to the following static checker warning:
+
+	drivers/base/node.c:279 node_init_cache_dev()
+	error: kfree after device_register(): 'dev'
+
+drivers/base/node.c
+   257  static void node_init_cache_dev(struct node *node)
+   258  {
+   259          struct device *dev;
+   260  
+   261          dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+   262          if (!dev)
+   263                  return;
+   264  
+   265          dev->parent = &node->dev;
+   266          dev->release = node_cache_release;
+   267          if (dev_set_name(dev, "memory_side_cache"))
+   268                  goto free_dev;
+   269  
+   270          if (device_register(dev))
+   271                  goto free_name;
+   272  
+   273          pm_runtime_no_callbacks(dev);
+   274          node->cache_dev = dev;
+   275          return;
+   276  free_name:
+   277          kfree_const(dev->kobj.name);
+   278  free_dev:
+   279          kfree(dev);
+                ^^^^^^^^^^
+Genereally we can't call kfree() after calling device_register().
+
+   280  }
+
+regards,
+dan carpenter
