@@ -1,29 +1,52 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Tue, 18 Feb 2020 16:41:24 +0000
-Subject: Re: [PATCH] IB/core: Fix a bitwise vs logical OR typo
-Message-Id: <20200218164124.GA14557@unreal>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Feb 2020 12:32:48 +0000
+Subject: [PATCH] dmaengine: idxd: Fix error handling in idxd_wq_cdev_dev_setup()
+Message-Id: <20200205123248.hmtog7qa2eiqaagh@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200218055801.cosg4fylgfxhk67s@kili.mountain>
-In-Reply-To: <20200218055801.cosg4fylgfxhk67s@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Erez Alfasi <ereza@mellanox.com>, Maor Gottlieb <maorg@mellanox.com>, Mohamad Heib <mohamadh@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 08:58:01AM +0300, Dan Carpenter wrote:
-> This was supposed to be a bitwise | instead of a logical ||.
->
-> Fixes: 1dd017882e01 ("RDMA/core: Fix protection fault in get_pkey_idx_qp_list")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/core/security.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+We can't call kfree(dev) after calling device_register(dev).  The "dev"
+pointer has to be freed using put_device().
 
-Thanks,
+Fixes: 42d279f9137a ("dmaengine: idxd: add char driver to expose submission portal to userland")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/dma/idxd/cdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-There is an extra patch for that.
-https://lore.kernel.org/lkml/20200217204318.13609-1-natechancellor@gmail.com
-
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+index 1d7347825b95..df47be612ebb 100644
+--- a/drivers/dma/idxd/cdev.c
++++ b/drivers/dma/idxd/cdev.c
+@@ -204,6 +204,7 @@ static int idxd_wq_cdev_dev_setup(struct idxd_wq *wq)
+ 	minor = ida_simple_get(&cdev_ctx->minor_ida, 0, MINORMASK, GFP_KERNEL);
+ 	if (minor < 0) {
+ 		rc = minor;
++		kfree(dev);
+ 		goto ida_err;
+ 	}
+ 
+@@ -212,7 +213,6 @@ static int idxd_wq_cdev_dev_setup(struct idxd_wq *wq)
+ 	rc = device_register(dev);
+ 	if (rc < 0) {
+ 		dev_err(&idxd->pdev->dev, "device register failed\n");
+-		put_device(dev);
+ 		goto dev_reg_err;
+ 	}
+ 	idxd_cdev->minor = minor;
+@@ -221,8 +221,8 @@ static int idxd_wq_cdev_dev_setup(struct idxd_wq *wq)
+ 
+  dev_reg_err:
+ 	ida_simple_remove(&cdev_ctx->minor_ida, MINOR(dev->devt));
++	put_device(dev);
+  ida_err:
+-	kfree(dev);
+ 	idxd_cdev->dev = NULL;
+ 	return rc;
+ }
+-- 
+2.11.0
