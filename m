@@ -1,31 +1,36 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 28 Feb 2020 00:53:49 +0000
-Subject: Re: [PATCH] crypto: hisilicon: remove redundant assignment of pointer ctx
-Message-Id: <20200228005349.GE9506@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Feb 2020 23:18:13 +0000
+Subject: [PATCH][next] KVM: x86: remove redundant WARN_ON check of an unsigned less than zero
+Message-Id: <20200207231813.786224-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200222142409.141057-1-colin.king@canonical.com>
-In-Reply-To: <20200222142409.141057-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Zaibo Xu <xuzaibo@huawei.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 02:24:09PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer ctx is being re-assigned with the same value as it
-> was initialized with. The second assignment is redundant and
-> can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/hisilicon/sec2/sec_crypto.c | 1 -
->  1 file changed, 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The check cpu->hv_clock.system_time < 0 is redundant since system_time
+is a u64 and hence can never be less than zero. Remove it.
+
+Addresses-Coverity: ("Macro compares unsigned to 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kvm/x86.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index fbabb2f06273..d4967ac47e68 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2448,7 +2448,6 @@ static int kvm_guest_time_update(struct kvm_vcpu *v)
+ 	vcpu->hv_clock.tsc_timestamp = tsc_timestamp;
+ 	vcpu->hv_clock.system_time = kernel_ns + v->kvm->arch.kvmclock_offset;
+ 	vcpu->last_guest_tsc = tsc_timestamp;
+-	WARN_ON(vcpu->hv_clock.system_time < 0);
+ 
+ 	/* If the host uses TSC clocksource, then it is stable */
+ 	pvclock_flags = 0;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.24.0
