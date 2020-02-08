@@ -1,31 +1,38 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Wed, 12 Feb 2020 13:47:31 +0000
-Subject: Re: [PATCH] HID: hiddev: Fix race in in hiddev_disconnect()
-Message-Id: <nycvar.YFH.7.76.2002121447190.3144@cbobk.fhfr.pm>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 16:18:02 +0000
+Subject: [PATCH] usb: cdns3: remove redundant assignment to pointer trb
+Message-Id: <20200208161802.28846-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200115174628.zxpxbpa6bwspjajg@kili.mountain>
-In-Reply-To: <20200115174628.zxpxbpa6bwspjajg@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, syzbot <syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, andreyknvl@google.com, syzkaller-bugs@googlegroups.com, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 15 Jan 2020, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Syzbot reports that "hiddev" is used after it's free in hiddev_disconnect().
-> The hiddev_disconnect() function sets "hiddev->exist = 0;" so
-> hiddev_release() can free it as soon as we drop the "existancelock"
-> lock.  This patch moves the mutex_unlock(&hiddev->existancelock) until
-> after we have finished using it.
-> 
-> Reported-by: syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com
-> Fixes: 7f77897ef2b6 ("HID: hiddev: fix potential use-after-free")
-> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Pointer trb being assigned with a value that is never read, it is
+assigned a new value later on. The assignment is redundant and
+can be removed.
 
-Applied to for-5.6/upstream-fixes. Thanks,
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index 736b0c6e27fe..3c05080a9ad5 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -1380,7 +1380,7 @@ static bool cdns3_request_handled(struct cdns3_endpoint *priv_ep,
+ 				  struct cdns3_request *priv_req)
+ {
+ 	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+-	struct cdns3_trb *trb = priv_req->trb;
++	struct cdns3_trb *trb;
+ 	int current_index = 0;
+ 	int handled = 0;
+ 	int doorbell;
 -- 
-Jiri Kosina
-SUSE Labs
+2.25.0
