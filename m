@@ -1,36 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 22 Feb 2020 17:10:54 +0000
-Subject: [PATCH][next] ice: remove redundant assignment to pointer vsi
-Message-Id: <20200222171054.171505-1-colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 16:31:32 +0000
+Subject: [PATCH] usb: gadget: remove redundant assignment to variable status
+Message-Id: <20200208163132.29592-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer vsi is being re-assigned a value that is never read,
-the assignment is redundant and can be removed.
+Variable status is being assigned with a value that is never read, it is
+assigned a new value immediately afterwards. The assignment is redundant
+and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/gadget/function/f_uac1_legacy.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-index 169b72a94b9d..2c8e334c47a0 100644
---- a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-@@ -2191,7 +2191,6 @@ static int ice_vc_ena_qs_msg(struct ice_vf *vf, u8 *msg)
- 		set_bit(vf_q_id, vf->rxq_ena);
- 	}
+diff --git a/drivers/usb/gadget/function/f_uac1_legacy.c b/drivers/usb/gadget/function/f_uac1_legacy.c
+index 6677ae932de0..349deae7cabd 100644
+--- a/drivers/usb/gadget/function/f_uac1_legacy.c
++++ b/drivers/usb/gadget/function/f_uac1_legacy.c
+@@ -752,8 +752,6 @@ f_audio_bind(struct usb_configuration *c, struct usb_function *f)
+ 	audio->out_ep = ep;
+ 	audio->out_ep->desc = &as_out_ep_desc;
  
--	vsi = pf->vsi[vf->lan_vsi_idx];
- 	q_map = vqs->tx_queues;
- 	for_each_set_bit(vf_q_id, &q_map, ICE_MAX_BASE_QS_PER_VF) {
- 		if (!ice_vc_isvalid_q_id(vf, vqs->vsi_id, vf_q_id)) {
+-	status = -ENOMEM;
+-
+ 	/* copy descriptors, and track endpoint copies */
+ 	status = usb_assign_descriptors(f, f_audio_desc, f_audio_desc, NULL,
+ 					NULL);
 -- 
 2.25.0
