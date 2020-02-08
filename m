@@ -1,33 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 16 Feb 2020 16:20:05 +0000
-Subject: [PATCH] mailbox: Fix a typo in Kconfig
-Message-Id: <20200216162005.22015-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 16:46:01 +0000
+Subject: [PATCH] USB: serial: digi_acceleport: remove redundant assignment to pointer priv
+Message-Id: <20200208164601.30032-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jassisinghbrar@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is an extra 'r' in 'Intergrated'
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Pointer priv is being assigned with a value that is never read, it is
+assigned a new value later on in a for-loop. The assignment is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mailbox/Kconfig | 2 +-
+ drivers/usb/serial/digi_acceleport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index ab4eb750bbdd..af42fd0c9e0a 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -71,7 +71,7 @@ config OMAP_MBOX_KFIFO_SIZE
- 	  module parameter).
- 
- config ROCKCHIP_MBOX
--	bool "Rockchip Soc Intergrated Mailbox Support"
-+	bool "Rockchip Soc Integrated Mailbox Support"
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	help
- 	  This driver provides support for inter-processor communication
+diff --git a/drivers/usb/serial/digi_acceleport.c b/drivers/usb/serial/digi_acceleport.c
+index 578ebdd86520..91055a191995 100644
+--- a/drivers/usb/serial/digi_acceleport.c
++++ b/drivers/usb/serial/digi_acceleport.c
+@@ -1472,7 +1472,7 @@ static int digi_read_oob_callback(struct urb *urb)
+ 	struct usb_serial_port *port = urb->context;
+ 	struct usb_serial *serial = port->serial;
+ 	struct tty_struct *tty;
+-	struct digi_port *priv = usb_get_serial_port_data(port);
++	struct digi_port *priv;
+ 	unsigned char *buf = urb->transfer_buffer;
+ 	int opcode, line, status, val;
+ 	unsigned long flags;
 -- 
-2.20.1
+2.25.0
