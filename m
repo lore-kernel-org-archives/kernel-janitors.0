@@ -1,23 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Feb 2020 19:04:19 +0000
-Subject: Re: [PATCH][next] net/mlxfw: fix spelling mistake: "progamming" -> "programming"
-Message-Id: <20200224.110419.2062154027865158345.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 22:20:06 +0000
+Subject: [PATCH] ALSA: hdsp: remove redundant assignment to variable err
+Message-Id: <20200208222006.37376-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224152101.361648-1-colin.king@canonical.com>
-In-Reply-To: <20200224152101.361648-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: mlxsw@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 24 Feb 2020 15:21:01 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a literal string. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable err is being assigned with a value that is never read, it is
+assigned a new value in the next statement. The assignment is redundant
+and can be removed.
 
-Applied, thanks Colin.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/rme9652/hdsp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+index cc06f0a1a7e4..227aece17e39 100644
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -3353,7 +3353,8 @@ snd_hdsp_proc_read(struct snd_info_entry *entry, struct snd_info_buffer *buffer)
+ 				return;
+ 			}
+ 		} else {
+-			int err = -EINVAL;
++			int err;
++
+ 			err = hdsp_request_fw_loader(hdsp);
+ 			if (err < 0) {
+ 				snd_iprintf(buffer,
+-- 
+2.25.0
