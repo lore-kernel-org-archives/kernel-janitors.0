@@ -1,81 +1,40 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 28 Feb 2020 22:23:17 +0000
-Subject: Re: [PATCH][next] drm/amd/display: fix indentation issue on a hunk of code
-Message-Id: <CADnq5_M17_MMfy8YqK-wn_aew1ZG2zZtsj7kaK5eM3=Em2zzzA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 21:55:23 +0000
+Subject: [PATCH] ASoC: ti: davinci-mcasp: remove redundant assignment to variable ret
+Message-Id: <20200208215523.36094-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228131606.65041-1-colin.king@canonical.com>
-In-Reply-To: <20200228131606.65041-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Zhou <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 8:16 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are multiple statements that are indented incorrectly. Add
-> in the missing tabs.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  Thanks!
+The assignment to ret is redundant as it is not used in the error
+return path and hence can be removed.
 
-Alex
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/ti/davinci-mcasp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->  .../gpu/drm/amd/display/dc/calcs/dce_calcs.c  | 46 +++++++++----------
->  1 file changed, 23 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-> index 5d081c42e81b..2c6db379afae 100644
-> --- a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-> +++ b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-> @@ -3265,33 +3265,33 @@ bool bw_calcs(struct dc_context *ctx,
->                                 bw_fixed_to_int(bw_mul(data->
->                                         stutter_exit_watermark[9], bw_int_to_fixed(1000)));
->
-> -               calcs_output->stutter_entry_wm_ns[0].b_mark > -                       bw_fixed_to_int(bw_mul(data->
-> -                               stutter_entry_watermark[4], bw_int_to_fixed(1000)));
-> -               calcs_output->stutter_entry_wm_ns[1].b_mark > -                       bw_fixed_to_int(bw_mul(data->
-> -                               stutter_entry_watermark[5], bw_int_to_fixed(1000)));
-> -               calcs_output->stutter_entry_wm_ns[2].b_mark > -                       bw_fixed_to_int(bw_mul(data->
-> -                               stutter_entry_watermark[6], bw_int_to_fixed(1000)));
-> -               if (ctx->dc->caps.max_slave_planes) {
-> -                       calcs_output->stutter_entry_wm_ns[3].b_mark > +                       calcs_output->stutter_entry_wm_ns[0].b_mark >                                 bw_fixed_to_int(bw_mul(data->
-> -                                       stutter_entry_watermark[0], bw_int_to_fixed(1000)));
-> -                       calcs_output->stutter_entry_wm_ns[4].b_mark > +                                       stutter_entry_watermark[4], bw_int_to_fixed(1000)));
-> +                       calcs_output->stutter_entry_wm_ns[1].b_mark >                                 bw_fixed_to_int(bw_mul(data->
-> -                                       stutter_entry_watermark[1], bw_int_to_fixed(1000)));
-> -               } else {
-> -                       calcs_output->stutter_entry_wm_ns[3].b_mark > +                                       stutter_entry_watermark[5], bw_int_to_fixed(1000)));
-> +                       calcs_output->stutter_entry_wm_ns[2].b_mark >                                 bw_fixed_to_int(bw_mul(data->
-> -                                       stutter_entry_watermark[7], bw_int_to_fixed(1000)));
-> -                       calcs_output->stutter_entry_wm_ns[4].b_mark > +                                       stutter_entry_watermark[6], bw_int_to_fixed(1000)));
-> +                       if (ctx->dc->caps.max_slave_planes) {
-> +                               calcs_output->stutter_entry_wm_ns[3].b_mark > +                                       bw_fixed_to_int(bw_mul(data->
-> +                                               stutter_entry_watermark[0], bw_int_to_fixed(1000)));
-> +                               calcs_output->stutter_entry_wm_ns[4].b_mark > +                                       bw_fixed_to_int(bw_mul(data->
-> +                                               stutter_entry_watermark[1], bw_int_to_fixed(1000)));
-> +                       } else {
-> +                               calcs_output->stutter_entry_wm_ns[3].b_mark > +                                       bw_fixed_to_int(bw_mul(data->
-> +                                               stutter_entry_watermark[7], bw_int_to_fixed(1000)));
-> +                               calcs_output->stutter_entry_wm_ns[4].b_mark > +                                       bw_fixed_to_int(bw_mul(data->
-> +                                               stutter_entry_watermark[8], bw_int_to_fixed(1000)));
-> +                       }
-> +                       calcs_output->stutter_entry_wm_ns[5].b_mark >                                 bw_fixed_to_int(bw_mul(data->
-> -                                       stutter_entry_watermark[8], bw_int_to_fixed(1000)));
-> -               }
-> -               calcs_output->stutter_entry_wm_ns[5].b_mark > -                       bw_fixed_to_int(bw_mul(data->
-> -                               stutter_entry_watermark[9], bw_int_to_fixed(1000)));
-> +                                       stutter_entry_watermark[9], bw_int_to_fixed(1000)));
->
->                         calcs_output->urgent_wm_ns[0].b_mark >                                 bw_fixed_to_int(bw_mul(data->
-> --
-> 2.25.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+index e1e937eb1dc1..450c394b2882 100644
+--- a/sound/soc/ti/davinci-mcasp.c
++++ b/sound/soc/ti/davinci-mcasp.c
+@@ -1764,10 +1764,8 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
+ 	} else if (match) {
+ 		pdata = devm_kmemdup(&pdev->dev, match->data, sizeof(*pdata),
+ 				     GFP_KERNEL);
+-		if (!pdata) {
+-			ret = -ENOMEM;
++		if (!pdata)
+ 			return pdata;
+-		}
+ 	} else {
+ 		/* control shouldn't reach here. something is wrong */
+ 		ret = -EINVAL;
+-- 
+2.25.0
