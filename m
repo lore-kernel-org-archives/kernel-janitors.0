@@ -1,31 +1,38 @@
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 27 Feb 2020 15:38:55 +0000
-Subject: Re: [PATCH v2] tee: amdtee: fix memory leak in amdtee_open_session()
-Message-Id: <CAHUa44G_40N4u8bqsmMm3oTwY+o0sr0APbUe64igXH83dJdv6A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 22:42:06 +0000
+Subject: [PATCH] ALSA: info: remove redundant assignment to variable c
+Message-Id: <20200208224206.38540-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224105139.b5nweo2guprmxteu@kili.mountain>
-In-Reply-To: <20200224105139.b5nweo2guprmxteu@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 1:06 PM Rijo Thomas <Rijo-john.Thomas@amd.com> wrote:
->
->
->
-> On 24/02/20 4:21 pm, Dan Carpenter wrote:
-> > On these error paths the "sess" variable isn't freed.  It's a refcounted
-> > pointer so we need to call kref_put().  I re-arranged the code a bit so
-> > the error case is always handled before the success case and the error
-> > paths are indented two tabs.
-> >
-> > Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Reviewed-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm picking up this.
+Variable c is being assigned with the value -1 that is never read,
+it is assigned a new value in a following while-loop. The assignment
+is redundant and can be removed.
 
-Thanks,
-Jens
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/info.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/core/info.c b/sound/core/info.c
+index ca87ae4c30ba..8c6bc5241df5 100644
+--- a/sound/core/info.c
++++ b/sound/core/info.c
+@@ -604,7 +604,7 @@ int snd_info_card_free(struct snd_card *card)
+  */
+ int snd_info_get_line(struct snd_info_buffer *buffer, char *line, int len)
+ {
+-	int c = -1;
++	int c;
+ 
+ 	if (snd_BUG_ON(!buffer || !buffer->buffer))
+ 		return 1;
+-- 
+2.25.0
