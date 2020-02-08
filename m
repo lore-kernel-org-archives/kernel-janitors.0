@@ -1,52 +1,40 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 24 Feb 2020 16:42:25 +0000
-Subject: Re: [PATCH] dmaengine: coh901318: Fix a double lock bug in dma_tc_handle()
-Message-Id: <20200224163025.GX2618@vkoul-mobl>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 22:07:20 +0000
+Subject: [PATCH] ASoC: Intel: mrfld: return error codes when an error occurs
+Message-Id: <20200208220720.36657-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200217144050.3i4ymbytogod4ijn@kili.mountain>
- <CAMuHMdWaCqZ_zcHuBetAQu4kmoffNw5jvHM5ciTi29MAxL70bg@mail.gmail.com>
- <20200219091754.GE2618@vkoul-mobl>
- <CACRpkdZ94VYtADCP9VXbNPsRkCacGFOYedd9dwXQw0Jve1HRjw@mail.gmail.com>
-In-Reply-To: <CACRpkdZ94VYtADCP9VXbNPsRkCacGFOYedd9dwXQw0Jve1HRjw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>, dmaengine <dmaengine@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Cezary Rojewski <cezary.rojewski@intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21-02-20, 15:50, Linus Walleij wrote:
-> On Wed, Feb 19, 2020 at 10:17 AM Vinod Koul <vkoul@kernel.org> wrote:
-> > On 17-02-20, 23:24, Geert Uytterhoeven wrote:
-> > > On Mon, Feb 17, 2020 at 3:41 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > > The caller is already holding the lock so this will deadlock.
-> > > >
-> > > > Fixes: 0b58828c923e ("DMAENGINE: COH 901 318 remove irq counting")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > ---
-> > > > This is the second double lock bug found using static analysis.  The
-> > > > previous one was commit 627469e4445b ("dmaengine: coh901318: Fix a
-> > > > double-lock bug").
-> > > >
-> > > > The fact that this has been broken for ten years suggests that no one
-> > > > has the hardware.
-> > >
-> > > Or this only runs CONFIG_SMP=n kernels?
-> > > This seems to be used in arch/arm/boot/dts/ste-u300.dts only, and
-> > > CONFIG_ARCH_U300 is a ARCH_MULTI_V5 platform, which looks like
-> > > it doesn't support SMP?
-> >
-> > Should we drop the driver then..?
-> 
-> I still have the hardware and it still works if that is the question :D
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for confirming :)
-> 
-> And yeah it only has one CPU, but still has a DMA engine.
-> 
-> The patch is fine to apply because it fixes a bug, should the same
-> hardware block be used on SMP.
+Currently function sst_platform_get_resources always returns zero and
+error return codes set by the function are never returned. Fix this
+by returning the error return code in variable ret rather than the
+hard coded zero.
 
-Applied now.
+Addresses-Coverity: ("Unused value")
+Fixes: f533a035e4da ("ASoC: Intel: mrfld - create separate module for pci part")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/intel/atom/sst/sst_pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/sound/soc/intel/atom/sst/sst_pci.c b/sound/soc/intel/atom/sst/sst_pci.c
+index d952719bc098..5862fe968083 100644
+--- a/sound/soc/intel/atom/sst/sst_pci.c
++++ b/sound/soc/intel/atom/sst/sst_pci.c
+@@ -99,7 +99,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
+ 	dev_dbg(ctx->dev, "DRAM Ptr %p\n", ctx->dram);
+ do_release_regions:
+ 	pci_release_regions(pci);
+-	return 0;
++	return ret;
+ }
+ 
+ /*
 -- 
-~Vinod
+2.25.0
