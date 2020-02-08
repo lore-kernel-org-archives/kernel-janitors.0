@@ -1,42 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Feb 2020 08:35:13 +0000
-Subject: Re: [PATCH] ASoC: ti: davinci-mcasp: remove redundant assignment to variable ret
-Message-Id: <20200210083513.GX1778@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Feb 2020 16:25:08 +0000
+Subject: [PATCH] usb: dwc3: debug: remove redundant call to strlen
+Message-Id: <20200208162508.29336-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200208215523.36094-1-colin.king@canonical.com>
-In-Reply-To: <20200208215523.36094-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@kernel.org>
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Feb 08, 2020 at 09:55:23PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The assignment to ret is redundant as it is not used in the error
-> return path and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/soc/ti/davinci-mcasp.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-> index e1e937eb1dc1..450c394b2882 100644
-> --- a/sound/soc/ti/davinci-mcasp.c
-> +++ b/sound/soc/ti/davinci-mcasp.c
-> @@ -1764,10 +1764,8 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
->  	} else if (match) {
->  		pdata = devm_kmemdup(&pdev->dev, match->data, sizeof(*pdata),
->  				     GFP_KERNEL);
-> -		if (!pdata) {
-> -			ret = -ENOMEM;
-> +		if (!pdata)
->  			return pdata;
+From: Colin Ian King <colin.king@canonical.com>
 
-Use a literal NULL for readability.  "return NULL;".
+The call to strlen is redundant since the return value is assigned
+to variable len but not subsequently used. Remove the redundant
+call.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/dwc3/debug.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/usb/dwc3/debug.h b/drivers/usb/dwc3/debug.h
+index e56beb9d1e36..ee964352c8e2 100644
+--- a/drivers/usb/dwc3/debug.h
++++ b/drivers/usb/dwc3/debug.h
+@@ -296,8 +296,6 @@ static inline const char *dwc3_ep_event_string(char *str, size_t size,
+ 				status & DEPEVT_STATUS_TRANSFER_ACTIVE ?
+ 				" (Active)" : " (Not Active)");
+ 
+-		len = strlen(str);
+-
+ 		/* Control Endpoints */
+ 		if (epnum <= 1) {
+ 			int phase = DEPEVT_STATUS_CONTROL_PHASE(event->status);
+-- 
+2.25.0
