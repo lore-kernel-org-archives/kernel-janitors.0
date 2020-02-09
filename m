@@ -1,23 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 27 Feb 2020 04:52:50 +0000
-Subject: Re: [PATCH net-next] net: qrtr: Fix error pointer vs NULL bugs
-Message-Id: <20200226.205250.1647452826316197149.davem@davemloft.net>
+From: JieunKim <jieun.kim4758@gmail.com>
+Date: Sun, 09 Feb 2020 20:48:10 +0000
+Subject: [PATCH] staging: exfat: Replace printk with pr_info
+Message-Id: <20200209204810.9899-1-jieun.kim4758@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200226145153.a7u2jzhseaipas54@kili.mountain>
-In-Reply-To: <20200226145153.a7u2jzhseaipas54@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: manivannan.sadhasivam@linaro.org, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: valdis.kletnieks@vt.edu
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, JieunKim <jieun.kim4758@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Feb 2020 17:51:53 +0300
+pr_info is preferred to use than printk.
+pr_info calls printk with KERN_INFO macros by itself.
+---
+ drivers/staging/exfat/exfat_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The callers only expect NULL pointers, so returning an error pointer
-> will lead to an Oops.
-> 
-> Fixes: 0c2204a4ad71 ("net: qrtr: Migrate nameservice to kernel from userspace")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied, thanks Dan.
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index b81d2a87b82e..3806036c0ef6 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -364,7 +364,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	exfat_bdev_open(sb);
+ 
+ 	if (p_bd->sector_size < sb->s_blocksize) {
+-		printk(KERN_INFO "EXFAT: mount failed - sector size %d less than blocksize %ld\n",
++		pr_info("EXFAT: mount failed - sector size %d less than blocksize %ld\n",
+ 		       p_bd->sector_size,  sb->s_blocksize);
+ 		ret = -EINVAL;
+ 		goto out;
+-- 
+2.17.1
