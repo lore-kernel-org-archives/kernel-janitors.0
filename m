@@ -1,63 +1,51 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 26 Feb 2020 23:56:10 +0000
-Subject: Re: [PATCH] NFS: check for allocation failure from mempool_alloc
-Message-Id: <ff2605b3-aefd-04c5-7d50-dc73091cb34e@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Feb 2020 14:26:46 +0000
+Subject: [PATCH] media: tda10071: fix unsigned sign extension overflow
+Message-Id: <20200210142646.431957-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200226234320.7722-1-colin.king@canonical.com>
- <12d1e7a2ce5b0c64dfd81aeda75879c460e59fcb.camel@hammerspace.com>
-In-Reply-To: <12d1e7a2ce5b0c64dfd81aeda75879c460e59fcb.camel@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trondmy@hammerspace.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 26/02/2020 23:48, Trond Myklebust wrote:
-> On Wed, 2020-02-26 at 23:43 +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> It is possible for mempool_alloc to return null when using
->> the GFP_KERNEL flag, so return NULL and avoid a null pointer
->> dereference on the following memset of the null pointer.
-> 
-> Umm, no. That would be a false positive by coverity.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah, sorry for the noise then.
+The shifting of buf[3] by 24 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an unsigned long. In
+the unlikely event that the the top bit of buf[3] is set then all
+then all the upper bits end up as also being set because of
+the sign-extension and this affect the ev->post_bit_error sum.
+Fix this by using the temporary u32 variable bit_error to avoid
+the sign-extension promotion. This also removes the need to do the
+computation twice.
 
-> 
-> If you look at the history of that function, you'll note that we
-> originally had those checks, but that Neil Brown removed them after
-> analysis of the mempool_alloc() function. He determined (correctly, I
-> believe) that any value that includes GFP_WAIT cannot fail to return a
-> valid pointer.
+Addresses-Coverity: ("Unintended sign extension")
+Fixes: 267897a4708f ("[media] tda10071: implement DVBv5 statistics")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/tda10071.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-OK - that's very helpful to know. That allows me to mark a shed load of
-false positives on mempool_alloc false positives.
-
-Colin
-
-> 
->>
->> Addresses-Coverity: ("Dereference null return")
->> Fixes: 2b17d725f9be ("NFS: Clean up writeback code")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  fs/nfs/write.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/nfs/write.c b/fs/nfs/write.c
->> index c478b772cc49..7ca036660dd1 100644
->> --- a/fs/nfs/write.c
->> +++ b/fs/nfs/write.c
->> @@ -106,6 +106,9 @@ static struct nfs_pgio_header
->> *nfs_writehdr_alloc(void)
->>  {
->>  	struct nfs_pgio_header *p = mempool_alloc(nfs_wdata_mempool,
->> GFP_KERNEL);
->>  
->> +	if (!p)
->> +		return NULL;
->> +
->>  	memset(p, 0, sizeof(*p));
->>  	p->rw_mode = FMODE_WRITE;
->>  	return p;
+diff --git a/drivers/media/dvb-frontends/tda10071.c b/drivers/media/dvb-frontends/tda10071.c
+index 1953b00b3e48..685c0ac71819 100644
+--- a/drivers/media/dvb-frontends/tda10071.c
++++ b/drivers/media/dvb-frontends/tda10071.c
+@@ -470,10 +470,11 @@ static int tda10071_read_status(struct dvb_frontend *fe, enum fe_status *status)
+ 			goto error;
+ 
+ 		if (dev->delivery_system = SYS_DVBS) {
+-			dev->dvbv3_ber = buf[0] << 24 | buf[1] << 16 |
+-					 buf[2] << 8 | buf[3] << 0;
+-			dev->post_bit_error += buf[0] << 24 | buf[1] << 16 |
+-					       buf[2] << 8 | buf[3] << 0;
++			u32 bit_error = buf[0] << 24 | buf[1] << 16 |
++					buf[2] << 8 | buf[3] << 0;
++
++			dev->dvbv3_ber = bit_error;
++			dev->post_bit_error += bit_error;
+ 			c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
+ 			c->post_bit_error.stat[0].uvalue = dev->post_bit_error;
+ 			dev->block_error += buf[4] << 8 | buf[5] << 0;
+-- 
+2.25.0
