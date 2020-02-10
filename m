@@ -1,27 +1,46 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 13 Feb 2020 09:17:51 +0000
-Subject: Re: [PATCH] crypto: rng - Fix a refcounting bug in crypto_rng_reset()
-Message-Id: <20200213091750.x7fke4xva3rtkcap@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Feb 2020 08:52:56 +0000
+Subject: [PATCH] PCI/ACPI: make array pcie_to_hpx3_type static const, makes object smaller
+Message-Id: <20200210085256.319424-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
-In-Reply-To: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>, Corentin Labbe <clabbe@baylibre.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 05:38:04PM +0300, Dan Carpenter wrote:
-> We need to decrement this refcounter on these error paths.
-> 
-> Fixes: f7d76e05d058 ("crypto: user - fix use_after_free of struct xxx_request")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  crypto/rng.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Don't populate the array pcie_to_hpx3_type on the stack but instead
+make it static const. Makes the object code smaller by 6 bytes:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  19247	   3048	     64	  22359	   5757	drivers/pci/pci-acpi.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  19177	   3112	     64	  22353	   5751	drivers/pci/pci-acpi.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/pci-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index 0c02d500158f..d914f8bc31ea 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -439,7 +439,7 @@ enum hpx_type3_dev_type {
+ static u16 hpx3_device_type(struct pci_dev *dev)
+ {
+ 	u16 pcie_type = pci_pcie_type(dev);
+-	const int pcie_to_hpx3_type[] = {
++	static const int pcie_to_hpx3_type[] = {
+ 		[PCI_EXP_TYPE_ENDPOINT]    = HPX_TYPE_ENDPOINT,
+ 		[PCI_EXP_TYPE_LEG_END]     = HPX_TYPE_LEG_END,
+ 		[PCI_EXP_TYPE_RC_END]      = HPX_TYPE_RC_END,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.0
