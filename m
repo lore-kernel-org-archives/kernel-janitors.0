@@ -1,39 +1,44 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Date: Fri, 28 Feb 2020 16:45:53 +0000
-Subject: Re: [PATCH][V2] backlight: sky81452: insure while loop does not allow negative array indexing
-Message-Id: <20200228164553.eojh3hbrymq3tw2d@holly.lan>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Feb 2020 09:24:22 +0000
+Subject: [PATCH][V2] ASoC: ti: davinci-mcasp: remove redundant assignment to variable ret
+Message-Id: <20200210092423.327499-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200226195826.6567-1-colin.king@canonical.com>
- <20200227114623.vaevrdwiduxa2mqs@holly.lan>
- <b0e21719-3a7c-099a-292d-c3fa65a84fe8@canonical.com>
-In-Reply-To: <b0e21719-3a7c-099a-292d-c3fa65a84fe8@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kernel-janitors@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Bryan Wu <cooloney@gmail.com>, Gyungoh Yoo <jack.yoo@skyworksinc.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Lee Jones <lee.jones@linaro.org>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 03:10:43PM +0000, Colin Ian King wrote:
-> On 27/02/2020 11:46, Daniel Thompson wrote:
-> > On Wed, Feb 26, 2020 at 07:58:26PM +0000, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> In the unlikely event that num_entry is zero, the while loop
-> >> pre-decrements num_entry to cause negative array indexing into the
-> >> array sources. Fix this by iterating only if num_entry >= 0.
-> >>
-> >> Addresses-Coverity: ("Out-of-bounds read")
-> >> Fixes: f705806c9f35 ("backlight: Add support Skyworks SKY81452 backlight driver")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>
-> >> V2: fix typo in commit subject line
-> > 
-> > Isn't the correct spelling "ensure"?
-> 
-> It is. V1 is correct after all. Doh.
+From: Colin Ian King <colin.king@canonical.com>
 
-It wasn't spelt "ensure" in v1... 
+The assignment to ret is redundant as it is not used in the error
+return path and hence can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: explicitly return NULL to improve readability. Thanks to Dan Carpenter for
+    suggesting this improvement.
+---
+ sound/soc/ti/davinci-mcasp.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Daniel.
+diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+index e1e937eb1dc1..6f97639c46cd 100644
+--- a/sound/soc/ti/davinci-mcasp.c
++++ b/sound/soc/ti/davinci-mcasp.c
+@@ -1764,10 +1764,8 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
+ 	} else if (match) {
+ 		pdata = devm_kmemdup(&pdev->dev, match->data, sizeof(*pdata),
+ 				     GFP_KERNEL);
+-		if (!pdata) {
+-			ret = -ENOMEM;
+-			return pdata;
+-		}
++		if (!pdata)
++			return NULL;
+ 	} else {
+ 		/* control shouldn't reach here. something is wrong */
+ 		ret = -EINVAL;
+-- 
+2.25.0
