@@ -1,46 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Feb 2020 06:42:22 +0000
-Subject: [PATCH] netfilter: clean up some indenting
-Message-Id: <20200225064150.hwewi26uc2yfwh2u@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Feb 2020 17:51:33 +0000
+Subject: [PATCH] media: dvb: return -EREMOTEIO on i2c transfer failure.
+Message-Id: <20200210175133.479739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Manoj Basapathi <manojbm@codeaurora.org>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Krufky <mkrufky@linuxtv.org>, Thomas Gleixner <tglx@linutronix.de>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These lines were indented wrong so Smatch complained.
-net/netfilter/xt_IDLETIMER.c:81 idletimer_tg_show() warn: inconsistent indenting
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently when i2c transfers fail the error return -EREMOTEIO
+is assigned to err but then later overwritten when the tuner
+attach call is made.  Fix this by returning early with the
+error return code -EREMOTEIO on i2c transfer failure errors.
+
+Addresses-Coverity: ("Unused value")
+Fixes: fbfee8684ff2 ("V4L/DVB (5651): Dibusb-mb: convert pll handling to properly use dvb-pll")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/netfilter/xt_IDLETIMER.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/media/usb/dvb-usb/dibusb-mb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index d620bbf13b30..75bd0e5dd312 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -77,9 +77,8 @@ static ssize_t idletimer_tg_show(struct device *dev,
- 			ktimespec = ktime_to_timespec64(expires_alarm);
- 			time_diff = ktimespec.tv_sec;
- 		} else {
--		expires = timer->timer.expires;
--			time_diff = jiffies_to_msecs(
--						expires - jiffies) / 1000;
-+			expires = timer->timer.expires;
-+			time_diff = jiffies_to_msecs(expires - jiffies) / 1000;
- 		}
+diff --git a/drivers/media/usb/dvb-usb/dibusb-mb.c b/drivers/media/usb/dvb-usb/dibusb-mb.c
+index d4ea72bf09c5..5131c8d4c632 100644
+--- a/drivers/media/usb/dvb-usb/dibusb-mb.c
++++ b/drivers/media/usb/dvb-usb/dibusb-mb.c
+@@ -81,7 +81,7 @@ static int dibusb_tuner_probe_and_attach(struct dvb_usb_adapter *adap)
+ 
+ 	if (i2c_transfer(&adap->dev->i2c_adap, msg, 2) != 2) {
+ 		err("tuner i2c write failed.");
+-		ret = -EREMOTEIO;
++		return -EREMOTEIO;
  	}
  
-@@ -216,7 +215,7 @@ static int idletimer_tg_create_v1(struct idletimer_tg_info_v1 *info)
- 	kobject_uevent(idletimer_tg_kobj,KOBJ_ADD);
- 
- 	list_add(&info->timer->entry, &idletimer_tg_list);
--		pr_debug("timer type value is %u", info->timer_type);
-+	pr_debug("timer type value is %u", info->timer_type);
- 	info->timer->timer_type = info->timer_type;
- 	info->timer->refcnt = 1;
- 
+ 	if (adap->fe_adap[0].fe->ops.i2c_gate_ctrl)
 -- 
-2.11.0
+2.25.0
