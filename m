@@ -1,34 +1,40 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Fri, 28 Feb 2020 14:55:28 +0000
-Subject: Re: [v2 0/1] Documentation: bootconfig: Documentation updates
-Message-Id: <20200228235528.acfc091ee58d4d685a119f4f@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Feb 2020 07:35:44 +0000
+Subject: [PATCH] gpio: siox: potentially enabling IRQs too early
+Message-Id: <20200211073511.r24n3bygyjxrsuez@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <158287861133.18632.12035327305997207220.stgit@devnote2>
-        <957cef56-04b0-3889-6c95-a8ed7606b68d@web.de>
-        <20200228222311.f5b9448027031b16a3be372a@kernel.org>
-        <0d7d201c-e313-6129-7cfa-4e61eb31342d@web.de>
-In-Reply-To: <0d7d201c-e313-6129-7cfa-4e61eb31342d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Thorsten Scherer <t.scherer@eckelmann.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Gavin Schenk <g.schenk@eckelmann.de>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 28 Feb 2020 15:05:42 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+Smatch thinks that gpio_siox_irq_set_type() can be called from
+probe_irq_on().  In that case the call to spin_unlock_irq() would
+renable IRQs too early.
 
-> > So, if you are interested in it, I don't stop you to write it up.
-> 
-> Will the collaboration continue anyhow?
+Fixes: be8c8facc707 ("gpio: new driver to work with a 8x12 siox")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpio/gpio-siox.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-It's your turn. "ask not what your community can do for you - ask what you can do for your community." :)
-Collaboration is not just talking, but move things step forward.
-
-> Will the clarification become more constructive for remaining challenges?
-
-If you think so, you can send a patch for it.
-
-Thank you,
-
+diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
+index 311f66757b92..578b71760939 100644
+--- a/drivers/gpio/gpio-siox.c
++++ b/drivers/gpio/gpio-siox.c
+@@ -133,10 +133,11 @@ static int gpio_siox_irq_set_type(struct irq_data *d, u32 type)
+ 	struct irq_chip *ic = irq_data_get_irq_chip(d);
+ 	struct gpio_siox_ddata *ddata  		container_of(ic, struct gpio_siox_ddata, ichip);
++	unsigned long flags;
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	spin_lock_irqsave(&ddata->irqlock, flags);
+ 	ddata->irq_type[d->hwirq] = type;
+-	spin_unlock_irq(&ddata->irqlock);
++	spin_unlock_irqrestore(&ddata->irqlock, flags);
+ 
+ 	return 0;
+ }
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.11.0
