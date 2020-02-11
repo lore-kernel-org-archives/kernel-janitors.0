@@ -1,34 +1,151 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2020 17:05:25 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to renaming physmap_of_versatile.c
-Message-Id: <CACRpkdabUZYhr7S8fcOX-dOgUEfDTnhUZjqsadyghpuTDCoqpw@mail.gmail.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Date: Tue, 11 Feb 2020 13:51:21 +0000
+Subject: [PATCH] gpio: siox: use raw spinlock for irq related locking
+Message-Id: <20200211135121.15752-1-uwe@kleine-koenig.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228063338.4099-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200228063338.4099-1-lukas.bulwahn@gmail.com>
+References: <87d0al4600.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87d0al4600.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Joe Perches <joe@perches.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sebastian Duda <sebastian.duda@fau.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Thorsten Scherer <t.scherer@eckelmann.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 7:33 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+All the irq related callbacks are called with the (raw) spinlock
+desc->lock being held. So the lock here must be raw as well. Also irqs
+were already disabled by the caller for the irq chip callbacks, so the
+non-irq variants of spin_lock must be used there.
 
-> Commit 6ca15cfa0788 ("mtd: maps: Rename physmap_of_{versatile, gemini}
-> into physmap-{versatile, gemini}") renamed physmap_of_versatile.c to
-> physmap-versatile.c, but did not adjust the MAINTAINERS entry.
->
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
->
->   warning: no file matches F: drivers/mtd/maps/physmap_of_versatile.c
->
-> Rectify the ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT entry and now
-> also cover drivers/mtd/maps/physmap-versatile.h while at it.
->
-> Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: be8c8facc707 ("gpio: new driver to work with a 8x12 siox")
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+Hello,
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Tue, Feb 11, 2020 at 02:18:23PM +0100, Thomas Gleixner wrote:
+> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
+> > On Tue, Feb 11, 2020 at 09:59:30AM +0100, Thomas Gleixner wrote:
+> >> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
+> >> Indeed. Looking at the driver, all of the spin_lock_irq() usage in the
+> >> irqchip callbacks is broken.
+> >> 
+> >> So this needs two changes:
+> >> 
+> >>    1) Convert to raw spin lock, as this won't work on RT otherwise
+> >> 
+> >>    2) s/lock_irq/lock/ for all irqchip callbacks.
+> >
+> > Are you sure about the calls in gpio_siox_get_data()? This is only
+> > called by siox_poll() which doesn't disable irqs.
+> 
+> I explicitely said: "for all irqchip callbacks".
+> 
+> gpio_siox_get_data() is not a irq chip callback, right? So obviously it
+> has to stay there.
 
-Yours,
-Linus Walleij
+Ah, I read "irqchip callbacks" as "spinlock calls". Thanks to restate
+this for me.
+
+Thanks
+Uwe
+
+ drivers/gpio/gpio-siox.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
+index 311f66757b92..26e1fe092304 100644
+--- a/drivers/gpio/gpio-siox.c
++++ b/drivers/gpio/gpio-siox.c
+@@ -15,7 +15,7 @@ struct gpio_siox_ddata {
+ 	u8 setdata[1];
+ 	u8 getdata[3];
+ 
+-	spinlock_t irqlock;
++	raw_spinlock_t irqlock;
+ 	u32 irq_enable;
+ 	u32 irq_status;
+ 	u32 irq_type[20];
+@@ -44,7 +44,7 @@ static int gpio_siox_get_data(struct siox_device *sdevice, const u8 buf[])
+ 
+ 	mutex_lock(&ddata->lock);
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	raw_spin_lock_irq(&ddata->irqlock);
+ 
+ 	for (offset = 0; offset < 12; ++offset) {
+ 		unsigned int bitpos = 11 - offset;
+@@ -66,7 +66,7 @@ static int gpio_siox_get_data(struct siox_device *sdevice, const u8 buf[])
+ 
+ 	trigger = ddata->irq_status & ddata->irq_enable;
+ 
+-	spin_unlock_irq(&ddata->irqlock);
++	raw_spin_unlock_irq(&ddata->irqlock);
+ 
+ 	ddata->getdata[0] = buf[0];
+ 	ddata->getdata[1] = buf[1];
+@@ -84,9 +84,9 @@ static int gpio_siox_get_data(struct siox_device *sdevice, const u8 buf[])
+ 			 * handler of the irq chip. But it doesn't, so we have
+ 			 * to clean the irq_status here.
+ 			 */
+-			spin_lock_irq(&ddata->irqlock);
++			raw_spin_lock_irq(&ddata->irqlock);
+ 			ddata->irq_status &= ~(1 << offset);
+-			spin_unlock_irq(&ddata->irqlock);
++			raw_spin_unlock_irq(&ddata->irqlock);
+ 
+ 			handle_nested_irq(irq);
+ 		}
+@@ -101,9 +101,9 @@ static void gpio_siox_irq_ack(struct irq_data *d)
+ 	struct gpio_siox_ddata *ddata  		container_of(ic, struct gpio_siox_ddata, ichip);
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	raw_spin_lock(&ddata->irqlock);
+ 	ddata->irq_status &= ~(1 << d->hwirq);
+-	spin_unlock_irq(&ddata->irqlock);
++	raw_spin_unlock(&ddata->irqlock);
+ }
+ 
+ static void gpio_siox_irq_mask(struct irq_data *d)
+@@ -112,9 +112,9 @@ static void gpio_siox_irq_mask(struct irq_data *d)
+ 	struct gpio_siox_ddata *ddata  		container_of(ic, struct gpio_siox_ddata, ichip);
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	raw_spin_lock(&ddata->irqlock);
+ 	ddata->irq_enable &= ~(1 << d->hwirq);
+-	spin_unlock_irq(&ddata->irqlock);
++	raw_spin_unlock(&ddata->irqlock);
+ }
+ 
+ static void gpio_siox_irq_unmask(struct irq_data *d)
+@@ -123,9 +123,9 @@ static void gpio_siox_irq_unmask(struct irq_data *d)
+ 	struct gpio_siox_ddata *ddata  		container_of(ic, struct gpio_siox_ddata, ichip);
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	raw_spin_lock(&ddata->irqlock);
+ 	ddata->irq_enable |= 1 << d->hwirq;
+-	spin_unlock_irq(&ddata->irqlock);
++	raw_spin_unlock(&ddata->irqlock);
+ }
+ 
+ static int gpio_siox_irq_set_type(struct irq_data *d, u32 type)
+@@ -134,9 +134,9 @@ static int gpio_siox_irq_set_type(struct irq_data *d, u32 type)
+ 	struct gpio_siox_ddata *ddata  		container_of(ic, struct gpio_siox_ddata, ichip);
+ 
+-	spin_lock_irq(&ddata->irqlock);
++	raw_spin_lock(&ddata->irqlock);
+ 	ddata->irq_type[d->hwirq] = type;
+-	spin_unlock_irq(&ddata->irqlock);
++	raw_spin_unlock(&ddata->irqlock);
+ 
+ 	return 0;
+ }
+@@ -222,7 +222,7 @@ static int gpio_siox_probe(struct siox_device *sdevice)
+ 	dev_set_drvdata(dev, ddata);
+ 
+ 	mutex_init(&ddata->lock);
+-	spin_lock_init(&ddata->irqlock);
++	raw_spin_lock_init(&ddata->irqlock);
+ 
+ 	ddata->gchip.base = -1;
+ 	ddata->gchip.can_sleep = 1;
+-- 
+2.24.0
