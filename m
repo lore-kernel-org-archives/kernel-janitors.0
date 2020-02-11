@@ -1,43 +1,43 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Fri, 14 Feb 2020 07:55:07 +0000
-Subject: Re: [PATCH] PM / devfreq: Fix a typo in a comment
-Message-Id: <7dd67d22-7fe6-ddfd-0752-a0771365d60d@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Feb 2020 16:20:59 +0000
+Subject: [PATCH][next] hwmon: axi-fan-control: fix uninitialized dereference of pointer res
+Message-Id: <20200211162059.94233-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200214060524epcas1p41d689fc376fa4f59d74f66147ce9f1d2@epcas1p4.samsung.com>
-        <20200214060506.29500-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200214060506.29500-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2/14/20 3:05 PM, Christophe JAILLET wrote:
-> 'govenror' was used in place of 'governor'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/devfreq/governor.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-> index c07ce77c253d..ae4d0cc18359 100644
-> --- a/drivers/devfreq/governor.h
-> +++ b/drivers/devfreq/governor.h
-> @@ -30,7 +30,7 @@
->   * @node:		list node - contains registered devfreq governors
->   * @name:		Governor's name
->   * @immutable:		Immutable flag for governor. If the value is 1,
-> - *			this govenror is never changeable to other governor.
-> + *			this governor is never changeable to other governor.
->   * @interrupt_driven:	Devfreq core won't schedule polling work for this
->   *			governor if value is set to 1.
->   * @get_target_freq:	Returns desired operating frequency for the device.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied it.
+Currently the resource pointer ret is uninitialized and it is
+being dereferenced when printing out a debug message. Fix this
+by fetching the resource and assigning pointer res.  It is
+a moot point that we sanity check for a null res since a successful
+call to devm_platform_ioremap_resource has already occurred so
+in theory it should never be non-null.
 
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: 690dd9ce04f6 ("hwmon: Support ADI Fan Control IP")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwmon/axi-fan-control.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/hwmon/axi-fan-control.c b/drivers/hwmon/axi-fan-control.c
+index 8041ba7cc152..36e0d060510a 100644
+--- a/drivers/hwmon/axi-fan-control.c
++++ b/drivers/hwmon/axi-fan-control.c
+@@ -415,6 +415,9 @@ static int axi_fan_control_probe(struct platform_device *pdev)
+ 	if (!ctl->clk_rate)
+ 		return -EINVAL;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
+ 	dev_dbg(&pdev->dev, "Re-mapped from 0x%08llX to %p\n",
+ 		(unsigned long long)res->start, ctl->base);
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.25.0
