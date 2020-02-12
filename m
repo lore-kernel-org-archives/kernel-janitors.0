@@ -1,34 +1,46 @@
-From: "D.H.L REJOY" <mrsrajoysmrsrajoyshassain@gmail.com>
-Date: Sat, 08 Feb 2020 05:54:56 +0000
-Subject: =?UTF-8?Q?Greetings=C2=A0to=C2=A0you.?=
-Message-Id: <88559687.34417.1581141296973@mail.yahoo.com>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Wed, 12 Feb 2020 14:06:58 +0000
+Subject: Re: [PATCH] HID: alps: Fix an error handling path in 'alps_input_configured()'
+Message-Id: <nycvar.YFH.7.76.2002121506510.3144@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20191204033525.10871-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20191204033525.10871-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: benjamin.tissoires@redhat.com, masaki.ota@jp.alps.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ATTENTION: DEAR BENEFICIARY CONGRATULATIONS TO YOU DEAR GOOD DAY I AM SORRY IF YOU RECEIVED THIS LETTER IN YOUR SPAM OR JUNK MAIL IT IS DUE TO A RECENT CONNECTION HERE IN MY COUNTRY.
+On Wed, 4 Dec 2019, Christophe JAILLET wrote:
 
-DEAR FRIEND.
+> They are issues:
+>    - if 'input_allocate_device()' fails and return NULL, there is no need
+>      to free anything and 'input_free_device()' call is a no-op. It can
+>      be axed.
+>    - 'ret' is known to be 0 at this point, so we must set it to a
+>      meaningful value before returning
+> 
+> Fixes: 2562756dde55 ("HID: add Alps I2C HID Touchpad-Stick support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/hid/hid-alps.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+> index ae79a7c66737..fa704153cb00 100644
+> --- a/drivers/hid/hid-alps.c
+> +++ b/drivers/hid/hid-alps.c
+> @@ -730,7 +730,7 @@ static int alps_input_configured(struct hid_device *hdev, struct hid_input *hi)
+>  	if (data->has_sp) {
+>  		input2 = input_allocate_device();
+>  		if (!input2) {
+> -			input_free_device(input2);
+> +			ret = -ENOMEM;
+>  			goto exit;
+>  		}
 
-YOU MAY BE WONDERING WHYI CONTACT YOU BUT SOMEONE LUCKY HAS TO BE CHOSEN WHICH IS YOU. I WANT YOU TO HANDLE THIS BUSINESS TRASACTION WITH ME IF CHANCE YOU TO DO INTERNATION BUSINESS I GO YOUR CONTACT FROM A RELIABLE WEB DIRECTORY.
+Applied, thank you.
 
-I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM THIS DHL MASTER CARD OFFICES FUND OF $10.5 USD MILLION AFTER THE BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE DECIDED TO ISSUE YOU YOUR (ATM) VALUED AT 10.5 MILLION UNITED STATES DOLLAR.THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION DOLLAR HAS BEING TODAY CREDITED INTO (ATM) MASTER CARD AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO SEND IT TO YOU TODAY IN YOUR FAVOR.
-
-WITH YOUR (ATM) YOU WILL HAVE ACCESS TO MAKE DAILY WITHDRAWALS OF $5000,00 UNITED STATE DOLLARS DAILIES AS ALREADY PROGRAMMED UNTIL YOU WITHDRAW YOUR TOTAL SUM IN YOUR (ATM) CARD WHICH HAS REGISTERED IN OUR SYSTEM FOR PAYMENT RECORD, AS SOON AS WE RECEIVE YOUR INFORMATIONS AND YOUR HOME ADDRESS OF YOUR COUNTRY AS ALREADY PROGRAMMED, WE WILL SEND YOUR (ATM) CARD THROUGH DHL COURIER SERVICE, WE HAVE RECEIVED A SIGNAL FROM THE SWISS WORLD BANK TO INFECT YOUR TRANSFER TO YOU WITHIN ONE WEEK,
-
-WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH THE CENTRAL BANK OF AMERICA (BOA). AT THE END OF THE BOARD OF DIRECTORS MEETING TODAY, WE HAVE CONCLUDED TO IMMEDIATELY ISSUE YOU AS SOON AS POSSIBLE,
-
-AND YOUR VALUE SUM HAS BEEN CREDITED INTO YOUR (ATM) VISA CARD
-ACCOUNT. WHICH YOU WILL USE TO WITHDRAW YOUR FUND IN ANY PART OF THE WORLD, WE HAVE ISSUED AND CREDITED YOUR (ATM) CARD IN YOUR NAME TODAY,
-
-YOUR (ATM) WILL BE INSURE BY THE INSURANCE COMPANY AND SEND TO YOU
-THROUGH ANY AVAILABLE COURIER COMPANY OF OUR CHOICE.
-
-ONCE AGAIN CONGRATULATIONS TO YOU,
-
-DIRECTOR DHL SERVICE,
-THANKS,
-SINCERELY.
-MRS. RAJOYS HASSAIN,
+-- 
+Jiri Kosina
+SUSE Labs
