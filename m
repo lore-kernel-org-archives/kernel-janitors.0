@@ -1,51 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 17 Feb 2020 09:24:25 +0000
-Subject: Re: [PATCH] firmware: tegra: Fix a typo in Kconfig
-Message-Id: <20200217092425.GK1339021@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Cy+5HEalSgyXkpVS"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Feb 2020 06:47:42 +0000
+Subject: [PATCH] tee: amdtee: Fix error handling in amdtee_open_session()
+Message-Id: <20200212064649.fbfipw4pqv3bkdfl@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200216161748.21894-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200216161748.21894-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+On these error paths the "sess" variable isn't freed.  It's a refcounted
+pointer so we need to call kref_put().  The other problem is that the
+error code isn't always set.
 
---Cy+5HEalSgyXkpVS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I re-arranged the code a bit so the error case is always handled before
+the success case and the error paths are indented two tabs.
 
-On Sun, Feb 16, 2020 at 05:17:48PM +0100, Christophe JAILLET wrote:
-> A 'n' is mising in 'commuication'
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/firmware/tegra/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/tee/amdtee/core.c | 52 +++++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
 
-Applied to for-5.7/firmware, thanks.
-
-Thierry
-
---Cy+5HEalSgyXkpVS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KW8UACgkQ3SOs138+
-s6FbnhAAmQgt8qy8o0BICDHNatpwIIywn9ZdnXsUKIgec9XPCnPCZ1LUEkDKm6ks
-ooXRmYaYTkLDZ4KeRsrBYgD9ngK+hcEcnTOsHywrI3GiiV2m7/nnyA6ASgOd9QEH
-Pn7xrftP5U9b8FqUYxt9t6WYw6BWOaOe6Hpq6Cau6y7Msr5OCO0/SxYrfd5deWHy
-gFAQfIBYy8xmjkwUf77ghSs56jiSrsCajH2ltrSwQZjLSEstSfLlomVugrc4Vsf8
-qTeGGXGQE8ApG6NcuqnLcpYCtP5pvLgQ7R2xaOKtmDXedau8V4BPXQQKvXTCJfcc
-Ly/yvseuCMfH42Q/S2PI6iaVyf0U1gGNix/HkCO/N0RD6Jve4gDs1+qR5LfDKEII
-u8GjZPb8AlgpKR+tXIaPViM7TPYXPLpHamSERsgA0KOMj4mineT+Eji0/e/cWc2o
-pXF10HzD/as6r9MxOnqgr3dZhxlACu6ZRklmzkQvbQ3GDdTvR2EIXxWeosXJZRHo
-9VdHFcjUdhGf1EDekc/0FTOYBNzxh5h+O3ceQZF6BdlM1IEiK1UeV7kYAjGDpEEL
-aFrKSCkcEpdOEYXy/kNhQyrKTFHOGtIKQf8wSyXoqm+tRCagNRu7hqIc8CGOBh+z
-IyDtGKn1Rhb/SD3mmz9EmTL+mtWniOw6Ukq97v/UxGpCY8zUdNs=
-=fk0G
------END PGP SIGNATURE-----
-
---Cy+5HEalSgyXkpVS--
+diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+index 6370bb55f512..40f3ff4cfae6 100644
+--- a/drivers/tee/amdtee/core.c
++++ b/drivers/tee/amdtee/core.c
+@@ -212,6 +212,19 @@ static int copy_ta_binary(struct tee_context *ctx, void *ptr, void **ta,
+ 	return rc;
+ }
+ 
++static void destroy_session(struct kref *ref)
++{
++	struct amdtee_session *sess = container_of(ref, struct amdtee_session,
++						   refcount);
++
++	/* Unload the TA from TEE */
++	handle_unload_ta(sess->ta_handle);
++	mutex_lock(&session_list_mutex);
++	list_del(&sess->list_node);
++	mutex_unlock(&session_list_mutex);
++	kfree(sess);
++}
++
+ int amdtee_open_session(struct tee_context *ctx,
+ 			struct tee_ioctl_open_session_arg *arg,
+ 			struct tee_param *param)
+@@ -236,14 +249,14 @@ int amdtee_open_session(struct tee_context *ctx,
+ 
+ 	/* Load the TA binary into TEE environment */
+ 	handle_load_ta(ta, ta_size, arg);
+-	if (arg->ret = TEEC_SUCCESS) {
+-		mutex_lock(&session_list_mutex);
+-		sess = alloc_session(ctxdata, arg->session);
+-		mutex_unlock(&session_list_mutex);
++	if (arg->ret != TEEC_SUCCESS) {
++		rc = -EINVAL;
++		goto out;
+ 	}
+ 
+-	if (arg->ret != TEEC_SUCCESS)
+-		goto out;
++	mutex_lock(&session_list_mutex);
++	sess = alloc_session(ctxdata, arg->session);
++	mutex_unlock(&session_list_mutex);
+ 
+ 	if (!sess) {
+ 		rc = -ENOMEM;
+@@ -259,40 +272,31 @@ int amdtee_open_session(struct tee_context *ctx,
+ 
+ 	if (i >= TEE_NUM_SESSIONS) {
+ 		pr_err("reached maximum session count %d\n", TEE_NUM_SESSIONS);
++		kref_put(&sess->refcount, destroy_session);
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+ 	/* Open session with loaded TA */
+ 	handle_open_session(arg, &session_info, param);
+-
+-	if (arg->ret = TEEC_SUCCESS) {
+-		sess->session_info[i] = session_info;
+-		set_session_id(sess->ta_handle, i, &arg->session);
+-	} else {
++	if (arg->ret != TEEC_SUCCESS) {
+ 		pr_err("open_session failed %d\n", arg->ret);
+ 		spin_lock(&sess->lock);
+ 		clear_bit(i, sess->sess_mask);
+ 		spin_unlock(&sess->lock);
++		kref_put(&sess->refcount, destroy_session);
++		rc = -EINVAL;
++		goto out;
+ 	}
++
++	sess->session_info[i] = session_info;
++	set_session_id(sess->ta_handle, i, &arg->session);
++
+ out:
+ 	free_pages((u64)ta, get_order(ta_size));
+ 	return rc;
+ }
+ 
+-static void destroy_session(struct kref *ref)
+-{
+-	struct amdtee_session *sess = container_of(ref, struct amdtee_session,
+-						   refcount);
+-
+-	/* Unload the TA from TEE */
+-	handle_unload_ta(sess->ta_handle);
+-	mutex_lock(&session_list_mutex);
+-	list_del(&sess->list_node);
+-	mutex_unlock(&session_list_mutex);
+-	kfree(sess);
+-}
+-
+ int amdtee_close_session(struct tee_context *ctx, u32 session)
+ {
+ 	struct amdtee_context_data *ctxdata = ctx->data;
+-- 
+2.11.0
