@@ -1,45 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Feb 2020 14:58:44 +0000
-Subject: [PATCH] media: lmedm04: remove redundant assignment to variable gate
-Message-Id: <20200210145844.438478-1-colin.king@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Thu, 13 Feb 2020 09:22:50 +0000
+Subject: Re: [PATCH -next] crypto: ccree - remove set but not used variable 'du_size'
+Message-Id: <20200213092250.qsvhnv6g55lnvw23@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200203153921.45273-1-yuehaibing@huawei.com>
+In-Reply-To: <20200203153921.45273-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Malcolm Priestley <tvboxspy@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>
+Cc: Hulk Robot <hulkci@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Gilad Ben-Yossef <gilad@benyossef.com>, linux-crypto@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Feb 03, 2020 at 03:39:21PM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/crypto/ccree/cc_cipher.c: In function 'cc_setup_state_desc':
+> drivers/crypto/ccree/cc_cipher.c:536:15: warning:
+>  variable 'du_size' set but not used [-Wunused-but-set-variable]
+> 
+> commit 5c83e8ec4d51 ("crypto: ccree - fix FDE descriptor sequence")
+> involved this unused variable, so remove it.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/crypto/ccree/cc_cipher.c | 8 --------
+>  1 file changed, 8 deletions(-)
 
-The variable gate is being initialized and also checked and re-assigned
-with values that are never read as it is being re-assigned later in a
-for-loop with a new value.  The assignments are redundant and can be
-removed.
-
-Addresses Coverity ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/dvb-usb-v2/lmedm04.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-index 62d3566bf7ee..fd8b42bb9a84 100644
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -486,13 +486,10 @@ static int lme2510_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
- 	static u8 obuf[64], ibuf[64];
- 	int i, read, read_o;
- 	u16 len;
--	u8 gate = st->i2c_gate;
-+	u8 gate;
- 
- 	mutex_lock(&d->i2c_mutex);
- 
--	if (gate = 0)
--		gate = 5;
--
- 	for (i = 0; i < num; i++) {
- 		read_o = msg[i].flags & I2C_M_RD;
- 		read = i + 1 < num && msg[i + 1].flags & I2C_M_RD;
+Patch applied.  Thanks.
 -- 
-2.25.0
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
