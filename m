@@ -1,51 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 04 Feb 2020 07:18:49 +0000
-Subject: Re: [PATCH] USB: HID: Fix timeout by adding retry loop
-Message-Id: <20200204071849.GQ1778@kadam>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Thu, 13 Feb 2020 09:17:51 +0000
+Subject: Re: [PATCH] crypto: rng - Fix a refcounting bug in crypto_rng_reset()
+Message-Id: <20200213091750.x7fke4xva3rtkcap@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <51d8ee09-7cd6-5304-00b0-99276e67aec1@gmail.com>
-In-Reply-To: <51d8ee09-7cd6-5304-00b0-99276e67aec1@gmail.com>
+References: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
+In-Reply-To: <20200120143804.pbmnrh72v2gogx43@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>, Corentin Labbe <clabbe@baylibre.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 09:00:46AM +0200, Lauri Jakku wrote:
-> Hi,
+On Mon, Jan 20, 2020 at 05:38:04PM +0300, Dan Carpenter wrote:
+> We need to decrement this refcounter on these error paths.
 > 
-> I'm quite newbie publicly patching stuff, but at anyway:
-> 
-> On 4.2.2020 8.27, Dan Carpenter wrote:
-> > Hi Lauri,
-> >
-> > There are a bunch of issues with this patch.
-> >
-> > 1)  There is no way we're going to add a retry loop to
-> >     usb_control_msg().  We might add it to a driver, but probably we
-> >     would suspect that the hardware is bad.  Maybe the cable is faulty?
-> >     Or I could be wrong on that...
-> 
-> For example there is lot of USB HID related oddities reported
-> 
-> by multiple users, that have said that after (kernel) update
-> 
-> of their system USB devices stopped working or work randomly.
-> 
-> 
-> I have problem with my mouse, and the problem went away
-> 
-> with my patch. I think that the change to driver by driver is
-> 
-> just code duplication, and with my patch the 'good' HW still
-> 
-> is not going to sleep even that 20ms, the time that I tought
-> 
-> to be good. Max retry time is 400ms.
-> 
+> Fixes: f7d76e05d058 ("crypto: user - fix use_after_free of struct xxx_request")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  crypto/rng.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-That doesn't sound totally unreasonable.  Go ahead and try sending the
-patch.  Maybe they apply it or maybe they don't but either way there
-is no harm in sending a patch.
-
-regards,
-dan carpenter
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
