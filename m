@@ -1,32 +1,45 @@
-From: "Kaneda, Erik" <erik.kaneda@intel.com>
-Date: Fri, 14 Feb 2020 17:07:53 +0000
+From: "Moore, Robert" <robert.moore@intel.com>
+Date: Fri, 14 Feb 2020 20:21:48 +0000
 Subject: RE: [PATCH] ACPICA: Fix a typo in acuuid.h
-Message-Id: <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
+Message-Id: <94F2FBAB4432B54E8AACC7DFDE6C92E3B96EA166@ORSMSX110.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200214063003.29741-1-christophe.jaillet@wanadoo.fr>
  <2712088.SaWAGPlJqS@kreacher>
-In-Reply-To: <2712088.SaWAGPlJqS@kreacher>
+ <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
+In-Reply-To: <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "lenb@kernel.org" <lenb@kernel.org>, "Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "devel@acpica.org" <devel@acpica.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "Kaneda, Erik" <erik.kaneda@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "devel@acpica.org" <devel@acpica.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+Ok, got it.
+Thanks,
+Bob
+-
+
+-----Original Message-----
+From: Kaneda, Erik <erik.kaneda@intel.com> 
+Sent: Friday, February 14, 2020 9:08 AM
+To: Rafael J. Wysocki <rjw@rjwysocki.net>; Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: RE: [PATCH] ACPICA: Fix a typo in acuuid.h
 
 
 
 > -----Original Message-----
-> From: linux-acpi-owner@vger.kernel.org <linux-acpi-
+> From: linux-acpi-owner@vger.kernel.org <linux-acpi- 
 > owner@vger.kernel.org> On Behalf Of Rafael J. Wysocki
 > Sent: Friday, February 14, 2020 2:02 AM
-> To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; Kaneda, Erik
+> To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; Kaneda, Erik 
 > <erik.kaneda@intel.com>
-> Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux-
-> acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org;
+> Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux- 
+> acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; 
 > kernel-janitors@vger.kernel.org
 > Subject: Re: [PATCH] ACPICA: Fix a typo in acuuid.h
 > 
 > On Friday, February 14, 2020 7:30:03 AM CET Christophe JAILLET wrote:
-> > The comment related to the ending of the include guard should be
+> > The comment related to the ending of the include guard should be 
 > > related to __ACUUID_H__, not __AUUID_H__ (i.e. 'C' is missing).
 > >
 > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
@@ -55,8 +68,8 @@ Erik
 > >  #define UUID_DEVICE_PROPERTIES          "daffd814-6eba-4d8c-8a91-
 > bc9bbf4aa301"
 > >
-> > -#endif				/* __AUUID_H__ */
-> > +#endif				/* __ACUUID_H__ */
+> > -#endif/* __AUUID_H__ */
+> > +#endif/* __ACUUID_H__ */
 > >
 > 
 > 
