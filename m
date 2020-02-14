@@ -1,37 +1,31 @@
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Feb 2020 16:57:26 +0000
-Subject: Re: [PATCH] MAINTAINERS: clean up PCIE DRIVER FOR CAVIUM THUNDERX
-Message-Id: <20200224165726.GA27161@bogus>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 14 Feb 2020 06:30:03 +0000
+Subject: [PATCH] ACPICA: Fix a typo in acuuid.h
+Message-Id: <20200214063003.29741-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200223090950.5259-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200223090950.5259-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: devicetree@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, David Daney <david.daney@cavium.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Robert Richter <rrichter@marvell.com>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: rjw@rjwysocki.net, lenb@kernel.org, robert.moore@intel.com, erik.kaneda@intel.com
+Cc: linux-acpi@vger.kernel.org, devel@acpica.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Feb 23, 2020 at 10:09:50AM +0100, Lukas Bulwahn wrote:
-> Commit e1ac611f57c9 ("dt-bindings: PCI: Convert generic host binding to
-> DT schema") combines all information from pci-thunder-{pem,ecam}.txt
-> into host-generic-pci.yaml, and deleted the two files in
-> Documentation/devicetree/bindings/pci/.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   no file matches F: Documentation/devicetree/bindings/pci/pci-thunder-*
-> 
-> As the PCIE DRIVER FOR CAVIUM THUNDERX-relevant information is only a
-> small part of the host-generic-pci.yaml, do not add this file to the
-> PCIE DRIVER FOR CAVIUM THUNDERX entry, and only drop the reference to
-> the removed files.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Robert, are you still the maintainer of this driver?
-> Rob Herring, please pick this patch.
-> applies cleanly on current master and next-20200221
+The comment related to the ending of the include guard should be related to
+__ACUUID_H__, not __AUUID_H__ (i.e. 'C' is missing).
 
-Applied, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/acpi/acuuid.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/include/acpi/acuuid.h b/include/acpi/acuuid.h
+index 9dd4689a39cf..9e1367b19069 100644
+--- a/include/acpi/acuuid.h
++++ b/include/acpi/acuuid.h
+@@ -57,4 +57,4 @@
+ #define UUID_THERMAL_EXTENSIONS         "14d399cd-7a27-4b18-8fb4-7cb7b9f4e500"
+ #define UUID_DEVICE_PROPERTIES          "daffd814-6eba-4d8c-8a91-bc9bbf4aa301"
+ 
+-#endif				/* __AUUID_H__ */
++#endif				/* __ACUUID_H__ */
+-- 
+2.20.1
