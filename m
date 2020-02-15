@@ -1,46 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 02 Feb 2020 20:19:22 +0000
-Subject: [PATCH] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-Message-Id: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
+From: Paul Burton <paulburton@kernel.org>
+Date: Sat, 15 Feb 2020 22:56:00 +0000
+Subject: Re: [PATCH] MIPS: VPE: Fix a double free and a memory leak in  'release_vpe()'
+Message-Id: <5e487701.1c69fb81.107e8.b7f9@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200202201922.22852-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, paulburton@kernel.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: ralf@linux-mips.org, paulburton@kernel.org
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
+Hello,
 
-'release_progmem()' is only a call to 'kfree()'.
+Christophe JAILLET wrote:
+> Pointer on the memory allocated by 'alloc_progmem()' is stored in
+> 'v->load_addr'. So this is this memory that should be freed by
+> 'release_progmem()'.
+> 
+> 'release_progmem()' is only a call to 'kfree()'.
+> 
+> With the current code, there is both a double free and a memory leak.
+> Fix it by passing the correct pointer to 'release_progmem()'.
 
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
+Applied to mips-fixes.
 
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Un-tested
+> commit bef8e2dfceed
+> https://git.kernel.org/mips/c/bef8e2dfceed
+> 
+> Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
 
-The 'if (v->load_addr)' looks also redundant, but, well, the code is old
-and I feel lazy tonight to send another patch for only that.
----
- arch/mips/kernel/vpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+    Paul
 
-diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 6176b9acba95..d0d832ab3d3b 100644
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
- 
--- 
-2.20.1
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
