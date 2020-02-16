@@ -1,33 +1,33 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 28 Feb 2020 16:44:05 +0000
-Subject: Re: [PATCH -next] RDMA/bnxt_re: Remove set but not used variables 'pg' and 'idx'
-Message-Id: <20200228164405.GC7181@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Feb 2020 16:17:48 +0000
+Subject: [PATCH] firmware: tegra: Fix a typo in Kconfig
+Message-Id: <20200216161748.21894-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200227064900.92255-1-yuehaibing@huawei.com>
-In-Reply-To: <20200227064900.92255-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On Thu, Feb 27, 2020 at 06:49:00AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/hw/bnxt_re/qplib_rcfw.c: In function '__send_message':
-> drivers/infiniband/hw/bnxt_re/qplib_rcfw.c:101:10: warning:
->  variable 'idx' set but not used [-Wunused-but-set-variable]
-> drivers/infiniband/hw/bnxt_re/qplib_rcfw.c:101:6: warning:
->  variable 'pg' set but not used [-Wunused-but-set-variable]
-> 
-> commit cee0c7bba486 ("RDMA/bnxt_re: Refactor command queue management code")
-> involved this, but not used.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 4 ----
->  1 file changed, 4 deletions(-)
+A 'n' is mising in 'commuication'
 
-Applied to for-next, thanks
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/tegra/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
+index a887731f50d6..1c8ba1f47c7c 100644
+--- a/drivers/firmware/tegra/Kconfig
++++ b/drivers/firmware/tegra/Kconfig
+@@ -7,7 +7,7 @@ config TEGRA_IVC
+ 	help
+ 	  IVC (Inter-VM Communication) protocol is part of the IPC
+ 	  (Inter Processor Communication) framework on Tegra. It maintains the
+-	  data and the different commuication channels in SysRAM or RAM and
++	  data and the different communication channels in SysRAM or RAM and
+ 	  keeps the content is synchronization between host CPU and remote
+ 	  processors.
+ 
+-- 
+2.20.1
