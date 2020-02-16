@@ -1,47 +1,49 @@
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Fri, 28 Feb 2020 13:04:44 +0000
-Subject: Re: [PATCH] lib/test_kmod: remove a NULL test
-Message-Id: <20200228130444.GY11244@42.do-not-panic.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 16 Feb 2020 13:08:41 +0000
+Subject: [PATCH] MAINTAINERS: adjust to stm32 timer dt-bindings conversion
+Message-Id: <20200216130841.4187-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228092452.vwkhthsn77nrxdy6@kili.mountain>
-In-Reply-To: <20200228092452.vwkhthsn77nrxdy6@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Gaignard <benjamin.gaignard@st.com>, Fabrice Gasnier <fabrice.gasnier@st.com>, Rob Herring <robh@kernel.org>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-On Fri, Feb 28, 2020 at 12:24:52PM +0300, Dan Carpenter wrote:
-> The "info" pointer has already been dereferenced so checking here is
-> too late.  Fortunately, we never pass NULL pointers to the
-> test_kmod_put_module() function so the test can simply be removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The commit 56fb34d86e87 ("dt-bindings: mfd: Convert stm32 timers bindings
+to json-schema") and commit b88091f5d84a ("dt-bindings: mfd: Convert stm32
+low power timers bindings to json-schema") converted some files from txt to
+yaml format in ./Documentation/devicetree/bindings/, but they missed to
+adjust MAINTAINERS.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Andrew, mind this going up through you? I'll bounce you the original
-next.
+  no file matches F: Documentation/devicetree/bindings/*/stm32-*timer*
+  no file matches F: Documentation/devicetree/bindings/pwm/pwm-stm32*
 
-  Luis
+So, repair the MAINTAINERS entry now.
 
-> ---
->  lib/test_kmod.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-> index 9cf77628fc91..e651c37d56db 100644
-> --- a/lib/test_kmod.c
-> +++ b/lib/test_kmod.c
-> @@ -204,7 +204,7 @@ static void test_kmod_put_module(struct kmod_test_device_info *info)
->  	case TEST_KMOD_DRIVER:
->  		break;
->  	case TEST_KMOD_FS_TYPE:
-> -		if (info && info->fs_sync && info->fs_sync->owner)
-> +		if (info->fs_sync && info->fs_sync->owner)
->  			module_put(info->fs_sync->owner);
->  		break;
->  	default:
-> -- 
-> 2.11.0
-> 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Benjamin, Fabrice, please ack.
+Rob, please pick this patch.
+applies cleanly on current master and on next-20200214
+
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a0d86490c2c6..9175b59e2b4c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15923,8 +15923,7 @@ F:	drivers/*/stm32-*timer*
+ F:	drivers/pwm/pwm-stm32*
+ F:	include/linux/*/stm32-*tim*
+ F:	Documentation/ABI/testing/*timer-stm32
+-F:	Documentation/devicetree/bindings/*/stm32-*timer*
+-F:	Documentation/devicetree/bindings/pwm/pwm-stm32*
++F:	Documentation/devicetree/bindings/mfd/st,stm32-*timer*.yaml
+ 
+ STMMAC ETHERNET DRIVER
+ M:	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+-- 
+2.17.1
