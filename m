@@ -1,35 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Feb 2020 09:25:54 +0000
-Subject: [PATCH] mtd: lpddr: Fix a double free in probe()
-Message-Id: <20200228092554.o57igp3nqhyvf66t@kili.mountain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Feb 2020 10:27:42 +0000
+Subject: [PATCH] tty: serial: Kconfig: Fix a typo
+Message-Id: <20200216102742.19298-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Alexey Korolev <akorolev@infradead.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, David Woodhouse <David.Woodhouse@intel.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Steve Winslow <swinslow@gmail.com>, Allison Randal <allison@lohutok.net>, Vignesh Raghavendra <vigneshr@ti.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This function is only called from lpddr_probe().  We free "lpddr" both
-here and in the caller, so it's a double free.  The best place to free
-"lpddr" is in lpddr_probe() so let's delete this one.
+'exsisting' has an extra 's'
 
-Fixes: 8dc004395d5e ("[MTD] LPDDR qinfo probing.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mtd/lpddr/lpddr_cmds.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/tty/serial/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
-index 1efc643c9871..9341a8a592e8 100644
---- a/drivers/mtd/lpddr/lpddr_cmds.c
-+++ b/drivers/mtd/lpddr/lpddr_cmds.c
-@@ -68,7 +68,6 @@ struct mtd_info *lpddr_cmdset(struct map_info *map)
- 	shared = kmalloc_array(lpddr->numchips, sizeof(struct flchip_shared),
- 						GFP_KERNEL);
- 	if (!shared) {
--		kfree(lpddr);
- 		kfree(mtd);
- 		return NULL;
- 	}
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 52eaac21ff9f..7172f1c5fa6d 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1111,7 +1111,7 @@ config SERIAL_SC16IS7XX_SPI
+ 	help
+ 	  Enable SC16IS7xx driver on SPI bus,
+ 	  If required say y, and say n to spi if not required,
+-	  This is additional support to exsisting driver.
++	  This is additional support to existing driver.
+ 	  You must select at least one bus for the driver to be built.
+ 
+ config SERIAL_TIMBERDALE
 -- 
-2.11.0
+2.20.1
