@@ -1,29 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 10 Feb 2020 07:30:50 +0000
-Subject: Re: [PATCH] ALSA: hda: remove redundant assignment to variable timeout
-Message-Id: <s5hwo8u526t.wl-tiwai@suse.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Feb 2020 11:47:08 +0000
+Subject: [PATCH] dma-buf: Fix a typo in Kconfig
+Message-Id: <20200216114708.20583-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200208222756.37707-1-colin.king@canonical.com>
-In-Reply-To: <20200208222756.37707-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Baolin Wang <baolin.wang@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: sumit.semwal@linaro.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-media@vger.kernel.org
 
-On Sat, 08 Feb 2020 23:27:56 +0100,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable timeout is being assigned with the value 200 that is never
-> read, it is assigned a new value in a following do-loop. The assignment
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+A 'h' ismissing in' syncronization'
 
-Thanks, applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/dma-buf/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Takashi
+diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+index 0613bb7770f5..e7d820ce0724 100644
+--- a/drivers/dma-buf/Kconfig
++++ b/drivers/dma-buf/Kconfig
+@@ -6,7 +6,7 @@ config SYNC_FILE
+ 	default n
+ 	select DMA_SHARED_BUFFER
+ 	---help---
+-	  The Sync File Framework adds explicit syncronization via
++	  The Sync File Framework adds explicit synchronization via
+ 	  userspace. It enables send/receive 'struct dma_fence' objects to/from
+ 	  userspace via Sync File fds for synchronization between drivers via
+ 	  userspace components. It has been ported from Android.
+-- 
+2.20.1
