@@ -1,50 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Feb 2020 14:40:50 +0000
-Subject: [PATCH] dmaengine: coh901318: Fix a double lock bug in dma_tc_handle()
-Message-Id: <20200217144050.3i4ymbytogod4ijn@kili.mountain>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Feb 2020 22:24:10 +0000
+Subject: Re: [PATCH] dmaengine: coh901318: Fix a double lock bug in dma_tc_handle()
+Message-Id: <CAMuHMdWaCqZ_zcHuBetAQu4kmoffNw5jvHM5ciTi29MAxL70bg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200217144050.3i4ymbytogod4ijn@kili.mountain>
+In-Reply-To: <20200217144050.3i4ymbytogod4ijn@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@stericsson.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>, dmaengine <dmaengine@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-The caller is already holding the lock so this will deadlock.
+Hi Dan,
 
-Fixes: 0b58828c923e ("DMAENGINE: COH 901 318 remove irq counting")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is the second double lock bug found using static analysis.  The
-previous one was commit 627469e4445b ("dmaengine: coh901318: Fix a
-double-lock bug").
+On Mon, Feb 17, 2020 at 3:41 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The caller is already holding the lock so this will deadlock.
+>
+> Fixes: 0b58828c923e ("DMAENGINE: COH 901 318 remove irq counting")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is the second double lock bug found using static analysis.  The
+> previous one was commit 627469e4445b ("dmaengine: coh901318: Fix a
+> double-lock bug").
+>
+> The fact that this has been broken for ten years suggests that no one
+> has the hardware.
 
-The fact that this has been broken for ten years suggests that no one
-has the hardware.
+Or this only runs CONFIG_SMP=n kernels?
+This seems to be used in arch/arm/boot/dts/ste-u300.dts only, and
+CONFIG_ARCH_U300 is a ARCH_MULTI_V5 platform, which looks like
+it doesn't support SMP?
 
- drivers/dma/coh901318.c | 4 ----
- 1 file changed, 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/dma/coh901318.c b/drivers/dma/coh901318.c
-index e51d836afcc7..1092d4ce723e 100644
---- a/drivers/dma/coh901318.c
-+++ b/drivers/dma/coh901318.c
-@@ -1947,8 +1947,6 @@ static void dma_tc_handle(struct coh901318_chan *cohc)
- 		return;
- 	}
- 
--	spin_lock(&cohc->lock);
--
- 	/*
- 	 * When we reach this point, at least one queue item
- 	 * should have been moved over from cohc->queue to
-@@ -1969,8 +1967,6 @@ static void dma_tc_handle(struct coh901318_chan *cohc)
- 	if (coh901318_queue_start(cohc) = NULL)
- 		cohc->busy = 0;
- 
--	spin_unlock(&cohc->lock);
--
- 	/*
- 	 * This tasklet will remove items from cohc->active
- 	 * and thus terminates them.
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
