@@ -1,87 +1,50 @@
-From: Lauri Jakku <lauri.jakku@pp.inet.fi>
-Date: Thu, 06 Feb 2020 15:03:54 +0000
-Subject: Re: [PATCH v6] USB: HID: random timeout failures tackle try.
-Message-Id: <0febac0f-6727-3d08-87c8-4d45c761654a@pp.inet.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Feb 2020 14:40:50 +0000
+Subject: [PATCH] dmaengine: coh901318: Fix a double lock bug in dma_tc_handle()
+Message-Id: <20200217144050.3i4ymbytogod4ijn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200205153944.11955-1-lja@iki.fi>
-In-Reply-To: <20200205153944.11955-1-lja@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@stericsson.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>, kernel-janitors@vger.kernel.org
 
-Hi,
+The caller is already holding the lock so this will deadlock.
 
-I make small descriptions as you suggested and remove dumb comments
+Fixes: 0b58828c923e ("DMAENGINE: COH 901 318 remove irq counting")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is the second double lock bug found using static analysis.  The
+previous one was commit 627469e4445b ("dmaengine: coh901318: Fix a
+double-lock bug").
 
-.. this is my first time patching kernel publicly so, I'm not used to
+The fact that this has been broken for ten years suggests that no one
+has the hardware.
 
-the Proper way, but i'm learning all the time :)
+ drivers/dma/coh901318.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-
---Lauri Jakku
-
-On 5.2.2020 19.12, Dan Carpenter wrote:
-> I never recieved v2-v5 so I can't really comment on those.  If you
-> didn't send those to linux-usb then let's just pretend we're still on
-> v1 otherwise it's just confusing.
->
-> This is not how we send v2 patches.  Put [PATCH v6], that's good.
-> Then the normal changelog and the Signed-off-by: then under the ---
-> cut off put a small comment.
->
-> Signed-off-by: you
-> ---
-> v6: changed commit message
-> v5: fixed error reported by kbuild
-> v4: blah blah
->
->
->> +/* Wrapper function to send control messages */
-> Don't include obvious comments like this.
->
->> +static int usbhid_control_msg(struct usb_device *dev, unsigned int pipe,
->> +				_u8 request, __u8 requesttype, __u16 value,
->> +				__u16 index, void *data, __u16 size,
->> +				int timeout)
->> +{
->> +	/* calculate timeout per call, to archieve total timeout requested */
-> This should be obvious if the variables and functions are named well.
->
-> It's weird that we're passing the total timeout and then dividing it
-> into littler chunks...  Normally we would know the timeout from the
-> spec and then the total would be something like "a timeout of 400ms
-> won't annoy users."  (This seems wrong).
->
->
->> +	int call_timeout = USBHID_CONTROL_COMMAND_TIMEOUT_CALC(timeout);
-> CALC is a bad name because obviously it's going to calculate something.
->
->> +	int call_count   = USBHID_CONTROL_COMMAND_RETRY_COUNT;
-> Just call it "int retry = USBHID_CONTROL_COMMAND_RETRY_COUNT;".  Don't
-> do anything fancy with the white space.
->
->> +	int ret;
->> +	int timeout_looping;
->> +
->> +	do {
->> +		ret = usb_control_msg(dev, pipe, request, requesttype,
->> +				value, index, data, size, call_timeout);
-> The indenting is wrong.  Use checkpatch.pl --strict
->
->> +
->> +		timeout_looping =	(call_count-- > 0) &&
->> +					(ret = -ETIMEDOUT);
->> +	} while (timeout_looping);
-> Delete the "timeout_looping" variable.
->
-> 	} while (ret = -ETIMEDOUT && retry-- > 0);
->
-> Have you tested with just one retry?
->
-> regards,
-> dan carpenter
->
+diff --git a/drivers/dma/coh901318.c b/drivers/dma/coh901318.c
+index e51d836afcc7..1092d4ce723e 100644
+--- a/drivers/dma/coh901318.c
++++ b/drivers/dma/coh901318.c
+@@ -1947,8 +1947,6 @@ static void dma_tc_handle(struct coh901318_chan *cohc)
+ 		return;
+ 	}
+ 
+-	spin_lock(&cohc->lock);
+-
+ 	/*
+ 	 * When we reach this point, at least one queue item
+ 	 * should have been moved over from cohc->queue to
+@@ -1969,8 +1967,6 @@ static void dma_tc_handle(struct coh901318_chan *cohc)
+ 	if (coh901318_queue_start(cohc) = NULL)
+ 		cohc->busy = 0;
+ 
+-	spin_unlock(&cohc->lock);
+-
+ 	/*
+ 	 * This tasklet will remove items from cohc->active
+ 	 * and thus terminates them.
 -- 
-Br,
-Lauri J.
+2.11.0
