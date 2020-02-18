@@ -1,27 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Feb 2020 00:41:54 +0000
-Subject: Re: [PATCH] net: ena: ethtool: remove redundant non-zero check on rc
-Message-Id: <20200223.164154.1411149705613568241.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Feb 2020 06:47:59 +0000
+Subject: [bug report] clone3: allow spawning processes into cgroups
+Message-Id: <20200218064759.4n6vwqgtxqlysjsk@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200221232653.33134-1-colin.king@canonical.com>
-In-Reply-To: <20200221232653.33134-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: netanel@amazon.com, akiyano@amazon.com, gtzalik@amazon.com, saeedb@amazon.com, zorik@amazon.com, sameehj@amazon.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 21 Feb 2020 23:26:53 +0000
+Hello Christian Brauner,
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The non-zero check on rc is redundant as a previous non-zero
-> check on rc will always return and the second check is never
-> reached, hence it is redundant and can be removed.  Also
-> remove a blank line.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The patch ef2c41cf38a7: "clone3: allow spawning processes into
+cgroups" from Feb 5, 2020, leads to the following static checker
+warning:
 
-Applied to net-next.
+	kernel/fork.c:2632 copy_clone_args_from_user()
+	warn: unsigned 'args.cgroup' is never less than zero.
+
+kernel/fork.c
+  2598  noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+  2599                                                struct clone_args __user *uargs,
+  2600                                                size_t usize)
+  2601  {
+  2602          int err;
+  2603          struct clone_args args;
+  2604          pid_t *kset_tid = kargs->set_tid;
+  2605  
+  2606          if (unlikely(usize > PAGE_SIZE))
+  2607                  return -E2BIG;
+  2608          if (unlikely(usize < CLONE_ARGS_SIZE_VER0))
+  2609                  return -EINVAL;
+  2610  
+  2611          err = copy_struct_from_user(&args, sizeof(args), uargs, usize);
+  2612          if (err)
+  2613                  return err;
+  2614  
+  2615          if (unlikely(args.set_tid_size > MAX_PID_NS_LEVEL))
+  2616                  return -EINVAL;
+  2617  
+  2618          if (unlikely(!args.set_tid && args.set_tid_size > 0))
+  2619                  return -EINVAL;
+  2620  
+  2621          if (unlikely(args.set_tid && args.set_tid_size = 0))
+  2622                  return -EINVAL;
+  2623  
+  2624          /*
+  2625           * Verify that higher 32bits of exit_signal are unset and that
+  2626           * it is a valid signal
+  2627           */
+  2628          if (unlikely((args.exit_signal & ~((u64)CSIGNAL)) ||
+  2629                       !valid_signal(args.exit_signal)))
+  2630                  return -EINVAL;
+  2631  
+  2632          if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
+                                                        ^^^^^^^^^^^^^^^
+This is a u64 so it can't be negative.  I'm not sure what was intended.
+
+  2633                  return -EINVAL;
+  2634  
+
+regards,
+dan carpenter
