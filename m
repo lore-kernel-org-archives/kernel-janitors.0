@@ -1,52 +1,39 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Thu, 27 Feb 2020 21:52:06 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust entry to moving cadence drivers
-Message-Id: <20200227215206.GA146772@google.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 20 Feb 2020 09:10:20 +0000
+Subject: Re: [for-next][PATCH 12/26] Documentation: bootconfig: Add a doc for extended boot config
+Message-Id: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200221185402.4703-1-lukas.bulwahn@gmail.com>
-References: <20200221185402.4703-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200221185402.4703-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Tom Joseph <tjoseph@cadence.com>, Andrew Murray <andrew.murray@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-pci@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Linus Torvalds <torvalds@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Tim Bird <Tim.Bird@sony.com>, Tom Zanussi <tom.zanussi@linux.intel.com>
 
-On Fri, Feb 21, 2020 at 07:54:02PM +0100, Lukas Bulwahn wrote:
-> Commit de80f95ccb9c ("PCI: cadence: Move all files to per-device cadence
-> directory") moved files of the pci cadence drivers, but did not adjust
-> the entry in MAINTAINERS.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: drivers/pci/controller/pcie-cadence*
-> 
-> So, repair the MAINTAINERS entry now.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+I wonder about a few details in the added text.
 
-Applied to for-linus for v5.6, thanks!
 
-> ---
-> Tom, Andrew, please ack. Lorenzo, please pick this patch.
-> applies cleanly on current master and next-20200221
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4beb8dc4c7eb..d8f690f0e838 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12740,7 +12740,7 @@ M:	Tom Joseph <tjoseph@cadence.com>
->  L:	linux-pci@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/pci/cdns,*.txt
-> -F:	drivers/pci/controller/pcie-cadence*
-> +F:	drivers/pci/controller/cadence/
->  
->  PCI DRIVER FOR FREESCALE LAYERSCAPE
->  M:	Minghuan Lian <minghuan.Lian@nxp.com>
-> -- 
-> 2.17.1
-> 
+…
+> +++ b/Documentation/admin-guide/bootconfig.rst
+…
+> +C onfig File Limitation
+
+How do you think about to omit a space character at the beginning
+of this line?
+
+
+> +Currently the maximum config size size is 32KB …
+
+Would you like to avoid a word duplication here?
+
+
+> +Note: this is not the number of entries but nodes, an entry must consume
+> +more than 2 nodes (a key-word and a value). …
+
+I find the relevance of the term “nodes” unclear at the moment.
+
+
+Could an other wording be nicer than the abbreviation “a doc for … config”
+in the commit subject?
+
+Regards,
+Markus
