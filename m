@@ -1,45 +1,35 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 02 Feb 2020 11:07:45 +0000
-Subject: Re: [PATCH] iio: imu: st_lsm6dsx: Fix mismatched comments
-Message-Id: <20200202110745.1d16533e@archlinux>
+From: "Mrs. Susan S. Cage" <drgoodluckebelejonathan061@gmail.com>
+Date: Thu, 20 Feb 2020 10:11:32 +0000
+Subject: Attention:Beneficiary
+Message-Id: <CALjo5=877S8-Ry+A=9FH6dxjXo5H81+Sa3p18iiZLBS7eO_8bA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200127120359.3955-1-jieun.kim4758@gmail.com>
-In-Reply-To: <20200127120359.3955-1-jieun.kim4758@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: JieunKim <jieun.kim4758@gmail.com>
-Cc: lorenzo.bianconi83@gmail.com, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 27 Jan 2020 21:03:59 +0900
-JieunKim <jieun.kim4758@gmail.com> wrote:
+-- 
+Dearest Friend,
 
-> odr to odr_table
-> gain to fs_table
-> 
-> 'gain' is actually in 'st_lsm6dsx_fs' structure of 'fs_table'
-> 
-> Signed-off-by: JieunKim <jieun.kim4758@gmail.com>
-Applied.  Thanks.
+Sorry for invading your privacy, my name is Susan S. Cage I am 81
+years, citizen of United States and presently in hospital undergoing
+chromatography for bronchogenic carcinomas (Lung cancer) which
+affected both Lungs. The doctors said I have few days to live because
+the cancer has now affected my brain.
 
-Jonathan
+My late husband left Fifteen Million, Five Hundred British Pounds
+Sterling in my account, I want to transfer the money to you and I want
+you to use it as a donate for charitable and help the needy,
+motherless, less privileged and widows within your location.
 
-> ---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-> index 9c3486a8134f..f2113a63721a 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-> @@ -230,8 +230,8 @@ enum st_lsm6dsx_ext_sensor_id {
->   * @i2c_addr: I2c slave address list.
->   * @wai: Wai address info.
->   * @id: external sensor id.
-> - * @odr: Output data rate of the sensor [Hz].
-> - * @gain: Configured sensor sensitivity.
-> + * @odr_table: Output data rate of the sensor [Hz].
-> + * @fs_table: Configured sensor sensitivity table depending on full scale.
->   * @temp_comp: Temperature compensation register info (addr + mask).
->   * @pwr_table: Power on register info (addr + mask).
->   * @off_canc: Offset cancellation register info (addr + mask).
+I need your assurance that you will use the fund for charity, once I a
+favorable reply from you, will inform my Bank through my lawyer to
+transfer the fund to you as my Next of Kin and Sole Beneficiary. Once
+I receive your response, I will inform my bank in writing through my
+lawyer.
+
+
+
+Thank you and God bless you.
+
+Mrs. Susan S. Cage
