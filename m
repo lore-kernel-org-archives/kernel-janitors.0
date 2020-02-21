@@ -1,41 +1,36 @@
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date: Tue, 11 Feb 2020 21:44:21 +0000
-Subject: Re: [PATCH] net/mlx5: Remove a useless 'drain_workqueue()' call in 'mlx5e_ipsec_cleanup()'
-Message-Id: <CALzJLG_Nyub5YJpP+b=7B128QHOir-vyDs_yrsSoHEPHTfP1bw@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 21 Feb 2020 16:43:32 +0000
+Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for extended boot config
+Message-Id: <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200126175104.17948-1-christophe.jaillet@wanadoo.fr> <f9b066c7-e59a-9106-da57-a7c0ffc36d9b@mellanox.com>
-In-Reply-To: <f9b066c7-e59a-9106-da57-a7c0ffc36d9b@mellanox.com>
+References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
+ <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+ <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
+ <20200221191637.e9eed4268ff607a98200628c@kernel.org>
+In-Reply-To: <20200221191637.e9eed4268ff607a98200628c@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Boris Pismenny <borisp@mellanox.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Saeed Mahameed <saeedm@mellanox.com>, "leon@kernel.org" <leon@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Linus Torvalds <torvalds@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Tim Bird <Tim.Bird@sony.com>, Tom Zanussi <tom.zanussi@linux.intel.com>
 
-On Mon, Jan 27, 2020 at 12:08 AM Boris Pismenny <borisp@mellanox.com> wrote:
+>> Is there a need to separate the number from the following unit?
 >
->
-> On 1/26/2020 7:51 PM, Christophe JAILLET wrote:
-> > 'destroy_workqueue()' already calls 'drain_workqueue()', there is no need
-> > to call it explicitly.
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-> > index cf58c9637904..29626c6c9c25 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-> > @@ -433,7 +433,6 @@ void mlx5e_ipsec_cleanup(struct mlx5e_priv *priv)
-> >       if (!ipsec)
-> >               return;
-> >
-> > -     drain_workqueue(ipsec->wq);
-> >       destroy_workqueue(ipsec->wq);
-> >
-> >       ida_destroy(&ipsec->halloc);
-> LGTM
+> Sorry, I couldn't understand what you pointed here.
 
-applied to net-next-mlx5
-Thanks!
+Can the specification “… size is 32 KiB …”be more appropriate
+(besides a small wording adjustment)?
+
+
+> Like "descriptions of ..." ?
+
+I got another idea also for the provided documentation format.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/admin-guide/bootconfig.rst?id=bee46b309a13ca158c99c325d0408fb2f0db207f#n18
+
+* Will a file format description become helpful in the way of
+  an extended Backus–Naur form?
+
+* How will data processing evolve around the added structures?
+
+Regards,
+Markus
