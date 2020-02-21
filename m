@@ -1,28 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 12 Feb 2020 16:20:20 +0000
-Subject: Re: [PATCH] rtw88: Use kfree_skb() instead of kfree()
-Message-Id: <20200212162020.00ACAC4479C@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Feb 2020 15:51:45 +0000
+Subject: [PATCH][next] lib/test_lockup: fix spelling mistake "iteraions" -> "iterations"
+Message-Id: <20200221155145.79522-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200129173923.rfufhv5c5pxwodm6@kili.mountain>
-In-Reply-To: <20200129173923.rfufhv5c5pxwodm6@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>, Chin-Yen Lee <timlee@realtek.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> sk_buff structs need to be freed with kfree_skb(), not kfree().
-> 
-> Fixes: b6c12908a33e ("rtw88: Add wowlan net-detect support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in a pr_notice message. Fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/test_lockup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-bafbc6f0b51b rtw88: Use kfree_skb() instead of kfree()
-
+diff --git a/lib/test_lockup.c b/lib/test_lockup.c
+index f91cd44ad75a..b45afd3ad7cb 100644
+--- a/lib/test_lockup.c
++++ b/lib/test_lockup.c
+@@ -490,7 +490,7 @@ static int __init test_lockup_init(void)
+ 		return -EINVAL;
+ 	}
+ 
+-	pr_notice("START pid=%d time=%u +%u ns cooldown=%u +%u ns iteraions=%u state=%s %s%s%s%s%s%s%s%s%s%s%s\n",
++	pr_notice("START pid=%d time=%u +%u ns cooldown=%u +%u ns iterations=%u state=%s %s%s%s%s%s%s%s%s%s%s%s\n",
+ 		  main_task->pid, time_secs, time_nsecs,
+ 		  cooldown_secs, cooldown_nsecs, iterations, state,
+ 		  all_cpus ? "all_cpus " : "",
 -- 
-https://patchwork.kernel.org/patch/11356627/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.25.0
