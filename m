@@ -1,50 +1,44 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 17 Feb 2020 09:27:52 +0000
-Subject: Re: [PATCH] dma-buf: Fix a typo in Kconfig
-Message-Id: <20200217092752.GF2363188@phenom.ffwll.local>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 21 Feb 2020 18:54:02 +0000
+Subject: [PATCH] MAINTAINERS: adjust entry to moving cadence drivers
+Message-Id: <20200221185402.4703-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200216114708.20583-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200216114708.20583-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org
+To: Tom Joseph <tjoseph@cadence.com>, Andrew Murray <andrew.murray@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-pci@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Sun, Feb 16, 2020 at 12:47:08PM +0100, Christophe JAILLET wrote:
-> A 'h' ismissing in' syncronization'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Commit de80f95ccb9c ("PCI: cadence: Move all files to per-device cadence
+directory") moved files of the pci cadence drivers, but did not adjust
+the entry in MAINTAINERS.
 
-Applied, thanks for your patch.
--Daniel
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-> ---
->  drivers/dma-buf/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-> index 0613bb7770f5..e7d820ce0724 100644
-> --- a/drivers/dma-buf/Kconfig
-> +++ b/drivers/dma-buf/Kconfig
-> @@ -6,7 +6,7 @@ config SYNC_FILE
->  	default n
->  	select DMA_SHARED_BUFFER
->  	---help---
-> -	  The Sync File Framework adds explicit syncronization via
-> +	  The Sync File Framework adds explicit synchronization via
->  	  userspace. It enables send/receive 'struct dma_fence' objects to/from
->  	  userspace via Sync File fds for synchronization between drivers via
->  	  userspace components. It has been ported from Android.
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+  warning: no file matches F: drivers/pci/controller/pcie-cadence*
 
+So, repair the MAINTAINERS entry now.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Tom, Andrew, please ack. Lorenzo, please pick this patch.
+applies cleanly on current master and next-20200221
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4beb8dc4c7eb..d8f690f0e838 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12740,7 +12740,7 @@ M:	Tom Joseph <tjoseph@cadence.com>
+ L:	linux-pci@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pci/cdns,*.txt
+-F:	drivers/pci/controller/pcie-cadence*
++F:	drivers/pci/controller/cadence/
+ 
+ PCI DRIVER FOR FREESCALE LAYERSCAPE
+ M:	Minghuan Lian <minghuan.Lian@nxp.com>
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.1
