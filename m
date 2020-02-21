@@ -1,53 +1,48 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Date: Sun, 23 Feb 2020 15:58:19 +0000
-Subject: Re: [PATCH] staging: speakup: remove redundant initialization of pointer p_key
-Message-Id: <20200223155819.hycmdvrsiid27jeg@function>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Feb 2020 23:26:53 +0000
+Subject: [PATCH] net: ena: ethtool: remove redundant non-zero check on rc
+Message-Id: <20200221232653.33134-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200223153954.420731-1-colin.king@canonical.com>
-In-Reply-To: <20200223153954.420731-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Kirk Reiser <kirk@reisers.ca>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, linux-kernel@vger.kernel.org, Chris Brannon <chris@the-brannons.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Netanel Belgazal <netanel@amazon.com>, Arthur Kiyanovski <akiyano@amazon.com>, Guy Tzalik <gtzalik@amazon.com>, Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>, "David S . Miller" <davem@davemloft.net>, Sameeh Jubran <sameehj@amazon.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King, le dim. 23 f=C3=A9vr. 2020 15:39:54 +0000, a ecrit:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Pointer p_key is being initialized with a value that is never read,
-> it is assigned a new value later on. The initialization is redundant
-> and can be removed.
->=20
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Indeed, thanks!
+The non-zero check on rc is redundant as a previous non-zero
+check on rc will always return and the second check is never
+reached, hence it is redundant and can be removed.  Also
+remove a blank line.
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> ---
->  drivers/staging/speakup/keyhelp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/speakup/keyhelp.c b/drivers/staging/speakup/=
-keyhelp.c
-> index 5f1bda37f86d..822ceac83068 100644
-> --- a/drivers/staging/speakup/keyhelp.c
-> +++ b/drivers/staging/speakup/keyhelp.c
-> @@ -49,7 +49,7 @@ static int cur_item, nstates;
->  static void build_key_data(void)
->  {
->  	u_char *kp, counters[MAXFUNCS], ch, ch1;
-> -	u_short *p_key =3D key_data, key;
-> +	u_short *p_key, key;
->  	int i, offset =3D 1;
-> =20
->  	nstates =3D (int)(state_tbl[-1]);
-> --=20
-> 2.25.0
->=20
-
---=20
-Samuel
-j'etais en train de nettoyer ma souris et le coup est parti...
- -+- s sur #ens-mim - et en plus c vrai... -+-
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index ced1d577b62a..1e38930353f2 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -674,7 +674,6 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 	 * supports getting/setting the hash function.
+ 	 */
+ 	rc = ena_com_get_hash_function(adapter->ena_dev, &ena_func, key);
+-
+ 	if (rc) {
+ 		if (rc = -EOPNOTSUPP) {
+ 			key = NULL;
+@@ -685,9 +684,6 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 		return rc;
+ 	}
+ 
+-	if (rc)
+-		return rc;
+-
+ 	switch (ena_func) {
+ 	case ENA_ADMIN_TOEPLITZ:
+ 		func = ETH_RSS_HASH_TOP;
+-- 
+2.25.0
