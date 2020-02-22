@@ -1,53 +1,40 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 28 Feb 2020 23:40:17 +0000
-Subject: Re: [PATCH] drm: prevent a harmless integer overflow in drm_legacy_sg_alloc()
-Message-Id: <20200228234017.GB2363188@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Feb 2020 00:15:13 +0000
+Subject: [PATCH][next] clone3: fix an unsigned args.cgroup comparison to less than zero
+Message-Id: <20200222001513.43099-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228092321.axulddmkxrujkmas@kili.mountain>
-In-Reply-To: <20200228092321.axulddmkxrujkmas@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Christian Brauner <christian@brauner.io>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 12:23:21PM +0300, Dan Carpenter wrote:
-> There is an integer overflow when we round up to PAGE_SIZE, but it's
-> harmless because we never re-use "request->size" for anything meaningful.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This code predates git.
+From: Colin Ian King <colin.king@canonical.com>
 
-Also not compiled without CONFIG_DRM_LEGACY, which we tell everyone is to
-enable the root holes in drm :-)
+The less than zero comparison of args.cgroup is aways false because
+args.cgroup is a u64 and can never be less than zero.  I believe the
+correct check is to cast args.cgroup to a s64 first to ensure an
+invalid value is not copied to kargs->cgroup.
 
-Thanks for your patch, queued in drm-misc-next.
--Daniel
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: ef2c41cf38a7 ("clone3: allow spawning processes into cgroups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->  drivers/gpu/drm/drm_scatter.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_scatter.c b/drivers/gpu/drm/drm_scatter.c
-> index d5c386154246..ca520028b2cb 100644
-> --- a/drivers/gpu/drm/drm_scatter.c
-> +++ b/drivers/gpu/drm/drm_scatter.c
-> @@ -99,6 +99,9 @@ int drm_legacy_sg_alloc(struct drm_device *dev, void *data,
->  	if (!drm_core_check_feature(dev, DRIVER_SG))
->  		return -EOPNOTSUPP;
->  
-> +	if (request->size > SIZE_MAX - PAGE_SIZE)
-> +		return -EINVAL;
-> +
->  	if (dev->sg)
->  		return -EINVAL;
->  
-> -- 
-> 2.11.0
-> 
-
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 67a5d691ffa8..98513a122dd1 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2635,7 +2635,7 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 		     !valid_signal(args.exit_signal)))
+ 		return -EINVAL;
+ 
+-	if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
++	if ((args.flags & CLONE_INTO_CGROUP) && (s64)args.cgroup < 0)
+ 		return -EINVAL;
+ 
+ 	*kargs = (struct kernel_clone_args){
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.25.0
