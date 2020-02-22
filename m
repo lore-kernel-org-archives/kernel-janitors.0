@@ -1,57 +1,37 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 05 Feb 2020 18:46:32 +0000
-Subject: Re: [PATCH] get_maintainer: Prefer MAINTAINER address over S-o-b
-Message-Id: <76267eda365d7c5c0adc7dd16681973c5378df8e.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Feb 2020 14:24:09 +0000
+Subject: [PATCH] crypto: hisilicon: remove redundant assignment of pointer ctx
+Message-Id: <20200222142409.141057-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200205152429.ejgx2on2z4hoycus@kili.mountain>
-In-Reply-To: <20200205152429.ejgx2on2z4hoycus@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Douglas Anderson <dianders@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zaibo Xu <xuzaibo@huawei.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-05 at 18:24 +0300, Dan Carpenter wrote:
-> The get_maintainer.pl script looks at git history to create the CC list,
-> but unfortunately sometimes those email addresses are out of date.  The
-> script also looks at the MAINTAINERS file, of course, but if it already
-> found an email address for a maintainer in the git history then the
-> deduplicate_email() function will remove the second address.
-> 
-> It should save the MAINTAINERS address first, before loading the commit
-> signer addresses.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah, thanks.  This has been submitted already.
-https://lore.kernel.org/patchwork/patch/1186249/
+Pointer ctx is being re-assigned with the same value as it
+was initialized with. The second assignment is redundant and
+can be removed.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> We will have to add a special case if the Dan Williamses ever decide
-> to work on the same subsystem.
-> 
->  scripts/get_maintainer.pl | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-> index 34085d146fa2..e5bdd3143a49 100755
-> --- a/scripts/get_maintainer.pl
-> +++ b/scripts/get_maintainer.pl
-> @@ -932,14 +932,14 @@ sub get_maintainers {
->  	}
->      }
->  
-> -    foreach my $fix (@fixes) {
-> -	vcs_add_commit_signers($fix, "blamed_fixes");
-> -    }
-> -
->      foreach my $email (@email_to, @list_to) {
->  	$email->[0] = deduplicate_email($email->[0]);
->      }
->  
-> +    foreach my $fix (@fixes) {
-> +	vcs_add_commit_signers($fix, "blamed_fixes");
-> +    }
-> +
->      foreach my $file (@files) {
->  	if ($email &&
->  	    ($email_git || ($email_git_fallback &&
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/hisilicon/sec2/sec_crypto.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/crypto/hisilicon/sec2/sec_crypto.c b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+index a2cfcc9ccd94..acd15507eb8a 100644
+--- a/drivers/crypto/hisilicon/sec2/sec_crypto.c
++++ b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+@@ -447,7 +447,6 @@ static int sec_skcipher_init(struct crypto_skcipher *tfm)
+ 	struct sec_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 	int ret;
+ 
+-	ctx = crypto_skcipher_ctx(tfm);
+ 	ctx->alg_type = SEC_SKCIPHER;
+ 	crypto_skcipher_set_reqsize(tfm, sizeof(struct sec_req));
+ 	ctx->c_ctx.ivsize = crypto_skcipher_ivsize(tfm);
+-- 
+2.25.0
