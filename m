@@ -1,29 +1,40 @@
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Date: Fri, 28 Feb 2020 11:45:44 +0000
-Subject: Re: [PATCH -next] MIPS: pic32mzda: Drop pointless static qualifier
-Message-Id: <20200228114544.GA10905@alpha.franken.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 23 Feb 2020 15:39:54 +0000
+Subject: [PATCH] staging: speakup: remove redundant initialization of pointer p_key
+Message-Id: <20200223153954.420731-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200227070502.106762-1-yuehaibing@huawei.com>
-In-Reply-To: <20200227070502.106762-1-yuehaibing@huawei.com>
+References: <20180711112607.31292-1-colin.king@canonical.com>
+In-Reply-To: <20180711112607.31292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: ralf@linux-mips.org, paulburton@kernel.org, tglx@linutronix.de, sboyd@kernel.org, geert+renesas@glider.be, f4bug@amsat.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 07:05:02AM +0000, YueHaibing wrote:
-> There is no need to have the 'struct device_node *node' variable static
-> since new value always be assigned before use it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  arch/mips/pic32/pic32mzda/time.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-applied to mips-next.
+Pointer p_key is being initialized with a value that is never read,
+it is assigned a new value later on. The initialization is redundant
+and can be removed.
 
-Thomas.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/speakup/keyhelp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/speakup/keyhelp.c b/drivers/staging/speakup/keyhelp.c
+index 5f1bda37f86d..822ceac83068 100644
+--- a/drivers/staging/speakup/keyhelp.c
++++ b/drivers/staging/speakup/keyhelp.c
+@@ -49,7 +49,7 @@ static int cur_item, nstates;
+ static void build_key_data(void)
+ {
+ 	u_char *kp, counters[MAXFUNCS], ch, ch1;
+-	u_short *p_key = key_data, key;
++	u_short *p_key, key;
+ 	int i, offset = 1;
+ 
+ 	nstates = (int)(state_tbl[-1]);
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.25.0
