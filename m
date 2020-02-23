@@ -1,57 +1,48 @@
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Mon, 10 Feb 2020 10:47:14 +0000
-Subject: Re: [PATCH][V2] ASoC: ti: davinci-mcasp: remove redundant assignment to variable ret
-Message-Id: <bc05a46a-fc38-c95f-4aa1-25034d3eb6cc@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 23 Feb 2020 15:14:38 +0000
+Subject: [PATCH] staging: rtl8723bs: remove temporary variable CrystalCap
+Message-Id: <20200223151438.415542-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200210092423.327499-1-colin.king@canonical.com>
-In-Reply-To: <20200210092423.327499-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently variable CrystalCap is being initialized with the value
+0x20 that is never read so that is redundant and can be removed.
+Clean up the code by removing the need for variable CrystalCap
+since the calculation of the return value is relatively simple.
 
-On 10/02/2020 11.24, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The assignment to ret is redundant as it is not used in the error
-> return path and hence can be removed.
+Addresses-Coverity: ("Unused Value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/hal/odm_CfoTracking.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> V2: explicitly return NULL to improve readability. Thanks to Dan Carpente=
-r for
->     suggesting this improvement.
-> ---
->  sound/soc/ti/davinci-mcasp.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-> index e1e937eb1dc1..6f97639c46cd 100644
-> --- a/sound/soc/ti/davinci-mcasp.c
-> +++ b/sound/soc/ti/davinci-mcasp.c
-> @@ -1764,10 +1764,8 @@ static struct davinci_mcasp_pdata *davinci_mcasp_s=
-et_pdata_from_of(
->  	} else if (match) {
->  		pdata =3D devm_kmemdup(&pdev->dev, match->data, sizeof(*pdata),
->  				     GFP_KERNEL);
-> -		if (!pdata) {
-> -			ret =3D -ENOMEM;
-> -			return pdata;
-> -		}
-> +		if (!pdata)
-> +			return NULL;
->  	} else {
->  		/* control shouldn't reach here. something is wrong */
->  		ret =3D -EINVAL;
->=20
-
-- P=C3=A9ter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c b/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
+index 95edd148ac24..34d83b238265 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
++++ b/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
+@@ -40,16 +40,11 @@ static void odm_SetCrystalCap(void *pDM_VOID, u8 CrystalCap)
+ static u8 odm_GetDefaultCrytaltalCap(void *pDM_VOID)
+ {
+ 	PDM_ODM_T pDM_Odm = (PDM_ODM_T)pDM_VOID;
+-	u8 CrystalCap = 0x20;
+ 
+ 	struct adapter *Adapter = pDM_Odm->Adapter;
+ 	struct hal_com_data *pHalData = GET_HAL_DATA(Adapter);
+ 
+-	CrystalCap = pHalData->CrystalCap;
+-
+-	CrystalCap = CrystalCap & 0x3f;
+-
+-	return CrystalCap;
++	return pHalData->CrystalCap & 0x3f;
+ }
+ 
+ static void odm_SetATCStatus(void *pDM_VOID, bool ATCStatus)
+-- 
+2.25.0
