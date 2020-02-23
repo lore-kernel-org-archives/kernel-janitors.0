@@ -1,48 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 21 Feb 2020 23:26:53 +0000
-Subject: [PATCH] net: ena: ethtool: remove redundant non-zero check on rc
-Message-Id: <20200221232653.33134-1-colin.king@canonical.com>
+From: "Jubran, Samih" <sameehj@amazon.com>
+Date: Sun, 23 Feb 2020 08:18:13 +0000
+Subject: RE: [PATCH] net: ena: ethtool: remove redundant non-zero check on rc
+Message-Id: <0e46020a1433409a8daccb829902280b@EX13D11EUB003.ant.amazon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200221232653.33134-1-colin.king@canonical.com>
+In-Reply-To: <20200221232653.33134-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Netanel Belgazal <netanel@amazon.com>, Arthur Kiyanovski <akiyano@amazon.com>, Guy Tzalik <gtzalik@amazon.com>, Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>, "David S . Miller" <davem@davemloft.net>, Sameeh Jubran <sameehj@amazon.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Belgazal, Netanel" <netanel@amazon.com>, "Kiyanovski, Arthur" <akiyano@amazon.com>, "Tzalik, Guy" <gtzalik@amazon.com>, "Bshara, Saeed" <saeedb@amazon.com>, "Machulsky, Zorik" <zorik@amazon.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The non-zero check on rc is redundant as a previous non-zero
-check on rc will always return and the second check is never
-reached, hence it is redundant and can be removed.  Also
-remove a blank line.
-
-Addresses-Coverity: ("Logically dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/amazon/ena/ena_ethtool.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-index ced1d577b62a..1e38930353f2 100644
---- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-@@ -674,7 +674,6 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
- 	 * supports getting/setting the hash function.
- 	 */
- 	rc = ena_com_get_hash_function(adapter->ena_dev, &ena_func, key);
--
- 	if (rc) {
- 		if (rc = -EOPNOTSUPP) {
- 			key = NULL;
-@@ -685,9 +684,6 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
- 		return rc;
- 	}
- 
--	if (rc)
--		return rc;
--
- 	switch (ena_func) {
- 	case ENA_ADMIN_TOEPLITZ:
- 		func = ETH_RSS_HASH_TOP;
--- 
-2.25.0
+QWNrLCBUaGFua3MNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xp
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFNhdHVyZGF5LCBGZWJy
+dWFyeSAyMiwgMjAyMCAxOjI3IEFNDQo+IFRvOiBCZWxnYXphbCwgTmV0YW5lbCA8bmV0YW5lbEBh
+bWF6b24uY29tPjsgS2l5YW5vdnNraSwgQXJ0aHVyDQo+IDxha2l5YW5vQGFtYXpvbi5jb20+OyBU
+emFsaWssIEd1eSA8Z3R6YWxpa0BhbWF6b24uY29tPjsgQnNoYXJhLCBTYWVlZA0KPiA8c2FlZWRi
+QGFtYXpvbi5jb20+OyBNYWNodWxza3ksIFpvcmlrIDx6b3Jpa0BhbWF6b24uY29tPjsgRGF2aWQg
+UyAuDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IEp1YnJhbiwgU2FtaWggPHNhbWVl
+aGpAYW1hem9uLmNvbT47DQo+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1q
+YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogW1BBVENIXSBuZXQ6IGVuYTogZXRodG9vbDogcmVtb3ZlIHJlZHVuZGFudCBub24t
+emVybyBjaGVjayBvbiByYw0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSBub24temVybyBjaGVjayBvbiByYyBpcyByZWR1bmRh
+bnQgYXMgYSBwcmV2aW91cyBub24temVybyBjaGVjayBvbiByYyB3aWxsDQo+IGFsd2F5cyByZXR1
+cm4gYW5kIHRoZSBzZWNvbmQgY2hlY2sgaXMgbmV2ZXIgcmVhY2hlZCwgaGVuY2UgaXQgaXMgcmVk
+dW5kYW50DQo+IGFuZCBjYW4gYmUgcmVtb3ZlZC4gIEFsc28gcmVtb3ZlIGEgYmxhbmsgbGluZS4N
+Cj4gDQo+IEFkZHJlc3Nlcy1Db3Zlcml0eTogKCJMb2dpY2FsbHkgZGVhZCBjb2RlIikNCj4gU2ln
+bmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4g
+LS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9hbWF6b24vZW5hL2VuYV9ldGh0b29sLmMgfCA0
+IC0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2FtYXpvbi9lbmEvZW5hX2V0aHRvb2wuYw0KPiBiL2Ry
+aXZlcnMvbmV0L2V0aGVybmV0L2FtYXpvbi9lbmEvZW5hX2V0aHRvb2wuYw0KPiBpbmRleCBjZWQx
+ZDU3N2I2MmEuLjFlMzg5MzAzNTNmMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvYW1hem9uL2VuYS9lbmFfZXRodG9vbC5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0
+L2FtYXpvbi9lbmEvZW5hX2V0aHRvb2wuYw0KPiBAQCAtNjc0LDcgKzY3NCw2IEBAIHN0YXRpYyBp
+bnQgZW5hX2dldF9yeGZoKHN0cnVjdCBuZXRfZGV2aWNlICpuZXRkZXYsDQo+IHUzMiAqaW5kaXIs
+IHU4ICprZXksDQo+ICAJICogc3VwcG9ydHMgZ2V0dGluZy9zZXR0aW5nIHRoZSBoYXNoIGZ1bmN0
+aW9uLg0KPiAgCSAqLw0KPiAgCXJjID0gZW5hX2NvbV9nZXRfaGFzaF9mdW5jdGlvbihhZGFwdGVy
+LT5lbmFfZGV2LCAmZW5hX2Z1bmMsDQo+IGtleSk7DQo+IC0NCj4gIAlpZiAocmMpIHsNCj4gIAkJ
+aWYgKHJjID09IC1FT1BOT1RTVVBQKSB7DQo+ICAJCQlrZXkgPSBOVUxMOw0KPiBAQCAtNjg1LDkg
+KzY4NCw2IEBAIHN0YXRpYyBpbnQgZW5hX2dldF9yeGZoKHN0cnVjdCBuZXRfZGV2aWNlICpuZXRk
+ZXYsDQo+IHUzMiAqaW5kaXIsIHU4ICprZXksDQo+ICAJCXJldHVybiByYzsNCj4gIAl9DQo+IA0K
+PiAtCWlmIChyYykNCj4gLQkJcmV0dXJuIHJjOw0KPiAtDQo+ICAJc3dpdGNoIChlbmFfZnVuYykg
+ew0KPiAgCWNhc2UgRU5BX0FETUlOX1RPRVBMSVRaOg0KPiAgCQlmdW5jID0gRVRIX1JTU19IQVNI
+X1RPUDsNCj4gLS0NCj4gMi4yNS4wDQoNCg=
