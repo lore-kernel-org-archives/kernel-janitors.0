@@ -1,55 +1,38 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sat, 29 Feb 2020 20:15:31 +0000
-Subject: [PATCH] MAINTAINERS: adjust entry to refactoring smiapp.h
-Message-Id: <20200229201531.6004-1-lukas.bulwahn@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 23 Feb 2020 15:18:58 +0000
+Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to cond
+Message-Id: <20200223151858.416499-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: linux-media@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit 7cbeb2e1bf0c ("media: smiapp: Move definitions under driver
-directory") moved the definitions in include/media/i2c/smiapp.h into other
-files and removed include/media/i2c/smiapp.h.
+From: Colin Ian King <colin.king@canonical.com>
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+Variable cond is initialized to a value that is never read and it
+is re-assigned later. The initialization is redundant and can be
+removed.
 
-  warning: no file matches F: include/media/i2c/smiapp.h
-
-Remove MAINTAINER file entry to this removed file and while at it, update
-Sakari's email address in this section.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Sakari, please ack this patch.
-Mauro, please pick this patch on your branch for linux-next.
-applies cleanly on next-20200228
+ drivers/staging/rtl8188eu/hal/rf_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sakari, I did not find an entry in mailmap to map your iki.fi mail address
-to your latest mail address. There are also three further entries with
-your iki.fi mail address in MAINTAINERS, that you could change to your
-intel address.
-
- MAINTAINERS | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b04505e7c3..33c8932a6756 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15392,11 +15392,10 @@ S:	Odd Fixes
- F:	drivers/net/ethernet/smsc/smc91x.*
+diff --git a/drivers/staging/rtl8188eu/hal/rf_cfg.c b/drivers/staging/rtl8188eu/hal/rf_cfg.c
+index 47b1bf5a6143..004e19301eae 100644
+--- a/drivers/staging/rtl8188eu/hal/rf_cfg.c
++++ b/drivers/staging/rtl8188eu/hal/rf_cfg.c
+@@ -15,7 +15,7 @@ static bool check_condition(struct adapter *adapt, const u32  condition)
+ 	u32 _board = odm->BoardType;
+ 	u32 _platform = odm->SupportPlatform;
+ 	u32 _interface = odm->SupportInterface;
+-	u32 cond = condition;
++	u32 cond;
  
- SMIA AND SMIA++ IMAGE SENSOR DRIVER
--M:	Sakari Ailus <sakari.ailus@iki.fi>
-+M:	Sakari Ailus <sakari.ailus@linux.intel.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	drivers/media/i2c/smiapp/
--F:	include/media/i2c/smiapp.h
- F:	drivers/media/i2c/smiapp-pll.c
- F:	drivers/media/i2c/smiapp-pll.h
- F:	include/uapi/linux/smiapp.h
+ 	if (condition = 0xCDCDCDCD)
+ 		return true;
 -- 
-2.17.1
+2.25.0
