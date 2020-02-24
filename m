@@ -1,30 +1,36 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 25 Feb 2020 17:39:32 +0000
-Subject: Re: [PATCH 1/2] acpi/nfit: improve bounds checking for 'func'
-Message-Id: <CAPcyv4ht6kicLV_uk5Rt7a7iAxXrwuVoN2m6uVSw0h3qiE4AhA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Feb 2020 10:32:15 +0000
+Subject: [PATCH] net/rds: Fix a debug message
+Message-Id: <20200224103215.utw3zaa6nmcb5vrz@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200225161927.hvftuq7kjn547fyj@kili.mountain>
-In-Reply-To: <20200225161927.hvftuq7kjn547fyj@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-nvdimm <linux-nvdimm@lists.01.org>, Linux ACPI <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 8:20 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The 'func' variable can come from the user in the __nd_ioctl().  If it's
-> too high then the (1 << func) shift in acpi_nfit_clear_to_send() is
-> undefined.  In acpi_nfit_ctl() we pass 'func' to test_bit(func, &dsm_mask)
-> which could result in an out of bounds access.
->
-> To fix these issues, I introduced the NVDIMM_CMD_MAX (31) define and
-> updated nfit_dsm_revid() to use that define as well instead of magic
-> numbers.
->
-> Fixes: 11189c1089da ("acpi/nfit: Fix command-supported detection")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This should display the error code but instead it just prints "1".
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 2eafa1746f17 ("net/rds: Handle ODP mr registration/unregistration")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/rds/ib_rdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'll apply this to my fixes branch.
+diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+index b34b24e237f8..82a25bf280e3 100644
+--- a/net/rds/ib_rdma.c
++++ b/net/rds/ib_rdma.c
+@@ -587,8 +587,8 @@ void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
+ 				       access_flags);
+ 
+ 		if (IS_ERR(ib_mr)) {
+-			rdsdebug("rds_ib_get_user_mr returned %d\n",
+-				 IS_ERR(ib_mr));
++			rdsdebug("rds_ib_get_user_mr returned %ld\n",
++				 PTR_ERR(ib_mr));
+ 			ret = PTR_ERR(ib_mr);
+ 			goto out;
+ 		}
+-- 
+2.11.0
