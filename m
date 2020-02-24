@@ -1,38 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 29 Feb 2020 00:12:43 +0000
-Subject: [PATCH] ACPI: video: remove redundant assignments to variable result
-Message-Id: <20200229001243.113176-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Feb 2020 10:33:25 +0000
+Subject: [PATCH] staging: kpc2000: prevent underflow in cpld_reconfigure()
+Message-Id: <20200224103325.hrxdnaeqsthplu42@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
 
-From: Colin Ian King <colin.king@canonical.com>
+This function should not allow negative values of "wr_val".  If
+negatives are allowed then capping the upper bound at 7 is
+meaningless.  Let's make it unsigned.
 
-The variable result is being initialized with a value that is never
-read and it is being updated later with a new value. The initialization
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/acpi/acpi_video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/kpc2000/kpc2000/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 15c5b272e698..bc96457c9e25 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -943,7 +943,7 @@ acpi_video_init_brightness(struct acpi_video_device *device)
- 	int i, max_level = 0;
- 	unsigned long long level, level_old;
- 	struct acpi_video_device_brightness *br = NULL;
--	int result = -EINVAL;
-+	int result;
+diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
+index 93cf28febdf6..7b00d7069e21 100644
+--- a/drivers/staging/kpc2000/kpc2000/core.c
++++ b/drivers/staging/kpc2000/kpc2000/core.c
+@@ -110,10 +110,10 @@ static ssize_t cpld_reconfigure(struct device *dev,
+ 				const char *buf, size_t count)
+ {
+ 	struct kp2000_device *pcard = dev_get_drvdata(dev);
+-	long wr_val;
++	unsigned long wr_val;
+ 	int rv;
  
- 	result = acpi_video_get_levels(device->dev, &br, &max_level);
- 	if (result)
+-	rv = kstrtol(buf, 0, &wr_val);
++	rv = kstrtoul(buf, 0, &wr_val);
+ 	if (rv < 0)
+ 		return rv;
+ 	if (wr_val > 7)
 -- 
-2.25.0
+2.11.0
