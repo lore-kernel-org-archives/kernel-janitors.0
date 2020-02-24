@@ -1,42 +1,39 @@
-From: Leo Li <leoyang.li@nxp.com>
-Date: Fri, 21 Feb 2020 23:18:38 +0000
-Subject: RE: [PATCH][next] soc: fsl: dpio: fix dereference of pointer p before null check
-Message-Id: <VE1PR04MB6687C23030FD3C59BA5EC1EE8F120@VE1PR04MB6687.eurprd04.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Feb 2020 06:35:29 +0000
+Subject: Re: [PATCH][next] soc: fsl: dpio: fix dereference of pointer p before null check
+Message-Id: <20200224063529.GA3286@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200221231143.30131-1-colin.king@canonical.com>
 In-Reply-To: <20200221231143.30131-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Roy Pledge <roy.pledge@nxp.com>, Youri Querry <youri.querry_1@nxp.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-kernel@vger.kernel.org, Roy Pledge <Roy.Pledge@nxp.com>, kernel-janitors@vger.kernel.org, Youri Querry <youri.querry_1@nxp.com>, Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiBTZW50OiBGcmlkYXksIEZlYnJ1YXJ5IDIxLCAyMDIw
-IDU6MTIgUE0NCj4gVG86IFJveSBQbGVkZ2UgPHJveS5wbGVkZ2VAbnhwLmNvbT47IExlbyBMaSA8
-bGVveWFuZy5saUBueHAuY29tPjsgWW91cmkNCj4gUXVlcnJ5IDx5b3VyaS5xdWVycnlfMUBueHAu
-Y29tPjsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7IGxpbnV4LQ0KPiBhcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXVtuZXh0
-XSBzb2M6IGZzbDogZHBpbzogZml4IGRlcmVmZXJlbmNlIG9mIHBvaW50ZXIgcCBiZWZvcmUgbnVs
-bA0KPiBjaGVjaw0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25p
-Y2FsLmNvbT4NCj4gDQo+IFBvaW50ZXIgcCBpcyBjdXJyZW50bHkgYmVpbmcgZGVyZWZlcmVuY2Vk
-IGJlZm9yZSBpdCBpcyBudWxsIGNoZWNrZWQgb24gYQ0KPiBtZW1vcnkgYWxsb2NhdGlvbiBmYWls
-dXJlIGNoZWNrLiBGaXggdGhpcyBieSBjaGVja2luZyBpZiBwIGlzIG51bGwgYmVmb3JlDQo+IGRl
-cmVmZXJlbmNpbmcgaXQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiRGVyZWZlcmVuY2Ug
-YmVmb3JlIG51bGwgY2hlY2siKQ0KPiBGaXhlczogM2IyYWJkYTdkMjhjICgic29jOiBmc2w6IGRw
-aW86IFJlcGxhY2UgUU1BTiBhcnJheSBtb2RlIHdpdGggcmluZw0KPiBtb2RlIGVucXVldWUiKQ0K
-PiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-Pg0KDQpBcHBsaWVkIGZvciBuZXh0LiAgVGhhbmtzLg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9zb2Mv
-ZnNsL2RwaW8vcWJtYW4tcG9ydGFsLmMgfCA1ICsrKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBp
-bnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-c29jL2ZzbC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+IGIvZHJpdmVycy9zb2MvZnNsL2RwaW8vcWJt
-YW4tcG9ydGFsLmMNCj4gaW5kZXggNzQwZWUwZDE5NTgyLi5kMWY0OWNhYTViMTMgMTAwNjQ0DQo+
-IC0tLSBhL2RyaXZlcnMvc29jL2ZzbC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+ICsrKyBiL2RyaXZl
-cnMvc29jL2ZzbC9kcGlvL3FibWFuLXBvcnRhbC5jDQo+IEBAIC0yNDksMTAgKzI0OSwxMSBAQCBz
-dHJ1Y3QgcWJtYW5fc3dwICpxYm1hbl9zd3BfaW5pdChjb25zdCBzdHJ1Y3QNCj4gcWJtYW5fc3dw
-X2Rlc2MgKmQpDQo+ICAJdTMyIG1hc2tfc2l6ZTsNCj4gIAl1MzIgZXFjcl9waTsNCj4gDQo+IC0J
-c3Bpbl9sb2NrX2luaXQoJnAtPmFjY2Vzc19zcGlubG9jayk7DQo+IC0NCj4gIAlpZiAoIXApDQo+
-ICAJCXJldHVybiBOVUxMOw0KPiArDQo+ICsJc3Bpbl9sb2NrX2luaXQoJnAtPmFjY2Vzc19zcGlu
-bG9jayk7DQo+ICsNCj4gIAlwLT5kZXNjID0gZDsNCj4gIAlwLT5tYy52YWxpZF9iaXQgPSBRQl9W
-QUxJRF9CSVQ7DQo+ICAJcC0+c2RxID0gMDsNCj4gLS0NCj4gMi4yNS4wDQoNCg=
+On Fri, Feb 21, 2020 at 11:11:43PM +0000, Colin King wrote:
+> ---
+>  drivers/soc/fsl/dpio/qbman-portal.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
+> index 740ee0d19582..d1f49caa5b13 100644
+> --- a/drivers/soc/fsl/dpio/qbman-portal.c
+> +++ b/drivers/soc/fsl/dpio/qbman-portal.c
+> @@ -249,10 +249,11 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
+>  	u32 mask_size;
+>  	u32 eqcr_pi;
+>  
+> -	spin_lock_init(&p->access_spinlock);
+> -
+>  	if (!p)
+>  		return NULL;
+> +
+> +	spin_lock_init(&p->access_spinlock);
+
+Allocations in the declaration blog are not super common in the kernel,
+but they're more bug prone.  Generally, it's not beautiful to call a
+function which can fail in the allocation block.
+
+regards,
+dan carpenter
