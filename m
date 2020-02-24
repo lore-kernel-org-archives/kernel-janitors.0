@@ -1,35 +1,35 @@
-From: "Mrs. Susan S. Cage" <drgoodluckebelejonathan061@gmail.com>
-Date: Thu, 20 Feb 2020 10:11:32 +0000
-Subject: Attention:Beneficiary
-Message-Id: <CALjo5=877S8-Ry+A=9FH6dxjXo5H81+Sa3p18iiZLBS7eO_8bA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Feb 2020 15:15:30 +0000
+Subject: [PATCH][next] drm/tidss: fix spelling mistake "bufer" -> "buffer"
+Message-Id: <20200224151530.360369-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in a dev_dbg message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/tidss/tidss_dispc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+index eeb160dc047b..d49f2d6d57df 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc.c
++++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+@@ -1699,7 +1699,7 @@ static int dispc_vid_calc_scaling(struct dispc_device *dispc,
+ 
+ 		if (sp->xinc > f->xinc_max) {
+ 			dev_dbg(dispc->dev,
+-				"%s: Too wide input bufer %u > %u\n", __func__,
++				"%s: Too wide input buffer %u > %u\n", __func__,
+ 				state->src_w >> 16, in_width_max * f->xinc_max);
+ 			return -EINVAL;
+ 		}
 -- 
-Dearest Friend,
-
-Sorry for invading your privacy, my name is Susan S. Cage I am 81
-years, citizen of United States and presently in hospital undergoing
-chromatography for bronchogenic carcinomas (Lung cancer) which
-affected both Lungs. The doctors said I have few days to live because
-the cancer has now affected my brain.
-
-My late husband left Fifteen Million, Five Hundred British Pounds
-Sterling in my account, I want to transfer the money to you and I want
-you to use it as a donate for charitable and help the needy,
-motherless, less privileged and widows within your location.
-
-I need your assurance that you will use the fund for charity, once I a
-favorable reply from you, will inform my Bank through my lawyer to
-transfer the fund to you as my Next of Kin and Sole Beneficiary. Once
-I receive your response, I will inform my bank in writing through my
-lawyer.
-
-
-
-Thank you and God bless you.
-
-Mrs. Susan S. Cage
+2.25.0
