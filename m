@@ -1,45 +1,35 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 02 Feb 2020 16:25:02 +0000
-Subject: Re: [PATCH][next] iio: st_sensors: handle memory allocation failure to fix null pointer dereference
-Message-Id: <20200202162502.0ab50117@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Feb 2020 17:35:53 +0000
+Subject: [PATCH][next] net: qrtr: fix spelling mistake "serivce" -> "service"
+Message-Id: <20200224173553.386446-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200121161757.1498082-1-colin.king@canonical.com>
-        <CACRpkdYzd13xu9ETj_a4eWrm4FMrVnF1NQ5G+=d_Ch=6SzRoxA@mail.gmail.com>
-In-Reply-To: <CACRpkdYzd13xu9ETj_a4eWrm4FMrVnF1NQ5G+=d_Ch=6SzRoxA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Colin King <colin.king@canonical.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 23 Jan 2020 16:28:28 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Tue, Jan 21, 2020 at 5:18 PM Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > A null pointer deference on pdata can occur if the allocation of
-> > pdata fails.  Fix this by adding a null pointer check and handle
-> > the -ENOMEM failure in the caller.
-> >
-> > Addresses-Coverity: ("Dereference null return value")  
-> 
-> That's a weirdo tag, but I suppose you have aligned with the maintainers
-> about this.
-> 
-> > Fixes: 3ce85cc4fbb7 ("iio: st_sensors: get platform data from device tree")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+There is a spelling mistake in a pr_err message. Fix it.
 
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/qrtr/ns.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Jonathan
-
-> 
-> Yours,
-> Linus Walleij
+diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+index 67a4e59cdf4d..7bfde01f4e8a 100644
+--- a/net/qrtr/ns.c
++++ b/net/qrtr/ns.c
+@@ -150,7 +150,7 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
+ 
+ 	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
+ 	if (ret < 0)
+-		pr_err("failed to announce del serivce\n");
++		pr_err("failed to announce del service\n");
+ 
+ 	return ret;
+ }
+-- 
+2.25.0
