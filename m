@@ -1,45 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Feb 2020 12:37:30 +0000
-Subject: Re: [PATCH][next] clone3: fix an unsigned args.cgroup comparison to less than zero
-Message-Id: <20200224123730.GB3308@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Feb 2020 19:20:22 +0000
+Subject: [PATCH][V2] net: hns3: remove redundant initialization of pointer 'client'
+Message-Id: <20200224192022.407524-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200222001513.43099-1-colin.king@canonical.com>
- <20200222121801.cu4dfnk4z5xd5uc2@wittgenstein>
- <20200224073157.GB3286@kadam>
- <20200224122503.2m4oc5wgg2oqpjsi@wittgenstein>
-In-Reply-To: <20200224122503.2m4oc5wgg2oqpjsi@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Colin King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel-mentees@lists.linuxfoundation.org, Ingo Molnar <mingo@kernel.org>, Christian Brauner <christian@brauner.io>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:25:03PM +0100, Christian Brauner wrote:
-> On Mon, Feb 24, 2020 at 10:31:57AM +0300, Dan Carpenter wrote:
-> > On Sat, Feb 22, 2020 at 01:18:01PM +0100, Christian Brauner wrote:
-> > > On Sat, Feb 22, 2020 at 12:15:13AM +0000, Colin King wrote:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > index 2diff --git a/kernel/fork.c b/kernel/fork.c
-> > > index 2853e258fe1f..dca4dde3b5b2 100644
-> > > --- a/kernel/fork.c
-> > > +++ b/kernel/fork.c
-> > > @@ -2618,7 +2618,8 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
-> > >                      !valid_signal(args.exit_signal)))
-> > >                 return -EINVAL;
-> > > 
-> > > -       if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
-> > > +       if ((args.flags & CLONE_INTO_CGROUP) &&
-> > > +           (args.cgroup > INT_MAX || (s64)args.cgroup < 0))
-> > 
-> > If we're capping it at INT_MAX then the check for negative isn't
-> > required and static analysis tools know it's not so they might complain.
-> 
-> It isn't, but it's easier to understand for the reader. But I don't care
-> that much and if it's trouble for tools than fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-It's not trouble for tools, (the tools parse it correctly), it's trouble
-for me looking at the static checker warnings...
+The pointer 'client' is being initialized with a value that is never
+read, it is being updated later on. The initialization is redundant
+and can be removed.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: use reverse christmas tree ordering of local variables
+
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 51399dbed77a..89d352385260 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -9076,8 +9076,8 @@ static int hclge_init_nic_client_instance(struct hnae3_ae_dev *ae_dev,
+ static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
+ 					   struct hclge_vport *vport)
+ {
+-	struct hnae3_client *client = vport->roce.client;
+ 	struct hclge_dev *hdev = ae_dev->priv;
++	struct hnae3_client *client;
+ 	int rst_cnt;
+ 	int ret;
+ 
+-- 
+2.25.0
