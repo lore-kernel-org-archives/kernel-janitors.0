@@ -1,49 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Feb 2020 05:11:30 +0000
-Subject: [bug report] node: Add memory-side caching attributes
-Message-Id: <20200205051130.iiieepxhebjo76di@kili.mountain>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 25 Feb 2020 08:07:27 +0000
+Subject: [PATCH] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
+Message-Id: <20200225080727.5687-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Keith Busch,
+Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+added a file entry that does not point to the intended file location.
 
-The patch acc02a109b04: "node: Add memory-side caching attributes"
-from Mar 11, 2019, leads to the following static checker warning:
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-	drivers/base/node.c:279 node_init_cache_dev()
-	error: kfree after device_register(): 'dev'
+  warning: no file matches F: linux/soc/mmp/
 
-drivers/base/node.c
-   257  static void node_init_cache_dev(struct node *node)
-   258  {
-   259          struct device *dev;
-   260  
-   261          dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-   262          if (!dev)
-   263                  return;
-   264  
-   265          dev->parent = &node->dev;
-   266          dev->release = node_cache_release;
-   267          if (dev_set_name(dev, "memory_side_cache"))
-   268                  goto free_dev;
-   269  
-   270          if (device_register(dev))
-   271                  goto free_name;
-   272  
-   273          pm_runtime_no_callbacks(dev);
-   274          node->cache_dev = dev;
-   275          return;
-   276  free_name:
-   277          kfree_const(dev->kobj.name);
-   278  free_dev:
-   279          kfree(dev);
-                ^^^^^^^^^^
-Genereally we can't call kfree() after calling device_register().
+Rectify the MAINTAINERS entry now.
 
-   280  }
+Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Lubomir, please pick this patch.
+applies cleanly on current master and next-20200225
 
-regards,
-dan carpenter
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fcd79fc38928..ed62b3eba75c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11197,7 +11197,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
+ S:	Odd Fixes
+ F:	arch/arm/boot/dts/mmp*
+ F:	arch/arm/mach-mmp/
+-F:	linux/soc/mmp/
++F:	include/linux/soc/mmp/
+ 
+ MMP USB PHY DRIVERS
+ R:	Lubomir Rintel <lkundrak@v3.sk>
+-- 
+2.17.1
