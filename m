@@ -1,80 +1,59 @@
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Tue, 18 Feb 2020 09:12:41 +0000
-Subject: Re: [bug report] clone3: allow spawning processes into cgroups
-Message-Id: <20200218091241.mm7t2gtyilr63hij@wittgenstein>
+From: "Allan, Bruce W" <bruce.w.allan@intel.com>
+Date: Tue, 25 Feb 2020 19:16:36 +0000
+Subject: RE: [Intel-wired-lan] [PATCH][next] ice: remove redundant assignment to pointer vsi
+Message-Id: <804857E1F29AAC47BF68C404FC60A184010B0500CE@ORSMSX113.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200218064759.4n6vwqgtxqlysjsk@kili.mountain>
-In-Reply-To: <20200218064759.4n6vwqgtxqlysjsk@kili.mountain>
+References: <20200222171054.171505-1-colin.king@canonical.com>
+In-Reply-To: <20200222171054.171505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Will Drewry <wad@chromium.org>, linux-kernel-mentees@lists.linuxfoundation.org, Andy Lutomirski <luto@amacapital.net>
+To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 18, 2020 at 09:47:59AM +0300, Dan Carpenter wrote:
-> Hello Christian Brauner,
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Colin King
+> Sent: Saturday, February 22, 2020 9:11 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
+> <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
+> netdev@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH][next] ice: remove redundant assignment to
+> pointer vsi
 > 
-> The patch ef2c41cf38a7: "clone3: allow spawning processes into
-> cgroups" from Feb 5, 2020, leads to the following static checker
-> warning:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> 	kernel/fork.c:2632 copy_clone_args_from_user()
-> 	warn: unsigned 'args.cgroup' is never less than zero.
+> Pointer vsi is being re-assigned a value that is never read,
+> the assignment is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
 
-Thanks, good catch. This strikes me as a great patch for the
-linux-kernel-mentees project so I've Cced the list.
-I'll wait for about two weeks for a patch and if none has surfaced by
-then I'll fix it myself.
-For anyone wanting to fix this, please note that this patch sits in
-Tejun's cgroup tree, i.e. your fix needs to be made against the
-following tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/log/?h=for-5.7
+What version of coverity and what options were used?
 
-Thanks!
-Christian
-
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> kernel/fork.c
->   2598  noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->   2599                                                struct clone_args __user *uargs,
->   2600                                                size_t usize)
->   2601  {
->   2602          int err;
->   2603          struct clone_args args;
->   2604          pid_t *kset_tid = kargs->set_tid;
->   2605  
->   2606          if (unlikely(usize > PAGE_SIZE))
->   2607                  return -E2BIG;
->   2608          if (unlikely(usize < CLONE_ARGS_SIZE_VER0))
->   2609                  return -EINVAL;
->   2610  
->   2611          err = copy_struct_from_user(&args, sizeof(args), uargs, usize);
->   2612          if (err)
->   2613                  return err;
->   2614  
->   2615          if (unlikely(args.set_tid_size > MAX_PID_NS_LEVEL))
->   2616                  return -EINVAL;
->   2617  
->   2618          if (unlikely(!args.set_tid && args.set_tid_size > 0))
->   2619                  return -EINVAL;
->   2620  
->   2621          if (unlikely(args.set_tid && args.set_tid_size = 0))
->   2622                  return -EINVAL;
->   2623  
->   2624          /*
->   2625           * Verify that higher 32bits of exit_signal are unset and that
->   2626           * it is a valid signal
->   2627           */
->   2628          if (unlikely((args.exit_signal & ~((u64)CSIGNAL)) ||
->   2629                       !valid_signal(args.exit_signal)))
->   2630                  return -EINVAL;
->   2631  
->   2632          if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
->                                                         ^^^^^^^^^^^^^^^
-> This is a u64 so it can't be negative.  I'm not sure what was intended.
+> diff --git a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+> b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+> index 169b72a94b9d..2c8e334c47a0 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+> @@ -2191,7 +2191,6 @@ static int ice_vc_ena_qs_msg(struct ice_vf *vf, u8
+> *msg)
+>  		set_bit(vf_q_id, vf->rxq_ena);
+>  	}
 > 
->   2633                  return -EINVAL;
->   2634  
+> -	vsi = pf->vsi[vf->lan_vsi_idx];
+>  	q_map = vqs->tx_queues;
+>  	for_each_set_bit(vf_q_id, &q_map, ICE_MAX_BASE_QS_PER_VF) {
+>  		if (!ice_vc_isvalid_q_id(vf, vqs->vsi_id, vf_q_id)) {
+> --
+> 2.25.0
 > 
-> regards,
-> dan carpenter
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
