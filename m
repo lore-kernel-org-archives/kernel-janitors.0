@@ -1,38 +1,63 @@
-From: Trond Myklebust <trondmy@hammerspace.com>
-Date: Wed, 26 Feb 2020 23:48:47 +0000
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 26 Feb 2020 23:56:10 +0000
 Subject: Re: [PATCH] NFS: check for allocation failure from mempool_alloc
-Message-Id: <12d1e7a2ce5b0c64dfd81aeda75879c460e59fcb.camel@hammerspace.com>
+Message-Id: <ff2605b3-aefd-04c5-7d50-dc73091cb34e@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200226234320.7722-1-colin.king@canonical.com>
-In-Reply-To: <20200226234320.7722-1-colin.king@canonical.com>
+ <12d1e7a2ce5b0c64dfd81aeda75879c460e59fcb.camel@hammerspace.com>
+In-Reply-To: <12d1e7a2ce5b0c64dfd81aeda75879c460e59fcb.camel@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
+To: Trond Myklebust <trondmy@hammerspace.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gV2VkLCAyMDIwLTAyLTI2IGF0IDIzOjQzICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gSXQg
-aXMgcG9zc2libGUgZm9yIG1lbXBvb2xfYWxsb2MgdG8gcmV0dXJuIG51bGwgd2hlbiB1c2luZw0K
-PiB0aGUgR0ZQX0tFUk5FTCBmbGFnLCBzbyByZXR1cm4gTlVMTCBhbmQgYXZvaWQgYSBudWxsIHBv
-aW50ZXINCj4gZGVyZWZlcmVuY2Ugb24gdGhlIGZvbGxvd2luZyBtZW1zZXQgb2YgdGhlIG51bGwg
-cG9pbnRlci4NCg0KVW1tLCBuby4gVGhhdCB3b3VsZCBiZSBhIGZhbHNlIHBvc2l0aXZlIGJ5IGNv
-dmVyaXR5Lg0KDQpJZiB5b3UgbG9vayBhdCB0aGUgaGlzdG9yeSBvZiB0aGF0IGZ1bmN0aW9uLCB5
-b3UnbGwgbm90ZSB0aGF0IHdlDQpvcmlnaW5hbGx5IGhhZCB0aG9zZSBjaGVja3MsIGJ1dCB0aGF0
-IE5laWwgQnJvd24gcmVtb3ZlZCB0aGVtIGFmdGVyDQphbmFseXNpcyBvZiB0aGUgbWVtcG9vbF9h
-bGxvYygpIGZ1bmN0aW9uLiBIZSBkZXRlcm1pbmVkIChjb3JyZWN0bHksIEkNCmJlbGlldmUpIHRo
-YXQgYW55IHZhbHVlIHRoYXQgaW5jbHVkZXMgR0ZQX1dBSVQgY2Fubm90IGZhaWwgdG8gcmV0dXJu
-IGENCnZhbGlkIHBvaW50ZXIuDQoNCj4gDQo+IEFkZHJlc3Nlcy1Db3Zlcml0eTogKCJEZXJlZmVy
-ZW5jZSBudWxsIHJldHVybiIpDQo+IEZpeGVzOiAyYjE3ZDcyNWY5YmUgKCJORlM6IENsZWFuIHVw
-IHdyaXRlYmFjayBjb2RlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBmcy9uZnMvd3JpdGUuYyB8IDMgKysrDQo+
-ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMv
-bmZzL3dyaXRlLmMgYi9mcy9uZnMvd3JpdGUuYw0KPiBpbmRleCBjNDc4Yjc3MmNjNDkuLjdjYTAz
-NjY2MGRkMSAxMDA2NDQNCj4gLS0tIGEvZnMvbmZzL3dyaXRlLmMNCj4gKysrIGIvZnMvbmZzL3dy
-aXRlLmMNCj4gQEAgLTEwNiw2ICsxMDYsOSBAQCBzdGF0aWMgc3RydWN0IG5mc19wZ2lvX2hlYWRl
-cg0KPiAqbmZzX3dyaXRlaGRyX2FsbG9jKHZvaWQpDQo+ICB7DQo+ICAJc3RydWN0IG5mc19wZ2lv
-X2hlYWRlciAqcCA9IG1lbXBvb2xfYWxsb2MobmZzX3dkYXRhX21lbXBvb2wsDQo+IEdGUF9LRVJO
-RUwpOw0KPiAgDQo+ICsJaWYgKCFwKQ0KPiArCQlyZXR1cm4gTlVMTDsNCj4gKw0KPiAgCW1lbXNl
-dChwLCAwLCBzaXplb2YoKnApKTsNCj4gIAlwLT5yd19tb2RlID0gRk1PREVfV1JJVEU7DQo+ICAJ
-cmV0dXJuIHA7DQotLSANClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFp
-bmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg=
+On 26/02/2020 23:48, Trond Myklebust wrote:
+> On Wed, 2020-02-26 at 23:43 +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> It is possible for mempool_alloc to return null when using
+>> the GFP_KERNEL flag, so return NULL and avoid a null pointer
+>> dereference on the following memset of the null pointer.
+> 
+> Umm, no. That would be a false positive by coverity.
+
+Ah, sorry for the noise then.
+
+> 
+> If you look at the history of that function, you'll note that we
+> originally had those checks, but that Neil Brown removed them after
+> analysis of the mempool_alloc() function. He determined (correctly, I
+> believe) that any value that includes GFP_WAIT cannot fail to return a
+> valid pointer.
+
+OK - that's very helpful to know. That allows me to mark a shed load of
+false positives on mempool_alloc false positives.
+
+Colin
+
+> 
+>>
+>> Addresses-Coverity: ("Dereference null return")
+>> Fixes: 2b17d725f9be ("NFS: Clean up writeback code")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  fs/nfs/write.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+>> index c478b772cc49..7ca036660dd1 100644
+>> --- a/fs/nfs/write.c
+>> +++ b/fs/nfs/write.c
+>> @@ -106,6 +106,9 @@ static struct nfs_pgio_header
+>> *nfs_writehdr_alloc(void)
+>>  {
+>>  	struct nfs_pgio_header *p = mempool_alloc(nfs_wdata_mempool,
+>> GFP_KERNEL);
+>>  
+>> +	if (!p)
+>> +		return NULL;
+>> +
+>>  	memset(p, 0, sizeof(*p));
+>>  	p->rw_mode = FMODE_WRITE;
+>>  	return p;
