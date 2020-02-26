@@ -1,26 +1,54 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Thu, 20 Feb 2020 17:15:21 +0000
-Subject: Re: [PATCH][next] RDMA/hns: fix spelling mistake: "attatch" -> "attach"
-Message-Id: <20200220171521.GA23368@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 26 Feb 2020 09:07:07 +0000
+Subject: [PATCH] dmaengine: Simplify error handling path in '__dma_async_device_channel_register()'
+Message-Id: <20200226090707.12285-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200214003338.6573-1-colin.king@canonical.com>
-In-Reply-To: <20200214003338.6573-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dan.j.williams@intel.com, vkoul@kernel.org, dave.jiang@intel.com
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Feb 14, 2020 at 12:33:38AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+If 'chan->dev = kzalloc()' fails, there is no need to explicitly call
+'free_percpu()'. It is already called in the error handling path.
+So it can be removed.
 
-Applied to for-next, thanks
+While at it, add a 'chan->local = NULL;' in the error handling path after
+the 'free_percpu()' call. It is maybe useless, but can not hurt.
 
-Jason
+Fixes: d2fb0a043838 ("dmaengine: break out channel registration")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure a Fixes tag is required for just a clean-up. I added it if the
+move of the 'chan->local = NULL;' makes a real sense.
+---
+ drivers/dma/dmaengine.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index c3b1283b6d31..6bb6e88c6019 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -978,11 +978,8 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 	if (!chan->local)
+ 		goto err_out;
+ 	chan->dev = kzalloc(sizeof(*chan->dev), GFP_KERNEL);
+-	if (!chan->dev) {
+-		free_percpu(chan->local);
+-		chan->local = NULL;
++	if (!chan->dev)
+ 		goto err_out;
+-	}
+ 
+ 	/*
+ 	 * When the chan_id is a negative value, we are dynamically adding
+@@ -1008,6 +1005,7 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 
+  err_out:
+ 	free_percpu(chan->local);
++	chan->local = NULL;
+ 	kfree(chan->dev);
+ 	if (atomic_dec_return(idr_ref) = 0)
+ 		kfree(idr_ref);
+-- 
+2.20.1
