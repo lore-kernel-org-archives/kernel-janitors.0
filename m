@@ -1,59 +1,36 @@
-From: "Allan, Bruce W" <bruce.w.allan@intel.com>
-Date: Tue, 25 Feb 2020 19:16:36 +0000
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Wed, 26 Feb 2020 22:06:17 +0000
 Subject: RE: [Intel-wired-lan] [PATCH][next] ice: remove redundant assignment to pointer vsi
-Message-Id: <804857E1F29AAC47BF68C404FC60A184010B0500CE@ORSMSX113.amr.corp.intel.com>
+Message-Id: <86c1fa9338da4e35a977773832a1188c@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200222171054.171505-1-colin.king@canonical.com>
 In-Reply-To: <20200222171054.171505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "David S . Miller" <davem@davemloft.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 > -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
-> Colin King
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Colin King
 > Sent: Saturday, February 22, 2020 9:11 AM
 > To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S . Miller
 > <davem@davemloft.net>; intel-wired-lan@lists.osuosl.org;
 > netdev@vger.kernel.org
 > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH][next] ice: remove redundant assignment to
-> pointer vsi
+> Subject: [Intel-wired-lan] [PATCH][next] ice: remove redundant assignment
+> to pointer vsi
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Pointer vsi is being re-assigned a value that is never read,
-> the assignment is redundant and can be removed.
+> Pointer vsi is being re-assigned a value that is never read, the assignment is
+> redundant and can be removed.
 > 
 > Addresses-Coverity: ("Unused value")
-
-What version of coverity and what options were used?
-
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 >  drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c | 1 -
 >  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-> b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-> index 169b72a94b9d..2c8e334c47a0 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-> @@ -2191,7 +2191,6 @@ static int ice_vc_ena_qs_msg(struct ice_vf *vf, u8
-> *msg)
->  		set_bit(vf_q_id, vf->rxq_ena);
->  	}
-> 
-> -	vsi = pf->vsi[vf->lan_vsi_idx];
->  	q_map = vqs->tx_queues;
->  	for_each_set_bit(vf_q_id, &q_map, ICE_MAX_BASE_QS_PER_VF) {
->  		if (!ice_vc_isvalid_q_id(vf, vqs->vsi_id, vf_q_id)) {
-> --
-> 2.25.0
-> 
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
