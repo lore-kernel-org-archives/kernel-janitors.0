@@ -1,142 +1,40 @@
-From: Rijo Thomas <Rijo-john.Thomas@amd.com>
-Date: Thu, 13 Feb 2020 14:18:18 +0000
-Subject: Re: [PATCH] tee: amdtee: Fix error handling in amdtee_open_session()
-Message-Id: <66f82e29-b31c-490e-0353-f1028fd1a131@amd.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 26 Feb 2020 23:43:20 +0000
+Subject: [PATCH] NFS: check for allocation failure from mempool_alloc
+Message-Id: <20200226234320.7722-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200212064649.fbfipw4pqv3bkdfl@kili.mountain>
-In-Reply-To: <20200212064649.fbfipw4pqv3bkdfl@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 12/02/20 12:17 pm, Dan Carpenter wrote:
-> On these error paths the "sess" variable isn't freed.  It's a refcounted
-> pointer so we need to call kref_put().  The other problem is that the
-> error code isn't always set.
-> 
+It is possible for mempool_alloc to return null when using
+the GFP_KERNEL flag, so return NULL and avoid a null pointer
+dereference on the following memset of the null pointer.
 
-The driver does not set error code in rc so that the user space client library
-can read the actual error code and return origin from arg->ret and arg->ret_origin.
+Addresses-Coverity: ("Dereference null return")
+Fixes: 2b17d725f9be ("NFS: Clean up writeback code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/nfs/write.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Otherwise the patch looks good.
-
-> I re-arranged the code a bit so the error case is always handled before
-> the success case and the error paths are indented two tabs.
-> 
-> Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/tee/amdtee/core.c | 52 +++++++++++++++++++++++++----------------------
->  1 file changed, 28 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
-> index 6370bb55f512..40f3ff4cfae6 100644
-> --- a/drivers/tee/amdtee/core.c
-> +++ b/drivers/tee/amdtee/core.c
-> @@ -212,6 +212,19 @@ static int copy_ta_binary(struct tee_context *ctx, void *ptr, void **ta,
->  	return rc;
->  }
->  
-> +static void destroy_session(struct kref *ref)
-> +{
-> +	struct amdtee_session *sess = container_of(ref, struct amdtee_session,
-> +						   refcount);
-> +
-> +	/* Unload the TA from TEE */
-> +	handle_unload_ta(sess->ta_handle);
-> +	mutex_lock(&session_list_mutex);
-> +	list_del(&sess->list_node);
-> +	mutex_unlock(&session_list_mutex);
-> +	kfree(sess);
-> +}
-> +
->  int amdtee_open_session(struct tee_context *ctx,
->  			struct tee_ioctl_open_session_arg *arg,
->  			struct tee_param *param)
-> @@ -236,14 +249,14 @@ int amdtee_open_session(struct tee_context *ctx,
->  
->  	/* Load the TA binary into TEE environment */
->  	handle_load_ta(ta, ta_size, arg);
-> -	if (arg->ret = TEEC_SUCCESS) {
-> -		mutex_lock(&session_list_mutex);
-> -		sess = alloc_session(ctxdata, arg->session);
-> -		mutex_unlock(&session_list_mutex);
-> +	if (arg->ret != TEEC_SUCCESS) {
-> +		rc = -EINVAL;
-
-As mentioned, rc should not be set to -EINVAL here. arg->ret and arg->ret_origin
-will have the correct error code and return origin. Any non-zero rc value will be
-treated by user space client library as error originating in driver. Error may even
-originate in TEE or Trusted App, in which case rc should be 0.
-
-> +		goto out;
->  	}
->  
-> -	if (arg->ret != TEEC_SUCCESS)
-> -		goto out;
-> +	mutex_lock(&session_list_mutex);
-> +	sess = alloc_session(ctxdata, arg->session);
-> +	mutex_unlock(&session_list_mutex);
->  
->  	if (!sess) {
->  		rc = -ENOMEM;
-> @@ -259,40 +272,31 @@ int amdtee_open_session(struct tee_context *ctx,
->  
->  	if (i >= TEE_NUM_SESSIONS) {
->  		pr_err("reached maximum session count %d\n", TEE_NUM_SESSIONS);
-> +		kref_put(&sess->refcount, destroy_session);
->  		rc = -ENOMEM;
->  		goto out;
->  	}
->  
->  	/* Open session with loaded TA */
->  	handle_open_session(arg, &session_info, param);
-> -
-> -	if (arg->ret = TEEC_SUCCESS) {
-> -		sess->session_info[i] = session_info;
-> -		set_session_id(sess->ta_handle, i, &arg->session);
-> -	} else {
-> +	if (arg->ret != TEEC_SUCCESS) {
->  		pr_err("open_session failed %d\n", arg->ret);
->  		spin_lock(&sess->lock);
->  		clear_bit(i, sess->sess_mask);
->  		spin_unlock(&sess->lock);
-> +		kref_put(&sess->refcount, destroy_session);
-> +		rc = -EINVAL;
-
-Ditto. rc should not be set to -EINVAL here.
-
-Thanks,
-Rijo
-
-> +		goto out;
->  	}
-> +
-> +	sess->session_info[i] = session_info;
-> +	set_session_id(sess->ta_handle, i, &arg->session);
-> +
->  out:
->  	free_pages((u64)ta, get_order(ta_size));
->  	return rc;
->  }
->  
-> -static void destroy_session(struct kref *ref)
-> -{
-> -	struct amdtee_session *sess = container_of(ref, struct amdtee_session,
-> -						   refcount);
-> -
-> -	/* Unload the TA from TEE */
-> -	handle_unload_ta(sess->ta_handle);
-> -	mutex_lock(&session_list_mutex);
-> -	list_del(&sess->list_node);
-> -	mutex_unlock(&session_list_mutex);
-> -	kfree(sess);
-> -}
-> -
->  int amdtee_close_session(struct tee_context *ctx, u32 session)
->  {
->  	struct amdtee_context_data *ctxdata = ctx->data;
-> 
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index c478b772cc49..7ca036660dd1 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -106,6 +106,9 @@ static struct nfs_pgio_header *nfs_writehdr_alloc(void)
+ {
+ 	struct nfs_pgio_header *p = mempool_alloc(nfs_wdata_mempool, GFP_KERNEL);
+ 
++	if (!p)
++		return NULL;
++
+ 	memset(p, 0, sizeof(*p));
+ 	p->rw_mode = FMODE_WRITE;
+ 	return p;
+-- 
+2.25.0
