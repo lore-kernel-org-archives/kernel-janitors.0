@@ -1,26 +1,45 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 24 Feb 2020 10:52:33 +0000
-Subject: Re: [PATCH] net/mlx5e: Fix error code in mlx5e_fec_in_caps()
-Message-Id: <20200224105233.GB468372@unreal>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 27 Feb 2020 06:42:09 +0000
+Subject: [PATCH -next] RDMA/bnxt_re: Remove set but not used variable 'pg_size'
+Message-Id: <20200227064209.87893-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224065557.d23b4yd46kjnzfya@kili.mountain>
-In-Reply-To: <20200224065557.d23b4yd46kjnzfya@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>, Aya Levin <ayal@mellanox.com>, Eran Ben Elisha <eranbe@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On Mon, Feb 24, 2020 at 09:55:57AM +0300, Dan Carpenter wrote:
-> The mlx5e_fec_in_caps() function is type bool so these negative returns
-> become "return true;" when they should be "return false;"
->
-> Fixes: 2132b71f78d2 ("net/mlx5e: Advertise globaly supported FEC modes")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en/port.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks,
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
+drivers/infiniband/hw/bnxt_re/qplib_res.c: In function '__alloc_pbl':
+drivers/infiniband/hw/bnxt_re/qplib_res.c:109:13: warning:
+ variable 'pg_size' set but not used [-Wunused-but-set-variable]
+
+commit 0c4dcd602817 ("RDMA/bnxt_re: Refactor hardware queue memory allocation")
+involved this, but not used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+index fc5909c7f2e0..cab1adf1fed9 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -106,13 +106,12 @@ static int __alloc_pbl(struct bnxt_qplib_res *res,
+ 	struct pci_dev *pdev = res->pdev;
+ 	struct scatterlist *sghead;
+ 	bool is_umem = false;
+-	u32 pages, pg_size;
++	u32 pages;
+ 	int i;
+ 
+ 	if (sginfo->nopte)
+ 		return 0;
+ 	pages = sginfo->npages;
+-	pg_size = sginfo->pgsize;
+ 	sghead = sginfo->sghead;
+ 	/* page ptr arrays */
+ 	pbl->pg_arr = vmalloc(pages * sizeof(void *));
