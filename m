@@ -1,35 +1,63 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Tue, 18 Feb 2020 20:14:53 +0000
-Subject: RE: [PATCH] tty/serial: cleanup after ioc*_serial driver removal
-Message-Id: <alpine.DEB.2.21.2002182112520.3368@felia>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 27 Feb 2020 19:12:17 +0000
+Subject: Re: [PATCH 1/2] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <8514c830-319b-33e9-025a-79d399674fb3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200217081558.10266-1-lukas.bulwahn@gmail.com> <CADxRZqwGBi=4A224mG0cPgONdNitnvi3LFD_KQckxdYSXzgBGg@mail.gmail.com> <alpine.DEB.2.21.2002170950390.11007@felia> <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F57B7D6@ORSMSX115.amr.corp.intel.com>
+References: <158278834245.14966.6179457011671073018.stgit@devnote2>
+ <158278835238.14966.16157216423901327777.stgit@devnote2>
+In-Reply-To: <158278835238.14966.16157216423901327777.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Anatoly Pugachev <matorola@gmail.com>, Pat Gefre <pfg@sgi.com>, Christoph Hellwig <hch@lst.de>, "Yu, Fenghua" <fenghua.yu@intel.com>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+> +This allows administrators to pass a structured-Key configuration file
+
+Does capitalisation matter here for the word “Key”?
 
 
+> +If you think that kernel/init options becomes too long to write in boot-loader
+> +configuration file or want to comment on each options, you can use this
 
-On Tue, 18 Feb 2020, Luck, Tony wrote:
+Can the following wording variant be a bit nicer?
 
-> > I do not know if there are more ia64 serial drivers, but the MAINTAINERS 
-> > entry and commit message suggested there is not another serial driver.
-> 
-> Lukas,
-> 
-> There aren't any other ia64 specific serial drivers. But ia64 does use generic
-> serial drivers (e.g. my test machine has a couple of serial ports attached to 16550A
-> devices)
-> 
-> I think some notes in that documentation file still apply. Please don't delete.
-> 
++… or you want to comment on each option, …
 
-I provided a PATCH v2 that does not delete the documentation, which 
-already was reviewed by Christoph Hellwig.
 
-Please pick and apply that PATCH v2.
+> +Also, some subsystem may depend on the boot configuration, and it has own
+> +root key.
 
-Lukas 
+Would you like to explain the influence of a key hierarchy any further?
+
+
+> +The boot configuration syntax allows user to merge partially same word keys
+>  by brace. For example::
+
+“by braces.
+For example::”?
+
+
+> +The file /proc/bootconfig is a user-space interface to the configuration
+
+“… is an user-…”?
+
+
+> +Currently the maximum configuration size is 32 KiB and the total number
+> +of key-words and values must be under 1024 nodes.
+
+* How were these constraints chosen?
+
+* Can such system limits become more configurable?
+
+
+> +(Note: Each key consists of words separated by dot, and value also consists
+> +of values separated by comma. Here, each word and each value is generally
+> +called a "node".)
+
+I would prefer the interpretation that nodes contain corresponding attributes.
+
+How do you think about to add a link to a formal file format description?
+
+Regards,
+Markus
