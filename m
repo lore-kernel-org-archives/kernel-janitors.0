@@ -1,33 +1,34 @@
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Feb 2020 20:33:07 +0000
-Subject: Re: [PATCH -next] drm/panfrost: Remove set but not used variable 'bo'
-Message-Id: <CAL_Jsq+BFrJ-bdDuKxCJ0OX=rLGsoHVf6u55irCA7duCJBB7sA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 08:22:10 +0000
+Subject: [PATCH] drm/amd/display: Use after free in dmub_psr_destroy()
+Message-Id: <20200228080436.rmsqe3ytmxi3bwxn@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200203152724.42611-1-yuehaibing@huawei.com>
-In-Reply-To: <20200203152724.42611-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, Steven Price <steven.price@arm.com>, linaro-mm-sig@lists.linaro.org, Hulk Robot <hulkci@huawei.com>, Boris Brezillon <boris.brezillon@collabora.com>, Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>, Linux Media Mailing List <linux-media@vger.kernel.org>
+To: Harry Wentland <harry.wentland@amd.com>, Wyatt Wood <wyatt.wood@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Mon, Feb 3, 2020 at 9:33 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/panfrost/panfrost_job.c: In function 'panfrost_job_cleanup':
-> drivers/gpu/drm/panfrost/panfrost_job.c:278:31: warning:
->  variable 'bo' set but not used [-Wunused-but-set-variable]
->
-> commit bdefca2d8dc0 ("drm/panfrost: Add the panfrost_gem_mapping concept")
-> involved this unused variable.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_job.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+These lines need to be re-ordered so that we don't dereference "dmub"
+after we just freed it.
 
-Applied to drm-misc-fixes.
+Fixes: 4c1a1335dfe0 ("drm/amd/display: Driverside changes to support PSR in DMCUB")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+index 2c932c29f1f9..dc858b152c6e 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+@@ -235,6 +235,6 @@ struct dmub_psr *dmub_psr_create(struct dc_context *ctx)
+  */
+ void dmub_psr_destroy(struct dmub_psr **dmub)
+ {
+-	kfree(dmub);
+ 	*dmub = NULL;
++	kfree(dmub);
+ }
+-- 
+2.11.0
