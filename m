@@ -1,24 +1,35 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 25 Feb 2020 17:40:17 +0000
-Subject: Re: [PATCH 2/2] libnvdimm: Out of bounds read in __nd_ioctl()
-Message-Id: <CAPcyv4h99vYcxgJ_9NKtYbhAGsifTG0JCRYq-j2t_CQinHZVcw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 09:24:52 +0000
+Subject: [PATCH] lib/test_kmod: remove a NULL test
+Message-Id: <20200228092452.vwkhthsn77nrxdy6@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200225161927.hvftuq7kjn547fyj@kili.mountain> <20200225162055.amtosfy7m35aivxg@kili.mountain>
-In-Reply-To: <20200225162055.amtosfy7m35aivxg@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 8:21 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The "cmd" comes from the user and it can be up to 255.  It it's more
-> than the number of bits in long, it results out of bounds read when we
-> check test_bit(cmd, &cmd_mask).  The highest valid value for "cmd" is
-> ND_CMD_CALL (10) so I added a compare against that.
->
-> Fixes: 62232e45f4a2 ("libnvdimm: control (ioctl) messages for nvdimm_bus and nvdimm devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The "info" pointer has already been dereferenced so checking here is
+too late.  Fortunately, we never pass NULL pointers to the
+test_kmod_put_module() function so the test can simply be removed.
 
-Looks good, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_kmod.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index 9cf77628fc91..e651c37d56db 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -204,7 +204,7 @@ static void test_kmod_put_module(struct kmod_test_device_info *info)
+ 	case TEST_KMOD_DRIVER:
+ 		break;
+ 	case TEST_KMOD_FS_TYPE:
+-		if (info && info->fs_sync && info->fs_sync->owner)
++		if (info->fs_sync && info->fs_sync->owner)
+ 			module_put(info->fs_sync->owner);
+ 		break;
+ 	default:
+-- 
+2.11.0
