@@ -1,29 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 04 Feb 2020 08:33:54 +0000
-Subject: Re: [PATCH net-next] qed: Remove set but not used variable 'p_link'
-Message-Id: <20200204.093354.137606525383512342.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 14:14:13 +0000
+Subject: [PATCH] drm/i915/selftests: Fix return in assert_mmap_offset()
+Message-Id: <20200228141413.qfjf4abr323drlo4@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200204022442.109809-1-yuehaibing@huawei.com>
-In-Reply-To: <20200204022442.109809-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: aelior@marvell.com, michal.kalderon@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, hulkci@huawei.com
+To: Jani Nikula <jani.nikula@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>, intel-gfx@lists.freedesktop.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 4 Feb 2020 02:24:41 +0000
+The assert_mmap_offset() returns type bool so if we return an error
+pointer that is "return true;" or success.  If we have an error, then
+we should return false.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/qlogic/qed/qed_cxt.c: In function 'qed_qm_init_pf':
-> drivers/net/ethernet/qlogic/qed/qed_cxt.c:1401:29: warning:
->  variable 'p_link' set but not used [-Wunused-but-set-variable]
-> 
-> commit 92fae6fb231f ("qed: FW 8.42.2.0 Queue Manager changes")
-> leave behind this unused variable.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 3d81d589d6e3 ("drm/i915: Test exhaustion of the mmap space")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.  In theory it's correct, but when you're adding new error
+paths it's always good to test.
 
-Applied, thank you.
+ drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
+index ef7c74cff28a..43912e9b683d 100644
+--- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
+@@ -570,7 +570,7 @@ static bool assert_mmap_offset(struct drm_i915_private *i915,
+ 
+ 	obj = i915_gem_object_create_internal(i915, size);
+ 	if (IS_ERR(obj))
+-		return PTR_ERR(obj);
++		return false;
+ 
+ 	mmo = mmap_offset_attach(obj, I915_MMAP_OFFSET_GTT, NULL);
+ 	i915_gem_object_put(obj);
+-- 
+2.11.0
