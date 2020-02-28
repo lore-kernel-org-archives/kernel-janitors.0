@@ -1,55 +1,67 @@
-From: Jyri Sarha <jsarha@ti.com>
-Date: Thu, 27 Feb 2020 10:01:26 +0000
-Subject: Re: [PATCH -next] drm/tidss: Drop pointless static qualifier in dispc_find_csc()
-Message-Id: <06fb1070-9c4c-c776-6379-fe27b0a7b220@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Feb 2020 13:16:06 +0000
+Subject: [PATCH][next] drm/amd/display: fix indentation issue on a hunk of code
+Message-Id: <20200228131606.65041-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200227065057.92766-1-yuehaibing@huawei.com>
-In-Reply-To: <20200227065057.92766-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 27/02/2020 08:50, YueHaibing wrote:
-> There is no need to have the 'const struct dispc_csc_coef *coef'
-> variable static since new value always be assigned before use it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Jyri Sarha <jsarha@ti.com>
-Tested-by: Jyri Sarha <jsarha@ti.com>
+There are multiple statements that are indented incorrectly. Add
+in the missing tabs.
 
-I'll merge this to drm-misc-next tomorrow.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../gpu/drm/amd/display/dc/calcs/dce_calcs.c  | 46 +++++++++----------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-Thank you for the patch,
-Jyri
-
-
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index eeb160dc047b..e6cb176484a9 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1510,7 +1510,7 @@ struct dispc_csc_coef *dispc_find_csc(enum drm_color_encoding encoding,
->  static void dispc_vid_csc_setup(struct dispc_device *dispc, u32 hw_plane,
->  				const struct drm_plane_state *state)
->  {
-> -	static const struct dispc_csc_coef *coef;
-> +	const struct dispc_csc_coef *coef;
->  
->  	coef = dispc_find_csc(state->color_encoding, state->color_range);
->  	if (!coef) {
-> 
-> 
-> 
-> 
-> 
-
-
+diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
+index 5d081c42e81b..2c6db379afae 100644
+--- a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
+@@ -3265,33 +3265,33 @@ bool bw_calcs(struct dc_context *ctx,
+ 				bw_fixed_to_int(bw_mul(data->
+ 					stutter_exit_watermark[9], bw_int_to_fixed(1000)));
+ 
+-		calcs_output->stutter_entry_wm_ns[0].b_mark -			bw_fixed_to_int(bw_mul(data->
+-				stutter_entry_watermark[4], bw_int_to_fixed(1000)));
+-		calcs_output->stutter_entry_wm_ns[1].b_mark -			bw_fixed_to_int(bw_mul(data->
+-				stutter_entry_watermark[5], bw_int_to_fixed(1000)));
+-		calcs_output->stutter_entry_wm_ns[2].b_mark -			bw_fixed_to_int(bw_mul(data->
+-				stutter_entry_watermark[6], bw_int_to_fixed(1000)));
+-		if (ctx->dc->caps.max_slave_planes) {
+-			calcs_output->stutter_entry_wm_ns[3].b_mark +			calcs_output->stutter_entry_wm_ns[0].b_mark  				bw_fixed_to_int(bw_mul(data->
+-					stutter_entry_watermark[0], bw_int_to_fixed(1000)));
+-			calcs_output->stutter_entry_wm_ns[4].b_mark +					stutter_entry_watermark[4], bw_int_to_fixed(1000)));
++			calcs_output->stutter_entry_wm_ns[1].b_mark  				bw_fixed_to_int(bw_mul(data->
+-					stutter_entry_watermark[1], bw_int_to_fixed(1000)));
+-		} else {
+-			calcs_output->stutter_entry_wm_ns[3].b_mark +					stutter_entry_watermark[5], bw_int_to_fixed(1000)));
++			calcs_output->stutter_entry_wm_ns[2].b_mark  				bw_fixed_to_int(bw_mul(data->
+-					stutter_entry_watermark[7], bw_int_to_fixed(1000)));
+-			calcs_output->stutter_entry_wm_ns[4].b_mark +					stutter_entry_watermark[6], bw_int_to_fixed(1000)));
++			if (ctx->dc->caps.max_slave_planes) {
++				calcs_output->stutter_entry_wm_ns[3].b_mark +					bw_fixed_to_int(bw_mul(data->
++						stutter_entry_watermark[0], bw_int_to_fixed(1000)));
++				calcs_output->stutter_entry_wm_ns[4].b_mark +					bw_fixed_to_int(bw_mul(data->
++						stutter_entry_watermark[1], bw_int_to_fixed(1000)));
++			} else {
++				calcs_output->stutter_entry_wm_ns[3].b_mark +					bw_fixed_to_int(bw_mul(data->
++						stutter_entry_watermark[7], bw_int_to_fixed(1000)));
++				calcs_output->stutter_entry_wm_ns[4].b_mark +					bw_fixed_to_int(bw_mul(data->
++						stutter_entry_watermark[8], bw_int_to_fixed(1000)));
++			}
++			calcs_output->stutter_entry_wm_ns[5].b_mark  				bw_fixed_to_int(bw_mul(data->
+-					stutter_entry_watermark[8], bw_int_to_fixed(1000)));
+-		}
+-		calcs_output->stutter_entry_wm_ns[5].b_mark -			bw_fixed_to_int(bw_mul(data->
+-				stutter_entry_watermark[9], bw_int_to_fixed(1000)));
++					stutter_entry_watermark[9], bw_int_to_fixed(1000)));
+ 
+ 			calcs_output->urgent_wm_ns[0].b_mark  				bw_fixed_to_int(bw_mul(data->
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.25.0
