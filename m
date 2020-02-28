@@ -1,21 +1,38 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 18 Feb 2020 18:22:27 +0000
-Subject: Re: [PATCH] io_uring: remove unnecessary NULL checks
-Message-Id: <93921160-d063-83d3-1064-a70247def2ac@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Feb 2020 23:50:03 +0000
+Subject: [PATCH] mm/memblock: remove redundant assignment to variable max_addr
+Message-Id: <20200228235003.112718-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200217143945.ua4lawkg22ggfihr@kili.mountain>
-In-Reply-To: <20200217143945.ua4lawkg22ggfihr@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Rapoport <rppt@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2/17/20 7:39 AM, Dan Carpenter wrote:
-> The "kmsg" pointer can't be NULL and we have already dereferenced it so
-> a check here would be useless.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks Dan.
+The variable max_addr is being initialized with a value that is never
+read and it is being updated later with a new value.  The initialization
+is redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/memblock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index eba94ee3de0b..4d06bbaded0f 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1698,7 +1698,7 @@ static phys_addr_t __init_memblock __find_max_addr(phys_addr_t limit)
+ 
+ void __init memblock_enforce_memory_limit(phys_addr_t limit)
+ {
+-	phys_addr_t max_addr = PHYS_ADDR_MAX;
++	phys_addr_t max_addr;
+ 
+ 	if (!limit)
+ 		return;
 -- 
-Jens Axboe
+2.25.0
