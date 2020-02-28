@@ -1,49 +1,55 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 25 Feb 2020 11:10:21 +0000
-Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for extended boot config
-Message-Id: <d13c63f5-35f6-129b-a3b8-61cb9ae5369d@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Feb 2020 21:38:38 +0000
+Subject: [PATCH] spi: bcm63xx-hsspi: Really keep pll clk enabled
+Message-Id: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
- <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
- <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
- <20200221191637.e9eed4268ff607a98200628c@kernel.org>
- <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
- <20200222131833.56a5be2d36033dc5a77a9f0b@kernel.org>
- <370e675a-598e-71db-8213-f5494b852a71@web.de>
- <20200223005615.79f308e2ca0717132bb2887b@kernel.org>
- <8cc7e621-c5e3-28fa-c789-0bb7c55d77d6@web.de>
- <20200224121302.5b730b519d550eb34da720a5@kernel.org>
- <25dd284f-6122-c01b-ef22-901c3e0bdf37@web.de>
- <20200225154903.f636acde809a304bfccf4995@kernel.org>
- <8c99a63b-b1b9-a1ba-fa2a-38d1573f18b1@web.de>
- <20200225192951.b7753d3cf31fda2dcaa12fdb@kernel.org>
-In-Reply-To: <20200225192951.b7753d3cf31fda2dcaa12fdb@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Linus Torvalds <torvalds@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Tim Bird <Tim.Bird@sony.com>, Tom Zanussi <tom.zanussi@linux.intel.com>
+To: broonie@kernel.org, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, jonas.gorski@gmail.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
 
->> The file format will trigger specific parsing efforts.
->
-> Maybe. If someone is interested in expanding their command, (e.g. vim)
-> they can use EBNF to understand syntax,
+The purpose of commit 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+was to keep the pll clk enabled through the lifetime of the device.
 
-I hope so.
+In order to do that, some 'clk_prepare_enable()'/'clk_disable_unprepare()'
+calls have been added in the error handling path of the probe function, in
+the remove function and in the suspend and resume functions.
 
+However, a 'clk_disable_unprepare()' call has been unfortunately left in
+the probe function. So the commit seems to be more or less a no-op.
 
-> or directly reuse lib/bootconfig.c which provides a compact parser. :)
+Axe it now, so that the pll clk is left enabled through the lifetime of
+the device, as described in the commit.
 
-I see some development challenges according to this design direction.
-This software component is using programming interfaces from
-the Linux kernel, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/lib/bootconfig.c?id=c99b17ac03994525092fd66bed14b4a0c82f0b4d#n9
+Fixes: 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+To be honest, I don't see why we need to keep pll clk, or hsspi clk
+enabled during the lifetime of the driver. My understanding of the code is
+that it is only used to get the 'speed_hz' value in the probe function.
+This value is never refreshed afterwards.
+I don't see the point in enabling/disabling the clks. I think that they
+both could be disabled in the probe function, without the need to keep
+track in the bcm63xx_hsspi structure, neither during pm cycles or the
+remove fucntion.
 
-I guess that other approaches should be considered for the desired
-software reuse in this system configuration area.
+However, my knowledge on drivers is limited and I may be completly wrong :)
+---
+ drivers/spi/spi-bcm63xx-hsspi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Is there a need to map key and value combinations directly to files
-(and directories) for a more convenient data processing by user-space processes?
-
-Regards,
-Markus
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
+index 7327309ea3d5..6c235306c0e4 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -366,7 +366,6 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
+ 			goto out_disable_clk;
+ 
+ 		rate = clk_get_rate(pll_clk);
+-		clk_disable_unprepare(pll_clk);
+ 		if (!rate) {
+ 			ret = -EINVAL;
+ 			goto out_disable_pll_clk;
+-- 
+2.20.1
