@@ -1,19 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Feb 2020 14:31:52 +0000
-Subject: Re: [PATCH] usb: dwc3: debug: fix string position formatting mixup with ret and len
-Message-Id: <20200210143151.GZ1778@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 28 Feb 2020 10:00:43 +0000
+Subject: Re: [PATCH v2] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <57b79bdd-36f1-c8c3-e1d3-7d21db47a8f3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200210095139.328711-1-colin.king@canonical.com>
-In-Reply-To: <20200210095139.328711-1-colin.king@canonical.com>
+References: <158287861133.18632.12035327305997207220.stgit@devnote2>
+ <158287862131.18632.11822701514141299400.stgit@devnote2>
+In-Reply-To: <158287862131.18632.11822701514141299400.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Looks good!
+…
+> +++ b/Documentation/admin-guide/bootconfig.rst
+…
+> +… All sub-keys under "kernel" root key are passed as a part of
+> +kernel command line [1]_, and ones under "init" root key are passed as a part
+> +of init command line. …
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Can an enumeration be clearer for this information?
 
-regards,
-dan carpenter
+Will the distinction become more interesting for well-known keys?
+
+Regards,
+Markus
