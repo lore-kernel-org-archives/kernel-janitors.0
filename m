@@ -1,24 +1,31 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Sat, 22 Feb 2020 14:42:19 +0000
-Subject: Re: [PATCH] drm/i915/gt: remove redundant assignment to variable dw
-Message-Id: <158238253958.7320.701595965210976453@skylake-alporthouse-com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 28 Feb 2020 09:00:55 +0000
+Subject: Re: [v2 0/1] Documentation: bootconfig: Documentation updates
+Message-Id: <957cef56-04b0-3889-6c95-a8ed7606b68d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200222134755.134209-1-colin.king@canonical.com>
-In-Reply-To: <20200222134755.134209-1-colin.king@canonical.com>
+References: <158287861133.18632.12035327305997207220.stgit@devnote2>
+In-Reply-To: <158287861133.18632.12035327305997207220.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Colin King (2020-02-22 13:47:55)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable dw is being initialized with a value that is never read,
-> it is assigned a new value later on. The assignment is redundant
-> and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+> I decided to drop EBNF (extended Backus=E2=80=93Naur form) patch
+> since the ISO/IEC 14977 EBNF seems not carefully defined
+
+Significant efforts happened also for this standard.
+Does its revision refer still to the year 1996?
+
+
+> and there are many variants which named EBNF.
+> I'll postpone it until finding better solution.
+
+How will the corresponding clarification evolve?
+
+
+I hope that typos will be avoided also in subjects of subsequent cover lett=
+ers.
+
+Regards,
+Markus
