@@ -1,38 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 08 Feb 2020 16:46:01 +0000
-Subject: [PATCH] USB: serial: digi_acceleport: remove redundant assignment to pointer priv
-Message-Id: <20200208164601.30032-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Feb 2020 21:59:48 +0000
+Subject: [PATCH] scsi: aha1740: Fix an errro handling path in 'aha1740_probe()'
+Message-Id: <20200228215948.7473-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+If 'dma_map_single()' fails, the ref counted 'shpnt' will be decremented
+twice because 'scsi_host_put()' is called in the if block, and in the
+error handling path.
 
-Pointer priv is being assigned with a value that is never read, it is
-assigned a new value later on in a for-loop. The assignment is
-redundant and can be removed.
+Axe one of these calls.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 1dc09e120c83 ("scsi: aha1740: stop using scsi_unregister")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/serial/digi_acceleport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/aha1740.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/serial/digi_acceleport.c b/drivers/usb/serial/digi_acceleport.c
-index 578ebdd86520..91055a191995 100644
---- a/drivers/usb/serial/digi_acceleport.c
-+++ b/drivers/usb/serial/digi_acceleport.c
-@@ -1472,7 +1472,7 @@ static int digi_read_oob_callback(struct urb *urb)
- 	struct usb_serial_port *port = urb->context;
- 	struct usb_serial *serial = port->serial;
- 	struct tty_struct *tty;
--	struct digi_port *priv = usb_get_serial_port_data(port);
-+	struct digi_port *priv;
- 	unsigned char *buf = urb->transfer_buffer;
- 	int opcode, line, status, val;
- 	unsigned long flags;
+diff --git a/drivers/scsi/aha1740.c b/drivers/scsi/aha1740.c
+index da4150c17781..5a227c03895f 100644
+--- a/drivers/scsi/aha1740.c
++++ b/drivers/scsi/aha1740.c
+@@ -592,7 +592,6 @@ static int aha1740_probe (struct device *dev)
+ 					     DMA_BIDIRECTIONAL);
+ 	if (!host->ecb_dma_addr) {
+ 		printk (KERN_ERR "aha1740_probe: Couldn't map ECB, giving up\n");
+-		scsi_host_put (shpnt);
+ 		goto err_host_put;
+ 	}
+ 	
 -- 
-2.25.0
+2.20.1
