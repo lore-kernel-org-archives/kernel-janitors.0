@@ -1,38 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 24 Feb 2020 17:38:02 +0000
-Subject: NAK: [PATCH][next] drm/tidss: fix spelling mistake "bufer" -> "buffer"
-Message-Id: <d903c16f-f6b4-fda4-911d-0613390f0854@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 28 Feb 2020 23:44:14 +0000
+Subject: [PATCH] SUNRPC: remove redundant assignments to variable status
+Message-Id: <20200228234414.112359-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224151530.360369-1-colin.king@canonical.com>
-In-Reply-To: <20200224151530.360369-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+To: "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 24/02/2020 15:15, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_dbg message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index eeb160dc047b..d49f2d6d57df 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1699,7 +1699,7 @@ static int dispc_vid_calc_scaling(struct dispc_device *dispc,
->  
->  		if (sp->xinc > f->xinc_max) {
->  			dev_dbg(dispc->dev,
-> -				"%s: Too wide input bufer %u > %u\n", __func__,
-> +				"%s: Too wide input buffer %u > %u\n", __func__,
->  				state->src_w >> 16, in_width_max * f->xinc_max);
->  			return -EINVAL;
->  		}
-> 
-Please ignore this, I've found another mistake. I'll send a V2 shortly.
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable status is being initialized with a value that is never
+read and it is being updated later with a new value.  The initialization
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sunrpc/xprtsock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+index d86c664ea6af..c9e039961e29 100644
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -1970,7 +1970,7 @@ static int xs_local_setup_socket(struct sock_xprt *transport)
+ 	struct rpc_xprt *xprt = &transport->xprt;
+ 	struct file *filp;
+ 	struct socket *sock;
+-	int status = -EIO;
++	int status;
+ 
+ 	status = __sock_create(xprt->xprt_net, AF_LOCAL,
+ 					SOCK_STREAM, 0, &sock, 1);
+-- 
+2.25.0
