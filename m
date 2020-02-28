@@ -1,64 +1,37 @@
-From: kbuild test robot <lkp@intel.com>
-Date: Mon, 03 Feb 2020 05:11:49 +0000
-Subject: Re: [PATCH net] device property: change device_get_phy_mode() to prevent signedess bugs
-Message-Id: <202002031247.fhmzF9z1%lkp@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 09:23:21 +0000
+Subject: [PATCH] drm: prevent a harmless integer overflow in drm_legacy_sg_alloc()
+Message-Id: <20200228092321.axulddmkxrujkmas@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200131045953.wbj66jkvijnmf5s2@kili.mountain>
-In-Reply-To: <20200131045953.wbj66jkvijnmf5s2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kbuild-all@lists.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ajay Gupta <ajayg@nvidia.com>, "David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Iyappan Subramanian <iyappan@os.amperecomputing.com>, Keyur Chudgar <keyur@os.amperecomputing.com>, Quan Nguyen <quan@os.amperecomputing.com>, Steve Glendinning <steve.glendinning@shawell.net>, Jassi Brar <jaswinder.singh@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hi Dan,
+There is an integer overflow when we round up to PAGE_SIZE, but it's
+harmless because we never re-use "request->size" for anything meaningful.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on net/master]
-[also build test WARNING on driver-core/driver-core-testing linus/master v5.5 next-20200131]
-[cannot apply to sparc-next/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Dan-Carpenter/device-property-change-device_get_phy_mode-to-prevent-signedess-bugs/20200203-043126
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git b7c3a17c6062701d97a0959890a2c882bfaac537
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-154-g1dc00f87-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   arch/x86/boot/compressed/cmdline.c:5:20: sparse: sparse: multiple definitions for function 'set_fs'
->> arch/x86/include/asm/uaccess.h:29:20: sparse:  the previous one is here
-   arch/x86/boot/compressed/../cmdline.c:28:5: sparse: sparse: symbol '__cmdline_find_option' was not declared. Should it be static?
-   arch/x86/boot/compressed/../cmdline.c:100:5: sparse: sparse: symbol '__cmdline_find_option_bool' was not declared. Should it be static?
-
-vim +29 arch/x86/include/asm/uaccess.h
-
-ca23386216b9d4 include/asm-x86/uaccess.h      Glauber Costa   2008-06-13  27  
-13d4ea097d18b4 arch/x86/include/asm/uaccess.h Andy Lutomirski 2016-07-14  28  #define get_fs()	(current->thread.addr_limit)
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14 @29  static inline void set_fs(mm_segment_t fs)
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  30  {
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  31  	current->thread.addr_limit = fs;
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  32  	/* On user-mode return, check fs is correct */
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  33  	set_thread_flag(TIF_FSCHECK);
-5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  34  }
-ca23386216b9d4 include/asm-x86/uaccess.h      Glauber Costa   2008-06-13  35  
-
-:::::: The code at line 29 was first introduced by commit
-:::::: 5ea0727b163cb5575e36397a12eade68a1f35f24 x86/syscalls: Check address limit on user-mode return
-
-:::::: TO: Thomas Garnier <thgarnie@google.com>
-:::::: CC: Thomas Gleixner <tglx@linutronix.de>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+This code predates git.
+
+ drivers/gpu/drm/drm_scatter.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_scatter.c b/drivers/gpu/drm/drm_scatter.c
+index d5c386154246..ca520028b2cb 100644
+--- a/drivers/gpu/drm/drm_scatter.c
++++ b/drivers/gpu/drm/drm_scatter.c
+@@ -99,6 +99,9 @@ int drm_legacy_sg_alloc(struct drm_device *dev, void *data,
+ 	if (!drm_core_check_feature(dev, DRIVER_SG))
+ 		return -EOPNOTSUPP;
+ 
++	if (request->size > SIZE_MAX - PAGE_SIZE)
++		return -EINVAL;
++
+ 	if (dev->sg)
+ 		return -EINVAL;
+ 
+-- 
+2.11.0
