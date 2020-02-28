@@ -1,76 +1,38 @@
-From: Dmitry Bogdanov <dbogdanov@marvell.com>
-Date: Wed, 12 Feb 2020 08:13:02 +0000
-Subject: RE: [EXT] [bug report] net: aquantia: add support of rx-vlan-filter offload
-Message-Id: <BYAPR18MB2357232C87FC858DB55AD3E2A41B0@BYAPR18MB2357.namprd18.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 09:22:59 +0000
+Subject: [PATCH] cifs: potential unintitliazed error code in cifs_getattr()
+Message-Id: <20200228092043.xoqau6ez7qxnpwc4@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>
+Cc: Aurelien Aptel <aaptel@suse.com>, Ronnie Sahlberg <lsahlber@redhat.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Smatch complains that "rc" could be uninitialized.
 
-Thank you for bug report. Yes, there is a missing of masking by VLAN_VID_MASK:
+    fs/cifs/inode.c:2206 cifs_getattr() error: uninitialized symbol 'rc'.
 
--166              (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci),
-+166              (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci) & VLAN_VID_MASK,
+Changing it to "return 0;" improves readability as well.
 
-I will prepare  the patch.
+Fixes: cc1baf98c8f6 ("cifs: do not ignore the SYNC flags in getattr")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR,
- Dmitry
-
------Original Message-----
-From: Dan Carpenter <dan.carpenter@oracle.com> 
-Sent: Wednesday, February 12, 2020 10:30 AM
-To: dmitry.bogdanov@aquantia.com
-Cc: 
-Subject: [EXT] [bug report] net: aquantia: add support of rx-vlan-filter offload
-
-External Email
-
-----------------------------------------------------------------------
-Hello Dmitry Bogdanov,
-
-The patch 7975d2aff5af: "net: aquantia: add support of rx-vlan-filter offload" from Nov 12, 2018, leads to the following static checker
-warning:
-
-	drivers/net/ethernet/aquantia/atlantic/aq_filters.c:166 aq_check_approve_fvlan()
-	error: passing untrusted data to 'test_bit()'
-
-drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-   151  static int __must_check
-   152  aq_check_approve_fvlan(struct aq_nic_s *aq_nic,
-   153                         struct aq_hw_rx_fltrs_s *rx_fltrs,
-   154                         struct ethtool_rx_flow_spec *fsp)
-   155  {
-   156          if (fsp->location < AQ_RX_FIRST_LOC_FVLANID ||
-   157              fsp->location > AQ_RX_LAST_LOC_FVLANID) {
-   158                  netdev_err(aq_nic->ndev,
-   159                             "ethtool: location must be in range [%d, %d]",
-   160                             AQ_RX_FIRST_LOC_FVLANID,
-   161                             AQ_RX_LAST_LOC_FVLANID);
-   162                  return -EINVAL;
-   163          }
-   164  
-   165          if ((aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
-   166              (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci),
-                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ If this is more than 4096 then it is a buffer overflow.
-
-   167                         aq_nic->active_vlans))) {
-   168                  netdev_err(aq_nic->ndev,
-   169                             "ethtool: unknown vlan-id specified");
-   170                  return -EINVAL;
-   171          }
-   172  
-   173          if (fsp->ring_cookie > aq_nic->aq_nic_cfg.num_rss_queues) {
-   174                  netdev_err(aq_nic->ndev,
-   175                             "ethtool: queue number must be in range [0, %d]",
-   176                             aq_nic->aq_nic_cfg.num_rss_queues - 1);
-   177                  return -EINVAL;
-   178          }
-   179          return 0;
-   180  }
-
-regards,
-dan carpenter
+diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+index 6543465595f6..e6d66977a81d 100644
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -2203,7 +2203,7 @@ int cifs_getattr(const struct path *path, struct kstat *stat,
+ 		if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_GID))
+ 			stat->gid = current_fsgid();
+ 	}
+-	return rc;
++	return 0;
+ }
+ 
+ int cifs_fiemap(struct inode *inode, struct fiemap_extent_info *fei, u64 start,
+-- 
+2.11.0
