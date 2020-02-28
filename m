@@ -1,66 +1,35 @@
-From: Jyri Sarha <jsarha@ti.com>
-Date: Thu, 27 Feb 2020 10:00:53 +0000
-Subject: Re: [PATCH][next][V2] drm/tidss: fix spelling mistakes "bufer" and "requsted"
-Message-Id: <61a9d7f0-ad42-b347-4a4c-0e5cd0deb11c@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 10:58:33 +0000
+Subject: [PATCH v2] drm/amd/display: Fix dmub_psr_destroy()
+Message-Id: <20200228105833.2jdsy7sxpeoo3lvy@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224174226.387874-1-colin.king@canonical.com>
-In-Reply-To: <20200224174226.387874-1-colin.king@canonical.com>
+In-Reply-To: <cba36257-8562-d14a-da9b-cc38076d350f@daenzer.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Wyatt Wood <wyatt.wood@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On 24/02/2020 19:42, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two spelling mistakes in warning and debug messages.
-> Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is freeing the wrong variable so it will crash.  It should be
+freeing "*dmub" instead of "dmub".
 
-Reviewed-by: Jyri Sarha <jsarha@ti.com>
-Tested-by: Jyri Sarha <jsarha@ti.com>
+Fixes: 4c1a1335dfe0 ("drm/amd/display: Driverside changes to support PSR in DMCUB")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll merge this to drm-misc-next tomorrow.
-
-Thank you for the patch,
-Jyri
-
-
-> ---
-> 
-> V2: Add spelling mistake fix for "requsted"
-> 
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index eeb160dc047b..b3dc83d2f668 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1235,7 +1235,7 @@ int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
->  
->  	if (dispc_pclk_diff(rate, new_rate) > 5)
->  		dev_warn(dispc->dev,
-> -			 "vp%d: Clock rate %lu differs over 5%% from requsted %lu\n",
-> +			 "vp%d: Clock rate %lu differs over 5%% from requested %lu\n",
->  			 hw_videoport, new_rate, rate);
->  
->  	dev_dbg(dispc->dev, "vp%d: new rate %lu Hz (requested %lu Hz)\n",
-> @@ -1699,7 +1699,7 @@ static int dispc_vid_calc_scaling(struct dispc_device *dispc,
->  
->  		if (sp->xinc > f->xinc_max) {
->  			dev_dbg(dispc->dev,
-> -				"%s: Too wide input bufer %u > %u\n", __func__,
-> +				"%s: Too wide input buffer %u > %u\n", __func__,
->  				state->src_w >> 16, in_width_max * f->xinc_max);
->  			return -EINVAL;
->  		}
-> 
-
-
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+index 2c932c29f1f9..f0936cb3c056 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+@@ -235,6 +235,6 @@ struct dmub_psr *dmub_psr_create(struct dc_context *ctx)
+  */
+ void dmub_psr_destroy(struct dmub_psr **dmub)
+ {
+-	kfree(dmub);
++	kfree(*dmub);
+ 	*dmub = NULL;
+ }
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.11.0
