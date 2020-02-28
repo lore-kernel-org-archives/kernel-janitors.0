@@ -1,54 +1,34 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 28 Feb 2020 22:25:12 +0000
-Subject: Re: [PATCH v2] drm/amd/display: Fix dmub_psr_destroy()
-Message-Id: <CADnq5_MkjfdaVe=7=sZhvAYUVMgNk1fHQb7VBcMSwsCXzc2jeA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Feb 2020 05:01:13 +0000
+Subject: [PATCH] Bluetooth: hci_h4: Remove a redundant assignment in 'h4_flush()'
+Message-Id: <20200228050113.25041-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228105833.2jdsy7sxpeoo3lvy@kili.mountain>
- <e425f3fd-a517-c10b-aab4-05d8315983de@amd.com>
-In-Reply-To: <e425f3fd-a517-c10b-aab4-05d8315983de@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Wyatt Wood <wyatt.wood@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: marcel@holtmann.org, johan.hedberg@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied.  Thanks!
+'hu->priv' is set twice to NULL in this function.
+Axe one of these assignments.
 
-Alex
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/bluetooth/hci_h4.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Fri, Feb 28, 2020 at 8:08 AM Kazlauskas, Nicholas
-<nicholas.kazlauskas@amd.com> wrote:
->
-> On 2020-02-28 5:58 a.m., Dan Carpenter wrote:
-> > This is freeing the wrong variable so it will crash.  It should be
-> > freeing "*dmub" instead of "dmub".
-> >
-> > Fixes: 4c1a1335dfe0 ("drm/amd/display: Driverside changes to support PSR in DMCUB")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
->
-> Thanks!
->
-> > ---
-> >   drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-> > index 2c932c29f1f9..f0936cb3c056 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-> > @@ -235,6 +235,6 @@ struct dmub_psr *dmub_psr_create(struct dc_context *ctx)
-> >    */
-> >   void dmub_psr_destroy(struct dmub_psr **dmub)
-> >   {
-> > -     kfree(dmub);
-> > +     kfree(*dmub);
-> >       *dmub = NULL;
-> >   }
-> >
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
+index 6dc1fbeb564b..0b84a05a730b 100644
+--- a/drivers/bluetooth/hci_h4.c
++++ b/drivers/bluetooth/hci_h4.c
+@@ -71,8 +71,6 @@ static int h4_close(struct hci_uart *hu)
+ {
+ 	struct h4_struct *h4 = hu->priv;
+ 
+-	hu->priv = NULL;
+-
+ 	BT_DBG("hu %p", hu);
+ 
+ 	skb_queue_purge(&h4->txq);
+-- 
+2.20.1
