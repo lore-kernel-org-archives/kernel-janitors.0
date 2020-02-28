@@ -1,33 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 29 Feb 2020 09:00:22 +0000
-Subject: Re: [PATCH 2/2] Documentation: bootconfig: Add EBNF syntax file
-Message-Id: <c3ea656f-7520-2cb4-7f39-92612343d7bf@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 14:13:50 +0000
+Subject: [PATCH] loop: Fix IS_ERR() vs NULL bugs in loop_prepare_queue()
+Message-Id: <20200228141350.iaviwnry3z4ipjqe@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <158278834245.14966.6179457011671073018.stgit@devnote2>
- <158278836196.14966.3881489301852781521.stgit@devnote2>
-In-Reply-To: <158278836196.14966.3881489301852781521.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jens Axboe <axboe@kernel.dk>, Dan Schatzberg <schatzberg.dan@gmail.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-…
-> +++ b/Documentation/admin-guide/bootconfig.rst
-…
-> +Syntax in EBNF
-> +--------------
-> +
-> +Here is the boot configuration file syntax written in EBNF.
-> +
-> +.. include:: bootconfig.ebnf
-> +   :literal:
+The alloc_workqueue() function returns NULL on error, it never returns
+error pointers.
 
-How do you think about to move the content for this section into another RST file
-so that it can be used as a text module?
+Fixes: 29dab2122492 ("loop: use worker per cgroup instead of kworker")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/block/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Would you like to improve the outline and corresponding reuse
-for such information any further?
-
-Regards,
-Markus
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index da8ec0b9d909..a31ca5e04fae 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -897,7 +897,7 @@ static int loop_prepare_queue(struct loop_device *lo)
+ 					WQ_UNBOUND | WQ_FREEZABLE |
+ 					WQ_MEM_RECLAIM,
+ 					lo->lo_number);
+-	if (IS_ERR(lo->workqueue))
++	if (!lo->workqueue)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+-- 
+2.11.0
