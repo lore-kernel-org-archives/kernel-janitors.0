@@ -1,29 +1,54 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 24 Feb 2020 10:51:34 +0000
-Subject: Re: [PATCH] mfd: Kconfig: Fix some typo
-Message-Id: <20200224105134.GQ3494@dell>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 09:22:56 +0000
+Subject: [PATCH] ext4: potential crash on allocation error in ext4_alloc_flex_bg_array()
+Message-Id: <20200228092142.7irbc44yaz3by7nb@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200216113242.20268-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200216113242.20268-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Theodore Ts'o <tytso@mit.edu>, Suraj Jitindar Singh <surajjs@amazon.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, Walter Harms <wharms@bfs.de>
 
-On Sun, 16 Feb 2020, Christophe JAILLET wrote:
+If sbi->s_flex_groups_allocated is zero and the first allocation fails
+then this code will crash.  The problem is that "i--" will set "i" to
+-1 but when we compare "i >= sbi->s_flex_groups_allocated" then the -1
+is type promoted to unsigned and becomes UINT_MAX.  Since UINT_MAX
+is more than zero, the condition is true so we call kvfree(new_groups[-1]).
+The loop will carry on freeing invalid memory until it crashes.
 
-> Fix several variations of typo around functionality.ies
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/mfd/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Fixes: 7c990728b99e ("ext4: fix potential race between s_flex_groups online resizing and access")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I changed this from a -- loop to a ++ loop because I knew it would make
+Walter Harms happy.  He hates -- loops and I don't when his birthday so
+I'm celebrating it today.  :)
 
-Applied, thanks.
+ fs/ext4/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index ff1b764b0c0e..0c7c4adb664e 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2391,7 +2391,7 @@ int ext4_alloc_flex_bg_array(struct super_block *sb, ext4_group_t ngroup)
+ {
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct flex_groups **old_groups, **new_groups;
+-	int size, i;
++	int size, i, j;
+ 
+ 	if (!sbi->s_log_groups_per_flex)
+ 		return 0;
+@@ -2412,8 +2412,8 @@ int ext4_alloc_flex_bg_array(struct super_block *sb, ext4_group_t ngroup)
+ 					 sizeof(struct flex_groups)),
+ 					 GFP_KERNEL);
+ 		if (!new_groups[i]) {
+-			for (i--; i >= sbi->s_flex_groups_allocated; i--)
+-				kvfree(new_groups[i]);
++			for (j = sbi->s_flex_groups_allocated; j < i; j++)
++				kvfree(new_groups[j]);
+ 			kvfree(new_groups);
+ 			ext4_msg(sb, KERN_ERR,
+ 				 "not enough memory for %d flex groups", size);
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
