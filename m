@@ -1,46 +1,47 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 13 Feb 2020 13:04:04 +0000
-Subject: Re: [PATCH] usb: typec: ucsi: remove redundant assignment to variable num
-Message-Id: <20200213130404.GA3369961@kroah.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 28 Feb 2020 06:33:38 +0000
+Subject: [PATCH] MAINTAINERS: adjust to renaming physmap_of_versatile.c
+Message-Id: <20200228063338.4099-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200208165022.30429-1-colin.king@canonical.com>
- <20200213113423.GK1498@kuha.fi.intel.com>
-In-Reply-To: <20200213113423.GK1498@kuha.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Colin King <colin.king@canonical.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sebastian Duda <sebastian.duda@fau.de>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Feb 13, 2020 at 01:34:23PM +0200, Heikki Krogerus wrote:
-> On Sat, Feb 08, 2020 at 04:50:22PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Variable num is being assigned with a value that is never read, it is
-> > assigned a new value later in a for-loop. The assignment is redundant
-> > and can be removed.
-> > 
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/usb/typec/ucsi/ucsi.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> > index d5a6aac86327..b1b72cb7af10 100644
-> > --- a/drivers/usb/typec/ucsi/ucsi.c
-> > +++ b/drivers/usb/typec/ucsi/ucsi.c
-> > @@ -400,7 +400,7 @@ static int ucsi_register_altmodes(struct ucsi_connector *con, u8 recipient)
-> >  	struct typec_altmode_desc desc;
-> >  	struct ucsi_altmode alt[2];
-> >  	u64 command;
-> > -	int num = 1;
-> > +	int num;
-> >  	int ret;
-> >  	int len;
-> >  	int j;
-> 
-> Greg! I'll pick this, and to you with a few other patches that I have
-> in my queue for the ucsi driver. I hope that's OK.
+Commit 6ca15cfa0788 ("mtd: maps: Rename physmap_of_{versatile, gemini}
+into physmap-{versatile, gemini}") renamed physmap_of_versatile.c to
+physmap-versatile.c, but did not adjust the MAINTAINERS entry.
 
-Thats fine.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
+
+  warning: no file matches F: drivers/mtd/maps/physmap_of_versatile.c
+
+Rectify the ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT entry and now
+also cover drivers/mtd/maps/physmap-versatile.h while at it.
+
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Boris, please pick or ack this patch.
+applies cleanly on current master and next-20200228
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fcd79fc38928..bbf2108fb9fd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1294,7 +1294,7 @@ F:	arch/arm/boot/dts/versatile*
+ F:	drivers/clk/versatile/
+ F:	drivers/i2c/busses/i2c-versatile.c
+ F:	drivers/irqchip/irq-versatile-fpga.c
+-F:	drivers/mtd/maps/physmap_of_versatile.c
++F:	drivers/mtd/maps/physmap-versatile.*
+ F:	drivers/power/reset/arm-versatile-reboot.c
+ F:	drivers/soc/versatile/
+ 
+-- 
+2.17.1
