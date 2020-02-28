@@ -1,31 +1,40 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sun, 02 Feb 2020 07:39:17 +0000
-Subject: [PATCH -next] ASoC: Remove unused including <linux/version.h>
-Message-Id: <20200202073917.195880-1-yuehaibing@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Feb 2020 17:21:36 +0000
+Subject: [PATCH resend] loop: Fix IS_ERR() vs NULL bugs in loop_prepare_queue()
+Message-Id: <20200228172136.h5dvwvrg5yfywxss@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <c106c6ec-7171-3586-d5c5-5c14e386b3d5@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias
- Brugger <matthias.bgg@gmail.com>, Jeff Chang <jeff_chang@richtek.com>
-Cc: alsa-devel@alsa-project.org, YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Jens Axboe <axboe@kernel.dk>, Dan Schatzberg <schatzberg.dan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org
 
-Remove including <linux/version.h> that don't need it.
+The alloc_workqueue() function returns NULL on error, it never returns
+error pointers.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 29dab2122492 ("loop: use worker per cgroup instead of kworker")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Dan Schatzberg <schatzberg.dan@gmail.com>
 ---
- sound/soc/codecs/mt6660.c | 1 -
- 1 file changed, 1 deletion(-)
+Resending because this goes through your -mm tree, Andrew.  The
+get_maintainer.pl script lead me astray.
 
-diff --git a/sound/soc/codecs/mt6660.c b/sound/soc/codecs/mt6660.c
-index a36c416caad4..1a3515df1764 100644
---- a/sound/soc/codecs/mt6660.c
-+++ b/sound/soc/codecs/mt6660.c
-@@ -4,7 +4,6 @@
+ drivers/block/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index da8ec0b9d909..a31ca5e04fae 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -897,7 +897,7 @@ static int loop_prepare_queue(struct loop_device *lo)
+ 					WQ_UNBOUND | WQ_FREEZABLE |
+ 					WQ_MEM_RECLAIM,
+ 					lo->lo_number);
+-	if (IS_ERR(lo->workqueue))
++	if (!lo->workqueue)
+ 		return -ENOMEM;
  
- #include <linux/module.h>
- #include <linux/kernel.h>
--#include <linux/version.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/pm_runtime.h>
+ 	return 0;
+-- 
+2.11.0
