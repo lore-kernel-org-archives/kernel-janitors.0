@@ -1,54 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Feb 2020 09:22:56 +0000
-Subject: [PATCH] ext4: potential crash on allocation error in ext4_alloc_flex_bg_array()
-Message-Id: <20200228092142.7irbc44yaz3by7nb@kili.mountain>
+From: "Jitindar SIngh, Suraj" <surajjs@amazon.com>
+Date: Fri, 28 Feb 2020 18:45:11 +0000
+Subject: Re: [PATCH] ext4: potential crash on allocation error in ext4_alloc_flex_bg_array()
+Message-Id: <97e4ea8a96c28aa5e8659c5779c86643cade1f96.camel@amazon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200228092142.7irbc44yaz3by7nb@kili.mountain>
+In-Reply-To: <20200228092142.7irbc44yaz3by7nb@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Suraj Jitindar Singh <surajjs@amazon.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, Walter Harms <wharms@bfs.de>
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "tytso@mit.edu" <tytso@mit.edu>
+Cc: "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "wharms@bfs.de" <wharms@bfs.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-If sbi->s_flex_groups_allocated is zero and the first allocation fails
-then this code will crash.  The problem is that "i--" will set "i" to
--1 but when we compare "i >= sbi->s_flex_groups_allocated" then the -1
-is type promoted to unsigned and becomes UINT_MAX.  Since UINT_MAX
-is more than zero, the condition is true so we call kvfree(new_groups[-1]).
-The loop will carry on freeing invalid memory until it crashes.
-
-Fixes: 7c990728b99e ("ext4: fix potential race between s_flex_groups online resizing and access")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I changed this from a -- loop to a ++ loop because I knew it would make
-Walter Harms happy.  He hates -- loops and I don't when his birthday so
-I'm celebrating it today.  :)
-
- fs/ext4/super.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index ff1b764b0c0e..0c7c4adb664e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2391,7 +2391,7 @@ int ext4_alloc_flex_bg_array(struct super_block *sb, ext4_group_t ngroup)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct flex_groups **old_groups, **new_groups;
--	int size, i;
-+	int size, i, j;
- 
- 	if (!sbi->s_log_groups_per_flex)
- 		return 0;
-@@ -2412,8 +2412,8 @@ int ext4_alloc_flex_bg_array(struct super_block *sb, ext4_group_t ngroup)
- 					 sizeof(struct flex_groups)),
- 					 GFP_KERNEL);
- 		if (!new_groups[i]) {
--			for (i--; i >= sbi->s_flex_groups_allocated; i--)
--				kvfree(new_groups[i]);
-+			for (j = sbi->s_flex_groups_allocated; j < i; j++)
-+				kvfree(new_groups[j]);
- 			kvfree(new_groups);
- 			ext4_msg(sb, KERN_ERR,
- 				 "not enough memory for %d flex groups", size);
--- 
-2.11.0
+T24gRnJpLCAyMDIwLTAyLTI4IGF0IDEyOjIyICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBJZiBzYmktPnNfZmxleF9ncm91cHNfYWxsb2NhdGVkIGlzIHplcm8gYW5kIHRoZSBmaXJzdCBh
+bGxvY2F0aW9uDQo+IGZhaWxzDQo+IHRoZW4gdGhpcyBjb2RlIHdpbGwgY3Jhc2guICBUaGUgcHJv
+YmxlbSBpcyB0aGF0ICJpLS0iIHdpbGwgc2V0ICJpIiB0bw0KPiAtMSBidXQgd2hlbiB3ZSBjb21w
+YXJlICJpID49IHNiaS0+c19mbGV4X2dyb3Vwc19hbGxvY2F0ZWQiIHRoZW4gdGhlDQo+IC0xDQo+
+IGlzIHR5cGUgcHJvbW90ZWQgdG8gdW5zaWduZWQgYW5kIGJlY29tZXMgVUlOVF9NQVguICBTaW5j
+ZSBVSU5UX01BWA0KPiBpcyBtb3JlIHRoYW4gemVybywgdGhlIGNvbmRpdGlvbiBpcyB0cnVlIHNv
+IHdlIGNhbGwNCj4ga3ZmcmVlKG5ld19ncm91cHNbLTFdKS4NCj4gVGhlIGxvb3Agd2lsbCBjYXJy
+eSBvbiBmcmVlaW5nIGludmFsaWQgbWVtb3J5IHVudGlsIGl0IGNyYXNoZXMuDQo+IA0KPiBGaXhl
+czogN2M5OTA3MjhiOTllICgiZXh0NDogZml4IHBvdGVudGlhbCByYWNlIGJldHdlZW4gc19mbGV4
+X2dyb3Vwcw0KPiBvbmxpbmUgcmVzaXppbmcgYW5kIGFjY2VzcyIpDQo+IFNpZ25lZC1vZmYtYnk6
+IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KUmV2aWV3ZWQtYnk6
+IFN1cmFqIEppdGluZGFyIFNpbmdoIDxzdXJhampzQGFtYXpvbi5jb20+DQpDYzogPHN0YWJsZUBr
+ZXJuZWwub3JnPg0KDQo+IC0tLQ0KPiBJIGNoYW5nZWQgdGhpcyBmcm9tIGEgLS0gbG9vcCB0byBh
+ICsrIGxvb3AgYmVjYXVzZSBJIGtuZXcgaXQgd291bGQNCj4gbWFrZQ0KPiBXYWx0ZXIgSGFybXMg
+aGFwcHkuICBIZSBoYXRlcyAtLSBsb29wcyBhbmQgSSBkb24ndCB3aGVuIGhpcyBiaXJ0aGRheQ0K
+PiBzbw0KPiBJJ20gY2VsZWJyYXRpbmcgaXQgdG9kYXkuICA6KQ0KPiANCj4gIGZzL2V4dDQvc3Vw
+ZXIuYyB8IDYgKysrLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRl
+bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2ZzL2V4dDQvc3VwZXIuYyBiL2ZzL2V4dDQv
+c3VwZXIuYw0KPiBpbmRleCBmZjFiNzY0YjBjMGUuLjBjN2M0YWRiNjY0ZSAxMDA2NDQNCj4gLS0t
+IGEvZnMvZXh0NC9zdXBlci5jDQo+ICsrKyBiL2ZzL2V4dDQvc3VwZXIuYw0KPiBAQCAtMjM5MSw3
+ICsyMzkxLDcgQEAgaW50IGV4dDRfYWxsb2NfZmxleF9iZ19hcnJheShzdHJ1Y3Qgc3VwZXJfYmxv
+Y2sNCj4gKnNiLCBleHQ0X2dyb3VwX3Qgbmdyb3VwKQ0KPiAgew0KPiAgCXN0cnVjdCBleHQ0X3Ni
+X2luZm8gKnNiaSA9IEVYVDRfU0Ioc2IpOw0KPiAgCXN0cnVjdCBmbGV4X2dyb3VwcyAqKm9sZF9n
+cm91cHMsICoqbmV3X2dyb3VwczsNCj4gLQlpbnQgc2l6ZSwgaTsNCj4gKwlpbnQgc2l6ZSwgaSwg
+ajsNCj4gIA0KPiAgCWlmICghc2JpLT5zX2xvZ19ncm91cHNfcGVyX2ZsZXgpDQo+ICAJCXJldHVy
+biAwOw0KPiBAQCAtMjQxMiw4ICsyNDEyLDggQEAgaW50IGV4dDRfYWxsb2NfZmxleF9iZ19hcnJh
+eShzdHJ1Y3Qgc3VwZXJfYmxvY2sNCj4gKnNiLCBleHQ0X2dyb3VwX3Qgbmdyb3VwKQ0KPiAgCQkJ
+CQkgc2l6ZW9mKHN0cnVjdCBmbGV4X2dyb3VwcykpLA0KPiAgCQkJCQkgR0ZQX0tFUk5FTCk7DQo+
+ICAJCWlmICghbmV3X2dyb3Vwc1tpXSkgew0KPiAtCQkJZm9yIChpLS07IGkgPj0gc2JpLT5zX2Zs
+ZXhfZ3JvdXBzX2FsbG9jYXRlZDsgaS0NCj4gLSkNCj4gLQkJCQlrdmZyZWUobmV3X2dyb3Vwc1tp
+XSk7DQo+ICsJCQlmb3IgKGogPSBzYmktPnNfZmxleF9ncm91cHNfYWxsb2NhdGVkOyBqIDwgaTsN
+Cj4gaisrKQ0KPiArCQkJCWt2ZnJlZShuZXdfZ3JvdXBzW2pdKTsNCj4gIAkJCWt2ZnJlZShuZXdf
+Z3JvdXBzKTsNCj4gIAkJCWV4dDRfbXNnKHNiLCBLRVJOX0VSUiwNCj4gIAkJCQkgIm5vdCBlbm91
+Z2ggbWVtb3J5IGZvciAlZCBmbGV4DQo+IGdyb3VwcyIsIHNpemUpOw0K
