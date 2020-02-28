@@ -1,76 +1,55 @@
-From: "Moore, Robert" <robert.moore@intel.com>
-Date: Fri, 14 Feb 2020 20:21:48 +0000
-Subject: RE: [PATCH] ACPICA: Fix a typo in acuuid.h
-Message-Id: <94F2FBAB4432B54E8AACC7DFDE6C92E3B96EA166@ORSMSX110.amr.corp.intel.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 28 Feb 2020 08:30:27 +0000
+Subject: Re: [1/2] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <efe38d09-e73d-97b3-d4be-79194ab2685f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200214063003.29741-1-christophe.jaillet@wanadoo.fr>
- <2712088.SaWAGPlJqS@kreacher>
- <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
-In-Reply-To: <BL0PR11MB29466C25466F5A88B4D4F5B9F0150@BL0PR11MB2946.namprd11.prod.outlook.com>
+References: <158278834245.14966.6179457011671073018.stgit@devnote2>
+ <158278835238.14966.16157216423901327777.stgit@devnote2>
+ <8514c830-319b-33e9-025a-79d399674fb3@web.de>
+ <20200228143528.209db45e5f0f78474ef83387@kernel.org>
+In-Reply-To: <20200228143528.209db45e5f0f78474ef83387@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Kaneda, Erik" <erik.kaneda@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "devel@acpica.org" <devel@acpica.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Ok, got it.
-Thanks,
-Bob
--
+>>> +Also, some subsystem may depend on the boot configuration, and it has own
+>>> +root key.
+>>
+>> Would you like to explain the influence of a key hierarchy any further?
+>
+> Please read the example (boot time tracer) carefully :)
 
------Original Message-----
-From: Kaneda, Erik <erik.kaneda@intel.com> 
-Sent: Friday, February 14, 2020 9:08 AM
-To: Rafael J. Wysocki <rjw@rjwysocki.net>; Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: RE: [PATCH] ACPICA: Fix a typo in acuuid.h
+I find the descriptions still too terse for corresponding relationships.
 
 
+>> * Can such system limits become more configurable?
+>
+> No.
 
-> -----Original Message-----
-> From: linux-acpi-owner@vger.kernel.org <linux-acpi- 
-> owner@vger.kernel.org> On Behalf Of Rafael J. Wysocki
-> Sent: Friday, February 14, 2020 2:02 AM
-> To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; Kaneda, Erik 
-> <erik.kaneda@intel.com>
-> Cc: lenb@kernel.org; Moore, Robert <robert.moore@intel.com>; linux- 
-> acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; 
-> kernel-janitors@vger.kernel.org
-> Subject: Re: [PATCH] ACPICA: Fix a typo in acuuid.h
-> 
-> On Friday, February 14, 2020 7:30:03 AM CET Christophe JAILLET wrote:
-> > The comment related to the ending of the include guard should be 
-> > related to __ACUUID_H__, not __AUUID_H__ (i.e. 'C' is missing).
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Erik, please route this through the upstream.
+The possibility remains to adjust the source code also for special needs.
 
-Thanks for your patch!
 
-I'll add it to our next release (in March)
+>>> +(Note: Each key consists of words separated by dot, and value also consists
+>>> +of values separated by comma. Here, each word and each value is generally
+>>> +called a "node".)
+>>
+>> I would prefer the interpretation that nodes contain corresponding attributes.
+>
+> No. Node is a node. It is merely generic.
 
-Erik
-> 
-> Thanks!
-> 
-> > ---
-> >  include/acpi/acuuid.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/acpi/acuuid.h b/include/acpi/acuuid.h index
-> > 9dd4689a39cf..9e1367b19069 100644
-> > --- a/include/acpi/acuuid.h
-> > +++ b/include/acpi/acuuid.h
-> > @@ -57,4 +57,4 @@
-> >  #define UUID_THERMAL_EXTENSIONS         "14d399cd-7a27-4b18-8fb4-
-> 7cb7b9f4e500"
-> >  #define UUID_DEVICE_PROPERTIES          "daffd814-6eba-4d8c-8a91-
-> bc9bbf4aa301"
-> >
-> > -#endif/* __AUUID_H__ */
-> > +#endif/* __ACUUID_H__ */
-> >
-> 
-> 
-> 
+I hope that the applied ontology will be clarified a bit more.
+
+
+>> How do you think about to add a link to a formal file format description?
+>
+> Oh, nice idea. Please contribute it :)
+
+Did you provide it (according to a RST include directive in the subsequent
+update step)?
+
+Can it be helpful to reorder any changes for the discussed patch series?
+
+Regards,
+Markus
