@@ -1,33 +1,27 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 28 Feb 2020 05:02:44 +0000
-Subject: [PATCH] Bluetooth: hci_h4: Fix a typo in a comment
-Message-Id: <20200228050244.25304-1-christophe.jaillet@wanadoo.fr>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Fri, 28 Feb 2020 07:43:36 +0000
+Subject: Re: [PATCH] Bluetooth: hci_h4: Fix a typo in a comment
+Message-Id: <E90C07DC-AE8C-4D5D-B887-329E784C0721@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200228050244.25304-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200228050244.25304-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: marcel@holtmann.org, johan.hedberg@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>, Bluez mailing list <linux-bluetooth@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-'transmittion' should be 'transmission'
+Hi Christophe,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/bluetooth/hci_h4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 'transmittion' should be 'transmission'
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> drivers/bluetooth/hci_h4.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
-index 0b84a05a730b..4b3b14a34794 100644
---- a/drivers/bluetooth/hci_h4.c
-+++ b/drivers/bluetooth/hci_h4.c
-@@ -83,7 +83,7 @@ static int h4_close(struct hci_uart *hu)
- 	return 0;
- }
- 
--/* Enqueue frame for transmittion (padding, crc, etc) */
-+/* Enqueue frame for transmission (padding, crc, etc) */
- static int h4_enqueue(struct hci_uart *hu, struct sk_buff *skb)
- {
- 	struct h4_struct *h4 = hu->priv;
--- 
-2.20.1
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
