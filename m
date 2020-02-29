@@ -1,40 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Feb 2020 17:51:33 +0000
-Subject: [PATCH] media: dvb: return -EREMOTEIO on i2c transfer failure.
-Message-Id: <20200210175133.479739-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 29 Feb 2020 20:15:31 +0000
+Subject: [PATCH] MAINTAINERS: adjust entry to refactoring smiapp.h
+Message-Id: <20200229201531.6004-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Krufky <mkrufky@linuxtv.org>, Thomas Gleixner <tglx@linutronix.de>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: linux-media@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 7cbeb2e1bf0c ("media: smiapp: Move definitions under driver
+directory") moved the definitions in include/media/i2c/smiapp.h into other
+files and removed include/media/i2c/smiapp.h.
 
-Currently when i2c transfers fail the error return -EREMOTEIO
-is assigned to err but then later overwritten when the tuner
-attach call is made.  Fix this by returning early with the
-error return code -EREMOTEIO on i2c transfer failure errors.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Addresses-Coverity: ("Unused value")
-Fixes: fbfee8684ff2 ("V4L/DVB (5651): Dibusb-mb: convert pll handling to properly use dvb-pll")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  warning: no file matches F: include/media/i2c/smiapp.h
+
+Remove MAINTAINER file entry to this removed file and while at it, update
+Sakari's email address in this section.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/usb/dvb-usb/dibusb-mb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sakari, please ack this patch.
+Mauro, please pick this patch on your branch for linux-next.
+applies cleanly on next-20200228
 
-diff --git a/drivers/media/usb/dvb-usb/dibusb-mb.c b/drivers/media/usb/dvb-usb/dibusb-mb.c
-index d4ea72bf09c5..5131c8d4c632 100644
---- a/drivers/media/usb/dvb-usb/dibusb-mb.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-mb.c
-@@ -81,7 +81,7 @@ static int dibusb_tuner_probe_and_attach(struct dvb_usb_adapter *adap)
+Sakari, I did not find an entry in mailmap to map your iki.fi mail address
+to your latest mail address. There are also three further entries with
+your iki.fi mail address in MAINTAINERS, that you could change to your
+intel address.
+
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09b04505e7c3..33c8932a6756 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15392,11 +15392,10 @@ S:	Odd Fixes
+ F:	drivers/net/ethernet/smsc/smc91x.*
  
- 	if (i2c_transfer(&adap->dev->i2c_adap, msg, 2) != 2) {
- 		err("tuner i2c write failed.");
--		ret = -EREMOTEIO;
-+		return -EREMOTEIO;
- 	}
- 
- 	if (adap->fe_adap[0].fe->ops.i2c_gate_ctrl)
+ SMIA AND SMIA++ IMAGE SENSOR DRIVER
+-M:	Sakari Ailus <sakari.ailus@iki.fi>
++M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/i2c/smiapp/
+-F:	include/media/i2c/smiapp.h
+ F:	drivers/media/i2c/smiapp-pll.c
+ F:	drivers/media/i2c/smiapp-pll.h
+ F:	include/uapi/linux/smiapp.h
 -- 
-2.25.0
+2.17.1
