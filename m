@@ -1,46 +1,38 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Wed, 12 Feb 2020 14:06:58 +0000
-Subject: Re: [PATCH] HID: alps: Fix an error handling path in 'alps_input_configured()'
-Message-Id: <nycvar.YFH.7.76.2002121506510.3144@cbobk.fhfr.pm>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 29 Feb 2020 00:12:43 +0000
+Subject: [PATCH] ACPI: video: remove redundant assignments to variable result
+Message-Id: <20200229001243.113176-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191204033525.10871-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191204033525.10871-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benjamin.tissoires@redhat.com, masaki.ota@jp.alps.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019, Christophe JAILLET wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> They are issues:
->    - if 'input_allocate_device()' fails and return NULL, there is no need
->      to free anything and 'input_free_device()' call is a no-op. It can
->      be axed.
->    - 'ret' is known to be 0 at this point, so we must set it to a
->      meaningful value before returning
-> 
-> Fixes: 2562756dde55 ("HID: add Alps I2C HID Touchpad-Stick support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/hid/hid-alps.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-> index ae79a7c66737..fa704153cb00 100644
-> --- a/drivers/hid/hid-alps.c
-> +++ b/drivers/hid/hid-alps.c
-> @@ -730,7 +730,7 @@ static int alps_input_configured(struct hid_device *hdev, struct hid_input *hi)
->  	if (data->has_sp) {
->  		input2 = input_allocate_device();
->  		if (!input2) {
-> -			input_free_device(input2);
-> +			ret = -ENOMEM;
->  			goto exit;
->  		}
+The variable result is being initialized with a value that is never
+read and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-Applied, thank you.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 15c5b272e698..bc96457c9e25 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -943,7 +943,7 @@ acpi_video_init_brightness(struct acpi_video_device *device)
+ 	int i, max_level = 0;
+ 	unsigned long long level, level_old;
+ 	struct acpi_video_device_brightness *br = NULL;
+-	int result = -EINVAL;
++	int result;
+ 
+ 	result = acpi_video_get_levels(device->dev, &br, &max_level);
+ 	if (result)
 -- 
-Jiri Kosina
-SUSE Labs
+2.25.0
