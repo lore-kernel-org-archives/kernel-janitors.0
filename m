@@ -1,35 +1,43 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Thu, 05 Mar 2020 23:11:09 +0000
-Subject: Re: [PATCH] net/mlx5e: Fix an IS_ERR() vs NULL check
-Message-Id: <9f205ed72a7a892ed8efda3a236bd533fc991c45.camel@mellanox.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 01 Mar 2020 15:57:48 +0000
+Subject: [PATCH] MAINTAINERS: adjust EFI entry to removing eboot.c
+Message-Id: <20200301155748.4788-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304142151.qivcobp6ngrynb2p@kili.mountain>
-         <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
-         <20200305080004.GA19839@kadam>
-In-Reply-To: <20200305080004.GA19839@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: Eli Cohen <eli@mellanox.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mark Bloch <markb@mellanox.com>, Paul Blakey <paulb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-T24gVGh1LCAyMDIwLTAzLTA1IGF0IDExOjAwICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBPbiBXZWQsIE1hciAwNCwgMjAyMCBhdCAwODozMToxM1BNICswMDAwLCBTYWVlZCBNYWhhbWVl
-ZCB3cm90ZToNCj4gPiBPbiBXZWQsIDIwMjAtMDMtMDQgYXQgMTc6MjIgKzAzMDAsIERhbiBDYXJw
-ZW50ZXIgd3JvdGU6DQo+ID4gPiBUaGUgZXN3X3Zwb3J0X3RibF9nZXQoKSBmdW5jdGlvbiByZXR1
-cm5zIGVycm9yIHBvaW50ZXJzIG9uIGVycm9yLg0KPiA+ID4gDQo+ID4gPiBGaXhlczogOTZlMzI2
-ODc4ZmE1ICgibmV0L21seDVlOiBFc3dpdGNoLCBVc2UgcGVyIHZwb3J0IHRhYmxlcw0KPiA+ID4g
-Zm9yDQo+ID4gPiBtaXJyb3JpbmciKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRl
-ciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+IA0KPiA+IEhpIERhbiB0aGUgcGF0Y2gg
-bG9va3MgZmluZSwgYnV0IHlvdSBkaWRuJ3QgY2MgbmV0ZGV2IG1haWxpbmcgbGlzdA0KPiA+IFR3
-byBvcHRpb25zOg0KPiA+IA0KPiA+IDEpIEkgY2FuIHBpY2sgdGhpcyBwYXRjaCB1cCBhbmQgcmVw
-b3N0IGl0IG15c2VsZiBpbiBhIGZ1dHVyZSBwdWxsDQo+ID4gcmVxdWVzdA0KPiANCj4gSSBhc3N1
-bWVkIHdlIHdvdWxkIGRvIHRoaXMsIGJlY2F1c2UgdGhlIG9yaWdpbmFsIHBhdGNoIGRpZG4ndCBo
-YXZlDQo+IERhdmUncyBzaWduZWQtb2ZmLWJ5Lg0KPiANCg0KV2UgbWFpbnRhaW4gdGhlIG5ldC1u
-ZXh0LW1seDUgYnJhbmNoIHVuZGVyIG5ldGRldiBtYWlsaW5nIGxpc3QuDQoNCj4gPiAyKSB5b3Ug
-Y2FuIHJlLXBvc3QgaXQgYW5kIGNjIG5ldGRldiBhbHNvIG1hcmsgaXQgZm9yIG5ldCBbUEFUQ0gN
-Cj4gPiBuZXRdDQo+IA0KPiBJZiB3ZSB3ZXJlIGdvaW5nIHRvIGdvIHRoYXQgcm91dGUgdGhlbiBp
-dCB3b3VsZCBoYXZlIHRvIFtQQVRDSCBuZXQtDQo+IG5leHRdDQo+IGJlY2F1c2UgaXQgZG9lc24n
-dCBhcHBseSB0byB0aGUgbmV0IHRyZWUuDQo+IA0KDQpJIHNlZSwgaSB3aWxsIHRha2UgaXQgbXlz
-ZWxmIHRvIG5ldC1uZXh0LW1seDUgYW5kIHdpbGwgc3VibWl0IHRvIG5ldC0NCm5leHQgc29vbiBp
-biBteSBuZXh0IHB1bGwgcmVxdWVzdCB0byBkYXZlLg0KDQpUaGFua3MsDQpTYWVlZC4NCg0K
+Commit c2d0b470154c ("efi/libstub/x86: Incorporate eboot.c into libstub")
+removed arch/x86/boot/compressed/eboot.[ch], but missed to adjust the
+MAINTAINERS entry.
+
+Since then, ./scripts/get_maintainer.pl --self-test complains:
+
+  warning: no file matches F: arch/x86/boot/compressed/eboot.[ch]
+
+Rectify EXTENSIBLE FIRMWARE INTERFACE (EFI) entry in MAINTAINERS.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Ard, please pick this patch for your linux-next branch.
+applies cleanly on next-20200228, do not apply on current master
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09b04505e7c3..4ce510b8467a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6383,7 +6383,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
+ S:	Maintained
+ F:	Documentation/admin-guide/efi-stub.rst
+ F:	arch/*/kernel/efi.c
+-F:	arch/x86/boot/compressed/eboot.[ch]
+ F:	arch/*/include/asm/efi.h
+ F:	arch/x86/platform/efi/
+ F:	drivers/firmware/efi/
+-- 
+2.17.1
