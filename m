@@ -1,73 +1,48 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 26 Mar 2020 23:54:26 +0000
-Subject: Re: [PATCH v2] bpf: fix build warning - missing prototype
-Message-Id: <20200326235426.ei6ae2z5ek6uq3tt@ast-mbp>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 02 Mar 2020 12:38:59 +0000
+Subject: Re: [PATCH] spi: bcm63xx-hsspi: Really keep pll clk enabled
+Message-Id: <20200302123859.GC4166@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="ZmUaFz6apKcXQszQ"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
- <20200324072231.5780-1-jpmenil@gmail.com>
-In-Reply-To: <20200324072231.5780-1-jpmenil@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jean-Philippe Menil <jpmenil@gmail.com>
-Cc: yhs@fb.com, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: f.fainelli@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, jonas.gorski@gmail.com, linux-arm-kernel@lists.infradead.org
 
-On Tue, Mar 24, 2020 at 08:22:31AM +0100, Jean-Philippe Menil wrote:
-> Fix build warnings when building net/bpf/test_run.o with W=1 due
-> to missing prototype for bpf_fentry_test{1..6}.
-> 
-> Declare prototypes in order to silence warnings.
-> 
-> Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
-> ---
->  net/bpf/test_run.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-> index d555c0d8657d..cdf87fb0b6eb 100644
-> --- a/net/bpf/test_run.c
-> +++ b/net/bpf/test_run.c
-> @@ -113,31 +113,37 @@ static int bpf_test_finish(const union bpf_attr *kattr,
->   * architecture dependent calling conventions. 7+ can be supported in the
->   * future.
->   */
-> +int noinline bpf_fentry_test1(int a);
->  int noinline bpf_fentry_test1(int a)
->  {
->  	return a + 1;
->  }
->  
-> +int noinline bpf_fentry_test2(int a, u64 b);
->  int noinline bpf_fentry_test2(int a, u64 b)
->  {
->  	return a + b;
->  }
->  
-> +int noinline bpf_fentry_test3(char a, int b, u64 c);
->  int noinline bpf_fentry_test3(char a, int b, u64 c)
->  {
->  	return a + b + c;
->  }
->  
-> +int noinline bpf_fentry_test4(void *a, char b, int c, u64 d);
->  int noinline bpf_fentry_test4(void *a, char b, int c, u64 d)
->  {
->  	return (long)a + b + c + d;
->  }
->  
-> +int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e);
->  int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
->  {
->  	return a + (long)b + c + d + e;
->  }
->  
-> +int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f);
->  int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
 
-That's a bit too much of "watery water".
-Have you considered
-__diag_push();
-__diag_ignore(GCC, "-Wwhatever specific flag will shut up this warn")
-__diag_pop();
-approach ?
-It will be self documenting as well.
+--ZmUaFz6apKcXQszQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Feb 28, 2020 at 10:38:38PM +0100, Christophe JAILLET wrote:
+
+> To be honest, I don't see why we need to keep pll clk, or hsspi clk
+> enabled during the lifetime of the driver. My understanding of the code is
+> that it is only used to get the 'speed_hz' value in the probe function.
+> This value is never refreshed afterwards.
+> I don't see the point in enabling/disabling the clks. I think that they
+> both could be disabled in the probe function, without the need to keep
+> track in the bcm63xx_hsspi structure, neither during pm cycles or the
+> remove fucntion.
+
+If the device has a clock there's a good chance it's needed for the
+device to operate and that disabling it will save a little power when
+the device isn't doing anything.
+
+--ZmUaFz6apKcXQszQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5c/mMACgkQJNaLcl1U
+h9Cwewf+LaiDuAFWakLpTKZ/xUwqWqdMeVhPJMgEYCToIfMYYsMsBLLvE57s71+Z
+Se4OYGwCbmz75sJq7KZTHEt7TStQ0Wfwtb2VTQ6e1nhoT0q6Vh/p0Xos0dapsFkw
+sERlnAbZzf0t9rrXQB6yLjBPnU9X8iS/tatAOYylTZb3g2KO31ZxT1/jg6op1+us
+bK4fcoLF+8W2G5leWAr9rn0YOTycey9CtBLnsyB6YUWGkUBx7rGhdW6sO2VWFcpy
+WkrryYV+AudPf1OU0PEtdS8acdzB6QCxIzTjyXwZXDyDlcYF9VVMrAuvMZy/XoPn
+rb3dzStyqbqmU+y0ZF4jWo+HDIeKig==
+=mNDy
+-----END PGP SIGNATURE-----
+
+--ZmUaFz6apKcXQszQ--
