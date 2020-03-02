@@ -1,90 +1,80 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Date: Thu, 26 Mar 2020 22:29:41 +0000
-Subject: Re: [PATCH 2/2] SUNRPC: Optimize 'svc_print_xprts()'
-Message-Id: <9AC34F25-68B7-4184-9A91-A6D026F6BA6F@oracle.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 02 Mar 2020 16:05:23 +0000
+Subject: Applied "spi: bcm63xx-hsspi: Really keep pll clk enabled" to the spi tree
+Message-Id: <applied-20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr>
- <EA5BCDB2-DB05-4B26-8635-E6F5C231DDC6@oracle.com>
- <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr>
- <87wo786o80.fsf@notabene.neil.brown.name>
- <2e2d1293-c978-3f1d-5a1e-dc43dc2ad06b@wanadoo.fr>
- <87r1xe7pvy.fsf@notabene.neil.brown.name>
-In-Reply-To: <87r1xe7pvy.fsf@notabene.neil.brown.name>
+In-Reply-To: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Neil Brown <neilb@suse.de>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: f.fainelli@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, bcm-kernel-feedback-list@broadcom.com, Jonas Gorski <jonas.gorski@gmail.com>, linux-arm-kernel@lists.infradead.org
 
+The patch
 
+   spi: bcm63xx-hsspi: Really keep pll clk enabled
 
-> On Mar 26, 2020, at 5:44 PM, NeilBrown <neilb@suse.de> wrote:
-> 
-> On Thu, Mar 26 2020, Christophe JAILLET wrote:
-> 
->> Le 25/03/2020 à 23:53, NeilBrown a écrit :
->>> Can I suggest something more like this:
->>> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
->>> index de3c077733a7..0292f45b70f6 100644
->>> --- a/net/sunrpc/svc_xprt.c
->>> +++ b/net/sunrpc/svc_xprt.c
->>> @@ -115,16 +115,9 @@ int svc_print_xprts(char *buf, int maxlen)
->>>  	buf[0] = '\0';
->>> 
->>>  	spin_lock(&svc_xprt_class_lock);
->>> -	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
->>> -		int slen;
->>> -
->>> -		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
->>> -		slen = strlen(tmpstr);
->>> -		if (len + slen > maxlen)
->>> -			break;
->>> -		len += slen;
->>> -		strcat(buf, tmpstr);
->>> -	}
->>> +	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list)
->>> +		len += scnprintf(buf + len, maxlen - len, "%s %d\n",
->>> +				 xcl->xcl_name, xcl->xcl_max_payload);
->>>  	spin_unlock(&svc_xprt_class_lock);
->>> 
->>>  	return len;
->>> 
->>> NeilBrown
->> 
->> Hi,
->> 
->> this was what I suggested in the patch:
->>     ---
->>     This patch should have no functional change.
->>     We could go further, use scnprintf and write directly in the 
->> destination
->>     buffer. However, this could lead to a truncated last line.
->>     ---
-> 
-> Sorry - I missed that.
-> So add
-> 
-> end = strrchr(tmpstr, '\n');
-> if (end)
->    end[1] = 0;
-> else
->    tmpstr[0] = 0;
-> 
-> or maybe something like
-> 	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
-> 		int l = snprintf(buf + len, maxlen - len, "%s %d\n",
-> 				 xcl->xcl_name, xcl->xcl_max_payload);
->                if (l < maxlen - len)
->                	len += l;
->        }
->        buf[len] = 0;
-> 
-> There really is no need to have the secondary buffer, and I think doing
-> so just complicates the code.
+has been applied to the spi tree at
 
-In the interest of getting this fix into the upcoming merge window, let's
-stick with the temporary buffer approach. Thanks!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---
-Chuck Lever
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 51bddd4501bc414b8b1e8f4d096b4a5304068169 Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Feb 2020 22:38:38 +0100
+Subject: [PATCH] spi: bcm63xx-hsspi: Really keep pll clk enabled
+
+The purpose of commit 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+was to keep the pll clk enabled through the lifetime of the device.
+
+In order to do that, some 'clk_prepare_enable()'/'clk_disable_unprepare()'
+calls have been added in the error handling path of the probe function, in
+the remove function and in the suspend and resume functions.
+
+However, a 'clk_disable_unprepare()' call has been unfortunately left in
+the probe function. So the commit seems to be more or less a no-op.
+
+Axe it now, so that the pll clk is left enabled through the lifetime of
+the device, as described in the commit.
+
+Fixes: 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Jonas Gorski <jonas.gorski@gmail.com>
+Link: https://lore.kernel.org/r/20200228213838.7124-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-bcm63xx-hsspi.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
+index 7327309ea3d5..6c235306c0e4 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -366,7 +366,6 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
+ 			goto out_disable_clk;
+ 
+ 		rate = clk_get_rate(pll_clk);
+-		clk_disable_unprepare(pll_clk);
+ 		if (!rate) {
+ 			ret = -EINVAL;
+ 			goto out_disable_pll_clk;
+-- 
+2.20.1
