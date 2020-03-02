@@ -1,53 +1,42 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 05 Mar 2020 17:16:08 +0000
-Subject: [PATCH AUTOSEL 4.4 3/7] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-Message-Id: <20200305171612.30555-3-sashal@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 02 Mar 2020 09:10:08 +0000
+Subject: Re: [PATCH v3] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <385d2d20-5f5d-529f-471c-89d0b4c3efd7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200305171612.30555-1-sashal@kernel.org>
-In-Reply-To: <20200305171612.30555-1-sashal@kernel.org>
+References: <158313621831.3082.9886161529613724376.stgit@devnote2>
+ <158313622831.3082.8237132211731864948.stgit@devnote2>
+In-Reply-To: <158313622831.3082.8237132211731864948.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+…
+> +++ b/Documentation/admin-guide/bootconfig.rst
+…
+> +If you think that kernel/init options becomes too long to write in boot-loader
+> +configuration file or you want to comment on each option, the boot
+> +configuration may be suitable.
 
-[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
+I have got still understanding difficulties for this wording.
+How do you choose to distribute settings between the mentioned places?
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
 
-'release_progmem()' is only a call to 'kfree()'.
+> +Also, some features may depend on the boot configuration, and it has own
+> +root key.
 
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
+Will the key hierarchy need any further clarification?
 
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/kernel/vpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 9067b651c7a2d..ca93984ff5a6e 100644
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
- 
--- 
-2.20.1
+> + # make O=<builddir> -C tools/bootconfig
+
+Can the order of these parameters matter?
+
+
+> +The boot configuration syntax is a simple structured key-value.
+
+Would you like to discuss any extensions for such software?
+
+Regards,
+Markus
