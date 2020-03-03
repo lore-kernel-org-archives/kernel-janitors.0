@@ -1,25 +1,50 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 26 Mar 2020 22:54:07 +0000
-Subject: Re: [PATCH] parse-maintainers: Do not sort section content by default
-Message-Id: <CAHk-=wg3=D0uFHXFsEz2CAvFGTb8RV1KJH-eOCqR5JUQGvOqeA@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 03 Mar 2020 17:42:54 +0000
+Subject: [PATCH 5.5 110/176] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
+Message-Id: <20200303174317.555620066@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
- <20200304131035.731a3947@lwn.net> <alpine.DEB.2.21.2003042145340.2698@felia>
- <e43f0cf0117fbfa8fe8c7e62538fd47a24b4657a.camel@perches.com>
- <alpine.DEB.2.21.2003062214500.5521@felia> <20200307110154.719572e4@onda.lan>
- <0d5503e1d864f2588e756ae590ff8935e11bf9d6.camel@perches.com>
- <4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com> <00d11cf766237d9c12c2a06458962c4bae84fa78.camel@perches.com>
-In-Reply-To: <00d11cf766237d9c12c2a06458962c4bae84fa78.camel@perches.com>
+References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 9:47 AM Joe Perches <joe@perches.com> wrote:
->
-> Linus? ping?
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied and pushed out.
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-            Linus
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/mips/kernel/vpe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
