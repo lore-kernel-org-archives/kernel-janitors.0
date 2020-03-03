@@ -1,41 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Mar 2020 10:39:03 +0000
-Subject: [PATCH][next] ASoc: amd: use correct format specifier for a long int
-Message-Id: <20200303103903.9259-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Mar 2020 12:33:21 +0000
+Subject: Re: [PATCH][next] ASoc: amd: use correct format specifier for a long int
+Message-Id: <20200303123321.GC3866@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="JgQwtEuHJzHdouWu"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200303103903.9259-1-colin.king@canonical.com>
+In-Reply-To: <20200303103903.9259-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently the format specifier %d is being used for a long int. Fix
-the by using %ld instead.
+--JgQwtEuHJzHdouWu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes warning:
-sound/soc/amd/acp3x-rt5682-max9836.c:341:23: warning: format '%d'
- expects argument of type 'int', but argument 3 has type
- 'long int' [-Wformat=]
+On Tue, Mar 03, 2020 at 10:39:03AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Currently the format specifier %d is being used for a long int. Fix
+> the by using %ld instead.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/amd/acp3x-rt5682-max9836.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Someone already sent a fix for this.
 
-diff --git a/sound/soc/amd/acp3x-rt5682-max9836.c b/sound/soc/amd/acp3x-rt5682-max9836.c
-index 511b8b1722aa..521c9ab4c29c 100644
---- a/sound/soc/amd/acp3x-rt5682-max9836.c
-+++ b/sound/soc/amd/acp3x-rt5682-max9836.c
-@@ -338,7 +338,7 @@ static int acp3x_probe(struct platform_device *pdev)
- 
- 	dmic_sel = devm_gpiod_get(&pdev->dev, "dmic", GPIOD_OUT_LOW);
- 	if (IS_ERR(dmic_sel)) {
--		dev_err(&pdev->dev, "DMIC gpio failed err=%d\n",
-+		dev_err(&pdev->dev, "DMIC gpio failed err=%ld\n",
- 			PTR_ERR(dmic_sel));
- 		return PTR_ERR(dmic_sel);
- 	}
--- 
-2.25.0
+--JgQwtEuHJzHdouWu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5eTpEACgkQJNaLcl1U
+h9AKuQf/U01aci745PIHD/iQ86xIE2c0Ph5wIDFYgVS45kaTlPwBGX6iX72t/5tT
+/BesrakIoU6wHxO5wNQst+QuxCauSfQTqwuqtA4k4P/sizM7M5NPcoxeM/uECmGf
+Z91qqtfZq492X6yWceLwhCt9SA+5xzJ1bKdeETaOGaiJ594qhD/4+22WjhuibSF5
+FHcllXvFPVKZCVGB0QOAVtUpBK0NQfRBsjshPlNLwMsop+dXJSfI3YhrhiIq5+sS
+41UM1RDsJu3jGE6Lld3dBl5BgUdxR5yxudSuCqPtliEYnKyINev6qqWrrGoiwZ4B
+SbuwgxiOqB11TS0lW97afaTVtdAETQ==
+=tEk3
+-----END PGP SIGNATURE-----
+
+--JgQwtEuHJzHdouWu--
