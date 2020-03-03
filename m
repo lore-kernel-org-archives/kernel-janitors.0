@@ -1,36 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Mar 2020 16:13:49 +0000
-Subject: [PATCH] soc: fsl: qe: clean up an indentation issue
-Message-Id: <20200327161349.284679-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 03 Mar 2020 17:43:45 +0000
+Subject: [PATCH 4.19 54/87] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
+Message-Id: <20200303174355.218566706@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-There is a statement that not indented correctly, remove the
-extraneous space.
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/soc/fsl/qe/ucc.c | 2 +-
+ arch/mips/kernel/vpe.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-index d6c93970df4d..cac0fb7693a0 100644
---- a/drivers/soc/fsl/qe/ucc.c
-+++ b/drivers/soc/fsl/qe/ucc.c
-@@ -519,7 +519,7 @@ int ucc_set_tdm_rxtx_clk(u32 tdm_num, enum qe_clock clock,
- 	int clock_bits;
- 	u32 shift;
- 	struct qe_mux __iomem *qe_mux_reg;
--	 __be32 __iomem *cmxs1cr;
-+	__be32 __iomem *cmxs1cr;
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
  
- 	qe_mux_reg = &qe_immr->qmx;
- 
--- 
-2.25.1
