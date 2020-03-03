@@ -1,31 +1,37 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Wed, 25 Mar 2020 02:36:58 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust entry to ICST clocks YAML schema creation
-Message-Id: <158510381898.125146.5862992017032580482@swboyd.mtv.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Mar 2020 10:16:08 +0000
+Subject: [PATCH] hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT()
+Message-Id: <20200303101608.kqjwfcazu2ylhi2a@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200323184501.5756-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200323184501.5756-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+To: Jean Delvare <jdelvare@suse.com>, "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Lukas Bulwahn (2020-03-23 11:45:01)
-> Commit 78c7d8f96b6f ("dt-bindings: clock: Create YAML schema for ICST
-> clocks") transformed arm-integrator.txt into arm,syscon-icst.yaml, but did
-> not adjust the reference to that file in the ARM INTEGRATOR, VERSATILE AND
-> REALVIEW SUPPORT entry in MAINTAINERS.
-> 
-> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches \
->   F: Documentation/devicetree/bindings/clock/arm-integrator.txt
-> 
-> Update the file entry in MAINTAINERS to the new transformed yaml file.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+This is only called from adt7462_update_device().  The caller expects it
+to return zero on error.  I fixed a similar issue earlier in commit
+a4bf06d58f21 ("hwmon: (adt7462) ADT7462_REG_VOLT_MAX() should return 0")
+but I missed this one.
 
-Mauro got here already
+Fixes: c0b4e3ab0c76 ("adt7462: new hwmon driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hwmon/adt7462.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- https://lkml.kernel.org/r/491d2928a47f59da3636bc63103a5f63fec72b1a.1584966325.git.mchehab+huawei@kernel.org
+diff --git a/drivers/hwmon/adt7462.c b/drivers/hwmon/adt7462.c
+index 9632e2e3c4bb..319a0519ebdb 100644
+--- a/drivers/hwmon/adt7462.c
++++ b/drivers/hwmon/adt7462.c
+@@ -413,7 +413,7 @@ static int ADT7462_REG_VOLT(struct adt7462_data *data, int which)
+ 			return 0x95;
+ 		break;
+ 	}
+-	return -ENODEV;
++	return 0;
+ }
+ 
+ /* Provide labels for sysfs */
+-- 
+2.11.0
