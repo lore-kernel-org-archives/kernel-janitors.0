@@ -1,79 +1,58 @@
-From: Michel Lespinasse <walken@google.com>
-Date: Thu, 26 Mar 2020 22:17:52 +0000
-Subject: Re: [PATCH 3/8] mmap locking API: use coccinelle to convert mmap_sem rwsem call sites
-Message-Id: <CANN689FtZ3VRzAJdHuSP2k=5r9p9QUe08caJpkuRjeLV=hQ9Kg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Mar 2020 10:13:06 +0000
+Subject: [PATCH] Input: raydium_i2c_ts - fix error codes in raydium_i2c_boot_trigger()
+Message-Id: <20200303101306.4potflz7na2nn3od@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b1c878c0-878a-6684-7cac-d1f4409295f6@web.de>
-In-Reply-To: <b1c878c0-878a-6684-7cac-d1f4409295f6@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, Davidlohr Bueso <dave@stgolabs.net>, Hugh Dickins <hughd@google.com>, Jerome Glisse <jglisse@redhat.com>, Laurent Dufour <ldufour@linux.ibm.com>, Liam Howlett <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Ying Han <yinghan@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeffrey Lin <jeffrey.lin@rad-ic.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Alexios Zavras <alexios.zavras@intel.com>, Allison Randal <allison@lohutok.net>, Rob Herring <robh@kernel.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-That seems to work too. I'm quite noobish in using coccinelle, so I
-wouldn't have been able to come up with that version on my own.
+These functions are supposed to return negative error codes but instead
+it returns true on failure and false on success.  The error codes are
+eventually propogated back to user space.
 
-On Thu, Mar 26, 2020 at 6:30 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > This change converts the existing mmap_sem rwsem calls to use the new
-> > mmap locking API instead.
-> >
-> > The change is generated using coccinelle with the following rules:
->
-> Do you find the following script variant more succinct together
-> with the usage of a disjunction in a single SmPL rule?
->
->
-> @replacement@
-> expression x;
-> @@
-> (
-> -init_rwsem
-> +mmap_init_lock
-> |
-> -down_write
-> +mmap_write_lock
-> |
-> -down_write_killable
-> +mmap_write_lock_killable
-> |
-> -down_write_trylock
-> +mmap_write_trylock
-> |
-> -up_write
-> +mmap_write_unlock
-> |
-> -downgrade_write
-> +mmap_downgrade_write_lock
-> |
-> -down_read
-> +mmap_read_lock
-> |
-> -down_read_killable
-> +mmap_read_lock_killable
-> |
-> -down_read_trylock
-> +mmap_read_trylock
-> |
-> -up_read
-> +mmap_read_unlock
-> |
-> -rwsem_is_locked
-> +mmap_is_locked
-> )
->  (
-> - &
->   x
-> - ->mmap_sem
->  )
->
->
-> Regards,
-> Markus
+Fixes: 48a2b783483b ("Input: add Raydium I2C touchscreen driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/input/touchscreen/raydium_i2c_ts.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-
+diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
+index 6ed9f22e6401..fe245439adee 100644
+--- a/drivers/input/touchscreen/raydium_i2c_ts.c
++++ b/drivers/input/touchscreen/raydium_i2c_ts.c
+@@ -432,7 +432,7 @@ static int raydium_i2c_write_object(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static bool raydium_i2c_boot_trigger(struct i2c_client *client)
++static int raydium_i2c_boot_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[7][6] = {
+ 		{ 0x08, 0x0C, 0x09, 0x00, 0x50, 0xD7 },
+@@ -457,10 +457,10 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+-static bool raydium_i2c_fw_trigger(struct i2c_client *client)
++static int raydium_i2c_fw_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[5][11] = {
+ 		{ 0, 0x09, 0x71, 0x0C, 0x09, 0x00, 0x50, 0xD7, 0, 0, 0 },
+@@ -483,7 +483,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+ static int raydium_i2c_check_path(struct i2c_client *client)
 -- 
-Michel "Walken" Lespinasse
-A program is never fully debugged until the last user dies.
+2.11.0
