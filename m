@@ -1,39 +1,36 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Fri, 20 Mar 2020 23:32:14 +0000
-Subject: Re: [PATCH v2] MAINTAINERS: adjust to filesystem doc ReST conversion
-Message-Id: <20200320173214.1cca3738@lwn.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Mar 2020 10:17:16 +0000
+Subject: [PATCH] thunderbolt: Fix error code in tb_port_is_width_supported()
+Message-Id: <20200303101716.uf6l62oavfqmf6hm@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200314175030.10436-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200314175030.10436-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas Noever <andreas.noever@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Michael Jamet <michael.jamet@intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 14 Mar 2020 18:50:30 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+This function is type bool, and it's supposed to return true on success. 
+Unfortunately, this path takes negative error codes and casts them to
+bool (true) so it's treated as success instead of failure.
 
-> Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
-> ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
-> converts many Documentation/filesystems/ files to ReST.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains with 27
-> warnings on Documentation/filesystems/ of this kind:
-> 
->   warning: no file matches F: Documentation/filesystems/...
-> 
-> Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
-> patch series and address the 27 warnings.
-> 
-> Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> v1 -> v2:
-> Patch v2 is now based on today's docs-next (now with base-commit below)
-> 
-> Jonathan, pick pick this patch v2 for docs-next.
+Fixes: 91c0c12080d0 ("thunderbolt: Add support for lane bonding")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/thunderbolt/switch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've done that, thanks.
-
-jon
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 7d6ecc342508..a2ce99051c51 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -954,7 +954,7 @@ static bool tb_port_is_width_supported(struct tb_port *port, int width)
+ 	ret = tb_port_read(port, &phy, TB_CFG_PORT,
+ 			   port->cap_phy + LANE_ADP_CS_0, 1);
+ 	if (ret)
+-		return ret;
++		return false;
+ 
+ 	widths = (phy & LANE_ADP_CS_0_SUPPORTED_WIDTH_MASK) >>
+ 		LANE_ADP_CS_0_SUPPORTED_WIDTH_SHIFT;
+-- 
+2.11.0
