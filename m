@@ -1,26 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Mar 2020 22:51:13 +0000
-Subject: Re: [PATCH] net: systemport: fix index check to avoid an array out of bounds access
-Message-Id: <20200312.155113.707852640601289044.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Mar 2020 10:18:58 +0000
+Subject: [PATCH] ASoC: SOF: Fix snd_sof_ipc_stream_posn()
+Message-Id: <20200303101858.ytehbrivocyp3cnf@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200312150430.1136618-1-colin.king@canonical.com>
-In-Reply-To: <20200312150430.1136618-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>, alsa-devel@alsa-project.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Keyon Jie <yang.jie@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Slawomir Blauciak <slawomir.blauciak@linux.intel.com>, Mark Brown <broonie@kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 12 Mar 2020 15:04:30 +0000
+We're passing "&posn" instead of "posn" so it ends up corrupting
+memory instead of doing something useful.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the bounds check on index is off by one and can lead to
-> an out of bounds access on array priv->filters_loc when index is
-> RXCHK_BRCM_TAG_MAX.
-> 
-> Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 53e0c72d98ba ("ASoC: SOF: Add support for IPC IO between DSP and Host")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/sof/ipc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied and queued up for -stable, thanks.
+diff --git a/sound/soc/sof/ipc.c b/sound/soc/sof/ipc.c
+index 22d296f95761..d6bf53dcd80b 100644
+--- a/sound/soc/sof/ipc.c
++++ b/sound/soc/sof/ipc.c
+@@ -524,7 +524,7 @@ int snd_sof_ipc_stream_posn(struct snd_soc_component *scomp,
+ 
+ 	/* send IPC to the DSP */
+ 	err = sof_ipc_tx_message(sdev->ipc,
+-				 stream.hdr.cmd, &stream, sizeof(stream), &posn,
++				 stream.hdr.cmd, &stream, sizeof(stream), posn,
+ 				 sizeof(*posn));
+ 	if (err < 0) {
+ 		dev_err(sdev->dev, "error: failed to get stream %d position\n",
+-- 
+2.11.0
