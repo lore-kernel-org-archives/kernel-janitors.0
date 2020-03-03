@@ -1,46 +1,50 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 25 Mar 2020 07:04:40 +0000
-Subject: [PATCH 1/2] SUNRPC: Fix a potential buffer overflow in 'svc_print_xprts()'
-Message-Id: <20200325070440.21988-1-christophe.jaillet@wanadoo.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 03 Mar 2020 17:43:12 +0000
+Subject: [PATCH 5.4 094/152] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
+Message-Id: <20200303174313.271395649@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trond.myklebust@hammerspace.com, anna.schumaker@netapp.com, bfields@fieldses.org, chuck.lever@oracle.com, davem@davemloft.net, kuba@kernel.org, gnb@sgi.com, neilb@suse.de, tom@opengridcomputing.com
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'maxlen' is the total size of the destination buffer. There is only one
-caller and this value is 256.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-When we compute the size already used and what we would like to add in
-the buffer, the trailling NULL character is not taken into account.
-However, this trailling character will be added by the 'strcat' once we
-have checked that we have enough place.
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-So, there is a off-by-one issue and 1 byte of the stack could be
-erroneously overwridden.
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
 
-Take into account the trailling NULL, when checking if there is enough
-place in the destination buffer.
+'release_progmem()' is only a call to 'kfree()'.
 
-Fixes: dc9a16e49dbba ("svc: Add /proc/sys/sunrpc/transport files")
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sunrpc/svc_xprt.c | 2 +-
+ arch/mips/kernel/vpe.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-index d53259346235..df39e7b8b06c 100644
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -120,7 +120,7 @@ int svc_print_xprts(char *buf, int maxlen)
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
  
- 		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
- 		slen = strlen(tmpstr);
--		if (len + slen > maxlen)
-+		if (len + slen >= maxlen)
- 			break;
- 		len += slen;
- 		strcat(buf, tmpstr);
--- 
-2.20.1
