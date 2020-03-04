@@ -1,53 +1,43 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 28 Mar 2020 07:30:40 +0000
-Subject: [PATCH] RDMA/ocrdma: Fix an off-by-one issue in 'ocrdma_add_stat'
-Message-Id: <20200328073040.24429-1-christophe.jaillet@wanadoo.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 04 Mar 2020 10:47:17 +0000
+Subject: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
+Message-Id: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: selvin.xavier@broadcom.com, devesh.sharma@broadcom.com, dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org, colin.king@canonical.com, roland@purestorage.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Marcel Holtmann <marcel@holtmann.org>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>, linux-bluetooth@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-There is an off-by-one issue when checking if there is enough space in the
-output buffer, because we must keep some place for a final '\0'.
+Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
+renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
 
-While at it:
-   - Use 'scnprintf' instead of 'snprintf' in order to avoid a superfluous
-    'strlen'
-   - avoid some useless initializations
-   - avoida hard coded buffer size that can be computed at built time.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Fixes: a51f06e1679e ("RDMA/ocrdma: Query controller information")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+  warning: no file matches F: Documentation/networking/6lowpan.txt
+
+Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-The '\0' comes from memset(..., 0, ...) in all callers.
-This could be also avoided if needed.
----
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Mauro, please ack.
+Marcel, please pick for bluetooth-next.
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-index 5f831e3bdbad..614a449e6b87 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-@@ -49,13 +49,12 @@ static struct dentry *ocrdma_dbgfs_dir;
- static int ocrdma_add_stat(char *start, char *pcur,
- 				char *name, u64 count)
- {
--	char buff[128] = {0};
--	int cpy_len = 0;
-+	char buff[128];
-+	int cpy_len;
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e19b275f2ac2..d064049aad1b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -176,7 +176,7 @@ L:	linux-wpan@vger.kernel.org
+ S:	Maintained
+ F:	net/6lowpan/
+ F:	include/net/6lowpan.h
+-F:	Documentation/networking/6lowpan.txt
++F:	Documentation/networking/6lowpan.rst
  
--	snprintf(buff, 128, "%s: %llu\n", name, count);
--	cpy_len = strlen(buff);
-+	cpy_len = scnprintf(buff, sizeof(buff), "%s: %llu\n", name, count);
- 
--	if (pcur + cpy_len > start + OCRDMA_MAX_DBGFS_MEM) {
-+	if (pcur + cpy_len >= start + OCRDMA_MAX_DBGFS_MEM) {
- 		pr_err("%s: No space in stats buff\n", __func__);
- 		return 0;
- 	}
+ 6PACK NETWORK DRIVER FOR AX.25
+ M:	Andreas Koensgen <ajk@comnets.uni-bremen.de>
 -- 
-2.20.1
+2.17.1
