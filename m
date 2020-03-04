@@ -1,36 +1,49 @@
-From: Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Date: Mon, 16 Mar 2020 08:05:28 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to MCAN MMIO schema conversion
-Message-Id: <28f8b502-1f33-1da2-e2b8-3a727db58eea@st.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 04 Mar 2020 16:03:59 +0000
+Subject: [PATCH] MAINTAINERS: adjust to trusted keys subsystem creation
+Message-Id: <20200304160359.16809-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200315075356.8596-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200315075356.8596-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Dan Murphy <dmurphy@ti.com>, Sriram Dash <sriram.dash@samsung.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sumit Garg <sumit.garg@linaro.org>, James Bottomley <jejb@linux.ibm.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-DQoNCk9uIDMvMTUvMjAgODo1MyBBTSwgTHVrYXMgQnVsd2FobiB3cm90ZToNCj4gQ29tbWl0IDgy
-NDY3NGI1OWY3MiAoImR0LWJpbmRpbmdzOiBuZXQ6IGNhbjogQ29udmVydCBNX0NBTiB0byBqc29u
-LXNjaGVtYSIpDQo+IG1pc3NlZCB0byBhZGp1c3QgdGhlIE1DQU4gTU1JTyBERVZJQ0UgRFJJVkVS
-IGVudHJ5IGluIE1BSU5UQUlORVJTLg0KPg0KPiBTaW5jZSB0aGVuLCAuL3NjcmlwdHMvZ2V0X21h
-aW50YWluZXIucGwgLS1zZWxmLXRlc3QgY29tcGxhaW5zOg0KPg0KPiAgICB3YXJuaW5nOiBubyBm
-aWxlIG1hdGNoZXMgXA0KPiAgICBGOiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-bmV0L2Nhbi9tX2Nhbi50eHQNCj4NCj4gVXBkYXRlIE1BSU5UQUlORVJTIGVudHJ5IHRvIGxvY2F0
-aW9uIG9mIGNvbnZlcnRlZCBzY2hlbWEuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IEx1a2FzIEJ1bHdh
-aG4gPGx1a2FzLmJ1bHdhaG5AZ21haWwuY29tPg0KUmV2aWV3ZWQtYnk6IEJlbmphbWluIEdhaWdu
-YXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBzdC5jb20+DQoNClRoYW5rcw0KPiAtLS0NCj4gYXBwbGll
-cyBjbGVhbmx5IG9uIG5leHQtMjAyMDAzMTMNCj4NCj4gQmVuamFtaW4sIHBsZWFzZSBhY2suDQo+
-IFJvYiwgcGxlYXNlIHBpY2sgdGhpcyBwYXRjaCAoaXQgaXMgbm90IHVyZ2VudCwgdGhvdWdoKS4N
-Cj4NCj4gICBNQUlOVEFJTkVSUyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
-b24oKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIvTUFJ
-TlRBSU5FUlMNCj4gaW5kZXggMzJhOTVkMTYyZjA2Li5lYmMzZDkxMjk0YzYgMTAwNjQ0DQo+IC0t
-LSBhL01BSU5UQUlORVJTDQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC0xMDMyMyw3ICsxMDMy
-Myw3IEBAIE06CURhbiBNdXJwaHkgPGRtdXJwaHlAdGkuY29tPg0KPiAgIE06CVNyaXJhbSBEYXNo
-IDxzcmlyYW0uZGFzaEBzYW1zdW5nLmNvbT4NCj4gICBMOglsaW51eC1jYW5Admdlci5rZXJuZWwu
-b3JnDQo+ICAgUzoJTWFpbnRhaW5lZA0KPiAtRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL25ldC9jYW4vbV9jYW4udHh0DQo+ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvbmV0L2Nhbi9ib3NjaCxtX2Nhbi55YW1sDQo+ICAgRjoJZHJpdmVycy9uZXQvY2Fu
-L21fY2FuL21fY2FuLmMNCj4gICBGOglkcml2ZXJzL25ldC9jYW4vbV9jYW4vbV9jYW4uaA0KPiAg
-IEY6CWRyaXZlcnMvbmV0L2Nhbi9tX2Nhbi9tX2Nhbl9wbGF0Zm9ybS5jDQo
+Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
+renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
+to trusted-keys/trusted_tpm1.c in security/keys/.
+
+Since then, ./scripts/get_maintainer.pl --self-test complains:
+
+  warning: no file matches F: security/keys/trusted.c
+  warning: no file matches F: include/keys/trusted.h
+
+Rectify the KEYS-TRUSTED entry in MAINTAINERS now.
+
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Sumit, please ack.
+Jarkko, please pick this patch.
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5c755e03ddee..cf389058ca76 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9276,8 +9276,8 @@ L:	keyrings@vger.kernel.org
+ S:	Supported
+ F:	Documentation/security/keys/trusted-encrypted.rst
+ F:	include/keys/trusted-type.h
+-F:	security/keys/trusted.c
+-F:	include/keys/trusted.h
++F:	include/keys/trusted_tpm.h
++F:	security/keys/trusted-keys/trusted_tpm1.c
+ 
+ KEYS/KEYRINGS
+ M:	David Howells <dhowells@redhat.com>
+-- 
+2.17.1
