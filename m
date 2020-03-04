@@ -1,72 +1,48 @@
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 12 Mar 2020 12:06:23 +0000
-Subject: Re: [PATCH] lib/stackdepot.c: fix a condition in stack_depot_fetch()
-Message-Id: <CAG_fn=WP0xeCaWpWzhzvT-uxW4w1dvVvxZ=yBGKGTNFwjD=gJw@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 04 Mar 2020 21:26:00 +0000
+Subject: [PATCH v2] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
+Message-Id: <20200304212600.6172-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200312113006.GA20562@mwanda>
-In-Reply-To: <20200312113006.GA20562@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Miles Chen <miles.chen@mediatek.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chen-Yu Tsai <wens@csie.org>, Yangtao Li <tiny.windzz@gmail.com>, Maxime Ripard <maxime@cerno.tech>, Rob Herring <robh@kernel.org>
+Cc: linux-pm@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Thu, Mar 12, 2020 at 12:30 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We should check for a NULL pointer first before adding the offset.
-> Otherwise if the pointer is NULL and the offset is non-zero, it will
-> lead to an Oops.
+Commit b30d8cf5e171 ("dt-bindings: opp: Convert Allwinner H6 OPP to a
+schema") converted in Documentation/devicetree/bindings/opp/ the file
+sun50i-nvmem-cpufreq.txt to allwinner,sun50i-h6-operating-points.yaml.
 
- Thanks!
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-> Fixes: d45048e65a59 ("lib/stackdepot.c: check depot_index before accessing the stack slab")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+  warning: no file matches \
+  F: Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
 
-Acked-by: Alexander Potapenko <glider@google.com>
+Adjust the file pattern in the ALLWINNER CPUFREQ DRIVER entry.
 
-> ---
->  lib/stackdepot.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-> index da5d1880bf34..2caffc64e4c8 100644
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -207,18 +207,16 @@ unsigned int stack_depot_fetch(depot_stack_handle_t handle,
->         size_t offset = parts.offset << STACK_ALLOC_ALIGN;
->         struct stack_record *stack;
->
-> +       *entries = NULL;
->         if (parts.slabindex > depot_index) {
->                 WARN(1, "slab index %d out of bounds (%d) for stack id %08x\n",
->                         parts.slabindex, depot_index, handle);
-> -               *entries = NULL;
->                 return 0;
->         }
->         slab = stack_slabs[parts.slabindex];
-> -       stack = slab + offset;
-> -       if (!stack) {
-> -               *entries = NULL;
-> +       if (!slab)
->                 return 0;
-> -       }
-> +       stack = slab + offset;
->
->         *entries = stack->entries;
->         return stack->size;
-> --
-> 2.20.1
->
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Changes to v1:
+  - do not include new maintainers because it is not needed.
 
+Maxime, Chen-Yu, Yangtao, please ack.
+Rob, please pick this patch.
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6158a143a13e..9402b05630f9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -693,7 +693,7 @@ ALLWINNER CPUFREQ DRIVER
+ M:	Yangtao Li <tiny.windzz@gmail.com>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
++F:	Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+ F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
+ 
+ ALLWINNER CRYPTO DRIVERS
 -- 
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Straße, 33
-80636 München
-
-Geschäftsführer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+2.17.1
