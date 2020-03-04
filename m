@@ -1,62 +1,71 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Fri, 06 Mar 2020 14:04:06 +0000
-Subject: Re: [PATCH v5.1] Documentation: bootconfig: Update boot configuration documentation
-Message-Id: <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Mar 2020 14:24:31 +0000
+Subject: [PATCH net] net: nfc: fix bounds checking bugs on "pipe"
+Message-Id: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
-        <158341540688.4236.11231142256496896074.stgit@devnote2>
-        <f3c51b0a-2a55-6523-96e2-4f9ef0635d9f@web.de>
-        <20200306105107.afba066a97db1eb12f290aff@kernel.org>
-        <58f4d6b3-ce3d-d1a5-aa0f-c31c1bbec091@web.de>
-In-Reply-To: <58f4d6b3-ce3d-d1a5-aa0f-c31c1bbec091@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-doc@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S. Miller" <davem@davemloft.net>, Christophe Ricard <christophe.ricard@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Allison Randal <allison@lohutok.net>, netdev@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, kernel-janitors@vger.kernel.org
 
-On Fri, 6 Mar 2020 10:34:30 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
+corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
+("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
+added range checks on "pipe".
 
-> > If you think you have "any more" update candidates, feel free to make
-> > an update "patch" and send to us.
-> 
-> I pointed a few change possibilities out already.
+The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
+It's in the 0-255 range.  We're using it as the array index into the
+hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
 
-I can not respond to requests only for possibility.
+Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/nfc/hci/core.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-> > That will be the next step.
-> 
-> I got the impression that we are in the process of constructing another patch together
-> which will fix known wording weaknesses.
-
-Would you mean the broken EBNF part? Yeah, maybe, but it is another story.
-I decided to drop it this time.
-You can refine it but please use better format instead of such incomplete one.
-
-> By the way:
-> I wonder about the shown version identifier.
-> Will the patch numbering need also further considerations?
-
-No.
-
-> >> …
-> >>> +++ b/Documentation/admin-guide/bootconfig.rst
-> >> …
-> >>> +If you think that kernel/init options become too long to write in boot-loader
-> >>> +configuration file or you want to comment on each option, the boot
-> >>> +configuration may be suitable. …
-> >>
-> >> Would you like to specify any settings in the boot configuration file
-> >> because the provided storage capacity would be too limited by the kernel command line?
-> >
-> > Yes.
-> 
-> How will affected places be improved after such an agreement?
-
-Would you please make a patch of new sentence?
-
-Thank you,
-
+diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
+index 6f1b096e601c..43811b5219b5 100644
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -181,13 +181,20 @@ void nfc_hci_resp_received(struct nfc_hci_dev *hdev, u8 result,
+ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 			  struct sk_buff *skb)
+ {
+-	u8 gate = hdev->pipes[pipe].gate;
+ 	u8 status = NFC_HCI_ANY_OK;
+ 	struct hci_create_pipe_resp *create_info;
+ 	struct hci_delete_pipe_noti *delete_info;
+ 	struct hci_all_pipe_cleared_noti *cleared_info;
++	u8 gate;
+ 
+-	pr_debug("from gate %x pipe %x cmd %x\n", gate, pipe, cmd);
++	pr_debug("from pipe %x cmd %x\n", pipe, cmd);
++
++	if (pipe >= NFC_HCI_MAX_PIPES) {
++		status = NFC_HCI_ANY_E_NOK;
++		goto exit;
++	}
++
++	gate = hdev->pipes[pipe].gate;
+ 
+ 	switch (cmd) {
+ 	case NFC_HCI_ADM_NOTIFY_PIPE_CREATED:
+@@ -375,8 +382,14 @@ void nfc_hci_event_received(struct nfc_hci_dev *hdev, u8 pipe, u8 event,
+ 			    struct sk_buff *skb)
+ {
+ 	int r = 0;
+-	u8 gate = hdev->pipes[pipe].gate;
++	u8 gate;
++
++	if (pipe >= NFC_HCI_MAX_PIPES) {
++		pr_err("Discarded event %x to invalid pipe %x\n", event, pipe);
++		goto exit;
++	}
+ 
++	gate = hdev->pipes[pipe].gate;
+ 	if (gate = NFC_HCI_INVALID_GATE) {
+ 		pr_err("Discarded event %x to unopened pipe %x\n", event, pipe);
+ 		goto exit;
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.11.0
