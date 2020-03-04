@@ -1,23 +1,41 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 04 Mar 2020 21:02:35 +0000
+From: Joe Perches <joe@perches.com>
+Date: Wed, 04 Mar 2020 21:24:48 +0000
 Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-Message-Id: <alpine.DEB.2.21.2003042151430.2698@felia>
+Message-Id: <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com> <20200304131035.731a3947@lwn.net> <20200304212846.0c79c6da@coco.lan>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+         <20200304131035.731a3947@lwn.net> <20200304212846.0c79c6da@coco.lan>
 In-Reply-To: <20200304212846.0c79c6da@coco.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-On Wed, 4 Mar 2020, Mauro Carvalho Chehab wrote:
-
+On Wed, 2020-03-04 at 21:28 +0100, Mauro Carvalho Chehab wrote:
 > Em Wed, 4 Mar 2020 13:10:35 -0700
 > Jonathan Corbet <corbet@lwn.net> escreveu:
 > 
+> > On Wed,  4 Mar 2020 08:29:50 +0100
+> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > 
+> > > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+> > > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+> > > converts many Documentation/filesystems/ files to ReST.
+> > > 
+> > > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
+> > > warnings on Documentation/filesystems/ of this kind:
+> > > 
+> > >   warning: no file matches F: Documentation/filesystems/...
+> > > 
+> > > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+> > > patch series and address the 27 warnings.
+> > > 
+> > > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > ---
+> > > Mauro, please ack.
+> > > Jonathan, pick pick this patch for doc-next.  
 > > 
 > > Sigh, I need to work a MAINTAINERS check into my workflow...
 > > 
@@ -28,25 +46,34 @@ On Wed, 4 Mar 2020, Mauro Carvalho Chehab wrote:
 > apply the patches at docs-next keeping links broken, and then run
 > ./scripts/documentation-file-ref-check --fix by the end of a merge
 > window, addressing such breakages.
-> 
-> There are usually lots of churn outside the merge window.
->
 
-Agree, it is probably the simplest solution to get such things fixed at 
-the end of the merge window; there are many of such 'automatic' fixes (and 
-scripts that generate them). It just needs somebody to convince Linus to
-have a trusted end-of-merge-window clean-up team to provide a final pull 
-request on Sunday afternoon to fix all those minor points.
- 
+I'm not sure at all that that script will always do the
+right thing with MAINTAINERS, but it seems to work OK
+except for some renames where a .txt file was directly
+renamed to a .rst file in the same directory where there
+was a similarly named file in a different directory.
+
+Likely the direct rename of a filename extension from
+.txt to .rst should always be applied by the script.
+
+Anyway, for -next as of today:
+
+$ git diff --shortstat
+ 64 files changed, 116 insertions(+), 116 deletions(-)
+
+> There are usually lots of churn outside the merge window.
+> 
 > Another alternative would be to split the MAINTAINERS file on a
 > per-subsystem basis. If I remember well, someone proposed this once at
 > LKML. I vaguely remember that there were even a patch (or RFC)
 > adding support for such thing for get_maintainers.pl.
-> 
 
-I would also support that idea. In the meantime, I am looking into the 
-effort to identify and fix these issues when they are submitted to the 
-mailing list. It is not the simplest solution, but at least a solution 
-that I can try to work on individually at first.
+Yeah.  get_maintainer.pl does work if the MAINTAINERS
+file is split up a few different ways.
 
-Lukas
+There was also a tool to do the MAINTAINERS split.
+https://lore.kernel.org/patchwork/patch/817857/
+
+I doubt that would matter at all given today's tools and
+the general mechanisms of maintainers renaming files and
+not running checkpatch in the first place.
