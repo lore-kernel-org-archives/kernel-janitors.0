@@ -1,37 +1,46 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 04 Mar 2020 12:47:43 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
-Message-Id: <D2D045E0-180D-4F76-93D5-735A5600E62B@holtmann.org>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 04 Mar 2020 12:07:11 +0000
+Subject: [PATCH] MAINTAINERS: adjust to reservation.h renaming
+Message-Id: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>, Bluez mailing list <linux-bluetooth@vger.kernel.org>, Alexander Aring <alex.aring@gmail.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>, linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Sebastian Duda <sebastian.duda@fau.de>, linux-media@vger.kernel.org
 
-Hi Lukas,
+Commit 52791eeec1d9 ("dma-buf: rename reservation_object to dma_resv")
+renamed include/linux/reservation.h to include/linux/dma-resv.h, but
+missed the reference in the MAINTAINERS entry.
 
-> Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
-> renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->  warning: no file matches F: Documentation/networking/6lowpan.txt
-> 
-> Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Mauro, please ack.
-> Marcel, please pick for bluetooth-next.
-> 
-> MAINTAINERS | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-patch has been applied to bluetooth-next tree.
+  warning: no file matches F: include/linux/reservation.h
 
-Regards
+Adjust the DMA BUFFER SHARING FRAMEWORK entry in MAINTAINERS.
 
-Marcel
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Christian, please pick this patch.
+applies cleanly on current master and next-20200303
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6158a143a13e..3d6cb2789c9e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5022,7 +5022,7 @@ L:	dri-devel@lists.freedesktop.org
+ L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
+ F:	drivers/dma-buf/
+ F:	include/linux/dma-buf*
+-F:	include/linux/reservation.h
++F:	include/linux/dma-resv.h
+ F:	include/linux/*fence.h
+ F:	Documentation/driver-api/dma-buf.rst
+ K:	dma_(buf|fence|resv)
+-- 
+2.17.1
