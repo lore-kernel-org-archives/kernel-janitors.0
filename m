@@ -1,49 +1,50 @@
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Sun, 01 Mar 2020 06:33:14 +0000
-Subject: Re: [PATCH] mm/memblock: remove redundant assignment to variable max_addr
-Message-Id: <20200301063314.GA6636@linux.ibm.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 04 Mar 2020 11:34:52 +0000
+Subject: [PATCH] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
+Message-Id: <20200304113452.10201-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228235003.112718-1-colin.king@canonical.com>
-In-Reply-To: <20200228235003.112718-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>, Yangtao Li <tiny.windzz@gmail.com>, Maxime Ripard <maxime@cerno.tech>, Rob Herring <robh@kernel.org>
+Cc: linux-pm@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Fri, Feb 28, 2020 at 11:50:03PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable max_addr is being initialized with a value that is never
-> read and it is being updated later with a new value.  The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Commit b30d8cf5e171 ("dt-bindings: opp: Convert Allwinner H6 OPP to a
+schema") converted in Documentation/devicetree/bindings/opp/ the file
+sun50i-nvmem-cpufreq.txt to allwinner,sun50i-h6-operating-points.yaml.
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-> ---
->  mm/memblock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index eba94ee3de0b..4d06bbaded0f 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1698,7 +1698,7 @@ static phys_addr_t __init_memblock __find_max_addr(phys_addr_t limit)
->  
->  void __init memblock_enforce_memory_limit(phys_addr_t limit)
->  {
-> -	phys_addr_t max_addr = PHYS_ADDR_MAX;
-> +	phys_addr_t max_addr;
->  
->  	if (!limit)
->  		return;
-> -- 
-> 2.25.0
-> 
+  warning: no file matches \
+  F: Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
 
+Adjust the file pattern and while at it, add the two maintainers mentioned
+in the yaml file to the ALLWINNER CPUFREQ DRIVER entry.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Maxime, Chen-Yu, Yangtao, please ack.
+Rob, please pick this patch.
+
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6158a143a13e..8e5ed8737966 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -691,9 +691,11 @@ F:	drivers/staging/media/allegro-dvt/
+ 
+ ALLWINNER CPUFREQ DRIVER
+ M:	Yangtao Li <tiny.windzz@gmail.com>
++M:	Chen-Yu Tsai <wens@csie.org>
++M:	Maxime Ripard <mripard@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
++F:	Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+ F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
+ 
+ ALLWINNER CRYPTO DRIVERS
 -- 
-Sincerely yours,
-Mike.
+2.17.1
