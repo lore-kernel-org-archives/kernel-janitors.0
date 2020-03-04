@@ -1,42 +1,43 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 05 Mar 2020 20:32:23 +0000
-Subject: Re: [PATCH v2] MAINTAINERS: adjust to trusted keys subsystem creation
-Message-Id: <alpine.DEB.2.21.2003052130520.5431@felia>
+Date: Wed, 04 Mar 2020 11:08:21 +0000
+Subject: [PATCH] MAINTAINERS: adjust to kobject doc ReST conversion
+Message-Id: <20200304110821.7243-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304211254.5127-1-lukas.bulwahn@gmail.com> <CAFA6WYOfLONAM8qAhpiikrGkmDkLq0qcw_eGUTzG1AdgP0TB+w@mail.gmail.com>
-In-Reply-To: <CAFA6WYOfLONAM8qAhpiikrGkmDkLq0qcw_eGUTzG1AdgP0TB+w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sumit Garg <sumit.garg@linaro.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, James Bottomley <jejb@linux.ibm.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>, Sameer Rahmani <lxsameer@gnu.org>
+Cc: linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+Commit 5fed00dcaca8 ("Documentation: kobject.txt has been moved to
+core-api/kobject.rst") missed to adjust the entry in MAINTAINERS.
 
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-On Thu, 5 Mar 2020, Sumit Garg wrote:
+  warning: no file matches F: Documentation/kobject.txt
 
-> On Thu, 5 Mar 2020 at 02:43, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
-> > renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
-> > to trusted-keys/trusted_tpm1.c in security/keys/.
-> >
-> > Since then, ./scripts/get_maintainer.pl --self-test complains:
-> >
-> >   warning: no file matches F: security/keys/trusted.c
-> >   warning: no file matches F: include/keys/trusted.h
-> >
-> > Rectify the KEYS-TRUSTED entry in MAINTAINERS now and ensure that all
-> > files in security/keys/ are identified as part of KEYS-TRUSTED.
-> >
-> 
-> I guess you meant here security/keys/trusted-keys/ instead of security/keys/.
->
+Adjust DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS entry in MAINTAINERS.
 
-Yes, that is what I meant. I rushed the patch v2 last night.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Sameer, please ack.
+Jonathan, pick pick this patch for doc-next.
 
-Here is hopefully now a PATCH v3 you can ack:
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://lore.kernel.org/linux-integrity/20200305203013.6189-1-lukas.bulwahn@gmail.com/T/#u
-
-Lukas
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d064049aad1b..998d56e61a41 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5213,7 +5213,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ R:	"Rafael J. Wysocki" <rafael@kernel.org>
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ S:	Supported
+-F:	Documentation/kobject.txt
++F:	Documentation/core-api/kobject.rst
+ F:	drivers/base/
+ F:	fs/debugfs/
+ F:	fs/sysfs/
+-- 
+2.17.1
