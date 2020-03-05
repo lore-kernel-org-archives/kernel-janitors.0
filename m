@@ -1,51 +1,57 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 31 Mar 2020 02:30:19 +0000
-Subject: Re: [PATCH][next] virtio: fix spelling mistake "confiugration" -> "configuration"
-Message-Id: <cb50bee4-5051-945b-cb62-87708f5d4083@redhat.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 05 Mar 2020 20:30:13 +0000
+Subject: [PATCH v3] MAINTAINERS: adjust to trusted keys subsystem creation
+Message-Id: <20200305203013.6189-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200330101901.162407-1-colin.king@canonical.com>
-In-Reply-To: <20200330101901.162407-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, "Michael S . Tsirkin" <mst@redhat.com>, Zhu Lingshan <lingshan.zhu@intel.com>, tiwei.bie@intel.com, Wang Xiao <xiao.w.wang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sumit Garg <sumit.garg@linaro.org>, James Bottomley <jejb@linux.ibm.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
+renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
+to trusted-keys/trusted_tpm1.c in security/keys/.
 
-On 2020/3/30 下午6:19, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are two spelling mistakes of configuration in IFCVF_ERR error
-> messages. Fix them.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/virtio/vdpa/ifcvf/ifcvf_main.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-> index 8d54dc5b08d2..111ac12f6c8e 100644
-> --- a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-> +++ b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-> @@ -340,14 +340,14 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   
->   	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
->   	if (ret) {
-> -		IFCVF_ERR(pdev, "No usable DMA confiugration\n");
-> +		IFCVF_ERR(pdev, "No usable DMA configuration\n");
->   		return ret;
->   	}
->   
->   	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
->   	if (ret) {
->   		IFCVF_ERR(pdev,
-> -			  "No usable coherent DMA confiugration\n");
-> +			  "No usable coherent DMA configuration\n");
->   		return ret;
->   	}
->   
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
+  warning: no file matches F: security/keys/trusted.c
+  warning: no file matches F: include/keys/trusted.h
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Rectify the KEYS-TRUSTED entry in MAINTAINERS now and ensure that all
+files in security/keys/trusted-keys/ are identified as part of
+KEYS-TRUSTED.
 
-Thanks
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Changes to v1:
+  - use a global pattern for matching the whole security/keys/trusted-keys/
+    directory.
+Changes to v2:
+  - name the correct directory in the commit message
+
+Sumit, please ack.
+Jarkko, please pick this patch v3.
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5c755e03ddee..7f11ac752b91 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9276,8 +9276,8 @@ L:	keyrings@vger.kernel.org
+ S:	Supported
+ F:	Documentation/security/keys/trusted-encrypted.rst
+ F:	include/keys/trusted-type.h
+-F:	security/keys/trusted.c
+-F:	include/keys/trusted.h
++F:	include/keys/trusted_tpm.h
++F:	security/keys/trusted-keys/
+ 
+ KEYS/KEYRINGS
+ M:	David Howells <dhowells@redhat.com>
+-- 
+2.17.1
