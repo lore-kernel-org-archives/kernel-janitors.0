@@ -1,63 +1,53 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 21 Mar 2020 08:58:36 +0000
-Subject: [PATCH] ARM: davinci: dm646x-evm: Simplify error handling in 'evm_sw_setup()'
-Message-Id: <20200321085836.16493-1-christophe.jaillet@wanadoo.fr>
+From: Sasha Levin <sashal@kernel.org>
+Date: Thu, 05 Mar 2020 17:15:53 +0000
+Subject: [PATCH AUTOSEL 4.9 06/12] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200305171559.30422-6-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200305171559.30422-1-sashal@kernel.org>
+In-Reply-To: <20200305171559.30422-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: nsekhar@ti.com, bgolaszewski@baylibre.com, linux@armlinux.org.uk
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-There is no need to call 'gpio_free(evm_sw_gpio[i])' for these error
-handling cases, it is already done in the error handling path at label
-'out_free'.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Simplify the code and axe a few LoC.
+[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
 
-While at it, also explicitly return 0 in the normal path.
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
 
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-The code after 'out_free' could also be replace by a single
-'evm_sw_teardown()' call, but I'm not a big fan of such construction.
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In 'evm_sw_teardown()', the 'gpio_unexport()' call could also be removed
-because it is implied by 'gpio_free()'.
-
-Let me now if interested for one or both of these additional clean-up.
----
- arch/arm/mach-davinci/board-dm646x-evm.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 4600b617f9b4..dd7d60f4139a 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -267,20 +267,15 @@ static int evm_sw_setup(struct i2c_client *client, int gpio,
- 		evm_sw_gpio[i] = gpio++;
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 544ea21bfef9c..b2683aca401f6 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
  
- 		status = gpio_direction_input(evm_sw_gpio[i]);
--		if (status) {
--			gpio_free(evm_sw_gpio[i]);
--			evm_sw_gpio[i] = -EINVAL;
-+		if (status)
- 			goto out_free;
--		}
- 
- 		status = gpio_export(evm_sw_gpio[i], 0);
--		if (status) {
--			gpio_free(evm_sw_gpio[i]);
--			evm_sw_gpio[i] = -EINVAL;
-+		if (status)
- 			goto out_free;
--		}
- 	}
--	return status;
-+	return 0;
-+
- out_free:
- 	for (i = 0; i < 4; ++i) {
- 		if (evm_sw_gpio[i] != -EINVAL) {
 -- 
 2.20.1
