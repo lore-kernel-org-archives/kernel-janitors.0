@@ -1,125 +1,118 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 04 Mar 2020 22:57:04 +0000
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Thu, 05 Mar 2020 06:14:31 +0000
 Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-Message-Id: <e43f0cf0117fbfa8fe8c7e62538fd47a24b4657a.camel@perches.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-o23BfZrrZ2cR0WULJF0x"
+Message-Id: <20200305071431.66362e3c@coco.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-         <20200304131035.731a3947@lwn.net>
-         <alpine.DEB.2.21.2003042145340.2698@felia>
-In-Reply-To: <alpine.DEB.2.21.2003042145340.2698@felia>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-
---=-o23BfZrrZ2cR0WULJF0x
-Content-Type: text/plain; charset="ISO-8859-1"
+        <20200304131035.731a3947@lwn.net>
+        <20200304212846.0c79c6da@coco.lan>
+        <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
+In-Reply-To: <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-04 at 21:50 +0100, Lukas Bulwahn wrote:
-> 
-> On Wed, 4 Mar 2020, Jonathan Corbet wrote:
-> 
-> > On Wed,  4 Mar 2020 08:29:50 +0100
-> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > > Jonathan, pick pick this patch for doc-next.
+Em Wed, 04 Mar 2020 13:24:48 -0800
+Joe Perches <joe@perches.com> escreveu:
+
+> On Wed, 2020-03-04 at 21:28 +0100, Mauro Carvalho Chehab wrote:
+> > Em Wed, 4 Mar 2020 13:10:35 -0700
+> > Jonathan Corbet <corbet@lwn.net> escreveu:
+> >   
+> > > On Wed,  4 Mar 2020 08:29:50 +0100
+> > > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >   
+> > > > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+> > > > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+> > > > converts many Documentation/filesystems/ files to ReST.
+> > > > 
+> > > > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
+> > > > warnings on Documentation/filesystems/ of this kind:
+> > > > 
+> > > >   warning: no file matches F: Documentation/filesystems/...
+> > > > 
+> > > > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+> > > > patch series and address the 27 warnings.
+> > > > 
+> > > > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+> > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > > ---
+> > > > Mauro, please ack.
+> > > > Jonathan, pick pick this patch for doc-next.    
+> > > 
+> > > Sigh, I need to work a MAINTAINERS check into my workflow...
+> > > 
+> > > Thanks for fixing these, but ... what tree did you generate the patch
+> > > against?  I doesn't come close to applying to docs-next.  
 > > 
-> > Sigh, I need to work a MAINTAINERS check into my workflow...
-> > 
+> > I'm starting to suspect that maybe the best workflow would be to just 
+> > apply the patches at docs-next keeping links broken, and then run
+> > ./scripts/documentation-file-ref-check --fix by the end of a merge
+> > window, addressing such breakages.  
 > 
-> I getting closer to have zero warnings on the MAINTAINER file matches and 
-> then, I would set up a bot following the mailing lists to warn when anyone
-> sends a patch that potentially introduces such warning.
+> I'm not sure at all that that script will always do the
+> right thing with MAINTAINERS,
 
-Hey Lukas.
+As it is based on some heuristics, whomever runs it should
+double-check the results.
 
-I wrote a hacky script that sent emails
-for invalid MAINTAINER F: and X: patterns
-a couple years back.
+> but it seems to work OK
+> except for some renames where a .txt file was directly
+> renamed to a .rst file in the same directory where there
+> was a similarly named file in a different directory.
 
-I ran it in September 2018 and March 2019.
+Yeah, the script could be smarter to catch this case.
 
-It's attached if you want to play with it.
-The email sending bit is commented out.
+> Likely the direct rename of a filename extension from
+> .txt to .rst should always be applied by the script.
 
-The script is used like:
+Yeah, makes sense to me. Yet, I got one exception for this:
+I found somewhere a case were there are both foo.txt and foo.rst,
+both with different contents.
 
-$ perl ./scripts/get_maintainer.pl --self-test=patterns | \
-  cut -f2 -d: | \
-  while read line ; do \
-    perl ./dump_section.perl $line \
-  done
+The solution I took were to rename foo.txt to bar.txt,
+adjusting the cross-references, then convert bar.txt to
+bar.rst.
 
+In any case, we're close to finish the conversion. I have
+already patches that convert everything to .rst (with a couple of
+exceptions), and I took the care of doing the cross-reference fixes 
+there. I'm still adjusting some things on this tree. My current plans
+are to have them all applied up to Kernel 5.8, and then start looking
+on better organizing the docs (I'm already doing that for media docs).
 
---=-o23BfZrrZ2cR0WULJF0x
-Content-Type: application/x-perl; name="dump_section.perl"
-Content-Disposition: attachment; filename="dump_section.perl"
-Content-Transfer-Encoding: base64
+Once all of those patches get merged, .txt -> .rst will
+be an exception.
 
-bXkgJGkgPSAkQVJHVlswXTsKCm15IEBvdXRwdXQgPSAoKTsKbXkgQGxpbmVzID0gKCk7Cm9wZW4g
-KG15ICRtYWludCwgJzwnLCAiTUFJTlRBSU5FUlMiKQogICAgb3IgZGllICIkUDogQ2FuJ3Qgb3Bl
-biBNQUlOVEFJTkVSUyBmaWxlICdNQUlOVEFJTkVSUyc6ICQhXG4iOwp3aGlsZSAoPCRtYWludD4p
-IHsKICAgIG15ICRsaW5lID0gJF87CiAgICBwdXNoKEBsaW5lcywgJGxpbmUpOwp9CmNsb3NlKCRt
-YWludCk7CgpteSAkbG93X2luZGV4ID0gJGkgLSAxOwoKd2hpbGUgKCRsaW5lc1skbG93X2luZGV4
-XSA9fiAvXi46LyAmJiAkbG93X2luZGV4ID4gMCkgewogICAgJGxvd19pbmRleC0tOwp9CgpteSAk
-aGlnaF9pbmRleCA9ICRpIC0gMTsKd2hpbGUgKCRsaW5lc1skaGlnaF9pbmRleF0gPX4gL14uOi8g
-JiYgJGhpZ2hfaW5kZXggPCAkI2xpbmVzKSB7CiAgICAkaGlnaF9pbmRleCsrOwp9CgpwdXNoKEBv
-dXRwdXQsICJBIGZpbGUgcGF0dGVybiBsaW5lIGluIHRoaXMgc2VjdGlvbiBvZiB0aGUgTUFJTlRB
-SU5FUlMgZmlsZSBpbiBsaW51eC1uZXh0XG4iKTsKcHVzaChAb3V0cHV0LCAiZG9lcyBub3QgaGF2
-ZSBhIG1hdGNoIGluIHRoZSBsaW51eCBzb3VyY2UgZmlsZXMuXG4iKTsKcHVzaChAb3V0cHV0LCAi
-XG4iKTsKcHVzaChAb3V0cHV0LCAiVGhpcyBjb3VsZCBvY2N1ciBiZWNhdXNlIGEgbWF0Y2hpbmcg
-ZmlsZW5hbWUgd2FzIG5ldmVyIGFkZGVkLCB3YXMgZGVsZXRlZFxuIik7CnB1c2goQG91dHB1dCwg
-Im9yIHJlbmFtZWQgaW4gc29tZSBvdGhlciBjb21taXQuXG4iKTsKcHVzaChAb3V0cHV0LCAiXG4i
-KTsKcHVzaChAb3V0cHV0LCAiVGhlIGNvbW1pdHMgdGhhdCBhZGRlZCBhbmQgaWYgZm91bmQgcmVu
-YW1lZCBvciByZW1vdmVkIHRoZSBmaWxlIHBhdHRlcm5cbiIpOwpwdXNoKEBvdXRwdXQsICJhcmUg
-c2hvd24gYmVsb3cuXG4iKTsKcHVzaChAb3V0cHV0LCAiXG4iKTsKcHVzaChAb3V0cHV0LCAiUGxl
-YXNlIGZpeCB0aGlzIGRlZmVjdCBhcHByb3ByaWF0ZWx5LlxuIik7CnB1c2goQG91dHB1dCwgIlxu
-Iik7CgpwdXNoKEBvdXRwdXQsICIxOiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbiIpOwpwdXNoKEBvdXRw
-dXQsICJcbiIpOwpwdXNoKEBvdXRwdXQsICJsaW51eC1uZXh0IE1BSU5UQUlORVJTIHNlY3Rpb246
-XG4iKTsKcHVzaChAb3V0cHV0LCAiXG4iKTsKCm15ICRmaWxlID0gJGxpbmVzWyRpLTFdOwokZmls
-ZSA9fiBzL15bQS1aXTpccysvLzsKY2hvbXAgJGZpbGU7CgpteSAkc2VjdGlvbiA9ICRsaW5lc1sk
-bG93X2luZGV4XTsKCndoaWxlICgkbG93X2luZGV4IDwgJGhpZ2hfaW5kZXgpIHsKICAgIHB1c2go
-QG91dHB1dCwgIi0tPiIpIGlmICgkbG93X2luZGV4ID09ICRpLTEpOwogICAgcHVzaChAb3V0cHV0
-LCAiXHQiIC4gKCRsb3dfaW5kZXgrMSkgLiAiXHQiIC4gJGxpbmVzWyRsb3dfaW5kZXhdKTsKICAg
-ICRsb3dfaW5kZXgrKzsKfQoKcHVzaChAb3V0cHV0LCAiXG4iKTsKcHVzaChAb3V0cHV0LCAiMjog
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tXG4iKTsKcHVzaChAb3V0cHV0LCAiXG4iKTsKCm15IEBibGFtZSA9
-IGBnaXQgYmxhbWUgLUwkaSwrMSBNQUlOVEFJTkVSU2A7Cm15IEBjb21taXRzID0gc3BsaXQoJyAn
-LCAkYmxhbWVbMF0pOwpteSAkY29tbWl0ID0gJGNvbW1pdHNbMF07Cm15IEBjb21taXRfbGluZXMg
-PSBgZ2l0IGxvZyAtMSAtLXN0YXQgJGNvbW1pdGA7CgpwdXNoKEBvdXRwdXQsICJUaGUgbW9zdCBy
-ZWNlbnQgY29tbWl0IHRoYXQgYWRkZWQgb3IgbW9kaWZpZWQgZmlsZSBwYXR0ZXJuICckZmlsZSc6
-XG4iKTsKcHVzaChAb3V0cHV0LCAiXG4iKTsKcHVzaChAb3V0cHV0LCBAY29tbWl0X2xpbmVzKTsK
-CnB1c2goQG91dHB1dCwgIlxuIik7CnB1c2goQG91dHB1dCwgIjM6IC0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LVxuIik7CnB1c2goQG91dHB1dCwgIlxuIik7CgpteSBAZm9sbG93ID0gYGdpdCBsb2cgLS1mb2xs
-b3cgLTEgLS1zdGF0IC1NIC0tICckZmlsZSdgOwppZiAoIUBmb2xsb3cpIHsKICAgIHB1c2goQG91
-dHB1dCwgIk5vIGNvbW1pdCB3aXRoIGZpbGUgcGF0dGVybiAnJGZpbGUnIHdhcyBmb3VuZFxuIik7
-Cn0gZWxzZSB7CiAgICBteSAkY29tbWl0ID0gJGZvbGxvd1swXTsKICAgICRjb21taXQgPX4gcy9e
-Y29tbWl0IC8vOwogICAgQGZvbGxvdyA9IGBnaXQgbG9nIC0tc3RhdCAtMSAtTSAkY29tbWl0YDsK
-ICAgIHB1c2goQG91dHB1dCwgIlRoZSBsYXN0IGNvbW1pdCB3aXRoIGEgcmVhbCBwcmVzZW5jZSBv
-ZiBmaWxlIHBhdHRlcm4gJyRmaWxlJzpcbiIpOwogICAgcHVzaChAb3V0cHV0LCAiXG4iKTsKICAg
-IHB1c2goQG91dHB1dCwgQGZvbGxvdyk7Cn0KCm15IEBtYWludGFpbmVycyA9IGdyZXAoL15ccytc
-ZCtccytbTFJNXTouKiQvLCBAb3V0cHV0KTsKbXkgQHNpZ25lcnMgPSBncmVwKC9eXHMrLiotYnk6
-LiokLywgQG91dHB1dCk7CgpvcGVuIChteSAkZmlsZWgsICc+JywgInBhdHRlcm5zLyRpLnR4dCIp
-OwoKJHNlY3Rpb24gPX4gcy9eXHMrXGQrXHMrLy87CiRzZWN0aW9uID1+IHMvXG4kLy87Cgpwcmlu
-dCAkZmlsZWggIlN1YmplY3Q6IEJhZCBmaWxlIHBhdHRlcm4gaW4gTUFJTlRBSU5FUlMgc2VjdGlv
-biAnJHNlY3Rpb24nXG4iOwpwcmludCAkZmlsZWggIlxuIjsKcHJpbnQgJGZpbGVoIChAb3V0cHV0
-KTsKCmZvcmVhY2ggbXkgJG0gKEBtYWludGFpbmVycykgewogICAgJG0gPX4gcy9eXHMrXGQrXHMr
-LjpccysvLzsKICAgICRtID1+IHMvXHMqXCguKlwpLiokLy87Cn0KCmZvcmVhY2ggbXkgJHMgKEBz
-aWduZXJzKSB7CiAgICAkcyA9fiBzL15ccypbXHdcLV0rLWJ5OlxzKi8vOwp9CgojcHJpbnQgJGZp
-bGVoICgiXG5tYWludGFpbmVyczpcblxuIik7CiNwcmludCAkZmlsZWggKEBtYWludGFpbmVycyk7
-CiNwcmludCAkZmlsZWggKCJcbnNpZ25lcnM6XG5cbiIpOwojcHJpbnQgJGZpbGVoIChAc2lnbmVy
-cyk7CgpteSBAZW1haWxzID0gKCk7CmZvcmVhY2ggbXkgJGVtYWlsIChAbWFpbnRhaW5lcnMsQHNp
-Z25lcnMpIHsKICAgIHB1c2goQGVtYWlscywgJGVtYWlsKSB1bmxlc3MgJGF7JGVtYWlsfSsrOwp9
-CgojcHJpbnQgJGZpbGVoICgiXG5lbWFpbHM6XG5cbiIpOwojcHJpbnQgJGZpbGVoIChAZW1haWxz
-KTsKCm15ICRjYyA9ICIiOwpmb3JlYWNoIG15ICRlbWFpbCAoQGVtYWlscykgewogICAgbXkgJHQg
-PSAkZW1haWw7CiAgICAkdCA9fiBzL1xuJC8vOwogICAgJHQgPX4gcy8iLy9nOwogICAgJGNjIC49
-ICIgLS1jYyBcIiR0XCIiOwp9CgpjbG9zZSAkZmlsZWg7CgpteSAkZ3NtID0gImdpdCBzZW5kLWVt
-YWlsIC0tdG8gXCJsaW51eC1rZXJuZWxcQHZnZXIua2VybmVsLm9yZ1wiIiAuICRjYyAuICIgcGF0
-dGVybnMvJGkudHh0IjsKcHJpbnQoIiRnc21cbiIpOwoKI215IEBnc21fb3V0cHV0ID0gYCRnc21g
-OwoKI3ByaW50KEBnc21fb3V0cHV0KTsK
+> 
+> Anyway, for -next as of today:
+> 
+> $ git diff --shortstat
+>  64 files changed, 116 insertions(+), 116 deletions(-)
+> 
+> > There are usually lots of churn outside the merge window.
+> > 
+> > Another alternative would be to split the MAINTAINERS file on a
+> > per-subsystem basis. If I remember well, someone proposed this once at
+> > LKML. I vaguely remember that there were even a patch (or RFC)
+> > adding support for such thing for get_maintainers.pl.  
+> 
+> Yeah.  get_maintainer.pl does work if the MAINTAINERS
+> file is split up a few different ways.
+> 
+> There was also a tool to do the MAINTAINERS split.
+> https://lore.kernel.org/patchwork/patch/817857/
+> 
+> I doubt that would matter at all given today's tools and
+> the general mechanisms of maintainers renaming files and
+> not running checkpatch in the first place.
 
+Yeah, it may not produce any concrete results on some parts.
+It may help to reduce the conflicts there, though. Also, I guess
+some maintainers will take more care, if they start to have
+their own */MAINTAINERS files.
 
---=-o23BfZrrZ2cR0WULJF0x--
+Thanks,
+Mauro
