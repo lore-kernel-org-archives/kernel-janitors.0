@@ -1,44 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Mar 2020 10:00:30 +0000
-Subject: [PATCH][next] bpf: Test_verifier: fix spelling mistake "arithmatic" -> "arithmetic"
-Message-Id: <20200331100030.41372-1-colin.king@canonical.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Thu, 05 Mar 2020 17:15:29 +0000
+Subject: [PATCH AUTOSEL 4.14 08/19] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200305171540.30250-8-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200305171540.30250-1-sashal@kernel.org>
+In-Reply-To: <20200305171540.30250-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-There are a couple of spelling mistakes in two literal strings, fix them.
+[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/verifier/bounds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/verifier/bounds.c b/tools/testing/selftests/bpf/verifier/bounds.c
-index 4d0d09574bf4..a253a064e6e0 100644
---- a/tools/testing/selftests/bpf/verifier/bounds.c
-+++ b/tools/testing/selftests/bpf/verifier/bounds.c
-@@ -501,7 +501,7 @@
- 	.result = REJECT
- },
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 544ea21bfef9c..b2683aca401f6 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
  {
--	"bounds check mixed 32bit and 64bit arithmatic. test1",
-+	"bounds check mixed 32bit and 64bit arithmetic. test1",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_MOV64_IMM(BPF_REG_1, -1),
-@@ -520,7 +520,7 @@
- 	.result = ACCEPT
- },
- {
--	"bounds check mixed 32bit and 64bit arithmatic. test2",
-+	"bounds check mixed 32bit and 64bit arithmetic. test2",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_MOV64_IMM(BPF_REG_1, -1),
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
 -- 
-2.25.1
+2.20.1
