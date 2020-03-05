@@ -1,38 +1,32 @@
-From: <Tudor.Ambarus@microchip.com>
-Date: Mon, 23 Mar 2020 17:57:00 +0000
-Subject: Re: [PATCH] MAINTAINERS: update entry after SPI NOR controller move
-Message-Id: <22897927.UjJTgWM9OM@192.168.0.120>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 05 Mar 2020 14:00:14 +0000
+Subject: Re: [PATCH v5.1] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <f3c51b0a-2a55-6523-96e2-4f9ef0635d9f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200321064217.6179-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200321064217.6179-1-lukas.bulwahn@gmail.com>
+References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <158341540688.4236.11231142256496896074.stgit@devnote2>
+In-Reply-To: <158341540688.4236.11231142256496896074.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: lukas.bulwahn@gmail.com
-Cc: vigneshr@ti.com, bbrezillon@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, vz@mleia.com, linux-mtd@lists.infradead.org, joe@perches.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Saturday, March 21, 2020 8:42:17 AM EET Lukas Bulwahn wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the
-> content is safe
-> 
-> Commit a0900d0195d2 ("mtd: spi-nor: Prepare core / manufacturer code
-> split") moved all SPI NOR controller drivers to a controllers/
-> sub-directory. However, the moved nxp-spifi.c file was referenced in the
-> ARM/LPC18XX ARCHITECTURE entry in MAINTAINERS.
-> 
-> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: drivers/mtd/spi-nor/nxp-spifi.c
-> 
-> Update the file entry in MAINTAINERS to its new location.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20200320
-> Boris, Tudor, please pick this trivial patch. Not urgent.
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v5.1:
+>  - Fix some mistakes (Thanks Randy!)
 
-Applied to spi-nor/next, thanks.
-ta
+Do you need any more reminders for remaining update candidates?
+
+
+…
+> +++ b/Documentation/admin-guide/bootconfig.rst
+…
+> +If you think that kernel/init options become too long to write in boot-loader
+> +configuration file or you want to comment on each option, the boot
+> +configuration may be suitable. …
+
+Would you like to specify any settings in the boot configuration file
+because the provided storage capacity would be too limited by the kernel command line?
+
+Regards,
+Markus
