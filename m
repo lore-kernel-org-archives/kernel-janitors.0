@@ -1,51 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Mar 2020 11:54:31 +0000
-Subject: Re: [EXT] Re: [PATCH] spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
-Message-Id: <20200313115431.GB5528@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="IrhDeMKUP4DT/M7F"
+From: Sasha Levin <sashal@kernel.org>
+Date: Thu, 05 Mar 2020 17:14:53 +0000
+Subject: [PATCH AUTOSEL 4.19 09/31] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200305171516.30028-9-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200312113154.GC20562@mwanda>
- <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
- <20200312121816.GC4038@sirena.org.uk>
- <VI1PR04MB4015D509DC78B0C7EA649CC995FA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB4015D509DC78B0C7EA649CC995FA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
-To: Ashish Kumar <ashish.kumar@nxp.com>
-Cc: Fabio Estevam <festevam@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>, Adam Ford <aford173@gmail.com>, linux-spi <linux-spi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+References: <20200305171516.30028-1-sashal@kernel.org>
+In-Reply-To: <20200305171516.30028-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
 
-On Fri, Mar 13, 2020 at 04:16:44AM +0000, Ashish Kumar wrote:
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
 
-> This patch needs to drop, until further debugged, since flexspi is
-> shared ip it is not having desired result on few boards, but it is
-> needed for i.mx series, This is one of the comments from han xu. I
-> believe further modifications will be needed, if not commit msg and
-> other things can be update.
+'release_progmem()' is only a call to 'kfree()'.
 
-Please send a patch doing the revert with a changelog explaining why
-it's needed.
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5rdHYACgkQJNaLcl1U
-h9DFCQf/UPqYCaPsBLcZEOTW72elTQpFxi4KP6BJ+mTkTETBkeHVQOP/U3FWwdDM
-THoABWIEq+t24rOwkNaro3dl6b85fkI513FBNy1vqqRA/VrjpkCRTgHAAKD/D7+g
-HQp3R/3GX5FkGJYNnmoOOQodhmR9UxklAfUASOtpiTS6wpzQw9puswv/eQO9Yumg
-526+cxrq0hePl72ZsmZlV9EkxMCkuW7X01JTLwmmC0EaFHp0E8LMU/hvAPxO9RCZ
-I9uT4S8tjPzEUZiwCm7sryHvnZePMK/8/BOv+IiZeQDXqwiW0JW6GGLK56MWH4SQ
-AwPhEnuNRd+LD/dUU6vWSvmAgMJ66A==
-=AmBc
------END PGP SIGNATURE-----
-
---IrhDeMKUP4DT/M7F--
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 0bef238d2c0c6..0d5f9c8f5bdac 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
+-- 
+2.20.1
