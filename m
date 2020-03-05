@@ -1,36 +1,38 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Wed, 04 Mar 2020 20:31:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Mar 2020 08:00:04 +0000
 Subject: Re: [PATCH] net/mlx5e: Fix an IS_ERR() vs NULL check
-Message-Id: <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
+Message-Id: <20200305080004.GA19839@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200304142151.qivcobp6ngrynb2p@kili.mountain>
-In-Reply-To: <20200304142151.qivcobp6ngrynb2p@kili.mountain>
+ <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
+In-Reply-To: <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eli Cohen <eli@mellanox.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mark Bloch <markb@mellanox.com>, Paul Blakey <paulb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
+To: Saeed Mahameed <saeedm@mellanox.com>
+Cc: Eli Cohen <eli@mellanox.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mark Bloch <markb@mellanox.com>, Paul Blakey <paulb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
 
-T24gV2VkLCAyMDIwLTAzLTA0IGF0IDE3OjIyICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGUgZXN3X3Zwb3J0X3RibF9nZXQoKSBmdW5jdGlvbiByZXR1cm5zIGVycm9yIHBvaW50ZXJz
-IG9uIGVycm9yLg0KPiANCj4gRml4ZXM6IDk2ZTMyNjg3OGZhNSAoIm5ldC9tbHg1ZTogRXN3aXRj
-aCwgVXNlIHBlciB2cG9ydCB0YWJsZXMgZm9yDQo+IG1pcnJvcmluZyIpDQo+IFNpZ25lZC1vZmYt
-Ynk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KSGkgRGFuIHRo
-ZSBwYXRjaCBsb29rcyBmaW5lLCBidXQgeW91IGRpZG4ndCBjYyBuZXRkZXYgbWFpbGluZyBsaXN0
-DQpUd28gb3B0aW9uczoNCg0KMSkgSSBjYW4gcGljayB0aGlzIHBhdGNoIHVwIGFuZCByZXBvc3Qg
-aXQgbXlzZWxmIGluIGEgZnV0dXJlIHB1bGwNCnJlcXVlc3QNCjIpIHlvdSBjYW4gcmUtcG9zdCBp
-dCBhbmQgY2MgbmV0ZGV2IGFsc28gbWFyayBpdCBmb3IgbmV0IFtQQVRDSCBuZXRdDQoNCmxldCBt
-ZSBrbm93IHdoYXQgeW91IHByZWZlci4NCg0KVGhhbmtzLA0KU2FlZWQuDQoNCg0KPiAtLS0NCj4g
-IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lc3dpdGNoX29mZmxvYWRz
-LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
-LSkNCj4gDQo+IGRpZmYgLS1naXQNCj4gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9t
-bHg1L2NvcmUvZXN3aXRjaF9vZmZsb2Fkcy5jDQo+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVs
-bGFub3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMuYw0KPiBpbmRleCA0YjViNjYxOGRmZjQu
-LjY5MmZlOWU2YTA4ZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFu
-b3gvbWx4NS9jb3JlL2Vzd2l0Y2hfb2ZmbG9hZHMuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXN3aXRjaF9vZmZsb2Fkcy5jDQo+IEBAIC0xOTgsNyAr
-MTk4LDcgQEAgaW50IG1seDVfZXN3X3Zwb3J0X3RibF9nZXQoc3RydWN0IG1seDVfZXN3aXRjaA0K
-PiAqZXN3KQ0KPiAgCW1seDVfZXN3X2Zvcl9hbGxfdnBvcnRzKGVzdywgaSwgdnBvcnQpIHsNCj4g
-IAkJYXR0ci5pbl9yZXAtPnZwb3J0ID0gdnBvcnQtPnZwb3J0Ow0KPiAgCQlmZGIgPSBlc3dfdnBv
-cnRfdGJsX2dldChlc3csICZhdHRyKTsNCj4gLQkJaWYgKCFmZGIpDQo+ICsJCWlmIChJU19FUlIo
-ZmRiKSkNCj4gIAkJCWdvdG8gb3V0Ow0KPiAgCX0NCj4gIAlyZXR1cm4gMDsNCg=
+On Wed, Mar 04, 2020 at 08:31:13PM +0000, Saeed Mahameed wrote:
+> On Wed, 2020-03-04 at 17:22 +0300, Dan Carpenter wrote:
+> > The esw_vport_tbl_get() function returns error pointers on error.
+> > 
+> > Fixes: 96e326878fa5 ("net/mlx5e: Eswitch, Use per vport tables for
+> > mirroring")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Hi Dan the patch looks fine, but you didn't cc netdev mailing list
+> Two options:
+> 
+> 1) I can pick this patch up and repost it myself in a future pull
+> request
+
+I assumed we would do this, because the original patch didn't have
+Dave's signed-off-by.
+
+> 2) you can re-post it and cc netdev also mark it for net [PATCH net]
+
+If we were going to go that route then it would have to [PATCH net-next]
+because it doesn't apply to the net tree.
+
+regards,
+dan carpenter
