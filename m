@@ -1,25 +1,53 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 27 Mar 2020 01:12:15 +0000
-Subject: Re: [PATCH] scsi: aha1740: Fix an errro handling path in 'aha1740_probe()'
-Message-Id: <yq1k136fvo0.fsf@oracle.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Thu, 05 Mar 2020 17:16:08 +0000
+Subject: [PATCH AUTOSEL 4.4 3/7] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200305171612.30555-3-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200228215948.7473-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200228215948.7473-1-christophe.jaillet@wanadoo.fr> (Christophe
-        JAILLET's message of "Fri, 28 Feb 2020 22:59:48 +0100")
+References: <20200305171612.30555-1-sashal@kernel.org>
+In-Reply-To: <20200305171612.30555-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Christophe,
+[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
 
-> If 'dma_map_single()' fails, the ref counted 'shpnt' will be decremented
-> twice because 'scsi_host_put()' is called in the if block, and in the
-> error handling path.
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
 
-Applied to 5.7/scsi-queue, thanks!
+'release_progmem()' is only a call to 'kfree()'.
 
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 9067b651c7a2d..ca93984ff5a6e 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.20.1
