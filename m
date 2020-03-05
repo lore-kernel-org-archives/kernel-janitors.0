@@ -1,80 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 02 Mar 2020 16:05:23 +0000
-Subject: Applied "spi: bcm63xx-hsspi: Really keep pll clk enabled" to the spi tree
-Message-Id: <applied-20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Mar 2020 08:20:20 +0000
+Subject: [bug report] octeontx2-pf: Support to enable/disable pause frames via ethtool
+Message-Id: <20200305082020.vwfxzxizbfuc5otk@kili.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: f.fainelli@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, bcm-kernel-feedback-list@broadcom.com, Jonas Gorski <jonas.gorski@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Hello Geetha sowjanya,
 
-   spi: bcm63xx-hsspi: Really keep pll clk enabled
+The patch 75f36270990c: "octeontx2-pf: Support to enable/disable
+pause frames via ethtool" from Mar 2, 2020, leads to the following
+static checker warning:
 
-has been applied to the spi tree at
+	drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c:269 otx2_get_pauseparam()
+	error: 'rsp' dereferencing possible ERR_PTR()
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+   256  static void otx2_get_pauseparam(struct net_device *netdev,
+   257                                  struct ethtool_pauseparam *pause)
+   258  {
+   259          struct otx2_nic *pfvf = netdev_priv(netdev);
+   260          struct cgx_pause_frm_cfg *req, *rsp;
+   261  
+   262          req = otx2_mbox_alloc_msg_cgx_cfg_pause_frm(&pfvf->mbox);
+   263          if (!req)
+   264                  return;
+   265  
+   266          if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
+   267                  rsp = (struct cgx_pause_frm_cfg *)
+   268                         otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Does this require error handling?  It's not totally clear to me.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+   269                  pause->rx_pause = rsp->rx_pause;
+   270                  pause->tx_pause = rsp->tx_pause;
+   271          }
+   272  }
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 51bddd4501bc414b8b1e8f4d096b4a5304068169 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 28 Feb 2020 22:38:38 +0100
-Subject: [PATCH] spi: bcm63xx-hsspi: Really keep pll clk enabled
-
-The purpose of commit 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
-was to keep the pll clk enabled through the lifetime of the device.
-
-In order to do that, some 'clk_prepare_enable()'/'clk_disable_unprepare()'
-calls have been added in the error handling path of the probe function, in
-the remove function and in the suspend and resume functions.
-
-However, a 'clk_disable_unprepare()' call has been unfortunately left in
-the probe function. So the commit seems to be more or less a no-op.
-
-Axe it now, so that the pll clk is left enabled through the lifetime of
-the device, as described in the commit.
-
-Fixes: 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Jonas Gorski <jonas.gorski@gmail.com>
-Link: https://lore.kernel.org/r/20200228213838.7124-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-bcm63xx-hsspi.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
-index 7327309ea3d5..6c235306c0e4 100644
---- a/drivers/spi/spi-bcm63xx-hsspi.c
-+++ b/drivers/spi/spi-bcm63xx-hsspi.c
-@@ -366,7 +366,6 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
- 			goto out_disable_clk;
- 
- 		rate = clk_get_rate(pll_clk);
--		clk_disable_unprepare(pll_clk);
- 		if (!rate) {
- 			ret = -EINVAL;
- 			goto out_disable_pll_clk;
--- 
-2.20.1
+regards,
+dan carpenter
