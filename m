@@ -1,44 +1,27 @@
-From: Fedor Tokarev <ftokarev@gmail.com>
-Date: Sat, 28 Mar 2020 11:56:55 +0000
-Subject: [PATCH] net: sunrpc: Fix off-by-one issues in 'rpc_ntop6'
-Message-Id: <20200328115650.GA27729@laptop>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 05 Mar 2020 09:22:57 +0000
+Subject: Re: [PATCH v5] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <02c12b1b-31a3-1fb6-f7c6-7b00e68e2b71@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+ <158339066140.26602.7533299987467005089.stgit@devnote2>
+In-Reply-To: <158339066140.26602.7533299987467005089.stgit@devnote2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: bfields@fieldses.org, chuck.lever@oracle.com, anna.schumaker@netapp.com, trond.myklebust@hammerspace.com, davem@davemloft.net, kuba@kernel.org
-Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix off-by-one issues in 'rpc_ntop6':
- - 'snprintf' returns the number of characters which would have been
-   written if enough space had been available, excluding the terminating
-   null byte. Thus, a return value of 'sizeof(scopebuf)' means that the
-   last character was dropped.
- - 'strcat' adds a terminating null byte to the string, thus if len =
-   buflen, the null byte is written past the end of the buffer.
+…
+> +++ b/Documentation/admin-guide/bootconfig.rst
+…
+> +If you think that kernel/init options becomes too long to write in boot-loader
+> +configuration file or you want to comment on each option, the boot
+> +configuration may be suitable. …
 
-Signed-off-by: Fedor Tokarev <ftokarev@gmail.com>
----
- net/sunrpc/addr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Will remaining open issues get any attention for such software?
 
-diff --git a/net/sunrpc/addr.c b/net/sunrpc/addr.c
-index 8b4d72b..010dcb8 100644
---- a/net/sunrpc/addr.c
-+++ b/net/sunrpc/addr.c
-@@ -82,11 +82,11 @@ static size_t rpc_ntop6(const struct sockaddr *sap,
- 
- 	rc = snprintf(scopebuf, sizeof(scopebuf), "%c%u",
- 			IPV6_SCOPE_DELIMITER, sin6->sin6_scope_id);
--	if (unlikely((size_t)rc > sizeof(scopebuf)))
-+	if (unlikely((size_t)rc >= sizeof(scopebuf)))
- 		return 0;
- 
- 	len += rc;
--	if (unlikely(len > buflen))
-+	if (unlikely(len >= buflen))
- 		return 0;
- 
- 	strcat(buf, scopebuf);
--- 
-2.7.4
+Will further collateral evolution happen around presented information?
+
+Regards,
+Markus
