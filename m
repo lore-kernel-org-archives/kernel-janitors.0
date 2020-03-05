@@ -1,10 +1,10 @@
 From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 05 Mar 2020 17:14:53 +0000
-Subject: [PATCH AUTOSEL 4.19 09/31] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-Message-Id: <20200305171516.30028-9-sashal@kernel.org>
+Date: Thu, 05 Mar 2020 17:12:15 +0000
+Subject: [PATCH AUTOSEL 5.5 14/67] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
+Message-Id: <20200305171309.29118-14-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200305171516.30028-1-sashal@kernel.org>
-In-Reply-To: <20200305171516.30028-1-sashal@kernel.org>
+References: <20200305171309.29118-1-sashal@kernel.org>
+In-Reply-To: <20200305171309.29118-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -37,7 +37,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 0bef238d2c0c6..0d5f9c8f5bdac 100644
+index 6176b9acba950..d0d832ab3d3b8 100644
 --- a/arch/mips/kernel/vpe.c
 +++ b/arch/mips/kernel/vpe.c
 @@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
