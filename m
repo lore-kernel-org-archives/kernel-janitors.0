@@ -1,38 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Mar 2020 08:00:04 +0000
+From: Saeed Mahameed <saeedm@mellanox.com>
+Date: Thu, 05 Mar 2020 23:11:09 +0000
 Subject: Re: [PATCH] net/mlx5e: Fix an IS_ERR() vs NULL check
-Message-Id: <20200305080004.GA19839@kadam>
+Message-Id: <9f205ed72a7a892ed8efda3a236bd533fc991c45.camel@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200304142151.qivcobp6ngrynb2p@kili.mountain>
- <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
-In-Reply-To: <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
+         <10527910074442142431505e9d424af9128e8c5c.camel@mellanox.com>
+         <20200305080004.GA19839@kadam>
+In-Reply-To: <20200305080004.GA19839@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@mellanox.com>
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
 Cc: Eli Cohen <eli@mellanox.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mark Bloch <markb@mellanox.com>, Paul Blakey <paulb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "leon@kernel.org" <leon@kernel.org>
 
-On Wed, Mar 04, 2020 at 08:31:13PM +0000, Saeed Mahameed wrote:
-> On Wed, 2020-03-04 at 17:22 +0300, Dan Carpenter wrote:
-> > The esw_vport_tbl_get() function returns error pointers on error.
-> > 
-> > Fixes: 96e326878fa5 ("net/mlx5e: Eswitch, Use per vport tables for
-> > mirroring")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Hi Dan the patch looks fine, but you didn't cc netdev mailing list
-> Two options:
-> 
-> 1) I can pick this patch up and repost it myself in a future pull
-> request
-
-I assumed we would do this, because the original patch didn't have
-Dave's signed-off-by.
-
-> 2) you can re-post it and cc netdev also mark it for net [PATCH net]
-
-If we were going to go that route then it would have to [PATCH net-next]
-because it doesn't apply to the net tree.
-
-regards,
-dan carpenter
+T24gVGh1LCAyMDIwLTAzLTA1IGF0IDExOjAwICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBPbiBXZWQsIE1hciAwNCwgMjAyMCBhdCAwODozMToxM1BNICswMDAwLCBTYWVlZCBNYWhhbWVl
+ZCB3cm90ZToNCj4gPiBPbiBXZWQsIDIwMjAtMDMtMDQgYXQgMTc6MjIgKzAzMDAsIERhbiBDYXJw
+ZW50ZXIgd3JvdGU6DQo+ID4gPiBUaGUgZXN3X3Zwb3J0X3RibF9nZXQoKSBmdW5jdGlvbiByZXR1
+cm5zIGVycm9yIHBvaW50ZXJzIG9uIGVycm9yLg0KPiA+ID4gDQo+ID4gPiBGaXhlczogOTZlMzI2
+ODc4ZmE1ICgibmV0L21seDVlOiBFc3dpdGNoLCBVc2UgcGVyIHZwb3J0IHRhYmxlcw0KPiA+ID4g
+Zm9yDQo+ID4gPiBtaXJyb3JpbmciKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRl
+ciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+IA0KPiA+IEhpIERhbiB0aGUgcGF0Y2gg
+bG9va3MgZmluZSwgYnV0IHlvdSBkaWRuJ3QgY2MgbmV0ZGV2IG1haWxpbmcgbGlzdA0KPiA+IFR3
+byBvcHRpb25zOg0KPiA+IA0KPiA+IDEpIEkgY2FuIHBpY2sgdGhpcyBwYXRjaCB1cCBhbmQgcmVw
+b3N0IGl0IG15c2VsZiBpbiBhIGZ1dHVyZSBwdWxsDQo+ID4gcmVxdWVzdA0KPiANCj4gSSBhc3N1
+bWVkIHdlIHdvdWxkIGRvIHRoaXMsIGJlY2F1c2UgdGhlIG9yaWdpbmFsIHBhdGNoIGRpZG4ndCBo
+YXZlDQo+IERhdmUncyBzaWduZWQtb2ZmLWJ5Lg0KPiANCg0KV2UgbWFpbnRhaW4gdGhlIG5ldC1u
+ZXh0LW1seDUgYnJhbmNoIHVuZGVyIG5ldGRldiBtYWlsaW5nIGxpc3QuDQoNCj4gPiAyKSB5b3Ug
+Y2FuIHJlLXBvc3QgaXQgYW5kIGNjIG5ldGRldiBhbHNvIG1hcmsgaXQgZm9yIG5ldCBbUEFUQ0gN
+Cj4gPiBuZXRdDQo+IA0KPiBJZiB3ZSB3ZXJlIGdvaW5nIHRvIGdvIHRoYXQgcm91dGUgdGhlbiBp
+dCB3b3VsZCBoYXZlIHRvIFtQQVRDSCBuZXQtDQo+IG5leHRdDQo+IGJlY2F1c2UgaXQgZG9lc24n
+dCBhcHBseSB0byB0aGUgbmV0IHRyZWUuDQo+IA0KDQpJIHNlZSwgaSB3aWxsIHRha2UgaXQgbXlz
+ZWxmIHRvIG5ldC1uZXh0LW1seDUgYW5kIHdpbGwgc3VibWl0IHRvIG5ldC0NCm5leHQgc29vbiBp
+biBteSBuZXh0IHB1bGwgcmVxdWVzdCB0byBkYXZlLg0KDQpUaGFua3MsDQpTYWVlZC4NCg0K
