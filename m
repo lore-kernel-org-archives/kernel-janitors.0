@@ -1,41 +1,33 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 23 Mar 2020 15:20:06 +0000
-Subject: Re: [PATCH] perf cpumap: Use scnprintf instead of snprintf
-Message-Id: <8bb4696a-3470-6613-50ce-a002fbce6b23@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 06 Mar 2020 18:14:55 +0000
+Subject: Re: [v5.1] Documentation: bootconfig: Update boot configuration documentation
+Message-Id: <8870b794-4ca2-9dc4-e45e-66de2ff64e4b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
- <c0441e54a07e424f9646ca232d44e9d8@AcuMS.aculab.com>
-In-Reply-To: <c0441e54a07e424f9646ca232d44e9d8@AcuMS.aculab.com>
+References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <158341540688.4236.11231142256496896074.stgit@devnote2>
+ <f3c51b0a-2a55-6523-96e2-4f9ef0635d9f@web.de>
+ <20200306105107.afba066a97db1eb12f290aff@kernel.org>
+ <58f4d6b3-ce3d-d1a5-aa0f-c31c1bbec091@web.de>
+ <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
+In-Reply-To: <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: David Laight <David.Laight@ACULAB.COM>, "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, "jolsa@redhat.com" <jolsa@redhat.com>, "namhyung@kernel.org" <namhyung@kernel.org>, "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "zhe.he@windriver.com" <zhe.he@windriver.com>, "dzickus@redhat.com" <dzickus@redhat.com>, "jstancek@redhat.com" <jstancek@redhat.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 23/03/2020 à 16:11, David Laight a écrit :
-> From: Christophe JAILLET
->> Sent: 22 March 2020 17:25
->> 'scnprintf' returns the number of characters written in the output buffer
->> excluding the trailing '\0', instead of the number of characters which
->> would be generated for the given input.
->>
->> Both function return a number of characters, excluding the trailing '\0'.
->> So comparaison to check if it overflows, should be done against max_size-1.
->> Comparaison against max_size can never match.
-> NACK.
-> Since snprintf() returns the number of characters it would have
-> written to an infinite buffer the comparison can 'match'.
+>> I got the impression that we are in the process of constructing another patch together
+>> which will fix known wording weaknesses.
 >
-> However it should test for (ret >= PATH_MAX).
+> Would you mean the broken EBNF part?
 
-Agreed. I'll send a V2.
+I hope that such software design approaches can also be reconsidered.
 
-CJ
 
-> 	David
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
->
->
+> Yeah, maybe, but it is another story.
+
+Other concrete update suggestions are probably easier to integrate before.
+Which change opportunities will be picked up next?
+
+Regards,
+Markus
