@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 06 Mar 2020 18:14:55 +0000
+Date: Fri, 06 Mar 2020 18:40:28 +0000
 Subject: Re: [v5.1] Documentation: bootconfig: Update boot configuration documentation
-Message-Id: <8870b794-4ca2-9dc4-e45e-66de2ff64e4b@web.de>
+Message-Id: <7a518d51-db04-ac56-fab8-5bc6be8f5b1c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
  <158341540688.4236.11231142256496896074.stgit@devnote2>
@@ -11,23 +11,35 @@ References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
  <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
 In-Reply-To: <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
 Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> I got the impression that we are in the process of constructing another patch together
->> which will fix known wording weaknesses.
+>>>> …
+>>>>> +++ b/Documentation/admin-guide/bootconfig.rst
+>>>> …
+>>>>> +If you think that kernel/init options become too long to write in boot-loader
+>>>>> +configuration file or you want to comment on each option, the boot
+>>>>> +configuration may be suitable. …
+>>>>
+>>>> Would you like to specify any settings in the boot configuration file
+>>>> because the provided storage capacity would be too limited by the kernel command line?
+>>>
+>>> Yes.
+>>
+>> How will affected places be improved after such an agreement?
 >
-> Would you mean the broken EBNF part?
+> Would you please make a patch of new sentence?
 
-I hope that such software design approaches can also be reconsidered.
+Not directly.
 
+* If I would need to provide another wording alternative as a concrete patch,
+  I would have to wait until previously accepted changes would become available
+  in a Linux development repository.
 
-> Yeah, maybe, but it is another story.
-
-Other concrete update suggestions are probably easier to integrate before.
-Which change opportunities will be picked up next?
+* So I would find it easier to agree on wording variants during our current
+  development discussion from which you would present results as a subsequent patch.
 
 Regards,
 Markus
