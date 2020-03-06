@@ -1,71 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Mar 2020 14:24:31 +0000
-Subject: [PATCH net] net: nfc: fix bounds checking bugs on "pipe"
-Message-Id: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 06 Mar 2020 05:33:21 +0000
+Subject: Re: [PATCH net] net: nfc: fix bounds checking bugs on "pipe"
+Message-Id: <20200305.213321.1243150631582322410.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
+In-Reply-To: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Christophe Ricard <christophe.ricard@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>, Allison Randal <allison@lohutok.net>, netdev@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: christophe.ricard@gmail.com, kuba@kernel.org, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, allison@lohutok.net, netdev@vger.kernel.org, surenb@google.com, kernel-janitors@vger.kernel.org
 
-This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
-corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
-("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
-added range checks on "pipe".
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 4 Mar 2020 17:24:31 +0300
 
-The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
-It's in the 0-255 range.  We're using it as the array index into the
-hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
+> This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
+> corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
+> ("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
+> added range checks on "pipe".
+> 
+> The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
+> It's in the 0-255 range.  We're using it as the array index into the
+> hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
+> 
+> Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- net/nfc/hci/core.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
-index 6f1b096e601c..43811b5219b5 100644
---- a/net/nfc/hci/core.c
-+++ b/net/nfc/hci/core.c
-@@ -181,13 +181,20 @@ void nfc_hci_resp_received(struct nfc_hci_dev *hdev, u8 result,
- void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
- 			  struct sk_buff *skb)
- {
--	u8 gate = hdev->pipes[pipe].gate;
- 	u8 status = NFC_HCI_ANY_OK;
- 	struct hci_create_pipe_resp *create_info;
- 	struct hci_delete_pipe_noti *delete_info;
- 	struct hci_all_pipe_cleared_noti *cleared_info;
-+	u8 gate;
- 
--	pr_debug("from gate %x pipe %x cmd %x\n", gate, pipe, cmd);
-+	pr_debug("from pipe %x cmd %x\n", pipe, cmd);
-+
-+	if (pipe >= NFC_HCI_MAX_PIPES) {
-+		status = NFC_HCI_ANY_E_NOK;
-+		goto exit;
-+	}
-+
-+	gate = hdev->pipes[pipe].gate;
- 
- 	switch (cmd) {
- 	case NFC_HCI_ADM_NOTIFY_PIPE_CREATED:
-@@ -375,8 +382,14 @@ void nfc_hci_event_received(struct nfc_hci_dev *hdev, u8 pipe, u8 event,
- 			    struct sk_buff *skb)
- {
- 	int r = 0;
--	u8 gate = hdev->pipes[pipe].gate;
-+	u8 gate;
-+
-+	if (pipe >= NFC_HCI_MAX_PIPES) {
-+		pr_err("Discarded event %x to invalid pipe %x\n", event, pipe);
-+		goto exit;
-+	}
- 
-+	gate = hdev->pipes[pipe].gate;
- 	if (gate = NFC_HCI_INVALID_GATE) {
- 		pr_err("Discarded event %x to unopened pipe %x\n", event, pipe);
- 		goto exit;
--- 
-2.11.0
+Applied and queued up for -stable, thanks Dan.
