@@ -1,51 +1,34 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Sun, 22 Mar 2020 22:04:38 +0000
-Subject: Re: [PATCH] err.h: remove deprecated PTR_RET for good
-Message-Id: <20200322220438.2phluryjzno777w2@pengutronix.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 08 Mar 2020 06:54:42 +0000
+Subject: [PATCH] RDMA/bnxt_re: Remove a redundant 'memset'
+Message-Id: <20200308065442.5415-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200322165702.6712-1-lukas.bulwahn@gmail.com>
- <nycvar.YFH.7.76.2003222240500.19500@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2003222240500.19500@cbobk.fhfr.pm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Rusty Russell <rusty@rustcorp.com.au>, Andrew Morton <akpm@linux-foundation.org>, "Gustavo A . R . Silva" <gustavo@embeddedor.com>, Nicholas Krause <xerofoify@gmail.com>, Duan Jiong <duanj.fnst@cn.fujitsu.com>, Sachin Kamat <sachin.kamat@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: selvin.xavier@broadcom.com, devesh.sharma@broadcom.com, somnath.kotur@broadcom.com, sriharsha.basavapatna@broadcom.com, dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Mar 22, 2020 at 10:42:56PM +0100, Jiri Kosina wrote:
-> On Sun, 22 Mar 2020, Lukas Bulwahn wrote:
->=20
-> > Initially, commit fa9ee9c4b988 ("include/linux/err.h: add a function to
-> > cast error-pointers to a return value") from Uwe Kleine-K=F6nig introdu=
-ced
-> > PTR_RET in 03/2011. Then, in 07/2013, commit 6e8b8726ad50 ("PTR_RET is
-> > now PTR_ERR_OR_ZERO") from Rusty Russell renamed PTR_RET to
-> > PTR_ERR_OR_ZERO, and left PTR_RET as deprecated-marked alias.
-> >=20
-> > After six years since the renaming and various repeated cleanups in the
-> > meantime, it is time to finally remove the deprecated PTR_RET for good.
-> >=20
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > Rusty, if you are still around, Acked-by is appreciated.
-> > Uwe, Acked-by is appreciated.
-> > Kudos to Gustavo, Nicholas, Duan & Sachin for previous cleanups.
-> >=20
-> > applies cleanly on current master and on next-20200320
-> > Jiri, please pick this trival patch for the next merge window. Thanks.
->=20
-> I am queuing it right away; it's been marked deprecated back in 2013, and=
-=20
-> it doesn't have any in-tree users anyway.
+'wqe' is already zeroed at the top of the 'while' loop, just a few lines
+below, and is not used outside of the loop.
+So there is no need to zero it here as well.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-in case it's not in a tree already that is not supposed to be changed
-any more.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index ad3e524187e3..15494ca33092 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -2475,7 +2475,6 @@ static int bnxt_re_post_send_shadow_qp(struct bnxt_re_dev *rdev,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&qp->sq_lock, flags);
+-	memset(&wqe, 0, sizeof(wqe));
+ 	while (wr) {
+ 		/* House keeping */
+ 		memset(&wqe, 0, sizeof(wqe));
+-- 
+2.20.1
