@@ -1,51 +1,47 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 18 Mar 2020 16:18:52 +0000
-Subject: Re: [PATCH] bnx2x: fix spelling mistake "pauseable" -> "pausable"
-Message-Id: <4920d5ae-a865-9445-3ebe-1683e668a1f8@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 08 Mar 2020 09:26:37 +0000
+Subject: [PATCH] drm/amdgpu/display: Fix an error handling path in 'dm_update_crtc_state()'
+Message-Id: <20200308092637.8194-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200317182921.482606-1-colin.king@canonical.com>
- <8d9544fe6d413cdd600504e48f301e023b99e17b.camel@perches.com>
- <7ce6d58f-a2d0-7173-0163-f1e3b5f93e65@canonical.com>
- <1bcfc53c523f120a4cf0f19490de506c5704d306.camel@perches.com>
-In-Reply-To: <1bcfc53c523f120a4cf0f19490de506c5704d306.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Ariel Elior <aelior@marvell.com>, Sudarsana Kalluru <skalluru@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: harry.wentland@amd.com, sunpeng.li@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, nicholas.kazlauskas@amd.com, Bhawanpreet.Lakha@amd.com, mario.kleiner.de@gmail.com, David.Francis@amd.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On 18/03/2020 16:13, Joe Perches wrote:
-> On Wed, 2020-03-18 at 09:16 +0000, Colin Ian King wrote:
->> On 18/03/2020 03:37, Joe Perches wrote:
->>> On Tue, 2020-03-17 at 18:29 +0000, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Bulk rename of variables and literal strings. No functional
->>>> changes.
->>>
->>> I'm not sure either spelling is a "real" word and
->>> pauseable seems more intelligible and less likely
->>> to be intended to be a typo of "possible" to me.
->>
->> It's indeed of marginal benefit. However..
->>
->> https://www.yourdictionary.com/pausable
-> 
-> Then again there's this:
-> https://www.spellcheck.net/misspelled-words/pausable
-> 
-> Correct spelling for PAUSABLE
->         
->             We think the word pausable is a misspelling.
-> 
-> and
-> 
-> https://www.anagrammer.com/crossword/answer/pausable
-> 
-> The word PAUSABLE is NOT valid in any word game. (Sorry, you cannot play
-> PAUSABLE in Scrabble, Words With Friends etc) 
->     
+'dc_stream_release()' may be called twice. Once here, and once below in the
+error handling path if we branch to the 'fail' label.
 
-OK, lets NAK this fix :-)  Apologies for the noise.
+Set 'new_stream' to NULL, once released to avoid the duplicated release
+function call.
 
-Colin
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Maybe the 'goto fail' at line 7745 should be turned into a 'return ret'
+instead. Could be clearer.
+
+No Fixes tag provided because I've not been able to dig deep enough in the
+git history.
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 97c1b01c0fc1..9d7773a77c4f 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -7704,8 +7704,10 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
+ 
+ skip_modeset:
+ 	/* Release extra reference */
+-	if (new_stream)
+-		 dc_stream_release(new_stream);
++	if (new_stream) {
++		dc_stream_release(new_stream);
++		new_stream = NULL;
++	}
+ 
+ 	/*
+ 	 * We want to do dc stream updates that do not require a
+-- 
+2.20.1
