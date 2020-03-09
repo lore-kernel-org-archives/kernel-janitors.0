@@ -1,74 +1,126 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 08 Mar 2020 22:54:47 +0000
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 09 Mar 2020 06:32:10 +0000
 Subject: Re: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
-Message-Id: <5129f7dbd8506cc9fd5a8f76dc993d789566af6c.camel@perches.com>
+Message-Id: <alpine.DEB.2.21.2003090702440.3325@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
-         <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com>
-In-Reply-To: <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com>
+References: <20200308195116.12836-1-lukas.bulwahn@gmail.com> <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com> <5129f7dbd8506cc9fd5a8f76dc993d789566af6c.camel@perches.com>
+In-Reply-To: <5129f7dbd8506cc9fd5a8f76dc993d789566af6c.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <groeck@google.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <swboyd@chromium.org>, Guenter Roeck <groeck@chromium.org>, Julius Werner <jwerner@chromium.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: Guenter Roeck <groeck@google.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <swboyd@chromium.org>, Guenter Roeck <groeck@chromium.org>, Julius Werner <jwerner@chromium.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Sun, 2020-03-08 at 15:32 -0700, Guenter Roeck wrote:
-> On Sun, Mar 8, 2020 at 12:51 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > All files in drivers/firmware/google/ are identified as part of THE REST
-> > according to MAINTAINERS, but they are really maintained by others.
-[]
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> > @@ -7111,6 +7111,14 @@ S:       Supported
-> >  F:     Documentation/networking/device_drivers/google/gve.rst
-> >  F:     drivers/net/ethernet/google
+
+
+On Sun, 8 Mar 2020, Joe Perches wrote:
+
+> On Sun, 2020-03-08 at 15:32 -0700, Guenter Roeck wrote:
+> > On Sun, Mar 8, 2020 at 12:51 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > > All files in drivers/firmware/google/ are identified as part of THE REST
+> > > according to MAINTAINERS, but they are really maintained by others.
+> []
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> []
+> > > @@ -7111,6 +7111,14 @@ S:       Supported
+> > >  F:     Documentation/networking/device_drivers/google/gve.rst
+> > >  F:     drivers/net/ethernet/google
+> > > 
+> > > +GOOGLE FIRMWARE
+> > > +M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > +M:     Stephen Boyd <swboyd@chromium.org>
+> > > +R:     Guenter Roeck <groeck@chromium.org>
+> > > +R:     Julius Werner <jwerner@chromium.org>
+> > > +S:     Maintained
+> > > +F:     drivers/firmware/google/
+> > > +
 > > 
-> > +GOOGLE FIRMWARE
-> > +M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > +M:     Stephen Boyd <swboyd@chromium.org>
-> > +R:     Guenter Roeck <groeck@chromium.org>
-> > +R:     Julius Werner <jwerner@chromium.org>
-> > +S:     Maintained
-> > +F:     drivers/firmware/google/
-> > +
+> > FWIW, I would not mind stepping up as maintainer if needed, but I
+> > think we should strongly discourage this kind of auto-assignment of
+> > maintainers and/or reviewers.
 > 
-> FWIW, I would not mind stepping up as maintainer if needed, but I
-> think we should strongly discourage this kind of auto-assignment of
-> maintainers and/or reviewers.
+> Auto assignment should definitely _not_ be done.
+> 
+> This is an RFC proposal though.
+> 
+> Sometimes it's better to not produce an RFC as
+> a patch, but maybe just show a proposed section
+> and ask if is appropriate may be a better style
+> going forward.
+>
 
-Auto assignment should definitely _not_ be done.
+Please interpret the RFC patch similar to an email as Joe wrote below, 
+simply reaching out to you.
 
-This is an RFC proposal though.
+There is no auto-assignment intended, nor did I expect the patch to be 
+picked up on the first attempt of uneducated guessing.
 
-Sometimes it's better to not produce an RFC as
-a patch, but maybe just show a proposed section
-and ask if is appropriate may be a better style
-going forward.
+There are currently around 3,000 files identified being part of THE REST;
+so they are all assigned to Linus and LKML.
 
-Maybe just emailing Greg, Stephen, Guenter and
-Julius (cc'ing LKML) asking something like the
-below would be better:
+To confirm that they actually are maintained by someone else and reflect 
+that in MAINTAINERS, a bit of educated guessing who to contact and to 
+which entry to add the files to is required.
 
-----------------------------------------------------
+I am starting with the "bigger" clustered files in drivers, and then try 
+to look at files in include and Documentation/ABI/.
 
-Hey all.
+Here is a rough statistics on how many files from each directory are in
+THE REST:
 
-Files in drivers/firmware/google/ do not seem to
-have a listed MAINTAINER.
+   1368 include
+    566 tools
+    327 lib
+    321 Documentation
+    100 drivers
+     91 kernel
+     84 scripts
+     75 samples
+     13 ipc
+     13 init
+      8 usr
+      2 arch
+      1 virt
 
-Would a section entry in MAINTAINERS like this be
-appropriate?
+ 
+> Maybe just emailing Greg, Stephen, Guenter and
+> Julius (cc'ing LKML) asking something like the
+> below would be better:
+> 
+> ----------------------------------------------------
+> 
+> Hey all.
+> 
+> Files in drivers/firmware/google/ do not seem to
+> have a listed MAINTAINER.
+> 
+> Would a section entry in MAINTAINERS like this be
+> appropriate?
+> 
+> GOOGLE FIRMWARE
+> M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> M:     Stephen Boyd <swboyd@chromium.org>
+> R:     Guenter Roeck <groeck@chromium.org>
+> R:     Julius Werner <jwerner@chromium.org>
+> S:     Maintained
+> F:     drivers/firmware/google/
+> 
+> Is there a git tree somewhere that should be added?
+> What would be the
+> status of this proposed section?
+> Does someone really look after it at
+> all?
+> 
 
-GOOGLE FIRMWARE
-M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-M:     Stephen Boyd <swboyd@chromium.org>
-R:     Guenter Roeck <groeck@chromium.org>
-R:     Julius Werner <jwerner@chromium.org>
-S:     Maintained
-F:     drivers/firmware/google/
+Thanks for the proposal; I was not sure about the best way to reach out to 
+others on suggesting to add new entries.
 
-Is there a git tree somewhere that should be added?
-What would be the
-status of this proposed section?
-Does someone really look after it at
-all?
+In the future, I will simply send out emails, as those above, when 
+suggesting to add new entries.
+
+Thanks for the feedback and sorry for the churn. Once most files are 
+assigned, it is much easier to follow when someone missed to adjust the 
+MAINTAINERS file and send out a friendly hint. I hope that is worth the 
+initial churn for some people at the beginning of this clean-up.
+
+Lukas
