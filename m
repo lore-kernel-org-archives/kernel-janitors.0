@@ -1,50 +1,23 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 03 Mar 2020 17:43:45 +0000
-Subject: [PATCH 4.19 54/87] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
-Message-Id: <20200303174355.218566706@linuxfoundation.org>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Mon, 09 Mar 2020 14:03:41 +0000
+Subject: Re: [PATCH] mtd: lpddr: Fix a double free in probe()
+Message-Id: <20200309140341.22314-1-miquel.raynal@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200303174349.075101355@linuxfoundation.org>
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200228092554.o57igp3nqhyvf66t@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Alexey Korolev <akorolev@infradead.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, David Woodhouse <David.Woodhouse@intel.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Steve Winslow <swinslow@gmail.com>, Allison Randal <allison@lohutok.net>, Vignesh Raghavendra <vigneshr@ti.com>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Fri, 2020-02-28 at 09:25:54 UTC, Dan Carpenter wrote:
+> This function is only called from lpddr_probe().  We free "lpddr" both
+> here and in the caller, so it's a double free.  The best place to free
+> "lpddr" is in lpddr_probe() so let's delete this one.
+> 
+> Fixes: 8dc004395d5e ("[MTD] LPDDR qinfo probing.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
-
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/vpe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
- 
+Miquel
