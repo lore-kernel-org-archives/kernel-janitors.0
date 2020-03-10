@@ -1,18 +1,50 @@
-From: postmaster@hokusetubad.sakura.ne.jp
-Date: Sun, 08 Mar 2020 15:55:02 +0000
-Subject: BUSINESS PROPOSAL
-Message-Id: <202003081555.028Ft2lu062216@www752.sakura.ne.jp>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 10 Mar 2020 12:38:43 +0000
+Subject: [PATCH 4.9 35/88] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
+Message-Id: <20200310123614.437868526@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200310123606.543939933@linuxfoundation.org>
+In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mitch.a.williams@intel.com
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dearest Friend
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I am Mr Abdul Kareem working with Emirate NBD Bank Dubai,United Arab Emirate as Finance Manager.
-I have a very profitable Business that concerns you and will benefit both of us after completion.
-Kindly get back to me for more details.
-Awaiting your response.
-Regards
-Abdul Kareem
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
+
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/mips/kernel/vpe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
+ }
+ 
