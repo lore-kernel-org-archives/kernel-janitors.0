@@ -1,35 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Mar 2020 13:45:56 +0000
-Subject: [PATCH] PCI: altera: clean up indentation issue on a return statement
-Message-Id: <20200327134556.265411-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 10 Mar 2020 12:38:37 +0000
+Subject: [PATCH 4.4 24/72] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
+Message-Id: <20200310123607.860475256@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200310123601.053680753@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ley Foon Tan <ley.foon.tan@intel.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, Bjorn Helgaas <bhelgaas@google.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-A return statment is indented incorrectly, remove extraneous space.
+commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Pointer on the memory allocated by 'alloc_progmem()' is stored in
+'v->load_addr'. So this is this memory that should be freed by
+'release_progmem()'.
+
+'release_progmem()' is only a call to 'kfree()'.
+
+With the current code, there is both a double free and a memory leak.
+Fix it by passing the correct pointer to 'release_progmem()'.
+
+Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: ralf@linux-mips.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/pci/controller/pcie-altera.c | 2 +-
+ arch/mips/kernel/vpe.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index b447c3e4abad..24cb1c331058 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -193,7 +193,7 @@ static bool altera_pcie_valid_device(struct altera_pcie *pcie,
- 	if (bus->number = pcie->root_bus_nr && dev > 0)
- 		return false;
- 
--	 return true;
-+	return true;
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
+ {
+ 	list_del(&v->list);
+ 	if (v->load_addr)
+-		release_progmem(v);
++		release_progmem(v->load_addr);
+ 	kfree(v);
  }
  
- static int tlp_read_packet(struct altera_pcie *pcie, u32 *value)
--- 
-2.25.1
