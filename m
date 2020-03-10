@@ -1,41 +1,34 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Tue, 10 Mar 2020 17:57:18 +0000
-Subject: AW: [PATCH] bfs: prevent underflow in bfs_find_entry()
-Message-Id: <fabccce3c25444bbb5aa51f8c08e9865@bfs.de>
+From: Tigran Aivazian <aivazian.tigran@gmail.com>
+Date: Tue, 10 Mar 2020 18:22:42 +0000
+Subject: Re: [PATCH] bfs: prevent underflow in bfs_find_entry()
+Message-Id: <CAK+_RLk3D1VA6Rms1TGEFuEeO8JGxUaXfmWxznn+cHCG96TOTQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200307060808.6nfyqnp2woq7d3cv@kili.mountain>
- <ba294b1d861142ca8f7b204356009dd0@bfs.de>,<20200310090644.GA11583@kadam>
-In-Reply-To: <20200310090644.GA11583@kadam>
+ <ba294b1d861142ca8f7b204356009dd0@bfs.de> <20200310090644.GA11583@kadam> <fabccce3c25444bbb5aa51f8c08e9865@bfs.de>
+In-Reply-To: <fabccce3c25444bbb5aa51f8c08e9865@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Walter Harms <wharms@bfs.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
+Hello,
 
-________________________________________
-Von: Dan Carpenter <dan.carpenter@oracle.com>
-Gesendet: Dienstag, 10. M=E4rz 2020 10:06
-An: Walter Harms
-Cc: Tigran A. Aivazian; linux-kernel@vger.kernel.org; kernel-janitors@vger.=
-kernel.org
-Betreff: Re: [PATCH] bfs: prevent underflow in bfs_find_entry()
+On Tue, 10 Mar 2020 at 17:57, Walter Harms <wharms@bfs.de> wrote:
+> that raises the question why is there a len paramter in the first place.
+> Surely the writer can make sure that there is always a NUL terminated
+> string, then it would be possible the use a simple strcmp() and the
+> range check is useless and can be removed.
+>
+> seems a question for the maintainer.
 
-On Mon, Mar 09, 2020 at 08:40:28AM +0000, Walter Harms wrote:
-> hi Dan,
-> the namelen usage is fishy. It goes into bfs_namecmp()
-> where it is checked for namelen < BFS_NAMELEN, leaving
-> only the case =3D=3D.
+Please have a look at, for example,
+fs/ufs/dir.c:ufs_find_entry()/ufs_match() functions --- they do almost
+the same thing as the ones in bfs. And, presumably, the line "int
+namelen = qstr->len;" in ufs_find_entry() is causing the static
+checker warning too, just like the one in bfs which Dan mentioned and
+fixed. So, let's not over-complicate things (or make a mountain out of
+a molehill) and accept Dan's patch as is.
 
-The rule in bfs_namecmp() is that the name has to be NUL terminated if
-there is enough space.
-
-that raises the question why is there a len paramter in the first place.
-Surely the writer can make sure that there is always a NUL terminated
-string, then it would be possible the use a simple strcmp() and the
-range check is useless and can be removed.
-
-seems a question for the maintainer.
-
-re,
- wh
+Kind regards,
+Tigran
