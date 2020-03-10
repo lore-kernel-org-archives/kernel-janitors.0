@@ -1,38 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Mar 2020 13:24:11 +0000
-Subject: [PATCH net-next] drm/amdgpu: Uninitialized variable in gfx_v9_0_rlcg_wreg()
-Message-Id: <20200320132411.GD95012@mwanda>
+From: ''Michael weirsky'' <ronald.pena@11d01.mspz7.gob.ec>
+Date: Tue, 10 Mar 2020 08:50:48 +0000
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
+Message-Id: <20200310082121.2E5BF2F6326C@mail.11d01.mspz7.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, Monk Liu <Monk.Liu@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Emily Deng <Emily.Deng@amd.com>, David Airlie <airlied@linux.ie>, Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, Tao Zhou <tao.zhou1@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, Le Ma <le.ma@amd.com>, Huang Rui <ray.huang@amd.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, James Zhu <James.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Dennis Li <Dennis.Li@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-The "shadow" variable was never set to false.
+Lieber Freund,
 
-There is a quirk in current versions of GCC where it will sometimes set
-it to false and not warn about the uninitiliazed variable.  That means
-that this bug wouldn't have been discovered in normal testing.
+Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen.
+Das ist dein Spendencode: [MW530342019]
+www.youtube.com/watch?v=un8yRTmrYMY
 
-Fixes: 2e0cc4d48b91 ("drm/amdgpu: revise RLCG access path")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Antworten Sie mit dem SPENDE-CODE an diese 
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 7bc2486167e7..affbff76758c 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -735,7 +735,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
- 	static void *spare_int;
- 	static uint32_t grbm_cntl;
- 	static uint32_t grbm_idx;
--	bool shadow;
-+	bool shadow = false;
- 
- 	scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
- 	scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
--- 
-2.25.1
+E-Mail:mikeweirskyspende@gmail.com
+
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+
+Grüße
+Herr Mike Weirsky
