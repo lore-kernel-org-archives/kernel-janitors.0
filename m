@@ -1,76 +1,75 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Mar 2020 12:13:33 +0000
-Subject: Re: [PATCH] drm/gem: Fix a leak in drm_gem_objects_lookup()
-Message-Id: <20200323121333.GF26299@kadam>
+From: Calvin Johnson <calvin.johnson@oss.nxp.com>
+Date: Wed, 11 Mar 2020 05:54:03 +0000
+Subject: Re: [PATCH net] device property: change device_get_phy_mode() to prevent signedess bugs
+Message-Id: <20200311055339.GA22511@lsv03152.swis.in-blr01.nxp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200320132334.GC95012@mwanda>
- <CACvgo51xwgF2hJPOESWGpJ16WittQSVixdd+62KwFsZaHO-Dpg@mail.gmail.com>
-In-Reply-To: <CACvgo51xwgF2hJPOESWGpJ16WittQSVixdd+62KwFsZaHO-Dpg@mail.gmail.com>
+References: <20200131045953.wbj66jkvijnmf5s2@kili.mountain>
+ <202002031247.fhmzF9z1%lkp@intel.com>
+In-Reply-To: <202002031247.fhmzF9z1%lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>, Thomas Zimmermann <tzimmermann@suse.de>
+To: dan.carpenter@oracle.com
+Cc: "kbuild-all@lists.01.org" <kbuild-all@lists.01.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ajay Gupta <ajayg@nvidia.com>, "David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Iyappan Subramanian <iyappan@os.amperecomputing.com>, Keyur Chudgar <keyur@os.amperecomputing.com>, Quan Nguyen <quan@os.amperecomputing.com>, Steve Glendinning <steve.glendinning@shawell.net>, Jassi Brar <jaswinder.singh@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Mon, Mar 23, 2020 at 11:13:22AM +0000, Emil Velikov wrote:
+Hi Dan,
+
+Do you plan to send v2 of this patch set?
+https://lkml.org/lkml/2020/1/31/1
+I'm preparing my patch set on top of this. Hence the query.
+
+Thanks
+Calvin
+
+On Mon, Feb 03, 2020 at 05:11:49AM +0000, kbuild test robot wrote:
 > Hi Dan,
 > 
-> On Fri, 20 Mar 2020 at 13:23, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > If the "handles" allocation or the copy_from_user() fails then we leak
-> > "objs".  It's supposed to be freed in panfrost_job_cleanup().
-> >
-> > Fixes: c117aa4d8701 ("drm: Add a drm_gem_objects_lookup helper")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/gpu/drm/drm_gem.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> > index a9e4a610445a..f28724f2eb69 100644
-> > --- a/drivers/gpu/drm/drm_gem.c
-> > +++ b/drivers/gpu/drm/drm_gem.c
-> > @@ -710,6 +710,8 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
-> >         if (!objs)
-> >                 return -ENOMEM;
-> >
-> > +       *objs_out = objs;
-> > +
-> >         handles = kvmalloc_array(count, sizeof(u32), GFP_KERNEL);
-> >         if (!handles) {
-> >                 ret = -ENOMEM;
-> > @@ -723,8 +725,6 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
-> >         }
-> >
-> >         ret = objects_lookup(filp, handles, count, objs);
-> > -       *objs_out = objs;
-> > -
-> >  out:
-> >         kvfree(handles);
-> >         return ret;
+> Thank you for the patch! Perhaps something to improve:
 > 
-> It seems that this will return error to the caller, mangle the output
-> pointer and effectively still leak the objs.
-
-The patch works.
-
-This is "one function frees everything" style error handling.  It gets
-passed back to panfrost_ioctl_submit() which calls panfrost_job_put()
-which calls panfrost_job_cleanup() which frees it.
-
-It's a horrible way to do error handling but this was the only actual
-bug I could see with the approach.
-
-> Better option IMHO is to:
-> - move the __user/copy_from_user into the caller
-> Removes a silly kvmalloc_array(1,...) in ~90+ users and drops the "out" label.
-> Extra bonus, this is the only instance in drm_gem with __user -
-> consistency is nice.
-> - add "err" or similar label, where the objs is freed before returning an error.
-
-Those sound like good ideas.  Also we could use kvcalloc() instead of
-kvmalloc_array() with __GFP_ZERO.  But it's too much for me to do...
-I'm mostly focused on static analysis warnings.
-
-regards,
-dan carpenter
+> [auto build test WARNING on net/master]
+> [also build test WARNING on driver-core/driver-core-testing linus/master v5.5 next-20200131]
+> [cannot apply to sparc-next/master]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Dan-Carpenter/device-property-change-device_get_phy_mode-to-prevent-signedess-bugs/20200203-043126
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git b7c3a17c6062701d97a0959890a2c882bfaac537
+> reproduce:
+>         # apt-get install sparse
+>         # sparse version: v0.6.1-154-g1dc00f87-dirty
+>         make ARCH=x86_64 allmodconfig
+>         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> 
+> sparse warnings: (new ones prefixed by >>)
+> 
+>    arch/x86/boot/compressed/cmdline.c:5:20: sparse: sparse: multiple definitions for function 'set_fs'
+> >> arch/x86/include/asm/uaccess.h:29:20: sparse:  the previous one is here
+>    arch/x86/boot/compressed/../cmdline.c:28:5: sparse: sparse: symbol '__cmdline_find_option' was not declared. Should it be static?
+>    arch/x86/boot/compressed/../cmdline.c:100:5: sparse: sparse: symbol '__cmdline_find_option_bool' was not declared. Should it be static?
+> 
+> vim +29 arch/x86/include/asm/uaccess.h
+> 
+> ca23386216b9d4 include/asm-x86/uaccess.h      Glauber Costa   2008-06-13  27  
+> 13d4ea097d18b4 arch/x86/include/asm/uaccess.h Andy Lutomirski 2016-07-14  28  #define get_fs()	(current->thread.addr_limit)
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14 @29  static inline void set_fs(mm_segment_t fs)
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  30  {
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  31  	current->thread.addr_limit = fs;
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  32  	/* On user-mode return, check fs is correct */
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  33  	set_thread_flag(TIF_FSCHECK);
+> 5ea0727b163cb5 arch/x86/include/asm/uaccess.h Thomas Garnier  2017-06-14  34  }
+> ca23386216b9d4 include/asm-x86/uaccess.h      Glauber Costa   2008-06-13  35  
+> 
+> :::::: The code at line 29 was first introduced by commit
+> :::::: 5ea0727b163cb5575e36397a12eade68a1f35f24 x86/syscalls: Check address limit on user-mode return
+> 
+> :::::: TO: Thomas Garnier <thgarnie@google.com>
+> :::::: CC: Thomas Gleixner <tglx@linutronix.de>
+> 
+> ---
+> 0-DAY kernel test infrastructure                 Open Source Technology Center
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
