@@ -1,33 +1,35 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Sat, 28 Mar 2020 15:46:17 +0000
-Subject: Re: [PATCH] MAINTAINERS: clarify maintenance of ARM Dove drivers
-Message-Id: <20200328154617.GX3819@lunn.ch>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Mar 2020 09:16:13 +0000
+Subject: [PATCH][next] soc: qcom: ipa: fix spelling mistake "cahces" -> "caches"
+Message-Id: <20200311091613.75613-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@bootlin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Alex Elder <elder@kernel.org>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 02:43:04PM +0100, Lukas Bulwahn wrote:
-> Commit 44e259ac909f ("ARM: dove: create a proper PMU driver for power
-> domains, PMU IRQs and resets") introduced new drivers for the ARM Dove SOC,
-> but did not add those drivers to the existing entry ARM/Marvell
-> Dove/MV78xx0/Orion SOC support in MAINTAINERS. Hence, these drivers were
-> considered to be part of "THE REST".
-> 
-> Clarify now that these drivers are maintained by the ARM/Marvell
-> Dove/MV78xx0/Orion SOC support maintainers. Also order the T: entry to the
-> place it belongs to, while at it.
-> 
-> This was identified with a small script that finds all files only belonging
-> to "THE REST" according to the current MAINTAINERS file, and I acted upon
-> its output.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+There is a spelling mistake in a dev_err message. Fix it.
 
-    Andrew
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ipa/ipa_modem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ipa/ipa_modem.c b/drivers/net/ipa/ipa_modem.c
+index 039afc8c608e..55c9329a4b1d 100644
+--- a/drivers/net/ipa/ipa_modem.c
++++ b/drivers/net/ipa/ipa_modem.c
+@@ -293,7 +293,7 @@ static void ipa_modem_crashed(struct ipa *ipa)
+ 
+ 	ret = ipa_table_hash_flush(ipa);
+ 	if (ret)
+-		dev_err(dev, "error %d flushing hash cahces\n", ret);
++		dev_err(dev, "error %d flushing hash caches\n", ret);
+ 
+ 	ret = ipa_endpoint_modem_exception_reset_all(ipa);
+ 	if (ret)
+-- 
+2.25.1
