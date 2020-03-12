@@ -1,69 +1,46 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Fri, 06 Mar 2020 22:40:26 +0000
-Subject: Re: [PATCH v3] MAINTAINERS: adjust to trusted keys subsystem creation
-Message-Id: <20200306224026.GA4095@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Mar 2020 11:32:31 +0000
+Subject: [PATCH] drm/amd/display: clean up a condition in dmub_psr_copy_settings()
+Message-Id: <20200312113231.GD20562@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200305203013.6189-1-lukas.bulwahn@gmail.com>
- <20200306193127.GJ7472@linux.intel.com>
- <alpine.DEB.2.21.2003062148050.2990@felia>
-In-Reply-To: <alpine.DEB.2.21.2003062148050.2990@felia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>, James Bottomley <jejb@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Wyatt Wood <wyatt.wood@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Nathan Chancellor <natechancellor@gmail.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Fri, Mar 06, 2020 at 09:50:44PM +0100, Lukas Bulwahn wrote:
-> 
-> 
-> On Fri, 6 Mar 2020, Jarkko Sakkinen wrote:
-> 
-> > On Thu, Mar 05, 2020 at 09:30:13PM +0100, Lukas Bulwahn wrote:
-> > > Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
-> > > renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
-> > > to trusted-keys/trusted_tpm1.c in security/keys/.
-> > > 
-> > > Since then, ./scripts/get_maintainer.pl --self-test complains:
-> > > 
-> > >   warning: no file matches F: security/keys/trusted.c
-> > >   warning: no file matches F: include/keys/trusted.h
-> > > 
-> > > Rectify the KEYS-TRUSTED entry in MAINTAINERS now and ensure that all
-> > > files in security/keys/trusted-keys/ are identified as part of
-> > > KEYS-TRUSTED.
-> > > 
-> > > Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > ---
-> > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > > Changes to v1:
-> > >   - use a global pattern for matching the whole security/keys/trusted-keys/
-> > >     directory.
-> > > Changes to v2:
-> > >   - name the correct directory in the commit message
-> > > 
-> > > Sumit, please ack.
-> > > Jarkko, please pick this patch v3.
-> > 
-> > Please tell me why you emphasize the moment when a patch that does not
-> > fix a critical bug is picked?
-> > 
-> > Do you have systems that break because the MAINTAINERS file is not
-> > updated?
-> > 
-> > It will end up in v5.7 PR for sure but saying things like that is same
-> > as saying that there would be some catastrophically urgent need to still
-> > squeeze the patch into v5.6. Unless you actually have something critical
-> > in your hand, please stop doing that.
-> > 
-> 
-> Got it. I did not intend to emphasize any urgency; I will not continue 
-> to do that for patches of this clean-up type.
+We can remove the NULL check for "res_ctx" and
+"res_ctx->pipe_ctx[i].stream->link".  Also it's nicer to align the
+conditions using spaces so I re-indented a bit.
 
-Anyway, thank you and I've applied your patch and will include it to my
-v5.7 PR.
+Longer explanation: The "res_ctx" pointer points to an address in the
+middle of a struct so it can't be NULL.  For
+"res_ctx->pipe_ctx[i].stream->link" we know that it is equal to "link"
+and "link" is non-NULL.
 
-/Jarkko
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+index 9c88a92bd96a..bc109d4fc6e6 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
+@@ -134,11 +134,9 @@ static bool dmub_psr_copy_settings(struct dmub_psr *dmub,
+ 	int i = 0;
+ 
+ 	for (i = 0; i < MAX_PIPES; i++) {
+-		if (res_ctx &&
+-			res_ctx->pipe_ctx[i].stream &&
+-			res_ctx->pipe_ctx[i].stream->link &&
+-			res_ctx->pipe_ctx[i].stream->link = link &&
+-			res_ctx->pipe_ctx[i].stream->link->connector_signal = SIGNAL_TYPE_EDP) {
++		if (res_ctx->pipe_ctx[i].stream &&
++		    res_ctx->pipe_ctx[i].stream->link = link &&
++		    res_ctx->pipe_ctx[i].stream->link->connector_signal = SIGNAL_TYPE_EDP) {
+ 			pipe_ctx = &res_ctx->pipe_ctx[i];
+ 			break;
+ 		}
+-- 
+2.20.1
