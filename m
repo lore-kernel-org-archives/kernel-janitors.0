@@ -1,34 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Mar 2020 06:10:29 +0000
-Subject: Re: [PATCH] octeontx2-pf: unlock on error path in otx2_config_pause_frm()
-Message-Id: <20200313061028.GP11561@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Mar 2020 14:05:22 +0000
+Subject: [PATCH] net: ena: ethtool: clean up minor indentation issue
+Message-Id: <20200312140522.1125768-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200312113048.GB20562@mwanda>
- <20200312.155321.1860923182739836747.davem@davemloft.net>
-In-Reply-To: <20200312.155321.1860923182739836747.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com, andrew@lunn.ch, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Netanel Belgazal <netanel@amazon.com>, Arthur Kiyanovski <akiyano@amazon.com>, Guy Tzalik <gtzalik@amazon.com>, Saeed Bishara <saeedb@amazon.com>, Zorik Machulsky <zorik@amazon.com>, "David S . Miller" <davem@davemloft.net>, Sameeh Jubran <sameehj@amazon.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 03:53:21PM -0700, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Thu, 12 Mar 2020 14:30:48 +0300
-> 
-> > We need to unlock before returning if this allocation fails.
-> > 
-> > Fixes: 75f36270990c ("octeontx2-pf: Support to enable/disable pause frames via ethtool")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Applied to net-next.
-> 
-> Dan, please indicate the appropriate target tree in your Subject lines
-> in the future.  I have to dance around my GIT trees to figure out where
-> your patches apply and that eats up more time than necessary.
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, I've been trying to do that but I forgot.  I'm going to update
-my QC scripts so hopefully it doesn't happen again.
+There is a statement that is indented incorrectly, remove a space.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index 552d4cbf6dbd..9cc28b4b2627 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -221,7 +221,7 @@ static void ena_queue_strings(struct ena_adapter *adapter, u8 **data)
+ 
+ 			snprintf(*data, ETH_GSTRING_LEN,
+ 				 "queue_%u_tx_%s", i, ena_stats->name);
+-			 (*data) += ETH_GSTRING_LEN;
++			(*data) += ETH_GSTRING_LEN;
+ 		}
+ 		/* Rx stats */
+ 		for (j = 0; j < ENA_STATS_ARRAY_RX; j++) {
+-- 
+2.25.1
