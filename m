@@ -1,27 +1,73 @@
-From: David Ibe <ylawrence@uic.edu.hk>
-Date: Tue, 17 Mar 2020 00:09:35 +0000
-Subject: 
-Message-Id: <658893193.63690258.1584403775841.JavaMail.zimbra@uic.edu.hk>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 12 Mar 2020 16:52:37 +0000
+Subject: Applied "spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe" to the spi tree
+Message-Id: <applied-20200312113154.GC20562@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200312113154.GC20562@mwanda>
+In-Reply-To: <20200312113154.GC20562@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Adam Ford <aford173-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ashish Kumar <ashish.kumar-3arQi8VN3Tc@public.gmane.org>, Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Yogesh Gaur <yogeshgaur.83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
+The patch
 
+   spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
 
-Good Day,                
+has been applied to the spi tree at
 
-I am Mr. David Ibe, I work with the International Standards on Auditing, I have seen on records, that several times people has divert your funds into their own personal accounts.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Now I am writing to you in respect of the amount which I have been able to send to you through our International United Nations accredited and approved Diplomat, who has arrived Africa, I want you to know that the diplomat would deliver the funds which I have packaged as a diplomatic compensation to you and the amount in the consignment is  $10,000,000.00 United State Dollars.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I did not disclose the contents to the diplomat, but I told him that it is your compensation from the Auditing Corporate Governance and Stewardship, Auditing and Assurance Standards Board. I want you to know that these funds would help with your financial status as I have seen in records that you have spent a lot trying to receive these funds and I am not demanding so much from you but only 30% for my stress and logistics.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I would like you to get back to me with your personal contact details, so that I can give you the contact information's of the diplomat who has arrived Africa and has been waiting to get your details so that he can proceed with the delivery to you.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Yours Sincerely,
-Kindly forward your details to: mrdavidibe966@gmail.com
-Mr. David Ibe
-International Auditor,
-Corporate Governance and Stewardship
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1a421ebab6bb5bf65001743ba9fef48e94fb345a Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Mar 2020 14:31:54 +0300
+Subject: [PATCH] spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
+
+The platform_get_resource_byname() function returns NULL on error, it
+doesn't return error pointers.
+
+Fixes: d166a73503ef ("spi: fspi: dynamically alloc AHB memory")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200312113154.GC20562@mwanda
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-nxp-fspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index 019f40e2917c..1ccda82da206 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -1019,8 +1019,8 @@ static int nxp_fspi_probe(struct platform_device *pdev)
+ 
+ 	/* find the resources - controller memory mapped space */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fspi_mmap");
+-	if (IS_ERR(res)) {
+-		ret = PTR_ERR(res);
++	if (!res) {
++		ret = -ENODEV;
+ 		goto err_put_ctrl;
+ 	}
+ 
+-- 
+2.20.1
