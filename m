@@ -1,39 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Mar 2020 11:33:09 +0000
-Subject: [PATCH] Bluetooth: L2CAP: Fix a condition in l2cap_sock_recvmsg()
-Message-Id: <20200312113309.GE20562@mwanda>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Thu, 12 Mar 2020 14:12:56 +0000
+Subject: Re: [PATCH] Bluetooth: L2CAP: Fix a condition in l2cap_sock_recvmsg()
+Message-Id: <4F91997F-782B-406F-8783-D64EA7826E06@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200312113309.GE20562@mwanda>
+In-Reply-To: <20200312113309.GE20562@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, Jakub Kicinski <kuba@kernel.org>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Johan Hedberg <johan.hedberg@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Bluez mailing list <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Smatch complains about the indenting:
+Hi Dan,
 
-    net/bluetooth/l2cap_sock.c:1027 l2cap_sock_recvmsg()
-    warn: inconsistent indenting
+> Smatch complains about the indenting:
+> 
+>    net/bluetooth/l2cap_sock.c:1027 l2cap_sock_recvmsg()
+>    warn: inconsistent indenting
+> 
+> It looks like this is supposed to be an "else if" condition.
+> 
+> Fixes: 15f02b910562 ("Bluetooth: L2CAP: Add initial code for Enhanced Credit Based Mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> net/bluetooth/l2cap_sock.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It looks like this is supposed to be an "else if" condition.
+patch has been applied to bluetooth-next tree.
 
-Fixes: 15f02b910562 ("Bluetooth: L2CAP: Add initial code for Enhanced Credit Based Mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- net/bluetooth/l2cap_sock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards
 
-diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 0c636be3469e..40fb10b591bd 100644
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@ -1024,7 +1024,7 @@ static int l2cap_sock_recvmsg(struct socket *sock, struct msghdr *msg,
- 			sk->sk_state = BT_CONNECTED;
- 			pi->chan->state = BT_CONNECTED;
- 			__l2cap_ecred_conn_rsp_defer(pi->chan);
--		} if (bdaddr_type_is_le(pi->chan->src_type)) {
-+		} else if (bdaddr_type_is_le(pi->chan->src_type)) {
- 			sk->sk_state = BT_CONNECTED;
- 			pi->chan->state = BT_CONNECTED;
- 			__l2cap_le_connect_rsp_defer(pi->chan);
--- 
-2.20.1
+Marcel
