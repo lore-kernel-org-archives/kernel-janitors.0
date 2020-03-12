@@ -1,73 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sun, 01 Mar 2020 01:02:19 +0000
-Subject: Re: [PATCH resend] loop: Fix IS_ERR() vs NULL bugs in loop_prepare_queue()
-Message-Id: <20200301120219.22d92d73@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/i6Tur=gNYxaKV0D4z4Cotes"
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 12 Mar 2020 14:23:02 +0000
+Subject: Re: [PATCH] drm/amdgpu/display: clean up some indenting
+Message-Id: <CADnq5_Or06=BeVmnx35vSqvK1vUxx+Vvzq9h=UY7OkRU+SK+4Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c106c6ec-7171-3586-d5c5-5c14e386b3d5@kernel.dk>
-        <20200228172136.h5dvwvrg5yfywxss@kili.mountain>
-In-Reply-To: <20200228172136.h5dvwvrg5yfywxss@kili.mountain>
+References: <20200224103120.zrvgqaokmoehs5y7@kili.mountain>
+In-Reply-To: <20200224103120.zrvgqaokmoehs5y7@kili.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Dan Schatzberg <schatzberg.dan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mm@kvack.org
+Cc: Leo Li <sunpeng.li@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, David Francis <David.Francis@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
---Sig_/i6Tur=gNYxaKV0D4z4Cotes
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Fri, 28 Feb 2020 20:21:36 +0300 Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
+On Mon, Feb 24, 2020 at 5:31 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> The alloc_workqueue() function returns NULL on error, it never returns
-> error pointers.
->=20
-> Fixes: 29dab2122492 ("loop: use worker per cgroup instead of kworker")
+> These lines were accidentally indented 4 spaces more than they should
+> be.
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Dan Schatzberg <schatzberg.dan@gmail.com>
+
+Applied.  thanks!
+
+Alex
+
 > ---
-> Resending because this goes through your -mm tree, Andrew.  The
-> get_maintainer.pl script lead me astray.
->=20
->  drivers/block/loop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index da8ec0b9d909..a31ca5e04fae 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -897,7 +897,7 @@ static int loop_prepare_queue(struct loop_device *lo)
->  					WQ_UNBOUND | WQ_FREEZABLE |
->  					WQ_MEM_RECLAIM,
->  					lo->lo_number);
-> -	if (IS_ERR(lo->workqueue))
-> +	if (!lo->workqueue)
->  		return -ENOMEM;
-> =20
->  	return 0;
-
-Added to linux-next from tomorrow (in case Andrew has better things to
-do with his weekend :-)).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/i6Tur=gNYxaKV0D4z4Cotes
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5bCZsACgkQAVBC80lX
-0GxlMgf/bCW6+K3FJmw7izRTxCApIyjOzBT5pvkC9bnCD7ymNZlTRsRjBrK4rXQP
-/Dt8hXSox5yW3SFkh6TuMkxLVk4NMPWSCg1HH9zHANLbcwA6/ZJTg0VzrywxCP71
-2A0d7r3MFuK92+NLb84yvz5+q3RfIi1x0+1KvDmtO/9aWbt2yWdicfJu2ZAPUqvY
-pCYJZ1g3Y5u7O9cfpazteWKCpn2k0uEtAkosPUx6YkZmQnVvf9w8oMisU3Ke7oVz
-VbkkIKJ1+2m/4YgwfFtRZpozWUY8YHvmReaEKNkJ1ZBhY6hiQ+dA075sgWDbket0
-pv1Ou9g7BZhzNGTrihXkopxI/f5pAw==
-=NCTl
------END PGP SIGNATURE-----
-
---Sig_/i6Tur=gNYxaKV0D4z4Cotes--
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 4cb3eb7c6745..408405d9f30c 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -2138,10 +2138,10 @@ static void handle_hpd_rx_irq(void *param)
+>                 }
+>         }
+>  #ifdef CONFIG_DRM_AMD_DC_HDCP
+> -           if (hpd_irq_data.bytes.device_service_irq.bits.CP_IRQ) {
+> -                   if (adev->dm.hdcp_workqueue)
+> -                           hdcp_handle_cpirq(adev->dm.hdcp_workqueue,  aconnector->base.index);
+> -           }
+> +       if (hpd_irq_data.bytes.device_service_irq.bits.CP_IRQ) {
+> +               if (adev->dm.hdcp_workqueue)
+> +                       hdcp_handle_cpirq(adev->dm.hdcp_workqueue,  aconnector->base.index);
+> +       }
+>  #endif
+>         if ((dc_link->cur_link_settings.lane_count != LANE_COUNT_UNKNOWN) ||
+>             (dc_link->type = dc_connection_mst_branch))
+> --
+> 2.11.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
