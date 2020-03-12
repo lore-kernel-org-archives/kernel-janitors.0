@@ -1,34 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 18 Mar 2020 16:01:08 +0000
-Subject: [PATCH] usb: cdns3: fix spelling mistake "wrapperr" -> "wrapper"
-Message-Id: <20200318160108.267403-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Mar 2020 11:37:30 +0000
+Subject: [PATCH] iommu/vt-d: Unlock on error paths
+Message-Id: <20200312113730.GF20562@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200122234437.2829803-1-colin.king@canonical.com>
-In-Reply-To: <20200122234437.2829803-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Megha Dey <megha.dey@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There were a couple places where we need to unlock before returning.
 
-There is a spelling mistake in the module description. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 91391b919e19 ("iommu/vt-d: Populate debugfs if IOMMUs are detected")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/usb/cdns3/cdns3-pci-wrap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/intel-iommu-debugfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
-index b0a29efe7d31..deeea618ba33 100644
---- a/drivers/usb/cdns3/cdns3-pci-wrap.c
-+++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
-@@ -201,4 +201,4 @@ MODULE_DEVICE_TABLE(pci, cdns3_pci_ids);
+diff --git a/drivers/iommu/intel-iommu-debugfs.c b/drivers/iommu/intel-iommu-debugfs.c
+index 8d24c4d85cc2..6a495b103972 100644
+--- a/drivers/iommu/intel-iommu-debugfs.c
++++ b/drivers/iommu/intel-iommu-debugfs.c
+@@ -289,11 +289,12 @@ static int dmar_translation_struct_show(struct seq_file *m, void *unused)
+ 		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
+ 		if (!(sts & DMA_GSTS_TES)) {
+ 			seq_puts(m, "DMA Remapping is not enabled\n");
+-			return 0;
++			goto unlock;
+ 		}
+ 		root_tbl_walk(m, iommu);
+ 		seq_putc(m, '\n');
+ 	}
++unlock:
+ 	rcu_read_unlock();
  
- MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
- MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("Cadence USBSS PCI wrapperr");
-+MODULE_DESCRIPTION("Cadence USBSS PCI wrapper");
+ 	return 0;
+@@ -444,7 +445,7 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
+ 		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
+ 		if (!(sts & DMA_GSTS_IRES)) {
+ 			seq_puts(m, "Interrupt Remapping is not enabled\n");
+-			return 0;
++			goto unlock;
+ 		}
+ 
+ 		if (iommu->ir_table) {
+@@ -475,6 +476,7 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
+ 		}
+ 		seq_putc(m, '\n');
+ 	}
++unlock:
+ 	rcu_read_unlock();
+ 
+ 	return 0;
 -- 
-2.25.1
+2.20.1
