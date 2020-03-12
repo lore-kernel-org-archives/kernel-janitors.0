@@ -1,38 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 12 Mar 2020 15:04:30 +0000
-Subject: [PATCH] net: systemport: fix index check to avoid an array out of bounds access
-Message-Id: <20200312150430.1136618-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 12 Mar 2020 22:51:13 +0000
+Subject: Re: [PATCH] net: systemport: fix index check to avoid an array out of bounds access
+Message-Id: <20200312.155113.707852640601289044.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200312150430.1136618-1-colin.king@canonical.com>
+In-Reply-To: <20200312150430.1136618-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Mar 2020 15:04:30 +0000
 
-Currently the bounds check on index is off by one and can lead to
-an out of bounds access on array priv->filters_loc when index is
-RXCHK_BRCM_TAG_MAX.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the bounds check on index is off by one and can lead to
+> an out of bounds access on array priv->filters_loc when index is
+> RXCHK_BRCM_TAG_MAX.
+> 
+> Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/broadcom/bcmsysport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index bea2dbc0e469..af7ce5c5488c 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2133,7 +2133,7 @@ static int bcm_sysport_rule_set(struct bcm_sysport_priv *priv,
- 		return -ENOSPC;
- 
- 	index = find_first_zero_bit(priv->filters, RXCHK_BRCM_TAG_MAX);
--	if (index > RXCHK_BRCM_TAG_MAX)
-+	if (index >= RXCHK_BRCM_TAG_MAX)
- 		return -ENOSPC;
- 
- 	/* Location is the classification ID, and index is the position
--- 
-2.25.1
+Applied and queued up for -stable, thanks.
