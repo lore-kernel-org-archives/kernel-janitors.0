@@ -1,47 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 12 Mar 2020 12:18:16 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Mar 2020 17:47:41 +0000
 Subject: Re: [PATCH] spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
-Message-Id: <20200312121816.GC4038@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="QRj9sO5tAVLaXnSD"
+Message-Id: <20200312125016.GF11583@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200312113154.GC20562@mwanda>
- <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
-In-Reply-To: <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>, Adam Ford <aford173@gmail.com>, Ashish Kumar <ashish.kumar@nxp.com>, linux-spi <linux-spi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+ <CAHCN7xKSc7spZyq=mySWHDmSrGMkQo8FYRbn-NzYRa7iB-0BoQ@mail.gmail.com>
+In-Reply-To: <CAHCN7xKSc7spZyq=mySWHDmSrGMkQo8FYRbn-NzYRa7iB-0BoQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adam Ford <aford173-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Yogesh Gaur <yogeshgaur.83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-3arQi8VN3Tc@public.gmane.org>, Ashish Kumar <ashish.kumar-3arQi8VN3Tc@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-
---QRj9sO5tAVLaXnSD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 12, 2020 at 09:11:44AM -0300, Fabio Estevam wrote:
-> On Thu, Mar 12, 2020 at 8:33 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
+On Thu, Mar 12, 2020 at 06:58:31AM -0500, Adam Ford wrote:
+> On Thu, Mar 12, 2020 at 6:32 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > The platform_get_resource_byname() function returns NULL on error, it
+> > doesn't return error pointers.
+> >
+> > Fixes: d166a73503ef ("spi: fspi: dynamically alloc AHB memory")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
 > > The commit message for commit d166a73503ef ("spi: fspi: dynamically
 > > alloc AHB memory") is not very good.  Why is it necessary to allocate
 > > the AHB memory dynamically instead of during probe?  Also I suspect that
+> > Adam should have recieved authorship credit for that patch.
+> 
+> It wasn't my patch, I just pulled it in from NXP's repo.  The true
+> author is Han Xu.  When I pulled in the series from NXP, I found the
+> flexSPI on the i.MX8MM to become functional, and my company has a
+> board with a qspi flash on it.
 
-> Agreed and I made the same comment during review:
-> https://patchwork.kernel.org/patch/11361581/
+You should have put your Signed-off-by after Han Xu's.  They should be
+in chronological order so whoever handles a patch adds their S-o-b to
+the end.
 
-Indeed.  There had been an earlier discussion of what it was doing IIRC
-but it didn't make it's way into the changelog.
-
---QRj9sO5tAVLaXnSD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5qKIcACgkQJNaLcl1U
-h9BqVAgAhEVYC3gX7h7lG4zaL2N7m2EahKxIbHvpVFZF1cfdBiKQgF8Mj7ARC9Ll
-rHHP0vQkgrHYVy5tmZJtF278eNq/QWAfgNOD17NDPiyd0HfL+tdnTmefLkSvzroE
-E2cVcXprfYn6sasUvW2EF5iufc3XSKBSV4UrSKFjGSiie+lNxIzFj765PQXvS9gt
-Va99+r5e5nTRRp3YUO/8cKTALx69BhK3qBFTAqG3HC9dWOxaftL3lxo8ppiKrrIO
-+D2/CSOPqU+3kLlqrMWXxVs/oJVWg2QneYZP8DU4AOLQ6HjFXnYlkETS4V6uXBKH
-0RcRBTtnwURqpgHOrIFN1ZcdlEmbAg==
-=oAWz
------END PGP SIGNATURE-----
-
---QRj9sO5tAVLaXnSD--
+regards,
+dan carpenter
