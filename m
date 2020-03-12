@@ -1,31 +1,47 @@
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 12 Mar 2020 12:11:44 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 12 Mar 2020 12:18:16 +0000
 Subject: Re: [PATCH] spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
-Message-Id: <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
+Message-Id: <20200312121816.GC4038@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="QRj9sO5tAVLaXnSD"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200312113154.GC20562@mwanda>
-In-Reply-To: <20200312113154.GC20562@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>, Adam Ford <aford173@gmail.com>, Ashish Kumar <ashish.kumar@nxp.com>, Mark Brown <broonie@kernel.org>, linux-spi <linux-spi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+ <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
+In-Reply-To: <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>, Adam Ford <aford173@gmail.com>, Ashish Kumar <ashish.kumar@nxp.com>, linux-spi <linux-spi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan,
 
-On Thu, Mar 12, 2020 at 8:33 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The platform_get_resource_byname() function returns NULL on error, it
-> doesn't return error pointers.
->
-> Fixes: d166a73503ef ("spi: fspi: dynamically alloc AHB memory")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The commit message for commit d166a73503ef ("spi: fspi: dynamically
-> alloc AHB memory") is not very good.  Why is it necessary to allocate
-> the AHB memory dynamically instead of during probe?  Also I suspect that
+--QRj9sO5tAVLaXnSD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Agreed and I made the same comment during review:
-https://patchwork.kernel.org/patch/11361581/
+On Thu, Mar 12, 2020 at 09:11:44AM -0300, Fabio Estevam wrote:
+> On Thu, Mar 12, 2020 at 8:33 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Thanks
+> > The commit message for commit d166a73503ef ("spi: fspi: dynamically
+> > alloc AHB memory") is not very good.  Why is it necessary to allocate
+> > the AHB memory dynamically instead of during probe?  Also I suspect that
+
+> Agreed and I made the same comment during review:
+> https://patchwork.kernel.org/patch/11361581/
+
+Indeed.  There had been an earlier discussion of what it was doing IIRC
+but it didn't make it's way into the changelog.
+
+--QRj9sO5tAVLaXnSD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5qKIcACgkQJNaLcl1U
+h9BqVAgAhEVYC3gX7h7lG4zaL2N7m2EahKxIbHvpVFZF1cfdBiKQgF8Mj7ARC9Ll
+rHHP0vQkgrHYVy5tmZJtF278eNq/QWAfgNOD17NDPiyd0HfL+tdnTmefLkSvzroE
+E2cVcXprfYn6sasUvW2EF5iufc3XSKBSV4UrSKFjGSiie+lNxIzFj765PQXvS9gt
+Va99+r5e5nTRRp3YUO/8cKTALx69BhK3qBFTAqG3HC9dWOxaftL3lxo8ppiKrrIO
++D2/CSOPqU+3kLlqrMWXxVs/oJVWg2QneYZP8DU4AOLQ6HjFXnYlkETS4V6uXBKH
+0RcRBTtnwURqpgHOrIFN1ZcdlEmbAg==
+=oAWz
+-----END PGP SIGNATURE-----
+
+--QRj9sO5tAVLaXnSD--
