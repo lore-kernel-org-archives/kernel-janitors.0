@@ -1,42 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Mar 2020 12:33:21 +0000
-Subject: Re: [PATCH][next] ASoc: amd: use correct format specifier for a long int
-Message-Id: <20200303123321.GC3866@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="JgQwtEuHJzHdouWu"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Mar 2020 11:25:34 +0000
+Subject: [PATCH][next] ethtool: fix spelling mistake "exceeeds" -> "exceeds"
+Message-Id: <20200313112534.76626-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200303103903.9259-1-colin.king@canonical.com>
-In-Reply-To: <20200303103903.9259-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Akshu Agrawal <akshu.agrawal@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are a couple of spelling mistakes in NL_SET_ERR_MSG_ATTR messages.
+Fix these.
 
-On Tue, Mar 03, 2020 at 10:39:03AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the format specifier %d is being used for a long int. Fix
-> the by using %ld instead.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ethtool/channels.c | 2 +-
+ net/ethtool/rings.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Someone already sent a fix for this.
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5eTpEACgkQJNaLcl1U
-h9AKuQf/U01aci745PIHD/iQ86xIE2c0Ph5wIDFYgVS45kaTlPwBGX6iX72t/5tT
-/BesrakIoU6wHxO5wNQst+QuxCauSfQTqwuqtA4k4P/sizM7M5NPcoxeM/uECmGf
-Z91qqtfZq492X6yWceLwhCt9SA+5xzJ1bKdeETaOGaiJ594qhD/4+22WjhuibSF5
-FHcllXvFPVKZCVGB0QOAVtUpBK0NQfRBsjshPlNLwMsop+dXJSfI3YhrhiIq5+sS
-41UM1RDsJu3jGE6Lld3dBl5BgUdxR5yxudSuCqPtliEYnKyINev6qqWrrGoiwZ4B
-SbuwgxiOqB11TS0lW97afaTVtdAETQ==
-=tEk3
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+diff --git a/net/ethtool/channels.c b/net/ethtool/channels.c
+index 8dc5485333a4..389924b65d05 100644
+--- a/net/ethtool/channels.c
++++ b/net/ethtool/channels.c
+@@ -189,7 +189,7 @@ int ethnl_set_channels(struct sk_buff *skb, struct genl_info *info)
+ 	if (err_attr) {
+ 		ret = -EINVAL;
+ 		NL_SET_ERR_MSG_ATTR(info->extack, err_attr,
+-				    "requested channel count exceeeds maximum");
++				    "requested channel count exceeds maximum");
+ 		goto out_ops;
+ 	}
+ 
+diff --git a/net/ethtool/rings.c b/net/ethtool/rings.c
+index c2ebf72be217..5422526f4eef 100644
+--- a/net/ethtool/rings.c
++++ b/net/ethtool/rings.c
+@@ -181,7 +181,7 @@ int ethnl_set_rings(struct sk_buff *skb, struct genl_info *info)
+ 	if (err_attr) {
+ 		ret = -EINVAL;
+ 		NL_SET_ERR_MSG_ATTR(info->extack, err_attr,
+-				    "requested ring size exceeeds maximum");
++				    "requested ring size exceeds maximum");
+ 		goto out_ops;
+ 	}
+ 
+-- 
+2.25.1
