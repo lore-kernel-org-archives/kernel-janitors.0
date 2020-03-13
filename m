@@ -1,22 +1,51 @@
-From: DR CHALLY NOAH <mayorabrahamedge404@gmail.com>
-Date: Tue, 03 Mar 2020 18:03:51 +0000
-Subject: Hello Dear
-Message-Id: <CALqVJWei9Umiw3V9aBt=DD1yV36_Nnu3F8RkmHvA_o5pvKCc1A@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 13 Mar 2020 11:54:31 +0000
+Subject: Re: [EXT] Re: [PATCH] spi: spi-nxp-fspi: Fix a NULL vs IS_ERR() check in probe
+Message-Id: <20200313115431.GB5528@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="IrhDeMKUP4DT/M7F"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+References: <20200312113154.GC20562@mwanda>
+ <CAOMZO5CJ7G7yJZEEPfsm1P2SnrJ7kmOPmZCWiKwrvDZjPNOnWw@mail.gmail.com>
+ <20200312121816.GC4038@sirena.org.uk>
+ <VI1PR04MB4015D509DC78B0C7EA649CC995FA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB4015D509DC78B0C7EA649CC995FA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
+To: Ashish Kumar <ashish.kumar@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>, Adam Ford <aford173@gmail.com>, linux-spi <linux-spi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hello Dear,
-What Have Kept You Waiting To Claim Your $600,000.00 USD Compensation Award?
-This said fund was issued out by the UNITED NATIONS To compensate
-you.Please If You Have Not Claim Your Fund (Award),Kindly contact me
-at   DR.CHALLYNOAH@GMAIL.COM   for further details on how to proceed your
-fund (award)release to you or better still reply back Immediately You
-Receive This Information For An Urgent Confirmation And Release Of Your
-Fund To You Without Delays, as your email was listed among those to be
-compensated this year.Congratulations..
-Best Regards,
-Dr Chally Noah.
-Minister Of Finance On Foreign Remittance:
+
+--IrhDeMKUP4DT/M7F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Mar 13, 2020 at 04:16:44AM +0000, Ashish Kumar wrote:
+
+> This patch needs to drop, until further debugged, since flexspi is
+> shared ip it is not having desired result on few boards, but it is
+> needed for i.mx series, This is one of the comments from han xu. I
+> believe further modifications will be needed, if not commit msg and
+> other things can be update.
+
+Please send a patch doing the revert with a changelog explaining why
+it's needed.
+
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
+
+--IrhDeMKUP4DT/M7F
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5rdHYACgkQJNaLcl1U
+h9DFCQf/UPqYCaPsBLcZEOTW72elTQpFxi4KP6BJ+mTkTETBkeHVQOP/U3FWwdDM
+THoABWIEq+t24rOwkNaro3dl6b85fkI513FBNy1vqqRA/VrjpkCRTgHAAKD/D7+g
+HQp3R/3GX5FkGJYNnmoOOQodhmR9UxklAfUASOtpiTS6wpzQw9puswv/eQO9Yumg
+526+cxrq0hePl72ZsmZlV9EkxMCkuW7X01JTLwmmC0EaFHp0E8LMU/hvAPxO9RCZ
+I9uT4S8tjPzEUZiwCm7sryHvnZePMK/8/BOv+IiZeQDXqwiW0JW6GGLK56MWH4SQ
+AwPhEnuNRd+LD/dUU6vWSvmAgMJ66A==
+=AmBc
+-----END PGP SIGNATURE-----
+
+--IrhDeMKUP4DT/M7F--
