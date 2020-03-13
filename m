@@ -1,32 +1,35 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Tue, 10 Mar 2020 06:48:40 +0000
-Subject: Re: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
-Message-Id: <alpine.DEB.2.21.2003100745590.2788@felia>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Mar 2020 17:19:37 +0000
+Subject: [PATCH] leds: lm3532: make bitfield 'enabled' unsigned
+Message-Id: <20200313171937.220884-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200308195116.12836-1-lukas.bulwahn@gmail.com> <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com> <5129f7dbd8506cc9fd5a8f76dc993d789566af6c.camel@perches.com> <alpine.DEB.2.21.2003090702440.3325@felia> <20200309070534.GA4093795@kroah.com>
- <alpine.DEB.2.21.2003092035300.2953@felia> <69ed8a468b3e4776d277292a2e4b2f9b3c266f23.camel@perches.com>
-In-Reply-To: <69ed8a468b3e4776d277292a2e4b2f9b3c266f23.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@google.com>, Stephen Boyd <swboyd@chromium.org>, Guenter Roeck <groeck@chromium.org>, Julius Werner <jwerner@chromium.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The bitfield 'enabled' should bit unsigned, so make it unsigned.
 
-On Mon, 9 Mar 2020, Joe Perches wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/leds/leds-lm3532.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Mon, 2020-03-09 at 22:03 +0100, Lukas Bulwahn wrote:
-> > I am starting with the "bigger" clustered files in drivers, and then try 
-> > > > to look at files in include and Documentation/ABI/.
-> 
-> If you want to spend the time tracking stuff down,
-> it may be best to to
-> start with include/
->
-
-Thanks for the guidance. I will do that, and we will see if others 
-appreciate that or not.
-
-
-Lukas
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 188a57da981a..aa9bf8cda673 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -140,7 +140,7 @@ struct lm3532_led {
+ 	int ctrl_brt_pointer;
+ 	int num_leds;
+ 	int full_scale_current;
+-	int enabled:1;
++	unsigned int enabled:1;
+ 	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
+ 	char label[LED_MAX_NAME_SIZE];
+ };
+-- 
+2.25.1
