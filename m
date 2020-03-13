@@ -1,94 +1,171 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 16 Mar 2020 09:56:49 +0000
-Subject: Re: [Intel-gfx] [PATCH] MAINTAINERS: adjust to reservation.h renaming
-Message-Id: <20200316095649.GK2363188@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Mar 2020 17:49:46 +0000
+Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+Message-Id: <20200313174946.228216-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
- <b0296e3a-31f8-635a-f26d-8b0bc490aae3@amd.com>
- <20200306103946.GT2363188@phenom.ffwll.local>
- <155f99baffe11836fc9d794ff297bdcee7831050.camel@perches.com>
- <20200316095007.GI2363188@phenom.ffwll.local>
-In-Reply-To: <20200316095007.GI2363188@phenom.ffwll.local>
+References: <1513619372.31581.106.camel@perches.com>
+In-Reply-To: <1513619372.31581.106.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Joe Perches <joe@perches.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Sebastian Duda <sebastian.duda@fau.de>, Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:50:07AM +0100, Daniel Vetter wrote:
-> On Fri, Mar 06, 2020 at 02:56:06AM -0800, Joe Perches wrote:
-> > On Fri, 2020-03-06 at 11:39 +0100, Daniel Vetter wrote:
-> > > On Wed, Mar 04, 2020 at 01:08:32PM +0100, Christian K=F6nig wrote:
-> > > > Am 04.03.20 um 13:07 schrieb Lukas Bulwahn:
-> > > > > Commit 52791eeec1d9 ("dma-buf: rename reservation_object to dma_r=
-esv")
-> > > > > renamed include/linux/reservation.h to include/linux/dma-resv.h, =
-but
-> > > > > missed the reference in the MAINTAINERS entry.
-> > > > >=20
-> > > > > Since then, ./scripts/get_maintainer.pl --self-test complains:
-> > > > >=20
-> > > > >    warning: no file matches F: include/linux/reservation.h
-> > > > >=20
-> > > > > Adjust the DMA BUFFER SHARING FRAMEWORK entry in MAINTAINERS.
-> > > > >=20
-> > > > > Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > > > Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > >=20
-> > > > Reviewed-by: Christian K=F6nig <christian.koenig@amd.com>
-> > >=20
-> > > You'll push this too?
-> > > -Daniel
-> > >=20
-> > > > > ---
-> > > > > Christian, please pick this patch.
-> > > > > applies cleanly on current master and next-20200303
-> > > > >=20
-> > > > >   MAINTAINERS | 2 +-
-> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >=20
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index 6158a143a13e..3d6cb2789c9e 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -5022,7 +5022,7 @@ L:	dri-devel@lists.freedesktop.org
-> > > > >   L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscriber=
-s)
-> > > > >   F:	drivers/dma-buf/
-> > > > >   F:	include/linux/dma-buf*
-> > > > > -F:	include/linux/reservation.h
-> > > > > +F:	include/linux/dma-resv.h
-> > > > >   F:	include/linux/*fence.h
-> > > > >   F:	Documentation/driver-api/dma-buf.rst
-> > > > >   K:	dma_(buf|fence|resv)
-> >=20
-> > Slightly unrelated:
-> >=20
-> > The K: entry matches a lot of other things
-> > and may have a lot of false positive matches
-> > like any variable named dma_buffer
-> >=20
-> > This should also use (?:...) to avoid a perl
-> > capture group.
-> >=20
-> > Perhaps:
-> >=20
-> > K:	'\bdma_(?:buf|fence|resv)\b'
->=20
-> Hm either people aren't using get_maintainers.pl consistently, or it
-> doesn't seem to be a real world problem. I'm not seeing any unrelated
-> patches on dri-devel at least.
->=20
-> But happy to merge such a patch if it shows up ofc, it's definitely the
-> more correct thing :-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Ofc as usual if you lean out the window you immediately get to eat your
-hat, right after sending this I got a mail from syzbot about some random
-stuff because of this :-)
+Here are some of the more common spelling mistakes and typos that I've
+found while fixing up spelling mistakes in the kernel since November 2019
 
-I'm gonna do the patch now ...
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/spelling.txt | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 6d5243904e76..d9cd24cf0d40 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -177,7 +177,9 @@ atomatically||automatically
+ atomicly||atomically
+ atempt||attempt
+ attachement||attachment
++attatch||attach
+ attched||attached
++attemp||attempt
+ attemps||attempts
+ attemping||attempting
+ attepmpt||attempt
+@@ -235,11 +237,13 @@ brievely||briefly
+ brigde||bridge
+ broadcase||broadcast
+ broadcat||broadcast
++bufer||buffer
+ bufufer||buffer
+ cacluated||calculated
+ caculate||calculate
+ caculation||calculation
+ cadidate||candidate
++cahces||caches
+ calender||calendar
+ calescing||coalescing
+ calle||called
+@@ -338,7 +342,6 @@ conditon||condition
+ condtion||condition
+ conected||connected
+ conector||connector
+-connecetd||connected
+ configration||configuration
+ configuartion||configuration
+ configuation||configuration
+@@ -349,7 +352,9 @@ configuretion||configuration
+ configutation||configuration
+ conider||consider
+ conjuction||conjunction
++connecetd||connected
+ connectinos||connections
++connetor||connector
+ connnection||connection
+ connnections||connections
+ consistancy||consistency
+@@ -469,6 +474,7 @@ difinition||definition
+ digial||digital
+ dimention||dimension
+ dimesions||dimensions
++disgest||digest
+ dispalying||displaying
+ diplay||display
+ directon||direction
+@@ -553,6 +559,7 @@ etsablishment||establishment
+ etsbalishment||establishment
+ excecutable||executable
+ exceded||exceeded
++exceeed||exceed
+ excellant||excellent
+ execeeded||exceeded
+ execeeds||exceeds
+@@ -742,6 +749,7 @@ initialzing||initializing
+ initilization||initialization
+ initilize||initialize
+ initliaze||initialize
++initilized||initialized
+ inofficial||unofficial
+ inrerface||interface
+ insititute||institute
+@@ -802,6 +810,7 @@ irrelevent||irrelevant
+ isnt||isn't
+ isssue||issue
+ issus||issues
++iteraions||iterations
+ iternations||iterations
+ itertation||iteration
+ itslef||itself
+@@ -828,6 +837,7 @@ libary||library
+ librairies||libraries
+ libraris||libraries
+ licenceing||licencing
++limted||limited
+ logaritmic||logarithmic
+ loggging||logging
+ loggin||login
+@@ -924,6 +934,7 @@ nerver||never
+ nescessary||necessary
+ nessessary||necessary
+ noticable||noticeable
++notication||notification
+ notications||notifications
+ notifcations||notifications
+ notifed||notified
+@@ -1007,6 +1018,7 @@ pendantic||pedantic
+ peprocessor||preprocessor
+ perfoming||performing
+ perfomring||performing
++periperal||peripheral
+ peripherial||peripheral
+ permissons||permissions
+ peroid||period
+@@ -1043,6 +1055,7 @@ prefferably||preferably
+ premption||preemption
+ prepaired||prepared
+ preperation||preparation
++preprare||prepare
+ pressre||pressure
+ primative||primitive
+ princliple||principle
+@@ -1064,6 +1077,7 @@ processsed||processed
+ processsing||processing
+ procteted||protected
+ prodecure||procedure
++progamming||programming
+ progams||programs
+ progess||progress
+ programers||programmers
+@@ -1151,12 +1165,14 @@ replys||replies
+ reponse||response
+ representaion||representation
+ reqeust||request
++reqister||register
+ requestied||requested
+ requiere||require
+ requirment||requirement
+ requred||required
+ requried||required
+ requst||request
++requsted||requested
+ reregisteration||reregistration
+ reseting||resetting
+ reseved||reserved
+@@ -1227,10 +1243,12 @@ seqeuncer||sequencer
+ seqeuencer||sequencer
+ sequece||sequence
+ sequencial||sequential
++serivce||service
+ serveral||several
+ servive||service
+ setts||sets
+ settting||setting
++shapshot||snapshot
+ shotdown||shutdown
+ shoud||should
+ shouldnt||shouldn't
+-- 
+2.25.1
