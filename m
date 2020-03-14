@@ -1,97 +1,49 @@
-From: Yonghong Song <yhs@fb.com>
-Date: Mon, 23 Mar 2020 14:52:00 +0000
-Subject: Re: [PATCH] bpf: fix build warning - missing prototype
-Message-Id: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 14 Mar 2020 14:25:59 +0000
+Subject: [PATCH] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
+Message-Id: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200322140844.4674-1-jpmenil@gmail.com>
- <b08375c6-81ce-b96d-0b87-299f966f4d84@fb.com>
- <20200323074247.wdkfualyvf3n6vlo@macbook>
-In-Reply-To: <20200323074247.wdkfualyvf3n6vlo@macbook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jean-Philippe Menil <jpmenil@gmail.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>
+Cc: linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-arm-kernel@lists.infradead.org
 
+Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
+controller") includes a new entry in MAINTAINERS, but slipped in a typo in
+one of the file entries.
 
+Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
 
-On 3/23/20 12:42 AM, Jean-Philippe Menil wrote:
-> On 22/03/20 at 10:32pm, Yonghong Song wrote:
->>
->>
->> On 3/22/20 7:08 AM, Jean-Philippe Menil wrote:
->>> Fix build warning when building net/bpf/test_run.o with W=1 due
->>> to missing prototype for bpf_fentry_test{1..6}.
->>>
->>> These functions are only used in test_run.c so just make them static.
->>> Therefore inline keyword should sit between storage class and type.
->>
->> This won't work. These functions are intentionally global functions
->> so that their definitions will be in vmlinux BTF and fentry/fexit kernel
->> selftests can run against them.
->>
->> See file 
->> linux/tools/testing/selftests/bpf/progs/{fentry_test.c,fexit_test.c}.
->>
-> 
-> I can see now, thanks for the pointer.
-> I totally missed that.
-> 
-> So, in order to fix the warnings, better to declare the prototypes?
-> (compiling with W=1 may be a bit unusual).
+  warning: no file matches F: \
+    drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
 
-Right, you can add prototypes in the same file (test_run.c) to silence 
-the warning.
+Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
 
-> 
->>>
->>> Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
->>> ---
->>>  net/bpf/test_run.c | 12 ++++++------
->>>  1 file changed, 6 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
->>> index d555c0d8657d..c0dcd29f682c 100644
->>> --- a/net/bpf/test_run.c
->>> +++ b/net/bpf/test_run.c
->>> @@ -113,32 +113,32 @@ static int bpf_test_finish(const union bpf_attr 
->>> *kattr,
->>>   * architecture dependent calling conventions. 7+ can be supported 
->>> in the
->>>   * future.
->>>   */
->>> -int noinline bpf_fentry_test1(int a)
->>> +static noinline int bpf_fentry_test1(int a)
->>>  {
->>>      return a + 1;
->>>  }
->>> -int noinline bpf_fentry_test2(int a, u64 b)
->>> +static noinline int bpf_fentry_test2(int a, u64 b)
->>>  {
->>>      return a + b;
->>>  }
->>> -int noinline bpf_fentry_test3(char a, int b, u64 c)
->>> +static noinline int bpf_fentry_test3(char a, int b, u64 c)
->>>  {
->>>      return a + b + c;
->>>  }
->>> -int noinline bpf_fentry_test4(void *a, char b, int c, u64 d)
->>> +static noinline int bpf_fentry_test4(void *a, char b, int c, u64 d)
->>>  {
->>>      return (long)a + b + c + d;
->>>  }
->>> -int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
->>> +static noinline int bpf_fentry_test5(u64 a, void *b, short c, int d, 
->>> u64 e)
->>>  {
->>>      return a + (long)b + c + d + e;
->>>  }
->>> -int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void 
->>> *e, u64 f)
->>> +static noinline int bpf_fentry_test6(u64 a, void *b, short c, int d, 
->>> void *e, u64 f)
->>>  {
->>>      return a + (long)b + c + d + (long)e + f;
->>>  }
->>>
-> 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20200313
+
+Hou, please ack.
+Rob, please pick this patch (it is not urgent, though).
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32a95d162f06..77eede976d0f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12858,7 +12858,7 @@ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+-F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
++F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+ 
+ PCI DRIVER FOR GENERIC OF HOSTS
+ M:	Will Deacon <will@kernel.org>
+
+base-commit: 2e602db729948ce577bf07e2b113f2aa806b62c7
+-- 
+2.17.1
