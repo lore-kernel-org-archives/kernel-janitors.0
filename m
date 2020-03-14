@@ -1,68 +1,284 @@
-From: Keyon Jie <yang.jie@linux.intel.com>
-Date: Wed, 04 Mar 2020 07:46:01 +0000
-Subject: Re: [PATCH] ASoC: SOF: Fix snd_sof_ipc_stream_posn()
-Message-Id: <3adf3c7d-7cf4-92c0-5653-465eeefd37ed@linux.intel.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 14 Mar 2020 17:50:30 +0000
+Subject: [PATCH v2] MAINTAINERS: adjust to filesystem doc ReST conversion
+Message-Id: <20200314175030.10436-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200303101858.ytehbrivocyp3cnf@kili.mountain>
- <alpine.DEB.2.21.2003031321410.2957@eliteleevi.tm.intel.com>
- <993233ff-1492-5a87-1026-09af76f6fc7f@linux.intel.com>
- <20200304070710.GA12003@ubuntu>
-In-Reply-To: <20200304070710.GA12003@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Slawomir Blauciak <slawomir.blauciak@linux.intel.com>, Mark Brown <broonie@kernel.org>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+converts many Documentation/filesystems/ files to ReST.
+
+Since then, ./scripts/get_maintainer.pl --self-test complains with 27
+warnings on Documentation/filesystems/ of this kind:
+
+  warning: no file matches F: Documentation/filesystems/...
+
+Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+patch series and address the 27 warnings.
+
+Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+v1 -> v2:
+Patch v2 is now based on today's docs-next (now with base-commit below)
+
+Jonathan, pick pick this patch v2 for docs-next.
+
+If still does not apply, let us reduce the churn---you can simply run
+this script if you want to produce the changes:
+
+  ./scripts/get_maintainer.pl --self-test > findings
+  grep "Documentation\/filesystems/" findings | \
+  sed 's#^.*\(Documentation\/filesystems\/.*\.\)txt$#sed -i "s!\1txt!\1rst!" MAINTAINERS#' | sh
 
 
+ MAINTAINERS | 54 ++++++++++++++++++++++++++---------------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-On 3/4/20 3:07 PM, Guennadi Liakhovetski wrote:
-> On Tue, Mar 03, 2020 at 09:36:29AM -0600, Pierre-Louis Bossart wrote:
->>
->>
->>>> We're passing "&posn" instead of "posn" so it ends up corrupting
->>>> memory instead of doing something useful.
->>> [...]
->>>>    	/* send IPC to the DSP */
->>>>    	err = sof_ipc_tx_message(sdev->ipc,
->>>> -				 stream.hdr.cmd, &stream, sizeof(stream), &posn,
->>>> +				 stream.hdr.cmd, &stream, sizeof(stream), posn,
->>>>    				 sizeof(*posn));
->>>
->>> ack, thanks, this is clearly wrong. This function is not used by current
->>> platforms, so the bug has gone unnnoticed. Most platforms either rely on
->>> direct MMIO queries of the DSP position, or the periodic position updates
->>> DSPs send after each ALSA period. This function for host to query DSP
->>> position via IPC is thus not used, although it's part of the generic audio
->>> DSP IPC interface.
->>>
->>> For the SOF folks in CC, I wonder should we keep this function at all?
->>>
->>> Anyways, that's probably a longer discussion, so while it's there,
->>> the code should be correct, so for the patch:
->>> Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
->>
->> I checked all the way to 5.2 and it was never used, so indeed wondering what
->> the purpose of this function was.
-> 
-> I actually have a patch, removing that function, which I noticed as being unused
-> during my VirtIO work. I think it was used by compressed.c before.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5ddc491bea55..38f58b85eb06 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -214,7 +214,7 @@ Q:	http://patchwork.kernel.org/project/v9fs-devel/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git
+ T:	git git://github.com/martinetd/linux.git
+ S:	Maintained
+-F:	Documentation/filesystems/9p.txt
++F:	Documentation/filesystems/9p.rst
+ F:	fs/9p/
+ F:	net/9p/
+ F:	include/net/9p/
+@@ -584,7 +584,7 @@ AFFS FILE SYSTEM
+ M:	David Sterba <dsterba@suse.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Odd Fixes
+-F:	Documentation/filesystems/affs.txt
++F:	Documentation/filesystems/affs.rst
+ F:	fs/affs/
+ 
+ AFS FILESYSTEM
+@@ -593,7 +593,7 @@ L:	linux-afs@lists.infradead.org
+ S:	Supported
+ F:	fs/afs/
+ F:	include/trace/events/afs.h
+-F:	Documentation/filesystems/afs.txt
++F:	Documentation/filesystems/afs.rst
+ W:	https://www.infradead.org/~dhowells/kafs/
+ 
+ AGPGART DRIVER
+@@ -3063,7 +3063,7 @@ M:	Luis de Bethencourt <luisbg@kernel.org>
+ M:	Salah Triki <salah.triki@gmail.com>
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/luisbg/linux-befs.git
+-F:	Documentation/filesystems/befs.txt
++F:	Documentation/filesystems/befs.rst
+ F:	fs/befs/
+ 
+ BFQ I/O SCHEDULER
+@@ -3077,7 +3077,7 @@ F:	Documentation/block/bfq-iosched.rst
+ BFS FILE SYSTEM
+ M:	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>
+ S:	Maintained
+-F:	Documentation/filesystems/bfs.txt
++F:	Documentation/filesystems/bfs.rst
+ F:	fs/bfs/
+ F:	include/uapi/linux/bfs_fs.h
+ 
+@@ -3610,7 +3610,7 @@ W:	http://btrfs.wiki.kernel.org/
+ Q:	http://patchwork.kernel.org/project/linux-btrfs/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git
+ S:	Maintained
+-F:	Documentation/filesystems/btrfs.txt
++F:	Documentation/filesystems/btrfs.rst
+ F:	fs/btrfs/
+ F:	include/linux/btrfs*
+ F:	include/uapi/linux/btrfs*
+@@ -3906,7 +3906,7 @@ W:	http://ceph.com/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+ T:	git git://github.com/ceph/ceph-client.git
+ S:	Supported
+-F:	Documentation/filesystems/ceph.txt
++F:	Documentation/filesystems/ceph.rst
+ F:	fs/ceph/
+ 
+ CERTIFICATE HANDLING:
+@@ -4423,7 +4423,7 @@ F:	include/linux/cpuidle.h
+ CRAMFS FILESYSTEM
+ M:	Nicolas Pitre <nico@fluxnic.net>
+ S:	Maintained
+-F:	Documentation/filesystems/cramfs.txt
++F:	Documentation/filesystems/cramfs.rst
+ F:	fs/cramfs/
+ 
+ CREATIVE SB0540
+@@ -5938,7 +5938,7 @@ W:	http://ecryptfs.org
+ W:	https://launchpad.net/ecryptfs
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git
+ S:	Supported
+-F:	Documentation/filesystems/ecryptfs.txt
++F:	Documentation/filesystems/ecryptfs.rst
+ F:	fs/ecryptfs/
+ 
+ EDAC-AMD64
+@@ -6254,7 +6254,7 @@ M:	Chao Yu <yuchao0@huawei.com>
+ L:	linux-erofs@lists.ozlabs.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
+-F:	Documentation/filesystems/erofs.txt
++F:	Documentation/filesystems/erofs.rst
+ F:	fs/erofs/
+ F:	include/trace/events/erofs.h
+ 
+@@ -6315,7 +6315,7 @@ EXT2 FILE SYSTEM
+ M:	Jan Kara <jack@suse.com>
+ L:	linux-ext4@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/filesystems/ext2.txt
++F:	Documentation/filesystems/ext2.rst
+ F:	fs/ext2/
+ F:	include/linux/ext2*
+ 
+@@ -6389,7 +6389,7 @@ L:	linux-f2fs-devel@lists.sourceforge.net
+ W:	https://f2fs.wiki.kernel.org/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+ S:	Maintained
+-F:	Documentation/filesystems/f2fs.txt
++F:	Documentation/filesystems/f2fs.rst
+ F:	Documentation/ABI/testing/sysfs-fs-f2fs
+ F:	fs/f2fs/
+ F:	include/linux/f2fs_fs.h
+@@ -7431,13 +7431,13 @@ F:	drivers/infiniband/hw/hfi1
+ HFS FILESYSTEM
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Orphan
+-F:	Documentation/filesystems/hfs.txt
++F:	Documentation/filesystems/hfs.rst
+ F:	fs/hfs/
+ 
+ HFSPLUS FILESYSTEM
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Orphan
+-F:	Documentation/filesystems/hfsplus.txt
++F:	Documentation/filesystems/hfsplus.rst
+ F:	fs/hfsplus/
+ 
+ HGA FRAMEBUFFER DRIVER
+@@ -8308,7 +8308,7 @@ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/filesystems/inotify.txt
++F:	Documentation/filesystems/inotify.rst
+ F:	fs/notify/inotify/
+ F:	include/linux/inotify.h
+ F:	include/uapi/linux/inotify.h
+@@ -11791,7 +11791,7 @@ W:	https://nilfs.sourceforge.io/
+ W:	https://nilfs.osdn.jp/
+ T:	git git://github.com/konis/nilfs2.git
+ S:	Supported
+-F:	Documentation/filesystems/nilfs2.txt
++F:	Documentation/filesystems/nilfs2.rst
+ F:	fs/nilfs2/
+ F:	include/trace/events/nilfs2.h
+ F:	include/uapi/linux/nilfs2_api.h
+@@ -11900,7 +11900,7 @@ L:	linux-ntfs-dev@lists.sourceforge.net
+ W:	http://www.tuxera.com/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
+ S:	Supported
+-F:	Documentation/filesystems/ntfs.txt
++F:	Documentation/filesystems/ntfs.rst
+ F:	fs/ntfs/
+ 
+ NUBUS SUBSYSTEM
+@@ -12246,7 +12246,7 @@ OMFS FILESYSTEM
+ M:	Bob Copeland <me@bobcopeland.com>
+ L:	linux-karma-devel@lists.sourceforge.net
+ S:	Maintained
+-F:	Documentation/filesystems/omfs.txt
++F:	Documentation/filesystems/omfs.rst
+ F:	fs/omfs/
+ 
+ OMNIKEY CARDMAN 4000 DRIVER
+@@ -12495,8 +12495,8 @@ M:	Joseph Qi <joseph.qi@linux.alibaba.com>
+ L:	ocfs2-devel@oss.oracle.com (moderated for non-subscribers)
+ W:	http://ocfs2.wiki.kernel.org
+ S:	Supported
+-F:	Documentation/filesystems/ocfs2.txt
+-F:	Documentation/filesystems/dlmfs.txt
++F:	Documentation/filesystems/ocfs2.rst
++F:	Documentation/filesystems/dlmfs.rst
+ F:	fs/ocfs2/
+ 
+ ORANGEFS FILESYSTEM
+@@ -12506,7 +12506,7 @@ L:	devel@lists.orangefs.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
+ S:	Supported
+ F:	fs/orangefs/
+-F:	Documentation/filesystems/orangefs.txt
++F:	Documentation/filesystems/orangefs.rst
+ 
+ ORINOCO DRIVER
+ L:	linux-wireless@vger.kernel.org
+@@ -13469,7 +13469,7 @@ S:	Maintained
+ F:	fs/proc/
+ F:	include/linux/proc_fs.h
+ F:	tools/testing/selftests/proc/
+-F:	Documentation/filesystems/proc.txt
++F:	Documentation/filesystems/proc.rst
+ 
+ PROC SYSCTL
+ M:	Luis Chamberlain <mcgrof@kernel.org>
+@@ -15738,7 +15738,7 @@ L:	squashfs-devel@lists.sourceforge.net (subscribers-only)
+ W:	http://squashfs.org.uk
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git
+ S:	Maintained
+-F:	Documentation/filesystems/squashfs.txt
++F:	Documentation/filesystems/squashfs.rst
+ F:	fs/squashfs/
+ 
+ SRM (Alpha) environment access
+@@ -16181,7 +16181,7 @@ F:	drivers/platform/x86/system76_acpi.c
+ SYSV FILESYSTEM
+ M:	Christoph Hellwig <hch@infradead.org>
+ S:	Maintained
+-F:	Documentation/filesystems/sysv-fs.txt
++F:	Documentation/filesystems/sysv-fs.rst
+ F:	fs/sysv/
+ F:	include/linux/sysv_fs.h
+ 
+@@ -17046,7 +17046,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git next
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git fixes
+ W:	http://www.linux-mtd.infradead.org/doc/ubifs.html
+ S:	Supported
+-F:	Documentation/filesystems/ubifs.txt
++F:	Documentation/filesystems/ubifs.rst
+ F:	fs/ubifs/
+ 
+ UCLINUX (M68KNOMMU AND COLDFIRE)
+@@ -17065,7 +17065,7 @@ F:	arch/m68k/include/asm/*_no.*
+ UDF FILESYSTEM
+ M:	Jan Kara <jack@suse.com>
+ S:	Maintained
+-F:	Documentation/filesystems/udf.txt
++F:	Documentation/filesystems/udf.rst
+ F:	fs/udf/
+ 
+ UDRAW TABLET
+@@ -18504,7 +18504,7 @@ L:	linux-fsdevel@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git
+ S:	Maintained
+ F:	fs/zonefs/
+-F:	Documentation/filesystems/zonefs.txt
++F:	Documentation/filesystems/zonefs.rst
+ 
+ ZPOOL COMPRESSED PAGE STORAGE API
+ M:	Dan Streetman <ddstreet@ieee.org>
 
-The function was designed for getting the full picture of the pipeline 
-position inside the FW, including the host position(the closest one to 
-the ALSA buffer), the dai rendering position, the system timestamp, etc.
-
-Iirc, the function could be used for precise position control, AV sync, 
-hammock harbor, etc.
-
-Handling to this IPC is already implemented in SOF firmware(which means 
-we can already get it from the FW), I think nobody is calling the 
-function as we haven't had the corresponding requirement yet.
-
-Thanks,
-~Keyon
-
-> 
-> Thanks
-> Guennadi
-> 
+base-commit: 7d3d3254adaa61cba896f71497f56901deb618e5
+-- 
+2.17.1
