@@ -1,53 +1,118 @@
-From: Toshiaki Makita <toshiaki.makita1@gmail.com>
-Date: Tue, 31 Mar 2020 06:16:22 +0000
-Subject: Re: [PATCH net v2] veth: xdp: use head instead of hard_start
-Message-Id: <7a1d55ad-1427-67fe-f204-4d4a0ab2c4b1@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 15 Mar 2020 15:50:15 +0000
+Subject: [PATCH] dmaengine: ti: k3-udma: Fix an error handling path in 'k3_udma_glue_cfg_rx_flow()'
+Message-Id: <20200315155015.27303-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fb5ab568-9bc8-3145-a8db-3e975ccdf846@gmail.com>
- <20200331060641.79999-1-maowenan@huawei.com>
-In-Reply-To: <20200331060641.79999-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net, kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, jwi@linux.ibm.com, jianglidong3@jd.com, edumazet@google.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: vkoul@kernel.org, dan.j.williams@intel.com, peter.ujfalusi@ti.com, grygorii.strashko@ti.com
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 2020/03/31 15:06, Mao Wenan wrote:
-> xdp.data_hard_start is equal to first address of
-> struct xdp_frame, which is mentioned in
-> convert_to_xdp_frame(). But the pointer hard_start
-> in veth_xdp_rcv_one() is 32 bytes offset of frame,
-> so it should use head instead of hard_start to
-> set xdp.data_hard_start. Otherwise, if BPF program
-> calls helper_function such as bpf_xdp_adjust_head, it
-> will be confused for xdp_frame_end.
+All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
+function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
 
-I think you should discuss this more with Jesper before
-submitting v2.
-He does not like this to be included now due to merge conflict risk.
-Basically I agree with him that we don't need to hurry with this fix.
+This not correct because this function has a 'channel->flows_ready--;' at
+the end, but 'flows_ready' has not been incremented here, when we branch to
+the error handling path.
 
-Toshiaki Makita
+In order to keep a correct value in 'flows_ready', un-roll
+'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
+at the correct places when an error is detected.
 
-> 
-> Fixes: 9fc8d518d9d5 ("veth: Handle xdp_frames in xdp napi ring")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->   v2: add fixes tag, as well as commit log.
->   drivers/net/veth.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-> index d4cbb9e8c63f..5ea550884bf8 100644
-> --- a/drivers/net/veth.c
-> +++ b/drivers/net/veth.c
-> @@ -506,7 +506,7 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
->   		struct xdp_buff xdp;
->   		u32 act;
->   
-> -		xdp.data_hard_start = hard_start;
-> +		xdp.data_hard_start = head;
->   		xdp.data = frame->data;
->   		xdp.data_end = frame->data + frame->len;
->   		xdp.data_meta = frame->data - frame->metasize;
-> 
+Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
+
+Fixes: d70241913413 ("dmaengine: ti: k3-udma: Add glue layer for non DMAengine user")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that the last point of the description is correct. Maybe, the
+'xudma_rflow_put / return -ENODEV;' should be kept in order not to
+override 'flow->udma_rflow'.
+---
+ drivers/dma/ti/k3-udma-glue.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+index dbccdc7c0ed5..890573eb1625 100644
+--- a/drivers/dma/ti/k3-udma-glue.c
++++ b/drivers/dma/ti/k3-udma-glue.c
+@@ -578,12 +578,12 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (IS_ERR(flow->udma_rflow)) {
+ 		ret = PTR_ERR(flow->udma_rflow);
+ 		dev_err(dev, "UDMAX rflow get err %d\n", ret);
+-		goto err;
++		goto err_return;
+ 	}
+ 
+ 	if (flow->udma_rflow_id != xudma_rflow_get_id(flow->udma_rflow)) {
+-		xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_rflow_put;
+ 	}
+ 
+ 	/* request and cfg rings */
+@@ -592,7 +592,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (!flow->ringrx) {
+ 		ret = -ENODEV;
+ 		dev_err(dev, "Failed to get RX ring\n");
+-		goto err;
++		goto err_rflow_put;
+ 	}
+ 
+ 	flow->ringrxfdq = k3_ringacc_request_ring(rx_chn->common.ringacc,
+@@ -600,19 +600,19 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (!flow->ringrxfdq) {
+ 		ret = -ENODEV;
+ 		dev_err(dev, "Failed to get RXFDQ ring\n");
+-		goto err;
++		goto err_ringrx_free;
+ 	}
+ 
+ 	ret = k3_ringacc_ring_cfg(flow->ringrx, &flow_cfg->rx_cfg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to cfg ringrx %d\n", ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	ret = k3_ringacc_ring_cfg(flow->ringrxfdq, &flow_cfg->rxfdq_cfg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to cfg ringrxfdq %d\n", ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	if (rx_chn->remote) {
+@@ -662,7 +662,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 	if (ret) {
+ 		dev_err(dev, "flow%d config failed: %d\n", flow->udma_rflow_id,
+ 			ret);
+-		goto err;
++		goto err_ringrxfdq_free;
+ 	}
+ 
+ 	rx_chn->flows_ready++;
+@@ -670,8 +670,18 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
+ 		flow->udma_rflow_id, rx_chn->flows_ready);
+ 
+ 	return 0;
+-err:
+-	k3_udma_glue_release_rx_flow(rx_chn, flow_idx);
++
++err_ringrxfdq_free:
++	k3_ringacc_ring_free(flow->ringrxfdq);
++
++err_ringrx_free:
++	k3_ringacc_ring_free(flow->ringrx);
++
++err_rflow_put:
++	xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
++	flow->udma_rflow = NULL;
++
++err_return:
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
