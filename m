@@ -1,48 +1,35 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sun, 15 Mar 2020 07:21:09 +0000
-Subject: [PATCH] MAINTAINERS: adjust to VIVANTE GPU schema conversion
-Message-Id: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
+From: Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Date: Mon, 16 Mar 2020 08:05:07 +0000
+Subject: Re: [PATCH] MAINTAINERS: adjust to VIVANTE GPU schema conversion
+Message-Id: <18450dfa-a150-45df-5b9c-c543c110c478@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Gaignard <benjamin.gaignard@st.com>, Rob Herring <robh@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-Commit 90aeca875f8a ("dt-bindings: display: Convert etnaviv to
-json-schema") missed to adjust the DRM DRIVERS FOR VIVANTE GPU IP entry
-in MAINTAINERS.
-
-Since then, ./scripts/get_maintainer.pl --self-test complains:
-
-  warning: no file matches \
-  F: Documentation/devicetree/bindings/display/etnaviv/
-
-Update MAINTAINERS entry to location of converted schema.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on next-20200313
-
-Benjamin, please ack.
-Rob, please pick this patch (it is not urgent, though)
-
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 77eede976d0f..50a7a6d62e06 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5766,7 +5766,7 @@ L:	dri-devel@lists.freedesktop.org
- S:	Maintained
- F:	drivers/gpu/drm/etnaviv/
- F:	include/uapi/drm/etnaviv_drm.h
--F:	Documentation/devicetree/bindings/display/etnaviv/
-+F:	Documentation/devicetree/bindings/gpu/vivante,gc.yaml
- 
- DRM DRIVERS FOR ZTE ZX
- M:	Shawn Guo <shawnguo@kernel.org>
--- 
-2.17.1
+DQoNCk9uIDMvMTUvMjAgODoyMSBBTSwgTHVrYXMgQnVsd2FobiB3cm90ZToNCj4gQ29tbWl0IDkw
+YWVjYTg3NWY4YSAoImR0LWJpbmRpbmdzOiBkaXNwbGF5OiBDb252ZXJ0IGV0bmF2aXYgdG8NCj4g
+anNvbi1zY2hlbWEiKSBtaXNzZWQgdG8gYWRqdXN0IHRoZSBEUk0gRFJJVkVSUyBGT1IgVklWQU5U
+RSBHUFUgSVAgZW50cnkNCj4gaW4gTUFJTlRBSU5FUlMuDQo+DQo+IFNpbmNlIHRoZW4sIC4vc2Ny
+aXB0cy9nZXRfbWFpbnRhaW5lci5wbCAtLXNlbGYtdGVzdCBjb21wbGFpbnM6DQo+DQo+ICAgIHdh
+cm5pbmc6IG5vIGZpbGUgbWF0Y2hlcyBcDQo+ICAgIEY6IERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9kaXNwbGF5L2V0bmF2aXYvDQo+DQo+IFVwZGF0ZSBNQUlOVEFJTkVSUyBlbnRy
+eSB0byBsb2NhdGlvbiBvZiBjb252ZXJ0ZWQgc2NoZW1hLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBM
+dWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NClJldmlld2VkLWJ5OiBCZW5q
+YW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAc3QuY29tPg0KDQpUaGFua3MNCj4gLS0t
+DQo+IGFwcGxpZXMgY2xlYW5seSBvbiBuZXh0LTIwMjAwMzEzDQo+DQo+IEJlbmphbWluLCBwbGVh
+c2UgYWNrLg0KPiBSb2IsIHBsZWFzZSBwaWNrIHRoaXMgcGF0Y2ggKGl0IGlzIG5vdCB1cmdlbnQs
+IHRob3VnaCkNCj4NCj4NCj4gICBNQUlOVEFJTkVSUyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdpdCBhL01BSU5U
+QUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5kZXggNzdlZWRlOTc2ZDBmLi41MGE3YTZkNjJlMDYg
+MTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJTDQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC01
+NzY2LDcgKzU3NjYsNyBAQCBMOglkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+ICAg
+UzoJTWFpbnRhaW5lZA0KPiAgIEY6CWRyaXZlcnMvZ3B1L2RybS9ldG5hdml2Lw0KPiAgIEY6CWlu
+Y2x1ZGUvdWFwaS9kcm0vZXRuYXZpdl9kcm0uaA0KPiAtRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXRuYXZpdi8NCj4gK0Y6CURvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9ncHUvdml2YW50ZSxnYy55YW1sDQo+ICAgDQo+ICAgRFJNIERSSVZFUlMg
+Rk9SIFpURSBaWA0KPiAgIE06CVNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCg=
