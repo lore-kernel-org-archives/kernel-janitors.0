@@ -1,26 +1,52 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 04 Mar 2020 18:36:36 +0000
-Subject: Re: [PATCH][next] RDMA/hns: fix spelling mistake "attatch" -> "attach"
-Message-Id: <20200304183636.GA13359@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Mar 2020 09:16:53 +0000
+Subject: [PATCH] dmaengine: fix spelling mistake "exceds" -> "exceeds"
+Message-Id: <20200316091653.110984-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304081045.81164-1-colin.king@canonical.com>
-In-Reply-To: <20200304081045.81164-1-colin.king@canonical.com>
+References: <20200123092359.10714-1-colin.king@canonical.com>
+In-Reply-To: <20200123092359.10714-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 09:10:45AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in an error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_qp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+There are a couple of spelling mistakes in dev_err error messages.
+Fix them.
 
-Jason
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/sh/rcar-dmac.c  | 2 +-
+ drivers/dma/sh/shdma-base.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index f06016d38a05..59b36ab5d684 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1219,7 +1219,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
+ 	sg_len = buf_len / period_len;
+ 	if (sg_len > RCAR_DMAC_MAX_SG_LEN) {
+ 		dev_err(chan->device->dev,
+-			"chan%u: sg length %d exceds limit %d",
++			"chan%u: sg length %d exceeds limit %d",
+ 			rchan->index, sg_len, RCAR_DMAC_MAX_SG_LEN);
+ 		return NULL;
+ 	}
+diff --git a/drivers/dma/sh/shdma-base.c b/drivers/dma/sh/shdma-base.c
+index c51de498b5b4..2deeaab078a4 100644
+--- a/drivers/dma/sh/shdma-base.c
++++ b/drivers/dma/sh/shdma-base.c
+@@ -709,7 +709,7 @@ static struct dma_async_tx_descriptor *shdma_prep_dma_cyclic(
+ 	BUG_ON(!schan->desc_num);
+ 
+ 	if (sg_len > SHDMA_MAX_SG_LEN) {
+-		dev_err(schan->dev, "sg length %d exceds limit %d",
++		dev_err(schan->dev, "sg length %d exceeds limit %d",
+ 				sg_len, SHDMA_MAX_SG_LEN);
+ 		return NULL;
+ 	}
+-- 
+2.25.1
