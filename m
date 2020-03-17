@@ -1,94 +1,27 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Wed, 25 Mar 2020 12:41:23 +0000
-Subject: [PATCH 23/24] perf cpumap: Fix snprintf overflow check
-Message-Id: <20200325124124.32648-24-acme@kernel.org>
+From: David Ibe <ylawrence@uic.edu.hk>
+Date: Tue, 17 Mar 2020 00:09:35 +0000
+Subject: 
+Message-Id: <658893193.63690258.1584403775841.JavaMail.zimbra@uic.edu.hk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200325124124.32648-1-acme@kernel.org>
-In-Reply-To: <20200325124124.32648-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Laight <David.Laight@ACULAB.COM>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Don Zickus <dzickus@redhat.com>, He Zhe <zhe.he@windriver.com>, Jan Stancek <jstancek@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'snprintf' returns the number of characters which would be generated for
-the given input.
 
-If the returned value is *greater than* or equal to the buffer size, it
-means that the output has been truncated.
+Good Day,                
 
-Fix the overflow test accordingly.
+I am Mr. David Ibe, I work with the International Standards on Auditing, I have seen on records, that several times people has divert your funds into their own personal accounts.
 
-Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
-Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Suggested-by: David Laight <David.Laight@ACULAB.COM>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Don Zickus <dzickus@redhat.com>
-Cc: He Zhe <zhe.he@windriver.com>
-Cc: Jan Stancek <jstancek@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20200324070319.10901-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cpumap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Now I am writing to you in respect of the amount which I have been able to send to you through our International United Nations accredited and approved Diplomat, who has arrived Africa, I want you to know that the diplomat would deliver the funds which I have packaged as a diplomatic compensation to you and the amount in the consignment is  $10,000,000.00 United State Dollars.
 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 983b7388f22b..dc5c5e6fc502 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -317,7 +317,7 @@ static void set_max_cpu_num(void)
- 
- 	/* get the highest possible cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -328,7 +328,7 @@ static void set_max_cpu_num(void)
- 
- 	/* get the highest present cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -356,7 +356,7 @@ static void set_max_node_num(void)
- 
- 	/* get the highest possible cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -441,7 +441,7 @@ int cpu__setup_cpunode_map(void)
- 		return 0;
- 
- 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
--	if (n = PATH_MAX) {
-+	if (n >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		return -1;
- 	}
-@@ -456,7 +456,7 @@ int cpu__setup_cpunode_map(void)
- 			continue;
- 
- 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
--		if (n = PATH_MAX) {
-+		if (n >= PATH_MAX) {
- 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 			continue;
- 		}
--- 
-2.21.1
+I did not disclose the contents to the diplomat, but I told him that it is your compensation from the Auditing Corporate Governance and Stewardship, Auditing and Assurance Standards Board. I want you to know that these funds would help with your financial status as I have seen in records that you have spent a lot trying to receive these funds and I am not demanding so much from you but only 30% for my stress and logistics.
+
+I would like you to get back to me with your personal contact details, so that I can give you the contact information's of the diplomat who has arrived Africa and has been waiting to get your details so that he can proceed with the delivery to you.
+
+Yours Sincerely,
+Kindly forward your details to: mrdavidibe966@gmail.com
+Mr. David Ibe
+International Auditor,
+Corporate Governance and Stewardship
