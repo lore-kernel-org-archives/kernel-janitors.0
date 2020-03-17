@@ -1,50 +1,23 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 10 Mar 2020 12:38:37 +0000
-Subject: [PATCH 4.4 24/72] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
-Message-Id: <20200310123607.860475256@linuxfoundation.org>
+From: Stephen Li <stenn7@gabg.net>
+Date: Tue, 17 Mar 2020 12:07:13 +0000
+Subject: REF
+Message-Id: <2078071840.1852905.1584446833663@mail.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200310123601.053680753@linuxfoundation.org>
-In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <2078071840.1852905.1584446833663.ref@mail.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
-
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/vpe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
- 
+Greetings,
+I was searching through a local business directory when I found your
+profile. I am Soliciting On-Behalf of my private client who is
+interested in having a serious business investment in your country. If
+you have a valid business, investment or project he can invest
+back to me for more details. Your swift response is highly needed.
+Sincerely
+Stephen Li
+Please response back to me with is my private email below for more details
+stephli947701@gmail.com
