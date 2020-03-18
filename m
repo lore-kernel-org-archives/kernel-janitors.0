@@ -1,40 +1,34 @@
-From: Roland Scheidegger <rscheidegger.oss@gmail.com>
-Date: Thu, 26 Mar 2020 16:03:15 +0000
-Subject: Re: [PATCH][next] drm/vmwgfx: fix spelling mistake "Cound" -> "Could"
-Message-Id: <d9ee5ec4-7341-decd-a382-3004fd367beb@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Mar 2020 16:01:08 +0000
+Subject: [PATCH] usb: cdns3: fix spelling mistake "wrapperr" -> "wrapper"
+Message-Id: <20200318160108.267403-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200326101911.241233-1-colin.king@canonical.com>
-In-Reply-To: <20200326101911.241233-1-colin.king@canonical.com>
+References: <20200122234437.2829803-1-colin.king@canonical.com>
+In-Reply-To: <20200122234437.2829803-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Am 26.03.20 um 11:19 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a DRM_ERROR error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index 367d5b87ee6a..2e61a4ecd8ef 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -3037,7 +3037,7 @@ static int vmw_cmd_dx_bind_streamoutput(struct vmw_private *dev_priv,
->  	res = vmw_dx_streamoutput_lookup(vmw_context_res_man(ctx_node->ctx),
->  					 cmd->body.soid);
->  	if (IS_ERR(res)) {
-> -		DRM_ERROR("Cound not find streamoutput to bind.\n");
-> +		DRM_ERROR("Could not find streamoutput to bind.\n");
->  		return PTR_ERR(res);
->  	}
->  
-> 
+There is a spelling mistake in the module description. Fix it.
 
-Reviewed-by: Roland Scheidegger <sroland@vmware.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/cdns3-pci-wrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+index b0a29efe7d31..deeea618ba33 100644
+--- a/drivers/usb/cdns3/cdns3-pci-wrap.c
++++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+@@ -201,4 +201,4 @@ MODULE_DEVICE_TABLE(pci, cdns3_pci_ids);
+ 
+ MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
+ MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("Cadence USBSS PCI wrapperr");
++MODULE_DESCRIPTION("Cadence USBSS PCI wrapper");
+-- 
+2.25.1
