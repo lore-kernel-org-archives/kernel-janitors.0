@@ -1,46 +1,60 @@
-From: "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Date: Mon, 16 Mar 2020 13:41:34 +0000
-Subject: RE: [PATCH] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Message-Id: <DB8PR04MB6747C64A930F240215A3FA8784F90@DB8PR04MB6747.eurprd04.prod.outlook.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Wed, 18 Mar 2020 18:49:39 +0000
+Subject: Re: [PATCH] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
+Message-Id: <20200318184939.GA209856@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
 References: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>
-Cc: Joe Perches <joe@perches.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEx1a2FzIEJ1bHdhaG4gPGx1
-a2FzLmJ1bHdhaG5AZ21haWwuY29tPg0KPiBTZW50OiAyMDIwxOoz1MIxNMjVIDIyOjI2DQo+IFRv
-OiBaLnEuIEhvdSA8emhpcWlhbmcuaG91QG54cC5jb20+OyBMb3JlbnpvIFBpZXJhbGlzaQ0KPiA8
-bG9yZW56by5waWVyYWxpc2lAYXJtLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+
-DQo+IENjOiBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmc7IEpvZQ0KPiBQZXJjaGVzIDxqb2VAcGVyY2hlcy5jb20+OyBrZXJuZWwt
-amFuaXRvcnNAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-OyBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NCj4gU3ViamVjdDogW1BB
-VENIXSBNQUlOVEFJTkVSUzogY29ycmVjdCB0eXBvIGluIG5ldyBOWFAgTEFZRVJTQ0FQRSBHRU40
-DQo+IA0KPiBDb21taXQgM2VkZWI0OTUyNWJiICgiZHQtYmluZGluZ3M6IFBDSTogQWRkIE5YUCBM
-YXllcnNjYXBlIFNvQ3MgUENJZQ0KPiBHZW40DQo+IGNvbnRyb2xsZXIiKSBpbmNsdWRlcyBhIG5l
-dyBlbnRyeSBpbiBNQUlOVEFJTkVSUywgYnV0IHNsaXBwZWQgaW4gYSB0eXBvIGluIG9uZQ0KPiBv
-ZiB0aGUgZmlsZSBlbnRyaWVzLg0KPiANCj4gSGVuY2UsIHNpbmNlIHRoZW4sIC4vc2NyaXB0cy9n
-ZXRfbWFpbnRhaW5lci5wbCAtLXNlbGYtdGVzdCBjb21wbGFpbnM6DQo+IA0KPiAgIHdhcm5pbmc6
-IG5vIGZpbGUgbWF0Y2hlcyBGOiBcDQo+ICAgICBkcml2ZXJzL3BjaS9jb250cm9sbGVyL21vYmli
-ZWlsL3BjaWUtbGF5ZXJzY2FwZS1nZW40LmMNCj4gDQo+IENvcnJlY3QgdGhlIHR5cG8gaW4gUENJ
-IERSSVZFUiBGT1IgTlhQIExBWUVSU0NBUEUgR0VONCBDT05UUk9MTEVSLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogTHVrYXMgQnVsd2FobiA8bHVrYXMuYnVsd2FobkBnbWFpbC5jb20+DQo+IC0tLQ0K
-PiBhcHBsaWVzIGNsZWFubHkgb24gbmV4dC0yMDIwMDMxMw0KPiANCj4gSG91LCBwbGVhc2UgYWNr
-Lg0KPiBSb2IsIHBsZWFzZSBwaWNrIHRoaXMgcGF0Y2ggKGl0IGlzIG5vdCB1cmdlbnQsIHRob3Vn
-aCkuDQo+IA0KPiAgTUFJTlRBSU5FUlMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBi
-L01BSU5UQUlORVJTDQo+IGluZGV4IDMyYTk1ZDE2MmYwNi4uNzdlZWRlOTc2ZDBmIDEwMDY0NA0K
-PiAtLS0gYS9NQUlOVEFJTkVSUw0KPiArKysgYi9NQUlOVEFJTkVSUw0KPiBAQCAtMTI4NTgsNyAr
-MTI4NTgsNyBAQCBMOglsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnDQo+ICBMOglsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gIFM6CU1haW50YWluZWQNCj4gIEY6CURvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wY2kvbGF5ZXJzY2FwZS1wY2llLWdlbjQudHh0
-DQo+IC1GOglkcml2ZXJzL3BjaS9jb250cm9sbGVyL21vYmliZWlsL3BjaWUtbGF5ZXJzY2FwZS1n
-ZW40LmMNCj4gK0Y6CWRyaXZlcnMvcGNpL2NvbnRyb2xsZXIvbW9iaXZlaWwvcGNpZS1sYXllcnNj
-YXBlLWdlbjQuYw0KPiANCj4gIFBDSSBEUklWRVIgRk9SIEdFTkVSSUMgT0YgSE9TVFMNCj4gIE06
-CVdpbGwgRGVhY29uIDx3aWxsQGtlcm5lbC5vcmc+DQo+IA0KPiBiYXNlLWNvbW1pdDogMmU2MDJk
-YjcyOTk0OGNlNTc3YmYwN2UyYjExM2YyYWE4MDZiNjJjNw0KPiAtLQ0KPiAyLjE3LjENCg0KUmV2
-aWV3ZWQtYnk6IEhvdSBaaGlxaWFuZyA8WmhpcWlhbmcuSG91QG54cC5jb20+DQoNCg=
+On Sat, Mar 14, 2020 at 03:25:59PM +0100, Lukas Bulwahn wrote:
+> Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
+> controller") includes a new entry in MAINTAINERS, but slipped in a typo in
+> one of the file entries.
+> 
+> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
+> 
+>   warning: no file matches F: \
+>     drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
+> 
+> Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> applies cleanly on next-20200313
+> 
+> Hou, please ack.
+> Rob, please pick this patch (it is not urgent, though).
+
+3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
+controller") is on Lorenzo's pci/mobiveil branch and queued for v5.7.
+
+But it hasn't been merged upstream yet, so we should squash this fix
+into Lorenzo's branch so we don't need a fixup commit.
+
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 32a95d162f06..77eede976d0f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12858,7 +12858,7 @@ L:	linux-pci@vger.kernel.org
+>  L:	linux-arm-kernel@lists.infradead.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> -F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
+> +F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+>  
+>  PCI DRIVER FOR GENERIC OF HOSTS
+>  M:	Will Deacon <will@kernel.org>
+> 
+> base-commit: 2e602db729948ce577bf07e2b113f2aa806b62c7
+> -- 
+> 2.17.1
+> 
