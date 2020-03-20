@@ -1,56 +1,45 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Tue, 17 Mar 2020 14:16:13 +0000
-Subject: Re: [PATCH] perf probe: Fix an error handling path in 'parse_perf_probe_command()'
-Message-Id: <20200317231613.af181e378e7c09ea97097314@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Mar 2020 13:25:25 +0000
+Subject: [PATCH] {IB,net}/mlx5: Remove unused variable
+Message-Id: <20200320132525.GE95012@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200315201259.29190-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200315201259.29190-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org, allison@lohutok.net, rostedt@goodmis.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>
+Cc: Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 15 Mar 2020 21:12:59 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+The "key" variable is never initialized or used except to print out a
+debug message.
 
-> If a memory allocation fail, we should branch to the error handling path in
-> order to free some resources allocated a few lines above.
-> 
+Fixes: fc6a9f86f08a ("{IB,net}/mlx5: Assign mkey variant in mlx5_ib only")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/mr.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Good catch!
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you,
-
-> Fixes: 15354d546986 ("perf probe: Generate event name with line number")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  tools/perf/util/probe-event.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index eea132f512b0..65a615ee4b4c 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -1683,8 +1683,10 @@ int parse_perf_probe_command(const char *cmd, struct perf_probe_event *pev)
->  	if (!pev->event && pev->point.function && pev->point.line
->  			&& !pev->point.lazy_line && !pev->point.offset) {
->  		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
-> -			pev->point.line) < 0)
-> -			return -ENOMEM;
-> +			pev->point.line) < 0) {
-> +			ret = -ENOMEM;
-> +			goto out;
-> +		}
->  	}
->  
->  	/* Copy arguments and ensure return probe has no C argument */
-> -- 
-> 2.20.1
-> 
-
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/mr.c b/drivers/net/ethernet/mellanox/mlx5/core/mr.c
+index fd3e6d217c3b..5286e8d5aa57 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/mr.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/mr.c
+@@ -44,7 +44,6 @@ int mlx5_core_create_mkey(struct mlx5_core_dev *dev,
+ 	u32 mkey_index;
+ 	void *mkc;
+ 	int err;
+-	u8 key;
+ 
+ 	MLX5_SET(create_mkey_in, in, opcode, MLX5_CMD_OP_CREATE_MKEY);
+ 
+@@ -59,8 +58,8 @@ int mlx5_core_create_mkey(struct mlx5_core_dev *dev,
+ 	mkey->key |= mlx5_idx_to_mkey(mkey_index);
+ 	mkey->pd = MLX5_GET(mkc, mkc, pd);
+ 
+-	mlx5_core_dbg(dev, "out 0x%x, key 0x%x, mkey 0x%x\n",
+-		      mkey_index, key, mkey->key);
++	mlx5_core_dbg(dev, "out 0x%x, mkey 0x%x\n",
++		      mkey_index, mkey->key);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(mlx5_core_create_mkey);
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.25.1
