@@ -1,33 +1,36 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Tue, 10 Mar 2020 17:30:03 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to kobject doc ReST conversion
-Message-Id: <20200310113003.0d6d301d@lwn.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Mar 2020 13:23:05 +0000
+Subject: [PATCH net-next] net/mlx5e: Fix actions_match_supported() return
+Message-Id: <20200320132305.GB95012@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304110821.7243-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200304110821.7243-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Sameer Rahmani <lxsameer@gnu.org>, linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Paul Blakey <paulb@mellanox.com>
+Cc: Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Roi Dayan <roid@mellanox.com>, Oz Shlomo <ozsh@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed,  4 Mar 2020 12:08:21 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+The actions_match_supported() function returns a bool, true for success
+and false for failure.  This error path is returning a negative which
+is cast to true but it should return false.
 
-> Commit 5fed00dcaca8 ("Documentation: kobject.txt has been moved to
-> core-api/kobject.rst") missed to adjust the entry in MAINTAINERS.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: Documentation/kobject.txt
-> 
-> Adjust DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS entry in MAINTAINERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Sameer, please ack.
-> Jonathan, pick pick this patch for doc-next.
+Fixes: 4c3844d9e97e ("net/mlx5e: CT: Introduce connection tracking")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
-
-jon
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index 044891a03be3..e5de7d2bac2b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -3058,7 +3058,7 @@ static bool actions_match_supported(struct mlx5e_priv *priv,
+ 			 */
+ 			NL_SET_ERR_MSG_MOD(extack,
+ 					   "Can't offload mirroring with action ct");
+-			return -EOPNOTSUPP;
++			return false;
+ 		}
+ 	} else {
+ 		actions = flow->nic_attr->action;
+-- 
+2.25.1
