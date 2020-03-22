@@ -1,27 +1,16 @@
-From: federa bureau of inteligence <federabureauofinteligence@gmail.com>
-Date: Fri, 20 Mar 2020 11:08:03 +0000
-Subject: HAPPY SURVIVAL OF CORONAVIRUS
-Message-Id: <CAE9o6LB50YPWezLwrs9uSwCgfuFuUSrTfGz=QiaO9Pj23qjovw@mail.gmail.com>
+From: "Mr. Fu" <amunoza@surnet.cl>
+Date: Sun, 22 Mar 2020 16:27:02 +0000
+Subject: YOUR EARLY REPLY
+Message-Id: <20200322162709.C9B1B2D53C3@mail.destinigroup.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Dear Sir,
-
-HAPPY SURVIVAL OF CORONAVIRUS
-
-We are reaching for a very interesting business transaction which we
-feel will of great benefit.We the FBI unit in the western subregion of
-Africa have a fund which we confiscated and lodge it in a bank
-
-This fund is worth of $12.5 million dollars.We will need your
-assistance to recieve this fund into your account for investment in
-your country.
-
-We will need your urgent response for details
-
-Inspector Greg Adams,
-For and on behalf of Cote D'Ivoire FBI
-Tel 00225 6716 6756
+YOUR EARLY REPLY
+I have a lucrative business proposal that I would like to share with you.
+I'm glad about your quick answer
+E-mail;fulanlan28@gmail.com
+greetings
+Mr. Fu Lan
