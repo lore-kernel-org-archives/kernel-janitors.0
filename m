@@ -1,39 +1,50 @@
-From: <Codrin.Ciubotariu@microchip.com>
-Date: Wed, 25 Mar 2020 15:03:32 +0000
-Subject: Re: [PATCH] ASoC: mchp-i2s-mcc: make signed 1 bit bitfields unsigned
-Message-Id: <130efce3-5a04-a813-062b-79f8b4284db8@microchip.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 22 Mar 2020 16:57:02 +0000
+Subject: [PATCH] err.h: remove deprecated PTR_RET for good
+Message-Id: <20200322165702.6712-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200325132913.110115-1-colin.king@canonical.com>
-In-Reply-To: <20200325132913.110115-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Jiri Kosina <trivial@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "Gustavo A . R . Silva" <gustavo@embeddedor.com>, Nicholas Krause <xerofoify@gmail.com>, Duan Jiong <duanj.fnst@cn.fujitsu.com>, Sachin Kamat <sachin.kamat@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-T24gMjUuMDMuMjAyMCAxNToyOSwgQ29saW4gS2luZyB3cm90ZToNCj4gRnJvbTogQ29saW4gSWFu
-IEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSBzaWduZWQgMSBiaXQg
-Yml0ZmllbGRzIHNob3VsZCBiZSB1bnNpZ25lZCwgc28gbWFrZSB0aGVtIHVuc2lnbmVkLg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNv
-bT4NCg0KUmV2aWV3ZWQtYnk6IENvZHJpbiBDaXVib3Rhcml1IDxjb2RyaW4uY2l1Ym90YXJpdUBt
-aWNyb2NoaXAuY29tPg0KDQpUaGFua3MhDQoNCj4gLS0tDQo+ICAgc291bmQvc29jL2F0bWVsL21j
-aHAtaTJzLW1jYy5jIHwgOCArKysrLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlv
-bnMoKyksIDQgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2F0bWVs
-L21jaHAtaTJzLW1jYy5jIGIvc291bmQvc29jL2F0bWVsL21jaHAtaTJzLW1jYy5jDQo+IGluZGV4
-IGJlZmMyYTNhMDViMC4uM2NiNjM4ODYxOTVmIDEwMDY0NA0KPiAtLS0gYS9zb3VuZC9zb2MvYXRt
-ZWwvbWNocC1pMnMtbWNjLmMNCj4gKysrIGIvc291bmQvc29jL2F0bWVsL21jaHAtaTJzLW1jYy5j
-DQo+IEBAIC0yMzksMTAgKzIzOSwxMCBAQCBzdHJ1Y3QgbWNocF9pMnNfbWNjX2RldiB7DQo+ICAg
-ICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgICAgICAgICAgICAgICAgICBmcmFtZV9sZW5n
-dGg7DQo+ICAgICAgICAgIGludCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB0
-ZG1fc2xvdHM7DQo+ICAgICAgICAgIGludCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBjaGFubmVsczsNCj4gLSAgICAgICBpbnQgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgZ2Nsa191c2U6MTsNCj4gLSAgICAgICBpbnQgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgZ2Nsa19ydW5uaW5nOjE7DQo+IC0gICAgICAgaW50ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHR4X3JkeToxOw0KPiAtICAgICAgIGludCAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICByeF9yZHk6MTsNCj4gKyAgICAgICB1bnNpZ25l
-ZCBpbnQgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ2Nsa191c2U6MTsNCj4gKyAgICAgICB1
-bnNpZ25lZCBpbnQgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ2Nsa19ydW5uaW5nOjE7DQo+
-ICsgICAgICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHR4X3JkeTox
-Ow0KPiArICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgICAgICAgICAgICAgICAgICByeF9y
-ZHk6MTsNCj4gICB9Ow0KPiANCj4gICBzdGF0aWMgaXJxcmV0dXJuX3QgbWNocF9pMnNfbWNjX2lu
-dGVycnVwdChpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+IC0tDQo+IDIuMjUuMQ0KPiANCg=
+Initially, commit fa9ee9c4b988 ("include/linux/err.h: add a function to
+cast error-pointers to a return value") from Uwe Kleine-K=C3=B6nig introduc=
+ed
+PTR_RET in 03/2011. Then, in 07/2013, commit 6e8b8726ad50 ("PTR_RET is
+now PTR_ERR_OR_ZERO") from Rusty Russell renamed PTR_RET to
+PTR_ERR_OR_ZERO, and left PTR_RET as deprecated-marked alias.
+
+After six years since the renaming and various repeated cleanups in the
+meantime, it is time to finally remove the deprecated PTR_RET for good.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Rusty, if you are still around, Acked-by is appreciated.
+Uwe, Acked-by is appreciated.
+Kudos to Gustavo, Nicholas, Duan & Sachin for previous cleanups.
+
+applies cleanly on current master and on next-20200320
+Jiri, please pick this trival patch for the next merge window. Thanks.
+
+ include/linux/err.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/include/linux/err.h b/include/linux/err.h
+index 87be24350e91..a139c64aef2a 100644
+--- a/include/linux/err.h
++++ b/include/linux/err.h
+@@ -62,9 +62,6 @@ static inline int __must_check PTR_ERR_OR_ZERO(__force co=
+nst void *ptr)
+ 		return 0;
+ }
+=20
+-/* Deprecated */
+-#define PTR_RET(p) PTR_ERR_OR_ZERO(p)
+-
+ #endif
+=20
+ #endif /* _LINUX_ERR_H */
+--=20
+2.17.1
