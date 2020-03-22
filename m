@@ -1,50 +1,67 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Date: Wed, 04 Mar 2020 12:08:32 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to reservation.h renaming
-Message-Id: <b0296e3a-31f8-635a-f26d-8b0bc490aae3@amd.com>
+From: Jean-Philippe Menil <jpmenil@gmail.com>
+Date: Sun, 22 Mar 2020 14:08:44 +0000
+Subject: [PATCH] bpf: fix build warning - missing prototype
+Message-Id: <20200322140844.4674-1-jpmenil@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Joe Perches <joe@perches.com>, Sebastian Duda <sebastian.duda@fau.de>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, jpmenil@gmail.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 04.03.20 um 13:07 schrieb Lukas Bulwahn:
-> Commit 52791eeec1d9 ("dma-buf: rename reservation_object to dma_resv")
-> renamed include/linux/reservation.h to include/linux/dma-resv.h, but
-> missed the reference in the MAINTAINERS entry.
->
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
->
->    warning: no file matches F: include/linux/reservation.h
->
-> Adjust the DMA BUFFER SHARING FRAMEWORK entry in MAINTAINERS.
->
-> Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fix build warning when building net/bpf/test_run.o with W=1 due
+to missing prototype for bpf_fentry_test{1..6}.
 
-Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+These functions are only used in test_run.c so just make them static.
+Therefore inline keyword should sit between storage class and type.
 
-> ---
-> Christian, please pick this patch.
-> applies cleanly on current master and next-20200303
->
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6158a143a13e..3d6cb2789c9e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5022,7 +5022,7 @@ L:	dri-devel@lists.freedesktop.org
->   L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
->   F:	drivers/dma-buf/
->   F:	include/linux/dma-buf*
-> -F:	include/linux/reservation.h
-> +F:	include/linux/dma-resv.h
->   F:	include/linux/*fence.h
->   F:	Documentation/driver-api/dma-buf.rst
->   K:	dma_(buf|fence|resv)
+Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
+---
+ net/bpf/test_run.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index d555c0d8657d..c0dcd29f682c 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -113,32 +113,32 @@ static int bpf_test_finish(const union bpf_attr *kattr,
+  * architecture dependent calling conventions. 7+ can be supported in the
+  * future.
+  */
+-int noinline bpf_fentry_test1(int a)
++static noinline int bpf_fentry_test1(int a)
+ {
+ 	return a + 1;
+ }
+ 
+-int noinline bpf_fentry_test2(int a, u64 b)
++static noinline int bpf_fentry_test2(int a, u64 b)
+ {
+ 	return a + b;
+ }
+ 
+-int noinline bpf_fentry_test3(char a, int b, u64 c)
++static noinline int bpf_fentry_test3(char a, int b, u64 c)
+ {
+ 	return a + b + c;
+ }
+ 
+-int noinline bpf_fentry_test4(void *a, char b, int c, u64 d)
++static noinline int bpf_fentry_test4(void *a, char b, int c, u64 d)
+ {
+ 	return (long)a + b + c + d;
+ }
+ 
+-int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
++static noinline int bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
+ {
+ 	return a + (long)b + c + d + e;
+ }
+ 
+-int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
++static noinline int bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
+ {
+ 	return a + (long)b + c + d + (long)e + f;
+ }
+-- 
+2.25.2
