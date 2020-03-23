@@ -1,120 +1,50 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 22 Mar 2020 17:25:23 +0000
-Subject: [PATCH] perf cpumap: Use scnprintf instead of snprintf
-Message-Id: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Mar 2020 11:03:34 +0000
+Subject: Re: [PATCH] perf cpumap: Use scnprintf instead of snprintf
+Message-Id: <20200323110334.GC26299@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com, zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com, zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'scnprintf' returns the number of characters written in the output buffer
-excluding the trailing '\0', instead of the number of characters which
-would be generated for the given input.
+On Sun, Mar 22, 2020 at 06:25:23PM +0100, Christophe JAILLET wrote:
+> 'scnprintf' returns the number of characters written in the output buffer
+> excluding the trailing '\0', instead of the number of characters which
+> would be generated for the given input.
+> 
+> Both function return a number of characters, excluding the trailing '\0'.
+> So comparaison to check if it overflows, should be done against max_size-1.
+> Comparaison against max_size can never match.
+> 
+> Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+> Fixes: a24020e6b7cf6 ("perf tools: Change cpu_map__fprintf output")
+> Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  tools/perf/util/cpumap.c | 39 ++++++++++++++++++++-------------------
+>  1 file changed, 20 insertions(+), 19 deletions(-)
+> 
+> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+> index 983b7388f22b..b87e7ef4d130 100644
+> --- a/tools/perf/util/cpumap.c
+> +++ b/tools/perf/util/cpumap.c
+> @@ -316,8 +316,8 @@ static void set_max_cpu_num(void)
+>  		goto out;
+>  
+>  	/* get the highest possible cpu number for a sparse allocation */
+> -	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+> -	if (ret = PATH_MAX) {
+> +	ret = scnprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+> +	if (ret = PATH_MAX-1) {
 
-Both function return a number of characters, excluding the trailing '\0'.
-So comparaison to check if it overflows, should be done against max_size-1.
-Comparaison against max_size can never match.
+This should be a static analysis warning.
 
-Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
-Fixes: a24020e6b7cf6 ("perf tools: Change cpu_map__fprintf output")
-Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- tools/perf/util/cpumap.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+But isn't this stuff userspace?  I can't figure out how to compile it on
+Debian so I'm not sure.  There is no scnprintf() in user space.
 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 983b7388f22b..b87e7ef4d130 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -316,8 +316,8 @@ static void set_max_cpu_num(void)
- 		goto out;
- 
- 	/* get the highest possible cpu number for a sparse allocation */
--	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
--	if (ret = PATH_MAX) {
-+	ret = scnprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
-+	if (ret = PATH_MAX-1) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -327,8 +327,8 @@ static void set_max_cpu_num(void)
- 		goto out;
- 
- 	/* get the highest present cpu number for a sparse allocation */
--	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
--	if (ret = PATH_MAX) {
-+	ret = scnprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
-+	if (ret = PATH_MAX-1) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -355,8 +355,8 @@ static void set_max_node_num(void)
- 		goto out;
- 
- 	/* get the highest possible cpu number for a sparse allocation */
--	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
--	if (ret = PATH_MAX) {
-+	ret = scnprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
-+	if (ret = PATH_MAX-1) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -440,8 +440,8 @@ int cpu__setup_cpunode_map(void)
- 	if (!mnt)
- 		return 0;
- 
--	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
--	if (n = PATH_MAX) {
-+	n = scnprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
-+	if (n = PATH_MAX-1) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		return -1;
- 	}
-@@ -455,8 +455,8 @@ int cpu__setup_cpunode_map(void)
- 		if (dent1->d_type != DT_DIR || sscanf(dent1->d_name, "node%u", &mem) < 1)
- 			continue;
- 
--		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
--		if (n = PATH_MAX) {
-+		n = scnprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
-+		if (n = PATH_MAX-1) {
- 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 			continue;
- 		}
-@@ -501,21 +501,22 @@ size_t cpu_map__snprint(struct perf_cpu_map *map, char *buf, size_t size)
- 		if (start = -1) {
- 			start = i;
- 			if (last) {
--				ret += snprintf(buf + ret, size - ret,
--						"%s%d", COMMA,
--						map->map[i]);
-+				ret += scnprintf(buf + ret, size - ret,
-+						 "%s%d", COMMA,
-+						 map->map[i]);
- 			}
- 		} else if (((i - start) != (cpu - map->map[start])) || last) {
- 			int end = i - 1;
- 
- 			if (start = end) {
--				ret += snprintf(buf + ret, size - ret,
--						"%s%d", COMMA,
--						map->map[start]);
-+				ret += scnprintf(buf + ret, size - ret,
-+						 "%s%d", COMMA,
-+						 map->map[start]);
- 			} else {
--				ret += snprintf(buf + ret, size - ret,
--						"%s%d-%d", COMMA,
--						map->map[start], map->map[end]);
-+				ret += scnprintf(buf + ret, size - ret,
-+						 "%s%d-%d", COMMA,
-+						 map->map[start],
-+						 map->map[end]);
- 			}
- 			first = false;
- 			start = i;
--- 
-2.20.1
+regards,
+dan carpenter
