@@ -1,33 +1,51 @@
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Sat, 21 Mar 2020 02:43:08 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Mar 2020 10:02:16 +0000
 Subject: Re: [PATCH net-next] net/mlx5e: Fix actions_match_supported() return
-Message-Id: <35fcb57643c0522b051318e75b106100422fb1dc.camel@mellanox.com>
+Message-Id: <20200323100215.GB26299@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200320132305.GB95012@mwanda>
-In-Reply-To: <20200320132305.GB95012@mwanda>
+ <35fcb57643c0522b051318e75b106100422fb1dc.camel@mellanox.com>
+In-Reply-To: <35fcb57643c0522b051318e75b106100422fb1dc.camel@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, Paul Blakey <paulb@mellanox.com>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Roi Dayan <roid@mellanox.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, Oz Shlomo <ozsh@mellanox.com>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Saeed Mahameed <saeedm@mellanox.com>
+Cc: Paul Blakey <paulb@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Roi Dayan <roid@mellanox.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, Oz Shlomo <ozsh@mellanox.com>, "leon@kernel.org" <leon@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-T24gRnJpLCAyMDIwLTAzLTIwIGF0IDE2OjIzICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGUgYWN0aW9uc19tYXRjaF9zdXBwb3J0ZWQoKSBmdW5jdGlvbiByZXR1cm5zIGEgYm9vbCwg
-dHJ1ZSBmb3INCj4gc3VjY2Vzcw0KPiBhbmQgZmFsc2UgZm9yIGZhaWx1cmUuICBUaGlzIGVycm9y
-IHBhdGggaXMgcmV0dXJuaW5nIGEgbmVnYXRpdmUgd2hpY2gNCj4gaXMgY2FzdCB0byB0cnVlIGJ1
-dCBpdCBzaG91bGQgcmV0dXJuIGZhbHNlLg0KPiANCj4gRml4ZXM6IDRjMzg0NGQ5ZTk3ZSAoIm5l
-dC9tbHg1ZTogQ1Q6IEludHJvZHVjZSBjb25uZWN0aW9uIHRyYWNraW5nIikNCj4gU2lnbmVkLW9m
-Zi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiAtLS0NCj4g
-IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lbl90Yy5jIHwgMiArLQ0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3Rj
-LmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0K
-PiBpbmRleCAwNDQ4OTFhMDNiZTMuLmU1ZGU3ZDJiYWMyYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3RjLmMNCj4gKysrIGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3RjLmMNCj4gQEAgLTMwNTgsNyAr
-MzA1OCw3IEBAIHN0YXRpYyBib29sIGFjdGlvbnNfbWF0Y2hfc3VwcG9ydGVkKHN0cnVjdA0KPiBt
-bHg1ZV9wcml2ICpwcml2LA0KPiAgCQkJICovDQo+ICAJCQlOTF9TRVRfRVJSX01TR19NT0QoZXh0
-YWNrLA0KPiAgCQkJCQkgICAiQ2FuJ3Qgb2ZmbG9hZCBtaXJyb3JpbmcNCj4gd2l0aCBhY3Rpb24g
-Y3QiKTsNCj4gLQkJCXJldHVybiAtRU9QTk9UU1VQUDsNCj4gKwkJCXJldHVybiBmYWxzZTsNCj4g
-IAkJfQ0KPiAgCX0gZWxzZSB7DQo+ICAJCWFjdGlvbnMgPSBmbG93LT5uaWNfYXR0ci0+YWN0aW9u
-Ow0KDQphcHBsaWVkIHRvIG5ldC1uZXh0LW1seDUgDQoNClRoYW5rcywNClNhZWVkLg0K
+On Sat, Mar 21, 2020 at 02:43:08AM +0000, Saeed Mahameed wrote:
+> On Fri, 2020-03-20 at 16:23 +0300, Dan Carpenter wrote:
+> > The actions_match_supported() function returns a bool, true for
+> > success
+> > and false for failure.  This error path is returning a negative which
+> > is cast to true but it should return false.
+> > 
+> > Fixes: 4c3844d9e97e ("net/mlx5e: CT: Introduce connection tracking")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > index 044891a03be3..e5de7d2bac2b 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > @@ -3058,7 +3058,7 @@ static bool actions_match_supported(struct
+> > mlx5e_priv *priv,
+> >  			 */
+> >  			NL_SET_ERR_MSG_MOD(extack,
+> >  					   "Can't offload mirroring
+> > with action ct");
+> > -			return -EOPNOTSUPP;
+> > +			return false;
+> >  		}
+> >  	} else {
+> >  		actions = flow->nic_attr->action;
+> 
+> applied to net-next-mlx5 
+
+I can never figure out which tree these are supposed to be applied to.
+:(  Is there a trick to it?
+
+regards,
+dan carpenter
