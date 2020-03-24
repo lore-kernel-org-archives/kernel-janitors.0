@@ -1,28 +1,81 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 30 Mar 2020 17:55:51 +0000
-Subject: Re: [PATCH] net: dsa: Simplify 'dsa_tag_protocol_to_str()'
-Message-Id: <20200330.105551.2176256870349576678.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 24 Mar 2020 07:03:19 +0000
+Subject: [PATCH V2] perf cpumap: Fix snprintf overflow check
+Message-Id: <20200324070319.10901-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200328095309.27389-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200328095309.27389-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: andrew@lunn.ch, vivien.didelot@gmail.com, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com, zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 28 Mar 2020 10:53:09 +0100
+'snprintf' returns the number of characters which would be generated for
+the given input.
 
-> There is no point in preparing the module name in a buffer. The format
-> string can be passed diectly to 'request_module()'.
-> 
-> This axes a few lines of code and cleans a few things:
->    - max len for a driver name is MODULE_NAME_LEN wich is ~ 60 chars,
->      not 128. It would be down-sized in 'request_module()'
->    - we should pass the total size of the buffer to 'snprintf()', not the
->      size minus 1
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If the returned value is *greater than* or equal to the buffer size, it
+means that the output has been truncated.
 
-Applied to net-next.
+Fix the overflow test accordingling.
+
+Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: keep snprintf
+    modifiy the tests for truncated output
+    Update subject and description
+---
+ tools/perf/util/cpumap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 983b7388f22b..dc5c5e6fc502 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -317,7 +317,7 @@ static void set_max_cpu_num(void)
+ 
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -328,7 +328,7 @@ static void set_max_cpu_num(void)
+ 
+ 	/* get the highest present cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -356,7 +356,7 @@ static void set_max_node_num(void)
+ 
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -441,7 +441,7 @@ int cpu__setup_cpunode_map(void)
+ 		return 0;
+ 
+ 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
+-	if (n = PATH_MAX) {
++	if (n >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		return -1;
+ 	}
+@@ -456,7 +456,7 @@ int cpu__setup_cpunode_map(void)
+ 			continue;
+ 
+ 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
+-		if (n = PATH_MAX) {
++		if (n >= PATH_MAX) {
+ 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 			continue;
+ 		}
+-- 
+2.20.1
