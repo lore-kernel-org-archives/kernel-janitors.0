@@ -1,35 +1,67 @@
-From: Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Date: Mon, 16 Mar 2020 08:05:07 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to VIVANTE GPU schema conversion
-Message-Id: <18450dfa-a150-45df-5b9c-c543c110c478@st.com>
+From: Jean-Philippe Menil <jpmenil@gmail.com>
+Date: Tue, 24 Mar 2020 07:22:31 +0000
+Subject: [PATCH v2] bpf: fix build warning - missing prototype
+Message-Id: <20200324072231.5780-1-jpmenil@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200315072109.6815-1-lukas.bulwahn@gmail.com>
+References: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
+In-Reply-To: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: yhs@fb.com
+Cc: kernel-janitors@vger.kernel.org, jpmenil@gmail.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDMvMTUvMjAgODoyMSBBTSwgTHVrYXMgQnVsd2FobiB3cm90ZToNCj4gQ29tbWl0IDkw
-YWVjYTg3NWY4YSAoImR0LWJpbmRpbmdzOiBkaXNwbGF5OiBDb252ZXJ0IGV0bmF2aXYgdG8NCj4g
-anNvbi1zY2hlbWEiKSBtaXNzZWQgdG8gYWRqdXN0IHRoZSBEUk0gRFJJVkVSUyBGT1IgVklWQU5U
-RSBHUFUgSVAgZW50cnkNCj4gaW4gTUFJTlRBSU5FUlMuDQo+DQo+IFNpbmNlIHRoZW4sIC4vc2Ny
-aXB0cy9nZXRfbWFpbnRhaW5lci5wbCAtLXNlbGYtdGVzdCBjb21wbGFpbnM6DQo+DQo+ICAgIHdh
-cm5pbmc6IG5vIGZpbGUgbWF0Y2hlcyBcDQo+ICAgIEY6IERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9kaXNwbGF5L2V0bmF2aXYvDQo+DQo+IFVwZGF0ZSBNQUlOVEFJTkVSUyBlbnRy
-eSB0byBsb2NhdGlvbiBvZiBjb252ZXJ0ZWQgc2NoZW1hLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBM
-dWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NClJldmlld2VkLWJ5OiBCZW5q
-YW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAc3QuY29tPg0KDQpUaGFua3MNCj4gLS0t
-DQo+IGFwcGxpZXMgY2xlYW5seSBvbiBuZXh0LTIwMjAwMzEzDQo+DQo+IEJlbmphbWluLCBwbGVh
-c2UgYWNrLg0KPiBSb2IsIHBsZWFzZSBwaWNrIHRoaXMgcGF0Y2ggKGl0IGlzIG5vdCB1cmdlbnQs
-IHRob3VnaCkNCj4NCj4NCj4gICBNQUlOVEFJTkVSUyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdpdCBhL01BSU5U
-QUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5kZXggNzdlZWRlOTc2ZDBmLi41MGE3YTZkNjJlMDYg
-MTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJTDQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC01
-NzY2LDcgKzU3NjYsNyBAQCBMOglkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+ICAg
-UzoJTWFpbnRhaW5lZA0KPiAgIEY6CWRyaXZlcnMvZ3B1L2RybS9ldG5hdml2Lw0KPiAgIEY6CWlu
-Y2x1ZGUvdWFwaS9kcm0vZXRuYXZpdl9kcm0uaA0KPiAtRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZXRuYXZpdi8NCj4gK0Y6CURvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9ncHUvdml2YW50ZSxnYy55YW1sDQo+ICAgDQo+ICAgRFJNIERSSVZFUlMg
-Rk9SIFpURSBaWA0KPiAgIE06CVNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCg=
+Fix build warnings when building net/bpf/test_run.o with W=1 due
+to missing prototype for bpf_fentry_test{1..6}.
+
+Declare prototypes in order to silence warnings.
+
+Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
+---
+ net/bpf/test_run.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index d555c0d8657d..cdf87fb0b6eb 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -113,31 +113,37 @@ static int bpf_test_finish(const union bpf_attr *kattr,
+  * architecture dependent calling conventions. 7+ can be supported in the
+  * future.
+  */
++int noinline bpf_fentry_test1(int a);
+ int noinline bpf_fentry_test1(int a)
+ {
+ 	return a + 1;
+ }
+ 
++int noinline bpf_fentry_test2(int a, u64 b);
+ int noinline bpf_fentry_test2(int a, u64 b)
+ {
+ 	return a + b;
+ }
+ 
++int noinline bpf_fentry_test3(char a, int b, u64 c);
+ int noinline bpf_fentry_test3(char a, int b, u64 c)
+ {
+ 	return a + b + c;
+ }
+ 
++int noinline bpf_fentry_test4(void *a, char b, int c, u64 d);
+ int noinline bpf_fentry_test4(void *a, char b, int c, u64 d)
+ {
+ 	return (long)a + b + c + d;
+ }
+ 
++int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e);
+ int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
+ {
+ 	return a + (long)b + c + d + e;
+ }
+ 
++int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f);
+ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
+ {
+ 	return a + (long)b + c + d + (long)e + f;
+-- 
+2.25.2
