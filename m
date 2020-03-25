@@ -1,46 +1,46 @@
-From: Rijo Thomas <Rijo-john.Thomas@amd.com>
-Date: Tue, 10 Mar 2020 06:34:01 +0000
-Subject: Re: [PATCH] tee: amdtee: out of bounds read in find_session()
-Message-Id: <0840f77c-6ebd-eafd-6fa5-bc1c2b90f580@amd.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 25 Mar 2020 07:04:40 +0000
+Subject: [PATCH 1/2] SUNRPC: Fix a potential buffer overflow in 'svc_print_xprts()'
+Message-Id: <20200325070440.21988-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200227161954.fo7pbbgomdjkraxq@kili.mountain>
-In-Reply-To: <20200227161954.fo7pbbgomdjkraxq@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jens Wiklander <jens.wiklander@linaro.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>, tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: trond.myklebust@hammerspace.com, anna.schumaker@netapp.com, bfields@fieldses.org, chuck.lever@oracle.com, davem@davemloft.net, kuba@kernel.org, gnb@sgi.com, neilb@suse.de, tom@opengridcomputing.com
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+'maxlen' is the total size of the destination buffer. There is only one
+caller and this value is 256.
 
-On 27/02/20 9:49 pm, Dan Carpenter wrote:
-> The "index" is a user provided value from 0-USHRT_MAX.  If it's over
-> TEE_NUM_SESSIONS (31) then it results in an out of bounds read when we
-> call test_bit(index, sess->sess_mask).
-> 
-> Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+When we compute the size already used and what we would like to add in
+the buffer, the trailling NULL character is not taken into account.
+However, this trailling character will be added by the 'strcat' once we
+have checked that we have enough place.
 
-Acked-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+So, there is a off-by-one issue and 1 byte of the stack could be
+erroneously overwridden.
 
-Thanks,
-Rijo
+Take into account the trailling NULL, when checking if there is enough
+place in the destination buffer.
 
-> ---
->  drivers/tee/amdtee/core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
-> index 6370bb55f512..dbc238c7c263 100644
-> --- a/drivers/tee/amdtee/core.c
-> +++ b/drivers/tee/amdtee/core.c
-> @@ -139,6 +139,9 @@ static struct amdtee_session *find_session(struct amdtee_context_data *ctxdata,
->  	u32 index = get_session_index(session);
->  	struct amdtee_session *sess;
->  
-> +	if (index >= TEE_NUM_SESSIONS)
-> +		return NULL;
-> +
->  	list_for_each_entry(sess, &ctxdata->sess_list, list_node)
->  		if (ta_handle = sess->ta_handle &&
->  		    test_bit(index, sess->sess_mask))
-> 
+Fixes: dc9a16e49dbba ("svc: Add /proc/sys/sunrpc/transport files")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/sunrpc/svc_xprt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index d53259346235..df39e7b8b06c 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -120,7 +120,7 @@ int svc_print_xprts(char *buf, int maxlen)
+ 
+ 		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
+ 		slen = strlen(tmpstr);
+-		if (len + slen > maxlen)
++		if (len + slen >= maxlen)
+ 			break;
+ 		len += slen;
+ 		strcat(buf, tmpstr);
+-- 
+2.20.1
