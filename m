@@ -1,60 +1,51 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Wed, 18 Mar 2020 18:49:39 +0000
-Subject: Re: [PATCH] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Message-Id: <20200318184939.GA209856@google.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 25 Mar 2020 07:04:52 +0000
+Subject: [PATCH 2/2] SUNRPC: Optimize 'svc_print_xprts()'
+Message-Id: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
-References: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200314142559.13505-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+To: trond.myklebust@hammerspace.com, anna.schumaker@netapp.com, bfields@fieldses.org, chuck.lever@oracle.com, davem@davemloft.net, kuba@kernel.org, gnb@sgi.com, neilb@suse.de, tom@opengridcomputing.com
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, Mar 14, 2020 at 03:25:59PM +0100, Lukas Bulwahn wrote:
-> Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
-> controller") includes a new entry in MAINTAINERS, but slipped in a typo in
-> one of the file entries.
-> 
-> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: \
->     drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-> 
-> Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20200313
-> 
-> Hou, please ack.
-> Rob, please pick this patch (it is not urgent, though).
+Using 'snprintf' is safer than 'sprintf' because it can avoid a buffer
+overflow.
+The return value can also be used to avoid a strlen a call.
 
-3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
-controller") is on Lorenzo's pci/mobiveil branch and queued for v5.7.
+Finally, we know where we need to copy and the length to copy, so, we
+can save a few cycles by rearraging the code and using a memcpy instead of
+a strcat.
 
-But it hasn't been merged upstream yet, so we should squash this fix
-into Lorenzo's branch so we don't need a fixup commit.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch should have no functionnal change.
+We could go further, use scnprintf and write directly in the destination
+buffer. However, this could lead to a truncated last line.
+---
+ net/sunrpc/svc_xprt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 32a95d162f06..77eede976d0f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12858,7 +12858,7 @@ L:	linux-pci@vger.kernel.org
->  L:	linux-arm-kernel@lists.infradead.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
-> -F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-> +F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
->  
->  PCI DRIVER FOR GENERIC OF HOSTS
->  M:	Will Deacon <will@kernel.org>
-> 
-> base-commit: 2e602db729948ce577bf07e2b113f2aa806b62c7
-> -- 
-> 2.17.1
-> 
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index df39e7b8b06c..6df861650040 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -118,12 +118,12 @@ int svc_print_xprts(char *buf, int maxlen)
+ 	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
+ 		int slen;
+ 
+-		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
+-		slen = strlen(tmpstr);
+-		if (len + slen >= maxlen)
++		slen = snprintf(tmpstr, sizeof(tmpstr), "%s %d\n",
++				xcl->xcl_name, xcl->xcl_max_payload);
++		if (slen >= sizeof(tmpstr) || len + slen >= maxlen)
+ 			break;
++		memcpy(buf + len, tmpstr, slen + 1);
+ 		len += slen;
+-		strcat(buf, tmpstr);
+ 	}
+ 	spin_unlock(&svc_xprt_class_lock);
+ 
+-- 
+2.20.1
