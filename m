@@ -1,50 +1,94 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 03 Mar 2020 17:43:12 +0000
-Subject: [PATCH 5.4 094/152] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
-Message-Id: <20200303174313.271395649@linuxfoundation.org>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 25 Mar 2020 12:41:23 +0000
+Subject: [PATCH 23/24] perf cpumap: Fix snprintf overflow check
+Message-Id: <20200325124124.32648-24-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200303174302.523080016@linuxfoundation.org>
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200325124124.32648-1-acme@kernel.org>
+In-Reply-To: <20200325124124.32648-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Laight <David.Laight@ACULAB.COM>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Don Zickus <dzickus@redhat.com>, He Zhe <zhe.he@windriver.com>, Jan Stancek <jstancek@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
+'snprintf' returns the number of characters which would be generated for
+the given input.
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
+If the returned value is *greater than* or equal to the buffer size, it
+means that the output has been truncated.
 
-'release_progmem()' is only a call to 'kfree()'.
+Fix the overflow test accordingly.
 
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
+Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: He Zhe <zhe.he@windriver.com>
+Cc: Jan Stancek <jstancek@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lore.kernel.org/lkml/20200324070319.10901-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/mips/kernel/vpe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/cpumap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 983b7388f22b..dc5c5e6fc502 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -317,7 +317,7 @@ static void set_max_cpu_num(void)
  
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -328,7 +328,7 @@ static void set_max_cpu_num(void)
+ 
+ 	/* get the highest present cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -356,7 +356,7 @@ static void set_max_node_num(void)
+ 
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -441,7 +441,7 @@ int cpu__setup_cpunode_map(void)
+ 		return 0;
+ 
+ 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
+-	if (n = PATH_MAX) {
++	if (n >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		return -1;
+ 	}
+@@ -456,7 +456,7 @@ int cpu__setup_cpunode_map(void)
+ 			continue;
+ 
+ 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
+-		if (n = PATH_MAX) {
++		if (n >= PATH_MAX) {
+ 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 			continue;
+ 		}
+-- 
+2.21.1
