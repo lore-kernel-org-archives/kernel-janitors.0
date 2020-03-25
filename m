@@ -1,68 +1,62 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 06 Mar 2020 19:51:36 +0000
-Subject: Re: [PATCH] Input: raydium_i2c_ts - fix error codes in raydium_i2c_boot_trigger()
-Message-Id: <20200306195136.GJ217608@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Mar 2020 12:50:41 +0000
+Subject: [PATCH] usb: cdns3: make signed 1 bit bitfields unsigned
+Message-Id: <20200325125041.94769-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200303101306.4potflz7na2nn3od@kili.mountain>
-In-Reply-To: <20200303101306.4potflz7na2nn3od@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeffrey Lin <jeffrey.lin@rad-ic.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Alexios Zavras <alexios.zavras@intel.com>, Allison Randal <allison@lohutok.net>, Rob Herring <robh@kernel.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sekhar Nori <nsekhar@ti.com>, Roger Quadros <rogerq@ti.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 01:13:06PM +0300, Dan Carpenter wrote:
-> These functions are supposed to return negative error codes but instead
-> it returns true on failure and false on success.  The error codes are
-> eventually propogated back to user space.
-> 
-> Fixes: 48a2b783483b ("Input: add Raydium I2C touchscreen driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+The signed 1 bit bitfields should be unsigned, so make them unsigned.
 
-> ---
->  drivers/input/touchscreen/raydium_i2c_ts.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
-> index 6ed9f22e6401..fe245439adee 100644
-> --- a/drivers/input/touchscreen/raydium_i2c_ts.c
-> +++ b/drivers/input/touchscreen/raydium_i2c_ts.c
-> @@ -432,7 +432,7 @@ static int raydium_i2c_write_object(struct i2c_client *client,
->  	return 0;
->  }
->  
-> -static bool raydium_i2c_boot_trigger(struct i2c_client *client)
-> +static int raydium_i2c_boot_trigger(struct i2c_client *client)
->  {
->  	static const u8 cmd[7][6] = {
->  		{ 0x08, 0x0C, 0x09, 0x00, 0x50, 0xD7 },
-> @@ -457,10 +457,10 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
->  		}
->  	}
->  
-> -	return false;
-> +	return 0;
->  }
->  
-> -static bool raydium_i2c_fw_trigger(struct i2c_client *client)
-> +static int raydium_i2c_fw_trigger(struct i2c_client *client)
->  {
->  	static const u8 cmd[5][11] = {
->  		{ 0, 0x09, 0x71, 0x0C, 0x09, 0x00, 0x50, 0xD7, 0, 0, 0 },
-> @@ -483,7 +483,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
->  		}
->  	}
->  
-> -	return false;
-> +	return 0;
->  }
->  
->  static int raydium_i2c_check_path(struct i2c_client *client)
-> -- 
-> 2.11.0
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/cdns3-ti.c | 4 ++--
+ drivers/usb/cdns3/gadget.h   | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+index c6a79ca15858..5685ba11480b 100644
+--- a/drivers/usb/cdns3/cdns3-ti.c
++++ b/drivers/usb/cdns3/cdns3-ti.c
+@@ -52,8 +52,8 @@ enum modestrap_mode { USBSS_MODESTRAP_MODE_NONE,
+ struct cdns_ti {
+ 	struct device *dev;
+ 	void __iomem *usbss;
+-	int usb2_only:1;
+-	int vbus_divider:1;
++	unsigned usb2_only:1;
++	unsigned vbus_divider:1;
+ 	struct clk *usb2_refclk;
+ 	struct clk *lpm_clk;
+ };
+diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
+index f003a7801872..bf2828e4df2c 100644
+--- a/drivers/usb/cdns3/gadget.h
++++ b/drivers/usb/cdns3/gadget.h
+@@ -1199,7 +1199,7 @@ struct cdns3_aligned_buf {
+ 	void			*buf;
+ 	dma_addr_t		dma;
+ 	u32			size;
+-	int			in_use:1;
++	unsigned		in_use:1;
+ 	struct list_head	list;
+ };
+ 
+@@ -1308,8 +1308,8 @@ struct cdns3_device {
+ 	unsigned			u2_allowed:1;
+ 	unsigned			is_selfpowered:1;
+ 	unsigned			setup_pending:1;
+-	int				hw_configured_flag:1;
+-	int				wake_up_flag:1;
++	unsigned			hw_configured_flag:1;
++	unsigned			wake_up_flag:1;
+ 	unsigned			status_completion_no_call:1;
+ 	unsigned			using_streams:1;
+ 	int				out_mem_is_allocated;
 -- 
-Dmitry
+2.25.1
