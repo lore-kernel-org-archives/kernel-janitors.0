@@ -1,50 +1,87 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 10 Mar 2020 12:41:06 +0000
-Subject: [PATCH 4.14 045/126] MIPS: VPE: Fix a double free and a memory leak in release_vpe()
-Message-Id: <20200310124207.176316001@linuxfoundation.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Mar 2020 13:50:18 +0000
+Subject: [PATCH] reiserfs: clean up several indentation issues
+Message-Id: <20200325135018.113431-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200310124203.704193207@linuxfoundation.org>
-In-Reply-To: <20200310124203.704193207@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
+There are several places where code is indented incorrectly. Fix these.
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
-
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/mips/kernel/vpe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/reiserfs/do_balan.c |  2 +-
+ fs/reiserfs/ioctl.c    | 11 ++++++-----
+ fs/reiserfs/namei.c    | 10 +++++-----
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
+diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+index 4075e41408b4..5129efc6f2e6 100644
+--- a/fs/reiserfs/do_balan.c
++++ b/fs/reiserfs/do_balan.c
+@@ -842,7 +842,7 @@ static void balance_leaf_paste_right_whole(struct tree_balance *tb,
+ 	struct item_head *pasted;
+ 	struct buffer_info bi;
  
+-							buffer_info_init_right(tb, &bi);
++	buffer_info_init_right(tb, &bi);
+ 	leaf_shift_right(tb, tb->rnum[0], tb->rbytes);
+ 
+ 	/* append item in R[0] */
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index 45e1a5d11af3..adb21bea3d60 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -184,11 +184,12 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ 	}
+ 
+ 	/* we need to make sure nobody is changing the file size beneath us */
+-{
+-	int depth = reiserfs_write_unlock_nested(inode->i_sb);
+-	inode_lock(inode);
+-	reiserfs_write_lock_nested(inode->i_sb, depth);
+-}
++	{
++		int depth = reiserfs_write_unlock_nested(inode->i_sb);
++
++		inode_lock(inode);
++		reiserfs_write_lock_nested(inode->i_sb, depth);
++	}
+ 
+ 	reiserfs_write_lock(inode->i_sb);
+ 
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 959a066b7bb0..ed433721134e 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -838,10 +838,10 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
+ 	 */
+ 	INC_DIR_INODE_NLINK(dir)
+ 
+-	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
+-					old_format_only(dir->i_sb) ?
+-					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
+-					dentry, inode, &security);
++	retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */,
++				    old_format_only(dir->i_sb) ?
++				    EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
++				    dentry, inode, &security);
+ 	if (retval) {
+ 		DEC_DIR_INODE_NLINK(dir)
+ 		goto out_failed;
+@@ -967,7 +967,7 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 	reiserfs_update_sd(&th, inode);
+ 
+ 	DEC_DIR_INODE_NLINK(dir)
+-	    dir->i_size -= (DEH_SIZE + de.de_entrylen);
++	dir->i_size -= (DEH_SIZE + de.de_entrylen);
+ 	reiserfs_update_sd(&th, dir);
+ 
+ 	/* prevent empty directory from getting lost */
+-- 
+2.25.1
