@@ -1,31 +1,66 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 23 Mar 2020 06:33:27 +0000
-Subject: Re: [PATCH V2] dmaengine: ti: k3-udma-glue: Fix an error handling path in 'k3_udma_glue_cfg_rx_flow(
-Message-Id: <20200323062127.GF72691@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 26 Mar 2020 13:30:07 +0000
+Subject: Re: [PATCH 3/8] mmap locking API: use coccinelle to convert mmap_sem rwsem call sites
+Message-Id: <b1c878c0-878a-6684-7cac-d1f4409295f6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.j.williams@intel.com, peter.ujfalusi@ti.com, grygorii.strashko@ti.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michel Lespinasse <walken@google.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, Davidlohr Bueso <dave@stgolabs.net>, Hugh Dickins <hughd@google.com>, Jerome Glisse <jglisse@redhat.com>, Laurent Dufour <ldufour@linux.ibm.com>, Liam Howlett <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Ying Han <yinghan@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 18-03-20, 20:12, Christophe JAILLET wrote:
-> All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
-> function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
-> 
-> This not correct because this function has a 'channel->flows_ready--;' at
-> the end, but 'flows_ready' has not been incremented here, when we branch to
-> the error handling path.
-> 
-> In order to keep a correct value in 'flows_ready', un-roll
-> 'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
-> at the correct places when an error is detected.
-> 
-> Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
+> This change converts the existing mmap_sem rwsem calls to use the new
+> mmap locking API instead.
+>
+> The change is generated using coccinelle with the following rules:
 
-Applied, thanks
+Do you find the following script variant more succinct together
+with the usage of a disjunction in a single SmPL rule?
 
--- 
-~Vinod
+
+@replacement@
+expression x;
+@@
+(
+-init_rwsem
++mmap_init_lock
+|
+-down_write
++mmap_write_lock
+|
+-down_write_killable
++mmap_write_lock_killable
+|
+-down_write_trylock
++mmap_write_trylock
+|
+-up_write
++mmap_write_unlock
+|
+-downgrade_write
++mmap_downgrade_write_lock
+|
+-down_read
++mmap_read_lock
+|
+-down_read_killable
++mmap_read_lock_killable
+|
+-down_read_trylock
++mmap_read_trylock
+|
+-up_read
++mmap_read_unlock
+|
+-rwsem_is_locked
++mmap_is_locked
+)
+ (
+- &
+  x
+- ->mmap_sem
+ )
+
+
+Regards,
+Markus
