@@ -1,152 +1,121 @@
 From: NeilBrown <neilb@suse.de>
-Date: Wed, 25 Mar 2020 22:53:19 +0000
+Date: Thu, 26 Mar 2020 21:44:17 +0000
 Subject: Re: [PATCH 2/2] SUNRPC: Optimize 'svc_print_xprts()'
-Message-Id: <87wo786o80.fsf@notabene.neil.brown.name>
+Message-Id: <87r1xe7pvy.fsf@notabene.neil.brown.name>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr> <EA5BCDB2-DB05-4B26-8635-E6F5C231DDC6@oracle.com> <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr>
-In-Reply-To: <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr>
+References: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr> <EA5BCDB2-DB05-4B26-8635-E6F5C231DDC6@oracle.com> <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr> <87wo786o80.fsf@notabene.neil.brown.name> <2e2d1293-c978-3f1d-5a1e-dc43dc2ad06b@wanadoo.fr>
+In-Reply-To: <2e2d1293-c978-3f1d-5a1e-dc43dc2ad06b@wanadoo.fr>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.orgkernel-janitors@vger.kernel.org
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.orgkernel-janitors@vger.kernel.orgkernel-janitors@vger.kernel.orgkernel-janitors@vger.kernel.org
 
 --=-=-=
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 25 2020, Christophe JAILLET wrote:
+On Thu, Mar 26 2020, Christophe JAILLET wrote:
 
-> Le 25/03/2020 =C3=A0 15:52, Chuck Lever a =C3=A9crit=C2=A0:
->> Hi Christophe,
+> Le 25/03/2020 =C3=A0 23:53, NeilBrown a =C3=A9crit=C2=A0:
+>> Can I suggest something more like this:
+>> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+>> index de3c077733a7..0292f45b70f6 100644
+>> --- a/net/sunrpc/svc_xprt.c
+>> +++ b/net/sunrpc/svc_xprt.c
+>> @@ -115,16 +115,9 @@ int svc_print_xprts(char *buf, int maxlen)
+>>   	buf[0] =3D '\0';
+>>=20=20=20
+>>   	spin_lock(&svc_xprt_class_lock);
+>> -	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
+>> -		int slen;
+>> -
+>> -		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
+>> -		slen =3D strlen(tmpstr);
+>> -		if (len + slen > maxlen)
+>> -			break;
+>> -		len +=3D slen;
+>> -		strcat(buf, tmpstr);
+>> -	}
+>> +	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list)
+>> +		len +=3D scnprintf(buf + len, maxlen - len, "%s %d\n",
+>> +				 xcl->xcl_name, xcl->xcl_max_payload);
+>>   	spin_unlock(&svc_xprt_class_lock);
+>>=20=20=20
+>>   	return len;
 >>
->>
->>> On Mar 25, 2020, at 3:04 AM, Christophe JAILLET <christophe.jaillet@wan=
-adoo.fr> wrote:
->>>
->>> Using 'snprintf' is safer than 'sprintf' because it can avoid a buffer
->>> overflow.
->> That's true as a general statement, but how likely is such an
->> overflow to occur here?
->>
-> I guess, that it us unlikely and that the 80 chars buffer is big enough.
-> That is the exact reason of why I've proposed 2 patches. The first one=20
-> could happen in RL. The 2nd is more like a clean-up and is less=20
-> relevant, IMHO.
->>
->>> The return value can also be used to avoid a strlen a call.
->> That's also true of sprintf, isn't it?
+>> NeilBrown
 >
-> Sure.
+> Hi,
 >
->
->>
->>> Finally, we know where we need to copy and the length to copy, so, we
->>> can save a few cycles by rearraging the code and using a memcpy instead=
- of
->>> a strcat.
->> I would be OK with squashing these two patches together. I don't
->> see the need to keep the two changes separated.
->
-> NP, I can resend as a V2 with your comments.
-> As said above, the first fixes something that could, IMHO, happen and=20
-> the 2nd is more a matter of taste and a clean-up.
->
->
->>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>> This patch should have no functionnal change.
->>> We could go further, use scnprintf and write directly in the destination
->>> buffer. However, this could lead to a truncated last line.
->> That's exactly what this function is trying to avoid. As part of any
->> change in this area, it would be good to replace the current block
->> comment before this function with a Doxygen-format comment that
->> documents that goal.
->
-> I'll take care of it.
->
->
->>> ---
->>> net/sunrpc/svc_xprt.c | 8 ++++----
->>> 1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
->>> index df39e7b8b06c..6df861650040 100644
->>> --- a/net/sunrpc/svc_xprt.c
->>> +++ b/net/sunrpc/svc_xprt.c
->>> @@ -118,12 +118,12 @@ int svc_print_xprts(char *buf, int maxlen)
->>> 	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
->>> 		int slen;
->>>
->>> -		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
->>> -		slen =3D strlen(tmpstr);
->>> -		if (len + slen >=3D maxlen)
->>> +		slen =3D snprintf(tmpstr, sizeof(tmpstr), "%s %d\n",
->>> +				xcl->xcl_name, xcl->xcl_max_payload);
->>> +		if (slen >=3D sizeof(tmpstr) || len + slen >=3D maxlen)
->>> 			break;
->>> +		memcpy(buf + len, tmpstr, slen + 1);
->>> 		len +=3D slen;
->>> -		strcat(buf, tmpstr);
->> IMO replacing the strcat makes the code harder to read, and this
->> is certainly not a performance path. Can you drop that part of the
->> patch?
->
-> Ok
->
->
->>
->>> 	}
->>> 	spin_unlock(&svc_xprt_class_lock);
->>>
->>> --=20
+> this was what I suggested in the patch:
+>  =C2=A0=C2=A0=C2=A0 ---
+>  =C2=A0=C2=A0=C2=A0 This patch should have no functional change.
+>  =C2=A0=C2=A0=C2=A0 We could go further, use scnprintf and write directly=
+ in the=20
+> destination
+>  =C2=A0=C2=A0=C2=A0 buffer. However, this could lead to a truncated last =
+line.
+>  =C2=A0=C2=A0=C2=A0 ---
 
-Can I suggest something more like this:
+Sorry - I missed that.
+So add
 
-diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-index de3c077733a7..0292f45b70f6 100644
-=2D-- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -115,16 +115,9 @@ int svc_print_xprts(char *buf, int maxlen)
- 	buf[0] =3D '\0';
-=20
- 	spin_lock(&svc_xprt_class_lock);
-=2D	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
-=2D		int slen;
-=2D
-=2D		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, xcl->xcl_max_payload);
-=2D		slen =3D strlen(tmpstr);
-=2D		if (len + slen > maxlen)
-=2D			break;
-=2D		len +=3D slen;
-=2D		strcat(buf, tmpstr);
-=2D	}
-+	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list)
-+		len +=3D scnprintf(buf + len, maxlen - len, "%s %d\n",
-+				 xcl->xcl_name, xcl->xcl_max_payload);
- 	spin_unlock(&svc_xprt_class_lock);
-=20
- 	return len;
+ end =3D strrchr(tmpstr, '\n');
+ if (end)
+    end[1] =3D 0;
+ else
+    tmpstr[0] =3D 0;
 
+or maybe something like
+	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
+		int l =3D snprintf(buf + len, maxlen - len, "%s %d\n",
+				 xcl->xcl_name, xcl->xcl_max_payload);
+                if (l < maxlen - len)
+                	len +=3D l;
+        }
+        buf[len] =3D 0;
+
+There really is no need to have the secondary buffer, and I think doing
+so just complicates the code.
+That last version is a change of behaviour in that it will skip over
+lines that are too long, rather than aborting on the first one.
+I don't know which is preferred.
+
+Thanks,
 NeilBrown
+=20
+
+>
+> And Chuck Lever confirmed that:
+>  =C2=A0=C2=A0=C2=A0 That's exactly what this function is trying to avoid.=
+ As part of any
+>  =C2=A0=C2=A0=C2=A0 change in this area, it would be good to replace the =
+current block
+>  =C2=A0=C2=A0=C2=A0 comment before this function with a Doxygen-format co=
+mment that
+>  =C2=A0=C2=A0=C2=A0 documents that goal.
+>
+> So, I will only send a V2 based on comments already received.
+>
+> CJ
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl574N8ACgkQOeye3VZi
-gblt1g/9HiVqAgfOAczPAHMlZ3fEpsGid1IWxmMW6KeiZkcNztY76eVboisWNlPs
-ZZK88kbrsOAKqagKDyKbRc1qbEFBfMQd0EGzQm4J562fO0YQgF7MwGVhBfxXGEeL
-ca9GPo2ZqG2p9/9FjFIk+/kOYk/8WMpK9noKlKR4Nqk/C+jW2jqNtZf/f6BE1OU/
-js7FCd0iK4KQSLGXSKT4i9puHiJoZMi0d+7bAxWDxub9UFrQk5yk1HQDQK6EuQj0
-hhalu5Pz3KoBih6gzlVLR0O2rUGr8abLRM/L0Cwa3p2113gymBmsEVPJyAQ2O5E/
-ohyRZCeGKMs9RXAcsAjFUr6CVmeJFvT+P35wbDT29V5wbnOja0R8UubAVxg8PPnm
-ZPrGeDVzOrKvRWoydX1mPffpj8PexJvJSZaXvDugmqY30WKDgDsjg7vsHox7oRC7
-R0MY26ilBwsvdrsegZlr3J7jRIcDj+ItkLoKYubhu0VUMQSyGZlP++Cz43PdQD21
-dujfjUKOVQvZ3h3IKO8L7Zo8hcetaKwDqCtrigO0O0IrClfSX7Jtrojnyj8jUobB
-67x/pEkRB8WVXI6ldungASWirIir5COofkJCVRNPeQDk6tFKb4blb5jqA8Xxi/Xt
-gua4apqXIK9M1nmXvriKSzVmiB+RRJG6Tjx+jfqNaDi8WRZKcyI=
-=aTlo
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl59IjEACgkQOeye3VZi
+gbmUPg/9EV6cZxRae5hgXZCWW9ODQKt1pH+ZIMVmP2UWNb+3mv6hPhNsGY1ED3xE
+4Ktqrz/6hiP8WHvNjZfmy1dAU7pqBnBJbZyfpfe2bBcvYZW7YI3oH/aliB+3KoLa
+qJ3FljZh9XnnaJ3f8qv77+G3+6vnrFioJhw1dFjn8WQZMY5FLPEUdLMu92GrKvQl
+I5DKtHTubYZ2OAT5n+D1duYfmiUBy9zV39ed1poMhfhAWuyYtprUGXiWw16DiDfH
+dbD5chlzkKL0HQwKclWTBpoxXoYn2NiUSNOiLmLRKZKBCHC1ry5+awc6nIy2xISI
+SuwRZfnCTuUYxFKjHO42ZqWgt0rX9xL+31mCbZt5jSV4ODo5jHSmAkSEwzcYNzwr
+GSe9o2T/Km6p0eWROf+mrxSy+NGmZqMpKqCkldWcu+dMA9o9UWk0AIfuU4vJTfkK
+LFxj86WFiL+r369g3XWPcyYh41v8iZmz48I1JV92IZ2xxCS+eI0KeoCw9cMA31IR
+S7BCSI5KazLdA8QVoVyTZX44SSvq9tiHTTrmrsIWtCU6k777o72o5E+bccyubCMb
+Wo6kFjlkahhCjF5UzY8HhnFofK218VGrhOIXqZ+X6nctA2KRDHPaSEQ1rXq509sO
+aWXiq5sSoIrwStrkyIk/6R1O/zGZDmgRJ0AvlUjxRjdio4wsyII=
+=oJ/H
 -----END PGP SIGNATURE-----
 --=-=-=--
