@@ -1,80 +1,125 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 27 Mar 2020 17:28:45 +0000
-Subject: Applied "ASoC: amd: acp3x-pcm-dma: clean up two indentation issues" to the asoc tree
-Message-Id: <applied-20200327141429.269191-1-colin.king@canonical.com>
+From: kbuild test robot <lkp@intel.com>
+Date: Fri, 27 Mar 2020 01:12:01 +0000
+Subject: [kbuild-all] [RFC PATCH v2] usb: cdns3: cdns3_clear_register_bit() can be static
+Message-Id: <20200327011201.GU11705@shao2-debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200327141429.269191-1-colin.king@canonical.com>
+References: <20200325125041.94769-1-colin.king@canonical.com>
+In-Reply-To: <20200325125041.94769-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+To: Colin King <colin.king@canonical.com>
+Cc: kbuild-all@lists.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sekhar Nori <nsekhar@ti.com>, Roger Quadros <rogerq@ti.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
 
-   ASoC: amd: acp3x-pcm-dma: clean up two indentation issues
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From acd4946f5bf031fa38e64bfe2467be94a1b8c25d Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 27 Mar 2020 14:14:29 +0000
-Subject: [PATCH] ASoC: amd: acp3x-pcm-dma: clean up two indentation issues
-
-There are a couple of statements that are not indented correctly,
-add in the missing tab and break the lines to address a checkpatch
-warning.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20200327141429.269191-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ gadget.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index d62c0d90c41e..e362f0bc9e46 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -458,7 +458,8 @@ static int acp3x_resume(struct device *dev)
- 			reg_val = mmACP_I2STDM_ITER;
- 			frmt_val = mmACP_I2STDM_TXFRMT;
- 		}
--	rv_writel((rtd->xfer_resolution  << 3), rtd->acp3x_base + reg_val);
-+		rv_writel((rtd->xfer_resolution  << 3),
-+			  rtd->acp3x_base + reg_val);
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index 372460ea4df9a..54a04614d336f 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -82,7 +82,7 @@ static int cdns3_ep_run_stream_transfer(struct cdns3_endpoint *priv_ep,
+  * @ptr: address of device controller register to be read and changed
+  * @mask: bits requested to clar
+  */
+-void cdns3_clear_register_bit(void __iomem *ptr, u32 mask)
++static void cdns3_clear_register_bit(void __iomem *ptr, u32 mask)
+ {
+ 	mask = readl(ptr) & ~mask;
+ 	writel(mask, ptr);
+@@ -137,7 +137,7 @@ struct usb_request *cdns3_next_request(struct list_head *list)
+  *
+  * Returns buffer or NULL if no buffers in list
+  */
+-struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
++static struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
+ {
+ 	return list_first_entry_or_null(list, struct cdns3_aligned_buf, list);
+ }
+@@ -148,7 +148,7 @@ struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
+  *
+  * Returns request or NULL if no requests in list
+  */
+-struct cdns3_request *cdns3_next_priv_request(struct list_head *list)
++static struct cdns3_request *cdns3_next_priv_request(struct list_head *list)
+ {
+ 	return list_first_entry_or_null(list, struct cdns3_request, list);
+ }
+@@ -190,7 +190,7 @@ dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
+ 	return priv_ep->trb_pool_dma + offset;
+ }
+ 
+-int cdns3_ring_size(struct cdns3_endpoint *priv_ep)
++static int cdns3_ring_size(struct cdns3_endpoint *priv_ep)
+ {
+ 	switch (priv_ep->type) {
+ 	case USB_ENDPOINT_XFER_ISOC:
+@@ -345,7 +345,7 @@ static void cdns3_ep_inc_deq(struct cdns3_endpoint *priv_ep)
+ 	cdns3_ep_inc_trb(&priv_ep->dequeue, &priv_ep->ccs, priv_ep->num_trbs);
+ }
+ 
+-void cdns3_move_deq_to_next_trb(struct cdns3_request *priv_req)
++static void cdns3_move_deq_to_next_trb(struct cdns3_request *priv_req)
+ {
+ 	struct cdns3_endpoint *priv_ep = priv_req->priv_ep;
+ 	int current_trb = priv_req->start_trb;
+@@ -511,9 +511,9 @@ static void cdns3_wa2_descmiss_copy_data(struct cdns3_endpoint *priv_ep,
  	}
- 	if (adata->capture_stream && adata->capture_stream->runtime) {
- 		struct i2s_stream_instance *rtd @@ -474,7 +475,8 @@ static int acp3x_resume(struct device *dev)
- 			reg_val = mmACP_I2STDM_IRER;
- 			frmt_val = mmACP_I2STDM_RXFRMT;
- 		}
--	rv_writel((rtd->xfer_resolution  << 3), rtd->acp3x_base + reg_val);
-+		rv_writel((rtd->xfer_resolution  << 3),
-+			  rtd->acp3x_base + reg_val);
- 	}
- 	if (adata->tdm_mode = TDM_ENABLE) {
- 		rv_writel(adata->tdm_fmt, adata->acp3x_base + frmt_val);
--- 
-2.20.1
+ }
+ 
+-struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
+-					      struct cdns3_endpoint *priv_ep,
+-					      struct cdns3_request *priv_req)
++static struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
++						     struct cdns3_endpoint *priv_ep,
++						     struct cdns3_request *priv_req)
+ {
+ 	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN &&
+ 	    priv_req->flags & REQUEST_INTERNAL) {
+@@ -551,9 +551,9 @@ struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
+ 	return &priv_req->request;
+ }
+ 
+-int cdns3_wa2_gadget_ep_queue(struct cdns3_device *priv_dev,
+-			      struct cdns3_endpoint *priv_ep,
+-			      struct cdns3_request *priv_req)
++static int cdns3_wa2_gadget_ep_queue(struct cdns3_device *priv_dev,
++				     struct cdns3_endpoint *priv_ep,
++				     struct cdns3_request *priv_req)
+ {
+ 	int deferred = 0;
+ 
+@@ -836,7 +836,7 @@ void cdns3_gadget_giveback(struct cdns3_endpoint *priv_ep,
+ 		cdns3_gadget_ep_free_request(&priv_ep->endpoint, request);
+ }
+ 
+-void cdns3_wa1_restore_cycle_bit(struct cdns3_endpoint *priv_ep)
++static void cdns3_wa1_restore_cycle_bit(struct cdns3_endpoint *priv_ep)
+ {
+ 	/* Work around for stale data address in TRB*/
+ 	if (priv_ep->wa1_set) {
+@@ -1904,8 +1904,8 @@ static int cdns3_ep_onchip_buffer_reserve(struct cdns3_device *priv_dev,
+ 	return 0;
+ }
+ 
+-void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
+-			      struct cdns3_endpoint *priv_ep)
++static void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
++				     struct cdns3_endpoint *priv_ep)
+ {
+ 	if (!priv_ep->use_streams || priv_dev->gadget.speed < USB_SPEED_SUPER)
+ 		return;
+@@ -1925,8 +1925,8 @@ void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
+ 			       EP_CFG_TDL_CHK | EP_CFG_SID_CHK);
+ }
+ 
+-void cdns3_configure_dmult(struct cdns3_device *priv_dev,
+-			   struct cdns3_endpoint *priv_ep)
++static void cdns3_configure_dmult(struct cdns3_device *priv_dev,
++				  struct cdns3_endpoint *priv_ep)
+ {
+ 	struct cdns3_usb_regs __iomem *regs = priv_dev->regs;
+ 
