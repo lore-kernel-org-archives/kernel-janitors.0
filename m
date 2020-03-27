@@ -1,44 +1,35 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Fri, 27 Mar 2020 18:08:14 +0000
-Subject: [PATCH RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
-Message-Id: <20200327180814.7255-1-lukas.bulwahn@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Mar 2020 13:45:56 +0000
+Subject: [PATCH] PCI: altera: clean up indentation issue on a return statement
+Message-Id: <20200327134556.265411-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Ley Foon Tan <ley.foon.tan@intel.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, Bjorn Helgaas <bhelgaas@google.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-added a file entry that does not point to the intended file location.
+From: Colin Ian King <colin.king@canonical.com>
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+A return statment is indented incorrectly, remove extraneous space.
 
-  warning: no file matches F: linux/soc/mmp/
-
-Rectify the MAINTAINERS entry now.
-
-Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Lubomir, please pick this patch.
-applies cleanly on current master and next-20200327
-
- MAINTAINERS | 2 +-
+ drivers/pci/controller/pcie-altera.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a5332b3591d..d1b21510fe5f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11199,7 +11199,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
- S:	Odd Fixes
- F:	arch/arm/boot/dts/mmp*
- F:	arch/arm/mach-mmp/
--F:	linux/soc/mmp/
-+F:	include/linux/soc/mmp/
+diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
+index b447c3e4abad..24cb1c331058 100644
+--- a/drivers/pci/controller/pcie-altera.c
++++ b/drivers/pci/controller/pcie-altera.c
+@@ -193,7 +193,7 @@ static bool altera_pcie_valid_device(struct altera_pcie *pcie,
+ 	if (bus->number = pcie->root_bus_nr && dev > 0)
+ 		return false;
  
- MMP USB PHY DRIVERS
- R:	Lubomir Rintel <lkundrak@v3.sk>
+-	 return true;
++	return true;
+ }
+ 
+ static int tlp_read_packet(struct altera_pcie *pcie, u32 *value)
 -- 
-2.17.1
+2.25.1
