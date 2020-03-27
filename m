@@ -1,38 +1,80 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Mar 2020 19:26:39 +0000
-Subject: [PATCH][next] ath11k: fix error message to correctly report the command that failed
-Message-Id: <20200327192639.363354-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 27 Mar 2020 17:28:45 +0000
+Subject: Applied "ASoC: amd: acp3x-pcm-dma: clean up two indentation issues" to the asoc tree
+Message-Id: <applied-20200327141429.269191-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200327141429.269191-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
 
+The patch
+
+   ASoC: amd: acp3x-pcm-dma: clean up two indentation issues
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From acd4946f5bf031fa38e64bfe2467be94a1b8c25d Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 27 Mar 2020 14:14:29 +0000
+Subject: [PATCH] ASoC: amd: acp3x-pcm-dma: clean up two indentation issues
 
-Currently the error message refers to the command WMI_TWT_DIeABLE_CMDID
-which looks like a cut-n-paste mangled typo. Fix the message to match
-the command WMI_BSS_COLOR_CHANGE_ENABLE_CMDID that failed.
+There are a couple of statements that are not indented correctly,
+add in the missing tab and break the lines to address a checkpatch
+warning.
 
-Fixes: 5a032c8d1953 ("ath11k: add WMI calls required for handling BSS color")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20200327141429.269191-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/wireless/ath/ath11k/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
-index e7ce36966d6a..6fec62846279 100644
---- a/drivers/net/wireless/ath/ath11k/wmi.c
-+++ b/drivers/net/wireless/ath/ath11k/wmi.c
-@@ -2779,7 +2779,7 @@ int ath11k_wmi_send_bss_color_change_enable_cmd(struct ath11k *ar, u32 vdev_id,
- 	ret = ath11k_wmi_cmd_send(wmi, skb,
- 				  WMI_BSS_COLOR_CHANGE_ENABLE_CMDID);
- 	if (ret) {
--		ath11k_warn(ab, "Failed to send WMI_TWT_DIeABLE_CMDID");
-+		ath11k_warn(ab, "Failed to send WMI_BSS_COLOR_CHANGE_ENABLE_CMDID");
- 		dev_kfree_skb(skb);
+diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
+index d62c0d90c41e..e362f0bc9e46 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
++++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
+@@ -458,7 +458,8 @@ static int acp3x_resume(struct device *dev)
+ 			reg_val = mmACP_I2STDM_ITER;
+ 			frmt_val = mmACP_I2STDM_TXFRMT;
+ 		}
+-	rv_writel((rtd->xfer_resolution  << 3), rtd->acp3x_base + reg_val);
++		rv_writel((rtd->xfer_resolution  << 3),
++			  rtd->acp3x_base + reg_val);
  	}
- 	return ret;
+ 	if (adata->capture_stream && adata->capture_stream->runtime) {
+ 		struct i2s_stream_instance *rtd @@ -474,7 +475,8 @@ static int acp3x_resume(struct device *dev)
+ 			reg_val = mmACP_I2STDM_IRER;
+ 			frmt_val = mmACP_I2STDM_RXFRMT;
+ 		}
+-	rv_writel((rtd->xfer_resolution  << 3), rtd->acp3x_base + reg_val);
++		rv_writel((rtd->xfer_resolution  << 3),
++			  rtd->acp3x_base + reg_val);
+ 	}
+ 	if (adata->tdm_mode = TDM_ENABLE) {
+ 		rv_writel(adata->tdm_fmt, adata->acp3x_base + frmt_val);
 -- 
-2.25.1
+2.20.1
