@@ -1,29 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 06 Mar 2020 05:33:21 +0000
-Subject: Re: [PATCH net] net: nfc: fix bounds checking bugs on "pipe"
-Message-Id: <20200305.213321.1243150631582322410.davem@davemloft.net>
+From: Jean-Philippe Menil <jpmenil@gmail.com>
+Date: Fri, 27 Mar 2020 07:55:44 +0000
+Subject: [PATCH v3] bpf: fix build warning - missing prototype
+Message-Id: <20200327075544.22814-1-jpmenil@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
-In-Reply-To: <20200304142429.2734khtbfyyoxmwc@kili.mountain>
+References: <20200326235426.ei6ae2z5ek6uq3tt@ast-mbp>
+In-Reply-To: <20200326235426.ei6ae2z5ek6uq3tt@ast-mbp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: christophe.ricard@gmail.com, kuba@kernel.org, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, allison@lohutok.net, netdev@vger.kernel.org, surenb@google.com, kernel-janitors@vger.kernel.org
+To: alexei.starovoitov@gmail.com
+Cc: kernel-janitors@vger.kernel.org, jpmenil@gmail.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 4 Mar 2020 17:24:31 +0300
+Fix build warnings when building net/bpf/test_run.o with W=1 due
+to missing prototype for bpf_fentry_test{1..6}.
 
-> This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
-> corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
-> ("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
-> added range checks on "pipe".
-> 
-> The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
-> It's in the 0-255 range.  We're using it as the array index into the
-> hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
-> 
-> Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Instead of declaring prototypes, turn off warnings with
+__diag_{push,ignore,pop} as pointed by Alexei.
 
-Applied and queued up for -stable, thanks Dan.
+Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
+---
+ net/bpf/test_run.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index d555c0d8657d..cc1592413fc3 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -113,6 +113,9 @@ static int bpf_test_finish(const union bpf_attr *kattr,
+  * architecture dependent calling conventions. 7+ can be supported in the
+  * future.
+  */
++__diag_push();
++__diag_ignore(GCC, 8, "-Wmissing-prototypes",
++	      "Global functions as their definitions will be in vmlinux BTF);
+ int noinline bpf_fentry_test1(int a)
+ {
+ 	return a + 1;
+@@ -143,6 +146,8 @@ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
+ 	return a + (long)b + c + d + (long)e + f;
+ }
+ 
++__diag_pop();
++
+ static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
+ 			   u32 headroom, u32 tailroom)
+ {
+-- 
+2.26.0
