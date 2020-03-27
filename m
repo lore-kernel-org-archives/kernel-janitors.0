@@ -1,48 +1,40 @@
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 21 Mar 2020 02:24:41 +0000
-Subject: Re: [PATCH] perf/core: Fix reversed NULL check in perf_event_groups_less()
-Message-Id: <CAP-5=fU060AZxi6gC7Z4exUqy8VBT08AuE1AZV6F2qDmTKLPwg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Mar 2020 17:44:02 +0000
+Subject: [PATCH] selinux: clean up indentation issue with assignment statement
+Message-Id: <20200327174402.351334-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200312105637.GA8960@mwanda> <20200313122725.GZ12561@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200313122725.GZ12561@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 5:27 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Mar 12, 2020 at 01:56:37PM +0300, Dan Carpenter wrote:
-> > This NULL check is reversed so it leads to a Smatch warning and
-> > presumably a NULL dereference.
-> >
-> >     kernel/events/core.c:1598 perf_event_groups_less()
-> >     error: we previously assumed 'right->cgrp->css.cgroup' could be null
-> >       (see line 1590)
-> >
-> > Fixes: 95ed6c707f26 ("perf/cgroup: Order events in RB tree by cgroup id")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  kernel/events/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 6a47c3e54fe9..607c04ec7cfa 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -1587,7 +1587,7 @@ perf_event_groups_less(struct perf_event *left, struct perf_event *right)
-> >                        */
-> >                       return true;
-> >               }
-> > -             if (!right->cgrp || right->cgrp->css.cgroup) {
-> > +             if (!right->cgrp || !right->cgrp->css.cgroup) {
-> >                       /*
-> >                        * Right has no cgroup but left does, no cgroups come
-> >                        * first.
->
-> Thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-Also much thanks!
+The assignment of e->type_names is indented one level too deep,
+clean this up by removing the extraneous tab.
 
-Ian
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/selinux/ss/policydb.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 932b2b9bcdb2..70ecdc78efbd 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1219,10 +1219,9 @@ static int read_cons_helper(struct policydb *p,
+ 				if (rc)
+ 					return rc;
+ 				if (p->policyvers >-					POLICYDB_VERSION_CONSTRAINT_NAMES) {
+-						e->type_names = kzalloc(sizeof
+-						(*e->type_names),
+-						GFP_KERNEL);
++				    POLICYDB_VERSION_CONSTRAINT_NAMES) {
++					e->type_names = kzalloc(sizeof
++						(*e->type_names), GFP_KERNEL);
+ 					if (!e->type_names)
+ 						return -ENOMEM;
+ 					type_set_init(e->type_names);
+-- 
+2.25.1
