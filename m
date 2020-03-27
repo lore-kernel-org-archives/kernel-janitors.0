@@ -1,35 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Mar 2020 14:23:12 +0000
-Subject: [PATCH] media: max2175: fix max2175_set_csm_mode() error code
-Message-Id: <20200304142312.uxk7t7w3jbdhk5wy@kili.mountain>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Mar 2020 16:13:49 +0000
+Subject: [PATCH] soc: fsl: qe: clean up an indentation issue
+Message-Id: <20200327161349.284679-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ramesh Shanmugasundaram <rashanmu@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is supposed to return negative error codes but the type is bool so
-it returns true instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: b47b79d8a231 ("[media] media: i2c: max2175: Add MAX2175 support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a statement that not indented correctly, remove the
+extraneous space.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/max2175.c | 2 +-
+ drivers/soc/fsl/qe/ucc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/max2175.c b/drivers/media/i2c/max2175.c
-index 506a30e69ced..ab4bc6c395b2 100644
---- a/drivers/media/i2c/max2175.c
-+++ b/drivers/media/i2c/max2175.c
-@@ -503,7 +503,7 @@ static void max2175_set_bbfilter(struct max2175 *ctx)
- 	}
- }
+diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
+index d6c93970df4d..cac0fb7693a0 100644
+--- a/drivers/soc/fsl/qe/ucc.c
++++ b/drivers/soc/fsl/qe/ucc.c
+@@ -519,7 +519,7 @@ int ucc_set_tdm_rxtx_clk(u32 tdm_num, enum qe_clock clock,
+ 	int clock_bits;
+ 	u32 shift;
+ 	struct qe_mux __iomem *qe_mux_reg;
+-	 __be32 __iomem *cmxs1cr;
++	__be32 __iomem *cmxs1cr;
  
--static bool max2175_set_csm_mode(struct max2175 *ctx,
-+static int max2175_set_csm_mode(struct max2175 *ctx,
- 			  enum max2175_csm_mode new_mode)
- {
- 	int ret = max2175_poll_csm_ready(ctx);
+ 	qe_mux_reg = &qe_immr->qmx;
+ 
 -- 
-2.11.0
+2.25.1
