@@ -1,53 +1,44 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 05 Mar 2020 17:15:29 +0000
-Subject: [PATCH AUTOSEL 4.14 08/19] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-Message-Id: <20200305171540.30250-8-sashal@kernel.org>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 27 Mar 2020 18:08:14 +0000
+Subject: [PATCH RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
+Message-Id: <20200327180814.7255-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200305171540.30250-1-sashal@kernel.org>
-In-Reply-To: <20200305171540.30250-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+added a file entry that does not point to the intended file location.
 
-[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
+  warning: no file matches F: linux/soc/mmp/
 
-'release_progmem()' is only a call to 'kfree()'.
+Rectify the MAINTAINERS entry now.
 
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/mips/kernel/vpe.c | 2 +-
+Lubomir, please pick this patch.
+applies cleanly on current master and next-20200327
+
+ MAINTAINERS | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 544ea21bfef9c..b2683aca401f6 100644
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5a5332b3591d..d1b21510fe5f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11199,7 +11199,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
+ S:	Odd Fixes
+ F:	arch/arm/boot/dts/mmp*
+ F:	arch/arm/mach-mmp/
+-F:	linux/soc/mmp/
++F:	include/linux/soc/mmp/
  
+ MMP USB PHY DRIVERS
+ R:	Lubomir Rintel <lkundrak@v3.sk>
 -- 
-2.20.1
+2.17.1
