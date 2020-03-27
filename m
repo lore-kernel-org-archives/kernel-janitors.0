@@ -1,45 +1,25 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 04 Mar 2020 14:40:45 +0000
-Subject: [PATCH] MAINTAINERS: rectify EDAC-SIFIVE entry
-Message-Id: <20200304144045.15060-1-lukas.bulwahn@gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 27 Mar 2020 01:12:15 +0000
+Subject: Re: [PATCH] scsi: aha1740: Fix an errro handling path in 'aha1740_probe()'
+Message-Id: <yq1k136fvo0.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200228215948.7473-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200228215948.7473-1-christophe.jaillet@wanadoo.fr> (Christophe
+        JAILLET's message of "Fri, 28 Feb 2020 22:59:48 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Christoph Hellwig <hch@lst.de>, Borislav Petkov <bp@suse.de>, Yash Shah <yash.shah@sifive.com>, linux-edac@vger.kernel.org, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Commit 9209fb51896f ("riscv: move sifive_l2_cache.c to drivers/soc") moved
-arch/riscv/mm/sifive_l2_cache.c to drivers/soc/sifive/sifive_l2_cache.c
-and adjusted the MAINTAINERS EDAC-SIFIVE entry but slipped in a mistake.
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+Christophe,
 
-  warning: no file matches F: drivers/soc/sifive_l2_cache.c
+> If 'dma_map_single()' fails, the ref counted 'shpnt' will be decremented
+> twice because 'scsi_host_put()' is called in the if block, and in the
+> error handling path.
 
-Rectify the EDAC-SIFIVE entry in MAINTAINERS now.
+Applied to 5.7/scsi-queue, thanks!
 
-Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Paul, please pick this patch.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6158a143a13e..5c755e03ddee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6110,7 +6110,7 @@ M:	Yash Shah <yash.shah@sifive.com>
- L:	linux-edac@vger.kernel.org
- S:	Supported
- F:	drivers/edac/sifive_edac.c
--F:	drivers/soc/sifive_l2_cache.c
-+F:	drivers/soc/sifive/sifive_l2_cache.c
- 
- EDAC-SKYLAKE
- M:	Tony Luck <tony.luck@intel.com>
 -- 
-2.17.1
+Martin K. Petersen	Oracle Linux Engineering
