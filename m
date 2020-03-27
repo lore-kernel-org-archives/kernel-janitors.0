@@ -1,23 +1,38 @@
-From: Stephen Li <stenn7@gabg.net>
-Date: Tue, 17 Mar 2020 12:07:13 +0000
-Subject: REF
-Message-Id: <2078071840.1852905.1584446833663@mail.yahoo.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Mar 2020 19:26:39 +0000
+Subject: [PATCH][next] ath11k: fix error message to correctly report the command that failed
+Message-Id: <20200327192639.363354-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2078071840.1852905.1584446833663.ref@mail.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the error message refers to the command WMI_TWT_DIeABLE_CMDID
+which looks like a cut-n-paste mangled typo. Fix the message to match
+the command WMI_BSS_COLOR_CHANGE_ENABLE_CMDID that failed.
 
-Greetings,
-I was searching through a local business directory when I found your
-profile. I am Soliciting On-Behalf of my private client who is
-interested in having a serious business investment in your country. If
-you have a valid business, investment or project he can invest
-back to me for more details. Your swift response is highly needed.
-Sincerely
-Stephen Li
-Please response back to me with is my private email below for more details
-stephli947701@gmail.com
+Fixes: 5a032c8d1953 ("ath11k: add WMI calls required for handling BSS color")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
+index e7ce36966d6a..6fec62846279 100644
+--- a/drivers/net/wireless/ath/ath11k/wmi.c
++++ b/drivers/net/wireless/ath/ath11k/wmi.c
+@@ -2779,7 +2779,7 @@ int ath11k_wmi_send_bss_color_change_enable_cmd(struct ath11k *ar, u32 vdev_id,
+ 	ret = ath11k_wmi_cmd_send(wmi, skb,
+ 				  WMI_BSS_COLOR_CHANGE_ENABLE_CMDID);
+ 	if (ret) {
+-		ath11k_warn(ab, "Failed to send WMI_TWT_DIeABLE_CMDID");
++		ath11k_warn(ab, "Failed to send WMI_BSS_COLOR_CHANGE_ENABLE_CMDID");
+ 		dev_kfree_skb(skb);
+ 	}
+ 	return ret;
+-- 
+2.25.1
