@@ -1,51 +1,53 @@
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 02 Mar 2020 09:05:47 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust EFI entry to removing eboot.c
-Message-Id: <CAKv+Gu_gCqMO89wQ8RTwveBMDu-vdwhS5anPiZzQHdViygEouQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 28 Mar 2020 07:30:40 +0000
+Subject: [PATCH] RDMA/ocrdma: Fix an off-by-one issue in 'ocrdma_add_stat'
+Message-Id: <20200328073040.24429-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200301155748.4788-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200301155748.4788-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-efi <linux-efi@vger.kernel.org>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: selvin.xavier@broadcom.com, devesh.sharma@broadcom.com, dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org, colin.king@canonical.com, roland@purestorage.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, 1 Mar 2020 at 16:58, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit c2d0b470154c ("efi/libstub/x86: Incorporate eboot.c into libstub")
-> removed arch/x86/boot/compressed/eboot.[ch], but missed to adjust the
-> MAINTAINERS entry.
->
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
->
->   warning: no file matches F: arch/x86/boot/compressed/eboot.[ch]
->
-> Rectify EXTENSIBLE FIRMWARE INTERFACE (EFI) entry in MAINTAINERS.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Ard, please pick this patch for your linux-next branch.
-> applies cleanly on next-20200228, do not apply on current master
->
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
->
+There is an off-by-one issue when checking if there is enough space in the
+output buffer, because we must keep some place for a final '\0'.
 
-Thanks Lukas, I'll queue this up.
+While at it:
+   - Use 'scnprintf' instead of 'snprintf' in order to avoid a superfluous
+    'strlen'
+   - avoid some useless initializations
+   - avoida hard coded buffer size that can be computed at built time.
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 09b04505e7c3..4ce510b8467a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6383,7 +6383,6 @@ T:        git git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
->  S:     Maintained
->  F:     Documentation/admin-guide/efi-stub.rst
->  F:     arch/*/kernel/efi.c
-> -F:     arch/x86/boot/compressed/eboot.[ch]
->  F:     arch/*/include/asm/efi.h
->  F:     arch/x86/platform/efi/
->  F:     drivers/firmware/efi/
-> --
-> 2.17.1
->
+Fixes: a51f06e1679e ("RDMA/ocrdma: Query controller information")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The '\0' comes from memset(..., 0, ...) in all callers.
+This could be also avoided if needed.
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+index 5f831e3bdbad..614a449e6b87 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+@@ -49,13 +49,12 @@ static struct dentry *ocrdma_dbgfs_dir;
+ static int ocrdma_add_stat(char *start, char *pcur,
+ 				char *name, u64 count)
+ {
+-	char buff[128] = {0};
+-	int cpy_len = 0;
++	char buff[128];
++	int cpy_len;
+ 
+-	snprintf(buff, 128, "%s: %llu\n", name, count);
+-	cpy_len = strlen(buff);
++	cpy_len = scnprintf(buff, sizeof(buff), "%s: %llu\n", name, count);
+ 
+-	if (pcur + cpy_len > start + OCRDMA_MAX_DBGFS_MEM) {
++	if (pcur + cpy_len >= start + OCRDMA_MAX_DBGFS_MEM) {
+ 		pr_err("%s: No space in stats buff\n", __func__);
+ 		return 0;
+ 	}
+-- 
+2.20.1
