@@ -1,54 +1,44 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 12 Mar 2020 14:23:02 +0000
-Subject: Re: [PATCH] drm/amdgpu/display: clean up some indenting
-Message-Id: <CADnq5_Or06=BeVmnx35vSqvK1vUxx+Vvzq9h=UY7OkRU+SK+4Q@mail.gmail.com>
+From: Fedor Tokarev <ftokarev@gmail.com>
+Date: Sat, 28 Mar 2020 11:56:55 +0000
+Subject: [PATCH] net: sunrpc: Fix off-by-one issues in 'rpc_ntop6'
+Message-Id: <20200328115650.GA27729@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200224103120.zrvgqaokmoehs5y7@kili.mountain>
-In-Reply-To: <20200224103120.zrvgqaokmoehs5y7@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Leo Li <sunpeng.li@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, David Francis <David.Francis@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+To: bfields@fieldses.org, chuck.lever@oracle.com, anna.schumaker@netapp.com, trond.myklebust@hammerspace.com, davem@davemloft.net, kuba@kernel.org
+Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 5:31 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> These lines were accidentally indented 4 spaces more than they should
-> be.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fix off-by-one issues in 'rpc_ntop6':
+ - 'snprintf' returns the number of characters which would have been
+   written if enough space had been available, excluding the terminating
+   null byte. Thus, a return value of 'sizeof(scopebuf)' means that the
+   last character was dropped.
+ - 'strcat' adds a terminating null byte to the string, thus if len =
+   buflen, the null byte is written past the end of the buffer.
 
-Applied.  thanks!
+Signed-off-by: Fedor Tokarev <ftokarev@gmail.com>
+---
+ net/sunrpc/addr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 4cb3eb7c6745..408405d9f30c 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -2138,10 +2138,10 @@ static void handle_hpd_rx_irq(void *param)
->                 }
->         }
->  #ifdef CONFIG_DRM_AMD_DC_HDCP
-> -           if (hpd_irq_data.bytes.device_service_irq.bits.CP_IRQ) {
-> -                   if (adev->dm.hdcp_workqueue)
-> -                           hdcp_handle_cpirq(adev->dm.hdcp_workqueue,  aconnector->base.index);
-> -           }
-> +       if (hpd_irq_data.bytes.device_service_irq.bits.CP_IRQ) {
-> +               if (adev->dm.hdcp_workqueue)
-> +                       hdcp_handle_cpirq(adev->dm.hdcp_workqueue,  aconnector->base.index);
-> +       }
->  #endif
->         if ((dc_link->cur_link_settings.lane_count != LANE_COUNT_UNKNOWN) ||
->             (dc_link->type = dc_connection_mst_branch))
-> --
-> 2.11.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/net/sunrpc/addr.c b/net/sunrpc/addr.c
+index 8b4d72b..010dcb8 100644
+--- a/net/sunrpc/addr.c
++++ b/net/sunrpc/addr.c
+@@ -82,11 +82,11 @@ static size_t rpc_ntop6(const struct sockaddr *sap,
+ 
+ 	rc = snprintf(scopebuf, sizeof(scopebuf), "%c%u",
+ 			IPV6_SCOPE_DELIMITER, sin6->sin6_scope_id);
+-	if (unlikely((size_t)rc > sizeof(scopebuf)))
++	if (unlikely((size_t)rc >= sizeof(scopebuf)))
+ 		return 0;
+ 
+ 	len += rc;
+-	if (unlikely(len > buflen))
++	if (unlikely(len >= buflen))
+ 		return 0;
+ 
+ 	strcat(buf, scopebuf);
+-- 
+2.7.4
