@@ -1,67 +1,55 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 27 Mar 2020 19:02:25 +0000
-Subject: Re: [PATCH][next] selftests/harness: fix spelling mistake "SIGARLM" -> "SIGALRM"
-Message-Id: <202003271202.123FD50@keescook>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 28 Mar 2020 13:43:04 +0000
+Subject: [PATCH] MAINTAINERS: clarify maintenance of ARM Dove drivers
+Message-Id: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200327090648.13387-1-colin.king@canonical.com>
-In-Reply-To: <20200327090648.13387-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>
+Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Mar 27, 2020 at 09:06:48AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There a few identical spelling mistakes, fix these.
+Commit 44e259ac909f ("ARM: dove: create a proper PMU driver for power
+domains, PMU IRQs and resets") introduced new drivers for the ARM Dove SOC,
+but did not add those drivers to the existing entry ARM/Marvell
+Dove/MV78xx0/Orion SOC support in MAINTAINERS. Hence, these drivers were
+considered to be part of "THE REST".
 
-Argh, thanks Colin!
+Clarify now that these drivers are maintained by the ARM/Marvell
+Dove/MV78xx0/Orion SOC support maintainers. Also order the T: entry to the
+place it belongs to, while at it.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+This was identified with a small script that finds all files only belonging
+to "THE REST" according to the current MAINTAINERS file, and I acted upon
+its output.
 
--Kees
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and on next-20200327
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/testing/selftests/kselftest_harness.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index 2902f6a78f8a..2bb8c81fc0b4 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -705,7 +705,7 @@ static void __timeout_handler(int sig, siginfo_t *info, void *ucontext)
->  	/* Sanity check handler execution environment. */
->  	if (!t) {
->  		fprintf(TH_LOG_STREAM,
-> -			"no active test in SIGARLM handler!?\n");
-> +			"no active test in SIGALRM handler!?\n");
->  		abort();
->  	}
->  	if (sig != SIGALRM || sig != info->si_signo) {
-> @@ -731,7 +731,7 @@ void __wait_for_test(struct __test_metadata *t)
->  	if (sigaction(SIGALRM, &action, &saved_action)) {
->  		t->passed = 0;
->  		fprintf(TH_LOG_STREAM,
-> -			"%s: unable to install SIGARLM handler\n",
-> +			"%s: unable to install SIGALRM handler\n",
->  			t->name);
->  		return;
->  	}
-> @@ -743,7 +743,7 @@ void __wait_for_test(struct __test_metadata *t)
->  	if (sigaction(SIGALRM, &saved_action, NULL)) {
->  		t->passed = 0;
->  		fprintf(TH_LOG_STREAM,
-> -			"%s: unable to uninstall SIGARLM handler\n",
-> +			"%s: unable to uninstall SIGALRM handler\n",
->  			t->name);
->  		return;
->  	}
-> -- 
-> 2.25.1
-> 
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8b8abe756ae0..38fff0374082 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1979,6 +1979,7 @@ M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+ M:	Gregory Clement <gregory.clement@bootlin.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
++T:	git git://git.infradead.org/linux-mvebu.git
+ F:	Documentation/devicetree/bindings/soc/dove/
+ F:	arch/arm/mach-dove/
+ F:	arch/arm/mach-mv78xx0/
+@@ -1986,7 +1987,7 @@ F:	arch/arm/mach-orion5x/
+ F:	arch/arm/plat-orion/
+ F:	arch/arm/boot/dts/dove*
+ F:	arch/arm/boot/dts/orion5x*
+-T:	git git://git.infradead.org/linux-mvebu.git
++F:	drivers/soc/dove/
+ 
+ ARM/Marvell Kirkwood and Armada 370, 375, 38x, 39x, XP, 3700, 7K/8K, CN9130 SOC support
+ M:	Jason Cooper <jason@lakedaemon.net>
 -- 
-Kees Cook
+2.17.1
