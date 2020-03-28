@@ -1,47 +1,33 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sat, 28 Mar 2020 14:43:06 +0000
-Subject: [PATCH] MAINTAINERS: clarify maintenance of Gemini SoC driver
-Message-Id: <20200328144306.574-1-lukas.bulwahn@gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Sat, 28 Mar 2020 15:46:17 +0000
+Subject: Re: [PATCH] MAINTAINERS: clarify maintenance of ARM Dove drivers
+Message-Id: <20200328154617.GX3819@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@bootlin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Commit 68198dca4569 ("soc: Add SoC driver for Gemini") introduced a Gemini
-SoC driver, but did not add the driver to the existing ARM/CORTINA SYSTEMS
-GEMINI ARM ARCHITECTURE entry in MAINTAINERS.
+On Sat, Mar 28, 2020 at 02:43:04PM +0100, Lukas Bulwahn wrote:
+> Commit 44e259ac909f ("ARM: dove: create a proper PMU driver for power
+> domains, PMU IRQs and resets") introduced new drivers for the ARM Dove SOC,
+> but did not add those drivers to the existing entry ARM/Marvell
+> Dove/MV78xx0/Orion SOC support in MAINTAINERS. Hence, these drivers were
+> considered to be part of "THE REST".
+> 
+> Clarify now that these drivers are maintained by the ARM/Marvell
+> Dove/MV78xx0/Orion SOC support maintainers. Also order the T: entry to the
+> place it belongs to, while at it.
+> 
+> This was identified with a small script that finds all files only belonging
+> to "THE REST" according to the current MAINTAINERS file, and I acted upon
+> its output.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hence, this driver was considered to be part of "THE REST".
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Clarify now that this driver is maintained by the ARM/CORTINA SYSTEMS
-GEMINI ARM ARCHITECTURE maintainers.
-
-This was identified with a small script that finds all files only
-belonging to "THE REST" according to the current MAINTAINERS file, and I
-acted upon its output.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on current master and next-20200327
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8b8abe756ae0..ae02568afa25 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1729,6 +1729,7 @@ F:	arch/arm/mach-gemini/
- F:	drivers/net/ethernet/cortina/
- F:	drivers/pinctrl/pinctrl-gemini.c
- F:	drivers/rtc/rtc-ftrtc010.c
-+F:	drivers/soc/gemini/
- 
- ARM/CSR SIRFPRIMA2 MACHINE SUPPORT
- M:	Barry Song <baohua@kernel.org>
--- 
-2.17.1
+    Andrew
