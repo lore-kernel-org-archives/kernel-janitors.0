@@ -1,34 +1,44 @@
-From: Tigran Aivazian <aivazian.tigran@gmail.com>
-Date: Tue, 10 Mar 2020 18:22:42 +0000
-Subject: Re: [PATCH] bfs: prevent underflow in bfs_find_entry()
-Message-Id: <CAK+_RLk3D1VA6Rms1TGEFuEeO8JGxUaXfmWxznn+cHCG96TOTQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Mar 2020 10:19:01 +0000
+Subject: [PATCH][next] virtio: fix spelling mistake "confiugration" -> "configuration"
+Message-Id: <20200330101901.162407-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200307060808.6nfyqnp2woq7d3cv@kili.mountain>
- <ba294b1d861142ca8f7b204356009dd0@bfs.de> <20200310090644.GA11583@kadam> <fabccce3c25444bbb5aa51f8c08e9865@bfs.de>
-In-Reply-To: <fabccce3c25444bbb5aa51f8c08e9865@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Zhu Lingshan <lingshan.zhu@intel.com>, tiwei.bie@intel.com, Wang Xiao <xiao.w.wang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, 10 Mar 2020 at 17:57, Walter Harms <wharms@bfs.de> wrote:
-> that raises the question why is there a len paramter in the first place.
-> Surely the writer can make sure that there is always a NUL terminated
-> string, then it would be possible the use a simple strcmp() and the
-> range check is useless and can be removed.
->
-> seems a question for the maintainer.
+There are two spelling mistakes of configuration in IFCVF_ERR error
+messages. Fix them.
 
-Please have a look at, for example,
-fs/ufs/dir.c:ufs_find_entry()/ufs_match() functions --- they do almost
-the same thing as the ones in bfs. And, presumably, the line "int
-namelen = qstr->len;" in ufs_find_entry() is causing the static
-checker warning too, just like the one in bfs which Dan mentioned and
-fixed. So, let's not over-complicate things (or make a mountain out of
-a molehill) and accept Dan's patch as is.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/virtio/vdpa/ifcvf/ifcvf_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards,
-Tigran
+diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
+index 8d54dc5b08d2..111ac12f6c8e 100644
+--- a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
++++ b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
+@@ -340,14 +340,14 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
+ 	if (ret) {
+-		IFCVF_ERR(pdev, "No usable DMA confiugration\n");
++		IFCVF_ERR(pdev, "No usable DMA configuration\n");
+ 		return ret;
+ 	}
+ 
+ 	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+ 	if (ret) {
+ 		IFCVF_ERR(pdev,
+-			  "No usable coherent DMA confiugration\n");
++			  "No usable coherent DMA configuration\n");
+ 		return ret;
+ 	}
+ 
+-- 
+2.25.1
