@@ -1,33 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 16 Apr 2020 06:51:54 +0000
-Subject: Re: [PATCH] hwrng: xgene - Delete an error message in xgene_rng_probe()
-Message-Id: <20200416065154.GH7901@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Apr 2020 16:35:45 +0000
+Subject: [PATCH][next] drm/amdgpu/vcn: fix spelling mistake "fimware" -> "firmware"
+Message-Id: <20200401163545.263372-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45447185-d64f-027c-7bca-c59ea21e6021@web.de>
-In-Reply-To: <45447185-d64f-027c-7bca-c59ea21e6021@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-crypto@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Chuhong Yuan <hslester96@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, Matt Mackall <mpm@selenic.com>, Thomas Gleixner <tglx@linutronix.de>, YueHaibing <yuehaibing@huawei.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Leo Liu <leo.liu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 04, 2020 at 05:17:19PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 4 Apr 2020 17:07:34 +0200
-> 
-> The function “platform_get_irq” can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/char/hw_random/xgene-rng.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+There is a spelling mistake in a dev_err error message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index 328b6ceb80de..d653a18dcbc3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -187,7 +187,7 @@ int amdgpu_vcn_sw_init(struct amdgpu_device *adev)
+ 				PAGE_SIZE, AMDGPU_GEM_DOMAIN_VRAM, &adev->vcn.inst[i].fw_shared_bo,
+ 				&adev->vcn.inst[i].fw_shared_gpu_addr, &adev->vcn.inst[i].fw_shared_cpu_addr);
+ 		if (r) {
+-			dev_err(adev->dev, "VCN %d (%d) failed to allocate fimware shared bo\n", i, r);
++			dev_err(adev->dev, "VCN %d (%d) failed to allocate firmware shared bo\n", i, r);
+ 			return r;
+ 		}
+ 	}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
