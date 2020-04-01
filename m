@@ -1,39 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 20 Apr 2020 06:36:47 +0000
-Subject: Re: [PATCH RESEND] MAINTAINERS: adjust to renaming physmap_of_versatile.c
-Message-Id: <CACRpkda7DBqJ_3N7eyqBREFk1jQpRQokgOqLq-sGs9UpaaSfXg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Apr 2020 23:27:36 +0000
+Subject: [PATCH][next] net: atlantic: fix missing | operator when assigning rec->llc
+Message-Id: <20200401232736.410028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200418100933.8012-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200418100933.8012-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Sebastian Duda <sebastian.duda@fau.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Igor Russkikh <irusskikh@marvell.com>, "David S . Miller" <davem@davemloft.net>, Mark Starovoytov <mstarovoitov@marvell.com>, Dmitry Bogdanov <dbogdanov@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 12:10 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Commit 6ca15cfa0788 ("mtd: maps: Rename physmap_of_{versatile, gemini}
-> into physmap-{versatile, gemini}") renamed physmap_of_versatile.c to
-> physmap-versatile.c, but did not adjust the MAINTAINERS entry.
->
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
->
->   warning: no file matches F: drivers/mtd/maps/physmap_of_versatile.c
->
-> Rectify the ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT entry and now
-> also cover drivers/mtd/maps/physmap-versatile.h while at it.
->
-> Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Boris, please pick or ack this patch.
-> applies cleanly on current master and next-20200417
+rec->llc is currently being assigned twice, once with the lower 8 bits
+from packed_record[8] and then re-assigned afterwards with data from
+packed_record[9].  This looks like a type, I believe the second assignment
+should be using the |= operator rather than a direct assignment.
 
-Patch applied to my Versatile tree.
+Addresses-Coverity: ("Unused value")
+Fixes: b8f8a0b7b5cb ("net: atlantic: MACSec ingress offload HW bindings")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/macsec/macsec_api.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Will send a pull request for this to ARM SoC soon.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/net/ethernet/aquantia/atlantic/macsec/macsec_api.c b/drivers/net/ethernet/aquantia/atlantic/macsec/macsec_api.c
+index 97901c114bfa..fbe9d88b13c7 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/macsec/macsec_api.c
++++ b/drivers/net/ethernet/aquantia/atlantic/macsec/macsec_api.c
+@@ -491,7 +491,7 @@ get_ingress_preclass_record(struct aq_hw_s *hw,
+ 	rec->snap[1] = packed_record[8] & 0xFF;
+ 
+ 	rec->llc = (packed_record[8] >> 8) & 0xFF;
+-	rec->llc = packed_record[9] << 8;
++	rec->llc |= packed_record[9] << 8;
+ 
+ 	rec->mac_sa[0] = packed_record[10];
+ 	rec->mac_sa[0] |= packed_record[11] << 16;
+-- 
+2.25.1
