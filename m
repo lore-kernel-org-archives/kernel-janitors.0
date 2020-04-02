@@ -1,45 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Apr 2020 15:03:14 +0000
-Subject: [PATCH][next] kunit: fix dereference of suite before it has been null checked
-Message-Id: <20200402150314.568044-1-colin.king@canonical.com>
+From: Alan Maguire <alan.maguire@oracle.com>
+Date: Thu, 02 Apr 2020 15:24:10 +0000
+Subject: Re: [PATCH][next] kunit: fix dereference of suite before it has been null checked
+Message-Id: <alpine.LRH.2.21.2004021623270.21551@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200402150314.568044-1-colin.king@canonical.com>
+In-Reply-To: <20200402150314.568044-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brendan Higgins <brendanhiggins@google.com>, Frank Rowand <frank.rowand@sony.com>, Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Brendan Higgins <brendanhiggins@google.com>, Frank Rowand <frank.rowand@sony.com>, Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2 Apr 2020, Colin King wrote:
 
-Currently pointer 'suite' is dereferenced when variable success
-is being initialized before the pointer is null checked. Fix this
-by only dereferencing suite after is has been null checked.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently pointer 'suite' is dereferenced when variable success
+> is being initialized before the pointer is null checked. Fix this
+> by only dereferencing suite after is has been null checked.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: e2219db280e3 ("kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results display")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: e2219db280e3 ("kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results display")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- lib/kunit/debugfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
 
-diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-index 9214c493d8b7..05547642f37c 100644
---- a/lib/kunit/debugfs.c
-+++ b/lib/kunit/debugfs.c
-@@ -52,12 +52,13 @@ static void debugfs_print_result(struct seq_file *seq,
- static int debugfs_print_results(struct seq_file *seq, void *v)
- {
- 	struct kunit_suite *suite = (struct kunit_suite *)seq->private;
--	bool success = kunit_suite_has_succeeded(suite);
-+	bool success;
- 	struct kunit_case *test_case;
- 
- 	if (!suite || !suite->log)
- 		return 0;
- 
-+	success = kunit_suite_has_succeeded(suite);
- 	seq_printf(seq, "%s", suite->log);
- 
- 	kunit_suite_for_each_test_case(suite, test_case)
--- 
-2.25.1
+Thanks for spotting this!
+
+Alan
+
+> ---
+>  lib/kunit/debugfs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+> index 9214c493d8b7..05547642f37c 100644
+> --- a/lib/kunit/debugfs.c
+> +++ b/lib/kunit/debugfs.c
+> @@ -52,12 +52,13 @@ static void debugfs_print_result(struct seq_file *seq,
+>  static int debugfs_print_results(struct seq_file *seq, void *v)
+>  {
+>  	struct kunit_suite *suite = (struct kunit_suite *)seq->private;
+> -	bool success = kunit_suite_has_succeeded(suite);
+> +	bool success;
+>  	struct kunit_case *test_case;
+>  
+>  	if (!suite || !suite->log)
+>  		return 0;
+>  
+> +	success = kunit_suite_has_succeeded(suite);
+>  	seq_printf(seq, "%s", suite->log);
+>  
+>  	kunit_suite_for_each_test_case(suite, test_case)
+> -- 
+> 2.25.1
+> 
+> 
