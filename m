@@ -1,48 +1,45 @@
-From: Stephan Mueller <smueller@chronox.de>
-Date: Thu, 30 Apr 2020 08:15:56 +0000
-Subject: Re: [PATCH -next] crypto: drbg - fix error return code in drbg_alloc_state()
-Message-Id: <4688335.RcRiWGvq7B@tauon.chronox.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Apr 2020 15:03:14 +0000
+Subject: [PATCH][next] kunit: fix dereference of suite before it has been null checked
+Message-Id: <20200402150314.568044-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200430081353.112449-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200430081353.112449-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Brendan Higgins <brendanhiggins@google.com>, Frank Rowand <frank.rowand@sony.com>, Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Donnerstag, 30. April 2020, 10:13:53 CEST schrieb Wei Yongjun:
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Wei,
+Currently pointer 'suite' is dereferenced when variable success
+is being initialized before the pointer is null checked. Fix this
+by only dereferencing suite after is has been null checked.
 
-> Fix to return negative error code -ENOMEM from the kzalloc error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: db07cd26ac6a ("crypto: drbg - add FIPS 140-2 CTRNG for noise source")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  crypto/drbg.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/crypto/drbg.c b/crypto/drbg.c
-> index e57901d8545b..37526eb8c5d5 100644
-> --- a/crypto/drbg.c
-> +++ b/crypto/drbg.c
-> @@ -1306,8 +1306,10 @@ static inline int drbg_alloc_state(struct drbg_state
-> *drbg) if (IS_ENABLED(CONFIG_CRYPTO_FIPS)) {
->  		drbg->prev = kzalloc(drbg_sec_strength(drbg->core->flags),
->  				     GFP_KERNEL);
-> -		if (!drbg->prev)
-> +		if (!drbg->prev) {
-> +			ret = -ENOMEM;
->  			goto fini;
-> +		}
->  		drbg->fips_primed = false;
->  	}
+Addresses-Coverity: ("Dereference before null check")
+Fixes: e2219db280e3 ("kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results display")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/kunit/debugfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thank you
-
-Reviewed-by: Stephan Mueller <smueller@chronox.de>
-
-Ciao
-Stephan
+diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+index 9214c493d8b7..05547642f37c 100644
+--- a/lib/kunit/debugfs.c
++++ b/lib/kunit/debugfs.c
+@@ -52,12 +52,13 @@ static void debugfs_print_result(struct seq_file *seq,
+ static int debugfs_print_results(struct seq_file *seq, void *v)
+ {
+ 	struct kunit_suite *suite = (struct kunit_suite *)seq->private;
+-	bool success = kunit_suite_has_succeeded(suite);
++	bool success;
+ 	struct kunit_case *test_case;
+ 
+ 	if (!suite || !suite->log)
+ 		return 0;
+ 
++	success = kunit_suite_has_succeeded(suite);
+ 	seq_printf(seq, "%s", suite->log);
+ 
+ 	kunit_suite_for_each_test_case(suite, test_case)
+-- 
+2.25.1
