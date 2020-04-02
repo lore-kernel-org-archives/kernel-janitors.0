@@ -1,47 +1,76 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Tue, 07 Apr 2020 10:58:51 +0000
-Subject: Re: [PATCH] bus: mhi: core: Fix a NULL vs IS_ERR check in mhi_create_devices()
-Message-Id: <20200407104651.GE2442@Mani-XPS-13-9360>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Apr 2020 13:14:41 +0000
+Subject: [PATCH][next] rtc: ds1307: check for failed memory allocation on wdt
+Message-Id: <20200402131441.539088-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407093133.GM68494@mwanda>
-In-Reply-To: <20200407093133.GM68494@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hemant Kumar <hemantk@codeaurora.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Siddartha Mohanadoss <smohanad@codeaurora.org>, Sujeev Dias <sdias@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Guenter Roeck <linux@roeck-us.net>, Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 12:31:33PM +0300, Dan Carpenter wrote:
-> The mhi_alloc_device() function never returns NULL, it returns error
-> pointers.
-> 
-> Fixes: da1c4f856924 ("bus: mhi: core: Add support for creating and destroying MHI devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Currently a failed memory allocation will lead to a null pointer
+dereference on point wdt.  Fix this by checking for a failed allocation
+and adding error return handling to function ds1307_wdt_register.
 
-Thanks Dan!
+Addresses-Coverity: ("Dereference null return")
+Fixes: fd90d48db037 ("rtc: ds1307: add support for watchdog timer on ds1388")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-ds1307.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Regards,
-Mani
-
-> ---
->  drivers/bus/mhi/core/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/mhi/core/main.c b/drivers/bus/mhi/core/main.c
-> index eb4256b81406..55928feea0c9 100644
-> --- a/drivers/bus/mhi/core/main.c
-> +++ b/drivers/bus/mhi/core/main.c
-> @@ -294,7 +294,7 @@ void mhi_create_devices(struct mhi_controller *mhi_cntrl)
->  		    !(mhi_chan->ee_mask & BIT(mhi_cntrl->ee)))
->  			continue;
->  		mhi_dev = mhi_alloc_device(mhi_cntrl);
-> -		if (!mhi_dev)
-> +		if (IS_ERR(mhi_dev))
->  			return;
->  
->  		mhi_dev->dev_type = MHI_DEVICE_XFER;
-> -- 
-> 2.25.1
-> 
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index fad042118862..95c5b6facc59 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1665,14 +1665,16 @@ static const struct watchdog_ops ds1388_wdt_ops = {
+ 
+ };
+ 
+-static void ds1307_wdt_register(struct ds1307 *ds1307)
++static int ds1307_wdt_register(struct ds1307 *ds1307)
+ {
+ 	struct watchdog_device	*wdt;
+ 
+ 	if (ds1307->type != ds_1388)
+-		return;
++		return 0;
+ 
+ 	wdt = devm_kzalloc(ds1307->dev, sizeof(*wdt), GFP_KERNEL);
++	if (!wdt)
++		return -ENOMEM;
+ 
+ 	wdt->info = &ds1388_wdt_info;
+ 	wdt->ops = &ds1388_wdt_ops;
+@@ -1683,10 +1685,13 @@ static void ds1307_wdt_register(struct ds1307 *ds1307)
+ 	watchdog_init_timeout(wdt, 0, ds1307->dev);
+ 	watchdog_set_drvdata(wdt, ds1307);
+ 	devm_watchdog_register_device(ds1307->dev, wdt);
++
++	return 0;
+ }
+ #else
+-static void ds1307_wdt_register(struct ds1307 *ds1307)
++static int ds1307_wdt_register(struct ds1307 *ds1307)
+ {
++	return 0;
+ }
+ #endif /* CONFIG_WATCHDOG_CORE */
+ 
+@@ -1979,9 +1984,9 @@ static int ds1307_probe(struct i2c_client *client,
+ 
+ 	ds1307_hwmon_register(ds1307);
+ 	ds1307_clks_register(ds1307);
+-	ds1307_wdt_register(ds1307);
++	err = ds1307_wdt_register(ds1307);
+ 
+-	return 0;
++	return err;
+ 
+ exit:
+ 	return err;
+-- 
+2.25.1
