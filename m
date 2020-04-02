@@ -1,47 +1,81 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Thu, 30 Apr 2020 20:06:59 +0000
-Subject: Re: [PATCH v2] i2c: i2c-amd-mp2-pci: Fix Oops in amd_mp2_pci_init() error handling
-Message-Id: <20200430200659.GA19155@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Apr 2020 13:52:01 +0000
+Subject: [PATCH][V2][next] rtc: ds1307: check for failed memory allocation on wdt
+Message-Id: <20200402135201.548313-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAC_JBqofuyRiSmK0mFqVLaY=5k9MYmjGaVmggx2dn_YjN8VOmw@mail.gmail.com>
- <20190910134242.GA6620@mwanda>
- <20200430141050.GB3355@ninjato>
- <CAC_JBqo4x0KBdb3j3VFrZu5sG2Mfx3xpbDzFk68h3TU99ZVj3Q@mail.gmail.com>
-In-Reply-To: <CAC_JBqo4x0KBdb3j3VFrZu5sG2Mfx3xpbDzFk68h3TU99ZVj3Q@mail.gmail.com>
-To: Elie Morisse <syniurge@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Nehal Shah <nehal-bakulchandra.shah@amd.com>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Guenter Roeck <linux@roeck-us.net>, Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Currently a failed memory allocation will lead to a null pointer
+dereference on point wdt.  Fix this by checking for a failed allocation
+and adding error return handling to function ds1307_wdt_register.
+Also move the error exit label "exit" to allow a return statement to
+be removed.
 
+Addresses-Coverity: ("Dereference null return")
+Fixes: fd90d48db037 ("rtc: ds1307: add support for watchdog timer on ds1388")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: move error exit label and remove a return statement, thanks to 
+    Walter Harms for spotting this clean up.
+---
+ drivers/rtc/rtc-ds1307.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-> Yes I'm still here to review patches.
-
-Glad to hear that :)
-
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6rL98ACgkQFA3kzBSg
-KbZhCg//QeNHhV9f1rXCvKq5Q0ePNMrFWiSk3HTktz1ULK5o8oRvjberyUM7azzd
-estLO7Wy8q4pFrxmXFs2K3sY3xIB/JyjMKIHMcfvV0gdEb8QHVo5S7BVsbga7qKB
-YRV6Pwk8Z0vbjGfxHjSUomY2x7NRbNJdOS0uMyBMPdG4yRUHo3KJ/ZA7iAeIVB87
-/w7l9mWd6UcQNCdANxMGOhnd5WqdfDCuCAVqpKJ5qWe+G8yNo09VcgGSwKCOfait
-nIuiiY2pDo9MxsvYRBlP3VqQiEQCcQEKZpLzbvC4hP7/GAqa1Jl4Uzwd5GsLCjPw
-IjuX88WWb3Ls2s0G4WBUMCHAfhXw6PL6+aZ6JewGlR3jxOlsRKzpU2eTRlcYm45c
-7MYmHW2V/cmYgqm67WvkP/P8EeqK5dEl3QZNF0k2g2cvjlFidImDKEOBIk8eFofw
-RQhh7dEWYKds2E8kdF7gdZYt/OeMhgQiwGwINHZs91yHXn4tOtrGW2+rvQPoRQry
-Iw0736Kz8Fhp0jxYAXaqAdsSkPnsZJib2ReE0Dd8hMwCFF4iTF2p1jRw6WR7YTrf
-bocsIj5OAIkkQLIOliiPdp6JWLEDsoNNjyt5jCjkq+VD2XfVW5lUSOS/niYX/EX6
-6ooQfkAHWTD+X5IlBLaweUV6q2smwT31j+xetgueb8pYCVnQXdw=
-=g4f+
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index fad042118862..c058b02efb4d 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1665,14 +1665,16 @@ static const struct watchdog_ops ds1388_wdt_ops = {
+ 
+ };
+ 
+-static void ds1307_wdt_register(struct ds1307 *ds1307)
++static int ds1307_wdt_register(struct ds1307 *ds1307)
+ {
+ 	struct watchdog_device	*wdt;
+ 
+ 	if (ds1307->type != ds_1388)
+-		return;
++		return 0;
+ 
+ 	wdt = devm_kzalloc(ds1307->dev, sizeof(*wdt), GFP_KERNEL);
++	if (!wdt)
++		return -ENOMEM;
+ 
+ 	wdt->info = &ds1388_wdt_info;
+ 	wdt->ops = &ds1388_wdt_ops;
+@@ -1683,10 +1685,13 @@ static void ds1307_wdt_register(struct ds1307 *ds1307)
+ 	watchdog_init_timeout(wdt, 0, ds1307->dev);
+ 	watchdog_set_drvdata(wdt, ds1307);
+ 	devm_watchdog_register_device(ds1307->dev, wdt);
++
++	return 0;
+ }
+ #else
+-static void ds1307_wdt_register(struct ds1307 *ds1307)
++static int ds1307_wdt_register(struct ds1307 *ds1307)
+ {
++	return 0;
+ }
+ #endif /* CONFIG_WATCHDOG_CORE */
+ 
+@@ -1979,10 +1984,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 
+ 	ds1307_hwmon_register(ds1307);
+ 	ds1307_clks_register(ds1307);
+-	ds1307_wdt_register(ds1307);
+-
+-	return 0;
+-
++	err = ds1307_wdt_register(ds1307);
+ exit:
+ 	return err;
+ }
+-- 
+2.25.1
