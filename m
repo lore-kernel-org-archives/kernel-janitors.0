@@ -1,34 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Apr 2020 09:27:53 +0000
-Subject: [PATCH] mailbox: imx: Fix return in imx_mu_scu_xlate()
-Message-Id: <20200407092753.GH68494@mwanda>
+From: Igor Russkikh <irusskikh@marvell.com>
+Date: Thu, 02 Apr 2020 11:40:06 +0000
+Subject: RE: [EXT] [PATCH][next] net: atlantic: fix missing | operator when assigning rec->llc
+Message-Id: <DM5PR18MB14189BD4043BE8974C9AC001B7C60@DM5PR18MB1418.namprd18.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200401232736.410028-1-colin.king@canonical.com>
+In-Reply-To: <20200401232736.410028-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, Mark Starovoytov <mstarovoitov@marvell.com>, Dmitry Bogdanov <dbogdanov@marvell.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This called from mbox_request_channel().  The caller is  expecting error
-pointers and not NULL so this "return NULL;" will lead to an Oops.
-
-Fixes: 0a67003b1985 ("mailbox: imx: add SCU MU support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/mailbox/imx-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 7906624a731c..9d6f0217077b 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -374,7 +374,7 @@ static struct mbox_chan *imx_mu_scu_xlate(struct mbox_controller *mbox,
- 		break;
- 	default:
- 		dev_err(mbox->dev, "Invalid chan type: %d\n", type);
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 	}
- 
- 	if (chan >= mbox->num_chans) {
--- 
-2.25.1
+VGhhbmtzIENvbGluLA0KDQpXZSBhbHNvIGZvdW5kIHRoaXMgdHlwbyByZWNlbnRseSwgYnV0IHlv
+dSB3ZXJlIGFoZWFkIG9mIHVzICkNCg0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2lu
+Z0BjYW5vbmljYWwuY29tPg0KPiByZWMtPmxsYyBpcyBjdXJyZW50bHkgYmVpbmcgYXNzaWduZWQg
+dHdpY2UsIG9uY2Ugd2l0aCB0aGUgbG93ZXIgOCBiaXRzDQo+IGZyb20gcGFja2VkX3JlY29yZFs4
+XSBhbmQgdGhlbiByZS1hc3NpZ25lZCBhZnRlcndhcmRzIHdpdGggZGF0YSBmcm9tIHBhY2tlZF9y
+ZWNvcmRbOV0uICBUaGlzIGxvb2tzIGxpa2UgYSB0eXBlLA0KPiAgSSBiZWxpZXZlIHRoZSBzZWNv
+bmQgYXNzaWdubWVudCBzaG91bGQgYmUgdXNpbmcgdGhlIHw9IG9wZXJhdG9yIHJhdGhlciB0aGFu
+IGEgZGlyZWN0IGFzc2lnbm1lbnQuDQoNCj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlVudXNlZCB2
+YWx1ZSIpDQo+IEZpeGVzOiBiOGY4YTBiN2I1Y2IgKCJuZXQ6IGF0bGFudGljOiBNQUNTZWMgaW5n
+cmVzcyBvZmZsb2FkIEhXIGJpbmRpbmdzIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
+bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KQWNrZWQtYnk6IElnb3IgUnVzc2tpa2gg
+PGlydXNza2lraEBtYXJlbGwuY29tPg0K
