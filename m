@@ -1,7 +1,7 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 02 Apr 2020 14:39:51 +0000
+Date: Thu, 02 Apr 2020 14:44:44 +0000
 Subject: Re: [PATCH][V2][next] rtc: ds1307: check for failed memory allocation on wdt
-Message-Id: <15e369be-847a-f480-988d-7d119d1f5bf3@roeck-us.net>
+Message-Id: <c6fe9db8-3e27-b6fc-fff7-131cecad3f88@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200402135201.548313-1-colin.king@canonical.com>
 In-Reply-To: <20200402135201.548313-1-colin.king@canonical.com>
@@ -40,11 +40,6 @@ On 4/2/20 6:52 AM, Colin King wrote:
 >  
 > -static void ds1307_wdt_register(struct ds1307 *ds1307)
 > +static int ds1307_wdt_register(struct ds1307 *ds1307)
-
-What exactly is the point of returning an error just to ignore it ?
-
-Guenter
-
 >  {
 >  	struct watchdog_device	*wdt;
 >  
@@ -82,6 +77,14 @@ Guenter
 > -	return 0;
 > -
 > +	err = ds1307_wdt_register(ds1307);
+
+Ah, sorry, missed this one. The original idea was to ignore errors on purpose.
+Same as with hwmon. If you want to change this, fine with me. Note though
+that rtc_nvmem_register() now leaks a sysfs file if I understand the code
+correctly.
+
+Guenter
+
 >  exit:
 >  	return err;
 >  }
