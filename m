@@ -1,51 +1,39 @@
-From: "Paul E. McKenney" <paulmck@kernel.org>
-Date: Wed, 29 Apr 2020 15:53:26 +0000
-Subject: Re: [PATCH] rcutorture: Fix error codes in rcu_torture_read_exit_init()
-Message-Id: <20200429155326.GD7560@paulmck-ThinkPad-P72>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Apr 2020 11:19:03 +0000
+Subject: [PATCH] bcache: remove redundant variables i and n
+Message-Id: <20200402111903.514146-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429132235.GA815283@mwanda>
-In-Reply-To: <20200429132235.GA815283@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Josh Triplett <josh@joshtriplett.org>, Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 04:22:35PM +0300, Dan Carpenter wrote:
-> The rcu_torture_read_exit_init() function is supposed to return negative
-> error codes which get propagated back down the call tree but the current
-> code returns true on failure.
-> 
-> Fixes: e02882cd57e3 ("rcutorture: Add races with task-exit processing")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch!  Talk about code sort of working by accident!!!
+Variables i and n are being assigned but are never used. They are
+redundant and can be removed.
 
-Thank you, and I folded this into the original commit with attribution.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/bcache/btree.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-						Thanx, Paul
-
-> ---
->  kernel/rcu/rcutorture.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> index 269881e51dc6d..5270674128029 100644
-> --- a/kernel/rcu/rcutorture.c
-> +++ b/kernel/rcu/rcutorture.c
-> @@ -2434,10 +2434,10 @@ static int rcu_torture_read_exit(void *unused)
->  	return 0;
->  }
->  
-> -static bool rcu_torture_read_exit_init(void)
-> +static int rcu_torture_read_exit_init(void)
->  {
->  	if (read_exit <= 0)
-> -		return true;
-> +		return -EINVAL;
->  	init_waitqueue_head(&read_exit_wq);
->  	read_exit_child_stop = false;
->  	read_exit_child_stopped = false;
-> -- 
-> 2.26.2
-> 
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 72856e5f23a3..114d0d73d909 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1907,10 +1907,8 @@ static int bch_btree_check_thread(void *arg)
+ 	struct btree_iter iter;
+ 	struct bkey *k, *p;
+ 	int cur_idx, prev_idx, skip_nr;
+-	int i, n;
+ 
+ 	k = p = NULL;
+-	i = n = 0;
+ 	cur_idx = prev_idx = 0;
+ 	ret = 0;
+ 
+-- 
+2.25.1
