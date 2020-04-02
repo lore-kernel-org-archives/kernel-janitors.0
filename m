@@ -1,62 +1,41 @@
-From: Ashish Kumar <ashish.kumar@nxp.com>
-Date: Tue, 21 Apr 2020 10:48:22 +0000
-Subject: RE: [PATCH -next] spi: spi-fsl-qspi: Fix return value check in fsl_qspi_probe()
-Message-Id: <HE1PR04MB31965ACB33866E9A673472AF95D50@HE1PR04MB3196.eurprd04.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Apr 2020 14:48:51 +0000
+Subject: [PATCH][next] mlxsw: spectrum_trap: fix unintention integer overflow on left shift
+Message-Id: <20200402144851.565983-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200421093908.48213-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200421093908.48213-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Han Xu <han.xu@nxp.com>, Mark Brown <broonie@kernel.org>
-Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Wei Yongjun,
+From: Colin Ian King <colin.king@canonical.com>
 
-> -----Original Message-----
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> Sent: Tuesday, April 21, 2020 3:09 PM
-> To: Han Xu <han.xu@nxp.com>; Mark Brown <broonie@kernel.org>; Ashish
-> Kumar <ashish.kumar@nxp.com>
-> Cc: Wei Yongjun <weiyongjun1@huawei.com>; linux-spi@vger.kernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: [PATCH -next] spi: spi-fsl-qspi: Fix return value check in
-> fsl_qspi_probe()
+Shifting the integer value 1 is evaluated using 32-bit
+arithmetic and then used in an expression that expects a 64-bit
+value, so there is potentially an integer overflow. Fix this
+by using the BIT_ULL macro to perform the shift and avoid the
+overflow.
 
-It sound like all return value in probe() is fixed.
-Please reword this commit message like this:
-spi: spi-fsl-qspi: Fix return value check of devm_ioremap() in probe()
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 13f2e64b94ea ("mlxsw: spectrum_trap: Add devlink-trap policer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_trap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> In case of error, the function devm_ioremap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be replaced
-> with NULL test.
-> 
-> Fixes: 858e26a515c2 ("spi: spi-fsl-qspi: Reduce devm_ioremap size to 4 times
-> AHB buffer size")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/spi/spi-fsl-qspi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c index
-> 83eb8a484faf..6766262d7e75 100644
-> --- a/drivers/spi/spi-fsl-qspi.c
-> +++ b/drivers/spi/spi-fsl-qspi.c
-> @@ -880,8 +880,8 @@ static int fsl_qspi_probe(struct platform_device
-> *pdev)
->  	/* Since there are 4 cs, map size required is 4 times ahb_buf_size */
->  	q->ahb_addr = devm_ioremap(dev, q->memmap_phy,
->  				   (q->devtype_data->ahb_buf_size * 4));
-> -	if (IS_ERR(q->ahb_addr)) {
-> -		ret = PTR_ERR(q->ahb_addr);
-> +	if (!q->ahb_addr) {
-> +		ret = -ENOMEM;
- Reviewed-by: Ashish Kumar <Ashish.Kumar@nxp.com>
-
-Thanks & Regards
-Ashish 
->  		goto err_put_ctrl;
->  	}
-> 
-> 
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_trap.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_trap.c
+index 9096ffd89e50..fbf714d027d8 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_trap.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_trap.c
+@@ -643,7 +643,7 @@ static int mlxsw_sp_trap_policer_bs(u64 burst, u8 *p_burst_size,
+ {
+ 	int bs = fls64(burst) - 1;
+ 
+-	if (burst != (1 << bs)) {
++	if (burst != (BIT_ULL(bs))) {
+ 		NL_SET_ERR_MSG_MOD(extack, "Policer burst size is not power of two");
+ 		return -EINVAL;
+ 	}
+-- 
+2.25.1
