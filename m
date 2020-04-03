@@ -1,38 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 25 Apr 2020 12:44:48 +0000
-Subject: [PATCH] drivers: uio: remove redundant assignment to variable retval
-Message-Id: <20200425124448.139532-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 03 Apr 2020 08:45:21 +0000
+Subject: Re: [PATCH] crypto: amlogic - Delete duplicate dev_err in meson_crypto_probe()
+Message-Id: <e1916128-6554-ea57-49ef-e4ad7b0d7229@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tang Bin <tangbin@cmss.chinamobile.com>, linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Neil Armstrong <narmstrong@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>, "David S. Miller" <davem@davemloft.net>
 
-From: Colin Ian King <colin.king@canonical.com>
+> In this place,
 
-The variable retval is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+I suggest to omit such a wording from the change description.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/uio/uio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 6e725c6c6256..73efb80815db 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -398,7 +398,7 @@ static void uio_dev_del_attributes(struct uio_device *idev)
- 
- static int uio_get_minor(struct uio_device *idev)
- {
--	int retval = -ENOMEM;
-+	int retval;
- 
- 	mutex_lock(&minor_lock);
- 	retval = idr_alloc(&uio_idr, idev, 0, UIO_MAX_DEVICES, GFP_KERNEL);
--- 
-2.25.1
+> when something goes wrong, platform_get_irq() will
+> print an error message,
+
+This information is helpful here.
+
+
+> so in order to avoid the situation of repeat output，
+
+Possible adjustments:
+* Separate sentences
+
+* “repeated output”
+
+
+> we should remove dev_err here.
+
+Thus remove a redundant function call.
+
+
+How do you think about to change any more source files in a systematic way?
+
+Regards,
+Markus
