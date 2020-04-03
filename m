@@ -1,38 +1,48 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 28 Apr 2020 14:14:59 +0000
-Subject: [PATCH -next] drm/mcde: dsi: Fix return value check in dev_err()
-Message-Id: <20200428141459.87624-1-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Apr 2020 11:04:37 +0000
+Subject: [PATCH][next][V3] rtc: ds1307: check for failed memory allocation on wdt
+Message-Id: <20200403110437.57420-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Guenter Roeck <linux@roeck-us.net>, Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of error, the function of_drm_find_bridge() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Currently a failed memory allocation will lead to a null pointer
+dereference on point wdt.  Fix this by checking for a failed
+allocation and just returning.
+
+Addresses-Coverity: ("Dereference null return")
+Fixes: fd90d48db037 ("rtc: ds1307: add support for watchdog timer on ds1388")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index 7af5ebb0c436..e705afc08c4e 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -1073,10 +1073,9 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
- 			panel = NULL;
+V2: move error exit label and remove a return statement, thanks to 
+    Walter Harms for spotting this clean up.
+V3: simplify, just bail out and return on detecting the out of memory
+    condition
+
+---
+
+ drivers/rtc/rtc-ds1307.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index fad042118862..49702942bb08 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1673,6 +1673,8 @@ static void ds1307_wdt_register(struct ds1307 *ds1307)
+ 		return;
  
- 			bridge = of_drm_find_bridge(child);
--			if (IS_ERR(bridge)) {
--				dev_err(dev, "failed to find bridge (%ld)\n",
--					PTR_ERR(bridge));
--				return PTR_ERR(bridge);
-+			if (!bridge) {
-+				dev_err(dev, "failed to find bridge\n");
-+				return -EINVAL;
- 			}
- 		}
- 	}
+ 	wdt = devm_kzalloc(ds1307->dev, sizeof(*wdt), GFP_KERNEL);
++	if (!wdt)
++		return;
+ 
+ 	wdt->info = &ds1388_wdt_info;
+ 	wdt->ops = &ds1388_wdt_ops;
+-- 
+2.25.1
