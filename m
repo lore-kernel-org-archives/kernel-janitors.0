@@ -1,36 +1,28 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 12:12:28 +0000
-Subject: [PATCH net-next] ice: Fix error return code in ice_add_prof()
-Message-Id: <20200427121228.12241-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 03 Apr 2020 10:12:54 +0000
+Subject: Re: mfd: asic3: Delete redundant variable definition
+Message-Id: <89c74a65-3da0-ddd5-2b80-407fd3a66ec6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b2a0e5f6-1f07-a7bd-2f3c-c95119efe635@web.de>
+ <20200403092521.GD30614@dell>
+In-Reply-To: <20200403092521.GD30614@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix to return a error code from the error handling case
-instead of 0, as done elsewhere in this function.
+> Why wasn't this sent 'in reply to'?  Something wrong with your mailer?
 
-Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It seems that my mail program version contains still open issues for
+the preservation of this information after a click on a web link.
+mailto:tangbin%40cmss.chinamobile.com?In-Reply-To=%3C20200403042020.17452-1-tangbin@cmss.chinamobile.com%3E&Cc=lee.jones%40linaro.org%2Clinux-kernel%40vger.kernel.org&Subject=Re%3A%20%5BPATCH%5D%20mfd%3Aasic3%3ADelete%20redundant%20variable%20definition
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-index 42bac3ec5526..e7a2671222d2 100644
---- a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-+++ b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-@@ -2962,8 +2962,10 @@ ice_add_prof(struct ice_hw *hw, enum ice_block blk, u64 id, u8 ptypes[],
- 
- 	/* add profile info */
- 	prof = devm_kzalloc(ice_hw_to_dev(hw), sizeof(*prof), GFP_KERNEL);
--	if (!prof)
-+	if (!prof) {
-+		status = ICE_ERR_NO_MEMORY;
- 		goto err_ice_add_prof;
-+	}
- 
- 	prof->profile_cookie = id;
- 	prof->prof_id = prof_id;
+
+> Now this messages is orphaned.  Floating about in my inbox on its own.
+
+This effect can be unfortunate.
+
+
+Regards,
+Markus
