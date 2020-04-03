@@ -1,26 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 06 Apr 2020 17:22:35 +0000
-Subject: Re: [PATCH] qed: remove redundant assignment to variable 'rc'
-Message-Id: <20200406.102235.1829438991568501793.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 03 Apr 2020 17:20:35 +0000
+Subject: Re: [PATCH v2] iommu/qcom: Fix local_base status check
+Message-Id: <084eb9b2-3f5f-4e87-08aa-fe57ed3f5d35@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200405134914.382716-1-colin.king@canonical.com>
-In-Reply-To: <20200405134914.382716-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tang Bin <tangbin@cmss.chinamobile.com>, iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, Rob Clark <robdclark@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  5 Apr 2020 14:49:14 +0100
+> Release resources when exiting on error.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable 'rc' is being assigned a value that is never read
-> and it is being updated later with a new value. The assignment
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I have got doubts that such a change description fits to
+the proposed source code adjustment.
 
-Applied.
+
+…
+> +++ b/drivers/iommu/qcom_iommu.c
+> @@ -813,8 +813,11 @@ static int qcom_iommu_device_probe(struct platform_device *pdev)
+>  	qcom_iommu->dev = dev;
+>
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (res)
+> +	if (res) {
+>  		qcom_iommu->local_base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(qcom_iommu->local_base))
+> +			return PTR_ERR(qcom_iommu->local_base);
+> +	}
+>
+>  	qcom_iommu->iface_clk = devm_clk_get(dev, "iface");
+…
+
+Will the commit message be improved any further?
+
+Would you like to add the tag “Fixes”?
+
+Regards,
+Markus
