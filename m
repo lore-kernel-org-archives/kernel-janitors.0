@@ -1,30 +1,41 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 03 Apr 2020 08:11:04 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Date: Fri, 03 Apr 2020 09:25:21 +0000
 Subject: Re: [PATCH] mfd: asic3: Delete redundant variable definition
-Message-Id: <b2a0e5f6-1f07-a7bd-2f3c-c95119efe635@web.de>
+Message-Id: <20200403092521.GD30614@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b2a0e5f6-1f07-a7bd-2f3c-c95119efe635@web.de>
+In-Reply-To: <b2a0e5f6-1f07-a7bd-2f3c-c95119efe635@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tang Bin <tangbin@cmss.chinamobile.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Tang Bin <tangbin@cmss.chinamobile.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> In this function, 'ret' is always assigned, even if 'pdata->leds'
-> don't carry out,
+On Fri, 03 Apr 2020, Markus Elfring wrote:
 
-I notice possibilities again to improve such a commit message.
+> > In this function, 'ret' is always assigned, even if 'pdata->leds'
+> > don't carry out,
+> 
+> I notice possibilities again to improve such a commit message.
+> 
+> 
+> > it has already been assigned a value in the above code, including '0',
+> 
+> The variable assignment will eventually be performed only in if branches.
+> 
+> 
+> > so it's redundant.
+> 
+> I suggest to reconsider this interpretation of the source code here.
+> Would you like to move the mentioned statement into an else branch
+> at the end?
 
+Why wasn't this sent 'in reply to'?  Something wrong with your mailer?
 
-> it has already been assigned a value in the above code, including '0',
+Now this messages is orphaned.  Floating about in my inbox on its own.
 
-The variable assignment will eventually be performed only in if branches.
-
-
-> so it's redundant.
-
-I suggest to reconsider this interpretation of the source code here.
-Would you like to move the mentioned statement into an else branch
-at the end?
-
-Regards,
-Markus
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
