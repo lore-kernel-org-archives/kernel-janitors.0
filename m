@@ -1,15 +1,20 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Thu, 02 Apr 2020 14:15:10 +0000
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Fri, 03 Apr 2020 19:43:55 +0000
 Subject: Re: [PATCH] pwm: meson: remove redundant assignment to variable fin_freq
-Message-Id: <20200402141510.yrjqhmccz6xjaknv@pengutronix.de>
+Message-Id: <20200403194355.GB201060@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="tjCHc7DPkfUGtrlw"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200402110857.509844-1-colin.king@canonical.com>
 In-Reply-To: <20200402110857.509844-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: Colin King <colin.king@canonical.com>
-Cc: linux-pwm@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-pwm@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+
+
+--tjCHc7DPkfUGtrlw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 On Thu, Apr 02, 2020 at 12:08:57PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -20,33 +25,32 @@ On Thu, Apr 02, 2020 at 12:08:57PM +0100, Colin King wrote:
 >=20
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pwm/pwm-meson.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This was introduced in 211ed630753d ("pwm: Add support for Meson PWM
-Controller"), adding Neil To Cc:.
+Applied, thanks.
 
-I don't think this was added to cope for a compiler not being able to
-see the variable is used initialized only.
+Thierry
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+--tjCHc7DPkfUGtrlw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks
-Uwe
+-----BEGIN PGP SIGNATURE-----
 
-> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-> index 8cf9129caa39..bd0d7336b898 100644
-> --- a/drivers/pwm/pwm-meson.c
-> +++ b/drivers/pwm/pwm-meson.c
-> @@ -163,7 +163,7 @@ static int meson_pwm_calc(struct meson_pwm *meson, st=
-ruct pwm_device *pwm,
->  {
->  	struct meson_pwm_channel *channel =3D pwm_get_chip_data(pwm);
->  	unsigned int duty, period, pre_div, cnt, duty_cnt;
-> -	unsigned long fin_freq =3D -1;
-> +	unsigned long fin_freq;
-> =20
->  	duty =3D state->duty_cycle;
->  	period =3D state->period;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6HkfsACgkQ3SOs138+
+s6HHhg//ZVsyNF1NKEv48QDcFr5adCAieVaCKk7J+kqjK7w2X2fnDrjuWXbmtlpb
+drMho5uh8b597B5cDcFoprjQSeHl0D56JKiLgBYsBuBxeRsFcVUVS5zXxt8mlvFc
+AIGKEPSSZsg+LFqlR5Msxf58M4YGYvG3lbFFQUOEN0I5K6W3wvfRY0+xGUvL0TC+
+1kOy5HmhM8lFPv5h/zgs0biiFg32D5ghmaLduZN9VjUJLgPmnlR3nESaWbjiFdZv
+XjGDkXPwx9+tJML2TzROxMWcBFFx7zBDfxHBvRfovv272QzMtpb7eT73Fh/cZSKQ
+hMCslpZy5Vj/2HcHkRY/w1MN/NZAdX/mNhQaIw1gz2P30mJxvUUDOoOaAGk3k8p6
+K2fUxY6YMthq7T731bAhROz1gxt4Ra0IMVksfAUSjBvHduIvOjikBJqTu+5TKIe3
+FnXfzaOODWL9+DQwHZtYJIRv4z21DfPFJunzohcsHKptPf1AqMW1BJX+4XX5rIbn
+dl0WS2h5BZ3lf/OU4FqXE6c9rKEj8NIZAYoYHTX1yDdQSI2G5GtFO811eGsN7h2C
+uVtwi5Jj2Js8rSxFQDj4d/jIKpxppzOvTGEXl1/Xz5XzMwD4TBl7ILKFryCnYCN5
+L6Y59GbxDRXjBGJuVj3HhV1bFnBcVqSFz5swfsnvXCMTNKp0wlk=
+=9i9z
+-----END PGP SIGNATURE-----
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+--tjCHc7DPkfUGtrlw--
