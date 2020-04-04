@@ -1,34 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 10 Apr 2020 17:12:24 +0000
-Subject: [PATCH] iio: imu: adis: Add a missing '\n' in a log message
-Message-Id: <20200410171224.4633-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 04 Apr 2020 18:02:38 +0000
+Subject: [bug report] ethtool: provide coalescing parameters with COALESCE_GET request
+Message-Id: <20200404180238.GA173535@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alexandru.ardelean@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, stefan.popa@analog.com, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
+Hello Michal Kubecek,
 
-Fixes: 1fd456702692 ("iio: imu: adis: add support product ID check in adis_initial_startup")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/imu/adis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 217275453b3e: "ethtool: provide coalescing parameters with
+COALESCE_GET request" from Mar 28, 2020, leads to the following
+static checker warning:
 
-diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-index a8afd01de4f3..2e7d0d337f8f 100644
---- a/drivers/iio/imu/adis.c
-+++ b/drivers/iio/imu/adis.c
-@@ -419,7 +419,7 @@ int __adis_initial_startup(struct adis *adis)
- 
- 	if (prod_id != adis->data->prod_id)
- 		dev_warn(&adis->spi->dev,
--			 "Device ID(%u) and product ID(%u) do not match.",
-+			 "Device ID(%u) and product ID(%u) do not match.\n",
- 			 adis->data->prod_id, prod_id);
- 
- 	return 0;
--- 
-2.20.1
+	net/ethtool/coalesce.c:134 coalesce_put_u32()
+	warn: signedness bug returning '(-90)'
+
+net/ethtool/coalesce.c
+   129  static bool coalesce_put_u32(struct sk_buff *skb, u16 attr_type, u32 val,
+   130                               u32 supported_params)
+   131  {
+   132          if (!val && !(supported_params & attr_to_mask(attr_type)))
+   133                  return false;
+   134          return nla_put_u32(skb, attr_type, val);
+
+This is done deliberately to return true on failure and false on
+success but it causes a static checker warning.
+
+   135  }
+   136  
+   137  static bool coalesce_put_bool(struct sk_buff *skb, u16 attr_type, u32 val,
+   138                                u32 supported_params)
+   139  {
+   140          if (!val && !(supported_params & attr_to_mask(attr_type)))
+   141                  return false;
+   142          return nla_put_u8(skb, attr_type, !!val);
+
+Same.
+
+   143  }
+
+regards,
+dan carpenter
