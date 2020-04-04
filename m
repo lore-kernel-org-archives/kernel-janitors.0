@@ -1,49 +1,44 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Tue, 28 Apr 2020 07:30:01 +0000
-Subject: Re: [PATCH net-next] drivers: net: davinci_mdio: fix potential NULL dereference in davinci_mdio_prob
-Message-Id: <68b08143-971a-4607-098c-2cdca9a1b0ba@ti.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 04 Apr 2020 18:45:36 +0000
+Subject: [PATCH] PM / devfreq: tegra30: Delete an error message in tegra_devfreq_probe()
+Message-Id: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6AADFAC011213A4C87B956458587ADB419A6B43E@dggeml532-mbs.china.huawei.com>
-In-Reply-To: <6AADFAC011213A4C87B956458587ADB419A6B43E@dggeml532-mbs.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "weiyongjun (A)" <weiyongjun1@huawei.com>, David Lechner <david@lechnology.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Apr 2020 20:34:02 +0200
 
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
 
-On 28/04/2020 06:25, weiyongjun (A) wrote:
->>
->> On 4/27/20 4:40 AM, Wei Yongjun wrote:
->>> platform_get_resource() may fail and return NULL, so we should better
->>> check it's return value to avoid a NULL pointer dereference a bit
->>> later in the code.
->>>
->>> This is detected by Coccinelle semantic patch.
->>>
->>> @@
->>> expression pdev, res, n, t, e, e1, e2; @@
->>>
->>> res = \(platform_get_resource\|platform_get_resource_byname\)(pdev, t, n);
->>> + if (!res)
->>> +   return -EINVAL;
->>> ... when != res = NULL
->>> e = devm_ioremap(e1, res->start, e2);
->>>
->>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->>> ---
->>
->> Could we use devm_platform_ioremap_resource() instead?
-> 
-> We cannot use devm_platform_ioremap_resource() here, see
-> Commit 03f66f067560 ("net: ethernet: ti: davinci_mdio: use devm_ioremap()")
+This issue was detected by using the Coccinelle software.
 
-Correct, could you add fixed tag as above commit actually introduced an issue:
-devm_ioremap_resource() checks input parameters for null.
-  
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/devfreq/tegra30-devfreq.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
--- 
-Best regards,
-grygorii
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 28b2c7ca416e..93e6f4b25b04 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -807,10 +807,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	}
+
+ 	err = platform_get_irq(pdev, 0);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
++	if (err < 0)
+ 		return err;
+-	}
++
+ 	tegra->irq = err;
+
+ 	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
+--
+2.26.0
