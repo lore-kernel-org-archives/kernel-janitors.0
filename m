@@ -1,45 +1,43 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 02 Apr 2020 13:44:42 +0000
-Subject: [PATCH] MAINTAINERS: remove entry after hp100 driver removal
-Message-Id: <20200402134442.4709-1-lukas.bulwahn@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 04 Apr 2020 20:00:11 +0000
+Subject: [PATCH] drm/fsl-dcu: Delete an error message in fsl_dcu_drm_probe()
+Message-Id: <1c108582-ba46-153e-7975-f6cfd82d57c6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, Alison Wang <alison.wang@nxp.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Stefan Agner <stefan@agner.ch>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-Commit a10079c66290 ("staging: remove hp100 driver") removed all files
-from ./drivers/staging/hp/, but missed to adjust MAINTAINERS.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Apr 2020 21:54:31 +0200
 
-Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
 
-  warning: no file matches F: drivers/staging/hp/hp100.*
+This issue was detected by using the Coccinelle software.
 
-So, drop HP100 Driver entry in MAINTAINERS now.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Greg, here is a minor non-urgent patch for staging.
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- MAINTAINERS | 5 -----
- 1 file changed, 5 deletions(-)
+diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+index f15d2e7967a3..9e8ce0774db9 100644
+--- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
++++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+@@ -268,10 +268,8 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
+ 	}
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index be43f1e37902..1c1abe8229af 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7721,11 +7721,6 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Orphan
- F:	drivers/platform/x86/tc1100-wmi.c
- 
--HP100:	Driver for HP 10/100 Mbit/s Voice Grade Network Adapter Series
--M:	Jaroslav Kysela <perex@perex.cz>
--S:	Obsolete
--F:	drivers/staging/hp/hp100.*
--
- HPET:	High Precision Event Timers driver
- M:	Clemens Ladisch <clemens@ladisch.de>
- S:	Maintained
--- 
-2.17.1
+ 	fsl_dev->irq = platform_get_irq(pdev, 0);
+-	if (fsl_dev->irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (fsl_dev->irq < 0)
+ 		return fsl_dev->irq;
+-	}
+
+ 	fsl_dev->regmap = devm_regmap_init_mmio(dev, base,
+ 			&fsl_dcu_regmap_config);
+--
+2.26.0
