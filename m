@@ -1,44 +1,24 @@
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date: Sat, 11 Apr 2020 23:11:43 +0000
-Subject: Re: [PATCH] media: gspca: remove redundant assignment to variable status
-Message-Id: <CAAEAJfB3D7KxruC2TzeEhyeF8qGHOWUa2hKmqcptub5gciSAxQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 04 Apr 2020 07:06:46 +0000
+Subject: Re: [PATCH] Coccinelle: zalloc-simple: Fix patch mode for dma_alloc_coherent()
+Message-Id: <beeed2c8-1b5a-66a8-ec41-f5770c04bae9@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410141813.29497-1-colin.king@canonical.com>
-In-Reply-To: <20200410141813.29497-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Alex Dewar <alex.dewar@gmx.co.uk>, cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Christoph Hellwig <hch@lst.de>, Allison Randal <allison@lohutok.net>
 
-On Fri, 10 Apr 2020 at 11:18, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable status is being assigned a value that is never read.
-> The assignment is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Commit dfd32cad146e ("dma-mapping: remove dma_zalloc_coherent()"), in
+> removing dma_zalloc_coherent() treewide, inadvertently removed the patch
+> rule for dma_alloc_coherent(), leaving Coccinelle unable to auto-generate
+> patches for this case. Fix this.
 
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
+I suggest to reconsider also the distribution of recipients for your patch
+according to the fields “Cc” and “To”.
 
-> ---
->  drivers/media/usb/gspca/mr97310a.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/media/usb/gspca/mr97310a.c b/drivers/media/usb/gspca/mr97310a.c
-> index 502fc2eaffe0..464aa61cd914 100644
-> --- a/drivers/media/usb/gspca/mr97310a.c
-> +++ b/drivers/media/usb/gspca/mr97310a.c
-> @@ -287,7 +287,6 @@ static int zero_the_pointer(struct gspca_dev *gspca_dev)
->                         return err_code;
->
->                 err_code = cam_get_response16(gspca_dev, 0x21, 0);
-> -               status = data[0];
->                 tries++;
->                 if (err_code < 0)
->                         return err_code;
-> --
-> 2.25.1
->
+Will the software development attention grow in a way so that further
+implementation details can be adjusted also for the mentioned SmPL script?
+
+Regards,
+Markus
