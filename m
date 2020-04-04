@@ -1,38 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Apr 2020 11:21:42 +0000
-Subject: [PATCH] integrity: remove redundant assignment to variable ret
-Message-Id: <20200424112142.12261-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 04 Apr 2020 16:01:57 +0000
+Subject: Re: [PATCH] ARM: pxa: ssp: Delete an error message in pxa_ssp_probe()
+Message-Id: <c6790c2f-7b10-8d7f-5bc7-84d07fd96632@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <524ae90a-a7cb-feee-6107-743c52c2b1e4@web.de>
+ <CAHp75VcBKEJtEZg9wUVdqnSHWb3gaOx493GGWMtisdTAwxmGkA@mail.gmail.com>
+In-Reply-To: <CAHp75VcBKEJtEZg9wUVdqnSHWb3gaOx493GGWMtisdTAwxmGkA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>, Tang Bin <tangbin@cmss.chinamobile.com>, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Enrico Weigelt <lkml@metux.net>, Thomas Gleixner <tglx@linutronix.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Allison Randal <allison@lohutok.net>
 
-From: Colin Ian King <colin.king@canonical.com>
+>>         ssp->irq = platform_get_irq(pdev, 0);
+>> -       if (ssp->irq < 0) {
+>> -               dev_err(dev, "no IRQ resource defined\n");
+>> +       if (ssp->irq < 0)
+>>                 return -ENODEV;
+>> -       }
+>
+> At the same time we can unshadow the error code, i.e.
+>   return ssp->irq;
 
-The variable ret is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+Have you got any preferences for the order of possible change combinations?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/integrity/digsig_asymmetric.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index 4e0d6778277e..cfa4127d0518 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -79,7 +79,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	struct public_key_signature pks;
- 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
- 	struct key *key;
--	int ret = -ENOMEM;
-+	int ret;
- 
- 	if (siglen <= sizeof(*hdr))
- 		return -EBADMSG;
--- 
-2.25.1
+Regards,
+Markus
