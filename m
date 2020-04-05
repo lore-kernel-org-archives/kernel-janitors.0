@@ -1,17 +1,18 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Sat, 04 Apr 2020 21:40:42 +0000
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Sun, 05 Apr 2020 23:51:29 +0000
 Subject: Re: [PATCH] PM / devfreq: tegra30: Delete an error message in tegra_devfreq_probe()
-Message-Id: <27bdd09b-0b8d-a6ef-2ffd-53421277fcca@gmail.com>
+Message-Id: <924a6012-985e-b22d-6f85-e9eb3f03e88b@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
+References: <CGME20200404184602epcas1p1e0188779ade7c393f9e37a4757e1b6cc@epcas1p1.samsung.com>
+        <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
 In-Reply-To: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
 
-04.04.2020 21:45, Markus Elfring пишет:
+On 4/5/20 3:45 AM, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sat, 4 Apr 2020 20:34:02 +0200
 > 
@@ -46,7 +47,12 @@ Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang B
 > --
 > 2.26.0
 > 
+> 
+> 
 
-Thanks,
+Applied it. Thanks.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
