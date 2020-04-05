@@ -1,26 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Date: Tue, 21 Apr 2020 11:35:48 +0000
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant assignment to variable err
-Message-Id: <881187e9-68c0-6766-d462-881371973974@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 06:00:31 +0000
+Subject: Re: PM / devfreq: tegra30: Delete an error message in tegra_devfreq_probe()
+Message-Id: <72e2319e-9b9b-9045-c007-320b2be1e886@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200420220057.98796-1-colin.king@canonical.com>
-In-Reply-To: <20200420220057.98796-1-colin.king@canonical.com>
+References: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
+ <27bdd09b-0b8d-a6ef-2ffd-53421277fcca@gmail.com>
+In-Reply-To: <27bdd09b-0b8d-a6ef-2ffd-53421277fcca@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
 
-On 2020/4/21 6:00, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being assigned with a value that is never read
-> and it is being updated later with a new value. The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Thanks for your positive feedback.
 
-Thanks,
+Will the logging of error codes need any more clarification
+around such function calls?
+
+Regards,
+Markus
