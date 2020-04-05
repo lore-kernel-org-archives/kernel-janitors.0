@@ -1,46 +1,77 @@
-From: "Saleem, Shiraz" <shiraz.saleem@intel.com>
-Date: Mon, 27 Apr 2020 17:54:43 +0000
-Subject: RE: [PATCH] i40iw: Fix error handling in i40iw_manage_arp_cache()
-Message-Id: <9DD61F30A802C4429A01CA4200E302A7DCD54B89@fmsmsx124.amr.corp.intel.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 12:18:23 +0000
+Subject: [PATCH] drm/exynos: Delete an error message in three functions
+Message-Id: <57b725ed-f705-b5e1-0da6-3d16801c7c85@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422092211.GA195357@mwanda>
- <20200425230004.GA23991@ziepe.ca>
-In-Reply-To: <20200425230004.GA23991@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jason Gunthorpe <jgg@ziepe.ca>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Latif, Faisal" <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Shannon Nelson <shannon.nelson@intel.com>, "Singhai, Anjali" <anjali.singhai@intel.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-> Subject: Re: [PATCH] i40iw: Fix error handling in i40iw_manage_arp_cache()
-> 
-> On Wed, Apr 22, 2020 at 12:22:11PM +0300, Dan Carpenter wrote:
-> > The i40iw_arp_table() function can return -EOVERFLOW if
-> > i40iw_alloc_resource() fails so we can't just test for "= -1".
-> >
-> > Fixes: 4e9042e647ff ("i40iw: add hw and utils files")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > drivers/infiniband/hw/i40iw/i40iw_hw.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/infiniband/hw/i40iw/i40iw_hw.c
-> > b/drivers/infiniband/hw/i40iw/i40iw_hw.c
-> > index 55a1fbf0e670..ae8b97c30665 100644
-> > +++ b/drivers/infiniband/hw/i40iw/i40iw_hw.c
-> > @@ -534,7 +534,7 @@ void i40iw_manage_arp_cache(struct i40iw_device
-> *iwdev,
-> >  	int arp_index;
-> >
-> >  	arp_index = i40iw_arp_table(iwdev, ip_addr, ipv4, mac_addr, action);
-> > -	if (arp_index = -1)
-> > +	if (arp_index < 0)
-> >  		return;
-> >  	cqp_request = i40iw_get_cqp_request(&iwdev->cqp, false);
-> >  	if (!cqp_request)
-> 
-> It is right Shiraz?
-> 
-Yes. Not convinced i40iw_manage_arp_cache being a void is ok
-but that's a separate problem which I ll review internally.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Apr 2020 14:10:09 +0200
 
-Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
+The function “platform_get_irq” can log an error already.
+Thus omit redundant messages for the exception handling in the
+calling functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index e080aa92338c..a00c6dd16c8a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1813,10 +1813,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	}
+
+ 	dsi->irq = platform_get_irq(pdev, 0);
+-	if (dsi->irq < 0) {
+-		dev_err(dev, "failed to request dsi irq resource\n");
++	if (dsi->irq < 0)
+ 		return dsi->irq;
+-	}
+
+ 	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_threaded_irq(dev, dsi->irq, NULL,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index dafa87b82052..2d94afba031e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -293,10 +293,8 @@ static int rotator_probe(struct platform_device *pdev)
+ 		return PTR_ERR(rot->regs);
+
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+
+ 	ret = devm_request_irq(dev, irq, rotator_irq_handler, 0, dev_name(dev),
+ 			       rot);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index 93c43c8d914e..ce1857138f89 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -502,10 +502,8 @@ static int scaler_probe(struct platform_device *pdev)
+ 		return PTR_ERR(scaler->regs);
+
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+
+ 	ret = devm_request_threaded_irq(dev, irq, NULL,	scaler_irq_handler,
+ 					IRQF_ONESHOT, "drm_scaler", scaler);
+--
+2.26.0
