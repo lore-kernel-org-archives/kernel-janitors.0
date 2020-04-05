@@ -1,75 +1,43 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 08 Apr 2020 20:23:32 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <4b7e1cf3-6fa7-60af-a1d3-2457339dbe8a@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 09:16:42 +0000
+Subject: [PATCH] drm/imx: imx-tve: Delete an error message in imx_tve_bind()
+Message-Id: <eb87043b-1881-da68-ba28-35406b6594ed@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
- <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
-In-Reply-To: <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Apr 2020 11:01:49 +0200
 
-Le 08/04/2020 à 04:14, Joe Perches a écrit :
-> This works rather better:
->
-> Perhaps you could test?
-> ---
->
-> v2:
->
-> o Avoid pr_cont
-> o Use only last format line if split across multiple lines
->
->   scripts/checkpatch.pl | 22 ++++++++++++++++++++++
->   1 file changed, 22 insertions(+)
->
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index d64c67..f00a6c8 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -5673,6 +5673,28 @@ sub process {
->   			}
->   		}
->   
-> +# check for possible missing newlines at the end of common logging functions
-> +		if (defined($stat) &&
-> +		    $stat =~ /^\+\s*($logFunctions)\s*\((?:\s*$FuncArg\s*,\s*){0,3}\s*$String/ &&
-> +		    $1 !~ /_cont$/ && $1 =~ /^(?:pr|dev|netdev|netif|wiphy)_/) {
-> +			my $cnt = statement_rawlines($stat);
-> +			my $extracted_string = "";
-> +			for (my $i = 0; $i < $cnt; $i++) {
-> +				next if ($lines[$linenr + $i - 1] !~ /$String\s*[,\)]/);
-> +				$extracted_string = get_quoted_string($lines[$linenr + $i - 1],
-> +								      $rawlines[$linenr + $i - 1]);
-> +				last if ($extracted_string ne "");
-> +			}
-> +			if ($extracted_string ne "" && $extracted_string !~ /\\n"$/) {
-> +				my $herectx = $here . "\n";
-> +				for (my $n = 0; $n < $cnt; $n++) {
-> +					$herectx .=  raw_line($linenr, $n) . "\n";
-> +				}
-> +				WARN("MISSING_FORMAT_NEWLINE",
-> +				     "Possible missing '\\n' at the end of a logging message format string\n" . $herectx);
-> +			}
-> +		}
-> +
->   # check for logging functions with KERN_<LEVEL>
->   		if ($line !~ /printk(?:_ratelimited|_once)?\s*\(/ &&
->   		    $line =~ /\b$logFunctions\s*\(.*\b(KERN_[A-Z]+)\b/) {
->
-For what I wanted to check and according to the few tests I've made, it 
-looks fine.
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
 
-Thank you very much for sharing this much more robust (and working) 
-alternative.
+This issue was detected by using the Coccinelle software.
 
-For what it worth: (i.e. much more tests should be done)
-Tested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/imx/imx-tve.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Maybe, at least a Suggested-By: would be appreciated.
+diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
+index 5bbfaa2cd0f4..23adbb818d92 100644
+--- a/drivers/gpu/drm/imx/imx-tve.c
++++ b/drivers/gpu/drm/imx/imx-tve.c
+@@ -598,10 +598,8 @@ static int imx_tve_bind(struct device *dev, struct device *master, void *data)
+ 	}
 
-CJ
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+
+ 	ret = devm_request_threaded_irq(dev, irq, NULL,
+ 					imx_tve_irq_handler, IRQF_ONESHOT,
+--
+2.26.0
