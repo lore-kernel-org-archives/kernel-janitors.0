@@ -1,30 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 28 Apr 2020 14:18:55 +0000
-Subject: [PATCH -next] scsi: cxlflash: Fix error return code in cxlflash_probe()
-Message-Id: <20200428141855.88704-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 11:53:05 +0000
+Subject: [PATCH] drm/sun4i: tcon: Delete an error message in sun4i_tcon_init_irq()
+Message-Id: <5a6cf5a7-3f27-5425-4d6a-550a17bc51e3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Manoj N . Kumar" <manoj@linux.ibm.com>, "Matthew R. Ochs" <mrochs@linux.ibm.com>, Uma Krishnan <ukrishn@linux.ibm.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Maxime Ripard <mripard@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-Fix to return negative error code -ENOMEM from create_afu error
-handling case instead of 0, as done elsewhere in this function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Apr 2020 13:45:53 +0200
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/cxlflash/main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-index fbd2ae40dab4..fcc5aa9f6014 100644
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -3744,6 +3744,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
- 	cfg->afu_cookie = cfg->ops->create_afu(pdev);
- 	if (unlikely(!cfg->afu_cookie)) {
- 		dev_err(dev, "%s: create_afu failed\n", __func__);
-+		rc = -ENOMEM;
- 		goto out_remove;
- 	}
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 624437b27cdc..359b56e43b83 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -812,10 +812,8 @@ static int sun4i_tcon_init_irq(struct device *dev,
+ 	int irq, ret;
+
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "Couldn't retrieve the TCON interrupt\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+
+ 	ret = devm_request_irq(dev, irq, sun4i_tcon_handler, 0,
+ 			       dev_name(dev), tcon);
+--
+2.26.0
