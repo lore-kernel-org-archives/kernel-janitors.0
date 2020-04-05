@@ -1,43 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 05 Apr 2020 11:34:54 +0000
-Subject: [PATCH] drm/omap: dmm_tiler: Delete an error message in omap_dmm_probe()
-Message-Id: <89420027-bf29-3322-9d1d-f77cf4a8c35d@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 05 Apr 2020 12:13:47 +0000
+Subject: [PATCH][next] drm/vmwgfx: remove redundant assignment to variable ret
+Message-Id: <20200405121347.370645-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Apr 2020 13:31:16 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The function “platform_get_irq” can log an error already.
-Thus omit a redundant message for the exception handling in the
-calling function.
+The variable ret is being initialized with a value that is never read
+and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 42ec51bb7b1b..63553e97207e 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -820,10 +820,8 @@ static int omap_dmm_probe(struct platform_device *dev)
- 	}
-
- 	omap_dmm->irq = platform_get_irq(dev, 0);
--	if (omap_dmm->irq < 0) {
--		dev_err(&dev->dev, "failed to get IRQ resource\n");
-+	if (omap_dmm->irq < 0)
- 		goto fail;
--	}
-
- 	omap_dmm->dev = &dev->dev;
-
---
-2.26.0
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+index 7ef51fa84b01..126f93c0b0b8 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+@@ -1651,7 +1651,7 @@ vmw_gb_surface_reference_internal(struct drm_device *dev,
+ 	struct vmw_surface_metadata *metadata;
+ 	struct ttm_base_object *base;
+ 	uint32_t backup_handle;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	ret = vmw_surface_handle_reference(dev_priv, file_priv, req->sid,
+ 					   req->handle_type, &base);
+-- 
+2.25.1
