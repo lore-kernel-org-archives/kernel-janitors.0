@@ -1,40 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 05 Apr 2020 13:01:34 +0000
-Subject: [PATCH] ftrace: remove redundant assignment to pointer 'name'
-Message-Id: <20200405130134.376247-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 13:16:01 +0000
+Subject: [PATCH] mailbox: ZynqMP IPI: Delete an error message in zynqmp_ipi_probe()
+Message-Id: <28699a47-7770-7ce2-69fa-183a98c368b8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org, Jassi Brar <jassisinghbrar@gmail.com>, Michal Simek <michal.simek@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Apr 2020 15:10:16 +0200
 
-The pointer 'name' is being initialized with a value that is never read
-and it is being updated later with a new value. The initialization
-is redundant and can be removed. Replace it with the later assignment.
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- kernel/trace/trace.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6519b7afc499..7f763edc7195 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3783,9 +3783,7 @@ print_trace_header(struct seq_file *m, struct trace_iterator *iter)
- 	struct tracer *type = iter->trace;
- 	unsigned long entries;
- 	unsigned long total;
--	const char *name = "preemption";
--
--	name = type->name;
-+	const char *name = type->name;
- 
- 	get_total_entries(buf, &total, &entries);
- 
--- 
-2.25.1
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 86887c9a349a..a4d176f160b8 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -668,10 +668,9 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
+
+ 	/* IPI IRQ */
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err(dev, "unable to find IPI IRQ.\n");
++	if (ret < 0)
+ 		goto free_mbox_dev;
+-	}
++
+ 	pdata->irq = ret;
+ 	ret = devm_request_irq(dev, pdata->irq, zynqmp_ipi_interrupt,
+ 			       IRQF_SHARED, dev_name(dev), pdata);
+--
+2.26.0
