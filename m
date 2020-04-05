@@ -1,35 +1,68 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 29 Apr 2020 06:52:01 +0000
-Subject: [PATCH 0/4 v2] firmware: stratix10-svc: Fix some error handling code
-Message-Id: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 05:44:01 +0000
+Subject: Re: Clarification for software development opportunities
+Message-Id: <95c5e77d-e993-f12e-11d6-9a43b9afc230@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <eae7170c-4371-4865-7b85-589c0ed2b5b6@web.de>
+ <2020040423261552036811@cmss.chinamobile.com>
+ <e71d56f1-6fce-5e2d-9719-1385ef3b0811@web.de>
+ <2020040505380926003012@cmss.chinamobile.com>
+In-Reply-To: <2020040505380926003012@cmss.chinamobile.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: =?UTF-8?B?5ZSQ5b2s?= <tangbin@cmss.chinamobile.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This serie was previously sent as a single patch.
-After a comment from Dan Carpenter about an error handling path that could be
-improved, I've looked deeper at the code and found other issues.
+> I don't know what is Coccinelle software, I will check it out.
 
-The previous patch corresponds to patch 3/4 in this serie.
-This v2 takes Dan's comment into account and fix another resource leak.
+I am curious under which circumstances the development tool box will be adjusted.
+http://coccinelle.lip6.fr/
 
-Patch 1/4: svc_create_memory_pool returns an error code on error, not NULL 
-Patch 2/4: undo a memremap on error path and remove funtion
-Patch 3/4: improve error handling in the probe function
-Patch 4/4: unrelated clean-up
 
-Christophe JAILLET (4):
-  firmware: stratix10-svc: Fix genpool creation error handling
-  firmware: stratix10-svc: Unmap some previously memremap'ed memory
-  firmware: stratix10-svc: Fix some error handling paths in
-    'stratix10_svc_drv_probe()'
-  firmware: stratix10-svc: Slighly simplify call
+> When I receive critical emails from others, I am happy that this is my study plan.
 
- drivers/firmware/stratix10-svc.c | 42 +++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+This view sounds positive.
 
--- 
-2.25.1
+
+> Previously, I was happy and looking forward to providing patches to the community.
+
+Such feedback is nice.
+
+
+> But when I noticed that you were sending similar patches over and over again,
+
+This can be an usual effect from the application of known source code
+analysis approaches.
+
+
+> I realized that if I want to increase my patch count,
+
+I suggest to reconsider corresponding development goals.
+
+
+> I would not be able to reuse some files I had already found,
+
+This can occasionally happen when some contributors try to achieve something
+in similar areas.
+
+* Would you like to clarify opportunities for further contributions?
+
+* Do you find globally distributed collaboration interesting?
+
+
+> which made me sad.
+
+* I find your feeling unfortunate.
+
+* I hope that your view can become more positive again.
+
+
+> So,thank you for giving me a lesson.
+
+This was eventually my intention partly.
+
+I imagine that possibilities can be improved also for teaching and education.
+
+Regards,
+Markus
