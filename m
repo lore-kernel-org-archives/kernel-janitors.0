@@ -1,33 +1,43 @@
-From: Tang Bin <tangbin@cmss.chinamobile.com>
-Date: Tue, 14 Apr 2020 09:13:09 +0000
-Subject: Re: [PATCH] usb: gadget: fsl: Fix a wrong judgment in fsl_udc_probe()
-Message-Id: <f712918c-2f61-0ba5-2ba8-b5ca3cce9a35@cmss.chinamobile.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 05 Apr 2020 09:30:19 +0000
+Subject: [PATCH] gpu/drm: ingenic: Delete an error message in ingenic_drm_probe()
+Message-Id: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410015832.8012-1-tangbin@cmss.chinamobile.com>
- <be8cd229-884a-40e6-3363-7c4680a51b30@web.de>
- <0b718268-d330-dfc1-aca3-3dd3203363d7@cmss.chinamobile.com>
- <20200414083036.GC14722@kadam>
-In-Reply-To: <20200414083036.GC14722@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Li Yang <leoyang.li@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Paul Cercueil <paul@crapouillou.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-Hi
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Apr 2020 11:25:30 +0200
 
-On 2020/4/14 16:30, Dan Carpenter wrote:
-> On Fri, Apr 10, 2020 at 04:05:06PM +0800, Tang Bin wrote:
->>>
->>>> Thus it must be fixed.
->>> Wording alternative:
->>>     Thus adjust the error detection and corresponding exception handling.
->> Got it.
-> Wow...
->
-> No, don't listen to Markus when it comes to writing commit messages.
-> You couldn't find worse advice anywhere.  :P
+The function “platform_get_irq” can log an error already.
+Thus omit a redundant message for the exception handling in the
+calling function.
 
-I'm actively waiting for a reply from the maintainer. Thank you very much.
+This issue was detected by using the Coccinelle software.
 
-Tang Bin
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/ingenic/ingenic-drm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
+index 9dfe7cb530e1..06ca752b76ee 100644
+--- a/drivers/gpu/drm/ingenic/ingenic-drm.c
++++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
+@@ -661,10 +661,8 @@ static int ingenic_drm_probe(struct platform_device *pdev)
+ 	}
+
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "Failed to get platform irq");
++	if (irq < 0)
+ 		return irq;
+-	}
+
+ 	if (soc_info->needs_dev_clk) {
+ 		priv->lcd_clk = devm_clk_get(dev, "lcd");
+--
+2.26.0
