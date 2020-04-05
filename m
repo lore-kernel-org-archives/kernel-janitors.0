@@ -1,33 +1,41 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 16 Apr 2020 06:51:50 +0000
-Subject: Re: [PATCH] hwrng: omap - Delete an error message in of_get_omap_rng_device_details()
-Message-Id: <20200416065150.GG7901@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 05 Apr 2020 13:49:14 +0000
+Subject: [PATCH] qed: remove redundant assignment to variable 'rc'
+Message-Id: <20200405134914.382716-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eae7170c-4371-4865-7b85-589c0ed2b5b6@web.de>
-In-Reply-To: <eae7170c-4371-4865-7b85-589c0ed2b5b6@web.de>
+References: <20190531132738.17221-1-colin.king@canonical.com>
+In-Reply-To: <20190531132738.17221-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-crypto@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Deepak Saxena <dsaxena@plexity.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matt Mackall <mpm@selenic.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 04, 2020 at 04:56:57PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 4 Apr 2020 16:45:57 +0200
-> 
-> The function “platform_get_irq” can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/char/hw_random/omap-rng.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The variable 'rc' is being assigned a value that is never read
+and it is being updated later with a new value. The assignment
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+index 1a5fc2ae351c..29810a1aa210 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+@@ -369,8 +369,8 @@ int qed_sp_eth_vport_start(struct qed_hwfn *p_hwfn,
+ 	struct qed_spq_entry *p_ent =  NULL;
+ 	struct qed_sp_init_data init_data;
+ 	u8 abs_vport_id = 0;
+-	int rc = -EINVAL;
+ 	u16 rx_mode = 0;
++	int rc;
+ 
+ 	rc = qed_fw_vport(p_hwfn, p_params->vport_id, &abs_vport_id);
+ 	if (rc)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
