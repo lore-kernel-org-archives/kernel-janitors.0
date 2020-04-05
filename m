@@ -1,33 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 28 Apr 2020 09:37:47 +0000
-Subject: Re: [PATCH net-next] ath10k: fix possible memory leak in ath10k_bmi_lz_data_large()
-Message-Id: <87ftcoeys4.fsf@kamboji.qca.qualcomm.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 05 Apr 2020 15:03:48 +0000
+Subject: [PATCH] ASoC: stm32: sai: Add missing cleanup
+Message-Id: <1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427104348.13570-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427104348.13570-1-weiyongjun1@huawei.com> (Wei Yongjun's
- message of "Mon, 27 Apr 2020 10:43:48 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, Wen Gong <wgong@codeaurora.org>
+To: Olivier Moysan <olivier.moysan@st.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-Wei Yongjun <weiyongjun1@huawei.com> writes:
+The commit 0d6defc7e0e4 ("ASoC: stm32: sai: manage rebind issue")
+converts some function calls to their non-devm equivalents.  The
+appropriate cleanup code was added to the remove function, but not
+to the probe function.  Add a call to snd_dmaengine_pcm_unregister
+to compensate for the call to snd_dmaengine_pcm_register in case
+of subsequent failure.
 
-> 'cmd' is malloced in ath10k_bmi_lz_data_large() and should be freed
-> before leaving from the error handling cases, otherwise it will cause
-> memory leak.
->
-> Fixes: d58f466a5dee ("ath10k: add large size for BMI download data for SDIO")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/net/wireless/ath/ath10k/bmi.c | 1 +
->  1 file changed, 1 insertion(+)
+Fixes: commit 0d6defc7e0e4 ("ASoC: stm32: sai: manage rebind issue")
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Please don't add "net-next" to wireless-driver patches (ath10k, ath11k
-etc), because we use different trees. You can add "-next" or
-"wireless-driver-next" if you want, but even that is not necessary as I
-apply patches to -next by default.
+---
 
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Not tested.
+
+ sound/soc/stm/stm32_sai_sub.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 2bd280c..0d0c9af 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -1556,8 +1556,10 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_register_component(&pdev->dev, &stm32_component,
+ 					 &sai->cpu_dai_drv, 1);
+-	if (ret)
++	if (ret) {
++		snd_dmaengine_pcm_unregister(&pdev->dev);
+ 		return ret;
++	}
+ 
+ 	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
+ 		conf = &stm32_sai_pcm_config_spdif;
