@@ -1,70 +1,31 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 14 Apr 2020 13:58:27 +0000
-Subject: Re: [PATCH] pwm: Add missing '\n' in log messages
-Message-Id: <20200414135827.GB3593749@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="/WwmFnJnmDyWGHa4"
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 06 Apr 2020 16:19:33 +0000
+Subject: Re: [PATCH][next] ath11k: fix error message to correctly report the command that failed
+Message-Id: <20200406161933.72BDCC433F2@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20200327192639.363354-1-colin.king@canonical.com>
+In-Reply-To: <20200327192639.363354-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Colin King <colin.king@canonical.com> wrote:
 
---/WwmFnJnmDyWGHa4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Currently the error message refers to the command WMI_TWT_DIeABLE_CMDID
+> which looks like a cut-n-paste mangled typo. Fix the message to match
+> the command WMI_BSS_COLOR_CHANGE_ENABLE_CMDID that failed.
+> 
+> Fixes: 5a032c8d1953 ("ath11k: add WMI calls required for handling BSS color")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-On Sat, Apr 11, 2020 at 05:35:28PM +0200, Christophe JAILLET wrote:
-> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
->=20
-> Fixes: 3ad1f3a33286 ("pwm: Implement some checks for lowlevel drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/pwm/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 9973c442b455..bca04965bfe6 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -537,7 +537,7 @@ static void pwm_apply_state_debug(struct pwm_device *=
-pwm,
-> =20
->  	if (!state->enabled && s2.enabled && s2.duty_cycle > 0)
->  		dev_warn(chip->dev,
-> -			 "requested disabled, but yielded enabled with duty > 0");
-> +			 "requested disabled, but yielded enabled with duty > 0\n");
-> =20
->  	/* reapply the state that the driver reported being configured. */
->  	err =3D chip->ops->apply(chip, pwm, &s1);
+Patch applied to ath-next branch of ath.git, thanks.
 
-I don't think this is strictly necessary any longer since the logging
-functions are supposed to add these themselves nowadays. But I like the
-consistency of this, so I'll apply this anyway.
+9a8074e3bcd7 ath11k: fix error message to correctly report the command that failed
 
-Thanks,
-Thierry
+-- 
+https://patchwork.kernel.org/patch/11462997/
 
---/WwmFnJnmDyWGHa4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6VwYMACgkQ3SOs138+
-s6Fzlg//b9ON8vAP4sRTnLHsUC0mCmY2XcrY0P5eCKvrjAivAAswf7qGNpzKcBN1
-FUzY74P+qLClXRXFcciVxdGCaPzb+dynFkizSZC5wqBathkkFK3WMAjfFkjH2fe5
-2pLX7gpMvlrlneBVM52ZrR2KK4fAonlQe7Xq07vKQ6K8stWmQblhGZNKXlCaK4fi
-gkzWQKzHvWML6Bzu5Zrk21Z/BxPeT4gHl0jxo3ZnsHhv1ZveNkDHDLB1ybDjTaEj
-p+faT8bCf4bSPp8OlpnJpP6d0yzAxcDO6gDRCEH/jaBUaZDkHEgjsSDxkL5H+lkp
-s8N/kJ9q+0qSivxQyFLPTGyUoUm5C/xkT81UrwWEQMbouN7FVBelXVs9SLKfUSbA
-noAYtOMxz8V4AxtUNniYyzo1ir8gqB4kZTUmr+cn0mP68WJHvmTHe/ElmC/bn8uK
-N92cuJnV0s4A+5SrPi4mDpLA4FP8m2MBAsEDKd5j1tPfBY7HrHgdgZkNxSIiehNQ
-+5rzl2LyBfx8rnz/Ljw02TpgJX/pNELNrM/Oa4jy3QoDiIlaUpoL5/d9QrIbt71d
-UlGep4cyvSvRlsY0CZDJhABtsjb6zLix/Rc6x0jCL45rwGVLilLbKgoHedCEllvu
-ueo5JO9bxbeHxPi+II1uGQ07LNd3TJyRZMVjSggpscDcfmfJCTc=
-=cwju
------END PGP SIGNATURE-----
-
---/WwmFnJnmDyWGHa4--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
