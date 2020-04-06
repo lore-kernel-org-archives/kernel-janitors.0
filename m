@@ -1,42 +1,79 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 16 Apr 2020 09:46:45 +0000
-Subject: Re: i2c: img-scb: remove duplicate dev_err()
-Message-Id: <73cc5a7c-787c-b263-7679-0f1fa58a70f8@web.de>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 06 Apr 2020 14:03:46 +0000
+Subject: Applied "ASoC: stm32: sai: Add missing cleanup" to the asoc tree
+Message-Id: <applied-1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <08564c03-3bbd-5518-1a9d-a40b8ca09f48@web.de>
- <20200415025426.GB14300@nuc8i5> <b5db65f5-f236-9e22-98df-07629a827738@web.de>
- <20200415152115.GA17519@nuc8i5> <668fe4da-56f2-8abe-1113-fa180f307524@web.de>
-In-Reply-To: <668fe4da-56f2-8abe-1113-fa180f307524@web.de>
+In-Reply-To: <1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Allison Randal <allison@lohutok.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Shah Nehal-Bakulchandra <Nehal-bakulchandra.Shah@amd.com>, Tang Bin <tangbin@cmss.chinamobile.com>, Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa@the-dreams.de>, Thor Thayer <thor.thayer@linux.intel.com>, Robert Richter <rrichter@marvell.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Barry Song <baohua@kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: alsa-devel@alsa-project.org, Olivier Moysan <olivier.moysan@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
->>> Would you like to take another look at corresponding change possibilities?
->>>
->> yes, I want to do it and thanks for your info.
+The patch
 
-How do you think about to improve the clarification around potentially
-“odd fixes” (because of collateral evolution)?
+   ASoC: stm32: sai: Add missing cleanup
 
+has been applied to the asoc tree at
 
-I noticed your update suggestion “i2c: busses: convert to devm_platform_ioremap_resource”.
-https://lore.kernel.org/linux-i2c/20200409135224.7426-1-zhengdejin5@gmail.com/
-https://lore.kernel.org/patchwork/patch/1222122/
-https://lkml.org/lkml/2020/4/9/431
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-It seems that you got encouraged to contribute changes according to another
-transformation approach by a single patch for a directory hierarchy.
-How likely is it that such adjustments touch source code places
-where related error messages would be found for further software
-development considerations?
-Would you like to wait until the integration of this update succeeded?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Will it be interesting in the meantime to become more familiar with
-applications around scripts for the semantic patch language?
-Can the Coccinelle software make the discussed transformations more convenient
-also for your needs?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Regards,
-Markus
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7506baeed8d05fc164254c64af14cfed2ac14446 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 5 Apr 2020 17:03:48 +0200
+Subject: [PATCH] ASoC: stm32: sai: Add missing cleanup
+
+The commit 0d6defc7e0e4 ("ASoC: stm32: sai: manage rebind issue")
+converts some function calls to their non-devm equivalents.  The
+appropriate cleanup code was added to the remove function, but not
+to the probe function.  Add a call to snd_dmaengine_pcm_unregister
+to compensate for the call to snd_dmaengine_pcm_register in case
+of subsequent failure.
+
+Fixes: commit 0d6defc7e0e4 ("ASoC: stm32: sai: manage rebind issue")
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+Acked-by: Olivier Moysan <olivier.moysan@st.com>
+Link: https://lore.kernel.org/r/1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/stm/stm32_sai_sub.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 2bd280c01c33..0d0c9afd8791 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -1556,8 +1556,10 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_register_component(&pdev->dev, &stm32_component,
+ 					 &sai->cpu_dai_drv, 1);
+-	if (ret)
++	if (ret) {
++		snd_dmaengine_pcm_unregister(&pdev->dev);
+ 		return ret;
++	}
+ 
+ 	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
+ 		conf = &stm32_sai_pcm_config_spdif;
+-- 
+2.20.1
