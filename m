@@ -1,7 +1,7 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 05 Apr 2020 18:52:23 +0000
+Date: Mon, 06 Apr 2020 17:48:52 +0000
 Subject: Re: [PATCH] gpu/drm: ingenic: Delete an error message in ingenic_drm_probe()
-Message-Id: <178751cb-10db-2f1b-3eca-6c0e6fb0fb17@wanadoo.fr>
+Message-Id: <9549b4a1-5874-5f00-6237-d5f5161e9852@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
 In-Reply-To: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
@@ -58,6 +58,25 @@ Le 05/04/2020 à 19:54, Julia Lawall a écrit :
 >
 > @r@
 > constant str : script:python() { check_for_missing_nl str };
+
+I can not have this work.
+According to my understanding of [1], this syntax is only allowed for 
+'position'.
+
+Nevertheless, I wrote another script (see below), which triggers ~2800 
+times in ./drivers only.
+Some are false positives, but most look valid.
+
+Not sure that fixing this kind of stuff really make sense.
+
+A better approach could be to teach ./checkpatch.pl, but I don't have 
+the knowledge for that.
+
+
+CJ
+
+[1]: http://coccinelle.lip6.fr/docs/main_grammar.pdf (SmPL Grammar 1.0.8)
+
 > expression e;
 > @@
 >
@@ -84,12 +103,7 @@ Le 05/04/2020 à 19:54, Julia Lawall a écrit :
 > though the code pretends that strnl is an identifier.
 >
 > julia
-
-Hi Julia,
-thx for the sample, I'll give it a try.
-
-CJ
-
+>
 >> CJ
 >>
 >>> +	if (irq < 0)
@@ -103,3 +117,50 @@ CJ
 >>>
 >>>
 > >
+
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+@initialize:python@
+@@
+
+@r@
+constant str;
+expression e;
+position p;
+@@
+(
+         pr_emerg@p(str, ...)
+|
+         pr_alert@p(str, ...)
+|
+         pr_crit@p(str, ...)
+|
+         pr_err@p(str, ...)
+|
+         pr_warn@p(str, ...)
+|
+         pr_notice@p(str, ...)
+|
+         pr_info@p(str, ...)
+|
+         dev_emerg@p(e, str, ...)
+|
+         dev_alert@p(e, str, ...)
+|
+         dev_crit@p(e, str, ...)
+|
+         dev_err@p(e, str, ...)
+|
+         dev_warn@p(e, str, ...)
+|
+         dev_notice@p(e, str, ...)
+|
+         dev_info@p(e, str, ...)
+)
+
+@script:python depends on r@
+str << r.str;
+p << r.p;
+@@
+if not str.endswith("\\n\""):
+     print(p[0].file + ":" + p[0].line + ": " + str)
