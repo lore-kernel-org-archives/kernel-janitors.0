@@ -1,110 +1,33 @@
-From: "J, KEERTHY" <j-keerthy@ti.com>
-Date: Mon, 06 Apr 2020 08:29:22 +0000
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Mon, 06 Apr 2020 09:03:57 +0000
 Subject: Re: [PATCH] thermal: Delete an error message in four functions
-Message-Id: <ac59c663-18a5-5bbf-09da-2cd8d034138c@ti.com>
+Message-Id: <89b0acdd-de88-bafb-0a2c-74aaf2fe0496@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <05f49ae7-5cc7-d6a0-fc3d-abaf2a0b373c@web.de>
- <CAHLCerMS5ghVXhOD7RAd5unxEe7w1W4_8hBP5Tf9HvuMEh5Lqg@mail.gmail.com>
-In-Reply-To: <CAHLCerMS5ghVXhOD7RAd5unxEe7w1W4_8hBP5Tf9HvuMEh5Lqg@mail.gmail.com>
+In-Reply-To: <05f49ae7-5cc7-d6a0-fc3d-abaf2a0b373c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Amit Kucheria <amit.kucheria@verdurent.com>, Markus Elfring <Markus.Elfring@web.de>
-Cc: Pascal Paillet <p.paillet@st.com>, Tang Bin <tangbin@cmss.chinamobile.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linux PM list <linux-pm@vger.kernel.org>, Clark Williams <williams@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-rockchip@lists.infradead.org, Allison Randal <allison@lohutok.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Colin Ian King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, linux-omap@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, lakml <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Allison Randal <allison@lohutok.net>, Amit Kucheria <amit.kucheria@verdurent.com>, Clark Williams <williams@redhat.com>, Colin Ian King <colin.king@canonical.com>, Eduardo Valentin <edubezval@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Keerthy <j-keerthy@ti.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pascal Paillet <p.paillet@st.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-
-
-On 4/6/2020 1:00 PM, Amit Kucheria wrote:
-> On Sun, Apr 5, 2020 at 10:21 PM Markus Elfring <Markus.Elfring@web.de> wrote:
->>
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sun, 5 Apr 2020 18:35:16 +0200
->>
->> The function “platform_get_irq” can log an error already.
->> Thus omit redundant messages for the exception handling in the
->> calling functions.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Reviewed-by: Keerthy <j-keerthy@ti.com>
-
+On 05/04/2020 18:50, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 5 Apr 2020 18:35:16 +0200
 > 
-> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+> The function “platform_get_irq” can log an error already.
+> Thus omit redundant messages for the exception handling in the
+> calling functions.
 > 
->> ---
->>   drivers/thermal/rockchip_thermal.c          | 4 +---
->>   drivers/thermal/st/st_thermal_memmap.c      | 4 +---
->>   drivers/thermal/st/stm_thermal.c            | 4 +---
->>   drivers/thermal/ti-soc-thermal/ti-bandgap.c | 5 ++---
->>   4 files changed, 5 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
->> index 7c1a8bccdcba..15a71ecc916c 100644
->> --- a/drivers/thermal/rockchip_thermal.c
->> +++ b/drivers/thermal/rockchip_thermal.c
->> @@ -1241,10 +1241,8 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
->>                  return -ENXIO;
->>
->>          irq = platform_get_irq(pdev, 0);
->> -       if (irq < 0) {
->> -               dev_err(&pdev->dev, "no irq resource?\n");
->> +       if (irq < 0)
->>                  return -EINVAL;
->> -       }
->>
->>          thermal = devm_kzalloc(&pdev->dev, sizeof(struct rockchip_thermal_data),
->>                                 GFP_KERNEL);
->> diff --git a/drivers/thermal/st/st_thermal_memmap.c b/drivers/thermal/st/st_thermal_memmap.c
->> index a824b78dabf8..a0114452d11f 100644
->> --- a/drivers/thermal/st/st_thermal_memmap.c
->> +++ b/drivers/thermal/st/st_thermal_memmap.c
->> @@ -94,10 +94,8 @@ static int st_mmap_register_enable_irq(struct st_thermal_sensor *sensor)
->>          int ret;
->>
->>          sensor->irq = platform_get_irq(pdev, 0);
->> -       if (sensor->irq < 0) {
->> -               dev_err(dev, "failed to register IRQ\n");
->> +       if (sensor->irq < 0)
->>                  return sensor->irq;
->> -       }
->>
->>          ret = devm_request_threaded_irq(dev, sensor->irq,
->>                                          NULL, st_mmap_thermal_trip_handler,
->> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
->> index 9314e3df6a42..331e2b768df5 100644
->> --- a/drivers/thermal/st/stm_thermal.c
->> +++ b/drivers/thermal/st/stm_thermal.c
->> @@ -385,10 +385,8 @@ static int stm_register_irq(struct stm_thermal_sensor *sensor)
->>          int ret;
->>
->>          sensor->irq = platform_get_irq(pdev, 0);
->> -       if (sensor->irq < 0) {
->> -               dev_err(dev, "%s: Unable to find IRQ\n", __func__);
->> +       if (sensor->irq < 0)
->>                  return sensor->irq;
->> -       }
->>
->>          ret = devm_request_threaded_irq(dev, sensor->irq,
->>                                          NULL,
->> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
->> index 263b0420fbe4..ab19ceff6e2a 100644
->> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
->> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
->> @@ -772,10 +772,9 @@ static int ti_bandgap_talert_init(struct ti_bandgap *bgp,
->>          int ret;
->>
->>          bgp->irq = platform_get_irq(pdev, 0);
->> -       if (bgp->irq < 0) {
->> -               dev_err(&pdev->dev, "get_irq failed\n");
->> +       if (bgp->irq < 0)
->>                  return bgp->irq;
->> -       }
->> +
->>          ret = request_threaded_irq(bgp->irq, NULL,
->>                                     ti_bandgap_talert_irq_handler,
->>                                     IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
->> --
->> 2.26.0
->>
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Applied, thanks
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
