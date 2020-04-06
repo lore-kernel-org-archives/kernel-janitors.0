@@ -1,43 +1,46 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 05 Apr 2020 11:53:05 +0000
-Subject: [PATCH] drm/sun4i: tcon: Delete an error message in sun4i_tcon_init_irq()
-Message-Id: <5a6cf5a7-3f27-5425-4d6a-550a17bc51e3@web.de>
+From: Maxime Ripard <maxime@cerno.tech>
+Date: Mon, 06 Apr 2020 08:19:43 +0000
+Subject: Re: [PATCH] drm/sun4i: tcon: Delete an error message in sun4i_tcon_init_irq()
+Message-Id: <20200406081943.hwjohk63lfpgrdvf@gilmour.lan>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="2o2zzt4r53mxdgxh"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Maxime Ripard <mripard@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+References: <5a6cf5a7-3f27-5425-4d6a-550a17bc51e3@web.de>
+In-Reply-To: <5a6cf5a7-3f27-5425-4d6a-550a17bc51e3@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Tang Bin <tangbin@cmss.chinamobile.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Apr 2020 13:45:53 +0200
 
-The function “platform_get_irq” can log an error already.
-Thus omit a redundant message for the exception handling in the
-calling function.
+--2o2zzt4r53mxdgxh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Sun, Apr 05, 2020 at 01:53:05PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 5 Apr 2020 13:45:53 +0200
+>
+> The function =E2=80=9Cplatform_get_irq=E2=80=9D can log an error already.
+> Thus omit a redundant message for the exception handling in the
+> calling function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied, thanks
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 624437b27cdc..359b56e43b83 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -812,10 +812,8 @@ static int sun4i_tcon_init_irq(struct device *dev,
- 	int irq, ret;
+Maxime
 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "Couldn't retrieve the TCON interrupt\n");
-+	if (irq < 0)
- 		return irq;
--	}
+--2o2zzt4r53mxdgxh
+Content-Type: application/pgp-signature; name="signature.asc"
 
- 	ret = devm_request_irq(dev, irq, sun4i_tcon_handler, 0,
- 			       dev_name(dev), tcon);
---
-2.26.0
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXormHgAKCRDj7w1vZxhR
+xcHuAP0WjOHzG00wGwXrC/L73opxmCYhJn2ZOmAfjN2ZfVnbHQEArryLB/dfTFEh
+yOQICYvOYcUiHRoH6LIRW07gu19BxQU=
+=YqNo
+-----END PGP SIGNATURE-----
+
+--2o2zzt4r53mxdgxh--
