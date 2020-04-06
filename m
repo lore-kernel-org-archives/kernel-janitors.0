@@ -1,35 +1,46 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Apr 2020 07:09:35 +0000
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Fix some typo in comments
-Message-Id: <CAMuHMdXoVGkRh63=H6P29JSS6yNCyKZdsAX1_qUNC_mH=aymyw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Apr 2020 09:19:10 +0000
+Subject: [PATCH net-next] drm/amd/display: Fix link_detect_sink()
+Message-Id: <20200406091910.GA5405@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200413041709.3630-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200413041709.3630-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Melissa Wen <melissa.srw@gmail.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, kernel-janitors@vger.kernel.org, Chris Park <Chris.Park@amd.com>, Zhan Liu <Zhan.Liu@amd.com>, Leo Li <sunpeng.li@amd.com>, Wenjing Liu <Wenjing.Liu@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Roman Li <Roman.Li@amd.com>, amd-gfx@lists.freedesktop.org, Nikola Cornij <nikola.cornij@amd.com>, David Airlie <airlied@linux.ie>, Lucy Li <lucy.li@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, David Galiffi <David.Galiffi@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Anthony Koo <Anthony.Koo@amd.com>
 
-On Mon, Apr 13, 2020 at 5:12 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> This file seems to be for R9A06G032 only. So replace reference to
-> R9A09G032 by R9A06G032 to avoid confusion.
->
-> AFAIK, R9A09G032 does'nt exist.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This TODO stub originally had curly braces but we deleted them as part
+of a clean up.  Unfortunately that changes the behavior of the code
+because now the switch statement is part of the if statement.  Smatch
+complains that the indenting doesn't make sense.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v5.8.
+    drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:425
+    link_detect_sink() warn: if statement not indented
 
-Gr{oetje,eeting}s,
+Also I changed "ZAZTODO" to just "TODO".  The ZAZ isn't used anywhere
+else.
 
-                        Geert
+Fixes: 621514aa4140 ("drm/amd/display: codestyle cleanup on dc_link file until detect_dp func")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Another idea is we should just delete this stub.  Stub code is generally
+against kernel style.  I can send a V2 if people want.
 
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index a93997ff0419..188670d374a3 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -423,7 +423,7 @@ static enum signal_type link_detect_sink(struct dc_link *link,
+ 
+ 	/* PCIE detects the actual connector on add-on board */
+ 	if (link->link_id.id = CONNECTOR_ID_PCIE)
+-		/* ZAZTODO implement PCIE add-on card detection */
++		; /* TODO implement PCIE add-on card detection */
+ 
+ 	switch (link->link_id.id) {
+ 	case CONNECTOR_ID_HDMI_TYPE_A: {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.25.1
