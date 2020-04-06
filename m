@@ -1,44 +1,40 @@
-From: Tang Bin <tangbin@cmss.chinamobile.com>
-Date: Fri, 10 Apr 2020 09:15:39 +0000
-Subject: Re: usb: gadget: fsl: Fix a wrong judgment in fsl_udc_probe()
-Message-Id: <a4738b42-b297-766c-56bf-94a91bc82767@cmss.chinamobile.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Apr 2020 14:45:52 +0000
+Subject: [PATCH 2/2] vdpa: Fix pointer math bug in vdpasim_get_config()
+Message-Id: <20200406144552.GF68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410015832.8012-1-tangbin@cmss.chinamobile.com>
- <be8cd229-884a-40e6-3363-7c4680a51b30@web.de>
- <0b718268-d330-dfc1-aca3-3dd3203363d7@cmss.chinamobile.com>
- <aa7006c9-8b83-5f30-86a6-8d60d290f824@web.de>
-In-Reply-To: <aa7006c9-8b83-5f30-86a6-8d60d290f824@web.de>
+References: <20200406144509.GE68494@mwanda>
+In-Reply-To: <20200406144509.GE68494@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Li Yang <leoyang.li@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, Shengju Zhang <zhangshengju@cmss.chinamobile.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
+Cc: virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
-Hi Markus:
+If "offset" is non-zero then we end up copying from beyond the end of
+the config because of pointer math.  We can fix this by casting the
+struct to a u8 pointer.
 
-On 2020/4/10 16:30, Markus Elfring wrote:
->> Hardware experiments show that the negative return value is not just "-EPROBE_DEFER".
-> How much will this specific error code influence our understanding
-> of the discussed software situation?
->
- From my superficial knowledge, I think we should not  think about it 
-too complicated. The return value is just zero or negative, and for 
-these negative return value, such as 
-"-ENODEV"、"-ENXIO"、"-ENOENT"、“EPROBE_DEFER”，may be the same 
-effect。But“-EPROBE_DEFER”has another  importment function: Driver 
-requested deferred probing，which is used in cases where the dependency 
-resource is not ready during the driver initialization process.
->>>> +        ret = udc_controller->irq ? : -ENODEV;
->>> Will it be clearer to specify values for all cases in such a conditional operator
->>> (instead of leaving one case empty)?
->> I don't know what you mean of "instead of leaving one case empty".
-> I suggest to reconsider also the proposed specification “… ? : …”.
+Fixes: 2c53d0f64c06 ("vdpasim: vDPA device simulator")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Is it really worth letting people specify the offset?
 
-What you mean is the way I'm written？
+ drivers/vdpa/vdpa_sim/vdpa_sim.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have provided two ways of patching, both functional can be verified on 
-hardware.
-
-Thanks for your patience.
-
-Tang Bin
+diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+index b3c800653056..e03c25765513 100644
+--- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
++++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+@@ -509,7 +509,7 @@ static void vdpasim_get_config(struct vdpa_device *vdpa, unsigned int offset,
+ 	struct vdpasim *vdpasim = vdpa_to_sim(vdpa);
+ 
+ 	if (offset + len < sizeof(struct virtio_net_config))
+-		memcpy(buf, &vdpasim->config + offset, len);
++		memcpy(buf, (u8 *)&vdpasim->config + offset, len);
+ }
+ 
+ static void vdpasim_set_config(struct vdpa_device *vdpa, unsigned int offset,
+-- 
+2.25.1
