@@ -1,74 +1,41 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 13 Apr 2020 12:02:25 +0000
-Subject: Re: [PATCH v2] MAINTAINERS: place sifive_l2_cache.c only in SIFIVE DRIVERS
-Message-Id: <alpine.DEB.2.21.2004131401190.7282@felia>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Apr 2020 23:20:31 +0000
+Subject: [PATCH] nft_set_pipapo: remove unused pointer lt
+Message-Id: <20200406232031.657615-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200413114702.6372-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200413114702.6372-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Christoph Hellwig <hch@lst.de>, Borislav Petkov <bp@suse.de>, Yash Shah <yash.shah@sifive.com>, linux-edac@vger.kernel.org, Sebastian Duda <sebastian.duda@fau.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Pointer lt being assigned with a value that is never read and
+the pointer is redundant and can be removed.
 
-On Mon, 13 Apr 2020, Lukas Bulwahn wrote:
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nft_set_pipapo_avx2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> Commit 9209fb51896f ("riscv: move sifive_l2_cache.c to drivers/soc") moved
-> arch/riscv/mm/sifive_l2_cache.c to drivers/soc/sifive/sifive_l2_cache.c
-> and adjusted the MAINTAINERS EDAC-SIFIVE entry but slipped in a mistake.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: drivers/soc/sifive_l2_cache.c
-> 
-> Boris suggested that sifive_l2_cache.c is considered part of the SIFIVE
-> DRIVERS, not part of EDAC-SIFIVE. So, we can simply drop this entry, and
-> by the sifive keyword pattern in SIFIVE PATTERNS, it is automatically part
-> of the SIFIVE DRIVERS.
-> 
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Paul, please pick this patch.
-> 
-> v1: https://lore.kernel.org/lkml/20200304144045.15060-1-lukas.bulwahn@gmail.com/
->   - was not picked up.
-> 
-> v1-resend: https://lore.kernel.org/lkml/20200413073447.9284-1-lukas.bulwahn@gmail.com/
-> 
-> v2: reworked based on Boris comment; applies on v5.7-rc1
-> 
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e64e5db31497..e28676766b26 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6172,7 +6172,7 @@ M:	Yash Shah <yash.shah@sifive.com>
->  L:	linux-edac@vger.kernel.org
->  S:	Supported
->  F:	drivers/edac/sifive_edac.c
-> -F:	drivers/soc/sifive_l2_cache.c
-> +F:	drivers/soc/sifive/sifive_l2_cache.c
->  
->  EDAC-SKYLAKE
->  M:	Tony Luck <tony.luck@intel.com>
-> -- 
-> 2.17.1
-> 
-> 
-
-Please ignore this patch. I accidently sent this patch out too quickly.
-
-Please consider and pick this PATCH v3 instead:
-
-https://lore.kernel.org/lkml/20200413115255.7100-1-lukas.bulwahn@gmail.com/
-
-
-Lukas
+diff --git a/net/netfilter/nft_set_pipapo_avx2.c b/net/netfilter/nft_set_pipapo_avx2.c
+index d65ae0e23028..9458c6b6ea04 100644
+--- a/net/netfilter/nft_set_pipapo_avx2.c
++++ b/net/netfilter/nft_set_pipapo_avx2.c
+@@ -1049,11 +1049,9 @@ static int nft_pipapo_avx2_lookup_slow(unsigned long *map, unsigned long *fill,
+ 					struct nft_pipapo_field *f, int offset,
+ 					const u8 *pkt, bool first, bool last)
+ {
+-	unsigned long *lt = f->lt, bsize = f->bsize;
++	unsigned long bsize = f->bsize;
+ 	int i, ret = -1, b;
+ 
+-	lt += offset * NFT_PIPAPO_LONGS_PER_M256;
+-
+ 	if (first)
+ 		memset(map, 0xff, bsize * sizeof(*map));
+ 
+-- 
+2.25.1
