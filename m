@@ -1,40 +1,44 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 Apr 2020 15:48:47 +0000
-Subject: [PATCH] EDAC: remove redundant assignment to variable ret
-Message-Id: <20200429154847.287001-1-colin.king@canonical.com>
+Date: Mon, 06 Apr 2020 22:54:39 +0000
+Subject: [PATCH] io_uring: remove redundant variable pointer nxt and io_wq_assign_next call
+Message-Id: <20200406225439.654486-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200424112920.12676-1-colin.king@canonical.com>
-In-Reply-To: <20200424112920.12676-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Robert Richter <rrichter@marvell.com>, linux-edac@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable ret is being assigned with a value that is never read
-and it is being updated later with a new value. The initialization is
-redundant and can be removed.
+An earlier commit "io_uring: remove @nxt from handlers" removed the
+setting of pointer nxt and now it is always null, hence the non-null
+check and call to io_wq_assign_next is redundant and can be removed.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("'Constant' variable guard")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/edac/amd64_edac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/io_uring.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 6bdc5bb8c8bc..e33f66cee132 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3400,7 +3400,7 @@ static const struct attribute_group *amd64_edac_attr_groups[] = {
- static int hw_info_get(struct amd64_pvt *pvt)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 14efcf0a3070..b594fa0bd210 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3509,14 +3509,11 @@ static void __io_sync_file_range(struct io_kiocb *req)
+ static void io_sync_file_range_finish(struct io_wq_work **workptr)
  {
- 	u16 pci_id1, pci_id2;
--	int ret = -EINVAL;
-+	int ret;
+ 	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
+-	struct io_kiocb *nxt = NULL;
  
- 	if (pvt->fam >= 0x17) {
- 		pvt->umc = kcalloc(fam_type->max_mcs, sizeof(struct amd64_umc), GFP_KERNEL);
+ 	if (io_req_cancelled(req))
+ 		return;
+ 	__io_sync_file_range(req);
+ 	io_put_req(req); /* put submission ref */
+-	if (nxt)
+-		io_wq_assign_next(workptr, nxt);
+ }
+ 
+ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
 -- 
 2.25.1
