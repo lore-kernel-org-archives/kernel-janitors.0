@@ -1,33 +1,34 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Mon, 06 Apr 2020 09:03:57 +0000
-Subject: Re: [PATCH] thermal: Delete an error message in four functions
-Message-Id: <89b0acdd-de88-bafb-0a2c-74aaf2fe0496@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 12:21:49 +0000
+Subject: [PATCH] ipmi: kcs: Fix aspeed_kcs_probe_of_v1()
+Message-Id: <20200407122149.GA100026@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05f49ae7-5cc7-d6a0-fc3d-abaf2a0b373c@web.de>
-In-Reply-To: <05f49ae7-5cc7-d6a0-fc3d-abaf2a0b373c@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Allison Randal <allison@lohutok.net>, Amit Kucheria <amit.kucheria@verdurent.com>, Clark Williams <williams@redhat.com>, Colin Ian King <colin.king@canonical.com>, Eduardo Valentin <edubezval@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Keerthy <j-keerthy@ti.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pascal Paillet <p.paillet@st.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 05/04/2020 18:50, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Apr 2020 18:35:16 +0200
-> 
-> The function “platform_get_irq” can log an error already.
-> Thus omit redundant messages for the exception handling in the
-> calling functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This needs to return the newly allocated struct but instead it returns
+zero which leads to an immediate Oops in the caller.
 
-Applied, thanks
+Fixes: 09f5f680707e ("ipmi: kcs: aspeed: Implement v2 bindings")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/char/ipmi/kcs_bmc_aspeed.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
+index 9422d55a0476..a140203c079b 100644
+--- a/drivers/char/ipmi/kcs_bmc_aspeed.c
++++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
+@@ -271,7 +271,7 @@ static struct kcs_bmc *aspeed_kcs_probe_of_v1(struct platform_device *pdev)
+ 	kcs->ioreg = ast_kcs_bmc_ioregs[channel - 1];
+ 	aspeed_kcs_set_address(kcs, slave);
+ 
+-	return 0;
++	return kcs;
+ }
+ 
+ static int aspeed_kcs_calculate_channel(const struct kcs_ioreg *regs)
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.25.1
