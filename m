@@ -1,44 +1,55 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 12:11:10 +0000
-Subject: [PATCH net-next] octeontx2-pf: Fix error return code in otx2_probe()
-Message-Id: <20200427121110.8446-1-weiyongjun1@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 07 Apr 2020 20:49:08 +0000
+Subject: [PATCH] checkpatch: check for missing \n at the end of logging message
+Message-Id: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: apw@canonical.com, joe@perches.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+Strings logged with pr_xxx and dev_xxx often lack a trailing '\n'.
+Introduce new tests to try to catch them early.
 
-Fixes: 5a6d7c9daef3 ("octeontx2-pf: Mailbox communication with AF")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+This is more a PoC for now.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index 411e5ea1031e..64786568af0d 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -1856,13 +1856,17 @@ static int otx2_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	num_vec = pci_msix_vec_count(pdev);
- 	hw->irq_name = devm_kmalloc_array(&hw->pdev->dev, num_vec, NAME_SIZE,
- 					  GFP_KERNEL);
--	if (!hw->irq_name)
-+	if (!hw->irq_name) {
-+		err = -ENOMEM;
- 		goto err_free_netdev;
-+	}
+Regex could be improved, merged, ...
+We could also check for surrounding pr_cont...
+
+This patch is based on idea from [1]. coccinelle spots too many places
+where \n are missing (~ 2800 with the heuristic I've used).
+Fixing them would be painful.
+I instead propose to teach checkpatch.pl about it to try to spot cases
+early and avoid introducing new cases.
+
+[1]: https://marc.info/?l=kernel-janitors&m8619533629657&w=4
+---
+ scripts/checkpatch.pl | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index c392ab8ea12e..792804bd6ad9 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5676,6 +5676,16 @@ sub process {
+ 			}
+ 		}
  
- 	hw->affinity_mask = devm_kcalloc(&hw->pdev->dev, num_vec,
- 					 sizeof(cpumask_var_t), GFP_KERNEL);
--	if (!hw->affinity_mask)
-+	if (!hw->affinity_mask) {
-+		err = -ENOMEM;
- 		goto err_free_netdev;
-+	}
- 
- 	/* Map CSRs */
- 	pf->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
++# check for missing \n at the end of logging function
++		if ($line =~ /\bpr_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\("([^"]*(?<!\\n))"/) {
++			WARN("MISSING NL",
++			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
++		}
++		if ($line =~ /\bdev_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\([^,]*,\s*"([^"]*(?<!\\n))"/) {
++			WARN("MISSING NL",
++			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
++		}
++
+ # check for logging functions with KERN_<LEVEL>
+ 		if ($line !~ /printk(?:_ratelimited|_once)?\s*\(/ &&
+ 		    $line =~ /\b$logFunctions\s*\(.*\b(KERN_[A-Z]+)\b/) {
+-- 
+2.20.1
