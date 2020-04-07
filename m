@@ -1,128 +1,38 @@
-From: kbuild test robot <lkp@intel.com>
-Date: Thu, 30 Apr 2020 01:55:03 +0000
-Subject: Re: [PATCH bpf-next 1/2] bpf: Change error code when ops is NULL
-Message-Id: <20200430020416.GE15540@xsang-OptiPlex-9020>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 07 Apr 2020 19:00:29 +0000
+Subject: [PATCH] checkpatch: Fix a typo in the regex for $allocFunctions
+Message-Id: <20200407190029.892-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200422083010.28000-2-maowenan@huawei.com>
-References: <20200422083010.28000-2-maowenan@huawei.com>
-In-Reply-To: <20200422083010.28000-2-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>, ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
-Cc: kbuild-all@lists.01.org, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: apw@canonical.com, joe@perches.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Mao,
+Here, we look for function such as 'netdev_alloc_skb_ip_align', so a '_'
+is missing in the regex.
 
-Thank you for the patch! Perhaps something to improve:
+To make sure:
+   grep -r --include=*.c skbip_a * | wc   =>   0 results
+   grep -r --include=*.c skb_ip_a * | wc  => 112 results
 
-[auto build test WARNING on bpf-next/master]
-[also build test WARNING on bpf/master net/master net-next/master ipvs/master v5.7-rc2 next-20200423]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Mao-Wenan/Change-return-code-if-failed-to-load-object/20200424-025339
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-191-gc51a0382-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-:::::: branch date: 19 hours ago
-:::::: commit date: 19 hours ago
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> kernel/bpf/syscall.c:117:0: sparse: sparse: missing terminating " character
-   kernel/bpf/syscall.c:118:0: sparse: sparse: missing terminating " character
->> kernel/bpf/syscall.c:686:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:772:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:979:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1046:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1111:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1164:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1341:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1442:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1504:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1548:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1550:1: sparse: sparse: directive in macro's argument list
-   kernel/bpf/syscall.c:1551:1: sparse: sparse: directive in macro's argument list
->> kernel/bpf/syscall.c:116:17: sparse: sparse: macro "pr_warn" passed 2 arguments, but takes just 2
->> include/linux/bpf_types.h:7:1: sparse: sparse: No right hand side of ','-expression
-   include/linux/bpf_types.h:7:1: sparse: sparse: Expected ; at end of statement
-   include/linux/bpf_types.h:7:1: sparse: sparse: got [
-   include/linux/bpf_types.h:121:0: sparse: sparse: Expected } at end of compound statement
-   include/linux/bpf_types.h:121:0: sparse: sparse: got end-of-input
-   include/linux/bpf_types.h:121:0: sparse: sparse: Expected } at end of function
-   include/linux/bpf_types.h:121:0: sparse: sparse: got end-of-input
-   kernel/bpf/syscall.c:116:17: sparse: sparse: undefined identifier 'pr_warn'
-   kernel/bpf/syscall.c:1560:21: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1560:21: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1562:16: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1562:16: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1562:16: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1562:16: sparse: sparse: undefined identifier 'bpf_prog_types'
->> kernel/bpf/syscall.c:1562:16: sparse: sparse: cannot size expression
-   kernel/bpf/syscall.c:1563:15: sparse: sparse: undefined identifier 'bpf_prog_types'
-   kernel/bpf/syscall.c:1797:27: sparse: sparse: undefined identifier 'bpf_dummy_read'
-   kernel/bpf/syscall.c:1798:27: sparse: sparse: undefined identifier 'bpf_dummy_write'
-   kernel/bpf/syscall.c:2293:27: sparse: sparse: undefined identifier 'bpf_dummy_read'
-   kernel/bpf/syscall.c:2294:27: sparse: sparse: undefined identifier 'bpf_dummy_write'
-   kernel/bpf/syscall.c:2870:23: sparse: sparse: undefined identifier '__bpf_map_inc_not_zero'
-   kernel/bpf/syscall.c:3538:15: sparse: sparse: undefined identifier 'map_get_sys_perms'
-   kernel/bpf/syscall.c:3544:15: sparse: sparse: undefined identifier 'map_get_sys_perms'
-   kernel/bpf/syscall.c:3685:23: sparse: sparse: undefined identifier 'map_create'
-   kernel/bpf/syscall.c:3688:23: sparse: sparse: undefined identifier 'map_lookup_elem'
-   kernel/bpf/syscall.c:3691:23: sparse: sparse: undefined identifier 'map_update_elem'
-   kernel/bpf/syscall.c:3694:23: sparse: sparse: undefined identifier 'map_delete_elem'
-   kernel/bpf/syscall.c:3697:23: sparse: sparse: undefined identifier 'map_get_next_key'
-   kernel/bpf/syscall.c:3700:23: sparse: sparse: undefined identifier 'map_freeze'
-   kernel/bpf/syscall.c:3757:23: sparse: sparse: undefined identifier 'map_lookup_and_delete_elem'
-
-# https://github.com/0day-ci/linux/commit/45c88e856945c443c39e3f519ad9740b8e487d8d
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 45c88e856945c443c39e3f519ad9740b8e487d8d
-vim +117 kernel/bpf/syscall.c
-
-a38845729ea398 Jakub Kicinski     2018-01-11  103  
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  104  static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  105  {
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  106  	const struct bpf_map_ops *ops;
-9ef09e35e521bf Mark Rutland       2018-05-03  107  	u32 type = attr->map_type;
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  108  	struct bpf_map *map;
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  109  	int err;
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  110  
-9ef09e35e521bf Mark Rutland       2018-05-03  111  	if (type >= ARRAY_SIZE(bpf_map_types))
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  112  		return ERR_PTR(-EINVAL);
-9ef09e35e521bf Mark Rutland       2018-05-03  113  	type = array_index_nospec(type, ARRAY_SIZE(bpf_map_types));
-9ef09e35e521bf Mark Rutland       2018-05-03  114  	ops = bpf_map_types[type];
-45c88e856945c4 Mao Wenan          2020-04-22  115  	if (!ops) {
-45c88e856945c4 Mao Wenan          2020-04-22 @116  		pr_warn("map type %d not supported or
-45c88e856945c4 Mao Wenan          2020-04-22 @117  			 kernel config not opened\n", type);
-45c88e856945c4 Mao Wenan          2020-04-22  118  		return ERR_PTR(-EOPNOTSUPP);
-45c88e856945c4 Mao Wenan          2020-04-22  119  	}
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  120  	if (ops->map_alloc_check) {
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  121  		err = ops->map_alloc_check(attr);
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  122  		if (err)
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  123  			return ERR_PTR(err);
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  124  	}
-a38845729ea398 Jakub Kicinski     2018-01-11  125  	if (attr->map_ifindex)
-a38845729ea398 Jakub Kicinski     2018-01-11  126  		ops = &bpf_map_offload_ops;
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  127  	map = ops->map_alloc(attr);
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  128  	if (IS_ERR(map))
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  129  		return map;
-1110f3a9bcf394 Jakub Kicinski     2018-01-11  130  	map->ops = ops;
-9ef09e35e521bf Mark Rutland       2018-05-03  131  	map->map_type = type;
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  132  	return map;
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  133  }
-99c55f7d47c0dc Alexei Starovoitov 2014-09-26  134  
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 529c892722b9..c392ab8ea12e 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -479,7 +479,7 @@ our $allocFunctions = qr{(?x:
+ 		(?:kv|k|v)[czm]alloc(?:_node|_array)? |
+ 		kstrdup(?:_const)? |
+ 		kmemdup(?:_nul)?) |
+-	(?:\w+)?alloc_skb(?:ip_align)? |
++	(?:\w+)?alloc_skb(?:_ip_align)? |
+ 				# dev_alloc_skb/netdev_alloc_skb, et al
+ 	dma_alloc_coherent
+ )};
+-- 
+2.20.1
