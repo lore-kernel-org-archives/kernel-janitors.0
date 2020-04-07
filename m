@@ -1,37 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 03 Apr 2020 10:01:25 +0000
-Subject: Re: [PATCH][V2][next] rtc: ds1307: check for failed memory allocation on wdt
-Message-Id: <5509d4e5-a6eb-c3ff-e89b-a4470ec3920a@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:37:14 +0000
+Subject: [PATCH v2] RDMA/cm: Fix an error check in cm_alloc_id_priv()
+Message-Id: <20200407093714.GA80285@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200402135201.548313-1-colin.king@canonical.com>
- <c6fe9db8-3e27-b6fc-fff7-131cecad3f88@roeck-us.net>
- <20200402145312.GN3683@piout.net> <20200403084504.GZ2001@kadam>
- <20200403092245.GR3683@piout.net>
-In-Reply-To: <20200403092245.GR3683@piout.net>
+In-Reply-To: <20200406145109.GQ20941@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Alessandro Zummo <a.zummo@towertech.it>, Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Matthew Wilcox <willy@infradead.org>
+Cc: Leon Romanovsky <leon@kernel.org>, Danit Goldberg <danitg@mellanox.com>, Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/04/2020 10:22, Alexandre Belloni wrote:
-> On 03/04/2020 11:45:04+0300, Dan Carpenter wrote:
->> On Thu, Apr 02, 2020 at 04:53:12PM +0200, Alexandre Belloni wrote:
->>>
->>> As stated, I also prefer keeping the watchdog optional and ignore the
->>> error.
->>
->> Hopefully you aren't running out of memory on start up.  In current
->> kernels small memory allocations like this never fail so it doesn't
->> really affect runtime.  It only silences the NULL dereference static
->> checker warning.
->>
-> 
-> Yes, so the
-> 
-> if (!wdt)
->  return;
-> 
-> would be enough instead of introducing unnecessary error handling.
-> 
-OK, I'll send a V3 later today.
+The xa_alloc_cyclic_irq() function returns either 0 or 1 on success and
+negatives on error.  This code treats 1 as an error and returns
+ERR_PTR(1) which will cause an Oops in the caller.
+
+Fixes: ae78ff3a0f0c ("RDMA/cm: Convert local_id_table to XArray")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Use the correct Fixes tag and add Matthew to the CC list.
+
+ drivers/infiniband/core/cm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
+index 4794113ecd59..f7ac5974176f 100644
+--- a/drivers/infiniband/core/cm.c
++++ b/drivers/infiniband/core/cm.c
+@@ -862,7 +862,7 @@ static struct cm_id_private *cm_alloc_id_priv(struct ib_device *device,
+ 
+ 	ret = xa_alloc_cyclic_irq(&cm.local_id_table, &id, NULL, xa_limit_32b,
+ 				  &cm.local_id_next, GFP_KERNEL);
+-	if (ret)
++	if (ret < 0)
+ 		goto error;
+ 	cm_id_priv->id.local_id = (__force __be32)id ^ cm.random_id_operand;
+ 
+-- 
+2.25.1
