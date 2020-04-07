@@ -1,46 +1,35 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Mon, 27 Apr 2020 12:13:36 +0000
-Subject: Re: [PATCH] leds: trigger: remove redundant assignment to variable ret
-Message-Id: <20200427121336.GB544@duo.ucw.cz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="l76fUT7nc3MelDdI"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:31:33 +0000
+Subject: [PATCH] bus: mhi: core: Fix a NULL vs IS_ERR check in mhi_create_devices()
+Message-Id: <20200407093133.GM68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200420221229.99150-1-colin.king@canonical.com>
-In-Reply-To: <20200420221229.99150-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Hemant Kumar <hemantk@codeaurora.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Siddartha Mohanadoss <smohanad@codeaurora.org>, Sujeev Dias <sdias@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The mhi_alloc_device() function never returns NULL, it returns error
+pointers.
 
---l76fUT7nc3MelDdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: da1c4f856924 ("bus: mhi: core: Add support for creating and destroying MHI devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/bus/mhi/core/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon 2020-04-20 23:12:29, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The variable ret is being assigned with a value that is never read
-> and it is being updated later with a new value. The initialization is
-> redundant and can be removed.
->=20
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, applied.
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---l76fUT7nc3MelDdI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXqbMcAAKCRAw5/Bqldv6
-8o7rAKCm8ntQEIFtZ61dXMpp4NXClLfyAQCfZtfwQz4pO6W+FS3+iyVfQR//BYc=
-=omzN
------END PGP SIGNATURE-----
-
---l76fUT7nc3MelDdI--
+diff --git a/drivers/bus/mhi/core/main.c b/drivers/bus/mhi/core/main.c
+index eb4256b81406..55928feea0c9 100644
+--- a/drivers/bus/mhi/core/main.c
++++ b/drivers/bus/mhi/core/main.c
+@@ -294,7 +294,7 @@ void mhi_create_devices(struct mhi_controller *mhi_cntrl)
+ 		    !(mhi_chan->ee_mask & BIT(mhi_cntrl->ee)))
+ 			continue;
+ 		mhi_dev = mhi_alloc_device(mhi_cntrl);
+-		if (!mhi_dev)
++		if (IS_ERR(mhi_dev))
+ 			return;
+ 
+ 		mhi_dev->dev_type = MHI_DEVICE_XFER;
+-- 
+2.25.1
