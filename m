@@ -1,50 +1,37 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Thu, 30 Apr 2020 14:07:12 +0000
-Subject: Re: [PATCH] i2c: stm32f7: prevent array underflow in stm32f7_get_lower_rate()
-Message-Id: <20200430140712.GA3355@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="oyUTqETQ0mS9luUI"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:30:52 +0000
+Subject: [PATCH] platform/x86: surface3_power: Fix a NULL vs IS_ERR() check in probe
+Message-Id: <20200407093052.GL68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429132323.GB815283@mwanda>
-In-Reply-To: <20200429132323.GB815283@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>, Alain Volmat <alain.volmat@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Darren Hart <dvhart@infradead.org>, =?utf-8?B?Qmxhxb4=?= Hrastnik <blaz@mxxn.io>
+Cc: Andy Shevchenko <andy@infradead.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Stephen Just <stephenjust@gmail.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The i2c_acpi_new_device() function never returns NULL, it returns error
+pointers.
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: b1f81b496b0d ("platform/x86: surface3_power: MSHW0011 rev-eng implementation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/x86/surface3_power.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, Apr 29, 2020 at 04:23:23PM +0300, Dan Carpenter wrote:
-> We want to break with "i" set to zero whether we find the rate we want
-> or not.  In the current code, if we don't find the rate we want then it
-> exits the loop with "i" set to -1 and results in an array underflow.
->=20
-> Fixes: 09cc9a3bce91 ("i2c: stm32f7: allows for any bus frequency")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied to for-next, thanks!
-
-
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6q24wACgkQFA3kzBSg
-KbY5gA/6AzWyIXBatskD8xK+ZAovWjUjVQp5YTU97M1XZE2JP583MJkhqUjhd9Yg
-o/qYLs0VwUfk+Beir3RwwWmO6Kk0LoSs1ppxFcc0FKM69w7hQyU73T5sTWZTrEvH
-7m2wuhrTfLOHEIMCIrOzET+WXJF53PAJmyBpBtcO1kVLRT2lW7KILYc3pgRlgoI3
-WhOvgt8VhHmII4+qE7lZ/UhYdtwrIu0I9lcAPcfBndqCUKWLL8kKX1H5/AqSE2De
-+R6Pce6v478wDnJ7FrSlgerJ+Kv/54NipuYzRyEm3tgEXJm5uQApMXulxi7Bhese
-E0ebjkvsLdfA842MS/+fIdxRSoyyZGgqS7zq6pOhubjsxdOo5evRDI3NdTcQhznZ
-XHvPUs9Cu0PBuyCanUPsfI7yxe/zLHY8wWCiLoZcSepLwp7ApU7aJSXqRTE/oCBZ
-1iorrv/gfPxLUA+KwhpeYE4pL+lX1p6l6zsSA1GItZzJrWUF9bnwXAHaw9eeJMIQ
-Srtbra0sUqqrVq3OkQvwC8erJ2GXbxe/NCVuU4OFAOtwq7zousxfVmI6l6N/+Ido
-Vs1wgDnBqvE57pl+LswFfVC25PR5MQ5C3Rxv6Lqi2N7o1lXFIAoXuON1tw/ymzB1
-Z3VZEApncCTQ4Mt5pXopoWGP8O8FAKAgzudUrjLsJfMUVVF+U6Y=
-=XwWa
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+diff --git a/drivers/platform/x86/surface3_power.c b/drivers/platform/x86/surface3_power.c
+index 946ac2dc08ae..cc4f9cba6856 100644
+--- a/drivers/platform/x86/surface3_power.c
++++ b/drivers/platform/x86/surface3_power.c
+@@ -522,8 +522,8 @@ static int mshw0011_probe(struct i2c_client *client)
+ 	strlcpy(board_info.type, "MSHW0011-bat0", I2C_NAME_SIZE);
+ 
+ 	bat0 = i2c_acpi_new_device(dev, 1, &board_info);
+-	if (!bat0)
+-		return -ENOMEM;
++	if (IS_ERR(bat0))
++		return PTR_ERR(bat0);
+ 
+ 	data->bat0 = bat0;
+ 	i2c_set_clientdata(bat0, data);
+-- 
+2.25.1
