@@ -1,53 +1,38 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Thu, 05 Mar 2020 17:15:53 +0000
-Subject: [PATCH AUTOSEL 4.9 06/12] MIPS: VPE: Fix a double free and a memory leak in 'release_vpe()'
-Message-Id: <20200305171559.30422-6-sashal@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:28:52 +0000
+Subject: [PATCH] rtc: rc5t619: Fix an ERR_PTR vs NULL check
+Message-Id: <20200407092852.GI68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200305171559.30422-1-sashal@kernel.org>
-In-Reply-To: <20200305171559.30422-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Paul Burton <paulburton@kernel.org>, ralf@linux-mips.org, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Alessandro Zummo <a.zummo@towertech.it>, Andreas Kemnade <andreas@kemnade.info>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Lee Jones <lee.jones@linaro.org>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The devm_kzalloc() function returns NULL on error, it doesn't return
+error pointers so this check doesn't work.
 
-[ Upstream commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 ]
-
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
-
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and things. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 540d1e15393d ("rtc: rc5t619: Add Ricoh RC5T619 RTC driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/mips/kernel/vpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-rc5t619.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
-index 544ea21bfef9c..b2683aca401f6 100644
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
- 	list_del(&v->list);
- 	if (v->load_addr)
--		release_progmem(v);
-+		release_progmem(v->load_addr);
- 	kfree(v);
- }
+diff --git a/drivers/rtc/rtc-rc5t619.c b/drivers/rtc/rtc-rc5t619.c
+index 24e386ecbc7e..dd1a20977478 100644
+--- a/drivers/rtc/rtc-rc5t619.c
++++ b/drivers/rtc/rtc-rc5t619.c
+@@ -356,10 +356,8 @@ static int rc5t619_rtc_probe(struct platform_device *pdev)
+ 	int err;
+ 
+ 	rtc = devm_kzalloc(dev, sizeof(*rtc), GFP_KERNEL);
+-	if (IS_ERR(rtc)) {
+-		err = PTR_ERR(rtc);
++	if (!rtc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	rtc->rn5t618 = rn5t618;
  
 -- 
-2.20.1
+2.25.1
