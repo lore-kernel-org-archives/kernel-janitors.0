@@ -1,36 +1,17 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Apr 2020 22:54:11 +0000
-Subject: [PATCH] media: davinci: remove redundant assignment to pointer 'common'
-Message-Id: <20200415225411.1565933-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 07 Apr 2020 14:45:55 +0000
+Subject: Re: [PATCH RT] signal: Prevent double-free of user struct
+Message-Id: <7be9cee2-6db5-3724-c6e5-58ff51680e36@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lad Prabhakar <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Matt Fleming <matt@codeblueprint.co.uk>, linux-rt@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Wagner <wagi@monom.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-From: Colin Ian King <colin.king@canonical.com>
+>  refcount_t: underflow; use-after-free.
 
-The pointer 'common' is being assigned with a value that is never read,
-the assignment is redundant and can be removed.
+I suggest to add the tag “Fixes” to the final change description.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/davinci/vpif_display.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
-index ead14c49d4f5..7d55fd45240e 100644
---- a/drivers/media/platform/davinci/vpif_display.c
-+++ b/drivers/media/platform/davinci/vpif_display.c
-@@ -1225,7 +1225,6 @@ static int vpif_probe_complete(void)
- probe_out:
- 	for (k = 0; k < j; k++) {
- 		ch = vpif_obj.dev[k];
--		common = &ch->common[k];
- 		video_unregister_device(&ch->video_dev);
- 	}
- 	return err;
--- 
-2.25.1
+Regards,
+Markus
