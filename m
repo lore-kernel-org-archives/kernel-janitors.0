@@ -1,42 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Apr 2020 20:06:31 +0000
-Subject: [PATCH] media: s5p-g2d: Fix a memory leak in an error handling path in 'g2d_probe()'
-Message-Id: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:29:35 +0000
+Subject: [PATCH] platform/chrome: cros_ec_sensorhub: Off by one in cros_sensorhub_send_sample()
+Message-Id: <20200407092935.GJ68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyungmin.park@samsung.com, kamil@wypas.org, a.hajda@samsung.com, mchehab@kernel.org, s.nawrocki@samsung.com, sachin.kamat@linaro.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Benson Leung <bleung@chromium.org>, Gwendal Grignou <gwendal@chromium.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Memory allocated with 'v4l2_m2m_init()' must be freed by a corresponding
-call to 'v4l2_m2m_release()'
+The sensorhub->push_data[] array has sensorhub->sensor_num elements.
+It's allocated in cros_ec_sensorhub_ring_add().  So the > should be >to prevent a read one element beyond the end of the array.
 
-Fixes: 5ce60d790a24 ("[media] s5p-g2d: Add DT based discovery support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 145d59baff59 ("platform/chrome: cros_ec_sensorhub: Add FIFO support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/platform/s5p-g2d/g2d.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/platform/chrome/cros_ec_sensorhub_ring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-index 6932fd47071b..ded6fa24677c 100644
---- a/drivers/media/platform/s5p-g2d/g2d.c
-+++ b/drivers/media/platform/s5p-g2d/g2d.c
-@@ -717,12 +717,14 @@ static int g2d_probe(struct platform_device *pdev)
- 	of_id = of_match_node(exynos_g2d_match, pdev->dev.of_node);
- 	if (!of_id) {
- 		ret = -ENODEV;
--		goto unreg_video_dev;
-+		goto free_m2m;
- 	}
- 	dev->variant = (struct g2d_variant *)of_id->data;
+diff --git a/drivers/platform/chrome/cros_ec_sensorhub_ring.c b/drivers/platform/chrome/cros_ec_sensorhub_ring.c
+index 230e6cf3da2f..85e8ba782f0c 100644
+--- a/drivers/platform/chrome/cros_ec_sensorhub_ring.c
++++ b/drivers/platform/chrome/cros_ec_sensorhub_ring.c
+@@ -40,7 +40,7 @@ cros_sensorhub_send_sample(struct cros_ec_sensorhub *sensorhub,
+ 	int id = sample->sensor_id;
+ 	struct iio_dev *indio_dev;
  
- 	return 0;
+-	if (id > sensorhub->sensor_num)
++	if (id >= sensorhub->sensor_num)
+ 		return -EINVAL;
  
-+free_m2m:
-+	v4l2_m2m_release(dev->m2m_dev);
- unreg_video_dev:
- 	video_unregister_device(dev->vfd);
- rel_vdev:
+ 	cb = sensorhub->push_data[id].push_data_cb;
 -- 
 2.25.1
