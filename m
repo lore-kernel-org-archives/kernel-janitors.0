@@ -1,32 +1,48 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Apr 2020 08:40:13 +0000
-Subject: Re: [PATCH][next] rtc: ds1307: check for failed memory allocation on wdt
-Message-Id: <20200403084013.GY2001@kadam>
+Date: Tue, 07 Apr 2020 13:55:59 +0000
+Subject: [bug report] bus: mhi: core: Add support for data transfer
+Message-Id: <20200407135559.GA109574@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200402131441.539088-1-colin.king@canonical.com>
-In-Reply-To: <20200402131441.539088-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Guenter Roeck <linux@roeck-us.net>, Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 02:14:41PM +0100, Colin King wrote:
-> @@ -1979,9 +1984,9 @@ static int ds1307_probe(struct i2c_client *client,
->  
->  	ds1307_hwmon_register(ds1307);
->  	ds1307_clks_register(ds1307);
-> -	ds1307_wdt_register(ds1307);
-> +	err = ds1307_wdt_register(ds1307);
->  
-> -	return 0;
-> +	return err;
->  
->  exit:
->  	return err;
+Hello Manivannan Sadhasivam,
 
-This bit is weird.  I guess just delete the "return 0;" without
-introducing a new "return err;".
+The patch 189ff97cca53: "bus: mhi: core: Add support for data
+transfer" from Feb 20, 2020, leads to the following static checker
+warning:
+
+	drivers/bus/mhi/core/main.c:1153 mhi_queue_buf()
+	error: double locked 'mhi_chan->lock' (orig line 1110)
+
+drivers/bus/mhi/core/main.c
+  1142          }
+  1143  
+  1144          /* Toggle wake to exit out of M2 */
+  1145          mhi_cntrl->wake_toggle(mhi_cntrl);
+  1146  
+  1147          if (mhi_chan->dir = DMA_TO_DEVICE)
+  1148                  atomic_inc(&mhi_cntrl->pending_pkts);
+  1149  
+  1150          if (likely(MHI_DB_ACCESS_VALID(mhi_cntrl))) {
+  1151                  unsigned long flags;
+  1152  
+  1153                  read_lock_irqsave(&mhi_chan->lock, flags);
+                                          ^^^^^^^^^^^^^^^
+The caller is already holding this lock.
+
+  1154                  mhi_ring_chan_db(mhi_cntrl, mhi_chan);
+  1155                  read_unlock_irqrestore(&mhi_chan->lock, flags);
+  1156          }
+  1157  
+  1158          read_unlock_irqrestore(&mhi_cntrl->pm_lock, flags);
+  1159  
+  1160          return 0;
+  1161  }
+  1162  EXPORT_SYMBOL_GPL(mhi_queue_buf);
 
 regards,
 dan carpenter
