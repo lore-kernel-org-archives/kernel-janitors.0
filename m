@@ -1,49 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Apr 2020 13:51:53 +0000
-Subject: [bug report] net: dsa: sja1105: Add support for the SGMII port
-Message-Id: <20200407135153.GA109191@mwanda>
+Date: Tue, 07 Apr 2020 09:27:53 +0000
+Subject: [PATCH] mailbox: imx: Fix return in imx_mu_scu_xlate()
+Message-Id: <20200407092753.GH68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Vladimir Oltean,
+This called from mbox_request_channel().  The caller is  expecting error
+pointers and not NULL so this "return NULL;" will lead to an Oops.
 
-The patch ffe10e679cec: "net: dsa: sja1105: Add support for the SGMII
-port" from Mar 20, 2020, leads to the following static checker
-warning:
+Fixes: 0a67003b1985 ("mailbox: imx: add SCU MU support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mailbox/imx-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	drivers/net/dsa/sja1105/sja1105_main.c:1693 sja1105_static_config_reload()
-	warn: bitwise AND condition is false here
-
-drivers/net/dsa/sja1105/sja1105_main.c
-  1680  
-  1681          if (sja1105_supports_sgmii(priv, SJA1105_SGMII_PORT)) {
-  1682                  bool an_enabled = !!(bmcr & BMCR_ANENABLE);
-  1683  
-  1684                  sja1105_sgmii_pcs_config(priv, an_enabled, false);
-  1685  
-  1686                  if (!an_enabled) {
-  1687                          int speed = SPEED_UNKNOWN;
-  1688  
-  1689                          if (bmcr & BMCR_SPEED1000)
-  1690                                  speed = SPEED_1000;
-  1691                          else if (bmcr & BMCR_SPEED100)
-  1692                                  speed = SPEED_100;
-  1693                          else if (bmcr & BMCR_SPEED10)
-                                                ^^^^^^^^^^^^
-This is zero so the condition can never be true.
-
-  1694                                  speed = SPEED_10;
-  1695  
-  1696                          sja1105_sgmii_pcs_force_speed(priv, speed);
-  1697                  }
-  1698          }
-  1699  out:
-  1700          mutex_unlock(&priv->mgmt_lock);
-  1701  
-  1702          return rc;
-
-regards,
-dan carpenter
+diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+index 7906624a731c..9d6f0217077b 100644
+--- a/drivers/mailbox/imx-mailbox.c
++++ b/drivers/mailbox/imx-mailbox.c
+@@ -374,7 +374,7 @@ static struct mbox_chan *imx_mu_scu_xlate(struct mbox_controller *mbox,
+ 		break;
+ 	default:
+ 		dev_err(mbox->dev, "Invalid chan type: %d\n", type);
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	if (chan >= mbox->num_chans) {
+-- 
+2.25.1
