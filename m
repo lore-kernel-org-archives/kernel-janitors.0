@@ -1,68 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 05 Apr 2020 05:44:01 +0000
-Subject: Re: Clarification for software development opportunities
-Message-Id: <95c5e77d-e993-f12e-11d6-9a43b9afc230@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Apr 2020 09:30:28 +0000
+Subject: [PATCH] tee:  remove unnecessary NULL check in tee_shm_alloc()
+Message-Id: <20200407093028.GK68494@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eae7170c-4371-4865-7b85-589c0ed2b5b6@web.de>
- <2020040423261552036811@cmss.chinamobile.com>
- <e71d56f1-6fce-5e2d-9719-1385ef3b0811@web.de>
- <2020040505380926003012@cmss.chinamobile.com>
-In-Reply-To: <2020040505380926003012@cmss.chinamobile.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?5ZSQ5b2s?= <tangbin@cmss.chinamobile.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> I don't know what is Coccinelle software, I will check it out.
+Smatch complains that "ctx" isn't checked consistently:
 
-I am curious under which circumstances the development tool box will be adjusted.
-http://coccinelle.lip6.fr/
+    drivers/tee/tee_shm.c:164 tee_shm_alloc()
+    warn: variable dereferenced before check 'ctx' (see line 95)
 
+I audited the callers and "ctx" can't be NULL so the check can be
+removed.
 
-> When I receive critical emails from others, I am happy that this is my study plan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/tee/tee_shm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This view sounds positive.
-
-
-> Previously, I was happy and looking forward to providing patches to the community.
-
-Such feedback is nice.
-
-
-> But when I noticed that you were sending similar patches over and over again,
-
-This can be an usual effect from the application of known source code
-analysis approaches.
-
-
-> I realized that if I want to increase my patch count,
-
-I suggest to reconsider corresponding development goals.
-
-
-> I would not be able to reuse some files I had already found,
-
-This can occasionally happen when some contributors try to achieve something
-in similar areas.
-
-* Would you like to clarify opportunities for further contributions?
-
-* Do you find globally distributed collaboration interesting?
-
-
-> which made me sad.
-
-* I find your feeling unfortunate.
-
-* I hope that your view can become more positive again.
-
-
-> So,thank you for giving me a lesson.
-
-This was eventually my intention partly.
-
-I imagine that possibilities can be improved also for teaching and education.
-
-Regards,
-Markus
+diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+index bd679b72bd05..8895cb910166 100644
+--- a/drivers/tee/tee_shm.c
++++ b/drivers/tee/tee_shm.c
+@@ -161,8 +161,7 @@ struct tee_shm *tee_shm_alloc(struct tee_context *ctx, size_t size, u32 flags)
+ 		}
+ 	}
+ 
+-	if (ctx)
+-		teedev_ctx_get(ctx);
++	teedev_ctx_get(ctx);
+ 
+ 	return shm;
+ err_rem:
+-- 
+2.25.1
