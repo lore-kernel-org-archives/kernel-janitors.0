@@ -1,39 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 08 Apr 2020 14:15:38 +0000
-Subject: usb: gadget: fsl_udc_core: Checking for a failed platform_get_irq() call in fsl_udc_probe()
-Message-Id: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
+From: Li Yang <leoyang.li@nxp.com>
+Date: Wed, 08 Apr 2020 22:47:03 +0000
+Subject: Re: usb: gadget: fsl_udc_core: Checking for a failed platform_get_irq() call in fsl_udc_probe()
+Message-Id: <CADRPPNRe=YxwjCOYbEjKg4LCOx2suK5WxZp17NJhTm76szdU0w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
+In-Reply-To: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Li Yang <leoyang.li@nxp.com>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Felipe Balbi <balbi@kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello,
-
-I have taken another look at the implementation of the function “fsl_udc_probe”.
-A software analysis approach points the following source code out for
-further development considerations.
-https://elixir.bootlin.com/linux/v5.6.2/source/drivers/usb/gadget/udc/fsl_udc_core.c#L2443
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/gadget/udc/fsl_udc_core.c?id=f5e94d10e4c468357019e5c28d48499f677b284f#n2442
-
- 	udc_controller->irq = platform_get_irq(pdev, 0);
- 	if (!udc_controller->irq) {
- 		ret = -ENODEV;
- 		goto err_iounmap;
- 	}
-
-
-The software documentation is providing the following information
-for the used programming interface.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/platform.c?id=f5e94d10e4c468357019e5c28d48499f677b284f#n221
-https://elixir.bootlin.com/linux/v5.6.2/source/drivers/base/platform.c#L202
-
-“…
- * Return: IRQ number on success, negative error number on failure.
-…”
-
-Would you like to reconsider the shown condition check?
-
-Regards,
-Markus
+T24gV2VkLCBBcHIgOCwgMjAyMCBhdCA5OjE5IEFNIE1hcmt1cyBFbGZyaW5nIDxNYXJrdXMuRWxm
+cmluZ0B3ZWIuZGU+IHdyb3RlOgo+Cj4gSGVsbG8sCj4KPiBJIGhhdmUgdGFrZW4gYW5vdGhlciBs
+b29rIGF0IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rpb24g4oCcZnNsX3VkY19wcm9i
+ZeKAnS4KPiBBIHNvZnR3YXJlIGFuYWx5c2lzIGFwcHJvYWNoIHBvaW50cyB0aGUgZm9sbG93aW5n
+IHNvdXJjZSBjb2RlIG91dCBmb3IKPiBmdXJ0aGVyIGRldmVsb3BtZW50IGNvbnNpZGVyYXRpb25z
+Lgo+IGh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y1LjYuMi9zb3VyY2UvZHJpdmVy
+cy91c2IvZ2FkZ2V0L3VkYy9mc2xfdWRjX2NvcmUuYyNMMjQ0Mwo+IGh0dHBzOi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2Ry
+aXZlcnMvdXNiL2dhZGdldC91ZGMvZnNsX3VkY19jb3JlLmM/aWT1ZTk0ZDEwZTRjNDY4MzU3MDE5
+ZTVjMjhkNDg0OTlmNjc3YjI4NGYjbjI0NDIKPgo+ICAgICAgICAgdWRjX2NvbnRyb2xsZXItPmly
+cSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7Cj4gICAgICAgICBpZiAoIXVkY19jb250cm9s
+bGVyLT5pcnEpIHsKPiAgICAgICAgICAgICAgICAgcmV0ID0gLUVOT0RFVjsKPiAgICAgICAgICAg
+ICAgICAgZ290byBlcnJfaW91bm1hcDsKPiAgICAgICAgIH0KPgo+Cj4gVGhlIHNvZnR3YXJlIGRv
+Y3VtZW50YXRpb24gaXMgcHJvdmlkaW5nIHRoZSBmb2xsb3dpbmcgaW5mb3JtYXRpb24KPiBmb3Ig
+dGhlIHVzZWQgcHJvZ3JhbW1pbmcgaW50ZXJmYWNlLgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZlcnMv
+YmFzZS9wbGF0Zm9ybS5jP2lk9WU5NGQxMGU0YzQ2ODM1NzAxOWU1YzI4ZDQ4NDk5ZjY3N2IyODRm
+I24yMjEKPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS42LjIvc291cmNlL2Ry
+aXZlcnMvYmFzZS9wbGF0Zm9ybS5jI0wyMDIKPgo+IOKAnOKApgo+ICAqIFJldHVybjogSVJRIG51
+bWJlciBvbiBzdWNjZXNzLCBuZWdhdGl2ZSBlcnJvciBudW1iZXIgb24gZmFpbHVyZS4KPiDigKbi
+gJ0KPgo+IFdvdWxkIHlvdSBsaWtlIHRvIHJlY29uc2lkZXIgdGhlIHNob3duIGNvbmRpdGlvbiBj
+aGVjaz8KClRoYW5rcyBmb3IgdGhlIGZpbmRpbmcuICBUaGlzIGlzIHRydWx5IGEgc29mdHdhcmUg
+aXNzdWUgdGhhdCBuZWVkIHRvCmJlIGZpeGVkLiAgV291bGQgeW91IHN1Ym1pdCBhIHBhdGNoIGZv
+ciBpdCBvciB5b3Ugd2FudCB1cyB0byBmaXggaXQ/CgpSZWdhcmRzLApMZW8=
