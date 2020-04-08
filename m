@@ -1,57 +1,50 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Date: Tue, 07 Apr 2020 20:42:29 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Apr 2020 09:42:44 +0000
 Subject: Re: [PATCH] gpu/drm: ingenic: Delete an error message in ingenic_drm_probe()
-Message-Id: <TUQF8Q.MM4L7PYRPUYD@crapouillou.net>
+Message-Id: <20200408094244.GM2001@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
 In-Reply-To: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Tang Bin <tangbin@cmss.chinamobile.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+On Mon, Apr 06, 2020 at 07:48:52PM +0200, Christophe JAILLET wrote:
+> Nevertheless, I wrote another script (see below), which triggers ~2800 times
+> in ./drivers only.
+> Some are false positives, but most look valid.
 
-Le dim. 5 avril 2020 à 11:30, Markus Elfring <Markus.Elfring@web.de> a 
-écrit :
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Apr 2020 11:25:30 +0200
-> 
-> The function “platform_get_irq” can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I did a quick grep and you're right there are a ton of these!
 
-Applied to drm-misc-next, thanks.
+> 
+> Not sure that fixing this kind of stuff really make sense.
+> 
+> A better approach could be to teach ./checkpatch.pl, but I don't have the
+> knowledge for that.
 
--Paul
+Yeah.  I think so too.  Here is what I tried.  $logFunctions ends up
+catching too many functions like process_mcheck_info() so maybe we need
+a stricter regex for that.
 
-> ---
->  drivers/gpu/drm/ingenic/ingenic-drm.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c 
-> b/drivers/gpu/drm/ingenic/ingenic-drm.c
-> index 9dfe7cb530e1..06ca752b76ee 100644
-> --- a/drivers/gpu/drm/ingenic/ingenic-drm.c
-> +++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
-> @@ -661,10 +661,8 @@ static int ingenic_drm_probe(struct 
-> platform_device *pdev)
->  	}
-> 
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		dev_err(dev, "Failed to get platform irq");
-> +	if (irq < 0)
->  		return irq;
-> -	}
-> 
->  	if (soc_info->needs_dev_clk) {
->  		priv->lcd_clk = devm_clk_get(dev, "lcd");
-> --
-> 2.26.0
-> 
+regards,
+dan carpenter
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index d64c67b67e3c..1bcfa9e18059 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5493,6 +5493,13 @@ sub process {
+ 			     "Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst\n" . $herecurr);
+ 		}
+ 
++# check for missing newline
++		if ($line =~ /\t$logFunctions\b.*$String[,)]/ && $rawline !~ /\\n/ &&
++			$rawline !~ / "[,)]/ &&
++			$line !~ /debugfs_/ && $line !~ /MODULE_/) {
++			WARN("MISSING_NEWLINE", "Missing newline?\n" . $herecurr);
++		}
++
+ # Check for user-visible strings broken across lines, which breaks the ability
+ # to grep for the string.  Make exceptions when the previous string ends in a
+ # newline (multiple lines in one string constant) or '\t', '\r', ';', or '{'
