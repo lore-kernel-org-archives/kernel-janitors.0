@@ -1,44 +1,46 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Sat, 11 Apr 2020 16:37:36 +0000
-Subject: Re: [PATCH] pwm: Add missing '\n' in log messages
-Message-Id: <20200411163736.mcxk5ujzjy5mzjib@pengutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Apr 2020 11:14:56 +0000
+Subject: [bug report] kernfs: Add option to enable user xattrs
+Message-Id: <20200408111456.GA250869@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: thierry.reding@gmail.com, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hello,
+Hello Daniel Xu,
 
-On Sat, Apr 11, 2020 at 05:35:28PM +0200, Christophe JAILLET wrote:
-> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
->=20
-> Fixes: 3ad1f3a33286 ("pwm: Implement some checks for lowlevel drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/pwm/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 9973c442b455..bca04965bfe6 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -537,7 +537,7 @@ static void pwm_apply_state_debug(struct pwm_device *=
-pwm,
-> =20
->  	if (!state->enabled && s2.enabled && s2.duty_cycle > 0)
->  		dev_warn(chip->dev,
-> -			 "requested disabled, but yielded enabled with duty > 0");
-> +			 "requested disabled, but yielded enabled with duty > 0\n");
+The patch 0c47383ba3bd: "kernfs: Add option to enable user xattrs"
+from Mar 12, 2020, leads to the following static checker warning:
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+	fs/kernfs/inode.c:379 kernfs_vfs_user_xattr_rm()
+	error: uninitialized symbol 'removed_size'.
 
-Thanks,
-Uwe
+fs/kernfs/inode.c
+   366  static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
+   367                                      const char *full_name,
+   368                                      struct simple_xattrs *xattrs,
+   369                                      const void *value, size_t size, int flags)
+   370  {
+   371          atomic_t *sz = &kn->iattr->user_xattr_size;
+   372          atomic_t *nr = &kn->iattr->nr_user_xattrs;
+   373          ssize_t removed_size;
+   374          int ret;
+   375  
+   376          ret = simple_xattr_set(xattrs, full_name, value, size, flags,
+   377                                 &removed_size);
+   378  
+   379          if (removed_size >= 0) {
+                    ^^^^^^^^^^^^^^^^^
+There are some path where simple_xattr_set() doesn't initialize
+"removed_size" on allocation failure.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+   380                  atomic_sub(removed_size, sz);
+   381                  atomic_dec(nr);
+   382          }
+   383  
+   384          return ret;
+   385  }
+
+regards,
+dan carpenter
