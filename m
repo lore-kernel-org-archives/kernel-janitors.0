@@ -1,24 +1,39 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Sun, 05 Apr 2020 13:50:16 +0000
-Subject: Re: PM / devfreq: tegra30: Delete an error message in tegra_devfreq_probe()
-Message-Id: <2af3ed08-3607-9ecf-e092-fc126d2abeab@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 08 Apr 2020 14:15:38 +0000
+Subject: usb: gadget: fsl_udc_core: Checking for a failed platform_get_irq() call in fsl_udc_probe()
+Message-Id: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
- <27bdd09b-0b8d-a6ef-2ffd-53421277fcca@gmail.com>
- <72e2319e-9b9b-9045-c007-320b2be1e886@web.de>
-In-Reply-To: <72e2319e-9b9b-9045-c007-320b2be1e886@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+To: linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Li Yang <leoyang.li@nxp.com>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-05.04.2020 09:00, Markus Elfring пишет:
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Thanks for your positive feedback.
-> 
-> Will the logging of error codes need any more clarification
-> around such function calls?
+Hello,
 
-In general no, but it could be different for some (more complex) drivers.
+I have taken another look at the implementation of the function “fsl_udc_probe”.
+A software analysis approach points the following source code out for
+further development considerations.
+https://elixir.bootlin.com/linux/v5.6.2/source/drivers/usb/gadget/udc/fsl_udc_core.c#L2443
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/gadget/udc/fsl_udc_core.c?id=f5e94d10e4c468357019e5c28d48499f677b284f#n2442
+
+ 	udc_controller->irq = platform_get_irq(pdev, 0);
+ 	if (!udc_controller->irq) {
+ 		ret = -ENODEV;
+ 		goto err_iounmap;
+ 	}
+
+
+The software documentation is providing the following information
+for the used programming interface.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/platform.c?id=f5e94d10e4c468357019e5c28d48499f677b284f#n221
+https://elixir.bootlin.com/linux/v5.6.2/source/drivers/base/platform.c#L202
+
+“…
+ * Return: IRQ number on success, negative error number on failure.
+…”
+
+Would you like to reconsider the shown condition check?
+
+Regards,
+Markus
