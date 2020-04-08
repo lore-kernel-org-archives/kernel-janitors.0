@@ -1,38 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Apr 2020 11:25:54 +0000
-Subject: [PATCH] media: cx231xx: remove redundant assignment to variable err
-Message-Id: <20200424112554.12456-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 08 Apr 2020 07:29:48 +0000
+Subject: [PATCH -next] dm integrity: remove set but not used variables
+Message-Id: <20200408072948.156175-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-The variable err is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+drivers/md/dm-integrity.c: In function 'integrity_metadata':
+drivers/md/dm-integrity.c:1557:12: warning:
+ variable 'save_metadata_offset' set but not used [-Wunused-but-set-variable]
+drivers/md/dm-integrity.c:1556:12: warning:
+ variable 'save_metadata_block' set but not used [-Wunused-but-set-variable]
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+They are never used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/media/usb/cx231xx/cx231xx-417.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-integrity.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index b0cd51134654..c5e21785fafe 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -1734,7 +1734,7 @@ static void cx231xx_video_dev_init(
- int cx231xx_417_register(struct cx231xx *dev)
- {
- 	/* FIXME: Port1 hardcoded here */
--	int err = -ENODEV;
-+	int err;
- 	struct cx231xx_tsport *tsport = &dev->ts1;
- 	struct vb2_queue *q;
+diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
+index b989d109d55d..94fb584854b8 100644
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -1553,8 +1553,6 @@ static void integrity_metadata(struct work_struct *w)
+ 		char checksums_onstack[max((size_t)HASH_MAX_DIGESTSIZE, MAX_TAG_SIZE)];
+ 		sector_t sector;
+ 		unsigned sectors_to_process;
+-		sector_t save_metadata_block;
+-		unsigned save_metadata_offset;
  
--- 
-2.25.1
+ 		if (unlikely(ic->mode = 'R'))
+ 			goto skip_io;
+@@ -1605,8 +1603,6 @@ static void integrity_metadata(struct work_struct *w)
+ 			goto skip_io;
+ 		}
+ 
+-		save_metadata_block = dio->metadata_block;
+-		save_metadata_offset = dio->metadata_offset;
+ 		sector = dio->range.logical_sector;
+ 		sectors_to_process = dio->range.n_sectors;
