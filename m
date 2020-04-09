@@ -1,52 +1,42 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 13 Apr 2020 07:22:21 +0000
-Subject: [PATCH v2] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
-Message-Id: <20200413072221.8061-1-lukas.bulwahn@gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Thu, 09 Apr 2020 17:50:47 +0000
+Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
+Message-Id: <f212b3ad6c09e595cb91c2f7e8728d71e27f6833.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
+         <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
+         <4b7e1cf3-6fa7-60af-a1d3-2457339dbe8a@wanadoo.fr>
+         <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
+         <60c732a1-aa4e-afab-d223-894a67713003@wanadoo.fr>
+         <bcdfa5ae68b8cb7d9324a89aedf452f6209b570c.camel@perches.com>
+         <05379b22-6755-368b-8127-8827fa020189@wanadoo.fr>
+In-Reply-To: <05379b22-6755-368b-8127-8827fa020189@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-added a file entry that does not point to the intended file location.
+On Thu, 2020-04-09 at 19:34 +0200, Christophe JAILLET wrote:
+> Le 09/04/2020 =E0 17:29, Joe Perches a =E9crit :
+[]
+> > lib/percpu-refcount.c:#define pr_fmt(fmt) "%s: " fmt "\n", __func__
+> In this file, there are some WARN_ON.
+> Are these log functions also influenced by pr_fmt?
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+No.
 
-  warning: no file matches F: linux/soc/mmp/
+> > drivers/md/bcache/bcache.h:#define pr_fmt(fmt) "bcache: %s() " fmt "\n"=
+, __func__
+> > drivers/md/bcache/bset.c:#define pr_fmt(fmt) "bcache: %s() " fmt "\n", =
+__func__
+> > tools/usb/usbip/libsrc/usbip_common.h:#define pr_fmt(fmt)       "%s: %s=
+: " fmt "\n", PROGNAME
+>=20
+> Tricky because all files that include it have to be checked.
+> I won't touch these ones.
 
-Rectify the MAINTAINERS entry now.
+What a pity I do not know the French equivalent
+for the children's taunt of "chicken!"...
 
-Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Lubomir, please pick this patch.
-
-v1 & v1-RESEND: was ignored.
-
-v1 -> v2:
-  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
-  ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
-  ("MAINTAINERS: sort field names for all entries").
-  - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
-
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e64e5db31497..a0fef0c33ba5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11327,7 +11327,7 @@ S:	Odd Fixes
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
- F:	arch/arm/boot/dts/mmp*
- F:	arch/arm/mach-mmp/
--F:	linux/soc/mmp/
-+F:	include/linux/soc/mmp/
- 
- MMP USB PHY DRIVERS
- R:	Lubomir Rintel <lkundrak@v3.sk>
--- 
-2.17.1
+cheers, Joe
