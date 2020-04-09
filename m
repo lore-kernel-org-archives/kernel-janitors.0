@@ -1,18 +1,33 @@
-From: maowenan <maowenan@huawei.com>
-Date: Tue, 28 Apr 2020 06:58:42 +0000
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: Change error code when ops is NULL
-Message-Id: <0e8261b9-5519-fca3-afb2-e92ef98e8ea4@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 09 Apr 2020 06:02:24 +0000
+Subject: Re: virtio-mmio: Delete an error message in vm_find_vqs()
+Message-Id: <96031fc7-dced-95bd-fc57-a5fe890638f4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200426063635.130680-1-maowenan@huawei.com>
- <20200426063635.130680-2-maowenan@huawei.com>
- <6f975e8c-34f5-4bcb-d99d-d1977866bedf@iogearbox.net>
-In-Reply-To: <6f975e8c-34f5-4bcb-d99d-d1977866bedf@iogearbox.net>
+References: <9e27bc4a-cfa1-7818-dc25-8ad308816b30@web.de>
+ <03b19e72-0021-dc6b-77c4-ed3c4e13d526@redhat.com>
+In-Reply-To: <03b19e72-0021-dc6b-77c4-ed3c4e13d526@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org, andrii.nakryiko@gmail.com, dan.carpenter@oracle.com
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux-foundation.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javierm@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>, Stephen Boyd <swboyd@chromium.org>, Tang Bin <tangbin@cmss.chinamobile.com>
 
-On 2020/4/28 5:37, Daniel Borkmann wrote:
-> bpftool feature probe kernel | grep sockmap
-ok, thanks.
+>> The function “platform_get_irq” can log an error already.
+>> Thus omit a redundant message for the exception handling in the
+>> calling function.
+>
+> It looks to me that not all error path of platform_get_irq() were loggd.
+
+How do you think about to clarify the handling of the error code “-EPROBE_DEFER” any more?
+https://elixir.bootlin.com/linux/v5.6.3/source/drivers/base/platform.c#L202
+
+
+> And git grep told me there're other users of platform_get_irq() that check and log by themselves.
+
+Source code analysis can point further update candidates out, can't it?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/base/platform.c?id=7723f4c5ecdb8d832f049f8483beb0d1081cedf6
+
+Would you like to achieve collateral evolution?
+
+Regards,
+Markus
