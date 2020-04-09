@@ -1,55 +1,34 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Tue, 07 Apr 2020 06:15:33 +0000
-Subject: Re: [PATCH] soc: qcom: smp2p: Delete an error message in qcom_smp2p_probe()
-Message-Id: <20200407061533.GA576963@builder.lan>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 09 Apr 2020 10:12:26 +0000
+Subject: [PATCH] clocksource: davinci: axe a pointless __GFP_NOFAIL
+Message-Id: <20200409101226.15432-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eb92fcfb-6181-1f9d-2601-61e5231bd892@web.de>
-In-Reply-To: <eb92fcfb-6181-1f9d-2601-61e5231bd892@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun 05 Apr 09:12 PDT 2020, Markus Elfring wrote:
+There is no need to specify __GFP_NOFAIL when allocating memory here, so
+axe it.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Apr 2020 18:08:13 +0200
->=20
-> The function =93platform_get_irq=94 can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clocksource/timer-davinci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Markus, picked up for 5.8.
-
-Regards,
-Bjorn
-
-> ---
->  drivers/soc/qcom/smp2p.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index c7300d54e444..07183d731d74 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -474,10 +474,8 @@ static int qcom_smp2p_probe(struct platform_device *=
-pdev)
->  		goto report_read_failure;
->=20
->  	irq =3D platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		dev_err(&pdev->dev, "unable to acquire smp2p interrupt\n");
-> +	if (irq < 0)
->  		return irq;
-> -	}
->=20
->  	smp2p->mbox_client.dev =3D &pdev->dev;
->  	smp2p->mbox_client.knows_txdone =3D true;
-> --
-> 2.26.0
->=20
+diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+index aae938368230..bb4eee31ae08 100644
+--- a/drivers/clocksource/timer-davinci.c
++++ b/drivers/clocksource/timer-davinci.c
+@@ -270,7 +270,7 @@ int __init davinci_timer_register(struct clk *clk,
+ 	davinci_timer_init(base);
+ 	tick_rate = clk_get_rate(clk);
+ 
+-	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL | __GFP_NOFAIL);
++	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL);
+ 	if (!clockevent)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
