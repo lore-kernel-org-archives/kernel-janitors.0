@@ -1,69 +1,39 @@
-From: "Koo, Anthony" <Anthony.Koo@amd.com>
-Date: Thu, 23 Apr 2020 15:18:56 +0000
-Subject: RE: [PATCH][next] drm/amd/display: fix incorrect assignment due to a typo
-Message-Id: <DM6PR12MB4545A35BA8D16B0218FF142FF3D30@DM6PR12MB4545.namprd12.prod.outlook.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 09 Apr 2020 13:05:17 +0000
+Subject: drm/tve200: Checking for a failed platform_get_irq() call in tve200_probe()
+Message-Id: <0263f4fb-c349-7651-b590-8722cdd30c85@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200423140240.19360-1-colin.king@canonical.com>
-In-Reply-To: <20200423140240.19360-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-SGkgQ29saW4sDQoNClNvcnJ5IGZvciBhbnkgY29uZnVzaW9uIG9mIHRoaXMgY29kZS4NCkkgdGhp
-bmsgaW4gdGhpcyBjYXNlLCBpdCBzZWVtcyBsaWtlIHRoZSBjb21tZW50IGlzIHdyb25nIChidXQg
-b3JpZ2luYWwgaW1wbGVtZW50YXRpb24gaXMgc29tZXdoYXQgd3JvbmcgYXMgd2VsbCkuIFByb2Jh
-Ymx5IHRoZSBvcmlnaW5hbCBjb2RlIGltcGxlbWVudGF0aW9uIG1ha2VzIGl0IHVuY2xlYXIuDQoN
-ClRoZXJlIGFyZSB0aHJlZSBzY2VuYXJpb3M6DQoxLiBWYXJpYWJsZSByZWZyZXNoIGFjdGl2ZSwg
-dGFyZ2V0aW5nIGEgZml4ZWQgcmF0ZQ0KSW4gdGhpcyBjYXNlLCB0aGUgbWluID0gbWF4ID0gZml4
-ZWQgcmF0ZQ0KDQoyLiBWYXJpYWJsZSByZWZyZXNoIGFjdGl2ZSwgd2l0aCBhIHZhcmlhYmxlIHJh
-bmdlDQpJbiB0aGlzIGNhc2UsIHRoZSBtaW4gPSBtaW5pbXVtIHJlZnJlc2ggcmF0ZSBvZiB0aGUg
-cmFuZ2UuDQpBbmQgdGhlIG1heCA9IG1heGltdW0gcmVmcmVzaCByYXRlIG9mIHRoZSByYW5nZS4N
-Cg0KMy4gVmFyaWFibGUgcmVmcmVzaCByYXRlIGlzIGRpc2FibGVkIChUaGUgY2FzZSB5b3UgYXJl
-IG1vZGlmeWluZykNCkluIHRoZSBkaXNhYmxlZCBjYXNlLCB3ZSB3YW50IHRvIGluZGljYXRlIHRv
-IHRoZSBkaXNwbGF5IHRoYXQgdGhlIHJlZnJlc2ggcmF0ZSBpcyBmaXhlZCwgc28gd2Ugd2FudCB0
-byBwcm9ncmFtIG1pbiA9IG1heCA9IHRoZSBiYXNlIHJlZnJlc2ggcmF0ZS4NClRvZGF5IHRoZXJl
-IHNlZW1zIHRvIGJlIGFuIGltcGxpY2F0aW9uIHRoYXQgbWF4IHJlZnJlc2ggPSBiYXNlIHJlZnJl
-c2gsIHdoaWNoIGlzIG5vdCBuZWNlc3NhcmlseSB0cnVlLg0KSSBndWVzcyB0byBtYWtlIHRoZSBj
-b2RlIG1vcmUgY2xlYXIgYW5kIGNvcnJlY3QsIHRoZSBtaW4gYW5kIG1heCBzaG91bGQgYm90aCBi
-ZSBwcm9ncmFtbWVkIGVxdWFsIHRvIHRoZSBiYXNlIHJlZnJlc2ggcmF0ZSAobm9taW5hbCBmaWVs
-ZCByYXRlIGZyb20gbW9kX2ZyZWVzeW5jX2NhbGNfbm9taW5hbF9maWVsZF9yYXRlKQ0KDQpEb2Vz
-IHRoYXQgbWFrZSBzZW5zZT8NCg0KVGhhbmtzLA0KQW50aG9ueQ0KDQotLS0tLU9yaWdpbmFsIE1l
-c3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiAN
-ClNlbnQ6IFRodXJzZGF5LCBBcHJpbCAyMywgMjAyMCAxMDowMyBBTQ0KVG86IFdlbnRsYW5kLCBI
-YXJyeSA8SGFycnkuV2VudGxhbmRAYW1kLmNvbT47IExpLCBTdW4gcGVuZyAoTGVvKSA8U3VucGVu
-Zy5MaUBhbWQuY29tPjsgRGV1Y2hlciwgQWxleGFuZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQu
-Y29tPjsgS29lbmlnLCBDaHJpc3RpYW4gPENocmlzdGlhbi5Lb2VuaWdAYW1kLmNvbT47IFpob3Us
-IERhdmlkKENodW5NaW5nKSA8RGF2aWQxLlpob3VAYW1kLmNvbT47IERhdmlkIEFpcmxpZSA8YWly
-bGllZEBsaW51eC5pZT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IEtvbywgQW50
-aG9ueSA8QW50aG9ueS5Lb29AYW1kLmNvbT47IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-OyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQpDYzoga2VybmVsLWphbml0b3JzQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KU3ViamVjdDogW1BB
-VENIXVtuZXh0XSBkcm0vYW1kL2Rpc3BsYXk6IGZpeCBpbmNvcnJlY3QgYXNzaWdubWVudCBkdWUg
-dG8gYSB0eXBvDQoNCkZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5j
-b20+DQoNClRoZSBhc3NpZ25tZW50IHRvIGluZm9wYWNrZXQtPnNiWzddIGxvb2tzIGluY29ycmVj
-dCwgdGhlIGNvbW1lbnQgc3RhdGVzIGl0IGlzIHRoZSBtaW5pbXVtIHJlZnJlc2ggcmF0ZSB5ZXQg
-aXQgaXMgYmVpbmcgYXNzaWduZWQgYSB2YWx1ZSBmcm9tIHRoZSBtYXhpbXVtIHJlZnJlc2ggcmF0
-ZSBtYXhfcmVmcmVzaF9pbl91aHouIEZpeCB0aGlzIGJ5IHVzaW5nIG1pbl9yZWZyZXNoX2luX3Vo
-eiBpbnN0ZWFkLg0KDQpBZGRyZXNzZXMtQ292ZXJpdHk6ICgiQ29weS1wYXN0ZSBlcnJvciIpDQpG
-aXhlczogZDJiYWNjMzhmNmNhICgiZHJtL2FtZC9kaXNwbGF5OiBDaGFuZ2UgaW5mb3BhY2tldCB0
-eXBlIHByb2dyYW1taW5nIikNClNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
-aW5nQGNhbm9uaWNhbC5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9k
-dWxlcy9mcmVlc3luYy9mcmVlc3luYy5jIHwgMiArLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
-dGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Ft
-ZC9kaXNwbGF5L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYyBiL2RyaXZlcnMvZ3B1L2RybS9h
-bWQvZGlzcGxheS9tb2R1bGVzL2ZyZWVzeW5jL2ZyZWVzeW5jLmMNCmluZGV4IGViNzQyMWU4M2I4
-Ni4uZmUxMTQzNjUzNmU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5
-L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9k
-aXNwbGF5L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYw0KQEAgLTU4Nyw3ICs1ODcsNyBAQCBz
-dGF0aWMgdm9pZCBidWlsZF92cnJfaW5mb3BhY2tldF9kYXRhX3YzKGNvbnN0IHN0cnVjdCBtb2Rf
-dnJyX3BhcmFtcyAqdnJyLA0KIAl9IGVsc2Ugew0KIAkJLy8gTm9uLWZzIGNhc2UsIHByb2dyYW0g
-bm9taW5hbCByYW5nZQ0KIAkJLyogUEI3ID0gRnJlZVN5bmMgTWluaW11bSByZWZyZXNoIHJhdGUg
-KEh6KSAqLw0KLQkJaW5mb3BhY2tldC0+c2JbN10gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWF4
-X3JlZnJlc2hfaW5fdWh6ICsgNTAwMDAwKSAvIDEwMDAwMDApOw0KKwkJaW5mb3BhY2tldC0+c2Jb
-N10gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWluX3JlZnJlc2hfaW5fdWh6ICsgDQorNTAwMDAw
-KSAvIDEwMDAwMDApOw0KIAkJLyogUEI4ID0gRnJlZVN5bmMgTWF4aW11bSByZWZyZXNoIHJhdGUg
-KEh6KSAqLw0KIAkJaW5mb3BhY2tldC0+c2JbOF0gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWF4
-X3JlZnJlc2hfaW5fdWh6ICsgNTAwMDAwKSAvIDEwMDAwMDApOw0KIAl9DQotLQ0KMi4yNS4xDQoN
-Cg=
+Hello,
+
+I have taken another look at the implementation of the function “tve200_probe”.
+A software analysis approach points the following source code out for
+further development considerations.
+https://elixir.bootlin.com/linux/v5.6.3/source/drivers/gpu/drm/tve200/tve200_drv.c#L212
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/tve200/tve200_drv.c?id=5d30bcacd91af6874481129797af364a53cd9b46#n212
+
+	irq = platform_get_irq(pdev, 0);
+	if (!irq) {
+		ret = -EINVAL;
+		goto clk_disable;
+	}
+
+
+The software documentation is providing the following information
+for the used programming interface.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/platform.c?id=5d30bcacd91af6874481129797af364a53cd9b46#n221
+https://elixir.bootlin.com/linux/v5.6.3/source/drivers/base/platform.c#L202
+
+“…
+ * Return: IRQ number on success, negative error number on failure.
+…”
+
+Would you like to reconsider the shown condition check?
+
+Regards,
+Markus
