@@ -1,34 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 09 Apr 2020 10:12:26 +0000
-Subject: [PATCH] clocksource: davinci: axe a pointless __GFP_NOFAIL
-Message-Id: <20200409101226.15432-1-christophe.jaillet@wanadoo.fr>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Thu, 09 Apr 2020 14:48:01 +0000
+Subject: Re: [PATCH] clocksource: davinci: axe a pointless __GFP_NOFAIL
+Message-Id: <e1ea1f7b-d5f6-d6bf-52da-32f2d3de7793@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200409101226.15432-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200409101226.15432-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is no need to specify __GFP_NOFAIL when allocating memory here, so
-axe it.
+On 09/04/2020 12:12, Christophe JAILLET wrote:
+> There is no need to specify __GFP_NOFAIL when allocating memory here, so
+> axe it.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clocksource/timer-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks
+--=20
+<http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM =
+SoCs
 
-diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
-index aae938368230..bb4eee31ae08 100644
---- a/drivers/clocksource/timer-davinci.c
-+++ b/drivers/clocksource/timer-davinci.c
-@@ -270,7 +270,7 @@ int __init davinci_timer_register(struct clk *clk,
- 	davinci_timer_init(base);
- 	tick_rate = clk_get_rate(clk);
- 
--	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL | __GFP_NOFAIL);
-+	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL);
- 	if (!clockevent)
- 		return -ENOMEM;
- 
--- 
-2.20.1
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
