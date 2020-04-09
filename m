@@ -1,37 +1,34 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Wed, 08 Apr 2020 22:47:03 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 09 Apr 2020 06:28:28 +0000
 Subject: Re: usb: gadget: fsl_udc_core: Checking for a failed platform_get_irq() call in fsl_udc_probe()
-Message-Id: <CADRPPNRe=YxwjCOYbEjKg4LCOx2suK5WxZp17NJhTm76szdU0w@mail.gmail.com>
+Message-Id: <8fdf250a-8a69-b875-db43-b228db202f98@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
-In-Reply-To: <36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de>
+ <CADRPPNRe=YxwjCOYbEjKg4LCOx2suK5WxZp17NJhTm76szdU0w@mail.gmail.com>
+In-Reply-To: <CADRPPNRe=YxwjCOYbEjKg4LCOx2suK5WxZp17NJhTm76szdU0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Felipe Balbi <balbi@kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Li Yang <leoyang.li@nxp.com>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tang Bin <tangbin@cmss.chinamobile.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-T24gV2VkLCBBcHIgOCwgMjAyMCBhdCA5OjE5IEFNIE1hcmt1cyBFbGZyaW5nIDxNYXJrdXMuRWxm
-cmluZ0B3ZWIuZGU+IHdyb3RlOgo+Cj4gSGVsbG8sCj4KPiBJIGhhdmUgdGFrZW4gYW5vdGhlciBs
-b29rIGF0IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rpb24g4oCcZnNsX3VkY19wcm9i
-ZeKAnS4KPiBBIHNvZnR3YXJlIGFuYWx5c2lzIGFwcHJvYWNoIHBvaW50cyB0aGUgZm9sbG93aW5n
-IHNvdXJjZSBjb2RlIG91dCBmb3IKPiBmdXJ0aGVyIGRldmVsb3BtZW50IGNvbnNpZGVyYXRpb25z
-Lgo+IGh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y1LjYuMi9zb3VyY2UvZHJpdmVy
-cy91c2IvZ2FkZ2V0L3VkYy9mc2xfdWRjX2NvcmUuYyNMMjQ0Mwo+IGh0dHBzOi8vZ2l0Lmtlcm5l
-bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2Ry
-aXZlcnMvdXNiL2dhZGdldC91ZGMvZnNsX3VkY19jb3JlLmM/aWT1ZTk0ZDEwZTRjNDY4MzU3MDE5
-ZTVjMjhkNDg0OTlmNjc3YjI4NGYjbjI0NDIKPgo+ICAgICAgICAgdWRjX2NvbnRyb2xsZXItPmly
-cSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7Cj4gICAgICAgICBpZiAoIXVkY19jb250cm9s
-bGVyLT5pcnEpIHsKPiAgICAgICAgICAgICAgICAgcmV0ID0gLUVOT0RFVjsKPiAgICAgICAgICAg
-ICAgICAgZ290byBlcnJfaW91bm1hcDsKPiAgICAgICAgIH0KPgo+Cj4gVGhlIHNvZnR3YXJlIGRv
-Y3VtZW50YXRpb24gaXMgcHJvdmlkaW5nIHRoZSBmb2xsb3dpbmcgaW5mb3JtYXRpb24KPiBmb3Ig
-dGhlIHVzZWQgcHJvZ3JhbW1pbmcgaW50ZXJmYWNlLgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
-cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZlcnMv
-YmFzZS9wbGF0Zm9ybS5jP2lk9WU5NGQxMGU0YzQ2ODM1NzAxOWU1YzI4ZDQ4NDk5ZjY3N2IyODRm
-I24yMjEKPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS42LjIvc291cmNlL2Ry
-aXZlcnMvYmFzZS9wbGF0Zm9ybS5jI0wyMDIKPgo+IOKAnOKApgo+ICAqIFJldHVybjogSVJRIG51
-bWJlciBvbiBzdWNjZXNzLCBuZWdhdGl2ZSBlcnJvciBudW1iZXIgb24gZmFpbHVyZS4KPiDigKbi
-gJ0KPgo+IFdvdWxkIHlvdSBsaWtlIHRvIHJlY29uc2lkZXIgdGhlIHNob3duIGNvbmRpdGlvbiBj
-aGVjaz8KClRoYW5rcyBmb3IgdGhlIGZpbmRpbmcuICBUaGlzIGlzIHRydWx5IGEgc29mdHdhcmUg
-aXNzdWUgdGhhdCBuZWVkIHRvCmJlIGZpeGVkLiAgV291bGQgeW91IHN1Ym1pdCBhIHBhdGNoIGZv
-ciBpdCBvciB5b3Ugd2FudCB1cyB0byBmaXggaXQ/CgpSZWdhcmRzLApMZW8=
+>> Would you like to reconsider the shown condition check?
+>
+> Thanks for the finding.  This is truly a software issue that need to
+> be fixed.
+
+I was unsure if I noticed another programming mistake.
+
+
+> Would you submit a patch for it
+
+Do other contributors know the affected software module better than me?
+
+
+> or you want us to fix it?
+
+I would find it nice if another developer will convert the bug report
+into corresponding improvements.
+
+Regards,
+Markus
