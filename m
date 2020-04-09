@@ -1,47 +1,121 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 14 Apr 2020 09:11:59 +0000
-Subject: Re: [PATCH] media: mantis: remove redundant assignment to variable err
-Message-Id: <de5e07e8-0bc7-efc5-b9cd-c0b26d9f707e@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 09 Apr 2020 09:25:43 +0000
+Subject: [PATCH] clocksource: davinci: avoid trailing '\n' hidden in pr_fmt()
+Message-Id: <20200409092543.14727-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410113913.14430-1-colin.king@canonical.com>
- <CAAEAJfCQaCCoShLPTA+EWUhMXdF6bKAxcOCj2SR5nPXMmk7LQg@mail.gmail.com>
- <20200414085922.GA1163@kadam>
-In-Reply-To: <20200414085922.GA1163@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 14/04/2020 09:59, Dan Carpenter wrote:
-> On Sat, Apr 11, 2020 at 07:53:51PM -0300, Ezequiel Garcia wrote:
->> There's a redundant err assignment right below here,
->> which you can also get rid of:
->>
->> -       err = mantis_frontend_power(mantis, POWER_ON);
->> +       mantis_frontend_power(mantis, POWER_ON);
->>
->> I can't test this, but calling mantis_frontend_power twice
->> is possibly redundant.
-> 
-> To me that code really looks like a hack-around for flakey hardware and
-> I would be afraid to delete it.  But the "err =" could be removed.
-> 
->>
->> Also, what's the gain from this cleanup? The driver is super
->> old, and it seems any modern compiler would be oblivious
->> of the redundant assignment.
-> 
-> Eventually we would like to enable that warning by default but there are
-> still thousands of pointless assignments so it will take years of
-> small fixes like this.  Generally cleaning up warnings is good.
+pr_xxx() functions usually have '\n' at the end of the logging message.
+Here, this '\n' is added via the 'pr_fmt' macro.
 
-They are indeed trivial fixes but can allow us to later find real
-unassigned variable bugs in the future when new code gets added and does
-not set these variables.
+In order to be more consistent with other files, use a more standard
+convention and put these '\n' back in the messages themselves and remove it
+from the pr_fmt macro.
 
-Colin
-> 
-> regards,
-> dan carpenter
-> 
+While at it, remove a useless message in case of 'kzalloc' failure,
+especially with a __GFP_NOFAIL flag.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that the __GFP_NOFAIL is relevant here.
+---
+ drivers/clocksource/timer-davinci.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+index e421946a91c5..aae938368230 100644
+--- a/drivers/clocksource/timer-davinci.c
++++ b/drivers/clocksource/timer-davinci.c
+@@ -18,7 +18,7 @@
+ #include <clocksource/timer-davinci.h>
+ 
+ #undef pr_fmt
+-#define pr_fmt(fmt) "%s: " fmt "\n", __func__
++#define pr_fmt(fmt) "%s: " fmt, __func__
+ 
+ #define DAVINCI_TIMER_REG_TIM12			0x10
+ #define DAVINCI_TIMER_REG_TIM34			0x14
+@@ -250,20 +250,20 @@ int __init davinci_timer_register(struct clk *clk,
+ 
+ 	rv = clk_prepare_enable(clk);
+ 	if (rv) {
+-		pr_err("Unable to prepare and enable the timer clock");
++		pr_err("Unable to prepare and enable the timer clock\n");
+ 		return rv;
+ 	}
+ 
+ 	if (!request_mem_region(timer_cfg->reg.start,
+ 				resource_size(&timer_cfg->reg),
+ 				"davinci-timer")) {
+-		pr_err("Unable to request memory region");
++		pr_err("Unable to request memory region\n");
+ 		return -EBUSY;
+ 	}
+ 
+ 	base = ioremap(timer_cfg->reg.start, resource_size(&timer_cfg->reg));
+ 	if (!base) {
+-		pr_err("Unable to map the register range");
++		pr_err("Unable to map the register range\n");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -271,10 +271,8 @@ int __init davinci_timer_register(struct clk *clk,
+ 	tick_rate = clk_get_rate(clk);
+ 
+ 	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL | __GFP_NOFAIL);
+-	if (!clockevent) {
+-		pr_err("Error allocating memory for clockevent data");
++	if (!clockevent)
+ 		return -ENOMEM;
+-	}
+ 
+ 	clockevent->dev.name = "tim12";
+ 	clockevent->dev.features = CLOCK_EVT_FEAT_ONESHOT;
+@@ -298,7 +296,7 @@ int __init davinci_timer_register(struct clk *clk,
+ 			 davinci_timer_irq_timer, IRQF_TIMER,
+ 			 "clockevent/tim12", clockevent);
+ 	if (rv) {
+-		pr_err("Unable to request the clockevent interrupt");
++		pr_err("Unable to request the clockevent interrupt\n");
+ 		return rv;
+ 	}
+ 
+@@ -325,7 +323,7 @@ int __init davinci_timer_register(struct clk *clk,
+ 
+ 	rv = clocksource_register_hz(&davinci_clocksource.dev, tick_rate);
+ 	if (rv) {
+-		pr_err("Unable to register clocksource");
++		pr_err("Unable to register clocksource\n");
+ 		return rv;
+ 	}
+ 
+@@ -343,20 +341,20 @@ static int __init of_davinci_timer_register(struct device_node *np)
+ 
+ 	rv = of_address_to_resource(np, 0, &timer_cfg.reg);
+ 	if (rv) {
+-		pr_err("Unable to get the register range for timer");
++		pr_err("Unable to get the register range for timer\n");
+ 		return rv;
+ 	}
+ 
+ 	rv = of_irq_to_resource_table(np, timer_cfg.irq,
+ 				      DAVINCI_TIMER_NUM_IRQS);
+ 	if (rv != DAVINCI_TIMER_NUM_IRQS) {
+-		pr_err("Unable to get the interrupts for timer");
++		pr_err("Unable to get the interrupts for timer\n");
+ 		return rv;
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
+ 	if (IS_ERR(clk)) {
+-		pr_err("Unable to get the timer clock");
++		pr_err("Unable to get the timer clock\n");
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-- 
+2.20.1
