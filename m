@@ -1,32 +1,38 @@
-From: Sinan Kaya <okaya@kernel.org>
-Date: Tue, 28 Apr 2020 20:29:49 +0000
-Subject: Re: [PATCH] dmaengine: qcom_hidma: Simplify error handling path in hidma_probe
-Message-Id: <430381bf-4fa5-80f7-4dcb-9e30d24e57ce@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 11:39:13 +0000
+Subject: [PATCH] media: mantis: remove redundant assignment to variable err
+Message-Id: <20200410113913.14430-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427111043.70218-1-christophe.jaillet@wanadoo.fr>
- <20200428125426.GE2014@kadam>
- <1efa0186-7fbe-9cb5-2719-2d7192f99e27@kernel.org>
- <20200428172116.GG2014@kadam>
-In-Reply-To: <20200428172116.GG2014@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, agross@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org, dan.j.williams@intel.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 4/28/2020 1:21 PM, Dan Carpenter wrote:
-> What I meant to say here was:
-> 
-> 	if (msi) {
-> 		rc = hidma_request_msi(dmadev, pdev);
-> 		if (rc)
-> 			msi = false;
-> 
-> Otherwise we end up checking freeing the msi in the error handling
-> code when we did not take it.
-> 
-> Hopefully, that clears things up?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, that works. However, I'd rather use a different flag for this
-in order not to mix the meaning of msi capability vs. msi allocation
-failure.
+The variable err is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/mantis/hopper_vp3028.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/mantis/hopper_vp3028.c b/drivers/media/pci/mantis/hopper_vp3028.c
+index 37bd386f3ed8..ce1e8737b14b 100644
+--- a/drivers/media/pci/mantis/hopper_vp3028.c
++++ b/drivers/media/pci/mantis/hopper_vp3028.c
+@@ -33,7 +33,7 @@ static int vp3028_frontend_init(struct mantis_pci *mantis, struct dvb_frontend *
+ {
+ 	struct i2c_adapter *adapter	= &mantis->adapter;
+ 	struct mantis_hwconfig *config	= mantis->hwconfig;
+-	int err = 0;
++	int err;
+ 
+ 	mantis_gpio_set_bits(mantis, config->reset, 0);
+ 	msleep(100);
+-- 
+2.25.1
