@@ -1,58 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Apr 2020 19:56:00 +0000
-Subject: Re: [PATCH v4] staging: wfx: cleanup long lines in data_tx.c
-Message-Id: <20200428195600.GN2014@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 14:18:13 +0000
+Subject: [PATCH] media: gspca: remove redundant assignment to variable status
+Message-Id: <20200410141813.29497-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200425113234.GA14492@blackclown> <8518467.FNpd3NTrYF@pc-42>
- <20200427115827.GA3214@blackclown>
-In-Reply-To: <20200427115827.GA3214@blackclown>
+References: <20191011185746.18570-1-colin.king@canonical.com>
+In-Reply-To: <20191011185746.18570-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 05:28:27PM +0530, Suraj Upadhyay wrote:
-> On Mon, Apr 27, 2020 at 11:50:23AM +0000, Jerome Pouiller wrote:
-> > On Saturday 25 April 2020 13:32:34 CEST Suraj Upadhyay wrote:
-> > > Break lines with length over 80 characters to
-> > > conform to the linux coding style and refactor
-> > > wherever necessary.
-> > > 
-> > > Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> > > ---
-> > > 
-> > > Changes in v4:
-> > > 	- Added a space after declaration in wfx_get_hw_rate().
-> > > 	- A checkpatch warning for this commit is retained at line 75,
-> > > 	  to maintain uniformity in function declarations. (Reviewer
-> > > 	  jerome suggested).
-> > > 
-> > > Changes in v3:
-> > >         - Changed the temporary variable name for the memzcmp statement
-> > >           to is_used. (as suggested).
-> > >         - Added a temporary ieee80211_supported_band variable to address
-> > >           the problem in wfx_get_hw_rate() more efficiently. (not
-> > >           suggested, but still).
-> > > 
-> > > Changes in v2:
-> > >         - Introduced a temporary variable for the memzcmp statement.
-> > >         - Addressed the checkpatch problem with wfx_get_hw_rate().
-> > >         - Restored the function definition of wfx_tx_get_tx_parms
-> > >           as suggested by the reviewer.
-> > >         - Added suggested changes for req->packet_id statement.
-> > > 
-> > >  drivers/staging/wfx/data_tx.c | 40 +++++++++++++++++++++++------------
-> > >  1 file changed, 26 insertions(+), 14 deletions(-)
-> > 
-> > This patch does not contain the suggestions from Dan. However, it is
-> > sufficient from my personal point of view.
-> 
-> Yes, I considered them but thought it would be bad to introduce a new
-> variable at every iteration of the for-loop.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-It's not bad at all.  I don't know why someone would think that.
+The variable status is being assigned a value that is never read.
+The assignment is redundant and can be removed.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/gspca/mr97310a.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/usb/gspca/mr97310a.c b/drivers/media/usb/gspca/mr97310a.c
+index 502fc2eaffe0..464aa61cd914 100644
+--- a/drivers/media/usb/gspca/mr97310a.c
++++ b/drivers/media/usb/gspca/mr97310a.c
+@@ -287,7 +287,6 @@ static int zero_the_pointer(struct gspca_dev *gspca_dev)
+ 			return err_code;
+ 
+ 		err_code = cam_get_response16(gspca_dev, 0x21, 0);
+-		status = data[0];
+ 		tries++;
+ 		if (err_code < 0)
+ 			return err_code;
+-- 
+2.25.1
