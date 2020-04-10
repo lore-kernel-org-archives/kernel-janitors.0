@@ -1,51 +1,56 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 29 Apr 2020 02:52:20 +0000
-Subject: [PATCH net-next v2] drivers: net: davinci_mdio: fix potential NULL dereference in davinci_mdio_probe
-Message-Id: <20200429025220.166415-1-weiyongjun1@huawei.com>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 10 Apr 2020 19:46:49 +0000
+Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
+Message-Id: <c9fd4bc75812fed4799c2fb87b452b809a7e9a7a.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427094032.181184-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427094032.181184-1-weiyongjun1@huawei.com>
+References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
+         <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
+         <6e52383e-100d-b016-32c2-6fb54938b6fe@wanadoo.fr>
+In-Reply-To: <6e52383e-100d-b016-32c2-6fb54938b6fe@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Grygorii Strashko <grygorii.strashko@ti.com>, David Lechner <david@lechnology.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-platform_get_resource() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-since devm_ioremap() does not check input parameters for null.
+On Fri, 2020-04-10 at 19:35 +0200, Christophe JAILLET wrote:
+> Le 08/04/2020 =E0 04:14, Joe Perches a =E9crit :
+> > This works rather better:
+> > Perhaps you could test?
+[]
+> I'm looking at some modification done in the last month that could have=20
+> been spotted by the above script.
+>=20
+>      ./scripts/checkpatch.pl -f drivers/usb/phy/phy-jz4770.c
+>=20
+> correctly spots the 3 first cases, but the 3 last (line 202, 210 and=20
+> 217) are missed.
+> I don't understand why.
 
-This is detected by Coccinelle semantic patch.
+It has to do with checkpatch's single statement parsing.
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
+This case:
 
-res = \(platform_get_resource\|platform_get_resource_byname\)(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res = NULL
-e = devm_ioremap(e1, res->start, e2);
+	if (foo)
+		dev_warn(...);
 
-Fixes: 03f66f067560 ("net: ethernet: ti: davinci_mdio: use devm_ioremap()")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
-v1 -> v2: add fixes and reviewed-by
----
- drivers/net/ethernet/ti/davinci_mdio.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+is parsed as a single statement but
 
-diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
-index 38b7f6d35759..702fdc393da0 100644
---- a/drivers/net/ethernet/ti/davinci_mdio.c
-+++ b/drivers/net/ethernet/ti/davinci_mdio.c
-@@ -397,6 +397,8 @@ static int davinci_mdio_probe(struct platform_device *pdev)
- 	data->dev = dev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
- 	data->regs = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!data->regs)
- 		return -ENOMEM;
+	if (foo) {
+		dev_warn(...);
+	};
+
+is parsed as multiple statements so for the
+second case
+
+		dev_warn(...);
+
+is analyzed as a separate statement.
+
+The regex match for this missing newline test expects
+that each printk is a separate statement so the first
+case doesn't match.
+
+Clearly the regex can be improved here.
+
+cheers, Joe
