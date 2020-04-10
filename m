@@ -1,66 +1,56 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 10 Apr 2020 07:33:49 +0000
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+Date: Fri, 10 Apr 2020 08:05:06 +0000
 Subject: Re: [PATCH] usb: gadget: fsl: Fix a wrong judgment in fsl_udc_probe()
-Message-Id: <be8cd229-884a-40e6-3363-7c4680a51b30@web.de>
+Message-Id: <0b718268-d330-dfc1-aca3-3dd3203363d7@cmss.chinamobile.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200410015832.8012-1-tangbin@cmss.chinamobile.com>
-In-Reply-To: <20200410015832.8012-1-tangbin@cmss.chinamobile.com>
+ <be8cd229-884a-40e6-3363-7c4680a51b30@web.de>
+In-Reply-To: <be8cd229-884a-40e6-3363-7c4680a51b30@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tang Bin <tangbin@cmss.chinamobile.com>, Li Yang <leoyang.li@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Shengju Zhang <zhangshengju@cmss.chinamobile.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Li Yang <leoyang.li@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> If the function "platform_get_irq()" failed, the negative value
-> returned will not be detected here, including "-EPROBE_DEFER",
-
-I suggest to adjust this change description.
-
-Wording alternative:
-  The negative return value (which could eventually be “-EPROBE_DEFER”)
-  will not be detected here from a failed call of the function “platform_get_irq”.
-
-
-> which causes the application to fail to get the correct error message.
-
-Will another fine-tuning become relevant also for this wording?
-
-
-> Thus it must be fixed.
-
-Wording alternative:
-  Thus adjust the error detection and corresponding exception handling.
-
-
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
-> Signed-off-by: Shengju Zhang <zhangshengju@cmss.chinamobile.com>
-
-How do you think about to add the tags “Fixes”, “Link” and “Reported-by”?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=c0cc271173b2e1c2d8d0ceaef14e4dfa79eefc0d#n584
-
-usb: gadget: fsl_udc_core: Checking for a failed platform_get_irq() call in fsl_udc_probe()
-https://lore.kernel.org/linux-usb/36341bb1-1e00-5eb1-d032-60dcc614ddaf@web.de/
-https://lkml.org/lkml/2020/4/8/442
-
-…
-> +++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-> @@ -2441,8 +2441,8 @@ static int fsl_udc_probe(struct platform_device *pdev)
->  	udc_controller->max_ep = (dccparams & DCCPARAMS_DEN_MASK) * 2;
->
->  	udc_controller->irq = platform_get_irq(pdev, 0);
-> -	if (!udc_controller->irq) {
-> -		ret = -ENODEV;
-> +	if (udc_controller->irq <= 0) {
-
-Will such a failure predicate need any more clarification?
-
-How does this check fit to the current software documentation?
-
-
-> +		ret = udc_controller->irq ? : -ENODEV;
-
-Will it be clearer to specify values for all cases in such a conditional operator
-(instead of leaving one case empty)?
-
-Regards,
-Markus
+SGkgTWFya3VzCgpPbiAyMDIwLzQvMTAgMTU6MzMsIE1hcmt1cyBFbGZyaW5nIHdyb3RlOgo+PiBJ
+ZiB0aGUgZnVuY3Rpb24gInBsYXRmb3JtX2dldF9pcnEoKSIgZmFpbGVkLCB0aGUgbmVnYXRpdmUg
+dmFsdWUKPj4gcmV0dXJuZWQgd2lsbCBub3QgYmUgZGV0ZWN0ZWQgaGVyZSwgaW5jbHVkaW5nICIt
+RVBST0JFX0RFRkVSIiwKPiBJIHN1Z2dlc3QgdG8gYWRqdXN0IHRoaXMgY2hhbmdlIGRlc2NyaXB0
+aW9uLgo+Cj4gV29yZGluZyBhbHRlcm5hdGl2ZToKPiAgICBUaGUgbmVnYXRpdmUgcmV0dXJuIHZh
+bHVlICh3aGljaCBjb3VsZCBldmVudHVhbGx5IGJlIOKAnC1FUFJPQkVfREVGRVLigJ0pCj4gICAg
+d2lsbCBub3QgYmUgZGV0ZWN0ZWQgaGVyZSBmcm9tIGEgZmFpbGVkIGNhbGwgb2YgdGhlIGZ1bmN0
+aW9uIOKAnHBsYXRmb3JtX2dldF9pcnHigJ0uCkhhcmR3YXJlIGV4cGVyaW1lbnRzIHNob3cgdGhh
+dCB0aGUgbmVnYXRpdmUgcmV0dXJuIHZhbHVlIGlzIG5vdCBqdXN0IAoiLUVQUk9CRV9ERUZFUiIu
+Cj4KPj4gd2hpY2ggY2F1c2VzIHRoZSBhcHBsaWNhdGlvbiB0byBmYWlsIHRvIGdldCB0aGUgY29y
+cmVjdCBlcnJvciBtZXNzYWdlLgo+IFdpbGwgYW5vdGhlciBmaW5lLXR1bmluZyBiZWNvbWUgcmVs
+ZXZhbnQgYWxzbyBmb3IgdGhpcyB3b3JkaW5nPwpNYXliZSB0aGF0J3Mgbm90IHF1aXRlIGFjY3Vy
+YXRlLgo+Cj4KPj4gVGh1cyBpdCBtdXN0IGJlIGZpeGVkLgo+IFdvcmRpbmcgYWx0ZXJuYXRpdmU6
+Cj4gICAgVGh1cyBhZGp1c3QgdGhlIGVycm9yIGRldGVjdGlvbiBhbmQgY29ycmVzcG9uZGluZyBl
+eGNlcHRpb24gaGFuZGxpbmcuCkdvdCBpdC4KPgo+Cj4+IFNpZ25lZC1vZmYtYnk6IFRhbmcgQmlu
+IDx0YW5nYmluQGNtc3MuY2hpbmFtb2JpbGUuY29tPgo+PiBTaWduZWQtb2ZmLWJ5OiBTaGVuZ2p1
+IFpoYW5nIDx6aGFuZ3NoZW5nanVAY21zcy5jaGluYW1vYmlsZS5jb20+Cj4gSG93IGRvIHlvdSB0
+aGluayBhYm91dCB0byBhZGQgdGhlIHRhZ3Mg4oCcRml4ZXPigJ0sIOKAnExpbmvigJ0gYW5kIOKA
+nFJlcG9ydGVkLWJ54oCdPwo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
+ZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9z
+dWJtaXR0aW5nLXBhdGNoZXMucnN0P2lkwGNjMjcxMTczYjJlMWMyZDhkMGNlYWVmMTRlNGRmYTc5
+ZWVmYzBkI241ODQKPgo+IHVzYjogZ2FkZ2V0OiBmc2xfdWRjX2NvcmU6IENoZWNraW5nIGZvciBh
+IGZhaWxlZCBwbGF0Zm9ybV9nZXRfaXJxKCkgY2FsbCBpbiBmc2xfdWRjX3Byb2JlKCkKPiBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9saW51eC11c2IvMzYzNDFiYjEtMWUwMC01ZWIxLWQwMzItNjBk
+Y2M2MTRkZGFmQHdlYi5kZS8KPiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAyMC80LzgvNDQyCj4K
+PiDigKYKPj4gKysrIGIvZHJpdmVycy91c2IvZ2FkZ2V0L3VkYy9mc2xfdWRjX2NvcmUuYwo+PiBA
+QCAtMjQ0MSw4ICsyNDQxLDggQEAgc3RhdGljIGludCBmc2xfdWRjX3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpCj4+ICAgCXVkY19jb250cm9sbGVyLT5tYXhfZXAgPSAoZGNjcGFy
+YW1zICYgRENDUEFSQU1TX0RFTl9NQVNLKSAqIDI7Cj4+Cj4+ICAgCXVkY19jb250cm9sbGVyLT5p
+cnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYsIDApOwo+PiAtCWlmICghdWRjX2NvbnRyb2xsZXIt
+PmlycSkgewo+PiAtCQlyZXQgPSAtRU5PREVWOwo+PiArCWlmICh1ZGNfY29udHJvbGxlci0+aXJx
+IDw9IDApIHsKPiBXaWxsIHN1Y2ggYSBmYWlsdXJlIHByZWRpY2F0ZSBuZWVkIGFueSBtb3JlIGNs
+YXJpZmljYXRpb24/Cj4KPiBIb3cgZG9lcyB0aGlzIGNoZWNrIGZpdCB0byB0aGUgY3VycmVudCBz
+b2Z0d2FyZSBkb2N1bWVudGF0aW9uPwpNYXliZSBteSB0YWdzIGFyZSBub3Qgc3VpdGFibGUuCj4K
+Pgo+PiArCQlyZXQgPSB1ZGNfY29udHJvbGxlci0+aXJxID8gOiAtRU5PREVWOwo+IFdpbGwgaXQg
+YmUgY2xlYXJlciB0byBzcGVjaWZ5IHZhbHVlcyBmb3IgYWxsIGNhc2VzIGluIHN1Y2ggYSBjb25k
+aXRpb25hbCBvcGVyYXRvcgo+IChpbnN0ZWFkIG9mIGxlYXZpbmcgb25lIGNhc2UgZW1wdHkpPwoK
+SSBkb24ndCBrbm93IHdoYXQgeW91IG1lYW4gb2YgImluc3RlYWQgb2YgbGVhdmluZyBvbmUgY2Fz
+ZSBlbXB0eSIuIEJ1dCAKYnkgZXhwZXJpbWVudCwgInJldCA9IHVkY19jb250cm9sbGVyLT5pcnEg
+PyA6IC1FTk9ERVYiIG9yICJyZXQgPSAKdWRjX2NvbnRyb2xsZXItPmlycSA8IDAgPyB1ZGNfY29u
+dHJvbGxlci0+aXJxIDogLUVOT0RFViIgc2hvdWxkIGJlIApzdWl0YWJsZSBoZXJlLgoKClRoYW5r
+IHlvdSBmb3IgeW91ciBndWlkYW5jZS4KClRhbmcgQmluCgoK
