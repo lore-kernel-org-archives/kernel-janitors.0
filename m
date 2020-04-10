@@ -1,33 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 22 Apr 2020 11:57:43 +0000
-Subject: Re: [PATCH] ASoC: SOF: ensure all fields in header are zero'd before copying back to userspace
-Message-Id: <96616094-2ba4-24ee-44df-deac919763ef@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 19:11:50 +0000
+Subject: [PATCH] net: neterion: remove redundant assignment to variable tmp64
+Message-Id: <20200410191150.75588-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422112417.208843-1-colin.king@canonical.com>
- <20200422114522.GK2659@kadam>
-In-Reply-To: <20200422114522.GK2659@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>, sound-open-firmware@alsa-project.org
+To: Jon Mason <jdmason@kudzu.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 22/04/2020 12:45, Dan Carpenter wrote:
-> On Wed, Apr 22, 2020 at 12:24:17PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Field header.tlv is uninitialized and being copied back to userspace
->         ^^^^^^^^^^
-> header.tlv is a zero element array so it doens't have any stack data.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Dan, I totally overlooked that. That's another class if issues I
-need to triage correctly.
+The variable tmp64 is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-> 
->> and hence leaking data from the stack to userspace.  Fix this by
->> ensuring the header structure is zero'd.
-> 
-> regards,
-> dan carpenter
-> 
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/neterion/s2io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/neterion/s2io.c b/drivers/net/ethernet/neterion/s2io.c
+index 0ec6b8e8b549..67e62603fe3b 100644
+--- a/drivers/net/ethernet/neterion/s2io.c
++++ b/drivers/net/ethernet/neterion/s2io.c
+@@ -5155,7 +5155,7 @@ static int do_s2io_delete_unicast_mc(struct s2io_nic *sp, u64 addr)
+ /* read mac entries from CAM */
+ static u64 do_s2io_read_unicast_mc(struct s2io_nic *sp, int offset)
+ {
+-	u64 tmp64 = 0xffffffffffff0000ULL, val64;
++	u64 tmp64, val64;
+ 	struct XENA_dev_config __iomem *bar0 = sp->bar0;
+ 
+ 	/* read mac addr */
+-- 
+2.25.1
