@@ -1,29 +1,57 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 26 Apr 2020 18:16:36 +0000
-Subject: Re: [PATCH V2] bcache: fix potential deadlock problem in btree_gc_coalesce
-Message-Id: <80c2a2c6-01b9-8280-34b4-ff6b9cfaf76a@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 13:34:06 +0000
+Subject: [PATCH] regulator: tps80031: remove redundant assignment to variables ret and val
+Message-Id: <20200410133406.24458-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Zhiqiang Liu <liuzhiqiang26@huawei.com>, linux-bcache@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Coly Li <colyli@suse.de>, Feilong Lin <linfeilong@huawei.com>, Kent Overstreet <kmo@daterainc.com>, mingfangsen@huawei.com, renxudong1@huawei.com, Wu Bo <wubo40@huawei.com>, yanxiaodan@huawei.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> --
-> V1->V2: rewrite commit log (suggested by Coly Li) and rename the patch
+From: Colin Ian King <colin.king@canonical.com>
 
-* The patch version description should be placed behind triple dashes.
+The variables ret and val are being initialized with values that are
+never read and are being updated later with a new value.  The
+initializations are redundant and can be removed.
 
-* I would find a shorter version identification (without the arrow)
-  also sufficient.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/regulator/tps80031-regulator.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-
-> Fixes: 2a285686c1 ("bcache: btree locking rework")>
-
-Will a longer commit identifier be safer for the final change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/process/submitting-patches.rst?id=B2768df24ec400dd4f7fa79542f797=
-e904812053#n183
-
-Regards,
-Markus
+diff --git a/drivers/regulator/tps80031-regulator.c b/drivers/regulator/tps80031-regulator.c
+index 85a6a8ca8c1b..a29e65230132 100644
+--- a/drivers/regulator/tps80031-regulator.c
++++ b/drivers/regulator/tps80031-regulator.c
+@@ -271,7 +271,7 @@ static int tps80031_vbus_is_enabled(struct regulator_dev *rdev)
+ {
+ 	struct tps80031_regulator *ri = rdev_get_drvdata(rdev);
+ 	struct device *parent = to_tps80031_dev(rdev);
+-	int ret = -EIO;
++	int ret;
+ 	uint8_t ctrl1 = 0;
+ 	uint8_t ctrl3 = 0;
+ 
+@@ -322,7 +322,7 @@ static int tps80031_vbus_disable(struct regulator_dev *rdev)
+ {
+ 	struct tps80031_regulator *ri = rdev_get_drvdata(rdev);
+ 	struct device *parent = to_tps80031_dev(rdev);
+-	int ret = 0;
++	int ret;
+ 
+ 	if (ri->config_flags & TPS80031_VBUS_DISCHRG_EN_PDN) {
+ 		ret = tps80031_write(parent, TPS80031_SLAVE_ID2,
+@@ -530,7 +530,8 @@ static int tps80031_regulator_config(struct device *parent,
+ 	case TPS80031_REGULATOR_LDOUSB:
+ 		if (ri->config_flags & (TPS80031_USBLDO_INPUT_VSYS |
+ 			TPS80031_USBLDO_INPUT_PMID)) {
+-			unsigned val = 0;
++			unsigned val;
++
+ 			if (ri->config_flags & TPS80031_USBLDO_INPUT_VSYS)
+ 				val = MISC2_LDOUSB_IN_VSYS;
+ 			else
+-- 
+2.25.1
