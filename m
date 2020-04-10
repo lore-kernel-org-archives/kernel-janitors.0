@@ -1,38 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 09 Apr 2020 11:41:18 +0000
-Subject: [PATCH] xen/pci: remove redundant assignment to variable irq
-Message-Id: <20200409114118.249461-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 10 Apr 2020 17:12:24 +0000
+Subject: [PATCH] iio: imu: adis: Add a missing '\n' in a log message
+Message-Id: <20200410171224.4633-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alexandru.ardelean@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, stefan.popa@analog.com, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-The variable irq is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 1fd456702692 ("iio: imu: adis: add support product ID check in adis_initial_startup")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/pci/xen.c | 2 +-
+ drivers/iio/imu/adis.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
-index 91220cc25854..80272eb49230 100644
---- a/arch/x86/pci/xen.c
-+++ b/arch/x86/pci/xen.c
-@@ -63,7 +63,7 @@ static int xen_pcifront_enable_irq(struct pci_dev *dev)
- static int xen_register_pirq(u32 gsi, int gsi_override, int triggering,
- 			     bool set_pirq)
- {
--	int rc, pirq = -1, irq = -1;
-+	int rc, pirq = -1, irq;
- 	struct physdev_map_pirq map_irq;
- 	int shareable = 0;
- 	char *name;
+diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
+index a8afd01de4f3..2e7d0d337f8f 100644
+--- a/drivers/iio/imu/adis.c
++++ b/drivers/iio/imu/adis.c
+@@ -419,7 +419,7 @@ int __adis_initial_startup(struct adis *adis)
+ 
+ 	if (prod_id != adis->data->prod_id)
+ 		dev_warn(&adis->spi->dev,
+-			 "Device ID(%u) and product ID(%u) do not match.",
++			 "Device ID(%u) and product ID(%u) do not match.\n",
+ 			 adis->data->prod_id, prod_id);
+ 
+ 	return 0;
 -- 
-2.25.1
+2.20.1
