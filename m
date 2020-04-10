@@ -1,43 +1,50 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 09 Apr 2020 20:48:19 +0000
-Subject: Re: Input: ep93xx_keypad: Checking for a failed platform_get_irq() call in ep93xx_keypad_probe()
-Message-Id: <20200409204819.GR75430@dtor-ws>
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+Date: Fri, 10 Apr 2020 02:52:50 +0000
+Subject: Re: Input: ep93xx_keypad: Checking for a failed platform_get_irq()call in ep93xx_keypad_probe()
+Message-Id: <55fdfd83-dc4f-36e9-b8a7-96ad4881a2ce@cmss.chinamobile.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <11aecb68-d243-2eeb-0cc8-50e1ec22bd71@web.de>
-In-Reply-To: <11aecb68-d243-2eeb-0cc8-50e1ec22bd71@web.de>
+ <20200409204819.GR75430@dtor-ws>
+In-Reply-To: <20200409204819.GR75430@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-input@vger.kernel.org, Allison Randal <allison@lohutok.net>, Arnd Bergmann <arnd@arndb.de>, H Hartley Sweeten <hsweeten@visionengravers.com>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-input@vger.kernel.org, Allison Randal <allison@lohutok.net>, Arnd Bergmann <arnd@arndb.de>, H Hartley Sweeten <hsweeten@visionengravers.com>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-SGkgTWFya3VzLAoKT24gV2VkLCBBcHIgMDgsIDIwMjAgYXQgMDY6NTI6MzFQTSArMDIwMCwgTWFy
-a3VzIEVsZnJpbmcgd3JvdGU6Cj4gSGVsbG8sCj4gCj4gSSBoYXZlIHRha2VuIGFub3RoZXIgbG9v
-ayBhdCB0aGUgaW1wbGVtZW50YXRpb24gb2YgdGhlIGZ1bmN0aW9uIOKAnGVwOTN4eF9rZXlwYWRf
-cHJvYmXigJ0uCj4gQSBzb2Z0d2FyZSBhbmFseXNpcyBhcHByb2FjaCBwb2ludHMgdGhlIGZvbGxv
-d2luZyBzb3VyY2UgY29kZSBvdXQgZm9yCj4gZnVydGhlciBkZXZlbG9wbWVudCBjb25zaWRlcmF0
-aW9ucy4KPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS42LjMvc291cmNlL2Ry
-aXZlcnMvaW5wdXQva2V5Ym9hcmQvZXA5M3h4X2tleXBhZC5jI0wyNTIKPiBodHRwczovL2dpdC5r
-ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJl
-ZS9kcml2ZXJzL2lucHV0L2tleWJvYXJkL2VwOTN4eF9rZXlwYWQuYz9pZPVlOTRkMTBlNGM0Njgz
-NTcwMTllNWMyOGQ0ODQ5OWY2NzdiMjg0ZiNuMjUyCj4gCj4gIAlrZXlwYWQtPmlycSA9IHBsYXRm
-b3JtX2dldF9pcnEocGRldiwgMCk7Cj4gIAlpZiAoIWtleXBhZC0+aXJxKSB7Cj4gIAkJZXJyID0g
-LUVOWElPOwo+ICAJCWdvdG8gZmFpbGVkX2ZyZWU7Cj4gIAl9Cj4gCj4gCj4gVGhlIHNvZnR3YXJl
-IGRvY3VtZW50YXRpb24gaXMgcHJvdmlkaW5nIHRoZSBmb2xsb3dpbmcgaW5mb3JtYXRpb24KPiBm
-b3IgdGhlIHVzZWQgcHJvZ3JhbW1pbmcgaW50ZXJmYWNlLgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZl
-cnMvYmFzZS9wbGF0Zm9ybS5jP2lk9WU5NGQxMGU0YzQ2ODM1NzAxOWU1YzI4ZDQ4NDk5ZjY3N2Iy
-ODRmI24yMjEKPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS42LjMvc291cmNl
-L2RyaXZlcnMvYmFzZS9wbGF0Zm9ybS5jI0wyMDIKPiAKPiDigJzigKYKPiAgKiBSZXR1cm46IElS
-USBudW1iZXIgb24gc3VjY2VzcywgbmVnYXRpdmUgZXJyb3IgbnVtYmVyIG9uIGZhaWx1cmUuCj4g
-4oCm4oCdCj4gCj4gV291bGQgeW91IGxpa2UgdG8gcmVjb25zaWRlciB0aGUgc2hvd24gY29uZGl0
-aW9uIGNoZWNrPwoKUGxhdGZvcm0gY29kZSBoaXN0b3JpY2FsbHkgYWxsb3dlZCBjcmVhdGluZyBJ
-UlEgcmVzb3VyY2VzIHdpdGggSVJRCm51bWJlciAwIHRvIGluZGljYXRlICJubyBpbnRlcnJ1cHQg
-YXNzaWduZWQiLCBzbyB0aGlzIGRyaXZlciB0cmllcyB0bwpmaWx0ZXIgb3V0IHN1Y2ggY29uZGl0
-aW9ucy4gVGhlIG5lZ2F0aXZlIElSUXMgKGVycm9ycykgd2lsbCBiZSByZWplY3RlZApieSByZXF1
-ZXN0X2lycSgpIGJ1dCBJIGd1ZXNzIHdlIGNhbiBsb3NlIC1FUFJPQkVfREVGRVIuIFdlIGNvdWxk
-IGRvCgoJaWYgKGtleXBhZC0+aXJxIDw9IDApIHsKCQllcnIgPSBrZXlwYWQtPmlycSA/OiAtRU5Y
-SU8gOiBrZXlwYWQtPmlycTsKCQlnb3RvIGZhaWxlZF9mcmVlOwoJfQoKCm9yLCBtYXliZSB3ZSBz
-aG91bGQgdGFrZSBhIGxvb2sgYXQgcGxhdGZvcm1fZ2V0X2lycSgpIGFuZCBzZWUgaWYgd2UgY2Fu
-CnN0b3AgaXQgcmV0dXJuaW5nIDAgaW50ZXJydXB0IG51bWJlcnMgYW5kIGNsZWFuIHVwIHRoZSBk
-cml2ZXJzLgoKVGhhbmtzLgoKLS0gCkRtaXRyeQ==
+Hi Dmitry:
+
+On 2020/4/10 4:48, Dmitry Torokhov wrote:
+> Platform code historically allowed creating IRQ resources with IRQ
+> number 0 to indicate "no interrupt assigned", so this driver tries to
+> filter out such conditions. The negative IRQs (errors) will be rejected
+> by request_irq() but I guess we can lose -EPROBE_DEFER. We could do
+>
+> 	if (keypad->irq <= 0) {
+> 		err = keypad->irq ?: -ENXIO : keypad->irq;
+> 		goto failed_free;
+> 	}
+>
+>
+I have been aware of this problem for a few days, and by doing 
+experiments on the hardware, I have found the following ways that maybe 
+suitable：
+
+     if (keypad->irq <= 0) {
+         err = keypad->irq ? : -ENXIO;
+         goto failed_free;
+     }
+     or
+     if (keypad->irq <= 0) {
+         err = keypad->irq < 0 ? keypad->irq : -ENXIO;
+         goto failed_free;
+     }
+
+If you think it's usefull, I will send this patch to fix it.
+
+Thanks
+
+Tang Bin
+
+
+>
