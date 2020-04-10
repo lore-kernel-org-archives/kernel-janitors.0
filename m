@@ -1,55 +1,75 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 07 Apr 2020 20:49:08 +0000
-Subject: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
+Date: Fri, 10 Apr 2020 17:35:37 +0000
+Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
+Message-Id: <6e52383e-100d-b016-32c2-6fb54938b6fe@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
+ <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
+In-Reply-To: <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: apw@canonical.com, joe@perches.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Strings logged with pr_xxx and dev_xxx often lack a trailing '\n'.
-Introduce new tests to try to catch them early.
+Le 08/04/2020 à 04:14, Joe Perches a écrit :
+> This works rather better:
+>
+> Perhaps you could test?
+> ---
+>
+> v2:
+>
+> o Avoid pr_cont
+> o Use only last format line if split across multiple lines
+>
+>   scripts/checkpatch.pl | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+>
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index d64c67..f00a6c8 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -5673,6 +5673,28 @@ sub process {
+>   			}
+>   		}
+>   
+> +# check for possible missing newlines at the end of common logging functions
+> +		if (defined($stat) &&
+> +		    $stat =~ /^\+\s*($logFunctions)\s*\((?:\s*$FuncArg\s*,\s*){0,3}\s*$String/ &&
+> +		    $1 !~ /_cont$/ && $1 =~ /^(?:pr|dev|netdev|netif|wiphy)_/) {
+> +			my $cnt = statement_rawlines($stat);
+> +			my $extracted_string = "";
+> +			for (my $i = 0; $i < $cnt; $i++) {
+> +				next if ($lines[$linenr + $i - 1] !~ /$String\s*[,\)]/);
+> +				$extracted_string = get_quoted_string($lines[$linenr + $i - 1],
+> +								      $rawlines[$linenr + $i - 1]);
+> +				last if ($extracted_string ne "");
+> +			}
+> +			if ($extracted_string ne "" && $extracted_string !~ /\\n"$/) {
+> +				my $herectx = $here . "\n";
+> +				for (my $n = 0; $n < $cnt; $n++) {
+> +					$herectx .=  raw_line($linenr, $n) . "\n";
+> +				}
+> +				WARN("MISSING_FORMAT_NEWLINE",
+> +				     "Possible missing '\\n' at the end of a logging message format string\n" . $herectx);
+> +			}
+> +		}
+> +
+>   # check for logging functions with KERN_<LEVEL>
+>   		if ($line !~ /printk(?:_ratelimited|_once)?\s*\(/ &&
+>   		    $line =~ /\b$logFunctions\s*\(.*\b(KERN_[A-Z]+)\b/) {
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This is more a PoC for now.
 
-Regex could be improved, merged, ...
-We could also check for surrounding pr_cont...
+Hi,
 
-This patch is based on idea from [1]. coccinelle spots too many places
-where \n are missing (~ 2800 with the heuristic I've used).
-Fixing them would be painful.
-I instead propose to teach checkpatch.pl about it to try to spot cases
-early and avoid introducing new cases.
+I'm looking at some modification done in the last month that could have 
+been spotted by the above script.
 
-[1]: https://marc.info/?l=kernel-janitors&m8619533629657&w=4
----
- scripts/checkpatch.pl | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+     ./scripts/checkpatch.pl -f drivers/usb/phy/phy-jz4770.c
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index c392ab8ea12e..792804bd6ad9 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5676,6 +5676,16 @@ sub process {
- 			}
- 		}
- 
-+# check for missing \n at the end of logging function
-+		if ($line =~ /\bpr_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\("([^"]*(?<!\\n))"/) {
-+			WARN("MISSING NL",
-+			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
-+		}
-+		if ($line =~ /\bdev_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\([^,]*,\s*"([^"]*(?<!\\n))"/) {
-+			WARN("MISSING NL",
-+			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
-+		}
-+
- # check for logging functions with KERN_<LEVEL>
- 		if ($line !~ /printk(?:_ratelimited|_once)?\s*\(/ &&
- 		    $line =~ /\b$logFunctions\s*\(.*\b(KERN_[A-Z]+)\b/) {
--- 
-2.20.1
+correctly spots the 3 first cases, but the 3 last (line 202, 210 and 
+217) are missed.
+I don't understand why.
+
+CJ
