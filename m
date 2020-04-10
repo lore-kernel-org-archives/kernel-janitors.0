@@ -1,28 +1,37 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Thu, 09 Apr 2020 19:34:10 +0000
-Subject: Re: [PATCH] xattr: fix uninitialized out-param
-Message-Id: <20200409193410.GD37608@mtj.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 11:35:26 +0000
+Subject: [PATCH] KVM: remove redundant assignment to variable r
+Message-Id: <20200410113526.13822-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200409062729.1658747-1-dxu@dxuuu.xyz>
-In-Reply-To: <20200409062729.1658747-1-dxu@dxuuu.xyz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: viro@zeniv.linux.org.uk, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 11:27:29PM -0700, Daniel Xu wrote:
-> `removed_sized` isn't correctly initialized (as the doc comment
-> suggests) on memory allocation failures. Fix by moving initialization up
-> a bit.
-> 
-> Fixes: 0c47383ba3bd ("kernfs: Add option to enable user xattrs")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+From: Colin Ian King <colin.king@canonical.com>
 
-Appiled to cgroup/for-5.7-fixes.
+The variable r is being assigned  with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ virt/kvm/kvm_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 74bdb7bf3295..03571f6acaa8 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3160,7 +3160,6 @@ static long kvm_vcpu_ioctl(struct file *filp,
+ 	case KVM_SET_REGS: {
+ 		struct kvm_regs *kvm_regs;
+ 
+-		r = -ENOMEM;
+ 		kvm_regs = memdup_user(argp, sizeof(*kvm_regs));
+ 		if (IS_ERR(kvm_regs)) {
+ 			r = PTR_ERR(kvm_regs);
 -- 
-tejun
+2.25.1
