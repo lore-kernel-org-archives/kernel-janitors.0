@@ -1,38 +1,82 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 17 Apr 2020 16:08:29 +0000
-Subject: [PATCH][next] drm/i915: remove redundant assignment to variable test_result
-Message-Id: <20200417160829.112776-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Apr 2020 14:03:56 +0000
+Subject: [PATCH] drm/amdgpu: Add missing '\n' in log messages
+Message-Id: <20200411140356.28211-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch, Hawking.Zhang@amd.com, evan.quan@amd.com, andrey.grodzovsky@amd.com, Monk.Liu@amd.com, kent.russell@amd.com, le.ma@amd.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-The variable test_result is being initialized with a value that is
-never read and it is being updated later with a new value.  The
-initialization is redundant and can be removed.
+While at it, split some long lines that where not that far.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Most of them have been added in commit bd607166af7f ("drm/amdgpu: Enable reading FRU chip via I2C v3")
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index d4fcc9583869..55697c5e251a 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -5567,7 +5567,7 @@ void intel_dp_process_phy_request(struct intel_dp *intel_dp)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 87f7c129c8ce..3d0a50e8c36b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -3249,25 +3249,25 @@ int amdgpu_device_init(struct amdgpu_device *adev,
  
- static u8 intel_dp_autotest_phy_pattern(struct intel_dp *intel_dp)
- {
--	u8 test_result = DP_TEST_NAK;
-+	u8 test_result;
+ 	r = device_create_file(adev->dev, &dev_attr_pcie_replay_count);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create pcie_replay_count");
++		dev_err(adev->dev, "Could not create pcie_replay_count\n");
+ 		return r;
+ 	}
  
- 	test_result = intel_dp_prepare_phytest(intel_dp);
- 	if (test_result != DP_TEST_ACK)
+ 	r = device_create_file(adev->dev, &dev_attr_product_name);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create product_name");
++		dev_err(adev->dev, "Could not create product_name\n");
+ 		return r;
+ 	}
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_product_number);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create product_number");
++		dev_err(adev->dev, "Could not create product_number\n");
+ 		return r;
+ 	}
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_serial_number);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create serial_number");
++		dev_err(adev->dev, "Could not create serial_number\n");
+ 		return r;
+ 	}
+ 
+@@ -4270,7 +4270,7 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+ 		job_signaled = true;
+ 
+ 	if (job_signaled) {
+-		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset");
++		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset\n");
+ 		goto skip_hw_reset;
+ 	}
+ 
+@@ -4339,10 +4339,12 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+ 
+ 		if (r) {
+ 			/* bad news, how to tell it to userspace ? */
+-			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n", atomic_read(&tmp_adev->gpu_reset_counter));
++			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n",
++				 atomic_read(&tmp_adev->gpu_reset_counter));
+ 			amdgpu_vf_error_put(tmp_adev, AMDGIM_ERROR_VF_GPU_RESET_FAIL, 0, r);
+ 		} else {
+-			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n", atomic_read(&tmp_adev->gpu_reset_counter));
++			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n",
++				 atomic_read(&tmp_adev->gpu_reset_counter));
+ 		}
+ 	}
+ 
 -- 
-2.25.1
+2.20.1
