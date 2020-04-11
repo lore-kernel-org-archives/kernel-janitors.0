@@ -1,35 +1,34 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Apr 2020 19:16:30 +0000
-Subject: [PATCH] gpu: host1x: Clean up debugfs in error handling path in 'host1x_probe()'
-Message-Id: <20200426191630.41290-1-christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Apr 2020 06:56:21 +0000
+Subject: [PATCH] usb: gadget: max3420: Add a missing '\n' in a log message
+Message-Id: <20200411065621.7744-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, jaswinder.singh@linaro.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'host1x_debug_init()' must be reverted in an error handling path.
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-This is already fixed in the remove function since commit 44156eee91ba
-("gpu: host1x: Clean up debugfs on removal")
-
+Fixes: 48ba02b2e2b1 ("usb: gadget: add udc driver for max3420")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/host1x/dev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/udc/max3420_udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 388bcc2889aa..be46554968af 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -435,6 +435,7 @@ static int host1x_probe(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/usb/gadget/udc/max3420_udc.c b/drivers/usb/gadget/udc/max3420_udc.c
+index 8fbc083b6732..23f33946d80c 100644
+--- a/drivers/usb/gadget/udc/max3420_udc.c
++++ b/drivers/usb/gadget/udc/max3420_udc.c
+@@ -901,7 +901,7 @@ static int max3420_thread(void *dev_id)
+ 	}
  
- deinit_intr:
-+	host1x_debug_deinit(host);
- 	host1x_intr_deinit(host);
- deinit_syncpt:
- 	host1x_syncpt_deinit(host);
+ 	set_current_state(TASK_RUNNING);
+-	dev_info(udc->dev, "SPI thread exiting");
++	dev_info(udc->dev, "SPI thread exiting\n");
+ 	return 0;
+ }
+ 
 -- 
-2.25.1
+2.20.1
