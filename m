@@ -1,31 +1,76 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Apr 2020 17:58:14 +0000
-Subject: Re: [PATCH] usb: phy: twl6030-usb: Fix a resource leak in an error handling path in 'twl6030_usb_pro
-Message-Id: <20200428175814.GI2014@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Apr 2020 06:38:11 +0000
+Subject: [PATCH] usb: phy: jz4770: Add a missing '\n' in a log message
+Message-Id: <20200411063811.6767-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427202116.94380-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200427202116.94380-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, paul@crapouillou.net
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Apr 27, 2020 at 10:21:16PM +0200, Christophe JAILLET wrote:
-> A call to 'regulator_get()' is hidden in 'twl6030_usb_ldo_init()'. A
-> corresponding put must be performed in the error handling path, as
-> already done in the remove function.
-> 
-> While at it, also move a 'free_irq()' call in the error handling path in
-> order to be consistent.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Maybe adding a 'twl6030_usb_ldo_uninit()' function would be more explicit.
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-It would be nicer, yes, but probably this is fine too.
+Fixes: 541368b46b82 ("usb: phy: Add driver for the Ingenic JZ4770 USB transceiver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/usb/phy/phy-jz4770.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
+diff --git a/drivers/usb/phy/phy-jz4770.c b/drivers/usb/phy/phy-jz4770.c
+index 3ea1f5b9bcf8..8f62dc2a90ff 100644
+--- a/drivers/usb/phy/phy-jz4770.c
++++ b/drivers/usb/phy/phy-jz4770.c
+@@ -125,13 +125,13 @@ static int jz4770_phy_init(struct usb_phy *phy)
+ 
+ 	err = regulator_enable(priv->vcc_supply);
+ 	if (err) {
+-		dev_err(priv->dev, "Unable to enable VCC: %d", err);
++		dev_err(priv->dev, "Unable to enable VCC: %d\n", err);
+ 		return err;
+ 	}
+ 
+ 	err = clk_prepare_enable(priv->clk);
+ 	if (err) {
+-		dev_err(priv->dev, "Unable to start clock: %d", err);
++		dev_err(priv->dev, "Unable to start clock: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -191,7 +191,7 @@ static int jz4770_phy_probe(struct platform_device *pdev)
+ 
+ 	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base)) {
+-		dev_err(dev, "Failed to map registers");
++		dev_err(dev, "Failed to map registers\n");
+ 		return PTR_ERR(priv->base);
+ 	}
+ 
+@@ -199,7 +199,7 @@ static int jz4770_phy_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->clk)) {
+ 		err = PTR_ERR(priv->clk);
+ 		if (err != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get clock");
++			dev_err(dev, "Failed to get clock\n");
+ 		return err;
+ 	}
+ 
+@@ -207,14 +207,14 @@ static int jz4770_phy_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->vcc_supply)) {
+ 		err = PTR_ERR(priv->vcc_supply);
+ 		if (err != -EPROBE_DEFER)
+-			dev_err(dev, "failed to get regulator");
++			dev_err(dev, "Failed to get regulator\n");
+ 		return err;
+ 	}
+ 
+ 	err = usb_add_phy(&priv->phy, USB_PHY_TYPE_USB2);
+ 	if (err) {
+ 		if (err != -EPROBE_DEFER)
+-			dev_err(dev, "Unable to register PHY");
++			dev_err(dev, "Unable to register PHY\n");
+ 		return err;
+ 	}
+ 
+-- 
+2.20.1
