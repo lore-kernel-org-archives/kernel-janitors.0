@@ -1,42 +1,36 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 09 Apr 2020 17:50:47 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <f212b3ad6c09e595cb91c2f7e8728d71e27f6833.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Apr 2020 14:27:29 +0000
+Subject: [PATCH] media: m88ds3103: Add missing '\n' in log messages
+Message-Id: <20200411142729.28699-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
-         <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
-         <4b7e1cf3-6fa7-60af-a1d3-2457339dbe8a@wanadoo.fr>
-         <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
-         <60c732a1-aa4e-afab-d223-894a67713003@wanadoo.fr>
-         <bcdfa5ae68b8cb7d9324a89aedf452f6209b570c.camel@perches.com>
-         <05379b22-6755-368b-8127-8827fa020189@wanadoo.fr>
-In-Reply-To: <05379b22-6755-368b-8127-8827fa020189@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: crope@iki.fi, mchehab@kernel.org, sean@mess.org, brad@nextdimension.cc
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 2020-04-09 at 19:34 +0200, Christophe JAILLET wrote:
-> Le 09/04/2020 =E0 17:29, Joe Perches a =E9crit :
-[]
-> > lib/percpu-refcount.c:#define pr_fmt(fmt) "%s: " fmt "\n", __func__
-> In this file, there are some WARN_ON.
-> Are these log functions also influenced by pr_fmt?
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-No.
+While at it, change the log level from 'err' to 'debug'.
 
-> > drivers/md/bcache/bcache.h:#define pr_fmt(fmt) "bcache: %s() " fmt "\n"=
-, __func__
-> > drivers/md/bcache/bset.c:#define pr_fmt(fmt) "bcache: %s() " fmt "\n", =
-__func__
-> > tools/usb/usbip/libsrc/usbip_common.h:#define pr_fmt(fmt)       "%s: %s=
-: " fmt "\n", PROGNAME
->=20
-> Tricky because all files that include it have to be checked.
-> I won't touch these ones.
+Fixes: e6089feca460 ("media: m88ds3103: Add support for ds3103b demod")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/dvb-frontends/m88ds3103.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What a pity I do not know the French equivalent
-for the children's taunt of "chicken!"...
-
-cheers, Joe
+diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
+index d2c28dcf6b42..bc356ac4fe5e 100644
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -1898,7 +1898,7 @@ static int m88ds3103_probe(struct i2c_client *client,
+ 		if (ret)
+ 			goto err_kfree;
+ 		dev->dt_addr = ((utmp & 0x80) = 0) ? 0x42 >> 1 : 0x40 >> 1;
+-		dev_err(&client->dev, "dt addr is 0x%02x", dev->dt_addr);
++		dev_dbg(&client->dev, "dt addr is 0x%02x\n", dev->dt_addr);
+ 
+ 		dev->dt_client = i2c_new_dummy_device(client->adapter,
+ 						      dev->dt_addr);
+-- 
+2.20.1
