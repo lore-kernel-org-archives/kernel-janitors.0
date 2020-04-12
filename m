@@ -1,7 +1,7 @@
 From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 11 Apr 2020 01:35:39 +0000
+Date: Sun, 12 Apr 2020 18:47:11 +0000
 Subject: Re: [PATCH] net: neterion: remove redundant assignment to variable tmp64
-Message-Id: <20200410183539.627ad5f2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+Message-Id: <20200412114711.2599fd9e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200410191150.75588-1-colin.king@canonical.com>
 In-Reply-To: <20200410191150.75588-1-colin.king@canonical.com>
@@ -19,7 +19,6 @@ On Fri, 10 Apr 2020 20:11:50 +0100 Colin King wrote:
 > redundant and can be removed.
 > 
 > Addresses-Coverity: ("Unused value")
-
-Patch looks good, but what's the value of this tag?
-
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied.
