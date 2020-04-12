@@ -1,41 +1,33 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 07 Apr 2020 19:03:52 +0000
-Subject: Re: [PATCH] checkpatch: Fix a typo in the regex for $allocFunctions
-Message-Id: <ffdaa916088c95a984b2953334ea446251b2ecd9.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Apr 2020 21:20:34 +0000
+Subject: [PATCH] net: mvneta: Fix a typo
+Message-Id: <20200412212034.4532-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407190029.892-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200407190029.892-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thomas.petazzoni@bootlin.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 2020-04-07 at 21:00 +0200, Christophe JAILLET wrote:
-> Here, we look for function such as 'netdev_alloc_skb_ip_align', so a '_'
-> is missing in the regex.
-> 
-> To make sure:
->    grep -r --include=*.c skbip_a * | wc   =>   0 results
->    grep -r --include=*.c skb_ip_a * | wc  => 112 results
+s/mvmeta/mvneta/
 
-Acked-by: Joe Perches <joe@perches.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 529c892722b9..c392ab8ea12e 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -479,7 +479,7 @@ our $allocFunctions = qr{(?x:
->  		(?:kv|k|v)[czm]alloc(?:_node|_array)? |
->  		kstrdup(?:_const)? |
->  		kmemdup(?:_nul)?) |
-> -	(?:\w+)?alloc_skb(?:ip_align)? |
-> +	(?:\w+)?alloc_skb(?:_ip_align)? |
->  				# dev_alloc_skb/netdev_alloc_skb, et al
->  	dma_alloc_coherent
->  )};
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 5be61f73b6ab..51889770958d 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -5383,7 +5383,7 @@ static int __init mvneta_driver_init(void)
+ {
+ 	int ret;
+ 
+-	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "net/mvmeta:online",
++	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "net/mvneta:online",
+ 				      mvneta_cpu_online,
+ 				      mvneta_cpu_down_prepare);
+ 	if (ret < 0)
+-- 
+2.20.1
