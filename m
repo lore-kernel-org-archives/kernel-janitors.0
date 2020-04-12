@@ -1,26 +1,44 @@
-From: Andi Shyti <andi.shyti@intel.com>
-Date: Wed, 29 Apr 2020 14:04:43 +0000
-Subject: Re: [PATCH] drm/i915/selftests: fix error handling in __live_lrc_indirect_ctx_bb()
-Message-Id: <20200429140443.GC5168@intel.intel>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Apr 2020 09:07:43 +0000
+Subject: [PATCH] HID: fix typo in Kconfig
+Message-Id: <20200412090743.8236-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429132425.GE815283@mwanda>
-In-Reply-To: <20200429132425.GE815283@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>
+To: jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
+Fix 2 typos:
+   s/Uninterruptable/Uninterruptible/
+   s/should't/shouldn't/
 
-On Wed, Apr 29, 2020 at 04:24:25PM +0300, Dan Carpenter wrote:
-> If intel_context_create() fails then it leads to an error pointer
-> dereference.  I shuffled things around to make error handling easier.
-> 
-> Fixes: 1dd47b54baea ("drm/i915: Add live selftests for indirect ctx batchbuffers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Andi Shyti <andi.shyti@intel.com>
-
-Thanks,
-Andi
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index c5b0bd5283fa..008bf44bc2c3 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -42,7 +42,7 @@ config HIDRAW
+ 	---help---
+ 	Say Y here if you want to support HID devices (from the USB
+ 	specification standpoint) that aren't strictly user interface
+-	devices, like monitor controls and Uninterruptable Power Supplies.
++	devices, like monitor controls and Uninterruptible Power Supplies.
+ 
+ 	This module supports these devices separately using a separate
+ 	event interface on /dev/hidraw.
+@@ -1140,7 +1140,7 @@ config HID_SENSOR_CUSTOM_SENSOR
+ 	  to decide how to interpret these special sensor ids and process in
+ 	  the user space. Currently some manufacturers are using these ids for
+ 	  sensor calibration and debugging other sensors. Manufacturers
+-	  should't use these special custom sensor ids to export any of the
++	  shouldn't use these special custom sensor ids to export any of the
+ 	  standard sensors.
+ 	  Select this config option for custom/generic sensor support.
+ 
+-- 
+2.20.1
