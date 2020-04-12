@@ -1,27 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Apr 2020 22:57:09 +0000
-Subject: Re: [PATCH][next] net: phy: bcm54140: fix less than zero comparison on an unsigned
-Message-Id: <20200423.155709.424252739885282745.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Apr 2020 14:35:09 +0000
+Subject: [PATCH] drm/msm: Fix typo
+Message-Id: <20200412143509.11353-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200423141016.19666-1-colin.king@canonical.com>
-In-Reply-To: <20200423141016.19666-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk, michael@walle.cc, linux@roeck-us.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: robdclark@gmail.com, sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch
+Cc: linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, freedreno@lists.freedesktop.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Apr 2020 15:10:16 +0100
+Duplicated 'we'
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the unsigned variable tmp is being checked for an negative
-> error return from the call to bcm_phy_read_rdb and this can never
-> be true since tmp is unsigned.  Fix this by making tmp a plain int.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 4406d36dfdf1 ("net: phy: bcm54140: add hwmon support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+index 998bef1190a3..b5fed67c4651 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+@@ -959,7 +959,7 @@ static int mdp5_crtc_cursor_set(struct drm_crtc *crtc,
+ 	if (!ctl)
+ 		return -EINVAL;
+ 
+-	/* don't support LM cursors when we we have source split enabled */
++	/* don't support LM cursors when we have source split enabled */
+ 	if (mdp5_cstate->pipeline.r_mixer)
+ 		return -EINVAL;
+ 
+@@ -1030,7 +1030,7 @@ static int mdp5_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
+ 		return -EINVAL;
+ 	}
+ 
+-	/* don't support LM cursors when we we have source split enabled */
++	/* don't support LM cursors when we have source split enabled */
+ 	if (mdp5_cstate->pipeline.r_mixer)
+ 		return -EINVAL;
+ 
+-- 
+2.20.1
