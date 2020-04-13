@@ -1,24 +1,28 @@
 From: David Miller <davem@davemloft.net>
-Date: Mon, 13 Apr 2020 04:21:01 +0000
+Date: Mon, 13 Apr 2020 04:22:03 +0000
 Subject: Re: [PATCH] net: mvneta: Fix a typo
-Message-Id: <20200412.212101.1714447481929250845.davem@davemloft.net>
+Message-Id: <20200412.212203.760665209399788301.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200412212034.4532-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200412212034.4532-1-christophe.jaillet@wanadoo.fr>
+        <20200412.212101.1714447481929250845.davem@davemloft.net>
+In-Reply-To: <20200412.212101.1714447481929250845.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: christophe.jaillet@wanadoo.fr
 Cc: thomas.petazzoni@bootlin.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 12 Apr 2020 23:20:34 +0200
+From: David Miller <davem@davemloft.net>
+Date: Sun, 12 Apr 2020 21:21:01 -0700 (PDT)
 
-> s/mvmeta/mvneta/
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Date: Sun, 12 Apr 2020 23:20:34 +0200
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> s/mvmeta/mvneta/
+>> 
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Applied, but please reply to Jakub's feedback explaining how you
+> found this.
 
-Applied, but please reply to Jakub's feedback explaining how you
-found this.
-
-Thank you.
+I meant "Joe's feedback" of course, my bad.
