@@ -1,37 +1,55 @@
-From: Olivier MOYSAN <olivier.moysan@st.com>
-Date: Mon, 06 Apr 2020 09:44:13 +0000
-Subject: Re: [PATCH] ASoC: stm32: sai: Add missing cleanup
-Message-Id: <1df96e7b-89fa-7822-1a57-b9a87e8388c0@st.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Mon, 13 Apr 2020 11:37:03 +0000
+Subject: [PATCH -next] bpf: remove set but not used variable 'dst_known'
+Message-Id: <20200413113703.194287-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1586099028-5104-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQpPbiA0LzUvMjAgNTowMyBQTSwgSnVsaWEgTGF3YWxsIHdyb3RlOg0KPiBUaGUgY29tbWl0IDBk
-NmRlZmM3ZTBlNCAoIkFTb0M6IHN0bTMyOiBzYWk6IG1hbmFnZSByZWJpbmQgaXNzdWUiKQ0KPiBj
-b252ZXJ0cyBzb21lIGZ1bmN0aW9uIGNhbGxzIHRvIHRoZWlyIG5vbi1kZXZtIGVxdWl2YWxlbnRz
-LiAgVGhlDQo+IGFwcHJvcHJpYXRlIGNsZWFudXAgY29kZSB3YXMgYWRkZWQgdG8gdGhlIHJlbW92
-ZSBmdW5jdGlvbiwgYnV0IG5vdA0KPiB0byB0aGUgcHJvYmUgZnVuY3Rpb24uICBBZGQgYSBjYWxs
-IHRvIHNuZF9kbWFlbmdpbmVfcGNtX3VucmVnaXN0ZXINCj4gdG8gY29tcGVuc2F0ZSBmb3IgdGhl
-IGNhbGwgdG8gc25kX2RtYWVuZ2luZV9wY21fcmVnaXN0ZXIgaW4gY2FzZQ0KPiBvZiBzdWJzZXF1
-ZW50IGZhaWx1cmUuDQo+DQo+IEZpeGVzOiBjb21taXQgMGQ2ZGVmYzdlMGU0ICgiQVNvQzogc3Rt
-MzI6IHNhaTogbWFuYWdlIHJlYmluZCBpc3N1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IEp1bGlhIExh
-d2FsbCA8SnVsaWEuTGF3YWxsQGlucmlhLmZyPg0KPg0KPiAtLS0NCj4NCj4gTm90IHRlc3RlZC4N
-Cj4NCj4gICBzb3VuZC9zb2Mvc3RtL3N0bTMyX3NhaV9zdWIuYyB8ICAgIDQgKysrLQ0KPiAgIDEg
-ZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCkhpIEp1bGlhLA0K
-VGhhbmtzIGZvciB0aGUgcGF0Y2guDQoNCkFja2VkLWJ5OiBPbGl2aWVyIE1veXNhbiA8b2xpdmll
-ci5tb3lzYW5Ac3QuY29tPg0KPg0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3N0bS9zdG0zMl9z
-YWlfc3ViLmMgYi9zb3VuZC9zb2Mvc3RtL3N0bTMyX3NhaV9zdWIuYw0KPiBpbmRleCAyYmQyODBj
-Li4wZDBjOWFmIDEwMDY0NA0KPiAtLS0gYS9zb3VuZC9zb2Mvc3RtL3N0bTMyX3NhaV9zdWIuYw0K
-PiArKysgYi9zb3VuZC9zb2Mvc3RtL3N0bTMyX3NhaV9zdWIuYw0KPiBAQCAtMTU1Niw4ICsxNTU2
-LDEwIEBAIHN0YXRpYyBpbnQgc3RtMzJfc2FpX3N1Yl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KPiAgIA0KPiAgIAlyZXQgPSBzbmRfc29jX3JlZ2lzdGVyX2NvbXBvbmVudCgm
-cGRldi0+ZGV2LCAmc3RtMzJfY29tcG9uZW50LA0KPiAgIAkJCQkJICZzYWktPmNwdV9kYWlfZHJ2
-LCAxKTsNCj4gLQlpZiAocmV0KQ0KPiArCWlmIChyZXQpIHsNCj4gKwkJc25kX2RtYWVuZ2luZV9w
-Y21fdW5yZWdpc3RlcigmcGRldi0+ZGV2KTsNCj4gICAJCXJldHVybiByZXQ7DQo+ICsJfQ0KPiAg
-IA0KPiAgIAlpZiAoU1RNX1NBSV9QUk9UT0NPTF9JU19TUERJRihzYWkpKQ0KPiAgIAkJY29uZiA9
-ICZzdG0zMl9zYWlfcGNtX2NvbmZpZ19zcGRpZjsNCj4NCg=
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+kernel/bpf/verifier.c:5603:18: warning: variable ‘dst_known’
+set but not used [-Wunused-but-set-variable]
+
+It is not used since commit f1174f77b50c ("bpf/verifier:
+rework value tracking")
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ kernel/bpf/verifier.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 04c6630cc18f..c9f50969a689 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5600,7 +5600,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ {
+ 	struct bpf_reg_state *regs = cur_regs(env);
+ 	u8 opcode = BPF_OP(insn->code);
+-	bool src_known, dst_known;
++	bool src_known;
+ 	s64 smin_val, smax_val;
+ 	u64 umin_val, umax_val;
+ 	s32 s32_min_val, s32_max_val;
+@@ -5622,7 +5622,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 
+ 	if (alu32) {
+ 		src_known = tnum_subreg_is_const(src_reg.var_off);
+-		dst_known = tnum_subreg_is_const(dst_reg->var_off);
+ 		if ((src_known &&
+ 		     (s32_min_val != s32_max_val || u32_min_val != u32_max_val)) ||
+ 		    s32_min_val > s32_max_val || u32_min_val > u32_max_val) {
+@@ -5634,7 +5633,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 	} else {
+ 		src_known = tnum_is_const(src_reg.var_off);
+-		dst_known = tnum_is_const(dst_reg->var_off);
+ 		if ((src_known &&
+ 		     (smin_val != smax_val || umin_val != umax_val)) ||
+ 		    smin_val > smax_val || umin_val > umax_val) {
+-- 
+2.17.1
