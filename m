@@ -1,50 +1,80 @@
-From: maowenan <maowenan@huawei.com>
-Date: Wed, 15 Apr 2020 07:52:10 +0000
-Subject: Re: [PATCH -next] bpf: remove set but not used variable 'dst_known'
-Message-Id: <8855e82a-88d0-8d1e-e5e0-47e781f9653c@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 13 Apr 2020 04:15:56 +0000
+Subject: [PATCH] EDAC/armada_xp: Fix some log messages
+Message-Id: <20200413041556.3514-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200413113703.194287-1-maowenan@huawei.com>
- <C75FACD4-8549-4AD1-BDE6-1F5B47095E4C@fb.com>
- <2b2e0060-ef9b-5541-1108-e28464b47f0a@huawei.com>
- <F68FB33A-1B98-45C1-8056-457EFA52F84F@fb.com>
-In-Reply-To: <F68FB33A-1B98-45C1-8056-457EFA52F84F@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Song Liu <songliubraving@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, "john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@chromium.org" <kpsingh@chromium.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jlu@pengutronix.de, bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com, james.morse@arm.com, rrichter@marvell.com
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 2020/4/15 15:23, Song Liu wrote:
-> 
-> 
->> On Apr 14, 2020, at 6:37 PM, maowenan <maowenan@huawei.com> wrote:
->>
->> On 2020/4/15 6:05, Song Liu wrote:
->>>
->>>
->>>> On Apr 13, 2020, at 4:37 AM, Mao Wenan <maowenan@huawei.com> wrote:
->>>>
->>>> Fixes gcc '-Wunused-but-set-variable' warning:
->>>>
->>>> kernel/bpf/verifier.c:5603:18: warning: variable ‘dst_known’
->>>> set but not used [-Wunused-but-set-variable]
->>>>
->>>> It is not used since commit f1174f77b50c ("bpf/verifier:
->>>> rework value tracking")
->>>
->>> The fix makes sense. But I think f1174f77b50c introduced dst_known, 
->>> so this statement is not accurate. 
->>>
->> thanks for review, yes, f1174f77b50c introduced dst_known, and below commit
->> doesn't deference variable dst_known. So I send v2 later?
->> 3f50f132d840 ("bpf: Verifier, do explicit ALU32 bounds tracking")
-> 
-> I don't think we need to back port this to stable. So it is OK not to 
-> include Fixes tag. We can just remove this statement in the commit log.
-> 
-> bpf-next is not open yet. Please send v2 when bpf-next is open. 
-> 
-> Thanks,
-> Song
-> 
-OK, I will do that.
+Fix some spelling (s/Aramda/Armada/) in 1 log message and in 1 comment.
+
+While at it, add some trailing '\n' in some other log message.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/edac/armada_xp_edac.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/edac/armada_xp_edac.c b/drivers/edac/armada_xp_edac.c
+index a7502ebe9bdc..e3e757513d1b 100644
+--- a/drivers/edac/armada_xp_edac.c
++++ b/drivers/edac/armada_xp_edac.c
+@@ -78,7 +78,7 @@ struct axp_mc_drvdata {
+ 	char msg[128];
+ };
+ 
+-/* derived from "DRAM Address Multiplexing" in the ARAMDA XP Functional Spec */
++/* derived from "DRAM Address Multiplexing" in the ARMADA XP Functional Spec */
+ static uint32_t axp_mc_calc_address(struct axp_mc_drvdata *drvdata,
+ 				    uint8_t cs, uint8_t bank, uint16_t row,
+ 				    uint16_t col)
+@@ -160,12 +160,12 @@ static void axp_mc_check(struct mem_ctl_info *mci)
+ 		if (cnt_sbe)
+ 			cnt_sbe--;
+ 		else
+-			dev_warn(mci->pdev, "inconsistent SBE count detected");
++			dev_warn(mci->pdev, "inconsistent SBE count detected\n");
+ 	} else {
+ 		if (cnt_dbe)
+ 			cnt_dbe--;
+ 		else
+-			dev_warn(mci->pdev, "inconsistent DBE count detected");
++			dev_warn(mci->pdev, "inconsistent DBE count detected\n");
+ 	}
+ 
+ 	/* report earlier errors */
+@@ -304,7 +304,7 @@ static int axp_mc_probe(struct platform_device *pdev)
+ 
+ 	config = readl(base + SDRAM_CONFIG_REG);
+ 	if (!(config & SDRAM_CONFIG_ECC_MASK)) {
+-		dev_warn(&pdev->dev, "SDRAM ECC is not enabled");
++		dev_warn(&pdev->dev, "SDRAM ECC is not enabled\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -532,9 +532,9 @@ static int aurora_l2_probe(struct platform_device *pdev)
+ 
+ 	l2x0_aux_ctrl = readl(base + L2X0_AUX_CTRL);
+ 	if (!(l2x0_aux_ctrl & AURORA_ACR_PARITY_EN))
+-		dev_warn(&pdev->dev, "tag parity is not enabled");
++		dev_warn(&pdev->dev, "tag parity is not enabled\n");
+ 	if (!(l2x0_aux_ctrl & AURORA_ACR_ECC_EN))
+-		dev_warn(&pdev->dev, "data ECC is not enabled");
++		dev_warn(&pdev->dev, "data ECC is not enabled\n");
+ 
+ 	dci = edac_device_alloc_ctl_info(sizeof(*drvdata),
+ 					 "cpu", 1, "L", 1, 2, NULL, 0, 0);
+@@ -618,7 +618,7 @@ static int __init armada_xp_edac_init(void)
+ 
+ 	res = platform_register_drivers(drivers, ARRAY_SIZE(drivers));
+ 	if (res)
+-		pr_warn("Aramda XP EDAC drivers fail to register\n");
++		pr_warn("Armada XP EDAC drivers fail to register\n");
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
