@@ -1,46 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Apr 2020 11:14:56 +0000
-Subject: [bug report] kernfs: Add option to enable user xattrs
-Message-Id: <20200408111456.GA250869@mwanda>
+From: Sebastian Fricke <sebastian.fricke.linux@gmail.com>
+Date: Mon, 13 Apr 2020 04:29:52 +0000
+Subject: [PATCH] soc/stm/stm32_sub_sai: Add missing '\n' in log messages
+Message-Id: <20200413042952.7675-1-sebastian.fricke.linux@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: olivier.moysan@st.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Liam Girdwood <lgirdwood@gmail.com>, sebastian.fricke.linux@gmail.com, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-Hello Daniel Xu,
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-The patch 0c47383ba3bd: "kernfs: Add option to enable user xattrs"
-from Mar 12, 2020, leads to the following static checker warning:
+Fixes: 3e086ed("ASoC: stm32: add SAI drivers")
 
-	fs/kernfs/inode.c:379 kernfs_vfs_user_xattr_rm()
-	error: uninitialized symbol 'removed_size'.
+Signed-off-by: Sebastian Fricke <sebastian.fricke.linux@gmail.com>
+---
+ sound/soc/stm/stm32_sai_sub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-fs/kernfs/inode.c
-   366  static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
-   367                                      const char *full_name,
-   368                                      struct simple_xattrs *xattrs,
-   369                                      const void *value, size_t size, int flags)
-   370  {
-   371          atomic_t *sz = &kn->iattr->user_xattr_size;
-   372          atomic_t *nr = &kn->iattr->nr_user_xattrs;
-   373          ssize_t removed_size;
-   374          int ret;
-   375  
-   376          ret = simple_xattr_set(xattrs, full_name, value, size, flags,
-   377                                 &removed_size);
-   378  
-   379          if (removed_size >= 0) {
-                    ^^^^^^^^^^^^^^^^^
-There are some path where simple_xattr_set() doesn't initialize
-"removed_size" on allocation failure.
-
-   380                  atomic_sub(removed_size, sz);
-   381                  atomic_dec(nr);
-   382          }
-   383  
-   384          return ret;
-   385  }
-
-regards,
-dan carpenter
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 0d0c9afd8791..34a7c3d6fb91 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -837,7 +837,7 @@ static int stm32_sai_set_config(struct snd_soc_dai *cpu_dai,
+ 		cr1 = SAI_XCR1_DS_SET(SAI_DATASIZE_32);
+ 		break;
+ 	default:
+-		dev_err(cpu_dai->dev, "Data format not supported");
++		dev_err(cpu_dai->dev, "Data format not supported\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.20.1
