@@ -1,43 +1,57 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 05 Apr 2020 14:52:49 +0000
-Subject: [PATCH] mt7615: Delete an error message in mt7622_wmac_probe()
-Message-Id: <0b236ef3-45cb-b6bf-a3ca-fbe4fa4185da@web.de>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 13 Apr 2020 07:06:49 +0000
+Subject: [PATCH v2] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
+Message-Id: <20200413070649.7014-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Felix Fietkau <nbd@nbd.name>, Kalle Valo <kvalo@codeaurora.org>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, Roy Luo <royluo@google.com>, Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Apr 2020 16:45:48 +0200
+Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
+controller") includes a new entry in MAINTAINERS, but slipped in a typo in
+one of the file entries.
 
-The function “platform_get_irq” can log an error already.
-Thus omit a redundant message for the exception handling in the
-calling function.
+Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
 
-This issue was detected by using the Coccinelle software.
+  warning: no file matches F: \
+    drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt7615/soc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Rob, please pick this patch (it is not urgent, though).
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/soc.c b/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
-index 43aa49706c66..9aa5183c7a56 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
-@@ -36,10 +36,8 @@ static int mt7622_wmac_probe(struct platform_device *pdev)
- 	int irq;
+v1: https://lore.kernel.org/lkml/20200314142559.13505-1-lukas.bulwahn@gmail.com/
+  - already received: Reviewed-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+  - Bjorn Helgaas' suggestion to squash this into commit 3edeb49525bb
+    ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4 controller") before
+    merging upstream did not happen.
 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Failed to get device IRQ\n");
-+	if (irq < 0)
- 		return irq;
--	}
+v1 -> v2:
+  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
+    ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
+    ("MAINTAINERS: sort field names for all entries").
+  - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
 
- 	mem_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(mem_base)) {
---
-2.26.0
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e64e5db31497..0fd27329e6f7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12941,7 +12941,7 @@ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+-F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
++F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+ 
+ PCI DRIVER FOR RENESAS R-CAR
+ M:	Marek Vasut <marek.vasut+renesas@gmail.com>
+-- 
+2.17.1
