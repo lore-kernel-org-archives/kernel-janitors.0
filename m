@@ -1,45 +1,94 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Apr 2020 10:40:13 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <20200409103049.GA14081@kadam>
+From: "Quan, Evan" <Evan.Quan@amd.com>
+Date: Mon, 13 Apr 2020 02:50:08 +0000
+Subject: RE: [PATCH] drm/amdgpu: Add missing '\n' in log messages
+Message-Id: <DM6PR12MB26190847ADE19FC3BC5BBD56E4DD0@DM6PR12MB2619.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
- <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
- <4b7e1cf3-6fa7-60af-a1d3-2457339dbe8a@wanadoo.fr>
- <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
-In-Reply-To: <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
+References: <20200411140356.28211-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200411140356.28211-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "Zhang, Hawking" <Hawking.Zhang@amd.com>, "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>, "Liu, Monk" <Monk.Liu@amd.com>, "Russell, Kent" <Kent.Russell@amd.com>, "Ma,
+ Le" <Le.Ma@amd.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Apr 08, 2020 at 08:10:23PM -0700, Joe Perches wrote:
-> Some types of false positives:
-> 
-> o Many of the formats seem to end in a ':' or a ' '
->   maybe those should be excluded
->    #86: FILE: drivers/android/binder_alloc_selftest.c:86:
->    +	pr_err("free seq: ");
-> 
+Reviewed-by: Evan Quan <evan.quan@amd.com>
 
-Yeah.  I also ignored strings that end in a space in my version.
+-----Original Message-----
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr> 
+Sent: Saturday, April 11, 2020 10:04 PM
+To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; airlied@linux.ie; daniel@ffwll.ch; Zhang, Hawking <Hawking.Zhang@amd.com>; Quan, Evan <Evan.Quan@amd.com>; Grodzovsky, Andrey <Andrey.Grodzovsky@amd.com>; Liu, Monk <Monk.Liu@amd.com>; Russell, Kent <Kent.Russell@amd.com>; Ma, Le <Le.Ma@amd.com>
+Cc: amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/amdgpu: Add missing '\n' in log messages
 
->    o Split string formats should be excluded better
->      as only the first string fragment is checked:
->    #1001: FILE: drivers/ata/pata_octeon_cf.c:1001:
->    +	dev_info(&pdev->dev, "version " DRV_VERSION" %d bit%s.\n",
+Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 
-I ignored anything with a newline in it anywhere.
+While at it, split some long lines that where not that far.
 
->    +		 is_16bit ? 16 : 8,
->    +		 cf_port->is_true_ide ? ", True IDE" : "");
-> 
->    probably a few others, including a desire to check
->    if a pr_cont is below the use within a few lines.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Most of them have been added in commit bd607166af7f ("drm/amdgpu: Enable reading FRU chip via I2C v3")
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Seems tricky to implement...  I think if you can't make it work it's
-still usefull even with a some false positives.
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 87f7c129c8ce..3d0a50e8c36b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -3249,25 +3249,25 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_pcie_replay_count);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create pcie_replay_count");
++		dev_err(adev->dev, "Could not create pcie_replay_count\n");
+ 		return r;
+ 	}
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_product_name);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create product_name");
++		dev_err(adev->dev, "Could not create product_name\n");
+ 		return r;
+ 	}
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_product_number);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create product_number");
++		dev_err(adev->dev, "Could not create product_number\n");
+ 		return r;
+ 	}
+ 
+ 	r = device_create_file(adev->dev, &dev_attr_serial_number);
+ 	if (r) {
+-		dev_err(adev->dev, "Could not create serial_number");
++		dev_err(adev->dev, "Could not create serial_number\n");
+ 		return r;
+ 	}
+ 
+@@ -4270,7 +4270,7 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+ 		job_signaled = true;
+ 
+ 	if (job_signaled) {
+-		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset");
++		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset\n");
+ 		goto skip_hw_reset;
+ 	}
+ 
+@@ -4339,10 +4339,12 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+ 
+ 		if (r) {
+ 			/* bad news, how to tell it to userspace ? */
+-			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n", atomic_read(&tmp_adev->gpu_reset_counter));
++			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n",
++				 atomic_read(&tmp_adev->gpu_reset_counter));
+ 			amdgpu_vf_error_put(tmp_adev, AMDGIM_ERROR_VF_GPU_RESET_FAIL, 0, r);
+ 		} else {
+-			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n", atomic_read(&tmp_adev->gpu_reset_counter));
++			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n",
++				 atomic_read(&tmp_adev->gpu_reset_counter));
+ 		}
+ 	}
+ 
+-- 
+2.20.1
