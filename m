@@ -1,36 +1,27 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 10:46:21 +0000
-Subject: [PATCH net-next] ath11k: fix error return code in ath11k_dp_alloc()
-Message-Id: <20200427104621.23752-1-weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Apr 2020 18:49:25 +0000
+Subject: Re: [PATCH] pwm: Add missing '\n' in log messages
+Message-Id: <20200414184925.GA12862@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
+ <20200414135827.GB3593749@ulmo>
+ <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
+In-Reply-To: <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, John Crispin <john@phrozen.org>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, ath11k@lists.infradead.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Thierry Reding <thierry.reding@gmail.com>, paul@crapouillou.net, Joe Perches <joe@perches.com>, u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+Huh...
 
-Fixes: d0998eb84ed3 ("ath11k: optimise ath11k_dp_tx_completion_handler")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/wireless/ath/ath11k/dp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+If you look at dev_vprintk_emit().  It looks like if
+create_syslog_header() returns a string then vprintk_store() will add
+a newline.
 
-diff --git a/drivers/net/wireless/ath/ath11k/dp.c b/drivers/net/wireless/ath/ath11k/dp.c
-index 50350f77b309..2f35d325f7a5 100644
---- a/drivers/net/wireless/ath/ath11k/dp.c
-+++ b/drivers/net/wireless/ath/ath11k/dp.c
-@@ -909,8 +909,10 @@ int ath11k_dp_alloc(struct ath11k_base *ab)
- 		dp->tx_ring[i].tx_status_head = 0;
- 		dp->tx_ring[i].tx_status_tail = DP_TX_COMP_RING_SIZE - 1;
- 		dp->tx_ring[i].tx_status = kmalloc(size, GFP_KERNEL);
--		if (!dp->tx_ring[i].tx_status)
-+		if (!dp->tx_ring[i].tx_status) {
-+			ret = -ENOMEM;
- 			goto fail_cmn_srng_cleanup;
-+		}
- 	}
- 
- 	for (i = 0; i < HAL_DSCP_TID_MAP_TBL_NUM_ENTRIES_MAX; i++)
+I guess that means that dev_printk() can't be used to pr_cont().  And
+probably that's deliberate because using pr_cont() after boot is racy
+anyway.
+
+regards,
+dan carpenter
