@@ -1,47 +1,72 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 29 Apr 2020 04:21:16 +0000
-Subject: [PATCH RESEND] MAINTAINERS: remove entry after hp100 driver removal
-Message-Id: <20200429042116.29126-1-lukas.bulwahn@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 14 Apr 2020 17:36:57 +0000
+Subject: Applied "spi: remove redundant assignment to variable ms" to the spi tree
+Message-Id: <applied-20200410122315.17523-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200410122315.17523-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-Commit a10079c66290 ("staging: remove hp100 driver") removed all files
-from ./drivers/staging/hp/, but missed to adjust MAINTAINERS.
+The patch
 
-Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+   spi: remove redundant assignment to variable ms
 
-  warning: no file matches F: drivers/staging/hp/hp100.*
+has been applied to the spi tree at
 
-So, drop HP100 Driver entry in MAINTAINERS now.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 49686df5b874e5ed6249bc622b73ad9a9e71cd99 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 10 Apr 2020 13:23:15 +0100
+Subject: [PATCH] spi: remove redundant assignment to variable ms
+
+The variable ms is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Addresses-Coverity: ("Unused value")
+Link: https://lore.kernel.org/r/20200410122315.17523-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Greg, here is a minor non-urgent patch for staging.
+ drivers/spi/spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-applies cleanly on v5.7-rc3, current master and next-20200428
-
- MAINTAINERS | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 26f281d9f32a..41e2b577488f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7746,11 +7746,6 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Orphan
- F:	drivers/platform/x86/tc1100-wmi.c
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index c92c89467e7e..5446b07dcd3a 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1075,7 +1075,7 @@ static int spi_transfer_wait(struct spi_controller *ctlr,
+ {
+ 	struct spi_statistics *statm = &ctlr->statistics;
+ 	struct spi_statistics *stats = &msg->spi->statistics;
+-	unsigned long long ms = 1;
++	unsigned long long ms;
  
--HP100:	Driver for HP 10/100 Mbit/s Voice Grade Network Adapter Series
--M:	Jaroslav Kysela <perex@perex.cz>
--S:	Obsolete
--F:	drivers/staging/hp/hp100.*
--
- HPET:	High Precision Event Timers driver
- M:	Clemens Ladisch <clemens@ladisch.de>
- S:	Maintained
+ 	if (spi_controller_is_slave(ctlr)) {
+ 		if (wait_for_completion_interruptible(&ctlr->xfer_completion)) {
 -- 
-2.17.1
+2.20.1
