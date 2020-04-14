@@ -1,7 +1,7 @@
-From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Date: Tue, 07 Apr 2020 19:48:13 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 14 Apr 2020 15:09:17 +0000
 Subject: Re: [PATCH] qtnfmac: Simplify code in _attach functions
-Message-Id: <20200407194812.aziu2hedsfkwh7lg@bars>
+Message-Id: <20200414150917.1E73AC433CB@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200407193233.9439-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20200407193233.9439-1-christophe.jaillet@wanadoo.fr>
@@ -9,19 +9,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: imitsyanko@quantenna.com, avinashp@quantenna.com, smatyukevich@quantenna.com, kvalo@codeaurora.org, davem@davemloft.net, huangfq.daxian@gmail.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: imitsyanko@quantenna.com, avinashp@quantenna.com, smatyukevich@quantenna.com, davem@davemloft.net, huangfq.daxian@gmail.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-Hello Christophe,
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
 > There is no need to re-implement 'netdev_alloc_skb_ip_align()' here.
 > Keep the code simple.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-Thanks for cleaning this up!
+Patch applied to wireless-drivers-next.git, thanks.
 
-Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+c960e2b384ef qtnfmac: Simplify code in _attach functions
 
-Regards,
-Sergey
+-- 
+https://patchwork.kernel.org/patch/11478939/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
