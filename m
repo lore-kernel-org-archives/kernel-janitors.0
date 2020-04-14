@@ -1,31 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 06 Apr 2020 16:19:33 +0000
-Subject: Re: [PATCH][next] ath11k: fix error message to correctly report the command that failed
-Message-Id: <20200406161933.72BDCC433F2@smtp.codeaurora.org>
+From: Joe Perches <joe@perches.com>
+Date: Tue, 14 Apr 2020 19:04:32 +0000
+Subject: Re: [PATCH] pwm: Add missing '\n' in log messages
+Message-Id: <b867ee8a02043ec6b18c9330bfe3a091d66c816c.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200327192639.363354-1-colin.king@canonical.com>
-In-Reply-To: <20200327192639.363354-1-colin.king@canonical.com>
+References: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
+         <20200414135827.GB3593749@ulmo>
+         <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
+In-Reply-To: <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Thierry Reding <thierry.reding@gmail.com>, paul@crapouillou.net, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-
-> Currently the error message refers to the command WMI_TWT_DIeABLE_CMDID
-> which looks like a cut-n-paste mangled typo. Fix the message to match
-> the command WMI_BSS_COLOR_CHANGE_ENABLE_CMDID that failed.
+On Tue, 2020-04-14 at 20:30 +0200, Christophe JAILLET wrote:
+> Being able to detect early missing trailing '\n' would help maintainers 
+> and patch providers.
 > 
-> Fixes: 5a032c8d1953 ("ath11k: add WMI calls required for handling BSS color")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> You are the 2nd person (I've added Paul Cercueil in copy of my reply) 
+> who reports that he is thinking that it is no more required to add a '\n'.
 
-Patch applied to ath-next branch of ath.git, thanks.
+The printk subsystem will, for every printk, check
+if the last printk has a newline termination and if
+it doesn't and the current printk does not start with
+KERN_CONT will insert a newline.
 
-9a8074e3bcd7 ath11k: fix error message to correctly report the command that failed
+The negative to this approach is the last printk,
+if it does not have a newline, is buffered and not
+emitted until another printk occurs.
 
--- 
-https://patchwork.kernel.org/patch/11462997/
+There is also the (now small) possibility that
+multiple concurrent kernel threads or processes
+could interleave printks without a terminating
+newline and a different process could emit a
+printk that starts with KERN_CONT and the emitted
+message could be garbled.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+See:
+
+commit 4bcc595ccd80decb4245096e3d1258989c50ed41
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat Oct 8 20:32:40 2016 -0700
+
+    printk: reinstate KERN_CONT for printing continuation lines
