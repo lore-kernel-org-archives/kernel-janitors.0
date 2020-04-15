@@ -1,22 +1,37 @@
-From: Song Liu <songliubraving@fb.com>
-Date: Tue, 14 Apr 2020 22:05:12 +0000
+From: maowenan <maowenan@huawei.com>
+Date: Wed, 15 Apr 2020 01:37:08 +0000
 Subject: Re: [PATCH -next] bpf: remove set but not used variable 'dst_known'
-Message-Id: <C75FACD4-8549-4AD1-BDE6-1F5B47095E4C@fb.com>
+Message-Id: <2b2e0060-ef9b-5541-1108-e28464b47f0a@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200413113703.194287-1-maowenan@huawei.com>
-In-Reply-To: <20200413113703.194287-1-maowenan@huawei.com>
+ <C75FACD4-8549-4AD1-BDE6-1F5B47095E4C@fb.com>
+In-Reply-To: <C75FACD4-8549-4AD1-BDE6-1F5B47095E4C@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Song Liu <songliubraving@fb.com>
 Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, "john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@chromium.org" <kpsingh@chromium.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-DQoNCj4gT24gQXByIDEzLCAyMDIwLCBhdCA0OjM3IEFNLCBNYW8gV2VuYW4gPG1hb3dlbmFuQGh1
-YXdlaS5jb20+IHdyb3RlOg0KPiANCj4gRml4ZXMgZ2NjICctV3VudXNlZC1idXQtc2V0LXZhcmlh
-YmxlJyB3YXJuaW5nOg0KPiANCj4ga2VybmVsL2JwZi92ZXJpZmllci5jOjU2MDM6MTg6IHdhcm5p
-bmc6IHZhcmlhYmxlIOKAmGRzdF9rbm93buKAmQ0KPiBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNl
-ZC1idXQtc2V0LXZhcmlhYmxlXQ0KPiANCj4gSXQgaXMgbm90IHVzZWQgc2luY2UgY29tbWl0IGYx
-MTc0Zjc3YjUwYyAoImJwZi92ZXJpZmllcjoNCj4gcmV3b3JrIHZhbHVlIHRyYWNraW5nIikNCg0K
-VGhlIGZpeCBtYWtlcyBzZW5zZS4gQnV0IEkgdGhpbmsgZjExNzRmNzdiNTBjIGludHJvZHVjZWQg
-ZHN0X2tub3duLCANCnNvIHRoaXMgc3RhdGVtZW50IGlzIG5vdCBhY2N1cmF0ZS4gDQoNCj4gDQo+
-IFNpZ25lZC1vZmYtYnk6IE1hbyBXZW5hbiA8bWFvd2VuYW5AaHVhd2VpLmNvbT4NCg0K
+On 2020/4/15 6:05, Song Liu wrote:
+> 
+> 
+>> On Apr 13, 2020, at 4:37 AM, Mao Wenan <maowenan@huawei.com> wrote:
+>>
+>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>
+>> kernel/bpf/verifier.c:5603:18: warning: variable ‘dst_known’
+>> set but not used [-Wunused-but-set-variable]
+>>
+>> It is not used since commit f1174f77b50c ("bpf/verifier:
+>> rework value tracking")
+> 
+> The fix makes sense. But I think f1174f77b50c introduced dst_known, 
+> so this statement is not accurate. 
+> 
+thanks for review, yes, f1174f77b50c introduced dst_known, and below commit
+doesn't deference variable dst_known. So I send v2 later?
+3f50f132d840 ("bpf: Verifier, do explicit ALU32 bounds tracking")
+
+>>
+>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> 
