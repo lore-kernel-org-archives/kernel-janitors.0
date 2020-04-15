@@ -1,80 +1,92 @@
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-Date: Wed, 15 Apr 2020 10:43:08 +0000
+From: Wei Liu <wei.liu@kernel.org>
+Date: Wed, 15 Apr 2020 14:37:52 +0000
 Subject: Re: [PATCH][next] drivers: hv: remove redundant assignment to pointer primary_channel
-Message-Id: <87wo6hvxkz.fsf@vitty.brq.redhat.com>
+Message-Id: <20200415143752.cm3xbesiuksfdbzm@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200414152343.243166-1-colin.king@canonical.com> <87d08axb7k.fsf@vitty.brq.redhat.com> <606c442c-1923-77d4-c350-e06878172c44@canonical.com>
-In-Reply-To: <606c442c-1923-77d4-c350-e06878172c44@canonical.com>
+References: <20200414152343.243166-1-colin.king@canonical.com>
+ <87d08axb7k.fsf@vitty.brq.redhat.com>
+ <606c442c-1923-77d4-c350-e06878172c44@canonical.com>
+ <87wo6hvxkz.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87wo6hvxkz.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> writes:
+On Wed, Apr 15, 2020 at 12:43:08PM +0200, Vitaly Kuznetsov wrote:
+> Colin Ian King <colin.king@canonical.com> writes:
+> 
+> > On 14/04/2020 17:51, Vitaly Kuznetsov wrote:
+> >> Colin King <colin.king@canonical.com> writes:
+> >> 
+> >>> From: Colin Ian King <colin.king@canonical.com>
+> >>>
+> >>> The pointer primary_channel is being assigned with a value that is never,
+> >>> The assignment is redundant and can be removed.
+> >>>
+> >>> Addresses-Coverity: ("Unused value")
+> >>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >>> ---
+> >>>  drivers/hv/channel_mgmt.c | 2 --
+> >>>  1 file changed, 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> >>> index ffd7fffa5f83..f7bbb8dc4b0f 100644
+> >>> --- a/drivers/hv/channel_mgmt.c
+> >>> +++ b/drivers/hv/channel_mgmt.c
+> >>> @@ -425,8 +425,6 @@ void hv_process_channel_removal(struct vmbus_channel *channel)
+> >>>  
+> >>>  	if (channel->primary_channel = NULL) {
+> >>>  		list_del(&channel->listentry);
+> >>> -
+> >>> -		primary_channel = channel;
+> >>>  	} else {
+> >>>  		primary_channel = channel->primary_channel;
+> >>>  		spin_lock_irqsave(&primary_channel->lock, flags);
+> >> 
+> >> If I'm looking at the right source (5.7-rc1) it *is* beeing used:
+> >> 
+> >> 	if (channel->primary_channel = NULL) {
+> >> 		list_del(&channel->listentry);
+> >> 
+> >> 		primary_channel = channel;
+> >> 	} else {
+> >> 		primary_channel = channel->primary_channel;
+> >> 		spin_lock_irqsave(&primary_channel->lock, flags);
+> >> 		list_del(&channel->sc_list);
+> >> 		spin_unlock_irqrestore(&primary_channel->lock, flags);
+> >> 	}
+> >> 
+> >> 	/*
+> >> 	 * We need to free the bit for init_vp_index() to work in the case
+> >> 	 * of sub-channel, when we reload drivers like hv_netvsc.
+> >> 	 */
+> >> 	if (channel->affinity_policy = HV_LOCALIZED)
+> >> 		cpumask_clear_cpu(channel->target_cpu,
+> >> 				  &primary_channel->alloced_cpus_in_node);
+> >>                                    ^^^^^ HERE ^^^^^
+> >> 
+> >
+> > I was basing my change on linux-next that has removed a hunk of code:
+> >
+> > commit bcefa400900739310e8ef0cb34cbe029c404455c
+> > Author: Andrea Parri (Microsoft) <parri.andrea@gmail.com>
+> > Date:   Mon Apr 6 02:15:11 2020 +0200
+> >
+> >     Drivers: hv: vmbus: Remove the unused HV_LOCALIZED channel affinity
+> > logic
+> >
+> 
+> Ah, please add the right 'Fixes:' tag then.
 
-> On 14/04/2020 17:51, Vitaly Kuznetsov wrote:
->> Colin King <colin.king@canonical.com> writes:
->> 
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The pointer primary_channel is being assigned with a value that is never,
->>> The assignment is redundant and can be removed.
->>>
->>> Addresses-Coverity: ("Unused value")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/hv/channel_mgmt.c | 2 --
->>>  1 file changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
->>> index ffd7fffa5f83..f7bbb8dc4b0f 100644
->>> --- a/drivers/hv/channel_mgmt.c
->>> +++ b/drivers/hv/channel_mgmt.c
->>> @@ -425,8 +425,6 @@ void hv_process_channel_removal(struct vmbus_channel *channel)
->>>  
->>>  	if (channel->primary_channel = NULL) {
->>>  		list_del(&channel->listentry);
->>> -
->>> -		primary_channel = channel;
->>>  	} else {
->>>  		primary_channel = channel->primary_channel;
->>>  		spin_lock_irqsave(&primary_channel->lock, flags);
->> 
->> If I'm looking at the right source (5.7-rc1) it *is* beeing used:
->> 
->> 	if (channel->primary_channel = NULL) {
->> 		list_del(&channel->listentry);
->> 
->> 		primary_channel = channel;
->> 	} else {
->> 		primary_channel = channel->primary_channel;
->> 		spin_lock_irqsave(&primary_channel->lock, flags);
->> 		list_del(&channel->sc_list);
->> 		spin_unlock_irqrestore(&primary_channel->lock, flags);
->> 	}
->> 
->> 	/*
->> 	 * We need to free the bit for init_vp_index() to work in the case
->> 	 * of sub-channel, when we reload drivers like hv_netvsc.
->> 	 */
->> 	if (channel->affinity_policy = HV_LOCALIZED)
->> 		cpumask_clear_cpu(channel->target_cpu,
->> 				  &primary_channel->alloced_cpus_in_node);
->>                                    ^^^^^ HERE ^^^^^
->> 
->
-> I was basing my change on linux-next that has removed a hunk of code:
->
-> commit bcefa400900739310e8ef0cb34cbe029c404455c
-> Author: Andrea Parri (Microsoft) <parri.andrea@gmail.com>
-> Date:   Mon Apr 6 02:15:11 2020 +0200
->
->     Drivers: hv: vmbus: Remove the unused HV_LOCALIZED channel affinity
-> logic
->
+I don't think the Fixes tag is particularly useful in this instance.
+Andrea's commit is not yet in Linus' tree. If I rebase hyper-next over
+the next 2.5 months the tag is going to have a stale commit hash in it.
 
-Ah, please add the right 'Fixes:' tag then.
+Wei.
 
--- 
-Vitaly
+> 
+> -- 
+> Vitaly
+> 
