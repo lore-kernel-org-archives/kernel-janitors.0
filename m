@@ -1,37 +1,38 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 03 Apr 2020 04:41:56 +0000
-Subject: Re: [PATCH][next] crypto: marvell: fix double free of ptr
-Message-Id: <20200403044156.GB26315@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Apr 2020 23:08:21 +0000
+Subject: [PATCH] extcon: remove redundant assignment to variable idx
+Message-Id: <20200415230821.1567410-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200401231012.407946-1-colin.king@canonical.com>
-In-Reply-To: <20200401231012.407946-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, "David S . Miller" <davem@davemloft.net>, Lukasz Bartosik <lbartosik@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 12:10:12AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently in the case where eq->src != req->ds, the allocation of
-> ptr is kfree'd at the end of the code block. However later on in
-> the case where enc is not null any of the error return paths that
-> return via the error handling return path end up performing an
-> erroneous second kfree of ptr.
-> 
-> Fix this by adding an error exit label error_free and only jump to
-> this when ptr needs kfree'ing thus avoiding the double free issue.
-> 
-> Addresses-Coverity: ("Double free")
-> Fixes: 10b4f09491bf ("crypto: marvell - add the Virtual Function driver for CPT")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/marvell/octeontx/otx_cptvf_algs.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The variable idx is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/extcon/extcon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index 2dfbfec572f9..0a6438cbb3f3 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -900,7 +900,7 @@ int extcon_register_notifier(struct extcon_dev *edev, unsigned int id,
+ 			     struct notifier_block *nb)
+ {
+ 	unsigned long flags;
+-	int ret, idx = -EINVAL;
++	int ret, idx;
+ 
+ 	if (!edev || !nb)
+ 		return -EINVAL;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
