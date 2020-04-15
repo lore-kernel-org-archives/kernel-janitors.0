@@ -1,32 +1,36 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 27 Apr 2020 17:28:56 +0000
-Subject: Re: [PATCH -next] sparc64: vcc: Fix error return code in vcc_probe()
-Message-Id: <20200427172856.GA3936841@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Apr 2020 22:40:10 +0000
+Subject: [PATCH] thermal: ti-soc-thermal: remove redundant assignment to variable i
+Message-Id: <20200415224010.1564330-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427122415.47416-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427122415.47416-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amit.kucheria@verdurent.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 09:14:38AM -0700, David Miller wrote:
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Date: Mon, 27 Apr 2020 14:27:47 +0200
-> 
-> > On Mon, Apr 27, 2020 at 12:24:15PM +0000, Wei Yongjun wrote:
-> >> Fix to return negative error code -ENOMEM from the error handling
-> >> case instead of 0, as done elsewhere in this function.
-> >> 
-> >> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> >> ---
-> >>  drivers/tty/vcc.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> > 
-> > Why is sparc64 in your subject line?
-> 
-> It's a sparc64 hypervisor console driver.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah, that wasn't very obvious, sorry about that.
+The variable i is being assigned with a value that is never read,
+the assignment is redundant and can be removed.
 
-greg k-h
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index ab19ceff6e2a..abaf629038c3 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -1003,7 +1003,6 @@ int ti_bandgap_probe(struct platform_device *pdev)
+ 		ret = ti_bandgap_talert_init(bgp, pdev);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "failed to initialize Talert IRQ\n");
+-			i = bgp->conf->sensor_count;
+ 			goto disable_clk;
+ 		}
+ 	}
+-- 
+2.25.1
