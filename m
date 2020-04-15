@@ -1,58 +1,38 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 25 Apr 2020 10:54:32 +0000
-Subject: Re: [PATCH v3] staging: wfx: cleanup long lines in data_tx.c
-Message-Id: <20200425105432.GA2068247@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Apr 2020 23:16:30 +0000
+Subject: [PATCH] ipv6: remove redundant assignment to variable err
+Message-Id: <20200415231630.1568296-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200424134834.GA19700@blackclown>
-In-Reply-To: <20200424134834.GA19700@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 07:18:34PM +0530, Suraj Upadhyay wrote:
-> Break lines with length over 80 characters to conform
-> to the linux coding style and refactor wherever necessary.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
-> 
-> Changes in v3:
-> 	- Changed the temporary variable name for the memzcmp statement
-> 	  to is_used. (as suggested).
-> 	- Added a temporary ieee80211_supported_band variable to address
-> 	  the problem in wfx_get_hw_rate() more efficiently. (not
-> 	  suggested, but still).
-> 
-> Changes in v2:
->         - Introduced a temporary variable for the memzcmp statement.
->         - Addressed the checkpatch problem with wfx_get_hw_rate().
->         - Restored the function definition of wfx_tx_get_tx_parms
->           as suggested by the reviewer.
->         - Added suggested changes for req->packet_id statement.
-> 
->  drivers/staging/wfx/data_tx.c | 40 +++++++++++++++++++++++------------
->  1 file changed, 26 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/staging/wfx/data_tx.c b/drivers/staging/wfx/data_tx.c
-> index 9c1a91207dd8..717155975345 100644
-> --- a/drivers/staging/wfx/data_tx.c
-> +++ b/drivers/staging/wfx/data_tx.c
-> @@ -20,6 +20,8 @@
->  static int wfx_get_hw_rate(struct wfx_dev *wdev,
->  			   const struct ieee80211_tx_rate *rate)
->  {
-> +
-> +	struct ieee80211_supported_band *band;
->  	if (rate->idx < 0)
+From: Colin Ian King <colin.king@canonical.com>
 
-checkpatch did not complain about this change?
+The variable err is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-It should have...
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/seg6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please fix that up.
-
-thanks,
-
-greg k-h
+diff --git a/net/ipv6/seg6.c b/net/ipv6/seg6.c
+index 75421a472d25..4c7e0a27fa9c 100644
+--- a/net/ipv6/seg6.c
++++ b/net/ipv6/seg6.c
+@@ -434,7 +434,7 @@ static struct genl_family seg6_genl_family __ro_after_init = {
+ 
+ int __init seg6_init(void)
+ {
+-	int err = -ENOMEM;
++	int err;
+ 
+ 	err = genl_register_family(&seg6_genl_family);
+ 	if (err)
+-- 
+2.25.1
