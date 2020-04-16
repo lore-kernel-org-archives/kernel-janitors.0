@@ -1,74 +1,42 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 20 Apr 2020 08:17:18 +0000
-Subject: Duplicated DMA-BUF HEAPS FRAMEWORK in MAINTAINERS on next-20200420
-Message-Id: <alpine.DEB.2.21.2004201003340.7417@felia>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 16 Apr 2020 09:46:45 +0000
+Subject: Re: i2c: img-scb: remove duplicate dev_err()
+Message-Id: <73cc5a7c-787c-b263-7679-0f1fa58a70f8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <08564c03-3bbd-5518-1a9d-a40b8ca09f48@web.de>
+ <20200415025426.GB14300@nuc8i5> <b5db65f5-f236-9e22-98df-07629a827738@web.de>
+ <20200415152115.GA17519@nuc8i5> <668fe4da-56f2-8abe-1113-fa180f307524@web.de>
+In-Reply-To: <668fe4da-56f2-8abe-1113-fa180f307524@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Allison Randal <allison@lohutok.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Shah Nehal-Bakulchandra <Nehal-bakulchandra.Shah@amd.com>, Tang Bin <tangbin@cmss.chinamobile.com>, Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa@the-dreams.de>, Thor Thayer <thor.thayer@linux.intel.com>, Robert Richter <rrichter@marvell.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Barry Song <baohua@kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Thomas,
+>>> Would you like to take another look at corresponding change possibilities?
+>>>
+>> yes, I want to do it and thanks for your info.
 
-on next-20200420, ./scripts/checkpatch.pl -f MAINTAINERS and 
-./scripts/parse-maintainers.pl report a number of issues:
-
-WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic 
-order
-#5059: FILE: MAINTAINERS:5059:
-+F:	include/linux/dma-resv.h
-+F:	include/linux/*fence.h
-
-WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic 
-order
-#5060: FILE: MAINTAINERS:5060:
-+F:	include/linux/*fence.h
-+F:	Documentation/driver-api/dma-buf.rst
-
-WARNING: Misordered MAINTAINERS entry - list 'T:' before 'K:'
-#5062: FILE: MAINTAINERS:5062:
-+K:	\bdma_(?:buf|fence|resv)\b
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
-
-WARNING: Misordered MAINTAINERS entry - list 'L:' before 'S:'
-#5073: FILE: MAINTAINERS:5073:
-+S:	Maintained
-+L:	linux-media@vger.kernel.org
-
-WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic 
-order
-#5077: FILE: MAINTAINERS:5077:
-+F:	include/uapi/linux/dma-heap.h
-+F:	include/linux/dma-heap.h
-
-WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic 
-order
-#5078: FILE: MAINTAINERS:5078:
-+F:	include/linux/dma-heap.h
-+F:	drivers/dma-buf/dma-heap.c
-
-WARNING: Misordered MAINTAINERS entry - list 'T:' before 'F:'
-#5080: FILE: MAINTAINERS:5080:
-+F:	drivers/dma-buf/heaps/*
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
+How do you think about to improve the clarification around potentially
+“odd fixes” (because of collateral evolution)?
 
 
-Header 'DMA-BUF HEAPS FRAMEWORK' already exists at 
-./scripts/parse-maintainers.pl line 159, <$file> line 5109.
+I noticed your update suggestion “i2c: busses: convert to devm_platform_ioremap_resource”.
+https://lore.kernel.org/linux-i2c/20200409135224.7426-1-zhengdejin5@gmail.com/
+https://lore.kernel.org/patchwork/patch/1222122/
+https://lkml.org/lkml/2020/4/9/431
 
+It seems that you got encouraged to contribute changes according to another
+transformation approach by a single patch for a directory hierarchy.
+How likely is it that such adjustments touch source code places
+where related error messages would be found for further software
+development considerations?
+Would you like to wait until the integration of this update succeeded?
 
-I tracked this down to commit 08d99b2c23df ("Merge drm/drm-next into 
-drm-misc-next") visible in next-20200420.
+Will it be interesting in the meantime to become more familiar with
+applications around scripts for the semantic patch language?
+Can the Coccinelle software make the discussed transformations more convenient
+also for your needs?
 
-It seems that this commit adds the DMA-BUF HEAPS FRAMEWORK a second time 
-in its state before the reordering into MAINTAINERS through this merge.
-
-Possibly, you can clean this up? I am happy to support with further 
-patches if it is clear what we should do here.
-
-
-Best regards,
-
-
-Lukas
+Regards,
+Markus
