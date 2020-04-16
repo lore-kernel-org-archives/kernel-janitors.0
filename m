@@ -1,57 +1,6 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 13 Apr 2020 07:06:49 +0000
-Subject: [PATCH v2] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Message-Id: <20200413070649.7014-1-lukas.bulwahn@gmail.com>
+From: Saleem Netanyahu <duchenko@dsns.gov.ua>
+Date: Thu, 16 Apr 2020 20:33:24 +0000
+Subject: Hey, how are u, can we talk?
+Message-Id: <517743135.717506.1587069204006.JavaMail.zimbra@dsns.gov.ua>
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-arm-kernel@lists.infradead.org
-
-Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
-controller") includes a new entry in MAINTAINERS, but slipped in a typo in
-one of the file entries.
-
-Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
-
-  warning: no file matches F: \
-    drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-
-Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Rob, please pick this patch (it is not urgent, though).
-
-v1: https://lore.kernel.org/lkml/20200314142559.13505-1-lukas.bulwahn@gmail.com/
-  - already received: Reviewed-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-  - Bjorn Helgaas' suggestion to squash this into commit 3edeb49525bb
-    ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4 controller") before
-    merging upstream did not happen.
-
-v1 -> v2:
-  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
-    ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
-    ("MAINTAINERS: sort field names for all entries").
-  - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
-
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e64e5db31497..0fd27329e6f7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12941,7 +12941,7 @@ L:	linux-pci@vger.kernel.org
- L:	linux-arm-kernel@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
--F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-+F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
- 
- PCI DRIVER FOR RENESAS R-CAR
- M:	Marek Vasut <marek.vasut+renesas@gmail.com>
--- 
-2.17.1
+To: kernel-janitors@vger.kernel.org
