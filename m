@@ -1,91 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Apr 2020 13:09:55 +0000
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 17 Apr 2020 13:28:21 +0000
 Subject: Re: [PATCH] RDMA/ocrdma: Fix an off-by-one issue in 'ocrdma_add_stat'
-Message-Id: <20200417130955.GU1163@kadam>
+Message-Id: <8c17ed4f-fb29-4ff8-35db-afab284c6e71@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200328073040.24429-1-christophe.jaillet@wanadoo.fr>
  <20200414183441.GA28870@ziepe.ca>
- <20200416130847.GP1163@kadam>
- <20200416184754.GZ5100@ziepe.ca>
- <20200417112624.GS1163@kadam>
- <20200417122542.GC5100@ziepe.ca>
-In-Reply-To: <20200417122542.GC5100@ziepe.ca>
+In-Reply-To: <20200414183441.GA28870@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, selvin.xavier@broadcom.com, devesh.sharma@broadcom.com, dledford@redhat.com, leon@kernel.org, colin.king@canonical.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: selvin.xavier@broadcom.com, devesh.sharma@broadcom.com, dledford@redhat.com, leon@kernel.org, colin.king@canonical.com, roland@purestorage.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 09:25:42AM -0300, Jason Gunthorpe wrote:
-> On Fri, Apr 17, 2020 at 02:26:24PM +0300, Dan Carpenter wrote:
-> > On Thu, Apr 16, 2020 at 03:47:54PM -0300, Jason Gunthorpe wrote:
-> > > On Thu, Apr 16, 2020 at 04:08:47PM +0300, Dan Carpenter wrote:
-> > > > On Tue, Apr 14, 2020 at 03:34:41PM -0300, Jason Gunthorpe wrote:
-> > > > > The memcpy is still kind of silly right? What about this:
-> > > > > 
-> > > > > static int ocrdma_add_stat(char *start, char *pcur, char *name, u64 count)
-> > > > > {
-> > > > > 	size_t len = (start + OCRDMA_MAX_DBGFS_MEM) - pcur;
-> > > > > 	int cpy_len;
-> > > > > 
-> > > > > 	cpy_len = snprintf(pcur, len, "%s: %llu\n", name, count);
-> > > > > 	if (cpy_len >= len || cpy_len < 0) {
-> > > > 
-> > > > The kernel version of snprintf() doesn't and will never return
-> > > > negatives.  It would cause a huge security headache if it started
-> > > > returning negatives.
-> > > 
-> > > Begs the question why it returns an int then :)
-> > 
-> > People should use "int" as their default type.  "int i;".  It means
-> > "This is a normal number.  Nothing special about it.  It's not too high.
-> > It's not defined by hardware requirements."  Other types call attention
-> > to themselves, but int is the humble datatype.
-> 
-> No, I strongly disagree with this, it is one of my pet peeves to see
-> 'int' being used for data which is known to be only ever be positive
-> just to save typing 'unsigned'.
-> 
-> Not only is it confusing, but allowing signed values has caused tricky
-> security bugs, unfortuntely.
 
-I have the opposite pet peeve.
+Le 14/04/2020 à 20:34, Jason Gunthorpe a écrit :
+> On Sat, Mar 28, 2020 at 08:30:40AM +0100, Christophe JAILLET wrote:
+>> There is an off-by-one issue when checking if there is enough space in the
+>> output buffer, because we must keep some place for a final '\0'.
+>>
+>> While at it:
+>>     - Use 'scnprintf' instead of 'snprintf' in order to avoid a superfluous
+>>      'strlen'
+>>     - avoid some useless initializations
+>>     - avoida hard coded buffer size that can be computed at built time.
+>>
+>> Fixes: a51f06e1679e ("RDMA/ocrdma: Query controller information")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> The '\0' comes from memset(..., 0, ...) in all callers.
+>> This could be also avoided if needed.
+>> ---
+>>   drivers/infiniband/hw/ocrdma/ocrdma_stats.c | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+>> index 5f831e3bdbad..614a449e6b87 100644
+>> --- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+>> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+>> @@ -49,13 +49,12 @@ static struct dentry *ocrdma_dbgfs_dir;
+>>   static int ocrdma_add_stat(char *start, char *pcur,
+>>   				char *name, u64 count)
+>>   {
+>> -	char buff[128] = {0};
+>> -	int cpy_len = 0;
+>> +	char buff[128];
+>> +	int cpy_len;
+>>   
+>> -	snprintf(buff, 128, "%s: %llu\n", name, count);
+>> -	cpy_len = strlen(buff);
+>> +	cpy_len = scnprintf(buff, sizeof(buff), "%s: %llu\n", name, count);
+>>   
+>> -	if (pcur + cpy_len > start + OCRDMA_MAX_DBGFS_MEM) {
+>> +	if (pcur + cpy_len >= start + OCRDMA_MAX_DBGFS_MEM) {
+>>   		pr_err("%s: No space in stats buff\n", __func__);
+>>   		return 0;
+>>   	}
+> The memcpy is still kind of silly right? What about this:
+>
+> static int ocrdma_add_stat(char *start, char *pcur, char *name, u64 count)
+> {
+> 	size_t len = (start + OCRDMA_MAX_DBGFS_MEM) - pcur;
+> 	int cpy_len;
+>
+> 	cpy_len = snprintf(pcur, len, "%s: %llu\n", name, count);
+> 	if (cpy_len >= len || cpy_len < 0) {
+> 		pr_err("%s: No space in stats buff\n", __func__);
+> 		return 0;
+> 	}
+> 	return cpy_len;
+> }
+>
+> Jason
 
-I complain about it a lot.  It pains me every time I see a "u32 i;".  I
-think there is a static analysis warning for using signed which
-encourages people to write code like that.  That warning really upsets
-me for two reasons 1) The static checker should know the range of values
-but it doesn't so it makes me sad to see inferior technology being used
-when it should deleted instead.  2)  I have never seen this warning
-prevent a real life bug.  You would need to hit a series of fairly rare
-events for this warning to be useful and I have never seen that happen
-yet.
+It can looks useless, but I think that the goal was to make sure that we 
+would not display truncated data. Each line is either complete or absent.
 
-The most common bug caused by unsigned variables is that it breaks the
-kernel error handling but there are other problems as well.  There was
-an example a little while back where someone "fixed" a security problem
-by making things unsigned.
+I don't have any strong opinion of what is best, but I can understand 
+the current logic.
 
-	for (i = 0; i < user_value; i++) {
+This function is not a hot spot, so useless memcpy is not a big issue.
 
-Originally if user_value was an int then the loop would have been a
-harmless no-op but now it was a large positive value so it lead to
-memory corruption.  Another example is:
-
-	for (i = 0; i < user_value - 1; i++) {
-
-If "user_value" is zero the subtraction becomes UINT_MAX.  Or some
-people use a "u16 i;" but then the limit increases so the loop doesn't
-work any more.
-
-From my experience with static analysis and security audits, making
-things unsigned en mass causes more security bugs.  There are definitely
-times where making variables unsigned is correct for security reasons
-like when you are taking a size from userspace.
-
-Complicated types call attention to themselves and they hurt
-readability.  You sometimes *need* other datatypes and you want those to
-stand out but if everything is special then nothing is special.
-
-regards,
-dan carpenter
+CJ
