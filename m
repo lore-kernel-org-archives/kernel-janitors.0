@@ -1,29 +1,38 @@
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 20 Apr 2020 11:13:13 +0000
-Subject: Re: [PATCH] tee: remove unnecessary NULL check in tee_shm_alloc()
-Message-Id: <CAHUa44FJZtFpj2FcaYOBShMU5yjXfQmoVe3wJXemnTFDfRsD_Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Apr 2020 16:08:29 +0000
+Subject: [PATCH][next] drm/i915: remove redundant assignment to variable test_result
+Message-Id: <20200417160829.112776-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 7, 2020 at 11:32 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Smatch complains that "ctx" isn't checked consistently:
->
->     drivers/tee/tee_shm.c:164 tee_shm_alloc()
->     warn: variable dereferenced before check 'ctx' (see line 95)
->
-> I audited the callers and "ctx" can't be NULL so the check can be
-> removed.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/tee/tee_shm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, I'm picking this up.
+The variable test_result is being initialized with a value that is
+never read and it is being updated later with a new value.  The
+initialization is redundant and can be removed.
 
-Cheers,
-Jens
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index d4fcc9583869..55697c5e251a 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -5567,7 +5567,7 @@ void intel_dp_process_phy_request(struct intel_dp *intel_dp)
+ 
+ static u8 intel_dp_autotest_phy_pattern(struct intel_dp *intel_dp)
+ {
+-	u8 test_result = DP_TEST_NAK;
++	u8 test_result;
+ 
+ 	test_result = intel_dp_prepare_phytest(intel_dp);
+ 	if (test_result != DP_TEST_ACK)
+-- 
+2.25.1
