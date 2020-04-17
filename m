@@ -1,56 +1,64 @@
-From: Esben Haabendal <esben@geanix.com>
-Date: Mon, 27 Apr 2020 09:46:10 +0000
-Subject: Re: [PATCH net-next] net: ll_temac: Fix return value check in temac_probe()
-Message-Id: <87sggpp8gt.fsf@geanix.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Apr 2020 15:49:01 +0000
+Subject: [PATCH][next] sdhci: arasan: fix uninitialized value being returned as error code
+Message-Id: <20200417154901.112236-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427094052.181554-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427094052.181554-1-weiyongjun1@huawei.com> (Wei Yongjun's
- message of "Mon, 27 Apr 2020 09:40:52 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: andrew@lunn.ch, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, michal.simek@xilinx.com, ynezz@true.cz, linux-arm-kernel@lists.infradead.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Michal Simek <michal.simek@xilinx.com>, Ulf Hansson <ulf.hansson@linaro.org>, Manish Narani <manish.narani@xilinx.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Esben Haabendal <esben@geanix.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Wei Yongjun <weiyongjun1@huawei.com> writes:
+Currently the error return value in variable ret is not being initialized
+and so a successful return path is returning a garbage value. Since ret
+is not being used the simple fix is just return 0 on a successful return.
 
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/net/ethernet/xilinx/ll_temac_main.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-> index 3e313e71ae36..929244064abd 100644
-> --- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-> +++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-> @@ -1410,9 +1410,9 @@ static int temac_probe(struct platform_device *pdev)
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	lp->regs = devm_ioremap(&pdev->dev, res->start,
->  					resource_size(res));
-> -	if (IS_ERR(lp->regs)) {
-> +	if (!lp->regs) {
->  		dev_err(&pdev->dev, "could not map TEMAC registers\n");
-> -		return PTR_ERR(lp->regs);
-> +		return -ENOMEM;
->  	}
->  
->  	/* Select register access functions with the specified
-> @@ -1505,10 +1505,10 @@ static int temac_probe(struct platform_device *pdev)
->  		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->  		lp->sdma_regs = devm_ioremap(&pdev->dev, res->start,
->  						     resource_size(res));
-> -		if (IS_ERR(lp->sdma_regs)) {
-> +		if (!lp->sdma_regs) {
->  			dev_err(&pdev->dev,
->  				"could not map DMA registers\n");
-> -			return PTR_ERR(lp->sdma_regs);
-> +			return -ENOMEM;
->  		}
->  		if (pdata->dma_little_endian) {
->  			lp->dma_in = temac_dma_in32_le;
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: f73e66a36772 ("sdhci: arasan: Add support for Versal Tap Delays")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sdhci-of-arasan.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+index 16e26c217a77..45603ba515b2 100644
+--- a/drivers/mmc/host/sdhci-of-arasan.c
++++ b/drivers/mmc/host/sdhci-of-arasan.c
+@@ -735,7 +735,6 @@ static int sdhci_versal_sdcardclk_set_phase(struct clk_hw *hw, int degrees)
+ 		container_of(clk_data, struct sdhci_arasan_data, clk_data);
+ 	struct sdhci_host *host = sdhci_arasan->host;
+ 	u8 tap_delay, tap_max = 0;
+-	int ret;
+ 
+ 	/*
+ 	 * This is applicable for SDHCI_SPEC_300 and above
+@@ -781,7 +780,7 @@ static int sdhci_versal_sdcardclk_set_phase(struct clk_hw *hw, int degrees)
+ 		sdhci_writel(host, regval, SDHCI_ARASAN_OTAPDLY_REGISTER);
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct clk_ops versal_sdcardclk_ops = {
+@@ -807,7 +806,6 @@ static int sdhci_versal_sampleclk_set_phase(struct clk_hw *hw, int degrees)
+ 		container_of(clk_data, struct sdhci_arasan_data, clk_data);
+ 	struct sdhci_host *host = sdhci_arasan->host;
+ 	u8 tap_delay, tap_max = 0;
+-	int ret;
+ 
+ 	/*
+ 	 * This is applicable for SDHCI_SPEC_300 and above
+@@ -857,7 +855,7 @@ static int sdhci_versal_sampleclk_set_phase(struct clk_hw *hw, int degrees)
+ 		sdhci_writel(host, regval, SDHCI_ARASAN_ITAPDLY_REGISTER);
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct clk_ops versal_sampleclk_ops = {
+-- 
+2.25.1
