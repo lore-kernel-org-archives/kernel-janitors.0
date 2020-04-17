@@ -1,24 +1,38 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 08 Apr 2020 09:49:04 +0000
-Subject: Re: [PATCH] gpu/drm: ingenic: Delete an error message in ingenic_drm_probe()
-Message-Id: <acc040a1c5bec74cb78e2ee7e859c6989647c343.camel@perches.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 17 Apr 2020 02:58:37 +0000
+Subject: [PATCH -next] kcsan: Use GFP_ATOMIC under spin lock
+Message-Id: <20200417025837.49780-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
-In-Reply-To: <e03e7106-0f22-99c4-ad21-b288e8990b5a@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2020-04-08 at 12:42 +0300, Dan Carpenter wrote:
-> On Mon, Apr 06, 2020 at 07:48:52PM +0200, Christophe JAILLET wrote:
-> > Nevertheless, I wrote another script (see below), which triggers ~2800 times
-> > in ./drivers only.
-> > Some are false positives, but most look valid.
-> 
-> I did a quick grep and you're right there are a ton of these!
+A spin lock is taken here so we should use GFP_ATOMIC.
 
-Quite a lot of them use pr_cont too.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ kernel/kcsan/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway, try this:
-https://lore.kernel.org/lkml/8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com/
+diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
+index 1a08664a7fab..023e49c58d55 100644
+--- a/kernel/kcsan/debugfs.c
++++ b/kernel/kcsan/debugfs.c
+@@ -230,7 +230,7 @@ static ssize_t insert_report_filterlist(const char *func)
+ 		/* initial allocation */
+ 		report_filterlist.addrs  			kmalloc_array(report_filterlist.size,
+-				      sizeof(unsigned long), GFP_KERNEL);
++				      sizeof(unsigned long), GFP_ATOMIC);
+ 		if (report_filterlist.addrs = NULL) {
+ 			ret = -ENOMEM;
+ 			goto out;
+@@ -240,7 +240,7 @@ static ssize_t insert_report_filterlist(const char *func)
+ 		size_t new_size = report_filterlist.size * 2;
+ 		unsigned long *new_addrs  			krealloc(report_filterlist.addrs,
+-				 new_size * sizeof(unsigned long), GFP_KERNEL);
++				 new_size * sizeof(unsigned long), GFP_ATOMIC);
+ 
+ 		if (new_addrs = NULL) {
+ 			/* leave filterlist itself untouched */
