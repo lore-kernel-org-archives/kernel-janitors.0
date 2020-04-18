@@ -1,58 +1,42 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Sun, 05 Apr 2020 23:51:29 +0000
-Subject: Re: [PATCH] PM / devfreq: tegra30: Delete an error message in tegra_devfreq_probe()
-Message-Id: <924a6012-985e-b22d-6f85-e9eb3f03e88b@samsung.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sat, 18 Apr 2020 06:47:05 +0000
+Subject: Re: [PATCH][next] drm/i915: remove redundant assignment to variable test_result
+Message-Id: <158719242529.2062.10865538071297156214@build.alporthouse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200404184602epcas1p1e0188779ade7c393f9e37a4757e1b6cc@epcas1p1.samsung.com>
-        <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
-In-Reply-To: <ba67e238-43a7-6c53-363e-7a2c12f09949@web.de>
+References: <20200417160829.112776-1-colin.king@canonical.com>
+In-Reply-To: <20200417160829.112776-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 4/5/20 3:45 AM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 4 Apr 2020 20:34:02 +0200
+Quoting Colin King (2020-04-17 17:08:29)
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The function “platform_get_irq” can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
+> The variable test_result is being initialized with a value that is
+> never read and it is being updated later with a new value.  The
+> initialization is redundant and can be removed.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 28b2c7ca416e..93e6f4b25b04 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -807,10 +807,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  	}
-> 
->  	err = platform_get_irq(pdev, 0);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", err);
-> +	if (err < 0)
->  		return err;
-> -	}
-> +
->  	tegra->irq = err;
-> 
->  	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
-> --
-> 2.26.0
-> 
-> 
-> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> index d4fcc9583869..55697c5e251a 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -5567,7 +5567,7 @@ void intel_dp_process_phy_request(struct intel_dp *intel_dp)
+>  
+>  static u8 intel_dp_autotest_phy_pattern(struct intel_dp *intel_dp)
+>  {
+> -       u8 test_result = DP_TEST_NAK;
+> +       u8 test_result;
+>  
+>         test_result = intel_dp_prepare_phytest(intel_dp);
 
-Applied it. Thanks.
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Yes, this is definitely being overwritten this time :)
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+-Chris
