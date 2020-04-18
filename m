@@ -1,24 +1,56 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 20 Apr 2020 10:16:57 +0000
-Subject: Re: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRN
-Message-Id: <CAHp75VeCWDB4VOyV30fFQ5YwBuKL=W62b+A2Pr3=zH-JmxsoRg@mail.gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sat, 18 Apr 2020 01:37:35 +0000
+Subject: [PATCH bpf-next v2] bpf: remove set but not used variable 'dst_known'
+Message-Id: <20200418013735.67882-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.2004201122490.9739@felia> <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
-In-Reply-To: <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
+References: <8855e82a-88d0-8d1e-e5e0-47e781f9653c@huawei.com>
+In-Reply-To: <8855e82a-88d0-8d1e-e5e0-47e781f9653c@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hadar Gat <Hadar.Gat@arm.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gilad Ben-Yossef <gilad@benyossef.com>, Ofir Drang <Ofir.Drang@arm.com>, nd <nd@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 12:51 PM Hadar Gat <Hadar.Gat@arm.com> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+kernel/bpf/verifier.c:5603:18: warning: variable ‘dst_known’
+set but not used [-Wunused-but-set-variable], delete this
+variable.
 
-> I was wondering why this patch was not applied.. somehow I didn't get this warning when running checkpatch.pl.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: remove fixes tag in commit log. 
+ kernel/bpf/verifier.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It a quite recent feature, so, if you are not running linux-next on
-daily basis, you probably won't see it.
-
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 04c6630cc18f..c9f50969a689 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5600,7 +5600,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ {
+ 	struct bpf_reg_state *regs = cur_regs(env);
+ 	u8 opcode = BPF_OP(insn->code);
+-	bool src_known, dst_known;
++	bool src_known;
+ 	s64 smin_val, smax_val;
+ 	u64 umin_val, umax_val;
+ 	s32 s32_min_val, s32_max_val;
+@@ -5622,7 +5622,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 
+ 	if (alu32) {
+ 		src_known = tnum_subreg_is_const(src_reg.var_off);
+-		dst_known = tnum_subreg_is_const(dst_reg->var_off);
+ 		if ((src_known &&
+ 		     (s32_min_val != s32_max_val || u32_min_val != u32_max_val)) ||
+ 		    s32_min_val > s32_max_val || u32_min_val > u32_max_val) {
+@@ -5634,7 +5633,6 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 	} else {
+ 		src_known = tnum_is_const(src_reg.var_off);
+-		dst_known = tnum_is_const(dst_reg->var_off);
+ 		if ((src_known &&
+ 		     (smin_val != smax_val || umin_val != umax_val)) ||
+ 		    smin_val > smax_val || umin_val > umax_val) {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
