@@ -1,22 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 29 Apr 2020 18:44:29 +0000
-Subject: Re: [PATCH -next] ptp: ptp_ines: convert to devm_platform_ioremap_resource
-Message-Id: <20200429.114429.1348838928565318110.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Apr 2020 08:16:37 +0000
+Subject: [PATCH] PCI: v3-semi: Fix a memory leak in some error handling paths in 'v3_pci_probe()'
+Message-Id: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429075820.103452-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200429075820.103452-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: richardcochran@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linus.walleij@linaro.org, lorenzo.pieralisi@arm.com, amurray@thegoodpenguin.co.uk, bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 29 Apr 2020 07:58:20 +0000
+IF we fails somewhere in 'v3_pci_probe()', we need to free 'host'.
+Use the managed version of 'pci_alloc_host_bridge()' to do that easily.
+The use of managed resources is already widely used in this driver.
 
-> Use the helper function that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Fixes could be older than this commit, but this is as far as git can go.
 
-Applied to net-next, thanks.
+There is also a 'clk_prepare_enable()' which looks un-ballanced. I don't
+know if it can be an issue.
+
+Compile tested only.
+---
+ drivers/pci/controller/pci-v3-semi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
+index bd05221f5a22..ddcb4571a79b 100644
+--- a/drivers/pci/controller/pci-v3-semi.c
++++ b/drivers/pci/controller/pci-v3-semi.c
+@@ -720,7 +720,7 @@ static int v3_pci_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int ret;
+ 
+-	host = pci_alloc_host_bridge(sizeof(*v3));
++	host = devm_pci_alloc_host_bridge(dev, sizeof(*v3));
+ 	if (!host)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
