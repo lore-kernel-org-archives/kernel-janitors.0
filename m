@@ -1,58 +1,38 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 25 Apr 2020 17:34:36 +0000
-Subject: Re: [PATCH] iio: imu: st_lsm6dsx: unlock on error in st_lsm6dsx_shub_write_raw()
-Message-Id: <20200425183436.2d22db77@archlinux>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Apr 2020 07:07:51 +0000
+Subject: [PATCH] m68k/PCI: Fix a memory leak in an error handling path
+Message-Id: <20200418070751.25420-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422093811.GA196034@mwanda>
-In-Reply-To: <20200422093811.GA196034@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gerg@linux-m68k.org, geert@linux-m68k.org, bhelgaas@google.com, lorenzo.pieralisi@arm.com
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 22 Apr 2020 12:38:11 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+If 'ioremap' fails, we must free 'bridge', as done in other error handling
+path bellow.
 
-> We need to release a lock if st_lsm6dsx_check_odr() fails, we can't
-> return directly.
-> 
-> Fixes: 76551a3c3df1 ("iio: imu: st_lsm6dsx: specify slave odr in slv_odr")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Good find.
+Fixes: 19cc4c843f40 ("m68k/PCI: Replace pci_fixup_irqs() call with host bridge IRQ mapping hooks")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/m68k/coldfire/pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied to the fixes-togreg branch of iio.git.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> index 64ef07a30726..1cf98195f84d 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> @@ -544,8 +544,10 @@ st_lsm6dsx_shub_write_raw(struct iio_dev *iio_dev,
->  
->  			ref_sensor = iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]);
->  			odr = st_lsm6dsx_check_odr(ref_sensor, val, &odr_val);
-> -			if (odr < 0)
-> -				return odr;
-> +			if (odr < 0) {
-> +				err = odr;
-> +				goto release;
-> +			}
->  
->  			sensor->ext_info.slv_odr = val;
->  			sensor->odr = odr;
-> @@ -557,6 +559,7 @@ st_lsm6dsx_shub_write_raw(struct iio_dev *iio_dev,
->  		break;
->  	}
->  
-> +release:
->  	iio_device_release_direct_mode(iio_dev);
->  
->  	return err;
+diff --git a/arch/m68k/coldfire/pci.c b/arch/m68k/coldfire/pci.c
+index 62b0eb6cf69a..84eab0f5e00a 100644
+--- a/arch/m68k/coldfire/pci.c
++++ b/arch/m68k/coldfire/pci.c
+@@ -216,8 +216,10 @@ static int __init mcf_pci_init(void)
+ 
+ 	/* Keep a virtual mapping to IO/config space active */
+ 	iospace = (unsigned long) ioremap(PCI_IO_PA, PCI_IO_SIZE);
+-	if (iospace = 0)
++	if (iospace = 0) {
++		pci_free_host_bridge(bridge);
+ 		return -ENODEV;
++	}
+ 	pr_info("Coldfire: PCI IO/config window mapped to 0x%x\n",
+ 		(u32) iospace);
+ 
+-- 
+2.20.1
