@@ -1,39 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 29 Apr 2020 06:52:43 +0000
-Subject: [PATCH 2/4 v2] firmware: stratix10-svc: Unmap some previously memremap'ed memory
-Message-Id: <43505dc3a4b405d1c7d4a0fa74c67eda3e8bdb75.1588142343.git.christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 19 Apr 2020 17:09:14 +0000
+Subject: Re: [PATCH v1 1/2] regmap: redefined regmap_read_poll_timeout to simplify code
+Message-Id: <3376dcba-4285-c894-915e-2f41cbf23caa@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dejin Zheng <zhengdejin5@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In 'svc_create_memory_pool()' we memremap some memory. This has to be
-undone in case of error and if the driver is removed.
+> use read_poll_timeout macro to redefined regmap_read_poll_timeout
+> and also remove the duplicate code.
 
-The easiest way to do it is to use 'devm_memremap()'.
+How do you think about a wording variant like the following?
 
-Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/firmware/stratix10-svc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   Subject:
+   [PATCH 1/2] regmap: Simplify implementation of the regmap_read_poll_timeout() macro
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 3a176e62754a..de5870f76c5e 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -631,7 +631,7 @@ svc_create_memory_pool(struct platform_device *pdev,
- 	end = rounddown(sh_memory->addr + sh_memory->size, PAGE_SIZE);
- 	paddr = begin;
- 	size = end - begin;
--	va = memremap(paddr, size, MEMREMAP_WC);
-+	va = devm_memremap(dev, paddr, size, MEMREMAP_WC);
- 	if (!va) {
- 		dev_err(dev, "fail to remap shared memory\n");
- 		return ERR_PTR(-EINVAL);
--- 
-2.25.1
+   Change description:
+   Simplify the implementation of the macro “regmap_read_poll_timeout”
+   by using the macro “read_poll_timeout”.
+
+
+…
+> +++ b/include/linux/regmap.h
+…
+> @@ -122,26 +123,10 @@ struct reg_sequence {
+>   */
+>  #define regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
+>  ({ \
+…
+> +	int __ret, __tmp; \
+> +	__tmp = read_poll_timeout(regmap_read, __ret, __ret || (cond), \
+> +			sleep_us, timeout_us, false, (map), (addr), &(val)); \
+> +	__ret ?: __tmp; \
+>  })
+
+* Can this macro work also with variable names which do not contain
+  double underscores?
+
+* Can the tag “Fixes” be relevant for such an adjustment?
+
+Regards,
+Markus
