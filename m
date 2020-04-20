@@ -1,28 +1,38 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Thu, 23 Apr 2020 03:33:12 +0000
-Subject: [PATCH bpf-next v2 0/2] Change return code if failed to load object
-Message-Id: <20200423033314.49205-1-maowenan@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Apr 2020 22:24:49 +0000
+Subject: [PATCH] iwlwifi: mvm: remove redundant assignment to variable ret
+Message-Id: <20200420222449.99481-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422093329.GI2659@kadam>
-In-Reply-To: <20200422093329.GI2659@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com, andrii.nakryiko@gmail.com
+To: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The first patch change return code from -EINVAL to -EOPNOTSUPP,
-the second patch quote the err value returned by bpf_object__load().
+From: Colin Ian King <colin.king@canonical.com>
 
-v2: Adjust line breaks at 72 characters for commit log, and pr_warn alignment as suggested by dan carpenter. For second patch, add Acked-by tag as well.
+The variable ret is being assigned with a value that is never read
+and it is being updated later with a new value. The initialization is
+redundant and can be removed.
 
-Mao Wenan (2):
-  bpf: Change error code when ops is NULL
-  libbpf: Return err if bpf_object__load failed
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/bpf/syscall.c   | 7 ++++---
- tools/lib/bpf/libbpf.c | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+index c1aba2bf73cf..852ccfc65378 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+@@ -604,7 +604,7 @@ static int rs_tl_turn_on_agg_for_tid(struct iwl_mvm *mvm,
+ 				     struct iwl_lq_sta *lq_data, u8 tid,
+ 				     struct ieee80211_sta *sta)
+ {
+-	int ret = -EAGAIN;
++	int ret;
+ 
+ 	IWL_DEBUG_HT(mvm, "Starting Tx agg: STA: %pM tid: %d\n",
+ 		     sta->addr, tid);
 -- 
-2.20.1
+2.25.1
