@@ -1,41 +1,47 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 09 Apr 2020 02:05:12 +0000
-Subject: Re: [PATCH 1/2] vdpa: Signedness bugs in vdpasim_work()
-Message-Id: <6d817506-221a-7a50-540d-58ed34a18df3@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Apr 2020 22:12:29 +0000
+Subject: [PATCH] leds: trigger: remove redundant assignment to variable ret
+Message-Id: <20200420221229.99150-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200406144509.GE68494@mwanda>
-In-Reply-To: <20200406144509.GE68494@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2020/4/6 下午10:45, Dan Carpenter wrote:
-> The "read" and "write" variables need to be signed for the error
-> handling to work.
->
-> Fixes: 2c53d0f64c06 ("vdpasim: vDPA device simulator")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/vdpa/vdpa_sim/vdpa_sim.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> index 6e8a0cf2fdeb..b3c800653056 100644
-> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> @@ -132,7 +132,8 @@ static void vdpasim_work(struct work_struct *work)
->   						 vdpasim, work);
->   	struct vdpasim_virtqueue *txq = &vdpasim->vqs[1];
->   	struct vdpasim_virtqueue *rxq = &vdpasim->vqs[0];
-> -	size_t read, write, total_write;
-> +	ssize_t read, write;
-> +	size_t total_write;
->   	int err;
->   	int pkts = 0;
->   
+The variable ret is being assigned with a value that is never read
+and it is being updated later with a new value. The initialization is
+redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/leds/trigger/ledtrig-timer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+index 34a68604c46c..b4688d1d9d2b 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -28,7 +28,7 @@ static ssize_t led_delay_on_store(struct device *dev,
+ {
+ 	struct led_classdev *led_cdev = led_trigger_get_led(dev);
+ 	unsigned long state;
+-	ssize_t ret = -EINVAL;
++	ssize_t ret;
+ 
+ 	ret = kstrtoul(buf, 10, &state);
+ 	if (ret)
+@@ -53,7 +53,7 @@ static ssize_t led_delay_off_store(struct device *dev,
+ {
+ 	struct led_classdev *led_cdev = led_trigger_get_led(dev);
+ 	unsigned long state;
+-	ssize_t ret = -EINVAL;
++	ssize_t ret;
+ 
+ 	ret = kstrtoul(buf, 10, &state);
+ 	if (ret)
+-- 
+2.25.1
