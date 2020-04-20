@@ -1,36 +1,38 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 20 Apr 2020 09:39:10 +0000
-Subject: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRNG) D
-Message-Id: <alpine.DEB.2.21.2004201122490.9739@felia>
+From: Hadar Gat <Hadar.Gat@arm.com>
+Date: Mon, 20 Apr 2020 09:51:26 +0000
+Subject: RE: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRN
+Message-Id: <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.21.2004201122490.9739@felia>
+In-Reply-To: <alpine.DEB.2.21.2004201122490.9739@felia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hadar Gat <hadar.gat@arm.com>
-Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gilad Ben-Yossef <gilad@benyossef.com>, Ofir Drang <Ofir.Drang@arm.com>, nd <nd@arm.com>
 
-Hi Hadar,
-
-
-with your commit 3c8e0bd10503 ("MAINTAINERS: add HG as cctrng 
-maintainer"), now visible on next-20200420, ./scripts/checkpatch.pl -f 
-MAINTAINERS complains:
-
-#3908: FILE: MAINTAINERS:3908:
-+F:	drivers/char/hw_random/cctrng.h
-+F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
-
-WARNING: Misordered MAINTAINERS entry - list 'W:' before 'F:'
-#3909: FILE: MAINTAINERS:3909:
-+F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
-+W:	
-https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
-
-
-This is due to wrong ordering of the entries in your submission. If you 
-would like me to send you a patch fixing that, please just let me know.
-
-
-Best regards,
-
-Lukas
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEx1a2FzIEJ1bHdhaG4gPGx1
+a2FzLmJ1bHdhaG5AZ21haWwuY29tPg0KPiBTZW50OiBNb25kYXksIDIwIEFwcmlsIDIwMjAgMTI6
+MzkNCj4gVG86IEhhZGFyIEdhdCA8SGFkYXIuR2F0QGFybS5jb20+DQo+IENjOiBKb2UgUGVyY2hl
+cyA8am9lQHBlcmNoZXMuY29tPjsgQW5keSBTaGV2Y2hlbmtvDQo+IDxhbmR5LnNoZXZjaGVua29A
+Z21haWwuY29tPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogTUFJTlRBSU5FUlM6IFdyb25nIG9yZGVy
+aW5nIGluIENDVFJORyBBUk0gVFJVU1RaT05FDQo+IENSWVBUT0NFTEwgVFJVRSBSQU5ET00gTlVN
+QkVSIEdFTkVSQVRPUiAoVFJORykgRFJJVkVSDQo+IA0KPiBIaSBIYWRhciwNCj4gDQo+IHdpdGgg
+eW91ciBjb21taXQgM2M4ZTBiZDEwNTAzICgiTUFJTlRBSU5FUlM6IGFkZCBIRyBhcyBjY3RybmcN
+Cj4gbWFpbnRhaW5lciIpLCBub3cgdmlzaWJsZSBvbiBuZXh0LTIwMjAwNDIwLCAuL3NjcmlwdHMv
+Y2hlY2twYXRjaC5wbCAtZg0KPiBNQUlOVEFJTkVSUyBjb21wbGFpbnM6DQo+IA0KPiAjMzkwODog
+RklMRTogTUFJTlRBSU5FUlM6MzkwODoNCj4gK0Y6CWRyaXZlcnMvY2hhci9od19yYW5kb20vY2N0
+cm5nLmgNCj4gK0Y6CURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ybmcvYXJtLWNj
+dHJuZy50eHQNCj4gDQo+IFdBUk5JTkc6IE1pc29yZGVyZWQgTUFJTlRBSU5FUlMgZW50cnkgLSBs
+aXN0ICdXOicgYmVmb3JlICdGOicNCj4gIzM5MDk6IEZJTEU6IE1BSU5UQUlORVJTOjM5MDk6DQo+
+ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvcm5nL2FybS1jY3RybmcudHh0
+DQo+ICtXOg0KPiBodHRwczovL2RldmVsb3Blci5hcm0uY29tL3Byb2R1Y3RzL3N5c3RlbS1pcC90
+cnVzdHpvbmUtDQo+IGNyeXB0b2NlbGwvY3J5cHRvY2VsbC03MDAtZmFtaWx5DQo+IA0KPiBUaGlz
+IGlzIGR1ZSB0byB3cm9uZyBvcmRlcmluZyBvZiB0aGUgZW50cmllcyBpbiB5b3VyIHN1Ym1pc3Np
+b24uIElmIHlvdSB3b3VsZA0KPiBsaWtlIG1lIHRvIHNlbmQgeW91IGEgcGF0Y2ggZml4aW5nIHRo
+YXQsIHBsZWFzZSBqdXN0IGxldCBtZSBrbm93Lg0KDQpUaGFua3MgYSBsb3QgTHVrYXMuDQpJIHdh
+cyB3b25kZXJpbmcgd2h5IHRoaXMgcGF0Y2ggd2FzIG5vdCBhcHBsaWVkLi4gc29tZWhvdyBJIGRp
+ZG4ndCBnZXQgdGhpcyB3YXJuaW5nIHdoZW4gcnVubmluZyBjaGVja3BhdGNoLnBsLg0KSSB3aWxs
+IGZpeCB0aGlzIHNob3J0bHksIG5vIG5lZWQgdG8gc2VuZCBtZSBhIHBhdGNoLg0KDQo+IA0KPiBC
+ZXN0IHJlZ2FyZHMsDQo+IA0KPiBMdWthcw0KDQpUaGFua3MsDQpIYWRhcg0K
