@@ -1,28 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 02 Apr 2020 13:51:26 +0000
-Subject: Re: [PATCH][next] net: atlantic: fix missing | operator when assigning rec->llc
-Message-Id: <20200402.065126.1342599499039366040.davem@davemloft.net>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 20 Apr 2020 09:39:10 +0000
+Subject: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRNG) D
+Message-Id: <alpine.DEB.2.21.2004201122490.9739@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200401232736.410028-1-colin.king@canonical.com>
-In-Reply-To: <20200401232736.410028-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: irusskikh@marvell.com, mstarovoitov@marvell.com, dbogdanov@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hadar Gat <hadar.gat@arm.com>
+Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  2 Apr 2020 00:27:36 +0100
+Hi Hadar,
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> rec->llc is currently being assigned twice, once with the lower 8 bits
-> from packed_record[8] and then re-assigned afterwards with data from
-> packed_record[9].  This looks like a type, I believe the second assignment
-> should be using the |= operator rather than a direct assignment.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: b8f8a0b7b5cb ("net: atlantic: MACSec ingress offload HW bindings")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+with your commit 3c8e0bd10503 ("MAINTAINERS: add HG as cctrng 
+maintainer"), now visible on next-20200420, ./scripts/checkpatch.pl -f 
+MAINTAINERS complains:
+
+#3908: FILE: MAINTAINERS:3908:
++F:	drivers/char/hw_random/cctrng.h
++F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
+
+WARNING: Misordered MAINTAINERS entry - list 'W:' before 'F:'
+#3909: FILE: MAINTAINERS:3909:
++F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
++W:	
+https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
+
+
+This is due to wrong ordering of the entries in your submission. If you 
+would like me to send you a patch fixing that, please just let me know.
+
+
+Best regards,
+
+Lukas
