@@ -1,38 +1,24 @@
-From: Hadar Gat <Hadar.Gat@arm.com>
-Date: Mon, 20 Apr 2020 09:51:26 +0000
-Subject: RE: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRN
-Message-Id: <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 20 Apr 2020 10:16:57 +0000
+Subject: Re: MAINTAINERS: Wrong ordering in CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRN
+Message-Id: <CAHp75VeCWDB4VOyV30fFQ5YwBuKL=W62b+A2Pr3=zH-JmxsoRg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.2004201122490.9739@felia>
-In-Reply-To: <alpine.DEB.2.21.2004201122490.9739@felia>
+References: <alpine.DEB.2.21.2004201122490.9739@felia> <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
+In-Reply-To: <DB6PR0802MB25339A9DFF7F87CB06158476E9D40@DB6PR0802MB2533.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gilad Ben-Yossef <gilad@benyossef.com>, Ofir Drang <Ofir.Drang@arm.com>, nd <nd@arm.com>
+To: Hadar Gat <Hadar.Gat@arm.com>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gilad Ben-Yossef <gilad@benyossef.com>, Ofir Drang <Ofir.Drang@arm.com>, nd <nd@arm.com>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEx1a2FzIEJ1bHdhaG4gPGx1
-a2FzLmJ1bHdhaG5AZ21haWwuY29tPg0KPiBTZW50OiBNb25kYXksIDIwIEFwcmlsIDIwMjAgMTI6
-MzkNCj4gVG86IEhhZGFyIEdhdCA8SGFkYXIuR2F0QGFybS5jb20+DQo+IENjOiBKb2UgUGVyY2hl
-cyA8am9lQHBlcmNoZXMuY29tPjsgQW5keSBTaGV2Y2hlbmtvDQo+IDxhbmR5LnNoZXZjaGVua29A
-Z21haWwuY29tPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogTUFJTlRBSU5FUlM6IFdyb25nIG9yZGVy
-aW5nIGluIENDVFJORyBBUk0gVFJVU1RaT05FDQo+IENSWVBUT0NFTEwgVFJVRSBSQU5ET00gTlVN
-QkVSIEdFTkVSQVRPUiAoVFJORykgRFJJVkVSDQo+IA0KPiBIaSBIYWRhciwNCj4gDQo+IHdpdGgg
-eW91ciBjb21taXQgM2M4ZTBiZDEwNTAzICgiTUFJTlRBSU5FUlM6IGFkZCBIRyBhcyBjY3RybmcN
-Cj4gbWFpbnRhaW5lciIpLCBub3cgdmlzaWJsZSBvbiBuZXh0LTIwMjAwNDIwLCAuL3NjcmlwdHMv
-Y2hlY2twYXRjaC5wbCAtZg0KPiBNQUlOVEFJTkVSUyBjb21wbGFpbnM6DQo+IA0KPiAjMzkwODog
-RklMRTogTUFJTlRBSU5FUlM6MzkwODoNCj4gK0Y6CWRyaXZlcnMvY2hhci9od19yYW5kb20vY2N0
-cm5nLmgNCj4gK0Y6CURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ybmcvYXJtLWNj
-dHJuZy50eHQNCj4gDQo+IFdBUk5JTkc6IE1pc29yZGVyZWQgTUFJTlRBSU5FUlMgZW50cnkgLSBs
-aXN0ICdXOicgYmVmb3JlICdGOicNCj4gIzM5MDk6IEZJTEU6IE1BSU5UQUlORVJTOjM5MDk6DQo+
-ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvcm5nL2FybS1jY3RybmcudHh0
-DQo+ICtXOg0KPiBodHRwczovL2RldmVsb3Blci5hcm0uY29tL3Byb2R1Y3RzL3N5c3RlbS1pcC90
-cnVzdHpvbmUtDQo+IGNyeXB0b2NlbGwvY3J5cHRvY2VsbC03MDAtZmFtaWx5DQo+IA0KPiBUaGlz
-IGlzIGR1ZSB0byB3cm9uZyBvcmRlcmluZyBvZiB0aGUgZW50cmllcyBpbiB5b3VyIHN1Ym1pc3Np
-b24uIElmIHlvdSB3b3VsZA0KPiBsaWtlIG1lIHRvIHNlbmQgeW91IGEgcGF0Y2ggZml4aW5nIHRo
-YXQsIHBsZWFzZSBqdXN0IGxldCBtZSBrbm93Lg0KDQpUaGFua3MgYSBsb3QgTHVrYXMuDQpJIHdh
-cyB3b25kZXJpbmcgd2h5IHRoaXMgcGF0Y2ggd2FzIG5vdCBhcHBsaWVkLi4gc29tZWhvdyBJIGRp
-ZG4ndCBnZXQgdGhpcyB3YXJuaW5nIHdoZW4gcnVubmluZyBjaGVja3BhdGNoLnBsLg0KSSB3aWxs
-IGZpeCB0aGlzIHNob3J0bHksIG5vIG5lZWQgdG8gc2VuZCBtZSBhIHBhdGNoLg0KDQo+IA0KPiBC
-ZXN0IHJlZ2FyZHMsDQo+IA0KPiBMdWthcw0KDQpUaGFua3MsDQpIYWRhcg0K
+On Mon, Apr 20, 2020 at 12:51 PM Hadar Gat <Hadar.Gat@arm.com> wrote:
+
+
+> I was wondering why this patch was not applied.. somehow I didn't get this warning when running checkpatch.pl.
+
+It a quite recent feature, so, if you are not running linux-next on
+daily basis, you probably won't see it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
