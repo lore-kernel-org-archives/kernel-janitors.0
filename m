@@ -1,55 +1,33 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Apr 2020 20:55:00 +0000
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 20 Apr 2020 07:08:58 +0000
 Subject: Re: [PATCH] m68k/PCI: Fix a memory leak in an error handling path
-Message-Id: <ea3d9b35-4409-fb86-8855-0ddb73989829@wanadoo.fr>
+Message-Id: <CAMuHMdUDO_rTzZbtOsMvH=uFG1oytTYDdJY_WSE7+70EERDNSw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2e00c1f1-8faa-5045-ddf5-2bf943f714f2@web.de>
-In-Reply-To: <2e00c1f1-8faa-5045-ddf5-2bf943f714f2@web.de>
+References: <20200418070751.25420-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200418070751.25420-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>, linux-m68k@lists.linux-m68k.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Greg Ungerer <gerg@linux-m68k.org>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-m68k <linux-m68k@lists.linux-m68k.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Le 18/04/2020 =C3=A0 22:00, Markus Elfring a =C3=A9crit=C2=A0:
->> If 'ioremap' fails, we must free 'bridge', as done in other error handli=
-ng
->> path bellow.
-> I suggest to improve this change description.
-
-I suggest you stop proposing over and over useless comments.
-Please just ignore my proposals as I do for your boring, never=20
-constructing, replies.
-
-
-> * Please avoid a typo.
+On Sat, Apr 18, 2020 at 9:07 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> If 'ioremap' fails, we must free 'bridge', as done in other error handling
+> path bellow.
 >
-> * Is an imperative wording preferred?
->
-* is Melissa still around?
+> Fixes: 19cc4c843f40 ("m68k/PCI: Replace pci_fixup_irqs() call with host bridge IRQ mapping hooks")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> =E2=80=A6
->> +++ b/arch/m68k/coldfire/pci.c
->> @@ -216,8 +216,10 @@ static int __init mcf_pci_init(void)
-> =E2=80=A6
->
-> I propose to move the pci_free_host_bridge() call for the desired
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-I propose to let patch submitter and maintainer decide about it.
-I don't need your point of view. I guess that maintainers don't either.
+Gr{oetje,eeting}s,
 
-No need to waste time trying to engage any discussion with me.
-This is the first and very last exchange we will ever have.
+                        Geert
 
-Best regards,
-CJ
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-> exception handling to the end of this function implementation.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/coding-style.rst?id=C0d73a868d9b411bd2d0c8e5ff9d98bfa8=
-563cb1#n450
->
-> Regards,
-> Markus
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
