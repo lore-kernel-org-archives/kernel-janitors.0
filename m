@@ -1,119 +1,58 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 09 Apr 2020 07:24:22 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <60c732a1-aa4e-afab-d223-894a67713003@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 20 Apr 2020 08:40:13 +0000
+Subject: NAK: [PATCH][next] selftests: khugepaged: fix spelling mistake "compount" -> "compound"
+Message-Id: <8a04de20-a94b-433f-c63a-3b912d82e564@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
- <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
- <4b7e1cf3-6fa7-60af-a1d3-2457339dbe8a@wanadoo.fr>
- <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
-In-Reply-To: <efb5a518fdc47f0120b94a7e8a95d275c0f4ad43.camel@perches.com>
+References: <20200420083804.65071-1-colin.king@canonical.com>
+In-Reply-To: <20200420083804.65071-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, William Kucharski <william.kucharski@oracle.com>, linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 09/04/2020 à 05:10, Joe Perches a écrit :
-> On Wed, 2020-04-08 at 22:23 +0200, Marion & Christophe JAILLET wrote:
->> Le 08/04/2020 à 04:14, Joe Perches a écrit :
->>> This works rather better:
->>>
->>> Perhaps you could test?
->>> ---
->>>
->>> v2:
->>>
->>> o Avoid pr_cont
->>> o Use only last format line if split across multiple lines
->>>
->>>    scripts/checkpatch.pl | 22 ++++++++++++++++++++++
->>>    1 file changed, 22 insertions(+)
->>>
->>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->>> index d64c67..f00a6c8 100755
->>> --- a/scripts/checkpatch.pl
->>> +++ b/scripts/checkpatch.pl
->>> @@ -5673,6 +5673,28 @@ sub process {
->>>    			}
->>>    		}
->>>    
->>> +# check for possible missing newlines at the end of common logging functions
->>> +		if (defined($stat) &&
->>> +		    $stat =~ /^\+\s*($logFunctions)\s*\((?:\s*$FuncArg\s*,\s*){0,3}\s*$String/ &&
->>> +		    $1 !~ /_cont$/ && $1 =~ /^(?:pr|dev|netdev|netif|wiphy)_/) {
->>> +			my $cnt = statement_rawlines($stat);
->>> +			my $extracted_string = "";
->>> +			for (my $i = 0; $i < $cnt; $i++) {
->>> +				next if ($lines[$linenr + $i - 1] !~ /$String\s*[,\)]/);
->>> +				$extracted_string = get_quoted_string($lines[$linenr + $i - 1],
->>> +								      $rawlines[$linenr + $i - 1]);
->>> +				last if ($extracted_string ne "");
->>> +			}
->>> +			if ($extracted_string ne "" && $extracted_string !~ /\\n"$/) {
->>> +				my $herectx = $here . "\n";
->>> +				for (my $n = 0; $n < $cnt; $n++) {
->>> +					$herectx .=  raw_line($linenr, $n) . "\n";
->>> +				}
->>> +				WARN("MISSING_FORMAT_NEWLINE",
->>> +				     "Possible missing '\\n' at the end of a logging message format string\n" . $herectx);
->>> +			}
->>> +		}
->>> +
->>>    # check for logging functions with KERN_<LEVEL>
->>>    		if ($line !~ /printk(?:_ratelimited|_once)?\s*\(/ &&
->>>    		    $line =~ /\b$logFunctions\s*\(.*\b(KERN_[A-Z]+)\b/) {
->>>
->> For what I wanted to check and according to the few tests I've made, it
->> looks fine.
->>
->> Thank you very much for sharing this much more robust (and working)
->> alternative.
->>
->> For what it worth: (i.e. much more tests should be done)
->> Tested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Then I think you really haven't tested it very thoroughly.
->
-> For instance:
->
-> $ git ls-files -- 'drivers/*.[ch]' | \
->    xargs ./scripts/checkpatch.pl -f --quiet --no-summary --types=MISSING_FORMAT_NEWLINE
->
-> emits many false positives.
->
-> Some types of false positives:
->
-> o Many of the formats seem to end in a ':' or a ' '
->    maybe those should be excluded
->     #86: FILE: drivers/android/binder_alloc_selftest.c:86:
->     +	pr_err("free seq: ");
->
->     o Split string formats should be excluded better
->       as only the first string fragment is checked:
->     #1001: FILE: drivers/ata/pata_octeon_cf.c:1001:
->     +	dev_info(&pdev->dev, "version " DRV_VERSION" %d bit%s.\n",
->     +		 is_16bit ? 16 : 8,
->     +		 cf_port->is_true_ide ? ", True IDE" : "");
->
->     probably a few others, including a desire to check
->     if a pr_cont is below the use within a few lines.
->
->     > Maybe, at least a Suggested-By: would be appreciated.
->
-> No worries, when it's cooked, it'll have that.
->
-> cheers, Joe
->
->
-I think that, at least printk(), WARN() and co, and panic() should also 
-be handled the same way.
+On 20/04/2020 09:38, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are three spelling mistakes in various messages. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  tools/testing/selftests/vm/khugepaged.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
+> index 490055290d7f..35f0bfa77ce8 100644
+> --- a/tools/testing/selftests/vm/khugepaged.c
+> +++ b/tools/testing/selftests/vm/khugepaged.c
+> @@ -654,14 +654,14 @@ static void collapse_single_pte_entry_compound(void)
+>  		fail("Fail");
+>  	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
+>  
+> -	printf("Split huge page leaving single PTE mapping compount page...");
+> +	printf("Split huge page leaving single PTE mapping compound page...");
+>  	madvise(p + page_size, hpage_pmd_size - page_size, MADV_DONTNEED);
+>  	if (!check_huge(p))
+>  		success("OK");
+>  	else
+>  		fail("Fail");
+>  
+> -	if (wait_for_scan("Collapse PTE table with single PTE mapping compount page", p))
+> +	if (wait_for_scan("Collapse PTE table with single PTE mapping compound page", p))
+>  		fail("Timeout");
+>  	else if (check_huge(p))
+>  		success("OK");
+> @@ -685,7 +685,7 @@ static void collapse_full_of_compound(void)
+>  	else
+>  		fail("Fail");
+>  
+> -	printf("Split huge page leaving single PTE page table full of compount pages...");
+> +	printf("Split huge page leaving single PTE page table full of compound pages...");
+>  	madvise(p, page_size, MADV_NOHUGEPAGE);
+>  	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
+>  	if (!check_huge(p))
+> 
 
+I found some more spelling miskages, I'll send a V2.
 
-A few files (5 according to my grep) also have something like:
-    #define pr_fmt(fmt) "bcache: %s()" fmt "\n", __func__
-and then sometimes a mix of pr_xxx() with either trailing \n or not.
-
-Maybe those should be handled manually to be consistent and avoid a "\n" 
-in pr_fmt which is not widely used in other files
-
-CJ
+Colin
