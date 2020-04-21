@@ -1,52 +1,39 @@
-From: Coly Li <colyli@suse.de>
-Date: Thu, 02 Apr 2020 11:34:09 +0000
-Subject: Re: [PATCH] bcache: remove redundant variables i and n
-Message-Id: <de88ae08-1200-285b-cd1b-cfd723d2da56@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Apr 2020 12:47:03 +0000
+Subject: [PATCH][next] btrfs: fix check for memory allocation failure of ret->path
+Message-Id: <20200421124703.149466-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200402111903.514146-1-colin.king@canonical.com>
-In-Reply-To: <20200402111903.514146-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2020/4/2 7:19 下午, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables i and n are being assigned but are never used. They are
-> redundant and can be removed.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Colin,
+Currently the memory allocation failure check for ret->path is checking
+that ret is null rather than ret->path.  Fix this by checking ret->path
+instead.
 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Addresses-Coverity: ("Dereference null return")
+Fixes: bd8bdc532152 ("btrfs: backref: introduce the skeleton of btrfs_backref_iter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/backref.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, I will submit this patch in Linux 5.7-rc series.
-
-> ---
->  drivers/md/bcache/btree.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 72856e5f23a3..114d0d73d909 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -1907,10 +1907,8 @@ static int bch_btree_check_thread(void *arg)
->  	struct btree_iter iter;
->  	struct bkey *k, *p;
->  	int cur_idx, prev_idx, skip_nr;
-> -	int i, n;
->  
->  	k = p = NULL;
-> -	i = n = 0;
->  	cur_idx = prev_idx = 0;
->  	ret = 0;
->  
-> 
-
-
+diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
+index 60a69f7c0b36..78e6c9a64212 100644
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -2307,7 +2307,7 @@ struct btrfs_backref_iter *btrfs_backref_iter_alloc(
+ 		return NULL;
+ 
+ 	ret->path = btrfs_alloc_path();
+-	if (!ret) {
++	if (!ret->path) {
+ 		kfree(ret);
+ 		return NULL;
+ 	}
 -- 
-
-Coly Li
+2.25.1
