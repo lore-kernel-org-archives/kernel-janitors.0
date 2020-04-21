@@ -1,40 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 29 Apr 2020 15:18:52 +0000
-Subject: Re: [v3] checkpatch: add dedicated checker for 'Fixes:' tag
-Message-Id: <f1234e16-eca2-e2af-c5a6-92f47fcbd98d@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 21 Apr 2020 09:39:08 +0000
+Subject: [PATCH -next] spi: spi-fsl-qspi: Fix return value check in fsl_qspi_probe()
+Message-Id: <20200421093908.48213-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428020223.GA28074@udknight>
- <38e1a926-53a6-bda6-cb07-2614f4c682ba@web.de>
- <20200428161831.GB30042@udknight>
-In-Reply-To: <20200428161831.GB30042@udknight>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wang YanQing <udknight@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Matteo Croce <mcroce@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Han Xu <han.xu@nxp.com>, Mark Brown <broonie@kernel.org>, Ashish Kumar <Ashish.Kumar@nxp.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> * Do you try to extend the existing software analysis approach “GIT_COMMIT_ID”?
->>
->> * Would you like to avoid the development of duplicate Perl code?
->
-> Fixes: lines don't need to have a "commit" prefix before the commit id, the description
-> in normal commit id could across multiple lines, and we don't need to consider the
-> $commit_log_possible_stack_dump for 'Fixes:' tag line.
+In case of error, the function devm_ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-It can be helpful to know such differences.
+Fixes: 858e26a515c2 ("spi: spi-fsl-qspi: Reduce devm_ioremap size to 4 times AHB buffer size")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/spi/spi-fsl-qspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-> I mean it will make the GIT_COMMIT_ID code become harder to read and maintain.
-
-This view depends on some factors.
-
-* How many data processing can be shared for your software extension?
-
-* Do you get any further development ideas from a previous suggestion
-  by Joe Perches according to the discussion topic “linux-next:
-  Fixes tag needs some work in the tip tree”?
-  https://lkml.org/lkml/2019/1/17/966
-  https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
-
-Regards,
-Markus
+diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
+index 83eb8a484faf..6766262d7e75 100644
+--- a/drivers/spi/spi-fsl-qspi.c
++++ b/drivers/spi/spi-fsl-qspi.c
+@@ -880,8 +880,8 @@ static int fsl_qspi_probe(struct platform_device *pdev)
+ 	/* Since there are 4 cs, map size required is 4 times ahb_buf_size */
+ 	q->ahb_addr = devm_ioremap(dev, q->memmap_phy,
+ 				   (q->devtype_data->ahb_buf_size * 4));
+-	if (IS_ERR(q->ahb_addr)) {
+-		ret = PTR_ERR(q->ahb_addr);
++	if (!q->ahb_addr) {
++		ret = -ENOMEM;
+ 		goto err_put_ctrl;
+ 	}
