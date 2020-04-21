@@ -1,33 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Apr 2020 11:51:12 +0000
+From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Date: Tue, 21 Apr 2020 12:54:25 +0000
 Subject: Re: [bug report] drm/xen-front: Add support for Xen PV display frontend
-Message-Id: <20200421115112.GB2682@kadam>
+Message-Id: <ea900230-25fb-2b2c-c29c-535bc44c16c7@epam.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200421104522.GA86681@mwanda>
- <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com>
-In-Reply-To: <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com>
+ <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com> <20200421115112.GB2682@kadam>
+In-Reply-To: <20200421115112.GB2682@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-It turns out there aren't that many of these in xen.
-
-$ grep IS_ERR_OR_NULL drivers/gpu/drm/xen/ -Rn
-drivers/gpu/drm/xen/xen_drm_front_kms.c:63:     if (IS_ERR_OR_NULL(fb))
-drivers/gpu/drm/xen/xen_drm_front_gem.c:86:     if (IS_ERR_OR_NULL(xen_obj))
-drivers/gpu/drm/xen/xen_drm_front_gem.c:120:    if (IS_ERR_OR_NULL(xen_obj->pages)) {
-drivers/gpu/drm/xen/xen_drm_front_gem.c:139:    if (IS_ERR_OR_NULL(xen_obj))
-drivers/gpu/drm/xen/xen_drm_front_gem.c:197:    if (IS_ERR_OR_NULL(xen_obj))
-drivers/gpu/drm/xen/xen_drm_front.c:403:        if (IS_ERR_OR_NULL(obj)) {
-
-They're all wrong, because if the pointer was really NULL then it's
-not handled correctly and would eventually lead to a runtime failure.
-
-Normally Smatch is smart enough to know that the pointer isn't NULL so
-it doesn't generate a warning but yesterday I introduced a bug in Smatch
-by mistake.  It's fixed now.
-
-regards,
-dan carpenter
+T24gNC8yMS8yMCAxNDo1MSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gSXQgdHVybnMgb3V0IHRo
+ZXJlIGFyZW4ndCB0aGF0IG1hbnkgb2YgdGhlc2UgaW4geGVuLg0KPg0KPiAkIGdyZXAgSVNfRVJS
+X09SX05VTEwgZHJpdmVycy9ncHUvZHJtL3hlbi8gLVJuDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4v
+eGVuX2RybV9mcm9udF9rbXMuYzo2MzogICAgIGlmIChJU19FUlJfT1JfTlVMTChmYikpDQo+IGRy
+aXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0uYzo4NjogICAgIGlmIChJU19FUlJf
+T1JfTlVMTCh4ZW5fb2JqKSkNCj4gZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2dl
+bS5jOjEyMDogICAgaWYgKElTX0VSUl9PUl9OVUxMKHhlbl9vYmotPnBhZ2VzKSkgew0KPiBkcml2
+ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfZ2VtLmM6MTM5OiAgICBpZiAoSVNfRVJSX09S
+X05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0u
+YzoxOTc6ICAgIGlmIChJU19FUlJfT1JfTlVMTCh4ZW5fb2JqKSkNCj4gZHJpdmVycy9ncHUvZHJt
+L3hlbi94ZW5fZHJtX2Zyb250LmM6NDAzOiAgICAgICAgaWYgKElTX0VSUl9PUl9OVUxMKG9iaikp
+IHsNCj4NCj4gVGhleSdyZSBhbGwgd3JvbmcsIGJlY2F1c2UgaWYgdGhlIHBvaW50ZXIgd2FzIHJl
+YWxseSBOVUxMIHRoZW4gaXQncw0KPiBub3QgaGFuZGxlZCBjb3JyZWN0bHkgYW5kIHdvdWxkIGV2
+ZW50dWFsbHkgbGVhZCB0byBhIHJ1bnRpbWUgZmFpbHVyZS4NCj4NCj4gTm9ybWFsbHkgU21hdGNo
+IGlzIHNtYXJ0IGVub3VnaCB0byBrbm93IHRoYXQgdGhlIHBvaW50ZXIgaXNuJ3QgTlVMTCBzbw0K
+PiBpdCBkb2Vzbid0IGdlbmVyYXRlIGEgd2FybmluZyBidXQgeWVzdGVyZGF5IEkgaW50cm9kdWNl
+ZCBhIGJ1ZyBpbiBTbWF0Y2gNCj4gYnkgbWlzdGFrZS4gIEl0J3MgZml4ZWQgbm93Lg0KPg0KPiBy
+ZWdhcmRzLA0KPiBkYW4gY2FycGVudGVyDQo+DQpUaGFuayB5b3UsDQoNCkknbGwgaGF2ZSBhIGxv
+b2sgYXQgdGhvc2UNCg=
