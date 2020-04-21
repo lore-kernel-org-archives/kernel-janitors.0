@@ -1,33 +1,83 @@
-From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Date: Tue, 21 Apr 2020 12:54:25 +0000
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Tue, 21 Apr 2020 15:29:02 +0000
 Subject: Re: [bug report] drm/xen-front: Add support for Xen PV display frontend
-Message-Id: <ea900230-25fb-2b2c-c29c-535bc44c16c7@epam.com>
+Message-Id: <alpine.DEB.2.21.2004211728360.3118@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200421104522.GA86681@mwanda>
- <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com> <20200421115112.GB2682@kadam>
-In-Reply-To: <20200421115112.GB2682@kadam>
+In-Reply-To: <20200421104522.GA86681@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, oleksandr_andrushchenko@epam.com
 
-T24gNC8yMS8yMCAxNDo1MSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gSXQgdHVybnMgb3V0IHRo
-ZXJlIGFyZW4ndCB0aGF0IG1hbnkgb2YgdGhlc2UgaW4geGVuLg0KPg0KPiAkIGdyZXAgSVNfRVJS
-X09SX05VTEwgZHJpdmVycy9ncHUvZHJtL3hlbi8gLVJuDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4v
-eGVuX2RybV9mcm9udF9rbXMuYzo2MzogICAgIGlmIChJU19FUlJfT1JfTlVMTChmYikpDQo+IGRy
-aXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0uYzo4NjogICAgIGlmIChJU19FUlJf
-T1JfTlVMTCh4ZW5fb2JqKSkNCj4gZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2dl
-bS5jOjEyMDogICAgaWYgKElTX0VSUl9PUl9OVUxMKHhlbl9vYmotPnBhZ2VzKSkgew0KPiBkcml2
-ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfZ2VtLmM6MTM5OiAgICBpZiAoSVNfRVJSX09S
-X05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0u
-YzoxOTc6ICAgIGlmIChJU19FUlJfT1JfTlVMTCh4ZW5fb2JqKSkNCj4gZHJpdmVycy9ncHUvZHJt
-L3hlbi94ZW5fZHJtX2Zyb250LmM6NDAzOiAgICAgICAgaWYgKElTX0VSUl9PUl9OVUxMKG9iaikp
-IHsNCj4NCj4gVGhleSdyZSBhbGwgd3JvbmcsIGJlY2F1c2UgaWYgdGhlIHBvaW50ZXIgd2FzIHJl
-YWxseSBOVUxMIHRoZW4gaXQncw0KPiBub3QgaGFuZGxlZCBjb3JyZWN0bHkgYW5kIHdvdWxkIGV2
-ZW50dWFsbHkgbGVhZCB0byBhIHJ1bnRpbWUgZmFpbHVyZS4NCj4NCj4gTm9ybWFsbHkgU21hdGNo
-IGlzIHNtYXJ0IGVub3VnaCB0byBrbm93IHRoYXQgdGhlIHBvaW50ZXIgaXNuJ3QgTlVMTCBzbw0K
-PiBpdCBkb2Vzbid0IGdlbmVyYXRlIGEgd2FybmluZyBidXQgeWVzdGVyZGF5IEkgaW50cm9kdWNl
-ZCBhIGJ1ZyBpbiBTbWF0Y2gNCj4gYnkgbWlzdGFrZS4gIEl0J3MgZml4ZWQgbm93Lg0KPg0KPiBy
-ZWdhcmRzLA0KPiBkYW4gY2FycGVudGVyDQo+DQpUaGFuayB5b3UsDQoNCkknbGwgaGF2ZSBhIGxv
-b2sgYXQgdGhvc2UNCg=
+
+
+On Tue, 21 Apr 2020, Dan Carpenter wrote:
+
+> Hi Kernel Janitors,
+>
+> Here is another idea that someone could work on, fixing the
+> IS_ERR_OR_NULL() checks in the xen driver.
+>
+> The patch c575b7eeb89f: "drm/xen-front: Add support for Xen PV
+> display frontend" from Apr 3, 2018, leads to the following static
+> checker warning:
+>
+> 	drivers/gpu/drm/xen/xen_drm_front_gem.c:140 xen_drm_front_gem_create()
+> 	warn: passing zero to 'ERR_CAST'
+>
+> drivers/gpu/drm/xen/xen_drm_front_gem.c
+>    133  struct drm_gem_object *xen_drm_front_gem_create(struct drm_device *dev,
+>    134                                                  size_t size)
+>    135  {
+>    136          struct xen_gem_object *xen_obj;
+>    137
+>    138          xen_obj = gem_create(dev, size);
+>    139          if (IS_ERR_OR_NULL(xen_obj))
+>    140                  return ERR_CAST(xen_obj);
+
+Are the other occurrences of this also a possible problem?  There are a
+few others outside of xen.
+
+julia
+
+>
+> This warning is old and it's actually the result of a bug I had in my
+> devel version of Smatch yesterday.  xen_obj can't really be NULL, but
+> if it were then the caller would return success which would probably
+> create some issues.
+>
+> When a function returns both error pointers and NULL then NULL is a
+> special case of success.  Like say you have:  "p = start_feature();".
+> If there is an allocation failure, then the code should return -ENOMEM
+> and the whole thing should fail.  But if the feature is optional and
+> the user has disabled it in the config then we return NULL and the
+> caller has to be able to accept that.  There are a lot of these
+> IS_ERR_OR_NULL() checks in the xen driver...
+>
+> The one here is clearly buggy because returning NULL would lead to a
+> run time failure.  All these IS_ERR_OR_NULL() should be checked and
+> probably changed to just IS_ERR().
+>
+> This sort of change is probably change is probably easiest if you build
+> the Smatch DB and you can check if Smatch thinks the functions return
+> NULL.
+>
+> ~/smatch/smatch_data/db/smdb.py return_states gem_create | grep INTERNAL
+> drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 58 |  (-4095)-(-1) |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
+> drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 62 | 4065035897849303040 |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
+> drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 66 | 4065035897849303040 |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
+> drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 68 | 0,(-4095)-(-1) |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
+>
+> Smatch thinks that gem_create() sometimes returns NULL or error pointers
+> but that's because of a bug in the unreleased version of Smatch and
+> because gem_create() uses IS_ERR_OR_NULL().
+>
+>    141
+>    142          return &xen_obj->base;
+>    143  }
+>
+> regards,
+> dan carpenter
+>
