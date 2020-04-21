@@ -1,70 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Apr 2020 10:45:22 +0000
-Subject: [bug report] drm/xen-front: Add support for Xen PV display frontend
-Message-Id: <20200421104522.GA86681@mwanda>
+From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Date: Tue, 21 Apr 2020 11:34:53 +0000
+Subject: Re: [bug report] drm/xen-front: Add support for Xen PV display frontend
+Message-Id: <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200421104522.GA86681@mwanda>
+In-Reply-To: <20200421104522.GA86681@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oleksandr_andrushchenko@epam.com
-Cc: xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-Hi Kernel Janitors,
-
-Here is another idea that someone could work on, fixing the
-IS_ERR_OR_NULL() checks in the xen driver.
-
-The patch c575b7eeb89f: "drm/xen-front: Add support for Xen PV
-display frontend" from Apr 3, 2018, leads to the following static
-checker warning:
-
-	drivers/gpu/drm/xen/xen_drm_front_gem.c:140 xen_drm_front_gem_create()
-	warn: passing zero to 'ERR_CAST'
-
-drivers/gpu/drm/xen/xen_drm_front_gem.c
-   133  struct drm_gem_object *xen_drm_front_gem_create(struct drm_device *dev,
-   134                                                  size_t size)
-   135  {
-   136          struct xen_gem_object *xen_obj;
-   137  
-   138          xen_obj = gem_create(dev, size);
-   139          if (IS_ERR_OR_NULL(xen_obj))
-   140                  return ERR_CAST(xen_obj);
-
-This warning is old and it's actually the result of a bug I had in my
-devel version of Smatch yesterday.  xen_obj can't really be NULL, but
-if it were then the caller would return success which would probably
-create some issues.
-
-When a function returns both error pointers and NULL then NULL is a
-special case of success.  Like say you have:  "p = start_feature();".
-If there is an allocation failure, then the code should return -ENOMEM
-and the whole thing should fail.  But if the feature is optional and
-the user has disabled it in the config then we return NULL and the
-caller has to be able to accept that.  There are a lot of these
-IS_ERR_OR_NULL() checks in the xen driver...
-
-The one here is clearly buggy because returning NULL would lead to a
-run time failure.  All these IS_ERR_OR_NULL() should be checked and
-probably changed to just IS_ERR().
-
-This sort of change is probably change is probably easiest if you build
-the Smatch DB and you can check if Smatch thinks the functions return
-NULL.
-
-~/smatch/smatch_data/db/smdb.py return_states gem_create | grep INTERNAL
-drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 58 |  (-4095)-(-1) |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
-drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 62 | 4065035897849303040 |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
-drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 66 | 4065035897849303040 |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
-drivers/gpu/drm/xen/xen_drm_front_gem.c | gem_create | 68 | 0,(-4095)-(-1) |      INTERNAL |  -1 |                      | struct xen_gem_object*(*)(struct drm_device*, ulong) |
-
-Smatch thinks that gem_create() sometimes returns NULL or error pointers
-but that's because of a bug in the unreleased version of Smatch and
-because gem_create() uses IS_ERR_OR_NULL().
-
-   141  
-   142          return &xen_obj->base;
-   143  }
-
-regards,
-dan carpenter
+T24gNC8yMS8yMCAxMzo0NSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gSGkgS2VybmVsIEphbml0
+b3JzLA0KSGkNCj4NCj4gSGVyZSBpcyBhbm90aGVyIGlkZWEgdGhhdCBzb21lb25lIGNvdWxkIHdv
+cmsgb24sIGZpeGluZyB0aGUNCj4gSVNfRVJSX09SX05VTEwoKSBjaGVja3MgaW4gdGhlIHhlbiBk
+cml2ZXIuDQo+DQo+IFRoZSBwYXRjaCBjNTc1YjdlZWI4OWY6ICJkcm0veGVuLWZyb250OiBBZGQg
+c3VwcG9ydCBmb3IgWGVuIFBWDQo+IGRpc3BsYXkgZnJvbnRlbmQiIGZyb20gQXByIDMsIDIwMTgs
+IGxlYWRzIHRvIHRoZSBmb2xsb3dpbmcgc3RhdGljDQo+IGNoZWNrZXIgd2FybmluZzoNCj4NCj4g
+CWRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0uYzoxNDAgeGVuX2RybV9mcm9u
+dF9nZW1fY3JlYXRlKCkNCj4gCXdhcm46IHBhc3NpbmcgemVybyB0byAnRVJSX0NBU1QnDQo+DQo+
+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0uYw0KPiAgICAgMTMzICBzdHJ1
+Y3QgZHJtX2dlbV9vYmplY3QgKnhlbl9kcm1fZnJvbnRfZ2VtX2NyZWF0ZShzdHJ1Y3QgZHJtX2Rl
+dmljZSAqZGV2LA0KPiAgICAgMTM0ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBzaXplX3Qgc2l6ZSkNCj4gICAgIDEzNSAgew0KPiAgICAgMTM2ICAgICAg
+ICAgIHN0cnVjdCB4ZW5fZ2VtX29iamVjdCAqeGVuX29iajsNCj4gICAgIDEzNw0KPiAgICAgMTM4
+ICAgICAgICAgIHhlbl9vYmogPSBnZW1fY3JlYXRlKGRldiwgc2l6ZSk7DQo+ICAgICAxMzkgICAg
+ICAgICAgaWYgKElTX0VSUl9PUl9OVUxMKHhlbl9vYmopKQ0KPiAgICAgMTQwICAgICAgICAgICAg
+ICAgICAgcmV0dXJuIEVSUl9DQVNUKHhlbl9vYmopOw0KPg0KPiBUaGlzIHdhcm5pbmcgaXMgb2xk
+IGFuZCBpdCdzIGFjdHVhbGx5IHRoZSByZXN1bHQgb2YgYSBidWcgSSBoYWQgaW4gbXkNCj4gZGV2
+ZWwgdmVyc2lvbiBvZiBTbWF0Y2ggeWVzdGVyZGF5LiAgeGVuX29iaiBjYW4ndCByZWFsbHkgYmUg
+TlVMTCwgYnV0DQo+IGlmIGl0IHdlcmUgdGhlbiB0aGUgY2FsbGVyIHdvdWxkIHJldHVybiBzdWNj
+ZXNzIHdoaWNoIHdvdWxkIHByb2JhYmx5DQo+IGNyZWF0ZSBzb21lIGlzc3Vlcy4NCj4NCj4gV2hl
+biBhIGZ1bmN0aW9uIHJldHVybnMgYm90aCBlcnJvciBwb2ludGVycyBhbmQgTlVMTCB0aGVuIE5V
+TEwgaXMgYQ0KPiBzcGVjaWFsIGNhc2Ugb2Ygc3VjY2Vzcy4gIExpa2Ugc2F5IHlvdSBoYXZlOiAg
+InAgPSBzdGFydF9mZWF0dXJlKCk7Ii4NCj4gSWYgdGhlcmUgaXMgYW4gYWxsb2NhdGlvbiBmYWls
+dXJlLCB0aGVuIHRoZSBjb2RlIHNob3VsZCByZXR1cm4gLUVOT01FTQ0KPiBhbmQgdGhlIHdob2xl
+IHRoaW5nIHNob3VsZCBmYWlsLiAgQnV0IGlmIHRoZSBmZWF0dXJlIGlzIG9wdGlvbmFsIGFuZA0K
+PiB0aGUgdXNlciBoYXMgZGlzYWJsZWQgaXQgaW4gdGhlIGNvbmZpZyB0aGVuIHdlIHJldHVybiBO
+VUxMIGFuZCB0aGUNCj4gY2FsbGVyIGhhcyB0byBiZSBhYmxlIHRvIGFjY2VwdCB0aGF0LiAgVGhl
+cmUgYXJlIGEgbG90IG9mIHRoZXNlDQo+IElTX0VSUl9PUl9OVUxMKCkgY2hlY2tzIGluIHRoZSB4
+ZW4gZHJpdmVyLi4uDQo+DQo+IFRoZSBvbmUgaGVyZSBpcyBjbGVhcmx5IGJ1Z2d5IGJlY2F1c2Ug
+cmV0dXJuaW5nIE5VTEwgd291bGQgbGVhZCB0byBhDQo+IHJ1biB0aW1lIGZhaWx1cmUuICBBbGwg
+dGhlc2UgSVNfRVJSX09SX05VTEwoKSBzaG91bGQgYmUgY2hlY2tlZCBhbmQNCj4gcHJvYmFibHkg
+Y2hhbmdlZCB0byBqdXN0IElTX0VSUigpLg0KPg0KPiBUaGlzIHNvcnQgb2YgY2hhbmdlIGlzIHBy
+b2JhYmx5IGNoYW5nZSBpcyBwcm9iYWJseSBlYXNpZXN0IGlmIHlvdSBidWlsZA0KPiB0aGUgU21h
+dGNoIERCIGFuZCB5b3UgY2FuIGNoZWNrIGlmIFNtYXRjaCB0aGlua3MgdGhlIGZ1bmN0aW9ucyBy
+ZXR1cm4NCj4gTlVMTC4NCj4NCj4gfi9zbWF0Y2gvc21hdGNoX2RhdGEvZGIvc21kYi5weSByZXR1
+cm5fc3RhdGVzIGdlbV9jcmVhdGUgfCBncmVwIElOVEVSTkFMDQo+IGRyaXZlcnMvZ3B1L2RybS94
+ZW4veGVuX2RybV9mcm9udF9nZW0uYyB8IGdlbV9jcmVhdGUgfCA1OCB8ICAoLTQwOTUpLSgtMSkg
+fCAgICAgIElOVEVSTkFMIHwgIC0xIHwgICAgICAgICAgICAgICAgICAgICAgfCBzdHJ1Y3QgeGVu
+X2dlbV9vYmplY3QqKCopKHN0cnVjdCBkcm1fZGV2aWNlKiwgdWxvbmcpIHwNCj4gZHJpdmVycy9n
+cHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2dlbS5jIHwgZ2VtX2NyZWF0ZSB8IDYyIHwgNDA2NTAz
+NTg5Nzg0OTMwMzA0MCB8ICAgICAgSU5URVJOQUwgfCAgLTEgfCAgICAgICAgICAgICAgICAgICAg
+ICB8IHN0cnVjdCB4ZW5fZ2VtX29iamVjdCooKikoc3RydWN0IGRybV9kZXZpY2UqLCB1bG9uZykg
+fA0KPiBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfZ2VtLmMgfCBnZW1fY3JlYXRl
+IHwgNjYgfCA0MDY1MDM1ODk3ODQ5MzAzMDQwIHwgICAgICBJTlRFUk5BTCB8ICAtMSB8ICAgICAg
+ICAgICAgICAgICAgICAgIHwgc3RydWN0IHhlbl9nZW1fb2JqZWN0KigqKShzdHJ1Y3QgZHJtX2Rl
+dmljZSosIHVsb25nKSB8DQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9nZW0u
+YyB8IGdlbV9jcmVhdGUgfCA2OCB8IDAsKC00MDk1KS0oLTEpIHwgICAgICBJTlRFUk5BTCB8ICAt
+MSB8ICAgICAgICAgICAgICAgICAgICAgIHwgc3RydWN0IHhlbl9nZW1fb2JqZWN0KigqKShzdHJ1
+Y3QgZHJtX2RldmljZSosIHVsb25nKSB8DQo+DQo+IFNtYXRjaCB0aGlua3MgdGhhdCBnZW1fY3Jl
+YXRlKCkgc29tZXRpbWVzIHJldHVybnMgTlVMTCBvciBlcnJvciBwb2ludGVycw0KPiBidXQgdGhh
+dCdzIGJlY2F1c2Ugb2YgYSBidWcgaW4gdGhlIHVucmVsZWFzZWQgdmVyc2lvbiBvZiBTbWF0Y2gg
+YW5kDQo+IGJlY2F1c2UgZ2VtX2NyZWF0ZSgpIHVzZXMgSVNfRVJSX09SX05VTEwoKS4NCj4NCj4g
+ICAgIDE0MQ0KPiAgICAgMTQyICAgICAgICAgIHJldHVybiAmeGVuX29iai0+YmFzZTsNCj4gICAg
+IDE0MyAgfQ0KPg0KPiByZWdhcmRzLA0KPiBkYW4gY2FycGVudGVyDQoNClRoYW5rIHlvdSBmb3Ig
+dGhlIHJlcG9ydCwgSSB3aWxsIHRyeSB0byBmaW5kIHNvbWUgdGltZSB0byBsb29rIGludG8gdGhp
+cyANCmFuZCBjb21lIHVwIHdpdGggZml4ZXMuDQoNCkNvdWxkIHlvdSBwbGVhc2UgKHByb2JhYmx5
+IG9mZi1saXN0KSBpbnN0cnVjdCBtZSBvciBnaXZlIGFueSBwb2ludGVycyB0byANCmhvdyB0byBy
+ZXByb2R1Y2UNCg0KdGhlIHJlc3VsdHMgb2YgdGhlIGFuYWx5emVyIHNob3duIGFib3ZlPw0KDQpU
+aGFuayB5b3UsDQoNCk9sZWtzYW5kcg0K
