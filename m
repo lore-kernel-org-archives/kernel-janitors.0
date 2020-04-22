@@ -1,46 +1,38 @@
-From: abhinavk@codeaurora.org
-Date: Sun, 12 Apr 2020 19:19:11 +0000
-Subject: Re: [PATCH] drm/msm: Fix typo
-Message-Id: <22cbe4e4310b7d475c02da6bf44c44f9@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Apr 2020 11:24:17 +0000
+Subject: [PATCH] ASoC: SOF: ensure all fields in header are zero'd before copying back to userspace
+Message-Id: <20200422112417.208843-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200412143509.11353-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200412143509.11353-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: freedreno@lists.freedesktop.org, airlied@linux.ie, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, sean@poorly.run, linux-arm-msm-owner@vger.kernel.org
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2020-04-12 07:35, Christophe JAILLET wrote:
-> Duplicated 'we'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-> ---
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> index 998bef1190a3..b5fed67c4651 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> @@ -959,7 +959,7 @@ static int mdp5_crtc_cursor_set(struct drm_crtc 
-> *crtc,
->  	if (!ctl)
->  		return -EINVAL;
-> 
-> -	/* don't support LM cursors when we we have source split enabled */
-> +	/* don't support LM cursors when we have source split enabled */
->  	if (mdp5_cstate->pipeline.r_mixer)
->  		return -EINVAL;
-> 
-> @@ -1030,7 +1030,7 @@ static int mdp5_crtc_cursor_move(struct drm_crtc
-> *crtc, int x, int y)
->  		return -EINVAL;
->  	}
-> 
-> -	/* don't support LM cursors when we we have source split enabled */
-> +	/* don't support LM cursors when we have source split enabled */
->  	if (mdp5_cstate->pipeline.r_mixer)
->  		return -EINVAL;
+From: Colin Ian King <colin.king@canonical.com>
+
+Field header.tlv is uninitialized and being copied back to userspace
+and hence leaking data from the stack to userspace.  Fix this by
+ensuring the header structure is zero'd.
+
+Fixes: c3078f539704 ("ASoC: SOF: Add Sound Open Firmware KControl support")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sof/control.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/control.c b/sound/soc/sof/control.c
+index dfc412e2d956..97d5c1a4c1ff 100644
+--- a/sound/soc/sof/control.c
++++ b/sound/soc/sof/control.c
+@@ -362,7 +362,7 @@ int snd_sof_bytes_ext_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_sof_control *scontrol = be->dobj.private;
+ 	struct snd_soc_component *scomp = scontrol->scomp;
+ 	struct sof_ipc_ctrl_data *cdata = scontrol->control_data;
+-	struct snd_ctl_tlv header;
++	struct snd_ctl_tlv header = { };
+ 	struct snd_ctl_tlv __user *tlvd  		(struct snd_ctl_tlv __user *)binary_data;
+ 	int data_size;
+-- 
+2.25.1
