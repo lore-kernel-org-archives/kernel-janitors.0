@@ -1,62 +1,48 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 29 Apr 2020 17:42:40 +0000
-Subject: Re: [PATCH] video: fbdev: pxa3xx_gcu: Fix some resource leak in an error handling path in 'pxa3xx_gc
-Message-Id: <0db91149-fa85-6ec3-1787-d5effd41a1b9@wanadoo.fr>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 22 Apr 2020 08:30:09 +0000
+Subject: [PATCH bpf-next 1/2] bpf: Change error code when ops is NULL
+Message-Id: <20200422083010.28000-2-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429043438.96212-1-christophe.jaillet@wanadoo.fr>
- <20200429122538.GO2014@kadam>
-In-Reply-To: <20200429122538.GO2014@kadam>
+References: <20200422083010.28000-1-maowenan@huawei.com>
+In-Reply-To: <20200422083010.28000-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-fbdev@vger.kernel.org, eric.y.miao@gmail.com, arnd@arndb.de, b.zolnierkie@samsung.com, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, zhenzhong.duan@gmail.com, daniel@caiaq.de, mpe@ellerman.id.au, tglx@linutronix.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 29/04/2020 à 14:25, Dan Carpenter a écrit :
-> On Wed, Apr 29, 2020 at 06:34:38AM +0200, Christophe JAILLET wrote:
->> If an error occurs in the loop where we call 'pxa3xx_gcu_add_buffer()',
->> any resource already allocated should be freed.
->>
->> In order to fix it, add a call to 'pxa3xx_gcu_free_buffers()' in the error
->> handling path, as already done in the remove function.
->>
->> Fixes: 364dbdf3b6c3 ("video: add driver for PXA3xx 2D graphics accelerator")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/video/fbdev/pxa3xx-gcu.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/video/fbdev/pxa3xx-gcu.c b/drivers/video/fbdev/pxa3xx-gcu.c
->> index 4279e13a3b58..68d9c7a681d4 100644
->> --- a/drivers/video/fbdev/pxa3xx-gcu.c
->> +++ b/drivers/video/fbdev/pxa3xx-gcu.c
->> @@ -675,6 +675,7 @@ static int pxa3xx_gcu_probe(struct platform_device *pdev)
->>   
->>   err_disable_clk:
->>   	clk_disable_unprepare(priv->clk);
->> +	pxa3xx_gcu_free_buffers(dev, priv);
-> The error handling in this function makes no sense and is buggy.  It
-> should be that it unwinds in the reverse order from the allocation.  The
-> goto should be "goto free_most_recently_allocated_resource;".  Since the
-> unwind is done in the wrong order it causes a couple bugs.
->
-> These buffers are the last thing which we allocated so they should be
-> the first thing which we free.  In this case, calling
-> pxa3xx_gcu_free_buffers() before the buffers are allocated is confusing
-> but harmless.  The clk_disable_unprepare() is done on some paths where
-> the clock was not enabled and that will trigger a WARN() so that's a
-> bug.  Syzcaller will complain and if you have reboot on WARN then it's
-> annoying.
->
-> The second bug is that we don't deregister the misc device or release
-> the DMA memory on failure when we allocate the buffers in the loop.
->
-> regards,
-> dan carpenter
->
-Agreed. I've been a little too fast on this one.
-I'll update it.
+There is one error printed when use type
+BPF_MAP_TYPE_SOCKMAP to create map:
+libbpf: failed to create map (name: 'sock_map'): Invalid argument(-22)
 
-Thx for the review.
+This is because CONFIG_BPF_STREAM_PARSER is not set, and
+bpf_map_types[type] return invalid ops. It is not clear
+to show the cause of config missing with return code -EINVAL,
+so add pr_warn() and change error code to describe the reason.
 
-CJ
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ kernel/bpf/syscall.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index d85f37239540..f67bc063bf75 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -112,9 +112,11 @@ static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
+ 		return ERR_PTR(-EINVAL);
+ 	type = array_index_nospec(type, ARRAY_SIZE(bpf_map_types));
+ 	ops = bpf_map_types[type];
+-	if (!ops)
+-		return ERR_PTR(-EINVAL);
+-
++	if (!ops) {
++		pr_warn("map type %d not supported or
++			 kernel config not opened\n", type);
++		return ERR_PTR(-EOPNOTSUPP);
++	}
+ 	if (ops->map_alloc_check) {
+ 		err = ops->map_alloc_check(attr);
+ 		if (err)
+-- 
+2.20.1
