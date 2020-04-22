@@ -1,35 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Apr 2020 09:22:55 +0000
-Subject: [PATCH] ALSA: usb-audio: Fix a limit check in proc_dump_substream_formats()
-Message-Id: <20200422092255.GB195357@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 22 Apr 2020 09:29:42 +0000
+Subject: Re: [PATCH] ALSA: usb-audio: Fix a limit check in proc_dump_substream_formats()
+Message-Id: <s5h8sin27i1.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200422092255.GB195357@mwanda>
+In-Reply-To: <20200422092255.GB195357@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Allison Randal <allison@lohutok.net>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Allison Randal <allison@lohutok.net>
 
-This should be ARRAY_SIZE() instead of sizeof().  The sizeof() limit is
-too high so it doesn't work.
+On Wed, 22 Apr 2020 11:22:55 +0200,
+Dan Carpenter wrote:
+> 
+> This should be ARRAY_SIZE() instead of sizeof().  The sizeof() limit is
+> too high so it doesn't work.
+> 
+> Fixes: 093b8494f299 ("ALSA: usb-audio: Print more information in stream proc files")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 093b8494f299 ("ALSA: usb-audio: Print more information in stream proc files")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- sound/usb/proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, applied.
 
-diff --git a/sound/usb/proc.c b/sound/usb/proc.c
-index 5a36e192ebb0..889c550c9f29 100644
---- a/sound/usb/proc.c
-+++ b/sound/usb/proc.c
-@@ -140,7 +140,7 @@ static void proc_dump_substream_formats(struct snd_usb_substream *subs, struct s
- 
- 			snd_iprintf(buffer, "    Channel map:");
- 			for (c = 0; c < map->channels; c++) {
--				if (map->map[c] >= sizeof(channel_labels) ||
-+				if (map->map[c] >= ARRAY_SIZE(channel_labels) ||
- 				    !channel_labels[map->map[c]])
- 					snd_iprintf(buffer, " --");
- 				else
--- 
-2.26.1
+
+Takashi
