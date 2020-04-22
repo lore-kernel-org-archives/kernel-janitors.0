@@ -1,39 +1,37 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 16 Apr 2020 10:08:13 +0000
-Subject: Re: [PATCH][next] drivers: hv: remove redundant assignment to pointer primary_channel
-Message-Id: <b59b9dab-fddc-8e50-cd0b-75eceab5d256@canonical.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Wed, 22 Apr 2020 08:30:10 +0000
+Subject: [PATCH bpf-next 2/2] libbpf: Return err if bpf_object__load failed
+Message-Id: <20200422083010.28000-3-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200414152343.243166-1-colin.king@canonical.com>
- <87d08axb7k.fsf@vitty.brq.redhat.com>
- <606c442c-1923-77d4-c350-e06878172c44@canonical.com>
- <87wo6hvxkz.fsf@vitty.brq.redhat.com>
- <20200415143752.cm3xbesiuksfdbzm@debian> <20200416100253.GN1163@kadam>
-In-Reply-To: <20200416100253.GN1163@kadam>
+References: <20200422083010.28000-1-maowenan@huawei.com>
+In-Reply-To: <20200422083010.28000-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Wei Liu <wei.liu@kernel.org>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, linux-hyperv@vger.kernel.org
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 16/04/2020 11:02, Dan Carpenter wrote:
-> We have this discussion over and over.  I always say it helps to have
-> the commit mentioned in the commit message but it's not a Fixes tag.
-> So I think that the commit message should say something like
-> "commit 1234234 ("blah blah") removed some code so this variable isn't
-> used any more".  I think it helps the review process.  But then if we
-> mention the commit everyone says to use the Fixes tag.
-> 
-> It turns out if you leave out the commit entirely then people still
-> complain but a lot less frequently.  It shouldn't work that way but
-> reviewers are illogical.
+bpf_object__load() has various return code, when
+it failed to load object, it must return err instead
+of return -EINVAL.
 
-Yep, to my knowledge the policy for this kind of commit is not described
-in any documentation, so it's ambiguous. Either way, one can't win
-without it being properly codified.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Colin
-
-> 
-> regards,
-> dan carpenter
-> 
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 8f480e29a6b0..8e1dc6980fac 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7006,7 +7006,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
+ 	err = bpf_object__load(obj);
+ 	if (err) {
+ 		bpf_object__close(obj);
+-		return -EINVAL;
++		return err;
+ 	}
+ 
+ 	*pobj = obj;
+-- 
+2.20.1
