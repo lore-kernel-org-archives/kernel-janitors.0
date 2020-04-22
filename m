@@ -1,35 +1,32 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 11 Apr 2020 10:17:03 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <159680bb287fc43bb2129d3b731e15931bd9979c.camel@perches.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 22 Apr 2020 02:01:54 +0000
+Subject: [PATCH net-next] mac80211_hwsim: use GFP_ATOMIC under spin lock
+Message-Id: <20200422020154.112088-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
-         <8617a6b94c0644bce1fd4ca77309d67a612e6300.camel@perches.com>
-         <6e52383e-100d-b016-32c2-6fb54938b6fe@wanadoo.fr>
-         <c9fd4bc75812fed4799c2fb87b452b809a7e9a7a.camel@perches.com>
-         <db2730700ab3eb7008413a1e7bba94ca7c49a031.camel@perches.com>
-         <26b49cf5-453b-9a81-b045-fdc99c42fcf8@wanadoo.fr>
-In-Reply-To: <26b49cf5-453b-9a81-b045-fdc99c42fcf8@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@codeaurora.org>, Erel Geron <erelx.geron@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2020-04-11 at 09:12 +0200, Christophe JAILLET wrote:
-> 	./scripts/checkpatch.pl -f drivers/soc/kendryte/k210-sysctl.c
-> 
-> is missing line 189, even if it looks like a construction correctly spotted in some other files:
-> 	if (foo) {
-> 		dev_err(...);
-> 		...
-> 	};
+A spin lock is taken here so we should use GFP_ATOMIC.
 
-Hi Christophe, many thanks for doing more testing
+Fixes: 5d44fe7c9808 ("mac80211_hwsim: add frame transmission support over virtio")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/mac80211_hwsim.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Are you sure about this one?  I get:
-
-$ ./scripts/checkpatch.pl -f drivers/soc/kendryte/k210-sysctl.c
-WARNING: Possible missing '\n' at the end of a logging message format string
-#189: FILE: drivers/soc/kendryte/k210-sysctl.c:189:
-+		dev_err(&pdev->dev, "failed to register clk");
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 7c4b7c31d07a..0528d4cb4d37 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -4068,7 +4068,7 @@ static void hwsim_virtio_rx_work(struct work_struct *work)
+ 	}
+ 	vq = hwsim_vqs[HWSIM_VQ_RX];
+ 	sg_init_one(sg, skb->head, skb_end_offset(skb));
+-	err = virtqueue_add_inbuf(vq, sg, 1, skb, GFP_KERNEL);
++	err = virtqueue_add_inbuf(vq, sg, 1, skb, GFP_ATOMIC);
+ 	if (WARN(err, "virtqueue_add_inbuf returned %d\n", err))
+ 		nlmsg_free(skb);
+ 	else
