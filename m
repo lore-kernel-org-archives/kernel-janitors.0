@@ -1,57 +1,28 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 13 Apr 2020 11:26:03 +0000
-Subject: [PATCH RFC v2] MAINTAINERS: add headers and doc to SCHEDULER
-Message-Id: <20200413112603.5257-1-lukas.bulwahn@gmail.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Thu, 23 Apr 2020 03:33:12 +0000
+Subject: [PATCH bpf-next v2 0/2] Change return code if failed to load object
+Message-Id: <20200423033314.49205-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200422093329.GI2659@kadam>
+In-Reply-To: <20200422093329.GI2659@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com, andrii.nakryiko@gmail.com
 
-Various files in include/linux/sched/ and include/uapi/linux/sched/ are
-identified as part of THE REST according to MAINTAINERS, but they really
-belong to SCHEDULER.
+The first patch change return code from -EINVAL to -EOPNOTSUPP,
+the second patch quote the err value returned by bpf_object__load().
 
-Add those headers and Documentation to the SCHEDULER entry.
+v2: Adjust line breaks at 72 characters for commit log, and pr_warn alignment as suggested by dan carpenter. For second patch, add Acked-by tag as well.
 
-This was identified with a small script that finds all files belonging to
-THE REST according to the current MAINTAINERS file, and I investigated
-upon its output.
+Mao Wenan (2):
+  bpf: Change error code when ops is NULL
+  libbpf: Return err if bpf_object__load failed
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-RFC v1: https://lore.kernel.org/lkml/20200308174931.9118-1-lukas.bulwahn@gmail.com/
-  - no feedback.
+ kernel/bpf/syscall.c   | 7 ++++---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-RFC v2:
-  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
-    ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
-    ("MAINTAINERS: sort field names for all entries").
-  - does not need to reorder entries anymore.
-  - applies cleanly on v5.7-rc1
-
-
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e64e5db31497..8546910db0ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14905,10 +14905,13 @@ R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-+F:	Documentation/scheduler/
- F:	include/linux/preempt.h
- F:	include/linux/sched.h
-+F:	include/linux/sched/
- F:	include/linux/wait.h
- F:	include/uapi/linux/sched.h
-+F:	include/uapi/linux/sched/
- F:	kernel/sched/
- 
- SCR24X CHIP CARD INTERFACE DRIVER
 -- 
-2.17.1
+2.20.1
