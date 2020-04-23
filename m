@@ -1,45 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 04 Apr 2020 18:02:38 +0000
-Subject: [bug report] ethtool: provide coalescing parameters with COALESCE_GET request
-Message-Id: <20200404180238.GA173535@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Apr 2020 14:02:40 +0000
+Subject: [PATCH][next] drm/amd/display: fix incorrect assignment due to a typo
+Message-Id: <20200423140240.19360-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Anthony Koo <Anthony.Koo@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Michal Kubecek,
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch 217275453b3e: "ethtool: provide coalescing parameters with
-COALESCE_GET request" from Mar 28, 2020, leads to the following
-static checker warning:
+The assignment to infopacket->sb[7] looks incorrect, the comment states it
+is the minimum refresh rate yet it is being assigned a value from the
+maximum refresh rate max_refresh_in_uhz. Fix this by using min_refresh_in_uhz
+instead.
 
-	net/ethtool/coalesce.c:134 coalesce_put_u32()
-	warn: signedness bug returning '(-90)'
+Addresses-Coverity: ("Copy-paste error")
+Fixes: d2bacc38f6ca ("drm/amd/display: Change infopacket type programming")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-net/ethtool/coalesce.c
-   129  static bool coalesce_put_u32(struct sk_buff *skb, u16 attr_type, u32 val,
-   130                               u32 supported_params)
-   131  {
-   132          if (!val && !(supported_params & attr_to_mask(attr_type)))
-   133                  return false;
-   134          return nla_put_u32(skb, attr_type, val);
-
-This is done deliberately to return true on failure and false on
-success but it causes a static checker warning.
-
-   135  }
-   136  
-   137  static bool coalesce_put_bool(struct sk_buff *skb, u16 attr_type, u32 val,
-   138                                u32 supported_params)
-   139  {
-   140          if (!val && !(supported_params & attr_to_mask(attr_type)))
-   141                  return false;
-   142          return nla_put_u8(skb, attr_type, !!val);
-
-Same.
-
-   143  }
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+index eb7421e83b86..fe11436536e8 100644
+--- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
++++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+@@ -587,7 +587,7 @@ static void build_vrr_infopacket_data_v3(const struct mod_vrr_params *vrr,
+ 	} else {
+ 		// Non-fs case, program nominal range
+ 		/* PB7 = FreeSync Minimum refresh rate (Hz) */
+-		infopacket->sb[7] = (unsigned char)((vrr->max_refresh_in_uhz + 500000) / 1000000);
++		infopacket->sb[7] = (unsigned char)((vrr->min_refresh_in_uhz + 500000) / 1000000);
+ 		/* PB8 = FreeSync Maximum refresh rate (Hz) */
+ 		infopacket->sb[8] = (unsigned char)((vrr->max_refresh_in_uhz + 500000) / 1000000);
+ 	}
+-- 
+2.25.1
