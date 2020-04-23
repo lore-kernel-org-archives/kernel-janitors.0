@@ -1,49 +1,40 @@
-From: Maxime Ripard <maxime@cerno.tech>
-Date: Tue, 14 Apr 2020 07:26:53 +0000
-Subject: Re: [PATCH] MAINTAINERS: point to display schemas in DRM DRIVERS FOR ALLWINNER A10
-Message-Id: <20200414072653.x2mvytbsvnjiqiij@gilmour.lan>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="kdkzdphvlzzoj572"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Apr 2020 14:17:28 +0000
+Subject: [PATCH][next] drm/amd/display: remove redundant assignment to variable ret
+Message-Id: <20200423141728.19949-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200413075329.10717-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200413075329.10717-1-lukas.bulwahn@gmail.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Joe Perches <joe@perches.com>
+References: <20190530161219.2507-1-colin.king@canonical.com>
+In-Reply-To: <20190530161219.2507-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Wenjing Liu <wenjing.liu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---kdkzdphvlzzoj572
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The variable ret is being initialized with a value that is never read
+and it is being updated later with a new value. The initialization is
+redundant and can be removed.
 
-On Mon, Apr 13, 2020 at 09:53:29AM +0200, Lukas Bulwahn wrote:
-> Commit f5a98bfe7b37 ("dt-bindings: display: Convert Allwinner display
-> pipeline to schemas") replaced sunxi/sun4i-drm.txt with
-> allwinner,sun*.yaml files in Documentation/devicetree/bindings/display/,
-> but did not adjust DRM DRIVERS FOR ALLWINNER A10.
->
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
->
->   warning: no file matches \
->   F: Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->
-> Point to allwinner display schemas in DRM DRIVERS FOR ALLWINNER A10.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-
-Thanks!
-Maxime
-
---kdkzdphvlzzoj572
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXpVlvQAKCRDj7w1vZxhR
-xVrnAPwPo+G3ObIsBJnK9D9AJ9dsl+LIKPP4Qz+TT7i4cgMDMAEAvnuVM7N5ZdVk
-yXUCRUxY6YQ5gMDbTD43X/MsWZqHmQ8=
-=gv8H
------END PGP SIGNATURE-----
-
---kdkzdphvlzzoj572--
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+index d5b306384d79..9ef9e50a34fa 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+@@ -4231,7 +4231,7 @@ void dpcd_set_source_specific_data(struct dc_link *link)
+ {
+ 	const uint32_t post_oui_delay = 30; // 30ms
+ 	uint8_t dspc = 0;
+-	enum dc_status ret = DC_ERROR_UNEXPECTED;
++	enum dc_status ret;
+ 
+ 	ret = core_link_read_dpcd(link, DP_DOWN_STREAM_PORT_COUNT, &dspc,
+ 				  sizeof(dspc));
+-- 
+2.25.1
