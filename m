@@ -1,67 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 27 Apr 2020 16:50:21 +0000
-Subject: Re: [PATCH v2] checkpatch: add dedicated checker for 'Fixes:' tag
-Message-Id: <0bded90c-cc66-bd12-7192-4bd75e72f678@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Apr 2020 08:39:22 +0000
+Subject: [PATCH][next] ASoC: fsl_easrc: fix spelling mistake "prefitler" -> "prefilter"
+Message-Id: <20200423083922.8159-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427145332.GA18830@udknight>
-In-Reply-To: <20200427145332.GA18830@udknight>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wang YanQing <udknight@gmail.com>, Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Timur Tabi <timur@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> According to submitting-patches.rst, …
+From: Colin Ian King <colin.king@canonical.com>
 
-I find that the reference to this document can trigger further considerations
-also for this evolving change description.
+There is a spelling mistake in a deb_dbg message, fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/fsl/fsl_easrc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> "
-> Do not split the tag across multiple
-> lines, tags are exempt from the "wrap at 75 columns" rule in order to simplify
-> parsing scripts
-> "
-
-Can it be nicer to use typographic quotation characters together with ellipses?
-
-
-> And the current 'Fixes:' checker in "# Check for git id commit length and
-> improperly formed commit descriptions" doesn't check for invalid commit id
-
-Should this “link” refer to a known check name?
-
-
-> length, so this patch adds dedicated checker to fix these issues.
-
-Would you care to transform this information into an imperative wording?
-
-
-…
-> +++ b/scripts/checkpatch.pl
-> @@ -2820,7 +2820,7 @@ sub process {
-…
-> -		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
-> +		      $line !~ /^\s*fixes:\s*(?:[0-9a-f]{6,40})\s*(?:.*)/i))) {
-
-I guess that the clarification around the relevance of word boundaries
-will become also more interesting.
-
-Will it become relevant to check if a provided change identification
-can actually be resolved to the desired commit?
-
-
-> @@ -2979,6 +2979,13 @@ sub process {
-…
-> +				ERROR("FIXES_TAG",
-> +					"please use the 'Fixes:' tag with at least the first 12 characters of the SHA-1 ID, and the one line summary(no across multiple lines)\n" . $herecurr);
-
-* How do you think about to start this message with the word “Please”?
-
-* Is the text “summary(no across” still questionable?
-
-* Will there be a need to explicitly describe the data format
-  for the summary specification also at this place?
-
-Regards,
-Markus
+diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
+index 233f26ff885c..97658e1f4989 100644
+--- a/sound/soc/fsl/fsl_easrc.c
++++ b/sound/soc/fsl/fsl_easrc.c
+@@ -1769,7 +1769,7 @@ static void fsl_easrc_dump_firmware(struct fsl_asrc *easrc)
+ 	}
+ 
+ 	dev_dbg(dev, "Firmware v%u dump:\n", firm->firmware_version);
+-	dev_dbg(dev, "Num prefitler scenarios: %u\n", firm->prefil_scen);
++	dev_dbg(dev, "Num prefilter scenarios: %u\n", firm->prefil_scen);
+ 	dev_dbg(dev, "Num interpolation scenarios: %u\n", firm->interp_scen);
+ 	dev_dbg(dev, "\nInterpolation scenarios:\n");
+ 
+-- 
+2.25.1
