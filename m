@@ -1,49 +1,34 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 16 Apr 2020 15:45:01 +0000
-Subject: Re: [PATCH] spi: remove redundant assignment to variable ms
-Message-Id: <158705187474.53607.10568254080085770802.b4-ty@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 23 Apr 2020 11:10:14 +0000
+Subject: Re: [PATCH v1] console: fix an issue about ioremap leak.
+Message-Id: <c62ec54f-348b-2eae-59eb-374dde4d49ad@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410122315.17523-1-colin.king@canonical.com>
-In-Reply-To: <20200410122315.17523-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-spi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dejin Zheng <zhengdejin5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: =?UTF-8?Q?Thomas_Bogend=c3=b6rfer?= <tsbogend@alpha.franken.de>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Fri, 10 Apr 2020 13:23:15 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ms is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Addresses-Coverity: ("Unused value")
-> 
-> [...]
+> if do_take_over_console() return an error in the newport_probe(),
+> due to the io virtual address is not released, it will cause a leak.
 
-Applied, thanks!
+How do you think about a wording variant like the following?
 
-[1/1] spi: remove redundant assignment to variable ms
-      commit: 49686df5b874e5ed6249bc622b73ad9a9e71cd99
+   Subject:
+   [PATCH v2] console: Complete exception handling in newport_probe()
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+   Change description:
+   A call of the function “do_take_over_console” can fail here.
+   The corresponding system resources were not released then.
+   Thus add a call of the function “iounmap” together with the check
+   of a failure predicate.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I would like to point out that there is a script for the semantic
+patch language which would detect other questionable source code.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/scripts/coccinelle/free/iounmap.cocci
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+How do you think about to extend presented software analysis approaches?
 
-Thanks,
-Mark
+Regards,
+Markus
