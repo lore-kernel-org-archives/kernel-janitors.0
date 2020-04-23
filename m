@@ -1,77 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Apr 2020 13:47:24 +0000
-Subject: Re: [PATCH -next] selinux: fix error return code in policydb_read()
-Message-Id: <20200429134724.GR2014@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 23 Apr 2020 15:23:29 +0000
+Subject: Re: console: Complete exception handling in newport_probe()
+Message-Id: <f054f00c-b813-e0c2-fe2e-30ccdec1ff46@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429073053.83660-1-weiyongjun1@huawei.com>
- <20200429130738.GQ2014@kadam>
- <CAFqZXNs=YTn-mnzSEssR1szRhSw7Ajdaqg=wy88O_F3gBL2rOQ@mail.gmail.com>
-In-Reply-To: <CAFqZXNs=YTn-mnzSEssR1szRhSw7Ajdaqg=wy88O_F3gBL2rOQ@mail.gmail.com>
+References: <c62ec54f-348b-2eae-59eb-374dde4d49ad@web.de>
+ <20200423142909.GB1562@nuc8i5>
+In-Reply-To: <20200423142909.GB1562@nuc8i5>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Jeff Vander Stoep <jeffv@google.com>, SElinux list <selinux@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dejin Zheng <zhengdejin5@gmail.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: =?UTF-8?Q?Thomas_Bogend=c3=b6rfer?= <tsbogend@alpha.franken.de>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Wed, Apr 29, 2020 at 03:32:13PM +0200, Ondrej Mosnacek wrote:
-> On Wed, Apr 29, 2020 at 3:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Wed, Apr 29, 2020 at 07:30:53AM +0000, Wei Yongjun wrote:
-> > > Fix to return negative error code -ENOMEM from the kvcalloc() error
-> > > handling case instead of 0, as done elsewhere in this function.
-> > >
-> >
-> > Please add a Fixes tag and Cc Kent.
-> >
-> > Fixes: acdf52d97f82 ("selinux: convert to kvmalloc")
-> >
-> >
-> > > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > > ---
-> > >  security/selinux/ss/policydb.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> > > index a0b3dc152468..a51e051df2cc 100644
-> > > --- a/security/selinux/ss/policydb.c
-> > > +++ b/security/selinux/ss/policydb.c
-> > > @@ -2638,6 +2638,7 @@ int policydb_read(struct policydb *p, void *fp)
-> > >       if (rc)
-> > >               goto bad;
-> > >
-> > > +     rc = -ENOMEM;
-> > >       p->type_attr_map_array = kvcalloc(p->p_types.nprim,
-> > >                                         sizeof(*p->type_attr_map_array),
-> > >                                         GFP_KERNEL);
-> >
-> > There is another bug earlier in the function as well:
-> >
-> > security/selinux/ss/policydb.c
-> >   2537
-> >   2538          rc = next_entry(buf, fp, sizeof(u32));
-> >   2539          if (rc)
-> >   2540                  goto bad;
-> >   2541          nel = le32_to_cpu(buf[0]);
-> >   2542
-> >   2543          p->role_tr = hashtab_create(role_trans_hash, role_trans_cmp, nel);
-> >   2544          if (!p->role_tr)
-> >   2545                  goto bad;
-> >                         ^^^^^^^^
-> >
-> >   2546          for (i = 0; i < nel; i++) {
-> >   2547                  rc = -ENOMEM;
-> >
-> > This style of setting the error code seems very bug prone.
-> >
-> > The Fixes tag for this one is:
-> > Fixes: e67b2ec9f617 ("selinux: store role transitions in a hash table")
-> 
-> FYI, this one is also indirectly fixed by this patch, which is
-> currently pending review:
-> https://patchwork.kernel.org/patch/11514495/
-> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/scripts/coccinelle/free/iounmap.cocci
+>>
+>> How do you think about to extend presented software analysis approaches?
+>>
+> Sorry, I am not familiar with it, I don't know.
 
-Ah.  Fantastic.  Wei, could you just resend your original commit with
-the first Fixes tag and Kent CC'd?
+Do you find the comments helpful at the beginning of this SmPL script?
 
-regards,
-dan carpenter
+Would you like to let any more source code analysis tools help you
+to find remaining update candidates?
+
+Regards,
+Markus
