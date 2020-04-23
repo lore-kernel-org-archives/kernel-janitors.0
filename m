@@ -1,43 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Apr 2020 12:58:02 +0000
-Subject: Re: [PATCH net-next] drm/amd/display: Fix link_detect_sink()
-Message-Id: <20200407125802.GK2001@kadam>
+From: "Koo, Anthony" <Anthony.Koo@amd.com>
+Date: Thu, 23 Apr 2020 15:18:56 +0000
+Subject: RE: [PATCH][next] drm/amd/display: fix incorrect assignment due to a typo
+Message-Id: <DM6PR12MB4545A35BA8D16B0218FF142FF3D30@DM6PR12MB4545.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200406091910.GA5405@mwanda>
- <7ab9e9de-8d78-7f63-f2b3-c1e9669faa6d@amd.com>
-In-Reply-To: <7ab9e9de-8d78-7f63-f2b3-c1e9669faa6d@amd.com>
+References: <20200423140240.19360-1-colin.king@canonical.com>
+In-Reply-To: <20200423140240.19360-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>, Chris Park <Chris.Park@amd.com>, Leo Li <sunpeng.li@amd.com>, Zhan Liu <Zhan.Liu@amd.com>, kernel-janitors@vger.kernel.org, Roman Li <Roman.Li@amd.com>, amd-gfx@lists.freedesktop.org, Wenjing Liu <Wenjing.Liu@amd.com>, Melissa Wen <melissa.srw@gmail.com>, David Airlie <airlied@linux.ie>, Nikola Cornij <nikola.cornij@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Lucy Li <lucy.li@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, David Galiffi <David.Galiffi@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Harry Wentland <harry.wentland@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Anthony Koo <Anthony.Koo@amd.com>
+To: Colin King <colin.king@canonical.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 06, 2020 at 12:22:51PM -0400, Kazlauskas, Nicholas wrote:
-> On 2020-04-06 5:19 a.m., Dan Carpenter wrote:
-> > This TODO stub originally had curly braces but we deleted them as part
-> > of a clean up.  Unfortunately that changes the behavior of the code
-> > because now the switch statement is part of the if statement.  Smatch
-> > complains that the indenting doesn't make sense.
-> > 
-> >      drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:425
-> >      link_detect_sink() warn: if statement not indented
-> > 
-> > Also I changed "ZAZTODO" to just "TODO".  The ZAZ isn't used anywhere
-> > else.
-> > 
-> > Fixes: 621514aa4140 ("drm/amd/display: codestyle cleanup on dc_link file until detect_dp func")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> I'd prefer just dropping the block, but either method is:
-> 
-> Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-> 
-> Since that previous patch broke most sink detection...
-> 
-
-Sorry for the net-next in the subject.  Anyway, this was fixed in
-commit 50dc581a8f43 ("drm/amd/display: fix the broken logic in dc_link.c")
-so no need for me to resend.
-
-regards,
-dan carpenter
+SGkgQ29saW4sDQoNClNvcnJ5IGZvciBhbnkgY29uZnVzaW9uIG9mIHRoaXMgY29kZS4NCkkgdGhp
+bmsgaW4gdGhpcyBjYXNlLCBpdCBzZWVtcyBsaWtlIHRoZSBjb21tZW50IGlzIHdyb25nIChidXQg
+b3JpZ2luYWwgaW1wbGVtZW50YXRpb24gaXMgc29tZXdoYXQgd3JvbmcgYXMgd2VsbCkuIFByb2Jh
+Ymx5IHRoZSBvcmlnaW5hbCBjb2RlIGltcGxlbWVudGF0aW9uIG1ha2VzIGl0IHVuY2xlYXIuDQoN
+ClRoZXJlIGFyZSB0aHJlZSBzY2VuYXJpb3M6DQoxLiBWYXJpYWJsZSByZWZyZXNoIGFjdGl2ZSwg
+dGFyZ2V0aW5nIGEgZml4ZWQgcmF0ZQ0KSW4gdGhpcyBjYXNlLCB0aGUgbWluID0gbWF4ID0gZml4
+ZWQgcmF0ZQ0KDQoyLiBWYXJpYWJsZSByZWZyZXNoIGFjdGl2ZSwgd2l0aCBhIHZhcmlhYmxlIHJh
+bmdlDQpJbiB0aGlzIGNhc2UsIHRoZSBtaW4gPSBtaW5pbXVtIHJlZnJlc2ggcmF0ZSBvZiB0aGUg
+cmFuZ2UuDQpBbmQgdGhlIG1heCA9IG1heGltdW0gcmVmcmVzaCByYXRlIG9mIHRoZSByYW5nZS4N
+Cg0KMy4gVmFyaWFibGUgcmVmcmVzaCByYXRlIGlzIGRpc2FibGVkIChUaGUgY2FzZSB5b3UgYXJl
+IG1vZGlmeWluZykNCkluIHRoZSBkaXNhYmxlZCBjYXNlLCB3ZSB3YW50IHRvIGluZGljYXRlIHRv
+IHRoZSBkaXNwbGF5IHRoYXQgdGhlIHJlZnJlc2ggcmF0ZSBpcyBmaXhlZCwgc28gd2Ugd2FudCB0
+byBwcm9ncmFtIG1pbiA9IG1heCA9IHRoZSBiYXNlIHJlZnJlc2ggcmF0ZS4NClRvZGF5IHRoZXJl
+IHNlZW1zIHRvIGJlIGFuIGltcGxpY2F0aW9uIHRoYXQgbWF4IHJlZnJlc2ggPSBiYXNlIHJlZnJl
+c2gsIHdoaWNoIGlzIG5vdCBuZWNlc3NhcmlseSB0cnVlLg0KSSBndWVzcyB0byBtYWtlIHRoZSBj
+b2RlIG1vcmUgY2xlYXIgYW5kIGNvcnJlY3QsIHRoZSBtaW4gYW5kIG1heCBzaG91bGQgYm90aCBi
+ZSBwcm9ncmFtbWVkIGVxdWFsIHRvIHRoZSBiYXNlIHJlZnJlc2ggcmF0ZSAobm9taW5hbCBmaWVs
+ZCByYXRlIGZyb20gbW9kX2ZyZWVzeW5jX2NhbGNfbm9taW5hbF9maWVsZF9yYXRlKQ0KDQpEb2Vz
+IHRoYXQgbWFrZSBzZW5zZT8NCg0KVGhhbmtzLA0KQW50aG9ueQ0KDQotLS0tLU9yaWdpbmFsIE1l
+c3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPiAN
+ClNlbnQ6IFRodXJzZGF5LCBBcHJpbCAyMywgMjAyMCAxMDowMyBBTQ0KVG86IFdlbnRsYW5kLCBI
+YXJyeSA8SGFycnkuV2VudGxhbmRAYW1kLmNvbT47IExpLCBTdW4gcGVuZyAoTGVvKSA8U3VucGVu
+Zy5MaUBhbWQuY29tPjsgRGV1Y2hlciwgQWxleGFuZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQu
+Y29tPjsgS29lbmlnLCBDaHJpc3RpYW4gPENocmlzdGlhbi5Lb2VuaWdAYW1kLmNvbT47IFpob3Us
+IERhdmlkKENodW5NaW5nKSA8RGF2aWQxLlpob3VAYW1kLmNvbT47IERhdmlkIEFpcmxpZSA8YWly
+bGllZEBsaW51eC5pZT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IEtvbywgQW50
+aG9ueSA8QW50aG9ueS5Lb29AYW1kLmNvbT47IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+OyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQpDYzoga2VybmVsLWphbml0b3JzQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KU3ViamVjdDogW1BB
+VENIXVtuZXh0XSBkcm0vYW1kL2Rpc3BsYXk6IGZpeCBpbmNvcnJlY3QgYXNzaWdubWVudCBkdWUg
+dG8gYSB0eXBvDQoNCkZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5j
+b20+DQoNClRoZSBhc3NpZ25tZW50IHRvIGluZm9wYWNrZXQtPnNiWzddIGxvb2tzIGluY29ycmVj
+dCwgdGhlIGNvbW1lbnQgc3RhdGVzIGl0IGlzIHRoZSBtaW5pbXVtIHJlZnJlc2ggcmF0ZSB5ZXQg
+aXQgaXMgYmVpbmcgYXNzaWduZWQgYSB2YWx1ZSBmcm9tIHRoZSBtYXhpbXVtIHJlZnJlc2ggcmF0
+ZSBtYXhfcmVmcmVzaF9pbl91aHouIEZpeCB0aGlzIGJ5IHVzaW5nIG1pbl9yZWZyZXNoX2luX3Vo
+eiBpbnN0ZWFkLg0KDQpBZGRyZXNzZXMtQ292ZXJpdHk6ICgiQ29weS1wYXN0ZSBlcnJvciIpDQpG
+aXhlczogZDJiYWNjMzhmNmNhICgiZHJtL2FtZC9kaXNwbGF5OiBDaGFuZ2UgaW5mb3BhY2tldCB0
+eXBlIHByb2dyYW1taW5nIikNClNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
+aW5nQGNhbm9uaWNhbC5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvbW9k
+dWxlcy9mcmVlc3luYy9mcmVlc3luYy5jIHwgMiArLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
+dGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Ft
+ZC9kaXNwbGF5L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYyBiL2RyaXZlcnMvZ3B1L2RybS9h
+bWQvZGlzcGxheS9tb2R1bGVzL2ZyZWVzeW5jL2ZyZWVzeW5jLmMNCmluZGV4IGViNzQyMWU4M2I4
+Ni4uZmUxMTQzNjUzNmU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5
+L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9k
+aXNwbGF5L21vZHVsZXMvZnJlZXN5bmMvZnJlZXN5bmMuYw0KQEAgLTU4Nyw3ICs1ODcsNyBAQCBz
+dGF0aWMgdm9pZCBidWlsZF92cnJfaW5mb3BhY2tldF9kYXRhX3YzKGNvbnN0IHN0cnVjdCBtb2Rf
+dnJyX3BhcmFtcyAqdnJyLA0KIAl9IGVsc2Ugew0KIAkJLy8gTm9uLWZzIGNhc2UsIHByb2dyYW0g
+bm9taW5hbCByYW5nZQ0KIAkJLyogUEI3ID0gRnJlZVN5bmMgTWluaW11bSByZWZyZXNoIHJhdGUg
+KEh6KSAqLw0KLQkJaW5mb3BhY2tldC0+c2JbN10gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWF4
+X3JlZnJlc2hfaW5fdWh6ICsgNTAwMDAwKSAvIDEwMDAwMDApOw0KKwkJaW5mb3BhY2tldC0+c2Jb
+N10gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWluX3JlZnJlc2hfaW5fdWh6ICsgDQorNTAwMDAw
+KSAvIDEwMDAwMDApOw0KIAkJLyogUEI4ID0gRnJlZVN5bmMgTWF4aW11bSByZWZyZXNoIHJhdGUg
+KEh6KSAqLw0KIAkJaW5mb3BhY2tldC0+c2JbOF0gPSAodW5zaWduZWQgY2hhcikoKHZyci0+bWF4
+X3JlZnJlc2hfaW5fdWh6ICsgNTAwMDAwKSAvIDEwMDAwMDApOw0KIAl9DQotLQ0KMi4yNS4xDQoN
+Cg=
