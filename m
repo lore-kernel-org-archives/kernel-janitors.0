@@ -1,75 +1,185 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 11 Apr 2020 11:05:43 +0000
-Subject: Re: [PATCH] crypto: marvell/octeontx - Add missing '\n' in log messages
-Message-Id: <d40b2b993d8e9764c5e7f6fd3f8ca037a9520b6e.camel@perches.com>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Fri, 24 Apr 2020 12:53:32 +0000
+Subject: [PATCH v2] staging: wfx: cleanup long lines in data_tx.c
+Message-Id: <20200424124105.GA18534@blackclown>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1SQmhf2mF2YjsYvc"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411104458.21526-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411104458.21526-1-christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com, herbert@gondor.apana.org.au, davem@davemloft.net, lbartosik@marvell.com, colin.king@canonical.com
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jerome.pouiller@silabs.com, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 2020-04-11 at 12:44 +0200, Christophe JAILLET wrote:
-> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
-> 
-> While at it, I've introduced a few pr_cont that looked logical to me.
 
-Hi again Christophe.
+--1SQmhf2mF2YjsYvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-[]
-> @@ -629,15 +629,15 @@ static void print_dbg_info(struct device *dev,
->  				pr_debug("Slot%d: %s", j, engs_info);
->  				bitmap_to_arr32(mask, engs->bmap,
->  						eng_grps->engs_num);
-> -				pr_debug("Mask:  %8.8x %8.8x %8.8x %8.8x",
-> -					 mask[3], mask[2], mask[1], mask[0]);
-> +				pr_cont(" Mask: %8.8x %8.8x %8.8x %8.8x\n",
-> +					mask[3], mask[2], mask[1], mask[0]);
+Break lines with length over 80 characters to conform
+to the linux coding style and refactor wherever necessary.
 
-Unfortunately, a pr_debug cannot reasonably be followed by pr_cont.
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
 
-pr_debug is conditionally compiled and if CONFIG_DYNAMIC_DEBUG
-is enabled, conditionally emitted.
+Changes in v2:
+	- Introduced a temporary variable for the memzcmp statement.
+	- Addressed the checkpatch problem with wfx_get_hw_rate().
+	- Restored the function definition of wfx_tx_get_tx_parms
+	  as suggested by the reviewer.
+	- Added suggested changes for req->packet_id statement.
 
-pr_cont is not conditionally compiled and is always emitted.
+ drivers/staging/wfx/data_tx.c | 39 ++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
-So this is fine as is (or with terminating newlines added)
-
-> @@ -1147,8 +1147,9 @@ static int delete_engine_group(struct device *dev,
->  		for (i = 0; i < OTX_CPT_MAX_ENGINE_GROUPS; i++) {
->  			if (eng_grp->g->grp[i].mirror.is_ena &&
->  			    eng_grp->g->grp[i].mirror.idx = eng_grp->idx)
-> -				dev_err(dev, "engine_group%d", i);
-> +				pr_cont(" engine_group%d", i);
->  		}
-> +		pr_cont("\n");
->  		return -EINVAL;
->  	}
-
-This one is probably reasonable, but I suggest that "engine_group%d"
-is a bit redundant and this might be better as something like:
-
-diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-index d04baa3..a6bb6c7 100644
---- a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-+++ b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-@@ -1142,13 +1143,14 @@ static int delete_engine_group(struct device *dev,
- 		return -EINVAL;
- 
- 	if (eng_grp->mirror.ref_count) {
--		dev_err(dev, "Can't delete engine_group%d as it is used by:",
-+		dev_err(dev, "Can't delete engine_group%d as it is used by engine_group(s):",
- 			eng_grp->idx);
- 		for (i = 0; i < OTX_CPT_MAX_ENGINE_GROUPS; i++) {
- 			if (eng_grp->g->grp[i].mirror.is_ena &&
- 			    eng_grp->g->grp[i].mirror.idx = eng_grp->idx)
--				dev_err(dev, "engine_group%d", i);
-+				pr_cont(dev, " %d", i);
- 		}
-+		pr_cont("\n");
- 		return -EINVAL;
+diff --git a/drivers/staging/wfx/data_tx.c b/drivers/staging/wfx/data_tx.c
+index 9c1a91207dd8..ae472ff8a088 100644
+--- a/drivers/staging/wfx/data_tx.c
++++ b/drivers/staging/wfx/data_tx.c
+@@ -20,6 +20,7 @@
+ static int wfx_get_hw_rate(struct wfx_dev *wdev,
+ 			   const struct ieee80211_tx_rate *rate)
+ {
++	struct ieee80211_rate tmp;
+ 	if (rate->idx < 0)
+ 		return -1;
+ 	if (rate->flags & IEEE80211_TX_RC_MCS) {
+@@ -31,7 +32,8 @@ static int wfx_get_hw_rate(struct wfx_dev *wdev,
  	}
- 
+ 	// WFx only support 2GHz, else band information should be retrieved
+ 	// from ieee80211_tx_info
+-	return wdev->hw->wiphy->bands[NL80211_BAND_2GHZ]->bitrates[rate->idx].hw_=
+value;
++	tmp =3D wdev->hw->wiphy->bands[NL80211_BAND_2GHZ]->bitrates[rate->idx];
++	return tmp.hw_value;
+ }
+=20
+ /* TX policy cache implementation */
+@@ -159,14 +161,16 @@ static int wfx_tx_policy_upload(struct wfx_vif *wvif)
+ {
+ 	struct tx_policy *policies =3D wvif->tx_policy_cache.cache;
+ 	u8 tmp_rates[12];
+-	int i;
++	int i, tmp;
+=20
+ 	do {
+ 		spin_lock_bh(&wvif->tx_policy_cache.lock);
+-		for (i =3D 0; i < HIF_TX_RETRY_POLICY_MAX; ++i)
+-			if (!policies[i].uploaded &&
+-			    memzcmp(policies[i].rates, sizeof(policies[i].rates)))
++		for (i =3D 0; i < HIF_TX_RETRY_POLICY_MAX; ++i) {
++			tmp =3D memzcmp(policies[i].rates,
++				      sizeof(policies[i].rates));
++			if (!policies[i].uploaded && tmp)
+ 				break;
++		}
+ 		if (i < HIF_TX_RETRY_POLICY_MAX) {
+ 			policies[i].uploaded =3D true;
+ 			memcpy(tmp_rates, policies[i].rates, sizeof(tmp_rates));
+@@ -290,7 +294,8 @@ static void wfx_tx_fixup_rates(struct ieee80211_tx_rate=
+ *rates)
+ 		if (rates[i].idx =3D=3D -1) {
+ 			rates[i].idx =3D 0;
+ 			rates[i].count =3D 8; // =3D=3D hw->max_rate_tries
+-			rates[i].flags =3D rates[i - 1].flags & IEEE80211_TX_RC_MCS;
++			rates[i].flags =3D rates[i - 1].flags &
++					 IEEE80211_TX_RC_MCS;
+ 			break;
+ 		}
+ 	}
+@@ -318,7 +323,8 @@ static u8 wfx_tx_get_rate_id(struct wfx_vif *wvif,
+ 	return rate_id;
+ }
+=20
+-static struct hif_ht_tx_parameters wfx_tx_get_tx_parms(struct wfx_dev *wde=
+v, struct ieee80211_tx_info *tx_info)
++static struct hif_ht_tx_parameters wfx_tx_get_tx_parms(struct wfx_dev *wde=
+v,
++						       struct ieee80211_tx_info *tx_info)
+ {
+ 	struct ieee80211_tx_rate *rate =3D &tx_info->driver_rates[0];
+ 	struct hif_ht_tx_parameters ret =3D { };
+@@ -381,7 +387,8 @@ static int wfx_tx_inner(struct wfx_vif *wvif, struct ie=
+ee80211_sta *sta,
+ 	hif_msg->id =3D HIF_REQ_ID_TX;
+ 	hif_msg->interface =3D wvif->id;
+ 	if (skb->len > wvif->wdev->hw_caps.size_inp_ch_buf) {
+-		dev_warn(wvif->wdev->dev, "requested frame size (%d) is larger than maxi=
+mum supported (%d)\n",
++		dev_warn(wvif->wdev->dev,
++			 "requested frame size (%d) is larger than maximum supported (%d)\n",
+ 			 skb->len, wvif->wdev->hw_caps.size_inp_ch_buf);
+ 		skb_pull(skb, wmsg_len);
+ 		return -EIO;
+@@ -392,9 +399,10 @@ static int wfx_tx_inner(struct wfx_vif *wvif, struct i=
+eee80211_sta *sta,
+ 	// packet_id just need to be unique on device. 32bits are more than
+ 	// necessary for that task, so we tae advantage of it to add some extra
+ 	// data for debug.
+-	req->packet_id =3D queue_id << 28 |
+-			 IEEE80211_SEQ_TO_SN(le16_to_cpu(hdr->seq_ctrl)) << 16 |
+-			 (atomic_add_return(1, &wvif->wdev->packet_id) & 0xFFFF);
++	req->packet_id =3D atomic_add_return(1, &wvif->wdev->packet_id) & 0xFFFF;
++	req->packet_id |=3D IEEE80211_SEQ_TO_SN(le16_to_cpu(hdr->seq_ctrl)) << 16;
++	req->packet_id |=3D queue_id << 28;
++
+ 	req->data_flags.fc_offset =3D offset;
+ 	if (tx_info->flags & IEEE80211_TX_CTL_SEND_AFTER_DTIM)
+ 		req->data_flags.after_dtim =3D 1;
+@@ -517,7 +525,8 @@ void wfx_tx_confirm_cb(struct wfx_vif *wvif, const stru=
+ct hif_cnf_tx *arg)
+ 		if (tx_count < rate->count &&
+ 		    arg->status =3D=3D HIF_STATUS_RETRY_EXCEEDED &&
+ 		    arg->ack_failures)
+-			dev_dbg(wvif->wdev->dev, "all retries were not consumed: %d !=3D %d\n",
++			dev_dbg(wvif->wdev->dev,
++				"all retries were not consumed: %d !=3D %d\n",
+ 				rate->count, tx_count);
+ 		if (tx_count <=3D rate->count && tx_count &&
+ 		    arg->txed_rate !=3D wfx_get_hw_rate(wvif->wdev, rate))
+@@ -554,7 +563,8 @@ void wfx_tx_confirm_cb(struct wfx_vif *wvif, const stru=
+ct hif_cnf_tx *arg)
+ 		else
+ 			tx_info->flags |=3D IEEE80211_TX_STAT_ACK;
+ 	} else if (arg->status =3D=3D HIF_REQUEUE) {
+-		WARN(!arg->tx_result_flags.requeue, "incoherent status and result_flags"=
+);
++		WARN(!arg->tx_result_flags.requeue,
++		     "incoherent status and result_flags");
+ 		if (tx_info->flags & IEEE80211_TX_CTL_SEND_AFTER_DTIM) {
+ 			wvif->after_dtim_tx_allowed =3D false; // DTIM period elapsed
+ 			schedule_work(&wvif->update_tim_work);
+@@ -588,7 +598,8 @@ void wfx_flush(struct ieee80211_hw *hw, struct ieee8021=
+1_vif *vif,
+ 		if (wait_event_timeout(wdev->tx_dequeue,
+ 				       wfx_tx_queue_empty(wdev, queue, vif_id),
+ 				       msecs_to_jiffies(1000)) <=3D 0)
+-			dev_warn(wdev->dev, "frames queued while flushing tx queues?");
++			dev_warn(wdev->dev,
++				 "frames queued while flushing tx queues?");
+ 	}
+ 	wfx_tx_flush(wdev);
+ 	if (wdev->chip_frozen)
+--=20
+2.17.1
+
+
+--1SQmhf2mF2YjsYvc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl6i3nwACgkQ+gRsbIfe
+744WsxAAkQEc+KPwAQNsExtEurqT70QXM3H77aqxDkaxEJqsphPQnZKdTJksPEO/
+pgXi4+rjqBZf7lM3iliE1o7bbIx1lZlT8OkdV636BcT7q1Xk+bHv79TQYY6LMO6/
+qHDKfcBkapIyZPyIBqr+byQF/YdY8harizCarKTDd8yBiyDsTAFp711FnvoSal9d
+EajpbExCLGxEi1Pe0uEEg/u7nFztGZmOxzW2/X1GrlS3H9NR/DeDajHEJUrk2WXR
+80SeSsAoHJ8Vc8oUv4/Ym2YmBNs1xnYuKW+LtGPrtwHvhipLWu1tpWXxnHlacARw
+cTUzgfvy8kZ1kmOwvGeyVLDHp7FAgHCbCqbYzdxP1yhDP1MbssNgk78ZyigecWBx
+47PkDpiz8S51M6CDy4oTWWy47S6F3NYQQbIsF9qkzjMShxmEcD60iLGABiKlmeRy
+KMZvIbcjAUjEMyX2UP3tlIXRiVEIvQeYZnaQ4MupRPbQrNcrWTUckg0ejX8mHOSV
+9JrUrTQF3+mMVRi1bFt34hz4t3R7jnCp5R2R6bMmg9zG+/2DnFON/9yN9d9chNjG
+Lcj+1BrC8t2wIKpL5QRmDOPhp6erwe+HDmJIdoBLqlpM/0a8xJoaScK6vPY2I09l
+09WA3AdIMXW7jfYZSr7F/eUXedJEEDzVUJF2Fd91n/T2rngWukY=
+=3JqP
+-----END PGP SIGNATURE-----
+
+--1SQmhf2mF2YjsYvc--
