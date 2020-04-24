@@ -1,49 +1,38 @@
-From: Jerome Pouiller <Jerome.Pouiller@silabs.com>
-Date: Fri, 24 Apr 2020 11:39:38 +0000
-Subject: Re: [PATCH] staging: wfx: check ssidlen and prevent an array overflow
-Message-Id: <2664933.6YeKyBzJok@pc-42>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Apr 2020 11:12:26 +0000
+Subject: [PATCH] amdgpu/dc: remove redundant assignment to variable 'option'
+Message-Id: <20200424111226.11796-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200424104235.GA416402@mwanda>
-In-Reply-To: <20200424104235.GA416402@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday 24 April 2020 12:42:35 CEST Dan Carpenter wrote:
->=20
-> We need to cap "ssidlen" to prevent a memcpy() overflow.
->=20
-> Fixes: 40115bbc40e2 ("staging: wfx: implement the rest of mac80211 API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/staging/wfx/sta.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
-> index c73dbb3a0de8c..3bff0f1e3d9ba 100644
-> --- a/drivers/staging/wfx/sta.c
-> +++ b/drivers/staging/wfx/sta.c
-> @@ -479,7 +479,9 @@ static void wfx_do_join(struct wfx_vif *wvif)
->                 ssidie =3D ieee80211_bss_get_ie(bss, WLAN_EID_SSID);
->         if (ssidie) {
->                 ssidlen =3D ssidie[1];
-> -               memcpy(ssid, &ssidie[2], ssidie[1]);
-> +               if (ssidlen > IEEE80211_MAX_SSID_LEN)
-> +                       ssidlen =3D IEEE80211_MAX_SSID_LEN;
-I'd have a little preference for sizeof(ssid) instead of
-IEEE80211_MAX_SSID_LEN, but ok.
+From: Colin Ian King <colin.king@canonical.com>
 
-> +               memcpy(ssid, &ssidie[2], ssidlen);
->         }
->         rcu_read_unlock();
->=20
-> --
-> 2.26.1
->=20
+The variable option is being initialized with a value that is
+never read and it is being updated later with a new value.  The
+initialization is redundant and can be removed.
 
-Reviewed-by: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---=20
-J=E9r=F4me Pouiller
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c
+index 4245e1f818a3..e096d2b95ef9 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_opp_csc_v.c
+@@ -679,8 +679,7 @@ void dce110_opp_v_set_csc_default(
+ 	if (default_adjust->force_hw_default = false) {
+ 		const struct out_csc_color_matrix *elm;
+ 		/* currently parameter not in use */
+-		enum grph_color_adjust_option option -			GRPH_COLOR_MATRIX_HW_DEFAULT;
++		enum grph_color_adjust_option option;
+ 		uint32_t i;
+ 		/*
+ 		 * HW default false we program locally defined matrix
+-- 
+2.25.1
