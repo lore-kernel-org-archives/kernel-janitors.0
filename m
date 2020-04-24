@@ -1,31 +1,57 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 14 Apr 2020 19:02:11 +0000
-Subject: Re: [PATCH v2] RDMA/cm: Fix an error check in cm_alloc_id_priv()
-Message-Id: <20200414190211.GA12156@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Apr 2020 12:56:40 +0000
+Subject: [PATCH][next] drm/amdgpu: fix unlocks on error return path
+Message-Id: <20200424125640.22656-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200406145109.GQ20941@ziepe.ca>
- <20200407093714.GA80285@mwanda>
-In-Reply-To: <20200407093714.GA80285@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Matthew Wilcox <willy@infradead.org>, Leon Romanovsky <leon@kernel.org>, Danit Goldberg <danitg@mellanox.com>, Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 07, 2020 at 12:37:14PM +0300, Dan Carpenter wrote:
-> The xa_alloc_cyclic_irq() function returns either 0 or 1 on success and
-> negatives on error.  This code treats 1 as an error and returns
-> ERR_PTR(1) which will cause an Oops in the caller.
-> 
-> Fixes: ae78ff3a0f0c ("RDMA/cm: Convert local_id_table to XArray")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
-> v2: Use the correct Fixes tag and add Matthew to the CC list.
-> 
->  drivers/infiniband/core/cm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to for-next, thanks
+Currently the error returns paths are unlocking lock kiq->ring_lock
+however it seems this should be dev->gfx.kiq.ring_lock as this
+is the lock that is being locked and unlocked around the ring
+operations.  This looks like a bug, fix it by unlocking the
+correct lock.
 
-Jason
+[ Note: untested ]
+
+Addresses-Coverity: ("Missing unlock")
+Fixes: 82478876eaac ("drm/amdgpu: protect ring overrun")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c | 2 +-
+ drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+index b120f9160f13..edaa50d850a6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+@@ -430,7 +430,7 @@ static int gmc_v10_0_flush_gpu_tlb_pasid(struct amdgpu_device *adev,
+ 		r = amdgpu_fence_emit_polling(ring, &seq, MAX_KIQ_REG_WAIT);
+ 		if (r) {
+ 			amdgpu_ring_undo(ring);
+-			spin_unlock(&kiq->ring_lock);
++			spin_unlock(&adev->gfx.kiq.ring_lock);
+ 			return -ETIME;
+ 		}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+index 0a6026308343..055ecba754ff 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+@@ -624,7 +624,7 @@ static int gmc_v9_0_flush_gpu_tlb_pasid(struct amdgpu_device *adev,
+ 		r = amdgpu_fence_emit_polling(ring, &seq, MAX_KIQ_REG_WAIT);
+ 		if (r) {
+ 			amdgpu_ring_undo(ring);
+-			spin_unlock(&kiq->ring_lock);
++			spin_unlock(&adev->gfx.kiq.ring_lock);
+ 			return -ETIME;
+ 		}
+ 
+-- 
+2.25.1
