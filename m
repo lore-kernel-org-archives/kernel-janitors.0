@@ -1,51 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 28 Apr 2020 15:41:13 +0000
-Subject: Re: [PATCH -next] ASoC: tegra: tegra_wm8903: Use devm_snd_soc_register_card()
-Message-Id: <158808847385.38342.17859489811900791487.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 24 Apr 2020 10:42:35 +0000
+Subject: [PATCH] staging: wfx: check ssidlen and prevent an array overflow
+Message-Id: <20200424104235.GA416402@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428110742.110335-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200428110742.110335-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Hunter <jonathanh@nvidia.com>, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, Wei Yongjun <weiyongjun1@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: =?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 28 Apr 2020 11:07:42 +0000, Wei Yongjun wrote:
-> Using devm_snd_soc_register_card() can make the code
-> shorter and cleaner.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  sound/soc/tegra/tegra_wm8903.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> [...]
+We need to cap "ssidlen" to prevent a memcpy() overflow.
 
-Applied to
+Fixes: 40115bbc40e2 ("staging: wfx: implement the rest of mac80211 API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/wfx/sta.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.8
-
-Thanks!
-
-[1/1] ASoC: tegra: tegra_wm8903: Use devm_snd_soc_register_card()
-      commit: ac3367442d9e5971e32014c6fea41ca1662c0e2d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
+index c73dbb3a0de8c..3bff0f1e3d9ba 100644
+--- a/drivers/staging/wfx/sta.c
++++ b/drivers/staging/wfx/sta.c
+@@ -479,7 +479,9 @@ static void wfx_do_join(struct wfx_vif *wvif)
+ 		ssidie = ieee80211_bss_get_ie(bss, WLAN_EID_SSID);
+ 	if (ssidie) {
+ 		ssidlen = ssidie[1];
+-		memcpy(ssid, &ssidie[2], ssidie[1]);
++		if (ssidlen > IEEE80211_MAX_SSID_LEN)
++			ssidlen = IEEE80211_MAX_SSID_LEN;
++		memcpy(ssid, &ssidie[2], ssidlen);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+2.26.1
