@@ -1,38 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Apr 2020 23:03:58 +0000
-Subject: [PATCH] crypto: algif_rng: remove redundant assignment to variable err
-Message-Id: <20200415230358.1566912-1-colin.king@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 24 Apr 2020 07:46:34 +0000
+Subject: Re: [PATCH] crypto: algif_rng: remove redundant assignment to variable err
+Message-Id: <20200424074634.GC24682@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200415230358.1566912-1-colin.king@canonical.com>
+In-Reply-To: <20200415230358.1566912-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 16, 2020 at 12:03:58AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable err is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  crypto/algif_rng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The variable err is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- crypto/algif_rng.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/crypto/algif_rng.c b/crypto/algif_rng.c
-index 22df3799a17b..087c0ad09d38 100644
---- a/crypto/algif_rng.c
-+++ b/crypto/algif_rng.c
-@@ -61,7 +61,7 @@ static int rng_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 	struct rng_ctx *ctx = ask->private;
--	int err = -EFAULT;
-+	int err;
- 	int genlen = 0;
- 	u8 result[MAXSIZE];
- 
+Patch applied.  Thanks.
 -- 
-2.25.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
