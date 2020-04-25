@@ -1,44 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 28 Apr 2020 13:39:34 +0000
-Subject: [PATCH -next] usb: gadget: mass_storage: use module_usb_composite_driver to simplify the code
-Message-Id: <20200428133934.73637-1-weiyongjun1@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 25 Apr 2020 19:30:22 +0000
+Subject: Re: [PATCH] mmc: owl-mmc: Fix dma_chan refcnt leak in owl_mmc_probe()
+Message-Id: <282da79a-eda7-f534-a6ed-8ac38fcc2c8b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhengbin <zhengbin13@huawei.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Xiyu Yang <xiyuyang19@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, Kangjie Lu <kjlu@umn.edu>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Yuan Zhang <yuanxzhang@fudan.edu.cn>
 
-module_usb_composite_driver() makes the code simpler by
-eliminating boilerplate code.
+> Fix this issue by jumping to "err_put_dma" label when those error
+> scenarios occur.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/usb/gadget/legacy/mass_storage.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+I suggest to reconsider your jump target selection.
 
-diff --git a/drivers/usb/gadget/legacy/mass_storage.c b/drivers/usb/gadget/legacy/mass_storage.c
-index f18f77584fc2..9ed22c5fb7fe 100644
---- a/drivers/usb/gadget/legacy/mass_storage.c
-+++ b/drivers/usb/gadget/legacy/mass_storage.c
-@@ -229,18 +229,8 @@ static struct usb_composite_driver msg_driver = {
- 	.unbind		= msg_unbind,
- };
- 
-+module_usb_composite_driver(msg_driver);
-+
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_AUTHOR("Michal Nazarewicz");
- MODULE_LICENSE("GPL");
--
--static int __init msg_init(void)
--{
--	return usb_composite_probe(&msg_driver);
--}
--module_init(msg_init);
--
--static void __exit msg_cleanup(void)
--{
--	usb_composite_unregister(&msg_driver);
--}
--module_exit(msg_cleanup);
+
+…
+> +++ b/drivers/mmc/host/owl-mmc.c
+…
+> @@ -643,19 +643,22 @@ static int owl_mmc_probe(struct platform_device *pdev)
+>  	return 0;
+>
+> +err_put_dma:
+> +	if (owl_host->dma)
+> +		dma_release_channel(owl_host->dma);
+
+I interpret the source code in the way that you would like to call
+this function for the desired exception handling only after a call
+of the function “dma_request_chan” succeeded.
+Thus I would expect that the passed pointer will usually be still valid.
+(Can the proposed null pointer check be omitted then?)
+
+How do you think about the following change possibility?
+
++err_release_channel:
++	dma_release_channel(owl_host->dma);
+
+
+Would you like to add the tag “Fixes” to the change description?
+
+Regards,
+Markus
