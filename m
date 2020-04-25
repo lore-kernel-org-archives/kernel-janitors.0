@@ -1,27 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 19 Apr 2020 09:51:21 +0000
-Subject: Re: [PATCH] PCI: v3-semi: Fix a memory leak in some error handling paths in 'v3_pci_probe()'
-Message-Id: <CACRpkdZ347msE7ohENGw1nBLJX1zQybywKoMA8HgZ6Cc6d9Z-A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 25 Apr 2020 11:28:14 +0000
+Subject: [PATCH] net: rtnetlink: remove redundant assignment to variable err
+Message-Id: <20200425112814.137857-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 10:16 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> IF we fails somewhere in 'v3_pci_probe()', we need to free 'host'.
-> Use the managed version of 'pci_alloc_host_bridge()' to do that easily.
-> The use of managed resources is already widely used in this driver.
->
-> Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable err is being initializeed with a value that is never read
+and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/core/rtnetlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index d6f4f4a9e8ba..2269199c5891 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3997,8 +3997,8 @@ static int rtnl_fdb_del(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	struct ndmsg *ndm;
+ 	struct nlattr *tb[NDA_MAX+1];
+ 	struct net_device *dev;
+-	int err = -EINVAL;
+ 	__u8 *addr;
++	int err;
+ 	u16 vid;
+ 
+ 	if (!netlink_capable(skb, CAP_NET_ADMIN))
+-- 
+2.25.1
