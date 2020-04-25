@@ -1,28 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 04 Apr 2020 16:01:57 +0000
-Subject: Re: [PATCH] ARM: pxa: ssp: Delete an error message in pxa_ssp_probe()
-Message-Id: <c6790c2f-7b10-8d7f-5bc7-84d07fd96632@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 25 Apr 2020 11:22:05 +0000
+Subject: [PATCH] media: stv0900_core: remove redundant assignment to variable val
+Message-Id: <20200425112205.137518-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <524ae90a-a7cb-feee-6107-743c52c2b1e4@web.de>
- <CAHp75VcBKEJtEZg9wUVdqnSHWb3gaOx493GGWMtisdTAwxmGkA@mail.gmail.com>
-In-Reply-To: <CAHp75VcBKEJtEZg9wUVdqnSHWb3gaOx493GGWMtisdTAwxmGkA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Tang Bin <tangbin@cmss.chinamobile.com>, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Enrico Weigelt <lkml@metux.net>, Thomas Gleixner <tglx@linutronix.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Allison Randal <allison@lohutok.net>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>         ssp->irq = platform_get_irq(pdev, 0);
->> -       if (ssp->irq < 0) {
->> -               dev_err(dev, "no IRQ resource defined\n");
->> +       if (ssp->irq < 0)
->>                 return -ENODEV;
->> -       }
->
-> At the same time we can unshadow the error code, i.e.
->   return ssp->irq;
+From: Colin Ian King <colin.king@canonical.com>
 
-Have you got any preferences for the order of possible change combinations?
+The variable val is being initializeed with a value that is never read
+and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-Regards,
-Markus
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/stv0900_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0900_core.c b/drivers/media/dvb-frontends/stv0900_core.c
+index 7d93a1617e86..212312d20ff6 100644
+--- a/drivers/media/dvb-frontends/stv0900_core.c
++++ b/drivers/media/dvb-frontends/stv0900_core.c
+@@ -193,7 +193,7 @@ void stv0900_write_bits(struct stv0900_internal *intp, u32 label, u8 val)
+ 
+ u8 stv0900_get_bits(struct stv0900_internal *intp, u32 label)
+ {
+-	u8 val = 0xff;
++	u8 val;
+ 	u8 mask, pos;
+ 
+ 	extract_mask_pos(label, &mask, &pos);
+-- 
+2.25.1
