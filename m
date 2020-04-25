@@ -1,45 +1,42 @@
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 22 Apr 2020 23:27:05 +0000
-Subject: Re: [PATCH bpf-next 2/2] libbpf: Return err if bpf_object__load failed
-Message-Id: <CAEf4BzaNZe63WxPrv0kAq-VjdoC8gOfrsmNLYBuK6nBu1Wh8kA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 25 Apr 2020 07:00:56 +0000
+Subject: [PATCH] iio: dac: ad5592r: Fix a typo in the name of a function
+Message-Id: <20200425070056.31664-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422083010.28000-1-maowenan@huawei.com> <20200422083010.28000-3-maowenan@huawei.com>
-In-Reply-To: <20200422083010.28000-3-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mao Wenan <maowenan@huawei.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, john fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lars@metafoo.de, Michael.Hennerich@analog.com, stefan.popa@analog.com, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Apr 22, 2020 at 1:30 AM Mao Wenan <maowenan@huawei.com> wrote:
->
-> bpf_object__load() has various return code, when
-> it failed to load object, it must return err instead
-> of return -EINVAL.
->
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
+This module is related to AD5592R, not AD5593R, so be consistent in naming.
 
-This patch looks good. The other one in this series - not so sure..
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/dac/ad5592r.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-
->  tools/lib/bpf/libbpf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 8f480e29a6b0..8e1dc6980fac 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -7006,7 +7006,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
->         err = bpf_object__load(obj);
->         if (err) {
->                 bpf_object__close(obj);
-> -               return -EINVAL;
-> +               return err;
->         }
->
->         *pobj = obj;
-> --
-> 2.20.1
->
+diff --git a/drivers/iio/dac/ad5592r.c b/drivers/iio/dac/ad5592r.c
+index 34ba059a77da..49308ad13c4b 100644
+--- a/drivers/iio/dac/ad5592r.c
++++ b/drivers/iio/dac/ad5592r.c
+@@ -98,7 +98,7 @@ static int ad5592r_reg_read(struct ad5592r_state *st, u8 reg, u16 *value)
+ 	return 0;
+ }
+ 
+-static int ad5593r_gpio_read(struct ad5592r_state *st, u8 *value)
++static int ad5592r_gpio_read(struct ad5592r_state *st, u8 *value)
+ {
+ 	int ret;
+ 
+@@ -121,7 +121,7 @@ static const struct ad5592r_rw_ops ad5592r_rw_ops = {
+ 	.read_adc = ad5592r_read_adc,
+ 	.reg_write = ad5592r_reg_write,
+ 	.reg_read = ad5592r_reg_read,
+-	.gpio_read = ad5593r_gpio_read,
++	.gpio_read = ad5592r_gpio_read,
+ };
+ 
+ static int ad5592r_spi_probe(struct spi_device *spi)
+-- 
+2.20.1
