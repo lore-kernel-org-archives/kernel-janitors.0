@@ -1,35 +1,29 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 28 Apr 2020 13:14:55 +0000
-Subject: [PATCH -next] maple: fix to pass correct device identity to free_irq()
-Message-Id: <20200428131455.69463-1-weiyongjun1@huawei.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sun, 26 Apr 2020 06:36:33 +0000
+Subject: [PATCH bpf-next v3 0/2] Change return code if failed to load
+Message-Id: <20200426063635.130680-1-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org, andrii.nakryiko@gmail.com, dan.carpenter@oracle.com
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-free_irq() expects the same device identity that was passed to
-corresponding request_irq(), otherwise the IRQ is not freed.
+The first patch change return code from -EINVAL to -EOPNOTSUPP,
+the second patch quote the err value returned by bpf_object__load().
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/sh/maple/maple.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3: delete pr_warn for first patch.
+v2: Adjust line breaks at 72 characters for commit log, and pr_warn
+alignment as suggested by dan carpenter. For second patch, add
+Acked-by tag as well.
 
-diff --git a/drivers/sh/maple/maple.c b/drivers/sh/maple/maple.c
-index e5d7fb81ad66..ba32bd9876f0 100644
---- a/drivers/sh/maple/maple.c
-+++ b/drivers/sh/maple/maple.c
-@@ -868,10 +868,10 @@ static int __init maple_bus_init(void)
- 	kmem_cache_destroy(maple_queue_cache);
- 
- cleanup_bothirqs:
--	free_irq(HW_EVENT_VSYNC, 0);
-+	free_irq(HW_EVENT_VSYNC, &maple_unsupported_device);
- 
- cleanup_irq:
--	free_irq(HW_EVENT_MAPLE_DMA, 0);
-+	free_irq(HW_EVENT_MAPLE_DMA, &maple_unsupported_device);
- 
- cleanup_dma:
- 	free_pages((unsigned long) maple_sendbuf, MAPLE_DMA_PAGES);
+Mao Wenan (2):
+  bpf: Change error code when ops is NULL
+  libbpf: Return err if bpf_object__load failed
+
+ kernel/bpf/syscall.c   | 2 +-
+ tools/lib/bpf/libbpf.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
