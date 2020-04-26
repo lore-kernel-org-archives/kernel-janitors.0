@@ -1,42 +1,36 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 30 Apr 2020 07:31:45 +0000
-Subject: [PATCH -next v2] drm/mcde: dsi: Fix return value check in mcde_dsi_bind()
-Message-Id: <20200430073145.52321-1-weiyongjun1@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Apr 2020 19:44:03 +0000
+Subject: [PATCH] iio: dac: vf610: Fix an error handling path in 'vf610_dac_probe()'
+Message-Id: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428141459.87624-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200428141459.87624-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, maitysanchayan@gmail.com, robh@kernel.org
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The of_drm_find_bridge() function returns NULL on error, it doesn't return
-error pointers so this check doesn't work.
+A call to 'vf610_dac_exit()' is missing in an error handling path.
 
-Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 1b983bf42fad ("iio: dac: vf610_dac: Add IIO DAC driver for Vybrid SoC")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v1 - > v2: add fixes and fix the subject
+Un-tested.
+Proposal based on function names and functions called in the remove function
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/iio/dac/vf610_dac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index 7af5ebb0c436..e705afc08c4e 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -1073,10 +1073,9 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
- 			panel = NULL;
+diff --git a/drivers/iio/dac/vf610_dac.c b/drivers/iio/dac/vf610_dac.c
+index 71f8a5c471c4..7f1e9317c3f3 100644
+--- a/drivers/iio/dac/vf610_dac.c
++++ b/drivers/iio/dac/vf610_dac.c
+@@ -223,6 +223,7 @@ static int vf610_dac_probe(struct platform_device *pdev)
+ 	return 0;
  
- 			bridge = of_drm_find_bridge(child);
--			if (IS_ERR(bridge)) {
--				dev_err(dev, "failed to find bridge (%ld)\n",
--					PTR_ERR(bridge));
--				return PTR_ERR(bridge);
-+			if (!bridge) {
-+				dev_err(dev, "failed to find bridge\n");
-+				return -EINVAL;
- 			}
- 		}
- 	}
+ error_iio_device_register:
++	vf610_dac_exit(info);
+ 	clk_disable_unprepare(info->clk);
+ 
+ 	return ret;
+-- 
+2.25.1
