@@ -1,36 +1,29 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Apr 2020 19:44:03 +0000
-Subject: [PATCH] iio: dac: vf610: Fix an error handling path in 'vf610_dac_probe()'
-Message-Id: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 26 Apr 2020 18:16:36 +0000
+Subject: Re: [PATCH V2] bcache: fix potential deadlock problem in btree_gc_coalesce
+Message-Id: <80c2a2c6-01b9-8280-34b4-ff6b9cfaf76a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, maitysanchayan@gmail.com, robh@kernel.org
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Zhiqiang Liu <liuzhiqiang26@huawei.com>, linux-bcache@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Coly Li <colyli@suse.de>, Feilong Lin <linfeilong@huawei.com>, Kent Overstreet <kmo@daterainc.com>, mingfangsen@huawei.com, renxudong1@huawei.com, Wu Bo <wubo40@huawei.com>, yanxiaodan@huawei.com
 
-A call to 'vf610_dac_exit()' is missing in an error handling path.
+> --
+> V1->V2: rewrite commit log (suggested by Coly Li) and rename the patch
 
-Fixes: 1b983bf42fad ("iio: dac: vf610_dac: Add IIO DAC driver for Vybrid SoC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Un-tested.
-Proposal based on function names and functions called in the remove function
----
- drivers/iio/dac/vf610_dac.c | 1 +
- 1 file changed, 1 insertion(+)
+* The patch version description should be placed behind triple dashes.
 
-diff --git a/drivers/iio/dac/vf610_dac.c b/drivers/iio/dac/vf610_dac.c
-index 71f8a5c471c4..7f1e9317c3f3 100644
---- a/drivers/iio/dac/vf610_dac.c
-+++ b/drivers/iio/dac/vf610_dac.c
-@@ -223,6 +223,7 @@ static int vf610_dac_probe(struct platform_device *pdev)
- 	return 0;
- 
- error_iio_device_register:
-+	vf610_dac_exit(info);
- 	clk_disable_unprepare(info->clk);
- 
- 	return ret;
--- 
-2.25.1
+* I would find a shorter version identification (without the arrow)
+  also sufficient.
+
+
+> Fixes: 2a285686c1 ("bcache: btree locking rework")>
+
+Will a longer commit identifier be safer for the final change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
+umentation/process/submitting-patches.rst?id=B2768df24ec400dd4f7fa79542f797=
+e904812053#n183
+
+Regards,
+Markus
