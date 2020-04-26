@@ -1,37 +1,42 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 16 Apr 2020 21:29:20 +0000
-Subject: Re: [PATCH v2] i2c: busses: remove duplicate dev_err()
-Message-Id: <CAHp75Vdd8SzrzXuxTTtkqRBWZuebhumJfv_fBPqdKwe780_ZEQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Apr 2020 20:06:31 +0000
+Subject: [PATCH] media: s5p-g2d: Fix a memory leak in an error handling path in 'g2d_probe()'
+Message-Id: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200416152345.23077-1-zhengdejin5@gmail.com> <6ca3cd57-de73-5327-5773-e08bf12c4a85@web.de>
- <7713a931e4475294de85b74aca298dde8be4242d.camel@perches.com>
-In-Reply-To: <7713a931e4475294de85b74aca298dde8be4242d.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c <linux-i2c@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Vignesh Raghavendra <vigneshr@ti.com>, Thor Thayer <thor.thayer@linux.intel.com>, Tang Bin <tangbin@cmss.chinamobile.com>, Stephen Boyd <swboyd@chromium.org>, Patrick Williams <alpawi@amazon.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Adamski <krzysztof.adamski@nokia.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ard Biesheuvel <ardb@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Barry Song <baohua@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Dong Aisheng <aisheng.dong@nxp.com>, George Cherian <gcherian@marvell.com>, Hans de Goede <hdegoede@redhat.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>
+To: kyungmin.park@samsung.com, kamil@wypas.org, a.hajda@samsung.com, mchehab@kernel.org, s.nawrocki@samsung.com, sachin.kamat@linaro.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 12:28 AM Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2020-04-16 at 20:22 +0200, Markus Elfring wrote:
-> > > it will print an error message by itself when platform_get_irq()
-> > > goes wrong. so don't need dev_err() in here again.
-> >
-> > I suggest to improve the commit message considerably.
->
-> I suggest you ignore Markus' suggestion.
->
-> The commit message is OK.
->
-> The subject _could_ have included "platform_get_irq" something like
->
-> Subject: [PATCH v2] i2c: busses: Remove platform_get_irq()'s duplicated dev_err()
->
-> but I believe it's not important enough to redo.
+Memory allocated with 'v4l2_m2m_init()' must be freed by a corresponding
+call to 'v4l2_m2m_release()'
 
-+1, I think it's good enough.
+Fixes: 5ce60d790a24 ("[media] s5p-g2d: Add DT based discovery support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/s5p-g2d/g2d.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+index 6932fd47071b..ded6fa24677c 100644
+--- a/drivers/media/platform/s5p-g2d/g2d.c
++++ b/drivers/media/platform/s5p-g2d/g2d.c
+@@ -717,12 +717,14 @@ static int g2d_probe(struct platform_device *pdev)
+ 	of_id = of_match_node(exynos_g2d_match, pdev->dev.of_node);
+ 	if (!of_id) {
+ 		ret = -ENODEV;
+-		goto unreg_video_dev;
++		goto free_m2m;
+ 	}
+ 	dev->variant = (struct g2d_variant *)of_id->data;
+ 
+ 	return 0;
+ 
++free_m2m:
++	v4l2_m2m_release(dev->m2m_dev);
+ unreg_video_dev:
+ 	video_unregister_device(dev->vfd);
+ rel_vdev:
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
