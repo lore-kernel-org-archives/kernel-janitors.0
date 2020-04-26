@@ -1,58 +1,54 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 20 Apr 2020 08:40:13 +0000
-Subject: NAK: [PATCH][next] selftests: khugepaged: fix spelling mistake "compount" -> "compound"
-Message-Id: <8a04de20-a94b-433f-c63a-3b912d82e564@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 26 Apr 2020 17:00:54 +0000
+Subject: Re: [PATCH] sound:hdmi:fix without unlocked before return
+Message-Id: <475cb7a9-0992-3a79-a0ad-d3f8922ba3cb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200420083804.65071-1-colin.king@canonical.com>
-In-Reply-To: <20200420083804.65071-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, William Kucharski <william.kucharski@oracle.com>, linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wu Bo <wubo40@huawei.com>, alsa-devel@alsa-project.org
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Nikhil Mahale <nmahale@nvidia.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, Aaron Plattner <aplattner@nvidia.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Feilong Lin <linfeilong@huawei.com>, Libin Yang <libin.yang@linux.intel.com>, Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-On 20/04/2020 09:38, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are three spelling mistakes in various messages. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/testing/selftests/vm/khugepaged.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
-> index 490055290d7f..35f0bfa77ce8 100644
-> --- a/tools/testing/selftests/vm/khugepaged.c
-> +++ b/tools/testing/selftests/vm/khugepaged.c
-> @@ -654,14 +654,14 @@ static void collapse_single_pte_entry_compound(void)
->  		fail("Fail");
->  	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
->  
-> -	printf("Split huge page leaving single PTE mapping compount page...");
-> +	printf("Split huge page leaving single PTE mapping compound page...");
->  	madvise(p + page_size, hpage_pmd_size - page_size, MADV_DONTNEED);
->  	if (!check_huge(p))
->  		success("OK");
->  	else
->  		fail("Fail");
->  
-> -	if (wait_for_scan("Collapse PTE table with single PTE mapping compount page", p))
-> +	if (wait_for_scan("Collapse PTE table with single PTE mapping compound page", p))
->  		fail("Timeout");
->  	else if (check_huge(p))
->  		success("OK");
-> @@ -685,7 +685,7 @@ static void collapse_full_of_compound(void)
->  	else
->  		fail("Fail");
->  
-> -	printf("Split huge page leaving single PTE page table full of compount pages...");
-> +	printf("Split huge page leaving single PTE page table full of compound pages...");
->  	madvise(p, page_size, MADV_NOHUGEPAGE);
->  	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
->  	if (!check_huge(p))
-> 
+> After add sanity check to pass klockwork check,
+> The spdif_mutex should be unlock before return true
+> in check_non_pcm_per_cvt().
 
-I found some more spelling miskages, I'll send a V2.
+How do you think about a wording variant like the following?
 
-Colin
+   Subject:
+   [PATCH v2] ALSA: hda/hdmi: Unlock a mutex always before returning from check_non_pcm_per_cvt()
+
+   Change description (according to a solution alternative):
+   The exception handling was incomplete in an if branch for
+   a null pointer check of the variable “spdif”.
+   Thus assign an appropriate value to the local variable “non_pcm”
+   by using a conditional operator instead.
+   A mutex is also appropriately unlocked then.
+
+
+…
+> +++ b/sound/pci/hda/patch_hdmi.c
+> @@ -1848,8 +1848,10 @@ static bool check_non_pcm_per_cvt(struct hda_codec *codec, hda_nid_t cvt_nid)
+…
+> -	if (WARN_ON(spdif == NULL))
+> +	if (WARN_ON(spdif == NULL)) {
+> +		mutex_unlock(&codec->spdif_mutex);
+>  		return true;
+> +	}
+>  	non_pcm = !!(spdif->status & IEC958_AES0_NONAUDIO);
+
+-	if (WARN_ON(spdif == NULL))
+-		return true;
+-	non_pcm = !!(spdif->status & IEC958_AES0_NONAUDIO);
++	non_pcm = WARN_ON(!spdif)
++		  ? true
++		  : !!(spdif->status & IEC958_AES0_NONAUDIO);
+ 	mutex_unlock(&codec->spdif_mutex);
+ 	return non_pcm;
+ }
+
+
+Would you like to add the tag “Fixes” to the change description?
+
+Regards,
+Markus
