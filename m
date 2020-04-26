@@ -1,58 +1,40 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 09 Apr 2020 03:19:20 +0000
-Subject: Re: [PATCH] virtio-mmio: Delete an error message in vm_find_vqs()
-Message-Id: <03b19e72-0021-dc6b-77c4-ed3c4e13d526@redhat.com>
+From: Mao Wenan <maowenan@huawei.com>
+Date: Sun, 26 Apr 2020 06:36:34 +0000
+Subject: [PATCH bpf-next v3 1/2] bpf: Change error code when ops is NULL
+Message-Id: <20200426063635.130680-2-maowenan@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9e27bc4a-cfa1-7818-dc25-8ad308816b30@web.de>
-In-Reply-To: <9e27bc4a-cfa1-7818-dc25-8ad308816b30@web.de>
+References: <20200426063635.130680-1-maowenan@huawei.com>
+In-Reply-To: <20200426063635.130680-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org, andrii.nakryiko@gmail.com, dan.carpenter@oracle.com
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+There is one error printed when use BPF_MAP_TYPE_SOCKMAP to create map:
+libbpf: failed to create map (name: 'sock_map'): Invalid argument(-22)
 
-On 2020/4/6 上午1:19, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Apr 2020 19:14:10 +0200
->
-> The function “platform_get_irq” can log an error already.
-> Thus omit a redundant message for the exception handling in the
-> calling function.
+This is because CONFIG_BPF_STREAM_PARSER is not set, and
+bpf_map_types[type] return invalid ops. It is not clear to show the
+cause of config missing with return code -EINVAL.
 
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ kernel/bpf/syscall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It looks to me that not all error path of platform_get_irq() were loggd.
-
-And git grep told me there're other users of platform_get_irq() that 
-check and log by themselves.
-
-Thanks
-
-
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/virtio/virtio_mmio.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-> index 97d5725fd9a2..9d16aaffca9d 100644
-> --- a/drivers/virtio/virtio_mmio.c
-> +++ b/drivers/virtio/virtio_mmio.c
-> @@ -466,10 +466,8 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   	int irq = platform_get_irq(vm_dev->pdev, 0);
->   	int i, err, queue_idx = 0;
->
-> -	if (irq < 0) {
-> -		dev_err(&vdev->dev, "Cannot get IRQ resource\n");
-> +	if (irq < 0)
->   		return irq;
-> -	}
->
->   	err = request_irq(irq, vm_interrupt, IRQF_SHARED,
->   			dev_name(&vdev->dev), vm_dev);
-> --
-> 2.26.0
->
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index d85f37239540..8ae78c98d91e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -113,7 +113,7 @@ static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
+ 	type = array_index_nospec(type, ARRAY_SIZE(bpf_map_types));
+ 	ops = bpf_map_types[type];
+ 	if (!ops)
+-		return ERR_PTR(-EINVAL);
++		return ERR_PTR(-EOPNOTSUPP);
+ 
+ 	if (ops->map_alloc_check) {
+ 		err = ops->map_alloc_check(attr);
+-- 
+2.20.1
