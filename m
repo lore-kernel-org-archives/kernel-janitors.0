@@ -1,58 +1,63 @@
-From: Alan Maguire <alan.maguire@oracle.com>
-Date: Thu, 02 Apr 2020 15:24:10 +0000
-Subject: Re: [PATCH][next] kunit: fix dereference of suite before it has been null checked
-Message-Id: <alpine.LRH.2.21.2004021623270.21551@localhost>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Apr 2020 19:03:07 +0000
+Subject: [PATCH] firmware: stratix10-svc: Fix some error handling paths in 'stratix10_svc_drv_probe()'
+Message-Id: <20200426190307.40840-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200402150314.568044-1-colin.king@canonical.com>
-In-Reply-To: <20200402150314.568044-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Brendan Higgins <brendanhiggins@google.com>, Frank Rowand <frank.rowand@sony.com>, Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 2 Apr 2020, Colin King wrote:
+If an error occurs after calling 'kfifo_alloc()', the allocated memory
+should be freed with 'kfifo_free()', as already done in the remove
+function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer 'suite' is dereferenced when variable success
-> is being initialized before the pointer is null checked. Fix this
-> by only dereferencing suite after is has been null checked.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: e2219db280e3 ("kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results display")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/stratix10-svc.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-
-Thanks for spotting this!
-
-Alan
-
-> ---
->  lib/kunit/debugfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-> index 9214c493d8b7..05547642f37c 100644
-> --- a/lib/kunit/debugfs.c
-> +++ b/lib/kunit/debugfs.c
-> @@ -52,12 +52,13 @@ static void debugfs_print_result(struct seq_file *seq,
->  static int debugfs_print_results(struct seq_file *seq, void *v)
->  {
->  	struct kunit_suite *suite = (struct kunit_suite *)seq->private;
-> -	bool success = kunit_suite_has_succeeded(suite);
-> +	bool success;
->  	struct kunit_case *test_case;
->  
->  	if (!suite || !suite->log)
->  		return 0;
->  
-> +	success = kunit_suite_has_succeeded(suite);
->  	seq_printf(seq, "%s", suite->log);
->  
->  	kunit_suite_for_each_test_case(suite, test_case)
-> -- 
-> 2.25.1
-> 
-> 
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index d5f0769f3761..cc9df9589195 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1043,24 +1043,31 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 
+ 	/* add svc client device(s) */
+ 	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
+-	if (!svc)
+-		return -ENOMEM;
++	if (!svc) {
++		ret = -ENOMEM;
++		goto err_free_kfifo;
++	}
+ 
+ 	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
+ 	if (!svc->stratix10_svc_rsu) {
+ 		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_free_kfifo;
+ 	}
+ 
+ 	ret = platform_device_add(svc->stratix10_svc_rsu);
+ 	if (ret) {
+ 		platform_device_put(svc->stratix10_svc_rsu);
+-		return ret;
++		goto err_free_kfifo;
+ 	}
+ 	dev_set_drvdata(dev, svc);
+ 
+ 	pr_info("Intel Service Layer Driver Initialized\n");
+ 
++	return 0;
++
++err_free_kfifo:
++	kfifo_free(&controller->svc_fifo);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
