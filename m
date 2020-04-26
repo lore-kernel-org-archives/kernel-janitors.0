@@ -1,24 +1,35 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Wed, 22 Apr 2020 08:30:08 +0000
-Subject: [PATCH bpf-next 0/2] Change return code if failed to load object
-Message-Id: <20200422083010.28000-1-maowenan@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Apr 2020 19:16:30 +0000
+Subject: [PATCH] gpu: host1x: Clean up debugfs in error handling path in 'host1x_probe()'
+Message-Id: <20200426191630.41290-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-The first patch change return code from -EINVAL to -EOPNOTSUPP, 
-the second patch quote the err value returned by bpf_object__load().  
+'host1x_debug_init()' must be reverted in an error handling path.
 
-Mao Wenan (2):
-  bpf: Change error code when ops is NULL
-  libbpf: Return err if bpf_object__load failed
+This is already fixed in the remove function since commit 44156eee91ba
+("gpu: host1x: Clean up debugfs on removal")
 
- kernel/bpf/syscall.c   | 8 +++++---
- tools/lib/bpf/libbpf.c | 2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/host1x/dev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 388bcc2889aa..be46554968af 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -435,6 +435,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ deinit_intr:
++	host1x_debug_deinit(host);
+ 	host1x_intr_deinit(host);
+ deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
 -- 
-2.20.1
+2.25.1
