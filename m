@@ -1,29 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 28 Apr 2020 16:15:26 +0000
-Subject: Re: [PATCH] drm/mcde: dsi: Fix a return value check in mcde_dsi_bind()
-Message-Id: <1900157b-39fe-e6fe-6fe7-26053a32f507@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 12:11:10 +0000
+Subject: [PATCH net-next] octeontx2-pf: Fix error return code in otx2_probe()
+Message-Id: <20200427121110.8446-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> In case of error, the function of_drm_find_bridge() returns NULL pointer
-> not ERR_PTR().
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Such information is helpful.
+Fixes: 5a6d7c9daef3 ("octeontx2-pf: Mailbox communication with AF")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-
-> The IS_ERR() test in the return value check should be
-> replaced with NULL test.
-
-* Would you like to convert this description into an imperative wording?
-
-* Please fix the patch subject according to a function name.
-
-* How do you think about to add the tag “Fixes” to the commit message
-  because of an adjustment for the error detection?
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index 411e5ea1031e..64786568af0d 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -1856,13 +1856,17 @@ static int otx2_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	num_vec = pci_msix_vec_count(pdev);
+ 	hw->irq_name = devm_kmalloc_array(&hw->pdev->dev, num_vec, NAME_SIZE,
+ 					  GFP_KERNEL);
+-	if (!hw->irq_name)
++	if (!hw->irq_name) {
++		err = -ENOMEM;
+ 		goto err_free_netdev;
++	}
+ 
+ 	hw->affinity_mask = devm_kcalloc(&hw->pdev->dev, num_vec,
+ 					 sizeof(cpumask_var_t), GFP_KERNEL);
+-	if (!hw->affinity_mask)
++	if (!hw->affinity_mask) {
++		err = -ENOMEM;
+ 		goto err_free_netdev;
++	}
+ 
+ 	/* Map CSRs */
+ 	pf->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
