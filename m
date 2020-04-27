@@ -1,24 +1,35 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 27 Apr 2020 15:18:05 +0000
-Subject: Re: [PATCH][next] btrfs: fix check for memory allocation failure of ret->path
-Message-Id: <20200427151805.GC18421@twin.jikos.cz>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 11:08:29 +0000
+Subject: [PATCH -next] gpio: mlxbf2: fix return value check in mlxbf2_gpio_get_lock_res()
+Message-Id: <20200427110829.154785-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200421124703.149466-1-colin.king@canonical.com>
-In-Reply-To: <20200421124703.149466-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 21, 2020 at 01:47:03PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the memory allocation failure check for ret->path is checking
-> that ret is null rather than ret->path.  Fix this by checking ret->path
-> instead.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: bd8bdc532152 ("btrfs: backref: introduce the skeleton of btrfs_backref_iter")
+In case of error, the function devm_ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-As this is still in development branch, fixup folded in. Thanks.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-mlxbf2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
+index 240b488609ac..fca6a50d9308 100644
+--- a/drivers/gpio/gpio-mlxbf2.c
++++ b/drivers/gpio/gpio-mlxbf2.c
+@@ -109,8 +109,8 @@ static int mlxbf2_gpio_get_lock_res(struct platform_device *pdev)
+ 	}
+ 
+ 	yu_arm_gpio_lock_param.io = devm_ioremap(dev, res->start, size);
+-	if (IS_ERR(yu_arm_gpio_lock_param.io))
+-		ret = PTR_ERR(yu_arm_gpio_lock_param.io);
++	if (!yu_arm_gpio_lock_param.io)
++		ret = -ENOMEM;
+ 
+ exit:
+ 	mutex_unlock(yu_arm_gpio_lock_param.lock);
