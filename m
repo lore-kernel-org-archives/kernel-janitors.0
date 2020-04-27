@@ -1,38 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 14 Apr 2020 14:35:02 +0000
-Subject: [PATCH][next] staging: vt6656: remove redundant assignment to variable ed_inx
-Message-Id: <20200414143502.237803-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Apr 2020 18:04:23 +0000
+Subject: [PATCH] usb: gadget: net2272: Fix a memory leak in an error handling path in 'net2272_plat_probe()'
+Message-Id: <20200427180423.88514-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, colin.king@canonical.com, stern@rowland.harvard.edu, arnd@arndb.de, andrzej.p@samsung.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+'dev' is allocated in 'net2272_probe_init()'. It must be freed in the error
+handling path, as already done in the remove function (i.e.
+'net2272_plat_remove()')
 
-The variable ed_inx is being initialized with a value that is never
-read and it is being updated later with a new value. The initialization
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 90fccb529d24 ("usb: gadget: Gadget directory cleanup - group UDC drivers")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/vt6656/baseband.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/net2272.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
-index 512d2a5b0b8e..a8bd7f9f8ada 100644
---- a/drivers/staging/vt6656/baseband.c
-+++ b/drivers/staging/vt6656/baseband.c
-@@ -655,7 +655,7 @@ void vnt_update_pre_ed_threshold(struct vnt_private *priv, int scanning)
- 	const struct vnt_threshold *threshold = NULL;
- 	u8 length;
- 	u8 cr_201, cr_206;
--	u8 ed_inx = priv->bb_pre_ed_index;
-+	u8 ed_inx;
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+index a8273b589456..5af0fe9c61d7 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2647,6 +2647,8 @@ net2272_plat_probe(struct platform_device *pdev)
+  err_req:
+ 	release_mem_region(base, len);
+  err:
++	kfree(dev);
++
+ 	return ret;
+ }
  
- 	switch (priv->rf_type) {
- 	case RF_AL2230:
 -- 
 2.25.1
