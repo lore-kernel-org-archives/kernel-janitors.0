@@ -1,38 +1,36 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 16 Apr 2020 06:53:39 +0000
-Subject: Re: [PATCH V2] crypto: marvell/octeontx - Add missing '\n' in log messages
-Message-Id: <20200416065339.GK7901@gondor.apana.org.au>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 10:44:03 +0000
+Subject: [PATCH net-next] ath11k: remove redundant dev_err call in ath11k_ahb_probe()
+Message-Id: <20200427104403.14598-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411120633.22150-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411120633.22150-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com, davem@davemloft.net, lbartosik@marvell.com, colin.king@canonical.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, ath11k@lists.infradead.org
 
-On Sat, Apr 11, 2020 at 02:06:33PM +0200, Christophe JAILLET wrote:
-> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
-> 
-> While at it, I've introduced a few pr_cont that looked logical to me.
-> 
-> Fixes: 10b4f09491bf ("crypto: marvell - add the Virtual Function driver for CPT")
-> Fixes: d9110b0b01ff ("crypto: marvell - add support for OCTEON TX CPT engine")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> V2: remove a pr_cont after a pr_debug
->     avoid repeating 'engine_group' in a message
-> ---
->  .../crypto/marvell/octeontx/otx_cptpf_main.c  |  4 +-
->  .../crypto/marvell/octeontx/otx_cptpf_mbox.c  | 12 +--
->  .../crypto/marvell/octeontx/otx_cptpf_ucode.c | 95 ++++++++++---------
->  .../crypto/marvell/octeontx/otx_cptvf_algs.c  |  6 +-
->  .../crypto/marvell/octeontx/otx_cptvf_main.c  | 12 +--
->  .../marvell/octeontx/otx_cptvf_reqmgr.c       | 10 +-
->  6 files changed, 70 insertions(+), 69 deletions(-)
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/wireless/ath/ath11k/ahb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
+index e7e3e64c07aa..7d3d1cc6f39f 100644
+--- a/drivers/net/wireless/ath/ath11k/ahb.c
++++ b/drivers/net/wireless/ath/ath11k/ahb.c
+@@ -897,10 +897,8 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mem = devm_ioremap_resource(&pdev->dev, mem_res);
+-	if (IS_ERR(mem)) {
+-		dev_err(&pdev->dev, "ioremap error\n");
++	if (IS_ERR(mem))
+ 		return PTR_ERR(mem);
+-	}
+ 
+ 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret) {
