@@ -1,17 +1,31 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 07 Apr 2020 14:45:55 +0000
-Subject: Re: [PATCH RT] signal: Prevent double-free of user struct
-Message-Id: <7be9cee2-6db5-3724-c6e5-58ff51680e36@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 13:22:20 +0000
+Subject: [PATCH -next v2] tty: vcc: Fix error return code in vcc_probe()
+Message-Id: <20200427132220.22028-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Matt Fleming <matt@codeblueprint.co.uk>, linux-rt@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Wagner <wagi@monom.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
->  refcount_t: underflow; use-after-free.
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-I suggest to add the tag “Fixes” to the final change description.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: fix module name in subject
+---
+ drivers/tty/vcc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Markus
+diff --git a/drivers/tty/vcc.c b/drivers/tty/vcc.c
+index d2a1e1228c82..9ffd42e333b8 100644
+--- a/drivers/tty/vcc.c
++++ b/drivers/tty/vcc.c
+@@ -605,6 +605,7 @@ static int vcc_probe(struct vio_dev *vdev, const struct vio_device_id *id)
+ 	port->index = vcc_table_add(port);
+ 	if (port->index = -1) {
+ 		pr_err("VCC: no more TTY indices left for allocation\n");
++		rv = -ENOMEM;
+ 		goto free_ldc;
+ 	}
