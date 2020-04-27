@@ -1,43 +1,48 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 15 Apr 2020 14:56:46 +0000
-Subject: Re: [PATCH] KVM: remove redundant assignment to variable r
-Message-Id: <6d66cb24-b517-1bc3-15c3-9b302215febf@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Apr 2020 06:18:03 +0000
+Subject: [PATCH] net/sonic: Fix a resource leak in an error handling path in 'jazz_sonic_probe()'
+Message-Id: <20200427061803.53857-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410113526.13822-1-colin.king@canonical.com>
-In-Reply-To: <20200410113526.13822-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, kvm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: davem@davemloft.net, fthain@telegraphics.com.au, tsbogend@alpha.franken.de, jgarzik@pobox.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 10/04/20 13:35, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable r is being assigned  with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  virt/kvm/kvm_main.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 74bdb7bf3295..03571f6acaa8 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -3160,7 +3160,6 @@ static long kvm_vcpu_ioctl(struct file *filp,
->  	case KVM_SET_REGS: {
->  		struct kvm_regs *kvm_regs;
->  
-> -		r = -ENOMEM;
->  		kvm_regs = memdup_user(argp, sizeof(*kvm_regs));
->  		if (IS_ERR(kvm_regs)) {
->  			r = PTR_ERR(kvm_regs);
-> 
+A call to 'dma_alloc_coherent()' is hidden in 'sonic_alloc_descriptors()',
+called from 'sonic_probe1()'.
 
-Queued, thanks.
+This is correctly freed in the remove function, but not in the error
+handling path of the probe function.
+Fix it and add the missing 'dma_free_coherent()' call.
 
-Paolo
+While at it, rename a label in order to be slightly more informative.
+
+Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/natsemi/jazzsonic.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/natsemi/jazzsonic.c b/drivers/net/ethernet/natsemi/jazzsonic.c
+index bfa0c0d39600..8b018ed37b1b 100644
+--- a/drivers/net/ethernet/natsemi/jazzsonic.c
++++ b/drivers/net/ethernet/natsemi/jazzsonic.c
+@@ -208,11 +208,13 @@ static int jazz_sonic_probe(struct platform_device *pdev)
+ 
+ 	err = register_netdev(dev);
+ 	if (err)
+-		goto out1;
++		goto undo_probe1;
+ 
+ 	return 0;
+ 
+-out1:
++undo_probe1:
++	dma_free_coherent(lp->device, SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
++			  lp->descriptors, lp->descriptors_laddr);
+ 	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
+ out:
+ 	free_netdev(dev);
+-- 
+2.25.1
