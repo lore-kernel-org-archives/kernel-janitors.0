@@ -1,39 +1,64 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 28 Apr 2020 23:17:03 +0000
-Subject: Re: [PATCH v3] checkpatch: add dedicated checker for 'Fixes:' tag
-Message-Id: <a2d7dbae193800ce430321d3fcc71ab5d1a5ed03.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Apr 2020 20:21:16 +0000
+Subject: [PATCH] usb: phy: twl6030-usb: Fix a resource leak in an error handling path in 'twl6030_usb_probe()
+Message-Id: <20200427202116.94380-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428020223.GA28074@udknight>
-         <b452dc29fb553fa5993b90131dcdbc04ed87532e.camel@perches.com>
-In-Reply-To: <b452dc29fb553fa5993b90131dcdbc04ed87532e.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wang YanQing <udknight@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Markus.Elfring@web.de, mcroce@redhat.com
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 2020-04-28 at 09:10 -0700, Joe Perches wrote:
-> On Tue, 2020-04-28 at 10:02 +0800, Wang YanQing wrote:
-> > According to submitting-patches.rst, 'Fixes:' tag has a little
-> > stricter condition about the one line summary:
-> > ...
-> > Do not split the tag across multiple
-> > lines, tags are exempt from the "wrap at 75 columns" rule in order to simplify
-> > parsing scripts
-> > ...
-> > 
-> > And there is no 'Fixes:' tag format checker in checkpatch to check
-> > the commit id length too, so let's add dedicated checker to check
-> > these conditions for 'Fixes:' tag.
-> 
-> There's no need to duplicate functionality like this.
-> Put this additional Fixes: logic into the existing block.
-> 
-> (and don't take advise from Markus too seriously when it
-> comes to English grammar or wording.  He is not an arbiter
-> of taste for this code)
-> 
+A call to 'regulator_get()' is hidden in 'twl6030_usb_ldo_init()'. A
+corresponding put must be performed in the error handling path, as
+already done in the remove function.
 
-btw:  I suggested this patch last year.
+While at it, also move a 'free_irq()' call in the error handling path in
+order to be consistent.
 
-https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Maybe adding a 'twl6030_usb_ldo_uninit()' function would be more explicit.
+---
+ drivers/usb/phy/phy-twl6030-usb.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/phy/phy-twl6030-usb.c b/drivers/usb/phy/phy-twl6030-usb.c
+index bfebf1f2e991..9a7e655d5280 100644
+--- a/drivers/usb/phy/phy-twl6030-usb.c
++++ b/drivers/usb/phy/phy-twl6030-usb.c
+@@ -377,7 +377,7 @@ static int twl6030_usb_probe(struct platform_device *pdev)
+ 	if (status < 0) {
+ 		dev_err(&pdev->dev, "can't get IRQ %d, err %d\n",
+ 			twl->irq1, status);
+-		return status;
++		goto err_put_regulator;
+ 	}
+ 
+ 	status = request_threaded_irq(twl->irq2, NULL, twl6030_usb_irq,
+@@ -386,8 +386,7 @@ static int twl6030_usb_probe(struct platform_device *pdev)
+ 	if (status < 0) {
+ 		dev_err(&pdev->dev, "can't get IRQ %d, err %d\n",
+ 			twl->irq2, status);
+-		free_irq(twl->irq1, twl);
+-		return status;
++		goto err_free_irq1;
+ 	}
+ 
+ 	twl->asleep = 0;
+@@ -396,6 +395,13 @@ static int twl6030_usb_probe(struct platform_device *pdev)
+ 	dev_info(&pdev->dev, "Initialized TWL6030 USB module\n");
+ 
+ 	return 0;
++
++err_free_irq1:
++	free_irq(twl->irq1, twl);
++err_put_regulator:
++	regulator_put(twl->usb3v3);
++
++	return status;
+ }
+ 
+ static int twl6030_usb_remove(struct platform_device *pdev)
+-- 
+2.25.1
