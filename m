@@ -1,47 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 20 Apr 2020 22:12:29 +0000
-Subject: [PATCH] leds: trigger: remove redundant assignment to variable ret
-Message-Id: <20200420221229.99150-1-colin.king@canonical.com>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Mon, 27 Apr 2020 12:13:36 +0000
+Subject: Re: [PATCH] leds: trigger: remove redundant assignment to variable ret
+Message-Id: <20200427121336.GB544@duo.ucw.cz>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="l76fUT7nc3MelDdI"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200420221229.99150-1-colin.king@canonical.com>
+In-Reply-To: <20200420221229.99150-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The variable ret is being assigned with a value that is never read
-and it is being updated later with a new value. The initialization is
-redundant and can be removed.
+--l76fUT7nc3MelDdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/leds/trigger/ledtrig-timer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon 2020-04-20 23:12:29, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The variable ret is being assigned with a value that is never read
+> and it is being updated later with a new value. The initialization is
+> redundant and can be removed.
+>=20
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
-index 34a68604c46c..b4688d1d9d2b 100644
---- a/drivers/leds/trigger/ledtrig-timer.c
-+++ b/drivers/leds/trigger/ledtrig-timer.c
-@@ -28,7 +28,7 @@ static ssize_t led_delay_on_store(struct device *dev,
- {
- 	struct led_classdev *led_cdev = led_trigger_get_led(dev);
- 	unsigned long state;
--	ssize_t ret = -EINVAL;
-+	ssize_t ret;
- 
- 	ret = kstrtoul(buf, 10, &state);
- 	if (ret)
-@@ -53,7 +53,7 @@ static ssize_t led_delay_off_store(struct device *dev,
- {
- 	struct led_classdev *led_cdev = led_trigger_get_led(dev);
- 	unsigned long state;
--	ssize_t ret = -EINVAL;
-+	ssize_t ret;
- 
- 	ret = kstrtoul(buf, 10, &state);
- 	if (ret)
--- 
-2.25.1
+Thanks, applied.
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--l76fUT7nc3MelDdI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXqbMcAAKCRAw5/Bqldv6
+8o7rAKCm8ntQEIFtZ61dXMpp4NXClLfyAQCfZtfwQz4pO6W+FS3+iyVfQR//BYc=
+=omzN
+-----END PGP SIGNATURE-----
+
+--l76fUT7nc3MelDdI--
