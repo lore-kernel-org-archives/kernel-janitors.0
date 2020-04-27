@@ -1,34 +1,16 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 10:43:22 +0000
-Subject: [PATCH net-next] dpaa2-eth: fix error return code in setup_dpni()
-Message-Id: <20200427104322.11214-1-weiyongjun1@huawei.com>
+From: Rent and Drive <nicolej@easy2access.co.za>
+Date: Mon, 27 Apr 2020 22:21:51 +0000
+Subject: =?utf-8?B?Q29weSBvZjog5pGG6ISx5peg6IGK77yM5Lqr5Y+X5LmQ6Laj77yM5YGl5bq3?=  =?utf-8?B?5aix5qiC77yM5a6M
+Message-Id: <735902c839f1328ec29eb44e01722ba4@www.rentanddrive.co.za>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ioana Ciornei <ioana.ciornei@nxp.com>, Ioana Radulescu <ruxandra.radulescu@nxp.com>, Russell King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+This is a copy of the following message you sent to  via Rent and Drive
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This is an enquiry email via http://www.rentanddrive.co.za/ from:
+段焦焦 <kernel-janitors@vger.kernel.org>
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index 8ec435ba7d27..11accab81ea1 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -2702,8 +2702,10 @@ static int setup_dpni(struct fsl_mc_device *ls_dev)
- 
- 	priv->cls_rules = devm_kzalloc(dev, sizeof(struct dpaa2_eth_cls_rule) *
- 				       dpaa2_eth_fs_count(priv), GFP_KERNEL);
--	if (!priv->cls_rules)
-+	if (!priv->cls_rules) {
-+		err = -ENOMEM;
- 		goto close;
-+	}
- 
- 	return 0;
+《現淦余乐馆网直营》，2020感恩回馈註测绑咔即领18圜红包，更有渞侟100鎹50元，秒提現，大额無忧，www.1641999 。
