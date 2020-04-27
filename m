@@ -1,40 +1,49 @@
-From: Sayali Lokhande <sayalil@codeaurora.org>
-Date: Wed, 29 Apr 2020 16:53:26 +0000
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: Avoid double lock for cp_rwsem during checkpoint
-Message-Id: <71c37cbb-03cd-134f-8b68-cf06bfa05317@codeaurora.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 09:40:52 +0000
+Subject: [PATCH net-next] net: ll_temac: Fix return value check in temac_probe()
+Message-Id: <20200427094052.181554-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07a820a2-b3b3-32ca-75ce-ceaca106d2c6@web.de>
- <433d4ad5-22e5-fd2b-cab3-9752ed0c66fb@codeaurora.org>
- <20200429124402.GP2014@kadam>
-In-Reply-To: <20200429124402.GP2014@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Markus Elfring <Markus.Elfring@web.de>, Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: michal.simek@xilinx.com, esben@geanix.com, andrew@lunn.ch, ynezz@true.cz
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
+In case of error, the function devm_ioremap() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should
+be replaced with NULL test.
 
-On 4/29/2020 6:14 PM, Dan Carpenter wrote:
-> On Wed, Apr 29, 2020 at 10:28:36AM +0530, Sayali Lokhande wrote:
->> Hi Markus
->>
->> On 4/27/2020 4:08 PM, Markus Elfring wrote:
->>>> … This results in deadlock as
->>>> iput() tries to hold cp_rwsem, which is already held at the
->>>> beginning by checkpoint->block_operations().
->>> Will another imperative wording become helpful besides the provided information
->>> for this change description?
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?idj8b55ed4056ea5559ebe4f6a4b247f627870d4c#n151
->>>
->>> Would you like to add the tag “Fixes” because of adjustments
->>> for the data synchronisation?
->> I couldn't find any past commit which suits to be added under "Fixes" here.
->> Let me know if you have any other comment.
-> This looks really old.  Maybe commit 399368372ed9 ("f2fs: introduce a
-> new global lock scheme")?
-Yes. Let me update it in Fixes tag in V3 and post it. Thanks for 
-pointing it.
->
-> regards,
-> dan carpenter
->
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index 3e313e71ae36..929244064abd 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -1410,9 +1410,9 @@ static int temac_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	lp->regs = devm_ioremap(&pdev->dev, res->start,
+ 					resource_size(res));
+-	if (IS_ERR(lp->regs)) {
++	if (!lp->regs) {
+ 		dev_err(&pdev->dev, "could not map TEMAC registers\n");
+-		return PTR_ERR(lp->regs);
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Select register access functions with the specified
+@@ -1505,10 +1505,10 @@ static int temac_probe(struct platform_device *pdev)
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		lp->sdma_regs = devm_ioremap(&pdev->dev, res->start,
+ 						     resource_size(res));
+-		if (IS_ERR(lp->sdma_regs)) {
++		if (!lp->sdma_regs) {
+ 			dev_err(&pdev->dev,
+ 				"could not map DMA registers\n");
+-			return PTR_ERR(lp->sdma_regs);
++			return -ENOMEM;
+ 		}
+ 		if (pdata->dma_little_endian) {
+ 			lp->dma_in = temac_dma_in32_le;
