@@ -1,52 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 20 Apr 2020 08:38:04 +0000
-Subject: [PATCH][next] selftests: khugepaged: fix spelling mistake "compount" -> "compound"
-Message-Id: <20200420083804.65071-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 12:12:28 +0000
+Subject: [PATCH net-next] ice: Fix error return code in ice_add_prof()
+Message-Id: <20200427121228.12241-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, William Kucharski <william.kucharski@oracle.com>, linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fix to return a error code from the error handling case
+instead of 0, as done elsewhere in this function.
 
-There are three spelling mistakes in various messages. Fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- tools/testing/selftests/vm/khugepaged.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
-index 490055290d7f..35f0bfa77ce8 100644
---- a/tools/testing/selftests/vm/khugepaged.c
-+++ b/tools/testing/selftests/vm/khugepaged.c
-@@ -654,14 +654,14 @@ static void collapse_single_pte_entry_compound(void)
- 		fail("Fail");
- 	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
+diff --git a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
+index 42bac3ec5526..e7a2671222d2 100644
+--- a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
++++ b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
+@@ -2962,8 +2962,10 @@ ice_add_prof(struct ice_hw *hw, enum ice_block blk, u64 id, u8 ptypes[],
  
--	printf("Split huge page leaving single PTE mapping compount page...");
-+	printf("Split huge page leaving single PTE mapping compound page...");
- 	madvise(p + page_size, hpage_pmd_size - page_size, MADV_DONTNEED);
- 	if (!check_huge(p))
- 		success("OK");
- 	else
- 		fail("Fail");
+ 	/* add profile info */
+ 	prof = devm_kzalloc(ice_hw_to_dev(hw), sizeof(*prof), GFP_KERNEL);
+-	if (!prof)
++	if (!prof) {
++		status = ICE_ERR_NO_MEMORY;
+ 		goto err_ice_add_prof;
++	}
  
--	if (wait_for_scan("Collapse PTE table with single PTE mapping compount page", p))
-+	if (wait_for_scan("Collapse PTE table with single PTE mapping compound page", p))
- 		fail("Timeout");
- 	else if (check_huge(p))
- 		success("OK");
-@@ -685,7 +685,7 @@ static void collapse_full_of_compound(void)
- 	else
- 		fail("Fail");
- 
--	printf("Split huge page leaving single PTE page table full of compount pages...");
-+	printf("Split huge page leaving single PTE page table full of compound pages...");
- 	madvise(p, page_size, MADV_NOHUGEPAGE);
- 	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
- 	if (!check_huge(p))
--- 
-2.25.1
+ 	prof->profile_cookie = id;
+ 	prof->prof_id = prof_id;
