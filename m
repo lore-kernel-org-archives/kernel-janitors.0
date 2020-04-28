@@ -1,39 +1,39 @@
-From: Wang YanQing <udknight@gmail.com>
-Date: Tue, 28 Apr 2020 16:18:31 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 28 Apr 2020 23:17:03 +0000
 Subject: Re: [PATCH v3] checkpatch: add dedicated checker for 'Fixes:' tag
-Message-Id: <20200428161831.GB30042@udknight>
+Message-Id: <a2d7dbae193800ce430321d3fcc71ab5d1a5ed03.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200428020223.GA28074@udknight>
- <38e1a926-53a6-bda6-cb07-2614f4c682ba@web.de>
-In-Reply-To: <38e1a926-53a6-bda6-cb07-2614f4c682ba@web.de>
+         <b452dc29fb553fa5993b90131dcdbc04ed87532e.camel@perches.com>
+In-Reply-To: <b452dc29fb553fa5993b90131dcdbc04ed87532e.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wang YanQing <udknight@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Markus.Elfring@web.de, mcroce@redhat.com
 
-T24gVHVlLCBBcHIgMjgsIDIwMjAgYXQgMTI6NTI6NTlQTSArMDIwMCwgTWFya3VzIEVsZnJpbmcg
-d3JvdGU6Cj4gPiBBbmQgdGhlcmUgaXMgbm8gJ0ZpeGVzOicgdGFnIGZvcm1hdCBjaGVja2VyIGlu
-IGNoZWNrcGF0Y2gKPiAKPiBJIGhhdmUgdGFrZW4gYW5vdGhlciBsb29rIGF0IGNvcnJlc3BvbmRp
-bmcgaW1wbGVtZW50YXRpb24gZGV0YWlscy4KPiBXaWxsIHByb2dyYW1taW5nIGNoYWxsZW5nZXMg
-Z2V0IGFueSBtb3JlIGF0dGVudGlvbj8KPiAKPiAKPiA+IHRvIGNoZWNrIHRoZSBjb21taXQgaWQg
-bGVuZ3RoIHRvbywKPiAKPiBUaGUgbWVudGlvbmVkIHNjcmlwdCBjb250YWlucyB0aGUgZm9sbG93
-aW5nIGluZm9ybWF0aW9uLgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
-ZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQvdHJlZS9zY3JpcHRzL2NoZWNrcGF0Y2gucGw/
-aWSyNDBmOTYwYWZiOTAwZTU5MTEyZWJjZmE1YTc1OWJiMGE4NWExNGUjbjI4MTgKPiAKPiAjIENo
-ZWNrIGZvciBnaXQgaWQgY29tbWl0IGxlbmd0aCBhbmQgaW1wcm9wZXJseSBmb3JtZWQgY29tbWl0
-IGRlc2NyaXB0aW9ucwo+IAo+IAo+ID4gc28gbGV0J3MgYWRkIGRlZGljYXRlZCBjaGVja2VyIHRv
-IGNoZWNrIHRoZXNlIGNvbmRpdGlvbnMgZm9yICdGaXhlczonIHRhZy4KPiAKPiBIb3cgZG8geW91
-IHRoaW5rIGFib3V0IHRvIHJlY29uc2lkZXIgdGhlIHVzYWdlIG9mIHRoZSB3b3JkIOKAnGNoZWNr
-ZXLigJ0KPiBhdCBzcGVjaWZpYyBwbGFjZXM/CgpZZXMsIEkgd2lsbCB1c2UgdGhlIHdvcmQgImNo
-ZWNrIiBvbmx5IGluIGxhdGVyIHZlcnNpb24uCgo+IAo+IAo+ID4gKwkJICAgIG15ICRpZCA9ICcw
-MTIzNDU2Nzg5YWInOwo+ID4gKwkJICAgIG15ICRvcmlnX2Rlc2MgPSAiY29tbWl0IGRlc2NyaXB0
-aW9uIjsKPiAKPiAqIERvIHlvdSB0cnkgdG8gZXh0ZW5kIHRoZSBleGlzdGluZyBzb2Z0d2FyZSBh
-bmFseXNpcyBhcHByb2FjaCDigJxHSVRfQ09NTUlUX0lE4oCdPwo+IAo+ICogV291bGQgeW91IGxp
-a2UgdG8gYXZvaWQgdGhlIGRldmVsb3BtZW50IG9mIGR1cGxpY2F0ZSBQZXJsIGNvZGU/CgpGaXhl
-czogbGluZXMgZG9uJ3QgbmVlZCB0byBoYXZlIGEgImNvbW1pdCIgcHJlZml4IGJlZm9yZSB0aGUg
-Y29tbWl0IGlkLCB0aGUgZGVzY3JpcHRpb24KaW4gbm9ybWFsIGNvbW1pdCBpZCBjb3VsZCBhY3Jv
-c3MgbXVsdGlwbGUgbGluZXMsIGFuZCB3ZSBkb24ndCBuZWVkIHRvIGNvbnNpZGVyIHRoZQokY29t
-bWl0X2xvZ19wb3NzaWJsZV9zdGFja19kdW1wIGZvciAnRml4ZXM6JyB0YWcgbGluZS4gSSBtZWFu
-IGl0IHdpbGwgbWFrZSB0aGUgR0lUX0NPTU1JVF9JRApjb2RlIGJlY29tZSBoYXJkZXIgdG8gcmVh
-ZCBhbmQgbWFpbnRhaW4uCgo+IAo+IFJlZ2FyZHMsCj4gTWFya3Vz
+On Tue, 2020-04-28 at 09:10 -0700, Joe Perches wrote:
+> On Tue, 2020-04-28 at 10:02 +0800, Wang YanQing wrote:
+> > According to submitting-patches.rst, 'Fixes:' tag has a little
+> > stricter condition about the one line summary:
+> > ...
+> > Do not split the tag across multiple
+> > lines, tags are exempt from the "wrap at 75 columns" rule in order to simplify
+> > parsing scripts
+> > ...
+> > 
+> > And there is no 'Fixes:' tag format checker in checkpatch to check
+> > the commit id length too, so let's add dedicated checker to check
+> > these conditions for 'Fixes:' tag.
+> 
+> There's no need to duplicate functionality like this.
+> Put this additional Fixes: logic into the existing block.
+> 
+> (and don't take advise from Markus too seriously when it
+> comes to English grammar or wording.  He is not an arbiter
+> of taste for this code)
+> 
+
+btw:  I suggested this patch last year.
+
+https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
