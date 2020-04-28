@@ -1,31 +1,30 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 28 Apr 2020 07:19:32 +0000
-Subject: [PATCH -next] NFSv4: Use GFP_ATOMIC under spin lock in _pnfs_grab_empty_layout()
-Message-Id: <20200428071932.69976-1-weiyongjun1@huawei.com>
+From: Trond Myklebust <trondmy@hammerspace.com>
+Date: Tue, 28 Apr 2020 17:41:26 +0000
+Subject: Re: [PATCH -next] NFSv4: Use GFP_ATOMIC under spin lock in _pnfs_grab_empty_layout()
+Message-Id: <db4bae1f410091808dafa36f446f14f9679aead9.camel@hammerspace.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200428071932.69976-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200428071932.69976-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
+Cc: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-A spin lock is taken here so we should use GFP_ATOMIC.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- fs/nfs/pnfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-index dd2e14f5875d..d84c1b7b71d2 100644
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -2170,7 +2170,7 @@ _pnfs_grab_empty_layout(struct inode *ino, struct nfs_open_context *ctx)
- 	struct pnfs_layout_hdr *lo;
- 
- 	spin_lock(&ino->i_lock);
--	lo = pnfs_find_alloc_layout(ino, ctx, GFP_KERNEL);
-+	lo = pnfs_find_alloc_layout(ino, ctx, GFP_ATOMIC);
- 	if (!lo)
- 		goto out_unlock;
- 	if (!test_bit(NFS_LAYOUT_INVALID_STID, &lo->plh_flags))
+T24gVHVlLCAyMDIwLTA0LTI4IGF0IDA3OjE5ICswMDAwLCBXZWkgWW9uZ2p1biB3cm90ZToNCj4g
+QSBzcGluIGxvY2sgaXMgdGFrZW4gaGVyZSBzbyB3ZSBzaG91bGQgdXNlIEdGUF9BVE9NSUMuDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVhd2VpLmNvbT4N
+Cj4gLS0tDQo+ICBmcy9uZnMvcG5mcy5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5z
+ZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvbmZzL3BuZnMu
+YyBiL2ZzL25mcy9wbmZzLmMNCj4gaW5kZXggZGQyZTE0ZjU4NzVkLi5kODRjMWI3YjcxZDIgMTAw
+NjQ0DQo+IC0tLSBhL2ZzL25mcy9wbmZzLmMNCj4gKysrIGIvZnMvbmZzL3BuZnMuYw0KPiBAQCAt
+MjE3MCw3ICsyMTcwLDcgQEAgX3BuZnNfZ3JhYl9lbXB0eV9sYXlvdXQoc3RydWN0IGlub2RlICpp
+bm8sDQo+IHN0cnVjdCBuZnNfb3Blbl9jb250ZXh0ICpjdHgpDQo+ICAJc3RydWN0IHBuZnNfbGF5
+b3V0X2hkciAqbG87DQo+ICANCj4gIAlzcGluX2xvY2soJmluby0+aV9sb2NrKTsNCj4gLQlsbyA9
+IHBuZnNfZmluZF9hbGxvY19sYXlvdXQoaW5vLCBjdHgsIEdGUF9LRVJORUwpOw0KPiArCWxvID0g
+cG5mc19maW5kX2FsbG9jX2xheW91dChpbm8sIGN0eCwgR0ZQX0FUT01JQyk7DQo+ICAJaWYgKCFs
+bykNCj4gIAkJZ290byBvdXRfdW5sb2NrOw0KPiAgCWlmICghdGVzdF9iaXQoTkZTX0xBWU9VVF9J
+TlZBTElEX1NUSUQsICZsby0+cGxoX2ZsYWdzKSkNCj4gDQo+IA0KPiANCg0KTkFDSy4gVGhlcmUg
+aXMgbm8gYWxsb2NhdGlvbiB1bmRlciB0aGUgc3BpbmxvY2suDQoNCi0tIA0KVHJvbmQgTXlrbGVi
+dXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWts
+ZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
