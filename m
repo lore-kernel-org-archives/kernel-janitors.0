@@ -1,75 +1,35 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 08 Apr 2020 20:19:17 +0000
-Subject: Re: [PATCH] checkpatch: check for missing \n at the end of logging message
-Message-Id: <48f32229-068d-cc62-b6df-03cdc11b99a4@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Apr 2020 08:49:20 +0000
+Subject: [PATCH][next] drm/i915/gt: fix spelling mistake "evalution" -> "evaluation"
+Message-Id: <20200428084920.1035125-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200407204908.10420-1-christophe.jaillet@wanadoo.fr>
- <437746b14735ecef311720ad41d5b237209e9674.camel@perches.com>
-In-Reply-To: <437746b14735ecef311720ad41d5b237209e9674.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, apw@canonical.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, Mika Kuoppala <mika.kuoppala@linux.intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Le 08/04/2020 à 02:33, Joe Perches a écrit :
-> On Tue, 2020-04-07 at 22:49 +0200, Christophe JAILLET wrote:
->> Strings logged with pr_xxx and dev_xxx often lack a trailing '\n'.
->> Introduce new tests to try to catch them early.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> This is more a PoC for now.
->>
->> Regex could be improved, merged, ...
->> We could also check for surrounding pr_cont...
->>
->> This patch is based on idea from [1]. coccinelle spots too many places
->> where \n are missing (~ 2800 with the heuristic I've used).
->> Fixing them would be painful.
->> I instead propose to teach checkpatch.pl about it to try to spot cases
->> early and avoid introducing new cases.
->>
->> [1]: https://marc.info/?l=kernel-janitors&m8619533629657&w=4
->> ---
->>   scripts/checkpatch.pl | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->> index c392ab8ea12e..792804bd6ad9 100755
->> --- a/scripts/checkpatch.pl
->> +++ b/scripts/checkpatch.pl
->> @@ -5676,6 +5676,16 @@ sub process {
->>   			}
->>   		}
->>   
->> +# check for missing \n at the end of logging function
->> +		if ($line =~ /\bpr_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\("([^"]*(?<!\\n))"/) {
->> +			WARN("MISSING NL",
->> +			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
->> +		}
->> +		if ($line =~ /\bdev_(emerg|alert|crit|err|warning|warn|notice|info|debug|dbg)\s*\([^,]*,\s*"([^"]*(?<!\\n))"/) {
->> +			WARN("MISSING NL",
->> +			     "Possible missing '\\n' at the end of a log message\n" . $hereprev);
->> +		}
-> This can't work as string is masked to "XXX"
+There is a spelling mistaking in a pr_notice message. Fix it.
 
-Ok. I wasn't aware of that.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gt/selftest_rps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I tested the regex with regex101.org and only tested with patches that 
-trigger the checkpatch.pl test, and it worked fine for me.
-I didn't test with string with trailing \n, that should NOT trigger the 
-test. I should have! :(
-
-> This is probably better using $stat and checking if a "XX" format
-> string exists as 1st or 2nd arg and adding an extraction
-> from the $rawline equivalent and checking that.
->
-> Also this test should probably using $logFunctions and check
-> if the initial block is one of the known functions that
-> use a newline termination (pr_|dev_|netdev_|wiphy_)
-
-Agreed but your perl and regex is much more fluent than mine. ;-)
-
-CJ
+diff --git a/drivers/gpu/drm/i915/gt/selftest_rps.c b/drivers/gpu/drm/i915/gt/selftest_rps.c
+index 181b29fa5b58..6ce7003bf92f 100644
+--- a/drivers/gpu/drm/i915/gt/selftest_rps.c
++++ b/drivers/gpu/drm/i915/gt/selftest_rps.c
+@@ -282,7 +282,7 @@ int live_rps_clock_interval(void *arg)
+ 						  GEN6_RP_CUR_UP_EI),
+ 			     10)) {
+ 			/* Just skip the test; assume lack of HW support */
+-			pr_notice("%s: rps evalution interval not ticking\n",
++			pr_notice("%s: rps evaluation interval not ticking\n",
+ 				  engine->name);
+ 			err = -ENODEV;
+ 		} else {
+-- 
+2.25.1
