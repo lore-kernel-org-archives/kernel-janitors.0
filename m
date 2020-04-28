@@ -1,43 +1,52 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Mon, 27 Apr 2020 06:57:51 +0000
-Subject: Re: [v2 2/3] net: qrtr: Add MHI transport layer
-Message-Id: <11CCC96F-FF72-464F-AC29-8E7D53C6F31E@linaro.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 28 Apr 2020 14:54:13 +0000
+Subject: Re: [v3] checkpatch: add dedicated checker for 'Fixes:' tag
+Message-Id: <166ad4b2-5c27-9027-6eef-83d0faef4d1b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85591553-f1f2-a7c9-9c5a-58f74ebeaf38@web.de> <20200427054023.GA3311@Mani-XPS-13-9360> <6affe7d6-4aa1-cd72-74bf-69d8f6c3c98a@web.de>
-In-Reply-To: <6affe7d6-4aa1-cd72-74bf-69d8f6c3c98a@web.de>
+References: <20200428020223.GA28074@udknight>
+ <35069ae9-cdb4-4728-5e94-6d863dd2721c@web.de>
+ <20200428140649.GA30042@udknight>
+In-Reply-To: <20200428140649.GA30042@udknight>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, Chris Lew <clew@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hemant Kumar <hemantk@codeaurora.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Kalle Valo <kvalo@codeaurora.org>, Siddartha Mohanadoss <smohanad@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wang YanQing <udknight@gmail.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
+
+> I guess it is a better perl programming practice that use non-capturing group always
+
+I suggest to reconsider the information “always”.
 
 
+> when you don't need to use the '$' to access it,
 
-On 27 April 2020 12:20:43 PM IST, Markus Elfring <Markus.Elfring@web.de> wrote:
->>> I propose again to add a jump target so that a bit of exception
->handling code
->>> can be better reused at the end of this function implementation.
->>>
->https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=b2768df24ec400dd4f7fa79542f797e904812053#n450
->>>
->>
->> Matter of taste! goto's are really useful if there are multiple exit
->paths
->> available. But in this case there is only one and I don't think we
->may add
->> anymore in future. So I'll keep it as it is.
+Such an expectation can be fine if alternatives would be specified in
+the notation “(?:…)”.
+
+
+> it will make code a little faster I guess.
+
+I hope this also when such a specification is actually needed.
+
+
+>> * Would we like to support any other quotation characters around
+>>   the commit summary?
 >
->Do you hope that an other optimiser software will avoid duplicate code
->like kfree_skb(skb) calls from if branches?
->
+> I think we don't need now
 
-Doh. I didn't notice the previous kfree in skb_linearize(). Will spin v3 incorporating this change. 
+I propose to reconsider also this view.
+How should titles be safely handled if they contain the mentioned
+quotation characters?
 
-Thanks, 
-Mani
+Can it be that you are used to the application of a specific language
+where you should choose between two quotes for specification
+of attributes (or text)?
 
->Regards,
->Markus
 
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+> and people could patch it easily when we need others in future:)
+
+I guess that there are further software development challenges to consider.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/scripts/checkpatch.pl?id=b240f960afb900e59112ebcfa5a759bb0a85a14e#n2872
+
+Regards,
+Markus
