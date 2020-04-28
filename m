@@ -1,39 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 29 Apr 2020 08:45:05 +0000
-Subject: [PATCH] video: pxafb: Fix the function used to balance a 'dma_alloc_coherent()' call
-Message-Id: <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 28 Apr 2020 13:39:34 +0000
+Subject: [PATCH -next] usb: gadget: mass_storage: use module_usb_composite_driver to simplify the code
+Message-Id: <20200428133934.73637-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, sumit.semwal@linaro.org, rafael.j.wysocki@intel.com, corbet@lwn.net, viresh.kumar@linaro.org, jani.nikula@intel.com, mchehab+samsung@kernel.org, eric.miao@marvell.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhengbin <zhengbin13@huawei.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'dma_alloc_coherent()' must be balanced by a call to 'dma_free_coherent()'
-not 'dma_free_wc()'.
-The correct dma_free_ function is already used in the error handling path
-of the probe function.
+module_usb_composite_driver() makes the code simpler by
+eliminating boilerplate code.
 
-Fixes: 77e196752bdd ("[ARM] pxafb: allow video memory size to be configurable")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/video/fbdev/pxafb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/legacy/mass_storage.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index 00b96a78676e..6f972bed410a 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2417,8 +2417,8 @@ static int pxafb_remove(struct platform_device *dev)
+diff --git a/drivers/usb/gadget/legacy/mass_storage.c b/drivers/usb/gadget/legacy/mass_storage.c
+index f18f77584fc2..9ed22c5fb7fe 100644
+--- a/drivers/usb/gadget/legacy/mass_storage.c
++++ b/drivers/usb/gadget/legacy/mass_storage.c
+@@ -229,18 +229,8 @@ static struct usb_composite_driver msg_driver = {
+ 	.unbind		= msg_unbind,
+ };
  
- 	free_pages_exact(fbi->video_mem, fbi->video_mem_size);
- 
--	dma_free_wc(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
--		    fbi->dma_buff_phys);
-+	dma_free_coherent(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
-+			  fbi->dma_buff_phys);
- 
- 	return 0;
- }
--- 
-2.25.1
++module_usb_composite_driver(msg_driver);
++
+ MODULE_DESCRIPTION(DRIVER_DESC);
+ MODULE_AUTHOR("Michal Nazarewicz");
+ MODULE_LICENSE("GPL");
+-
+-static int __init msg_init(void)
+-{
+-	return usb_composite_probe(&msg_driver);
+-}
+-module_init(msg_init);
+-
+-static void __exit msg_cleanup(void)
+-{
+-	usb_composite_unregister(&msg_driver);
+-}
+-module_exit(msg_cleanup);
