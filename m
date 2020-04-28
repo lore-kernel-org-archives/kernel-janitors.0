@@ -1,94 +1,35 @@
-From: "Quan, Evan" <Evan.Quan@amd.com>
-Date: Mon, 13 Apr 2020 02:50:08 +0000
-Subject: RE: [PATCH] drm/amdgpu: Add missing '\n' in log messages
-Message-Id: <DM6PR12MB26190847ADE19FC3BC5BBD56E4DD0@DM6PR12MB2619.namprd12.prod.outlook.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 28 Apr 2020 13:14:55 +0000
+Subject: [PATCH -next] maple: fix to pass correct device identity to free_irq()
+Message-Id: <20200428131455.69463-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411140356.28211-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411140356.28211-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "Zhang, Hawking" <Hawking.Zhang@amd.com>, "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>, "Liu, Monk" <Monk.Liu@amd.com>, "Russell, Kent" <Kent.Russell@amd.com>, "Ma,
- Le" <Le.Ma@amd.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-sh@vger.kernel.org
 
-Reviewed-by: Evan Quan <evan.quan@amd.com>
+free_irq() expects the same device identity that was passed to
+corresponding request_irq(), otherwise the IRQ is not freed.
 
------Original Message-----
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr> 
-Sent: Saturday, April 11, 2020 10:04 PM
-To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; airlied@linux.ie; daniel@ffwll.ch; Zhang, Hawking <Hawking.Zhang@amd.com>; Quan, Evan <Evan.Quan@amd.com>; Grodzovsky, Andrey <Andrey.Grodzovsky@amd.com>; Liu, Monk <Monk.Liu@amd.com>; Russell, Kent <Kent.Russell@amd.com>; Ma, Le <Le.Ma@amd.com>
-Cc: amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/amdgpu: Add missing '\n' in log messages
-
-Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
-
-While at it, split some long lines that where not that far.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-Most of them have been added in commit bd607166af7f ("drm/amdgpu: Enable reading FRU chip via I2C v3")
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/sh/maple/maple.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 87f7c129c8ce..3d0a50e8c36b 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -3249,25 +3249,25 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+diff --git a/drivers/sh/maple/maple.c b/drivers/sh/maple/maple.c
+index e5d7fb81ad66..ba32bd9876f0 100644
+--- a/drivers/sh/maple/maple.c
++++ b/drivers/sh/maple/maple.c
+@@ -868,10 +868,10 @@ static int __init maple_bus_init(void)
+ 	kmem_cache_destroy(maple_queue_cache);
  
- 	r = device_create_file(adev->dev, &dev_attr_pcie_replay_count);
- 	if (r) {
--		dev_err(adev->dev, "Could not create pcie_replay_count");
-+		dev_err(adev->dev, "Could not create pcie_replay_count\n");
- 		return r;
- 	}
+ cleanup_bothirqs:
+-	free_irq(HW_EVENT_VSYNC, 0);
++	free_irq(HW_EVENT_VSYNC, &maple_unsupported_device);
  
- 	r = device_create_file(adev->dev, &dev_attr_product_name);
- 	if (r) {
--		dev_err(adev->dev, "Could not create product_name");
-+		dev_err(adev->dev, "Could not create product_name\n");
- 		return r;
- 	}
+ cleanup_irq:
+-	free_irq(HW_EVENT_MAPLE_DMA, 0);
++	free_irq(HW_EVENT_MAPLE_DMA, &maple_unsupported_device);
  
- 	r = device_create_file(adev->dev, &dev_attr_product_number);
- 	if (r) {
--		dev_err(adev->dev, "Could not create product_number");
-+		dev_err(adev->dev, "Could not create product_number\n");
- 		return r;
- 	}
- 
- 	r = device_create_file(adev->dev, &dev_attr_serial_number);
- 	if (r) {
--		dev_err(adev->dev, "Could not create serial_number");
-+		dev_err(adev->dev, "Could not create serial_number\n");
- 		return r;
- 	}
- 
-@@ -4270,7 +4270,7 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 		job_signaled = true;
- 
- 	if (job_signaled) {
--		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset");
-+		dev_info(adev->dev, "Guilty job already signaled, skipping HW reset\n");
- 		goto skip_hw_reset;
- 	}
- 
-@@ -4339,10 +4339,12 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 
- 		if (r) {
- 			/* bad news, how to tell it to userspace ? */
--			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n", atomic_read(&tmp_adev->gpu_reset_counter));
-+			dev_info(tmp_adev->dev, "GPU reset(%d) failed\n",
-+				 atomic_read(&tmp_adev->gpu_reset_counter));
- 			amdgpu_vf_error_put(tmp_adev, AMDGIM_ERROR_VF_GPU_RESET_FAIL, 0, r);
- 		} else {
--			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n", atomic_read(&tmp_adev->gpu_reset_counter));
-+			dev_info(tmp_adev->dev, "GPU reset(%d) succeeded!\n",
-+				 atomic_read(&tmp_adev->gpu_reset_counter));
- 		}
- 	}
- 
--- 
-2.20.1
+ cleanup_dma:
+ 	free_pages((unsigned long) maple_sendbuf, MAPLE_DMA_PAGES);
