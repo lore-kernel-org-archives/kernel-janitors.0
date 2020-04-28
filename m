@@ -1,77 +1,43 @@
 From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 29 Apr 2020 07:30:20 +0000
-Subject: [PATCH -next] mailbox: Fix NULL vs IS_ERR() check in zynqmp_ipi_mbox_probe()
-Message-Id: <20200429073020.83519-1-weiyongjun1@huawei.com>
+Date: Tue, 28 Apr 2020 13:48:55 +0000
+Subject: [PATCH -next] stm class: stm_heartbeat: fix error return code
+Message-Id: <20200428134855.78014-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jassi Brar <jassisinghbrar@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wendy Liang <wendy.liang@xilinx.com>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+Fix to return error code -ENOMEM from the error handling case instead
+of 0(ret can be overwritted to 0 in for loop).
 
-Fixes: 4981b82ba2ff ("mailbox: ZynqMP IPI mailbox controller")
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/mailbox/zynqmp-ipi-mailbox.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/hwtracing/stm/heartbeat.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
-index 86887c9a349a..f9cc674ba9b7 100644
---- a/drivers/mailbox/zynqmp-ipi-mailbox.c
-+++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
-@@ -504,10 +504,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
- 		mchan->req_buf_size = resource_size(&res);
- 		mchan->req_buf = devm_ioremap(mdev, res.start,
- 					      mchan->req_buf_size);
--		if (IS_ERR(mchan->req_buf)) {
-+		if (!mchan->req_buf) {
- 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
--			ret = PTR_ERR(mchan->req_buf);
--			return ret;
-+			return -ENOMEM;
- 		}
- 	} else if (ret != -ENODEV) {
- 		dev_err(mdev, "Unmatched resource %s, %d.\n", name, ret);
-@@ -520,10 +519,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
- 		mchan->resp_buf_size = resource_size(&res);
- 		mchan->resp_buf = devm_ioremap(mdev, res.start,
- 					       mchan->resp_buf_size);
--		if (IS_ERR(mchan->resp_buf)) {
-+		if (!mchan->resp_buf) {
- 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
--			ret = PTR_ERR(mchan->resp_buf);
--			return ret;
-+			return -ENOMEM;
- 		}
- 	} else if (ret != -ENODEV) {
- 		dev_err(mdev, "Unmatched resource %s.\n", name);
-@@ -543,10 +541,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
- 		mchan->req_buf_size = resource_size(&res);
- 		mchan->req_buf = devm_ioremap(mdev, res.start,
- 					      mchan->req_buf_size);
--		if (IS_ERR(mchan->req_buf)) {
-+		if (!mchan->req_buf) {
- 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
--			ret = PTR_ERR(mchan->req_buf);
--			return ret;
-+			return -ENOMEM;
- 		}
- 	} else if (ret != -ENODEV) {
- 		dev_err(mdev, "Unmatched resource %s.\n", name);
-@@ -559,10 +556,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
- 		mchan->resp_buf_size = resource_size(&res);
- 		mchan->resp_buf = devm_ioremap(mdev, res.start,
- 					       mchan->resp_buf_size);
--		if (IS_ERR(mchan->resp_buf)) {
-+		if (!mchan->resp_buf) {
- 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
--			ret = PTR_ERR(mchan->resp_buf);
--			return ret;
-+			return -ENOMEM;
- 		}
- 	} else if (ret != -ENODEV) {
- 		dev_err(mdev, "Unmatched resource %s.\n", name);
+diff --git a/drivers/hwtracing/stm/heartbeat.c b/drivers/hwtracing/stm/heartbeat.c
+index 3e7df1c0477f..81d7b21d31ec 100644
+--- a/drivers/hwtracing/stm/heartbeat.c
++++ b/drivers/hwtracing/stm/heartbeat.c
+@@ -64,7 +64,7 @@ static void stm_heartbeat_unlink(struct stm_source_data *data)
+ 
+ static int stm_heartbeat_init(void)
+ {
+-	int i, ret = -ENOMEM;
++	int i, ret;
+ 
+ 	if (nr_devs < 0 || nr_devs > STM_HEARTBEAT_MAX)
+ 		return -EINVAL;
+@@ -72,8 +72,10 @@ static int stm_heartbeat_init(void)
+ 	for (i = 0; i < nr_devs; i++) {
+ 		stm_heartbeat[i].data.name  			kasprintf(GFP_KERNEL, "heartbeat.%d", i);
+-		if (!stm_heartbeat[i].data.name)
++		if (!stm_heartbeat[i].data.name) {
++			ret = -ENOMEM;
+ 			goto fail_unregister;
++		}
+ 
+ 		stm_heartbeat[i].data.nr_chans	= 1;
+ 		stm_heartbeat[i].data.link	= stm_heartbeat_link;
