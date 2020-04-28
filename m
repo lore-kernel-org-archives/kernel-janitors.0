@@ -1,26 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 30 Apr 2020 06:36:00 +0000
-Subject: Re: [PATCH] ASoC: mxs-saif: Add variable dev to simplify code
-Message-Id: <a397e9c0-343c-685a-dd3f-53be09429a70@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 28 Apr 2020 13:50:19 +0000
+Subject: [PATCH -next] stm class: dummy_stm: fix error return code in dummy_stm_init()
+Message-Id: <20200428135019.78920-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tang Bin <tangbin@cmss.chinamobile.com>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-> Add variable 'dev' to make the code cleaner in the function
-> mxs_saif_probe(). And now that the function mxs_saif_mclk_init()
-> have defined the variables 'ret' as the error returned value,
-> then it should be used instead in this place.
+Fix to return error code -ENOMEM from the error handling case instead
+of 0(ret can be overwritted to 0 in for loop).
 
-I find it clearer to integrate such source code adjustments by separate patches
-together with improved commit messages.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id2cc5ac6f6668cc15216d51051103c61467d7e8#n138
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/hwtracing/stm/dummy_stm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-Would you become interested to search for similar update candidates
-by the means of the semantic patch language (Coccinelle software)?
-
-Regards,
-Markus
+diff --git a/drivers/hwtracing/stm/dummy_stm.c b/drivers/hwtracing/stm/dummy_stm.c
+index 38528ffdc0b3..36d32e7afb35 100644
+--- a/drivers/hwtracing/stm/dummy_stm.c
++++ b/drivers/hwtracing/stm/dummy_stm.c
+@@ -68,7 +68,7 @@ static int dummy_stm_link(struct stm_data *data, unsigned int master,
+ 
+ static int dummy_stm_init(void)
+ {
+-	int i, ret = -ENOMEM;
++	int i, ret;
+ 
+ 	if (nr_dummies < 0 || nr_dummies > DUMMY_STM_MAX)
+ 		return -EINVAL;
+@@ -80,8 +80,10 @@ static int dummy_stm_init(void)
+ 
+ 	for (i = 0; i < nr_dummies; i++) {
+ 		dummy_stm[i].name = kasprintf(GFP_KERNEL, "dummy_stm.%d", i);
+-		if (!dummy_stm[i].name)
++		if (!dummy_stm[i].name) {
++			ret = -ENOMEM;
+ 			goto fail_unregister;
++		}
+ 
+ 		dummy_stm[i].sw_start		= master_min;
+ 		dummy_stm[i].sw_end		= master_max;
