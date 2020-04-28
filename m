@@ -1,30 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 24 Apr 2020 14:50:17 +0000
-Subject: Re: [PATCH] scsi: fnic: Use kmalloc instead of vmalloc for a small memory allocation
-Message-Id: <d9e5c4d7-43fd-13fd-688e-36f9f0d1466d@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 28 Apr 2020 03:47:36 +0000
+Subject: [PATCH -next] ipc: use GFP_ATOMIC under spin lock
+Message-Id: <20200428034736.27850-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200423204620.26395-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200423204620.26395-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "James E. J. Bottomley" <jejb@linux.ibm.com>, Karan Tilak Kumar <kartilak@cisco.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Waiman Long <longman@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> 'struct fc_trace_flag_type' is just a few bytes long. There is no need
-> to allocate such a structure with vmalloc. Using kmalloc instead.
+The function ipc_id_alloc() is called from ipc_addid(), in which
+a spin lock is held, so we should use GFP_ATOMIC instead.
 
-Can such an adjustment be relevant for the specification of the tag “Fixes”?
+Fixes: de5738d1c364 ("ipc: convert ipcs_idr to XArray")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ ipc/util.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-> While at it, axe a useless test when freeing the memory.
-
-I find it more appropriate to provide this source code improvement
-by a separate update step.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b4f633221f0aeac102e463a4be46a643b2e3b819#n138
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccinelle/free/ifnullfree.cocci?id=b4f633221f0aeac102e463a4be46a643b2e3b819#n4
-
-Regards,
-Markus
+diff --git a/ipc/util.c b/ipc/util.c
+index 723dc4b05208..093b31993d39 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -241,7 +241,7 @@ static inline int ipc_id_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
+ 					xas.xa_index;
+ 			xas_store(&xas, new);
+ 			xas_clear_mark(&xas, XA_FREE_MARK);
+-		} while (__xas_nomem(&xas, GFP_KERNEL));
++		} while (__xas_nomem(&xas, GFP_ATOMIC));
+ 
+ 		xas_unlock(&xas);
+ 		err = xas_error(&xas);
+@@ -250,7 +250,7 @@ static inline int ipc_id_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
+ 		new->id = get_restore_id(ids);
+ 		new->seq = ipcid_to_seqx(new->id);
+ 		idx = ipcid_to_idx(new->id);
+-		err = xa_insert(&ids->ipcs, idx, new, GFP_KERNEL);
++		err = xa_insert(&ids->ipcs, idx, new, GFP_ATOMIC);
+ 		if (err = -EBUSY)
+ 			err = -ENOSPC;
+ 		set_restore_id(ids, -1);
