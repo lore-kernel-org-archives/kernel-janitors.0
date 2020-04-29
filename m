@@ -1,45 +1,25 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 14 Apr 2020 19:04:32 +0000
-Subject: Re: [PATCH] pwm: Add missing '\n' in log messages
-Message-Id: <b867ee8a02043ec6b18c9330bfe3a091d66c816c.camel@perches.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 29 Apr 2020 13:30:20 +0000
+Subject: Re: [PATCH] clk/meson: Complete exception handling in meson8b_clkc_init_common()
+Message-Id: <ceba9706-0819-54cf-c3d3-9ceb93d31c5e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200411153528.30130-1-christophe.jaillet@wanadoo.fr>
-         <20200414135827.GB3593749@ulmo>
-         <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
-In-Reply-To: <f13a8754-3866-d3d2-eaff-29cb6d14ff8d@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Thierry Reding <thierry.reding@gmail.com>, paul@crapouillou.net, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bernard Zhao <bernard@vivo.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: opensource.kernel@vivo.com, Neil Armstrong <narmstrong@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
 
-On Tue, 2020-04-14 at 20:30 +0200, Christophe JAILLET wrote:
-> Being able to detect early missing trailing '\n' would help maintainers 
-> and patch providers.
-> 
-> You are the 2nd person (I've added Paul Cercueil in copy of my reply) 
-> who reports that he is thinking that it is no more required to add a '\n'.
+> In common init function, when run into err branch, we didn`t
+> use kfree to release kzmalloc area, this may bring in memleak
 
-The printk subsystem will, for every printk, check
-if the last printk has a newline termination and if
-it doesn't and the current printk does not start with
-KERN_CONT will insert a newline.
+* I suggest to improve also this change description.
 
-The negative to this approach is the last printk,
-if it does not have a newline, is buffered and not
-emitted until another printk occurs.
+* Please move the resource release functions to end of
+  the function “meson8b_clkc_init_common” here.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=96c9a7802af7d500a582d89a8b864584fe878c1b#n450
 
-There is also the (now small) possibility that
-multiple concurrent kernel threads or processes
-could interleave printks without a terminating
-newline and a different process could emit a
-printk that starts with KERN_CONT and the emitted
-message could be garbled.
+* Will the tag “Fixes” be relevant then for the completed exception handling?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=96c9a7802af7d500a582d89a8b864584fe878c1b#n183
 
-See:
-
-commit 4bcc595ccd80decb4245096e3d1258989c50ed41
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat Oct 8 20:32:40 2016 -0700
-
-    printk: reinstate KERN_CONT for printing continuation lines
+Regards,
+Markus
