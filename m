@@ -1,75 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Apr 2020 13:20:08 +0000
-Subject: [bug report] dpaa2-eth: use bulk enqueue in .ndo_xdp_xmit
-Message-Id: <20200428132008.GA696615@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 29 Apr 2020 02:52:20 +0000
+Subject: [PATCH net-next v2] drivers: net: davinci_mdio: fix potential NULL dereference in davinci_mdio_probe
+Message-Id: <20200429025220.166415-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200427094032.181184-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200427094032.181184-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, David Lechner <david@lechnology.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Ioana Ciornei,
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+since devm_ioremap() does not check input parameters for null.
 
-The patch 8665d9780e6e: "dpaa2-eth: use bulk enqueue in
-.ndo_xdp_xmit" from Apr 22, 2020, leads to the following static
-checker warning:
+This is detected by Coccinelle semantic patch.
 
-	drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:1972 dpaa2_eth_xdp_xmit()
-	error: uninitialized symbol 'enqueued'.
+@@
+expression pdev, res, n, t, e, e1, e2;
+@@
 
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-  1932  static int dpaa2_eth_xdp_xmit(struct net_device *net_dev, int n,
-  1933                                struct xdp_frame **frames, u32 flags)
-  1934  {
-  1935          struct dpaa2_eth_priv *priv = netdev_priv(net_dev);
-  1936          int total_enqueued = 0, retries = 0, enqueued;
-  1937          struct dpaa2_eth_drv_stats *percpu_extras;
-  1938          struct rtnl_link_stats64 *percpu_stats;
-  1939          int num_fds, i, err, max_retries;
-  1940          struct dpaa2_eth_fq *fq;
-  1941          struct dpaa2_fd *fds;
-  1942  
-  1943          if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK))
-  1944                  return -EINVAL;
-  1945  
-  1946          if (!netif_running(net_dev))
-  1947                  return -ENETDOWN;
-  1948  
-  1949          fq = &priv->fq[smp_processor_id()];
-  1950          fds = fq->xdp_fds;
-  1951  
-  1952          percpu_stats = this_cpu_ptr(priv->percpu_stats);
-  1953          percpu_extras = this_cpu_ptr(priv->percpu_extras);
-  1954  
-  1955          /* create a FD for each xdp_frame in the list received */
-  1956          for (i = 0; i < n; i++) {
-  1957                  err = dpaa2_eth_xdp_create_fd(net_dev, frames[i], &fds[i]);
-  1958                  if (err)
-  1959                          break;
-  1960          }
-  1961          num_fds = i;
-  1962  
-  1963          /* try to enqueue all the FDs until the max number of retries is hit */
-  1964          max_retries = num_fds * DPAA2_ETH_ENQUEUE_RETRIES;
-  1965          while (total_enqueued < num_fds && retries < max_retries) {
-  1966                  err = priv->enqueue(priv, fq, &fds[total_enqueued],
-  1967                                      0, num_fds - total_enqueued, &enqueued);
-  1968                  if (err = -EBUSY) {
-                            ^^^^^^^^^^^^^
-Smatch is complaining here because some -enqueue() implementations
-return other error codes as well as -EBUSY.  The
-dpaa2_io_service_enqueue_multiple_desc_fq() function returns -ENODEV
-for example.
+res = \(platform_get_resource\|platform_get_resource_byname\)(pdev, t, n);
++ if (!res)
++   return -EINVAL;
+... when != res = NULL
+e = devm_ioremap(e1, res->start, e2);
 
-  1969                          percpu_extras->tx_portal_busy += ++retries;
-  1970                          continue;
-  1971                  }
-  1972                  total_enqueued += enqueued;
-  1973          }
-  1974  
-  1975          /* update statistics */
-  1976          percpu_stats->tx_packets += total_enqueued;
-  1977          for (i = 0; i < total_enqueued; i++)
+Fixes: 03f66f067560 ("net: ethernet: ti: davinci_mdio: use devm_ioremap()")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+v1 -> v2: add fixes and reviewed-by
+---
+ drivers/net/ethernet/ti/davinci_mdio.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
+index 38b7f6d35759..702fdc393da0 100644
+--- a/drivers/net/ethernet/ti/davinci_mdio.c
++++ b/drivers/net/ethernet/ti/davinci_mdio.c
+@@ -397,6 +397,8 @@ static int davinci_mdio_probe(struct platform_device *pdev)
+ 	data->dev = dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
+ 	data->regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!data->regs)
+ 		return -ENOMEM;
