@@ -1,38 +1,32 @@
-From: Mao Wenan <maowenan@huawei.com>
-Date: Thu, 23 Apr 2020 03:33:14 +0000
-Subject: [PATCH bpf-next v2 2/2] libbpf: Return err if bpf_object__load failed
-Message-Id: <20200423033314.49205-3-maowenan@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 29 Apr 2020 20:40:14 +0000
+Subject: Re: [PATCH] misc: fastrpc: fix memory leak
+Message-Id: <1471e6f6-fd20-334a-041b-9d55be234111@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422093329.GI2659@kadam>
- <20200423033314.49205-1-maowenan@huawei.com>
-In-Reply-To: <20200423033314.49205-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ast@kernel.org, daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com, kpsingh@chromium.org
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com, andrii.nakryiko@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-bpf_object__load() has various return code, when it failed to load
-object, it must return err instead of -EINVAL.
+> if misc_register() fails, previously allocated data is left without freeing,
+> this could result in memory leak.
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do you think about a wording variant like the following?
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 8f480e29a6b0..8e1dc6980fac 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -7006,7 +7006,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
- 	err = bpf_object__load(obj);
- 	if (err) {
- 		bpf_object__close(obj);
--		return -EINVAL;
-+		return err;
- 	}
- 
- 	*pobj = obj;
--- 
-2.20.1
+   Subject:
+   [PATCH v2] misc: fastrpc: Fix an incomplete memory release in fastrpc_rpmsg_probe()
+
+   Change description:
+   A few fastrpc data were not released after a call of the
+   function “misc_register” failed.
+   Thus add a call of the function “kfree”.
+
+
+> So fix it!
+
+Would you like to replace such an information by the tag “Fixes”?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=96c9a7802af7d500a582d89a8b864584fe878c1b#n183
+
+Regards,
+Markus
