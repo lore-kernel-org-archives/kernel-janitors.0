@@ -1,39 +1,36 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Date: Sun, 05 Apr 2020 16:31:22 +0000
-Subject: Re: [PATCH] rtc: Delete an error message in three functions
-Message-Id: <a33be664-7b21-a9a5-de45-7bb24740e927@mleia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Apr 2020 13:23:23 +0000
+Subject: [PATCH] i2c: stm32f7: prevent array underflow in stm32f7_get_lower_rate()
+Message-Id: <20200429132323.GB815283@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <04116352-b464-041c-1939-96440133aa6f@web.de>
-In-Reply-To: <04116352-b464-041c-1939-96440133aa6f@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Eddie Huang <eddie.huang@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>, Alain Volmat <alain.volmat@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
 
-On 4/5/20 6:36 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Apr 2020 17:30:15 +0200
-> 
-> The function “platform_get_irq” can log an error already.
-> Thus omit redundant messages for the exception handling in the
-> calling functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/rtc/rtc-fsl-ftm-alarm.c | 4 +---
->  drivers/rtc/rtc-lpc24xx.c       | 4 +---
+We want to break with "i" set to zero whether we find the rate we want
+or not.  In the current code, if we don't find the rate we want then it
+exits the loop with "i" set to -1 and results in an array underflow.
 
-For LPC24xx/18xx/43xx change
+Fixes: 09cc9a3bce91 ("i2c: stm32f7: allows for any bus frequency")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-
->  drivers/rtc/rtc-mt2712.c        | 4 +---
->  3 files changed, 3 insertions(+), 9 deletions(-)
-> 
-
---
-Best wishes,
-Vladimir
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 9c9e10ea91991..bff3479fe122a 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -607,7 +607,7 @@ static u32 stm32f7_get_lower_rate(u32 rate)
+ {
+ 	int i = ARRAY_SIZE(stm32f7_i2c_specs);
+ 
+-	while (i--)
++	while (--i)
+ 		if (stm32f7_i2c_specs[i].rate < rate)
+ 			break;
+ 
+-- 
+2.26.2
