@@ -1,30 +1,118 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Mon, 06 Apr 2020 14:51:09 +0000
-Subject: Re: [PATCH] RDMA/cm: Fix an error check in cm_alloc_id_priv()
-Message-Id: <20200406145109.GQ20941@ziepe.ca>
+From: Wang YanQing <udknight@gmail.com>
+Date: Wed, 29 Apr 2020 16:36:45 +0000
+Subject: [PATCH] checkpatch: add support to check 'Fixes:' tag format
+Message-Id: <20200429163645.GA13810@udknight>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200406144335.GD68494@mwanda>
-In-Reply-To: <20200406144335.GD68494@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Leon Romanovsky <leon@kernel.org>, Danit Goldberg <danitg@mellanox.com>, Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: joe@perches.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Markus.Elfring@web.de, mcroce@redhat.com
 
-On Mon, Apr 06, 2020 at 05:43:35PM +0300, Dan Carpenter wrote:
-> The xa_alloc_cyclic_irq() function returns either 0 or 1 on success and
-> negatives on error.  This code treats 1 as an error and returns
-> ERR_PTR(1) which will cause an Oops in the caller.
-> 
-> Fixes: e8dc4e885c45 ("RDMA/cm: Fix ordering of xa_alloc_cyclic() in ib_create_cm_id()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The Fixes tag may not be correct.  That's the patch which introduces an
-> Oops but we may want to backport this further back.
+According to submitting-patches.rst, 'Fixes:' tag has a little
+stricter condition about the one line summary than normal git
+commit description:
+“...
+Do not split the tag across multiple
+lines, tags are exempt from the "wrap at 75 columns" rule in order to simplify
+parsing scripts
+...”
 
-Right it should be
+And there is no sanity check for 'Fixes:' tag format in checkpatch the same
+as GIT_COMMIT_ID for git commit description, so let's expand the GIT_COMMIT_ID
+to add 'Fixes:' tag format check support.
 
-Fixes: ae78ff3a0f0c ("RDMA/cm: Convert local_id_table to XArray")
+Based on original patch by Joe Perches <joe@perches.com>
 
-Thanks,
-Jason
+Link: https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+---
+ scripts/checkpatch.pl | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 23a001a..879dcf4 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2818,11 +2818,13 @@ sub process {
+ 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
+ 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
+ 		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
++		     $line =~ /\bfixes:\s+[0-9a-f]{5,}\b/i ||
+ 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
+-		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
+-		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
++		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i))) {
+ 			my $init_char = "c";
+ 			my $orig_commit = "";
++			my $prefix = "commit";
++			my $prefix_case = "[Cc]ommit";
+ 			my $short = 1;
+ 			my $long = 0;
+ 			my $case = 1;
+@@ -2832,19 +2834,28 @@ sub process {
+ 			my $id = '0123456789ab';
+ 			my $orig_desc = "commit description";
+ 			my $description = "";
++			my $acrosslines = 0;
++			my $title = "title line";
+ 
+-			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
++			if ($line =~ /\b(f)ixes:\s+([0-9a-f]{5,})\b/i) {
++				$init_char = $1;
++				$orig_commit = lc($2);
++				$prefix = "Fixes:";
++				$prefix_case = "Fixes:";
++				$init_char = "F";
++				$title = "a single line title (without line breaks)";
++			} elsif ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
+ 				$init_char = $1;
+ 				$orig_commit = lc($2);
+ 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
+ 				$orig_commit = lc($1);
+ 			}
+ 
+-			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
+-			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
+-			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
+-			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
+-			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
++			$short = 0 if ($line =~ /\b$prefix\s+[0-9a-f]{12,40}/i);
++			$long = 1 if ($line =~ /\b$prefix\s+[0-9a-f]{41,}/i);
++			$space = 0 if ($line =~ /\b$prefix [0-9a-f]/i);
++			$case = 0 if ($line =~ /\b$prefix_case\s+[0-9a-f]{5,40}[^A-F]/);
++			if ($line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
+ 				$orig_desc = $1;
+ 				$hasparens = 1;
+ 			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
+@@ -2852,23 +2863,24 @@ sub process {
+ 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
+ 				$orig_desc = $1;
+ 				$hasparens = 1;
+-			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
++			} elsif ($line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
+ 				 defined $rawlines[$linenr] &&
+ 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
+-				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
++				$line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
+ 				$orig_desc = $1;
+ 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
+ 				$orig_desc .= " " . $1;
+ 				$hasparens = 1;
++				$acrosslines = 1 if ($prefix eq "Fixes:");
+ 			}
+ 
+ 			($id, $description) = git_commit_info($orig_commit,
+ 							      $id, $orig_desc);
+ 
+ 			if (defined($id) &&
+-			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
++			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens || $acrosslines)) {
+ 				ERROR("GIT_COMMIT_ID",
+-				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
++				      "Please use git commit description style '$prefix <12+ chars of sha1> (\"<$title>\")' - ie: '${init_char}" . substr($prefix, 1) . " $id (\"$description\")'\n" . $herecurr);
+ 			}
+ 		}
+ 
+-- 
+1.8.5.6.2.g3d8a54e.dirty
