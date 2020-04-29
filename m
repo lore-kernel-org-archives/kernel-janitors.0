@@ -1,43 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 04 Apr 2020 20:00:11 +0000
-Subject: [PATCH] drm/fsl-dcu: Delete an error message in fsl_dcu_drm_probe()
-Message-Id: <1c108582-ba46-153e-7975-f6cfd82d57c6@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 29 Apr 2020 08:45:05 +0000
+Subject: [PATCH] video: pxafb: Fix the function used to balance a 'dma_alloc_coherent()' call
+Message-Id: <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, Alison Wang <alison.wang@nxp.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Stefan Agner <stefan@agner.ch>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: b.zolnierkie@samsung.com, sumit.semwal@linaro.org, rafael.j.wysocki@intel.com, corbet@lwn.net, viresh.kumar@linaro.org, jani.nikula@intel.com, mchehab+samsung@kernel.org, eric.miao@marvell.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Apr 2020 21:54:31 +0200
+'dma_alloc_coherent()' must be balanced by a call to 'dma_free_coherent()'
+not 'dma_free_wc()'.
+The correct dma_free_ function is already used in the error handling path
+of the probe function.
 
-The function “platform_get_irq” can log an error already.
-Thus omit a redundant message for the exception handling in the
-calling function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 77e196752bdd ("[ARM] pxafb: allow video memory size to be configurable")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/video/fbdev/pxafb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-index f15d2e7967a3..9e8ce0774db9 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-@@ -268,10 +268,8 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
- 	}
-
- 	fsl_dev->irq = platform_get_irq(pdev, 0);
--	if (fsl_dev->irq < 0) {
--		dev_err(dev, "failed to get irq\n");
-+	if (fsl_dev->irq < 0)
- 		return fsl_dev->irq;
--	}
-
- 	fsl_dev->regmap = devm_regmap_init_mmio(dev, base,
- 			&fsl_dcu_regmap_config);
---
-2.26.0
+diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+index 00b96a78676e..6f972bed410a 100644
+--- a/drivers/video/fbdev/pxafb.c
++++ b/drivers/video/fbdev/pxafb.c
+@@ -2417,8 +2417,8 @@ static int pxafb_remove(struct platform_device *dev)
+ 
+ 	free_pages_exact(fbi->video_mem, fbi->video_mem_size);
+ 
+-	dma_free_wc(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
+-		    fbi->dma_buff_phys);
++	dma_free_coherent(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
++			  fbi->dma_buff_phys);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
