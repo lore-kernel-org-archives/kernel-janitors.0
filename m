@@ -1,31 +1,40 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 29 Apr 2020 06:45:11 +0000
+Date: Wed, 29 Apr 2020 15:18:52 +0000
 Subject: Re: [v3] checkpatch: add dedicated checker for 'Fixes:' tag
-Message-Id: <dec3d317-8381-a4d9-efb9-0418f9b42a55@web.de>
+Message-Id: <f1234e16-eca2-e2af-c5a6-92f47fcbd98d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200428020223.GA28074@udknight>
- <b452dc29fb553fa5993b90131dcdbc04ed87532e.camel@perches.com>
- <a2d7dbae193800ce430321d3fcc71ab5d1a5ed03.camel@perches.com>
-In-Reply-To: <a2d7dbae193800ce430321d3fcc71ab5d1a5ed03.camel@perches.com>
+ <38e1a926-53a6-bda6-cb07-2614f4c682ba@web.de>
+ <20200428161831.GB30042@udknight>
+In-Reply-To: <20200428161831.GB30042@udknight>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Matteo Croce <mcroce@redhat.com>, Wang YanQing <udknight@gmail.com>
+To: Wang YanQing <udknight@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Matteo Croce <mcroce@redhat.com>
 
-> btw:  I suggested this patch last year.
+>> * Do you try to extend the existing software analysis approach “GIT_COMMIT_ID”?
+>>
+>> * Would you like to avoid the development of duplicate Perl code?
 >
-> https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
+> Fixes: lines don't need to have a "commit" prefix before the commit id, the description
+> in normal commit id could across multiple lines, and we don't need to consider the
+> $commit_log_possible_stack_dump for 'Fixes:' tag line.
 
-Thanks for this link to the previous discussion topic “linux-next:
-Fixes tag needs some work in the tip tree”.
-https://lkml.org/lkml/2019/1/17/966
+It can be helpful to know such differences.
 
-With which script did you determine the presented statistic for variations
-in the usage of details for such tags?
 
-Will another update become interesting how often shorter commit identifiers
-are still published for Linux patches?
+> I mean it will make the GIT_COMMIT_ID code become harder to read and maintain.
+
+This view depends on some factors.
+
+* How many data processing can be shared for your software extension?
+
+* Do you get any further development ideas from a previous suggestion
+  by Joe Perches according to the discussion topic “linux-next:
+  Fixes tag needs some work in the tip tree”?
+  https://lkml.org/lkml/2019/1/17/966
+  https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
 
 Regards,
 Markus
