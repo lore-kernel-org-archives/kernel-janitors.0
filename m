@@ -1,33 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 19 Apr 2020 13:10:33 +0000
-Subject: Re: [PATCH v2] iommu/qcom: Fix local_base status check
-Message-Id: <b07d3b02-bf96-fd73-8333-a1104da9ae47@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 29 Apr 2020 02:54:26 +0000
+Subject: [PATCH -next] spi: spi-amd: Fix a NULL vs IS_ERR() check in amd_spi_probe()
+Message-Id: <20200429025426.167664-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <73736017-cae3-1c2a-dcf4-d771d0f3bbbf@web.de>
-In-Reply-To: <73736017-cae3-1c2a-dcf4-d771d0f3bbbf@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tang Bin <tangbin@cmss.chinamobile.com>, iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, Rob Clark <robdclark@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sanjay R Mehta <sanju.mehta@amd.com>, Mark Brown <broonie@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> …
->> +++ b/drivers/iommu/qcom_iommu.c
->> @@ -813,8 +813,11 @@ static int qcom_iommu_device_probe(struct platform_device *pdev)
->>  	qcom_iommu->dev = dev;
->>
->>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-…
->>  		qcom_iommu->local_base = devm_ioremap_resource(dev, res);
-…
-> Please take another look at a corresponding usage example.
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-I would like to point another possibility out for desirable software evolution.
-How do you think about to call a “known” wrapper function instead?
+Fixes: bbb336f39efc ("spi: spi-amd: Add AMD SPI controller driver support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/spi/spi-amd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-devm_platform_get_and_ioremap_resource
-https://elixir.bootlin.com/linux/v5.7-rc1/source/drivers/base/platform.c#L66
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/drivers/base/platform.c
-
-Regards,
-Markus
+diff --git a/drivers/spi/spi-amd.c b/drivers/spi/spi-amd.c
+index 0d9debe1386e..d8e66689d132 100644
+--- a/drivers/spi/spi-amd.c
++++ b/drivers/spi/spi-amd.c
+@@ -266,10 +266,9 @@ static int amd_spi_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	amd_spi->io_remap_addr = devm_ioremap_resource(&pdev->dev, res);
+-
+-	if (!amd_spi->io_remap_addr) {
++	if (IS_ERR(amd_spi->io_remap_addr)) {
++		err = PTR_ERR(amd_spi->io_remap_addr);
+ 		dev_err(dev, "error %d ioremap of SPI registers failed\n", err);
+-		err = -ENOMEM;
+ 		goto err_free_master;
+ 	}
+ 	dev_dbg(dev, "io_remap_address: %p\n", amd_spi->io_remap_addr);
