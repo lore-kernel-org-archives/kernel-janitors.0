@@ -1,74 +1,23 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 09 Apr 2020 16:32:34 +0000
-Subject: [PATCH] lib/math: avoid trailing '\n' hidden in pr_fmt()
-Message-Id: <20200409163234.22830-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 29 Apr 2020 09:13:15 +0000
+Subject: Re: [PATCH] mailbox: Fix NULL vs IS_ERR() check in zynqmp_ipi_mbox_probe()
+Message-Id: <1931070d-77fe-996c-3ce4-5400b1bd72cd@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab+samsung@kernel.org, akpm@linux-foundation.org, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wendy Liang <wendy.liang@xilinx.com>
 
-pr_xxx() functions usually have '\n' at the end of the logging message.
-Here, this '\n' is added via the 'pr_fmt' macro.
+> In case of error, the function devm_ioremap() returns NULL pointer
+> not ERR_PTR().
 
-In order to be more consistent with other files, use a more standard
-convention and put these '\n' back in the messages themselves and remove it
-from the pr_fmt macro.
+Such information is helpful.
 
-While at it, use __func__ instead of hardcoding a function name in the
-last message.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- lib/math/prime_numbers.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> The IS_ERR() test in the return value check should be replaced with NULL test.
 
-diff --git a/lib/math/prime_numbers.c b/lib/math/prime_numbers.c
-index 052f5b727be7..d42cebf7407f 100644
---- a/lib/math/prime_numbers.c
-+++ b/lib/math/prime_numbers.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--#define pr_fmt(fmt) "prime numbers: " fmt "\n"
-+#define pr_fmt(fmt) "prime numbers: " fmt
- 
- #include <linux/module.h>
- #include <linux/mutex.h>
-@@ -253,7 +253,7 @@ static void dump_primes(void)
- 
- 	if (buf)
- 		bitmap_print_to_pagebuf(true, buf, p->primes, p->sz);
--	pr_info("primes.{last=%lu, .sz=%lu, .primes[]=...x%lx} = %s",
-+	pr_info("primes.{last=%lu, .sz=%lu, .primes[]=...x%lx} = %s\n",
- 		p->last, p->sz, p->primes[BITS_TO_LONGS(p->sz) - 1], buf);
- 
- 	rcu_read_unlock();
-@@ -273,7 +273,7 @@ static int selftest(unsigned long max)
- 		bool fast = is_prime_number(x);
- 
- 		if (slow != fast) {
--			pr_err("inconsistent result for is-prime(%lu): slow=%s, fast=%s!",
-+			pr_err("inconsistent result for is-prime(%lu): slow=%s, fast=%s!\n",
- 			       x, slow ? "yes" : "no", fast ? "yes" : "no");
- 			goto err;
- 		}
-@@ -282,14 +282,14 @@ static int selftest(unsigned long max)
- 			continue;
- 
- 		if (next_prime_number(last) != x) {
--			pr_err("incorrect result for next-prime(%lu): expected %lu, got %lu",
-+			pr_err("incorrect result for next-prime(%lu): expected %lu, got %lu\n",
- 			       last, x, next_prime_number(last));
- 			goto err;
- 		}
- 		last = x;
- 	}
- 
--	pr_info("selftest(%lu) passed, last prime was %lu", x, last);
-+	pr_info("%s(%lu) passed, last prime was %lu\n", __func__, x, last);
- 	return 0;
- 
- err:
--- 
-2.20.1
+Would you like to convert this description into an imperative wording?
+
+Regards,
+Markus
