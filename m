@@ -1,29 +1,88 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 03 Apr 2020 21:12:54 +0000
-Subject: Re: [PATCH net v2] veth: xdp: use head instead of hard_start
-Message-Id: <CAADnVQKs9hLUPB6vW+sC3pe1ivXKU3woJFvT=X2hCqT=NnZF7Q@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 29 Apr 2020 06:52:52 +0000
+Subject: [PATCH 3/4 v2] firmware: stratix10-svc: Fix some error handling paths in 'stratix10_svc_drv_probe()'
+Message-Id: <0ff40f39de4deb63b03b363d0e0f3e3c8cccd62d.1588142343.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fb5ab568-9bc8-3145-a8db-3e975ccdf846@gmail.com>
- <20200331060641.79999-1-maowenan@huawei.com> <7a1d55ad-1427-67fe-f204-4d4a0ab2c4b1@gmail.com>
- <20200401181419.7acd2aa6@carbon> <ede2f407-839e-d29e-0ebe-aa39dd461bfd@gmail.com>
- <20200402110619.48f31a63@carbon> <CAADnVQKEyv_bRhEfu1Jp=DSggj_O2xjJyd_QZ7a4LJY+dUO2rg@mail.gmail.com>
- <20200403095847.21e1e5ea@carbon>
-In-Reply-To: <20200403095847.21e1e5ea@carbon>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Toshiaki Makita <toshiaki.makita1@gmail.com>, Mao Wenan <maowenan@huawei.com>, "David S. Miller" <davem@davemloft.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, jwi@linux.ibm.com, jianglidong3@jd.com, Eric Dumazet <edumazet@google.com>, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Apr 3, 2020 at 12:59 AM Jesper Dangaard Brouer
-<brouer@redhat.com> wrote:
->
-> I want to wait to ease your life as maintainer. This is part of a
-> larger patchset (for XDP frame_sz) and the next patch touch same code
-> path and thus depend on these code adjustments.  If we apply them in
-> bpf vs bpf-next then you/we will have to handle merge conflicts.  The
-> severity of the "fix" is really low, it only means 32 bytes less
-> headroom (which I doubt anyone is using).
+If an error occurs after calling 'svc_create_memory_pool()', the allocated
+genpool should be destroyed with 'gen_pool_destroy()', as already done in
+the remove function.
 
-Ahh. Make sense. That type of fix can wait.
-Thanks!
+If an error occurs after calling 'kfifo_alloc()', the allocated memory
+should be freed with 'kfifo_free()', as already done in the remove
+function.
+
+While at it, also move a 'platform_device_put()' call to the error handling
+path.
+
+Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
+Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/stratix10-svc.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index de5870f76c5e..739004398877 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1024,7 +1024,7 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 	ret = kfifo_alloc(&controller->svc_fifo, fifo_size, GFP_KERNEL);
+ 	if (ret) {
+ 		dev_err(dev, "failed to allocate FIFO\n");
+-		return ret;
++		goto err_destroy_pool;
+ 	}
+ 	spin_lock_init(&controller->svc_fifo_lock);
+ 
+@@ -1043,24 +1043,34 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 
+ 	/* add svc client device(s) */
+ 	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
+-	if (!svc)
+-		return -ENOMEM;
++	if (!svc) {
++		ret = -ENOMEM;
++		goto err_free_kfifo;
++	}
+ 
+ 	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
+ 	if (!svc->stratix10_svc_rsu) {
+ 		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_free_kfifo;
+ 	}
+ 
+ 	ret = platform_device_add(svc->stratix10_svc_rsu);
+-	if (ret) {
+-		platform_device_put(svc->stratix10_svc_rsu);
+-		return ret;
+-	}
++	if (ret)
++		goto put_platform;
++
+ 	dev_set_drvdata(dev, svc);
+ 
+ 	pr_info("Intel Service Layer Driver Initialized\n");
+ 
++	return 0;
++
++put_platform:
++	platform_device_put(svc->stratix10_svc_rsu);
++err_free_kfifo:
++	kfifo_free(&controller->svc_fifo);
++err_destroy_pool:
++	gen_pool_destroy(genpool);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
