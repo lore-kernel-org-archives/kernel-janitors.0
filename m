@@ -1,67 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 14 Apr 2020 11:40:08 +0000
-Subject: Applied "spi: sc18is602: Fix a typo in MODULE_DESCRIPTION" to the spi tree
-Message-Id: <applied-20200413154043.23064-1-christophe.jaillet@wanadoo.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 29 Apr 2020 04:21:16 +0000
+Subject: [PATCH RESEND] MAINTAINERS: remove entry after hp100 driver removal
+Message-Id: <20200429042116.29126-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200413154043.23064-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: broonie@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-The patch
+Commit a10079c66290 ("staging: remove hp100 driver") removed all files
+from ./drivers/staging/hp/, but missed to adjust MAINTAINERS.
 
-   spi: sc18is602: Fix a typo in MODULE_DESCRIPTION
+Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-has been applied to the spi tree at
+  warning: no file matches F: drivers/staging/hp/hp100.*
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+So, drop HP100 Driver entry in MAINTAINERS now.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6d75145bf6b6558dea5ce3b4f83f3f66444bcac0 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 13 Apr 2020 17:40:43 +0200
-Subject: [PATCH] spi: sc18is602: Fix a typo in MODULE_DESCRIPTION
-
-This should be 'SC18IS602', not 'SC18IC602'
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20200413154043.23064-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/spi/spi-sc18is602.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Greg, here is a minor non-urgent patch for staging.
 
-diff --git a/drivers/spi/spi-sc18is602.c b/drivers/spi/spi-sc18is602.c
-index 5497eeb3bf3e..ee0f3edf49cd 100644
---- a/drivers/spi/spi-sc18is602.c
-+++ b/drivers/spi/spi-sc18is602.c
-@@ -345,6 +345,6 @@ static struct i2c_driver sc18is602_driver = {
+applies cleanly on v5.7-rc3, current master and next-20200428
+
+ MAINTAINERS | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 26f281d9f32a..41e2b577488f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7746,11 +7746,6 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Orphan
+ F:	drivers/platform/x86/tc1100-wmi.c
  
- module_i2c_driver(sc18is602_driver);
- 
--MODULE_DESCRIPTION("SC18IC602/603 SPI Master Driver");
-+MODULE_DESCRIPTION("SC18IS602/603 SPI Master Driver");
- MODULE_AUTHOR("Guenter Roeck");
- MODULE_LICENSE("GPL");
+-HP100:	Driver for HP 10/100 Mbit/s Voice Grade Network Adapter Series
+-M:	Jaroslav Kysela <perex@perex.cz>
+-S:	Obsolete
+-F:	drivers/staging/hp/hp100.*
+-
+ HPET:	High Precision Event Timers driver
+ M:	Clemens Ladisch <clemens@ladisch.de>
+ S:	Maintained
 -- 
-2.20.1
+2.17.1
