@@ -1,32 +1,37 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 14 Apr 2020 15:05:24 +0000
-Subject: Re: [PATCH] brcm80211: remove redundant pointer 'address'
-Message-Id: <20200414150525.01C0AC44792@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 29 Apr 2020 04:34:38 +0000
+Subject: [PATCH] video: fbdev: pxa3xx_gcu: Fix some resource leak in an error handling path in 'pxa3xx_gcu_pr
+Message-Id: <20200429043438.96212-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200405133906.381358-1-colin.king@canonical.com>
-In-Reply-To: <20200405133906.381358-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b.zolnierkie@samsung.com, gregkh@linuxfoundation.org, mpe@ellerman.id.au, zhenzhong.duan@gmail.com, arnd@arndb.de, tglx@linutronix.de, eric.y.miao@gmail.com, daniel@caiaq.de
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Colin King <colin.king@canonical.com> wrote:
+If an error occurs in the loop where we call 'pxa3xx_gcu_add_buffer()',
+any resource already allocated should be freed.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'address' is being assigned and updated in a few places
-> by it is never read. Hence the assignments are redundant and can
-> be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In order to fix it, add a call to 'pxa3xx_gcu_free_buffers()' in the error
+handling path, as already done in the remove function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Fixes: 364dbdf3b6c3 ("video: add driver for PXA3xx 2D graphics accelerator")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/video/fbdev/pxa3xx-gcu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-09667ea7ce6d brcm80211: remove redundant pointer 'address'
-
+diff --git a/drivers/video/fbdev/pxa3xx-gcu.c b/drivers/video/fbdev/pxa3xx-gcu.c
+index 4279e13a3b58..68d9c7a681d4 100644
+--- a/drivers/video/fbdev/pxa3xx-gcu.c
++++ b/drivers/video/fbdev/pxa3xx-gcu.c
+@@ -675,6 +675,7 @@ static int pxa3xx_gcu_probe(struct platform_device *pdev)
+ 
+ err_disable_clk:
+ 	clk_disable_unprepare(priv->clk);
++	pxa3xx_gcu_free_buffers(dev, priv);
+ 
+ 	return ret;
+ }
 -- 
-https://patchwork.kernel.org/patch/11474705/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.25.1
