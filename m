@@ -1,61 +1,52 @@
-From: Manish Rangankar <mrangankar@marvell.com>
-Date: Wed, 29 Apr 2020 05:48:33 +0000
-Subject: RE: [EXT] [PATCH] scsi: qedi: Check for buffer overflow in qedi_set_path()
-Message-Id: <BYAPR18MB29985E46F58EDE47E32D773CD8AD0@BYAPR18MB2998.namprd18.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Apr 2020 15:40:55 +0000
+Subject: [PATCH] scsi: pm80xx: remove redundant assignments to status
+Message-Id: <20200429154055.286617-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428131939.GA696531@mwanda>
-In-Reply-To: <20200428131939.GA696531@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "QLogic-Storage-Upstream@cavium.com" <QLogic-Storage-Upstream@cavium.com>, Manish Rangankar <manish.rangankar@cavium.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Tuesday, April 28, 2020 6:50 PM
-> To: QLogic-Storage-Upstream@cavium.com; Manish Rangankar
-> <manish.rangankar@cavium.com>
-> Cc: James E.J. Bottomley <jejb@linux.ibm.com>; Martin K. Petersen
-> <martin.petersen@oracle.com>; linux-scsi@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [EXT] [PATCH] scsi: qedi: Check for buffer overflow in
-> qedi_set_path()
-> 
-> External Email
-> 
-> ----------------------------------------------------------------------
-> Smatch complains that the "path_data->handle" variable is user controlled.
-> It comes from iscsi_set_path() so that seems possible.
-> It's harmless to add a limit check.
-> 
-> The qedi->ep_tbl[] array has qedi->max_active_conns elements (which is
-> always ISCSI_MAX_SESS_PER_HBA (4096) elements).  The array is allocated
-> in the qedi_cm_alloc_mem() function.
-> 
-> Fixes: ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver
-> framework.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/scsi/qedi/qedi_iscsi.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
-> index b867a143d2638..425e665ec08b2 100644
-> --- a/drivers/scsi/qedi/qedi_iscsi.c
-> +++ b/drivers/scsi/qedi/qedi_iscsi.c
-> @@ -1221,6 +1221,10 @@ static int qedi_set_path(struct Scsi_Host
-> *shost, struct iscsi_path *path_data)
->  	}
-> 
->  	iscsi_cid = (u32)path_data->handle;
-> +	if (iscsi_cid >= qedi->max_active_conns) {
-> +		ret = -EINVAL;
-> +		goto set_path_exit;
-> +	}
->  	qedi_ep = qedi->ep_tbl[iscsi_cid];
->  	QEDI_INFO(&qedi->dbg_ctx, QEDI_LOG_INFO,
->  		  "iscsi_cid=0x%x, qedi_ep=%p\n", iscsi_cid, qedi_ep);
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks,
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
+The variable status is being assigned with a value that is never read
+hence the assignment is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm80xx_hwi.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80xx_hwi.c
+index 4d205ebaee87..f5e36375a68f 100644
+--- a/drivers/scsi/pm8001/pm80xx_hwi.c
++++ b/drivers/scsi/pm8001/pm80xx_hwi.c
+@@ -235,7 +235,6 @@ ssize_t pm80xx_get_fatal_dump(struct device *cdev,
+ 			pm8001_ha->forensic_fatal_step = 1;
+ 			pm8001_ha->fatal_forensic_shift_offset = 0;
+ 			pm8001_ha->forensic_last_offset	= 0;
+-			status = 0;
+ 			offset = (int)
+ 			((char *)pm8001_ha->forensic_info.data_buf.direct_data
+ 			- (char *)buf);
+@@ -258,7 +257,6 @@ ssize_t pm80xx_get_fatal_dump(struct device *cdev,
+ 					forensic_info.data_buf.direct_data,
+ 					"%08x ", *(temp + index));
+ 			}
+-			status = 0;
+ 			offset = (int)
+ 			((char *)pm8001_ha->forensic_info.data_buf.direct_data
+ 			- (char *)buf);
+@@ -285,7 +283,6 @@ ssize_t pm80xx_get_fatal_dump(struct device *cdev,
+ 		pm8001_cw32(pm8001_ha, 0, MEMBASE_II_SHIFT_REGISTER,
+ 			pm8001_ha->fatal_forensic_shift_offset);
+ 		pm8001_ha->fatal_bar_loc = 0;
+-		status = 0;
+ 		offset = (int)
+ 			((char *)pm8001_ha->forensic_info.data_buf.direct_data
+ 			- (char *)buf);
+-- 
+2.25.1
