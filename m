@@ -1,44 +1,82 @@
-From: Dejin Zheng <zhengdejin5@gmail.com>
-Date: Thu, 23 Apr 2020 14:29:09 +0000
-Subject: Re: [PATCH v1] console: fix an issue about ioremap leak.
-Message-Id: <20200423142909.GB1562@nuc8i5>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 29 Apr 2020 09:35:03 +0000
+Subject: [PATCH -next v2] mailbox: zynqmp-ipi: Fix NULL vs IS_ERR() check in zynqmp_ipi_mbox_probe()
+Message-Id: <20200429093503.150485-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c62ec54f-348b-2eae-59eb-374dde4d49ad@web.de>
-In-Reply-To: <c62ec54f-348b-2eae-59eb-374dde4d49ad@web.de>
+References: <20200429073020.83519-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200429073020.83519-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fbdev@vger.kernel.org, Thomas =?utf-8?Q?Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Ralf =?utf-8?Q?B=C3=A4chle?= <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>, Coccinelle <cocci@systeme.lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jassi Brar <jassisinghbrar@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wendy Liang <wendy.liang@xilinx.com>, Markus
+ Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 23, 2020 at 01:10:14PM +0200, Markus Elfring wrote:
-> > if do_take_over_console() return an error in the newport_probe(),
-> > due to the io virtual address is not released, it will cause a leak.
-> 
-> How do you think about a wording variant like the following?
-> 
->    Subject:
->    [PATCH v2] console: Complete exception handling in newport_probe()
-> 
->    Change description:
->    A call of the function “do_take_over_console” can fail here.
->    The corresponding system resources were not released then.
->    Thus add a call of the function “iounmap” together with the check
->    of a failure predicate.
->
-Thanks!
+In case of error, the function devm_ioremap() returns NULL pointer not
+ERR_PTR(). So we should check whether the return value of devm_ioremap()
+is NULL instead of IS_ERR.
 
-> 
-> I would like to point out that there is a script for the semantic
-> patch language which would detect other questionable source code.
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/scripts/coccinelle/free/iounmap.cocci
-> 
-> How do you think about to extend presented software analysis approaches?
->
-Sorry, I am not familiar with it, I don't know.
+Fixes: 4981b82ba2ff ("mailbox: ZynqMP IPI mailbox controller")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 ->v2: fix the description and the module name in subject
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-BR,
-Dejin
-
-> Regards,
-> Markus
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 86887c9a349a..f9cc674ba9b7 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -504,10 +504,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->req_buf_size = resource_size(&res);
+ 		mchan->req_buf = devm_ioremap(mdev, res.start,
+ 					      mchan->req_buf_size);
+-		if (IS_ERR(mchan->req_buf)) {
++		if (!mchan->req_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->req_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s, %d.\n", name, ret);
+@@ -520,10 +519,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->resp_buf_size = resource_size(&res);
+ 		mchan->resp_buf = devm_ioremap(mdev, res.start,
+ 					       mchan->resp_buf_size);
+-		if (IS_ERR(mchan->resp_buf)) {
++		if (!mchan->resp_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->resp_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
+@@ -543,10 +541,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->req_buf_size = resource_size(&res);
+ 		mchan->req_buf = devm_ioremap(mdev, res.start,
+ 					      mchan->req_buf_size);
+-		if (IS_ERR(mchan->req_buf)) {
++		if (!mchan->req_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->req_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
+@@ -559,10 +556,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->resp_buf_size = resource_size(&res);
+ 		mchan->resp_buf = devm_ioremap(mdev, res.start,
+ 					       mchan->resp_buf_size);
+-		if (IS_ERR(mchan->resp_buf)) {
++		if (!mchan->resp_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->resp_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
