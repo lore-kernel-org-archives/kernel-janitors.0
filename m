@@ -1,50 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 29 Apr 2020 17:52:24 +0000
-Subject: Re: [PATCH -next] spi: spi-amd: Fix a NULL vs IS_ERR() check in amd_spi_probe()
-Message-Id: <158818274449.17408.17312221145865344653.b4-ty@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 29 Apr 2020 06:52:43 +0000
+Subject: [PATCH 2/4 v2] firmware: stratix10-svc: Unmap some previously memremap'ed memory
+Message-Id: <43505dc3a4b405d1c7d4a0fa74c67eda3e8bdb75.1588142343.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200429025426.167664-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200429025426.167664-1-weiyongjun1@huawei.com>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Sanjay R Mehta <sanju.mehta@amd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org
+To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 29 Apr 2020 02:54:26 +0000, Wei Yongjun wrote:
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
-> 
-> Fixes: bbb336f39efc ("spi: spi-amd: Add AMD SPI controller driver support")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> [...]
+In 'svc_create_memory_pool()' we memremap some memory. This has to be
+undone in case of error and if the driver is removed.
 
-Applied to
+The easiest way to do it is to use 'devm_memremap()'.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.8
+Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/stratix10-svc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] spi: spi-amd: Fix a NULL vs IS_ERR() check in amd_spi_probe()
-      commit: f84b604dbaf242d17135f527dbe81093a41226b3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index 3a176e62754a..de5870f76c5e 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -631,7 +631,7 @@ svc_create_memory_pool(struct platform_device *pdev,
+ 	end = rounddown(sh_memory->addr + sh_memory->size, PAGE_SIZE);
+ 	paddr = begin;
+ 	size = end - begin;
+-	va = memremap(paddr, size, MEMREMAP_WC);
++	va = devm_memremap(dev, paddr, size, MEMREMAP_WC);
+ 	if (!va) {
+ 		dev_err(dev, "fail to remap shared memory\n");
+ 		return ERR_PTR(-EINVAL);
+-- 
+2.25.1
