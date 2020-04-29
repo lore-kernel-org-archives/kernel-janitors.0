@@ -1,40 +1,50 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 10 Apr 2020 12:25:57 +0000
-Subject: Re: drm/tve200: Checking for a failed platform_get_irq() call in tve200_probe()
-Message-Id: <9971df1b-0651-fac0-847f-cf07eefe8996@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 29 Apr 2020 06:52:59 +0000
+Subject: [PATCH 4/4 v2] firmware: stratix10-svc: Slightly simplify code
+Message-Id: <8c505c686438c54da61ad4fe15e1eae722011153.1588142343.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0263f4fb-c349-7651-b590-8722cdd30c85@web.de>
- <20200410101831.GA27723@ravnborg.org>
- <235b500a-0e5e-9ca3-4be5-9026c7d9f87f@web.de>
- <20200410121406.GA31761@ravnborg.org>
-In-Reply-To: <20200410121406.GA31761@ravnborg.org>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Sam Ravnborg <sam@ravnborg.org>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: richard.gong@linux.intel.com, gregkh@linuxfoundation.org, atull@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
->> I found 20 source files from the software “Linux next-20200408”
->> which seem to contain similar update candidates.
->> Would you like to clarify any extensions for improved applications
->> of scripts with the semantic patch language (Coccinelle software)
->> for corresponding analysis and transformation purposes?
-> Please just send a series of patches, one for each driver.
+Replace 'devm_kmalloc_array(... | __GFP_ZERO)' with the equivalent and
+shorter 'devm_kcalloc(...)'.
 
-I am used to this possibility for years.
+'ctrl->genpool' can not be NULL, so axe a useless test in the remove
+function.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/stratix10-svc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> Each changelog needs to explain the rationale behind the change.
-
-I hope to achieve higher confidence also around specific checks
-for return values of Linux functions so that unwanted misunderstandings
-can be avoided for mentioned implementation details.
-
-
-> As for coccinelle - I cannot help you.
-
-I might help you more also by the means of this development tool
-if related system factors can be improved somehow.
-
-Regards,
-Markus
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index 739004398877..c228337cb0a1 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1002,8 +1002,7 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 	if (!controller)
+ 		return -ENOMEM;
+ 
+-	chans = devm_kmalloc_array(dev, SVC_NUM_CHANNEL,
+-				   sizeof(*chans), GFP_KERNEL | __GFP_ZERO);
++	chans = devm_kcalloc(dev, SVC_NUM_CHANNEL, sizeof(*chans), GFP_KERNEL);
+ 	if (!chans)
+ 		return -ENOMEM;
+ 
+@@ -1086,8 +1085,7 @@ static int stratix10_svc_drv_remove(struct platform_device *pdev)
+ 		kthread_stop(ctrl->task);
+ 		ctrl->task = NULL;
+ 	}
+-	if (ctrl->genpool)
+-		gen_pool_destroy(ctrl->genpool);
++	gen_pool_destroy(ctrl->genpool);
+ 	list_del(&ctrl->node);
+ 
+ 	return 0;
+-- 
+2.25.1
