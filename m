@@ -1,26 +1,77 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 21 Apr 2020 10:00:12 +0000
-Subject: Re: [V3] amdgpu: remove unnecessary condition check
-Message-Id: <aa0a34ce-714f-a637-d1a8-54de94a09e75@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 29 Apr 2020 07:30:20 +0000
+Subject: [PATCH -next] mailbox: Fix NULL vs IS_ERR() check in zynqmp_ipi_mbox_probe()
+Message-Id: <20200429073020.83519-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AIsA-wCZCFCxiq0WKb3WjKr*.3.1587458683834.Hmail.bernard@vivo.com>
- <ccd14dee-f275-5de4-b5c1-4f359d155288@amd.com>
-In-Reply-To: <ccd14dee-f275-5de4-b5c1-4f359d155288@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, =?UTF-8?B?6LW15Yab5aWO?= <bernard@vivo.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Chunming Zhou <David1.Zhou@amd.com>, opensource.kernel@vivo.com, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Felix_K=c3=bchling?= <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Coccinelle <cocci@systeme.lip6.fr>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wendy Liang <wendy.liang@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
->> But i have to say there are so many code not follow the kernel code-style in amdgpu module.
->> And also the ./scripts/checkpatch.pl did not throw any warning or error.
->
-> That is unfortunately true, yes. But we try to push new code through the usual code review and improve things as we go.
->
-> On the other hand patches just to fix the coding style are usually seen as an unnecessary interruption and just a waste of time.
+In case of error, the function devm_ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-Would you become interested in adjusting deviations from known programming guidelines
-in an automatic way with the help of corresponding advanced development tools?
+Fixes: 4981b82ba2ff ("mailbox: ZynqMP IPI mailbox controller")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 86887c9a349a..f9cc674ba9b7 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -504,10 +504,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->req_buf_size = resource_size(&res);
+ 		mchan->req_buf = devm_ioremap(mdev, res.start,
+ 					      mchan->req_buf_size);
+-		if (IS_ERR(mchan->req_buf)) {
++		if (!mchan->req_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->req_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s, %d.\n", name, ret);
+@@ -520,10 +519,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->resp_buf_size = resource_size(&res);
+ 		mchan->resp_buf = devm_ioremap(mdev, res.start,
+ 					       mchan->resp_buf_size);
+-		if (IS_ERR(mchan->resp_buf)) {
++		if (!mchan->resp_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->resp_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
+@@ -543,10 +541,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->req_buf_size = resource_size(&res);
+ 		mchan->req_buf = devm_ioremap(mdev, res.start,
+ 					      mchan->req_buf_size);
+-		if (IS_ERR(mchan->req_buf)) {
++		if (!mchan->req_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->req_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
+@@ -559,10 +556,9 @@ static int zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
+ 		mchan->resp_buf_size = resource_size(&res);
+ 		mchan->resp_buf = devm_ioremap(mdev, res.start,
+ 					       mchan->resp_buf_size);
+-		if (IS_ERR(mchan->resp_buf)) {
++		if (!mchan->resp_buf) {
+ 			dev_err(mdev, "Unable to map IPI buffer I/O memory\n");
+-			ret = PTR_ERR(mchan->resp_buf);
+-			return ret;
++			return -ENOMEM;
+ 		}
+ 	} else if (ret != -ENODEV) {
+ 		dev_err(mdev, "Unmatched resource %s.\n", name);
