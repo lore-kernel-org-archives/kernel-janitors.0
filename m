@@ -1,49 +1,57 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 27 Apr 2020 05:54:33 +0000
-Subject: Re: [PATCH] mmc: alcor: Fix a resource leak in an error handling path in 'alcor_pci_sdmmc_drv_probe(
-Message-Id: <35c7cffb-02dd-452c-f525-fe5ddcbb0a48@web.de>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Thu, 30 Apr 2020 14:10:50 +0000
+Subject: Re: [PATCH v2] i2c: i2c-amd-mp2-pci: Fix Oops in amd_mp2_pci_init() error handling
+Message-Id: <20200430141050.GB3355@ninjato>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="9zSXsLTf0vkW971A"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200426202355.43055-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200426202355.43055-1-christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Daniel Drake <drake@endlessm.com>, Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>, Oleksij Rempel <linux@rempel-privat.de>, Ulf Hansson <ulf.hansson@linaro.org>
-
-> If 'devm_request_threaded_irq()' fails, resources allocated by
-> 'mmc_alloc_host()' must be freed.
-
-How do you think about a wording variant like the following?
-
-   Subject:
-   [PATCH v2] mmc: alcor: Complete exception handling in alcor_pci_sdmmc_drv_probe()
-
-   Change description (according to a solution alternative):
-   The exception handling was incomplete in an if branch
-   after a failed call of the function “devm_request_threaded_irq”.
-   Thus add a call of the function “mmc_free_host” for the release of
-   corresponding system resources.
+References: <CAC_JBqofuyRiSmK0mFqVLaY=5k9MYmjGaVmggx2dn_YjN8VOmw@mail.gmail.com>
+ <20190910134242.GA6620@mwanda>
+In-Reply-To: <20190910134242.GA6620@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Elie Morisse <syniurge@gmail.com>, Nehal Shah <nehal-bakulchandra.shah@amd.com>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
-> +++ b/drivers/mmc/host/alcor.c
-> @@ -1104,7 +1104,7 @@ static int alcor_pci_sdmmc_drv_probe(struct platform_device *pdev)
->
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to get irq for data line\n");
-> -		return ret;
-> +		goto free_host;
->  	}
->
->  	mutex_init(&host->cmd_mutex);
+--9zSXsLTf0vkW971A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You propose to perform a jump to other code only once in this implementation.
-I find it more succinct to call the desired function then directly.
+On Tue, Sep 10, 2019 at 04:42:42PM +0300, Dan Carpenter wrote:
+> The problem is that we dereference "privdata->pci_dev" when we print
+> the error messages in amd_mp2_pci_init():
+>=20
+> 	dev_err(ndev_dev(privdata), "Failed to enable MP2 PCI device\n");
+> 		^^^^^^^^^^^^^^^^^
+>=20
+> Fixes: 529766e0a011 ("i2c: Add drivers for the AMD PCIe MP2 I2C controlle=
+r")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- 		dev_err(…);
-+		mmc_free_host(mmc);
- 		return ret;
+Applied to for-current, thanks!
+
+Elie, Nehal, Shyam, are you still there to review patches for this
+driver?
 
 
-Regards,
-Markus
+--9zSXsLTf0vkW971A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6q3GoACgkQFA3kzBSg
+Kbb3Ww/+IR1Q3p2H6vZjfVbP/E4riOWYHlKhuDWDgmMPjRtep4KFmwo7swfQXwmg
+hMZQxtBq8TiTubh0E893JCCeGoIt9ZA2Mq1tkYBDNc7Ad3yjQu81edCmXHkMxsgW
+RRnCjK+6ssxyLeXh+fZhTDCUyESJpmwRTsUOmisWRiE2RJfmWxY+5YVhJ/IHDaBH
+rKNSsDPYza6EkusCoztaTaw3A7f4gfKqsRv03mBA1WuXE1mG/rZgxhYV2zT9eGtU
+ra6FPdWs6MCGx4OdkqqlofHhsQrZUtTjvT+7baLAZRnY8COxFoutNr1S3vq6GiGo
+0BIS5dd6U1CCiWulK7glHfGI93Lufo5KZ58mm74rF9NvjBRcNt302ZQRrGlb/R2a
+hYcFV5Qyp65glytBRsNgN8Ua2IeTC2tMY/PJBj/K9DvMspDB8G97nERvrVBB82R8
+JMMxbSryHnvD3jsl6bD/BMh91in3VfTPecaB1DLWnendtRU//bPeD49rCSmN0lC8
+/FBdTfYvPorMG2aAGyo3vusL1LeM7o1mVbyH1bPrSdErvDXg1z1ktbL8uxQWKtL8
+NaSh1QsgNzsYfZIc3Jb9TCUTHGxW8uno0fw7zf7i4MK+vu3Yljrzkf+nbsDv7XLz
+iiFTApTilMxmACRANgA3yOo/kzqMUViKZ8jUzrKPTexjLdyLVXo=
+=2Kcc
+-----END PGP SIGNATURE-----
+
+--9zSXsLTf0vkW971A--
