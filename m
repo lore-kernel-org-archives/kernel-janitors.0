@@ -1,43 +1,26 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 05 Apr 2020 09:16:42 +0000
-Subject: [PATCH] drm/imx: imx-tve: Delete an error message in imx_tve_bind()
-Message-Id: <eb87043b-1881-da68-ba28-35406b6594ed@web.de>
+Date: Thu, 30 Apr 2020 06:36:00 +0000
+Subject: Re: [PATCH] ASoC: mxs-saif: Add variable dev to simplify code
+Message-Id: <a397e9c0-343c-685a-dd3f-53be09429a70@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tang Bin <tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tang Bin <tangbin@cmss.chinamobile.com>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 5 Apr 2020 11:01:49 +0200
+> Add variable 'dev' to make the code cleaner in the function
+> mxs_saif_probe(). And now that the function mxs_saif_mclk_init()
+> have defined the variables 'ret' as the error returned value,
+> then it should be used instead in this place.
 
-The function “platform_get_irq” can log an error already.
-Thus omit a redundant message for the exception handling in the
-calling function.
+I find it clearer to integrate such source code adjustments by separate patches
+together with improved commit messages.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id2cc5ac6f6668cc15216d51051103c61467d7e8#n138
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/imx/imx-tve.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Would you become interested to search for similar update candidates
+by the means of the semantic patch language (Coccinelle software)?
 
-diff --git a/drivers/gpu/drm/imx/imx-tve.c b/drivers/gpu/drm/imx/imx-tve.c
-index 5bbfaa2cd0f4..23adbb818d92 100644
---- a/drivers/gpu/drm/imx/imx-tve.c
-+++ b/drivers/gpu/drm/imx/imx-tve.c
-@@ -598,10 +598,8 @@ static int imx_tve_bind(struct device *dev, struct device *master, void *data)
- 	}
-
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "failed to get irq\n");
-+	if (irq < 0)
- 		return irq;
--	}
-
- 	ret = devm_request_threaded_irq(dev, irq, NULL,
- 					imx_tve_irq_handler, IRQF_ONESHOT,
---
-2.26.0
+Regards,
+Markus
