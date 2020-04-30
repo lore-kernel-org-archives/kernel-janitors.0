@@ -1,52 +1,35 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 25 Apr 2020 16:55:57 +0000
-Subject: Re: [PATCH] iio: dac: ad5592r: Fix a typo in the name of a function
-Message-Id: <20200425175557.20cd9256@archlinux>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 30 Apr 2020 08:13:53 +0000
+Subject: [PATCH -next] crypto: drbg - fix error return code in drbg_alloc_state()
+Message-Id: <20200430081353.112449-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200425070056.31664-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200425070056.31664-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, stefan.popa@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Stephan Mueller <smueller@chronox.de>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 25 Apr 2020 09:00:56 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Fix to return negative error code -ENOMEM from the kzalloc error handling
+case instead of 0, as done elsewhere in this function.
 
-> This module is related to AD5592R, not AD5593R, so be consistent in naming.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: db07cd26ac6a ("crypto: drbg - add FIPS 140-2 CTRNG for noise source")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ crypto/drbg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/dac/ad5592r.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad5592r.c b/drivers/iio/dac/ad5592r.c
-> index 34ba059a77da..49308ad13c4b 100644
-> --- a/drivers/iio/dac/ad5592r.c
-> +++ b/drivers/iio/dac/ad5592r.c
-> @@ -98,7 +98,7 @@ static int ad5592r_reg_read(struct ad5592r_state *st, u8 reg, u16 *value)
->  	return 0;
->  }
->  
-> -static int ad5593r_gpio_read(struct ad5592r_state *st, u8 *value)
-> +static int ad5592r_gpio_read(struct ad5592r_state *st, u8 *value)
->  {
->  	int ret;
->  
-> @@ -121,7 +121,7 @@ static const struct ad5592r_rw_ops ad5592r_rw_ops = {
->  	.read_adc = ad5592r_read_adc,
->  	.reg_write = ad5592r_reg_write,
->  	.reg_read = ad5592r_reg_read,
-> -	.gpio_read = ad5593r_gpio_read,
-> +	.gpio_read = ad5592r_gpio_read,
->  };
->  
->  static int ad5592r_spi_probe(struct spi_device *spi)
+diff --git a/crypto/drbg.c b/crypto/drbg.c
+index e57901d8545b..37526eb8c5d5 100644
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -1306,8 +1306,10 @@ static inline int drbg_alloc_state(struct drbg_state *drbg)
+ 	if (IS_ENABLED(CONFIG_CRYPTO_FIPS)) {
+ 		drbg->prev = kzalloc(drbg_sec_strength(drbg->core->flags),
+ 				     GFP_KERNEL);
+-		if (!drbg->prev)
++		if (!drbg->prev) {
++			ret = -ENOMEM;
+ 			goto fini;
++		}
+ 		drbg->fips_primed = false;
+ 	}
