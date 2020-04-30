@@ -1,43 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 25 Apr 2020 19:30:22 +0000
-Subject: Re: [PATCH] mmc: owl-mmc: Fix dma_chan refcnt leak in owl_mmc_probe()
-Message-Id: <282da79a-eda7-f534-a6ed-8ac38fcc2c8b@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 30 Apr 2020 07:05:23 +0000
+Subject: [PATCH -next] drm/vboxvideo: Fix a NULL vs IS_ERR() check in vbox_hw_init()
+Message-Id: <20200430070523.185584-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Xiyu Yang <xiyuyang19@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, Kangjie Lu <kjlu@umn.edu>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Yuan Zhang <yuanxzhang@fudan.edu.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans de Goede <hdegoede@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-> Fix this issue by jumping to "err_put_dma" label when those error
-> scenarios occur.
+The devm_gen_pool_create() function returns ERR_PTR() on error, it
+doesn't return NULL so this check doesn't work.
 
-I suggest to reconsider your jump target selection.
+Fixes: 4cc9b565454b ("drm/vboxvideo: Use devm_gen_pool_create")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/vboxvideo/vbox_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-…
-> +++ b/drivers/mmc/host/owl-mmc.c
-…
-> @@ -643,19 +643,22 @@ static int owl_mmc_probe(struct platform_device *pdev)
->  	return 0;
->
-> +err_put_dma:
-> +	if (owl_host->dma)
-> +		dma_release_channel(owl_host->dma);
-
-I interpret the source code in the way that you would like to call
-this function for the desired exception handling only after a call
-of the function “dma_request_chan” succeeded.
-Thus I would expect that the passed pointer will usually be still valid.
-(Can the proposed null pointer check be omitted then?)
-
-How do you think about the following change possibility?
-
-+err_release_channel:
-+	dma_release_channel(owl_host->dma);
-
-
-Would you like to add the tag “Fixes” to the change description?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_main.c b/drivers/gpu/drm/vboxvideo/vbox_main.c
+index d68d9bad7674..c5ea880d17b2 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_main.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_main.c
+@@ -123,8 +123,8 @@ int vbox_hw_init(struct vbox_private *vbox)
+ 	/* Create guest-heap mem-pool use 2^4 = 16 byte chunks */
+ 	vbox->guest_pool = devm_gen_pool_create(vbox->ddev.dev, 4, -1,
+ 						"vboxvideo-accel");
+-	if (!vbox->guest_pool)
+-		return -ENOMEM;
++	if (IS_ERR(vbox->guest_pool))
++		return PTR_ERR(vbox->guest_pool);
+ 
+ 	ret = gen_pool_add_virt(vbox->guest_pool,
+ 				(unsigned long)vbox->guest_heap,
