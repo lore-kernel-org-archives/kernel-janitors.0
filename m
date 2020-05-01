@@ -1,42 +1,32 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Fri, 08 May 2020 10:40:08 +0000
-Subject: Re: [PATCH] powerpc/spufs: adjust list element pointer type
-Message-Id: <alpine.DEB.2.21.2005081237210.5307@hadrien>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 01 May 2020 07:20:23 +0000
+Subject: Re: Improving documentation for programming interfaces
+Message-Id: <5185a8a7-1fdd-a9b9-eeef-f5952485e1c0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1588929176-28527-1-git-send-email-Julia.Lawall@inria.fr>
- <4c9cc9184213ded65489cb95050046c8904ddad8.camel@ozlabs.org>
-In-Reply-To: <4c9cc9184213ded65489cb95050046c8904ddad8.camel@ozlabs.org>
+References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
+ <20191220151945.GD59959@mit.edu>
+ <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
+ <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
+ <20200108161428.GA263696@mit.edu>
+In-Reply-To: <20200108161428.GA263696@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeremy Kerr <jk@ozlabs.org>
-Cc: Nic Volanschi <eugene.volanschi@inria.fr>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+>> I propose to encode helpful information into macro calls as needed
+>> for the C programming language.
+=E2=80=A6
+> On the "benefits" side of the equation, is there are ways in which it
+> will directly benefit the kernel developers who will need to review
+> the patches and review the annotations, that can be demonstrated
+> immediately?  Not in some abstract way, or "when I my research work is
+> completed", but a very concrete way that will be obvious to those of
+> us who are still not completely convinced?
 
+Would any contributors like to clarify further possibilities around
+the application of source code annotation languages?
 
-On Fri, 8 May 2020, Jeremy Kerr wrote:
-
-> Hi Julia,
->
-> > Other uses of &gang->aff_list_head, eg in spufs_assert_affinity, indicate
-> > that the list elements have type spu_context, not spu as used here.  Change
-> > the type of tmp accordingly.
->
-> Looks good to me; we could even use ctx there, rather than the separate
-> tmp variable.
-
-I thought about that, but it seemed a little bit abusive, since ctx is
-used in an iteration over another list.  But if you prefer that I can
-change it.
-
-julia
-
->
-> Reviewed-by: Jeremy Kerr <jk@ozlabs.org>
->
-> Cheers,
->
->
-> Jeremy
->
->
+Regards,
+Markus
