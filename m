@@ -1,60 +1,38 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Tue, 05 May 2020 10:54:29 +0000
-Subject: Re: [PATCH -next  v2] PCI: dwc: pci-dra7xx: use devm_platform_ioremap_resource_byname()
-Message-Id: <20200505105429.GB13446@e121166-lin.cambridge.arm.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 01 May 2020 22:28:17 +0000
+Subject: Re: [PATCH net-next v2] drivers: net: davinci_mdio: fix potential NULL dereference in davinci_mdio_p
+Message-Id: <20200501.152817.688071349221528108.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427111044.162618-1-weiyongjun1@huawei.com>
- <20200429015027.134485-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200429015027.134485-1-weiyongjun1@huawei.com>
+References: <20200427094032.181184-1-weiyongjun1@huawei.com>
+        <20200429025220.166415-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200429025220.166415-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vignesh Raghavendra <vigneshr@ti.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: grygorii.strashko@ti.com, david@lechnology.com, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 01:50:27AM +0000, Wei Yongjun wrote:
-> platform_get_resource() may fail and return NULL, so we should better
-> check it's return value to avoid a NULL pointer dereference a bit later
-> in the code. Fix it to use devm_platform_ioremap_resource_byname()
-> instead of calling platform_get_resource_byname() and devm_ioremap().
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 29 Apr 2020 02:52:20 +0000
+
+> platform_get_resource() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> since devm_ioremap() does not check input parameters for null.
 > 
+> This is detected by Coccinelle semantic patch.
+> 
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> 
+> res = \(platform_get_resource\|platform_get_resource_byname\)(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res = NULL
+> e = devm_ioremap(e1, res->start, e2);
+> 
+> Fixes: 03f66f067560 ("net: ethernet: ti: davinci_mdio: use devm_ioremap()")
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 -> v2: use devm_platform_ioremap_resource_byname, suggest by Vignesh
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Applied to pci/dwc, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index 3b0e58f2de58..6184ebc9392d 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -840,7 +840,6 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
->  	struct phy **phy;
->  	struct device_link **link;
->  	void __iomem *base;
-> -	struct resource *res;
->  	struct dw_pcie *pci;
->  	struct dra7xx_pcie *dra7xx;
->  	struct device *dev = &pdev->dev;
-> @@ -877,10 +876,9 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
->  		return irq;
->  	}
->  
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ti_conf");
-> -	base = devm_ioremap(dev, res->start, resource_size(res));
-> -	if (!base)
-> -		return -ENOMEM;
-> +	base = devm_platform_ioremap_resource_byname(pdev, "ti_conf");
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
->  
->  	phy_count = of_property_count_strings(np, "phy-names");
->  	if (phy_count < 0) {
-> 
-> 
-> 
+Applied.
