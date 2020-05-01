@@ -1,36 +1,35 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 01 May 2020 19:51:11 +0000
-Subject: [PATCH] selinux: fix return value on error in policydb_read()
-Message-Id: <20200501195111.3335258-1-omosnace@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 01 May 2020 19:54:55 +0000
+Subject: Re: [PATCH] selinux: fix return value on error in policydb_read()
+Message-Id: <CAHC9VhT7EDa_HJpeq476G=euHz3=p5b4u2KONeMEAMef=ASy8A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200501195111.3335258-1-omosnace@redhat.com>
+In-Reply-To: <20200501195111.3335258-1-omosnace@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: selinux@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
 
-The value of rc is still zero from the last assignment when the error
-path is taken. Fix it by setting it to -ENOMEM before the
-hashtab_create() call.
+On Fri, May 1, 2020 at 3:51 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> The value of rc is still zero from the last assignment when the error
+> path is taken. Fix it by setting it to -ENOMEM before the
+> hashtab_create() call.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: e67b2ec9f617 ("selinux: store role transitions in a hash table")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  security/selinux/ss/policydb.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: e67b2ec9f617 ("selinux: store role transitions in a hash table")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- security/selinux/ss/policydb.c | 1 +
- 1 file changed, 1 insertion(+)
+Here I was just about to reply to your other patches that patch 2/4
+looked fine to me but I was going to hold off on applying it until
+this patch came through :)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 1c0041576643..9f7ce3e037d1 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -2540,6 +2540,7 @@ int policydb_read(struct policydb *p, void *fp)
- 		goto bad;
- 	nel = le32_to_cpu(buf[0]);
- 
-+	rc = -ENOMEM;
- 	p->role_tr = hashtab_create(role_trans_hash, role_trans_cmp, nel);
- 	if (!p->role_tr)
- 		goto bad;
+Merged into selinux/next, thanks.
+
 -- 
-2.25.4
+paul moore
+www.paul-moore.com
