@@ -1,34 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 May 2020 10:51:20 +0000
-Subject: Re: [PATCH] cnic: remove redundant assignment to variable ret
-Message-Id: <20200509105120.GH9365@kadam>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 01 May 2020 16:46:47 +0000
+Subject: Re: [PATCH -next] selinux: fix error return code in policydb_read()
+Message-Id: <CAHC9VhT1-rV3heNWxcKo58AVsvhGeX5=oTQY8d8uahpMhwbJrA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508224026.483746-1-colin.king@canonical.com>
-In-Reply-To: <20200508224026.483746-1-colin.king@canonical.com>
+References: <20200429073053.83660-1-weiyongjun1@huawei.com> <20200429130738.GQ2014@kadam>
+In-Reply-To: <20200429130738.GQ2014@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Ondrej Mosnacek <omosnace@redhat.com>, Jeff Vander Stoep <jeffv@google.com>, selinux@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 08, 2020 at 11:40:26PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being assigned with a value that is never read,
-> the assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Wed, Apr 29, 2020 at 9:15 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Wed, Apr 29, 2020 at 07:30:53AM +0000, Wei Yongjun wrote:
+> > Fix to return negative error code -ENOMEM from the kvcalloc() error
+> > handling case instead of 0, as done elsewhere in this function.
+>
+> Please add a Fixes tag and Cc Kent.
 
-We used to return negative error codes until commit 23021c21055f ("cnic:
-Improve error recovery on bnx2x devices").
+Kent?  Who is Kent?
 
-To be honest, I like the deliberate "ret = 0;" because this code will
-trigger a static checker warning about wrong error codes.  Also it looks
-wrong to human reviewers.  We should probably add a comment:
-
-	/* Deliberately returning success */
-	return 0;
-
-regards,
-dan carpenter
+-- 
+paul moore
+www.paul-moore.com
