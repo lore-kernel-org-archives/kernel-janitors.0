@@ -1,24 +1,62 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Fri, 08 May 2020 15:31:49 +0000
-Subject: Re: [PATCH] iommu/virtio: reverse arguments to list_add
-Message-Id: <20200508153149.GA10908@8bytes.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 May 2020 13:43:10 +0000
+Subject: [PATCH] net: dsa: sja1105: fix speed setting for 10 MBPS
+Message-Id: <20200501134310.289561-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1588704467-13431-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1588704467-13431-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: eugene.volanschi@inria.fr, Jean-Philippe Brucker <jean-philippe@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, iommu@lists.linux-foundation.org
+To: Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Russell King <rmk+kernel@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, May 05, 2020 at 08:47:47PM +0200, Julia Lawall wrote:
-> Elsewhere in the file, there is a list_for_each_entry with
-> &vdev->resv_regions as the second argument, suggesting that
-> &vdev->resv_regions is the list head.  So exchange the
-> arguments on the list_add call to put the list head in the
-> second argument.
-> 
-> Fixes: 2a5a31487445 ("iommu/virtio: Add probe request")
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for v5.7, thanks.
+The current logic for speed checking will never set the speed to 10 MBPS
+because bmcr & BMCR_SPEED10 is always 0 since BMCR_SPEED10 is 0. Also
+the erroneous setting where BMCR_SPEED1000 and BMCR_SPEED100 are both
+set causes the speed to be 1000 MBS.  Fix this by masking bps and checking
+for just the expected settings of BMCR_SPEED1000, BMCR_SPEED100 and
+BMCR_SPEED10 and defaulting to the unknown speed otherwise.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: ffe10e679cec ("net: dsa: sja1105: Add support for the SGMII port")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/sja1105/sja1105_main.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
+index 472f4eb20c49..59a9038cdc4e 100644
+--- a/drivers/net/dsa/sja1105/sja1105_main.c
++++ b/drivers/net/dsa/sja1105/sja1105_main.c
+@@ -1600,6 +1600,7 @@ static const char * const sja1105_reset_reasons[] = {
+ int sja1105_static_config_reload(struct sja1105_private *priv,
+ 				 enum sja1105_reset_reason reason)
+ {
++	const int mask = (BMCR_SPEED1000 | BMCR_SPEED100 | BMCR_SPEED10);
+ 	struct ptp_system_timestamp ptp_sts_before;
+ 	struct ptp_system_timestamp ptp_sts_after;
+ 	struct sja1105_mac_config_entry *mac;
+@@ -1684,14 +1685,16 @@ int sja1105_static_config_reload(struct sja1105_private *priv,
+ 		sja1105_sgmii_pcs_config(priv, an_enabled, false);
+ 
+ 		if (!an_enabled) {
+-			int speed = SPEED_UNKNOWN;
++			int speed;
+ 
+-			if (bmcr & BMCR_SPEED1000)
++			if ((bmcr & mask) = BMCR_SPEED1000)
+ 				speed = SPEED_1000;
+-			else if (bmcr & BMCR_SPEED100)
++			else if ((bmcr & mask) = BMCR_SPEED100)
+ 				speed = SPEED_100;
+-			else if (bmcr & BMCR_SPEED10)
++			else if ((bmcr & mask) = BMCR_SPEED10)
+ 				speed = SPEED_10;
++			else
++				speed = SPEED_UNKNOWN;
+ 
+ 			sja1105_sgmii_pcs_force_speed(priv, speed);
+ 		}
+-- 
+2.25.1
