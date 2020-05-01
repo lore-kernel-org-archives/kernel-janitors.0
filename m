@@ -1,29 +1,76 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 01 May 2020 19:04:47 +0000
+Date: Fri, 01 May 2020 19:08:18 +0000
 Subject: Re: [PATCH -next] selinux: fix error return code in policydb_read()
-Message-Id: <CAHC9VhTEHJiRm-9zkic1mUyVJ6WNLL8AhzRsbq+bf7q2GDdCgA@mail.gmail.com>
+Message-Id: <CAHC9VhTxDkrLP4nvwsUTZDNiLPQJn0=gqTr609MCTrXQU40arw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200429073053.83660-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200429073053.83660-1-weiyongjun1@huawei.com>
+ <20200429130738.GQ2014@kadam> <CAFqZXNs=YTn-mnzSEssR1szRhSw7Ajdaqg=wy88O_F3gBL2rOQ@mail.gmail.com>
+In-Reply-To: <CAFqZXNs=YTn-mnzSEssR1szRhSw7Ajdaqg=wy88O_F3gBL2rOQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Ondrej Mosnacek <omosnace@redhat.com>, Jeff Vander Stoep <jeffv@google.com>, selinux@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Wei Yongjun <weiyongjun1@huawei.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Jeff Vander Stoep <jeffv@google.com>, SElinux list <selinux@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 3:29 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Wed, Apr 29, 2020 at 9:32 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Wed, Apr 29, 2020 at 3:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Wed, Apr 29, 2020 at 07:30:53AM +0000, Wei Yongjun wrote:
+> > > Fix to return negative error code -ENOMEM from the kvcalloc() error
+> > > handling case instead of 0, as done elsewhere in this function.
+> > >
+> >
+> > Please add a Fixes tag and Cc Kent.
+> >
+> > Fixes: acdf52d97f82 ("selinux: convert to kvmalloc")
+> >
+> >
+> > > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > > ---
+> > >  security/selinux/ss/policydb.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> > > index a0b3dc152468..a51e051df2cc 100644
+> > > --- a/security/selinux/ss/policydb.c
+> > > +++ b/security/selinux/ss/policydb.c
+> > > @@ -2638,6 +2638,7 @@ int policydb_read(struct policydb *p, void *fp)
+> > >       if (rc)
+> > >               goto bad;
+> > >
+> > > +     rc = -ENOMEM;
+> > >       p->type_attr_map_array = kvcalloc(p->p_types.nprim,
+> > >                                         sizeof(*p->type_attr_map_array),
+> > >                                         GFP_KERNEL);
+> >
+> > There is another bug earlier in the function as well:
+> >
+> > security/selinux/ss/policydb.c
+> >   2537
+> >   2538          rc = next_entry(buf, fp, sizeof(u32));
+> >   2539          if (rc)
+> >   2540                  goto bad;
+> >   2541          nel = le32_to_cpu(buf[0]);
+> >   2542
+> >   2543          p->role_tr = hashtab_create(role_trans_hash, role_trans_cmp, nel);
+> >   2544          if (!p->role_tr)
+> >   2545                  goto bad;
+> >                         ^^^^^^^^
+> >
+> >   2546          for (i = 0; i < nel; i++) {
+> >   2547                  rc = -ENOMEM;
+> >
+> > This style of setting the error code seems very bug prone.
+> >
+> > The Fixes tag for this one is:
+> > Fixes: e67b2ec9f617 ("selinux: store role transitions in a hash table")
 >
-> Fix to return negative error code -ENOMEM from the kvcalloc() error
-> handling case instead of 0, as done elsewhere in this function.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  security/selinux/ss/policydb.c | 1 +
->  1 file changed, 1 insertion(+)
+> FYI, this one is also indirectly fixed by this patch, which is
+> currently pending review:
+> https://patchwork.kernel.org/patch/11514495/
 
-Regardless of the other error, this patch fixes a legitimate problem
-so I've merged it into selinux/next with the appropriate fixes tag.
-Thanks.
+If we know the code is broken, let's fix it independently of a feature
+patch.  Ondrej, I believe the original patch is yours so please send
+me a new patch with just the fix, thank you.
 
 -- 
 paul moore
