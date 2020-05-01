@@ -1,94 +1,44 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Fri, 01 May 2020 18:00:52 +0000
-Subject: AW: [PATCH] net: dsa: sja1105: fix speed setting for 10 MBPS
-Message-Id: <9018be0b7dc441cd8aad625c6cc44e1c@bfs.de>
+From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Date: Fri, 01 May 2020 18:37:03 +0000
+Subject: Re: [PATCH] net: dsa: sja1105: fix speed setting for 10 MBPS
+Message-Id: <20200501183703.GS1551@shell.armlinux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200501134310.289561-1-colin.king@canonical.com>
-In-Reply-To: <20200501134310.289561-1-colin.king@canonical.com>
+ <9018be0b7dc441cd8aad625c6cc44e1c@bfs.de>
+In-Reply-To: <9018be0b7dc441cd8aad625c6cc44e1c@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Russell King <rmk+kernel@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Walter Harms <wharms@bfs.de>
+Cc: Colin King <colin.king@canonical.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-IMHO it would be better to use switch case here to improve readability.
+On Fri, May 01, 2020 at 06:00:52PM +0000, Walter Harms wrote:
+> IMHO it would be better to use switch case here to improve readability.
+> 
+> switch (bmcr & mask) {
+> 
+> case  BMCR_SPEED1000:
+>                                  speed = SPEED_1000;
+>                                  break;
+> case  BMCR_SPEED100:
+>                                  speed = SPEED_100;
+>                                  break;
+> case  BMCR_SPEED10:
+>                                  speed = SPEED_10;
+>                                  break;
+> default:
+>                                 speed = SPEED_UNKNOWN
+> }
+> 
+> jm2c,
+>  wh
+> 
+> btw: an_enabled ? why not !enabled, mich more easy to read
 
-switch (bmcr & mask) {
+You misinterpret "an_enabled".  It's not "negated enabled".  It's not
+even "disabled".  It's short for "autonegotiation enabled".  It's
+positive logic too.
 
-case  BMCR_SPEED1000:
-                                 speed = SPEED_1000;
-                                 break;
-case  BMCR_SPEED100:
-                                 speed = SPEED_100;
-                                 break;
-case  BMCR_SPEED10:
-                                 speed = SPEED_10;
-                                 break;
-default:
-                                speed = SPEED_UNKNOWN
-}
-
-jm2c,
- wh
-
-btw: an_enabled ? why not !enabled, mich more easy to read
-
-
-________________________________________
-Von: kernel-janitors-owner@vger.kernel.org <kernel-janitors-owner@vger.kernel.org> im Auftrag von Colin King <colin.king@canonical.com>
-Gesendet: Freitag, 1. Mai 2020 15:43:10
-An: Vladimir Oltean; Andrew Lunn; Vivien Didelot; Florian Fainelli; David S . Miller; Russell King; linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org; netdev@vger.kernel.org
-Betreff: [PATCH] net: dsa: sja1105: fix speed setting for 10 MBPS
-
-From: Colin Ian King <colin.king@canonical.com>
-
-The current logic for speed checking will never set the speed to 10 MBPS
-because bmcr & BMCR_SPEED10 is always 0 since BMCR_SPEED10 is 0. Also
-the erroneous setting where BMCR_SPEED1000 and BMCR_SPEED100 are both
-set causes the speed to be 1000 MBS.  Fix this by masking bps and checking
-for just the expected settings of BMCR_SPEED1000, BMCR_SPEED100 and
-BMCR_SPEED10 and defaulting to the unknown speed otherwise.
-
-Addresses-Coverity: ("Logically dead code")
-Fixes: ffe10e679cec ("net: dsa: sja1105: Add support for the SGMII port")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/dsa/sja1105/sja1105_main.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index 472f4eb20c49..59a9038cdc4e 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -1600,6 +1600,7 @@ static const char * const sja1105_reset_reasons[] = {
- int sja1105_static_config_reload(struct sja1105_private *priv,
-                                 enum sja1105_reset_reason reason)
- {
-+       const int mask = (BMCR_SPEED1000 | BMCR_SPEED100 | BMCR_SPEED10);
-        struct ptp_system_timestamp ptp_sts_before;
-        struct ptp_system_timestamp ptp_sts_after;
-        struct sja1105_mac_config_entry *mac;
-@@ -1684,14 +1685,16 @@ int sja1105_static_config_reload(struct sja1105_private *priv,
-                sja1105_sgmii_pcs_config(priv, an_enabled, false);
-
-                if (!an_enabled) {
--                       int speed = SPEED_UNKNOWN;
-+                       int speed;
-
--                       if (bmcr & BMCR_SPEED1000)
-+                       if ((bmcr & mask) == BMCR_SPEED1000)
-                                speed = SPEED_1000;
--                       else if (bmcr & BMCR_SPEED100)
-+                       else if ((bmcr & mask) == BMCR_SPEED100)
-                                speed = SPEED_100;
--                       else if (bmcr & BMCR_SPEED10)
-+                       else if ((bmcr & mask) == BMCR_SPEED10)
-                                speed = SPEED_10;
-+                       else
-+                               speed = SPEED_UNKNOWN;
-
-                        sja1105_sgmii_pcs_force_speed(priv, speed);
-                }
---
-2.25.1
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
