@@ -1,39 +1,59 @@
-From: qzhang2 <qiang.zhang@windriver.com>
-Date: Mon, 25 May 2020 10:19:59 +0000
-Subject: Re: [PATCH v2] workqueue: Fix double kfree for rescuer
-Message-Id: <bee86d19-6c14-1fd9-eead-24e63af6cf8e@windriver.com>
+From: Richard Gong <richard.gong@linux.intel.com>
+Date: Fri, 01 May 2020 15:40:20 +0000
+Subject: Re: [PATCH 4/4 v2] firmware: stratix10-svc: Slightly simplify code
+Message-Id: <1f8ae50d-6830-7fbb-e999-3e8110fe7cd6@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200525075901.12699-1-qiang.zhang@windriver.com>
- <7d19381c-2c51-deb4-f82f-d54bc56c6ecf@web.de>
-In-Reply-To: <7d19381c-2c51-deb4-f82f-d54bc56c6ecf@web.de>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+ <8c505c686438c54da61ad4fe15e1eae722011153.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8c505c686438c54da61ad4fe15e1eae722011153.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, gregkh@linuxfoundation.org, atull@kernel.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I see, kfree does nothing with null pointers and direct return.
-but again kfree is not a good suggestion.
+Hi,
 
-On 5/25/20 5:50 PM, Markus Elfring wrote:
->> The duplicate memory release should be deleted from the implementation
->> of the callback function "rcu_free_wq".
+On 4/29/20 1:52 AM, Christophe JAILLET wrote:
+> Replace 'devm_kmalloc_array(... | __GFP_ZERO)' with the equivalent and
+> shorter 'devm_kcalloc(...)'.
 > 
-> I tried to help with the selection of a better commit message.
-> I have taken another look also at the implementation of the function “destroy_workqueue”.
+It doesn't make much sense.
+Actually devm_kcalloc returns devm_kmalloc_array(.., flag | __GFP_ZERO).
+
+> 'ctrl->genpool' can not be NULL, so axe a useless test in the remove
+> function.
 > 
-> * The function call “destroy_workqueue” can be performed there in an if branch
->    after the statement “wq->rescuer = NULL” was executed.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/firmware/stratix10-svc.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> * This data processing is independent from a possible call of the
->    function “call_rcu(&wq->rcu, rcu_free_wq)” in another if branch.
->    Thus it seems that a null pointer is intentionally passed by a data structure
->    member to this callback function on demand.
->    The corresponding call of the function “kfree” can tolerate this special case.
+> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+> index 739004398877..c228337cb0a1 100644
+> --- a/drivers/firmware/stratix10-svc.c
+> +++ b/drivers/firmware/stratix10-svc.c
+> @@ -1002,8 +1002,7 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+>   	if (!controller)
+>   		return -ENOMEM;
+>   
+> -	chans = devm_kmalloc_array(dev, SVC_NUM_CHANNEL,
+> -				   sizeof(*chans), GFP_KERNEL | __GFP_ZERO);
+> +	chans = devm_kcalloc(dev, SVC_NUM_CHANNEL, sizeof(*chans), GFP_KERNEL);
+>   	if (!chans)
+>   		return -ENOMEM;
+>   
+> @@ -1086,8 +1085,7 @@ static int stratix10_svc_drv_remove(struct platform_device *pdev)
+>   		kthread_stop(ctrl->task);
+>   		ctrl->task = NULL;
+>   	}
+> -	if (ctrl->genpool)
+> -		gen_pool_destroy(ctrl->genpool);
+> +	gen_pool_destroy(ctrl->genpool);
+>   	list_del(&ctrl->node);
+>   
+>   	return 0;
 > 
-> 
-> Now I find that the proposed change can be inappropriate.
-> 
-> Regards,
-> Markus
-> 
+
+Regards,
+Richard
