@@ -1,31 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 24 May 2020 07:00:28 +0000
-Subject: Re: [PATCH v2 1/2] drivers: provide devm_platform_request_irq()
-Message-Id: <b0a8e1be-359a-17bf-0eb8-dcf175042811@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 01 May 2020 12:55:11 +0000
+Subject: [PATCH] drm/stm: Fix an error handling path in 'stm_drm_platform_probe()'
+Message-Id: <20200501125511.132029-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Barry Song <baohua@kernel.org>, Baruch Siach <baruch@tkos.co.il>, Fabio Estevam <festevam@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Kevin Hilman <khilman@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Paul Cercueil <paul@crapouillou.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: yannick.fertre@st.com, philippe.cornu@st.com, benjamin.gaignard@linaro.org, vincent.abriou@st.com, airlied@linux.ie, daniel@ffwll.ch, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, narmstrong@baylibre.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 
-> It will call devm_request_irq() after platform_get_irq() function
-> in many drivers, sometimes, it is not right for the error handling
-> of these two functions in some drivers. so provide this function
-> to simplify the driver.
+If 'drm_dev_register()' fails, a call to 'drv_load()' must be undone, as
+already done in the remove function.
 
-I recommend to improve also this change description.
-How do you think about a wording variant like the following?
+Fixes: b759012c5fa7 ("drm/stm: Add STM32 LTDC driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/stm/drv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-   The function “devm_request_irq” is called after the
-   function “platform_get_irq” in many drivers.
-   The exception handling is incomplete there sometimes.
-   Thus add a corresponding wrapper function for the simplification
-   of the drivers.
-
-
-Will a companion script for the semantic patch language (Coccinelle software)
-become helpful for further support of collateral evolution?
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+index ea9fcbdc68b3..9a66e350abd5 100644
+--- a/drivers/gpu/drm/stm/drv.c
++++ b/drivers/gpu/drm/stm/drv.c
+@@ -206,12 +206,14 @@ static int stm_drm_platform_probe(struct platform_device *pdev)
+ 
+ 	ret = drm_dev_register(ddev, 0);
+ 	if (ret)
+-		goto err_put;
++		goto err_unload;
+ 
+ 	drm_fbdev_generic_setup(ddev, 16);
+ 
+ 	return 0;
+ 
++err_unload:
++	drv_unload(ddev);
+ err_put:
+ 	drm_dev_put(ddev);
+ 
+-- 
+2.25.1
