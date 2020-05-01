@@ -1,28 +1,23 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 29 May 2020 11:50:04 +0000
-Subject: Re: edac: Fix reference count leak in edac_device_register_sysfs_main_kobj()
-Message-Id: <20200529115004.GE9011@zn.tnic>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 01 May 2020 03:29:53 +0000
+Subject: Re: [PATCH net-next] net: lpc-enet: fix error return code in lpc_mii_init()
+Message-Id: <20200430.202953.2091105199865668501.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28ebc99f-c0dd-00b2-7a53-9edf0df36c9c@web.de>
- <20200529093644.GC9011@zn.tnic>
- <c304a0b0-692a-0696-6750-05a3db6a4b42@web.de>
- <20200529094758.GD9011@zn.tnic>
- <fac5fdef-6148-38fb-1149-5bfc06969ac8@web.de>
-In-Reply-To: <fac5fdef-6148-38fb-1149-5bfc06969ac8@web.de>
+References: <20200427121507.23249-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200427121507.23249-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Morse <james.morse@arm.com>, Kangjie Lu <kjlu@umn.edu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Qiushi Wu <wu000273@umn.edu>, Robert Richter <rrichter@marvell.com>, Tony Luck <tony.luck@intel.com>
+To: weiyongjun1@huawei.com
+Cc: stigge@antcom.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, vz@mleia.com, linaro-mm-sig@lists.linaro.org, slemieux.tyco@gmail.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Which part of
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 12:15:07 +0000
 
-	"Please refrain from "reviewing" EDAC patches!"
+> Fix to return a negative error code from the error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: b7370112f519 ("lpc32xx: Added ethernet driver")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-don't you understand?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Applied.
