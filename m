@@ -1,45 +1,23 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 07 May 2020 05:22:11 +0000
-Subject: [PATCH -next] visorbus: fix error return code in visorchipset_init()
-Message-Id: <20200507052211.103018-1-weiyongjun1@huawei.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 01 May 2020 03:29:24 +0000
+Subject: Re: [PATCH net-next] ice: Fix error return code in ice_add_prof()
+Message-Id: <20200430.202924.285425895831692651.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200427121228.12241-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200427121228.12241-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Kershner <david.kershner@unisys.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, sparmaintainer@unisys.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: weiyongjun1@huawei.com
+Cc: jeffrey.t.kirsher@intel.com, anthony.l.nguyen@intel.com, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix to return negative error code -ENODEV from the visor_check_channel()
-error handling case instead of 0. Also change the error code to -ENOMEM
-in kzalloc() error case.
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 27 Apr 2020 12:12:28 +0000
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/visorbus/visorchipset.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> Fix to return a error code from the error handling case
+> instead of 0, as done elsewhere in this function.
+> 
+> Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
-index cb1eb7e05f87..5668cad86e37 100644
---- a/drivers/visorbus/visorchipset.c
-+++ b/drivers/visorbus/visorchipset.c
-@@ -1561,7 +1561,7 @@ static void controlvm_periodic_work(struct work_struct *work)
- 
- static int visorchipset_init(struct acpi_device *acpi_device)
- {
--	int err = -ENODEV;
-+	int err = -ENOMEM;
- 	struct visorchannel *controlvm_channel;
- 
- 	chipset_dev = kzalloc(sizeof(*chipset_dev), GFP_KERNEL);
-@@ -1584,8 +1584,10 @@ static int visorchipset_init(struct acpi_device *acpi_device)
- 				 "controlvm",
- 				 sizeof(struct visor_controlvm_channel),
- 				 VISOR_CONTROLVM_CHANNEL_VERSIONID,
--				 VISOR_CHANNEL_SIGNATURE))
-+				 VISOR_CHANNEL_SIGNATURE)) {
-+		err = -ENODEV;
- 		goto error_delete_groups;
-+	}
- 	/* if booting in a crash kernel */
- 	if (is_kdump_kernel())
- 		INIT_DELAYED_WORK(&chipset_dev->periodic_controlvm_work,
+Applied, thanks.
