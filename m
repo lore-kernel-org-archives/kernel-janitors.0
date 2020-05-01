@@ -1,38 +1,40 @@
-From: Ayush Sawal <ayush.sawal@chelsio.com>
-Date: Tue, 12 May 2020 19:30:40 +0000
-Subject: Re: [PATCH] Crypto/chcr: drop refcount on error path in chcr_aead_op()
-Message-Id: <20d2f5c2-d9f0-0016-b33a-5c417dfe9558@chelsio.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 May 2020 14:10:16 +0000
+Subject: [PATCH] net: stmmac: gmac5+: fix potential integer overflow on 32 bit multiply
+Message-Id: <20200501141016.290699-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512083723.GB251760@mwanda>
-In-Reply-To: <20200512083723.GB251760@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Devulapally Shiva Krishna <shiva@chelsio.com>
-Cc: ayush.sawal@asicdesigners.com, Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 5/12/2020 2:07 PM, Dan Carpenter wrote:
-> We need to drop inflight counter before returning on this error path.
->
-> Fixes: d91a3159e8d9 ("Crypto/chcr: fix gcm-aes and rfc4106-gcm failed tests")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/crypto/chelsio/chcr_algo.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-> index 83ddc2b39490e..e05998a1c0148 100644
-> --- a/drivers/crypto/chelsio/chcr_algo.c
-> +++ b/drivers/crypto/chelsio/chcr_algo.c
-> @@ -3744,6 +3744,7 @@ static int chcr_aead_op(struct aead_request *req,
->   	    crypto_ipsec_check_assoclen(req->assoclen) != 0) {
->   		pr_err("RFC4106: Invalid value of assoclen %d\n",
->   		       req->assoclen);
-> +		chcr_dec_wrcount(cdev);
->   		return -EINVAL;
->   	}
->   
+The multiplication of cfg->ctr[1] by 1000000000 is performed using a
+32 bit multiplication (since cfg->ctr[1] is a u32) and this can lead
+to a potential overflow. Fix this by making the constant a ULL to
+ensure a 64 bit multiply occurs.
 
+Fixes: 504723af0d85 ("net: stmmac: Add basic EST support for GMAC5+")
+Addresses-Coverity: ("Unintentional integer overflow")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good. Thanks a lot.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+index 494c859b4ade..67ba67ed0cb9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+@@ -624,7 +624,7 @@ int dwmac5_est_configure(void __iomem *ioaddr, struct stmmac_est *cfg,
+ 		total_offset += offset;
+ 	}
+ 
+-	total_ctr = cfg->ctr[0] + cfg->ctr[1] * 1000000000;
++	total_ctr = cfg->ctr[0] + cfg->ctr[1] * 1000000000ULL;
+ 	total_ctr += total_offset;
+ 
+ 	ctr_low = do_div(total_ctr, 1000000000);
+-- 
+2.25.1
