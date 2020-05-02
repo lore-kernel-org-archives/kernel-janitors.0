@@ -1,51 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 06 May 2020 14:55:27 +0000
-Subject: Re: [PATCH -next] spi: bcm2835: Fix error return code in bcm2835_dma_init()
-Message-Id: <158877692139.14713.15107842057895225626.b4-ty@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 02 May 2020 11:59:49 +0000
+Subject: [PATCH] powerpc/powernv: Fix a warning message
+Message-Id: <20200502115949.139000-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506125607.90952-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200506125607.90952-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Wei Yongjun <weiyongjun1@huawei.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+To: mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, tglx@linutronix.de, maddy@linux.vnet.ibm.com, cclaudio@linux.ibm.com, zhangshaokun@hisilicon.com, atrajeev@linux.vnet.ibm.com, akshay.adiga@linux.vnet.ibm.com, ego@linux.vnet.ibm.com
+Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-On Wed, 6 May 2020 12:56:07 +0000, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the dma mapping error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/spi/spi-bcm2835.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> [...]
+Fix a cut'n'paste error in a warning message. This should be
+'cpu-idle-state-residency-ns' to match the property searched in the
+previous 'of_property_read_u32_array()'
 
-Applied to
+Fixes: 9c7b185ab2fe ("powernv/cpuidle: Parse dt idle properties into global structure")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/powerpc/platforms/powernv/idle.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.8
-
-Thanks!
-
-[1/1] spi: bcm2835: Fix error return code in bcm2835_dma_init()
-      commit: dd4441ab1fa1e2787a5f218f92d8ead1aa5ce6b5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
+index 78599bca66c2..2dd467383a88 100644
+--- a/arch/powerpc/platforms/powernv/idle.c
++++ b/arch/powerpc/platforms/powernv/idle.c
+@@ -1270,7 +1270,7 @@ static int pnv_parse_cpuidle_dt(void)
+ 	/* Read residencies */
+ 	if (of_property_read_u32_array(np, "ibm,cpu-idle-state-residency-ns",
+ 				       temp_u32, nr_idle_states)) {
+-		pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-latencies-ns in DT\n");
++		pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-residency-ns in DT\n");
+ 		rc = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.25.1
