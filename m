@@ -1,38 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 May 2020 22:00:40 +0000
-Subject: [PATCH] media: dvb-frontends: remove redundant initialization of variable status
-Message-Id: <20200507220040.66476-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 02 May 2020 16:48:16 +0000
+Subject: clk: keystone: Clarification for a return value check in _of_pll_clk_init()
+Message-Id: <f1a2a717-f89b-d4c4-02aa-dd106eaed0a9@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-The variable status is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+I have tried another small script out for the semantic patch language.
+This source code analysis approach points out that the function “clk_register_pll”
+is called by the function “_of_pll_clk_init”.
+https://elixir.bootlin.com/linux/v5.7-rc3/source/drivers/clk/keystone/pll.c#L153
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/keystone/pll.c?id=690e2aba7beb1ef06352803bea41a68a3c695015#n153
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/dvb-frontends/drxk_hard.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A null pointer check is performed at this place.
+The function “clk_register_pll” (from the same source file) can eventually
+return the pointer “ERR_PTR(-ENOMEM)”.
+Is there a need to take this special case also into account?
 
-diff --git a/drivers/media/dvb-frontends/drxk_hard.c b/drivers/media/dvb-frontends/drxk_hard.c
-index 0a4875b391d9..7e8e5c308d1c 100644
---- a/drivers/media/dvb-frontends/drxk_hard.c
-+++ b/drivers/media/dvb-frontends/drxk_hard.c
-@@ -1093,7 +1093,7 @@ static int init_hi(struct drxk_state *state)
- 
- static int mpegts_configure_pins(struct drxk_state *state, bool mpeg_enable)
- {
--	int status = -1;
-+	int status;
- 	u16 sio_pdr_mclk_cfg = 0;
- 	u16 sio_pdr_mdx_cfg = 0;
- 	u16 err_cfg = 0;
--- 
-2.25.1
+Regards,
+Markus
