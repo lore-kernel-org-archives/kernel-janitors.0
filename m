@@ -1,40 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 24 May 2020 16:25:03 +0000
-Subject: [PATCH] media: gspca: remove redundant assignment to variable retval
-Message-Id: <20200524162503.20902-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 02 May 2020 20:07:10 +0000
+Subject: Re: [v4] checkpatch: add support to check 'Fixes:' tag format
+Message-Id: <9e10afa6-937c-1fc1-7ef5-904d7d9165ea@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191011185746.18570-1-colin.king@canonical.com>
-In-Reply-To: <20191011185746.18570-1-colin.king@canonical.com>
+References: <20200502185421.GB9082@udknight>
+ <6a3a6f8d-e8be-0002-780d-1991f6152c8f@web.de>
+ <57b725f495e422e80c062d2edd90abe99f40fd51.camel@perches.com>
+In-Reply-To: <57b725f495e422e80c062d2edd90abe99f40fd51.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>, Wang YanQing <udknight@gmail.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+>> Will the tolerance (and support) grow for such quotation character alternatives?
+>
+> No.
 
-The variable retval is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+Would you prefer to achieve a restrictive data format description?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/gspca/jl2005bcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-index 80ce7448b3dd..ca12f33f3e12 100644
---- a/drivers/media/usb/gspca/jl2005bcd.c
-+++ b/drivers/media/usb/gspca/jl2005bcd.c
-@@ -165,7 +165,7 @@ static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
- {
- 	struct sd *sd = (struct sd *)gspca_dev;
- 	int i = 0;
--	int retval = -1;
-+	int retval;
- 	unsigned char regs_to_read[] = {0x57, 0x02, 0x03, 0x5d, 0x5e, 0x5f};
- 
- 	gspca_dbg(gspca_dev, D_PROBE, "Running jl2005c_get_firmware_id\n");
--- 
-2.25.1
+>> * Which formula do you propose for the length calculation?
+>
+> None.
+
+I imagine that such a view can increase the probability for confusion.
+
+Regards,
+Markus
