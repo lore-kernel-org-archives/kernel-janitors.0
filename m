@@ -1,38 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 23 May 2020 17:46:48 +0000
-Subject: [PATCH net-next] ipv4:  potential underflow in compat_ip_setsockopt()
-Message-Id: <20200523174648.GA105146@mwanda>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 02 May 2020 18:17:25 +0000
+Subject: Re: [PATCH] iio: dac: vf610: Fix an error handling path in 'vf610_dac_probe()'
+Message-Id: <20200502191725.10eabc8a@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, maitysanchayan@gmail.com, robh@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The value of "n" is capped at 0x1ffffff but it checked for negative
-values.  I don't think this causes a problem but I'm not certain and
-it's harmless to prevent it.
+On Sun, 26 Apr 2020 21:44:03 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Fixes: 2e04172875c9 ("ipv4: do compat setsockopt for MCAST_MSFILTER directly")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
+> A call to 'vf610_dac_exit()' is missing in an error handling path.
+> 
+> Fixes: 1b983bf42fad ("iio: dac: vf610_dac: Add IIO DAC driver for Vybrid SoC")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
- net/ipv4/ip_sockglue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll count this one as 'obviously' correct, though happy to have input
+from sanchayan if possible.
 
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index a2469bc57cfe..f43d5f12aa86 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -1347,8 +1347,8 @@ int compat_ip_setsockopt(struct sock *sk, int level, int optname,
- 	{
- 		const int size0 = offsetof(struct compat_group_filter, gf_slist);
- 		struct compat_group_filter *gf32;
-+		unsigned int n;
- 		void *p;
--		int n;
- 
- 		if (optlen < size0)
- 			return -EINVAL;
--- 
-2.26.2
+Applied to the fixes-togreg branch of iio.git and marked for stable.
+
+Thanks,
+
+Jonathan
+
+> ---
+> Un-tested.
+> Proposal based on function names and functions called in the remove function
+> ---
+>  drivers/iio/dac/vf610_dac.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iio/dac/vf610_dac.c b/drivers/iio/dac/vf610_dac.c
+> index 71f8a5c471c4..7f1e9317c3f3 100644
+> --- a/drivers/iio/dac/vf610_dac.c
+> +++ b/drivers/iio/dac/vf610_dac.c
+> @@ -223,6 +223,7 @@ static int vf610_dac_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  error_iio_device_register:
+> +	vf610_dac_exit(info);
+>  	clk_disable_unprepare(info->clk);
+>  
+>  	return ret;
