@@ -1,30 +1,47 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 28 May 2020 19:48:57 +0000
-Subject: Re: [PATCH] nilfs2: Fix reference count leak in nilfs_sysfs_create_snapshot_group()
-Message-Id: <30cf7534-b62e-84b1-571a-945aaffac5b0@web.de>
+Date: Sun, 03 May 2020 20:25:27 +0000
+Subject: Re: [PATCH v2] nfp: abm: Fix incomplete release of system resources in nfp_abm_vnic_set_mac()
+Message-Id: <88eecbe4-89b3-2b4d-87c7-5487cf23cadb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200503184220.6209-1-wu000273@umn.edu>
+In-Reply-To: <20200503184220.6209-1-wu000273@umn.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Qiushi Wu <wu000273@umn.edu>, linux-nilfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Kangjie Lu <kjlu@umn.edu>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, Vyacheslav Dubeyko <Vyacheslav.Dubeyko@hgst.com>
+To: Qiushi Wu <wu000273@umn.edu>, oss-drivers@netronome.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Kangjie Lu <kjlu@umn.edu>
 
-> kobject_init_and_add() takes reference even when it fails.
+> … Thus add a call of the function
+> “nfp_nsp_close” for the completion of the exception handling.
 
-It will be helpful to mention which object is referenced here, won't it?
+Thanks for your positive response.
+
+I imagined that a small patch series would be more reasonable
+than this direct change combination.
 
 
-> If this function returns an error, kobject_put() must be called to
-> properly clean up the memory associated with the object.
+…
+> +++ b/drivers/net/ethernet/netronome/nfp/abm/main.c
+…
+>  	ether_addr_copy(nn->dp.netdev->perm_addr, mac_addr);
+> +
+> +generate_random_address:
+> +	eth_hw_addr_random(nn->dp.netdev);
+> +	return;
+>  }
+…
 
-I guess that an imperative wording is preferred also for this change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b0c3ba31be3e45a130e13b278cf3b90f69bda6f6#n151
+Unfortunately, you interpreted my update suggestion in a questionable way
+at this source code place.
+I guess that the following code variant can be considered instead.
 
-How do you think about to combine this update step together with
-“nilfs2: Fix reference count leak in nilfs_sysfs_create_device_group”
-into a small patch series?
-https://lore.kernel.org/patchwork/patch/1248696/
-https://lore.kernel.org/lkml/20200527200933.31135-1-wu000273@umn.edu/
+ 	ether_addr_copy(nn->dp.netdev->perm_addr, mac_addr);
++	return;
++
++generate_random_address:
++	eth_hw_addr_random(nn->dp.netdev);
+ }
+
 
 Regards,
 Markus
