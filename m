@@ -1,44 +1,31 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 31 May 2020 22:11:27 +0000
-Subject: Re: [PATCH] kernel: power: swap: mark a function as __init to save some memory
-Message-Id: <effe3cde7b1f188427c42c476f5a96251d837416.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 03 May 2020 19:11:04 +0000
+Subject: [PATCH] thermal: stm32: fix spelling mistake "acces" -> "access"
+Message-Id: <20200503191104.153711-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200531210059.647066-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200531210059.647066-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com, Dan Carpenter <error27@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rui.zhang@intel.com, daniel.lezcano@linaro.org, amit.kucheria@verdurent.com, edubezval@gmail.com, info@metux.net, tglx@linutronix.de, gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-(adding Dan Carpenter)
+Fix a typo in Kconfig.
 
-On Sun, 2020-05-31 at 23:00 +0200, Christophe JAILLET wrote:
-> 'swsusp_header_init()' is only called via 'core_initcall'.
-> It can be marked as __init to save a few bytes of memory.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/thermal/st/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hey Dan
-
-smatch has a full function calling tree right?
-
-Can smatch find unmarked functions called only by __init
-functions so those unmarked functions can be appropriately
-marked with __init like the below?
-
-> ---
->  kernel/power/swap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index ca0fcb5ced71..01e2858b5fe3 100644
-> --- a/kernel/power/swap.c
-> +++ b/kernel/power/swap.c
-> @@ -1590,7 +1590,7 @@ int swsusp_unmark(void)
->  }
->  #endif
->  
-> -static int swsusp_header_init(void)
-> +static int __init swsusp_header_init(void)
->  {
->  	swsusp_header = (struct swsusp_header*) __get_free_page(GFP_KERNEL);
->  	if (!swsusp_header)
+diff --git a/drivers/thermal/st/Kconfig b/drivers/thermal/st/Kconfig
+index 3c3b695cc3e9..58ece381956b 100644
+--- a/drivers/thermal/st/Kconfig
++++ b/drivers/thermal/st/Kconfig
+@@ -23,5 +23,5 @@ config STM32_THERMAL
+ 	help
+ 	  Support for thermal framework on STMicroelectronics STM32 series of
+ 	  SoCs. This thermal driver allows to access to general thermal framework
+-	  functionalities and to acces to SoC sensor functionalities. This
++	  functionalities and to access to SoC sensor functionalities. This
+ 	  configuration is fully dependent of MACH_STM32MP157.
+-- 
+2.25.1
