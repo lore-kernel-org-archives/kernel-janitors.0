@@ -1,36 +1,50 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 04 May 2020 16:58:03 +0000
-Subject: Re: [PATCH] drm/i915/gem: Fix inconsistent IS_ERR and PTR_ERR
-Message-Id: <dfe752dc-6833-2b08-7e7c-6c52ffc81626@web.de>
+Date: Sun, 03 May 2020 11:30:13 +0000
+Subject: Re: [PATCH] nfp: abm: fix a memory leak bug
+Message-Id: <75768a26-836d-2aa5-94c8-6d8183745a9c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Qiushi Wu <wu000273@umn.edu>, netdev@vger.kernel.org, oss-drivers@netronome.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Kangjie Lu <kjlu@umn.edu>
 
 …
-> The proper pointer to be passed as argument is ce.
->
-> This bug was detected with the help of Coccinelle.
+> Fix this issue by adding nfp_nsp_close(nsp) in the error path.
 
-My software development attention was caught also by your commit message.
+How do you think about a wording variant like the following?
+
+   Subject:
+   [PATCH v2] nfp: abm: Fix incomplete release of system resources in nfp_abm_vnic_set_mac()
+
+   Change description:
+   …
+   Thus add a call of the function “nfp_nsp_close” for the completion
+   of the exception handling.
 
 
 …
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> @@ -1325,7 +1325,7 @@ static int __reloc_gpu_alloc(struct i915_execbuffer *eb,
->
->  		ce = intel_context_create(engine);
->  		if (IS_ERR(ce)) {
-> -			err = PTR_ERR(rq);
-> +			err = PTR_ERR(ce);
->  			goto err_unpin;
->  		}
->
+> +++ b/drivers/net/ethernet/netronome/nfp/abm/main.c
+> @@ -283,6 +283,7 @@  nfp_abm_vnic_set_mac(struct nfp_pf *pf, struct nfp_abm *abm, struct nfp_net *nn,
+>  	if (!nfp_nsp_has_hwinfo_lookup(nsp)) {
+>  		nfp_warn(pf->cpp, "NSP doesn't support PF MAC generation\n");
+>  		eth_hw_addr_random(nn->dp.netdev);
+> +		nfp_nsp_close(nsp);
+>  		return;
+>  	}
 
-Are you looking for any more questionable identifier (or expression) combinations
-also at other places by the means of advanced source code analysis?
+I suggest to reconsider the order for resource clean-up function calls
+a bit more.
+
++		nfp_nsp_close(nsp);
+-		eth_hw_addr_random(nn->dp.netdev);
+-		return;
++		goto generate_random_address;
+
+
+Should such a jump target be added in another update step?
+
+Would you like to add the tag “Fixes”?
 
 Regards,
 Markus
