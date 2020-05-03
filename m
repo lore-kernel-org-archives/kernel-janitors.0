@@ -1,29 +1,77 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 May 2020 22:20:28 +0000
-Subject: Re: [PATCH][next] sfc: fix dereference of table before it is null checked
-Message-Id: <20200513.152028.653894441720284438.davem@davemloft.net>
+From: Wang YanQing <udknight@gmail.com>
+Date: Sun, 03 May 2020 12:34:35 +0000
+Subject: [PATCH] checkpatch: add support for title acrosses three lines in commit id description
+Message-Id: <20200503123435.GD10332@udknight>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512171355.221810-1-colin.king@canonical.com>
-In-Reply-To: <20200512171355.221810-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, mhabets@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: joe@perches.com
+Cc: Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>, Markus.Elfring@web.de, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 May 2020 18:13:55 +0100
+The current GIT_COMMIT_ID will report error when the title in commit id
+description acrosses three lines, take changelog of commit 87b0f983f66f
+("net: mscc: ocelot: fix untagged packet drops when enslaving to vlan
+aware bridge") as a example.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer table is being dereferenced on a null check of
-> table->must_restore_filters before it is being null checked, leading
-> to a potential null pointer dereference issue.  Fix this by null
-> checking table before dereferencing it when checking for a null
-> table->must_restore_filters.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: e4fe938cff04 ("sfc: move 'must restore' flags out of ef10-specific nic_data")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It make senses to support three lines title, because three lines could only
+have about two lines length title, see above example, but I think we don't
+need to add support for more than three lines length title, ~225 (75 * 3)
+shoud be enough for any sensible title.
 
-Applied, thanks.
+This patch adds support for three lines title in the commit id description,
+and emit diagnostics info when the title acrosses more than three lines.
+
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+---
+ Hi! Joe
+ This is the third patch based on previous two patches.
+
+ Thanks.
+ 
+ scripts/checkpatch.pl | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a1e4113..e9c46d3 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2899,15 +2899,27 @@ sub process {
+ 				$orig_desc = $1;
+ 				$has_parens_and_dqm = 1;
+ 			} elsif ($line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\(".+$/i &&
+-				 defined $rawlines[$linenr] &&
+-				 $rawlines[$linenr] =~ /^\s*.+"\)/) {
+-				$line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("(.+)$/i;
+-				$orig_desc = $1;
+-				$rawlines[$linenr] =~ /^\s*(.+)"\)/;
+-				$orig_desc .= " " . $1;
+-				$has_parens_and_dqm = 1;
+-
+-				if ($prefix eq "Fixes:") {
++				 defined $rawlines[$linenr]) {
++				 if ($rawlines[$linenr] =~ /^\s*.+"\)/) {
++					$line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("(.+)$/i;
++					$orig_desc = $1;
++					$rawlines[$linenr] =~ /^\s*(.+)"\)/;
++					$orig_desc .= " " . $1;
++					$has_parens_and_dqm = 1;
++				 } elsif (defined $rawlines[$linenr + 1] &&
++					  $rawlines[$linenr + 1] =~ /^\s*.+"\)/) {
++					$line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("(.+)$/i;
++					$orig_desc = $1;
++					$rawlines[$linenr] =~ /^\s*(.+)/;
++					$orig_desc .= " " . $1;
++					$rawlines[$linenr + 1] =~ /^\s*(.+)"\)/;
++					$orig_desc .= " " . $1;
++					$has_parens_and_dqm = 1;
++				 } else {
++					$diagnostics .= "Missing terminal '\")' at the end of title or the title acrosses more than 3 lines.\n";
++				 }
++
++				if ($has_parens_and_dqm && $prefix eq "Fixes:") {
+ 					$acrosslines = 1;
+ 					$diagnostics .= "The title acrosses lines.\n";
+ 				}
+-- 
+1.8.5.6.2.g3d8a54e.dirty
