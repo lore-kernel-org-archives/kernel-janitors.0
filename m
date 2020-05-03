@@ -1,92 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 03 May 2020 13:51:39 +0000
+From: Wang YanQing <udknight@gmail.com>
+Date: Sun, 03 May 2020 14:37:01 +0000
 Subject: Re: [PATCH v5] checkpatch: add support to check 'Fixes:' tag format
-Message-Id: <2d13b5c1-6745-23da-e22d-d56f0644edb2@web.de>
+Message-Id: <20200503143700.GA12276@udknight>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200503122938.GC10332@udknight>
-In-Reply-To: <20200503122938.GC10332@udknight>
+ <2d13b5c1-6745-23da-e22d-d56f0644edb2@web.de>
+In-Reply-To: <2d13b5c1-6745-23da-e22d-d56f0644edb2@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Wang YanQing <udknight@gmail.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
 
-> “...
+On Sun, May 03, 2020 at 03:51:39PM +0200, Markus Elfring wrote:
+> 
+> 
+> …
+> > +					$diagnostics .= "The title is too abbreviated, at least half of orignial commit title is necessary.\n";
+> 
+> Will the word “original” be more appropriate here?
+> (Why did you not integrate my previous patch review comment?)
 
-Can the character “Horizontal ellipsis” (U+2026) be occasionally nicer
-instead of three separate dots?
+Sorry, I miss it.
 
+This version patch has indentation issue, I will fix the typo
+with the indentation issue in next version (v6).
 
-> The check supports below formats:
+Thanks.
 
-I would prefer the explicit wording for the support of (Unicode) ellipses
-also in the shown commit titles.
-Will the document “submitting-patches.rst” need corresponding adjustments?
+> 
+> 
+> …
+> > +				      "Please use git commit description style '$prefix <$sha1_length_min+ chars of sha1> (\"<$title>\")' - ie: '${init_char}" . substr($prefix, 1) .
+> > +				      " $id (\"$description\")'\n" . $diagnostics . $herecurr);
+> 
+> Can error diagnostics become multi-line?
+The length of "$description" is unknown, it is difficult to
+cook the error message into pretty format with any length of
+"$description", so let's keep it in current way.
 
-
-> Because after GIT_COMMIT_ID supports 'Fixes:' tag format check, it could do
-> the same check as the UNKNOWN_COMMIT_ID, so we don't need UNKNOWN_COMMIT_ID
-> anymore and I decide to delete it.
-
-Would you like to propose related software adjustments?
-
-
-> Note: this patch also fixes double quotation mark issue for normal git
->       commit description, and now it supports double quotation mark in
->       title line, for example:
->       Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by default
->       when checking usable channels"")
-
-Do you care to achieve a safer data format description also for this use case?
-
-
->  This is the v5 version, and I have tested it with below command:
-
-How do you think about to reuse the analysis approach outside
-the script “checkpatch.pl”?
-
-
->  v5:
->  1: Rebased on '[PATCH v2] checkpatch: fix can't check for too long invalid commit id'.
-
-Are the software dependencies (and corresponding development challenges) growing?
-
-
-…
-> +++ b/scripts/checkpatch.pl
-> @@ -2818,51 +2818,101 @@ sub process {
-…
-> +		     $line =~ /\bfixes:\s+[0-9a-f]{5,}\b/i ||
-
-Would you like to reconsider the program organisation according to
-the application of regular expressions?
-
-
-…
-> +			if (defined($id) && $has_parens_and_dqm && ($orig_desc ne $description)) {
-> +			    # Allow short description without too short!
-
-Will another wording adjustment become relevant here?
-
-
-> +			    if ($prefix eq "Fixes:") {
-> +				if (length($orig_desc) >= length($description)/2) {
-
-Will the structure of the commit title matter any more?
-
-
-…
-> +					$diagnostics .= "The title is too abbreviated, at least half of orignial commit title is necessary.\n";
-
-Will the word “original” be more appropriate here?
-(Why did you not integrate my previous patch review comment?)
-
-
-…
-> +				      "Please use git commit description style '$prefix <$sha1_length_min+ chars of sha1> (\"<$title>\")' - ie: '${init_char}" . substr($prefix, 1) .
-> +				      " $id (\"$description\")'\n" . $diagnostics . $herecurr);
-
-Can error diagnostics become multi-line?
-
-Regards,
-Markus
+Thanks.
