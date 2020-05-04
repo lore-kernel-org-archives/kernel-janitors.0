@@ -1,83 +1,33 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 01 May 2020 19:52:15 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 May 2020 19:17:00 +0000
 Subject: Re: [PATCH -next] selinux: fix error return code in policydb_read()
-Message-Id: <CAFqZXNthwrGDOWei-8ET8A-3sE+Ecg3DquHy-EB2YCmDtHAaWg@mail.gmail.com>
+Message-Id: <20200504191700.GV2014@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200429073053.83660-1-weiyongjun1@huawei.com>
- <20200429130738.GQ2014@kadam> <CAFqZXNs=YTn-mnzSEssR1szRhSw7Ajdaqg=wy88O_F3gBL2rOQ@mail.gmail.com>
- <CAHC9VhTxDkrLP4nvwsUTZDNiLPQJn0=gqTr609MCTrXQU40arw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTxDkrLP4nvwsUTZDNiLPQJn0=gqTr609MCTrXQU40arw@mail.gmail.com>
+ <20200429130738.GQ2014@kadam>
+ <CAHC9VhT1-rV3heNWxcKo58AVsvhGeX5=oTQY8d8uahpMhwbJrA@mail.gmail.com>
+In-Reply-To: <CAHC9VhT1-rV3heNWxcKo58AVsvhGeX5=oTQY8d8uahpMhwbJrA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paul Moore <paul@paul-moore.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Wei Yongjun <weiyongjun1@huawei.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Jeff Vander Stoep <jeffv@google.com>, SElinux list <selinux@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Ondrej Mosnacek <omosnace@redhat.com>, Jeff Vander Stoep <jeffv@google.com>, selinux@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 1, 2020 at 9:08 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Wed, Apr 29, 2020 at 9:32 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > On Wed, Apr 29, 2020 at 3:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > On Wed, Apr 29, 2020 at 07:30:53AM +0000, Wei Yongjun wrote:
-> > > > Fix to return negative error code -ENOMEM from the kvcalloc() error
-> > > > handling case instead of 0, as done elsewhere in this function.
-> > > >
-> > >
-> > > Please add a Fixes tag and Cc Kent.
-> > >
-> > > Fixes: acdf52d97f82 ("selinux: convert to kvmalloc")
-> > >
-> > >
-> > > > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > > > ---
-> > > >  security/selinux/ss/policydb.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> > > > index a0b3dc152468..a51e051df2cc 100644
-> > > > --- a/security/selinux/ss/policydb.c
-> > > > +++ b/security/selinux/ss/policydb.c
-> > > > @@ -2638,6 +2638,7 @@ int policydb_read(struct policydb *p, void *fp)
-> > > >       if (rc)
-> > > >               goto bad;
-> > > >
-> > > > +     rc = -ENOMEM;
-> > > >       p->type_attr_map_array = kvcalloc(p->p_types.nprim,
-> > > >                                         sizeof(*p->type_attr_map_array),
-> > > >                                         GFP_KERNEL);
-> > >
-> > > There is another bug earlier in the function as well:
-> > >
-> > > security/selinux/ss/policydb.c
-> > >   2537
-> > >   2538          rc = next_entry(buf, fp, sizeof(u32));
-> > >   2539          if (rc)
-> > >   2540                  goto bad;
-> > >   2541          nel = le32_to_cpu(buf[0]);
-> > >   2542
-> > >   2543          p->role_tr = hashtab_create(role_trans_hash, role_trans_cmp, nel);
-> > >   2544          if (!p->role_tr)
-> > >   2545                  goto bad;
-> > >                         ^^^^^^^^
-> > >
-> > >   2546          for (i = 0; i < nel; i++) {
-> > >   2547                  rc = -ENOMEM;
-> > >
-> > > This style of setting the error code seems very bug prone.
-> > >
-> > > The Fixes tag for this one is:
-> > > Fixes: e67b2ec9f617 ("selinux: store role transitions in a hash table")
+On Fri, May 01, 2020 at 12:46:47PM -0400, Paul Moore wrote:
+> On Wed, Apr 29, 2020 at 9:15 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Wed, Apr 29, 2020 at 07:30:53AM +0000, Wei Yongjun wrote:
+> > > Fix to return negative error code -ENOMEM from the kvcalloc() error
+> > > handling case instead of 0, as done elsewhere in this function.
 > >
-> > FYI, this one is also indirectly fixed by this patch, which is
-> > currently pending review:
-> > https://patchwork.kernel.org/patch/11514495/
->
-> If we know the code is broken, let's fix it independently of a feature
-> patch.  Ondrej, I believe the original patch is yours so please send
-> me a new patch with just the fix, thank you.
+> > Please add a Fixes tag and Cc Kent.
+> 
+> Kent?  Who is Kent?
 
-Sure, here you go:
-https://lore.kernel.org/selinux/20200501195111.3335258-1-omosnace@redhat.com/T/
+commit acdf52d97f824019888422842757013b37441dd1
+Author: Kent Overstreet <kent.overstreet@gmail.com>
+Date:   Mon Mar 11 23:31:10 2019 -0700
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+    selinux: convert to kvmalloc
+
+regards,
+dan carepnter
