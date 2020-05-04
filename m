@@ -1,25 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 May 2020 08:35:05 +0000
-Subject: Re: question about lists
-Message-Id: <20200505083505.GY2014@kadam>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 04 May 2020 08:53:00 +0000
+Subject: Re: [PATCH net-next] ath10k: fix possible memory leak in ath10k_bmi_lz_data_large()
+Message-Id: <20200504085300.03736C433BA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.2005032308500.2533@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2005032308500.2533@hadrien>
+References: <20200427104348.13570-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200427104348.13570-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Wen Gong <wgong@codeaurora.org>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 04, 2020 at 09:41:21PM +0200, Christophe JAILLET wrote:
-> =A0=A0 - in your example, before commit f52c380a48f52, it was allocated w=
-ith
-> kmalloc, so it was maybe to avoid a really unlikely '__list_add_valid'
-> failure. Now that it is kzalloc'ed, this can not happen anymore.
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-No, it was never possible to get a __list_add_valid() failure.  The list
-you're adding to has to be initialized, but the list item that doesn't.
-In __list_add_valid() the "new" is "&entry_obj->list" which is an offset
-into the entry_obj object.
+> 'cmd' is malloced in ath10k_bmi_lz_data_large() and should be freed
+> before leaving from the error handling cases, otherwise it will cause
+> memory leak.
+> 
+> Fixes: d58f466a5dee ("ath10k: add large size for BMI download data for SDIO")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-regards,
-dan carpenter
+Patch applied to ath-next branch of ath.git, thanks.
+
+2326aa011967 ath10k: fix possible memory leak in ath10k_bmi_lz_data_large()
+
+-- 
+https://patchwork.kernel.org/patch/11511841/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
