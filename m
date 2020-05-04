@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Mon, 04 May 2020 12:30:22 +0000
 Subject: Re: [PATCH] i2c: drivers: Remove superfluous error messages
-Message-Id: <52dbb335-d3ea-3f14-8228-5832cfa59728@web.de>
+Message-Id: <9ecae921-be46-dec0-f62a-f388740b03ea@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <52dbb335-d3ea-3f14-8228-5832cfa59728@web.de>
+In-Reply-To: <52dbb335-d3ea-3f14-8228-5832cfa59728@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
