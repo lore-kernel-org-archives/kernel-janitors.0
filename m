@@ -1,42 +1,34 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 May 2020 15:54:43 +0000
-Subject: [PATCH][next] modpost: close file when fstat fails
-Message-Id: <20200528155443.421933-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 04 May 2020 11:17:11 +0000
+Subject: Re: [v6] checkpatch: add support to check 'Fixes:' tag format
+Message-Id: <56a0219f-48c6-4b15-fd71-e8312079f7f2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200504082002.GA29972@udknight>
+ <38251b1f-e89b-7b3a-6045-f5ce1dc2596a@web.de>
+ <20200504102242.GA13013@udknight>
+In-Reply-To: <20200504102242.GA13013@udknight>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masahiro Yamada <masahiroy@kernel.org>, Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wang YanQing <udknight@gmail.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> This feature is a side effect of missing right '")' detection, so I think
+> it is acceptable to add it.
 
-Currently a failed fstat error return path fails to close an open file.
-Fix this by setting buf to NULL and returning via the error exit path.
+Will any more collateral evolution become helpful finally?
 
-Addresses-Coverity: ("Resource leak");
-Fixes: commit 076ad831dfe8 ("modpost: add read_text_file() and get_line() helpers")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- scripts/mod/modpost.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index e4691127f051..3012e5f8ec7e 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -109,8 +109,10 @@ char *read_text_file(const char *filename)
- 	if (fd < 0)
- 		return NULL;
- 
--	if (fstat(fd, &st) < 0)
--		return NULL;
-+	if (fstat(fd, &st) < 0) {
-+		buf = NULL;
-+		goto close;
-+	}
- 
- 	buf = NOFAIL(malloc(st.st_size + 1));
- 
--- 
-2.25.1
+> But I agree with you, this patch is a little big,
+
+I find such a view also interesting.
+
+
+> I don't want to add more code into it.
+
+The software can be extended as usual depending on some factor.
+
+Will your contributions evolve into consistent patch series?
+
+Regards,
+Markus
