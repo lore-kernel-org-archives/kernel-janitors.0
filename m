@@ -1,40 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 May 2020 17:09:10 +0000
-Subject: [PATCH][next] drm/i915: fix incorrect return of an error status
-Message-Id: <20200518170910.58292-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 May 2020 18:33:31 +0000
+Subject: [PATCH v2] ovl: potential crash in ovl_fid_to_fh()
+Message-Id: <20200505183331.GA49866@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <CAOQ4uxhOi0H4ecJOc6emFc+bUhepscHF8qHywJQUzr-46H3+yw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-unionfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The "buflen" value comes from the user and there is a potential that it
+could be zero.  In do_handle_to_path() we know that "handle->handle_bytes"
+is non-zero and we do:
 
-Currently when a call to intel_atomic_get_dbuf_state fails the
-error value being returns is a potentially uninitialized value
-in variable ret.  Fix this by returning the error value of
-new_dbuf_state.
+	handle_dwords = handle->handle_bytes >> 2;
 
-Addresses-Coverity: ("Uninitialized scalar value")
-Fixes: 3cf43cdc63fb ("drm/i915: Introduce proper dbuf state")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+So values 1-3 become zero.  Then in ovl_fh_to_dentry() we do:
+
+	int len = fh_len << 2;
+
+So now len is in the "0,4-128" range and a multiple of 4.  But if
+"buflen" is zero it will try to copy negative bytes when we do the
+memcpy in ovl_fid_to_fh().
+
+	memcpy(&fh->fb, fid, buflen - OVL_FH_WIRE_OFFSET);
+
+And that will lead to a crash.  Thanks to Amir Goldstein for his help
+with this patch.
+
+Fixes: cbe7fba8edfc: ("ovl: make sure that real fid is 32bit aligned in memory")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 ---
- drivers/gpu/drm/i915/intel_pm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Move the check after the other checks
 
-diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-index a21e36ed1a77..762a5184fc69 100644
---- a/drivers/gpu/drm/i915/intel_pm.c
-+++ b/drivers/gpu/drm/i915/intel_pm.c
-@@ -5917,7 +5917,7 @@ skl_ddb_add_affected_pipes(struct intel_atomic_state *state)
+ fs/overlayfs/export.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 475c61f53f0fe..ed5c1078919cc 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -783,6 +783,9 @@ static struct ovl_fh *ovl_fid_to_fh(struct fid *fid, int buflen, int fh_type)
+ 	if (fh_type != OVL_FILEID_V0)
+ 		return ERR_PTR(-EINVAL);
  
- 		new_dbuf_state = intel_atomic_get_dbuf_state(state);
- 		if (IS_ERR(new_dbuf_state))
--			return ret;
-+			return PTR_ERR(new_dbuf_state);
- 
- 		old_dbuf_state = intel_atomic_get_old_dbuf_state(state);
- 
++	if (buflen <= OVL_FH_WIRE_OFFSET)
++		return ERR_PTR(-EINVAL);
++
+ 	fh = kzalloc(buflen, GFP_KERNEL);
+ 	if (!fh)
+ 		return ERR_PTR(-ENOMEM);
 -- 
-2.25.1
+2.26.2
