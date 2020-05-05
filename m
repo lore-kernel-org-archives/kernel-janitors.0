@@ -1,48 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 12 May 2020 16:44:56 +0000
-Subject: Re: [PATCH] ASoC: ux500: mop500: Fix some refcounted resources issues
-Message-Id: <158930188456.55827.11720310632308061350.b4-ty@kernel.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Tue, 05 May 2020 11:04:24 +0000
+Subject: Re: [PATCH] PCI: v3-semi: Fix a memory leak in some error handling paths in 'v3_pci_probe()'
+Message-Id: <20200505110423.GC13446@e121166-lin.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512100705.246349-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200512100705.246349-1-christophe.jaillet@wanadoo.fr>
+References: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lee.jones@linaro.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linus.walleij@linaro.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linus.walleij@linaro.org, amurray@thegoodpenguin.co.uk, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 12 May 2020 12:07:05 +0200, Christophe JAILLET wrote:
-> There are 2 issues here:
->    - if one of the 'of_parse_phandle' fails, calling 'mop500_of_node_put()'
->      is a no-op because the 'mop500_dai_links' structure has not been
->      initialized yet, so the referenced are not decremented
->    - The reference stored in 'mop500_dai_links[i].codecs' is refcounted
->      only once in the probe and must be decremented only once.
+On Sat, Apr 18, 2020 at 10:16:37AM +0200, Christophe JAILLET wrote:
+> IF we fails somewhere in 'v3_pci_probe()', we need to free 'host'.
+> Use the managed version of 'pci_alloc_host_bridge()' to do that easily.
+> The use of managed resources is already widely used in this driver.
+> 
+> Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Fixes could be older than this commit, but this is as far as git can go.
+> 
+> There is also a 'clk_prepare_enable()' which looks un-ballanced. I don't
+> know if it can be an issue.
+> 
+> Compile tested only.
+> ---
+>  drivers/pci/controller/pci-v3-semi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to
+Applied to pci/v3-semi, thanks !
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.8
+Lorenzo
 
-Thanks!
-
-[1/1] ASoC: ux500: mop500: Fix some refcounted resources issues
-      commit: 4e8748fcaeec073e3ba794871ce86c545e4f961f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
+> index bd05221f5a22..ddcb4571a79b 100644
+> --- a/drivers/pci/controller/pci-v3-semi.c
+> +++ b/drivers/pci/controller/pci-v3-semi.c
+> @@ -720,7 +720,7 @@ static int v3_pci_probe(struct platform_device *pdev)
+>  	int irq;
+>  	int ret;
+>  
+> -	host = pci_alloc_host_bridge(sizeof(*v3));
+> +	host = devm_pci_alloc_host_bridge(dev, sizeof(*v3));
+>  	if (!host)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.20.1
+> 
