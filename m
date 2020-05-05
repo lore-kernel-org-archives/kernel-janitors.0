@@ -1,29 +1,48 @@
-From: "Mrs.Judith Rice" <hamurafujimi@tmail.plala.or.jp>
-Date: Wed, 27 May 2020 13:58:33 +0000
-Subject: Spende
-Message-Id: <20200527225834.AOWGS.1026.root@mwebp13>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 05 May 2020 10:12:00 +0000
+Subject: [PATCH -next] crypto: xilinx - Remove set but not used variable 'drv_ctx'
+Message-Id: <20200505101200.195184-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527220940.C5BT6.807.root@mwebp13>
-In-Reply-To: <20200527220940.C5BT6.807.root@mwebp13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Michal Simek <michal.simek@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rajan Vaja <rajan.vaja@xilinx.com>, Kalyani Akula <kalyani.akula@xilinx.com>, Jolly Shah <jolly.shah@xilinx.com>
+Cc: kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Hulk Robot <hulkci@huawei.com>
 
-Attn:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Es tut uns leid, dass wir Sie aufgrund eines Mismanagent of Beneficaries-Fonds von unseren ernannten Zonal Managern versp&#228;tet kontaktiert haben. Bitte beachten Sie, dass Sie qualifiziert sind, die Zahlung von 900.000,00 USD an der ATM-Karte mit neunhunderttausend Dollar zu erhalten.
+drivers/crypto/xilinx/zynqmp-aes-gcm.c: In function 'zynqmp_aes_aead_cipher':
+drivers/crypto/xilinx/zynqmp-aes-gcm.c:83:30: warning:
+ variable 'drv_ctx' set but not used [-Wunused-but-set-variable]
 
-Als Entsch&#228;digung von WORLD BANK / IWF (Internationaler W&#228;hrungsfonds) f&#252;r die automatisch &#252;ber einen E-Mail-Wahlautomaten gezogenen, die in der Vergangenheit noch nicht abgeschlossene Transaktionen hatten.
+commit bc86f9c54616 ("firmware: xilinx: Remove eemi ops for aes engine") left
+behind this, remove it.
 
-F&#252;r weitere Informationen kontaktieren Sie bitte Rev.EVANS JONES ( jonesevansje@gmail.com )
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/xilinx/zynqmp-aes-gcm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Bitte senden Sie ihm Ihre pers&#246;nlichen Daten wie:
-
-Vollst&#228;ndiger Name:
-Wohnanschrift:
-Telefonnummer:
-Herkunftsland:
-
-Gr&#252;&#223;e,
-Mrs. Judith Rice
+diff --git a/drivers/crypto/xilinx/zynqmp-aes-gcm.c b/drivers/crypto/xilinx/zynqmp-aes-gcm.c
+index d0a0daf3ea08..9a342932b7f3 100644
+--- a/drivers/crypto/xilinx/zynqmp-aes-gcm.c
++++ b/drivers/crypto/xilinx/zynqmp-aes-gcm.c
+@@ -79,8 +79,6 @@ static int zynqmp_aes_aead_cipher(struct aead_request *req)
+ 	struct zynqmp_aead_tfm_ctx *tfm_ctx = crypto_aead_ctx(aead);
+ 	struct zynqmp_aead_req_ctx *rq_ctx = aead_request_ctx(req);
+ 	struct device *dev = tfm_ctx->dev;
+-	struct aead_alg *alg = crypto_aead_alg(aead);
+-	struct zynqmp_aead_drv_ctx *drv_ctx;
+ 	struct zynqmp_aead_hw_req *hwreq;
+ 	dma_addr_t dma_addr_data, dma_addr_hw_req;
+ 	unsigned int data_size;
+@@ -89,8 +87,6 @@ static int zynqmp_aes_aead_cipher(struct aead_request *req)
+ 	char *kbuf;
+ 	int err;
+ 
+-	drv_ctx = container_of(alg, struct zynqmp_aead_drv_ctx, alg.aead);
+-
+ 	if (tfm_ctx->keysrc = ZYNQMP_AES_KUP_KEY)
+ 		dma_size = req->cryptlen + ZYNQMP_AES_KEY_SIZE
+ 			   + GCM_AES_IV_SIZE;
