@@ -1,64 +1,46 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Date: Fri, 15 May 2020 14:52:37 +0000
-Subject: Re: [PATCH -next] soc: mediatek: Missing platform_device_unregister() on error in mtk_mmsys_probe()
-Message-Id: <490d37e9-3661-ef4b-75bc-8ca7523e5bde@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Tue, 05 May 2020 14:43:55 +0000
+Subject: Re: [PATCH 2/4 v2] firmware: stratix10-svc: Unmap some previously memremap'ed memory
+Message-Id: <20200505144355.GC838641@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506141317.119537-1-weiyongjun1@huawei.com>
- <923a48d8-eb9e-2729-a4be-dad63a6df28a@collabora.com>
-In-Reply-To: <923a48d8-eb9e-2729-a4be-dad63a6df28a@collabora.com>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+ <43505dc3a4b405d1c7d4a0fa74c67eda3e8bdb75.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <43505dc3a4b405d1c7d4a0fa74c67eda3e8bdb75.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: richard.gong@linux.intel.com, atull@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-On 06/05/2020 19:24, Enric Balletbo i Serra wrote:
-> Hi Wei,
+On Wed, Apr 29, 2020 at 08:52:43AM +0200, Christophe JAILLET wrote:
+> In 'svc_create_memory_pool()' we memremap some memory. This has to be
+> undone in case of error and if the driver is removed.
 > 
-> Thank you for your patch.
+> The easiest way to do it is to use 'devm_memremap()'.
 > 
-> On 6/5/20 16:13, Wei Yongjun wrote:
->> Add the missing platform_device_unregister() before return
->> from mtk_mmsys_probe() in the error handling case.
->>
->> Fixes: 667c769246b0 ("soc / drm: mediatek: Fix mediatek-drm device probing")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/firmware/stratix10-svc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
+> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+> index 3a176e62754a..de5870f76c5e 100644
+> --- a/drivers/firmware/stratix10-svc.c
+> +++ b/drivers/firmware/stratix10-svc.c
+> @@ -631,7 +631,7 @@ svc_create_memory_pool(struct platform_device *pdev,
+>  	end = rounddown(sh_memory->addr + sh_memory->size, PAGE_SIZE);
+>  	paddr = begin;
+>  	size = end - begin;
+> -	va = memremap(paddr, size, MEMREMAP_WC);
+> +	va = devm_memremap(dev, paddr, size, MEMREMAP_WC);
+>  	if (!va) {
+>  		dev_err(dev, "fail to remap shared memory\n");
+>  		return ERR_PTR(-EINVAL);
 
-applied to v5.7-next/soc
+And there was no previous unmap happening when the pool was torn down
+that now needs to be removed?
 
-Thanks!
+thanks,
 
->> ---
->>  drivers/soc/mediatek/mtk-mmsys.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
->> index 05e322c9c301..05ce4cb464b0 100644
->> --- a/drivers/soc/mediatek/mtk-mmsys.c
->> +++ b/drivers/soc/mediatek/mtk-mmsys.c
->> @@ -312,8 +312,10 @@ static int mtk_mmsys_probe(struct platform_device *pdev)
->>  
->>  	drm = platform_device_register_data(&pdev->dev, "mediatek-drm",
->>  					    PLATFORM_DEVID_AUTO, NULL, 0);
->> -	if (IS_ERR(drm))
->> +	if (IS_ERR(drm)) {
->> +		platform_device_unregister(clks);
->>  		return PTR_ERR(drm);
->> +	}
->>  
->>  	return 0;
->>  }
->>
->>
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
+greg k-h
