@@ -1,32 +1,28 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 12 May 2020 07:34:25 +0000
-Subject: Re: [PATCH][next] ath11k: remove redundant initialization of pointer info
-Message-Id: <20200512073425.0C16DC433F2@smtp.codeaurora.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 05 May 2020 05:12:09 +0000
+Subject: Re: fs: jfs: fix a possible data race in txBegin()
+Message-Id: <fa6fabec-8cc5-fc62-657f-3794e9405fac@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507164318.56570-1-colin.king@canonical.com>
-In-Reply-To: <20200507164318.56570-1-colin.king@canonical.com>
+References: <5ef374a5-0e2e-5c74-a827-0148c384f6e3@web.de>
+ <abbb03ec-7ce3-08b6-7d08-420743067f19@gmail.com>
+In-Reply-To: <abbb03ec-7ce3-08b6-7d08-420743067f19@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, jfs-discussion@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dave Kleikamp <shaggy@kernel.org>
 
-Colin King <colin.king@canonical.com> wrote:
+> I am not sure how to add the tag "Fixes"...
 
-> Pointer info is being assigned twice, once at the start of the function
-> and secondly when it is just about to be accessed. Remove the redundant
-> initialization and keep the original assignment to info that is close
-> to the memcpy that uses it.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+How helpful do you find the available software documentation?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=47cf1b422e6093aee2a3e55d5e162112a2c69870#n183
 
-Patch applied to ath-next branch of ath.git, thanks.
 
-52b776fa5921 ath11k: remove redundant initialization of pointer info
+> I need to find which previous commit add the code about txBegin()?
 
--- 
-https://patchwork.kernel.org/patch/11534415/
+I suggest to take another look at corresponding source code places
+by a command like “git blame”.
+https://git-scm.com/book/en/v2/Git-Tools-Debugging-with-Gits
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Regards,
+Markus
