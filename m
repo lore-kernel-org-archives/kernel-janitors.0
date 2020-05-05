@@ -1,40 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 24 May 2020 22:48:02 +0000
-Subject: [PATCH] orangefs: remove redundant assignment to variable ret
-Message-Id: <20200524224802.27850-1-colin.king@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 05 May 2020 09:56:51 +0000
+Subject: [PATCH -next] mm: remove duplicated include from madvise.c
+Message-Id: <20200505100049.191351-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20190511132700.4862-1-colin.king@canonical.com>
-In-Reply-To: <20190511132700.4862-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <christian@brauner.io>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Remove duplicated include.
 
-The variable ret is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/orangefs/orangefs-mod.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/madvise.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/orangefs/orangefs-mod.c b/fs/orangefs/orangefs-mod.c
-index c010c1fddafc..289b648ae196 100644
---- a/fs/orangefs/orangefs-mod.c
-+++ b/fs/orangefs/orangefs-mod.c
-@@ -79,7 +79,7 @@ DECLARE_WAIT_QUEUE_HEAD(orangefs_request_list_waitq);
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 8fec261457a6..f8be54dd92d3 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -29,7 +29,6 @@
+ #include <linux/swapops.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/mmu_notifier.h>
+-#include <linux/sched/mm.h>
+ #include <linux/uio.h>
  
- static int __init orangefs_init(void)
- {
--	int ret = -1;
-+	int ret;
- 	__u32 i = 0;
- 
- 	if (op_timeout_secs < 0)
--- 
-2.25.1
+ #include <asm/tlb.h>
