@@ -1,29 +1,60 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 28 May 2020 17:09:17 +0000
-Subject: Re: [PATCH] Bluetooth: btmtkuart: Improve exception handling in btmtuart_probe()
-Message-Id: <dd458e1d-26cf-2cc6-4fdb-fb464f9c3ac6@web.de>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Tue, 05 May 2020 10:54:29 +0000
+Subject: Re: [PATCH -next  v2] PCI: dwc: pci-dra7xx: use devm_platform_ioremap_resource_byname()
+Message-Id: <20200505105429.GB13446@e121166-lin.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200427111044.162618-1-weiyongjun1@huawei.com>
+ <20200429015027.134485-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200429015027.134485-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Chuhong Yuan <hslester96@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vignesh Raghavendra <vigneshr@ti.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> btmtuart_probe() misses several function calls in its error paths,
-> including hci_free_dev() and clk_disable_unprepare().
-> Refactor the code and call correct undo functions to fix the error
-> paths.
+On Wed, Apr 29, 2020 at 01:50:27AM +0000, Wei Yongjun wrote:
+> platform_get_resource() may fail and return NULL, so we should better
+> check it's return value to avoid a NULL pointer dereference a bit later
+> in the code. Fix it to use devm_platform_ioremap_resource_byname()
+> instead of calling platform_get_resource_byname() and devm_ioremap().
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+> v1 -> v2: use devm_platform_ioremap_resource_byname, suggest by Vignesh
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 
-How do you think about a wording variant like the following?
+Applied to pci/dwc, thanks.
 
-   Change description:
-   Calls of the functions “clk_disable_unprepare” and “hci_free_dev”
-   were missing for the exception handling.
-   Thus add the missed function calls together with corresponding
-   jump targets.
+Lorenzo
 
-
-Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 3b0e58f2de58..6184ebc9392d 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -840,7 +840,6 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>  	struct phy **phy;
+>  	struct device_link **link;
+>  	void __iomem *base;
+> -	struct resource *res;
+>  	struct dw_pcie *pci;
+>  	struct dra7xx_pcie *dra7xx;
+>  	struct device *dev = &pdev->dev;
+> @@ -877,10 +876,9 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>  		return irq;
+>  	}
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ti_conf");
+> -	base = devm_ioremap(dev, res->start, resource_size(res));
+> -	if (!base)
+> -		return -ENOMEM;
+> +	base = devm_platform_ioremap_resource_byname(pdev, "ti_conf");
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+>  
+>  	phy_count = of_property_count_strings(np, "phy-names");
+>  	if (phy_count < 0) {
+> 
+> 
+> 
