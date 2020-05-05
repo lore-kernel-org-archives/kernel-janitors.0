@@ -1,36 +1,44 @@
-From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Date: Fri, 08 May 2020 07:34:56 +0000
-Subject: Re: [bug report] drm/xen-front: Add support for Xen PV display frontend
-Message-Id: <84a349ac-d162-48c6-afc1-38f1bbf49b75@epam.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 05 May 2020 07:50:34 +0000
+Subject: [PATCH] media: sun8i: Fix an error handling path in 'deinterlace_runtime_resume()'
+Message-Id: <20200505075034.168296-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200421104522.GA86681@mwanda>
- <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com> <20200421115112.GB2682@kadam>
-In-Reply-To: <20200421115112.GB2682@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: jernej.skrabec@siol.net, mchehab@kernel.org, mripard@kernel.org, wens@csie.org, hverkuil-cisco@xs4all.nl
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-DQpPbiA0LzIxLzIwIDI6NTEgUE0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEl0IHR1cm5zIG91
-dCB0aGVyZSBhcmVuJ3QgdGhhdCBtYW55IG9mIHRoZXNlIGluIHhlbi4NCj4NCj4gJCBncmVwIElT
-X0VSUl9PUl9OVUxMIGRyaXZlcnMvZ3B1L2RybS94ZW4vIC1Sbg0KPiBkcml2ZXJzL2dwdS9kcm0v
-eGVuL3hlbl9kcm1fZnJvbnRfa21zLmM6NjM6ICAgICBpZiAoSVNfRVJSX09SX05VTEwoZmIpKQ0K
-PiBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfZ2VtLmM6ODY6ICAgICBpZiAoSVNf
-RVJSX09SX05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9u
-dF9nZW0uYzoxMjA6ICAgIGlmIChJU19FUlJfT1JfTlVMTCh4ZW5fb2JqLT5wYWdlcykpIHsNCj4g
-ZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2dlbS5jOjEzOTogICAgaWYgKElTX0VS
-Ul9PUl9OVUxMKHhlbl9vYmopKQ0KPiBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRf
-Z2VtLmM6MTk3OiAgICBpZiAoSVNfRVJSX09SX05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1
-L2RybS94ZW4veGVuX2RybV9mcm9udC5jOjQwMzogICAgICAgIGlmIChJU19FUlJfT1JfTlVMTChv
-YmopKSB7DQo+DQo+IFRoZXkncmUgYWxsIHdyb25nLCBiZWNhdXNlIGlmIHRoZSBwb2ludGVyIHdh
-cyByZWFsbHkgTlVMTCB0aGVuIGl0J3MNCj4gbm90IGhhbmRsZWQgY29ycmVjdGx5IGFuZCB3b3Vs
-ZCBldmVudHVhbGx5IGxlYWQgdG8gYSBydW50aW1lIGZhaWx1cmUuDQoNCkl0IHNlZW1zIHRoYXQg
-eW91IHdlcmUgcmlnaHQgYW5kIEkgY2FuIHNpbXBseSBjaGFuZ2UgYWxsIElTX0VSUl9PUl9OVUxM
-IA0KdG8ganVzdCBJU19FUlINCg0KSSBhbSBwbGFubmluZyBhIHNlcmllcyBvZiBwYXRjaGVzIGxh
-dGVyIG9uLCBzbyBJJ2xsIGluY2x1ZGUgdGhpcyBmaXggYXMgd2VsbA0KDQo+DQo+IE5vcm1hbGx5
-IFNtYXRjaCBpcyBzbWFydCBlbm91Z2ggdG8ga25vdyB0aGF0IHRoZSBwb2ludGVyIGlzbid0IE5V
-TEwgc28NCj4gaXQgZG9lc24ndCBnZW5lcmF0ZSBhIHdhcm5pbmcgYnV0IHllc3RlcmRheSBJIGlu
-dHJvZHVjZWQgYSBidWcgaW4gU21hdGNoDQo+IGJ5IG1pc3Rha2UuICBJdCdzIGZpeGVkIG5vdy4N
-Cj4NCj4gcmVnYXJkcywNCj4gZGFuIGNhcnBlbnRlcg0KPg0KVGhhbmsgeW91LA0KDQpPbGVrc2Fu
-ZHINCg=
+It is spurious to call 'clk_disable_unprepare()' when
+'clk_prepare_enable()' has not been called yet.
+Re-order the error handling path to avoid it.
+
+Fixes: a4260ea49547 ("media: sun4i: Add H3 deinterlace driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/sunxi/sun8i-di/sun8i-di.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/sunxi/sun8i-di/sun8i-di.c b/drivers/media/platform/sunxi/sun8i-di/sun8i-di.c
+index d78f6593ddd1..a1f29462d260 100644
+--- a/drivers/media/platform/sunxi/sun8i-di/sun8i-di.c
++++ b/drivers/media/platform/sunxi/sun8i-di/sun8i-di.c
+@@ -969,14 +969,14 @@ static int deinterlace_runtime_resume(struct device *device)
+ 
+ 	return 0;
+ 
+-err_exlusive_rate:
+-	clk_rate_exclusive_put(dev->mod_clk);
+ err_ram_clk:
+ 	clk_disable_unprepare(dev->ram_clk);
+ err_mod_clk:
+ 	clk_disable_unprepare(dev->mod_clk);
+ err_bus_clk:
+ 	clk_disable_unprepare(dev->bus_clk);
++err_exlusive_rate:
++	clk_rate_exclusive_put(dev->mod_clk);
+ 
+ 	return ret;
+ }
+-- 
+2.25.1
