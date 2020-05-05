@@ -1,94 +1,107 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 02 May 2020 08:49:05 +0000
+From: Richard Gong <richard.gong@linux.intel.com>
+Date: Tue, 05 May 2020 14:18:43 +0000
 Subject: Re: [PATCH 4/4 v2] firmware: stratix10-svc: Slightly simplify code
-Message-Id: <dab419d3-5942-fa89-a352-e8917ced0744@wanadoo.fr>
+Message-Id: <b3b70de2-73af-f136-749c-51e40be9ffdc@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
  <8c505c686438c54da61ad4fe15e1eae722011153.1588142343.git.christophe.jaillet@wanadoo.fr>
  <1f8ae50d-6830-7fbb-e999-3e8110fe7cd6@linux.intel.com>
  <c7ac6b7c-a1d5-e001-964b-0881707c41b1@wanadoo.fr>
  <2a1de0d5-444a-2680-10b5-8578c2670d54@linux.intel.com>
-In-Reply-To: <2a1de0d5-444a-2680-10b5-8578c2670d54@linux.intel.com>
+ <dab419d3-5942-fa89-a352-e8917ced0744@wanadoo.fr>
+In-Reply-To: <dab419d3-5942-fa89-a352-e8917ced0744@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Richard Gong <richard.gong@linux.intel.com>, gregkh@linuxfoundation.org, atull@kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, gregkh@linuxfoundation.org, atull@kernel.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 01/05/2020 à 18:55, Richard Gong a écrit :
-> Hi,
->
-> On 5/1/20 10:48 AM, Christophe JAILLET wrote:
->> Le 01/05/2020 à 17:40, Richard Gong a écrit :
->>> Hi,
->>>
->>> On 4/29/20 1:52 AM, Christophe JAILLET wrote:
->>>> Replace 'devm_kmalloc_array(... | __GFP_ZERO)' with the equivalent and
->>>> shorter 'devm_kcalloc(...)'.
->>>>
->>> It doesn't make much sense.
->>> Actually devm_kcalloc returns devm_kmalloc_array(.., flag | 
->>> __GFP_ZERO).
->>>
->> The only goal is to have a sightly less verbose code.
->> This saves one line of code and there is no need to wonder why we 
->> explicitly pass __GFP_ZERO to kmalloc_array.
->>
->> Mostly a matter of taste.
-> I prefer this part remain unchanged.
->
+Hi,
 
-The easiest would be just to ignore this patch entirely but if you need 
-a v3 for the series, could you tell me if you have any comments on the 3 
-other patches?
-
-CJ
-
-
-> Regards,
-> Richard
->
+On 5/2/20 3:49 AM, Christophe JAILLET wrote:
+> Le 01/05/2020 à 18:55, Richard Gong a écrit :
+>> Hi,
 >>
->> 'devm_kcalloc' is inlined, so the binary should be exactly the same. >
->> CJ
+>> On 5/1/20 10:48 AM, Christophe JAILLET wrote:
+>>> Le 01/05/2020 à 17:40, Richard Gong a écrit :
+>>>> Hi,
+>>>>
+>>>> On 4/29/20 1:52 AM, Christophe JAILLET wrote:
+>>>>> Replace 'devm_kmalloc_array(... | __GFP_ZERO)' with the equivalent and
+>>>>> shorter 'devm_kcalloc(...)'.
+>>>>>
+>>>> It doesn't make much sense.
+>>>> Actually devm_kcalloc returns devm_kmalloc_array(.., flag | 
+>>>> __GFP_ZERO).
+>>>>
+>>> The only goal is to have a sightly less verbose code.
+>>> This saves one line of code and there is no need to wonder why we 
+>>> explicitly pass __GFP_ZERO to kmalloc_array.
+>>>
+>>> Mostly a matter of taste.
+>> I prefer this part remain unchanged.
 >>
->>>> 'ctrl->genpool' can not be NULL, so axe a useless test in the remove
->>>> function.
+> 
+> The easiest would be just to ignore this patch entirely
+Yes, please.
+  but if you need
+> a v3 for the series, could you tell me if you have any comments on the 3 
+> other patches?
+> 
+I added some comments in your patch #3, also recommend putting all 
+changes in one patch.
+
+Regards,
+Richard
+
+> CJ
+> 
+> 
+>> Regards,
+>> Richard
+>>
+>>>
+>>> 'devm_kcalloc' is inlined, so the binary should be exactly the same. >
+>>> CJ
+>>>
+>>>>> 'ctrl->genpool' can not be NULL, so axe a useless test in the remove
+>>>>> function.
+>>>>>
+>>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>>> ---
+>>>>>   drivers/firmware/stratix10-svc.c | 6 ++----
+>>>>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/firmware/stratix10-svc.c 
+>>>>> b/drivers/firmware/stratix10-svc.c
+>>>>> index 739004398877..c228337cb0a1 100644
+>>>>> --- a/drivers/firmware/stratix10-svc.c
+>>>>> +++ b/drivers/firmware/stratix10-svc.c
+>>>>> @@ -1002,8 +1002,7 @@ static int stratix10_svc_drv_probe(struct 
+>>>>> platform_device *pdev)
+>>>>>       if (!controller)
+>>>>>           return -ENOMEM;
+>>>>>   -    chans = devm_kmalloc_array(dev, SVC_NUM_CHANNEL,
+>>>>> -                   sizeof(*chans), GFP_KERNEL | __GFP_ZERO);
+>>>>> +    chans = devm_kcalloc(dev, SVC_NUM_CHANNEL, sizeof(*chans), 
+>>>>> GFP_KERNEL);
+>>>>>       if (!chans)
+>>>>>           return -ENOMEM;
+>>>>>   @@ -1086,8 +1085,7 @@ static int stratix10_svc_drv_remove(struct 
+>>>>> platform_device *pdev)
+>>>>>           kthread_stop(ctrl->task);
+>>>>>           ctrl->task = NULL;
+>>>>>       }
+>>>>> -    if (ctrl->genpool)
+>>>>> -        gen_pool_destroy(ctrl->genpool);
+>>>>> +    gen_pool_destroy(ctrl->genpool);
+>>>>>       list_del(&ctrl->node);
+>>>>>         return 0;
+>>>>>
 >>>>
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>> ---
->>>>   drivers/firmware/stratix10-svc.c | 6 ++----
->>>>   1 file changed, 2 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/firmware/stratix10-svc.c 
->>>> b/drivers/firmware/stratix10-svc.c
->>>> index 739004398877..c228337cb0a1 100644
->>>> --- a/drivers/firmware/stratix10-svc.c
->>>> +++ b/drivers/firmware/stratix10-svc.c
->>>> @@ -1002,8 +1002,7 @@ static int stratix10_svc_drv_probe(struct 
->>>> platform_device *pdev)
->>>>       if (!controller)
->>>>           return -ENOMEM;
->>>>   -    chans = devm_kmalloc_array(dev, SVC_NUM_CHANNEL,
->>>> -                   sizeof(*chans), GFP_KERNEL | __GFP_ZERO);
->>>> +    chans = devm_kcalloc(dev, SVC_NUM_CHANNEL, sizeof(*chans), 
->>>> GFP_KERNEL);
->>>>       if (!chans)
->>>>           return -ENOMEM;
->>>>   @@ -1086,8 +1085,7 @@ static int stratix10_svc_drv_remove(struct 
->>>> platform_device *pdev)
->>>>           kthread_stop(ctrl->task);
->>>>           ctrl->task = NULL;
->>>>       }
->>>> -    if (ctrl->genpool)
->>>> -        gen_pool_destroy(ctrl->genpool);
->>>> +    gen_pool_destroy(ctrl->genpool);
->>>>       list_del(&ctrl->node);
->>>>         return 0;
+>>>> Regards,
+>>>> Richard
 >>>>
 >>>
->>> Regards,
->>> Richard
->>>
 >>
->
+> 
