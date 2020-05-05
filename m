@@ -1,27 +1,38 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Wed, 13 May 2020 02:33:57 +0000
-Subject: Re: [PATCH] phy: cpcap-usb: Remove some useless code
-Message-Id: <c8a8bcf5-f7e1-115d-34f5-3b88bc1ef0d7@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 May 2020 09:33:43 +0000
+Subject: [PATCH]i[next] io_uring: remove redundant check on force_nonblock
+Message-Id: <20200505093343.41869-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507203127.202197-1-christophe.jaillet@wanadoo.fr>
- <20200508152254.GZ37466@atomide.com>
-In-Reply-To: <20200508152254.GZ37466@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Lindgren <tony@atomide.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: vkoul@kernel.org, pavel@ucw.cz, sebastian.reichel@collabora.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The check on force_nonblock is redundant as this is performed
+several statements earlier and also returns with -EAGAIN. Remove
+the redundant check.
 
-On 5/8/2020 8:52 PM, Tony Lindgren wrote:
-> * Christophe JAILLET <christophe.jaillet@wanadoo.fr> [200507 20:32]:
->> Axe a clk that is unused in the driver.
-> 
-> Thanks for fixing it:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
+Addresses-Coverity: ("Logicall dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-merged, thanks!
-
--Kishon
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index e5dfbbd2aa34..4b1efb062f7f 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2782,7 +2782,7 @@ static int io_splice(struct io_kiocb *req, bool force_nonblock)
+ 	poff_in = (sp->off_in = -1) ? NULL : &sp->off_in;
+ 	poff_out = (sp->off_out = -1) ? NULL : &sp->off_out;
+ 	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
+-	if (force_nonblock && ret = -EAGAIN)
++	if (ret = -EAGAIN)
+ 		return -EAGAIN;
+ 
+ 	io_put_file(req, in, (sp->flags & SPLICE_F_FD_IN_FIXED));
+-- 
+2.25.1
