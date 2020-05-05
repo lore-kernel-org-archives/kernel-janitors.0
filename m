@@ -1,30 +1,29 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 19 May 2020 23:44:29 +0000
-Subject: Re: [PATCH -next] RDMA/rtrs: server: fix some error return code
-Message-Id: <20200519234429.GA30609@ziepe.ca>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 05 May 2020 09:59:10 +0000
+Subject: [PATCH net-next] net: ipa: remove duplicated include from ipa_mem.c
+Message-Id: <20200505100307.191806-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200519091912.134358-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200519091912.134358-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Alex Elder <elder@kernel.org>, "David S . Miller" <davem@davemloft.net>
+Cc: YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 19, 2020 at 09:19:12AM +0000, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the some error handling
-> cases instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 9cb837480424 ("RDMA/rtrs: server: main functionality")
-> Fixes: 91b11610af8d ("RDMA/rtrs: server: sysfs interface functions")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Danil Kipnis <danil.kipnis@cloud.ionos.com>
-> ---
->  drivers/infiniband/ulp/rtrs/rtrs-srv.c | 8 +++++---
->  drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c | 1 +
->  2 file changed, 6 insertions(+), 3 deletions(-)
+Remove duplicated include.
 
-Applied to for-next, thanks
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ipa/ipa_mem.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Jason
+diff --git a/drivers/net/ipa/ipa_mem.c b/drivers/net/ipa/ipa_mem.c
+index aa8f6b0f3d50..3ef814119aab 100644
+--- a/drivers/net/ipa/ipa_mem.c
++++ b/drivers/net/ipa/ipa_mem.c
+@@ -17,7 +17,6 @@
+ #include "ipa_data.h"
+ #include "ipa_cmd.h"
+ #include "ipa_mem.h"
+-#include "ipa_data.h"
+ #include "ipa_table.h"
+ #include "gsi_trans.h"
