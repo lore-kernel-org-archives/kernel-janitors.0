@@ -1,29 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 12 May 2020 07:34:53 +0000
-Subject: Re: [PATCH next] ath11k: convert to devm_platform_get_and_ioremap_resource
-Message-Id: <20200512073453.82903C4478F@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 May 2020 20:47:21 +0000
+Subject: [PATCH net-next] enetc: Fix use after free in stream_filter_unref()
+Message-Id: <20200505204721.GA51853@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508075323.81128-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200508075323.81128-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Claudiu Manoil <claudiu.manoil@nxp.com>, Po Liu <Po.Liu@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+This code frees "sfi" and then dereferences it on the next line.
 
-> Use the helper function that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 888ae5a3952b ("net: enetc: add tc flower psfp offload driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc_qos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-c8ffcd122760 ath11k: convert to devm_platform_get_and_ioremap_resource
-
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_qos.c b/drivers/net/ethernet/freescale/enetc/enetc_qos.c
+index 48e589e9d0f7c..10d79eb46c2e8 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_qos.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_qos.c
+@@ -902,8 +902,8 @@ static void stream_filter_unref(struct enetc_ndev_priv *priv, u32 index)
+ 	if (z) {
+ 		enetc_streamfilter_hw_set(priv, sfi, false);
+ 		hlist_del(&sfi->node);
+-		kfree(sfi);
+ 		clear_bit(sfi->index, epsfp.psfp_sfi_bitmap);
++		kfree(sfi);
+ 	}
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/11535829/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.26.2
