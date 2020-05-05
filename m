@@ -1,54 +1,123 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 31 May 2020 14:06:11 +0000
-Subject: Re: [PATCH v2] iio: magnetometer: ak8974: Fix runtime PM imbalance on error in ak8974_probe()
-Message-Id: <dd84c12f-277d-27e7-3727-4592e530e4ed@web.de>
+From: Richard Gong <richard.gong@linux.intel.com>
+Date: Tue, 05 May 2020 13:46:28 +0000
+Subject: Re: [PATCH 3/4 v2] firmware: stratix10-svc: Fix some error handling paths in 'stratix10_svc_drv_prob
+Message-Id: <1c0b3414-aea4-8b10-d4a9-4e04f1988002@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1588142343.git.christophe.jaillet@wanadoo.fr>
+ <0ff40f39de4deb63b03b363d0e0f3e3c8cccd62d.1588142343.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0ff40f39de4deb63b03b363d0e0f3e3c8cccd62d.1588142343.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Linus Walleij <linus.walleij@linaro.org>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Kangjie Lu <kjlu@umn.edu>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, gregkh@linuxfoundation.org, atull@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> When devm_regmap_init_i2c() returns an error code, a pairing
-> runtime PM usage counter decrement is needed to keep the
-> counter balanced.
+Hi,
 
-How do you think about to replace the word “pairing” by “corresponding”?
+Similarly we need add error handling for controller and chans, something 
+like below:
 
+@@ -997,13 +997,17 @@ static int stratix10_svc_drv_probe(struct 
+platform_device *pdev)
 
-> For error paths after ak8974_set_power(),
-> ak8974_detect() and ak8974_reset(), things are the same.
+         /* allocate service controller and supporting channel */
+         controller = devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
+-       if (!controller)
+-               return -ENOMEM;
++       if (!controller) {
++               ret = -ENOMEM;
++               goto err_destroy_pool;
++       }
 
-Will an other wording become more helpful than this information?
+         chans = devm_kmalloc_array(dev, SVC_NUM_CHANNEL,
+                                    sizeof(*chans), GFP_KERNEL | 
+__GFP_ZERO);
+-       if (!chans)
+-               return -ENOMEM;
++       if (!chans) {
++               ret = -ENOMEM;
++               goto err_destroy_pool;
++       }
 
+         controller->dev = dev;
+         controller->num_chans = SVC_NUM_CHANNEL;
 
-> However, When iio_triggered_buffer_setup() returns an error
-> code, there will be two PM usgae counter decrements.
+On 4/29/20 1:52 AM, Christophe JAILLET wrote:
+> If an error occurs after calling 'svc_create_memory_pool()', the allocated
+> genpool should be destroyed with 'gen_pool_destroy()', as already done in
+> the remove function.
+> 
+> If an error occurs after calling 'kfifo_alloc()', the allocated memory
+> should be freed with 'kfifo_free()', as already done in the remove
+> function.
+> 
+> While at it, also move a 'platform_device_put()' call to the error handling
+> path.
+> 
+> Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
+> Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/firmware/stratix10-svc.c | 26 ++++++++++++++++++--------
+>   1 file changed, 18 insertions(+), 8 deletions(-)
+> 
+I am fine with below changes.
 
-Please avoid two typos in this sentence.
-
-
-Would you like to add the tag “Fixes” to the commit message?
-
-
-…
-+++ b/drivers/iio/magnetometer/ak8974.c
-…
-@@ -854,7 +856,6 @@  static int ak8974_probe(struct i2c_client *i2c,
-…
-
-Can a source code variant like the following make sense
-for a more complete exception handling?
-
-power_off:
-	ak8974_set_power(ak8974, AK8974_PWR_OFF);
-put_pm:
-	pm_runtime_put_noidle(&i2c->dev);
-	pm_runtime_disable(&i2c->dev);
-disable_regulator:
-	regulator_bulk_disable(ARRAY_SIZE(ak8974->regs), ak8974->regs);
-	return ret;
-
-
+> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+> index de5870f76c5e..739004398877 100644
+> --- a/drivers/firmware/stratix10-svc.c
+> +++ b/drivers/firmware/stratix10-svc.c
+> @@ -1024,7 +1024,7 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+>   	ret = kfifo_alloc(&controller->svc_fifo, fifo_size, GFP_KERNEL);
+>   	if (ret) {
+>   		dev_err(dev, "failed to allocate FIFO\n");
+> -		return ret;
+> +		goto err_destroy_pool;
+>   	}
+>   	spin_lock_init(&controller->svc_fifo_lock);
+>   
+> @@ -1043,24 +1043,34 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+>   
+>   	/* add svc client device(s) */
+>   	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
+> -	if (!svc)
+> -		return -ENOMEM;
+> +	if (!svc) {
+> +		ret = -ENOMEM;
+> +		goto err_free_kfifo;
+> +	}
+>   
+>   	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
+>   	if (!svc->stratix10_svc_rsu) {
+>   		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto err_free_kfifo;
+>   	}
+>   
+>   	ret = platform_device_add(svc->stratix10_svc_rsu);
+> -	if (ret) {
+> -		platform_device_put(svc->stratix10_svc_rsu);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto put_platform;
+> +
+>   	dev_set_drvdata(dev, svc);
+>   
+>   	pr_info("Intel Service Layer Driver Initialized\n");
+>   
+> +	return 0;
+> +
+> +put_platform:
+> +	platform_device_put(svc->stratix10_svc_rsu);
+> +err_free_kfifo:
+> +	kfifo_free(&controller->svc_fifo);
+> +err_destroy_pool:
+> +	gen_pool_destroy(genpool);
+>   	return ret;
+>   }
+>   
+> 
 Regards,
-Markus
+Richard
