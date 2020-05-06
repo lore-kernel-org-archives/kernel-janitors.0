@@ -1,58 +1,59 @@
-From: Akira shimahara <akira215corp@gmail.com>
-Date: Wed, 20 May 2020 16:44:11 +0000
-Subject: Re: [PATCH] w1_therm: Free the correct variable
-Message-Id: <5f5b6a08acc94089caf3f9969579a45c4744c7b3.camel@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 06 May 2020 03:28:24 +0000
+Subject: [PATCH] i2c: puv3: Fix an error handling path in 'puv3_i2c_probe()'
+Message-Id: <20200506032824.191633-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200520120019.GA172354@mwanda>
-In-Reply-To: <20200520120019.GA172354@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Evgeniy Polyakov <zbr@ioremap.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, Allison Randal <allison@lohutok.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gxt@pku.edu.cn, arnd@arndb.de
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi,
+There is a spurious 'put_device()' in the remove function.
+A reference to 'pdev->dev' is taken in the probe function without a
+corresponding 'get_device()' to increment the refcounted reference.
 
-Le mercredi 20 mai 2020 à 15:00 +0300, Dan Carpenter a écrit :
-> The problem is that we change "p_args" to point to the middle of the
-> string so when we free it at the end of the function it's not freeing
-> the same pointer that we originally allocated.
-> 
-> Fixes: e2c94d6f5720 ("w1_therm: adding alarm sysfs entry")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  I guess it must not cause too much of a problem
-> at run time?
-> 
->  drivers/w1/slaves/w1_therm.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
-> index cc4b88056b33..a6c85e486671 100644
-> --- a/drivers/w1/slaves/w1_therm.c
-> +++ b/drivers/w1/slaves/w1_therm.c
-> @@ -1526,8 +1526,9 @@ static ssize_t alarms_store(struct device *device,
->  	int temp, ret = -EINVAL;
->  	char *token = NULL;
->  	s8 tl, th, tt;	/* 1 byte per value + temp ring order */
-> -	char *p_args = kmalloc(size, GFP_KERNEL);
-> +	char *p_args, *orig;
->  
-> +	p_args = orig = kmalloc(size, GFP_KERNEL);
->  	/* Safe string copys as buf is const */
->  	if (!p_args) {
->  		dev_warn(device,
-> @@ -1611,7 +1612,7 @@ static ssize_t alarms_store(struct device *device,
->  
->  free_m:
->  	/* free allocated memory */
-> -	kfree(p_args);
-> +	kfree(orig);
->  
->  	return size;
->  }
+Add the missing 'get_device()' and update the error handling path
+accordingly.
 
-I tested it on several devices to be safe, no issue at runtime.
-Sorry for the mistake and thanks for the fix.
+Fixes: d10e4a660d11 ("unicore32 machine related files: add i2c bus drivers for pkunity-v3 soc")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is provided as-is. It is not even compile tested because I don't
+use cross-compiler.
 
-Akira Shimahara
+It is purely speculative and based on what looks like an unbalanced
+'put_device()' in the remove function.
+---
+ drivers/i2c/busses/i2c-puv3.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-puv3.c b/drivers/i2c/busses/i2c-puv3.c
+index 5cec5a36807d..62a4b860d3c0 100644
+--- a/drivers/i2c/busses/i2c-puv3.c
++++ b/drivers/i2c/busses/i2c-puv3.c
+@@ -203,18 +203,20 @@ static int puv3_i2c_probe(struct platform_device *pdev)
+ 			mem->start);
+ 	adapter->algo = &puv3_i2c_algorithm;
+ 	adapter->class = I2C_CLASS_HWMON;
+-	adapter->dev.parent = &pdev->dev;
++	adapter->dev.parent = get_device(&pdev->dev);
+ 
+ 	platform_set_drvdata(pdev, adapter);
+ 
+ 	adapter->nr = pdev->id;
+ 	rc = i2c_add_numbered_adapter(adapter);
+ 	if (rc)
+-		goto fail_add_adapter;
++		goto fail_put_device;
+ 
+ 	dev_info(&pdev->dev, "PKUnity v3 i2c bus adapter.\n");
+ 	return 0;
+ 
++fail_put_device:
++	put_device(&pdev->dev);
+ fail_add_adapter:
+ 	kfree(adapter);
+ fail_nomem:
+-- 
+2.25.1
