@@ -1,27 +1,80 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 12 May 2020 19:59:32 +0000
-Subject: Re: [PATCH -next] mm/hmm/test: fix error return code in hmm_dmirror_init()
-Message-Id: <20200512195932.GB9154@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 06 May 2020 20:09:07 +0000
+Subject: [PATCH] memory: tegra: Fix an error handling path in 'tegra186_emc_probe()'
+Message-Id: <20200506200907.195502-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200509030234.14747-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200509030234.14747-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: jglisse@redhat.com, Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On Sat, May 09, 2020 at 03:02:34AM +0000, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the alloc_page() error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 5d5e54be8a1e ("mm/hmm/test: add selftest driver for HMM")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  lib/test_hmm.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+The call to 'tegra_bpmp_get()' must be balanced by a call to
+'tegra_bpmp_put()' in case of error, as already done in the remove
+function.
 
-Thank you, I squashed this into the original commit
+Add an error handling path and corresponding goto.
 
-Jason
+Fixes: 52d15dd23f0b ("memory: tegra: Support DVFS on Tegra186 and later")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/memory/tegra/tegra186-emc.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 97f26bc77ad4..7b35bf6450f3 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -185,7 +185,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(emc->clk)) {
+ 		err = PTR_ERR(emc->clk);
+ 		dev_err(&pdev->dev, "failed to get EMC clock: %d\n", err);
+-		return err;
++		goto err_put_bpmp;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, emc);
+@@ -201,7 +201,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 	err = tegra_bpmp_transfer(emc->bpmp, &msg);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to EMC DVFS pairs: %d\n", err);
+-		return err;
++		goto err_put_bpmp;
+ 	}
+ 
+ 	emc->debugfs.min_rate = ULONG_MAX;
+@@ -211,8 +211,10 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 
+ 	emc->dvfs = devm_kmalloc_array(&pdev->dev, emc->num_dvfs,
+ 				       sizeof(*emc->dvfs), GFP_KERNEL);
+-	if (!emc->dvfs)
+-		return -ENOMEM;
++	if (!emc->dvfs) {
++		err = -ENOMEM;
++		goto err_put_bpmp;
++	}
+ 
+ 	dev_dbg(&pdev->dev, "%u DVFS pairs:\n", emc->num_dvfs);
+ 
+@@ -237,7 +239,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 			"failed to set rate range [%lu-%lu] for %pC\n",
+ 			emc->debugfs.min_rate, emc->debugfs.max_rate,
+ 			emc->clk);
+-		return err;
++		goto err_put_bpmp;
+ 	}
+ 
+ 	emc->debugfs.root = debugfs_create_dir("emc", NULL);
+@@ -254,6 +256,10 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 			    emc, &tegra186_emc_debug_max_rate_fops);
+ 
+ 	return 0;
++
++err_put_bpmp:
++	tegra_bpmp_put(emc->bpmp);
++	return err;
+ }
+ 
+ static int tegra186_emc_remove(struct platform_device *pdev)
+-- 
+2.25.1
