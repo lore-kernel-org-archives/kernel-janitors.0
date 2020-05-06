@@ -1,26 +1,51 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 28 May 2020 07:34:20 +0000
-Subject: Re: [PATCH] crypto: cavium/nitrox - Fix a typo in a comment
-Message-Id: <20200528073419.GA32600@gondor.apana.org.au>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 06 May 2020 20:29:06 +0000
+Subject: [PATCH] MAINTAINERS: put DYNAMIC INTERRUPT MODERATION in proper order
+Message-Id: <20200506202906.23297-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200519203654.281351-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200519203654.281351-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, jsrikanth@marvell.com, phemadri@marvell.com, gustavo@embeddedor.com, tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Tue, May 19, 2020 at 10:36:54PM +0200, Christophe JAILLET wrote:
-> s/NITORX/NITROX/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/cavium/nitrox/nitrox_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Commit 9b038086f06b ("docs: networking: convert DIM to RST") added a new
+file entry to DYNAMIC INTERRUPT MODERATION to the end, and not following
+alphabetical order.
 
-Patch applied.  Thanks.
+So, ./scripts/checkpatch.pl -f MAINTAINERS complains:
+
+  WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic
+  order
+  #5966: FILE: MAINTAINERS:5966:
+  +F:      lib/dim/
+  +F:      Documentation/networking/net_dim.rst
+
+Reorder the file entries to keep MAINTAINERS nicely ordered.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Jakub, please pick this minor non-urgent patch.
+
+applies cleanly on next-20200505
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b103ff039077..92dced585e54 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5957,9 +5957,9 @@ F:	lib/dynamic_debug.c
+ DYNAMIC INTERRUPT MODERATION
+ M:	Tal Gilboa <talgi@mellanox.com>
+ S:	Maintained
++F:	Documentation/networking/net_dim.rst
+ F:	include/linux/dim.h
+ F:	lib/dim/
+-F:	Documentation/networking/net_dim.rst
+ 
+ DZ DECSTATION DZ11 SERIAL DRIVER
+ M:	"Maciej W. Rozycki" <macro@linux-mips.org>
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
