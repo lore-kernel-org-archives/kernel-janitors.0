@@ -1,50 +1,54 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 31 May 2020 07:37:16 +0000
-Subject: [PATCH] pinctrl: pxa: pxa2xx: Remove 'pxa2xx_pinctrl_exit()' which is unused and broken
-Message-Id: <20200531073716.593343-1-christophe.jaillet@wanadoo.fr>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 May 2020 12:56:07 +0000
+Subject: [PATCH -next] spi: bcm2835: Fix error return code in bcm2835_dma_init()
+Message-Id: <20200506125607.90952-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel@zonque.org, haojian.zhuang@gmail.com, robert.jarzmik@free.fr, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-Commit 6d33ee7a0534 ("pinctrl: pxa: Use devm_pinctrl_register() for pinctrl registration")
-has turned a 'pinctrl_register()' into 'devm_pinctrl_register()' in
-'pxa2xx_pinctrl_init()'.
-However, the corresponding 'pinctrl_unregister()' call in
-'pxa2xx_pinctrl_exit()' has not been removed.
+Fix to return negative error code -ENOMEM from the dma mapping error
+handling case instead of 0, as done elsewhere in this function.
 
-This is not an issue, because 'pxa2xx_pinctrl_exit()' is unused.
-Remove it now to avoid some wondering in the future and save a few LoC.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-If some some reason the function should be kept, at least it should be
-only 'return 0;'
----
- drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/spi/spi-bcm2835.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-index bddf2c5dd3bf..eab029a21643 100644
---- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-+++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-@@ -425,15 +425,6 @@ int pxa2xx_pinctrl_init(struct platform_device *pdev,
- }
- EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_init);
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index 11c235879bb7..c4f4bd135279 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -940,6 +940,7 @@ static int bcm2835_dma_init(struct spi_controller *ctlr, struct device *dev,
+ 	if (dma_mapping_error(ctlr->dma_tx->device->dev, bs->fill_tx_addr)) {
+ 		dev_err(dev, "cannot map zero page - not using DMA mode\n");
+ 		bs->fill_tx_addr = 0;
++		ret = -ENOMEM;
+ 		goto err_release;
+ 	}
  
--int pxa2xx_pinctrl_exit(struct platform_device *pdev)
--{
--	struct pxa_pinctrl *pctl = platform_get_drvdata(pdev);
--
--	pinctrl_unregister(pctl->pctl_dev);
--	return 0;
--}
--EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_exit);
--
- MODULE_AUTHOR("Robert Jarzmik <robert.jarzmik@free.fr>");
- MODULE_DESCRIPTION("Marvell PXA2xx pinctrl driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.25.1
+@@ -949,6 +950,7 @@ static int bcm2835_dma_init(struct spi_controller *ctlr, struct device *dev,
+ 						     DMA_MEM_TO_DEV, 0);
+ 	if (!bs->fill_tx_desc) {
+ 		dev_err(dev, "cannot prepare fill_tx_desc - not using DMA mode\n");
++		ret = -ENOMEM;
+ 		goto err_release;
+ 	}
+ 
+@@ -979,6 +981,7 @@ static int bcm2835_dma_init(struct spi_controller *ctlr, struct device *dev,
+ 	if (dma_mapping_error(ctlr->dma_rx->device->dev, bs->clear_rx_addr)) {
+ 		dev_err(dev, "cannot map clear_rx_cs - not using DMA mode\n");
+ 		bs->clear_rx_addr = 0;
++		ret = -ENOMEM;
+ 		goto err_release;
+ 	}
+ 
+@@ -989,6 +992,7 @@ static int bcm2835_dma_init(struct spi_controller *ctlr, struct device *dev,
+ 					   DMA_MEM_TO_DEV, 0);
+ 		if (!bs->clear_rx_desc[i]) {
+ 			dev_err(dev, "cannot prepare clear_rx_desc - not using DMA mode\n");
++			ret = -ENOMEM;
+ 			goto err_release;
+ 		}
