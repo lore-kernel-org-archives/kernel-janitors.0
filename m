@@ -1,45 +1,36 @@
-From: Wu Bo <wubo40@huawei.com>
-Date: Mon, 18 May 2020 11:34:27 +0000
-Subject: Re: [PATCH] blkcg: Fix memory leak in blkg_conf_prep()
-Message-Id: <5cfba9c1-675d-d4e8-65bf-746712ae32e5@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 May 2020 14:13:17 +0000
+Subject: [PATCH -next] soc: mediatek: Missing platform_device_unregister() on error in mtk_mmsys_probe()
+Message-Id: <20200506141317.119537-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4c670a6c-98c3-2b14-7438-09199506d92f@web.de>
-In-Reply-To: <4c670a6c-98c3-2b14-7438-09199506d92f@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, cgroups@vger.kernel.org, linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Feilong Lin <linfeilong@huawei.com>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthias Brugger <matthias.bgg@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 2020/5/15 23:08, Markus Elfring wrote:
-> …
->> new_blkg = blkg_alloc(pos, q, GFP_KERNEL);
-> …
-> 
-> I suggest to omit the source code quotation from the change description.
-> 
-> 
->> if calling blkg_lookup_check() failed, at the IS_ERR block,
->> the new_blkg should be free before goto lable fail_unlock
->> in blkg_conf_prep() function.
-> 
-> How do you think about a wording variant like the following?
-> 
->    If a call of the function “blkg_lookup_check” failed,
->    release the previously allocated block group before jumping
->    to the target “fail_unlock” in the implementation of
->    the function “blkg_conf_prep”.
-> 
+Add the missing platform_device_unregister() before return
+from mtk_mmsys_probe() in the error handling case.
 
-Thanks for your suggestion. omit the source code quotation from the 
-description is more friendly. I will modify the description in V2 patch.
+Fixes: 667c769246b0 ("soc / drm: mediatek: Fix mediatek-drm device probing")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/soc/mediatek/mtk-mmsys.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Wu Bo
-
-> 
-> Would you like to add the tag “Fixes” to the commit message?
-> 
-> Regards,
-> Markus
-> 
+diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+index 05e322c9c301..05ce4cb464b0 100644
+--- a/drivers/soc/mediatek/mtk-mmsys.c
++++ b/drivers/soc/mediatek/mtk-mmsys.c
+@@ -312,8 +312,10 @@ static int mtk_mmsys_probe(struct platform_device *pdev)
+ 
+ 	drm = platform_device_register_data(&pdev->dev, "mediatek-drm",
+ 					    PLATFORM_DEVID_AUTO, NULL, 0);
+-	if (IS_ERR(drm))
++	if (IS_ERR(drm)) {
++		platform_device_unregister(clks);
+ 		return PTR_ERR(drm);
++	}
+ 
+ 	return 0;
+ }
