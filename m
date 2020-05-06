@@ -1,29 +1,31 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 27 May 2020 08:20:46 +0000
-Subject: Re: [PATCH v5] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
-Message-Id: <284c7851-4e89-a00f-a2e6-aa8e2e1f3fce@web.de>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 06 May 2020 08:32:09 +0000
+Subject: Re: [PATCH v2] ipw2x00: Remove a memory allocation failure log message
+Message-Id: <20200506083209.4272FC433BA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527075715.36849-1-qiang.zhang@windriver.com>
-In-Reply-To: <20200527075715.36849-1-qiang.zhang@windriver.com>
+References: <20200424154527.27309-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200424154527.27309-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: stas.yakovlev@gmail.com, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Thus delete this function call which became unnecessary with the referenced
-> software update.
-…
-> Suggested-by: Markus Elfring <Markus.Elfring@web.de>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Would the tag “Co-developed-by” be more appropriate according to the patch review
-to achieve a more pleasing commit message?
+> Axe a memory allocation failure log message. This message is useless and
+> incorrect (vmalloc is not used here for the memory allocation)
+> 
+> This has been like that since the very beginning of this driver in
+> commit 43f66a6ce8da ("Add ipw2200 wireless driver.")
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Patch applied to wireless-drivers-next.git, thanks.
 
->  v1->v2->v3->v4->v5:
->  Modify weakly submitted information.
+c03e3fe91c19 ipw2x00: Remove a memory allocation failure log message
 
-Now I wonder about your wording choice “weakly”.
+-- 
+https://patchwork.kernel.org/patch/11508307/
 
-Regards,
-Markus
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
