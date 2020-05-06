@@ -1,40 +1,45 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 16 May 2020 09:25:34 +0000
-Subject: Re: [PATCH][next] USB: EHCI: ehci-mv: fix less than zero comparison of an unsigned int
-Message-Id: <abab6ad5-5c97-60d4-031a-64632c0e2b04@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 May 2020 01:40:08 +0000
+Subject: [PATCH -next] power: supply: bq25890_charger: fix missing unlock on error in bq25890_resume()
+Message-Id: <20200506014008.59755-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200515165453.104028-1-colin.king@canonical.com>
- <20200515172121.GA5498@rowland.harvard.edu>
- <20200516063045.GA3846431@kroah.com>
-In-Reply-To: <20200516063045.GA3846431@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>
-Cc: Zhang Shengju <zhangshengju@cmss.chinamobile.com>, Tang Bin <tangbin@cmss.chinamobile.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Micha Mirosaw <mirq-linux@rere.qmqm.pl>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 16/05/2020 07:30, Greg Kroah-Hartman wrote:
-> On Fri, May 15, 2020 at 01:21:21PM -0400, Alan Stern wrote:
->> On Fri, May 15, 2020 at 05:54:53PM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The comparison of hcd->irq to less than zero for an error check will
->>> never be true because hcd->irq is an unsigned int.  Fix this by
->>> assigning the int retval to the return of platform_get_irq and checking
->>> this for the -ve error condition and assigning hcd->irq to retval.
->>>
->>> Addresses-Coverity: ("Unsigned compared against 0")
->>> Fixes: c856b4b0fdb5 ("USB: EHCI: ehci-mv: fix error handling in mv_ehci_probe()")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>
->> Thanks to Coverity for spotting this.  Any reason why it didn't spot 
->> exactly the same mistake in the ohci-da8xx.c driver?
-> 
-> I think Coverity only runs on a limited kernel configuration and does
-> not build everything :(
-> 
-I do x86-64 make allmodconfig builds, so it does a fair amount of
-coverage on the builds
+Add the missing unlock before return from function bq25890_resume()
+in the error handling case.
 
-Colin
+Fixes: 72d9cd9cdc18 ("power: bq25890: protect view of the chip's state")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/power/supply/bq25890_charger.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
+index 9339e216651f..cd9c5ed9bc0c 100644
+--- a/drivers/power/supply/bq25890_charger.c
++++ b/drivers/power/supply/bq25890_charger.c
+@@ -977,14 +977,18 @@ static int bq25890_resume(struct device *dev)
+ 	mutex_lock(&bq->lock);
+ 
+ 	ret = bq25890_get_chip_state(bq, &bq->state);
+-	if (ret < 0)
++	if (ret < 0) {
++		mutex_unlock(&bq->lock);
+ 		return ret;
++	}
+ 
+ 	/* Re-enable ADC only if charger is plugged in. */
+ 	if (bq->state.online) {
+ 		ret = bq25890_field_write(bq, F_CONV_START, 1);
+-		if (ret < 0)
++		if (ret < 0) {
++			mutex_unlock(&bq->lock);
+ 			return ret;
++		}
+ 	}
+ 
+ 	/* signal userspace, maybe state changed while suspended */
