@@ -1,56 +1,41 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 06 May 2020 20:59:48 +0000
-Subject: Re: MAINTAINERS: Wrong ordering in S390 PCI SUBSYSTEM
-Message-Id: <303818f9b6dc16880b3bc715c16144e4245022b8.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 06 May 2020 03:52:06 +0000
+Subject: [PATCH] iio: sca3000: Remove an erroneous 'get_device()'
+Message-Id: <20200506035206.192173-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.2005060741520.7719@felia>
-         <CAHp75VeNiuJ7QXvNO2=W_TjEjjK3xRbg0-Don6HkSOHV5LXRbA@mail.gmail.com>
-         <alpine.DEB.2.21.2005062232330.23358@felia>
-In-Reply-To: <alpine.DEB.2.21.2005062232330.23358@felia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Pierre Morel <pmorel@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, info@metux.net, gregkh@linuxfoundation.org, dan.carpenter@oracle.com, tglx@linutronix.de
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 2020-05-06 at 22:37 +0200, Lukas Bulwahn wrote:
-> 
-> On Wed, 6 May 2020, Andy Shevchenko wrote:
-> 
-> > On Wed, May 6, 2020 at 8:46 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > > Hi Pierre,
-> > > 
-> > > with your commit de267a7c71ba ("s390/pci: Documentation for zPCI"),
-> > > visible on next-20200505, ./scripts/checkpatch.pl -f MAINTAINERS
-> > > complains:
-> > > 
-> > > WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic order
-> > > #14723: FILE: MAINTAINERS:14723:
-> > > +F:     drivers/pci/hotplug/s390_pci_hpc.c
-> > > +F:     Documentation/s390/pci.rst
-> > > 
-> > > 
-> > > This is due to wrong ordering of the entries in your submission. If you
-> > > would like me to send you a patch fixing that, please just let me know.
-> > > 
-> > > It is a recent addition to checkpatch.pl to report ordering problems in
-> > > MAINTAINERS, so you might have not seen that at submission time.
-> > 
-> > Why not to send a patch?
-> > Same for the rest of similar mails from you.
-> > 
-> 
-> Well, the checkpatch warning is new, so I want to find out if and make 
-> sure that the involved developers are generally okay getting those patches 
-> or if there is a better way handling those patches to MAINTAINERS.
-> 
-> I do not expect that there are too many further cases of this warning 
-> appearing soon in linux-next now that checkpatch already warns about it.
+This looks really unusual to have a 'get_device()' hidden in a 'dev_err()'
+call.
+Remove it.
 
-Hey Lukas.
+While at it add a missing \n at the end of the message.
 
-Don't expect _too_ much as checkpatch has for a long time
-has done add/delete/move tests for files and emitted a
-"Does MAINTAINERS need updating" message that most have
-ignored or not seen as many patches are submitted without
-running checkpatch.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is purely speculative.
+I've looked a bit arround and see no point for this get_device() but other
+eyes are welcomed :)
+---
+ drivers/iio/accel/sca3000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
+index 66d768d971e1..6e429072e44a 100644
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -980,7 +980,7 @@ static int sca3000_read_data(struct sca3000_state *st,
+ 	st->tx[0] = SCA3000_READ_REG(reg_address_high);
+ 	ret = spi_sync_transfer(st->us, xfer, ARRAY_SIZE(xfer));
+ 	if (ret) {
+-		dev_err(get_device(&st->us->dev), "problem reading register");
++		dev_err(&st->us->dev, "problem reading register\n");
+ 		return ret;
+ 	}
+ 
+-- 
+2.25.1
