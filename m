@@ -1,25 +1,56 @@
-From: dinghao.liu@zju.edu.cn
-Date: Sun, 31 May 2020 08:23:10 +0000
-Subject: Re: Re: [PATCH] drm/nouveau/clk/gm20b: Fix memory leak in gm20b_clk_new()
-Message-Id: <40d8fb01.db721.17269d3d620.Coremail.dinghao.liu@zju.edu.cn>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 06 May 2020 05:34:31 +0000
+Subject: [PATCH v2 RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
+Message-Id: <20200506053431.7464-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
-In-Reply-To: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, Kangjie Lu <kjlu@umn.edu>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Olof Johansson <olof@lixom.net>, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
 
-PiAKPiA+IEl0J3MgdGhlIHNhbWUgd2hlbiBnbTIwYl9jbGtfbmV3KCkgcmV0dXJucyBmcm9tIGVs
-c2V3aGVyZSBmb2xsb3dpbmcgdGhpcyBjYWxsLgo+IAo+IEkgc3VnZ2VzdCB0byByZWNvbnNpZGVy
-IHRoZSBpbnRlcnByZXRhdGlvbiBvZiB0aGUgc29mdHdhcmUgc2l0dWF0aW9uIG9uY2UgbW9yZS4K
-PiBDYW4gaXQgYmUgdGhhdCB0aGUgYWxsb2NhdGVkIGNsb2NrIG9iamVjdCBzaG91bGQgYmUga2Vw
-dCB1c2FibGUgZXZlbiBhZnRlcgo+IGEgc3VjY2Vzc2Z1bCByZXR1cm4gZnJvbSB0aGlzIGZ1bmN0
-aW9uPwo+IAoKSXQncyBwb3NzaWJsZSB0aGF0IHdlIGV4cGVjdCBhbiB1c2FibGUgY2xrIHBvaW50
-ZXIsIHRob3VnaCBJIGNvdWxkIG5vdCBmaW5kCnRoZSBleGFjdCB1c2FnZSB5ZXQuIEZvciBzZWN1
-cml0eSwgSSB3aWxsIHJlbGVhc2UgdGhpcyBwb2ludGVyIG9ubHkgb24gZXJyb3IgCnBhdGhzIGlu
-IHRoaXMgZnVuY3Rpb24uCgo+IAo+IFdvdWxkIHlvdSBsaWtlIHRvIGFkZCB0aGUgdGFnIOKAnEZp
-eGVz4oCdIHRvIHRoZSBjb21taXQgbWVzc2FnZT8KPiAKClRoYW5rIHlvdSBmb3IgeW91ciBhZHZp
-Y2UhIEkgd2lsbCBhZGQgdGhpcyB0YWcgaW4gdGhlIG5leHQgdmVyc2lvbiBvZiBwYXRjaC4KClJl
-Z2FyZHMsCkRpbmdoYW8
+Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+added a file entry that does not point to the intended file location.
+
+Since then, ./scripts/get_maintainer.pl --self-test complains:
+
+  warning: no file matches F: linux/soc/mmp/
+
+Rectify the MAINTAINERS entry now.
+
+Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Jiri, please pick this patch.
+
+v1 & v1-RESEND: was ignored.
+
+v1 -> v2:
+  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
+  ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
+  ("MAINTAINERS: sort field names for all entries").
+  - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
+
+v2-resend:
+  - still applies on v5.7-rc4 and next-20200505
+  - asking for inclusion through trivial tree, as maintainers are not
+    responding.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e64e5db31497..a0fef0c33ba5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11327,7 +11327,7 @@ S:	Odd Fixes
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
+ F:	arch/arm/boot/dts/mmp*
+ F:	arch/arm/mach-mmp/
+-F:	linux/soc/mmp/
++F:	include/linux/soc/mmp/
+ 
+ MMP USB PHY DRIVERS
+ R:	Lubomir Rintel <lkundrak@v3.sk>
+-- 
+2.17.1
