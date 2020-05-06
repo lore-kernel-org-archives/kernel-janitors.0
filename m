@@ -1,25 +1,32 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 27 May 2020 02:12:55 +0000
-Subject: Re: [PATCH] scsi: target: tcmu: Fix a use after free in tcmu_check_expired_queue_cmd()
-Message-Id: <159054550934.12032.1754394879666854643.b4-ty@oracle.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 06 May 2020 05:51:36 +0000
+Subject: MAINTAINERS: Wrong ordering in DYNAMIC INTERRUPT MODERATION
+Message-Id: <alpine.DEB.2.21.2005060749590.7719@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200523101129.GB98132@mwanda>
-In-Reply-To: <20200523101129.GB98132@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bodo Stroesser <bstroesser@ts.fujitsu.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Mike Christie <mchristi@redhat.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 23 May 2020 13:11:29 +0300, Dan Carpenter wrote:
+Hi Jakub,
 
-> The pr_debug() dereferences "cmd" after we already freed it by calling
-> tcmu_free_cmd(cmd).  The debug printk needs to be done earlier.
+with your commit 9b038086f06b ("docs: networking: convert DIM to RST"), 
+visible on next-20200505, ./scripts/checkpatch.pl -f MAINTAINERS 
+complains:
 
-Applied to 5.8/scsi-queue, thanks!
+WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic order
+#5966: FILE: MAINTAINERS:5966:
++F:	lib/dim/
++F:	Documentation/networking/net_dim.rst
 
-[1/1] scsi: target: tcmu: Fix a use after free in tcmu_check_expired_queue_cmd()
-      https://git.kernel.org/mkp/scsi/c/9d7464b18892
+This is due to wrong ordering of the entries in your submission. If you 
+would like me to send you a patch fixing that, please just let me know.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+It is a recent addition to checkpatch.pl to report ordering problems in 
+MAINTAINERS, so you might have not seen that at submission time.
+
+
+Best regards,
+
+Lukas
