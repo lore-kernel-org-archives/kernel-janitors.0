@@ -1,51 +1,34 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Tue, 05 May 2020 11:04:24 +0000
-Subject: Re: [PATCH] PCI: v3-semi: Fix a memory leak in some error handling paths in 'v3_pci_probe()'
-Message-Id: <20200505110423.GC13446@e121166-lin.cambridge.arm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 06 May 2020 19:21:00 +0000
+Subject: [PATCH] i2c: mux: demux-pinctrl: Fix an error handling path in 'i2c_demux_pinctrl_probe()'
+Message-Id: <20200506192100.194821-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200418081637.1585-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linus.walleij@linaro.org, amurray@thegoodpenguin.co.uk, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: wsa+renesas@sang-engineering.com, peda@axentia.se, robh@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, Apr 18, 2020 at 10:16:37AM +0200, Christophe JAILLET wrote:
-> IF we fails somewhere in 'v3_pci_probe()', we need to free 'host'.
-> Use the managed version of 'pci_alloc_host_bridge()' to do that easily.
-> The use of managed resources is already widely used in this driver.
-> 
-> Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Fixes could be older than this commit, but this is as far as git can go.
-> 
-> There is also a 'clk_prepare_enable()' which looks un-ballanced. I don't
-> know if it can be an issue.
-> 
-> Compile tested only.
-> ---
->  drivers/pci/controller/pci-v3-semi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+A call to 'i2c_demux_deactivate_master()' is missing in the error handling
+path, as already done in the remove function.
 
-Applied to pci/v3-semi, thanks !
+Fixes: 50a5ba876908 ("i2c: mux: demux-pinctrl: add driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/i2c/muxes/i2c-demux-pinctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lorenzo
-
-> diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
-> index bd05221f5a22..ddcb4571a79b 100644
-> --- a/drivers/pci/controller/pci-v3-semi.c
-> +++ b/drivers/pci/controller/pci-v3-semi.c
-> @@ -720,7 +720,7 @@ static int v3_pci_probe(struct platform_device *pdev)
->  	int irq;
->  	int ret;
->  
-> -	host = pci_alloc_host_bridge(sizeof(*v3));
-> +	host = devm_pci_alloc_host_bridge(dev, sizeof(*v3));
->  	if (!host)
->  		return -ENOMEM;
->  
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+index 0e16490eb3a1..5365199a31f4 100644
+--- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
++++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+@@ -272,6 +272,7 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
+ err_rollback_available:
+ 	device_remove_file(&pdev->dev, &dev_attr_available_masters);
+ err_rollback:
++	i2c_demux_deactivate_master(priv);
+ 	for (j = 0; j < i; j++) {
+ 		of_node_put(priv->chan[j].parent_np);
+ 		of_changeset_destroy(&priv->chan[j].chgset);
+-- 
+2.25.1
