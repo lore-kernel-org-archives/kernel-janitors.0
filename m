@@ -1,30 +1,36 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 03 May 2020 20:06:25 +0000
-Subject: Re: [PATCH] thermal: stm32: fix spelling mistake "acces" -> "access"
-Message-Id: <67bb48d7e7927b6b50bafa69a21eef41fc2157b5.camel@perches.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 06 May 2020 12:42:56 +0000
+Subject: [PATCH -next] gpio: exar: Fix error return code in gpio_exar_probe()
+Message-Id: <20200506124256.87628-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200503191104.153711-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200503191104.153711-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, rui.zhang@intel.com, daniel.lezcano@linaro.org, amit.kucheria@verdurent.com, edubezval@gmail.com, info@metux.net, tglx@linutronix.de, gregkh@linuxfoundation.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Kangjie Lu <kjlu@umn.edu>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2020-05-03 at 21:11 +0200, Christophe JAILLET wrote:
-> Fix a typo in Kconfig.
-[]
-> diff --git a/drivers/thermal/st/Kconfig b/drivers/thermal/st/Kconfig
-[]
-> @@ -23,5 +23,5 @@ config STM32_THERMAL
->  	help
->  	  Support for thermal framework on STMicroelectronics STM32 series of
->  	  SoCs. This thermal driver allows to access to general thermal framework
-> -	  functionalities and to acces to SoC sensor functionalities. This
-> +	  functionalities and to access to SoC sensor functionalities. This
->  	  configuration is fully dependent of MACH_STM32MP157.
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Could fix the grammar too:
+Fixes: 7ecced0934e5 ("gpio: exar: add a check for the return value of ida_simple_get fails")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-exar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This thermal driver allows to access general thermal framework
-functionalities and access to SoC sensor functionalities.
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index da1ef0b1c291..c5c3fa5b519f 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -148,8 +148,10 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	mutex_init(&exar_gpio->lock);
+ 
+ 	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
+-	if (index < 0)
++	if (index < 0) {
++		ret = index;
+ 		goto err_destroy;
++	}
+ 
+ 	sprintf(exar_gpio->name, "exar_gpio%d", index);
+ 	exar_gpio->gpio_chip.label = exar_gpio->name;
