@@ -1,26 +1,45 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 02 May 2020 16:48:16 +0000
-Subject: clk: keystone: Clarification for a return value check in _of_pll_clk_init()
-Message-Id: <f1a2a717-f89b-d4c4-02aa-dd106eaed0a9@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 07 May 2020 05:22:11 +0000
+Subject: [PATCH -next] visorbus: fix error return code in visorchipset_init()
+Message-Id: <20200507052211.103018-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Kershner <david.kershner@unisys.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, sparmaintainer@unisys.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+Fix to return negative error code -ENODEV from the visor_check_channel()
+error handling case instead of 0. Also change the error code to -ENOMEM
+in kzalloc() error case.
 
-I have tried another small script out for the semantic patch language.
-This source code analysis approach points out that the function “clk_register_pll”
-is called by the function “_of_pll_clk_init”.
-https://elixir.bootlin.com/linux/v5.7-rc3/source/drivers/clk/keystone/pll.c#L153
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/keystone/pll.c?id=690e2aba7beb1ef06352803bea41a68a3c695015#n153
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/visorbus/visorchipset.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-A null pointer check is performed at this place.
-The function “clk_register_pll” (from the same source file) can eventually
-return the pointer “ERR_PTR(-ENOMEM)”.
-Is there a need to take this special case also into account?
-
-Regards,
-Markus
+diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
+index cb1eb7e05f87..5668cad86e37 100644
+--- a/drivers/visorbus/visorchipset.c
++++ b/drivers/visorbus/visorchipset.c
+@@ -1561,7 +1561,7 @@ static void controlvm_periodic_work(struct work_struct *work)
+ 
+ static int visorchipset_init(struct acpi_device *acpi_device)
+ {
+-	int err = -ENODEV;
++	int err = -ENOMEM;
+ 	struct visorchannel *controlvm_channel;
+ 
+ 	chipset_dev = kzalloc(sizeof(*chipset_dev), GFP_KERNEL);
+@@ -1584,8 +1584,10 @@ static int visorchipset_init(struct acpi_device *acpi_device)
+ 				 "controlvm",
+ 				 sizeof(struct visor_controlvm_channel),
+ 				 VISOR_CONTROLVM_CHANNEL_VERSIONID,
+-				 VISOR_CHANNEL_SIGNATURE))
++				 VISOR_CHANNEL_SIGNATURE)) {
++		err = -ENODEV;
+ 		goto error_delete_groups;
++	}
+ 	/* if booting in a crash kernel */
+ 	if (is_kdump_kernel())
+ 		INIT_DELAYED_WORK(&chipset_dev->periodic_controlvm_work,
