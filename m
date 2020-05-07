@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 May 2020 03:29:53 +0000
-Subject: Re: [PATCH net-next] net: lpc-enet: fix error return code in lpc_mii_init()
-Message-Id: <20200430.202953.2091105199865668501.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 07 May 2020 05:13:23 +0000
+Subject: [PATCH -next] usb: gadget: legacy: fix error return code in gncm_bind()
+Message-Id: <20200507051323.99098-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427121507.23249-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427121507.23249-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: stigge@antcom.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, vz@mleia.com, linaro-mm-sig@lists.linaro.org, slemieux.tyco@gmail.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Roger Quadros <rogerq@ti.com>, Li Jun <jun.li@freescale.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 12:15:07 +0000
+If 'usb_otg_descriptor_alloc()' fails, we must return a
+negative error code -ENOMEM, not 0.
 
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: b7370112f519 ("lpc32xx: Added ethernet driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 1156e91dd7cc ("usb: gadget: ncm: allocate and init otg descriptor by otg capabilities")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/usb/gadget/legacy/ncm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/usb/gadget/legacy/ncm.c b/drivers/usb/gadget/legacy/ncm.c
+index c61e71ba7045..0f1b45e3abd1 100644
+--- a/drivers/usb/gadget/legacy/ncm.c
++++ b/drivers/usb/gadget/legacy/ncm.c
+@@ -156,8 +156,10 @@ static int gncm_bind(struct usb_composite_dev *cdev)
+ 		struct usb_descriptor_header *usb_desc;
+ 
+ 		usb_desc = usb_otg_descriptor_alloc(gadget);
+-		if (!usb_desc)
++		if (!usb_desc) {
++			status = -ENOMEM;
+ 			goto fail;
++		}
+ 		usb_otg_descriptor_init(gadget, usb_desc);
+ 		otg_desc[0] = usb_desc;
+ 		otg_desc[1] = NULL;
