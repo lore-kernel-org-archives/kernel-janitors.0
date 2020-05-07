@@ -1,35 +1,57 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date: Mon, 11 May 2020 19:44:11 +0000
-Subject: Re: [PATCH] MAINTAINERS: correct path in TEGRA VIDEO DRIVER
-Message-Id: <00ec3aa4-07c5-49ed-df89-de3f7f8b8cd8@nvidia.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 07 May 2020 04:36:19 +0000
+Subject: [PATCH] wcn36xx: Fix error handling path in 'wcn36xx_probe()'
+Message-Id: <20200507043619.200051-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200511192844.11044-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200511192844.11044-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kvalo@codeaurora.org, davem@davemloft.net, bjorn.andersson@linaro.org, marcel@holtmann.org, andy.gross@linaro.org
+Cc: wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+In case of error, 'qcom_wcnss_open_channel()' must be undone by a call to
+'rpmsg_destroy_ept()', as already done in the remove function.
 
-On 5/11/20 12:28 PM, Lukas Bulwahn wrote:
-> Commit 423d10a99b30 ("media: tegra: Add Tegra210 Video input driver") added
-> the driver to drivers/staging/media/tegra-video/, but commit 2c6b617f2cca
-> ("MAINTAINERS: Add Tegra Video driver section") added a file entry
-> referring to drivers/staging/media/tegra/.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
->
->    warning: no file matches  F:  drivers/staging/media/tegra/
->
-> Adjust the file entry in TEGRA VIDEO DRIVER to the correct path.
->
-> Signed-off-by: Lukas Bulwahn<lukas.bulwahn@gmail.com>
-> ---
-> Sowjanya, please ack this minor patch.
->
-> applies cleanly on next-20200511
->
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-Acked-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Fixes: 5052de8deff5 ("soc: qcom: smd: Transition client drivers from smd to rpmsg")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not 100% sure of the commit for Fixes, but it is consistent with the
+analysis in efad8396e906 where the same call has been added in the remove
+function.
+---
+ drivers/net/wireless/ath/wcn36xx/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
+index e49c306e0eef..1acdc13a74fc 100644
+--- a/drivers/net/wireless/ath/wcn36xx/main.c
++++ b/drivers/net/wireless/ath/wcn36xx/main.c
+@@ -1339,7 +1339,7 @@ static int wcn36xx_probe(struct platform_device *pdev)
+ 	if (addr && ret != ETH_ALEN) {
+ 		wcn36xx_err("invalid local-mac-address\n");
+ 		ret = -EINVAL;
+-		goto out_wq;
++		goto out_channel;
+ 	} else if (addr) {
+ 		wcn36xx_info("mac address: %pM\n", addr);
+ 		SET_IEEE80211_PERM_ADDR(wcn->hw, addr);
+@@ -1347,7 +1347,7 @@ static int wcn36xx_probe(struct platform_device *pdev)
+ 
+ 	ret = wcn36xx_platform_get_resources(wcn, pdev);
+ 	if (ret)
+-		goto out_wq;
++		goto out_channel;
+ 
+ 	wcn36xx_init_ieee80211(wcn);
+ 	ret = ieee80211_register_hw(wcn->hw);
+@@ -1359,6 +1359,8 @@ static int wcn36xx_probe(struct platform_device *pdev)
+ out_unmap:
+ 	iounmap(wcn->ccu_base);
+ 	iounmap(wcn->dxe_base);
++out_channel:
++	rpmsg_destroy_ept(wcn->smd_channel);
+ out_wq:
+ 	ieee80211_free_hw(hw);
+ out_err:
+-- 
+2.25.1
