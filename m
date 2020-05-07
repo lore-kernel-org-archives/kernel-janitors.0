@@ -1,51 +1,32 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Fri, 08 May 2020 08:54:07 +0000
-Subject: Re: [PATCH net-next] net: ethernet: ti: fix error return code in am65_cpsw_nuss_probe()
-Message-Id: <4440e1fc-2749-cf36-b5d0-fa252789d37c@ti.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 07 May 2020 09:42:37 +0000
+Subject: [PATCH -next] ipack: tpci200: fix error return code in tpci200_register()
+Message-Id: <20200507094237.13599-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508021059.172001-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200508021059.172001-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, "David S . Miller" <davem@davemloft.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Samuel Iglesias Gonsalvez <siglesias@igalia.com>, Jens Taprogge <jens.taprogge@taprogge.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhouyang Jia <jiazhouyang09@gmail.com>, Kees Cook <keescook@chromium.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, industrypack-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
+Fix to return negative error code -ENOMEM from the ioremap() error handling
+case instead of 0, as done elsewhere in this function.
 
+Fixes: 43986798fd50 ("ipack: add error handling for ioremap_nocache")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/ipack/carriers/tpci200.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 08/05/2020 05:10, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the cpsw_ale_create()
-> error handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/net/ethernet/ti/am65-cpsw-nuss.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> index f8c589929308..066ba52f57cb 100644
-> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> @@ -2065,6 +2065,7 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
->   	common->ale = cpsw_ale_create(&ale_params);
->   	if (!common->ale) {
->   		dev_err(dev, "error initializing ale engine\n");
-> +		ret = -ENOMEM;
->   		goto err_of_clear;
->   	}
-> 
-> 
-> 
-
-It seems not enough.
-
-For consistency, Could you update it as below?
-- cpsw_ale_create() to return PTR_ERR() in all places
-- users to use IS_ERR() and ret = PTR_ERR()
-
-
--- 
-Best regards,
-grygorii
+diff --git a/drivers/ipack/carriers/tpci200.c b/drivers/ipack/carriers/tpci200.c
+index 8a9c169..b5eec18 100644
+--- a/drivers/ipack/carriers/tpci200.c
++++ b/drivers/ipack/carriers/tpci200.c
+@@ -309,6 +309,7 @@ static int tpci200_register(struct tpci200_board *tpci200)
+ 			"(bn 0x%X, sn 0x%X) failed to map driver user space!",
+ 			tpci200->info->pdev->bus->number,
+ 			tpci200->info->pdev->devfn);
++		res = -ENOMEM;
+ 		goto out_release_mem8_space;
+ 	}
