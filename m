@@ -1,20 +1,41 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 09 May 2020 05:29:58 +0000
-Subject: Re: [PATCH net-next] net: dsa: vsc73xx: convert to devm_platform_ioremap_resource
-Message-Id: <20200508222958.19e127d4@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Thu, 07 May 2020 19:30:08 +0000
+Subject: [PATCH] tracing/probe: reverse arguments to list_add
+Message-Id: <1588879808-24488-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508101114.2331-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200508101114.2331-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, Nic Volanschi <eugene.volanschi@inria.fr>
 
-On Fri, 8 May 2020 10:11:14 +0000 Wei Yongjun wrote:
-> Use the helper function that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Elsewhere in the file, the function trace_kprobe_has_same_kprobe uses
+a trace_probe_event.probes object as the second argument of
+list_for_each_entry, ie as a list head, while the list_for_each_entry
+iterates over the list fields of the trace_probe structures, making
+them the list elements.  So, exchange the arguments on the list_add
+call to put the list head in the second argument.
 
-Applied, thank you!
+Since both list_head structures were just initialized, this problem
+did not cause any loss of information.
+
+Fixes: 60d53e2c3b75 ("tracing/probe: Split trace_event related data from trace_probe")
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ kernel/trace/trace_probe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index ab8b6436d53f..b8a928e925c7 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -1006,7 +1006,7 @@ int trace_probe_init(struct trace_probe *tp, const char *event,
+ 	INIT_LIST_HEAD(&tp->event->class.fields);
+ 	INIT_LIST_HEAD(&tp->event->probes);
+ 	INIT_LIST_HEAD(&tp->list);
+-	list_add(&tp->event->probes, &tp->list);
++	list_add(&tp->list, &tp->event->probes);
+ 
+ 	call = trace_probe_event_call(tp);
+ 	call->class = &tp->event->class;
