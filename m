@@ -1,25 +1,39 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 09 May 2020 05:49:08 +0000
-Subject: Re: [PATCH][V2] net: tg3: tidy up loop, remove need to compute off with a multiply
-Message-Id: <20200508224908.5c594f73@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Po Liu <Po.Liu@nxp.com>
+Date: Thu, 07 May 2020 10:57:38 +0000
+Subject: [net-next] net:enetc: bug fix for qos sfi operate space after freed
+Message-Id: <20200507105738.29961-1-Po.Liu@nxp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508231447.485241-1-colin.king@canonical.com>
-In-Reply-To: <20200508231447.485241-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Siva Reddy Kallam <siva.kallam@broadcom.com>, Prashant Sreedharan <prashant@broadcom.com>, Michael Chan <mchan@broadcom.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, dan.carpenter@oracle.com
+Cc: davem@davemloft.net, claudiu.manoil@nxp.com, Po Liu <Po.Liu@nxp.com>
 
-On Sat,  9 May 2020 00:14:47 +0100 Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the value for 'off' is computed using a multiplication and
-> a couple of statements later off is being incremented by len and
-> this value is never read.  Clean up the code by removing the
-> multiplication and just increment off by len on each iteration.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+'Dan Carpenter' reported:
+This code frees "sfi" and then dereferences it on the next line:
+>                 kfree(sfi);
+>                 clear_bit(sfi->index, epsfp.psfp_sfi_bitmap);
 
-Applied, thank you!
+This "sfi->index" should be "index".
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Po Liu <Po.Liu@nxp.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc_qos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_qos.c b/drivers/net/ethernet/freescale/enetc/enetc_qos.c
+index 48e589e9d0f7..77f110e24505 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_qos.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_qos.c
+@@ -903,7 +903,7 @@ static void stream_filter_unref(struct enetc_ndev_priv *priv, u32 index)
+ 		enetc_streamfilter_hw_set(priv, sfi, false);
+ 		hlist_del(&sfi->node);
+ 		kfree(sfi);
+-		clear_bit(sfi->index, epsfp.psfp_sfi_bitmap);
++		clear_bit(index, epsfp.psfp_sfi_bitmap);
+ 	}
+ }
+ 
+-- 
+2.17.1
