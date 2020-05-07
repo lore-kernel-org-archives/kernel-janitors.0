@@ -1,38 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 May 2020 14:40:22 +0000
-Subject: [PATCH] firewire: Using uninitialized values in node_probe()
-Message-Id: <20200508144022.GB410645@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 May 2020 22:04:55 +0000
+Subject: [PATCH] platform/x86: asus_wmi: remove redundant initialization of variable status
+Message-Id: <20200507220455.66681-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux1394-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If fw_csr_string() returns -ENOENT, then "name" is uninitialized.  So
-then the "strlen(model_names[i]) <= name_len" is true because strlen()
-is unsigned and -ENOENT is type promoted to a very high positive value.
-Then the "strncmp(name, model_names[i], name_len)" uses uninitialized
-data because "name" is uninitialized.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 92374e886c75 ("[media] firedtv: drop obsolete backend abstraction")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The variable status is being initialized with a value that is never read
+and it is being updated later with a new value. The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/firewire/firedtv-fw.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/platform/x86/asus-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/firewire/firedtv-fw.c b/drivers/media/firewire/firedtv-fw.c
-index 97144734eb052..3f1ca40b9b987 100644
---- a/drivers/media/firewire/firedtv-fw.c
-+++ b/drivers/media/firewire/firedtv-fw.c
-@@ -272,6 +272,8 @@ static int node_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index bb7c529d7d16..1909d728a536 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -309,7 +309,7 @@ static int asus_wmi_evaluate_method_agfn(const struct acpi_buffer args)
+ 	struct acpi_buffer input;
+ 	u64 phys_addr;
+ 	u32 retval;
+-	u32 status = -1;
++	u32 status;
  
- 	name_len = fw_csr_string(unit->directory, CSR_MODEL,
- 				 name, sizeof(name));
-+	if (name_len < 0)
-+		return name_len;
- 	for (i = ARRAY_SIZE(model_names); --i; )
- 		if (strlen(model_names[i]) <= name_len &&
- 		    strncmp(name, model_names[i], name_len) = 0)
+ 	/*
+ 	 * Copy to dma capable address otherwise memory corruption occurs as
 -- 
-2.26.2
+2.25.1
