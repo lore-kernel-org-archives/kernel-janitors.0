@@ -1,38 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 May 2020 22:28:17 +0000
-Subject: Re: [PATCH net-next v2] drivers: net: davinci_mdio: fix potential NULL dereference in davinci_mdio_p
-Message-Id: <20200501.152817.688071349221528108.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 May 2020 15:06:52 +0000
+Subject: [PATCH][next] staging: most: usb: sanity check channel before using it as an index into arrays
+Message-Id: <20200507150652.52238-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427094032.181184-1-weiyongjun1@huawei.com>
-        <20200429025220.166415-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200429025220.166415-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: grygorii.strashko@ti.com, david@lechnology.com, linux-omap@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>, Masahiro Yamada <masahiroy@kernel.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 29 Apr 2020 02:52:20 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> since devm_ioremap() does not check input parameters for null.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = \(platform_get_resource\|platform_get_resource_byname\)(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res = NULL
-> e = devm_ioremap(e1, res->start, e2);
-> 
-> Fixes: 03f66f067560 ("net: ethernet: ti: davinci_mdio: use devm_ioremap()")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Currently channel is being sanity checked after it has been used as
+an index into some arrays. Fix this by moving the sanity check of
+channel before the arrays are indexed with it.
 
-Applied.
+Addresses-Coverity: ("Negative array index read")
+Fixes: 59ed0480b950 ("Staging: most: replace pr_*() functions by dev_*()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/usb/usb.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/most/usb/usb.c b/drivers/staging/most/usb/usb.c
+index b31a49c37f7f..24ebd3071380 100644
+--- a/drivers/staging/most/usb/usb.c
++++ b/drivers/staging/most/usb/usb.c
+@@ -664,11 +664,6 @@ static int hdm_configure_channel(struct most_interface *iface, int channel,
+ 	struct most_dev *mdev = to_mdev(iface);
+ 	struct device *dev = &mdev->usb_device->dev;
+ 
+-	mdev->is_channel_healthy[channel] = true;
+-	mdev->clear_work[channel].channel = channel;
+-	mdev->clear_work[channel].mdev = mdev;
+-	INIT_WORK(&mdev->clear_work[channel].ws, wq_clear_halt);
+-
+ 	if (!conf) {
+ 		dev_err(dev, "Bad config pointer.\n");
+ 		return -EINVAL;
+@@ -677,6 +672,12 @@ static int hdm_configure_channel(struct most_interface *iface, int channel,
+ 		dev_err(dev, "Channel ID out of range.\n");
+ 		return -EINVAL;
+ 	}
++
++	mdev->is_channel_healthy[channel] = true;
++	mdev->clear_work[channel].channel = channel;
++	mdev->clear_work[channel].mdev = mdev;
++	INIT_WORK(&mdev->clear_work[channel].ws, wq_clear_halt);
++
+ 	if (!conf->num_buffers || !conf->buffer_size) {
+ 		dev_err(dev, "Misconfig: buffer size or #buffers zero.\n");
+ 		return -EINVAL;
+-- 
+2.25.1
