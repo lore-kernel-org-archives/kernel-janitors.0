@@ -1,30 +1,39 @@
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 27 May 2020 18:40:40 +0000
-Subject: Re: [PATCH v2] of: Fix a refcounting bug in __of_attach_node_sysfs()
-Message-Id: <20200527184040.GA2529559@bogus>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 May 2020 16:43:18 +0000
+Subject: [PATCH][next] ath11k: remove redundant initialization of pointer info
+Message-Id: <20200507164318.56570-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200520120414.GE172354@mwanda>
-In-Reply-To: <20200520120414.GE172354@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Frank Rowand <frowand.list@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 20 May 2020 15:04:14 +0300, Dan Carpenter wrote:
-> The problem in this code is that if kobject_add() fails, then it should
-> call of_node_put(np) to drop the reference count.  I've actually moved
-> the of_node_get(np) later in the function to avoid needing to do clean
-> up.
-> 
-> Fixes: 5b2c2f5a0ea3 ("of: overlay: add missing of_node_get() in __of_attach_node_sysfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: move the of_node_get() instead of doing clean up.  Also the v1 had a
->     confusing typo in the commit message.
-> 
->  drivers/of/kobj.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+Pointer info is being assigned twice, once at the start of the function
+and secondly when it is just about to be accessed. Remove the redundant
+initialization and keep the original assignment to info that is close
+to the memcpy that uses it.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/mac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
+index d9117ebf2809..1a7e5817e5c8 100644
+--- a/drivers/net/wireless/ath/ath11k/mac.c
++++ b/drivers/net/wireless/ath/ath11k/mac.c
+@@ -3692,7 +3692,7 @@ static int __ath11k_set_antenna(struct ath11k *ar, u32 tx_ant, u32 rx_ant)
+ int ath11k_mac_tx_mgmt_pending_free(int buf_id, void *skb, void *ctx)
+ {
+ 	struct sk_buff *msdu = skb;
+-	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(msdu);
++	struct ieee80211_tx_info *info;
+ 	struct ath11k *ar = ctx;
+ 	struct ath11k_base *ab = ar->ab;
+ 
+-- 
+2.25.1
