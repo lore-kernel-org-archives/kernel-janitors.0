@@ -1,40 +1,38 @@
-From: Jia-Ju Bai <baijiaju1990@163.com>
-Date: Tue, 05 May 2020 13:32:11 +0000
-Subject: Re: fs: jfs: fix a possible data race in txBegin()
-Message-Id: <565e317a-396e-9221-11bb-bc8c76cc9f7a@163.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 May 2020 20:22:37 +0000
+Subject: [PATCH] drm/exynos: remove redundant initialization to variable 'start'
+Message-Id: <20200507202237.64350-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ef374a5-0e2e-5c74-a827-0148c384f6e3@web.de>
- <abbb03ec-7ce3-08b6-7d08-420743067f19@gmail.com>
- <fa6fabec-8cc5-fc62-657f-3794e9405fac@web.de>
- <df165b9f-7a51-a632-b1a0-a2cf1efa1915@oracle.com>
-In-Reply-To: <df165b9f-7a51-a632-b1a0-a2cf1efa1915@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dave Kleikamp <dave.kleikamp@oracle.com>, Markus Elfring <Markus.Elfring@web.de>, Jia-Ju Bai <baijiaju1990@gmail.com>, jfs-discussion@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable 'start' is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-On 2020/5/5 21:23, Dave Kleikamp wrote:
-> On 5/5/20 12:12 AM, Markus Elfring wrote:
->>> I am not sure how to add the tag "Fixes"...
->> How helpful do you find the available software documentation?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?idGcf1b422e6093aee2a3e55d5e162112a2c69870#n183
->>
->>
->>> I need to find which previous commit add the code about txBegin()?
->> I suggest to take another look at corresponding source code places
->> by a command like “git blame”.
->> https://git-scm.com/book/en/v2/Git-Tools-Debugging-with-Gits
-> I suspect that the problem was in the code much longer than it has been
-> under git source control.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I agree, because "git blame" shows the last change to txBegin() is 
-commit 1da177e4c3f4, which was submitted in 2005...
-And this commit just added or merged the filesystem to the Linux kernel.
-Thus, adding the tag "Fixes" of this commit should be useless...
-
-
-Best wishes,
-Jia-Ju Bai
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 902938d2568f..b0b9cb1ec18f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1150,7 +1150,7 @@ static bool exynos_dsi_transfer_finish(struct exynos_dsi *dsi)
+ {
+ 	struct exynos_dsi_transfer *xfer;
+ 	unsigned long flags;
+-	bool start = true;
++	bool start;
+ 
+ 	spin_lock_irqsave(&dsi->transfer_lock, flags);
+ 
+-- 
+2.25.1
