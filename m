@@ -1,47 +1,43 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 31 May 2020 16:06:42 +0000
-Subject: Re: [PATCH] media: exynos4-is: Fix runtime PM imbalance in isp_video_open()
-Message-Id: <3b8459ce-114b-f69a-b671-4f4cc0127fd6@web.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 08 May 2020 12:30:22 +0000
+Subject: [PATCH 4.4 031/312] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
+Message-Id: <20200508123126.677472805@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200508123124.574959822@linuxfoundation.org>
+In-Reply-To: <20200508123124.574959822@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
 
-> pm_runtime_get_sync() increments the runtime PM usage counter even
-> when it returns an error code. Thus a pairing decrement is needed on
-> the error handling path to keep the counter balanced.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-How do you think about a wording variant like the following?
+commit 58a7e1c140f3ad61646bc0cd9a1f6a9cafc0b225 upstream.
 
-   Change description:
-   The PM runtime usage counter is incremented even if a call of
-   the function “pm_runtime_get_sync” failed. Thus decrement it also
-   in an error case so that the reference counting is kept consistent.
+We obviously intended to enable IRQs again at the end.
 
+Fixes: 745aef5df1e2 ('MIPS: RM7000: Add support for tertiary cache')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/13815/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Would you like to add the tag “Fixes” to the commit message?
+---
+ arch/mips/mm/sc-rm7k.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Can it make sense to combine the software adjustment with the
-update step “media: exynos4-is: Fix runtime PM imbalance in fimc_is_probe”?
-https://lore.kernel.org/linux-arm-kernel/20200524025903.17219-1-dinghao.liu@zju.edu.cn/
-https://lore.kernel.org/patchwork/patch/1246424/
-
-
-…
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -293,6 +293,7 @@  static int isp_video_open(struct file *file)
- 	if (!ret)
- 		goto unlock;
- rel_fh:
-+	pm_runtime_put_noidle(&isp->pdev->dev);
- 	v4l2_fh_release(file);
- unlock:
-…
-
-Is there a need to use a label like “put_pm”?
-
-Regards,
-Markus
+--- a/arch/mips/mm/sc-rm7k.c
++++ b/arch/mips/mm/sc-rm7k.c
+@@ -161,7 +161,7 @@ static void rm7k_tc_disable(void)
+ 	local_irq_save(flags);
+ 	blast_rm7k_tcache();
+ 	clear_c0_config(RM7K_CONF_TE);
+-	local_irq_save(flags);
++	local_irq_restore(flags);
+ }
+ 
+ static void rm7k_sc_disable(void)
