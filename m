@@ -1,38 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 May 2020 22:04:55 +0000
-Subject: [PATCH] platform/x86: asus_wmi: remove redundant initialization of variable status
-Message-Id: <20200507220455.66681-1-colin.king@canonical.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Fri, 08 May 2020 10:26:31 +0000
+Subject: Re: [PATCH] gpu: host1x: Clean up debugfs in error handling path in 'host1x_probe()'
+Message-Id: <20200508102631.GA3030605@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="pWyiEgJYm5f9v55/"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200426191630.41290-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200426191630.41290-1-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The variable status is being initialized with a value that is never read
-and it is being updated later with a new value. The initialization is
-redundant and can be removed.
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/platform/x86/asus-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, Apr 26, 2020 at 09:16:30PM +0200, Christophe JAILLET wrote:
+> 'host1x_debug_init()' must be reverted in an error handling path.
+>=20
+> This is already fixed in the remove function since commit 44156eee91ba
+> ("gpu: host1x: Clean up debugfs on removal")
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/host1x/dev.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index bb7c529d7d16..1909d728a536 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -309,7 +309,7 @@ static int asus_wmi_evaluate_method_agfn(const struct acpi_buffer args)
- 	struct acpi_buffer input;
- 	u64 phys_addr;
- 	u32 retval;
--	u32 status = -1;
-+	u32 status;
- 
- 	/*
- 	 * Copy to dma capable address otherwise memory corruption occurs as
--- 
-2.25.1
+Applied, thanks.
+
+Thierry
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl61M9QACgkQ3SOs138+
+s6E5qA/+MmoiWrLTVaFdEnFgY568ldpbMKJel9y+2djQ7IncLvkQt+g/Z6o0ghVD
+OkhEvQfWM6rdYUehLaFfN9k1VJ+8VaNqrvDPa+SEfivIS0lDAF5dU4x6rOxN8gFf
+t6VHONMlhZsHhPI8jlMvIW+v3OczrbDzXmo5P9o6iKPFDfkqEpbS8FAqlzhpXGPY
+qVSmowOZtNJcvF1754ssJFb95uz0kl0XZ6LNa5Pgl1YFHgBAZrUKHtu5ekmvs2hU
+tXJB6Z/nyJs8/38HWqQD6+6MjOsPVD3hBEf/Mz6PE3TLSQlTxUoGGvECjU4NNnnl
+HrdBPXIOCNYC5a8KAEyaFg9I4jUcpnhwfB7RwXZeFUmUMdl0DZx4m6jckCbD13pV
+Qax13ypm7mUuTAh1ZpzI01Vb193QG5Zx3YpSb/cFlFeoe12YXZH+j9lawuoCI83s
+TfcwxTaPtYhUd3UnxpW21SKmun49sL12lilKyLhydEWCVcMozaYJUyz7wkJPEoU5
+Jkpnu8M1YhW6W3nFa/hOBXdcEHg+LG14DRaGZ/Dfv+9oMRNcOEoW+p7WZSSDODs1
+84p1Ec/NedIcB9XJjtaB6RLkwu5PbPk5g7uBEZLl6hVSZfUnXW7/wg/zcuedwkO4
+p7GYMpqt2vRfQ7iM4VXH60fqlN3lF1GDj0T5JZsMrclFInwK2dw=
+=zg/O
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
