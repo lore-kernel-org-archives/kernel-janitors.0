@@ -1,32 +1,55 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 01 May 2020 07:20:23 +0000
-Subject: Re: Improving documentation for programming interfaces
-Message-Id: <5185a8a7-1fdd-a9b9-eeef-f5952485e1c0@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 May 2020 23:14:47 +0000
+Subject: [PATCH][V2] net: tg3: tidy up loop, remove need to compute off with a multiply
+Message-Id: <20200508231447.485241-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <350cd156-9080-24fe-c49e-96e758d3ca45@web.de>
- <20191220151945.GD59959@mit.edu>
- <17931ddd-76ec-d342-912c-faed6084e863@metux.net>
- <748b8572-a3b3-c084-e8e3-de420f53e468@web.de>
- <20200108161428.GA263696@mit.edu>
-In-Reply-To: <20200108161428.GA263696@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Siva Reddy Kallam <siva.kallam@broadcom.com>, Prashant Sreedharan <prashant@broadcom.com>, Michael Chan <mchan@broadcom.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> I propose to encode helpful information into macro calls as needed
->> for the C programming language.
-=E2=80=A6
-> On the "benefits" side of the equation, is there are ways in which it
-> will directly benefit the kernel developers who will need to review
-> the patches and review the annotations, that can be demonstrated
-> immediately?  Not in some abstract way, or "when I my research work is
-> completed", but a very concrete way that will be obvious to those of
-> us who are still not completely convinced?
+From: Colin Ian King <colin.king@canonical.com>
 
-Would any contributors like to clarify further possibilities around
-the application of source code annotation languages?
+Currently the value for 'off' is computed using a multiplication and
+a couple of statements later off is being incremented by len and
+this value is never read.  Clean up the code by removing the
+multiplication and just increment off by len on each iteration.
 
-Regards,
-Markus
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Use reverse Christmas tree variable declaration style
+
+---
+ drivers/net/ethernet/broadcom/tg3.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index ff98a82b7bc4..7a3b22b35238 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -10797,17 +10797,15 @@ static int tg3_init_hw(struct tg3 *tp, bool reset_phy)
+ #ifdef CONFIG_TIGON3_HWMON
+ static void tg3_sd_scan_scratchpad(struct tg3 *tp, struct tg3_ocir *ocir)
+ {
++	u32 off, len = TG3_OCIR_LEN;
+ 	int i;
+ 
+-	for (i = 0; i < TG3_SD_NUM_RECS; i++, ocir++) {
+-		u32 off = i * TG3_OCIR_LEN, len = TG3_OCIR_LEN;
+-
++	for (i = 0, off = 0; i < TG3_SD_NUM_RECS; i++, ocir++, off += len) {
+ 		tg3_ape_scratchpad_read(tp, (u32 *) ocir, off, len);
+-		off += len;
+ 
+ 		if (ocir->signature != TG3_OCIR_SIG_MAGIC ||
+ 		    !(ocir->version_flags & TG3_OCIR_FLAG_ACTIVE))
+-			memset(ocir, 0, TG3_OCIR_LEN);
++			memset(ocir, 0, len);
+ 	}
+ }
+ 
+-- 
+2.25.1
