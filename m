@@ -1,7 +1,7 @@
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Date: Wed, 06 May 2020 09:35:24 +0000
+From: Joerg Roedel <joro@8bytes.org>
+Date: Fri, 08 May 2020 15:31:49 +0000
 Subject: Re: [PATCH] iommu/virtio: reverse arguments to list_add
-Message-Id: <20200506093524.GA497896@myrica>
+Message-Id: <20200508153149.GA10908@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1588704467-13431-1-git-send-email-Julia.Lawall@inria.fr>
 In-Reply-To: <1588704467-13431-1-git-send-email-Julia.Lawall@inria.fr>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: eugene.volanschi@inria.fr, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, iommu@lists.linux-foundation.org
+Cc: eugene.volanschi@inria.fr, Jean-Philippe Brucker <jean-philippe@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, iommu@lists.linux-foundation.org
 
 On Tue, May 05, 2020 at 08:47:47PM +0200, Julia Lawall wrote:
 > Elsewhere in the file, there is a list_for_each_entry with
@@ -21,27 +21,4 @@ On Tue, May 05, 2020 at 08:47:47PM +0200, Julia Lawall wrote:
 > Fixes: 2a5a31487445 ("iommu/virtio: Add probe request")
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Thanks for the fix. The reason this hasn't blown up so far is
-iommu_alloc_resv_region() initializes region->list, but adding more than
-one item would break the list.
-
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-
-> ---
->  drivers/iommu/virtio-iommu.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-> index d5cac4f46ca5..4e1d11af23c8 100644
-> --- a/drivers/iommu/virtio-iommu.c
-> +++ b/drivers/iommu/virtio-iommu.c
-> @@ -453,7 +453,7 @@ static int viommu_add_resv_mem(struct viommu_endpoint *vdev,
->  	if (!region)
->  		return -ENOMEM;
->  
-> -	list_add(&vdev->resv_regions, &region->list);
-> +	list_add(&region->list, &vdev->resv_regions);
->  	return 0;
->  }
->  
-> 
+Applied for v5.7, thanks.
