@@ -1,66 +1,46 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 12 May 2020 19:40:57 +0000
-Subject: Re: [PATCH][next] pstore/zone: remove redundant initializations to variable ret
-Message-Id: <202005121240.1C306861D@keescook>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 May 2020 15:07:40 +0000
+Subject: [PATCH] workqueue: Fix an use after free in init_rescuer()
+Message-Id: <20200508150740.GA415175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512173801.222666-1-colin.king@canonical.com>
-In-Reply-To: <20200512173801.222666-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Sean Fu <fxinrong@gmail.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 12, 2020 at 06:38:01PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable rc is being initialized with a value that is never read and it
-> is being updated later with a new value.  The initialization is redundant
-> and can be removed.  In one of the cases, ret can also be moved inside a
-> for-loop to reduce the scope.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We need to preserve error code before freeing "rescuer".
 
-Thanks!
+Fixes: f187b6974f6df ("workqueue: Use IS_ERR and PTR_ERR instead of PTR_ERR_OR_ZERO.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Another option would be to just revert the original commit.
 
-> ---
->  fs/pstore/zone.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
-> index 3cf7d6762c76..419de481c69c 100644
-> --- a/fs/pstore/zone.c
-> +++ b/fs/pstore/zone.c
-> @@ -600,7 +600,7 @@ static int psz_recover_zones(struct psz_context *cxt,
->   */
->  static inline int psz_recovery(struct psz_context *cxt)
->  {
-> -	int ret = -EBUSY;
-> +	int ret;
->  
->  	if (atomic_read(&cxt->recovered))
->  		return 0;
+ kernel/workqueue.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I've refactored this code.
-
-> @@ -746,13 +746,13 @@ static void psz_write_kmsg_hdr(struct pstore_zone *zone,
->  static inline int notrace psz_kmsg_write_record(struct psz_context *cxt,
->  		struct pstore_record *record)
->  {
-> -	int ret = -EBUSY;
->  	size_t size, hlen;
->  	struct pstore_zone *zone;
->  	unsigned int i;
->  
->  	for (i = 0; i < cxt->kmsg_max_cnt; i++) {
->  		unsigned int zonenum, len;
-> +		int ret;
->  
->  		zonenum = (cxt->kmsg_write_cnt + i) % cxt->kmsg_max_cnt;
->  		zone = cxt->kpszs[zonenum];
-
-And I've applied this hunk. Thanks!
-
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index ddf0537dce140..10ed8d761e0b7 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -4197,6 +4197,7 @@ static int wq_clamp_max_active(int max_active, unsigned int flags,
+ static int init_rescuer(struct workqueue_struct *wq)
+ {
+ 	struct worker *rescuer;
++	int ret;
+ 
+ 	if (!(wq->flags & WQ_MEM_RECLAIM))
+ 		return 0;
+@@ -4208,8 +4209,9 @@ static int init_rescuer(struct workqueue_struct *wq)
+ 	rescuer->rescue_wq = wq;
+ 	rescuer->task = kthread_create(rescuer_thread, rescuer, "%s", wq->name);
+ 	if (IS_ERR(rescuer->task)) {
++		ret = PTR_ERR(rescuer->task);
+ 		kfree(rescuer);
+-		return PTR_ERR(rescuer->task);
++		return ret;
+ 	}
+ 
+ 	wq->rescuer = rescuer;
 -- 
-Kees Cook
+2.26.2
