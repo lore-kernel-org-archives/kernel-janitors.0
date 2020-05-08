@@ -1,28 +1,35 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 12 May 2020 20:00:01 +0000
-Subject: Re: [PATCH] mm/hmm/test: Fix some copy_to_user() error handling
-Message-Id: <20200512200001.GC9154@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 May 2020 22:33:21 +0000
+Subject: [PATCH] net/atheros: remove redundant assignment to variable size
+Message-Id: <20200508223321.483485-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200511183704.GA225608@mwanda>
-In-Reply-To: <20200511183704.GA225608@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 11, 2020 at 09:37:04PM +0300, Dan Carpenter wrote:
-> The copy_to_user() function returns the number of bytes which weren't
-> copied but we want to return negative error codes.  Also in dmirror_write()
-> if the copy_from_user() fails then there is some cleanup needed before
-> we can return so I fixed that as well.
-> 
-> Fixes: 5d5e54be8a1e3 ("mm/hmm/test: add selftest driver for HMM")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  lib/test_hmm.c | 41 +++++++++++++++++++++++++----------------
->  1 file changed, 25 insertions(+), 16 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you, I squashed this into the original commit.
+The variable size is being assigned with a value that is never read,
+the assignment is redundant and cab be removed.
 
-Jason
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/atheros/atlx/atl1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
+index 271e7034fa70..b35fcfcd692d 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl1.c
++++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+@@ -1042,7 +1042,7 @@ static s32 atl1_setup_ring_resources(struct atl1_adapter *adapter)
+ 	 * each ring/block may need up to 8 bytes for alignment, hence the
+ 	 * additional 40 bytes tacked onto the end.
+ 	 */
+-	ring_header->size = size +	ring_header->size  		sizeof(struct tx_packet_desc) * tpd_ring->count
+ 		+ sizeof(struct rx_free_desc) * rfd_ring->count
+ 		+ sizeof(struct rx_return_desc) * rrd_ring->count
+-- 
+2.25.1
