@@ -1,38 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 27 May 2020 12:56:11 +0000
-Subject: [PATCH] NFS: remove redundant initialization of variable result
-Message-Id: <20200527125611.174291-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 08 May 2020 10:17:44 +0000
+Subject: Re: [v2] tools/bootconfig: fix resource leak in apply_xbc()
+Message-Id: <131a5310-5d8e-5eb5-e55f-fa0a9a829ec1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <189d719f-a8b8-6e10-ae2f-8120c3d2b7a9@huawei.com>
+ <20200508093059.GF9365@kadam>
+In-Reply-To: <20200508093059.GF9365@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Yunfeng Ye <yeyunfeng@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> Btw, these leaks are totally harmless.  This is a short running user
+> space program with is going to immediately exit on error so the memory
+> will be freed anyway.
 
-The variable result is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+Can such a view mean that the function call “free(data)” should be omitted here
+for a quicker program termination?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/nfs/direct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index a57e7c72c7f4..bb63e2b93ff7 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -446,7 +446,7 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter)
- 	struct inode *inode = mapping->host;
- 	struct nfs_direct_req *dreq;
- 	struct nfs_lock_context *l_ctx;
--	ssize_t result = -EINVAL, requested;
-+	ssize_t result, requested;
- 	size_t count = iov_iter_count(iter);
- 	nfs_add_stats(mapping->host, NFSIOS_DIRECTREADBYTES, count);
- 
--- 
-2.25.1
+> But the benifit is to silence static checker warnings so that's useful.
+
+Would you like to extend the commit message for the explanation of
+the importance of the proposed change accordingly?
+
+Regards,
+Markus
