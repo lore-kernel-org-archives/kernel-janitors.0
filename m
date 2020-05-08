@@ -1,45 +1,41 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 08 May 2020 17:14:03 +0000
+Date: Fri, 08 May 2020 17:53:50 +0000
 Subject: Re: [PATCH -next] spi: spi-amd: Remove spi_master_put in amd_spi_remove()
-Message-Id: <158895800278.30774.17228690037210292718.b4-ty@kernel.org>
+Message-Id: <20200508175350.GA3011@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="BXVAT5kNtrzKuDFl"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200507115550.139457-1-weiyongjun1@huawei.com>
 In-Reply-To: <20200507115550.139457-1-weiyongjun1@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sanjay R Mehta <sanju.mehta@amd.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Sanjay R Mehta <sanju.mehta@amd.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On Thu, 7 May 2020 11:55:50 +0000, Wei Yongjun wrote:
+
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, May 07, 2020 at 11:55:50AM +0000, Wei Yongjun wrote:
 > The call to spi_master_put() in amd_spi_remove() is redundant and
 > may causes user after free since the master have been freed by
 > spi_unregister_master(), so remove it.
 
-Applied to
+This doesn't apply against current code, please check and resend (there
+were quite a few issues that got fixed).
 
-   local tree regulator/for-5.7
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
 
-[1/1] spi: spi-amd: Remove spi_master_put in amd_spi_remove()
-      (no commit info)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl61nK0ACgkQJNaLcl1U
+h9APGQgAg5Mu75hZSXDbUWOiVnemr3EA0Rq6XsrwDrZd7UUq9wXkFGqfk70MEeWj
+gqcdLS68iTMFeIQ1ph1516b7cuYmMZBGU/lH22bOyYoveTpKto6QNsz3KX6G+2dC
+BktSNvldIjJ2VKFtZWziAYv3QDbDCgTSskrUf+u/qNfm/oo114RO1cYbCsr6CLFZ
+c0JRUNdM0MIMcjrkKz8lb81jO+bs9t1aizdgbbZvteHVF6bV6mGtLHDvxfXRu/QT
+tOQMKjIUj4H3R45mDIfIevFcMEAoo9wB7ZDUkUuNoDiR7h7++ETjUTbWnEojOx+Q
+FjR+eFGJMYLBh3m4QAbTssVZC72xjA==
+=MHHd
+-----END PGP SIGNATURE-----
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+--BXVAT5kNtrzKuDFl--
