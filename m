@@ -1,60 +1,50 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 11 May 2020 07:54:56 +0000
-Subject: Re: [PATCH v2] net/sonic: Fix some resource leaks in error handling paths
-Message-Id: <f9a2c71b-e001-d546-64cd-8a904ae881ca@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 May 2020 14:48:18 +0000
+Subject: [PATCH] ALSA: cs5535audio: Fix a math error in cs5535audio_build_dma_packets()
+Message-Id: <20200508144818.GA411239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3eaa58c16dcf313ff7cb873dcff21659b0ea037d.1589158098.git.fthain@telegraphics.com.au>
-In-Reply-To: <3eaa58c16dcf313ff7cb873dcff21659b0ea037d.1589158098.git.fthain@telegraphics.com.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Finn Thain <fthain@telegraphics.com.au>, "David S. Miller" <davem@davemloft.net>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?Thomas_Bogend=c3=b6rfer?= <tsbogend@alpha.franken.de>, Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaya Kumar <jayakumar.alsa@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-> Changed since v1:
->  - Improved commit log slightly.
->  - Changed 'undo_probe1' to 'undo_probe' where appropriate.
+We want to allocate enough space for CS5535AUDIO_MAX_DESCRIPTORS + 1
+elements and we also want the size to rounded up to PAGE_SIZE.  The
+"+ 1" is because we don't use the zeroeth element.
 
-I find this response interesting.
+CS5535AUDIO_MAX_DESCRIPTORS is 128.  Each element is 8 bytes.  So it
+should be "(128 + 1) * 8 = 1032" but rounded up that becomes 4096.  In
+the original code, it did the "+ 1" after rounding up so so it allocated
+4097 bytes.  The DMA API will probably round this up to two pages.
 
+Fixes: 9b4ffa48ae85 ("[ALSA] Add support for the CS5535 Audio device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/pci/cs5535audio/cs5535audio_pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
-
-I suggest to replace these triple dashes by a blank line.
-
-
->  drivers/net/ethernet/natsemi/macsonic.c | 17 +++++++++++++----
->  drivers/net/ethernet/natsemi/xtsonic.c  |  7 +++++--
-
-I imagine that this change combination will need further clarification
-because David Miller provided the information “Applied, thanks.” on 2020-04-27.
-
-net/sonic: Fix a resource leak in an error handling path in 'jazz_sonic_probe()'
-https://lore.kernel.org/patchwork/comment/1426045/
-https://lkml.org/lkml/2020/4/27/1014
-
-
-…
-> +++ b/drivers/net/ethernet/natsemi/xtsonic.c
-> @@ -229,11 +229,14 @@ int xtsonic_probe(struct platform_device *pdev)
->  	sonic_msg_init(dev);
->
->  	if ((err = register_netdev(dev)))
-> -		goto out1;
-> +		goto undo_probe1;
->
->  	return 0;
->
-> -out1:
-> +undo_probe1:
-> +	dma_free_coherent(lp->device,
-> +			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
-> +			  lp->descriptors, lp->descriptors_laddr);
->  	release_region(dev->base_addr, SONIC_MEM_SIZE);
->  out:
-…
-
-Can it be nicer to use the label “free_dma”?
-
-Regards,
-Markus
+diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
+index 4032b89b1fc1d..f6324636b355f 100644
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -100,7 +100,7 @@ static int snd_cs5535audio_playback_close(struct snd_pcm_substream *substream)
+ }
+ 
+ #define CS5535AUDIO_DESC_LIST_SIZE \
+-	PAGE_ALIGN(CS5535AUDIO_MAX_DESCRIPTORS * sizeof(struct cs5535audio_dma_desc))
++	PAGE_ALIGN((CS5535AUDIO_MAX_DESCRIPTORS + 1) * sizeof(struct cs5535audio_dma_desc))
+ 
+ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
+ 					 struct cs5535audio_dma *dma,
+@@ -118,7 +118,7 @@ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
+ 	if (dma->desc_buf.area = NULL) {
+ 		if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV,
+ 					&cs5535au->pci->dev,
+-					CS5535AUDIO_DESC_LIST_SIZE+1,
++					CS5535AUDIO_DESC_LIST_SIZE,
+ 					&dma->desc_buf) < 0)
+ 			return -ENOMEM;
+ 		dma->period_bytes = dma->periods = 0;
+-- 
+2.26.2
