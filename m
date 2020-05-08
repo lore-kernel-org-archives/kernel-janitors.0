@@ -1,85 +1,38 @@
-From: Yunfeng Ye <yeyunfeng@huawei.com>
-Date: Fri, 08 May 2020 12:09:46 +0000
-Subject: [PATCH v4] tools/bootconfig: fix resource leak in apply_xbc()
-Message-Id: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 08 May 2020 13:42:40 +0000
+Subject: Re: [PATCH v4] tools/bootconfig: fix resource leak in apply_xbc()
+Message-Id: <757dc0e5-3ab7-b00b-11dc-e94a903e3901@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
+In-Reply-To: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mhiramat@kernel.org, linux-kernel@vger.kernel.org, Markus.Elfring@web.de, rostedt@goodmis.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
-Cc: Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Yunfeng Ye <yeyunfeng@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-An error is found by a internel analysis tool:
-  "Memory leak: data" and "Resource leak: fd" in tools/bootconfig/main.c
+> An error is found by a internel analysis tool:
+>   "Memory leak: data" and "Resource leak: fd" in tools/bootconfig/main.c
 
-Fix the @data and @fd allocations that are leaked in the error path of
-apply_xbc().
+If such an information will ever be integrated into a final commit message,
+I would prefer a wording variant like the following.
 
-Fixes: 85c46b78da58 ("bootconfig: Add bootconfig magic word for indicating bootconfig explicitly")
-Fixes: 950313ebf79c ("tools: bootconfig: Add bootconfig command")
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-v3 -> v4:
- - update the commit message
+   Two issues were pointed out by an internal source code analysis tool:
+   * Line …:
+     Memory leak: data
 
-v2 -> v3:
- - set 'ret' to 0 before returning on success
+   * Line …:
+     Resource leak: fd
 
-v1 -> v2:
- - complete the error handling at other error path
- - add "Fixes" tag
 
- tools/bootconfig/main.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+Each of these issues has got a different importance for this function implementation.
 
-diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
-index 16b9a420e6fd..17a9837dcfaa 100644
---- a/tools/bootconfig/main.c
-+++ b/tools/bootconfig/main.c
-@@ -314,31 +314,35 @@ int apply_xbc(const char *path, const char *xbc_path)
- 	ret = delete_xbc(path);
- 	if (ret < 0) {
- 		pr_err("Failed to delete previous boot config: %d\n", ret);
--		return ret;
-+		goto free_data;
- 	}
 
- 	/* Apply new one */
- 	fd = open(path, O_RDWR | O_APPEND);
- 	if (fd < 0) {
- 		pr_err("Failed to open %s: %d\n", path, fd);
--		return fd;
-+		ret = fd;
-+		goto free_data;
- 	}
- 	/* TODO: Ensure the @path is initramfs/initrd image */
- 	ret = write(fd, data, size + 8);
- 	if (ret < 0) {
- 		pr_err("Failed to apply a boot config: %d\n", ret);
--		return ret;
-+		goto close_fd;
- 	}
- 	/* Write a magic word of the bootconfig */
- 	ret = write(fd, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
--	if (ret < 0) {
-+	if (ret < 0)
- 		pr_err("Failed to apply a boot config magic: %d\n", ret);
--		return ret;
--	}
-+
-+	ret = 0;
-+
-+close_fd:
- 	close(fd);
-+free_data:
- 	free(data);
+> Fix the @data and @fd allocations that are leaked in the error path of
+> apply_xbc().
 
--	return 0;
-+	return ret;
- }
+How do you think about to replace the @ characters by other delimiters
+for the relevant identifiers?
 
- int usage(void)
--- 
-1.8.3.1
+Regards,
+Markus
