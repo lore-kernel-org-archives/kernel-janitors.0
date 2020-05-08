@@ -1,30 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 04 May 2020 08:53:36 +0000
-Subject: Re: [PATCH net-next] ath11k: fix error return code in ath11k_dp_alloc()
-Message-Id: <20200504085336.3D74AC44788@smtp.codeaurora.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 08 May 2020 12:30:20 +0000
+Subject: [PATCH 4.4 029/312] MIPS: Octeon: Off by one in octeon_irq_gpio_map()
+Message-Id: <20200508123126.529643159@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427104621.23752-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427104621.23752-1-weiyongjun1@huawei.com>
+References: <20200508123124.574959822@linuxfoundation.org>
+In-Reply-To: <20200508123124.574959822@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: John Crispin <john@phrozen.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, David Daney <david.daney@cavium.com>, Rob Herring <robh@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Fix to return negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: d0998eb84ed3 ("ath11k: optimise ath11k_dp_tx_completion_handler")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+commit 008d0cf1ec69ec6d2c08f2d23aff2b67cbe5d2af upstream.
 
-Patch applied to ath-next branch of ath.git, thanks.
+It should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
 
-f76f750aeea4 ath11k: fix error return code in ath11k_dp_alloc()
+Fixes: 64b139f97c01 ('MIPS: OCTEON: irq: add CIB and other fixes')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: David Daney <david.daney@cavium.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/13813/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
--- 
-https://patchwork.kernel.org/patch/11511849/
+---
+ arch/mips/cavium-octeon/octeon-irq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -1220,7 +1220,7 @@ static int octeon_irq_gpio_map(struct ir
+ 
+ 	line = (hw + gpiod->base_hwirq) >> 6;
+ 	bit = (hw + gpiod->base_hwirq) & 63;
+-	if (line > ARRAY_SIZE(octeon_irq_ciu_to_irq) ||
++	if (line >= ARRAY_SIZE(octeon_irq_ciu_to_irq) ||
+ 		octeon_irq_ciu_to_irq[line][bit] != 0)
+ 		return -EINVAL;
+ 
