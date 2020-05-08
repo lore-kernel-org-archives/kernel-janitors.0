@@ -1,29 +1,85 @@
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Date: Sun, 31 May 2020 12:32:27 +0000
-Subject: Re: [PATCH] MIPS: ralink: bootrom: mark a function as __init to save some memory
-Message-Id: <20200531123227.GA6039@alpha.franken.de>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
+Date: Fri, 08 May 2020 12:09:46 +0000
+Subject: [PATCH v4] tools/bootconfig: fix resource leak in apply_xbc()
+Message-Id: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200531100603.597847-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200531100603.597847-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: john@phrozen.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mhiramat@kernel.org, linux-kernel@vger.kernel.org, Markus.Elfring@web.de, rostedt@goodmis.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+Cc: Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
 
-On Sun, May 31, 2020 at 12:06:03PM +0200, Christophe JAILLET wrote:
-> 'bootrom_setup()' is only called via 'postcore_initcall'.
-> It can be marked as __init to save a few bytes of memory.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/mips/ralink/bootrom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+An error is found by a internel analysis tool:
+  "Memory leak: data" and "Resource leak: fd" in tools/bootconfig/main.c
 
-applied to mips-next.
+Fix the @data and @fd allocations that are leaked in the error path of
+apply_xbc().
 
-Thomas.
+Fixes: 85c46b78da58 ("bootconfig: Add bootconfig magic word for indicating bootconfig explicitly")
+Fixes: 950313ebf79c ("tools: bootconfig: Add bootconfig command")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+v3 -> v4:
+ - update the commit message
 
+v2 -> v3:
+ - set 'ret' to 0 before returning on success
+
+v1 -> v2:
+ - complete the error handling at other error path
+ - add "Fixes" tag
+
+ tools/bootconfig/main.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
+index 16b9a420e6fd..17a9837dcfaa 100644
+--- a/tools/bootconfig/main.c
++++ b/tools/bootconfig/main.c
+@@ -314,31 +314,35 @@ int apply_xbc(const char *path, const char *xbc_path)
+ 	ret = delete_xbc(path);
+ 	if (ret < 0) {
+ 		pr_err("Failed to delete previous boot config: %d\n", ret);
+-		return ret;
++		goto free_data;
+ 	}
+
+ 	/* Apply new one */
+ 	fd = open(path, O_RDWR | O_APPEND);
+ 	if (fd < 0) {
+ 		pr_err("Failed to open %s: %d\n", path, fd);
+-		return fd;
++		ret = fd;
++		goto free_data;
+ 	}
+ 	/* TODO: Ensure the @path is initramfs/initrd image */
+ 	ret = write(fd, data, size + 8);
+ 	if (ret < 0) {
+ 		pr_err("Failed to apply a boot config: %d\n", ret);
+-		return ret;
++		goto close_fd;
+ 	}
+ 	/* Write a magic word of the bootconfig */
+ 	ret = write(fd, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		pr_err("Failed to apply a boot config magic: %d\n", ret);
+-		return ret;
+-	}
++
++	ret = 0;
++
++close_fd:
+ 	close(fd);
++free_data:
+ 	free(data);
+
+-	return 0;
++	return ret;
+ }
+
+ int usage(void)
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+1.8.3.1
