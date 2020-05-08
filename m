@@ -1,40 +1,22 @@
-From: Po Liu <po.liu@nxp.com>
-Date: Wed, 06 May 2020 04:14:49 +0000
-Subject: RE:  [PATCH net-next] enetc: Fix use after free in stream_filter_unref()
-Message-Id: <VE1PR04MB6496EA13ABB5C079D314EE8792A40@VE1PR04MB6496.eurprd04.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 08 May 2020 00:36:42 +0000
+Subject: Re: [PATCH net-next] enetc: Fix use after free in stream_filter_unref()
+Message-Id: <20200507.173642.1807000659009589804.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200505204721.GA51853@mwanda>
 In-Reply-To: <20200505204721.GA51853@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Claudiu Manoil <claudiu.manoil@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: dan.carpenter@oracle.com
+Cc: claudiu.manoil@nxp.com, Po.Liu@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SGkgRGFuLA0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGFuIENh
-cnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiBTZW50OiAyMDIwxOo11MI2yNUg
-NDo0Nw0KPiBUbzogQ2xhdWRpdSBNYW5vaWwgPGNsYXVkaXUubWFub2lsQG54cC5jb20+OyBQbyBM
-aXUgPHBvLmxpdUBueHAuY29tPg0KPiBDYzogRGF2aWQgUy4gTWlsbGVyIDxkYXZlbUBkYXZlbWxv
-ZnQubmV0PjsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsNCj4ga2VybmVsLWphbml0b3JzQHZnZXIu
-a2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0ggbmV0LW5leHRdIGVuZXRjOiBGaXggdXNlIGFm
-dGVyIGZyZWUgaW4NCj4gc3RyZWFtX2ZpbHRlcl91bnJlZigpDQo+IA0KPiANCj4gVGhpcyBjb2Rl
-IGZyZWVzICJzZmkiIGFuZCB0aGVuIGRlcmVmZXJlbmNlcyBpdCBvbiB0aGUgbmV4dCBsaW5lLg0K
-PiANCj4gRml4ZXM6IDg4OGFlNWEzOTUyYiAoIm5ldDogZW5ldGM6IGFkZCB0YyBmbG93ZXIgcHNm
-cCBvZmZsb2FkIGRyaXZlciIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5j
-YXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVl
-c2NhbGUvZW5ldGMvZW5ldGNfcW9zLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9l
-dGhlcm5ldC9mcmVlc2NhbGUvZW5ldGMvZW5ldGNfcW9zLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9mcmVlc2NhbGUvZW5ldGMvZW5ldGNfcW9zLmMNCj4gaW5kZXggNDhlNTg5ZTlkMGY3Yy4u
-MTBkNzllYjQ2YzJlOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNj
-YWxlL2VuZXRjL2VuZXRjX3Fvcy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVz
-Y2FsZS9lbmV0Yy9lbmV0Y19xb3MuYw0KPiBAQCAtOTAyLDggKzkwMiw4IEBAIHN0YXRpYyB2b2lk
-IHN0cmVhbV9maWx0ZXJfdW5yZWYoc3RydWN0DQo+IGVuZXRjX25kZXZfcHJpdiAqcHJpdiwgdTMy
-IGluZGV4KQ0KPiAgICAgICAgIGlmICh6KSB7DQo+ICAgICAgICAgICAgICAgICBlbmV0Y19zdHJl
-YW1maWx0ZXJfaHdfc2V0KHByaXYsIHNmaSwgZmFsc2UpOw0KPiAgICAgICAgICAgICAgICAgaGxp
-c3RfZGVsKCZzZmktPm5vZGUpOw0KPiAtICAgICAgICAgICAgICAga2ZyZWUoc2ZpKTsNCj4gICAg
-ICAgICAgICAgICAgIGNsZWFyX2JpdChzZmktPmluZGV4LCBlcHNmcC5wc2ZwX3NmaV9iaXRtYXAp
-Ow0KDQpUaGlzICJzZmktPmluZGV4IiBzaG91bGQgYmUgImluZGV4IiwgYnV0IHRoZSBwYXRjaCBp
-cyBhbHNvIGZpeCBpdC4NCg0KPiArICAgICAgICAgICAgICAga2ZyZWUoc2ZpKTsNCj4gICAgICAg
-ICB9DQo+ICB9DQo+IA0KPiAtLQ0KPiAyLjI2LjINCg0KVGhhbmtzIGEgbG90Lg0KDQpCciwNClBv
-IExpdQ0KDQo
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 5 May 2020 23:47:21 +0300
+
+> This code frees "sfi" and then dereferences it on the next line.
+> 
+> Fixes: 888ae5a3952b ("net: enetc: add tc flower psfp offload driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+This was fixed in another patch by using the local variable 'index'.
