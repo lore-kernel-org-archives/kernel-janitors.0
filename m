@@ -1,19 +1,23 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 May 2020 14:40:09 +0000
+Date: Fri, 08 May 2020 14:51:33 +0000
 Subject: Re: [PATCH v4] tools/bootconfig: fix resource leak in apply_xbc()
-Message-Id: <20200508144009.GQ1992@kadam>
+Message-Id: <20200508145133.GG9365@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
-In-Reply-To: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
+ <20200508144009.GQ1992@kadam>
+In-Reply-To: <20200508144009.GQ1992@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Yunfeng Ye <yeyunfeng@huawei.com>
 Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org, Markus.Elfring@web.de, rostedt@goodmis.org, kernel-janitors@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
 
-Looks good thanks!
+On Fri, May 08, 2020 at 05:40:09PM +0300, Dan Carpenter wrote:
+> Looks good thanks!
+> 
+> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+I was also absolutely fine with the v3 patch as well.
 
 regards,
 dan carpenter
