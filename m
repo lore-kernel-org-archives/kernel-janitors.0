@@ -1,26 +1,37 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 15 May 2020 01:39:47 +0000
-Subject: Re: [PATCH][next] selftest/bpf: fix spelling mistake "SIGALARM" -> "SIGALRM"
-Message-Id: <CAADnVQKeM7-H0HCLHfQdY4U=898uxUSMHNV04tE2ZMtG8oSByQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 May 2020 14:37:20 +0000
+Subject: [PATCH net] dpaa2-eth: prevent array underflow in update_cls_rule()
+Message-Id: <20200508143720.GA410645@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200514121529.259668-1-colin.king@canonical.com> <bae961e3-a3ae-2652-6f4e-df97f501db0e@fb.com>
-In-Reply-To: <bae961e3-a3ae-2652-6f4e-df97f501db0e@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yonghong Song <yhs@fb.com>
-Cc: Colin King <colin.king@canonical.com>, Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Ioana Radulescu <ruxandra.radulescu@nxp.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 14, 2020 at 8:01 AM Yonghong Song <yhs@fb.com> wrote:
->
->
->
-> On 5/14/20 5:15 AM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in an error message, fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Yonghong Song <yhs@fb.com>
+The "location" is controlled by the user via the ethtool_set_rxnfc()
+function.  This update_cls_rule() function checks for array overflows
+but it doesn't check if the value is negative.  I have changed the type
+to unsigned to prevent array underflows.
 
-Applied. Thanks
+Fixes: afb90dbb5f78 ("dpaa2-eth: Add ethtool support for flow classification")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c
+index bd13ee48d6230..049afd1d6252d 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ethtool.c
+@@ -635,7 +635,7 @@ static int num_rules(struct dpaa2_eth_priv *priv)
+ 
+ static int update_cls_rule(struct net_device *net_dev,
+ 			   struct ethtool_rx_flow_spec *new_fs,
+-			   int location)
++			   unsigned int location)
+ {
+ 	struct dpaa2_eth_priv *priv = netdev_priv(net_dev);
+ 	struct dpaa2_eth_cls_rule *rule;
+-- 
+2.26.2
