@@ -1,29 +1,78 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Tue, 12 May 2020 14:40:57 +0000
-Subject: Re: [PATCH] i2c: mux: demux-pinctrl: Fix an error handling path in 'i2c_demux_pinctrl_probe()'
-Message-Id: <3e1f4c56-c590-8121-7129-9ebbf4db773d@axentia.se>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
+Date: Fri, 08 May 2020 10:52:53 +0000
+Subject: [PATCH v3] tools/bootconfig: fix resource leak in apply_xbc()
+Message-Id: <3569aa33-8963-966d-9247-ec79b3b3d56d@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506192100.194821-1-christophe.jaillet@wanadoo.fr>
- <20200512130802.GC13516@ninjato>
-In-Reply-To: <20200512130802.GC13516@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: robh@kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mhiramat@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Markus.Elfring@web.de, dan.carpenter@oracle.com, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
 
-On 2020-05-12 15:08, Wolfram Sang wrote:
-> On Wed, May 06, 2020 at 09:21:00PM +0200, Christophe JAILLET wrote:
->> A call to 'i2c_demux_deactivate_master()' is missing in the error handling
->> path, as already done in the remove function.
->>
->> Fixes: 50a5ba876908 ("i2c: mux: demux-pinctrl: add driver")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Applied to for-current, thanks! Peter, I hope you are okay with me
-> applying patches for my strange driver directly.
+Fix the @data and @fd allocations that are leaked in the error path of
+apply_xbc().
 
-Absolutely, you have always "owned" that one. I prefer to stay out :-)
+Fixes: 85c46b78da58 ("bootconfig: Add bootconfig magic word for indicating bootconfig explicitly")
+Fixes: 950313ebf79c ("tools: bootconfig: Add bootconfig command")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+v2 -> v3:
+ - set 'ret' to 0 before returning on success
 
-Cheers,
-Peter
+v1 -> v2:
+ - complete the error handling at other error path
+ - add "Fixes" tag
+
+ tools/bootconfig/main.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
+index 16b9a420e6fd..17a9837dcfaa 100644
+--- a/tools/bootconfig/main.c
++++ b/tools/bootconfig/main.c
+@@ -314,31 +314,35 @@ int apply_xbc(const char *path, const char *xbc_path)
+ 	ret = delete_xbc(path);
+ 	if (ret < 0) {
+ 		pr_err("Failed to delete previous boot config: %d\n", ret);
+-		return ret;
++		goto free_data;
+ 	}
+
+ 	/* Apply new one */
+ 	fd = open(path, O_RDWR | O_APPEND);
+ 	if (fd < 0) {
+ 		pr_err("Failed to open %s: %d\n", path, fd);
+-		return fd;
++		ret = fd;
++		goto free_data;
+ 	}
+ 	/* TODO: Ensure the @path is initramfs/initrd image */
+ 	ret = write(fd, data, size + 8);
+ 	if (ret < 0) {
+ 		pr_err("Failed to apply a boot config: %d\n", ret);
+-		return ret;
++		goto close_fd;
+ 	}
+ 	/* Write a magic word of the bootconfig */
+ 	ret = write(fd, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		pr_err("Failed to apply a boot config magic: %d\n", ret);
+-		return ret;
+-	}
++
++	ret = 0;
++
++close_fd:
+ 	close(fd);
++free_data:
+ 	free(data);
+
+-	return 0;
++	return ret;
+ }
+
+ int usage(void)
+-- 
+1.8.3.1
