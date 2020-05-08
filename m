@@ -1,120 +1,95 @@
-From: Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 12 May 2020 13:43:52 +0000
-Subject: RE: [PATCH] evm: Fix a small race in init_desc()
-Message-Id: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Fri, 08 May 2020 10:06:49 +0000
+Subject: [PATCH net-next v2] net: ethernet: ti: fix some return value check of cpsw_ale_create()
+Message-Id: <20200508100649.1112-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512130410.GB2056@kadam> <20200512131917.GA287386@mwanda>
-In-Reply-To: <20200512131917.GA287386@mwanda>
+References: <20200508021059.172001-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200508021059.172001-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+To: "David S . Miller" <davem@davemloft.net>, Grygorii Strashko <grygorii.strashko@ti.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-> From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
-> owner@vger.kernel.org] On Behalf Of Dan Carpenter
-> Sent: Tuesday, May 12, 2020 3:19 PM
-> Subject: [PATCH] evm: Fix a small race in init_desc()
-> 
-> The IS_ERR_OR_NULL() function has two conditions and if we got really
-> unlucky we could hit a race where "ptr" started as an error pointer and
-> then was set to NULL.  Both conditions would be false even though the
-> pointer at the end was NULL.
-> 
-> This patch fixes the problem by ensuring that "*tfm" can only be NULL
-> or valid.  I have introduced a "tmp_tfm" variable to make that work.  I
-> also reversed a condition and pulled the code in one tab.
-> 
-> Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Fixes: 53de3b080d5e: "evm: Check also if *tfm is an error pointer in
-> init_desc()"
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I just had a go at the fix.  I'm not super wedded to this solution, but
-> I hoped it was nice.
+cpsw_ale_create() can return both NULL and PTR_ERR(), but all of
+the caller only check NULL for error handling. This patch convert
+it to only return PTR_ERR() in all error cases, all the caller using
+IS_ERR() install of NULL test.
 
-Thanks. I think you can merge both patches in one, as the first one
-is not yet pulled.
+Also fix a return negative error code from the cpsw_ale_create()
+error handling case instead of 0 in am65_cpsw_nuss_probe().
 
-Roberto
+Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
+Fixes: 4b41d3436796 ("net: ethernet: ti: cpsw: allow untagged traffic on host port")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: fix cpsw_ale_create() to retuen PTR_ERR() in all places as Grygorii's suggest
+---
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 ++-
+ drivers/net/ethernet/ti/cpsw_ale.c       | 2 +-
+ drivers/net/ethernet/ti/cpsw_priv.c      | 4 ++--
+ drivers/net/ethernet/ti/netcp_ethss.c    | 4 ++--
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-
->  security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c
-> b/security/integrity/evm/evm_crypto.c
-> index 5d3789edab71f..168c3b78ac47b 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  {
->  	long rc;
->  	const char *algo;
-> -	struct crypto_shash **tfm;
-> +	struct crypto_shash **tfm, *tmp_tfm;
->  	struct shash_desc *desc;
-> 
->  	if (type = EVM_XATTR_HMAC) {
-> @@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  		algo = hash_algo_name[hash_algo];
->  	}
-> 
-> -	if (IS_ERR_OR_NULL(*tfm)) {
-> -		mutex_lock(&mutex);
-> -		if (*tfm)
-> -			goto out;
-> -		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> -		if (IS_ERR(*tfm)) {
-> -			rc = PTR_ERR(*tfm);
-> -			pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> rc);
-> -			*tfm = NULL;
-> +	if (*tfm)
-> +		goto alloc;
-> +	mutex_lock(&mutex);
-> +	if (*tfm)
-> +		goto unlock;
-> +
-> +	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> +	if (IS_ERR(tmp_tfm)) {
-> +		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> +		       PTR_ERR(tmp_tfm));
-> +		mutex_unlock(&mutex);
-> +		return ERR_CAST(tmp_tfm);
-> +	}
-> +	if (type = EVM_XATTR_HMAC) {
-> +		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-> +		if (rc) {
-> +			crypto_free_shash(tmp_tfm);
->  			mutex_unlock(&mutex);
->  			return ERR_PTR(rc);
->  		}
-> -		if (type = EVM_XATTR_HMAC) {
-> -			rc = crypto_shash_setkey(*tfm, evmkey,
-> evmkey_len);
-> -			if (rc) {
-> -				crypto_free_shash(*tfm);
-> -				*tfm = NULL;
-> -				mutex_unlock(&mutex);
-> -				return ERR_PTR(rc);
-> -			}
-> -		}
-> -out:
-> -		mutex_unlock(&mutex);
->  	}
-> -
-> +	*tfm = tmp_tfm;
-> +unlock:
-> +	mutex_unlock(&mutex);
-> +alloc:
->  	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
->  			GFP_KERNEL);
->  	if (!desc)
-> --
-> 2.26.2
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 8cdbb2b9b13a..5530d7ef77a6 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -2074,8 +2074,9 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
+ 	ale_params.nu_switch_ale = true;
+ 
+ 	common->ale = cpsw_ale_create(&ale_params);
+-	if (!common->ale) {
++	if (IS_ERR(common->ale)) {
+ 		dev_err(dev, "error initializing ale engine\n");
++		ret = ERR_PTR(common->ale);
+ 		goto err_of_clear;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+index 0374e6936091..8dc6be11b2ff 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.c
++++ b/drivers/net/ethernet/ti/cpsw_ale.c
+@@ -955,7 +955,7 @@ struct cpsw_ale *cpsw_ale_create(struct cpsw_ale_params *params)
+ 
+ 	ale = devm_kzalloc(params->dev, sizeof(*ale), GFP_KERNEL);
+ 	if (!ale)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	ale->p0_untag_vid_mask  		devm_kmalloc_array(params->dev, BITS_TO_LONGS(VLAN_N_VID),
+diff --git a/drivers/net/ethernet/ti/cpsw_priv.c b/drivers/net/ethernet/ti/cpsw_priv.c
+index 9d098c802c6d..d940628bff8d 100644
+--- a/drivers/net/ethernet/ti/cpsw_priv.c
++++ b/drivers/net/ethernet/ti/cpsw_priv.c
+@@ -504,9 +504,9 @@ int cpsw_init_common(struct cpsw_common *cpsw, void __iomem *ss_regs,
+ 	ale_params.ale_ports		= CPSW_ALE_PORTS_NUM;
+ 
+ 	cpsw->ale = cpsw_ale_create(&ale_params);
+-	if (!cpsw->ale) {
++	if (IS_ERR(cpsw->ale)) {
+ 		dev_err(dev, "error initializing ale engine\n");
+-		return -ENODEV;
++		return PTR_ERR(cpsw->ale);
+ 	}
+ 
+ 	dma_params.dev		= dev;
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 9d6e27fb710e..28093923a7fb 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -3704,9 +3704,9 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 		ale_params.nu_switch_ale = true;
+ 	}
+ 	gbe_dev->ale = cpsw_ale_create(&ale_params);
+-	if (!gbe_dev->ale) {
++	if (IS_ERR(gbe_dev->ale)) {
+ 		dev_err(gbe_dev->dev, "error initializing ale engine\n");
+-		ret = -ENODEV;
++		ret = PTR_ERR(gbe_dev->ale);
+ 		goto free_sec_ports;
+ 	} else {
+ 		dev_dbg(gbe_dev->dev, "Created a gbe ale engine\n");
+-- 
+2.20.1
