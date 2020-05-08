@@ -1,34 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 04 May 2020 11:17:11 +0000
-Subject: Re: [v6] checkpatch: add support to check 'Fixes:' tag format
-Message-Id: <56a0219f-48c6-4b15-fd71-e8312079f7f2@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 May 2020 14:40:22 +0000
+Subject: [PATCH] firewire: Using uninitialized values in node_probe()
+Message-Id: <20200508144022.GB410645@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200504082002.GA29972@udknight>
- <38251b1f-e89b-7b3a-6045-f5ce1dc2596a@web.de>
- <20200504102242.GA13013@udknight>
-In-Reply-To: <20200504102242.GA13013@udknight>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wang YanQing <udknight@gmail.com>, Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux1394-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-> This feature is a side effect of missing right '")' detection, so I think
-> it is acceptable to add it.
+If fw_csr_string() returns -ENOENT, then "name" is uninitialized.  So
+then the "strlen(model_names[i]) <= name_len" is true because strlen()
+is unsigned and -ENOENT is type promoted to a very high positive value.
+Then the "strncmp(name, model_names[i], name_len)" uses uninitialized
+data because "name" is uninitialized.
 
-Will any more collateral evolution become helpful finally?
+Fixes: 92374e886c75 ("[media] firedtv: drop obsolete backend abstraction")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/media/firewire/firedtv-fw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-> But I agree with you, this patch is a little big,
-
-I find such a view also interesting.
-
-
-> I don't want to add more code into it.
-
-The software can be extended as usual depending on some factor.
-
-Will your contributions evolve into consistent patch series?
-
-Regards,
-Markus
+diff --git a/drivers/media/firewire/firedtv-fw.c b/drivers/media/firewire/firedtv-fw.c
+index 97144734eb052..3f1ca40b9b987 100644
+--- a/drivers/media/firewire/firedtv-fw.c
++++ b/drivers/media/firewire/firedtv-fw.c
+@@ -272,6 +272,8 @@ static int node_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
+ 
+ 	name_len = fw_csr_string(unit->directory, CSR_MODEL,
+ 				 name, sizeof(name));
++	if (name_len < 0)
++		return name_len;
+ 	for (i = ARRAY_SIZE(model_names); --i; )
+ 		if (strlen(model_names[i]) <= name_len &&
+ 		    strncmp(name, model_names[i], name_len) = 0)
+-- 
+2.26.2
