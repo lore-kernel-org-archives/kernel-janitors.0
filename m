@@ -1,61 +1,106 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 01 May 2020 10:27:10 +0000
-Subject: Re: [PATCH] ALSA: isa/wavefront: prevent out of bounds write in ioctl
-Message-Id: <s5himhghrwh.wl-tiwai@suse.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 08 May 2020 17:25:57 +0000
+Subject: [PATCH] net/sonic: Fix some resource leaks in error handling paths
+Message-Id: <20200508172557.218132-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200501094011.GA960082@mwanda>
-In-Reply-To: <20200501094011.GA960082@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Armijn Hemel <armijn@tjaldur.nl>, Allison Randal <allison@lohutok.net>
+To: davem@davemloft.net, fthain@telegraphics.com.au
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 01 May 2020 11:40:11 +0200,
-Dan Carpenter wrote:
-> 
-> The "header->number" comes from the ioctl and it needs to be clamped to
-> prevent out of bounds writes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A call to 'dma_alloc_coherent()' is hidden in 'sonic_alloc_descriptors()'.
 
-Applied now.  Thanks.
+This is correctly freed in the remove function, but not in the error
+handling path of the probe function.
+Fix it and add the missing 'dma_free_coherent()' call.
 
+While at it, rename a label in order to be slightly more informative and
+split some too long lines.
 
-Takashi
+This patch is similar to commit 10e3cc180e64 ("net/sonic: Fix a resource leak in an error handling path in 'jazz_sonic_probe()'")
+which was for 'jazzsonic.c'.
 
-> ---
-> This code predates git.
-> 
->  sound/isa/wavefront/wavefront_synth.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-> index c5b1d5900eed2..d6420d224d097 100644
-> --- a/sound/isa/wavefront/wavefront_synth.c
-> +++ b/sound/isa/wavefront/wavefront_synth.c
-> @@ -1171,7 +1171,10 @@ wavefront_send_alias (snd_wavefront_t *dev, wavefront_patch_info *header)
->  				      "alias for %d\n",
->  				      header->number,
->  				      header->hdr.a.OriginalSample);
-> -    
-> +
-> +	if (header->number >= WF_MAX_SAMPLE)
-> +		return -EINVAL;
-> +
->  	munge_int32 (header->number, &alias_hdr[0], 2);
->  	munge_int32 (header->hdr.a.OriginalSample, &alias_hdr[2], 2);
->  	munge_int32 (*((unsigned int *)&header->hdr.a.sampleStartOffset),
-> @@ -1202,6 +1205,9 @@ wavefront_send_multisample (snd_wavefront_t *dev, wavefront_patch_info *header)
->  	int num_samples;
->  	unsigned char *msample_hdr;
->  
-> +	if (header->number >= WF_MAX_SAMPLE)
-> +		return -EINVAL;
-> +
->  	msample_hdr = kmalloc(WF_MSAMPLE_BYTES, GFP_KERNEL);
->  	if (! msample_hdr)
->  		return -ENOMEM;
-> -- 
-> 2.26.2
-> 
+Suggested-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Only macsonic has been compile tested. I don't have the needed setup to
+compile xtsonic
+---
+ drivers/net/ethernet/natsemi/macsonic.c | 17 +++++++++++++----
+ drivers/net/ethernet/natsemi/xtsonic.c  |  7 +++++--
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/natsemi/macsonic.c b/drivers/net/ethernet/natsemi/macsonic.c
+index 1b5559aacb38..38d86c712bbc 100644
+--- a/drivers/net/ethernet/natsemi/macsonic.c
++++ b/drivers/net/ethernet/natsemi/macsonic.c
+@@ -506,10 +506,14 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
+ 
+ 	err = register_netdev(dev);
+ 	if (err)
+-		goto out;
++		goto undo_probe1;
+ 
+ 	return 0;
+ 
++undo_probe1:
++	dma_free_coherent(lp->device,
++			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
++			  lp->descriptors, lp->descriptors_laddr);
+ out:
+ 	free_netdev(dev);
+ 
+@@ -527,8 +531,9 @@ static int mac_sonic_platform_remove(struct platform_device *pdev)
+ 	struct sonic_local* lp = netdev_priv(dev);
+ 
+ 	unregister_netdev(dev);
+-	dma_free_coherent(lp->device, SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
+-	                  lp->descriptors, lp->descriptors_laddr);
++	dma_free_coherent(lp->device,
++			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
++			  lp->descriptors, lp->descriptors_laddr);
+ 	free_netdev(dev);
+ 
+ 	return 0;
+@@ -584,12 +589,16 @@ static int mac_sonic_nubus_probe(struct nubus_board *board)
+ 
+ 	err = register_netdev(ndev);
+ 	if (err)
+-		goto out;
++		goto undo_probe1;
+ 
+ 	nubus_set_drvdata(board, ndev);
+ 
+ 	return 0;
+ 
++undo_probe1:
++	dma_free_coherent(lp->device,
++			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
++			  lp->descriptors, lp->descriptors_laddr);
+ out:
+ 	free_netdev(ndev);
+ 	return err;
+diff --git a/drivers/net/ethernet/natsemi/xtsonic.c b/drivers/net/ethernet/natsemi/xtsonic.c
+index dda9ec7d9cee..a917f1a830fc 100644
+--- a/drivers/net/ethernet/natsemi/xtsonic.c
++++ b/drivers/net/ethernet/natsemi/xtsonic.c
+@@ -229,11 +229,14 @@ int xtsonic_probe(struct platform_device *pdev)
+ 	sonic_msg_init(dev);
+ 
+ 	if ((err = register_netdev(dev)))
+-		goto out1;
++		goto undo_probe1;
+ 
+ 	return 0;
+ 
+-out1:
++undo_probe1:
++	dma_free_coherent(lp->device,
++			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
++			  lp->descriptors, lp->descriptors_laddr);
+ 	release_region(dev->base_addr, SONIC_MEM_SIZE);
+ out:
+ 	free_netdev(dev);
+-- 
+2.25.1
