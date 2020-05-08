@@ -1,19 +1,26 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 31 May 2020 17:36:49 +0000
-Subject: Re: [PATCH 1/2] Coccinelle: extend memdup_user transformation with GFP_USER
-Message-Id: <2631dbba-f38c-02fd-6c20-e4fe7ed2c00f@web.de>
+Date: Fri, 08 May 2020 15:42:22 +0000
+Subject: Re: [PATCH v4] tools/bootconfig: Completion of error handling
+Message-Id: <839d6c0f-4c77-d8f4-3aff-c5762190c57e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
+In-Reply-To: <bdda096b-9f8a-dacb-9f89-9077d1288ad7@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Denis Efremov <efremov@linux.com>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yunfeng Ye <yeyunfeng@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-> Match GFP_USER allocations with memdup_user.cocci rule.
+…
+> +++ b/tools/bootconfig/main.c
+> @@ -314,31 +314,35 @@ int apply_xbc(const char *path, const char *xbc_path)
+…
+> +close_fd:
+>  	close(fd);
 
-Can this software extension help also for the clarification of the topic
-“Safer source code analysis by "memdup_user.cocci"”?
-https://github.com/coccinelle/coccinelle/issues/78
+Do analysis tools point any software development concerns out
+at this source code place?
+https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handle+standard+library+errors#ERR33-C.Detectandhandlestandardlibraryerrors-AutomatedDetection
 
 Regards,
 Markus
