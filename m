@@ -1,22 +1,36 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 09 May 2020 01:42:36 +0000
-Subject: Re: [PATCH net-next] nfp: abm: fix error return code in nfp_abm_vnic_alloc()
-Message-Id: <20200508184236.6229f2b7@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Date: Fri, 08 May 2020 07:34:56 +0000
+Subject: Re: [bug report] drm/xen-front: Add support for Xen PV display frontend
+Message-Id: <84a349ac-d162-48c6-afc1-38f1bbf49b75@epam.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508072735.61047-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200508072735.61047-1-weiyongjun1@huawei.com>
+References: <20200421104522.GA86681@mwanda>
+ <28cc7f7c-fe0a-fd06-d330-73531b818a79@epam.com> <20200421115112.GB2682@kadam>
+In-Reply-To: <20200421115112.GB2682@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Qiushi Wu <wu000273@umn.edu>, Jakub Kicinski <jakub.kicinski@netronome.com>, oss-drivers@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On Fri, 8 May 2020 07:27:35 +0000 Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the kzalloc() error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 174ab544e3bc ("nfp: abm: add cls_u32 offload for simple band classification")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-Applied, thanks!
+DQpPbiA0LzIxLzIwIDI6NTEgUE0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IEl0IHR1cm5zIG91
+dCB0aGVyZSBhcmVuJ3QgdGhhdCBtYW55IG9mIHRoZXNlIGluIHhlbi4NCj4NCj4gJCBncmVwIElT
+X0VSUl9PUl9OVUxMIGRyaXZlcnMvZ3B1L2RybS94ZW4vIC1Sbg0KPiBkcml2ZXJzL2dwdS9kcm0v
+eGVuL3hlbl9kcm1fZnJvbnRfa21zLmM6NjM6ICAgICBpZiAoSVNfRVJSX09SX05VTEwoZmIpKQ0K
+PiBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfZ2VtLmM6ODY6ICAgICBpZiAoSVNf
+RVJSX09SX05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9u
+dF9nZW0uYzoxMjA6ICAgIGlmIChJU19FUlJfT1JfTlVMTCh4ZW5fb2JqLT5wYWdlcykpIHsNCj4g
+ZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2dlbS5jOjEzOTogICAgaWYgKElTX0VS
+Ul9PUl9OVUxMKHhlbl9vYmopKQ0KPiBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRf
+Z2VtLmM6MTk3OiAgICBpZiAoSVNfRVJSX09SX05VTEwoeGVuX29iaikpDQo+IGRyaXZlcnMvZ3B1
+L2RybS94ZW4veGVuX2RybV9mcm9udC5jOjQwMzogICAgICAgIGlmIChJU19FUlJfT1JfTlVMTChv
+YmopKSB7DQo+DQo+IFRoZXkncmUgYWxsIHdyb25nLCBiZWNhdXNlIGlmIHRoZSBwb2ludGVyIHdh
+cyByZWFsbHkgTlVMTCB0aGVuIGl0J3MNCj4gbm90IGhhbmRsZWQgY29ycmVjdGx5IGFuZCB3b3Vs
+ZCBldmVudHVhbGx5IGxlYWQgdG8gYSBydW50aW1lIGZhaWx1cmUuDQoNCkl0IHNlZW1zIHRoYXQg
+eW91IHdlcmUgcmlnaHQgYW5kIEkgY2FuIHNpbXBseSBjaGFuZ2UgYWxsIElTX0VSUl9PUl9OVUxM
+IA0KdG8ganVzdCBJU19FUlINCg0KSSBhbSBwbGFubmluZyBhIHNlcmllcyBvZiBwYXRjaGVzIGxh
+dGVyIG9uLCBzbyBJJ2xsIGluY2x1ZGUgdGhpcyBmaXggYXMgd2VsbA0KDQo+DQo+IE5vcm1hbGx5
+IFNtYXRjaCBpcyBzbWFydCBlbm91Z2ggdG8ga25vdyB0aGF0IHRoZSBwb2ludGVyIGlzbid0IE5V
+TEwgc28NCj4gaXQgZG9lc24ndCBnZW5lcmF0ZSBhIHdhcm5pbmcgYnV0IHllc3RlcmRheSBJIGlu
+dHJvZHVjZWQgYSBidWcgaW4gU21hdGNoDQo+IGJ5IG1pc3Rha2UuICBJdCdzIGZpeGVkIG5vdy4N
+Cj4NCj4gcmVnYXJkcywNCj4gZGFuIGNhcnBlbnRlcg0KPg0KVGhhbmsgeW91LA0KDQpPbGVrc2Fu
+ZHINCg=
