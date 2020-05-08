@@ -1,26 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 May 2020 18:29:22 +0000
-Subject: Re: [PATCH] net: dsa: b53: remove redundant premature assignment to new_pvid
-Message-Id: <20200527.112922.1235278258146783650.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Fri, 08 May 2020 09:12:56 +0000
+Subject: [PATCH] powerpc/spufs: adjust list element pointer type
+Message-Id: <1588929176-28527-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527120129.172676-1-colin.king@canonical.com>
-In-Reply-To: <20200527120129.172676-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: f.fainelli@gmail.com, andrew@lunn.ch, vivien.didelot@gmail.com, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeremy Kerr <jk@ozlabs.org>
+Cc: Nic Volanschi <eugene.volanschi@inria.fr>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 27 May 2020 13:01:29 +0100
+Other uses of &gang->aff_list_head, eg in spufs_assert_affinity, indicate
+that the list elements have type spu_context, not spu as used here.  Change
+the type of tmp accordingly.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable new_pvid is being assigned with a value that is never read,
-> the following if statement updates new_pvid with a new value in both
-> of the if paths. The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This has no impact on the execution, because tmp is not used in the body of
+the loop.
 
-Applied to net-next, thanks.
+Fixes: c5fc8d2a92461 ("[CELL] cell: add placement computation for scheduling of affinity contexts")
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ arch/powerpc/platforms/cell/spufs/sched.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/cell/spufs/sched.c b/arch/powerpc/platforms/cell/spufs/sched.c
+index f18d5067cd0f..487fcb47f10d 100644
+--- a/arch/powerpc/platforms/cell/spufs/sched.c
++++ b/arch/powerpc/platforms/cell/spufs/sched.c
+@@ -344,8 +344,7 @@ static struct spu *aff_ref_location(struct spu_context *ctx, int mem_aff,
+ static void aff_set_ref_point_location(struct spu_gang *gang)
+ {
+ 	int mem_aff, gs, lowest_offset;
+-	struct spu_context *ctx;
+-	struct spu *tmp;
++	struct spu_context *tmp, *ctx;
+ 
+ 	mem_aff = gang->aff_ref_ctx->flags & SPU_CREATE_AFFINITY_MEM;
+ 	lowest_offset = 0;
