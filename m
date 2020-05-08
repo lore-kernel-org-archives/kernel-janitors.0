@@ -1,28 +1,37 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 08 May 2020 06:06:01 +0000
-Subject: Re: [PATCH -next] crypto: drbg - fix error return code in drbg_alloc_state()
-Message-Id: <20200508060601.GE24789@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 May 2020 22:58:10 +0000
+Subject: [PATCH] net: lio_core: remove redundant assignment to variable tx_done
+Message-Id: <20200508225810.484331-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200430081353.112449-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200430081353.112449-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <dchickles@marvell.com>, Satanand Burla <sburla@marvell.com>, Felix Manlunas <fmanlunas@marvell.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 30, 2020 at 08:13:53AM +0000, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the kzalloc error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: db07cd26ac6a ("crypto: drbg - add FIPS 140-2 CTRNG for noise source")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  crypto/drbg.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The variable tx_done is being assigned with a value that is never read
+as the function returns a few statements later.  The assignment is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/lio_core.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+index d7e805749a5b..e40c64b79f66 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+@@ -782,7 +782,6 @@ static int liquidio_napi_poll(struct napi_struct *napi, int budget)
+ 	if ((work_done < budget && tx_done) ||
+ 	    (iq && iq->pkt_in_done >= MAX_REG_CNT) ||
+ 	    (droq->pkt_count >= MAX_REG_CNT)) {
+-		tx_done = 1;
+ 		napi_complete_done(napi, work_done);
+ 
+ 		octeon_enable_irq(droq->oct_dev, droq->q_no);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
