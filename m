@@ -1,50 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 May 2020 14:48:18 +0000
-Subject: [PATCH] ALSA: cs5535audio: Fix a math error in cs5535audio_build_dma_packets()
-Message-Id: <20200508144818.GA411239@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 09 May 2020 08:05:48 +0000
+Subject: [PATCH -next] cxgb4/chcr: Fix error return code in chcr_ktls_dev_add()
+Message-Id: <20200509080548.118667-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaya Kumar <jayakumar.alsa@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Ayush Sawal <ayush.sawal@chelsio.com>, Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-We want to allocate enough space for CS5535AUDIO_MAX_DESCRIPTORS + 1
-elements and we also want the size to rounded up to PAGE_SIZE.  The
-"+ 1" is because we don't use the zeroeth element.
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-CS5535AUDIO_MAX_DESCRIPTORS is 128.  Each element is 8 bytes.  So it
-should be "(128 + 1) * 8 = 1032" but rounded up that becomes 4096.  In
-the original code, it did the "+ 1" after rounding up so so it allocated
-4097 bytes.  The DMA API will probably round this up to two pages.
-
-Fixes: 9b4ffa48ae85 ("[ALSA] Add support for the CS5535 Audio device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 34aba2c45024 ("cxgb4/chcr : Register to tls add and del callback")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- sound/pci/cs5535audio/cs5535audio_pcm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/chelsio/chcr_ktls.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
-index 4032b89b1fc1d..f6324636b355f 100644
---- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-+++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-@@ -100,7 +100,7 @@ static int snd_cs5535audio_playback_close(struct snd_pcm_substream *substream)
- }
+diff --git a/drivers/crypto/chelsio/chcr_ktls.c b/drivers/crypto/chelsio/chcr_ktls.c
+index 43d9e2420110..baaea8ce4080 100644
+--- a/drivers/crypto/chelsio/chcr_ktls.c
++++ b/drivers/crypto/chelsio/chcr_ktls.c
+@@ -501,12 +501,14 @@ static int chcr_ktls_dev_add(struct net_device *netdev, struct sock *sk,
+ 	dst = sk_dst_get(sk);
+ 	if (!dst) {
+ 		pr_err("DST entry not found\n");
++		ret = -ENOENT;
+ 		goto out2;
+ 	}
+ 	n = dst_neigh_lookup(dst, daaddr);
+ 	if (!n || !n->dev) {
+ 		pr_err("neighbour not found\n");
+ 		dst_release(dst);
++		ret = -ENOENT;
+ 		goto out2;
+ 	}
+ 	tx_info->l2te  = cxgb4_l2t_get(adap->l2t, n, n->dev, 0);
+@@ -516,6 +518,7 @@ static int chcr_ktls_dev_add(struct net_device *netdev, struct sock *sk,
  
- #define CS5535AUDIO_DESC_LIST_SIZE \
--	PAGE_ALIGN(CS5535AUDIO_MAX_DESCRIPTORS * sizeof(struct cs5535audio_dma_desc))
-+	PAGE_ALIGN((CS5535AUDIO_MAX_DESCRIPTORS + 1) * sizeof(struct cs5535audio_dma_desc))
- 
- static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
- 					 struct cs5535audio_dma *dma,
-@@ -118,7 +118,7 @@ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
- 	if (dma->desc_buf.area = NULL) {
- 		if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV,
- 					&cs5535au->pci->dev,
--					CS5535AUDIO_DESC_LIST_SIZE+1,
-+					CS5535AUDIO_DESC_LIST_SIZE,
- 					&dma->desc_buf) < 0)
- 			return -ENOMEM;
- 		dma->period_bytes = dma->periods = 0;
--- 
-2.26.2
+ 	if (!tx_info->l2te) {
+ 		pr_err("l2t entry not found\n");
++		ret = -ENOENT;
+ 		goto out2;
+ 	}
