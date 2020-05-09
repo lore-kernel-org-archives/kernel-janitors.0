@@ -1,34 +1,35 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Fri, 08 May 2020 19:38:22 +0000
-Subject: Re: [PATCH net-next v2] net: ethernet: ti: fix some return value check of cpsw_ale_create()
-Message-Id: <20200508123822.5324b74f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 09 May 2020 08:42:37 +0000
+Subject: [PATCH -next] remoteproc/mediatek: fix invalid use of sizeof in scp_ipi_init()
+Message-Id: <20200509084237.36293-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508021059.172001-1-weiyongjun1@huawei.com>
-        <20200508100649.1112-1-weiyongjun1@huawei.com>
-        <da50aa53-a967-83b7-0737-701ab30228e4@ti.com>
-In-Reply-To: <da50aa53-a967-83b7-0737-701ab30228e4@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "David S . Miller" <davem@davemloft.net>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, 8 May 2020 14:26:27 +0300 Grygorii Strashko wrote:
-> On 08/05/2020 13:06, Wei Yongjun wrote:
-> > cpsw_ale_create() can return both NULL and PTR_ERR(), but all of
-> > the caller only check NULL for error handling. This patch convert
-> > it to only return PTR_ERR() in all error cases, all the caller using
-> > IS_ERR() install of NULL test.
-> > 
-> > Also fix a return negative error code from the cpsw_ale_create()
-> > error handling case instead of 0 in am65_cpsw_nuss_probe().
-> > 
-> > Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
-> > Fixes: 4b41d3436796 ("net: ethernet: ti: cpsw: allow untagged traffic on host port")  
-> 
-> ^ I do not think it can be back-ported so far back.
-> So, or drop second "Fixes: 4b41d3436796"
-> or split am65-cpsw-nuss.c changes
+sizeof() when applied to a pointer typed expression gives the
+size of the pointer, not that of the pointed data.
 
-Please also tag this commit with [net] not [net-next], 
-AFAICS the problem is present in Linus's tree.
+Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/remoteproc/mtk_scp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 2bead57c9cf9..ac13e7b046a6 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -132,8 +132,8 @@ static int scp_ipi_init(struct mtk_scp *scp)
+ 		(struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
+ 	scp->send_buf  		(struct mtk_share_obj __iomem *)(scp->sram_base + send_offset);
+-	memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
+-	memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
++	memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
++	memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+ 
+ 	return 0;
+ }
