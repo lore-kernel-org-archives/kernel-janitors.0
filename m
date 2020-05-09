@@ -1,28 +1,25 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 12 May 2020 12:04:45 +0000
-Subject: Re: [PATCH -next v2] drm/mcde: dsi: Fix return value check in mcde_dsi_bind()
-Message-Id: <CACRpkda2-EHn3BrMtGoTV4uax6G0JJekEjnnLL1FT+2YQFawTQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 09 May 2020 08:00:13 +0000
+Subject: Re: [PATCH 1/4] fs: btrfs: fix a data race in btrfs_block_group_done()
+Message-Id: <ce41cc75-ee89-61fe-ef7d-6d527ea56e5a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200428141459.87624-1-weiyongjun1@huawei.com>
- <20200430073145.52321-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200430073145.52321-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>
 
-On Thu, Apr 30, 2020 at 9:30 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> To fix this race, the spinlock cache->lock is used to protect the
+> access to cache->cached in btrfs_block_group_done().
 
-> The of_drm_find_bridge() function returns NULL on error, it doesn't return
-> error pointers so this check doesn't work.
->
-> Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 - > v2: add fixes and fix the subject
+How do you think about to replace this wording by a variant like the following?
 
-Already applied v1, no big deal anyways, its a nonurgent fix.
+   Thus use the spin lock “cache->lock” to protect the access to
+   the data structure member “cached” in the implementation of
+   the function “btrfs_block_group_done”.
 
-Yours,
-Linus Walleij
+
+Would you like to add the tag “Fixes” to the change description?
+
+Regards,
+Markus
