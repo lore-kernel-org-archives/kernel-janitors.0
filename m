@@ -1,42 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 May 2020 18:01:51 +0000
-Subject: Re: [PATCH resend] scsi: lpfc: Fix a use after free in lpfc_nvme_unsol_ls_handler()
-Message-Id: <20200520180151.GE30374@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 09 May 2020 21:57:55 +0000
+Subject: [PATCH] net: usb: qmi_wwan: remove redundant assignment to variable status
+Message-Id: <20200509215756.506840-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <yq1y2purqt1.fsf@oracle.com> <20200515101903.GJ3041@kadam>
- <20200520165557.GA9700@infradead.org>
- <20200520172433.GD30374@kadam>
- <20200520172844.GA21006@infradead.org>
- <yq1y2pmtsv7.fsf@ca-mkp.ca.oracle.com>
- <20200520173752.GA13546@infradead.org>
- <yq1sgfutsjd.fsf@ca-mkp.ca.oracle.com>
- <20200520174800.GA13253@infradead.org>
- <4693662b-60de-388e-d67f-722eabbba475@broadcom.com>
-In-Reply-To: <4693662b-60de-388e-d67f-722eabbba475@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Dick Kennedy <dick.kennedy@broadcom.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.ibm.com>, kernel-janitors@vger.kernel.org, linux-nvme@lists.infradead.org, Christoph Hellwig <hch@infradead.org>, Paul Ely <paul.ely@broadcom.com>, Hannes Reinecke <hare@suse.de>
+To: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 20, 2020 at 10:51:48AM -0700, James Smart wrote:
-> On 5/20/2020 10:48 AM, Christoph Hellwig wrote:
-> > On Wed, May 20, 2020 at 01:39:55PM -0400, Martin K. Petersen wrote:
-> > > Christoph,
-> > > 
-> > > > I'll pick it up.  Can you give me an ACK for it to show Jens you are
-> > > > ok with that?
-> > > Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > Thanks,
-> > 
-> > applied to nvme-5.8.
-> 
-> Guess you didn't see Dan's response - we had replied, and Dick rejected it.
-> Dick has created a new patch that I'll be posting shortly.
+From: Colin Ian King <colin.king@canonical.com>
 
-Gar....  I'm sorry I have two mail boxes, one for kernel-janitors and
-one for my own email address.  I guess his email never made it to the
-lists.  I did get it on my other email box though.
+The variable status is being initializeed with a value that is never read
+and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/usb/qmi_wwan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 4bb8552a00d3..b0eab6e5279d 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -719,7 +719,7 @@ static int qmi_wwan_change_dtr(struct usbnet *dev, bool on)
+ 
+ static int qmi_wwan_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+-	int status = -1;
++	int status;
+ 	u8 *buf = intf->cur_altsetting->extra;
+ 	int len = intf->cur_altsetting->extralen;
+ 	struct usb_interface_descriptor *desc = &intf->cur_altsetting->desc;
+-- 
+2.25.1
