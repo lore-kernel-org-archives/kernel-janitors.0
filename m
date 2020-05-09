@@ -1,22 +1,41 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 09 May 2020 05:23:15 +0000
-Subject: Re: [PATCH net-next] octeontx2-vf: Fix error return code in otx2vf_probe()
-Message-Id: <20200508222315.3b672eeb@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 09 May 2020 02:58:28 +0000
+Subject: [PATCH -next] interconnect: imx: Fix return value check in imx_icc_node_init_qos()
+Message-Id: <20200509030214.14435-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508021519.179062-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200508021519.179062-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>, Tomasz Duszynski <tduszynski@marvell.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Georgi Djakov <georgi.djakov@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Alexandre Bailon <abailon@baylibre.com>, Leonard Crestez <leonard.crestez@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, Hulk Robot <hulkci@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 
-On Fri, 8 May 2020 02:15:19 +0000 Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the alloc failed error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 3184fb5ba96e ("octeontx2-vf: Virtual function driver support")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+In case of error, the function of_parse_phandle() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-Applied, thank you!
+Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/interconnect/imx/imx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/interconnect/imx/imx.c b/drivers/interconnect/imx/imx.c
+index 6884212511f0..ac420f86008e 100644
+--- a/drivers/interconnect/imx/imx.c
++++ b/drivers/interconnect/imx/imx.c
+@@ -90,10 +90,10 @@ static int imx_icc_node_init_qos(struct icc_provider *provider,
+ 			node->name, node->id);
+ 	} else {
+ 		dn = of_parse_phandle(dev->of_node, adj->phandle_name, 0);
+-		if (IS_ERR(dn)) {
+-			dev_warn(dev, "Failed to parse %s: %ld\n",
+-				 adj->phandle_name, PTR_ERR(dn));
+-			return PTR_ERR(dn);
++		if (!dn) {
++			dev_warn(dev, "Failed to parse %s\n",
++				 adj->phandle_name);
++			return -ENODEV;
+ 		}
+ 		/* Allow scaling to be disabled on a per-node basis */
+ 		if (!dn || !of_device_is_available(dn)) {
