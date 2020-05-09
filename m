@@ -1,52 +1,41 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 09 May 2020 02:04:02 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 09 May 2020 06:15:18 +0000
 Subject: Re: [PATCH] net/sonic: Fix some resource leaks in error handling paths
-Message-Id: <20200508190402.76018e90@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+Message-Id: <b7651b26-ac1e-6281-efb2-7eff0018b158@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200508172557.218132-1-christophe.jaillet@wanadoo.fr>
-        <20200508175701.4eee970d@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <alpine.LNX.2.22.394.2005091143590.8@nippy.intranet>
-In-Reply-To: <alpine.LNX.2.22.394.2005091143590.8@nippy.intranet>
+In-Reply-To: <20200508172557.218132-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Finn Thain <fthain@telegraphics.com.au>, Jakub Kicinski <kuba@kernel.org>
 
-On Sat, 9 May 2020 11:57:44 +1000 (AEST) Finn Thain wrote:
-> On Fri, 8 May 2020, Jakub Kicinski wrote:
-> > On Fri,  8 May 2020 19:25:57 +0200 Christophe JAILLET wrote:  
-> > > Only macsonic has been compile tested. I don't have the needed setup to
-> > > compile xtsonic  
-> > 
-> > Well, we gotta do that before we apply the patch :S
-> >   
-> 
-> I've compiled xtsonic.c with this patch.
-> 
-> > Does the driver actually depend on some platform stuff,  
-> 
-> xtsonic.c looks portable enough but it has some asm includes that I 
-> haven't looked at. It is really a question for the arch maintainers.
+> While at it, rename a label in order to be slightly more informative and
+> split some too long lines.
 
-I see.
+Would you like to add the tag “Fixes” to the change description?
 
-> >  or can we do this:
-> > 
-> > diff --git a/drivers/net/ethernet/natsemi/Kconfig b/drivers/net/ethernet/natsemi/Kconfig
-> > @@ -58,7 +58,7 @@ config NS83820
-> >  
-> >  config XTENSA_XT2000_SONIC
-> >         tristate "Xtensa XT2000 onboard SONIC Ethernet support"
-> > -       depends on XTENSA_PLATFORM_XT2000
-> > +       depends on XTENSA_PLATFORM_XT2000 || COMPILE_TEST
-> >         ---help---
-> >           This is the driver for the onboard card of the Xtensa XT2000 board.
-> >  
-> > ?
-> >   
-> 
-> That's effectively what I did to compile test xtsonic.c (I removed the 
-> line to get the same effect).
 
-Thank you, that should do!
+…
+> +++ b/drivers/net/ethernet/natsemi/macsonic.c
+> @@ -506,10 +506,14 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
+>
+>  	err = register_netdev(dev);
+>  	if (err)
+> -		goto out;
+> +		goto undo_probe1;
+>
+>  	return 0;
+>
+> +undo_probe1:
+> +	dma_free_coherent(lp->device,
+> +			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
+> +			  lp->descriptors, lp->descriptors_laddr);
+>  out:
+…
+
+How do you think about the possibility to use the label “free_dma”?
+
+Regards,
+Markus
