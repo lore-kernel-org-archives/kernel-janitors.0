@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 09 May 2020 21:57:55 +0000
+Date: Sat, 09 May 2020 21:57:56 +0000
 Subject: [PATCH] net: usb: qmi_wwan: remove redundant assignment to variable status
-Message-Id: <20200509215756.506840-1-colin.king@canonical.com>
+Message-Id: <20200509215756.506840-2-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200509215756.506840-1-colin.king@canonical.com>
+In-Reply-To: <20200509215756.506840-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
