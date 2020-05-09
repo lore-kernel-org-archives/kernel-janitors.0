@@ -1,34 +1,54 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 09 May 2020 23:41:30 +0000
+From: Finn Thain <fthain@telegraphics.com.au>
+Date: Sat, 09 May 2020 23:45:04 +0000
 Subject: Re: [PATCH] net/sonic: Fix some resource leaks in error handling paths
-Message-Id: <1870db200ffa03e3fce935b5e35e4562989d2dcf.camel@perches.com>
+Message-Id: <alpine.LNX.2.22.394.2005100922240.11@nippy.intranet>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50ef36cd-d095-9abe-26ea-d363d11ce521@wanadoo.fr>
-         <20200509111321.51419b19@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-         <fc5cf8da8e70ebb981a9fc3aec6834c74197f0ed.camel@perches.com>
-         <20200509.163217.1372289149714306397.davem@davemloft.net>
-In-Reply-To: <20200509.163217.1372289149714306397.davem@davemloft.net>
+References: <b7651b26-ac1e-6281-efb2-7eff0018b158@web.de>
+In-Reply-To: <b7651b26-ac1e-6281-efb2-7eff0018b158@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: kuba@kernel.org, christophe.jaillet@wanadoo.fr, fthain@telegraphics.com.au, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
 
-On Sat, 2020-05-09 at 16:32 -0700, David Miller wrote:
-> From: Joe Perches <joe@perches.com>
-> Date: Sat, 09 May 2020 15:42:36 -0700
+On Sat, 9 May 2020, Markus Elfring wrote:
+
+> > While at it, rename a label in order to be slightly more informative and
+> > split some too long lines.
 > 
-> > David, maybe I missed some notification about Jakub's role.
-> > 
-> > What is Jakub's role in relation to the networking tree?
+> Would you like to add the tag 'Fixes' to the change description?
 > 
-> He is the co-maintainer of the networking tree and you should respect
-> his actions and feedback as if it were coming from me.
 
-If he's committing drivers then presumably then
-he should be added to this section as well.
+Sorry but I don't follow your reasoning here. Are you saying that this 
+needs to be pushed out to -stable branches? If so, stable-kernel-rules.rst 
+would seem to disagree as the bug is theoretical and isn't bothering 
+people.
 
-NETWORKING DRIVERS
-M:	"David S. Miller" <davem@davemloft.net>
-L:	netdev@vger.kernel.org
-S:	Odd Fixes
+Is there a way to add a Fixes tag that would not invoke the -stable 
+process? And was that what you had in mind?
+
+> 
+> > +++ b/drivers/net/ethernet/natsemi/macsonic.c
+> > @@ -506,10 +506,14 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
+> >
+> >  	err = register_netdev(dev);
+> >  	if (err)
+> > -		goto out;
+> > +		goto undo_probe1;
+> >
+> >  	return 0;
+> >
+> > +undo_probe1:
+> > +	dma_free_coherent(lp->device,
+> > +			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
+> > +			  lp->descriptors, lp->descriptors_laddr);
+> >  out:
+> How do you think about the possibility to use the label 'free_dma'?
+
+I think 'undo_probe1' is both descriptive and consistent with commit 
+10e3cc180e64 ("net/sonic: Fix a resource leak in an error handling path in 
+'jazz_sonic_probe()'").
+
+Your suggestion, 'free_dma' is also good. But coming up with good 
+alternatives is easy. If every good alternative would be considered there 
+would be no obvious way to get a patch merged.
