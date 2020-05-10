@@ -1,17 +1,18 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Date: Sat, 09 May 2020 13:22:54 +0000
+From: Jiri Kosina <jikos@kernel.org>
+Date: Sun, 10 May 2020 21:51:04 +0000
 Subject: Re: [PATCH] MAINTAINERS: adjust to livepatch .klp.arch removal
-Message-Id: <bfe91b2d-e319-bf12-6a15-4f200d0e8ea4@linux.vnet.ibm.com>
+Message-Id: <nycvar.YFH.7.76.2005102350050.25812@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200509073258.5970-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20200509073258.5970-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5/9/20 1:02 PM, Lukas Bulwahn wrote:
+On Sat, 9 May 2020, Lukas Bulwahn wrote:
+
 > Commit 1d05334d2899 ("livepatch: Remove .klp.arch") removed
 > arch/x86/kernel/livepatch.c, but missed to adjust the LIVE PATCHING entry
 > in MAINTAINERS.
@@ -21,38 +22,15 @@ On 5/9/20 1:02 PM, Lukas Bulwahn wrote:
 >   warning: no file matches  F:  arch/x86/kernel/livepatch.c
 > 
 > So, drop that obsolete file entry in MAINTAINERS.
-
-Patch looks good to me,  you probably want to add following architecture
-specific livepatching header files to the list:
-
-arch/s390/include/asm/livepatch.h
-arch/powerpc/include/asm/livepatch.h
-
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Jiri, please take this minor non-urgent patch for livepatching/for-next.
-> Peter, please ack.
-> 
-> applies cleanly on next-20200508
-> 
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 92657a132417..642f55c4b556 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9909,7 +9909,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.g
->  F:	Documentation/ABI/testing/sysfs-kernel-livepatch
->  F:	Documentation/livepatch/
->  F:	arch/x86/include/asm/livepatch.h
-> -F:	arch/x86/kernel/livepatch.c
->  F:	include/linux/livepatch.h
->  F:	kernel/livepatch/
->  F:	samples/livepatch/
-> 
 
+I've added
+
+	Fixes: 1d05334d2899 ("livepatch: Remove .klp.arch")
+
+and applied, thanks.
 
 -- 
-Kamalesh
+Jiri Kosina
+SUSE Labs
