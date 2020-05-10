@@ -1,29 +1,52 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 08 May 2020 00:04:15 +0000
-Subject: Re: [PATCH][next] RDMA/mlx5: remove duplicated assignment to variable rcqe_sz
-Message-Id: <20200508000415.GA5704@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 May 2020 09:53:03 +0000
+Subject: [PATCH] extcon: adc-jack: Fix an error handling path in 'adc_jack_probe()'
+Message-Id: <20200510095303.231635-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507151610.52636-1-colin.king@canonical.com>
-In-Reply-To: <20200507151610.52636-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: myungjoo.ham@samsung.com, cw00.choi@samsung.com, anish198519851985@gmail.com, gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, May 07, 2020 at 04:16:10PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable rcqe_sz is being unnecessarily assigned twice, fix this
-> by removing one of the duplicates.
-> 
-> Addresses-Coverity: ("Evaluation order violation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Leon Romanovsky <leonro@mellanox.com>
-> ---
->  drivers/infiniband/hw/mlx5/qp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+In some error handling paths, a call to 'iio_channel_get()' is not balanced
+by a corresponding call to 'iio_channel_release()'.
 
-Applied to for-next, thanks
+This can be achieved easily by using the devm_ variant of
+'iio_channel_get()'.
 
-Jason
+This has the extra benefit to simplify the remove function.
+
+Fixes: 19939860dcae ("extcon: adc_jack: adc-jack driver to support 3.5 pi or simliar devices")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch in a more complete version than commit 5a696d9760fe
+("extcon: adc-jack: Release IIO channel on driver remove") which fixed the
+issue for the remove function only.
+---
+ drivers/extcon/extcon-adc-jack.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc-jack.c
+index ad02dc6747a4..0317b614b680 100644
+--- a/drivers/extcon/extcon-adc-jack.c
++++ b/drivers/extcon/extcon-adc-jack.c
+@@ -124,7 +124,7 @@ static int adc_jack_probe(struct platform_device *pdev)
+ 	for (i = 0; data->adc_conditions[i].id != EXTCON_NONE; i++);
+ 	data->num_conditions = i;
+ 
+-	data->chan = iio_channel_get(&pdev->dev, pdata->consumer_channel);
++	data->chan = devm_iio_channel_get(&pdev->dev, pdata->consumer_channel);
+ 	if (IS_ERR(data->chan))
+ 		return PTR_ERR(data->chan);
+ 
+@@ -164,7 +164,6 @@ static int adc_jack_remove(struct platform_device *pdev)
+ 
+ 	free_irq(data->irq, data);
+ 	cancel_work_sync(&data->handler.work);
+-	iio_channel_release(data->chan);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
