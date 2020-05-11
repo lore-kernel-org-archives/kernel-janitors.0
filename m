@@ -1,23 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 May 2020 03:24:22 +0000
-Subject: Re: [PATCH] net: moxa: Fix a potential double 'free_irq()'
-Message-Id: <20200430.202422.549223229334559883.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 11 May 2020 07:54:56 +0000
+Subject: Re: [PATCH v2] net/sonic: Fix some resource leaks in error handling paths
+Message-Id: <f9a2c71b-e001-d546-64cd-8a904ae881ca@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200426205921.47714-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200426205921.47714-1-christophe.jaillet@wanadoo.fr>
+References: <3eaa58c16dcf313ff7cb873dcff21659b0ea037d.1589158098.git.fthain@telegraphics.com.au>
+In-Reply-To: <3eaa58c16dcf313ff7cb873dcff21659b0ea037d.1589158098.git.fthain@telegraphics.com.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jonas.jensen@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Finn Thain <fthain@telegraphics.com.au>, "David S. Miller" <davem@davemloft.net>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, netdev@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?Thomas_Bogend=c3=b6rfer?= <tsbogend@alpha.franken.de>, Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Apr 2020 22:59:21 +0200
+> Changed since v1:
+>  - Improved commit log slightly.
+>  - Changed 'undo_probe1' to 'undo_probe' where appropriate.
 
-> Should an irq requested with 'devm_request_irq' be released explicitly,
-> it should be done by 'devm_free_irq()', not 'free_irq()'.
-> 
-> Fixes: 6c821bd9edc9 ("net: Add MOXA ART SoCs ethernet driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I find this response interesting.
 
-Applied, thank you.
+
+> ---
+
+I suggest to replace these triple dashes by a blank line.
+
+
+>  drivers/net/ethernet/natsemi/macsonic.c | 17 +++++++++++++----
+>  drivers/net/ethernet/natsemi/xtsonic.c  |  7 +++++--
+
+I imagine that this change combination will need further clarification
+because David Miller provided the information “Applied, thanks.” on 2020-04-27.
+
+net/sonic: Fix a resource leak in an error handling path in 'jazz_sonic_probe()'
+https://lore.kernel.org/patchwork/comment/1426045/
+https://lkml.org/lkml/2020/4/27/1014
+
+
+…
+> +++ b/drivers/net/ethernet/natsemi/xtsonic.c
+> @@ -229,11 +229,14 @@ int xtsonic_probe(struct platform_device *pdev)
+>  	sonic_msg_init(dev);
+>
+>  	if ((err = register_netdev(dev)))
+> -		goto out1;
+> +		goto undo_probe1;
+>
+>  	return 0;
+>
+> -out1:
+> +undo_probe1:
+> +	dma_free_coherent(lp->device,
+> +			  SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
+> +			  lp->descriptors, lp->descriptors_laddr);
+>  	release_region(dev->base_addr, SONIC_MEM_SIZE);
+>  out:
+…
+
+Can it be nicer to use the label “free_dma”?
+
+Regards,
+Markus
