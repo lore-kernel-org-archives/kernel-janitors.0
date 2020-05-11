@@ -1,45 +1,41 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 18 May 2020 17:11:16 +0000
-Subject: Re: [PATCH][next] i2c: mediatek: fix integer overflow on an integer multiplication
-Message-Id: <06434e4d5980b17a1cacee80369087cbd7a8cbe0.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 May 2020 18:37:42 +0000
+Subject: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
+Message-Id: <20200511183742.GB225608@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200518165529.57821-1-colin.king@canonical.com>
- <20200518165928.GA5109@ninjato>
-In-Reply-To: <20200518165928.GA5109@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@kernel.org>, Colin King <colin.king@canonical.com>, qii.wang@mediatek.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-i2c@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Zhu Yanjun <yanjunz@mellanox.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2020-05-18 at 18:59 +0200, Wolfram Sang wrote:
-> On Mon, May 18, 2020 at 05:55:29PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the calculation of sample_ns is using a 32 bit integer
-> > multiplication and can potentially overflow. Fix this by making the
-> > constant a long long to use a 64 bit multiply and hence
-> > avoid an overflow.
-> > 
-> > Addresses-Coverity: ("Unintentional integer overflow")
-> > Fixes: 5f1ae73d538a ("i2c: mediatek: Add i2c ac-timing adjust support")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> CCing the patch author.
-> 
-> > ---
-> >  drivers/i2c/busses/i2c-mt65xx.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> > index 702061805925..c93492b997ce 100644
-> > --- a/drivers/i2c/busses/i2c-mt65xx.c
-> > +++ b/drivers/i2c/busses/i2c-mt65xx.c
-> > @@ -551,7 +551,7 @@ static int mtk_i2c_check_ac_timing(struct mtk_i2c *i2c,
-> >  	const struct i2c_spec_values *spec;
-> >  	unsigned int su_sta_cnt, low_cnt, high_cnt, max_step_cnt;
-> >  	unsigned int sda_max, sda_min, clk_ns, max_sta_cnt = 0x3f;
-> > -	long long sample_ns = (1000000000 * (sample_cnt + 1)) / clk_src;
-> > +	long long sample_ns = (1000000000LL * (sample_cnt + 1)) / clk_src;
+This function used to always return -EINVAL but we updated it to try
+preserve the error codes.  Unfortunately the copy_to_user() is returning
+the number of bytes remaining to be copied instead of a negative error
+code.
 
-unsigned long long?
+Fixes: a3a974b4654d ("RDMA/rxe: Always return ERR_PTR from rxe_create_mmap_info()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/sw/rxe/rxe_queue.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_queue.c b/drivers/infiniband/sw/rxe/rxe_queue.c
+index fef2ab5112de5..245040c3a35d0 100644
+--- a/drivers/infiniband/sw/rxe/rxe_queue.c
++++ b/drivers/infiniband/sw/rxe/rxe_queue.c
+@@ -50,9 +50,10 @@ int do_mmap_info(struct rxe_dev *rxe, struct mminfo __user *outbuf,
+ 			goto err1;
+ 		}
+ 
+-		err = copy_to_user(outbuf, &ip->info, sizeof(ip->info));
+-		if (err)
++		if (copy_to_user(outbuf, &ip->info, sizeof(ip->info))) {
++			err = -EFAULT;
+ 			goto err2;
++		}
+ 
+ 		spin_lock_bh(&rxe->pending_lock);
+ 		list_add(&ip->pending_mmaps, &rxe->pending_mmaps);
+-- 
+2.26.2
