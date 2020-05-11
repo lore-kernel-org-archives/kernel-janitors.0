@@ -1,7 +1,7 @@
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 07 May 2020 21:52:12 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Date: Mon, 11 May 2020 14:15:20 +0000
 Subject: Re: [PATCH v2 RESEND] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Message-Id: <20200507215212.GA6603@bogus>
+Message-Id: <20200511141508.GA27249@e121166-lin.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200506052130.5780-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20200506052130.5780-1-lukas.bulwahn@gmail.com>
@@ -9,9 +9,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-pci@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed,  6 May 2020 07:21:30 +0200, Lukas Bulwahn wrote:
+On Wed, May 06, 2020 at 07:21:30AM +0200, Lukas Bulwahn wrote:
 > Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
 > controller") includes a new entry in MAINTAINERS, but slipped in a typo in
 > one of the file entries.
@@ -45,6 +45,24 @@ On Wed,  6 May 2020 07:21:30 +0200, Lukas Bulwahn wrote:
 > 
 >  MAINTAINERS | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to pci/misc, thanks !
+
+Lorenzo
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e64e5db31497..0fd27329e6f7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12941,7 +12941,7 @@ L:	linux-pci@vger.kernel.org
+>  L:	linux-arm-kernel@lists.infradead.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> -F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
+> +F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+>  
+>  PCI DRIVER FOR RENESAS R-CAR
+>  M:	Marek Vasut <marek.vasut+renesas@gmail.com>
+> -- 
+> 2.17.1
+> 
