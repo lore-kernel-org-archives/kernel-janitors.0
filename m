@@ -1,45 +1,119 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 11 May 2020 17:45:03 +0000
-Subject: Re: [PATCH -next] remoteproc/mediatek: fix invalid use of sizeof in scp_ipi_init()
-Message-Id: <CANLsYkxn2QAHgGtmygbw4x-kmrzo2R5u3XDmDUz5EVAYg=SQyQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 May 2020 18:37:04 +0000
+Subject: [PATCH] mm/hmm/test: Fix some copy_to_user() error handling
+Message-Id: <20200511183704.GA225608@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200509084237.36293-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200509084237.36293-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, kernel-janitors@vger.kernel.org, Erin Lo <erin.lo@mediatek.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Hulk Robot <hulkci@huawei.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Ralph Campbell <rcampbell@nvidia.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-On Sat, 9 May 2020 at 02:38, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
->
-> Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 2bead57c9cf9..ac13e7b046a6 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -132,8 +132,8 @@ static int scp_ipi_init(struct mtk_scp *scp)
->                 (struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
->         scp->send_buf >                 (struct mtk_share_obj __iomem *)(scp->sram_base + send_offset);
-> -       memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
-> -       memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
-> +       memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
-> +       memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+The copy_to_user() function returns the number of bytes which weren't
+copied but we want to return negative error codes.  Also in dmirror_write()
+if the copy_from_user() fails then there is some cleanup needed before
+we can return so I fixed that as well.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 5d5e54be8a1e3 ("mm/hmm/test: add selftest driver for HMM")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/test_hmm.c | 41 +++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
 
->
->         return 0;
->  }
->
->
->
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index 00bca6116f930..fd4889f7b3d90 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -360,9 +360,11 @@ static int dmirror_read(struct dmirror *dmirror, struct hmm_dmirror_cmd *cmd)
+ 		cmd->faults++;
+ 	}
+ 
+-	if (ret = 0)
+-		ret = copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
+-					bounce.size);
++	if (ret = 0) {
++		if (copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
++				 bounce.size))
++			ret = -EFAULT;
++	}
+ 	cmd->cpages = bounce.cpages;
+ 	dmirror_bounce_fini(&bounce);
+ 	return ret;
+@@ -412,10 +414,11 @@ static int dmirror_write(struct dmirror *dmirror, struct hmm_dmirror_cmd *cmd)
+ 	ret = dmirror_bounce_init(&bounce, start, size);
+ 	if (ret)
+ 		return ret;
+-	ret = copy_from_user(bounce.ptr, u64_to_user_ptr(cmd->ptr),
+-				bounce.size);
+-	if (ret)
+-		return ret;
++	if (copy_from_user(bounce.ptr, u64_to_user_ptr(cmd->ptr),
++			   bounce.size)) {
++		ret = -EFAULT;
++		goto fini;
++	}
+ 
+ 	while (1) {
+ 		mutex_lock(&dmirror->mutex);
+@@ -431,6 +434,7 @@ static int dmirror_write(struct dmirror *dmirror, struct hmm_dmirror_cmd *cmd)
+ 		cmd->faults++;
+ 	}
+ 
++fini:
+ 	cmd->cpages = bounce.cpages;
+ 	dmirror_bounce_fini(&bounce);
+ 	return ret;
+@@ -715,9 +719,11 @@ static int dmirror_migrate(struct dmirror *dmirror,
+ 	mutex_lock(&dmirror->mutex);
+ 	ret = dmirror_do_read(dmirror, start, end, &bounce);
+ 	mutex_unlock(&dmirror->mutex);
+-	if (ret = 0)
+-		ret = copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
+-					bounce.size);
++	if (ret = 0) {
++		if (copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
++				 bounce.size))
++			ret = -EFAULT;
++	}
+ 	cmd->cpages = bounce.cpages;
+ 	dmirror_bounce_fini(&bounce);
+ 	return ret;
+@@ -886,9 +892,10 @@ static int dmirror_snapshot(struct dmirror *dmirror,
+ 			break;
+ 
+ 		n = (range.end - range.start) >> PAGE_SHIFT;
+-		ret = copy_to_user(uptr, perm, n);
+-		if (ret)
++		if (copy_to_user(uptr, perm, n)) {
++			ret = -EFAULT;
+ 			break;
++		}
+ 
+ 		cmd->cpages += n;
+ 		uptr += n;
+@@ -911,9 +918,8 @@ static long dmirror_fops_unlocked_ioctl(struct file *filp,
+ 	if (!dmirror)
+ 		return -EINVAL;
+ 
+-	ret = copy_from_user(&cmd, uarg, sizeof(cmd));
+-	if (ret)
+-		return ret;
++	if (copy_from_user(&cmd, uarg, sizeof(cmd)))
++		return -EFAULT;
+ 
+ 	if (cmd.addr & ~PAGE_MASK)
+ 		return -EINVAL;
+@@ -946,7 +952,10 @@ static long dmirror_fops_unlocked_ioctl(struct file *filp,
+ 	if (ret)
+ 		return ret;
+ 
+-	return copy_to_user(uarg, &cmd, sizeof(cmd));
++	if (copy_to_user(uarg, &cmd, sizeof(cmd)))
++		return -EFAULT;
++
++	return 0;
+ }
+ 
+ static const struct file_operations dmirror_fops = {
+-- 
+2.26.2
