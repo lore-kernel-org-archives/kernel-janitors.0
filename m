@@ -1,41 +1,33 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Wed, 13 May 2020 21:09:16 +0000
-Subject: Re: [PATCH] xfs: fix error code in xfs_iflush_cluster()
-Message-Id: <20200513210916.GF2040@dread.disaster.area>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 May 2020 08:37:23 +0000
+Subject: [PATCH] Crypto/chcr: drop refcount on error path in chcr_aead_op()
+Message-Id: <20200512083723.GB251760@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200513094803.GF347693@mwanda>
- <20200513132904.GE44225@bfoster>
- <20200513133905.GB3041@kadam>
- <20200513151754.GC1984748@magnolia>
-In-Reply-To: <20200513151754.GC1984748@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Brian Foster <bfoster@redhat.com>, linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ayush Sawal <ayush.sawal@chelsio.com>, Devulapally Shiva Krishna <shiva@chelsio.com>
+Cc: Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 13, 2020 at 08:17:54AM -0700, Darrick J. Wong wrote:
-> On Wed, May 13, 2020 at 04:39:05PM +0300, Dan Carpenter wrote:
-> > Oh yeah.  You're right.  This patch isn't correct.  Sorry about that.
-> > 
-> > I worry that there are several static analyzer's which will warn about
-> > this code...
-> 
-> /me wonders if this particular instance ought to have a breadcrumb to
-> remind future readers that we can handle the lack of memory, e.g.
-> 
-> cilist = kmem_alloc(..., KM_MAYFAIL...);
-> if (!cilist) {
-> 	/* memory is tight, so defer the inode cluster flush */
-> 	goto out_put;
-> }
+We need to drop inflight counter before returning on this error path.
 
-I'm working on patches that make this memory allocation go away
-altogether, so I'd suggest just ignoring it for now.
+Fixes: d91a3159e8d9 ("Crypto/chcr: fix gcm-aes and rfc4106-gcm failed tests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers,
-
-Dave.
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 83ddc2b39490e..e05998a1c0148 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -3744,6 +3744,7 @@ static int chcr_aead_op(struct aead_request *req,
+ 	    crypto_ipsec_check_assoclen(req->assoclen) != 0) {
+ 		pr_err("RFC4106: Invalid value of assoclen %d\n",
+ 		       req->assoclen);
++		chcr_dec_wrcount(cdev);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.26.2
