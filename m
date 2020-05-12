@@ -1,18 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 May 2020 18:37:42 +0000
-Subject: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
-Message-Id: <20200511183742.GB225608@mwanda>
+From: Yanjun Zhu <yanjunz@mellanox.com>
+Date: Tue, 12 May 2020 01:12:38 +0000
+Subject: RE: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
+Message-Id: <AM6PR05MB6263ECA5663A63A9CC825145D8BE0@AM6PR05MB6263.eurprd05.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200511183742.GB225608@mwanda>
+In-Reply-To: <20200511183742.GB225608@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhu Yanjun <yanjunz@mellanox.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-This function used to always return -EINVAL but we updated it to try
-preserve the error codes.  Unfortunately the copy_to_user() is returning
-the number of bytes remaining to be copied instead of a negative error
-code.
+Does this "err = -EFAULT;" make any sense in your commit?
+
+Zhu Yanjun
+
+-----Original Message-----
+From: Dan Carpenter <dan.carpenter@oracle.com> 
+Sent: Tuesday, May 12, 2020 2:38 AM
+To: Yanjun Zhu <yanjunz@mellanox.com>; Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Doug Ledford <dledford@redhat.com>; Jason Gunthorpe <jgg@ziepe.ca>; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
+
+This function used to always return -EINVAL but we updated it to try preserve the error codes.  Unfortunately the copy_to_user() is returning the number of bytes remaining to be copied instead of a negative error code.
 
 Fixes: a3a974b4654d ("RDMA/rxe: Always return ERR_PTR from rxe_create_mmap_info()")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
@@ -37,5 +47,5 @@ index fef2ab5112de5..245040c3a35d0 100644
  
  		spin_lock_bh(&rxe->pending_lock);
  		list_add(&ip->pending_mmaps, &rxe->pending_mmaps);
--- 
+--
 2.26.2
