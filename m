@@ -1,29 +1,38 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Tue, 12 May 2020 08:31:07 +0000
-Subject: Re: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
-Message-Id: <20200512083107.GI4814@unreal>
+From: Yanjun Zhu <yanjunz@mellanox.com>
+Date: Tue, 12 May 2020 08:33:57 +0000
+Subject: RE: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
+Message-Id: <AM6PR05MB62630AC146F51635E181AA44D8BE0@AM6PR05MB6263.eurprd05.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200511183742.GB225608@mwanda>
- <20200512062936.GE4814@unreal>
- <20200512070203.GG4814@unreal>
- <20200512081706.GJ9365@kadam>
-In-Reply-To: <20200512081706.GJ9365@kadam>
+References: <20200511183742.GB225608@mwanda> <20200512062936.GE4814@unreal>
+ <20200512070203.GG4814@unreal> <20200512081706.GJ9365@kadam>
+ <20200512083107.GI4814@unreal>
+In-Reply-To: <20200512083107.GI4814@unreal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Zhu Yanjun <yanjunz@mellanox.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Leon Romanovsky <leon@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Doug Ledford <dledford@redhat.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+
+
+-----Original Message-----
+From: Leon Romanovsky <leon@kernel.org> 
+Sent: Tuesday, May 12, 2020 4:31 PM
+To: Dan Carpenter <dan.carpenter@oracle.com>; Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Yanjun Zhu <yanjunz@mellanox.com>; Sudip Mukherjee <sudipm.mukherjee@gmail.com>; Doug Ledford <dledford@redhat.com>; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
 
 On Tue, May 12, 2020 at 11:17:06AM +0300, Dan Carpenter wrote:
 > On Tue, May 12, 2020 at 10:02:03AM +0300, Leon Romanovsky wrote:
 > > On Tue, May 12, 2020 at 09:29:36AM +0300, Leon Romanovsky wrote:
 > > > On Mon, May 11, 2020 at 09:37:42PM +0300, Dan Carpenter wrote:
-> > > > This function used to always return -EINVAL but we updated it to try
-> > > > preserve the error codes.  Unfortunately the copy_to_user() is returning
-> > > > the number of bytes remaining to be copied instead of a negative error
-> > > > code.
+> > > > This function used to always return -EINVAL but we updated it to 
+> > > > try preserve the error codes.  Unfortunately the copy_to_user() 
+> > > > is returning the number of bytes remaining to be copied instead 
+> > > > of a negative error code.
 > > > >
-> > > > Fixes: a3a974b4654d ("RDMA/rxe: Always return ERR_PTR from rxe_create_mmap_info()")
+> > > > Fixes: a3a974b4654d ("RDMA/rxe: Always return ERR_PTR from 
+> > > > rxe_create_mmap_info()")
 > > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > > > ---
 > > > >  drivers/infiniband/sw/rxe/rxe_queue.c | 5 +++--
@@ -37,11 +46,15 @@ On Tue, May 12, 2020 at 11:17:06AM +0300, Dan Carpenter wrote:
 > >
 > > Thanks
 >
-> I don't know if the code you guys are looking at is older or newer than
-> linux-next...  :P
+> I don't know if the code you guys are looking at is older or newer 
+> than linux-next...  :P
 
-We both looked on rdma-next, but the wrong code was added to -rc.
+> We both looked on rdma-next, but the wrong code was added to -rc.
 
-Jason, that patch was marked as stable@.
+Yes. I agree with you.
+
+Zhu Yanjun
+
+> Jason, that patch was marked as stable@.
 
 Thanks
