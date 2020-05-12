@@ -1,65 +1,123 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 May 2020 12:52:09 +0000
-Subject: Re: [PATCH] drm/amdgpu: off by on in amdgpu_device_attr_create_groups() error handling
-Message-Id: <20200520125209.GP3041@kadam>
+Date: Tue, 12 May 2020 17:47:06 +0000
+Subject: [PATCH v2] evm: Fix a small race in init_desc()
+Message-Id: <20200512174706.GA298379@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200520120054.GB172354@mwanda>
- <62d9d539-8401-233a-3f20-984042489987@gmail.com>
-In-Reply-To: <62d9d539-8401-233a-3f20-984042489987@gmail.com>
+In-Reply-To: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: christian.koenig@amd.com
-Cc: David Airlie <airlied@linux.ie>, Kevin Wang <kevin1.wang@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, Rui Huang <ray.huang@amd.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Yintian Tao <yttao@amd.com>, Evan Quan <evan.quan@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Dmitry Kasatkin <dmitry.kasatkin@nokia.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 20, 2020 at 02:05:19PM +0200, Christian K=F6nig wrote:
-> Am 20.05.20 um 14:00 schrieb Dan Carpenter:
-> > This loop in the error handling code should start a "i - 1" and end at
-> > "i =3D 0".  Currently it starts a "i" and ends at "i =3D 1".  The result
-> > is that it removes one attribute that wasn't created yet, and leaks the
-> > zeroeth attribute.
-> >=20
-> > Fixes: 4e01847c38f7 ("drm/amdgpu: optimize amdgpu device attribute code=
-")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_pm.c
-> > index b75362bf0742..ee4a8e44fbeb 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-> > @@ -1931,7 +1931,7 @@ static int amdgpu_device_attr_create_groups(struc=
-t amdgpu_device *adev,
-> >   					    uint32_t mask)
-> >   {
-> >   	int ret =3D 0;
-> > -	uint32_t i =3D 0;
-> > +	int i;
-> >   	for (i =3D 0; i < counts; i++) {
-> >   		ret =3D amdgpu_device_attr_create(adev, &attrs[i], mask);
-> > @@ -1942,9 +1942,8 @@ static int amdgpu_device_attr_create_groups(struc=
-t amdgpu_device *adev,
-> >   	return 0;
-> >   failed:
-> > -	for (; i > 0; i--) {
-> > +	while (--i >=3D 0)
->=20
-> As far as I know the common idiom for this is while (i--) which even works
-> without changing the type of i to signed.
+This patch avoids a kernel panic due to accessing an error pointer set by
+crypto_alloc_shash(). It occurs especially when there are many files that
+require an unsupported algorithm, as it would increase the likelihood of
+the following race condition.
 
-It's about 50/50, one way or the other.  To me --i >=3D 0 seems far more
-readable.
+Imagine we have two threads and in the first thread crypto_alloc_shash()
+fails and returns an error pointer.
 
-I've been trying to figure out which tool tells people to make iterators
-unsigned so I can help them avoid it.  :/  I understand how in theory
-iterators could go above INT_MAX but if we're going above INT_MAX then
-probably we should use a 64 bit type.  There are very few times where 2
-billion iterations is not enough but in those situations probably 4
-billion is not enough either.  So unsigned int iterators never or seldom
-solve real life bugs but they regularly cause them.
+		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+		if (IS_ERR(*tfm)) {
+			rc = PTR_ERR(*tfm); <--- FIRST THREAD HERE!
+			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+			*tfm = NULL;
 
-regards,
-dan carpenter
+And the second thread is here:
+
+	if (*tfm = NULL) {  <--- SECOND THREAD HERE!
+		mutex_lock(&mutex);
+		if (*tfm)
+			goto out;
+
+Since "*tfm" is non-NULL, we assume that it is valid and that leads to
+a crash when it dereferences "*tfm".
+
+	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+                                                             ^^^^
+
+This patch fixes the problem by introducing a temporary "tmp_tfm" and
+only setting "*tfm" at the very end after everything has succeeded.  The
+other change is that I reversed the initial "if (!*tfm) {" condition and
+pull the code in one indent level.
+
+Cc: stable@vger.kernel.org
+Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reported-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I folded mine patch together with Roberto's
+
+ security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 35682852ddea9..c9f7206591b30 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+ 	const char *algo;
+-	struct crypto_shash **tfm;
++	struct crypto_shash **tfm, *tmp_tfm;
+ 	struct shash_desc *desc;
+ 
+ 	if (type = EVM_XATTR_HMAC) {
+@@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ 		algo = hash_algo_name[hash_algo];
+ 	}
+ 
+-	if (*tfm = NULL) {
+-		mutex_lock(&mutex);
+-		if (*tfm)
+-			goto out;
+-		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+-		if (IS_ERR(*tfm)) {
+-			rc = PTR_ERR(*tfm);
+-			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+-			*tfm = NULL;
++	if (*tfm)
++		goto alloc;
++	mutex_lock(&mutex);
++	if (*tfm)
++		goto unlock;
++
++	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
++	if (IS_ERR(tmp_tfm)) {
++		pr_err("Can not allocate %s (reason: %ld)\n", algo,
++		       PTR_ERR(tmp_tfm));
++		mutex_unlock(&mutex);
++		return ERR_CAST(tmp_tfm);
++	}
++	if (type = EVM_XATTR_HMAC) {
++		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
++		if (rc) {
++			crypto_free_shash(tmp_tfm);
+ 			mutex_unlock(&mutex);
+ 			return ERR_PTR(rc);
+ 		}
+-		if (type = EVM_XATTR_HMAC) {
+-			rc = crypto_shash_setkey(*tfm, evmkey, evmkey_len);
+-			if (rc) {
+-				crypto_free_shash(*tfm);
+-				*tfm = NULL;
+-				mutex_unlock(&mutex);
+-				return ERR_PTR(rc);
+-			}
+-		}
+-out:
+-		mutex_unlock(&mutex);
+ 	}
+-
++	*tfm = tmp_tfm;
++unlock:
++	mutex_unlock(&mutex);
++alloc:
+ 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+ 			GFP_KERNEL);
+ 	if (!desc)
+-- 
+2.26.2
