@@ -1,54 +1,48 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Wed, 13 May 2020 14:53:47 +0000
-Subject: Re: [PATCH -next] gnss: sirf: fix error return code in sirf_probe()
-Message-Id: <20200513145347.GX25962@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 May 2020 17:07:19 +0000
+Subject: [PATCH][next] pstore/zone,blk: fix dereference of pointer before it has been null checked
+Message-Id: <20200512170719.221514-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507094252.13914-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200507094252.13914-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, WeiXiong Liao <liaoweixiong@allwinnertech.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 07, 2020 at 09:42:52AM +0000, Wei Yongjun wrote:
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: d2efbbd18b1e ("gnss: add driver for sirfstar-based receivers")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gnss/sirf.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-> index effed3a8d398..2ecb1d3e8eeb 100644
-> --- a/drivers/gnss/sirf.c
-> +++ b/drivers/gnss/sirf.c
-> @@ -439,14 +439,18 @@ static int sirf_probe(struct serdev_device *serdev)
->  
->  	data->on_off = devm_gpiod_get_optional(dev, "sirf,onoff",
->  			GPIOD_OUT_LOW);
-> -	if (IS_ERR(data->on_off))
-> +	if (IS_ERR(data->on_off)) {
-> +		ret = PTR_ERR(data->on_off);
->  		goto err_put_device;
-> +	}
->  
->  	if (data->on_off) {
->  		data->wakeup = devm_gpiod_get_optional(dev, "sirf,wakeup",
->  				GPIOD_IN);
-> -		if (IS_ERR(data->wakeup))
-> +		if (IS_ERR(data->wakeup)) {
-> +			ret = PTR_ERR(data->wakeup);
->  			goto err_put_device;
-> +		}
->  
->  		ret = regulator_enable(data->vcc);
->  		if (ret)
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch! Now applied with a stable tag as this would lead to a
-use-after-free on driver unbind.
+Currently the assignment of ctx dereferences pointer 'record' before
+the pointer has been null checked. Fix this by only making this
+dereference after it has been null checked close to the point ctx
+is to be used.
 
-Johan
+Addresses-Coverity: ("Dereference before null check")
+Fixes: bb4ccd1e6f56 ("pstore/zone,blk: Add ftrace frontend support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/pstore/zone.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
+index bd8e194110fc..c5bf3b9f644f 100644
+--- a/fs/pstore/zone.c
++++ b/fs/pstore/zone.c
+@@ -998,7 +998,7 @@ static ssize_t psz_kmsg_read(struct pstore_zone *zone,
+ static ssize_t psz_ftrace_read(struct pstore_zone *zone,
+ 		struct pstore_record *record)
+ {
+-	struct psz_context *cxt = record->psi->data;
++	struct psz_context *cxt;
+ 	struct psz_buffer *buf;
+ 	int ret;
+ 
+@@ -1018,6 +1018,7 @@ static ssize_t psz_ftrace_read(struct pstore_zone *zone,
+ 		return ret;
+ 
+ out:
++	cxt = record->psi->data;
+ 	if (cxt->ftrace_read_cnt < cxt->ftrace_max_cnt)
+ 		/* then, read next ftrace zone */
+ 		return -ENOMSG;
+-- 
+2.25.1
