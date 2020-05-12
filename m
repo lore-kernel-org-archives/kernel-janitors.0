@@ -1,54 +1,99 @@
-From: =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>
-Date: Tue, 12 May 2020 09:03:16 +0000
-Subject: Re: [PATCH] staging: wfx: unlock on error path
-Message-Id: <2556639.E3UUflA7rB@pc-42>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 May 2020 13:19:17 +0000
+Subject: [PATCH] evm: Fix a small race in init_desc()
+Message-Id: <20200512131917.GA287386@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512083656.GA251760@mwanda>
-In-Reply-To: <20200512083656.GA251760@mwanda>
+In-Reply-To: <20200512130410.GB2056@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tuesday 12 May 2020 10:36:56 CEST Dan Carpenter wrote:
->=20
-> We need to release the tx_lock on the error path before returning.
->=20
-> Fixes: d1c015b4ef6f ("staging: wfx: rewrite wfx_hw_scan()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  Not tested.
->=20
->  drivers/staging/wfx/scan.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/wfx/scan.c b/drivers/staging/wfx/scan.c
-> index 76761e4960dd7..eff1be9fb28f8 100644
-> --- a/drivers/staging/wfx/scan.c
-> +++ b/drivers/staging/wfx/scan.c
-> @@ -57,8 +57,10 @@ static int send_scan_req(struct wfx_vif *wvif,
->         wvif->scan_abort =3D false;
->         reinit_completion(&wvif->scan_complete);
->         timeout =3D hif_scan(wvif, req, start_idx, i - start_idx);
-> -       if (timeout < 0)
-> +       if (timeout < 0) {
-> +               wfx_tx_unlock(wvif->wdev);
->                 return timeout;
-> +       }
->         ret =3D wait_for_completion_timeout(&wvif->scan_complete, timeout=
-);
->         if (req->channels[start_idx]->max_power !=3D wvif->vif->bss_conf.=
-txpower)
->                 hif_set_output_power(wvif, wvif->vif->bss_conf.txpower);
-> --
-> 2.26.2
->=20
->=20
+The IS_ERR_OR_NULL() function has two conditions and if we got really
+unlucky we could hit a race where "ptr" started as an error pointer and
+then was set to NULL.  Both conditions would be false even though the
+pointer at the end was NULL.
 
-Good catch!
+This patch fixes the problem by ensuring that "*tfm" can only be NULL
+or valid.  I have introduced a "tmp_tfm" variable to make that work.  I
+also reversed a condition and pulled the code in one tab.
 
-Reviewed-by: J=E9r=F4me Pouiller <jerome.pouiller@silabs.com>
+Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
+Fixes: 53de3b080d5e: "evm: Check also if *tfm is an error pointer in init_desc()"
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I just had a go at the fix.  I'm not super wedded to this solution, but
+I hoped it was nice.
 
---=20
-J=E9r=F4me Pouiller
+ security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 5d3789edab71f..168c3b78ac47b 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+ 	const char *algo;
+-	struct crypto_shash **tfm;
++	struct crypto_shash **tfm, *tmp_tfm;
+ 	struct shash_desc *desc;
+ 
+ 	if (type = EVM_XATTR_HMAC) {
+@@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ 		algo = hash_algo_name[hash_algo];
+ 	}
+ 
+-	if (IS_ERR_OR_NULL(*tfm)) {
+-		mutex_lock(&mutex);
+-		if (*tfm)
+-			goto out;
+-		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+-		if (IS_ERR(*tfm)) {
+-			rc = PTR_ERR(*tfm);
+-			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+-			*tfm = NULL;
++	if (*tfm)
++		goto alloc;
++	mutex_lock(&mutex);
++	if (*tfm)
++		goto unlock;
++
++	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
++	if (IS_ERR(tmp_tfm)) {
++		pr_err("Can not allocate %s (reason: %ld)\n", algo,
++		       PTR_ERR(tmp_tfm));
++		mutex_unlock(&mutex);
++		return ERR_CAST(tmp_tfm);
++	}
++	if (type = EVM_XATTR_HMAC) {
++		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
++		if (rc) {
++			crypto_free_shash(tmp_tfm);
+ 			mutex_unlock(&mutex);
+ 			return ERR_PTR(rc);
+ 		}
+-		if (type = EVM_XATTR_HMAC) {
+-			rc = crypto_shash_setkey(*tfm, evmkey, evmkey_len);
+-			if (rc) {
+-				crypto_free_shash(*tfm);
+-				*tfm = NULL;
+-				mutex_unlock(&mutex);
+-				return ERR_PTR(rc);
+-			}
+-		}
+-out:
+-		mutex_unlock(&mutex);
+ 	}
+-
++	*tfm = tmp_tfm;
++unlock:
++	mutex_unlock(&mutex);
++alloc:
+ 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+ 			GFP_KERNEL);
+ 	if (!desc)
+-- 
+2.26.2
