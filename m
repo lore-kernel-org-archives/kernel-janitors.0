@@ -1,38 +1,37 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 28 May 2020 07:48:56 +0000
-Subject: [PATCH] mt76: mt7615: Use kmemdup in mt7615_queue_key_update()
-Message-Id: <20200528074856.118279-1-yuehaibing@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 May 2020 18:22:53 +0000
+Subject: [PATCH][next] fs: remove redundant assignment to variable ret
+Message-Id: <20200512182253.223249-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, Kalle
- Valo <kvalo@codeaurora.org>, Jakub Kicinski <kuba@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The variable ret is being assigned a value that is never read and it
+is being updated later with a new value. The assignment is redundant
+and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt7615/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-index 2e9e9d3519d7..c32f06c85f0f 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-@@ -289,12 +289,11 @@ mt7615_queue_key_update(struct mt7615_dev *dev, enum set_key_cmd cmd,
- 	wd->type = MT7615_WTBL_KEY_DESC;
- 	wd->sta = msta;
- 
--	wd->key.key = kzalloc(key->keylen, GFP_KERNEL);
-+	wd->key.key = kmemdup(key->key, key->keylen, GFP_KERNEL);
- 	if (!wd->key.key) {
- 		kfree(wd);
- 		return -ENOMEM;
- 	}
--	memcpy(wd->key.key, key->key, key->keylen);
- 	wd->key.cipher = key->cipher;
- 	wd->key.keyidx = key->keyidx;
- 	wd->key.keylen = key->keylen;
+diff --git a/fs/super.c b/fs/super.c
+index b0a511bef4a0..6674c2af26ef 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -2052,7 +2052,6 @@ SYSCALL_DEFINE5(watch_sb,
+ 		if (drop_s_count)
+ 			put_super(s);
+ 	} else {
+-		ret = -EBADSLT;
+ 		down_write(&s->s_umount);
+ 		ret = remove_watch_from_object(s->s_watchers, wqueue,
+ 					       s->s_unique_id, false);
+-- 
+2.25.1
