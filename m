@@ -1,35 +1,54 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 08 May 2020 16:42:05 +0000
-Subject: Re: [v3] tools/bootconfig: fix resource leak in apply_xbc()
-Message-Id: <dbfae758-c516-dca1-5511-9618510e49e8@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 May 2020 17:38:01 +0000
+Subject: [PATCH][next] pstore/zone: remove redundant initializations to variable ret
+Message-Id: <20200512173801.222666-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3569aa33-8963-966d-9247-ec79b3b3d56d@huawei.com>
- <5e2c3348-f346-e3f2-9c7c-5c4135f9b38c@web.de>
- <559edb00-a03b-747e-8ba7-1f16285deefb@huawei.com>
- <65057e82-8002-4ec4-b714-25ac8d05cb68@web.de>
- <938cd0e9-d96b-766c-cfbc-4f0b73d97cd4@huawei.com>
- <20200508090053.430d28d7@gandalf.local.home> <20200508144527.GR1992@kadam>
- <20200508111449.575d176c@gandalf.local.home>
-In-Reply-To: <20200508111449.575d176c@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Dan Carpenter <dan.carpenter@oracle.com>, Yunfeng Ye <yeyunfeng@huawei.com>, Masami Hiramatsu <mhiramat@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
+To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> There was actually a bug in v2.  It exits with a non-zero instead of
->> zero on success so it will mess up people's scripts.
->
-> Thanks, I just fixed it. And because of the distraction of Markus's
-> bikesheding, it was missed :-(
+From: Colin Ian King <colin.king@canonical.com>
 
-I am curious how the software development attention will evolve further.
-tools/bootconfig: Fix apply_xbc() to return zero on success
-https://lore.kernel.org/lkml/20200508111349.3b599bde@gandalf.local.home/
-https://lore.kernel.org/patchwork/patch/1239092/
-https://lkml.org/lkml/2020/5/8/1342
+The variable rc is being initialized with a value that is never read and it
+is being updated later with a new value.  The initialization is redundant
+and can be removed.  In one of the cases, ret can also be moved inside a
+for-loop to reduce the scope.
 
-Will additional change possibilities be taken into account?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/pstore/zone.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
+index 3cf7d6762c76..419de481c69c 100644
+--- a/fs/pstore/zone.c
++++ b/fs/pstore/zone.c
+@@ -600,7 +600,7 @@ static int psz_recover_zones(struct psz_context *cxt,
+  */
+ static inline int psz_recovery(struct psz_context *cxt)
+ {
+-	int ret = -EBUSY;
++	int ret;
+ 
+ 	if (atomic_read(&cxt->recovered))
+ 		return 0;
+@@ -746,13 +746,13 @@ static void psz_write_kmsg_hdr(struct pstore_zone *zone,
+ static inline int notrace psz_kmsg_write_record(struct psz_context *cxt,
+ 		struct pstore_record *record)
+ {
+-	int ret = -EBUSY;
+ 	size_t size, hlen;
+ 	struct pstore_zone *zone;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < cxt->kmsg_max_cnt; i++) {
+ 		unsigned int zonenum, len;
++		int ret;
+ 
+ 		zonenum = (cxt->kmsg_write_cnt + i) % cxt->kmsg_max_cnt;
+ 		zone = cxt->kpszs[zonenum];
+-- 
+2.25.1
