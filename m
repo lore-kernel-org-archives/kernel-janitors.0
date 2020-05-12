@@ -1,27 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 May 2020 20:06:10 +0000
-Subject: Re: [net-next] net:enetc: bug fix for qos sfi operate space after freed
-Message-Id: <20200507.130610.2218488895332459354.davem@davemloft.net>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 12 May 2020 05:21:01 +0000
+Subject: MAINTAINERS: Wrong ordering in VIRTIO BALLOON
+Message-Id: <alpine.DEB.2.21.2005120717260.3701@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507105738.29961-1-Po.Liu@nxp.com>
-In-Reply-To: <20200507105738.29961-1-Po.Liu@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Po.Liu@nxp.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, dan.carpenter@oracle.com, claudiu.manoil@nxp.com
+To: David Hildenbrand <david@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Po Liu <Po.Liu@nxp.com>
-Date: Thu,  7 May 2020 18:57:38 +0800
+Hi David,
 
-> 'Dan Carpenter' reported:
-> This code frees "sfi" and then dereferences it on the next line:
->>                 kfree(sfi);
->>                 clear_bit(sfi->index, epsfp.psfp_sfi_bitmap);
-> 
-> This "sfi->index" should be "index".
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Po Liu <Po.Liu@nxp.com>
+with your commit 6d6b93b9afd8 ("MAINTAINERS: Add myself as virtio-balloon 
+co-maintainer"), visible on next-20200508, ./scripts/checkpatch.pl -f 
+MAINTAINERS complains:
 
-Applied.
+WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic order
+#17982: FILE: MAINTAINERS:17982:
++F:	include/uapi/linux/virtio_balloon.h
++F:	include/linux/balloon_compaction.h
+
+This is due to wrong ordering of the entries in your submission. If you 
+would like me to send you a patch fixing that, please just let me know.
+
+It is a recent addition to checkpatch.pl to report ordering problems in 
+MAINTAINERS, so you might have not seen that at submission time.
+
+
+Best regards,
+
+Lukas
