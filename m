@@ -1,29 +1,44 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 10 May 2020 09:55:57 +0000
-Subject: Re: [PATCH] iio: sca3000: Remove an erroneous get_device() call in sca3000_read_data()
-Message-Id: <20200510105557.716fa742@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 May 2020 17:13:55 +0000
+Subject: [PATCH][next] sfc: fix dereference of table before it is null checked
+Message-Id: <20200512171355.221810-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6e972e9b-c799-f0ad-91ac-144640b463f6@web.de>
-In-Reply-To: <6e972e9b-c799-f0ad-91ac-144640b463f6@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Thomas Gleixner <tglx@linutronix.de>
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Edward Cree <ecree@solarflare.com>, Martin Habets <mhabets@solarflare.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 6 May 2020 17:30:06 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> > This looks really unusual to have a 'get_device()' hidden in a 'dev_err()' call.  
-> 
-> Is there a need to prevent similar function calls by the means of
-> advanced source code analysis?
+Currently pointer table is being dereferenced on a null check of
+table->must_restore_filters before it is being null checked, leading
+to a potential null pointer dereference issue.  Fix this by null
+checking table before dereferencing it when checking for a null
+table->must_restore_filters.
 
-It's a seriously stupid bug so I'd have thought unlikely to
-occur often enough to be worth it.
+Addresses-Coverity: ("Dereference before null check")
+Fixes: e4fe938cff04 ("sfc: move 'must restore' flags out of ef10-specific nic_data")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/sfc/mcdi_filters.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Jonathan
-
-> 
-> Regards,
-> Markus
+diff --git a/drivers/net/ethernet/sfc/mcdi_filters.c b/drivers/net/ethernet/sfc/mcdi_filters.c
+index 88de95a8c08c..455a62814fb9 100644
+--- a/drivers/net/ethernet/sfc/mcdi_filters.c
++++ b/drivers/net/ethernet/sfc/mcdi_filters.c
+@@ -1369,10 +1369,7 @@ void efx_mcdi_filter_table_restore(struct efx_nic *efx)
+ 
+ 	WARN_ON(!rwsem_is_locked(&efx->filter_sem));
+ 
+-	if (!table->must_restore_filters)
+-		return;
+-
+-	if (!table)
++	if (!table || !table->must_restore_filters)
+ 		return;
+ 
+ 	down_write(&table->lock);
+-- 
+2.25.1
