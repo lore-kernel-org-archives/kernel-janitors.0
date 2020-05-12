@@ -1,34 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 May 2020 18:43:06 +0000
-Subject: Re: [PATCH -next] bus: mhi: core: Fix some error return code
-Message-Id: <20200511184306.GI9365@kadam>
+Date: Tue, 12 May 2020 18:19:09 +0000
+Subject: [PATCH] scsi: lpfc: Fix a use after free in lpfc_nvme_unsol_ls_handler()
+Message-Id: <20200512181909.GA299091@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200509075654.175002-1-weiyongjun1@huawei.com>
- <20200511103124.GA12753@mani>
- <78d3f7d7be1849138df7dcf9d49177b5@bfs.de>
-In-Reply-To: <78d3f7d7be1849138df7dcf9d49177b5@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, Hemant Kumar <hemantk@codeaurora.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sujeev Dias <sdias@codeaurora.org>, Siddartha Mohanadoss <smohanad@codeaurora.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+To: James Smart <james.smart@broadcom.com>
+Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>, Paul Ely <paul.ely@broadcom.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 11, 2020 at 02:26:10PM +0000, Walter Harms wrote:
-> Hello guys,
-> some nitpicking ...
-> the prefered kernalstyle is:
-> 
-> if (condition)
->    set error_code
->    do something
-> 
-> from what i can see it is
-> 
->  set error_code
->       if (condition)
+The "axchg" pointer is dereferenced when we call the
+lpfc_nvme_unsol_ls_issue_abort() function.  It can't be either freed or
+NULL.
 
-There isn't a prefered style.  Both are accepted.  Most people have a
-personal preference, but there isn't an official preference.
+Fixes: 3a8070c567aa ("lpfc: Refactor NVME LS receive handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/lpfc/lpfc_sli.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 38889cb6e1996..fcf51b4192d66 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -2895,14 +2895,14 @@ lpfc_nvme_unsol_ls_handler(struct lpfc_hba *phba, struct lpfc_iocbq *piocb)
+ 			(phba->nvmet_support) ? "T" : "I", ret);
+ 
+ out_fail:
+-	kfree(axchg);
+-
+ 	/* recycle receive buffer */
+ 	lpfc_in_buf_free(phba, &nvmebuf->dbuf);
+ 
+ 	/* If start of new exchange, abort it */
+-	if (fctl & FC_FC_FIRST_SEQ && !(fctl & FC_FC_EX_CTX))
++	if (axchg && (fctl & FC_FC_FIRST_SEQ) && !(fctl & FC_FC_EX_CTX))
+ 		lpfc_nvme_unsol_ls_issue_abort(phba, axchg, sid, oxid);
++
++	kfree(axchg);
+ }
+ 
+ /**
+-- 
+2.26.2
