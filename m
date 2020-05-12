@@ -1,37 +1,39 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 06 May 2020 17:20:32 +0000
-Subject: Re: MAINTAINERS: Wrong ordering in DYNAMIC INTERRUPT MODERATION
-Message-Id: <20200506102032.32b0f9a3@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 May 2020 08:36:56 +0000
+Subject: [PATCH] staging: wfx: unlock on error path
+Message-Id: <20200512083656.GA251760@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.21.2005060749590.7719@felia>
-In-Reply-To: <alpine.DEB.2.21.2005060749590.7719@felia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Joe Perches <joe@perches.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 6 May 2020 07:51:36 +0200 (CEST) Lukas Bulwahn wrote:
-> Hi Jakub,
-> 
-> with your commit 9b038086f06b ("docs: networking: convert DIM to RST"), 
-> visible on next-20200505, ./scripts/checkpatch.pl -f MAINTAINERS 
-> complains:
-> 
-> WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic order
-> #5966: FILE: MAINTAINERS:5966:
-> +F:	lib/dim/
-> +F:	Documentation/networking/net_dim.rst
-> 
-> This is due to wrong ordering of the entries in your submission. If you 
-> would like me to send you a patch fixing that, please just let me know.
+We need to release the tx_lock on the error path before returning.
 
-Please do, thank you!
+Fixes: d1c015b4ef6f ("staging: wfx: rewrite wfx_hw_scan()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Not tested.
 
-> It is a recent addition to checkpatch.pl to report ordering problems in 
-> MAINTAINERS, so you might have not seen that at submission time.
-> 
-> 
-> Best regards,
-> 
-> Lukas
+ drivers/staging/wfx/scan.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wfx/scan.c b/drivers/staging/wfx/scan.c
+index 76761e4960dd7..eff1be9fb28f8 100644
+--- a/drivers/staging/wfx/scan.c
++++ b/drivers/staging/wfx/scan.c
+@@ -57,8 +57,10 @@ static int send_scan_req(struct wfx_vif *wvif,
+ 	wvif->scan_abort = false;
+ 	reinit_completion(&wvif->scan_complete);
+ 	timeout = hif_scan(wvif, req, start_idx, i - start_idx);
+-	if (timeout < 0)
++	if (timeout < 0) {
++		wfx_tx_unlock(wvif->wdev);
+ 		return timeout;
++	}
+ 	ret = wait_for_completion_timeout(&wvif->scan_complete, timeout);
+ 	if (req->channels[start_idx]->max_power != wvif->vif->bss_conf.txpower)
+ 		hif_set_output_power(wvif, wvif->vif->bss_conf.txpower);
+-- 
+2.26.2
