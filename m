@@ -1,33 +1,56 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 06 May 2020 20:45:23 +0000
-Subject: Re: [PATCH] MAINTAINERS: put DYNAMIC INTERRUPT MODERATION in proper order
-Message-Id: <20200506134523.46b358e3@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 12 May 2020 10:07:05 +0000
+Subject: [PATCH] ASoC: ux500: mop500: Fix some refcounted resources issues
+Message-Id: <20200512100705.246349-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506202906.23297-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200506202906.23297-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, linus.walleij@linaro.org, lee.jones@linaro.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed,  6 May 2020 22:29:06 +0200 Lukas Bulwahn wrote:
-> Commit 9b038086f06b ("docs: networking: convert DIM to RST") added a new
-> file entry to DYNAMIC INTERRUPT MODERATION to the end, and not following
-> alphabetical order.
-> 
-> So, ./scripts/checkpatch.pl -f MAINTAINERS complains:
-> 
->   WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic
->   order
->   #5966: FILE: MAINTAINERS:5966:
->   +F:      lib/dim/
->   +F:      Documentation/networking/net_dim.rst
-> 
-> Reorder the file entries to keep MAINTAINERS nicely ordered.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+There are 2 issues here:
+   - if one of the 'of_parse_phandle' fails, calling 'mop500_of_node_put()'
+     is a no-op because the 'mop500_dai_links' structure has not been
+     initialized yet, so the referenced are not decremented
+   - The reference stored in 'mop500_dai_links[i].codecs' is refcounted
+     only once in the probe and must be decremented only once.
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: 39013bd60e79 ("ASoC: Ux500: Dispose of device nodes correctly")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/ux500/mop500.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Thanks!
+diff --git a/sound/soc/ux500/mop500.c b/sound/soc/ux500/mop500.c
+index 2873e8e6f02b..cdae1190b930 100644
+--- a/sound/soc/ux500/mop500.c
++++ b/sound/soc/ux500/mop500.c
+@@ -63,10 +63,11 @@ static void mop500_of_node_put(void)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < 2; i++) {
++	for (i = 0; i < 2; i++)
+ 		of_node_put(mop500_dai_links[i].cpus->of_node);
+-		of_node_put(mop500_dai_links[i].codecs->of_node);
+-	}
++
++	/* Both links use the same codec, which is refcounted only once */
++	of_node_put(mop500_dai_links[0].codecs->of_node);
+ }
+ 
+ static int mop500_of_probe(struct platform_device *pdev,
+@@ -81,7 +82,9 @@ static int mop500_of_probe(struct platform_device *pdev,
+ 
+ 	if (!(msp_np[0] && msp_np[1] && codec_np)) {
+ 		dev_err(&pdev->dev, "Phandle missing or invalid\n");
+-		mop500_of_node_put();
++		for (i = 0; i < 2; i++)
++			of_node_put(msp_np[i]);
++		of_node_put(codec_np);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.25.1
