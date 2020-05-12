@@ -1,23 +1,48 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Mon, 11 May 2020 14:27:01 +0000
-Subject: Re: [PATCH] workqueue: Fix an use after free in init_rescuer()
-Message-Id: <20200511142701.GC16815@mtj.duckdns.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 May 2020 17:19:32 +0000
+Subject: [PATCH][next] pstore/zone: fix dereference of pointer before it has been null checked
+Message-Id: <20200512171932.222102-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508150740.GA415175@mwanda>
-In-Reply-To: <20200508150740.GA415175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sean Fu <fxinrong@gmail.com>, Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, WeiXiong Liao <liaoweixiong@allwinnertech.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 08, 2020 at 06:07:40PM +0300, Dan Carpenter wrote:
-> We need to preserve error code before freeing "rescuer".
-> 
-> Fixes: f187b6974f6df ("workqueue: Use IS_ERR and PTR_ERR instead of PTR_ERR_OR_ZERO.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to wq/for-5.8. Thank you.
+Currently the assignment of cnt dereferences pointer 'record' before
+the pointer has been null checked. Fix this by only making this
+dereference after it has been null checked close to the point cnt
+is to be used.
 
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 637ce64e7f57 ("pstore/zone,blk: Add support for pmsg frontend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/pstore/zone.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
+index c5bf3b9f644f..3cf7d6762c76 100644
+--- a/fs/pstore/zone.c
++++ b/fs/pstore/zone.c
+@@ -825,7 +825,7 @@ static int notrace psz_record_write(struct pstore_zone *zone,
+ 		struct pstore_record *record)
+ {
+ 	size_t start, rem;
+-	int cnt = record->size;
++	int cnt;
+ 	bool is_full_data = false;
+ 	char *buf = record->buf;
+ 
+@@ -835,6 +835,7 @@ static int notrace psz_record_write(struct pstore_zone *zone,
+ 	if (atomic_read(&zone->buffer->datalen) >= zone->buffer_size)
+ 		is_full_data = true;
+ 
++	cnt = record->size;
+ 	if (unlikely(cnt > zone->buffer_size)) {
+ 		buf += cnt - zone->buffer_size;
+ 		cnt = zone->buffer_size;
 -- 
-tejun
+2.25.1
