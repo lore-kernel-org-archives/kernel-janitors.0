@@ -1,68 +1,34 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Date: Mon, 11 May 2020 14:15:20 +0000
-Subject: Re: [PATCH v2 RESEND] MAINTAINERS: correct typo in new NXP LAYERSCAPE GEN4
-Message-Id: <20200511141508.GA27249@e121166-lin.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 May 2020 09:37:03 +0000
+Subject: [PATCH] scsi: aacraid: Fix an Oops in error handling
+Message-Id: <20200513093703.GB347693@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506052130.5780-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200506052130.5780-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Zou Wei <zou_wei@huawei.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 06, 2020 at 07:21:30AM +0200, Lukas Bulwahn wrote:
-> Commit 3edeb49525bb ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4
-> controller") includes a new entry in MAINTAINERS, but slipped in a typo in
-> one of the file entries.
-> 
-> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   warning: no file matches F: \
->     drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-> 
-> Correct the typo in PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Rob, please pick this patch (it is not urgent, though).
-> 
-> v1: https://lore.kernel.org/lkml/20200314142559.13505-1-lukas.bulwahn@gmail.com/
->   - already received: Reviewed-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->   - Bjorn Helgaas' suggestion to squash this into commit 3edeb49525bb
->     ("dt-bindings: PCI: Add NXP Layerscape SoCs PCIe Gen4 controller") before
->     merging upstream did not happen.
-> 
-> v1 -> v2:
->   - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
->     ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
->     ("MAINTAINERS: sort field names for all entries").
->   - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
-> 
-> v2-resend:
->   - resend of v2: https://lore.kernel.org/lkml/20200413070649.7014-1-lukas.bulwahn@gmail.com/ 
->   - still applies to v5.7-rc4 and next-20200505
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+If the memdup_user() function fails then it results in an Oops in the
+error handling code when we try to kfree() and error pointer.
 
-Applied to pci/misc, thanks !
+Fixes: 8d925b1f00e6 ("scsi: aacraid: Use memdup_user() as a cleanup")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/aacraid/commctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lorenzo
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e64e5db31497..0fd27329e6f7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12941,7 +12941,7 @@ L:	linux-pci@vger.kernel.org
->  L:	linux-arm-kernel@lists.infradead.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
-> -F:	drivers/pci/controller/mobibeil/pcie-layerscape-gen4.c
-> +F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
->  
->  PCI DRIVER FOR RENESAS R-CAR
->  M:	Marek Vasut <marek.vasut+renesas@gmail.com>
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index 102658bdc15a..34e65dea992e 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -516,6 +516,7 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 	user_srbcmd = memdup_user(user_srb, fibsize);
+ 	if (IS_ERR(user_srbcmd)) {
+ 		rcode = PTR_ERR(user_srbcmd);
++		user_srbcmd = NULL;
+ 		goto cleanup;
+ 	}
+ 
+-- 
+2.26.2
