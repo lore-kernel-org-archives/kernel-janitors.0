@@ -1,46 +1,57 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 30 May 2020 10:41:40 +0000
-Subject: Re: [PATCH] scsi: cumana_2: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <63fbba26-82f4-5c4b-90d6-d951eb914f50@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 May 2020 09:37:41 +0000
+Subject: [PATCH] RDMA/mlx5: Fix query_srq_cmd() function
+Message-Id: <20200513093741.GC347693@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530073555.577414-1-christophe.jaillet@wanadoo.fr>
- <20200530094338.GE1551@shell.armlinux.org.uk>
-In-Reply-To: <20200530094338.GE1551@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: linux-scsi@vger.kernel.org, martin.petersen@oracle.com, jejb@linux.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The "srq_out" pointer is never freed so that causes a memory leak.  It's
+never used and can be deleted.  Freeing "out" will lead to a double in
+mlx5_ib_query_srq().
 
-Le 30/05/2020 à 11:43, Russell King - ARM Linux admin a écrit :
-> On Sat, May 30, 2020 at 09:35:55AM +0200, Christophe JAILLET wrote:
->> The dev_id used in 'request_irq()' and 'free_irq()' should match.
->> So use 'host' in both cases.
->>
->> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> This is itself wrong.  cumanascsi_2_intr() requires "info" as the devid.
-> Either cumanascsi_2_intr() needs changing to use shost_priv(host) along
-> with this change, or free_irq() needs changing to use "info".
+Fixes: 31578defe4eb ("RDMA/mlx5: Update mlx5_ib to use new cmd interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/hw/mlx5/srq_cmd.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-My bad.
-
-I've only looked at the difference of the dev_id for the 2 functions, 
-not at the usage of it with the function registered by 'request_irq'. 
-This one is obviously correct, or the driver would have some problems 
-somewhere.
-I don't know why have chosen to change request_irq and not free_irq.
-
-So obvious. I'm a little embarrassed and will send a v2.
-
-Thx for the quick reply and review.
-
-
-All the 3 patches being in "/drivers/scsi/arm/", do you prefer only 1 
-patch for the 3, or separated as I've done so far?
-
-CJ
-
-> Likely the same for the other patches, I haven't looked.
->
+diff --git a/drivers/infiniband/hw/mlx5/srq_cmd.c b/drivers/infiniband/hw/mlx5/srq_cmd.c
+index bc50a712bf2ed..ee85b8087a718 100644
+--- a/drivers/infiniband/hw/mlx5/srq_cmd.c
++++ b/drivers/infiniband/hw/mlx5/srq_cmd.c
+@@ -159,27 +159,20 @@ static int query_srq_cmd(struct mlx5_ib_dev *dev, struct mlx5_core_srq *srq,
+ 			 struct mlx5_srq_attr *out)
+ {
+ 	u32 in[MLX5_ST_SZ_DW(query_srq_in)] = {};
+-	u32 *srq_out;
+ 	void *srqc;
+ 	int err;
+ 
+-	srq_out = kvzalloc(MLX5_ST_SZ_BYTES(query_srq_out), GFP_KERNEL);
+-	if (!srq_out)
+-		return -ENOMEM;
+-
+ 	MLX5_SET(query_srq_in, in, opcode, MLX5_CMD_OP_QUERY_SRQ);
+ 	MLX5_SET(query_srq_in, in, srqn, srq->srqn);
+ 	err = mlx5_cmd_exec_inout(dev->mdev, query_srq, in, out);
+ 	if (err)
+-		goto out;
++		return err;
+ 
+ 	srqc = MLX5_ADDR_OF(query_srq_out, out, srq_context_entry);
+ 	get_srqc(srqc, out);
+ 	if (MLX5_GET(srqc, srqc, state) != MLX5_SRQC_STATE_GOOD)
+ 		out->flags |= MLX5_SRQ_FLAG_ERR;
+-out:
+-	kvfree(out);
+-	return err;
++	return 0;
+ }
+ 
+ static int create_xrc_srq_cmd(struct mlx5_ib_dev *dev,
+-- 
+2.26.2
