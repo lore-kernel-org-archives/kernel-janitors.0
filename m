@@ -1,28 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 06 May 2020 21:18:14 +0000
-Subject: Re: [PATCH 2/2 net] net: mvpp2: cls: Prevent buffer overflow in mvpp2_ethtool_cls_rule_del()
-Message-Id: <20200506.141814.1060708966400070196.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 May 2020 09:48:03 +0000
+Subject: [PATCH] xfs: fix error code in xfs_iflush_cluster()
+Message-Id: <20200513094803.GF347693@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506101622.GB77004@mwanda>
-        <20200506101656.GC77004@mwanda>
-In-Reply-To: <20200506101656.GC77004@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: maxime.chevallier@bootlin.com, kuba@kernel.org, jiri@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, Brian Foster <bfoster@redhat.com>
+Cc: linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 6 May 2020 13:16:56 +0300
+Originally this function used to always return -EFSCORRUPTED on error
+but now we're trying to return more informative error codes.
+Unfortunately, there was one error path missed.  If this kmem_alloc()
+allocation fails then we need to return -ENOMEM instead of success.
 
-> The "info->fs.location" is a u32 that comes from the user via the
-> ethtool_set_rxnfc() function.  We need to check for invalid values to
-> prevent a buffer overflow.
-> 
-> I copy and pasted this check from the mvpp2_ethtool_cls_rule_ins()
-> function.
-> 
-> Fixes: 90b509b39ac9 ("net: mvpp2: cls: Add Classification offload support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: f20192991d79 ("xfs: simplify inode flush error handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/xfs/xfs_inode.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index ab31a5dec7aab..63aeda7cbafb0 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -3505,8 +3505,10 @@ xfs_iflush_cluster(
+ 
+ 	cilist_size = igeo->inodes_per_cluster * sizeof(struct xfs_inode *);
+ 	cilist = kmem_alloc(cilist_size, KM_MAYFAIL|KM_NOFS);
+-	if (!cilist)
++	if (!cilist) {
++		error = -ENOMEM;
+ 		goto out_put;
++	}
+ 
+ 	mask = ~(igeo->inodes_per_cluster - 1);
+ 	first_index = XFS_INO_TO_AGINO(mp, ip->i_ino) & mask;
+-- 
+2.26.2
