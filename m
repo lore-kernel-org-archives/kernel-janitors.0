@@ -1,25 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 27 May 2020 02:12:54 +0000
-Subject: Re: [PATCH] scsi: cxgb3i: fix some leaks in init_act_open()
-Message-Id: <159054550935.12032.3078033061151944751.b4-ty@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 13 May 2020 05:07:15 +0000
+Subject: Re: net/sonic: Software evolution around the application of coding standards
+Message-Id: <47b7cfc3-68a1-b1da-9761-ab27dc8118ad@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200521121221.GA247492@mwanda>
-In-Reply-To: <20200521121221.GA247492@mwanda>
+References: <b7651b26-ac1e-6281-efb2-7eff0018b158@web.de>
+ <alpine.LNX.2.22.394.2005100922240.11@nippy.intranet>
+ <9d279f21-6172-5318-4e29-061277e82157@web.de>
+ <alpine.LNX.2.22.394.2005101738510.11@nippy.intranet>
+ <bc70e24c-dd31-75b7-6ece-2ad31982641e@web.de>
+ <alpine.LNX.2.22.394.2005110845060.8@nippy.intranet>
+ <9994a7de-0399-fb34-237a-a3c71b3cf568@web.de>
+ <alpine.LNX.2.22.394.2005120905410.8@nippy.intranet>
+ <3fabce05-7da9-7daa-d92c-411369f35b4a@web.de>
+ <alpine.LNX.2.22.394.2005131028450.20@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.22.394.2005131028450.20@nippy.intranet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Karen Xie <kxie@chelsio.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, James Bottomley <James.Bottomley@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, "James E.J. Bottomley" <jejb@linux.ibm.com>, kernel-janitors@vger.kernel.org
+To: Finn Thain <fthain@telegraphics.com.au>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-On Thu, 21 May 2020 15:12:21 +0300, Dan Carpenter wrote:
+> When the people who write and review the coding standards are the same
+> people who write and review the code, the standards devolve (given the
+> prevailing incentives).
 
-> There wasn't any clean up done if cxgb3_alloc_atid() failed and also the
-> original code didn't release "csk->l2t".
+A coding style is applied also for Linux software. This coding style
+supports some alternatives for implementation details.
+Deviations from the recommended style are occasionally tolerated.
+But some developers care to improve the compliance with the current standard
+at various source code places, don't they?
 
-Applied to 5.8/scsi-queue, thanks!
-
-[1/1] scsi: cxgb3i: Fix some leaks in init_act_open()
-      https://git.kernel.org/mkp/scsi/c/b6170a49c59c
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
