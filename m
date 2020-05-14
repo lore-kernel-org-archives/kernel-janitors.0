@@ -1,40 +1,35 @@
-From: qzhang2 <qiang.zhang@windriver.com>
-Date: Tue, 26 May 2020 02:05:44 +0000
-Subject: Re: [v2] workqueue: Fix double kfree for rescuer
-Message-Id: <e002d552-b161-0cc3-88ea-daee541ee6f4@windriver.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 May 2020 12:15:29 +0000
+Subject: [PATCH][next] selftest/bpf: fix spelling mistake "SIGALARM" -> "SIGALRM"
+Message-Id: <20200514121529.259668-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200525075901.12699-1-qiang.zhang@windriver.com>
- <7d19381c-2c51-deb4-f82f-d54bc56c6ecf@web.de>
- <bee86d19-6c14-1fd9-eead-24e63af6cf8e@windriver.com>
- <8b67c327-e70c-1e96-6a99-a5fd2667f666@web.de>
-In-Reply-To: <8b67c327-e70c-1e96-6a99-a5fd2667f666@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks for your advice.
-The rescuer null pointer is intentionally passed by a data structure?
-and also I read the code of workqueue again, when destroy_workqueue is
-called, after "wq->rescuer = NULL" was executed, The scenario described 
-below does not happen
+From: Colin Ian King <colin.king@canonical.com>
 
-"if non-null pointers (according to valid rescuer objects) are 
-occasionally passed by the corresponding data structure member
-for the callback function "rcu_free_wq"."
+There is a spelling mistake in an error message, fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/bpf/bench.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 5/25/20 6:40 PM, Markus Elfring wrote:
->> I see, kfree does nothing with null pointers and direct return.
->> but again kfree is not a good suggestion.
-> 
-> I have got the impression that the implementation detail is important here
-> if non-null pointers (according to valid rescuer objects) are occasionally
-> passed by the corresponding data structure member for the callback
-> function “rcu_free_wq”.
-> Can another clarification attempt reduce unwanted confusion for this patch review?
-> 
-> Regards,
-> Markus
-> 
+diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
+index 8c0dfbfe6088..14390689ef90 100644
+--- a/tools/testing/selftests/bpf/bench.c
++++ b/tools/testing/selftests/bpf/bench.c
+@@ -242,7 +242,7 @@ static void setup_timer()
+ 	last_time_ns = get_time_ns();
+ 	err = sigaction(SIGALRM, &sigalarm_action, NULL);
+ 	if (err < 0) {
+-		fprintf(stderr, "failed to install SIGALARM handler: %d\n", -errno);
++		fprintf(stderr, "failed to install SIGALRM handler: %d\n", -errno);
+ 		exit(1);
+ 	}
+ 	timer_settings.it_interval.tv_sec = 1;
+-- 
+2.25.1
