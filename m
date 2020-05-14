@@ -1,71 +1,40 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Thu, 07 May 2020 23:57:12 +0000
-Subject: Re: [PATCH] tracing/probe: reverse arguments to list_add
-Message-Id: <20200508085712.dcb44a32d1fb50c0a7e3e2a9@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 May 2020 18:33:02 +0000
+Subject: [PATCH][next] net: dsa: felix: fix incorrect clamp calculation for burst
+Message-Id: <20200514183302.16925-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1588879808-24488-1-git-send-email-Julia.Lawall@inria.fr>
-        <20200507165053.291ba5ea@gandalf.local.home>
-In-Reply-To: <20200507165053.291ba5ea@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, Nic Volanschi <eugene.volanschi@inria.fr>, Masami Hiramatsu <mhiramat@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Xiaoliang Yang <xiaoliang.yang_1@nxp.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 7 May 2020 16:50:53 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Thu,  7 May 2020 21:30:08 +0200
-> Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> 
-> > Elsewhere in the file, the function trace_kprobe_has_same_kprobe uses
-> > a trace_probe_event.probes object as the second argument of
-> > list_for_each_entry, ie as a list head, while the list_for_each_entry
-> > iterates over the list fields of the trace_probe structures, making
-> > them the list elements.  So, exchange the arguments on the list_add
-> > call to put the list head in the second argument.
-> > 
-> > Since both list_head structures were just initialized, this problem
-> > did not cause any loss of information.
-> > 
+Currently burst is clamping on rate and not burst, the assignment
+of burst from the clamping discards the previous assignment of burst.
+This looks like a cut-n-paste error from the previous clamping
+calculation on ramp.  Fix this by replacing ramp with burst.
 
-Oops, good catch!
+Addresses-Coverity: ("Unused value")
+Fixes: 0fbabf875d18 ("net: dsa: felix: add support Credit Based Shaper(CBS) for hardware offload")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/ocelot/felix_vsc9959.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Fixes: 60d53e2c3b75 ("tracing/probe: Split trace_event related data from trace_probe")
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> Masami,
-> 
-> Can you give a Reviewed-by to this?
-
-Yes, thanks Julia!
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you,
-> 
-> -- Steve
-> 
-> > 
-> > ---
-> >  kernel/trace/trace_probe.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-> > index ab8b6436d53f..b8a928e925c7 100644
-> > --- a/kernel/trace/trace_probe.c
-> > +++ b/kernel/trace/trace_probe.c
-> > @@ -1006,7 +1006,7 @@ int trace_probe_init(struct trace_probe *tp, const char *event,
-> >  	INIT_LIST_HEAD(&tp->event->class.fields);
-> >  	INIT_LIST_HEAD(&tp->event->probes);
-> >  	INIT_LIST_HEAD(&tp->list);
-> > -	list_add(&tp->event->probes, &tp->list);
-> > +	list_add(&tp->list, &tp->event->probes);
-> >  
-> >  	call = trace_probe_event_call(tp);
-> >  	call->class = &tp->event->class;
-> 
-
-
+diff --git a/drivers/net/dsa/ocelot/felix_vsc9959.c b/drivers/net/dsa/ocelot/felix_vsc9959.c
+index df4498c0e864..85e34d85cc51 100644
+--- a/drivers/net/dsa/ocelot/felix_vsc9959.c
++++ b/drivers/net/dsa/ocelot/felix_vsc9959.c
+@@ -1360,7 +1360,7 @@ static int vsc9959_qos_port_cbs_set(struct dsa_switch *ds, int port,
+ 	/* Burst unit is 4kB */
+ 	burst = DIV_ROUND_UP(cbs_qopt->hicredit, 4096);
+ 	/* Avoid using zero burst size */
+-	burst = clamp_t(u32, rate, 1, GENMASK(5, 0));
++	burst = clamp_t(u32, burst, 1, GENMASK(5, 0));
+ 	ocelot_write_gix(ocelot,
+ 			 QSYS_CIR_CFG_CIR_RATE(rate) |
+ 			 QSYS_CIR_CFG_CIR_BURST(burst),
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.25.1
