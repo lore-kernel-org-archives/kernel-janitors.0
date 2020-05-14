@@ -1,40 +1,39 @@
-From: Alex Elder <elder@linaro.org>
-Date: Tue, 26 May 2020 11:47:41 +0000
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: loopback: fix a spelling error.
-Message-Id: <3f610a0c-fb15-e929-0f94-447f732659a0@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 May 2020 18:19:26 +0000
+Subject: [PATCH][next] fsinfo: fix an uninialized variable 'conn'
+Message-Id: <20200514181926.16571-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200518051314.1785567-1-till.varoquaux@gmail.com>
-In-Reply-To: <20200518051314.1785567-1-till.varoquaux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Till Varoquaux <till.varoquaux@gmail.com>, kernel-janitors@vger.kernel.org, pure.logic@nexus-software.ie
-Cc: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, trivial@kernel.org, Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org, greybus-dev@lists.linaro.org
+To: David Howells <dhowells@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5/25/20 1:10 AM, Till Varoquaux wrote:
-> Successed -> succeeded.
-> 
-> Signed-off-by: Till Varoquaux <till.varoquaux@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good.
+Variable conn is not initialized and can potentially contain
+garbage causing a false -EPERM return on the !conn check.
+Fix this by initializing it to false.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: f2494de388bd ("fsinfo: Add an attribute that lists all the visible mounts in a namespace")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   drivers/staging/greybus/loopback.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
-> index 583d9708a191..2471448ba42a 100644
-> --- a/drivers/staging/greybus/loopback.c
-> +++ b/drivers/staging/greybus/loopback.c
-> @@ -135,7 +135,7 @@ static ssize_t name##_##field##_show(struct device *dev,	\
->   			    char *buf)					\
->   {									\
->   	struct gb_loopback *gb = dev_get_drvdata(dev);			\
-> -	/* Report 0 for min and max if no transfer successed */		\
-> +	/* Report 0 for min and max if no transfer succeeded */		\
->   	if (!gb->requests_completed)					\
->   		return sprintf(buf, "0\n");				\
->   	return sprintf(buf, "%" #type "\n", gb->name.field);		\
-> 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 3fd24575756b..ae489cbac467 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4433,7 +4433,7 @@ int fsinfo_generic_mount_all(struct path *path, struct fsinfo_context *ctx)
+ 	struct mnt_namespace *ns;
+ 	struct mount *m, *p;
+ 	struct path chroot;
+-	bool conn;
++	bool conn = false;
+ 
+ 	m = real_mount(path->mnt);
+ 	ns = m->mnt_ns;
+-- 
+2.25.1
