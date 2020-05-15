@@ -1,50 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 12 May 2020 16:45:14 +0000
-Subject: Re: [PATCH] ASoC: ti: omap-mcbsp: Fix an error handling path in 'asoc_mcbsp_probe()'
-Message-Id: <158930188456.55827.1765769472470838223.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2020 12:06:59 +0000
+Subject: [PATCH] nvme: delete an unnecessary declaration
+Message-Id: <20200515120659.GA575846@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200512134325.252073-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200512134325.252073-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lgirdwood@gmail.com, linux-omap@vger.kernel.org, perex@perex.cz, tiwai@suse.com, jarkko.nikula@bitmer.com, peter.ujfalusi@ti.com
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@fb.com>, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org, Sagi Grimberg <sagi@grimberg.me>
 
-On Tue, 12 May 2020 15:43:25 +0200, Christophe JAILLET wrote:
-> If an error occurs after the call to 'omap_mcbsp_init()', the reference to
-> 'mcbsp->fclk' must be decremented, as already done in the remove function.
-> 
-> This can be achieved easily by using the devm_ variant of 'clk_get()'
-> when the reference is taken in 'omap_mcbsp_init()'
-> 
-> This fixes the leak in the probe and has the side effect to simplify both
-> the error handling path of 'omap_mcbsp_init()' and the remove function.
+The nvme_put_ctrl() is implemented earlier as an inline function so
+this declaration isn't required.
 
-Applied to
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/nvme/host/nvme.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.8
-
-Thanks!
-
-[1/1] ASoC: ti: omap-mcbsp: Fix an error handling path in 'asoc_mcbsp_probe()'
-      commit: 03990fd58d2b7c8f7d53e514ba9b8749fac260f9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index f3ab17778349..86f152e777bc 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -497,7 +497,6 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ void nvme_uninit_ctrl(struct nvme_ctrl *ctrl);
+ void nvme_start_ctrl(struct nvme_ctrl *ctrl);
+ void nvme_stop_ctrl(struct nvme_ctrl *ctrl);
+-void nvme_put_ctrl(struct nvme_ctrl *ctrl);
+ int nvme_init_identify(struct nvme_ctrl *ctrl);
+ 
+ void nvme_remove_namespaces(struct nvme_ctrl *ctrl);
+-- 
+2.26.2
