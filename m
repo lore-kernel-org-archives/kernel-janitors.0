@@ -1,38 +1,52 @@
-From: Tao pilgrim <pilgrimtao@gmail.com>
-Date: Thu, 28 May 2020 12:51:41 +0000
-Subject: Re: [PATCH] proc/fd: Remove the initialization of variables in seq_show()
-Message-Id: <CAAWJmAYox7VNCzj7FnRdiX450wd=DtZAcZv3_2JiPmBuLvUMeQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2020 10:19:03 +0000
+Subject: [PATCH resend] scsi: lpfc: Fix a use after free in lpfc_nvme_unsol_ls_handler()
+Message-Id: <20200515101903.GJ3041@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e218bc34-b8cf-cf0d-aaf1-e1f259d29f7c@web.de>
-In-Reply-To: <e218bc34-b8cf-cf0d-aaf1-e1f259d29f7c@web.de>
+In-Reply-To: <yq1y2purqt1.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Muchun Song <songmuchun@bytedance.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: James Smart <james.smart@broadcom.com>, linux-nvme@lists.infradead.org
+Cc: Jens Axboe <axboe@kernel.dk>, Dick Kennedy <dick.kennedy@broadcom.com>, linux-scsi@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, kernel-janitors@vger.kernel.org, Paul Ely <paul.ely@broadcom.com>, Hannes Reinecke <hare@suse.de>
 
-> > The variables{files, file} will definitely be assigned,
->
-> I find an other specification nicer for these identifiers.
->
->
-> > so we don't need to initialize them.
->
-> I suggest to recheck programming concerns around the handling
-> of the null pointer for the variable “file”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/proc/fd.c?id=caffb99b6929f41a69edbb5aef3a359bf45f3315#n20
-> https://elixir.bootlin.com/linux/v5.7-rc6/source/fs/proc/fd.c#L20
+The "axchg" pointer is dereferenced when we call the
+lpfc_nvme_unsol_ls_issue_abort() function.  It can't be either freed or
+NULL.
 
-We don't need to initialize the variable “file”.
-On line 34, if (files) is true,
-{file = fcheck_files(files, fd)} will be executed on line 38.
-On line 34, if (files) is flse,
-{return ret;} will be executed on line 54, and seq_show() will exit directly.
-I don't find the programming concerns around the handling of the null
-pointer for the variable “file”.
+Fixes: 3a8070c567aa ("lpfc: Refactor NVME LS receive handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: James Smart <james.smart@broadcom.com>
+---
+Resending to the NVMe list.  Added James' R-b.
 
-If you have other suggestions, please elaborate on the details.
+Is there a way we could update MAINTAINERS so that ./get_maintainer.pl
+send these to the correct list?
 
---
-Yours,
-Kaitao Cheng
+ drivers/scsi/lpfc/lpfc_sli.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 38889cb6e1996..fcf51b4192d66 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -2895,14 +2895,14 @@ lpfc_nvme_unsol_ls_handler(struct lpfc_hba *phba, struct lpfc_iocbq *piocb)
+ 			(phba->nvmet_support) ? "T" : "I", ret);
+ 
+ out_fail:
+-	kfree(axchg);
+-
+ 	/* recycle receive buffer */
+ 	lpfc_in_buf_free(phba, &nvmebuf->dbuf);
+ 
+ 	/* If start of new exchange, abort it */
+-	if (fctl & FC_FC_FIRST_SEQ && !(fctl & FC_FC_EX_CTX))
++	if (axchg && (fctl & FC_FC_FIRST_SEQ) && !(fctl & FC_FC_EX_CTX))
+ 		lpfc_nvme_unsol_ls_issue_abort(phba, axchg, sid, oxid);
++
++	kfree(axchg);
+ }
+ 
+ /**
+-- 
+2.26.2
