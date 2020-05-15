@@ -1,49 +1,37 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Date: Fri, 15 May 2020 08:23:25 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to livepatch .klp.arch removal
-Message-Id: <509c316f-5b34-2859-49aa-e4fe4a407428@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2020 12:09:08 +0000
+Subject: [PATCH] fsinfo: Fix uninitialized variable in fsinfo_generic_mount_all()
+Message-Id: <20200515120908.GB575846@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200509073258.5970-1-lukas.bulwahn@gmail.com>
- <bfe91b2d-e319-bf12-6a15-4f200d0e8ea4@linux.vnet.ibm.com>
- <nycvar.YFH.7.76.2005142344230.25812@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2005142344230.25812@cbobk.fhfr.pm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 5/15/20 3:15 AM, Jiri Kosina wrote:
-> On Sat, 9 May 2020, Kamalesh Babulal wrote:
-> 
->>> Commit 1d05334d2899 ("livepatch: Remove .klp.arch") removed
->>> arch/x86/kernel/livepatch.c, but missed to adjust the LIVE PATCHING entry
->>> in MAINTAINERS.
->>>
->>> Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
->>>
->>>   warning: no file matches  F:  arch/x86/kernel/livepatch.c
->>>
->>> So, drop that obsolete file entry in MAINTAINERS.
->>
->> Patch looks good to me,  you probably want to add following architecture
->> specific livepatching header files to the list:
->>
->> arch/s390/include/asm/livepatch.h
->> arch/powerpc/include/asm/livepatch.h
-> 
-> Good point, thanks for spotting it Kamalesh. I've queued the patch below 
-> on top.
-> 
-> 
+The "conn" variable is never set to false.
 
-Thanks, Jiri. I realized later, that the lib/livepatch directory also needs
-to be included in the list of files maintained under livepatch. Earlier, this
-week I had sent a patch to the mailing list that includes both arch
-headers and lib/livepatch to the list of files, the link to the patch is:
+Fixes: f2494de388bd ("fsinfo: Add an attribute that lists all the visible mounts in a namespace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The buggy commit looks like preliminary stuff not pushed to anywhere so
+probably this can just be folded in.
 
-https://lore.kernel.org/live-patching/20200511061014.308675-1-kamalesh@linux.vnet.ibm.com/
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 3fd24575756b..ae489cbac467 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4433,7 +4433,7 @@ int fsinfo_generic_mount_all(struct path *path, struct fsinfo_context *ctx)
+ 	struct mnt_namespace *ns;
+ 	struct mount *m, *p;
+ 	struct path chroot;
+-	bool conn;
++	bool conn = false;
+ 
+ 	m = real_mount(path->mnt);
+ 	ns = m->mnt_ns;
 -- 
-Kamalesh
+2.26.2
