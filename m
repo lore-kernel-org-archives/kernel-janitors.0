@@ -1,34 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 May 2020 09:37:03 +0000
-Subject: [PATCH] scsi: aacraid: Fix an Oops in error handling
-Message-Id: <20200513093703.GB347693@mwanda>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 15 May 2020 01:10:28 +0000
+Subject: Re: [PATCH] scsi: aacraid: Fix an Oops in error handling
+Message-Id: <158950485294.8169.9682857771113228452.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200513093703.GB347693@mwanda>
+In-Reply-To: <20200513093703.GB347693@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Zou Wei <zou_wei@huawei.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Dan Carpenter <dan.carpenter@oracle.com>, Zou Wei <zou_wei@huawei.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
 
-If the memdup_user() function fails then it results in an Oops in the
-error handling code when we try to kfree() and error pointer.
+On Wed, 13 May 2020 12:37:03 +0300, Dan Carpenter wrote:
 
-Fixes: 8d925b1f00e6 ("scsi: aacraid: Use memdup_user() as a cleanup")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/scsi/aacraid/commctrl.c | 1 +
- 1 file changed, 1 insertion(+)
+> If the memdup_user() function fails then it results in an Oops in the
+> error handling code when we try to kfree() and error pointer.
 
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 102658bdc15a..34e65dea992e 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -516,6 +516,7 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 	user_srbcmd = memdup_user(user_srb, fibsize);
- 	if (IS_ERR(user_srbcmd)) {
- 		rcode = PTR_ERR(user_srbcmd);
-+		user_srbcmd = NULL;
- 		goto cleanup;
- 	}
- 
+Applied to 5.8/scsi-queue, thanks!
+
+[1/1] scsi: aacraid: Fix an oops in error handling
+      https://git.kernel.org/mkp/scsi/c/25c21d20bcfd
+
 -- 
-2.26.2
+Martin K. Petersen	Oracle Linux Engineering
