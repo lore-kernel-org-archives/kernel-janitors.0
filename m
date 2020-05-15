@@ -1,43 +1,47 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 15 May 2020 17:26:04 +0000
+From: Alan Stern <stern@rowland.harvard.edu>
+Date: Fri, 15 May 2020 18:43:01 +0000
 Subject: Re: [PATCH][next] USB: EHCI: ehci-mv: fix less than zero comparison of an unsigned int
-Message-Id: <342e8fc0-c961-d9f0-f2d1-bd455ce06d86@canonical.com>
+Message-Id: <20200515184301.GA13795@rowland.harvard.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200515165453.104028-1-colin.king@canonical.com>
  <20200515172121.GA5498@rowland.harvard.edu>
-In-Reply-To: <20200515172121.GA5498@rowland.harvard.edu>
+ <342e8fc0-c961-d9f0-f2d1-bd455ce06d86@canonical.com>
+In-Reply-To: <342e8fc0-c961-d9f0-f2d1-bd455ce06d86@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
+To: Colin Ian King <colin.king@canonical.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>, Tang Bin <tangbin@cmss.chinamobile.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 15/05/2020 18:21, Alan Stern wrote:
-> On Fri, May 15, 2020 at 05:54:53PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The comparison of hcd->irq to less than zero for an error check will
->> never be true because hcd->irq is an unsigned int.  Fix this by
->> assigning the int retval to the return of platform_get_irq and checking
->> this for the -ve error condition and assigning hcd->irq to retval.
->>
->> Addresses-Coverity: ("Unsigned compared against 0")
->> Fixes: c856b4b0fdb5 ("USB: EHCI: ehci-mv: fix error handling in mv_ehci_probe()")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
+On Fri, May 15, 2020 at 06:26:04PM +0100, Colin Ian King wrote:
+> On 15/05/2020 18:21, Alan Stern wrote:
+> > On Fri, May 15, 2020 at 05:54:53PM +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The comparison of hcd->irq to less than zero for an error check will
+> >> never be true because hcd->irq is an unsigned int.  Fix this by
+> >> assigning the int retval to the return of platform_get_irq and checking
+> >> this for the -ve error condition and assigning hcd->irq to retval.
+> >>
+> >> Addresses-Coverity: ("Unsigned compared against 0")
+> >> Fixes: c856b4b0fdb5 ("USB: EHCI: ehci-mv: fix error handling in mv_ehci_probe()")
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> ---
+> > 
+> > Thanks to Coverity for spotting this.  Any reason why it didn't spot 
+> > exactly the same mistake in the ohci-da8xx.c driver?
 > 
-> Thanks to Coverity for spotting this.  Any reason why it didn't spot 
-> exactly the same mistake in the ohci-da8xx.c driver?
-
-No idea, it is curious that it can spot one error but miss another.
-Sometimes I see these issues on the next scan, so it maybe the database
-diff'ing is awry.
-
+> No idea, it is curious that it can spot one error but miss another.
+> Sometimes I see these issues on the next scan, so it maybe the database
+> diff'ing is awry.
 > 
-> Also, why wasn't the patch CC'ed for the stable series?
-
-My bad on that. Human error
-
+> > 
+> > Also, why wasn't the patch CC'ed for the stable series?
 > 
-> Alan Stern
-> 
+> My bad on that. Human error
+
+Actually the question itself was my mistake.  I didn't notice that your 
+patch was a fix to something that was just merged and hadn't been CC'ed 
+to stable.
+
+Alan Stern
