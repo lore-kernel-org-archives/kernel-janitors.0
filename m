@@ -1,31 +1,46 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Tue, 12 May 2020 14:51:11 +0000
-Subject: Re: [PATCH] RDMA/rxe: Return -EFAULT if copy_from_user() fails
-Message-Id: <20200512145110.GA10905@ziepe.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 May 2020 16:54:53 +0000
+Subject: [PATCH][next] USB: EHCI: ehci-mv: fix less than zero comparison of an unsigned int
+Message-Id: <20200515165453.104028-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200511183742.GB225608@mwanda>
-In-Reply-To: <20200511183742.GB225608@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zhu Yanjun <yanjunz@mellanox.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>, Tang Bin <tangbin@cmss.chinamobile.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 11, 2020 at 09:37:42PM +0300, Dan Carpenter wrote:
-> This function used to always return -EINVAL but we updated it to try
-> preserve the error codes.  Unfortunately the copy_to_user() is returning
-> the number of bytes remaining to be copied instead of a negative error
-> code.
-> 
-> Fixes: a3a974b4654d ("RDMA/rxe: Always return ERR_PTR from rxe_create_mmap_info()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/sw/rxe/rxe_queue.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-I squashed this into to the above patch since it is marked for -stable
+The comparison of hcd->irq to less than zero for an error check will
+never be true because hcd->irq is an unsigned int.  Fix this by
+assigning the int retval to the return of platform_get_irq and checking
+this for the -ve error condition and assigning hcd->irq to retval.
 
-This means for-rc gets rebased
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: c856b4b0fdb5 ("USB: EHCI: ehci-mv: fix error handling in mv_ehci_probe()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/host/ehci-mv.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Thanks,
-Jason
+diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
+index 0d61f43c29dc..cffdc8d01b2a 100644
+--- a/drivers/usb/host/ehci-mv.c
++++ b/drivers/usb/host/ehci-mv.c
+@@ -166,11 +166,10 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 	hcd->rsrc_len = resource_size(r);
+ 	hcd->regs = ehci_mv->op_regs;
+ 
+-	hcd->irq = platform_get_irq(pdev, 0);
+-	if (hcd->irq < 0) {
+-		retval = hcd->irq;
++	retval = platform_get_irq(pdev, 0);
++	if (retval < 0)
+ 		goto err_disable_clk;
+-	}
++	hcd->irq = retval;
+ 
+ 	ehci = hcd_to_ehci(hcd);
+ 	ehci->caps = (struct ehci_caps __iomem *) ehci_mv->cap_regs;
+-- 
+2.25.1
