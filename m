@@ -1,77 +1,34 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sat, 02 May 2020 12:21:20 +0000
-Subject: Re: [PATCH] net: dsa: sja1105: fix speed setting for 10 MBPS
-Message-Id: <ccfa3bc1-cdbd-f990-321f-55555531d56d@cogentembedded.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 15 May 2020 15:08:24 +0000
+Subject: Re: [PATCH] blkcg: Fix memory leak in blkg_conf_prep()
+Message-Id: <4c670a6c-98c3-2b14-7438-09199506d92f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200501134310.289561-1-colin.king@canonical.com>
-In-Reply-To: <20200501134310.289561-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Russell King <rmk+kernel@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wu Bo <wubo40@huawei.com>, cgroups@vger.kernel.org, linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Feilong Lin <linfeilong@huawei.com>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-Hello!
+…
+> new_blkg = blkg_alloc(pos, q, GFP_KERNEL);
+…
 
-On 01.05.2020 16:43, Colin King wrote:
+I suggest to omit the source code quotation from the change description.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current logic for speed checking will never set the speed to 10 MBPS
-> because bmcr & BMCR_SPEED10 is always 0 since BMCR_SPEED10 is 0. Also
-> the erroneous setting where BMCR_SPEED1000 and BMCR_SPEED100 are both
-> set causes the speed to be 1000 MBS.  Fix this by masking bps and checking
-> for just the expected settings of BMCR_SPEED1000, BMCR_SPEED100 and
-> BMCR_SPEED10 and defaulting to the unknown speed otherwise.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: ffe10e679cec ("net: dsa: sja1105: Add support for the SGMII port")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/dsa/sja1105/sja1105_main.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-> index 472f4eb20c49..59a9038cdc4e 100644
-> --- a/drivers/net/dsa/sja1105/sja1105_main.c
-> +++ b/drivers/net/dsa/sja1105/sja1105_main.c
-> @@ -1600,6 +1600,7 @@ static const char * const sja1105_reset_reasons[] = {
->   int sja1105_static_config_reload(struct sja1105_private *priv,
->   				 enum sja1105_reset_reason reason)
->   {
-> +	const int mask = (BMCR_SPEED1000 | BMCR_SPEED100 | BMCR_SPEED10);
 
-    Why not declare it in the block it's used in? Also, () not needed here.
+> if calling blkg_lookup_check() failed, at the IS_ERR block,
+> the new_blkg should be free before goto lable fail_unlock
+> in blkg_conf_prep() function.
 
->   	struct ptp_system_timestamp ptp_sts_before;
->   	struct ptp_system_timestamp ptp_sts_after;
->   	struct sja1105_mac_config_entry *mac;
-> @@ -1684,14 +1685,16 @@ int sja1105_static_config_reload(struct sja1105_private *priv,
->   		sja1105_sgmii_pcs_config(priv, an_enabled, false);
->   
->   		if (!an_enabled) {
-> -			int speed = SPEED_UNKNOWN;
-> +			int speed;
+How do you think about a wording variant like the following?
 
-    Why not the following?
+  If a call of the function “blkg_lookup_check” failed,
+  release the previously allocated block group before jumping
+  to the target “fail_unlock” in the implementation of
+  the function “blkg_conf_prep”.
 
-		int mask = bmcr & (BMCR_SPEED1000 | BMCR_SPEED100 |
-			   BMCR_SPEED10);			
 
->   
-> -			if (bmcr & BMCR_SPEED1000)
-> +			if ((bmcr & mask) = BMCR_SPEED1000)
->   				speed = SPEED_1000;
-> -			else if (bmcr & BMCR_SPEED100)
-> +			else if ((bmcr & mask) = BMCR_SPEED100)
->   				speed = SPEED_100;
-> -			else if (bmcr & BMCR_SPEED10)
-> +			else if ((bmcr & mask) = BMCR_SPEED10)
->   				speed = SPEED_10;
-> +			else
-> +				speed = SPEED_UNKNOWN;
->   
->   			sja1105_sgmii_pcs_force_speed(priv, speed);
->   		}
+Would you like to add the tag “Fixes” to the commit message?
 
-MBR, Sergei
+Regards,
+Markus
