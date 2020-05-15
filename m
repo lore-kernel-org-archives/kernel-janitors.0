@@ -1,83 +1,50 @@
-From: Karsten Graul <kgraul@linux.ibm.com>
-Date: Wed, 06 May 2020 09:39:12 +0000
-Subject: Re: [PATCH net-next] net/smc: remove set but not used variables 'del_llc, del_llc_resp'
-Message-Id: <7e36e689-f5b7-0140-cd04-be62dcf08fbc@linux.ibm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 May 2020 10:22:26 +0000
+Subject: [PATCH] rtlwifi: rtl8192ee: remove redundant for-loop
+Message-Id: <20200515102226.29819-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506065540.171504-1-yuehaibing@huawei.com>
-In-Reply-To: <20200506065540.171504-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>, Ursula Braun <ubraun@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/05/2020 08:55, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you, good catch. Your patch will be part of our next patch submission.
+The for-loop seems to be redundant, the assignments for indexes
+0..2 are being over-written by the last index 3 in the loop. Remove
+the loop and use index 3 instead.
 
-Regards, Karsten
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../net/wireless/realtek/rtlwifi/rtl8192ee/phy.c   | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-> 
-> net/smc/smc_llc.c: In function 'smc_llc_cli_conf_link':
-> net/smc/smc_llc.c:753:31: warning:
->  variable 'del_llc' set but not used [-Wunused-but-set-variable]
->   struct smc_llc_msg_del_link *del_llc;
->                                ^
-> net/smc/smc_llc.c: In function 'smc_llc_process_srv_delete_link':
-> net/smc/smc_llc.c:1311:33: warning:
->  variable 'del_llc_resp' set but not used [-Wunused-but-set-variable]
->     struct smc_llc_msg_del_link *del_llc_resp;
->                                  ^
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  net/smc/smc_llc.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/net/smc/smc_llc.c b/net/smc/smc_llc.c
-> index 4cc583678ac7..391237b601fe 100644
-> --- a/net/smc/smc_llc.c
-> +++ b/net/smc/smc_llc.c
-> @@ -750,7 +750,6 @@ static int smc_llc_cli_conf_link(struct smc_link *link,
->  				 enum smc_lgr_type lgr_new_t)
->  {
->  	struct smc_link_group *lgr = link->lgr;
-> -	struct smc_llc_msg_del_link *del_llc;
->  	struct smc_llc_qentry *qentry = NULL;
->  	int rc = 0;
->  
-> @@ -764,7 +763,6 @@ static int smc_llc_cli_conf_link(struct smc_link *link,
->  	}
->  	if (qentry->msg.raw.hdr.common.type != SMC_LLC_CONFIRM_LINK) {
->  		/* received DELETE_LINK instead */
-> -		del_llc = &qentry->msg.delete_link;
->  		qentry->msg.raw.hdr.flags |= SMC_LLC_FLAG_RESP;
->  		smc_llc_send_message(link, &qentry->msg);
->  		smc_llc_flow_qentry_del(&lgr->llc_flow_lcl);
-> @@ -1308,16 +1306,12 @@ static void smc_llc_process_srv_delete_link(struct smc_link_group *lgr)
->  		 * enqueued DELETE_LINK request (forward it)
->  		 */
->  		if (!smc_llc_send_message(lnk, &qentry->msg)) {
-> -			struct smc_llc_msg_del_link *del_llc_resp;
->  			struct smc_llc_qentry *qentry2;
->  
->  			qentry2 = smc_llc_wait(lgr, lnk, SMC_LLC_WAIT_TIME,
->  					       SMC_LLC_DELETE_LINK);
-> -			if (!qentry2) {
-> -			} else {
-> -				del_llc_resp = &qentry2->msg.delete_link;
-> +			if (qentry2)
->  				smc_llc_flow_qentry_del(&lgr->llc_flow_lcl);
-> -			}
->  		}
->  	}
->  	smcr_link_clear(lnk_del, true);
-> 
-> 
-> 
-
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/phy.c
+index 6dba576aa81e..bb291b951f4d 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/phy.c
+@@ -2866,14 +2866,12 @@ void rtl92ee_phy_iq_calibrate(struct ieee80211_hw *hw, bool b_recovery)
+ 		}
+ 	}
+ 
+-	for (i = 0; i < 4; i++) {
+-		reg_e94 = result[i][0];
+-		reg_e9c = result[i][1];
+-		reg_ea4 = result[i][2];
+-		reg_eb4 = result[i][4];
+-		reg_ebc = result[i][5];
+-		reg_ec4 = result[i][6];
+-	}
++	reg_e94 = result[3][0];
++	reg_e9c = result[3][1];
++	reg_ea4 = result[3][2];
++	reg_eb4 = result[3][4];
++	reg_ebc = result[3][5];
++	reg_ec4 = result[3][6];
+ 
+ 	if (final_candidate != 0xff) {
+ 		reg_e94 = result[final_candidate][0];
 -- 
-Karsten
-
-(I'm a dude)
+2.25.1
