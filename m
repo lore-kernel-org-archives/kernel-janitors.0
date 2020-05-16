@@ -1,26 +1,40 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 25 May 2020 07:04:46 +0000
-Subject: Re: [PATCH] workqueue: Fix double kfree(rescuer) in destroy_workqueue()
-Message-Id: <cb2735b1-c54a-8746-d776-951081582366@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 16 May 2020 21:42:05 +0000
+Subject: [PATCH] dmaengine: tegra210-adma: Fix an error handling path in 'tegra_adma_probe()'
+Message-Id: <20200516214205.276266-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
- <69170178-f149-b44b-6465-a4c6ab893d52@windriver.com>
-In-Reply-To: <69170178-f149-b44b-6465-a4c6ab893d52@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Qiang Zhang <qiang.zhang@windriver.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ldewangan@nvidia.com, jonathanh@nvidia.com, dan.j.williams@intel.com, vkoul@kernel.org, thierry.reding@gmail.com
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> Sorry I didn't describe clearly
->
-> I describe the meaning as follows:
+Commit b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
+has moved some code in the probe function and reordered the error handling
+path accordingly.
+However, a goto has been missed.
 
-Can it help to adjust the change description in the way
-that a duplicate memory release should be deleted from the implementation
-of the callback function “rcu_free_wq”?
+Fix it and goto the right label if 'dma_async_device_register()' fails, so
+that all resources are released.
 
-Which commit should be referenced for the tag “Fixes”?
+Fixes: b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/dma/tegra210-adma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index c4ce5dfb149b..db58d7e4f9fe 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -900,7 +900,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	ret = dma_async_device_register(&tdma->dma_dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
+-		goto irq_dispose;
++		goto rpm_put;
+ 	}
+ 
+ 	ret = of_dma_controller_register(pdev->dev.of_node,
+-- 
+2.25.1
