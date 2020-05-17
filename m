@@ -1,98 +1,82 @@
-From: Inki Dae <inki.dae@samsung.com>
-Date: Mon, 18 May 2020 04:58:28 +0000
-Subject: Re: [PATCH v2] drm/exynos: dsi: Remove bridge node reference in error handling path in probe functio
-Message-Id: <4555b0a8-b919-b5c1-cacb-1e6aec8a1aa8@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Sun, 17 May 2020 20:48:08 +0000
+Subject: Re: [PATCH] drm/gem: Fix a leak in drm_gem_objects_lookup()
+Message-Id: <CACvgo53Xbc7prbQrcSXwQtTffFo2gYO7O=yK=zaWA6dj-_bEzQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200516105750epcas1p2227417d4e2387a0f6aec4a96b1ba7ae4@epcas1p2.samsung.com>
- <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
+References: <20200320132334.GC95012@mwanda>
+ <CACvgo51xwgF2hJPOESWGpJ16WittQSVixdd+62KwFsZaHO-Dpg@mail.gmail.com>
+ <20200323121333.GF26299@kadam>
+In-Reply-To: <20200323121333.GF26299@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org, krzk@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>, Thomas Zimmermann <tzimmermann@suse.de>
 
+On Mon, 23 Mar 2020 at 12:13, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Mon, Mar 23, 2020 at 11:13:22AM +0000, Emil Velikov wrote:
+> > Hi Dan,
+> >
+> > On Fri, 20 Mar 2020 at 13:23, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > >
+> > > If the "handles" allocation or the copy_from_user() fails then we leak
+> > > "objs".  It's supposed to be freed in panfrost_job_cleanup().
+> > >
+> > > Fixes: c117aa4d8701 ("drm: Add a drm_gem_objects_lookup helper")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_gem.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> > > index a9e4a610445a..f28724f2eb69 100644
+> > > --- a/drivers/gpu/drm/drm_gem.c
+> > > +++ b/drivers/gpu/drm/drm_gem.c
+> > > @@ -710,6 +710,8 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+> > >         if (!objs)
+> > >                 return -ENOMEM;
+> > >
+> > > +       *objs_out = objs;
+> > > +
+> > >         handles = kvmalloc_array(count, sizeof(u32), GFP_KERNEL);
+> > >         if (!handles) {
+> > >                 ret = -ENOMEM;
+> > > @@ -723,8 +725,6 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+> > >         }
+> > >
+> > >         ret = objects_lookup(filp, handles, count, objs);
+> > > -       *objs_out = objs;
+> > > -
+> > >  out:
+> > >         kvfree(handles);
+> > >         return ret;
+> >
+> > It seems that this will return error to the caller, mangle the output
+> > pointer and effectively still leak the objs.
+>
+> The patch works.
+>
+> This is "one function frees everything" style error handling.  It gets
+> passed back to panfrost_ioctl_submit() which calls panfrost_job_put()
+> which calls panfrost_job_cleanup() which frees it.
+>
+> It's a horrible way to do error handling but this was the only actual
+> bug I could see with the approach.
+>
+> > Better option IMHO is to:
+> > - move the __user/copy_from_user into the caller
+> > Removes a silly kvmalloc_array(1,...) in ~90+ users and drops the "out" label.
+> > Extra bonus, this is the only instance in drm_gem with __user -
+> > consistency is nice.
+> > - add "err" or similar label, where the objs is freed before returning an error.
+>
+> Those sound like good ideas.  Also we could use kvcalloc() instead of
+> kvmalloc_array() with __GFP_ZERO.  But it's too much for me to do...
+> I'm mostly focused on static analysis warnings.
+>
+Your patch addresses the issue with the smallest diffstat, so I've
+pushed it to drm-misc-next.
 
-
-20. 5. 16. 오후 7:57에 Christophe JAILLET 이(가) 쓴 글:
-> 'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
-> This must be released in the error handling path.
-
-Picked it up.
-
-Thanks,
-Inki Dae
-
-> 
-> In order to do that, add an error handling path and move the
-> 'exynos_dsi_parse_dt()' call from the beginning to the end of the probe
-> function to ease the error handling path.
-> This function only sets some variables which are used only in the
-> 'transfer' function.
-> 
-> The call chain is:
->    .transfer
->     --> exynos_dsi_host_transfer
->       --> exynos_dsi_init
->         --> exynos_dsi_enable_clock  (use burst_clk_rate and esc_clk_rate)
->           --> exynos_dsi_set_pll     (use pll_clk_rate)
-> 
-> While at it, also handle cases where 'component_add()' fails.
-> 
-> This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
-> which fixed the issue in the remove function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> A Fixes tag could be required, but I've not been able to figure out which
-> one to use.
-> 
-> v2: move around 'exynos_dsi_parse_dt' instead of adding many gotos
->     handle component_add failures
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 902938d2568f..a9d24402fabf 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1759,10 +1759,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
->  	dsi->dev = dev;
->  	dsi->driver_data = of_device_get_match_data(dev);
->  
-> -	ret = exynos_dsi_parse_dt(dsi);
-> -	if (ret)
-> -		return ret;
-> -
->  	dsi->supplies[0].supply = "vddcore";
->  	dsi->supplies[1].supply = "vddio";
->  	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
-> @@ -1823,11 +1819,25 @@ static int exynos_dsi_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	ret = exynos_dsi_parse_dt(dsi);
-> +	if (ret)
-> +		return ret;
-> +
->  	platform_set_drvdata(pdev, &dsi->encoder);
->  
->  	pm_runtime_enable(dev);
->  
-> -	return component_add(dev, &exynos_dsi_component_ops);
-> +	ret = component_add(dev, &exynos_dsi_component_ops);
-> +	if (ret)
-> +		goto err_disable_runtime;
-> +
-> +	return 0;
-> +
-> +err_disable_runtime:
-> +	pm_runtime_disable(dev);
-> +	of_node_put(dsi->in_bridge_node);
-> +
-> +	return ret;
->  }
->  
->  static int exynos_dsi_remove(struct platform_device *pdev)
-> 
+Thanks
+Emil
