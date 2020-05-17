@@ -1,56 +1,80 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sun, 31 May 2020 21:01:27 +0000
-Subject: Re: [PATCH] staging: fbtft: fb_st7789v: make HSD20_IPS numeric and not a string
-Message-Id: <20200531210127.GD138722@ravnborg.org>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Sun, 17 May 2020 16:23:28 +0000
+Subject: Re: [PATCH] MAINTAINERS: clarify maintenance of ARM Dove drivers
+Message-Id: <87blmmh6nz.fsf@FE-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200521135038.345878-1-colin.king@canonical.com>
-In-Reply-To: <20200521135038.345878-1-colin.king@canonical.com>
+References: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200328134304.7317-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oliver Graute <oliver.graute@kococonnector.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Colin/Greg.
+Hi Lukas,
 
-On Thu, May 21, 2020 at 02:50:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently HSD20_IPS is defined as "true" and will always result in a
-> non-zero result even if it is defined as "false" because it is an array
-> and that will never be zero. Fix this by defining it as an integer 1
-> rather than a literal string.
-> 
-> Addessses-Coverity: ("Array compared against 0")
-> Fixes: f03c9b788472 ("staging: fbtft: fb_st7789v: Initialize the Display")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Commit 44e259ac909f ("ARM: dove: create a proper PMU driver for power
+> domains, PMU IRQs and resets") introduced new drivers for the ARM Dove SOC,
+> but did not add those drivers to the existing entry ARM/Marvell
+> Dove/MV78xx0/Orion SOC support in MAINTAINERS. Hence, these drivers were
+> considered to be part of "THE REST".
+>
+> Clarify now that these drivers are maintained by the ARM/Marvell
+> Dove/MV78xx0/Orion SOC support maintainers.
+
+> Also order the T: entry to the
+> place it belongs to, while at it.
+
+In 5.7-rc1 Linus took care of it, so I removed this part ofthe commit
+log.
+
+>
+> This was identified with a small script that finds all files only belonging
+> to "THE REST" according to the current MAINTAINERS file, and I acted upon
+> its output.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+
+Applied on mvebu/arm
+
+Thanks,
+
+Gregory
+
+
 > ---
->  drivers/staging/fbtft/fb_st7789v.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
-> index ebc17e05ecd0..3a280cc1892c 100644
-> --- a/drivers/staging/fbtft/fb_st7789v.c
-> +++ b/drivers/staging/fbtft/fb_st7789v.c
-> @@ -24,7 +24,7 @@
->  	"D0 05 0A 09 08 05 2E 44 45 0F 17 16 2B 33\n" \
->  	"D0 05 0A 09 08 05 2E 43 45 0F 16 16 2B 33"
+> applies cleanly on current master and on next-20200327
+>
+>  MAINTAINERS | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8b8abe756ae0..38fff0374082 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1979,6 +1979,7 @@ M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>  M:	Gregory Clement <gregory.clement@bootlin.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+> +T:	git git://git.infradead.org/linux-mvebu.git
+>  F:	Documentation/devicetree/bindings/soc/dove/
+>  F:	arch/arm/mach-dove/
+>  F:	arch/arm/mach-mv78xx0/
+> @@ -1986,7 +1987,7 @@ F:	arch/arm/mach-orion5x/
+>  F:	arch/arm/plat-orion/
+>  F:	arch/arm/boot/dts/dove*
+>  F:	arch/arm/boot/dts/orion5x*
+> -T:	git git://git.infradead.org/linux-mvebu.git
+> +F:	drivers/soc/dove/
 >  
-> -#define HSD20_IPS "true"
-> +#define HSD20_IPS 1
->  
->  /**
->   * enum st7789v_command - ST7789V display controller commands
-
-Patch does not apply to drm-misc-next, seems to be a staging thing.
-So do not expext the DRM people to pick it up.
-
-	Sam
-
+>  ARM/Marvell Kirkwood and Armada 370, 375, 38x, 39x, XP, 3700, 7K/8K, CN9130 SOC support
+>  M:	Jason Cooper <jason@lakedaemon.net>
 > -- 
-> 2.25.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 2.17.1
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
