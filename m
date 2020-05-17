@@ -1,62 +1,43 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Mon, 11 May 2020 01:47:10 +0000
-Subject: Re: [PATCH] extcon: adc-jack: Fix an error handling path in 'adc_jack_probe()'
-Message-Id: <acc38674-b94d-b738-d737-49b6a4299d25@samsung.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 May 2020 08:50:49 +0000
+Subject: [PATCH] drm/mm: Fix an error handling path in '__igt_once()'
+Message-Id: <20200517085049.278103-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200510095313epcas1p2ee698cfbe023da47555c603260fe2188@epcas1p2.samsung.com>
-        <20200510095303.231635-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200510095303.231635-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, myungjoo.ham@samsung.com, anish198519851985@gmail.com, gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: airlied@linux.ie, daniel@ffwll.ch, gregkh@linuxfoundation.org, tglx@linutronix.de, chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com, joonas.lahtinen@linux.intel.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 5/10/20 6:53 PM, Christophe JAILLET wrote:
-> In some error handling paths, a call to 'iio_channel_get()' is not balanced
-> by a corresponding call to 'iio_channel_release()'.
-> 
-> This can be achieved easily by using the devm_ variant of
-> 'iio_channel_get()'.
-> 
-> This has the extra benefit to simplify the remove function.
-> 
-> Fixes: 19939860dcae ("extcon: adc_jack: adc-jack driver to support 3.5 pi or simliar devices")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch in a more complete version than commit 5a696d9760fe
-> ("extcon: adc-jack: Release IIO channel on driver remove") which fixed the
-> issue for the remove function only.
-> ---
->  drivers/extcon/extcon-adc-jack.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc-jack.c
-> index ad02dc6747a4..0317b614b680 100644
-> --- a/drivers/extcon/extcon-adc-jack.c
-> +++ b/drivers/extcon/extcon-adc-jack.c
-> @@ -124,7 +124,7 @@ static int adc_jack_probe(struct platform_device *pdev)
->  	for (i = 0; data->adc_conditions[i].id != EXTCON_NONE; i++);
->  	data->num_conditions = i;
->  
-> -	data->chan = iio_channel_get(&pdev->dev, pdata->consumer_channel);
-> +	data->chan = devm_iio_channel_get(&pdev->dev, pdata->consumer_channel);
->  	if (IS_ERR(data->chan))
->  		return PTR_ERR(data->chan);
->  
-> @@ -164,7 +164,6 @@ static int adc_jack_remove(struct platform_device *pdev)
->  
->  	free_irq(data->irq, data);
->  	cancel_work_sync(&data->handler.work);
-> -	iio_channel_release(data->chan);
->  
->  	return 0;
->  }
-> 
+The label of the last gotos must be switched for the error handling code to
+work as expected.
 
-Applied it. Thanks.
+Fixes: 83bc4ec37210 ("drm/mm: Add a search-by-address variant to only inspect a single hole")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/selftests/test-drm_mm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/selftests/test-drm_mm.c b/drivers/gpu/drm/selftests/test-drm_mm.c
+index 9aabe82dcd3a..af38c4fa4db5 100644
+--- a/drivers/gpu/drm/selftests/test-drm_mm.c
++++ b/drivers/gpu/drm/selftests/test-drm_mm.c
+@@ -1864,14 +1864,14 @@ static int __igt_once(unsigned int mode)
+ 		pr_err("Unexpectedly inserted the node into the wrong hole: node.start=%llx\n",
+ 		       node.start);
+ 		err = -EINVAL;
+-		goto err_node;
++		goto err_hi;
+ 	}
+ 
+ 	err = drm_mm_insert_node_generic(&mm, &node, 2, 0, 0, mode);
+ 	if (err) {
+ 		pr_err("Could not insert the node into the available hole!\n");
+ 		err = -EINVAL;
+-		goto err_hi;
++		goto err_node;
+ 	}
+ 
+ err_node:
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.25.1
