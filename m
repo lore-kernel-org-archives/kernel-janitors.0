@@ -1,42 +1,39 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Tue, 05 May 2020 04:10:20 +0000
-Subject: Re: [PATCH] fs: jfs: fix a possible data race in txBegin()
-Message-Id: <abbb03ec-7ce3-08b6-7d08-420743067f19@gmail.com>
+From: "Matthew R. Ochs" <mrochs@linux.ibm.com>
+Date: Mon, 18 May 2020 21:41:14 +0000
+Subject: Re: [PATCH -next] scsi: cxlflash: Fix error return code in cxlflash_probe()
+Message-Id: <20200518214114.GA16690@p8tul1-build.aus.stglabs.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ef374a5-0e2e-5c74-a827-0148c384f6e3@web.de>
-In-Reply-To: <5ef374a5-0e2e-5c74-a827-0148c384f6e3@web.de>
+References: <20200428141855.88704-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200428141855.88704-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, jfs-discussion@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dave Kleikamp <shaggy@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: "Manoj N . Kumar" <manoj@linux.ibm.com>, Uma Krishnan <ukrishn@linux.ibm.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, Apr 28, 2020 at 02:18:55PM +0000, Wei Yongjun wrote:
+> Fix to return negative error code -ENOMEM from create_afu error
+> handling case instead of 0, as done elsewhere in this function.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
+Acked-by: Matthew R. Ochs <mrochs@linux.ibm.com>
 
-On 2020/5/5 0:15, Markus Elfring wrote:
->> Thus, a data race can occur for tblk->flag.
->>
->> To fix this data race, the spinlock log->gclock is used in
->> txBegin().
->>
->> This data race is found by our concurrency fuzzer.
-> How do you think about a wording variant like the following?
->
->     Change description:
->     A data race can occur for the data structure member “flag”.
->     This data race was found by our concurrency fuzzer.
->
->     Thus use the spin lock “gclock” for the resetting of five
->     data structure members in this function implementation.
->
->
-> Would you like to add the tag “Fixes” to the commit message?
->
-
-Thanks, Markus.
-I am not sure how to add the tag "Fixes"...
-I need to find which previous commit add the code about txBegin()?
-
-
-Best wishes,
-Jia-Ju Bai
+> ---
+>  drivers/scsi/cxlflash/main.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
+> index fbd2ae40dab4..fcc5aa9f6014 100644
+> --- a/drivers/scsi/cxlflash/main.c
+> +++ b/drivers/scsi/cxlflash/main.c
+> @@ -3744,6 +3744,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
+>  	cfg->afu_cookie = cfg->ops->create_afu(pdev);
+>  	if (unlikely(!cfg->afu_cookie)) {
+>  		dev_err(dev, "%s: create_afu failed\n", __func__);
+> +		rc = -ENOMEM;
+>  		goto out_remove;
+>  	}
+> 
+> 
+> 
