@@ -1,105 +1,40 @@
-From: Yunfeng Ye <yeyunfeng@huawei.com>
-Date: Fri, 08 May 2020 06:41:31 +0000
-Subject: Re: [PATCH] tools/bootconfig: fix resource leak in apply_xbc()
-Message-Id: <9359694c-57bf-729f-593f-6e25c4b115f6@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 May 2020 11:29:55 +0000
+Subject: [PATCH] drm/etnaviv: Fix a leak in submit_pin_objects()
+Message-Id: <20200518112955.GA48709@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <63755ce8-5e1b-6c54-2f74-649cc2546371@web.de>
-In-Reply-To: <63755ce8-5e1b-6c54-2f74-649cc2546371@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hewenliang <hewenliang4@huawei.com>, Shiyuan Hu <hushiyuan@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: David Airlie <airlied@linux.ie>, Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, kernel-janitors@vger.kernel.org, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <linux+etnaviv@armlinux.org.uk>
 
+If the mapping address is wrong then we have to release the reference to
+it before returning -EINVAL.
 
+Fixes: 088880ddc0b2 ("drm/etnaviv: implement softpin")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Untested.
 
-On 2020/5/8 4:30, Markus Elfring wrote:
->> The @data and @fd is leak in the error path of apply_xbc(), so this
->> patch fix it.
-> 
-> I suggest to improve this change description.
-> 
-> * Please use an imperative wording.
-> 
-> * Would you like to add the tag “Fixes”?
-> 
-> 
->> +++ b/tools/bootconfig/main.c
->> @@ -314,6 +314,7 @@  int apply_xbc(const char *path, const char *xbc_path)
->>  	ret = delete_xbc(path);
->>  	if (ret < 0) {
->>  		pr_err("Failed to delete previous boot config: %d\n", ret);
->> +		free(data);
->>  		return ret;
->>  	}
-> 
-> I propose to adjust the exception handling.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?idn7f2eacf09811d092c1b41263108ac7fe0d089d#n450
-> 
-> -		return ret;
-> +		goto free_data;
-> 
-> 
->> @@ -321,24 +322,26 @@ int apply_xbc(const char *path, const char *xbc_path)
->>  	fd = open(path, O_RDWR | O_APPEND);
->>  	if (fd < 0) {
->>  		pr_err("Failed to open %s: %d\n", path, fd);
->> +		free(data);
->>  		return fd;
-> 
-> -		return fd;
-> +		ret = fd;
-> +		goto free_data;
-> 
-> 
->>  	}
->>  	/* TODO: Ensure the @path is initramfs/initrd image */
->>  	ret = write(fd, data, size + 8);
->>  	if (ret < 0) {
->>  		pr_err("Failed to apply a boot config: %d\n", ret);
->> -		return ret;
->> +		goto out;
-> 
-> +		goto free_data;
-> 
-> 
->>  	}
->>  	/* Write a magic word of the bootconfig */
->>  	ret = write(fd, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
->>  	if (ret < 0) {
-> 
-> -	if (ret < 0) {
-> +	if (ret < 0)
-> 
-> 
->>  		pr_err("Failed to apply a boot config magic: %d\n", ret);
->> -		return ret;
->> +		goto out;
-> 
-> I suggest to avoid an extra jump at such a place.
-> 
-> 
->>  	}
-> 
-> -	}
-> +
-> 
-> 
->> +out:
-> 
-> +close_fd:
->>  	close(fd);
-> 
-> +free_data:
->>  	free(data);
-> 
-> 
-> How do you think about to complete the error handling also at other
-> source code places?
-> 
-ok, I will modify and send the patch v2, thanks.
+ drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Regards,
-> Markus
-> 
-> 
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
+index 3b0afa156d92..54def341c1db 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
+@@ -238,8 +238,10 @@ static int submit_pin_objects(struct etnaviv_gem_submit *submit)
+ 		}
+ 
+ 		if ((submit->flags & ETNA_SUBMIT_SOFTPIN) &&
+-		     submit->bos[i].va != mapping->iova)
++		     submit->bos[i].va != mapping->iova) {
++			etnaviv_gem_mapping_unreference(mapping);
+ 			return -EINVAL;
++		}
+ 
+ 		atomic_inc(&etnaviv_obj->gpu_active);
+ 
+-- 
+2.26.2
