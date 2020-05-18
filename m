@@ -1,34 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 May 2020 13:44:46 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 18 May 2020 12:15:43 +0000
 Subject: Re: [PATCH] rtlwifi: Fix a double free in _rtl_usb_tx_urb_setup()
-Message-Id: <20200513134446.GC3041@kadam>
+Message-Id: <20200518121543.E2B76C43637@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200513093951.GD347693@mwanda>
- <ba9452bd2cff4888b76fd17ef85a274b@bfs.de>
-In-Reply-To: <ba9452bd2cff4888b76fd17ef85a274b@bfs.de>
+In-Reply-To: <20200513093951.GD347693@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Jussi Kivilinna <jussi.kivilinna@iki.fi>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Jussi Kivilinna <jussi.kivilinna@iki.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 13, 2020 at 01:38:09PM +0000, Walter Harms wrote:
-> IMHO _rtl_usb_transmit() should not free() either
-> it should return -1.
-> The only caller is rtl_usb_tx() where we need a check:
-> 
-> if ( _rtl_usb_transmit()  < 0)
->   goto err_free;
-> 
-> but i am confused, rtl_usb_tx() is returning NETDEV_TX_OK in an error case ?
-> 
-> err_free:
->      dev_kfree_skb_any(skb);
->       return NETDEV_TX_OK;
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-This is a pretty typical pattern in networking.  For convenience we are
-pretending that the transmit always succeeds and that the packet was
-lost somewhere in the network.  The TCP layer will ask for a resend.
+> Seven years ago we tried to fix a leak but actually introduced a double
+> free instead.  It was an understandable mistake because the code was a
+> bit confusing and the free was done in the wrong place.  The "skb"
+> pointer is freed in both _rtl_usb_tx_urb_setup() and _rtl_usb_transmit().
+> The free belongs _rtl_usb_transmit() instead of _rtl_usb_tx_urb_setup()
+> and I've cleaned the code up a bit to hopefully make it more clear.
+> 
+> Fixes: 36ef0b473fbf ("rtlwifi: usb: add missing freeing of skbuff")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+Patch applied to wireless-drivers-next.git, thanks.
+
+beb12813bc75 rtlwifi: Fix a double free in _rtl_usb_tx_urb_setup()
+
+-- 
+https://patchwork.kernel.org/patch/11545535/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
