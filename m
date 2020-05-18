@@ -1,35 +1,41 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 30 May 2020 07:29:33 +0000
-Subject: [PATCH] scsi: powertec: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 May 2020 11:30:21 +0000
+Subject: [PATCH] of: drop a reference on error in __of_attach_node_sysfs()
+Message-Id: <20200518113021.GB48709@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The dev_id used in 'request_irq()' and 'free_irq()' should match.
-So use 'host' in both cases.
+We add a new of_node_get() to this function, but we should drop the
+reference if kobject_add().
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 5b2c2f5a0ea3 ("of: overlay: add missing of_node_get() in __of_attach_node_sysfs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/scsi/arm/powertec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From static analysis.  Maybe we should just call of_node_get() right
+before we return 0?
 
-diff --git a/drivers/scsi/arm/powertec.c b/drivers/scsi/arm/powertec.c
-index 772a13e5fd91..723b80084498 100644
---- a/drivers/scsi/arm/powertec.c
-+++ b/drivers/scsi/arm/powertec.c
-@@ -354,7 +354,7 @@ static int powertecscsi_probe(struct expansion_card *ec,
- 		goto out_free;
+ drivers/of/kobj.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
+index c72eef988041..a90dc4b3b060 100644
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -138,8 +138,10 @@ int __of_attach_node_sysfs(struct device_node *np)
  
- 	ret = request_irq(ec->irq, powertecscsi_intr,
--			  0, "powertec", info);
-+			  0, "powertec", host);
- 	if (ret) {
- 		printk("scsi%d: IRQ%d not free: %d\n",
- 		       host->host_no, ec->irq, ret);
+ 	rc = kobject_add(&np->kobj, parent, "%s", name);
+ 	kfree(name);
+-	if (rc)
++	if (rc) {
++		of_node_put(np);
+ 		return rc;
++	}
+ 
+ 	for_each_property_of_node(np, pp)
+ 		__of_add_property_sysfs(np, pp);
 -- 
-2.25.1
+2.26.2
