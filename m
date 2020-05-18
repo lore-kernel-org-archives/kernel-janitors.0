@@ -1,49 +1,55 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 27 May 2020 06:40:12 +0000
-Subject: Re: [PATCH v4] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
-Message-Id: <067566d5-9392-c155-fb8e-f2662fb5f60f@web.de>
+Date: Mon, 18 May 2020 14:06:58 +0000
+Subject: Re: [PATCH v2] blkcg: Fix memory leak in blkg_conf_prep()
+Message-Id: <48c1964b-a939-b33f-2c47-90ac7069317a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527015054.34796-1-qiang.zhang@windriver.com>
-In-Reply-To: <20200527015054.34796-1-qiang.zhang@windriver.com>
+References: <1589805366-328489-1-git-send-email-wubo40@huawei.com>
+In-Reply-To: <1589805366-328489-1-git-send-email-wubo40@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wu Bo <wubo40@huawei.com>, cgroups@vger.kernel.org, linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Feilong Lin <linfeilong@huawei.com>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-> The callback function "rcu_free_wq" could be called after memory
-> was released for "wq->rescuer" already and assignment is empty. so
-> remove unnecessary kfree(NULL).
+> If a call of the function blkg_lookup_check() failed,
 
-I have got the impression that also this wording approach contains weaknesses.
-How do you think about a wording variant like the following?
-
-   The data structure member “wq->rescuer” was reset to a null pointer
-   in one if branch. It was passed to a call of the function “kfree”
-   in the callback function “rcu_free_wq” (which was eventually executed).
-   The function “kfree” does not perform more meaningful data processing
-   for a passed null pointer (besides immediately returning from such a call).
-   Thus delete this function call which became unnecessary with the referenced
-   software update.
+Thanks that you would like to integrate something from my suggestion.
 
 
-> Fixes: def98c84b6cd ("workqueue: Fix spurious sanity check failures in destroy_workqueue()")
+> we should be release the previously allocated block group
 
-This change triggered another collateral evolution finally.
-Would you like to detect similarly questionable function calls
-by advanced source code analysis?
-
-
-> Fixes: 8efe1223d73c ("workqueue: Fix missing kfree(rescuer) in destroy_workqueue()")
-
-Please delete this tag from the change description
-(because I find that it is not so relevant here.)
+I find that an other wording would be preferred over “we should”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b9bbe6ed63b2b9f2c9ee5cbd0f2c946a2723f4ce#n151
 
 
->  v1->v2->v3->v4:
->  Modify wrong submission information.
+> before jumping to the lable 'fail_unlock' in the implementation of
 
-Will it be nicer to mention the adjustment of the commit message?
+Please avoid another typo here.
+
+
+> the function blkg_conf_prep().
+>
+> Suggested-by: Markus Elfring <Markus.Elfring@web.de>
+
+I find this tag questionable because the bug fix was presented before.
+https://lore.kernel.org/linux-block/4c670a6c-98c3-2b14-7438-09199506d92f@web.de/
+https://lkml.org/lkml/2020/5/15/779
+
+
+> ---
+> V2: omit the source code quotation from
+>     the change description
+
+* I recommend to improve also the patch subject accordingly.
+
+* Would you like to move the name from the previous tag into
+  this information?
+
+
+> ---
+>  block/blk-cgroup.c | 1 +
+
+I suggest to omit the triple dashes before this diffstat.
 
 Regards,
 Markus
