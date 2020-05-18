@@ -1,50 +1,40 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 08 May 2020 07:08:37 +0000
-Subject: Re: [PATCH] drm/exynos: remove redundant initialization to variable 'start'
-Message-Id: <20200508070837.GF1383626@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 May 2020 16:55:29 +0000
+Subject: [PATCH][next] i2c: mediatek: fix integer overflow on an integer multiplication
+Message-Id: <20200518165529.57821-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507202237.64350-1-colin.king@canonical.com>
-In-Reply-To: <20200507202237.64350-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+To: Matthias Brugger <matthias.bgg@gmail.com>, Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 07, 2020 at 09:22:37PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable 'start' is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Currently the calculation of sample_ns is using a 32 bit integer
+multiplication and can potentially overflow. Fix this by making the
+constant a long long to use a 64 bit multiply and hence
+avoid an overflow.
 
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 902938d2568f..b0b9cb1ec18f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1150,7 +1150,7 @@ static bool exynos_dsi_transfer_finish(struct exynos_dsi *dsi)
->  {
->  	struct exynos_dsi_transfer *xfer;
->  	unsigned long flags;
-> -	bool start = true;
-> +	bool start;
->  
->  	spin_lock_irqsave(&dsi->transfer_lock, flags);
->  
-> -- 
-> 2.25.1
-> 
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 5f1ae73d538a ("i2c: mediatek: Add i2c ac-timing adjust support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-mt65xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
+index 702061805925..c93492b997ce 100644
+--- a/drivers/i2c/busses/i2c-mt65xx.c
++++ b/drivers/i2c/busses/i2c-mt65xx.c
+@@ -551,7 +551,7 @@ static int mtk_i2c_check_ac_timing(struct mtk_i2c *i2c,
+ 	const struct i2c_spec_values *spec;
+ 	unsigned int su_sta_cnt, low_cnt, high_cnt, max_step_cnt;
+ 	unsigned int sda_max, sda_min, clk_ns, max_sta_cnt = 0x3f;
+-	long long sample_ns = (1000000000 * (sample_cnt + 1)) / clk_src;
++	long long sample_ns = (1000000000LL * (sample_cnt + 1)) / clk_src;
+ 
+ 	if (!i2c->dev_comp->timing_adjust)
+ 		return 0;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.25.1
