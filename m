@@ -1,58 +1,59 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 28 May 2020 06:33:50 +0000
-Subject: Re: [PATCH] crypto: cavium/nitrox - Fix 'nitrox_get_first_device()' when ndevlist is fully iterated
-Message-Id: <20200528063350.GA26818@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 May 2020 13:32:23 +0000
+Subject: [PATCH v2] RDMA/rtrs: Fix some signedness bugs in error handling
+Message-Id: <20200519133223.GN2078@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200519204503.281872-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200519204503.281872-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAMGffEkkUVV9b=iMhP4C=ndBRcePcTQMiF4h-Et1DFEKYPA6mg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, jsrikanth@marvell.com, phemadri@marvell.com, gustavo@embeddedor.com, tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 19, 2020 at 10:45:03PM +0200, Christophe JAILLET wrote:
-> When a list is completely iterated with 'list_for_each_entry(x, ...)', x is
-> not NULL at the end.
-> 
-> Introduce an intermediate variable and test it instead, in order to
-> reliably know if something was found or not.
-> 
-> Fixes: f2663872f073 ("crypto: cavium - Register the CNN55XX supported crypto algorithms.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/cavium/nitrox/nitrox_main.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
-> index 788c6607078b..172cafe7c039 100644
-> --- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-> +++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-> @@ -278,15 +278,18 @@ static void nitrox_remove_from_devlist(struct nitrox_device *ndev)
->  
->  struct nitrox_device *nitrox_get_first_device(void)
->  {
-> -	struct nitrox_device *ndev = NULL;
-> +	struct nitrox_device *ndev;
-> +	bool found = false;
->  
->  	mutex_lock(&devlist_lock);
->  	list_for_each_entry(ndev, &ndevlist, list) {
-> -		if (nitrox_ready(ndev))
-> +		if (nitrox_ready(ndev)) {
-> +			found = true;
->  			break;
-> +		}
->  	}
->  	mutex_unlock(&devlist_lock);
-> -	if (!ndev)
+The problem is that "req->sg_cnt" is an unsigned int so if "nr" is
+negative, it gets type promoted to a high positive value and the
+condition is false.  This patch fixes it by handling negatives separately.
 
-Instead of adding found, you could fix this by changing the test to
+Fixes: 6a98d71daea1 ("RDMA/rtrs: client: main functionality")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: propagate the correct error code instead of returning -EINVAL
 
-	if (&ndev->list = &nevlist)
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c | 7 +++----
+ drivers/infiniband/ulp/rtrs/rtrs-srv.c | 2 +-
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-Cheers,
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+index 468fdd0d8713..17f99f0962d0 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+@@ -1047,11 +1047,10 @@ static int rtrs_map_sg_fr(struct rtrs_clt_io_req *req, size_t count)
+ 
+ 	/* Align the MR to a 4K page size to match the block virt boundary */
+ 	nr = ib_map_mr_sg(req->mr, req->sglist, count, NULL, SZ_4K);
+-	if (unlikely(nr < req->sg_cnt)) {
+-		if (nr < 0)
+-			return nr;
++	if (nr < 0)
++		return nr;
++	if (unlikely(nr < req->sg_cnt))
+ 		return -EINVAL;
+-	}
+ 	ib_update_fast_reg_key(req->mr, ib_inc_rkey(req->mr->rkey));
+ 
+ 	return nr;
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv.c b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+index ba8ab33b94a2..eefd149ce7a4 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-srv.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+@@ -649,7 +649,7 @@ static int map_cont_bufs(struct rtrs_srv_sess *sess)
+ 		}
+ 		nr = ib_map_mr_sg(mr, sgt->sgl, sgt->nents,
+ 				  NULL, max_chunk_size);
+-		if (nr < sgt->nents) {
++		if (nr < 0 || nr < sgt->nents) {
+ 			err = nr < 0 ? nr : -EINVAL;
+ 			goto dereg_mr;
+ 		}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.26.2
