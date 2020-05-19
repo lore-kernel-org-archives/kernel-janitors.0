@@ -1,23 +1,37 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 03 May 2020 15:46:22 +0000
-Subject: Re: [PATCH] checkpatch: add support for title acrosses three lines in commit id description
-Message-Id: <83ef442fc90cbfce1d8566e43e9af2bd2089b4e1.camel@perches.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 19 May 2020 09:19:24 +0000
+Subject: [PATCH -next] block/rnbd: server: fix error return code in rnbd_srv_create_dev_sysfs()
+Message-Id: <20200519091924.134494-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200503123435.GD10332@udknight>
-In-Reply-To: <20200503123435.GD10332@udknight>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wang YanQing <udknight@gmail.com>
-Cc: Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>, Markus.Elfring@web.de, kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On Sun, 2020-05-03 at 20:34 +0800, Wang YanQing wrote:
-> The current GIT_COMMIT_ID will report error when the title in commit id
-> description acrosses three lines, take changelog of commit 87b0f983f66f
-> ("net: mscc: ocelot: fix untagged packet drops when enslaving to vlan
-> aware bridge") as a example.
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-I think it's a diminishing returns problem.
+Fixes: 8cee532f469b ("block/rnbd: server: sysfs interface functions")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/block/rnbd/rnbd-srv-sysfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-What percentage of commits in the last 10000
-has this issue?
+diff --git a/drivers/block/rnbd/rnbd-srv-sysfs.c b/drivers/block/rnbd/rnbd-srv-sysfs.c
+index 106775c074d1..5ba1a31ad626 100644
+--- a/drivers/block/rnbd/rnbd-srv-sysfs.c
++++ b/drivers/block/rnbd/rnbd-srv-sysfs.c
+@@ -52,8 +52,10 @@ int rnbd_srv_create_dev_sysfs(struct rnbd_srv_dev *dev,
+ 
+ 	dev->dev_sessions_kobj = kobject_create_and_add("sessions",
+ 							&dev->dev_kobj);
+-	if (!dev->dev_sessions_kobj)
++	if (!dev->dev_sessions_kobj) {
++		ret = -ENOMEM;
+ 		goto put_dev_kobj;
++	}
+ 
+ 	bdev_kobj = &disk_to_dev(bdev->bd_disk)->kobj;
+ 	ret = sysfs_create_link(&dev->dev_kobj, bdev_kobj, "block_dev");
