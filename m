@@ -1,44 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 May 2020 11:25:11 +0000
-Subject: Re: [PATCH -next] ASoC: SOF: core: fix error return code in sof_probe_continue()
-Message-Id: <158919630591.8372.2693006903071941501.b4-ty@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 19 May 2020 20:45:03 +0000
+Subject: [PATCH] crypto: cavium/nitrox - Fix 'nitrox_get_first_device()' when ndevlist is fully iterated
+Message-Id: <20200519204503.281872-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200509093337.78897-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200509093337.78897-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Wei Yongjun <weiyongjun1@huawei.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Cc: Hulk Robot <hulkci@huawei.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, sound-open-firmware@alsa-project.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, jsrikanth@marvell.com, phemadri@marvell.com, gustavo@embeddedor.com, tglx@linutronix.de
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, 9 May 2020 09:33:37 +0000, Wei Yongjun wrote:
-> Fix to return negative error code -ENOMEM from the IPC init error
-> handling case instead of 0, as done elsewhere in this function.
+When a list is completely iterated with 'list_for_each_entry(x, ...)', x is
+not NULL at the end.
 
-Applied to
+Introduce an intermediate variable and test it instead, in order to
+reliably know if something was found or not.
 
-   local tree asoc/for-5.7
+Fixes: f2663872f073 ("crypto: cavium - Register the CNN55XX supported crypto algorithms.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Thanks!
-
-[1/1] ASoC: SOF: core: fix error return code in sof_probe_continue()
-      (no commit info)
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index 788c6607078b..172cafe7c039 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -278,15 +278,18 @@ static void nitrox_remove_from_devlist(struct nitrox_device *ndev)
+ 
+ struct nitrox_device *nitrox_get_first_device(void)
+ {
+-	struct nitrox_device *ndev = NULL;
++	struct nitrox_device *ndev;
++	bool found = false;
+ 
+ 	mutex_lock(&devlist_lock);
+ 	list_for_each_entry(ndev, &ndevlist, list) {
+-		if (nitrox_ready(ndev))
++		if (nitrox_ready(ndev)) {
++			found = true;
+ 			break;
++		}
+ 	}
+ 	mutex_unlock(&devlist_lock);
+-	if (!ndev)
++	if (!found)
+ 		return NULL;
+ 
+ 	refcount_inc(&ndev->refcnt);
+-- 
+2.25.1
