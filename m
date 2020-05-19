@@ -1,24 +1,33 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 27 May 2020 11:42:33 +0000
-Subject: Re: [PATCH][next] block: blk-crypto-fallback: remove redundant initialization of variable err
-Message-Id: <feb4f798-ce3b-6a08-e462-ab23bd223b18@kernel.dk>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 19 May 2020 20:36:54 +0000
+Subject: [PATCH] crypto: cavium/nitrox - Fix a typo in a comment
+Message-Id: <20200519203654.281351-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200526224902.63975-1-colin.king@canonical.com>
-In-Reply-To: <20200526224902.63975-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, jsrikanth@marvell.com, phemadri@marvell.com, gustavo@embeddedor.com, tglx@linutronix.de
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 5/26/20 4:49 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+s/NITORX/NITROX/
 
-Applied, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index e91be9b8b083..788c6607078b 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -346,7 +346,7 @@ static void nitrox_pf_sw_cleanup(struct nitrox_device *ndev)
+ }
+ 
+ /**
+- * nitrox_bist_check - Check NITORX BIST registers status
++ * nitrox_bist_check - Check NITROX BIST registers status
+  * @ndev: NITROX device
+  */
+ static int nitrox_bist_check(struct nitrox_device *ndev)
 -- 
-Jens Axboe
+2.25.1
