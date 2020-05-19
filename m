@@ -1,27 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 May 2020 01:07:58 +0000
-Subject: Re: [PATCH][next] net: phy: fix less than zero comparison with unsigned variable val
-Message-Id: <20200507.180758.1608657964463079833.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 19 May 2020 09:19:12 +0000
+Subject: [PATCH -next] RDMA/rtrs: server: fix some error return code
+Message-Id: <20200519091912.134358-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507143430.50507-1-colin.king@canonical.com>
-In-Reply-To: <20200507143430.50507-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk, linux@rempel-privat.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  7 May 2020 15:34:30 +0100
+Fix to return negative error code -ENOMEM from the some error handling
+cases instead of 0, as done elsewhere in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The unsigned variable val is being checked for an error by checking
-> if it is less than zero. This can never occur because val is unsigned.
-> Fix this by making val a plain int.
-> 
-> Addresses-Coverity: ("Unsigned compared against zero")
-> Fixes: bdbdac7649fa ("ethtool: provide UAPI for PHY master/slave configuration.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9cb837480424 ("RDMA/rtrs: server: main functionality")
+Fixes: 91b11610af8d ("RDMA/rtrs: server: sysfs interface functions")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/infiniband/ulp/rtrs/rtrs-srv.c | 8 +++++---
+ drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c | 1 +
+ 2 file changed, 6 insertions(+), 3 deletions(-)
 
-Applied, thanks Colin.
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv.c b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+index ba8ab33b94a2..526433580b96 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-srv.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+@@ -660,8 +660,8 @@ static int map_cont_bufs(struct rtrs_srv_sess *sess)
+ 					GFP_KERNEL, sess->s.dev->ib_dev,
+ 					DMA_TO_DEVICE, rtrs_srv_rdma_done);
+ 			if (!srv_mr->iu) {
+-				rtrs_err(ss, "rtrs_iu_alloc(), err: %d\n",
+-					  -ENOMEM);
++				err = -ENOMEM;
++				rtrs_err(ss, "rtrs_iu_alloc(), err: %d\n", err);
+ 				goto free_iu;
+ 			}
+ 		}
+@@ -2150,8 +2150,10 @@ static int __init rtrs_server_init(void)
+ 		goto out_chunk_pool;
+ 	}
+ 	rtrs_wq = alloc_workqueue("rtrs_server_wq", WQ_MEM_RECLAIM, 0);
+-	if (!rtrs_wq)
++	if (!rtrs_wq) {
++		err = -ENOMEM;
+ 		goto out_dev_class;
++	}
+ 
+ 	return 0;
+
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c b/drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c
+index 0cf015634338..3d7877534bcc 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-srv-sysfs.c
+@@ -189,6 +189,7 @@ static int rtrs_srv_create_once_sysfs_root_folders(struct rtrs_srv_sess *sess)
+ 	}
+ 	srv->kobj_paths = kobject_create_and_add("paths", &srv->dev.kobj);
+ 	if (!srv->kobj_paths) {
++		err = -ENOMEM;
+ 		pr_err("kobject_create_and_add(): %d\n", err);
+ 		device_unregister(&srv->dev);
+ 		goto unlock;
