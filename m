@@ -1,54 +1,56 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 31 May 2020 17:36:55 +0000
-Subject: Re: [PATCH v2] IB/hfi1: Fix hfi1_netdev_rx_init() error handling
-Message-Id: <20200531173655.GT22511@kadam>
+Date: Tue, 19 May 2020 12:02:56 +0000
+Subject: [PATCH] RDMA/rtrs: Fix some signedness bugs in error handling
+Message-Id: <20200519120256.GC42765@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BY5PR11MB3958CF61BB1F59A6F6B5234D868F0@BY5PR11MB3958.namprd11.prod.outlook.com>
- <20200530140224.GA1330098@mwanda>
- <20200531100512.GH66309@unreal>
-In-Reply-To: <20200531100512.GH66309@unreal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>, Grzegorz Andrejczuk <grzegorz.andrejczuk@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, May 31, 2020 at 01:05:12PM +0300, Leon Romanovsky wrote:
-> On Sat, May 30, 2020 at 05:02:24PM +0300, Dan Carpenter wrote:
-> > The hfi1_vnic_up() function doesn't check whether hfi1_netdev_rx_init()
-> > returns errors.  In hfi1_vnic_init() we need to change the code to
-> > preserve the error code instead of returning success.
-> >
-> > Fixes: 2280740f01ae ("IB/hfi1: Virtual Network Interface Controller (VNIC) HW support")
-> > Fixes: 4730f4a6c6b2 ("IB/hfi1: Activate the dummy netdev")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: Add error handling in hfi1_vnic_up() and add second fixes tag
-> >
-> >  drivers/infiniband/hw/hfi1/vnic_main.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/hw/hfi1/vnic_main.c b/drivers/infiniband/hw/hfi1/vnic_main.c
-> > index b183c56b7b6a4..03f8be8e9488e 100644
-> > --- a/drivers/infiniband/hw/hfi1/vnic_main.c
-> > +++ b/drivers/infiniband/hw/hfi1/vnic_main.c
-> > @@ -457,13 +457,19 @@ static int hfi1_vnic_up(struct hfi1_vnic_vport_info *vinfo)
-> >  	if (rc < 0)
-> >  		return rc;
-> >
-> > -	hfi1_netdev_rx_init(dd);
-> > +	rc = hfi1_netdev_rx_init(dd);
-> > +	if (rc < 0)
-> > +		goto err_remove;
-> 
-> Why did you check for the negative value here and didn't check below?
-> 
+The problem is that "req->sg_cnt" is an unsigned int so if "nr" is
+negative, it gets type promoted to a high positive value and the
+condition is false.  This patch fixes it by handling negatives separately.
 
-I just copied the pattern in the nearest code.  I didn't realize until
-now that it was different in both functions...  The checking isn't done
-consistently in this file.
+Fixes: 6a98d71daea1 ("RDMA/rtrs: client: main functionality")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c | 7 +++----
+ drivers/infiniband/ulp/rtrs/rtrs-srv.c | 2 +-
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-I can resend on Tuesday though if you want.
-
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+index 468fdd0d8713..17f99f0962d0 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+@@ -1047,11 +1047,10 @@ static int rtrs_map_sg_fr(struct rtrs_clt_io_req *req, size_t count)
+ 
+ 	/* Align the MR to a 4K page size to match the block virt boundary */
+ 	nr = ib_map_mr_sg(req->mr, req->sglist, count, NULL, SZ_4K);
+-	if (unlikely(nr < req->sg_cnt)) {
+-		if (nr < 0)
+-			return nr;
++	if (nr < 0)
++		return -EINVAL;
++	if (unlikely(nr < req->sg_cnt))
+ 		return -EINVAL;
+-	}
+ 	ib_update_fast_reg_key(req->mr, ib_inc_rkey(req->mr->rkey));
+ 
+ 	return nr;
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv.c b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+index ba8ab33b94a2..eefd149ce7a4 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-srv.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+@@ -649,7 +649,7 @@ static int map_cont_bufs(struct rtrs_srv_sess *sess)
+ 		}
+ 		nr = ib_map_mr_sg(mr, sgt->sgl, sgt->nents,
+ 				  NULL, max_chunk_size);
+-		if (nr < sgt->nents) {
++		if (nr < 0 || nr < sgt->nents) {
+ 			err = nr < 0 ? nr : -EINVAL;
+ 			goto dereg_mr;
+ 		}
+-- 
+2.26.2
