@@ -1,46 +1,38 @@
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Sat, 09 May 2020 04:48:30 +0000
-Subject: Re: [PATCH] net: tg3: tidy up loop, remove need to compute off with a multiply
-Message-Id: <CACKFLi=A_43O6OqNGfiybpnJyuQJFV0MjoG-mrRHD0RbNumQnA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 May 2020 15:45:25 +0000
+Subject: [PATCH] RDMA/rtrs: Fix a couple off by one bugs in rtrs_srv_rdma_done()
+Message-Id: <20200519154525.GA66801@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508225301.484094-1-colin.king@canonical.com>
- <1890306fc8c9306abe11186d419d84f784ee6144.camel@perches.com>
- <160ce1ee-3bb5-3357-64f3-e5dea8c0538d@canonical.com> <20200508184814.45e10c12@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <fbd61323358554b00460c97ec303572189f99544.camel@perches.com>
-In-Reply-To: <fbd61323358554b00460c97ec303572189f99544.camel@perches.com>
+In-Reply-To: <CAHg0Huz39q9nWwTrtCY=SgU=T9oZJQdchx6c1LOPbSQiywzrqw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Colin Ian King <colin.king@canonical.com>, Siva Reddy Kallam <siva.kallam@broadcom.com>, Prashant Sreedharan <prashant@broadcom.com>, Michael Chan <mchan@broadcom.com>, "David S . Miller" <davem@davemloft.net>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 8, 2020 at 7:31 PM Joe Perches <joe@perches.com> wrote:
->
-> On Fri, 2020-05-08 at 18:48 -0700, Jakub Kicinski wrote:
-> > On Sat, 9 May 2020 00:31:03 +0100 Colin Ian King wrote:
-> > > > My preference would be for
-> > > >
-> > > > {
-> > > >   int i;
-> > > >   u32 off = 0;
-> > > >
-> > > >   for (i = 0; i < TG3_SD_NUM_RECS; i++) {
-> > > >           tg3_ape_scratchpad_read(tp, (u32 *)ocir, off, TC3_OCIR_LEN);
-> > > >
-> > > >           if (ocir->signature != TG3_OCIR_SIG_MAGIC ||
-> > > >               !(ocir->version_flags & TG3_OCIR_FLAG_ACTIVE))
-> > > >                   memset(ocir, 0, TG3_OCIR_LEN);
-> > > >
-> > > >           off += TG3_OCIR_LEN;
-> > > >           ocir++;
-> > > >   }
-> > > >
-> > > OK, I'll send a V3 tomorrow.
-> >
-> > I already reviewed and applied v2, just waiting for builds to finish,
-> > let's leave it.
->
->
-> I think clarity should be preferred.
+These > comparisons should be >= to prevent accessing one element
+beyond the end of the buffer.
 
-Either way is fine with me.  I'm fine with v2 since it's already applied.
+Fixes: 9cb837480424 ("RDMA/rtrs: server: main functionality")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/ulp/rtrs/rtrs-srv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv.c b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+index 658c8999cb0d..0b53b79b0e27 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-srv.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+@@ -1213,8 +1213,8 @@ static void rtrs_srv_rdma_done(struct ib_cq *cq, struct ib_wc *wc)
+ 
+ 			msg_id = imm_payload >> sess->mem_bits;
+ 			off = imm_payload & ((1 << sess->mem_bits) - 1);
+-			if (unlikely(msg_id > srv->queue_depth ||
+-				     off > max_chunk_size)) {
++			if (unlikely(msg_id >= srv->queue_depth ||
++				     off >= max_chunk_size)) {
+ 				rtrs_err(s, "Wrong msg_id %u, off %u\n",
+ 					  msg_id, off);
+ 				close_sess(sess);
+-- 
+2.26.2
