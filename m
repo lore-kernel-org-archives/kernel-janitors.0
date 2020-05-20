@@ -1,26 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 12 May 2020 03:28:28 +0000
-Subject: Re: [PATCH] scsi: lpfc: remove redundant initialization to variable rc
-Message-Id: <158925392374.17325.12424804060546822236.b4-ty@oracle.com>
+From: James Smart <jsmart2021@gmail.com>
+Date: Wed, 20 May 2020 18:59:26 +0000
+Subject: [PATCH 0/3] lpfc: Fix errors in LS receive refactoring
+Message-Id: <20200520185929.48779-1-jsmart2021@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507203111.64709-1-colin.king@canonical.com>
-In-Reply-To: <20200507203111.64709-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, James Smart <james.smart@broadcom.com>, Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-nvme@lists.infradead.org
+Cc: axboe@kernel.dk, James Smart <jsmart2021@gmail.com>, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, jejb@linux.ibm.com, kernel-janitors@vger.kernel.org, hch@infradead.org, paul.ely@broadcom.com, hare@suse.de, dan.carpenter@oracle.com
 
-On Thu, 7 May 2020 21:31:11 +0100, Colin King wrote:
+A prior patch set refactored lpfc to create common routines for NVME LS
+handling for use by both the initiator and target paths.  The refactoring
+introduced several errors spotted by additional testing and static checker
+reporting.
 
-> The variable rc is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+This patch set corrects those errors.
 
-Applied to 5.8/scsi-queue, thanks!
+The patches should enter via the nvme tree, as the lpfc modifications were
+in support of nvme-fc transport api deltas merged via the nvme tree.
 
-[1/1] scsi: lpfc: Remove redundant initialization to variable rc
-      https://git.kernel.org/mkp/scsi/c/6e27a86aed97
+-- james
+
+
+James Smart (3):
+  lpfc: Fix pointer checks and comments in LS receive refactoring
+  lpfc: fix axchg pointer reference after free and double frees
+  lpfc: Fix return value in __lpfc_nvme_ls_abort
+
+ drivers/scsi/lpfc/lpfc_nvme.c  |  2 +-
+ drivers/scsi/lpfc/lpfc_nvmet.c | 29 ++++++++++++++++++-----------
+ drivers/scsi/lpfc/lpfc_sli.c   | 10 ++++++----
+ 3 files changed, 25 insertions(+), 16 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.26.1
