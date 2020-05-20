@@ -1,28 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 04 May 2020 18:57:38 +0000
-Subject: Re: [PATCH] net: stmmac: gmac5+: fix potential integer overflow on 32 bit multiply
-Message-Id: <20200504.115738.1197878174801820355.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2020 12:03:06 +0000
+Subject: [PATCH] iio: dummy_evgen: Fix use after free on error in iio_dummy_evgen_create()
+Message-Id: <20200520120306.GD172354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200501141016.290699-1-colin.king@canonical.com>
-In-Reply-To: <20200501141016.290699-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: alexandre.torgue@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, joabreu@synopsys.com, mcoquelin.stm32@gmail.com, peppe.cavallaro@st.com, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+To: Jonathan Cameron <jic23@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kate Stewart <kstewart@linuxfoundation.org>, Marc Zyngier <maz@kernel.org>, Allison Randal <allison@lohutok.net>, Linus Walleij <linus.walleij@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri,  1 May 2020 15:10:16 +0100
+We need to preserve the "iio_evgen->irq_sim_domain" error code before
+we free "iio_evgen" otherwise it leads to a use after free.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The multiplication of cfg->ctr[1] by 1000000000 is performed using a
-> 32 bit multiplication (since cfg->ctr[1] is a u32) and this can lead
-> to a potential overflow. Fix this by making the constant a ULL to
-> ensure a 64 bit multiply occurs.
-> 
-> Fixes: 504723af0d85 ("net: stmmac: Add basic EST support for GMAC5+")
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 337cbeb2c13e ("genirq/irq_sim: Simplify the API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/iio/dummy/iio_dummy_evgen.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/iio/dummy/iio_dummy_evgen.c b/drivers/iio/dummy/iio_dummy_evgen.c
+index 409fe0f7df1c..ee85d596e528 100644
+--- a/drivers/iio/dummy/iio_dummy_evgen.c
++++ b/drivers/iio/dummy/iio_dummy_evgen.c
+@@ -45,6 +45,8 @@ static struct iio_dummy_eventgen *iio_evgen;
+ 
+ static int iio_dummy_evgen_create(void)
+ {
++	int ret;
++
+ 	iio_evgen = kzalloc(sizeof(*iio_evgen), GFP_KERNEL);
+ 	if (!iio_evgen)
+ 		return -ENOMEM;
+@@ -52,8 +54,9 @@ static int iio_dummy_evgen_create(void)
+ 	iio_evgen->irq_sim_domain = irq_domain_create_sim(NULL,
+ 							  IIO_EVENTGEN_NO);
+ 	if (IS_ERR(iio_evgen->irq_sim_domain)) {
++		ret = PTR_ERR(iio_evgen->irq_sim_domain);
+ 		kfree(iio_evgen);
+-		return PTR_ERR(iio_evgen->irq_sim_domain);
++		return ret;
+ 	}
+ 
+ 	mutex_init(&iio_evgen->lock);
+-- 
+2.26.2
