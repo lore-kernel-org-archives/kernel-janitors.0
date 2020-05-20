@@ -1,38 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 09 May 2020 21:48:03 +0000
-Subject: [PATCH] net: huawei_cdc_ncm: remove redundant assignment to variable ret
-Message-Id: <20200509214803.506276-1-colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 20 May 2020 03:41:16 +0000
+Subject: [PATCH 2/2 v3] net: ethernet: ti: am65-cpsw-nuss: fix error handling of am65_cpsw_nuss_probe
+Message-Id: <20200520034116.170946-3-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200520034116.170946-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200520034116.170946-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, open <linux-usb@vger.kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Convert to using IS_ERR() instead of NULL test for cpsw_ale_create()
+error handling. Also fix to return negative error code from this error
+handling case instead of 0 in.
 
-The variable ret is being initializeed with a value that is never read
-and it is being updated later with a new value. The initialization
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 93a76530316a ("net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/usb/huawei_cdc_ncm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/huawei_cdc_ncm.c b/drivers/net/usb/huawei_cdc_ncm.c
-index 099d84827004..a87f0dabcdb7 100644
---- a/drivers/net/usb/huawei_cdc_ncm.c
-+++ b/drivers/net/usb/huawei_cdc_ncm.c
-@@ -67,7 +67,7 @@ static int huawei_cdc_ncm_bind(struct usbnet *usbnet_dev,
- {
- 	struct cdc_ncm_ctx *ctx;
- 	struct usb_driver *subdriver = ERR_PTR(-ENODEV);
--	int ret = -ENODEV;
-+	int ret;
- 	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
- 	int drvflags = 0;
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 2517ffba8178..88f52a2f85b3 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -1895,8 +1895,9 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
+ 	ale_params.nu_switch_ale = true;
+ 
+ 	common->ale = cpsw_ale_create(&ale_params);
+-	if (!common->ale) {
++	if (IS_ERR(common->ale)) {
+ 		dev_err(dev, "error initializing ale engine\n");
++		ret = PTR_ERR(common->ale);
+ 		goto err_of_clear;
+ 	}
  
 -- 
 2.25.1
