@@ -1,32 +1,48 @@
-From: Wang YanQing <udknight@gmail.com>
-Date: Sun, 03 May 2020 11:45:57 +0000
-Subject: Re: [PATCH v4] checkpatch: add support to check 'Fixes:' tag format
-Message-Id: <20200503114557.GA10332@udknight>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2020 12:00:54 +0000
+Subject: [PATCH] drm/amdgpu: off by on in amdgpu_device_attr_create_groups() error handling
+Message-Id: <20200520120054.GB172354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200502185421.GB9082@udknight>
- <6a3a6f8d-e8be-0002-780d-1991f6152c8f@web.de>
-In-Reply-To: <6a3a6f8d-e8be-0002-780d-1991f6152c8f@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce <mcroce@redhat.com>
+To: Alex Deucher <alexander.deucher@amd.com>, Kevin Wang <kevin1.wang@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, Hawking Zhang <Hawking.Zhang@amd.com>, Rui Huang <ray.huang@amd.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Yintian Tao <yttao@amd.com>
 
-On Sat, May 02, 2020 at 09:40:24PM +0200, Markus Elfring wrote:
-> 
-> 
-> > +				$diagnostics .= "Missing a pair of parentheses '()' or a pair of double quotation marks (\"\").\n";
-> 
-> Can such a message trigger any more thoughts and development ideas?
+This loop in the error handling code should start a "i - 1" and end at
+"i = 0".  Currently it starts a "i" and ends at "i = 1".  The result
+is that it removes one attribute that wasn't created yet, and leaks the
+zeroeth attribute.
 
-No, I don't think so. '(" ... ")' is the minimum interface between analyser
-(checkpatch) and commit id description (normal commit id and 'Fixes:' tag)
-about the title, it is very difficult if not impossible to guess the title
-boundary and whether it is the *REAL* title that folllow the SHA1 without
-this precondition, and it is more difficult to do it when we need to support
-title which across lines in the normal commit id description.
+Fixes: 4e01847c38f7 ("drm/amdgpu: optimize amdgpu device attribute code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-At last I really doubt the benefit it brings deserves the complexity and the
-current diagnostics info is enough clear for most situation.
-
-Thanks.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+index b75362bf0742..ee4a8e44fbeb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+@@ -1931,7 +1931,7 @@ static int amdgpu_device_attr_create_groups(struct amdgpu_device *adev,
+ 					    uint32_t mask)
+ {
+ 	int ret = 0;
+-	uint32_t i = 0;
++	int i;
+ 
+ 	for (i = 0; i < counts; i++) {
+ 		ret = amdgpu_device_attr_create(adev, &attrs[i], mask);
+@@ -1942,9 +1942,8 @@ static int amdgpu_device_attr_create_groups(struct amdgpu_device *adev,
+ 	return 0;
+ 
+ failed:
+-	for (; i > 0; i--) {
++	while (--i >= 0)
+ 		amdgpu_device_attr_remove(adev, &attrs[i]);
+-	}
+ 
+ 	return ret;
+ }
+-- 
+2.26.2
