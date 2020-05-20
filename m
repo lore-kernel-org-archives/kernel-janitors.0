@@ -1,76 +1,32 @@
-From: Boris Sukholitko <boris.sukholitko@broadcom.com>
-Date: Sun, 24 May 2020 05:25:42 +0000
-Subject: Re: [bug report] __netif_receive_skb_core: pass skb by reference
-Message-Id: <20200524052540.GA11080@noodle>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 20 May 2020 03:41:14 +0000
+Subject: [PATCH 0/2 v3] net: ethernet: ti: fix some return value check
+Message-Id: <20200520034116.170946-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200522101553.GA41044@mwanda>
-In-Reply-To: <20200522101553.GA41044@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Colin Ian King <colin.king@canonical.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+This patchset convert cpsw_ale_create() to return PTR_ERR() only, and
+changed all the caller to check IS_ERR() instead of NULL.
 
-On Fri, May 22, 2020 at 01:15:53PM +0300, Dan Carpenter wrote:
-> Hello Boris Sukholitko,
-> 
-> The patch c0bbbdc32feb: "__netif_receive_skb_core: pass skb by
-> reference" from May 19, 2020, leads to the following static checker
-> warning:
-> 
-> 	net/core/dev.c:5256 __netif_receive_skb_core()
-> 	warn: 'skb' was already freed.
+Since v2:
+1) rebased on net.git, as Jakub's suggest
+2) split am65-cpsw-nuss.c changes, as Grygorii's suggest
 
-IMHO, the static checker is wrong in this case. Please see below.
 
-> 
-> net/core/dev.c
->   5230          }
->   5231  
->   5232          if (pt_prev) {
->   5233                  if (unlikely(skb_orphan_frags_rx(skb, GFP_ATOMIC)))
->   5234                          goto drop;
->   5235                  *ppt_prev = pt_prev;
->   5236          } else {
->   5237  drop:
->   5238                  if (!deliver_exact)
->   5239                          atomic_long_inc(&skb->dev->rx_dropped);
->   5240                  else
->   5241                          atomic_long_inc(&skb->dev->rx_nohandler);
->   5242                  kfree_skb(skb);
->                                   ^^^
+Wei Yongjun (2):
+  net: ethernet: ti: fix some return value check of cpsw_ale_create()
+  net: ethernet: ti: am65-cpsw-nuss: fix error handling of
+    am65_cpsw_nuss_probe
 
-Notice how the *ppt_prev is *not* being set in the drop case, when we
-are freeing the skb.
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 ++-
+ drivers/net/ethernet/ti/cpsw_ale.c       | 2 +-
+ drivers/net/ethernet/ti/cpsw_priv.c      | 4 ++--
+ drivers/net/ethernet/ti/netcp_ethss.c    | 4 ++--
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
-> 
->   5243                  /* Jamal, now you will not able to escape explaining
->   5244                   * me how you were going to use this. :-)
->   5245                   */
->   5246                  ret = NET_RX_DROP;
->   5247          }
->   5248  
->   5249  out:
->   5250          /* The invariant here is that if *ppt_prev is not NULL
->   5251           * then skb should also be non-NULL.
->   5252           *
->   5253           * Apparently *ppt_prev assignment above holds this invariant due to
->   5254           * skb dereferencing near it.
->   5255           */
->   5256          *pskb = skb;
->                 ^^^^^^^^^^^^
-> Freed and also used in the caller.
-> 
-
-Although the skb may be freed at this point, the callers have their pt_prev
-being set to NULL. Therefore none of them will try to use the bad skb.
-
-Thanks,
-Boris.
-
->   5257          return ret;
->   5258  }
-> 
-> regards,
-> dan carpenter
+-- 
+2.25.1
