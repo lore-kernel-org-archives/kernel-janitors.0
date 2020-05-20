@@ -1,33 +1,49 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 18 May 2020 12:15:43 +0000
-Subject: Re: [PATCH] rtlwifi: Fix a double free in _rtl_usb_tx_urb_setup()
-Message-Id: <20200518121543.E2B76C43637@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2020 12:04:14 +0000
+Subject: [PATCH v2] of: Fix a refcounting bug in __of_attach_node_sysfs()
+Message-Id: <20200520120414.GE172354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200513093951.GD347693@mwanda>
-In-Reply-To: <20200513093951.GD347693@mwanda>
+In-Reply-To: <877dx69az4.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Jussi Kivilinna <jussi.kivilinna@iki.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The problem in this code is that if kobject_add() fails, then it should
+call of_node_put(np) to drop the reference count.  I've actually moved
+the of_node_get(np) later in the function to avoid needing to do clean
+up.
 
-> Seven years ago we tried to fix a leak but actually introduced a double
-> free instead.  It was an understandable mistake because the code was a
-> bit confusing and the free was done in the wrong place.  The "skb"
-> pointer is freed in both _rtl_usb_tx_urb_setup() and _rtl_usb_transmit().
-> The free belongs _rtl_usb_transmit() instead of _rtl_usb_tx_urb_setup()
-> and I've cleaned the code up a bit to hopefully make it more clear.
-> 
-> Fixes: 36ef0b473fbf ("rtlwifi: usb: add missing freeing of skbuff")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 5b2c2f5a0ea3 ("of: overlay: add missing of_node_get() in __of_attach_node_sysfs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: move the of_node_get() instead of doing clean up.  Also the v1 had a
+    confusing typo in the commit message.
 
-Patch applied to wireless-drivers-next.git, thanks.
+ drivers/of/kobj.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-beb12813bc75 rtlwifi: Fix a double free in _rtl_usb_tx_urb_setup()
-
+diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
+index c72eef988041..a32e60b024b8 100644
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -134,8 +134,6 @@ int __of_attach_node_sysfs(struct device_node *np)
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+-	of_node_get(np);
+-
+ 	rc = kobject_add(&np->kobj, parent, "%s", name);
+ 	kfree(name);
+ 	if (rc)
+@@ -144,6 +142,7 @@ int __of_attach_node_sysfs(struct device_node *np)
+ 	for_each_property_of_node(np, pp)
+ 		__of_add_property_sysfs(np, pp);
+ 
++	of_node_get(np);
+ 	return 0;
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/11545535/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.26.2
