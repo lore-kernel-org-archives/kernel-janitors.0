@@ -1,26 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 May 2020 18:23:49 +0000
-Subject: Re: [PATCH][V2][net-next] mlxsw: spectrum_router: remove redundant initialization of pointer br_dev
-Message-Id: <20200527.112349.724631175356044481.davem@davemloft.net>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 20 May 2020 03:21:50 +0000
+Subject: [PATCH -next] bus: arm-integrator-lm: Fix return value check in integrator_ap_lm_probe()
+Message-Id: <20200520032150.165388-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527081555.124615-1-colin.king@canonical.com>
-In-Reply-To: <20200527081555.124615-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jiri@mellanox.com, idosch@mellanox.com, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Hulk Robot <hulkci@huawei.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 27 May 2020 09:15:55 +0100
+In case of error, the function of_find_matching_node() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer br_dev is being initialized with a value that is never read
-> and is being updated with a new value later on. The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: ccea5e8a5918 ("bus: Add driver for Integrator/AP logic modules")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/bus/arm-integrator-lm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/bus/arm-integrator-lm.c b/drivers/bus/arm-integrator-lm.c
+index 669ea7e1f92e..845b6c43fef8 100644
+--- a/drivers/bus/arm-integrator-lm.c
++++ b/drivers/bus/arm-integrator-lm.c
+@@ -78,10 +78,10 @@ static int integrator_ap_lm_probe(struct platform_device *pdev)
+ 
+ 	/* Look up the system controller */
+ 	syscon = of_find_matching_node(NULL, integrator_ap_syscon_match);
+-	if (IS_ERR(syscon)) {
++	if (!syscon) {
+ 		dev_err(dev,
+ 			"could not find Integrator/AP system controller\n");
+-		return PTR_ERR(syscon);
++		return -ENODEV;
+ 	}
+ 	map = syscon_node_to_regmap(syscon);
+ 	if (IS_ERR(map)) {
