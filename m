@@ -1,24 +1,50 @@
-From: Finn Thain <fthain@telegraphics.com.au>
-Date: Wed, 13 May 2020 23:16:55 +0000
-Subject: Re: net/sonic: Software evolution around the application of coding standards
-Message-Id: <alpine.LNX.2.22.394.2005140853420.8@nippy.intranet>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2020 12:00:19 +0000
+Subject: [PATCH] w1_therm: Free the correct variable
+Message-Id: <20200520120019.GA172354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b7651b26-ac1e-6281-efb2-7eff0018b158@web.de> <alpine.LNX.2.22.394.2005100922240.11@nippy.intranet> <9d279f21-6172-5318-4e29-061277e82157@web.de> <alpine.LNX.2.22.394.2005101738510.11@nippy.intranet> <bc70e24c-dd31-75b7-6ece-2ad31982641e@web.de>
- <alpine.LNX.2.22.394.2005110845060.8@nippy.intranet> <9994a7de-0399-fb34-237a-a3c71b3cf568@web.de> <alpine.LNX.2.22.394.2005120905410.8@nippy.intranet> <3fabce05-7da9-7daa-d92c-411369f35b4a@web.de> <alpine.LNX.2.22.394.2005131028450.20@nippy.intranet>
- <47b7cfc3-68a1-b1da-9761-ab27dc8118ad@web.de>
-In-Reply-To: <47b7cfc3-68a1-b1da-9761-ab27dc8118ad@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+To: Evgeniy Polyakov <zbr@ioremap.net>, Akira Shimahara <akira215corp@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Fontana <rfontana@redhat.com>, Allison Randal <allison@lohutok.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 13 May 2020, Markus Elfring wrote:
+The problem is that we change "p_args" to point to the middle of the
+string so when we free it at the end of the function it's not freeing
+the same pointer that we originally allocated.
 
-> some developers care to improve the compliance with the current 
-> standard at various source code places, don't they?
-> 
+Fixes: e2c94d6f5720 ("w1_therm: adding alarm sysfs entry")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  I guess it must not cause too much of a problem
+at run time?
 
-This thread appears to be circular. Before I abandon it as folly, perhaps 
-you would answer one more question. Out of all of the semantic patches in 
-scripts/coccinelle, would you care to cast a vote for the best one?
+ drivers/w1/slaves/w1_therm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index cc4b88056b33..a6c85e486671 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -1526,8 +1526,9 @@ static ssize_t alarms_store(struct device *device,
+ 	int temp, ret = -EINVAL;
+ 	char *token = NULL;
+ 	s8 tl, th, tt;	/* 1 byte per value + temp ring order */
+-	char *p_args = kmalloc(size, GFP_KERNEL);
++	char *p_args, *orig;
+ 
++	p_args = orig = kmalloc(size, GFP_KERNEL);
+ 	/* Safe string copys as buf is const */
+ 	if (!p_args) {
+ 		dev_warn(device,
+@@ -1611,7 +1612,7 @@ static ssize_t alarms_store(struct device *device,
+ 
+ free_m:
+ 	/* free allocated memory */
+-	kfree(p_args);
++	kfree(orig);
+ 
+ 	return size;
+ }
+-- 
+2.26.2
