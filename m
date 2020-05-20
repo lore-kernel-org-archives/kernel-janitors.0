@@ -1,87 +1,34 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 16 May 2020 10:57:36 +0000
-Subject: [PATCH v2] drm/exynos: dsi: Remove bridge node reference in error handling path in probe function
-Message-Id: <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2020 12:05:51 +0000
+Subject: [PATCH] mt76: mt7915: fix locking bug in mt7915_sta_rc_update()
+Message-Id: <20200520120551.GG172354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org, krzk@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-arm-kernel@lists.infradead.org
+To: Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, YF Luo <yf.luo@mediatek.com>, Chih-Min Chen <chih-min.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yiwei Chung <yiwei.chung@mediatek.com>, linux-mediatek@lists.infradead.org, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Shayne Chen <shayne.chen@mediatek.com>
 
-'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
-This must be released in the error handling path.
+This function calls rcu_read_lock() twice instead of unlocking.
 
-In order to do that, add an error handling path and move the
-'exynos_dsi_parse_dt()' call from the beginning to the end of the probe
-function to ease the error handling path.
-This function only sets some variables which are used only in the
-'transfer' function.
-
-The call chain is:
-   .transfer
-    --> exynos_dsi_host_transfer
-      --> exynos_dsi_init
-        --> exynos_dsi_enable_clock  (use burst_clk_rate and esc_clk_rate)
-          --> exynos_dsi_set_pll     (use pll_clk_rate)
-
-While at it, also handle cases where 'component_add()' fails.
-
-This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
-which fixed the issue in the remove function.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-A Fixes tag could be required, but I've not been able to figure out which
-one to use.
+ drivers/net/wireless/mediatek/mt76/mt7915/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: move around 'exynos_dsi_parse_dt' instead of adding many gotos
-    handle component_add failures
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 902938d2568f..a9d24402fabf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1759,10 +1759,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi->dev = dev;
- 	dsi->driver_data = of_device_get_match_data(dev);
- 
--	ret = exynos_dsi_parse_dt(dsi);
--	if (ret)
--		return ret;
--
- 	dsi->supplies[0].supply = "vddcore";
- 	dsi->supplies[1].supply = "vddio";
- 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
-@@ -1823,11 +1819,25 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 		return ret;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+index 98567374c2c9..3f00f5439c7c 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+@@ -790,7 +790,7 @@ mt7915_sta_rc_update(struct ieee80211_hw *hw,
+ 		rcu_read_unlock();
+ 		return;
  	}
+-	rcu_read_lock();
++	rcu_read_unlock();
  
-+	ret = exynos_dsi_parse_dt(dsi);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, &dsi->encoder);
- 
- 	pm_runtime_enable(dev);
- 
--	return component_add(dev, &exynos_dsi_component_ops);
-+	ret = component_add(dev, &exynos_dsi_component_ops);
-+	if (ret)
-+		goto err_disable_runtime;
-+
-+	return 0;
-+
-+err_disable_runtime:
-+	pm_runtime_disable(dev);
-+	of_node_put(dsi->in_bridge_node);
-+
-+	return ret;
- }
- 
- static int exynos_dsi_remove(struct platform_device *pdev)
+ 	set_bit(changed, &msta->stats.changed);
+ 	ieee80211_queue_work(hw, &msta->stats_work);
 -- 
-2.25.1
+2.26.2
