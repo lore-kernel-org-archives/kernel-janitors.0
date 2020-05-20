@@ -1,48 +1,69 @@
-From: "Ruhl, Michael J" <michael.j.ruhl@intel.com>
-Date: Wed, 20 May 2020 15:31:11 +0000
-Subject: RE: [PATCH v3] drm/amdgpu: off by one in amdgpu_device_attr_create_groups() error handling
-Message-Id: <14063C7AD467DE4B82DEDB5C278E8663010E230378@FMSMSX108.amr.corp.intel.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Date: Wed, 20 May 2020 15:32:57 +0000
+Subject: Re: [PATCH v3] drm/amdgpu: off by one in amdgpu_device_attr_create_groups() error handling
+Message-Id: <d8b26176-b3f7-500a-50f8-9282f615ec74@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <14063C7AD467DE4B82DEDB5C278E8663010E2302FA@FMSMSX108.amr.corp.intel.com>
  <20200520152556.GQ3041@kadam>
-In-Reply-To: <20200520152556.GQ3041@kadam>
+ <14063C7AD467DE4B82DEDB5C278E8663010E230378@FMSMSX108.amr.corp.intel.com>
+In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663010E230378@FMSMSX108.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alex Deucher <alexander.deucher@amd.com>, Kevin Wang <kevin1.wang@amd.com>
-Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, Hawking Zhang <Hawking.Zhang@amd.com>, Rui Huang <ray.huang@amd.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, Yintian Tao <yttao@amd.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: "Ruhl, Michael J" <michael.j.ruhl@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Alex Deucher <alexander.deucher@amd.com>, Kevin Wang <kevin1.wang@amd.com>
+Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, Hawking Zhang <Hawking.Zhang@amd.com>, Rui Huang <ray.huang@amd.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>, Kenneth Feng <kenneth.feng@amd.com>, Yintian Tao <yttao@amd.com>
 
-Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRGFuIENhcnBlbnRlciA8ZGFuLmNh
-cnBlbnRlckBvcmFjbGUuY29tPg0KPlNlbnQ6IFdlZG5lc2RheSwgTWF5IDIwLCAyMDIwIDExOjI2
-IEFNDQo+VG86IEFsZXggRGV1Y2hlciA8YWxleGFuZGVyLmRldWNoZXJAYW1kLmNvbT47IEtldmlu
-IFdhbmcNCj48a2V2aW4xLndhbmdAYW1kLmNvbT47IFJ1aGwsIE1pY2hhZWwgSiA8bWljaGFlbC5q
-LnJ1aGxAaW50ZWwuY29tPg0KPkNjOiBDaHJpc3RpYW4gS8O2bmlnIDxjaHJpc3RpYW4ua29lbmln
-QGFtZC5jb20+OyBEYXZpZCBBaXJsaWUNCj48YWlybGllZEBsaW51eC5pZT47IERhbmllbCBWZXR0
-ZXIgPGRhbmllbEBmZndsbC5jaD47IEV2YW4gUXVhbg0KPjxldmFuLnF1YW5AYW1kLmNvbT47IFJ1
-aSBIdWFuZyA8cmF5Lmh1YW5nQGFtZC5jb20+OyBLZW5uZXRoIEZlbmcNCj48a2VubmV0aC5mZW5n
-QGFtZC5jb20+OyBZaW50aWFuIFRhbyA8eXR0YW9AYW1kLmNvbT47IEhhd2tpbmcgWmhhbmcNCj48
-SGF3a2luZy5aaGFuZ0BhbWQuY29tPjsgYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGRy
-aS0NCj5kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IGtlcm5lbC0NCj5qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj5TdWJqZWN0OiBbUEFU
-Q0ggdjNdIGRybS9hbWRncHU6IG9mZiBieSBvbmUgaW4NCj5hbWRncHVfZGV2aWNlX2F0dHJfY3Jl
-YXRlX2dyb3VwcygpIGVycm9yIGhhbmRsaW5nDQo+DQo+VGhpcyBsb29wIGluIHRoZSBlcnJvciBo
-YW5kbGluZyBjb2RlIHNob3VsZCBzdGFydCBhICJpIC0gMSIgYW5kIGVuZCBhdA0KPiJpID09IDAi
-LiAgQ3VycmVudGx5IGl0IHN0YXJ0cyBhICJpIiBhbmQgZW5kcyBhdCAiaSA9PSAxIi4gIFRoZSBy
-ZXN1bHQNCj5pcyB0aGF0IGl0IHJlbW92ZXMgb25lIGF0dHJpYnV0ZSB0aGF0IHdhc24ndCBjcmVh
-dGVkIHlldCwgYW5kIGxlYWtzIHRoZQ0KPnplcm9ldGggYXR0cmlidXRlLg0KPg0KPkZpeGVzOiA0
-ZTAxODQ3YzM4ZjcgKCJkcm0vYW1kZ3B1OiBvcHRpbWl6ZSBhbWRncHUgZGV2aWNlIGF0dHJpYnV0
-ZSBjb2RlIikNCj5TaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9y
-YWNsZS5jb20+DQo+LS0tDQo+djI6IHN0eWxlIGNoYW5nZQ0KPnYzOiBGaXggZW1iYXJyYXNzaW5n
-IHR5cG8gaW4gdGhlIHN1YmplY3QNCg0K8J+Yig0KDQpBY2tlZC1ieTogTWljaGFlbCBKLiBSdWhs
-IDxtaWNoYWVsLmoucnVobEBpbnRlbC5jb20+DQoNCm0NCj4gZHJpdmVycy9ncHUvZHJtL2FtZC9h
-bWRncHUvYW1kZ3B1X3BtLmMgICAgICAgICAgIHwgMyArLS0NCj4gMSBmaWxlcyBjaGFuZ2VkLCAx
-IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+DQo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9wbS5jDQo+Yi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
-ZGdwdS9hbWRncHVfcG0uYw0KPmluZGV4IGI3NTM2MmJmMDc0Mi4uZTgwOTUzNGZhYmQ0IDEwMDY0
-NA0KPi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9wbS5jDQo+KysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3BtLmMNCj5AQCAtMTk0Miw5ICsxOTQy
-LDggQEAgc3RhdGljIGludCBhbWRncHVfZGV2aWNlX2F0dHJfY3JlYXRlX2dyb3VwcyhzdHJ1Y3QN
-Cj5hbWRncHVfZGV2aWNlICphZGV2LA0KPiAJcmV0dXJuIDA7DQo+DQo+IGZhaWxlZDoNCj4tCWZv
-ciAoOyBpID4gMDsgaS0tKSB7DQo+Kwl3aGlsZSAoaS0tKQ0KPiAJCWFtZGdwdV9kZXZpY2VfYXR0
-cl9yZW1vdmUoYWRldiwgJmF0dHJzW2ldKTsNCj4tCX0NCj4NCj4gCXJldHVybiByZXQ7DQo+IH0N
-Cg=
+Am 20.05.20 um 17:31 schrieb Ruhl, Michael J:
+>> -----Original Message-----
+>> From: Dan Carpenter <dan.carpenter@oracle.com>
+>> Sent: Wednesday, May 20, 2020 11:26 AM
+>> To: Alex Deucher <alexander.deucher@amd.com>; Kevin Wang
+>> <kevin1.wang@amd.com>; Ruhl, Michael J <michael.j.ruhl@intel.com>
+>> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>; David Airlie
+>> <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Evan Quan
+>> <evan.quan@amd.com>; Rui Huang <ray.huang@amd.com>; Kenneth Feng
+>> <kenneth.feng@amd.com>; Yintian Tao <yttao@amd.com>; Hawking Zhang
+>> <Hawking.Zhang@amd.com>; amd-gfx@lists.freedesktop.org; dri-
+>> devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-
+>> janitors@vger.kernel.org
+>> Subject: [PATCH v3] drm/amdgpu: off by one in
+>> amdgpu_device_attr_create_groups() error handling
+>>
+>> This loop in the error handling code should start a "i - 1" and end at
+>> "i =3D 0".  Currently it starts a "i" and ends at "i =3D 1".  The result
+>> is that it removes one attribute that wasn't created yet, and leaks the
+>> zeroeth attribute.
+>>
+>> Fixes: 4e01847c38f7 ("drm/amdgpu: optimize amdgpu device attribute code")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> ---
+>> v2: style change
+>> v3: Fix embarrassing typo in the subject
+> =F0=9F=98=8A
+>
+> Acked-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+
+Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+
+>
+> m
+>> drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c           | 3 +--
+>> 1 files changed, 1 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+>> index b75362bf0742..e809534fabd4 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+>> @@ -1942,9 +1942,8 @@ static int amdgpu_device_attr_create_groups(struct
+>> amdgpu_device *adev,
+>> 	return 0;
+>>
+>> failed:
+>> -	for (; i > 0; i--) {
+>> +	while (i--)
+>> 		amdgpu_device_attr_remove(adev, &attrs[i]);
+>> -	}
+>>
+>> 	return ret;
+>> }
