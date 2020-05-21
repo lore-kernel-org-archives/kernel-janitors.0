@@ -1,28 +1,73 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 30 May 2020 00:00:05 +0000
-Subject: Re: [PATCH net-next] tipc: remove set but not used variable 'prev'
-Message-Id: <20200529.170005.1952701912928856345.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 May 2020 12:12:21 +0000
+Subject: [PATCH] scsi: cxgb3i: fix some leaks in init_act_open()
+Message-Id: <20200521121221.GA247492@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200528074359.116680-1-yuehaibing@huawei.com>
-In-Reply-To: <20200528074359.116680-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yuehaibing@huawei.com
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, kuba@kernel.org, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 28 May 2020 07:43:59 +0000
+There wasn't any clean up done if cxgb3_alloc_atid() failed and also the
+original code didn't release "csk->l2t".
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> net/tipc/msg.c: In function 'tipc_msg_append':
-> net/tipc/msg.c:215:24: warning:
->  variable 'prev' set but not used [-Wunused-but-set-variable]
-> 
-> commit 0a3e060f340d ("tipc: add test for Nagle algorithm effectiveness")
-> left behind this, remove it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 6f7efaabefeb ("[SCSI] cxgb3i: change cxgb3i to use libcxgbi")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Not tested.
 
-Applied.
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 524cdbcd29aa..ec7d01f6e2d5 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -959,6 +959,7 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	struct net_device *ndev = cdev->ports[csk->port_id];
+ 	struct cxgbi_hba *chba = cdev->hbas[csk->port_id];
+ 	struct sk_buff *skb = NULL;
++	int ret;
+ 
+ 	log_debug(1 << CXGBI_DBG_TOE | 1 << CXGBI_DBG_SOCK,
+ 		"csk 0x%p,%u,0x%lx.\n", csk, csk->state, csk->flags);
+@@ -979,16 +980,16 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	csk->atid = cxgb3_alloc_atid(t3dev, &t3_client, csk);
+ 	if (csk->atid < 0) {
+ 		pr_err("NO atid available.\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto put_sock;
+ 	}
+ 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
+ 	cxgbi_sock_get(csk);
+ 
+ 	skb = alloc_wr(sizeof(struct cpl_act_open_req), 0, GFP_KERNEL);
+ 	if (!skb) {
+-		cxgb3_free_atid(t3dev, csk->atid);
+-		cxgbi_sock_put(csk);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_atid;
+ 	}
+ 	skb->sk = (struct sock *)csk;
+ 	set_arp_failure_handler(skb, act_open_arp_failure);
+@@ -1010,6 +1011,15 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	cxgbi_sock_set_state(csk, CTP_ACTIVE_OPEN);
+ 	send_act_open_req(csk, skb, csk->l2t);
+ 	return 0;
++
++free_atid:
++	cxgb3_free_atid(t3dev, csk->atid);
++put_sock:
++	cxgbi_sock_put(csk);
++	l2t_release(t3dev, csk->l2t);
++	csk->l2t = NULL;
++
++	return ret;
+ }
+ 
+ cxgb3_cpl_handler_func cxgb3i_cpl_handlers[NUM_CPL_CMDS] = {
+-- 
+2.26.2
