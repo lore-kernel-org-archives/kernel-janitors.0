@@ -1,60 +1,40 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Wed, 06 May 2020 14:53:54 +0000
-Subject: AW: [PATCH -next] USB: ohci-sm501: fix error return code in ohci_hcd_sm501_drv_probe()
-Message-Id: <8119f7d234a84440a0ca1082296fb59e@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 May 2020 13:50:38 +0000
+Subject: [PATCH] staging: fbtft: fb_st7789v: make HSD20_IPS numeric and not a string
+Message-Id: <20200521135038.345878-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506135625.106910-1-weiyongjun1@huawei.com>,<Pine.LNX.4.44L0.2005061010480.13334-100000@netrider.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.2005061010480.13334-100000@netrider.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oliver Graute <oliver.graute@kococonnector.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-while you are here ...
-maybe you can give labels like err5 some meaningful names ?
+From: Colin Ian King <colin.king@canonical.com>
 
-re,
- wh
-________________________________________
-Von: kernel-janitors-owner@vger.kernel.org <kernel-janitors-owner@vger.kernel.org> im Auftrag von Alan Stern <stern@rowland.harvard.edu>
-Gesendet: Mittwoch, 6. Mai 2020 16:12:08
-An: Wei Yongjun
-Cc: Greg Kroah-Hartman; Laurentiu Tudor; linux-usb@vger.kernel.org; kernel-janitors@vger.kernel.org
-Betreff: Re: [PATCH -next] USB: ohci-sm501: fix error return code in ohci_hcd_sm501_drv_probe()
+Currently HSD20_IPS is defined as "true" and will always result in a
+non-zero result even if it is defined as "false" because it is an array
+and that will never be zero. Fix this by defining it as an integer 1
+rather than a literal string.
 
-On Wed, 6 May 2020, Wei Yongjun wrote:
+Addessses-Coverity: ("Array compared against 0")
+Fixes: f03c9b788472 ("staging: fbtft: fb_st7789v: Initialize the Display")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/fbtft/fb_st7789v.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
->
-> Fixes: 7d9e6f5aebe8 ("usb: host: ohci-sm501: init genalloc for local memory")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/usb/host/ohci-sm501.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
-> index c158cda9e4b9..cff965240327 100644
-> --- a/drivers/usb/host/ohci-sm501.c
-> +++ b/drivers/usb/host/ohci-sm501.c
-> @@ -157,9 +157,10 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
->        * the call to usb_hcd_setup_local_mem() below does just that.
->        */
->
-> -     if (usb_hcd_setup_local_mem(hcd, mem->start,
-> -                                 mem->start - mem->parent->start,
-> -                                 resource_size(mem)) < 0)
-> +     retval = usb_hcd_setup_local_mem(hcd, mem->start,
-> +                                      mem->start - mem->parent->start,
-> +                                      resource_size(mem));
-> +     if (retval < 0)
->               goto err5;
->       retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
->       if (retval)
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-Thanks for noticing and fixing this.
-
-Alan Stern
+diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
+index ebc17e05ecd0..3a280cc1892c 100644
+--- a/drivers/staging/fbtft/fb_st7789v.c
++++ b/drivers/staging/fbtft/fb_st7789v.c
+@@ -24,7 +24,7 @@
+ 	"D0 05 0A 09 08 05 2E 44 45 0F 17 16 2B 33\n" \
+ 	"D0 05 0A 09 08 05 2E 43 45 0F 16 16 2B 33"
+ 
+-#define HSD20_IPS "true"
++#define HSD20_IPS 1
+ 
+ /**
+  * enum st7789v_command - ST7789V display controller commands
+-- 
+2.25.1
