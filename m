@@ -1,20 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 May 2020 09:56:40 +0000
-Subject: [bug report] habanalabs: add gaudi security module
-Message-Id: <20200522095640.GA32453@mwanda>
+From: Walter Harms <wharms@bfs.de>
+Date: Fri, 22 May 2020 11:00:15 +0000
+Subject: AW: [bug report] habanalabs: add gaudi security module
+Message-Id: <0a05fa8a8bd94e5c9b2a4dd0c8e541fd@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200522095640.GA32453@mwanda>
+In-Reply-To: <20200522095640.GA32453@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+
+This line looks strange (read: does not fit pattern) also:
+ pb_addr = (mmMME0_CTRL_SHADOW_0_STATUS & ~0xFFF) + PROT_BITS_OFFS;
+
+perhaps the intention was to set bits ?
+pb_addr = (mmMME0_CTRL_SHADOW_0_STATUS & ~0xFFF) | PROT_BITS_OFFS;
+
+jm2c,
+
+re,
+ wh
+________________________________________
+Von: kernel-janitors-owner@vger.kernel.org <kernel-janitors-owner@vger.kernel.org> im Auftrag von Dan Carpenter <dan.carpenter@oracle.com>
+Gesendet: Freitag, 22. Mai 2020 11:56:40
+An: oshpigelman@habana.ai
+Cc: Omer Shpigelman; kernel-janitors@vger.kernel.org
+Betreff: [bug report] habanalabs: add gaudi security module
 
 Hello Omer Shpigelman,
 
 The patch 3a3a5bf19639: "habanalabs: add gaudi security module" from
 May 11, 2020, leads to the following static checker warning:
 
-	drivers/misc/habanalabs/gaudi/gaudi_security.c:527 gaudi_init_mme_protection_bits()
-	warn: odd binop '0x60400 & 0x7f'
+        drivers/misc/habanalabs/gaudi/gaudi_security.c:527 gaudi_init_mme_protection_bits()
+        warn: odd binop '0x60400 & 0x7f'
 
 drivers/misc/habanalabs/gaudi/gaudi_security.c
    514          mask |= 1 << ((mmMME0_CTRL_TE_CLOSE_CGATE & 0x7F) >> 2);
@@ -24,9 +44,9 @@ drivers/misc/habanalabs/gaudi/gaudi_security.c
    518          mask |= 1 << ((mmMME0_CTRL_PCU_RL_SAT_SEC & 0x7F) >> 2);
    519          mask |= 1 << ((mmMME0_CTRL_AGU_SYNC_MSG_AXI_USER & 0x7F) >> 2);
    520          mask |= 1 << ((mmMME0_CTRL_QM_SLV_LBW_CLK_EN & 0x7F) >> 2);
-   521  
+   521
    522          WREG32(pb_addr + word_offset, ~mask);
-   523  
+   523
    524          pb_addr = (mmMME0_CTRL_SHADOW_0_STATUS & ~0xFFF) + PROT_BITS_OFFS;
    525          word_offset = ((mmMME0_CTRL_SHADOW_0_STATUS & PROT_BITS_OFFS) >> 7)
    526                          << 2;
@@ -34,9 +54,9 @@ drivers/misc/habanalabs/gaudi/gaudi_security.c
                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 This is zero.
 
-   528  
+   528
    529          WREG32(pb_addr + word_offset, ~mask);
-   530  
+   530
    531          pb_addr = (mmMME0_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
    532          word_offset = ((mmMME0_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
    533          mask = 1 << ((mmMME0_QM_GLBL_CFG0 & 0x7F) >> 2);
