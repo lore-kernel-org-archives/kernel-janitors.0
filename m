@@ -1,47 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 03 May 2020 20:25:27 +0000
-Subject: Re: [PATCH v2] nfp: abm: Fix incomplete release of system resources in nfp_abm_vnic_set_mac()
-Message-Id: <88eecbe4-89b3-2b4d-87c7-5487cf23cadb@web.de>
+From: Li Yang <leoyang.li@nxp.com>
+Date: Fri, 22 May 2020 23:01:44 +0000
+Subject: Re: [PATCH] soc: fsl: qe: clean up an indentation issue
+Message-Id: <CADRPPNQ4KrnSsG2PxgXxe-+c5DQsUNQjw3f9Xq-kxP3+xAaQcQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200503184220.6209-1-wu000273@umn.edu>
-In-Reply-To: <20200503184220.6209-1-wu000273@umn.edu>
+References: <20200327161349.284679-1-colin.king@canonical.com>
+In-Reply-To: <20200327161349.284679-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Qiushi Wu <wu000273@umn.edu>, oss-drivers@netronome.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Kangjie Lu <kjlu@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, lkml <linux-kernel@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Qiang Zhao <qiang.zhao@nxp.com>
 
-> … Thus add a call of the function
-> “nfp_nsp_close” for the completion of the exception handling.
+On Fri, Mar 27, 2020 at 11:15 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a statement that not indented correctly, remove the
+> extraneous space.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your positive response.
+Applied for next.  Thanks.
 
-I imagined that a small patch series would be more reasonable
-than this direct change combination.
-
-
-…
-> +++ b/drivers/net/ethernet/netronome/nfp/abm/main.c
-…
->  	ether_addr_copy(nn->dp.netdev->perm_addr, mac_addr);
-> +
-> +generate_random_address:
-> +	eth_hw_addr_random(nn->dp.netdev);
-> +	return;
->  }
-…
-
-Unfortunately, you interpreted my update suggestion in a questionable way
-at this source code place.
-I guess that the following code variant can be considered instead.
-
- 	ether_addr_copy(nn->dp.netdev->perm_addr, mac_addr);
-+	return;
-+
-+generate_random_address:
-+	eth_hw_addr_random(nn->dp.netdev);
- }
-
-
-Regards,
-Markus
+> ---
+>  drivers/soc/fsl/qe/ucc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
+> index d6c93970df4d..cac0fb7693a0 100644
+> --- a/drivers/soc/fsl/qe/ucc.c
+> +++ b/drivers/soc/fsl/qe/ucc.c
+> @@ -519,7 +519,7 @@ int ucc_set_tdm_rxtx_clk(u32 tdm_num, enum qe_clock clock,
+>         int clock_bits;
+>         u32 shift;
+>         struct qe_mux __iomem *qe_mux_reg;
+> -        __be32 __iomem *cmxs1cr;
+> +       __be32 __iomem *cmxs1cr;
+>
+>         qe_mux_reg = &qe_immr->qmx;
+>
+> --
+> 2.25.1
+>
