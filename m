@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 May 2020 03:28:47 +0000
-Subject: Re: [PATCH net-next] octeontx2-pf: Fix error return code in otx2_probe()
-Message-Id: <20200430.202847.1797161927869340111.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 23 May 2020 17:46:48 +0000
+Subject: [PATCH net-next] ipv4:  potential underflow in compat_ip_setsockopt()
+Message-Id: <20200523174648.GA105146@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427121110.8446-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427121110.8446-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 12:11:10 +0000
+The value of "n" is capped at 0x1ffffff but it checked for negative
+values.  I don't think this causes a problem but I'm not certain and
+it's harmless to prevent it.
 
-> Fix to return negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 5a6d7c9daef3 ("octeontx2-pf: Mailbox communication with AF")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: 2e04172875c9 ("ipv4: do compat setsockopt for MCAST_MSFILTER directly")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-Applied, thanks.
+ net/ipv4/ip_sockglue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index a2469bc57cfe..f43d5f12aa86 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1347,8 +1347,8 @@ int compat_ip_setsockopt(struct sock *sk, int level, int optname,
+ 	{
+ 		const int size0 = offsetof(struct compat_group_filter, gf_slist);
+ 		struct compat_group_filter *gf32;
++		unsigned int n;
+ 		void *p;
+-		int n;
+ 
+ 		if (optlen < size0)
+ 			return -EINVAL;
+-- 
+2.26.2
