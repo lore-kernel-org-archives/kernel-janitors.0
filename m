@@ -1,35 +1,43 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 15 May 2020 06:15:57 +0000
-Subject: Re: [PATCH -next] crypto: xilinx - Remove set but not used variable 'drv_ctx'
-Message-Id: <20200515061557.GA11092@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 23 May 2020 10:11:29 +0000
+Subject: [PATCH] scsi: target: tcmu: Fix a use after free in tcmu_check_expired_queue_cmd()
+Message-Id: <20200523101129.GB98132@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200505101200.195184-1-yuehaibing@huawei.com>
-References: <20200505101200.195184-1-yuehaibing@huawei.com>
-In-Reply-To: <20200505101200.195184-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, rajan.vaja@xilinx.com, gregkh@linuxfoundation.org, michal.simek@xilinx.com, hulkci@huawei.com, linux-crypto@vger.kernel.org, kalyani.akula@xilinx.com, jolly.shah@xilinx.com, linux-arm-kernel@lists.infradead.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, Bodo Stroesser <bstroesser@ts.fujitsu.com>
+Cc: Mike Christie <mchristi@redhat.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/crypto/xilinx/zynqmp-aes-gcm.c: In function 'zynqmp_aes_aead_cipher':
-> drivers/crypto/xilinx/zynqmp-aes-gcm.c:83:30: warning:
-> variable 'drv_ctx' set but not used [-Wunused-but-set-variable]
-> 
-> commit bc86f9c54616 ("firmware: xilinx: Remove eemi ops for aes engine") left
-> behind this, remove it.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> drivers/crypto/xilinx/zynqmp-aes-gcm.c | 4 ----
-> 1 file changed, 4 deletions(-)
+The pr_debug() dereferences "cmd" after we already freed it by calling
+tcmu_free_cmd(cmd).  The debug printk needs to be done earlier.
 
-This patch doesn't apply to the current cryptodev tree.
+Fixes: 61fb24822166 ("scsi: target: tcmu: Userspace must not complete queued commands")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/target/target_core_user.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 904d8a8373f2..28fb9441de7a 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -1292,13 +1292,13 @@ static void tcmu_check_expired_queue_cmd(struct tcmu_cmd *cmd)
+ 	if (!time_after(jiffies, cmd->deadline))
+ 		return;
+ 
++	pr_debug("Timing out queued cmd %p on dev %s.\n",
++		  cmd, cmd->tcmu_dev->name);
++
+ 	list_del_init(&cmd->queue_entry);
+ 	se_cmd = cmd->se_cmd;
+ 	tcmu_free_cmd(cmd);
+ 
+-	pr_debug("Timing out queued cmd %p on dev %s.\n",
+-		  cmd, cmd->tcmu_dev->name);
+-
+ 	target_complete_cmd(se_cmd, SAM_STAT_TASK_SET_FULL);
+ }
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.26.2
