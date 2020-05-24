@@ -1,38 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 09 May 2020 21:41:11 +0000
-Subject: [PATCH] net: usb: ax88179_178a: remove redundant assignment to variable ret
-Message-Id: <20200509214111.505920-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 24 May 2020 07:00:28 +0000
+Subject: Re: [PATCH v2 1/2] drivers: provide devm_platform_request_irq()
+Message-Id: <b0a8e1be-359a-17bf-0eb8-dcf175042811@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, Barry Song <baohua@kernel.org>, Baruch Siach <baruch@tkos.co.il>, Fabio Estevam <festevam@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Kevin Hilman <khilman@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Paul Cercueil <paul@crapouillou.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+> It will call devm_request_irq() after platform_get_irq() function
+> in many drivers, sometimes, it is not right for the error handling
+> of these two functions in some drivers. so provide this function
+> to simplify the driver.
 
-The variable ret is being initializeed with a value that is never read
-and it is being updated later with a new value. The initialization
-is redundant and can be removed.
+I recommend to improve also this change description.
+How do you think about a wording variant like the following?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/usb/ax88179_178a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   The function “devm_request_irq” is called after the
+   function “platform_get_irq” in many drivers.
+   The exception handling is incomplete there sometimes.
+   Thus add a corresponding wrapper function for the simplification
+   of the drivers.
 
-diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
-index b05bb11a02cb..950711448f39 100644
---- a/drivers/net/usb/ax88179_178a.c
-+++ b/drivers/net/usb/ax88179_178a.c
-@@ -860,7 +860,7 @@ static int ax88179_set_eee(struct net_device *net, struct ethtool_eee *edata)
- {
- 	struct usbnet *dev = netdev_priv(net);
- 	struct ax88179_data *priv = (struct ax88179_data *)dev->data;
--	int ret = -EOPNOTSUPP;
-+	int ret;
- 
- 	priv->eee_enabled = edata->eee_enabled;
- 	if (!priv->eee_enabled) {
--- 
-2.25.1
+
+Will a companion script for the semantic patch language (Coccinelle software)
+become helpful for further support of collateral evolution?
+
+Regards,
+Markus
