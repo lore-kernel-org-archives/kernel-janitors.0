@@ -1,41 +1,33 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Sun, 24 May 2020 10:21:19 +0000
-Subject: Re: [PATCH -next] pwm: pca9685: Remove set but not used variable 'pwm'
-Message-Id: <20200524102119.2fzcl7bqu6qh3w5g@pengutronix.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 24 May 2020 15:33:02 +0000
+Subject: Re: [PATCH] workqueue: Fix double kfree(rescuer) in destroy_workqueue()
+Message-Id: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAGngYiVDCCjo6VKt660Uz5mbEGOBOZpcUWeRHWx_L=TapZgv_w@mail.gmail.com>
- <20190606151111.14237-1-TheSven73@gmail.com>
- <20200523201730.o7y7pent4hjtgia3@pengutronix.de>
- <CAGngYiWCT=_H+PwXRTgMWRpwRWMrgvA3vD1is2r704oZn14LiA@mail.gmail.com>
-In-Reply-To: <CAGngYiWCT=_H+PwXRTgMWRpwRWMrgvA3vD1is2r704oZn14LiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Sven Van Asbroeck <thesven73@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, YueHaibing <yuehaibing@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhang Qiang <qiang.zhang@windriver.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, May 23, 2020 at 08:24:23PM -0400, Sven Van Asbroeck wrote:
-> Hi Uwe,
->=20
-> On Sat, May 23, 2020 at 4:17 PM Uwe Kleine-K=F6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > Is this patch still relevant?
->=20
-> A slightly different version of this patch has already landed in
-> mainline. Clemens Gruber had
-> relevant hardware available, and was able to test it out.
->=20
-> See Linus's tree here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/drivers/pwm/pwm-pca9685.c?h=3Dv5.7-rc6&id=9Cc5f232a4b6a0ef6e9b57876d61b88f=
-61bdd7c2
+> When destroy_workqueue if rescuer worker exist,wq->rescuer pointer be
+> kfree. if sanity checks passed. the func call_rcu(&wq->rcu, rcu_free_wq)
+> will be called if the wq->flags & WQ_UNBOUND is false,in rcu_free_wq
+> func wq->rescuer pointer was kfree again.
 
-Optimal, thanks for the feedback. So this thread can be closed.
+1. I suggest to improve also this change description.
+   Do you try to explain here that a call of the function “free_workqueue_attrs”
+   (or “free_percpu”) would perform sufficient clean-up of system resources
+   in this use case?
 
-Thanks
-Uwe
+2. You proposed to delete the function call “kfree(wq->rescuer)” from
+   the implementation of the function “rcu_free_wq”.
+   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/workqueue.c?id=c11d28ab4a691736e30b49813fb801847bd44e83#n3482
+   https://elixir.bootlin.com/linux/v5.7-rc6/source/kernel/workqueue.c#L3482
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+   This function name should be specified also in the patch subject,
+   shouldn't it?
+
+3. Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
