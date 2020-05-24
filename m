@@ -1,47 +1,40 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Date: Tue, 19 May 2020 10:49:33 +0000
-Subject: Re: [PATCH] drm/etnaviv: Fix a leak in submit_pin_objects()
-Message-Id: <20aa90bd9004e24d6e79968fa03a97d2030bf013.camel@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 24 May 2020 16:25:03 +0000
+Subject: [PATCH] media: gspca: remove redundant assignment to variable retval
+Message-Id: <20200524162503.20902-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200518112955.GA48709@mwanda>
-In-Reply-To: <20200518112955.GA48709@mwanda>
+References: <20191011185746.18570-1-colin.king@canonical.com>
+In-Reply-To: <20191011185746.18570-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, kernel-janitors@vger.kernel.org, etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <linux+etnaviv@armlinux.org.uk>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Am Montag, den 18.05.2020, 14:29 +0300 schrieb Dan Carpenter:
-> If the mapping address is wrong then we have to release the reference to
-> it before returning -EINVAL.
-> 
-> Fixes: 088880ddc0b2 ("drm/etnaviv: implement softpin")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied to etnaviv/fixes.
+The variable retval is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Regards,
-Lucas
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/gspca/jl2005bcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
-> From static analysis.  Untested.
-> 
->  drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
-> index 3b0afa156d92..54def341c1db 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c
-> @@ -238,8 +238,10 @@ static int submit_pin_objects(struct etnaviv_gem_submit *submit)
->  		}
->  
->  		if ((submit->flags & ETNA_SUBMIT_SOFTPIN) &&
-> -		     submit->bos[i].va != mapping->iova)
-> +		     submit->bos[i].va != mapping->iova) {
-> +			etnaviv_gem_mapping_unreference(mapping);
->  			return -EINVAL;
-> +		}
->  
->  		atomic_inc(&etnaviv_obj->gpu_active);
->  
+diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
+index 80ce7448b3dd..ca12f33f3e12 100644
+--- a/drivers/media/usb/gspca/jl2005bcd.c
++++ b/drivers/media/usb/gspca/jl2005bcd.c
+@@ -165,7 +165,7 @@ static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
+ {
+ 	struct sd *sd = (struct sd *)gspca_dev;
+ 	int i = 0;
+-	int retval = -1;
++	int retval;
+ 	unsigned char regs_to_read[] = {0x57, 0x02, 0x03, 0x5d, 0x5e, 0x5f};
+ 
+ 	gspca_dbg(gspca_dev, D_PROBE, "Running jl2005c_get_firmware_id\n");
+-- 
+2.25.1
