@@ -1,33 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 24 May 2020 15:33:02 +0000
+From: qzhang2 <qiang.zhang@windriver.com>
+Date: Mon, 25 May 2020 06:28:28 +0000
 Subject: Re: [PATCH] workqueue: Fix double kfree(rescuer) in destroy_workqueue()
-Message-Id: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
+Message-Id: <d9dd0dc2-e169-6a63-9a79-d692994324f1@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
+In-Reply-To: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zhang Qiang <qiang.zhang@windriver.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Markus Elfring <Markus.Elfring@web.de>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> When destroy_workqueue if rescuer worker exist,wq->rescuer pointer be
-> kfree. if sanity checks passed. the func call_rcu(&wq->rcu, rcu_free_wq)
-> will be called if the wq->flags & WQ_UNBOUND is false,in rcu_free_wq
-> func wq->rescuer pointer was kfree again.
-
-1. I suggest to improve also this change description.
-   Do you try to explain here that a call of the function “free_workqueue_attrs”
-   (or “free_percpu”) would perform sufficient clean-up of system resources
-   in this use case?
-
-2. You proposed to delete the function call “kfree(wq->rescuer)” from
-   the implementation of the function “rcu_free_wq”.
-   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/workqueue.c?id=c11d28ab4a691736e30b49813fb801847bd44e83#n3482
-   https://elixir.bootlin.com/linux/v5.7-rc6/source/kernel/workqueue.c#L3482
-
-   This function name should be specified also in the patch subject,
-   shouldn't it?
-
-3. Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+U29ycnkgSSBkaWRuJ3QgZGVzY3JpYmUgY2xlYXJseQoKSSBkZXNjcmliZSB0aGUgbWVhbmluZyBh
+cyBmb2xsb3dzOgoKCWRlc3Ryb3lfd29ya3F1ZXVlCgkJaWYod3EtPnJlc2N1ZXIpCgkJCXN0cnVj
+dCB3b3JrZXIgKnJlc2N1ZXIgPSB3cS0+cmVzY3VlcgoJCQlrZnJlZShyZXNjdWVyKQoJCS4uLi4u
+Li4uLi4uLi4uLi4uLgogICAgICAgICAgICAgICAgIGlmICghKHdxLT5mbGFncyAmIFdRX1VOQk9V
+TkQpKQoJCQljYWxsX3JjdSgmd3EtPnJjdSwgcmN1X2ZyZWVfd3EpCgkJCS4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4KCQkJcmN1X2ZyZWVfd3EKCQkJCWtmcmVlKHdxLT5yZXNjdWVyKQoKdGhlcmUgYXJl
+IGRvdWJsZSBmcmVlLgoKT24gNS8yNC8yMCAxMTozMyBQTSwgTWFya3VzIEVsZnJpbmcgd3JvdGU6
+Cj4+IFdoZW4gZGVzdHJveV93b3JrcXVldWUgaWYgcmVzY3VlciB3b3JrZXIgZXhpc3Qsd3EtPnJl
+c2N1ZXIgcG9pbnRlciBiZQo+PiBrZnJlZS4gaWYgc2FuaXR5IGNoZWNrcyBwYXNzZWQuIHRoZSBm
+dW5jIGNhbGxfcmN1KCZ3cS0+cmN1LCByY3VfZnJlZV93cSkKPj4gd2lsbCBiZSBjYWxsZWQgaWYg
+dGhlIHdxLT5mbGFncyAmIFdRX1VOQk9VTkQgaXMgZmFsc2UsaW4gcmN1X2ZyZWVfd3EKPj4gZnVu
+YyB3cS0+cmVzY3VlciBwb2ludGVyIHdhcyBrZnJlZSBhZ2Fpbi4KPiAKPiAxLiBJIHN1Z2dlc3Qg
+dG8gaW1wcm92ZSBhbHNvIHRoaXMgY2hhbmdlIGRlc2NyaXB0aW9uLgo+ICAgICBEbyB5b3UgdHJ5
+IHRvIGV4cGxhaW4gaGVyZSB0aGF0IGEgY2FsbCBvZiB0aGUgZnVuY3Rpb24g4oCcZnJlZV93b3Jr
+cXVldWVfYXR0cnPigJ0KPiAgICAgKG9yIOKAnGZyZWVfcGVyY3B14oCdKSB3b3VsZCBwZXJmb3Jt
+IHN1ZmZpY2llbnQgY2xlYW4tdXAgb2Ygc3lzdGVtIHJlc291cmNlcwo+ICAgICBpbiB0aGlzIHVz
+ZSBjYXNlPwo+IAo+IDIuIFlvdSBwcm9wb3NlZCB0byBkZWxldGUgdGhlIGZ1bmN0aW9uIGNhbGwg
+4oCca2ZyZWUod3EtPnJlc2N1ZXIp4oCdIGZyb20KPiAgICAgdGhlIGltcGxlbWVudGF0aW9uIG9m
+IHRoZSBmdW5jdGlvbiDigJxyY3VfZnJlZV93ceKAnS4KPiAgICAgaHR0cHM6Ly9naXQua2VybmVs
+Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVlL2tl
+cm5lbC93b3JrcXVldWUuYz9pZMExZDI4YWI0YTY5MTczNmUzMGI0OTgxM2ZiODAxODQ3YmQ0NGU4
+MyNuMzQ4Mgo+ICAgICBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS43LXJjNi9z
+b3VyY2Uva2VybmVsL3dvcmtxdWV1ZS5jI0wzNDgyCj4gCj4gICAgIFRoaXMgZnVuY3Rpb24gbmFt
+ZSBzaG91bGQgYmUgc3BlY2lmaWVkIGFsc28gaW4gdGhlIHBhdGNoIHN1YmplY3QsCj4gICAgIHNo
+b3VsZG4ndCBpdD8KPiAKPiAzLiBXb3VsZCB5b3UgbGlrZSB0byBhZGQgdGhlIHRhZyDigJxGaXhl
+c+KAnSB0byB0aGUgY29tbWl0IG1lc3NhZ2U/Cj4gCj4gUmVnYXJkcywKPiBNYXJrdXMKPiA=
