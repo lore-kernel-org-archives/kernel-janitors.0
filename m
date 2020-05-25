@@ -1,46 +1,55 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 29 May 2020 05:45:38 +0000
-Subject: Re: [PATCH] PCI: Fix reference count leak in pci_create_slot()
-Message-Id: <4cf93f73-5bea-9748-f97b-99a6efe9ea20@web.de>
+Date: Mon, 25 May 2020 12:54:47 +0000
+Subject: Re: [PATCH] RDMA/core: Complete exception handling in add_port()
+Message-Id: <4bf45476-ad99-042b-d0ea-3c97bb429a98@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Qiushi Wu <wu000273@umn.edu>, linux-pci@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Chiang <achiang@hp.com>, Bjorn Helgaas <bhelgaas@google.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Kangjie Lu <kjlu@umn.edu>, Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+To: Qiushi Wu <wu000273@umn.edu>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kangjie Lu <kjlu@umn.edu>, Leon Romanovsky <leon@kernel.org>
 
-Please add a prefix to the patch subject.
+> In function add_port(), pointer p is not released in error paths.
 
-
-> kobject_init_and_add() takes reference even when it fails.
-
-I suggest to extend this description another bit.
-Which object is affected here?
+1. I would prefer to describe that an ib_port data structure was not released
+   in some error cases.
+   How relevant can its size be here?
 
 
-> If this function returns an error, kobject_put() must be called to
-> properly clean up the memory associated with the object.
+> Fix this issue by adding a kfree(p) into the end of error path.
 
-Such a copy from the function description of this programming interface
-can be helpful.
+2. I suggest to improve also this change description.
 
-
-> Thus, when call of kobject_init_and_add() fail,
-
-I propose to avoid the repetition of this condition.
+3. I find an other subject more appropriate.
 
 
-> we should call kobject_put() instead of kfree().
+…
+> +++ b/drivers/infiniband/core/sysfs.c
+> @@ -1202,6 +1202,7 @@  static int add_port(struct ib_core_device *coredev, int port_num)
+>
+>  err_put:
+>  	kobject_put(&p->kobj);
+> +	kfree(p);
+>  	return ret;
+>  }
 
-How do you think about a wording variant like the following?
+4. I recommend to add also the label “free_port” before the missed function call.
 
-   Replace a call of the function “kfree” by “kobject_put”
-   because of using kernel objects in the proper way.
+   Another source code place should be accordingly adjusted then.
+
+ 	ret = kobject_init_and_add(&p->kobj, &port_type,
+ 				   coredev->ports_kobj,
+ 				   "%d", port_num);
+-	if (ret) {
+-		kfree(p);
+-		return ret;
+-	}
++	if (ret)
++		goto free_port;
 
 
-> Previous commit "b8eb718348b8" fixed a similar problem.
-
-I wonder if such information is really relevant for the commit message.
+5. Will a similar adjustment be needed for the data structure member “gid_attr_group”
+   according to the desired complete exception handling?
 
 Regards,
 Markus
