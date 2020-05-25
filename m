@@ -1,39 +1,30 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Wed, 20 May 2020 03:21:50 +0000
-Subject: [PATCH -next] bus: arm-integrator-lm: Fix return value check in integrator_ap_lm_probe()
-Message-Id: <20200520032150.165388-1-weiyongjun1@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 25 May 2020 09:17:23 +0000
+Subject: Re: [PATCH -next] bus: arm-integrator-lm: Fix return value check in integrator_ap_lm_probe()
+Message-Id: <CACRpkdYXmziVfd0ZDTq_3ReCdcw9cWPXXD1H9jfxvLiE=7EDDA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200520032150.165388-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200520032150.165388-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Hulk Robot <hulkci@huawei.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Hulk Robot <hulkci@huawei.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-In case of error, the function of_find_matching_node() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+Hi Wei,
 
-Fixes: ccea5e8a5918 ("bus: Add driver for Integrator/AP logic modules")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/bus/arm-integrator-lm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, May 20, 2020 at 5:18 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-diff --git a/drivers/bus/arm-integrator-lm.c b/drivers/bus/arm-integrator-lm.c
-index 669ea7e1f92e..845b6c43fef8 100644
---- a/drivers/bus/arm-integrator-lm.c
-+++ b/drivers/bus/arm-integrator-lm.c
-@@ -78,10 +78,10 @@ static int integrator_ap_lm_probe(struct platform_device *pdev)
- 
- 	/* Look up the system controller */
- 	syscon = of_find_matching_node(NULL, integrator_ap_syscon_match);
--	if (IS_ERR(syscon)) {
-+	if (!syscon) {
- 		dev_err(dev,
- 			"could not find Integrator/AP system controller\n");
--		return PTR_ERR(syscon);
-+		return -ENODEV;
- 	}
- 	map = syscon_node_to_regmap(syscon);
- 	if (IS_ERR(map)) {
+> In case of error, the function of_find_matching_node() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
+>
+> Fixes: ccea5e8a5918 ("bus: Add driver for Integrator/AP logic modules")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+I applied this and signed it off and sent it over to the ARM SoC
+maintainers.
+
+Yours,
+Linus Walleij
