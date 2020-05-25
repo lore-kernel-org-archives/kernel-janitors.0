@@ -1,39 +1,26 @@
-From: qzhang2 <qiang.zhang@windriver.com>
-Date: Mon, 25 May 2020 06:43:31 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 25 May 2020 07:04:46 +0000
 Subject: Re: [PATCH] workqueue: Fix double kfree(rescuer) in destroy_workqueue()
-Message-Id: <69170178-f149-b44b-6465-a4c6ab893d52@windriver.com>
+Message-Id: <cb2735b1-c54a-8746-d776-951081582366@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
-In-Reply-To: <96b49f22-50a7-9c8f-7c9d-f178195de717@web.de>
+ <69170178-f149-b44b-6465-a4c6ab893d52@windriver.com>
+In-Reply-To: <69170178-f149-b44b-6465-a4c6ab893d52@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Qiang Zhang <qiang.zhang@windriver.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-U29ycnkgSSBkaWRuJ3QgZGVzY3JpYmUgY2xlYXJseQoKSSBkZXNjcmliZSB0aGUgbWVhbmluZyBh
-cyBmb2xsb3dzOgoKICBkZXN0cm95X3dvcmtxdWV1ZToKCWlmKHdxLT5yZXNjdWVyKQoJCXN0cnVj
-dCB3b3JrZXIgKnJlc2N1ZXIgPSB3cS0+cmVzY3VlcgoJCWtmcmVlKHJlc2N1ZXIpICAvL2ZpcnN0
-IGtmcmVlCgkJCgogICAgICAgICBpZiAoISh3cS0+ZmxhZ3MgJiBXUV9VTkJPVU5EKSkKCQljYWxs
-X3JjdSgmd3EtPnJjdSwgcmN1X2ZyZWVfd3EpCgkJCQoJCXJjdV9mcmVlX3dxCgkJCWtmcmVlKHdx
-LT5yZXNjdWVyKSAvL3NlY29uZCBrZnJlZQoKdGhlcmUgYXJlIGRvdWJsZSBmcmVlLgoKT24gNS8y
-NC8yMCAxMTozMyBQTSwgTWFya3VzIEVsZnJpbmcgd3JvdGU6Cj4+IFdoZW4gZGVzdHJveV93b3Jr
-cXVldWUgaWYgcmVzY3VlciB3b3JrZXIgZXhpc3Qsd3EtPnJlc2N1ZXIgcG9pbnRlciBiZQo+PiBr
-ZnJlZS4gaWYgc2FuaXR5IGNoZWNrcyBwYXNzZWQuIHRoZSBmdW5jIGNhbGxfcmN1KCZ3cS0+cmN1
-LCByY3VfZnJlZV93cSkKPj4gd2lsbCBiZSBjYWxsZWQgaWYgdGhlIHdxLT5mbGFncyAmIFdRX1VO
-Qk9VTkQgaXMgZmFsc2UsaW4gcmN1X2ZyZWVfd3EKPj4gZnVuYyB3cS0+cmVzY3VlciBwb2ludGVy
-IHdhcyBrZnJlZSBhZ2Fpbi4KPiAKPiAxLiBJIHN1Z2dlc3QgdG8gaW1wcm92ZSBhbHNvIHRoaXMg
-Y2hhbmdlIGRlc2NyaXB0aW9uLgo+ICAgICBEbyB5b3UgdHJ5IHRvIGV4cGxhaW4gaGVyZSB0aGF0
-IGEgY2FsbCBvZiB0aGUgZnVuY3Rpb24g4oCcZnJlZV93b3JrcXVldWVfYXR0cnPigJ0KPiAgICAg
-KG9yIOKAnGZyZWVfcGVyY3B14oCdKSB3b3VsZCBwZXJmb3JtIHN1ZmZpY2llbnQgY2xlYW4tdXAg
-b2Ygc3lzdGVtIHJlc291cmNlcwo+ICAgICBpbiB0aGlzIHVzZSBjYXNlPwo+IAo+IDIuIFlvdSBw
-cm9wb3NlZCB0byBkZWxldGUgdGhlIGZ1bmN0aW9uIGNhbGwg4oCca2ZyZWUod3EtPnJlc2N1ZXIp
-4oCdIGZyb20KPiAgICAgdGhlIGltcGxlbWVudGF0aW9uIG9mIHRoZSBmdW5jdGlvbiDigJxyY3Vf
-ZnJlZV93ceKAnS4KPiAgICAgaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
-cm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVlL2tlcm5lbC93b3JrcXVldWUuYz9pZMEx
-ZDI4YWI0YTY5MTczNmUzMGI0OTgxM2ZiODAxODQ3YmQ0NGU4MyNuMzQ4Mgo+ICAgICBodHRwczov
-L2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS43LXJjNi9zb3VyY2Uva2VybmVsL3dvcmtxdWV1
-ZS5jI0wzNDgyCj4gCj4gICAgIFRoaXMgZnVuY3Rpb24gbmFtZSBzaG91bGQgYmUgc3BlY2lmaWVk
-IGFsc28gaW4gdGhlIHBhdGNoIHN1YmplY3QsCj4gICAgIHNob3VsZG4ndCBpdD8KPiAKPiAzLiBX
-b3VsZCB5b3UgbGlrZSB0byBhZGQgdGhlIHRhZyDigJxGaXhlc+KAnSB0byB0aGUgY29tbWl0IG1l
-c3NhZ2U/Cj4gCj4gUmVnYXJkcywKPiBNYXJrdXMKPiA=
+> Sorry I didn't describe clearly
+>
+> I describe the meaning as follows:
+
+Can it help to adjust the change description in the way
+that a duplicate memory release should be deleted from the implementation
+of the callback function “rcu_free_wq”?
+
+Which commit should be referenced for the tag “Fixes”?
+
+Regards,
+Markus
