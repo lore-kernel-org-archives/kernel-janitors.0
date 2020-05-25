@@ -1,39 +1,107 @@
-From: "Zhang, Qiang" <Qiang.Zhang@windriver.com>
-Date: Thu, 28 May 2020 01:44:43 +0000
-Subject: =?gb2312?B?u9i4tDogW1BBVENIIHY1XSB3b3JrcXVldWU6IFJlbW92ZSB1bm5lY2Vzc2Fy?= =?gb2312?B?eSBrZnJlZSgpIGN
-Message-Id: <DM6PR11MB3257D6E7E93A518392502809FF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 25 May 2020 14:29:46 +0000
+Subject: [PATCH SECOND RESEND] MAINTAINERS: adjust entries to moving CEC platform drivers
+Message-Id: <20200525142946.8268-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527075715.36849-1-qiang.zhang@windriver.com>,<284c7851-4e89-a00f-a2e6-aa8e2e1f3fce@web.de>,<DM6PR11MB32573F3884A864ECD586235EFF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
-In-Reply-To: <DM6PR11MB32573F3884A864ECD586235EFF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <markus.elfring@web.de>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, kernel-janitors@vger.kernel.org, Ettore Chimenti <ek5.chimenti@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Guenter Roeck <groeck@chromium.org>, linux-stm32@st-md-mailman.stormreply.com, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, Benson Leung <bleung@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>
 
-VGhhbmtzIGZvciB5b3VyIGd1aWRlLg0KSSB3aWxsIHRyeSB0byBjaGFuZ2UgdGhlIHdlYWtuZXNz
-IG9mIHdlYWsgd29yZGluZy4NCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXw0Kt6K8/sjLOiBaaGFuZywgUWlhbmcgPFFpYW5nLlpoYW5nQHdpbmRyaXZlci5jb20+DQq3
-osvNyrG85DogMjAyMMTqNdTCMjjI1SA5OjQxDQrK1bz+yMs6IE1hcmt1cyBFbGZyaW5nOyBUZWp1
-biBIZW87IExhaSBKaWFuZ3NoYW4NCrOty806IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCtb3zOI6ILvYuLQ6IFtQQVRDSCB2NV0g
-d29ya3F1ZXVlOiBSZW1vdmUgdW5uZWNlc3Nhcnkga2ZyZWUoKSBjYWxsIGluIHJjdV9mcmVlX3dx
-KCkNCg0KVGhhbmtzIGZvciB5b3VyIGd1aWRlLiBJIHRyaWVkIHRvIGNoYW5nZSB0aGUgd2Vha25l
-c3Mgb2Ygd2VhayB3b3JkaW5nDQoNCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18N
-CreivP7IyzogbGludXgta2VybmVsLW93bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgta2VybmVs
-LW93bmVyQHZnZXIua2VybmVsLm9yZz4gtPqx7SBNYXJrdXMgRWxmcmluZyA8TWFya3VzLkVsZnJp
-bmdAd2ViLmRlPg0Kt6LLzcqxvOQ6IDIwMjDE6jXUwjI3yNUgMTY6MjANCsrVvP7IyzogWmhhbmcs
-IFFpYW5nIDxRaWFuZy5aaGFuZ0B3aW5kcml2ZXIuY29tPjsgVGVqdW4gSGVvIDx0akBrZXJuZWwu
-b3JnPjsgTGFpIEppYW5nc2hhbiA8amlhbmdzaGFubGFpQGdtYWlsLmNvbT4NCrOty806IGxpbnV4
-LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBr
-ZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIDxrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJu
-ZWwub3JnPg0K1vfM4jogUmU6IFtQQVRDSCB2NV0gd29ya3F1ZXVlOiBSZW1vdmUgdW5uZWNlc3Nh
-cnkga2ZyZWUoKSBjYWxsIGluIHJjdV9mcmVlX3dxKCkNCg0KPiBUaHVzIGRlbGV0ZSB0aGlzIGZ1
-bmN0aW9uIGNhbGwgd2hpY2ggYmVjYW1lIHVubmVjZXNzYXJ5IHdpdGggdGhlIHJlZmVyZW5jZWQN
-Cj4gc29mdHdhcmUgdXBkYXRlLg0Koa0NCj4gU3VnZ2VzdGVkLWJ5OiBNYXJrdXMgRWxmcmluZyA8
-TWFya3VzLkVsZnJpbmdAd2ViLmRlPg0KDQpXb3VsZCB0aGUgdGFnIKGwQ28tZGV2ZWxvcGVkLWJ5
-obEgYmUgbW9yZSBhcHByb3ByaWF0ZSBhY2NvcmRpbmcgdG8gdGhlIHBhdGNoIHJldmlldw0KdG8g
-YWNoaWV2ZSBhIG1vcmUgcGxlYXNpbmcgY29tbWl0IG1lc3NhZ2U/DQoNCg0KPiAgdjEtPnYyLT52
-My0+djQtPnY1Og0KPiAgTW9kaWZ5IHdlYWtseSBzdWJtaXR0ZWQgaW5mb3JtYXRpb24uDQoNCk5v
-dyBJIHdvbmRlciBhYm91dCB5b3VyIHdvcmRpbmcgY2hvaWNlIKGwd2Vha2x5obEuDQoNClJlZ2Fy
-ZHMsDQpNYXJrdXMNCg=
+Commit 4be5e8648b0c ("media: move CEC platform drivers to a separate
+directory") moved various files into a new directory structure, but did
+not adjust the entries in MAINTAINERS.
+
+Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+
+  warning: no file matches F: drivers/media/platform/s5p-cec/
+  warning: no file matches F: drivers/media/platform/tegra-cec/
+  warning: no file matches F: drivers/media/platform/cec-gpio/
+  warning: no file matches F: drivers/media/platform/meson/ao-cec-g12a.c
+  warning: no file matches F: drivers/media/platform/meson/ao-cec.c
+  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.c
+  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.h
+  warning: no file matches F: drivers/media/platform/sti/cec/
+
+Update the MAINTAINERS entries to the new file locations.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Mauro, please pick this non-urgent minor clean-up patch on top of the
+CEC platform driver moves.
+ 
+applies cleanly on next-20200417, next-20200505 and still on next-20200525
+for this second resend.
+
+v1 send here:
+https://lore.kernel.org/lkml/20200418093630.6149-1-lukas.bulwahn@gmail.com/
+
+v1 first resend here:
+https://lore.kernel.org/lkml/20200506050744.4779-1-lukas.bulwahn@gmail.com/
+
+ MAINTAINERS | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a442b48f24b..bf5cb149101b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2403,7 +2403,7 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/s5p-cec.txt
+-F:	drivers/media/platform/s5p-cec/
++F:	drivers/media/cec/platform/s5p/
+ 
+ ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
+ M:	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+@@ -2548,7 +2548,7 @@ L:	linux-tegra@vger.kernel.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/tegra-cec.txt
+-F:	drivers/media/platform/tegra-cec/
++F:	drivers/media/cec/platform/tegra/
+ 
+ ARM/TETON BGA MACHINE SUPPORT
+ M:	"Mark F. Brown" <mark.brown314@gmail.com>
+@@ -3969,7 +3969,7 @@ S:	Supported
+ W:	http://linuxtv.org
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/cec-gpio.txt
+-F:	drivers/media/platform/cec-gpio/
++F:	drivers/media/cec/platform/cec-gpio/
+ 
+ CELL BROADBAND ENGINE ARCHITECTURE
+ M:	Arnd Bergmann <arnd@arndb.de>
+@@ -11146,8 +11146,7 @@ S:	Supported
+ W:	http://linux-meson.com/
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+-F:	drivers/media/platform/meson/ao-cec-g12a.c
+-F:	drivers/media/platform/meson/ao-cec.c
++F:	drivers/media/cec/platform/meson/
+ 
+ MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+ M:	Liang Yang <liang.yang@amlogic.com>
+@@ -15212,8 +15211,7 @@ F:	drivers/mmc/host/sdricoh_cs.c
+ SECO BOARDS CEC DRIVER
+ M:	Ettore Chimenti <ek5.chimenti@gmail.com>
+ S:	Maintained
+-F:	drivers/media/platform/seco-cec/seco-cec.c
+-F:	drivers/media/platform/seco-cec/seco-cec.h
++F:	drivers/media/cec/platform/seco/
+ 
+ SECURE COMPUTING
+ M:	Kees Cook <keescook@chromium.org>
+@@ -16249,7 +16247,7 @@ STI CEC DRIVER
+ M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/stih-cec.txt
+-F:	drivers/media/platform/sti/cec/
++F:	drivers/media/cec/platform/sti/
+ 
+ STK1160 USB VIDEO CAPTURE DRIVER
+ M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+-- 
+2.17.1
