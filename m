@@ -1,58 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 May 2020 08:25:56 +0000
-Subject: [PATCH] media: cec: silence shift wrapping warning in __cec_s_log_addrs()
-Message-Id: <20200505082556.GA113134@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 25 May 2020 08:20:45 +0000
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v2=5d_workqueue=3a_Delete_duplicate_kfree?= =?UTF-8?B?KCkgY2FsbCBmb3Ig4oCcc
+Message-Id: <efe09ccb-914c-6573-b88f-919bddff20a5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200525075901.12699-1-qiang.zhang@windriver.com>
+In-Reply-To: <20200525075901.12699-1-qiang.zhang@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Dariusz Marcinkiewicz <darekm@google.com>, Kamil Debski <kamil@wypas.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The log_addrs->log_addr_type[i] value is a u8 which is controlled by
-the user and comes from the ioctl.  If it's over 31 then that results in
-undefined behavior (shift wrapping) and that leads to a Smatch static
-checker warning.  We already cap the value later so we can silence the
-warning just by re-ordering the existing checks.
+> The duplicate memory release should be deleted from the implementation
+> of the callback function "rcu_free_wq".
 
-I think the UBSan checker will also catch this bug at runtime and
-generate a warning.  But otherwise the bug is harmless.
+I would find it nicer if you would have extended my simple wording suggestion.
 
-Fixes: 9881fe0ca187 ("[media] cec: add HDMI CEC framework (adapter)")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I haven't pushed the Smatch check for this but I've been re-working how
-user data is tracked and hopefully it should reach acceptable false
-positive ratio soon so I can do that.
+1. Mention conditions:
+   The callback function “rcu_free_wq” could be called after memory was released
+   for “rescuer” already.
 
- drivers/media/cec/core/cec-adap.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+2. Specify the desired action:
+   Thus delete a misplaced call of the function “kfree”.
 
-diff --git a/drivers/media/cec/core/cec-adap.c b/drivers/media/cec/core/cec-adap.c
-index 6c95dc471d4c6..6a04d19a96b2e 100644
---- a/drivers/media/cec/core/cec-adap.c
-+++ b/drivers/media/cec/core/cec-adap.c
-@@ -1734,6 +1734,10 @@ int __cec_s_log_addrs(struct cec_adapter *adap,
- 		unsigned j;
- 
- 		log_addrs->log_addr[i] = CEC_LOG_ADDR_INVALID;
-+		if (log_addrs->log_addr_type[i] > CEC_LOG_ADDR_TYPE_UNREGISTERED) {
-+			dprintk(1, "unknown logical address type\n");
-+			return -EINVAL;
-+		}
- 		if (type_mask & (1 << log_addrs->log_addr_type[i])) {
- 			dprintk(1, "duplicate logical address type\n");
- 			return -EINVAL;
-@@ -1754,10 +1758,6 @@ int __cec_s_log_addrs(struct cec_adapter *adap,
- 			dprintk(1, "invalid primary device type\n");
- 			return -EINVAL;
- 		}
--		if (log_addrs->log_addr_type[i] > CEC_LOG_ADDR_TYPE_UNREGISTERED) {
--			dprintk(1, "unknown logical address type\n");
--			return -EINVAL;
--		}
- 		for (j = 0; j < feature_sz; j++) {
- 			if ((features[j] & 0x80) = 0) {
- 				if (op_is_dev_features)
--- 
-2.26.2
+3. Please keep the patch versioning consistent.
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9cb1fd0efd195590b828b9b865421ad345a4a145#n709
+
+Regards,
+Markus
