@@ -1,7 +1,7 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Date: Tue, 26 May 2020 23:20:50 +0000
-Subject: Re: [PATCH][next] block: blk-crypto-fallback: remove redundant initialization of variable err
-Message-Id: <20200526232050.GB182086@gmail.com>
+From: Satya Tangirala <satyat@google.com>
+Date: Tue, 26 May 2020 23:27:25 +0000
+Subject: Re: [PATCH][next] block: blk-crypto-fallback: remove redundant initialization of variable err'
+Message-Id: <20200526232725.GA41114@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200526224902.63975-1-colin.king@canonical.com>
 In-Reply-To: <20200526224902.63975-1-colin.king@canonical.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Satya Tangirala <satyat@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Tue, May 26, 2020 at 11:49:02PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -37,9 +37,11 @@ On Tue, May 26, 2020 at 11:49:02PM +0100, Colin King wrote:
 >  
 >  	if (blk_crypto_fallback_inited)
 >  		return 0;
+> -- 
+Looks good to me - you can add:
 
-Looks good, you can add:
+Reviewed-by: Satya Tangirala <satyat@google.com>
 
-	Reviewed-by: Eric Biggers <ebiggers@google.com>
-
-- Eric
+Thanks!
+> 2.25.1
+> 
