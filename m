@@ -1,8 +1,10 @@
 From: "Mrs.Judith Rice" <hamurafujimi@tmail.plala.or.jp>
-Date: Wed, 27 May 2020 13:09:40 +0000
+Date: Wed, 27 May 2020 13:58:33 +0000
 Subject: Spende
-Message-Id: <20200527220940.C5BT6.807.root@mwebp13>
+Message-Id: <20200527225834.AOWGS.1026.root@mwebp13>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200527220940.C5BT6.807.root@mwebp13>
+In-Reply-To: <20200527220940.C5BT6.807.root@mwebp13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
