@@ -1,42 +1,38 @@
-From: Renato Lui Geh <renatogeh@gmail.com>
-Date: Mon, 18 May 2020 02:21:29 +0000
-Subject: Re: [PATCH] iio: adc: ad7780: Fix a resource handling path in 'ad7780_probe()'
-Message-Id: <20200518022129.xkcuw4yxotnll7ym@renatolg>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 27 May 2020 11:52:42 +0000
+Subject: [PATCH] scsi: qedf: remove redundant initialization of variable rc
+Message-Id: <20200527115242.172344-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200517095953.278950-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200517095953.278950-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Michael.Hennerich@analog.com, renatogeh@gmail.com, lars@metafoo.de, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net, giuliano.belinassi@usp.br, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Renato Lui Geh <renatogeh@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-On 05/17, Christophe JAILLET wrote:
->If 'ad7780_init_gpios()' fails, we must not release some resources that
->have not been allocated yet. Return directly instead.
->
->Fixes: 5bb30e7daf00 ("staging: iio: ad7780: move regulator to after GPIO init")
->Fixes: 9085daa4abcc ("staging: iio: ad7780: add gain & filter gpio support")
->Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->---
-> drivers/iio/adc/ad7780.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/iio/adc/ad7780.c b/drivers/iio/adc/ad7780.c
->index f47606ebbbbe..b33fe6c3907e 100644
->--- a/drivers/iio/adc/ad7780.c
->+++ b/drivers/iio/adc/ad7780.c
->@@ -329,7 +329,7 @@ static int ad7780_probe(struct spi_device *spi)
->
-> 	ret = ad7780_init_gpios(&spi->dev, st);
-> 	if (ret)
->-		goto error_cleanup_buffer_and_trigger;
->+		return ret;
->
-> 	st->reg = devm_regulator_get(&spi->dev, "avdd");
-> 	if (IS_ERR(st->reg))
->-- 
->2.25.1
->
+The variable rc is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qedf/qedf_fip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qedf/qedf_fip.c b/drivers/scsi/qedf/qedf_fip.c
+index bb82f0875eca..ad6a56ce72a8 100644
+--- a/drivers/scsi/qedf/qedf_fip.c
++++ b/drivers/scsi/qedf/qedf_fip.c
+@@ -20,7 +20,7 @@ void qedf_fcoe_send_vlan_req(struct qedf_ctx *qedf)
+ #define MY_FIP_ALL_FCF_MACS        ((__u8[6]) { 1, 0x10, 0x18, 1, 0, 2 })
+ 	static u8 my_fcoe_all_fcfs[ETH_ALEN] = MY_FIP_ALL_FCF_MACS;
+ 	unsigned long flags = 0;
+-	int rc = -1;
++	int rc;
+ 
+ 	skb = dev_alloc_skb(sizeof(struct fip_vlan));
+ 	if (!skb) {
+-- 
+2.25.1
