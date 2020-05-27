@@ -1,43 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 08 May 2020 12:30:22 +0000
-Subject: [PATCH 4.4 031/312] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
-Message-Id: <20200508123126.677472805@linuxfoundation.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 27 May 2020 12:56:11 +0000
+Subject: [PATCH] NFS: remove redundant initialization of variable result
+Message-Id: <20200527125611.174291-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200508123124.574959822@linuxfoundation.org>
-In-Reply-To: <20200508123124.574959822@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 58a7e1c140f3ad61646bc0cd9a1f6a9cafc0b225 upstream.
+The variable result is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-We obviously intended to enable IRQs again at the end.
-
-Fixes: 745aef5df1e2 ('MIPS: RM7000: Add support for tertiary cache')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/13815/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/mips/mm/sc-rm7k.c |    2 +-
+ fs/nfs/direct.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/mm/sc-rm7k.c
-+++ b/arch/mips/mm/sc-rm7k.c
-@@ -161,7 +161,7 @@ static void rm7k_tc_disable(void)
- 	local_irq_save(flags);
- 	blast_rm7k_tcache();
- 	clear_c0_config(RM7K_CONF_TE);
--	local_irq_save(flags);
-+	local_irq_restore(flags);
- }
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index a57e7c72c7f4..bb63e2b93ff7 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -446,7 +446,7 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter)
+ 	struct inode *inode = mapping->host;
+ 	struct nfs_direct_req *dreq;
+ 	struct nfs_lock_context *l_ctx;
+-	ssize_t result = -EINVAL, requested;
++	ssize_t result, requested;
+ 	size_t count = iov_iter_count(iter);
+ 	nfs_add_stats(mapping->host, NFSIOS_DIRECTREADBYTES, count);
  
- static void rm7k_sc_disable(void)
+-- 
+2.25.1
