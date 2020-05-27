@@ -1,28 +1,25 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 27 May 2020 05:49:08 +0000
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Wed, 27 May 2020 06:40:48 +0000
 Subject: Re: [PATCH] clk: versatile: remove redundant assignment to pointer clk
-Message-Id: <CACRpkdb7s77aOnQxMQ=Gi9zcy_fz37PZ5E3+vk0=P5N8wjA6sw@mail.gmail.com>
+Message-Id: <159056164860.88029.7554351167857846969@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200526224116.63549-1-colin.king@canonical.com>
 In-Reply-To: <20200526224116.63549-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Colin King <colin.king@canonical.com>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 27, 2020 at 12:41 AM Colin King <colin.king@canonical.com> wrote:
-
+Quoting Colin King (2020-05-26 15:41:16)
 > From: Colin Ian King <colin.king@canonical.com>
->
+> 
 > The pointer clk is being initialized with a value that is never read
 > and is being updated with a new value later on. The initialization
 > is redundant and can be removed.
->
+> 
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Applied to clk-next
