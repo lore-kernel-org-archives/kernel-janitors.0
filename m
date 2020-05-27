@@ -1,44 +1,49 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Fri, 22 May 2020 23:01:44 +0000
-Subject: Re: [PATCH] soc: fsl: qe: clean up an indentation issue
-Message-Id: <CADRPPNQ4KrnSsG2PxgXxe-+c5DQsUNQjw3f9Xq-kxP3+xAaQcQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 27 May 2020 06:40:12 +0000
+Subject: Re: [PATCH v4] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
+Message-Id: <067566d5-9392-c155-fb8e-f2662fb5f60f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200327161349.284679-1-colin.king@canonical.com>
-In-Reply-To: <20200327161349.284679-1-colin.king@canonical.com>
+References: <20200527015054.34796-1-qiang.zhang@windriver.com>
+In-Reply-To: <20200527015054.34796-1-qiang.zhang@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, lkml <linux-kernel@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Qiang Zhao <qiang.zhao@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 11:15 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a statement that not indented correctly, remove the
-> extraneous space.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> The callback function "rcu_free_wq" could be called after memory
+> was released for "wq->rescuer" already and assignment is empty. so
+> remove unnecessary kfree(NULL).
 
-Applied for next.  Thanks.
+I have got the impression that also this wording approach contains weaknesses.
+How do you think about a wording variant like the following?
 
-> ---
->  drivers/soc/fsl/qe/ucc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-> index d6c93970df4d..cac0fb7693a0 100644
-> --- a/drivers/soc/fsl/qe/ucc.c
-> +++ b/drivers/soc/fsl/qe/ucc.c
-> @@ -519,7 +519,7 @@ int ucc_set_tdm_rxtx_clk(u32 tdm_num, enum qe_clock clock,
->         int clock_bits;
->         u32 shift;
->         struct qe_mux __iomem *qe_mux_reg;
-> -        __be32 __iomem *cmxs1cr;
-> +       __be32 __iomem *cmxs1cr;
->
->         qe_mux_reg = &qe_immr->qmx;
->
-> --
-> 2.25.1
->
+   The data structure member “wq->rescuer” was reset to a null pointer
+   in one if branch. It was passed to a call of the function “kfree”
+   in the callback function “rcu_free_wq” (which was eventually executed).
+   The function “kfree” does not perform more meaningful data processing
+   for a passed null pointer (besides immediately returning from such a call).
+   Thus delete this function call which became unnecessary with the referenced
+   software update.
+
+
+> Fixes: def98c84b6cd ("workqueue: Fix spurious sanity check failures in destroy_workqueue()")
+
+This change triggered another collateral evolution finally.
+Would you like to detect similarly questionable function calls
+by advanced source code analysis?
+
+
+> Fixes: 8efe1223d73c ("workqueue: Fix missing kfree(rescuer) in destroy_workqueue()")
+
+Please delete this tag from the change description
+(because I find that it is not so relevant here.)
+
+
+>  v1->v2->v3->v4:
+>  Modify wrong submission information.
+
+Will it be nicer to mention the adjustment of the commit message?
+
+Regards,
+Markus
