@@ -1,37 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 May 2020 18:22:53 +0000
-Subject: [PATCH][next] fs: remove redundant assignment to variable ret
-Message-Id: <20200512182253.223249-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 28 May 2020 08:07:48 +0000
+Subject: Re: [PATCH v6] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
+Message-Id: <4f292007-4da0-3558-4c6b-ca3eaf884193@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200528013736.39356-1-qiang.zhang@windriver.com>
+In-Reply-To: <20200528013736.39356-1-qiang.zhang@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Thus delete this function call which became unnecessary with the referenced
+> software update.
+…
+> Co-developed-by: Markus Elfring <Markus.Elfring@web.de>
 
-The variable ret is being assigned a value that is never read and it
-is being updated later with a new value. The assignment is redundant
-and can be removed.
+I guess that this tag should usually trigger another consequence like the following.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b0c3ba31be3e45a130e13b278cf3b90f69bda6f6#n548
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/super.c | 1 -
- 1 file changed, 1 deletion(-)
+Signed-off-by: Markus Elfring <Markus.Elfring@web.de>
 
-diff --git a/fs/super.c b/fs/super.c
-index b0a511bef4a0..6674c2af26ef 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2052,7 +2052,6 @@ SYSCALL_DEFINE5(watch_sb,
- 		if (drop_s_count)
- 			put_super(s);
- 	} else {
--		ret = -EBADSLT;
- 		down_write(&s->s_umount);
- 		ret = remove_watch_from_object(s->s_watchers, wqueue,
- 					       s->s_unique_id, false);
--- 
-2.25.1
+
+Is there a need to tag also the patch review contribution of Lai Jiangshan?
+https://lore.kernel.org/lkml/CAJhGHyC4XcNL8yzWZKZ=73wZJej4JwCaAHGV8qjYn-AqcEAEjQ@mail.gmail.com/
+https://lore.kernel.org/patchwork/comment/1442889/
+https://lkml.org/lkml/2020/5/26/201
+
+
+I am unsure if such aspects will matter after Tejun Heo responded with the information
+“Applied to wq/for-5.8.” to the previous patch version yesterday.
+https://lore.kernel.org/lkml/20200527135214.GI83516@mtj.thefacebook.com/
+https://lore.kernel.org/patchwork/comment/1443888/
+
+
+>  v1->v2->v3->v4->v5->v6:
+>  Modify weakly submitted information and tag.
+
+I am curious how our imaginations and preferences will evolve further
+also for such wording selections.
+
+Regards,
+Markus
