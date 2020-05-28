@@ -1,27 +1,40 @@
-From: "Shah, Nehal-bakulchandra" <nehal-bakulchandra.shah@amd.com>
-Date: Fri, 01 May 2020 05:22:57 +0000
-Subject: Re: [PATCH v2] i2c: i2c-amd-mp2-pci: Fix Oops in amd_mp2_pci_init() error handling
-Message-Id: <383303a1-b326-a37d-0a2b-e6ce4f945b74@amd.com>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Thu, 28 May 2020 12:08:06 +0000
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHY1XSB3b3JrcXVldWU6IFJlbW92ZSB1bm5lY2Vzc2FyeQ==?= =?UTF-8?B?IGtmc
+Message-Id: <CAJhGHyD1nV=M=ccycqCMt86GMuZGkO9trbJ=4ti4EzP9kta6iA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAC_JBqofuyRiSmK0mFqVLaY=5k9MYmjGaVmggx2dn_YjN8VOmw@mail.gmail.com>
- <20190910134242.GA6620@mwanda> <20200430141050.GB3355@ninjato>
- <CAC_JBqo4x0KBdb3j3VFrZu5sG2Mfx3xpbDzFk68h3TU99ZVj3Q@mail.gmail.com>
- <20200430200659.GA19155@ninjato>
-In-Reply-To: <20200430200659.GA19155@ninjato>
+References: <20200527075715.36849-1-qiang.zhang@windriver.com>
+ <284c7851-4e89-a00f-a2e6-aa8e2e1f3fce@web.de> <DM6PR11MB32573F3884A864ECD586235EFF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
+ <DM6PR11MB3257D6E7E93A518392502809FF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
+ <20200528095703.GH30374@kadam>
+In-Reply-To: <20200528095703.GH30374@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>, Elie Morisse <syniurge@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Zhang, Qiang" <Qiang.Zhang@windriver.com>, Markus Elfring <markus.elfring@web.de>, Tejun Heo <tj@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hi wolfram,
+On Thu, May 28, 2020 at 5:57 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> Guys, the patch is wrong.  The kfree is harmless when this is called
+> from destroy_workqueue() and required when it's called from
+> pwq_unbound_release_workfn().  Lai Jiangshan already explained this
+> already.  Why are we still discussing this?
+>
 
-On 5/1/2020 1:36 AM, Wolfram Sang wrote:
->> Yes I'm still here to review patches.
-> Glad to hear that :)
+I'm also confused why they have been debating about the changelog
+after the patch was queued. My statement was about "the patch is
+a correct cleanup, but the changelog is totally misleading".
 
-Shyam and myslef also are here to review the patches.
+destroy_workqueue(percpu_wq) -> rcu_free_wq()
+or
+destroy_workqueue(unbound_wq) -> put_pwq() ->
+pwq_unbound_release_workfn() -> rcu_free_wq()
 
-Thanks
+So the patch is correct to me. Only can destroy_workqueue()
+lead to rcu_free_wq().
 
-Nehal
+Still, the kfree(NULL) is harmless. But it is cleaner
+to have the patch. But the changelog is wrong, even after
+the lengthened debating, and English is not my mother tongue,
+so I just looked on.
