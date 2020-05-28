@@ -1,49 +1,30 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 02 May 2020 18:17:25 +0000
-Subject: Re: [PATCH] iio: dac: vf610: Fix an error handling path in 'vf610_dac_probe()'
-Message-Id: <20200502191725.10eabc8a@archlinux>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 28 May 2020 19:48:57 +0000
+Subject: Re: [PATCH] nilfs2: Fix reference count leak in nilfs_sysfs_create_snapshot_group()
+Message-Id: <30cf7534-b62e-84b1-571a-945aaffac5b0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200426194403.41913-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, maitysanchayan@gmail.com, robh@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Qiushi Wu <wu000273@umn.edu>, linux-nilfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Kangjie Lu <kjlu@umn.edu>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, Vyacheslav Dubeyko <Vyacheslav.Dubeyko@hgst.com>
 
-On Sun, 26 Apr 2020 21:44:03 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> kobject_init_and_add() takes reference even when it fails.
 
-> A call to 'vf610_dac_exit()' is missing in an error handling path.
-> 
-> Fixes: 1b983bf42fad ("iio: dac: vf610_dac: Add IIO DAC driver for Vybrid SoC")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+It will be helpful to mention which object is referenced here, won't it?
 
-I'll count this one as 'obviously' correct, though happy to have input
-from sanchayan if possible.
 
-Applied to the fixes-togreg branch of iio.git and marked for stable.
+> If this function returns an error, kobject_put() must be called to
+> properly clean up the memory associated with the object.
 
-Thanks,
+I guess that an imperative wording is preferred also for this change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b0c3ba31be3e45a130e13b278cf3b90f69bda6f6#n151
 
-Jonathan
+How do you think about to combine this update step together with
+“nilfs2: Fix reference count leak in nilfs_sysfs_create_device_group”
+into a small patch series?
+https://lore.kernel.org/patchwork/patch/1248696/
+https://lore.kernel.org/lkml/20200527200933.31135-1-wu000273@umn.edu/
 
-> ---
-> Un-tested.
-> Proposal based on function names and functions called in the remove function
-> ---
->  drivers/iio/dac/vf610_dac.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/dac/vf610_dac.c b/drivers/iio/dac/vf610_dac.c
-> index 71f8a5c471c4..7f1e9317c3f3 100644
-> --- a/drivers/iio/dac/vf610_dac.c
-> +++ b/drivers/iio/dac/vf610_dac.c
-> @@ -223,6 +223,7 @@ static int vf610_dac_probe(struct platform_device *pdev)
->  	return 0;
->  
->  error_iio_device_register:
-> +	vf610_dac_exit(info);
->  	clk_disable_unprepare(info->clk);
->  
->  	return ret;
+Regards,
+Markus
