@@ -1,29 +1,44 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 29 May 2020 09:47:58 +0000
-Subject: Re: [PATCH] edac: Fix reference count leak in edac_device_register_sysfs_main_kobj()
-Message-Id: <20200529094758.GD9011@zn.tnic>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 May 2020 22:24:53 +0000
+Subject: [PATCH][next] drm/amdkfd: fix a dereference of pdd before it is null checked
+Message-Id: <20200528222453.536137-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28ebc99f-c0dd-00b2-7a53-9edf0df36c9c@web.de>
- <20200529093644.GC9011@zn.tnic>
- <c304a0b0-692a-0696-6750-05a3db6a4b42@web.de>
-In-Reply-To: <c304a0b0-692a-0696-6750-05a3db6a4b42@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Morse <james.morse@arm.com>, Kangjie Lu <kjlu@umn.edu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Qiushi Wu <wu000273@umn.edu>, Robert Richter <rrichter@marvell.com>, Tony Luck <tony.luck@intel.com>
+To: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mukul Joshi <mukul.joshi@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 29, 2020 at 11:40:47AM +0200, Markus Elfring wrote:
-> Have we got different programming expectations also around the application
-> of the Linux coding style?
+From: Colin Ian King <colin.king@canonical.com>
 
-We have me stopping you from giving new submitters wrong review and bad
-advice.
+Currently pointer pdd is being dereferenced when assigning pointer
+dpm and then pdd is being null checked.  Fix this by checking if
+pdd is null before the dereference of pdd occurs.
 
-Please refrain from "reviewing" EDAC patches!
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 522b89c63370 ("drm/amdkfd: Track SDMA utilization per process")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index 25636789f3d3..bdc58741b32e 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -103,10 +103,11 @@ static void kfd_sdma_activity_worker(struct work_struct *work)
+ 		return;
+ 
+ 	pdd = workarea->pdd;
++	if (!pdd)
++		return;
+ 	dqm = pdd->dev->dqm;
+ 	qpd = &pdd->qpd;
+-
+-	if (!pdd || !dqm || !qpd)
++	if (!dqm || !qpd)
+ 		return;
+ 
+ 	mm = get_task_mm(pdd->process->lead_thread);
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+2.25.1
