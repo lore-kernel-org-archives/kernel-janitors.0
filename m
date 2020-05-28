@@ -1,51 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 07 May 2020 12:18:19 +0000
-Subject: Re: [PATCH -next] ASoC: rt5677: Use devm_snd_soc_register_component()
-Message-Id: <158885389338.38935.14311915230086603146.b4-ty@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 28 May 2020 11:00:03 +0000
+Subject: Re: [v5] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
+Message-Id: <5e25fc22-fb61-46f8-a8ec-232bceee40b7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200507094335.14302-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200507094335.14302-1-weiyongjun1@huawei.com>
+References: <20200527075715.36849-1-qiang.zhang@windriver.com>
+ <284c7851-4e89-a00f-a2e6-aa8e2e1f3fce@web.de>
+ <DM6PR11MB32573F3884A864ECD586235EFF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
+ <DM6PR11MB3257D6E7E93A518392502809FF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
+ <20200528095703.GH30374@kadam> <20200528103809.GK83516@mtj.thefacebook.com>
+In-Reply-To: <20200528103809.GK83516@mtj.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Takashi Iwai <tiwai@suse.com>, Oder Chiou <oder_chiou@realtek.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Zhang Qiang <qiang.zhang@windriver.com>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 7 May 2020 09:43:35 +0000, Wei Yongjun wrote:
-> Using devm_snd_soc_register_component() can make the code
-> shorter and cleaner.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  sound/soc/codecs/rt5677-spi.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> [...]
+>> Guys, the patch is wrong.  The kfree is harmless when this is called
+>> from destroy_workqueue() and required when it's called from
+>> pwq_unbound_release_workfn().  Lai Jiangshan already explained this
+>> already.  Why are we still discussing this?
+>
+> Oops, missed that. Reverting.
 
-Applied to
+Can it matter to use separate callback functions for these cases?
+https://elixir.bootlin.com/linux/v5.7-rc7/C/ident/rcu_free_pwq
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.8
-
-Thanks!
-
-[1/1] ASoC: rt5677: Use devm_snd_soc_register_component()
-      commit: 9558ad215509b75c72c84f4f7691f1bd80fda42a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Regards,
+Markus
