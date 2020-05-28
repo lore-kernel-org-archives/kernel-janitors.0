@@ -1,19 +1,26 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 30 May 2020 09:24:23 +0000
-Subject: Re: [PATCH] usb: cdns3: fix possible buffer overflow caused by bad DMA value
-Message-Id: <b489646a-a4f7-adf0-b996-ab92039c8487@web.de>
+Date: Thu, 28 May 2020 17:09:17 +0000
+Subject: Re: [PATCH] Bluetooth: btmtkuart: Improve exception handling in btmtuart_probe()
+Message-Id: <dd458e1d-26cf-2cc6-4fdb-fb464f9c3ac6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Laszczak <pawell@cadence.com>, Peter Chen <peter.chen@nxp.com>, Roger Quadros <rogerq@ti.com>, YueHaibing <yuehaibing@huawei.com>
+To: Chuhong Yuan <hslester96@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>
 
-> To fix these possible bugs, index is checked before being used.
+> btmtuart_probe() misses several function calls in its error paths,
+> including hci_free_dev() and clk_disable_unprepare().
+> Refactor the code and call correct undo functions to fix the error
+> paths.
 
 How do you think about a wording variant like the following?
 
-  Thus check the index before using it further.
+   Change description:
+   Calls of the functions “clk_disable_unprepare” and “hci_free_dev”
+   were missing for the exception handling.
+   Thus add the missed function calls together with corresponding
+   jump targets.
 
 
 Would you like to add the tag “Fixes” to the commit message?
