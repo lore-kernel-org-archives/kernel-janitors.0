@@ -1,24 +1,35 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Sun, 24 May 2020 16:44:17 +0000
-Subject: Re: [PATCH][next] loop: remove redundant assignment to variable error
-Message-Id: <9042a7ea-2d2b-9cb9-226b-266c35036701@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 May 2020 11:07:09 +0000
+Subject: [PATCH][next] IB/hfi1: fix spelling mistake "enought" -> "enough"
+Message-Id: <20200528110709.400935-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200524161043.20292-1-colin.king@canonical.com>
-In-Reply-To: <20200524161043.20292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org
+To: Mike Marciniszyn <mike.marciniszyn@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 5/24/20 10:10 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable error is being assigned a value that is never
-> read so the assignment is redundant and can be removed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Plus, by definition, we already know that error is zero at the
-time of assignment.
+There is a spelling mistake in an error message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hfi1/chip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
+index 7f35b9ea158b..15f9c635f292 100644
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -14559,7 +14559,7 @@ static bool hfi1_netdev_update_rmt(struct hfi1_devdata *dd)
+ 	}
+ 
+ 	if (hfi1_is_rmt_full(rmt_start, NUM_NETDEV_MAP_ENTRIES)) {
+-		dd_dev_err(dd, "Not enought RMT entries used = %d\n",
++		dd_dev_err(dd, "Not enough RMT entries used = %d\n",
+ 			   rmt_start);
+ 		return false;
+ 	}
 -- 
-Jens Axboe
+2.25.1
