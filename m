@@ -1,25 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 30 May 2020 00:15:21 +0000
-Subject: Re: [PATCH][net-next] nexthop: fix incorrect allocation failure on nhg->spare
-Message-Id: <20200529.171521.699478164991447623.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 28 May 2020 07:59:46 +0000
+Subject: [PATCH -next] IB/hfi1: Remove set but not used variable 'priv'
+Message-Id: <20200528075946.123480-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200528145114.420100-1-colin.king@canonical.com>
-In-Reply-To: <20200528145114.420100-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dsahern@kernel.org, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Marciniszyn <mike.marciniszyn@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 May 2020 15:51:14 +0100
+drivers/infiniband/hw/hfi1/netdev_rx.c: In function 'hfi1_netdev_free':
+drivers/infiniband/hw/hfi1/netdev_rx.c:374:27: warning:
+ variable 'priv' set but not used [-Wunused-but-set-variable]
 
-> @@ -1185,7 +1185,7 @@ static struct nexthop *nexthop_create_group(struct net *net,
->  
->  	/* spare group used for removals */
->  	nhg->spare = nexthop_grp_alloc(num_nh);
+It is never used, so can be removed, then null check before
+kfree is unneeded.
 
-I don't even see this line in the current net-next tree nor any references
-to ->spare.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/hfi1/netdev_rx.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-What am I missing?
+diff --git a/drivers/infiniband/hw/hfi1/netdev_rx.c b/drivers/infiniband/hw/hfi1/netdev_rx.c
+index 58af6a454761..bd6546b52159 100644
+--- a/drivers/infiniband/hw/hfi1/netdev_rx.c
++++ b/drivers/infiniband/hw/hfi1/netdev_rx.c
+@@ -371,14 +371,9 @@ int hfi1_netdev_alloc(struct hfi1_devdata *dd)
+ 
+ void hfi1_netdev_free(struct hfi1_devdata *dd)
+ {
+-	struct hfi1_netdev_priv *priv;
+-
+-	if (dd->dummy_netdev) {
+-		priv = hfi1_netdev_priv(dd->dummy_netdev);
+-		dd_dev_info(dd, "hfi1 netdev freed\n");
+-		kfree(dd->dummy_netdev);
+-		dd->dummy_netdev = NULL;
+-	}
++	dd_dev_info(dd, "hfi1 netdev freed\n");
++	kfree(dd->dummy_netdev);
++	dd->dummy_netdev = NULL;
+ }
+ 
+ /**
