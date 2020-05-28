@@ -1,37 +1,76 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 May 2020 06:56:00 +0000
-Subject: Re: [PATCH] ath11k: Fix some resource leaks in error path in 'ath11k_thermal_register()'
-Message-Id: <20200519065600.C7ADBC44788@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 May 2020 12:37:03 +0000
+Subject: [PATCH] crypto: hisilicon/qm - allow smaller reads in debugfs
+Message-Id: <20200528123703.GA1219412@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200513201454.258111-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200513201454.258111-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, pradeepc@codeaurora.org, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhou Wang <wangzhou1@hisilicon.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Originally this code rejected any read less than 256 bytes.  There
+is no need for this artificial limit.
 
-> If 'thermal_cooling_device_register()' fails, we must undo what has been
-> allocated so far. So we must go to 'err_thermal_destroy' instead of
-> returning directly
-> 
-> In case of error in 'ath11k_thermal_register()', the previous
-> 'thermal_cooling_device_register()' call must also be undone. Move the
-> 'ar->thermal.cdev = cdev' a few lines above in order for this to be done
-> in 'ath11k_thermal_unregister()' which is called in the error handling
-> path.
-> 
-> Fixes: 2a63bbca06b2 ("ath11k: add thermal cooling device support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Also I have changed the snprintf() functions to scnprintf().  The
+difference is that snprintf() returns the number of bytes which would
+have been copied if there were enough space and scnprintf() returns the
+number of bytes which were actually copied.  It doesn't matter here
+because the strings are very short so they can't go over 256 bytes.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/crypto/hisilicon/qm.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-25ca180ad380 ath11k: Fix some resource leaks in error path in 'ath11k_thermal_register()'
-
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index a781c02251980..9c0c9f500d91d 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -1076,16 +1076,15 @@ static ssize_t qm_cmd_read(struct file *filp, char __user *buffer,
+ 	if (*pos)
+ 		return 0;
+ 
+-	if (count < QM_DBG_READ_LEN)
+-		return -ENOSPC;
+-
+-	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n",
++	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n",
+ 		       "Please echo help to cmd to get help information");
+ 
++	len = min_t(size_t, len, count);
+ 	if (copy_to_user(buffer, buf, len))
+ 		return -EFAULT;
+ 
+-	return (*pos = len);
++	*pos = len;
++	return len;
+ }
+ 
+ static void *qm_ctx_alloc(struct hisi_qm *qm, size_t ctx_size,
+@@ -2710,19 +2709,18 @@ static ssize_t qm_status_read(struct file *filp, char __user *buffer,
+ 	if (*pos)
+ 		return 0;
+ 
+-	if (count < QM_DBG_READ_LEN)
+-		return -ENOSPC;
+-
+ 	val = atomic_read(&qm->status.flags);
+-	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
++	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
+ 	if (!len)
+ 		return -EFAULT;
+ 
++	len = min_t(size_t, len, count);
+ 	cp_len = copy_to_user(buffer, buf, len);
+ 	if (cp_len)
+ 		return -EFAULT;
+ 
+-	return (*pos = len);
++	*pos = len;
++	return len;
+ }
+ 
+ static const struct file_operations qm_status_fops = {
 -- 
-https://patchwork.kernel.org/patch/11547195/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.26.2
