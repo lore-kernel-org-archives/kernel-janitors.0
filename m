@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 May 2020 03:39:44 +0000
-Subject: Re: [PATCH net-next] net: ll_temac: Fix return value check in temac_probe()
-Message-Id: <20200430.203944.1500164412783078570.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 May 2020 15:04:27 +0000
+Subject: [PATCH][next] RDMA/hns: remove duplicate assignment to pointer raq
+Message-Id: <20200528150427.420624-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427094052.181554-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427094052.181554-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: weiyongjun1@huawei.com
-Cc: andrew@lunn.ch, netdev@vger.kernel.org, esben@geanix.com, kernel-janitors@vger.kernel.org, michal.simek@xilinx.com, ynezz@true.cz, linux-arm-kernel@lists.infradead.org
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <huwei87@hisilicon.com>, Weihang Li <liweihang@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 27 Apr 2020 09:40:52 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The pointer raq is being assigned twice. Fix this by removing
+one of the redundant assignments.
 
-Applied, thank you.
+Fixes: 14ba87304bf9 ("RDMA/hns: Remove redundant type cast for general pointers")
+Addressses-Coverity: ("Evaluation order violation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index 8ff6b922b4d7..d02207cd30df 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -1146,7 +1146,7 @@ static void hns_roce_db_free(struct hns_roce_dev *hr_dev)
+ static int hns_roce_raq_init(struct hns_roce_dev *hr_dev)
+ {
+ 	struct hns_roce_v1_priv *priv = hr_dev->priv;
+-	struct hns_roce_raq_table *raq = raq = &priv->raq_table;
++	struct hns_roce_raq_table *raq = &priv->raq_table;
+ 	struct device *dev = &hr_dev->pdev->dev;
+ 	int raq_shift = 0;
+ 	dma_addr_t addr;
+-- 
+2.25.1
