@@ -1,35 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 30 May 2020 07:34:18 +0000
-Subject: [PATCH] scsi: eesox: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <20200530073418.577210-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 29 May 2020 08:45:08 +0000
+Subject: Re: [PATCH] edac: Fix reference count leak in edac_device_register_sysfs_main_kobj()
+Message-Id: <77d6b960-aedc-c7ce-5df9-f3653bfd500a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Qiushi Wu <wu000273@umn.edu>, linux-edac@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Doug Thompson <dougthompson@xmission.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Morse <james.morse@arm.com>, Kangjie Lu <kjlu@umn.edu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter <rrichter@marvell.com>, Tony Luck <tony.luck@intel.com>
 
-The dev_id used in 'request_irq()' and 'free_irq()' should match.
-So use 'host' in both cases.
+> object_init_and_add() should be handled when it return an error,
+> because kobject_init_and_add() takes reference even when it fails.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/arm/eesox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I find this wording approach improvable.
 
-diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
-index 6e204a2e0c8d..af0bb401ca23 100644
---- a/drivers/scsi/arm/eesox.c
-+++ b/drivers/scsi/arm/eesox.c
-@@ -546,7 +546,7 @@ static int eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
- 	if (ret)
- 		goto out_free;
- 
--	ret = request_irq(ec->irq, eesoxscsi_intr, 0, "eesoxscsi", info);
-+	ret = request_irq(ec->irq, eesoxscsi_intr, 0, "eesoxscsi", host);
- 	if (ret) {
- 		printk("scsi%d: IRQ%d not free: %d\n",
- 		       host->host_no, ec->irq, ret);
--- 
-2.25.1
+
+> Previous commit "b8eb718348b8" fixed a similar problem.
+
+Would you like to indicate with such information (according to
+the topic “net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject”)
+that your issue was detected also with the help of the kernel fuzzing
+tool “syzkaller”?
+
+
+How do you think about to add an imperative wording to the change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b0c3ba31be3e45a130e13b278cf3b90f69bda6f6#n151
+
+
+Will it be helpful to combine this update step together with
+“edac: Fix reference count leak in edac_pci_main_kobj_setup”
+into a small patch series?
+https://lore.kernel.org/lkml/20200528202238.18078-1-wu000273@umn.edu/
+https://lore.kernel.org/patchwork/patch/1249351/
+
+Regards,
+Markus
