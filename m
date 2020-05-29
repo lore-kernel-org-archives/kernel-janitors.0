@@ -1,31 +1,25 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 18 May 2020 19:23:31 +0000
-Subject: Re: [PATCH 1/2] drivers: provide devm_platform_request_irq()
-Message-Id: <e679788a-d616-a45d-f12d-20485aad2f43@web.de>
+Date: Fri, 29 May 2020 17:54:19 +0000
+Subject: Re: [PATCH] net: atm: Replace kmalloc with kzalloc in the error message
+Message-Id: <5e2d3852-9b10-e918-c50a-2a11a46472d8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dejin Zheng <zhengdejin5@gmail.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Barry Song <baohua@kernel.org>, Baruch Siach <baruch@tkos.co.il>, Fabio Estevam <festevam@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Kevin Hilman <khilman@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Paul Cercueil <paul@crapouillou.net>, Radu Pirea <radu_nicolae.pirea@upb.ro>, "Rafael J. Wysocki" <rafael@kernel.org>, Ray Jui <rjui@broadcom.com>, Sascha Hauer <s.hauer@pengutronix.de>, Scott Branden <sbranden@broadcom.com>, Shawn Guo <shawnguo@kernel.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Zhou Yanjie <zhouyanjie@wanyeetech.com>, linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Liao Pingfang <liao.pingfang@zte.com.cn>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Shannon Nelson <snelson@pensando.io>, Wang Liang <wang.liang82@zte.com.cn>, Yi Wang <wang.yi59@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>
 
-> It will call devm_request_irq() after platform_get_irq() function
-> in many drivers, sometimes, it is not right of the error handling
-> for these two functions in some drivers. so provide this function
-> to simplify the driver.
+> Looking into the context (atomic!) and error message itself I would rather drop
+> message completely.
 
-I suggest to improve also this change description.
-How do you think about a wording variant like the following?
+How do you think about to take another look at a previous update suggestion
+like the following?
 
-   The function “devm_request_irq” is called after the
-   function “platform_get_irq” in many drivers.
-   The exception handling is incomplete there sometimes.
-   Thus add a corresponding wrapper function for the simplification
-   of the drivers.
-
-
-Will a companion script for the semantic patch language (Coccinelle software)
-become helpful for further support of collateral evolution?
+net/atm: Delete an error message for a failed memory allocation in five functions
+https://patchwork.ozlabs.org/project/netdev/patch/5270f15b-5e97-0c3e-3e55-fbded48ae07d@users.sourceforge.net/
+https://lore.kernel.org/lkml/5270f15b-5e97-0c3e-3e55-fbded48ae07d@users.sourceforge.net/
+https://lore.kernel.org/patchwork/patch/838867/
+https://lkml.org/lkml/2017/10/9/1009
 
 Regards,
 Markus
