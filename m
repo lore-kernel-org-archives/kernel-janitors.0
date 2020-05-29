@@ -1,38 +1,39 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Thu, 07 May 2020 02:50:17 +0000
-Subject: RE: [PATCH -next] exfat: fix possible memory leak in exfat_find()
-Message-Id: <004801d6241a$3d8da150$b8a8e3f0$@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 May 2020 12:27:44 +0000
+Subject: [PATCH] x86/resctrl: fix a NULL vs IS_ERR() static checker warning
+Message-Id: <20200529122744.GA1217265@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200506142203epcas1p1f805af350b11786d9771fb5bd12bfdd6@epcas1p1.samsung.com>
-        <20200506142554.123748-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200506142554.123748-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Wei Yongjun' <weiyongjun1@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Sungjong Seo' <sj1557.seo@samsung.com>
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> 'es' is malloced from exfat_get_dentry_set() in exfat_find() and should be freed before leaving from
-> the error handling cases, otherwise it will cause memory leak.
-> 
-> Fixes: 5f2aa075070c ("exfat: add inode operations")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Applied.
-Thanks!
-> ---
->  fs/exfat/namei.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c index c241dd177f1a..48f4df883f3b 100644
-> --- a/fs/exfat/namei.c
-> +++ b/fs/exfat/namei.c
-> @@ -681,6 +681,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
->  			exfat_fs_error(sb,
->  				"non-zero size file starts with zero cluster (size : %llu, p_dir : %u,
-> entry : 0x%08x)",
->  				i_size_read(dir), ei->dir.dir, ei->entry);
-> +			kfree(es);
->  			return -EIO;
->  		}
-> 
-> 
+The callers don't expect *d_cdp to be set to an error pointer, they only
+check for NULL.  This leads to a static checker warning:
+
+    arch/x86/kernel/cpu/resctrl/rdtgroup.c:2648 __init_one_rdt_domain()
+    warn: 'd_cdp' could be an error pointer
+
+I don't think this will lead to a real life bug, but it's easy enough to
+change it to be NULL.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 23b4b61319d3f..3f844f14fc0a6 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1117,6 +1117,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
+ 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
+ 	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
+ 		_r_cdp = NULL;
++		_d_cdp = NULL;
+ 		ret = -EINVAL;
+ 	}
+ 
+-- 
+2.26.2
