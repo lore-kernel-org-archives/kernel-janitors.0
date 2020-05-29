@@ -1,22 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 May 2020 00:36:42 +0000
-Subject: Re: [PATCH net-next] enetc: Fix use after free in stream_filter_unref()
-Message-Id: <20200507.173642.1807000659009589804.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 29 May 2020 10:40:21 +0000
+Subject: Re: edac: Fix reference count leak in edac_device_register_sysfs_main_kobj()
+Message-Id: <fac5fdef-6148-38fb-1149-5bfc06969ac8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200505204721.GA51853@mwanda>
-In-Reply-To: <20200505204721.GA51853@mwanda>
+References: <28ebc99f-c0dd-00b2-7a53-9edf0df36c9c@web.de>
+ <20200529093644.GC9011@zn.tnic> <c304a0b0-692a-0696-6750-05a3db6a4b42@web.de>
+ <20200529094758.GD9011@zn.tnic>
+In-Reply-To: <20200529094758.GD9011@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: claudiu.manoil@nxp.com, Po.Liu@nxp.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Morse <james.morse@arm.com>, Kangjie Lu <kjlu@umn.edu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Qiushi Wu <wu000273@umn.edu>, Robert Richter <rrichter@marvell.com>, Tony Luck <tony.luck@intel.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 5 May 2020 23:47:21 +0300
+> We have me stopping you from giving new submitters wrong review
 
-> This code frees "sfi" and then dereferences it on the next line.
-> 
-> Fixes: 888ae5a3952b ("net: enetc: add tc flower psfp offload driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I do not find my suggestions wrong for this issue.
 
-This was fixed in another patch by using the local variable 'index'.
+
+> and bad advice.
+
+But I can understand that we might occasionally prefer other software development approaches.
+
+
+> Please refrain from "reviewing" EDAC patches!
+
+Would you prefer to clarify any remaining adjustments from my selection
+of change possibilities?
+https://lore.kernel.org/linux-edac/3cf2076e-6394-4997-613d-cbf5b6dbee1e@web.de/
+https://lore.kernel.org/patchwork/patch/1130412/
+https://lkml.org/lkml/2019/9/21/121
+
+Regards,
+Markus
