@@ -1,67 +1,48 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Wed, 06 May 2020 18:23:18 +0000
-Subject: Re: [PATCH V2] video: fbdev: w100fb: Fix a potential double free.
-Message-Id: <20200506182318.GA8712@ravnborg.org>
+From: Borislav Petkov <bp@alien8.de>
+Date: Fri, 29 May 2020 13:20:08 +0000
+Subject: Re: [PATCH] EDAC: remove redundant assignment to variable ret
+Message-Id: <20200529132008.GI9011@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506181902.193290-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200506181902.193290-1-christophe.jaillet@wanadoo.fr>
+References: <20200429154847.287001-1-colin.king@canonical.com>
+In-Reply-To: <20200429154847.287001-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-fbdev@vger.kernel.org, b.zolnierkie@samsung.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, rpurdie@rpsys.net, stable@vger.kernel.org, adaplas@pol.net
+To: Colin King <colin.king@canonical.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Robert Richter <rrichter@marvell.com>, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Christophe
-On Wed, May 06, 2020 at 08:19:02PM +0200, Christophe JAILLET wrote:
-> Some memory is vmalloc'ed in the 'w100fb_save_vidmem' function and freed in
-> the 'w100fb_restore_vidmem' function. (these functions are called
-> respectively from the 'suspend' and the 'resume' functions)
+On Wed, Apr 29, 2020 at 04:48:47PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> However, it is also freed in the 'remove' function.
+> The variable ret is being assigned with a value that is never read
+> and it is being updated later with a new value. The initialization is
+> redundant and can be removed.
 > 
-> In order to avoid a potential double free, set the corresponding pointer
-> to NULL once freed in the 'w100fb_restore_vidmem' function.
-> 
-> Fixes: aac51f09d96a ("[PATCH] w100fb: Rewrite for platform independence")
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Antonino Daplas <adaplas@pol.net>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: <stable@vger.kernel.org> # v2.6.14+
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thanks for the quick v2.
-Applied to drm-misc-next.
-
-	Sam
-
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> v2: - Add Cc: tags
->     - Reword the commit message to give the names of the functions that
->       allocate and free the memory. These functions are called from the
->       suspend and resume function.
-> ---
->  drivers/video/fbdev/w100fb.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/edac/amd64_edac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/video/fbdev/w100fb.c b/drivers/video/fbdev/w100fb.c
-> index 2d6e2738b792..d96ab28f8ce4 100644
-> --- a/drivers/video/fbdev/w100fb.c
-> +++ b/drivers/video/fbdev/w100fb.c
-> @@ -588,6 +588,7 @@ static void w100fb_restore_vidmem(struct w100fb_par *par)
->  		memsize=par->mach->mem->size;
->  		memcpy_toio(remapped_fbuf + (W100_FB_BASE-MEM_WINDOW_BASE), par->saved_extmem, memsize);
->  		vfree(par->saved_extmem);
-> +		par->saved_extmem = NULL;
->  	}
->  	if (par->saved_intmem) {
->  		memsize=MEM_INT_SIZE;
-> @@ -596,6 +597,7 @@ static void w100fb_restore_vidmem(struct w100fb_par *par)
->  		else
->  			memcpy_toio(remapped_fbuf + (W100_FB_BASE-MEM_WINDOW_BASE), par->saved_intmem, memsize);
->  		vfree(par->saved_intmem);
-> +		par->saved_intmem = NULL;
->  	}
->  }
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 6bdc5bb8c8bc..e33f66cee132 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -3400,7 +3400,7 @@ static const struct attribute_group *amd64_edac_attr_groups[] = {
+>  static int hw_info_get(struct amd64_pvt *pvt)
+>  {
+>  	u16 pci_id1, pci_id2;
+> -	int ret = -EINVAL;
+> +	int ret;
 >  
+>  	if (pvt->fam >= 0x17) {
+>  		pvt->umc = kcalloc(fam_type->max_mcs, sizeof(struct amd64_umc), GFP_KERNEL);
 > -- 
-> 2.25.1
+
+Applied, thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
