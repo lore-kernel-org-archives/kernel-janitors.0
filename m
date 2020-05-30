@@ -1,81 +1,72 @@
-From: Yunfeng Ye <yeyunfeng@huawei.com>
-Date: Fri, 08 May 2020 10:32:19 +0000
-Subject: Re: [PATCH v2] tools/bootconfig: fix resource leak in apply_xbc()
-Message-Id: <5e8e9e2e-e7a0-a9f7-79d7-1b48d5f7a6ae@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 May 2020 20:49:55 +0000
+Subject: [PATCH] pinctrl: freescale: imx: Fix an error handling path in 'imx_pinctrl_probe()'
+Message-Id: <20200530204955.588962-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <189d719f-a8b8-6e10-ae2f-8120c3d2b7a9@huawei.com>
- <20200508093059.GF9365@kadam>
-In-Reply-To: <20200508093059.GF9365@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, Markus.Elfring@web.de, kernel-janitors@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
+To: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org, s.hauer@pengutronix.de, linux-imx@nxp.com, gary.bisson@boundarydevices.com
+Cc: linux-gpio@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+'pinctrl_unregister()' should not be called to undo
+'devm_pinctrl_register_and_init()', it is already handled by the framework.
 
+This simplifies the error handling paths of the probe function.
+The 'imx_free_resources()' can be removed as well.
 
-On 2020/5/8 17:30, Dan Carpenter wrote:
-> On Fri, May 08, 2020 at 02:51:15PM +0800, Yunfeng Ye wrote:
->> diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
->> index 16b9a420e6fd..d034f86022b7 100644
->> --- a/tools/bootconfig/main.c
->> +++ b/tools/bootconfig/main.c
->> @@ -314,31 +314,33 @@ int apply_xbc(const char *path, const char *xbc_path)
->>  	ret = delete_xbc(path);
->>  	if (ret < 0) {
->>  		pr_err("Failed to delete previous boot config: %d\n", ret);
->> -		return ret;
->> +		goto free_data;
->>  	}
->>
->>  	/* Apply new one */
->>  	fd = open(path, O_RDWR | O_APPEND);
->>  	if (fd < 0) {
->>  		pr_err("Failed to open %s: %d\n", path, fd);
->> -		return fd;
->> +		ret = fd;
->> +		goto free_data;
->>  	}
->>  	/* TODO: Ensure the @path is initramfs/initrd image */
->>  	ret = write(fd, data, size + 8);
->>  	if (ret < 0) {
->>  		pr_err("Failed to apply a boot config: %d\n", ret);
->> -		return ret;
->> +		goto close_fd;
->>  	}
->>  	/* Write a magic word of the bootconfig */
->>  	ret = write(fd, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
-> 
-> write returns the number of bytes written on success
-> 
->> -	if (ret < 0) {
->> +	if (ret < 0)
->>  		pr_err("Failed to apply a boot config magic: %d\n", ret);
->> -		return ret;
->> -	}
->> +
->> +close_fd:
->>  	close(fd);
->> +free_data:
->>  	free(data);
->>
->> -	return 0;
->> +	return ret;
-> 
-> But we want to return zero on success.
-> 
-yes, I should set 'ret' to 0 before returning on success. thanks.
+Fixes: a51c158bf0f7 ("pinctrl: imx: use radix trees for groups and functions")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
->>  }
-> 
-> Btw, these leaks are totally harmless.  This is a short running user
-> space program with is going to immediately exit on error so the memory
-> will be freed anyway.  But the benifit is to silence static checker
-> warnings so that's useful.
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> .
-> 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 9f42036c5fbb..1f81569c7ae3 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -774,16 +774,6 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-/*
+- * imx_free_resources() - free memory used by this driver
+- * @info: info driver instance
+- */
+-static void imx_free_resources(struct imx_pinctrl *ipctl)
+-{
+-	if (ipctl->pctl)
+-		pinctrl_unregister(ipctl->pctl);
+-}
+-
+ int imx_pinctrl_probe(struct platform_device *pdev,
+ 		      const struct imx_pinctrl_soc_info *info)
+ {
+@@ -874,23 +864,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 					     &ipctl->pctl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "could not register IMX pinctrl driver\n");
+-		goto free;
++		return ret;
+ 	}
+ 
+ 	ret = imx_pinctrl_probe_dt(pdev, ipctl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "fail to probe dt properties\n");
+-		goto free;
++		return ret;
+ 	}
+ 
+ 	dev_info(&pdev->dev, "initialized IMX pinctrl driver\n");
+ 
+ 	return pinctrl_enable(ipctl->pctl);
+-
+-free:
+-	imx_free_resources(ipctl);
+-
+-	return ret;
+ }
+ 
+ static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
+-- 
+2.25.1
