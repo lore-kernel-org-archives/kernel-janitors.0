@@ -1,24 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 30 May 2020 13:03:28 +0000
-Subject: Re: [PATCH v5] virtio_vsock: Fix race condition in virtio_transport_recv_pkt()
-Message-Id: <7972c279-19a7-3573-647c-749122c90b81@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 May 2020 08:16:22 +0000
+Subject: [PATCH] scsi: acornscsi: Fix an error handling path in 'acornscsi_probe()'
+Message-Id: <20200530081622.577888-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530123206.63335-1-justin.he@arm.com>
- <20200530123936.63480-1-justin.he@arm.com>
-In-Reply-To: <20200530123936.63480-1-justin.he@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jia He <justin.he@arm.com>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Asias He <asias@redhat.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Kaly Xin <Kaly.Xin@arm.com>, Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>
+To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-> ---
-> v5: sorry, MIME type in the previous commit message
->
->  net/vmw_vsock/virtio_transport_common.c | 8 ++++++++
+'ret' is known to be 0 at this point.
+So, explicitly return -ENOMEM if one of the 'ecardm_iomap()' calls fail.
 
-Is it helpful to keep the patch version information complete here?
-(Will another fine-tuning follow for the proposed change?)
+Fixes: e95a1b656a98 ("[ARM] rpc: acornscsi: update to new style ecard driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/arm/acornscsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/scsi/arm/acornscsi.c b/drivers/scsi/arm/acornscsi.c
+index ddb52e7ba622..9a912fd0f70b 100644
+--- a/drivers/scsi/arm/acornscsi.c
++++ b/drivers/scsi/arm/acornscsi.c
+@@ -2911,8 +2911,10 @@ static int acornscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 
+ 	ashost->base = ecardm_iomap(ec, ECARD_RES_MEMC, 0, 0);
+ 	ashost->fast = ecardm_iomap(ec, ECARD_RES_IOCFAST, 0, 0);
+-	if (!ashost->base || !ashost->fast)
++	if (!ashost->base || !ashost->fast) {
++		ret = -ENOMEM;
+ 		goto out_put;
++	}
+ 
+ 	host->irq = ec->irq;
+ 	ashost->host = host;
+-- 
+2.25.1
