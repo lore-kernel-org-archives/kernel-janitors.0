@@ -1,27 +1,48 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 30 May 2020 09:44:11 +0000
-Subject: Re: [PATCH] media: venus: Fix possible buffer overflow in venus_sfr_print()
-Message-Id: <30acaf40-3709-d712-892f-c410acd78f63@web.de>
+Date: Sat, 30 May 2020 11:40:53 +0000
+Subject: Re: [PATCH] checkpatch/coding-style: Allow 100 column lines
+Message-Id: <a45357fe-6570-ef20-ed0e-494cdf7a6f1d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, netfilter-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>, David Laight <David.Laight@ACULAB.COM>, Ian Kent <raven@themaw.net>, Linus Torvalds <torvalds@linux-foundation.org>
 
-Please avoid typos in the patch subject.
+> Change the maximum allowed line length to 100 from 80.
+>
+> Miscellanea:
+>
+> o to avoid unnecessary whitespace changes in files,
+>   checkpatch will no longer emit a warning about line length
+>   when scanning files unless --strict is also used
+> o Add a bit to coding-style about alignment to open parenthesis
+
+I suggest to convert this patch into a patch series with three update steps.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=86852175b016f0c6873dcbc24b93d12b7b246612#n138
 
 
-> To fix this possible bug, sfr->buf_size is assigned to a local variable,
-> and then this variable is checked before being used.
+…
+> +++ b/Documentation/process/coding-style.rst
+> @@ -84,15 +84,22 @@ …
+…
+> +… and are
+> +are placed …
 
-How do you think about a wording variant like the following?
-
-  Thus assign the data structure member “buf_size” to a local variable
-  and check it before further usage.
+Please avoid a word duplication here.
 
 
-Would you like to add the tag “Fixes” to the commit message?
+> +… to a function open parenthesis.
+
+Wording alternatives:
+
++is to align descendants to an open parenthesis of a function call.
+
+
+> +These same rules are …
+
++The same rules are applied to function headers with a long argument list.
+
 
 Regards,
 Markus
