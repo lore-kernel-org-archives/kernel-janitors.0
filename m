@@ -1,56 +1,35 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 06 May 2020 05:34:31 +0000
-Subject: [PATCH v2 RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
-Message-Id: <20200506053431.7464-1-lukas.bulwahn@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 May 2020 07:35:55 +0000
+Subject: [PATCH] scsi: cumana_2: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <20200530073555.577414-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Olof Johansson <olof@lixom.net>, Joe Perches <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-added a file entry that does not point to the intended file location.
+The dev_id used in 'request_irq()' and 'free_irq()' should match.
+So use 'host' in both cases.
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
-
-  warning: no file matches F: linux/soc/mmp/
-
-Rectify the MAINTAINERS entry now.
-
-Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Jiri, please pick this patch.
-
-v1 & v1-RESEND: was ignored.
-
-v1 -> v2:
-  - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
-  ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
-  ("MAINTAINERS: sort field names for all entries").
-  - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
-
-v2-resend:
-  - still applies on v5.7-rc4 and next-20200505
-  - asking for inclusion through trivial tree, as maintainers are not
-    responding.
-
- MAINTAINERS | 2 +-
+ drivers/scsi/arm/cumana_2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e64e5db31497..a0fef0c33ba5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11327,7 +11327,7 @@ S:	Odd Fixes
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
- F:	arch/arm/boot/dts/mmp*
- F:	arch/arm/mach-mmp/
--F:	linux/soc/mmp/
-+F:	include/linux/soc/mmp/
+diff --git a/drivers/scsi/arm/cumana_2.c b/drivers/scsi/arm/cumana_2.c
+index 65691c21f133..3a3bf53fa925 100644
+--- a/drivers/scsi/arm/cumana_2.c
++++ b/drivers/scsi/arm/cumana_2.c
+@@ -426,7 +426,7 @@ static int cumanascsi2_probe(struct expansion_card *ec,
+ 		goto out_free;
  
- MMP USB PHY DRIVERS
- R:	Lubomir Rintel <lkundrak@v3.sk>
+ 	ret = request_irq(ec->irq, cumanascsi_2_intr,
+-			  0, "cumanascsi2", info);
++			  0, "cumanascsi2", host);
+ 	if (ret) {
+ 		printk("scsi%d: IRQ%d not free: %d\n",
+ 		       host->host_no, ec->irq, ret);
 -- 
-2.17.1
+2.25.1
