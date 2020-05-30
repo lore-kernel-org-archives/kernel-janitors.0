@@ -1,39 +1,33 @@
-From: Li Yang <leoyang.li@nxp.com>
-Date: Fri, 22 May 2020 22:40:24 +0000
-Subject: Re: [PATCH] usb: gadget: fsl: Fix a wrong judgment in fsl_udc_probe()
-Message-Id: <CADRPPNRJe6aE3MXjK0z6uYtey3smU8cbFcGBqqv0ELJ9SxApvQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 May 2020 08:39:03 +0000
+Subject: [PATCH] dlm: Fix a typo in a comment
+Message-Id: <20200530083903.578271-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200410015832.8012-1-tangbin@cmss.chinamobile.com>
- <be8cd229-884a-40e6-3363-7c4680a51b30@web.de> <0b718268-d330-dfc1-aca3-3dd3203363d7@cmss.chinamobile.com>
- <20200414083036.GC14722@kadam> <f712918c-2f61-0ba5-2ba8-b5ca3cce9a35@cmss.chinamobile.com>
-In-Reply-To: <f712918c-2f61-0ba5-2ba8-b5ca3cce9a35@cmss.chinamobile.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tang Bin <tangbin@cmss.chinamobile.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Markus Elfring <Markus.Elfring@web.de>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: ccaulfie@redhat.com, teigland@redhat.com
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Apr 14, 2020 at 4:13 AM Tang Bin <tangbin@cmss.chinamobile.com> wrote:
->
-> Hi
->
-> On 2020/4/14 16:30, Dan Carpenter wrote:
-> > On Fri, Apr 10, 2020 at 04:05:06PM +0800, Tang Bin wrote:
-> >>>
-> >>>> Thus it must be fixed.
-> >>> Wording alternative:
-> >>>     Thus adjust the error detection and corresponding exception handling.
-> >> Got it.
-> > Wow...
-> >
-> > No, don't listen to Markus when it comes to writing commit messages.
-> > You couldn't find worse advice anywhere.  :P
->
-> I'm actively waiting for a reply from the maintainer. Thank you very much.
+s/locksapce/lockspace/
 
-Sorry for the late response.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/dlm/lockspace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Li Yang <leoyang.li@nxp.com>
-
-Regards,
-Leo
+diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
+index e93670ecfae5..f17e091daab3 100644
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -859,7 +859,7 @@ static int release_lockspace(struct dlm_ls *ls, int force)
+  * until this returns.
+  *
+  * Force has 4 possible values:
+- * 0 - don't destroy locksapce if it has any LKBs
++ * 0 - don't destroy lockspace if it has any LKBs
+  * 1 - destroy lockspace if it has remote LKBs but not if it has local LKBs
+  * 2 - destroy lockspace regardless of LKBs
+  * 3 - destroy lockspace as part of a forced shutdown
+-- 
+2.25.1
