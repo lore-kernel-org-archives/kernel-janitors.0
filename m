@@ -1,43 +1,35 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 28 May 2020 15:25:18 +0000
-Subject: Re: [v5] workqueue: Remove unnecessary kfree() call in rcu_free_wq()
-Message-Id: <b711731e-f024-5db3-ba9d-cf37e9ae0bef@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 May 2020 07:34:18 +0000
+Subject: [PATCH] scsi: eesox: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <20200530073418.577210-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527075715.36849-1-qiang.zhang@windriver.com>
- <284c7851-4e89-a00f-a2e6-aa8e2e1f3fce@web.de>
- <DM6PR11MB32573F3884A864ECD586235EFF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
- <DM6PR11MB3257D6E7E93A518392502809FF8E0@DM6PR11MB3257.namprd11.prod.outlook.com>
- <20200528095703.GH30374@kadam>
- <CAJhGHyD1nV=M=ccycqCMt86GMuZGkO9trbJ=4ti4EzP9kta6iA@mail.gmail.com>
- <20200528122545.GP22511@kadam>
-In-Reply-To: <20200528122545.GP22511@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Zhang Qiang <qiang.zhang@windriver.com>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
->> Still, the kfree(NULL) is harmless. But it is cleaner
->> to have the patch. But the changelog is wrong, even after
->> the lengthened debating, and English is not my mother tongue,
->> so I just looked on.
->
-> We have tried to tell Markus not to advise people about commit messages
+The dev_id used in 'request_irq()' and 'free_irq()' should match.
+So use 'host' in both cases.
 
-A few concerns were mentioned.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/arm/eesox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> but he doesn't listen.
-
-I am still listening as usual.
-
-I am offering constructive patch reviews for selected topics.
-
-
-> He has discouraged some contributors.  :/
-
-There are the usual risks that additional views are occasionally not picked up
-in positive ways.
-
-Regards,
-Markus
+diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
+index 6e204a2e0c8d..af0bb401ca23 100644
+--- a/drivers/scsi/arm/eesox.c
++++ b/drivers/scsi/arm/eesox.c
+@@ -546,7 +546,7 @@ static int eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 	if (ret)
+ 		goto out_free;
+ 
+-	ret = request_irq(ec->irq, eesoxscsi_intr, 0, "eesoxscsi", info);
++	ret = request_irq(ec->irq, eesoxscsi_intr, 0, "eesoxscsi", host);
+ 	if (ret) {
+ 		printk("scsi%d: IRQ%d not free: %d\n",
+ 		       host->host_no, ec->irq, ret);
+-- 
+2.25.1
