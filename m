@@ -1,29 +1,47 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 08 May 2020 08:23:36 +0000
-Subject: Re: [PATCH v2] tools/bootconfig: Completion of error handling
-Message-Id: <0b2612c1-28ca-2bb0-14f1-4befea09cede@web.de>
+Date: Sun, 31 May 2020 16:06:42 +0000
+Subject: Re: [PATCH] media: exynos4-is: Fix runtime PM imbalance in isp_video_open()
+Message-Id: <3b8459ce-114b-f69a-b671-4f4cc0127fd6@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <189d719f-a8b8-6e10-ae2f-8120c3d2b7a9@huawei.com>
-In-Reply-To: <189d719f-a8b8-6e10-ae2f-8120c3d2b7a9@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Yunfeng Ye <yeyunfeng@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Shiyuan Hu <hushiyuan@huawei.com>, Hewenliang <hewenliang4@huawei.com>
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> when it returns an error code. Thus a pairing decrement is needed on
+> the error handling path to keep the counter balanced.
+
+How do you think about a wording variant like the following?
+
+   Change description:
+   The PM runtime usage counter is incremented even if a call of
+   the function “pm_runtime_get_sync” failed. Thus decrement it also
+   in an error case so that the reference counting is kept consistent.
+
+
+Would you like to add the tag “Fixes” to the commit message?
+
+
+Can it make sense to combine the software adjustment with the
+update step “media: exynos4-is: Fix runtime PM imbalance in fimc_is_probe”?
+https://lore.kernel.org/linux-arm-kernel/20200524025903.17219-1-dinghao.liu@zju.edu.cn/
+https://lore.kernel.org/patchwork/patch/1246424/
+
 
 …
-> +++ b/tools/bootconfig/main.c
-> @@ -314,31 +314,33 @@ int apply_xbc(const char *path, const char *xbc_path)
-…
-> +close_fd:
->  	close(fd);
-> +free_data:
->  	free(data);
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -293,6 +293,7 @@  static int isp_video_open(struct file *file)
+ 	if (!ret)
+ 		goto unlock;
+ rel_fh:
++	pm_runtime_put_noidle(&isp->pdev->dev);
+ 	v4l2_fh_release(file);
+ unlock:
 …
 
-Do you find unchecked return values from calls of functions like close()
-and printf() suspicious?
-https://cwe.mitre.org/data/definitions/252.html
+Is there a need to use a label like “put_pm”?
 
 Regards,
 Markus
