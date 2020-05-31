@@ -1,24 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 29 May 2020 19:48:58 +0000
-Subject: Re: [PATCH net-next] net: phy: marvell: unlock after phy_select_page() failure
-Message-Id: <20200529.124858.1944254056553169947.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 31 May 2020 11:00:15 +0000
+Subject: [PATCH] arm64: debug: mark a function as __init to save some memory
+Message-Id: <20200531110015.598607-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200529100207.GB1304852@mwanda>
-In-Reply-To: <20200529100207.GB1304852@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, paulmck@kernel.org, gregkh@linuxfoundation.org, mhiramat@kernel.org, dianders@chromium.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 May 2020 13:02:07 +0300
+'debug_monitors_init()' is only called via 'postcore_initcall'.
+It can be marked as __init to save a few bytes of memory.
 
-> We need to call phy_restore_page() even if phy_select_page() fails.
-> Otherwise we are holding the phy_lock_mdio_bus() lock.  This requirement
-> is documented at the start of the phy_select_page() function.
-> 
-> Fixes: a618e86da91d ("net : phy: marvell: Speedup TDR data retrieval by only changing page once")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/arm64/kernel/debug-monitors.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+index 15e80c876d46..5df49366e9ab 100644
+--- a/arch/arm64/kernel/debug-monitors.c
++++ b/arch/arm64/kernel/debug-monitors.c
+@@ -130,7 +130,7 @@ static int clear_os_lock(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int debug_monitors_init(void)
++static int __init debug_monitors_init(void)
+ {
+ 	return cpuhp_setup_state(CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
+ 				 "arm64/debug_monitors:starting",
+-- 
+2.25.1
