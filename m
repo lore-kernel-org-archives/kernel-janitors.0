@@ -1,26 +1,34 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 03 May 2020 12:05:41 +0000
-Subject: Re: [PATCH] rtc: mc13xxx: fix a double-unlock issue
-Message-Id: <b9c82115-c70a-2381-f920-385846eb2a45@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 31 May 2020 09:34:29 +0000
+Subject: [PATCH] ARM: riscpc: mark a function as __init to save some memory
+Message-Id: <20200531093429.596642-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Qiushi Wu <wu000273@umn.edu>, linux-rtc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Kangjie Lu <kjlu@umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux@armlinux.org.uk
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-> … To fix this problem,
-> we need to call mc13xxx_lock() again in this error path.
+'ecard_bus_init()' is only called via 'postcore_initcall'.
+It can be marked as __init to save a few bytes of memory.
 
-How do you think about a wording variant like the following?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/arm/mach-rpc/ecard.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Change description:
-   …
-   Thus add a call of the function “mc13xxx_lock” in an if branch
-   for the completion of the exception handling.
-
-
-Would you like to add the tag “Fixes”?
-
-Regards,
-Markus
+diff --git a/arch/arm/mach-rpc/ecard.c b/arch/arm/mach-rpc/ecard.c
+index 75cfad2cb143..9f4e7106efb9 100644
+--- a/arch/arm/mach-rpc/ecard.c
++++ b/arch/arm/mach-rpc/ecard.c
+@@ -1135,7 +1135,7 @@ struct bus_type ecard_bus_type = {
+ 	.shutdown	= ecard_drv_shutdown,
+ };
+ 
+-static int ecard_bus_init(void)
++static int __init ecard_bus_init(void)
+ {
+ 	return bus_register(&ecard_bus_type);
+ }
+-- 
+2.25.1
