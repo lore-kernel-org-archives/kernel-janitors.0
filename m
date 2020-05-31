@@ -1,27 +1,34 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Mon, 04 May 2020 17:13:15 +0000
-Subject: Re: [PATCH] i40iw: Fix error handling in i40iw_manage_arp_cache()
-Message-Id: <20200504171315.GA10755@ziepe.ca>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 31 May 2020 21:00:59 +0000
+Subject: [PATCH] kernel: power: swap: mark a function as __init to save some memory
+Message-Id: <20200531210059.647066-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200422092211.GA195357@mwanda>
-In-Reply-To: <20200422092211.GA195357@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Faisal Latif <faisal.latif@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Doug Ledford <dledford@redhat.com>, Shannon Nelson <shannon.nelson@intel.com>, Anjali Singhai Jain <anjali.singhai@intel.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Apr 22, 2020 at 12:22:11PM +0300, Dan Carpenter wrote:
-> The i40iw_arp_table() function can return -EOVERFLOW if
-> i40iw_alloc_resource() fails so we can't just test for "= -1".
-> 
-> Fixes: 4e9042e647ff ("i40iw: add hw and utils files")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
-> ---
->  drivers/infiniband/hw/i40iw/i40iw_hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+'swsusp_header_init()' is only called via 'core_initcall'.
+It can be marked as __init to save a few bytes of memory.
 
-Applied to for-rc, thanks
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ kernel/power/swap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jason
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index ca0fcb5ced71..01e2858b5fe3 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -1590,7 +1590,7 @@ int swsusp_unmark(void)
+ }
+ #endif
+ 
+-static int swsusp_header_init(void)
++static int __init swsusp_header_init(void)
+ {
+ 	swsusp_header = (struct swsusp_header*) __get_free_page(GFP_KERNEL);
+ 	if (!swsusp_header)
+-- 
+2.25.1
