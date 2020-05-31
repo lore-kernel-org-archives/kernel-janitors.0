@@ -1,32 +1,26 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Wed, 13 May 2020 10:14:21 +0000
-Subject: Re: [PATCH] RDMA/mlx5: Fix query_srq_cmd() function
-Message-Id: <20200513101421.GU4814@unreal>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 31 May 2020 07:01:38 +0000
+Subject: Re: [PATCH v2] i2c: imx-lpi2c: Fix runtime PM imbalance on error in lpi2c_imx_master_enable()
+Message-Id: <845a11a9-51ed-cc7c-350f-b319111f32ee@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200513093741.GC347693@mwanda>
- <20200513100031.GT4814@unreal>
-In-Reply-To: <20200513100031.GT4814@unreal>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, linux-imx@nxp.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Kangjie Lu <kjlu@umn.edu>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
 
-On Wed, May 13, 2020 at 01:00:31PM +0300, Leon Romanovsky wrote:
-> On Wed, May 13, 2020 at 12:37:41PM +0300, Dan Carpenter wrote:
-> > The "srq_out" pointer is never freed so that causes a memory leak.  It's
-> > never used and can be deleted.  Freeing "out" will lead to a double in
-> > mlx5_ib_query_srq().
-> >
-> > Fixes: 31578defe4eb ("RDMA/mlx5: Update mlx5_ib to use new cmd interface")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/infiniband/hw/mlx5/srq_cmd.c | 11 ++---------
-> >  1 file changed, 2 insertions(+), 9 deletions(-)
-> >
->
-> Thanks for the report, the change should be slightly different.
->
-> I'm sending fix right now.
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> the call returns an error code. Thus a pairing decrement is needed
+> on the error handling path to keep the counter balanced.
 
-https://lore.kernel.org/linux-rdma/20200513100809.246315-1-leon@kernel.org
+* How do you think about to replace the word “pairing” by “corresponding”?
+
+* Will it be helpful to add an imperative wording?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=ffeb595d84811dde16a28b33d8a7cf26d51d51b3#n151
+
+* Would you like to add the tag “Fixes” to the commit message?
+
+* Are you going to take such possibilities into account for any more patches?
+
+Regards,
+Markus
