@@ -1,55 +1,26 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 08 May 2020 09:31:18 +0000
-Subject: Re: [PATCH] memory: tegra: Fix an error handling path in 'tegra186_emc_probe()'
-Message-Id: <b4b55c4b-1aff-6272-b15c-67466ee1706e@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 31 May 2020 08:38:03 +0000
+Subject: Re: drm/nouveau/clk/gm20b: Fix memory leak in gm20b_clk_new()
+Message-Id: <74977dc6-7ace-6ef7-4fcd-3f6c89a3eb5f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506200907.195502-1-christophe.jaillet@wanadoo.fr>
- <20200508084941.GE9365@kadam>
-In-Reply-To: <20200508084941.GE9365@kadam>
+References: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
+ <40d8fb01.db721.17269d3d620.Coremail.dinghao.liu@zju.edu.cn>
+In-Reply-To: <40d8fb01.db721.17269d3d620.Coremail.dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+
+> It's possible that we expect an usable clk pointer, though I could not find
+> the exact usage yet.
+
+I am curious if another developer would like to add helpful background information.
 
 
-Le 08/05/2020 à 10:49, Dan Carpenter a écrit :
-> On Wed, May 06, 2020 at 10:09:07PM +0200, Christophe JAILLET wrote:
->> @@ -237,7 +239,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>   			"failed to set rate range [%lu-%lu] for %pC\n",
->>   			emc->debugfs.min_rate, emc->debugfs.max_rate,
->>   			emc->clk);
->> -		return err;
->> +		goto err_put_bpmp;
->>   	}
->>   
->>   	emc->debugfs.root = debugfs_create_dir("emc", NULL);
-> Not really related to this patch but the error handling on this
-> debugfs_create_dir() call is wrong.  It never returns NULL.  The error
-> should just be ignored.  It shouldn't try print a message when debugfs
-> is deliberately disabled.
->
-> As in the correct code looks like:
->
->   
->          emc->debugfs.root = debugfs_create_dir("emc", NULL);
-> -       if (!emc->debugfs.root) {
-> -               dev_err(&pdev->dev, "failed to create debugfs directory\n");
-> -               return 0;
-> -       }
-> -
->          debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root,
->                              emc, &tegra186_emc_debug_available_rates_fops);
->          debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
->
-> debugfs_create_file() will return an error pointer if debugfs_create_dir()
-> fails or if debugfs is disabled.  (It is a no-op).
->
-> regards,
-> dan carpenter
+> For security, I will release this pointer only on error paths in this function.
 
-LGTM.
+Do you tend to release objects (which are referenced by pointers)?
 
-I let you propose a patch for it,.
-
-CJ
+Regards,
+Markus
