@@ -1,61 +1,54 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Date: Wed, 06 May 2020 12:25:18 +0000
-Subject: Re: [PATCH -next] power: supply: bq25890_charger: fix missing unlock on error in bq25890_resume()
-Message-Id: <20200506122516.GC18376@qmqm.qmqm.pl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 31 May 2020 14:06:11 +0000
+Subject: Re: [PATCH v2] iio: magnetometer: ak8974: Fix runtime PM imbalance on error in ak8974_probe()
+Message-Id: <dd84c12f-277d-27e7-3727-4592e530e4ed@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200506014008.59755-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200506014008.59755-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Linus Walleij <linus.walleij@linaro.org>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Kangjie Lu <kjlu@umn.edu>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
-On Wed, May 06, 2020 at 01:40:08AM +0000, Wei Yongjun wrote:
-> Add the missing unlock before return from function bq25890_resume()
-> in the error handling case.
->=20
-> Fixes: 72d9cd9cdc18 ("power: bq25890: protect view of the chip's state")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> When devm_regmap_init_i2c() returns an error code, a pairing
+> runtime PM usage counter decrement is needed to keep the
+> counter balanced.
 
-A similar fix was sent by Dan Carpenter [1]. I'd prefer his version due
-to less lines introduced.
+How do you think about to replace the word “pairing” by “corresponding”?
 
-[1] https://lore.kernel.org/linux-pm/20200506101116.GA77004@mwanda/
 
-Best Regards,
-Micha=B3 Miros=B3aw
+> For error paths after ak8974_set_power(),
+> ak8974_detect() and ak8974_reset(), things are the same.
 
-> ---
->  drivers/power/supply/bq25890_charger.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/suppl=
-y/bq25890_charger.c
-> index 9339e216651f..cd9c5ed9bc0c 100644
-> --- a/drivers/power/supply/bq25890_charger.c
-> +++ b/drivers/power/supply/bq25890_charger.c
-> @@ -977,14 +977,18 @@ static int bq25890_resume(struct device *dev)
->  	mutex_lock(&bq->lock);
-> =20
->  	ret =3D bq25890_get_chip_state(bq, &bq->state);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		mutex_unlock(&bq->lock);
->  		return ret;
-> +	}
-> =20
->  	/* Re-enable ADC only if charger is plugged in. */
->  	if (bq->state.online) {
->  		ret =3D bq25890_field_write(bq, F_CONV_START, 1);
-> -		if (ret < 0)
-> +		if (ret < 0) {
-> +			mutex_unlock(&bq->lock);
->  			return ret;
-> +		}
->  	}
-> =20
->  	/* signal userspace, maybe state changed while suspended */
->=20
->=20
->=20
+Will an other wording become more helpful than this information?
+
+
+> However, When iio_triggered_buffer_setup() returns an error
+> code, there will be two PM usgae counter decrements.
+
+Please avoid two typos in this sentence.
+
+
+Would you like to add the tag “Fixes” to the commit message?
+
+
+…
++++ b/drivers/iio/magnetometer/ak8974.c
+…
+@@ -854,7 +856,6 @@  static int ak8974_probe(struct i2c_client *i2c,
+…
+
+Can a source code variant like the following make sense
+for a more complete exception handling?
+
+power_off:
+	ak8974_set_power(ak8974, AK8974_PWR_OFF);
+put_pm:
+	pm_runtime_put_noidle(&i2c->dev);
+	pm_runtime_disable(&i2c->dev);
+disable_regulator:
+	regulator_bulk_disable(ARRAY_SIZE(ak8974->regs), ak8974->regs);
+	return ret;
+
+
+Regards,
+Markus
