@@ -1,48 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 May 2020 13:25:19 +0000
-Subject: Re: [PATCH] RDMA/rtrs: Fix some signedness bugs in error handling
-Message-Id: <20200519132519.GM2078@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 31 May 2020 08:03:19 +0000
+Subject: Re: [PATCH] drm/nouveau/clk/gm20b: Fix memory leak in gm20b_clk_new()
+Message-Id: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200519120256.GC42765@mwanda>
- <CAMGffEkkUVV9b=iMhP4C=ndBRcePcTQMiF4h-Et1DFEKYPA6mg@mail.gmail.com>
-In-Reply-To: <CAMGffEkkUVV9b=iMhP4C=ndBRcePcTQMiF4h-Et1DFEKYPA6mg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Cc: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
 
-On Tue, May 19, 2020 at 02:40:41PM +0200, Jinpu Wang wrote:
-> On Tue, May 19, 2020 at 2:05 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > The problem is that "req->sg_cnt" is an unsigned int so if "nr" is
-> > negative, it gets type promoted to a high positive value and the
-> > condition is false.  This patch fixes it by handling negatives separately.
-> >
-> > Fixes: 6a98d71daea1 ("RDMA/rtrs: client: main functionality")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Thanks Dan, fix looks correct, just one comment inline.
-> > ---
-> >  drivers/infiniband/ulp/rtrs/rtrs-clt.c | 7 +++----
-> >  drivers/infiniband/ulp/rtrs/rtrs-srv.c | 2 +-
-> >  2 files changed, 4 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> > index 468fdd0d8713..17f99f0962d0 100644
-> > --- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> > +++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> > @@ -1047,11 +1047,10 @@ static int rtrs_map_sg_fr(struct rtrs_clt_io_req *req, size_t count)
-> >
-> >         /* Align the MR to a 4K page size to match the block virt boundary */
-> >         nr = ib_map_mr_sg(req->mr, req->sglist, count, NULL, SZ_4K);
-> > -       if (unlikely(nr < req->sg_cnt)) {
-> > -               if (nr < 0)
-> > -                       return nr;
-> > +       if (nr < 0)
-> > +               return -EINVAL;
-> Why not just return nr here?
+> When gk20a_clk_ctor() returns an error code, pointer "clk"
+> should be released.
 
-Sorry.  I thought I did but I made a typo.  Let me resend.
+Such an information is reasonable.
 
-regards,
-dan carpenter
+
+> It's the same when gm20b_clk_new() returns from elsewhere following this call.
+
+I suggest to reconsider the interpretation of the software situation once more.
+Can it be that the allocated clock object should be kept usable even after
+a successful return from this function?
+
+
+Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
