@@ -1,36 +1,31 @@
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date: Sun, 28 Jun 2020 12:26:48 +0000
-Subject: Re: [PATCH] kconfig: qconf: Fix find on split mode
-Message-Id: <20200628142648.2748d56d@coco.lan>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jun 2020 12:00:48 +0000
+Subject: Re: [PATCH 1/2] ubifs: Fix potential memory leaks while iterating entries
+Message-Id: <2bec05b7-78d3-fa36-134a-efbe977933e3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9048b1ca-87aa-dfee-2be3-2f399d2b7fe6@web.de>
-In-Reply-To: <9048b1ca-87aa-dfee-2be3-2f399d2b7fe6@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-kbuild@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhihao Cheng <chengzhihao1@huawei.com>, linux-mtd@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, Yi Zhang <yi.zhang@huawei.com>
 
-Em Sun, 28 Jun 2020 14:18:22 +0200
-Markus Elfring <Markus.Elfring@web.de> escreveu:
+> Fix some potential memory leaks in error handling branches while
+> iterating xattr entries.
 
-> > The logic handling find on split mode is currently broken.  
-> 
-> * Is there a word missing in this change description?
-> 
-> * Can any information become clearer another bit?
-> 
-> 
-> > Fix it, …  
-> 
-> Please replace the beginning of this sentence with the tag “Fixes”.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=719fdd32921fb7e3208db8832d32ae1c2d68900f#n183
-> 
-> Regards,
-> Markus
+Such information is useful.
 
-Please ignore this one. I ended re-submitting a previously
-merged patch.
 
-Thanks,
-Mauro
+> For example, function ubifs_tnc_remove_ino()
+> forgets to free pxent if it exists. Similar problems also exist in
+> ubifs_purge_xattrs(), ubifs_add_orphan() and ubifs_jnl_write_inode().
+
+Can an other wording variant be a bit nicer?
+
+
+I suggest to avoid the specification of duplicate function calls
+(also for the desired exception handling).
+Will it be helpful to add a few jump targets?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=77e6a8804abcc0504c904bd6e5cdf3a5cf8162#n455
+
+Regards,
+Markus
