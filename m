@@ -1,27 +1,62 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 09 Jun 2020 05:59:36 +0000
-Subject: Re: [PATCH] powerpc/powernv: Fix a warning message
-Message-Id: <49gzwT05fTz9sTG@ozlabs.org>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 01 Jun 2020 04:24:33 +0000
+Subject: Re: [PATCH v2] IB/hfi1: Fix hfi1_netdev_rx_init() error handling
+Message-Id: <20200601042433.GA34024@unreal>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200502115949.139000-1-christophe.jaillet@wanadoo.fr>
-References: <20200502115949.139000-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200502115949.139000-1-christophe.jaillet@wanadoo.fr>
+References: <BY5PR11MB3958CF61BB1F59A6F6B5234D868F0@BY5PR11MB3958.namprd11.prod.outlook.com>
+ <20200530140224.GA1330098@mwanda>
+ <20200531100512.GH66309@unreal>
+ <20200531173655.GT22511@kadam>
+In-Reply-To: <20200531173655.GT22511@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, tglx@linutronix.de, maddy@linux.vnet.ibm.com, cclaudio@linux.ibm.com, zhangshaokun@hisilicon.com, atrajeev@linux.vnet.ibm.com, akshay.adiga@linux.vnet.ibm.com, ego@linux.vnet.ibm.com
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>, Grzegorz Andrejczuk <grzegorz.andrejczuk@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2020-05-02 at 11:59:49 UTC, Christophe JAILLET wrote:
-> Fix a cut'n'paste error in a warning message. This should be
-> 'cpu-idle-state-residency-ns' to match the property searched in the
-> previous 'of_property_read_u32_array()'
-> 
-> Fixes: 9c7b185ab2fe ("powernv/cpuidle: Parse dt idle properties into global structure")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sun, May 31, 2020 at 08:36:55PM +0300, Dan Carpenter wrote:
+> On Sun, May 31, 2020 at 01:05:12PM +0300, Leon Romanovsky wrote:
+> > On Sat, May 30, 2020 at 05:02:24PM +0300, Dan Carpenter wrote:
+> > > The hfi1_vnic_up() function doesn't check whether hfi1_netdev_rx_init()
+> > > returns errors.  In hfi1_vnic_init() we need to change the code to
+> > > preserve the error code instead of returning success.
+> > >
+> > > Fixes: 2280740f01ae ("IB/hfi1: Virtual Network Interface Controller (VNIC) HW support")
+> > > Fixes: 4730f4a6c6b2 ("IB/hfi1: Activate the dummy netdev")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > > v2: Add error handling in hfi1_vnic_up() and add second fixes tag
+> > >
+> > >  drivers/infiniband/hw/hfi1/vnic_main.c | 11 +++++++++--
+> > >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/infiniband/hw/hfi1/vnic_main.c b/drivers/infiniband/hw/hfi1/vnic_main.c
+> > > index b183c56b7b6a4..03f8be8e9488e 100644
+> > > --- a/drivers/infiniband/hw/hfi1/vnic_main.c
+> > > +++ b/drivers/infiniband/hw/hfi1/vnic_main.c
+> > > @@ -457,13 +457,19 @@ static int hfi1_vnic_up(struct hfi1_vnic_vport_info *vinfo)
+> > >  	if (rc < 0)
+> > >  		return rc;
+> > >
+> > > -	hfi1_netdev_rx_init(dd);
+> > > +	rc = hfi1_netdev_rx_init(dd);
+> > > +	if (rc < 0)
+> > > +		goto err_remove;
+> >
+> > Why did you check for the negative value here and didn't check below?
+> >
+>
+> I just copied the pattern in the nearest code.  I didn't realize until
+> now that it was different in both functions...  The checking isn't done
+> consistently in this file.
+>
+> I can resend on Tuesday though if you want.
 
-Applied to powerpc next, thanks.
+I imagine that Jason will fix it once he will apply the patch.
 
-https://git.kernel.org/powerpc/c/2f62870ca5bc9d305f3c212192320c29e9dbdc54
+Thanks
 
-cheers
+>
+> regards,
+> dan carpenter
+>
