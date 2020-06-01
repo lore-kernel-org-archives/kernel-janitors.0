@@ -1,38 +1,25 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 05 Jun 2020 15:25:27 +0000
-Subject: Re: block: Fix use-after-free in blkdev_get()
-Message-Id: <f9a73f54-8f4e-175a-b16b-486fec5c7f9e@web.de>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 01 Jun 2020 04:25:32 +0000
+Subject: Re: [PATCH] RDMA/hns: Uninitialized variable in modify_qp_init_to_rtr()
+Message-Id: <20200601042532.GB34024@unreal>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88676ff2-cb7e-70ec-4421-ecf8318990b1@web.de>
- <5fa658bf-3028-9b5c-30cc-dbdef6bf8f7a@huawei.com>
- <20200605094353.GS30374@kadam> <2ee6f2f7-eaec-e748-bead-0ad59f4c378b@web.de>
- <20200605111039.GL22511@kadam> <63e57552-ab95-7bb4-b4f1-70a307b6381d@web.de>
- <20200605114208.GC19604@bombadil.infradead.org>
- <a050788f-5875-0115-af31-692fd6bf3a88@web.de>
- <20200605125209.GG19604@bombadil.infradead.org>
- <366e055b-6a00-662e-2e03-f72053f67ae6@web.de>
- <20200605151537.GH19604@bombadil.infradead.org>
-In-Reply-To: <20200605151537.GH19604@bombadil.infradead.org>
+References: <20200529083918.GA1298465@mwanda>
+In-Reply-To: <20200529083918.GA1298465@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jason Yan <yanaijie@huawei.com>, hulkci@huawei.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Lijun Ou <oulijun@huawei.com>, Xi Wang <wangxi11@huawei.com>, "Wei Hu(Xavier)" <huwei87@hisilicon.com>, Weihang Li <liweihang@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Do you find proposed spelling corrections useful?
+On Fri, May 29, 2020 at 11:39:18AM +0300, Dan Carpenter wrote:
+> The "dmac" variable is used before it is initialized.
 >
-> To commit messages?  No.
+> Fixes: 494c3b312255 ("RDMA/hns: Refactor the QP context filling process related to WQE buffer configure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Are you really going to tolerate wording weaknesses there?
-https://lore.kernel.org/linux-block/20200605104558.16686-1-yanaijie@huawei.com/
-https://lore.kernel.org/patchwork/patch/1252648/
-
-
-> You do not seem to progress, and making spelling corrections to
-> changelog messages is a level of nitpicking that just isn't helpful.
-
-I got obviously an other software development understanding
-(also in this area).
-
-Regards,
-Markus
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
