@@ -1,55 +1,28 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jun 2020 15:30:14 +0000
-Subject: Re: [PATCH RFC] panic: Fix deadlock in panic()
-Message-Id: <fabff510-bd19-1712-2aa2-b1d742349c39@web.de>
+From: ''Tayeb Souami'' <yoshi@bestprofit-futures.co.id>
+Date: Mon, 01 Jun 2020 01:06:09 +0000
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
+Message-Id: <20200601010617.77EA852691E@mx.bestprofit-futures.co.id>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Cheng Jian <cj.chengjian@huawei.com>, kernel-janitors@vger.kernel.org
-Cc: Wang ShaoBo <bobo.shaobowang@huawei.com>, Chen Wandun <chenwandun@huawei.com>, Li Bin <huawei.libin@huawei.com>, Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Xie XiuQi <xiexiuqi@huawei.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
->  A deadlock caused by logbuf_lock occurs when panic:
+Lieber Freund,
 
-I suggest a few wording adjustments for this change description.
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
 
-Would you like to omit an extra space character at the beginning of this sentence?
-
-
-> we try to re-init …
-
-We …
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
 
 
-> … deadlock, but it … here, because :
-
-… deadlock. But it … here because:
+Das ist dein Spendencode: [TS530342018]
 
 
-> Firstly, …
+Antworten Sie mit dem SPENDE-CODE an diese
 
-1. …
+ E-Mail:Tayebsouam.spende@gmail.com
 
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
 
-> When the CPU bring down …, … CPU willn't
-
-… CPU was brought down …, … CPU will not
-
-
-> Secondly, …
-
-2. …
-
-
-> … callback, so if printk() …
-
-… callback. If printk() …
-
-
-> …, deadlock will still occurs. Eg, …
-
-…, deadlock will still occur. E. g. …
-
-
-Regards,
-Markus
+Grüße
+Herr Tayeb Souami
