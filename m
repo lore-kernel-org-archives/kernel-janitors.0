@@ -1,28 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 30 Jun 2020 20:37:12 +0000
-Subject: Re: [PATCH][next] net/tls: fix sign extension issue when left shifting u16 value
-Message-Id: <20200630.133712.641790280086952744.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jun 2020 09:18:48 +0000
+Subject: Re: [PATCH] misc: atmel-ssc: lock with mutex instead of spinlock
+Message-Id: <eb9b1cb3-5b3f-f387-da45-71427a4383ed@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200630142746.516188-1-colin.king@canonical.com>
-In-Reply-To: <20200630142746.516188-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: borisp@mellanox.com, aviadye@mellanox.com, john.fastabend@gmail.com, daniel@iogearbox.net, kuba@kernel.org, tariqt@mellanox.com, saeedm@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 30 Jun 2020 15:27:46 +0100
+> Uninterruptible context is not needed in the driver and causes lockdep
+> warning because of mutex taken in of_alias_get_id().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Left shifting the u16 value promotes it to a int and then it
-> gets sign extended to a u64.  If len << 16 is greater than 0x7fffffff
-> then the upper bits get set to 1 because of the implicit sign extension.
-> Fix this by casting len to u64 before shifting it.
-> 
-> Addresses-Coverity: ("integer handling issues")
-> Fixes: ed9b7646b06a ("net/tls: Add asynchronous resync")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Was a spin lock taken?
 
-Applied, thanks Colin.
+
+> Convert the lock to mutex to avoid the issue.
+
+Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
