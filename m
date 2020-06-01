@@ -1,28 +1,88 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 10 Jun 2020 11:53:06 +0000
-Subject: Re: [PATCH] scsi: powertec: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <yq11rmnrvcl.fsf@ca-mkp.ca.oracle.com>
+From: Shukun Tan <tanshukun1@huawei.com>
+Date: Mon, 01 Jun 2020 02:19:00 +0000
+Subject: Re: [PATCH] crypto: hisilicon/qm - allow smaller reads in debugfs
+Message-Id: <b6da310b-e633-9f74-f7af-7791d803aaf5@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
- <159175686974.7062.8526082970785072740.b4-ty@oracle.com>
- <08f63617-03df-71cf-70c4-00f08a9f51d8@wanadoo.fr>
-In-Reply-To: <08f63617-03df-71cf-70c4-00f08a9f51d8@wanadoo.fr> (Christophe
- JAILLET's message of "Wed, 10 Jun 2020 07:35:49 +0200")
+References: <20200528123703.GA1219412@mwanda>
+In-Reply-To: <20200528123703.GA1219412@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-scsi@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, jejb@linux.ibm.com, kernel-janitors@vger.kernel.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Zhou Wang <wangzhou1@hisilicon.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Hi Dan & Zhou,
 
-Christophe,
+On 2020/5/28 20:37, Dan Carpenter wrote:
+> Originally this code rejected any read less than 256 bytes.  There
+> is no need for this artificial limit.
+> 
+> Also I have changed the snprintf() functions to scnprintf().  The
+> difference is that snprintf() returns the number of bytes which would
+> have been copied if there were enough space and scnprintf() returns the
+> number of bytes which were actually copied.  It doesn't matter here
+> because the strings are very short so they can't go over 256 bytes.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/crypto/hisilicon/qm.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+> index a781c02251980..9c0c9f500d91d 100644
+> --- a/drivers/crypto/hisilicon/qm.c
+> +++ b/drivers/crypto/hisilicon/qm.c
+> @@ -1076,16 +1076,15 @@ static ssize_t qm_cmd_read(struct file *filp, char __user *buffer,
+>  	if (*pos)
+>  		return 0;
+>  
+> -	if (count < QM_DBG_READ_LEN)
+> -		return -ENOSPC;
+> -
 
->> [1/1] scsi: powertec: Fix different dev_id between request_irq() and free_irq()
->>        https://git.kernel.org/mkp/scsi/c/af7b415a1ebf
->>
-> Please revert,
+I think we should keep it, maybe you are right when using 'cat', but if you use 'read'
+system call this may make the user read only part of the prompt. This may break our
+original design. :)
 
-Dropped (x2).
+Thanks,
+Shukun
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> -	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n",
+> +	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n",
+>  		       "Please echo help to cmd to get help information");
+>  
+> +	len = min_t(size_t, len, count);
+>  	if (copy_to_user(buffer, buf, len))
+>  		return -EFAULT;
+>  
+> -	return (*pos = len);
+> +	*pos = len;
+> +	return len;
+>  }
+>  
+>  static void *qm_ctx_alloc(struct hisi_qm *qm, size_t ctx_size,
+> @@ -2710,19 +2709,18 @@ static ssize_t qm_status_read(struct file *filp, char __user *buffer,
+>  	if (*pos)
+>  		return 0;
+>  
+> -	if (count < QM_DBG_READ_LEN)
+> -		return -ENOSPC;
+> -
+>  	val = atomic_read(&qm->status.flags);
+> -	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
+> +	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
+>  	if (!len)
+>  		return -EFAULT;
+>  
+> +	len = min_t(size_t, len, count);
+>  	cp_len = copy_to_user(buffer, buf, len);
+>  	if (cp_len)
+>  		return -EFAULT;
+>  
+> -	return (*pos = len);
+> +	*pos = len;
+> +	return len;
+>  }
+>  
+>  static const struct file_operations qm_status_fops = {
+> 
