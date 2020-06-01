@@ -1,88 +1,24 @@
-From: Shukun Tan <tanshukun1@huawei.com>
-Date: Mon, 01 Jun 2020 02:19:00 +0000
-Subject: Re: [PATCH] crypto: hisilicon/qm - allow smaller reads in debugfs
-Message-Id: <b6da310b-e633-9f74-f7af-7791d803aaf5@huawei.com>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Date: Mon, 01 Jun 2020 10:16:19 +0000
+Subject: RE: [PATCH] pinctrl: freescale: imx: Fix an error handling path in 'imx_pinctrl_probe()'
+Message-Id: <AM6PR04MB49667D023D9C5ACB7CABF229808A0@AM6PR04MB4966.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200528123703.GA1219412@mwanda>
-In-Reply-To: <20200528123703.GA1219412@mwanda>
+References: <20200530204955.588962-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530204955.588962-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Zhou Wang <wangzhou1@hisilicon.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, Gary Bisson <gary.bisson@boundarydevices.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Dan & Zhou,
-
-On 2020/5/28 20:37, Dan Carpenter wrote:
-> Originally this code rejected any read less than 256 bytes.  There
-> is no need for this artificial limit.
-> 
-> Also I have changed the snprintf() functions to scnprintf().  The
-> difference is that snprintf() returns the number of bytes which would
-> have been copied if there were enough space and scnprintf() returns the
-> number of bytes which were actually copied.  It doesn't matter here
-> because the strings are very short so they can't go over 256 bytes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/hisilicon/qm.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-> index a781c02251980..9c0c9f500d91d 100644
-> --- a/drivers/crypto/hisilicon/qm.c
-> +++ b/drivers/crypto/hisilicon/qm.c
-> @@ -1076,16 +1076,15 @@ static ssize_t qm_cmd_read(struct file *filp, char __user *buffer,
->  	if (*pos)
->  		return 0;
->  
-> -	if (count < QM_DBG_READ_LEN)
-> -		return -ENOSPC;
-> -
-
-I think we should keep it, maybe you are right when using 'cat', but if you use 'read'
-system call this may make the user read only part of the prompt. This may break our
-original design. :)
-
-Thanks,
-Shukun
-
-> -	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n",
-> +	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n",
->  		       "Please echo help to cmd to get help information");
->  
-> +	len = min_t(size_t, len, count);
->  	if (copy_to_user(buffer, buf, len))
->  		return -EFAULT;
->  
-> -	return (*pos = len);
-> +	*pos = len;
-> +	return len;
->  }
->  
->  static void *qm_ctx_alloc(struct hisi_qm *qm, size_t ctx_size,
-> @@ -2710,19 +2709,18 @@ static ssize_t qm_status_read(struct file *filp, char __user *buffer,
->  	if (*pos)
->  		return 0;
->  
-> -	if (count < QM_DBG_READ_LEN)
-> -		return -ENOSPC;
-> -
->  	val = atomic_read(&qm->status.flags);
-> -	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
-> +	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
->  	if (!len)
->  		return -EFAULT;
->  
-> +	len = min_t(size_t, len, count);
->  	cp_len = copy_to_user(buffer, buf, len);
->  	if (cp_len)
->  		return -EFAULT;
->  
-> -	return (*pos = len);
-> +	*pos = len;
-> +	return len;
->  }
->  
->  static const struct file_operations qm_status_fops = {
-> 
+PiBGcm9tOiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
+Pg0KPiBTZW50OiBTdW5kYXksIE1heSAzMSwgMjAyMCA0OjUwIEFNDQo+IA0KPiAncGluY3RybF91
+bnJlZ2lzdGVyKCknIHNob3VsZCBub3QgYmUgY2FsbGVkIHRvIHVuZG8NCj4gJ2Rldm1fcGluY3Ry
+bF9yZWdpc3Rlcl9hbmRfaW5pdCgpJywgaXQgaXMgYWxyZWFkeSBoYW5kbGVkIGJ5IHRoZSBmcmFt
+ZXdvcmsuDQo+IA0KPiBUaGlzIHNpbXBsaWZpZXMgdGhlIGVycm9yIGhhbmRsaW5nIHBhdGhzIG9m
+IHRoZSBwcm9iZSBmdW5jdGlvbi4NCj4gVGhlICdpbXhfZnJlZV9yZXNvdXJjZXMoKScgY2FuIGJl
+IHJlbW92ZWQgYXMgd2VsbC4NCj4gDQo+IEZpeGVzOiBhNTFjMTU4YmYwZjcgKCJwaW5jdHJsOiBp
+bXg6IHVzZSByYWRpeCB0cmVlcyBmb3IgZ3JvdXBzIGFuZCBmdW5jdGlvbnMiKQ0KPiBTaWduZWQt
+b2ZmLWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
+Pg0KDQpSZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCg0K
+UmVnYXJkcw0KQWlzaGVuZw0K
