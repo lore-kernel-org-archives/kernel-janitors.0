@@ -1,49 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 09 Jun 2020 23:22:57 +0000
-Subject: [PATCH] NFS: remove redundant pointer clnt
-Message-Id: <20200609232257.1118354-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jun 2020 06:42:08 +0000
+Subject: Re: [PATCH v3] i2c: imx-lpi2c: Fix runtime PM imbalance in lpi2c_imx_master_enable()
+Message-Id: <77448b13-9233-20a8-5e68-a8830314c27d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200601061640.27632-1-dinghao.liu@zju.edu.cn>
+In-Reply-To: <20200601061640.27632-1-dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Fugang Duan <fugang.duan@nxp.com>, kernel@pengutronix.de, linux-imx@nxp.com, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, kernel-janitors@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Kangjie Lu <kjlu@umn.edu>, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> the call returns an error code. Thus a corresponding decrement is
+> needed on the error handling path to keep the counter balanced.
+>
+> Fix this by adding the missed function call.
 
-The pointer clnt is being initialized with a value that is never
-read and so this is assignment redundant and can be removed. The
-pointer can removed because it is being used as a temporary
-variable and it is clearer to make the direct assignment and remove
-it completely.
+How do you think about a wording variant like the following?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/nfs/nfs4proc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+   Change description:
+   The PM runtime usage counter is incremented even if a call of
+   the function “pm_runtime_get_sync” failed. Thus decrement it also
+   in an error case so that the reference counting is kept consistent.
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index e32717fd1169..7a56e2ab473b 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -9518,7 +9518,6 @@ _nfs41_proc_secinfo_no_name(struct nfs_server *server, struct nfs_fh *fhandle,
- 		.rpc_argp = &args,
- 		.rpc_resp = &res,
- 	};
--	struct rpc_clnt *clnt = server->client;
- 	struct nfs4_call_sync_data data = {
- 		.seq_server = server,
- 		.seq_args = &args.seq_args,
-@@ -9535,8 +9534,7 @@ _nfs41_proc_secinfo_no_name(struct nfs_server *server, struct nfs_fh *fhandle,
- 	int status;
- 
- 	if (use_integrity) {
--		clnt = server->nfs_client->cl_rpcclient;
--		task_setup.rpc_client = clnt;
-+		task_setup.rpc_client = server->nfs_client->cl_rpcclient;
- 
- 		cred = nfs4_get_clid_cred(server->nfs_client);
- 		msg.rpc_cred = cred;
--- 
-2.27.0.rc0
+
+Regards,
+Markus
