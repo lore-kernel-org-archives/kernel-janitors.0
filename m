@@ -1,29 +1,33 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 02 Jun 2020 08:00:13 +0000
-Subject: Re: [PATCH v2] iommu: Improve exception handling in iommu_group_alloc()
-Message-Id: <c6f587ac-aebe-3aae-da0e-087dc7f78ac5@web.de>
+Date: Mon, 01 Jun 2020 06:24:39 +0000
+Subject: Re: [PATCH 2/2] Coccinelle: extend memdup_user rule with vmemdup_user()
+Message-Id: <273990e2-f289-905f-2930-725540857c67@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, iommu@lists.linux-foundation.org
-Cc: Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Qiushi Wu <wu000273@umn.edu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Denis Efremov <efremov@linux.com>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Improve the exception handling to free the resources correctly when
-> failed to allocate an iommu group.
+> +@rv depends on !patch@
+> +expression from,to,size;
+> +position p;
+> +statement S1,S2;
+> +@@
+> +
+> +*  to = \(kvmalloc@p\|kvzalloc@p\)(size,\(GFP_KERNEL\|GFP_USER\));
+> +   if (to==NULL || ...) S1
+> +   if (copy_from_user(to, from, size) != 0)
+> +   S2
 
-I propose to avoid the specification of duplicate function calls.
-Will it become helpful to add a few jump targets?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/process/coding-style.rst?id=F359287765c04711ff54fbd11645271d8e5f=
-f763#n455
+How does the SmPL asterisk functionality fit to the operation
+modes “org” and “report”?
 
 
-> ---
->  drivers/iommu/iommu.c | 10 ++++++++--
+> +@script:python depends on org && r@
 
-I suggest to replace the triple dashes before this diffstat
-by a blank line.
+I find the modification of SmPL rule dependencies also interesting.
+Are these specifications really required?
 
 Regards,
 Markus
