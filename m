@@ -1,50 +1,48 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Tue, 09 Jun 2020 09:10:14 +0000
-Subject: Re: [PATCH] exfat: Fix use after free in exfat_load_upcase_table()
-Message-Id: <20200609091014.GA529192@kroah.com>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Mon, 01 Jun 2020 11:15:04 +0000
+Subject: Re: [PATCH] orangefs: remove redundant assignment to variable ret
+Message-Id: <CAOg9mSQWuE06DJtfSn-d2cBK+RMZ0ndnw6m29pWEdw3jQq3erQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
-In-Reply-To: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
+References: <20200524224802.27850-1-colin.king@canonical.com>
+In-Reply-To: <20200524224802.27850-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, Tetsuhiro Kohada <kohada.t2@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Jun 08, 2020 at 05:07:33PM +0200, Markus Elfring wrote:
-> > This code calls brelse(bh) and then dereferences "bh" on the next line
-> > resulting in a possible use after free.
-> 
-> There is an unfortunate function call sequence.
-> 
-> 
-> > The brelse() should just be moved down a line.
-> 
-> How do you think about a wording variant like the following?
-> 
->    Thus move a call of the function “brelse” one line down.
-> 
-> 
-> Would you like to omit a word from the patch subject so that
-> a typo will be avoided there?
+Hi Colin... thanks for the patch, I have applied it
+to the orangefs for-next tree...
 
-Hi,
+-Mike
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+On Sun, May 24, 2020 at 6:48 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable ret is being initialized with a value that is
+> never read and it is being updated later with a new value. The
+> initialization is redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/orangefs/orangefs-mod.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/orangefs/orangefs-mod.c b/fs/orangefs/orangefs-mod.c
+> index c010c1fddafc..289b648ae196 100644
+> --- a/fs/orangefs/orangefs-mod.c
+> +++ b/fs/orangefs/orangefs-mod.c
+> @@ -79,7 +79,7 @@ DECLARE_WAIT_QUEUE_HEAD(orangefs_request_list_waitq);
+>
+>  static int __init orangefs_init(void)
+>  {
+> -       int ret = -1;
+> +       int ret;
+>         __u32 i = 0;
+>
+>         if (op_timeout_secs < 0)
+> --
+> 2.25.1
+>
