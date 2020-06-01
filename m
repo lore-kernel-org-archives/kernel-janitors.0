@@ -1,27 +1,25 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 30 Jun 2020 03:23:04 +0000
-Subject: Re: [PATCH] scsi: ufs: ufs-exynos: Remove an unnecessary NULL check
-Message-Id: <159348736490.22355.10176976047581563338.b4-ty@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 01 Jun 2020 12:38:05 +0000
+Subject: Re: [PATCH] iommu: Improve exception handling in iommu_group_alloc()
+Message-Id: <9f8d8308-2056-8e33-7b38-0b7d96e51c3c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200626105133.GF314359@mwanda>
-In-Reply-To: <20200626105133.GF314359@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alim Akhtar <alim.akhtar@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.ibm.com>, linux-samsung-soc@vger.kernel.org, Avri Altman <avri.altman@wdc.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 26 Jun 2020 13:51:33 +0300, Dan Carpenter wrote:
+> Optimize the error handling to free the resources correctly when
+> failed to allocate an iommu group.
 
-> The "head" pointer can't be NULL because it points to an address in
-> the middle of a ufs_hba struct.  Looking at this code, probably someone
-> would wonder if the intent was to check whether "hba" is NULL, but "hba"
-> isn't NULL and the check can just be removed.
+* I would not categorise the desired completion of exception handling
+  as a software optimisation.
 
-Applied to 5.9/scsi-queue, thanks!
+* Would you like to add the tag “Fixes” to the commit message?
 
-[1/1] scsi: ufs: ufs-exynos: Remove an unnecessary NULL check
-      https://git.kernel.org/mkp/scsi/c/b7a80dac0f1f
+* I suggest to avoid the specification of duplicate function calls.
+  Will it be helpful to add a few jump targets?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=3d77e6a8804abcc0504c904bd6e5cdf3a5cf8162#n455
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
