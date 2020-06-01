@@ -1,35 +1,52 @@
-From: Garrit Franke <garritfranke@gmail.com>
-Date: Mon, 15 Jun 2020 13:55:41 +0000
-Subject: [PATCH] staging: comedi: fix up missing whitespace in comment
-Message-Id: <20200615135541.46986-1-garritfranke@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Mon, 01 Jun 2020 13:25:21 +0000
+Subject: Re: [PATCH] video: pxafb: Fix the function used to balance a 'dma_alloc_coherent()' call
+Message-Id: <b39fa7b2-fc01-be3e-f899-40b949aa11ee@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CGME20200429084519eucas1p2813ed7e76d573778607ac1270d8cb2e7@eucas1p2.samsung.com>
+ <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
-Cc: Garrit Franke <garritfranke+kernel@gmail.com>, Garrit Franke <garritfranke@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-fbdev@vger.kernel.org, corbet@lwn.net, jani.nikula@intel.com, viresh.kumar@linaro.org, rafael.j.wysocki@intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, eric.miao@marvell.com, mchehab+samsung@kernel.org
 
-From: Garrit Franke <garritfranke+kernel@gmail.com>
 
-I noticed this missing whitespace in a comment inside ni_mio_common.c
+On 4/29/20 10:45 AM, Christophe JAILLET wrote:
+> 'dma_alloc_coherent()' must be balanced by a call to 'dma_free_coherent()'
+> not 'dma_free_wc()'.
+> The correct dma_free_ function is already used in the error handling path
+> of the probe function.
+> 
+> Fixes: 77e196752bdd ("[ARM] pxafb: allow video memory size to be configurable")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Garrit Franke <garritfranke@gmail.com>
----
- drivers/staging/comedi/drivers/ni_mio_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to drm-misc-next tree (patch should show up in v5.9), thanks.
 
-diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
-index d99f4065b96d..9266e13f6271 100644
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -2390,7 +2390,7 @@ static int ni_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
- #endif
- 			break;
- 		case AIMODE_SAMPLE:
--			/*generate FIFO interrupts on non-empty */
-+			/* generate FIFO interrupts on non-empty */
- 			ni_stc_writew(dev, NISTC_AI_MODE3_FIFO_MODE_NE,
- 				      NISTC_AI_MODE3_REG);
- 			break;
--- 
-2.25.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/video/fbdev/pxafb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+> index 00b96a78676e..6f972bed410a 100644
+> --- a/drivers/video/fbdev/pxafb.c
+> +++ b/drivers/video/fbdev/pxafb.c
+> @@ -2417,8 +2417,8 @@ static int pxafb_remove(struct platform_device *dev)
+>  
+>  	free_pages_exact(fbi->video_mem, fbi->video_mem_size);
+>  
+> -	dma_free_wc(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
+> -		    fbi->dma_buff_phys);
+> +	dma_free_coherent(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
+> +			  fbi->dma_buff_phys);
+>  
+>  	return 0;
+>  }
+> 
