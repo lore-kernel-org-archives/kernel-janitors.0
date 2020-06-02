@@ -1,50 +1,28 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 03 Jun 2020 17:56:18 +0000
-Subject: Re: [PATCH] Bluetooth: hci_qca: Fix an error pointer dereference
-Message-Id: <95074BC2-C7A8-44F7-9C14-0B82E26D05A9@holtmann.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jun 2020 10:23:14 +0000
+Subject: Re: [PATCH] media: staging: tegra-vde: add missing pm_runtime_put_autosuspend
+Message-Id: <248e05e2-1df9-70f2-a6ac-f1af7de59a06@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200529095948.GA1304852@mwanda>
-In-Reply-To: <20200529095948.GA1304852@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rocky Liao <rjliao@codeaurora.org>, Johan Hedberg <johan.hedberg@gmail.com>, Bluez mailing list <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Navid Emamdoost <emamd001@umn.edu>, Thierry Reding <thierry.reding@gmail.com>, Qiushi Wu <wu000273@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Hi Dan,
+> Call to pm_runtime_get_sync increments counter even in case of
+> failure leading to incorrect ref count.
+> Call pm_runtime_put_autosuspend if pm_runtime_get_sync fails.
 
-> When a function like devm_clk_get_optional() function returns both error
-> pointers on error and NULL then the NULL return means that the optional
-> feature is deliberately disabled.  It is a special sort of success and
-> should not trigger an error message.  The surrounding code should be
-> written to check for NULL and not crash.
-> 
-> On the other hand, if we encounter an error, then the probe from should
-> clean up and return a failure.
-> 
-> In this code, if devm_clk_get_optional() returns an error pointer then
-> the kernel will crash inside the call to:
-> 
-> 	clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
-> 
-> The error handling must be updated to prevent that.
-> 
-> Fixes: 77131dfec6af ("Bluetooth: hci_qca: Replace devm_gpiod_get() with devm_gpiod_get_optional()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Commit 77131dfec6af ("Bluetooth: hci_qca: Replace devm_gpiod_get() with
-> devm_gpiod_get_optional()") changed how qcadev->bt_en is handled as
-> well.  From a very strict perspective the new code is buggy because the
-> warnings should only be printed for error pointers, but currently errors
-> are ignored and warnings are printed for NULL.
-> 
-> However this bug does not lead to a crash so I have left it as is.
-> 
-> drivers/bluetooth/hci_qca.c | 18 +++++++++---------
-> 1 file changed, 9 insertions(+), 9 deletions(-)
+How do you think about a wording variant like the following?
 
-patch has been applied to bluetooth-next tree.
+   Change description:
+   The PM runtime reference counter is generally incremented by a call of
+   the function “pm_runtime_get_sync”.
+   Thus call the function “pm_runtime_put_autosuspend” also in one error case
+   to keep the reference counting consistent.
 
-Regards
 
-Marcel
+Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
