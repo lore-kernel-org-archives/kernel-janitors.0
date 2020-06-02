@@ -1,29 +1,27 @@
-From: Will Deacon <will@kernel.org>
-Date: Thu, 04 Jun 2020 17:25:41 +0000
-Subject: Re: [PATCH] arm64: debug: mark a function as __init to save some memory
-Message-Id: <159128408989.162070.15969733421063303923.b4-ty@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jun 2020 08:40:33 +0000
+Subject: Re: [PATCH] spi: spi-ti-qspi: call pm_runtime_put on pm_runtime_get failure
+Message-Id: <26028f50-3fb8-eb08-3c9f-08ada018bf9e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200531110015.598607-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200531110015.598607-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: catalin.marinas@arm.com, mhiramat@kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, gregkh@linuxfoundation.org, paulmck@kernel.org, tglx@linutronix.de, dianders@chromium.org
-Cc: kernel-janitors@vger.kernel.org, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-spi@vger.kernel.org
+Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Mark Brown <broonie@kernel.org>, Dinghao Liu <dinghao.liu@zju.edu.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 31 May 2020 13:00:15 +0200, Christophe JAILLET wrote:
-> 'debug_monitors_init()' is only called via 'postcore_initcall'.
-> It can be marked as __init to save a few bytes of memory.
+> The counter is incremented via pm_runtime_get even in failure case.
+> To correct the counter call pm_runtime_put in case of failure, too.
 
-Applied to arm64 (for-next/core), thanks!
+How do you think about a wording variant like the following?
 
-[1/1] arm64: debug: mark a function as __init to save some memory
-      https://git.kernel.org/arm64/c/5311ebfb612f
+   Change description:
+   The PM runtime reference counter is generally incremented by a call of
+   the function “pm_runtime_get_sync”.
+   Thus call the function “pm_runtime_put_autosuspend” also in one error case
+   to keep the reference counting consistent.
 
-Cheers,
--- 
-Will
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
