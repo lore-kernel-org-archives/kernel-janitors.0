@@ -1,35 +1,42 @@
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Mon, 01 Jun 2020 13:55:10 +0000
-Subject: Re: [PATCH 1/2] ubifs: Fix potential memory leaks while iterating entries
-Message-Id: <CAFLxGvxGqes3By2Qg6nouo8Eg-c--=fmvyS6pq1xgMC+JKAmpA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jun 2020 15:35:05 +0000
+Subject: [PATCH][next] afs: fix double kfree on cell_name on error exit path
+Message-Id: <20200602153505.64714-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2bec05b7-78d3-fa36-134a-efbe977933e3@web.de>
- <45e2cd69-93ec-a0b9-b2a6-d170eee44055@huawei.com>
-In-Reply-To: <45e2cd69-93ec-a0b9-b2a6-d170eee44055@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: Yi Zhang <yi.zhang@huawei.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 1, 2020 at 3:46 PM Zhihao Cheng <chengzhihao1@huawei.com> wrote:
->
-> 在 2020/6/1 20:00, Markus Elfring 写道:
-> >> Fix some potential memory leaks in error handling branches while
-> >> iterating xattr entries.
-> > Such information is useful.
-> >
-> >
-> >> For example, function ubifs_tnc_remove_ino()
-> >> forgets to free pxent if it exists. Similar problems also exist in
-> >> ubifs_purge_xattrs(), ubifs_add_orphan() and ubifs_jnl_write_inode().
-> > Can an other wording variant be a bit nicer?
-> Thanks for reminding, I will improve this description.
+From: Colin Ian King <colin.king@canonical.com>
 
-The description is fine. No need to resend. Patch will be queued after
-the merge window.
-Thanks for fixing these issues!
+The error exit path is currently kfree'ing cell_name for a second time,
+the previous kfree of this object occurred a statement earlier. Fix this
+by removing it.
 
+Addresses-Coverity: ("Double free")
+Fixes: 6147fe6b7f8c ("afs: Detect cell aliases 3 - YFS Cells with a canonical cell name op")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/afs/vl_alias.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
+index 6c1cf702478e..093895c49c21 100644
+--- a/fs/afs/vl_alias.c
++++ b/fs/afs/vl_alias.c
+@@ -315,10 +315,8 @@ static int yfs_check_canonical_cell_name(struct afs_cell *cell, struct key *key)
+ 	master = afs_lookup_cell(cell->net, cell_name, strlen(cell_name),
+ 				 NULL, false);
+ 	kfree(cell_name);
+-	if (IS_ERR(master)) {
+-		kfree(cell_name);
++	if (IS_ERR(master))
+ 		return PTR_ERR(master);
+-	}
+ 
+ 	cell->alias_of = master; /* Transfer our ref */
+ 	return 1;
 -- 
-Thanks,
-//richard
+2.25.1
