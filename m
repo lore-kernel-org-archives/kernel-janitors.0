@@ -1,40 +1,34 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 11 Jun 2020 18:01:41 +0000
-Subject: Re: [PATCH] drm/bridge: make array frs_limits static, makes object smaller
-Message-Id: <17564b0632ef8ca6a64023fe430d69e861f252f1.camel@perches.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 02 Jun 2020 17:20:32 +0000
+Subject: Re: [PATCH] cxl: Fix kobject memory leak in cxl_sysfs_afu_new_cr()
+Message-Id: <b9791ff3-8397-f6e9-ca88-59c9bbe8c78f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200611133924.923774-1-colin.king@canonical.com>
-In-Reply-To: <20200611133924.923774-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrzej Hajda <a.hajda@samsung.com>, Neil Armstrong <narmstrong@baylibre.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@siol.net>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wang Hai <wanghai38@huawei.com>, linuxppc-dev@lists.ozlabs.org
+Cc: Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Munsie <imunsie@au1.ibm.com>, Frederic Barrat <fbarrat@linux.ibm.com>
 
-On Thu, 2020-06-11 at 14:39 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array frs_limits on the stack but instead make it
-> static. Makes the object code smaller by 123 bytes
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   23456	   5712	     64	  29232	   7230	drivers/gpu/drm/bridge/tc358768.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   23333	   5712	     64	  29109	   71b5	drivers/gpu/drm/bridge/tc358768.o
-> 
-> (gcc version 9.3.0, amd64)
+> Fix it by adding a call to kobject_put() in the error path of
+> kobject_init_and_add().
 
-It's curious that the data size didn't change.
+Thanks for another completion of the exception handling.
 
-Perhaps you should make sure you do not compile
-with allyesconfig when you show these change.
+Would an other patch subject be a bit nicer?
 
-For instance: x86-64 defconfig with this bridge
-enabled:
 
-$ size drivers/gpu/drm/bridge/tc358768.o
-   text	   data	    bss	    dec	    hex	filename
-   9423	    300	      0	   9723	   25fb	drivers/gpu/drm/bridge/tc358768.o
+…
+> +++ b/drivers/misc/cxl/sysfs.c
+> @@ -624,7 +624,7 @@ static struct afu_config_record *cxl_sysfs_afu_new_cr(struct cxl_afu *afu, int c
+>  	rc = kobject_init_and_add(&cr->kobj, &afu_config_record_type,
+>  				  &afu->dev.kobj, "cr%i", cr->cr);
+>  	if (rc)
+> -		goto err;
+> +		goto err1;
+…
+
+Can an other label be more reasonable here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=f359287765c04711ff54fbd11645271d8e5ff763#n465
+
+Regards,
+Markus
