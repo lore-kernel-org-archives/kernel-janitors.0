@@ -1,27 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 05 Jun 2020 20:11:38 +0000
-Subject: Re: [PATCH net] ethtool: linkinfo: remove an unnecessary NULL check
-Message-Id: <20200605.131138.784441206945490177.davem@davemloft.net>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 02 Jun 2020 05:21:04 +0000
+Subject: [PATCH] MAINTAINERS: rectify entry in ARM SMC WATCHDOG DRIVER
+Message-Id: <20200602052104.7795-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200605110413.GF978434@mwanda>
-In-Reply-To: <20200605110413.GF978434@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: kuba@kernel.org, mkubecek@suse.cz, f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>, Evan Benn <evanbenn@chromium.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 5 Jun 2020 14:04:13 +0300
+Commit 5c24a28b4eb8 ("dt-bindings: watchdog: Add ARM smc wdt for mt8173
+watchdog") added the new ARM SMC WATCHDOG DRIVER entry in MAINTAINERS, but
+slipped in a minor mistake.
 
-> This code generates a Smatch warning:
-> 
->     net/ethtool/linkinfo.c:143 ethnl_set_linkinfo()
->     warn: variable dereferenced before check 'info' (see line 119)
-> 
-> Fortunately, the "info" pointer is never NULL so the check can be
-> removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Luckily, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Applied.
+  warning: no file matches F: devicetree/bindings/watchdog/arm-smc-wdt.yaml
+
+Update file entry to intended file location.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Julius, Evan, please ack.
+
+Wim, please pick this minor patch into your -next tree.
+
+applies cleanly on next-20200529
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b045b70e54df..dcfb09700b96 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1489,7 +1489,7 @@ ARM SMC WATCHDOG DRIVER
+ M:	Julius Werner <jwerner@chromium.org>
+ R:	Evan Benn <evanbenn@chromium.org>
+ S:	Maintained
+-F:	devicetree/bindings/watchdog/arm-smc-wdt.yaml
++F:	Documentation/devicetree/bindings/watchdog/arm-smc-wdt.yaml
+ F:	drivers/watchdog/arm_smc_wdt.c
+ 
+ ARM SMMU DRIVERS
+-- 
+2.17.1
