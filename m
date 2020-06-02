@@ -1,24 +1,32 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Date: Mon, 01 Jun 2020 10:16:19 +0000
-Subject: RE: [PATCH] pinctrl: freescale: imx: Fix an error handling path in 'imx_pinctrl_probe()'
-Message-Id: <AM6PR04MB49667D023D9C5ACB7CABF229808A0@AM6PR04MB4966.eurprd04.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jun 2020 10:13:46 +0000
+Subject: Re: [PATCH] pinctrl: freescale: imx: Fix an error handling path in 'imx_pinctrl_probe()'
+Message-Id: <20200602101346.GW30374@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200530204955.588962-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20200530204955.588962-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: aisheng.dong@nxp.com, festevam@gmail.com, linus.walleij@linaro.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, stefan@agner.ch, gary.bisson@boundarydevices.com, linux-gpio@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-PiBGcm9tOiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
-Pg0KPiBTZW50OiBTdW5kYXksIE1heSAzMSwgMjAyMCA0OjUwIEFNDQo+IA0KPiAncGluY3RybF91
-bnJlZ2lzdGVyKCknIHNob3VsZCBub3QgYmUgY2FsbGVkIHRvIHVuZG8NCj4gJ2Rldm1fcGluY3Ry
-bF9yZWdpc3Rlcl9hbmRfaW5pdCgpJywgaXQgaXMgYWxyZWFkeSBoYW5kbGVkIGJ5IHRoZSBmcmFt
-ZXdvcmsuDQo+IA0KPiBUaGlzIHNpbXBsaWZpZXMgdGhlIGVycm9yIGhhbmRsaW5nIHBhdGhzIG9m
-IHRoZSBwcm9iZSBmdW5jdGlvbi4NCj4gVGhlICdpbXhfZnJlZV9yZXNvdXJjZXMoKScgY2FuIGJl
-IHJlbW92ZWQgYXMgd2VsbC4NCj4gDQo+IEZpeGVzOiBhNTFjMTU4YmYwZjcgKCJwaW5jdHJsOiBp
-bXg6IHVzZSByYWRpeCB0cmVlcyBmb3IgZ3JvdXBzIGFuZCBmdW5jdGlvbnMiKQ0KPiBTaWduZWQt
-b2ZmLWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZy
-Pg0KDQpSZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCg0K
-UmVnYXJkcw0KQWlzaGVuZw0K
+On Sat, May 30, 2020 at 10:49:55PM +0200, Christophe JAILLET wrote:
+> 'pinctrl_unregister()' should not be called to undo
+> 'devm_pinctrl_register_and_init()', it is already handled by the framework.
+> 
+> This simplifies the error handling paths of the probe function.
+> The 'imx_free_resources()' can be removed as well.
+> 
+> Fixes: a51c158bf0f7 ("pinctrl: imx: use radix trees for groups and functions")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+
+You didn't introduce this but the:
+
+	ipctl->input_sel_base = of_iomap(np, 0);
+
+should be changed to devm_of_iomap().
+
+regards,
+dan carpenter
