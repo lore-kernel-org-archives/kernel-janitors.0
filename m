@@ -1,62 +1,51 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 24 Jun 2020 15:11:45 +0000
-Subject: Re: [PATCH][next] drm: amdgpu: fix premature goto because of missing braces
-Message-Id: <CADnq5_PA+Qs=oBkWwSneD1ptAVMdLcN3zL=UrjsNQFnaA2wLYQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jun 2020 19:36:11 +0000
+Subject: [PATCH v2] x86/resctrl: fix a NULL vs IS_ERR() static checker warning
+Message-Id: <20200602193611.GA190851@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200624141423.6307-1-colin.king@canonical.com>
- <f9ceecb4-2679-c0e2-8f64-4dd2a4f5401f@amd.com>
-In-Reply-To: <f9ceecb4-2679-c0e2-8f64-4dd2a4f5401f@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nirmoy <nirmodas@amd.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Sonny Jiang <sonny.jiang@amd.com>, Nirmoy Das <nirmoy.das@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Colin King <colin.king@canonical.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+The callers don't expect *d_cdp to be set to an error pointer, they only
+check for NULL.  This leads to a static checker warning:
 
-Alex
+    arch/x86/kernel/cpu/resctrl/rdtgroup.c:2648 __init_one_rdt_domain()
+    warn: 'd_cdp' could be an error pointer
 
-On Wed, Jun 24, 2020 at 10:32 AM Nirmoy <nirmodas@amd.com> wrote:
->
-> Acked-by: Nirmoy Das <nirmoy.das@amd.com>
->
->
-> Thanks,
->
-> Nirmoy
->
-> On 6/24/20 4:14 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the goto statement is skipping over a lot of setup code
-> > because it is outside of an if-block and should be inside it. Fix
-> > this by adding missing if statement braces.
-> >
-> > Addresses-Coverity: ("Structurally dead code")
-> > Fixes: fd151ca5396d ("drm amdgpu: SI UVD v3_1")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c b/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
-> > index 599719e89c31..7cf4b11a65c5 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
-> > @@ -642,9 +642,10 @@ static int uvd_v3_1_hw_init(void *handle)
-> >       uvd_v3_1_start(adev);
-> >
-> >       r = amdgpu_ring_test_helper(ring);
-> > -     if (r)
-> > +     if (r) {
-> >               DRM_ERROR("amdgpu: UVD ring test fail (%d).\n", r);
-> > -     goto done;
-> > +             goto done;
-> > +     }
-> >
-> >       r = amdgpu_ring_alloc(ring, 10);
-> >       if (r) {
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+This would not trigger a bug in this specific case because
+__init_one_rdt_domain() calls it with a valid domain that would not have
+a negative id and thus not trigger the return of the ERR_PTR(). If this
+was a negative domain id then the call to rdt_find_domain() in
+domain_add_cpu() would have returned the ERR_PTR() much earlier and the
+creation of the domain with an invalid id would have been prevented.
+
+Even though a bug is not triggered currently the right and safe thing to
+do is to set the pointer to NULL because that is what can be checked for
+when the caller is handling the CDP and non-CDP cases.
+
+Fixes: 52eb74339a62 ("x86/resctrl: Fix rdt_find_domain() return value and checks")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+v2: improve commit message with extra information from the maintainer
+
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 23b4b61319d3f..3f844f14fc0a6 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1117,6 +1117,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
+ 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
+ 	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
+ 		_r_cdp = NULL;
++		_d_cdp = NULL;
+ 		ret = -EINVAL;
+ 	}
+ 
+-- 
+2.26.2
