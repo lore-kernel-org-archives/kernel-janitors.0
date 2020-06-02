@@ -1,47 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 02 Jun 2020 14:13:06 +0000
-Subject: Re: [PATCH] spi: spi-ti-qspi: call pm_runtime_put on pm_runtime_get failure
-Message-Id: <20200602141306.GH5684@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ik0NlRzMGhMnxrMX"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 02 Jun 2020 17:24:35 +0000
+Subject: [PATCH] clk: baikal-t1: remove redundant assignment to variable 'divider'
+Message-Id: <20200602172435.70282-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <26028f50-3fb8-eb08-3c9f-08ada018bf9e@web.de>
- <20200602094947.GA5684@sirena.org.uk>
- <1c13e0ec-e50f-9eea-5704-052d2d682727@web.de>
-In-Reply-To: <1c13e0ec-e50f-9eea-5704-052d2d682727@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-spi@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Dinghao Liu <dinghao.liu@zju.edu.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---ik0NlRzMGhMnxrMX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The variable divider is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-On Tue, Jun 02, 2020 at 12:02:11PM +0200, Markus Elfring wrote:
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/baikal-t1/ccu-div.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > The original changelog is perfectly fine, please stop sending these.
-
-> I find this commit message improvable also according to Linux software
-> development documentation.
-
-Causing people to send out new versions of things for tweaks to the
-commit log consumes time for them and everyone they're sending changes
-to.  Pushing people to make trivial rewordings of their commit logs to
-match your particular taste is not a good use of people's time.
-
---ik0NlRzMGhMnxrMX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7WXnIACgkQJNaLcl1U
-h9BIPAf/Qg3X33LluXMNn6+or5b8wx23/eNT76IKOCDLt2nsBUFeX0RTB14vx2Ij
-wQwNT/+zdryOjbNaDuuxsRM0DV4SawkJVlaUJ81/HDGRTzyD7LbZwDy7GMSrkhW/
-suZlkonuFDGJ07yuMaYGcGykfALQc8/37nX5+WSOX682mHkqnpzIy1uZL231RcLg
-hhccjsA7NflG4vQzHy6cdAnoRTVdXtp9EZ50jXdrQjS6BaAtJniAn9B6j7ifz8s/
-f3j0pUuLHqkXXY+yP5B8I0QWoTUkFSd/f+LL8PdwG5qfp17iswdqZoutqVwwzsOw
-aQeBit3pr2gLrZOVf6/Ehu7Je1Jnqw==
-=e8Ou
------END PGP SIGNATURE-----
-
---ik0NlRzMGhMnxrMX--
+diff --git a/drivers/clk/baikal-t1/ccu-div.c b/drivers/clk/baikal-t1/ccu-div.c
+index bd40f5936f08..4062092d67f9 100644
+--- a/drivers/clk/baikal-t1/ccu-div.c
++++ b/drivers/clk/baikal-t1/ccu-div.c
+@@ -248,7 +248,7 @@ static int ccu_div_var_set_rate_fast(struct clk_hw *hw, unsigned long rate,
+ 				     unsigned long parent_rate)
+ {
+ 	struct ccu_div *div = to_ccu_div(hw);
+-	unsigned long flags, divider = 1;
++	unsigned long flags, divider;
+ 	u32 val;
+ 
+ 	divider = ccu_div_var_calc_divider(rate, parent_rate, div->mask);
+-- 
+2.25.1
