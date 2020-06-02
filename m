@@ -1,61 +1,88 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 10 Jun 2020 14:53:44 +0000
-Subject: Re: exfat: Improving exception handling in two functions
-Message-Id: <20200610145344.GA2102023@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jun 2020 13:54:09 +0000
+Subject: [PATCH v2] crypto: hisilicon - allow smaller reads in debugfs
+Message-Id: <20200602135409.GA59808@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
- <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
-In-Reply-To: <208cba7b-e535-c8e0-5ac7-f15170117a7f@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>, Tetsuhiro Kohada <kohada.t2@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhou Wang <wangzhou1@hisilicon.com>, Shukun Tan <tanshukun1@huawei.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 11:27:58AM +0200, Markus Elfring wrote:
-> Hello,
-> 
-> I have taken another look at pointer usage after calls of the function “brelse”.
-> My source code analysis approach pointed implementation details
-> like the following out for further software development considerations.
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/exfat/namei.c?id=155ae4358baf4831609c2f9cd09396a2b8badf#n1078
-> 
-> …
-> 		epold = exfat_get_dentry(sb, p_dir, oldentry + 1, &old_bh,
-> 			&sector_old);
-> 		epnew = exfat_get_dentry(sb, p_dir, newentry + 1, &new_bh,
-> 			&sector_new);
-> 		if (!epold || !epnew)
-> 			return -EIO;
-> …
-> 
-> I suggest to split such an error check.
-> How do you think about to release a buffer head object for the desired
-> exception handling if one of these function calls succeeded?
-> 
-> Would you like to adjust such code in the functions “exfat_rename_file”
-> and “exfat_move_file”?
-> 
-> Regards,
-> Markus
+Originally this code rejected any read less than 256 bytes.  There
+is no need for this artificial limit.  We should just use the normal
+helper functions to read a string from the kernel.
 
-Hi,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Use simple_read_from_buffer().  The v1 was slightly half arsed
+because I left the original check for:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+	if (*pos)
+		return 0;
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+So it could result in partial reads.  The new code means that if you
+want to read the buffer one byte at a time, that's fine or if you want
+to read it in one 256 byte chunk that's also fine.  Plus it deletes 21
+lines of code and is a lot cleaner.
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+ drivers/crypto/hisilicon/qm.c | 33 ++++++---------------------------
+ 1 file changed, 6 insertions(+), 27 deletions(-)
 
-thanks,
-
-greg k-h's patch email bot
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index 9bb263cec6c30..13ccb9e29a2e1 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -1064,19 +1064,10 @@ static ssize_t qm_cmd_read(struct file *filp, char __user *buffer,
+ 	char buf[QM_DBG_READ_LEN];
+ 	int len;
+ 
+-	if (*pos)
+-		return 0;
+-
+-	if (count < QM_DBG_READ_LEN)
+-		return -ENOSPC;
++	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n",
++			"Please echo help to cmd to get help information");
+ 
+-	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n",
+-		       "Please echo help to cmd to get help information");
+-
+-	if (copy_to_user(buffer, buf, len))
+-		return -EFAULT;
+-
+-	return (*pos = len);
++	return simple_read_from_buffer(buffer, count, pos, buf, len);
+ }
+ 
+ static void *qm_ctx_alloc(struct hisi_qm *qm, size_t ctx_size,
+@@ -2691,24 +2682,12 @@ static ssize_t qm_status_read(struct file *filp, char __user *buffer,
+ {
+ 	struct hisi_qm *qm = filp->private_data;
+ 	char buf[QM_DBG_READ_LEN];
+-	int val, cp_len, len;
+-
+-	if (*pos)
+-		return 0;
+-
+-	if (count < QM_DBG_READ_LEN)
+-		return -ENOSPC;
++	int val, len;
+ 
+ 	val = atomic_read(&qm->status.flags);
+-	len = snprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
+-	if (!len)
+-		return -EFAULT;
+-
+-	cp_len = copy_to_user(buffer, buf, len);
+-	if (cp_len)
+-		return -EFAULT;
++	len = scnprintf(buf, QM_DBG_READ_LEN, "%s\n", qm_s[val]);
+ 
+-	return (*pos = len);
++	return simple_read_from_buffer(buffer, count, pos, buf, len);
+ }
+ 
+ static const struct file_operations qm_status_fops = {
+-- 
+2.26.2
