@@ -1,48 +1,54 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 30 Jun 2020 11:28:47 +0000
-Subject: Re: [PATCH] drm/i915/display: fix missing null check on allocated dsb object
-Message-Id: <877dvon66o.fsf@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 15:45:59 +0000
+Subject: [PATCH][next] ovl: fix null pointer dereference on null stack pointer on error return
+Message-Id: <20200603154559.140418-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200616114221.73971-1-colin.king@canonical.com>
- <20200616115459.GN4151@kadam>
- <45e8594c-14e5-ba67-9708-1b72fa2c51d3@canonical.com>
-In-Reply-To: <45e8594c-14e5-ba67-9708-1b72fa2c51d3@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Animesh Manna <animesh.manna@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org, Maarten Lankhorst <maarten.lankhorst@intel.com>
+To: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 16 Jun 2020, Colin Ian King <colin.king@canonical.com> wrote:
-> On 16/06/2020 12:54, Dan Carpenter wrote:
->> On Tue, Jun 16, 2020 at 12:42:21PM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently there is no null check for a failed memory allocation
->>> on the dsb object and without this a null pointer dereference
->>> error can occur. Fix this by adding a null check.
->>>
->>> Note: added a drm_err message in keeping with the error message style
->>> in the function.
->> 
->> Don't give in to peer pressure!  That's like being a lemming when Disney
->> film makers come to push you off the cliff to create the 1958 nature
->> film "White Wilderness".
->
-> :-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed, thanks for the patch and smile.
+There are two error return paths where the call to path_put is
+dereferencing the null pointer 'stack'.  Fix this by avoiding the
+error exit path via label 'out_err' that will lead to the path_put
+calls and instead just return the error code directly.
 
-BR,
-Jani.
+Addresses-Coverity: ("Dereference after null check)"
+Fixes: 4155c10a0309 ("ovl: clean up getting lower layers")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/overlayfs/super.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-
->
->> 
->> regards,
->> dan carpenter
->> 
->
-
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 1094836f7e31..4be1b041b32c 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1594,20 +1594,18 @@ static struct ovl_entry *ovl_get_lowerstack(struct super_block *sb,
+ 	unsigned int i;
+ 	struct ovl_entry *oe;
+ 
+-	err = -EINVAL;
+ 	if (!ofs->config.upperdir && numlower = 1) {
+ 		pr_err("at least 2 lowerdir are needed while upperdir nonexistent\n");
+-		goto out_err;
++		return ERR_PTR(-EINVAL);
+ 	} else if (!ofs->config.upperdir && ofs->config.nfs_export &&
+ 		   ofs->config.redirect_follow) {
+ 		pr_warn("NFS export requires \"redirect_dir=nofollow\" on non-upper mount, falling back to nfs_export=off.\n");
+ 		ofs->config.nfs_export = false;
+ 	}
+ 
+-	err = -ENOMEM;
+ 	stack = kcalloc(numlower, sizeof(struct path), GFP_KERNEL);
+ 	if (!stack)
+-		goto out_err;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	err = -EINVAL;
+ 	for (i = 0; i < numlower; i++) {
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.25.1
