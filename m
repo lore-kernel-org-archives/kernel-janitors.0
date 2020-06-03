@@ -1,80 +1,83 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Wed, 03 Jun 2020 11:37:18 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Jun 2020 13:18:41 +0000
 Subject: Re: [PATCH] powerpc/nvram: Replace kmalloc with kzalloc in the error message
-Message-Id: <87tuzsgz2p.fsf@mpe.ellerman.id.au>
+Message-Id: <20200603131841.GB22511@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <c3d22d89-9133-30aa-8270-c515df214963@web.de>
  <87imgai394.fsf@mpe.ellerman.id.au>
  <a3c158fa-3829-f38a-9202-8984b5ef5f21@web.de>
  <87a71liucy.fsf@mpe.ellerman.id.au> <20200602114158.GB30374@kadam>
-In-Reply-To: <20200602114158.GB30374@kadam>
+ <87tuzsgz2p.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87tuzsgz2p.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Yi Wang <wang.yi59@zte.com.cn>, Tony Luck <tony.luck@intel.com>, Kees Cook <keescook@chromium.org>, Wang Liang <wang.liang82@zte.com.cn>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Anton Vorontsov <anton@enomsg.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Markus Elfring <Markus.Elfring@web.de>, Liao Pingfang <liao.pingfang@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>, Colin Cross <ccross@android.com>, Joe Perches <joe@perches.com>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org, Allison Randal <allison@lohutok.net>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-> On Tue, Jun 02, 2020 at 09:23:57PM +1000, Michael Ellerman wrote:
->> Markus Elfring <Markus.Elfring@web.de> writes:
->> >>>> Please just remove the message instead, it's a tiny allocation that's
->> >>>> unlikely to ever fail, and the caller will print an error anyway.
->> >>>
->> >>> How do you think about to take another look at a previous update suggestion
->> >>> like the following?
->> >>>
->> >>> powerpc/nvram: Delete three error messages for a failed memory allocation
->> >>> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/00845261-8528-d011-d3b8-e9355a231d3a@users.sourceforge.net/
->> >>> https://lore.kernel.org/linuxppc-dev/00845261-8528-d011-d3b8-e9355a231d3a@users.sourceforge.net/
->> >>> https://lore.kernel.org/patchwork/patch/752720/
->> >>> https://lkml.org/lkml/2017/1/19/537
->> >>
->> >> That deleted the messages from nvram_scan_partitions(), but neither of
->> >> the callers of nvram_scan_paritions() check its return value or print
->> >> anything if it fails. So removing those messages would make those
->> >> failures silent which is not what we want.
->> >
->> > * How do you think about information like the following?
->> >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=f359287765c04711ff54fbd11645271d8e5ff763#n883
->> > “…
->> > These generic allocation functions all emit a stack dump on failure when used
->> > without __GFP_NOWARN so there is no use in emitting an additional failure
->> > message when NULL is returned.
->> > …”
->> 
->> Are you sure that's actually true?
->> 
->> A quick look around in slub.c leads me to:
->> 
->> slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
->> {
->> #ifdef CONFIG_SLUB_DEBUG
->
-> You first have to enable EXPERT mode before you can disable SLUB_DEBUG.
-
-I see ~175 defconfigs with CONFIG_EXPERT=y, so that's not really a high
-bar unfortunately.
-
-And there's 38 defconfigs with SLUB_DEBUG=n.
-
-So for kernels built with those defconfigs that documentation is plain
-wrong and misleading.
-
-And then there's SLOB which doesn't dump stack anywhere AFAICS.
-
-In fact slab_out_of_memory() doesn't emit a stack dump either, it just
-prints a bunch of slab related info!
-
-> So that hopefully means you *really* want to save memory.  It doesn't
-> make sense to add a bunch of memory wasting printks when the users want
-> to go to extra lengths to conserve memory.
-
-I agree that in many cases those printks are just a waste of space in
-the source and the binary and should be removed.
-
-But I dislike being told "these generic allocation functions all emit a
-stack dump" only to find out that actually they don't, they print some
-other debug info, and depending on config settings they actually don't
-print _anything_.
-
-cheers
+T24gV2VkLCBKdW4gMDMsIDIwMjAgYXQgMDk6Mzc6MThQTSArMTAwMCwgTWljaGFlbCBFbGxlcm1h
+biB3cm90ZToKPiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+IHdyaXRl
+czoKPiA+IE9uIFR1ZSwgSnVuIDAyLCAyMDIwIGF0IDA5OjIzOjU3UE0gKzEwMDAsIE1pY2hhZWwg
+RWxsZXJtYW4gd3JvdGU6Cj4gPj4gTWFya3VzIEVsZnJpbmcgPE1hcmt1cy5FbGZyaW5nQHdlYi5k
+ZT4gd3JpdGVzOgo+ID4+ID4+Pj4gUGxlYXNlIGp1c3QgcmVtb3ZlIHRoZSBtZXNzYWdlIGluc3Rl
+YWQsIGl0J3MgYSB0aW55IGFsbG9jYXRpb24gdGhhdCdzCj4gPj4gPj4+PiB1bmxpa2VseSB0byBl
+dmVyIGZhaWwsIGFuZCB0aGUgY2FsbGVyIHdpbGwgcHJpbnQgYW4gZXJyb3IgYW55d2F5Lgo+ID4+
+ID4+Pgo+ID4+ID4+PiBIb3cgZG8geW91IHRoaW5rIGFib3V0IHRvIHRha2UgYW5vdGhlciBsb29r
+IGF0IGEgcHJldmlvdXMgdXBkYXRlIHN1Z2dlc3Rpb24KPiA+PiA+Pj4gbGlrZSB0aGUgZm9sbG93
+aW5nPwo+ID4+ID4+Pgo+ID4+ID4+PiBwb3dlcnBjL252cmFtOiBEZWxldGUgdGhyZWUgZXJyb3Ig
+bWVzc2FnZXMgZm9yIGEgZmFpbGVkIG1lbW9yeSBhbGxvY2F0aW9uCj4gPj4gPj4+IGh0dHBzOi8v
+cGF0Y2h3b3JrLm96bGFicy5vcmcvcHJvamVjdC9saW51eHBwYy1kZXYvcGF0Y2gvMDA4NDUyNjEt
+ODUyOC1kMDExLWQzYjgtZTkzNTVhMjMxZDNhQHVzZXJzLnNvdXJjZWZvcmdlLm5ldC8KPiA+PiA+
+Pj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXhwcGMtZGV2LzAwODQ1MjYxLTg1MjgtZDAx
+MS1kM2I4LWU5MzU1YTIzMWQzYUB1c2Vycy5zb3VyY2Vmb3JnZS5uZXQvCj4gPj4gPj4+IGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC83NTI3MjAvCj4gPj4gPj4+IGh0dHBz
+Oi8vbGttbC5vcmcvbGttbC8yMDE3LzEvMTkvNTM3Cj4gPj4gPj4KPiA+PiA+PiBUaGF0IGRlbGV0
+ZWQgdGhlIG1lc3NhZ2VzIGZyb20gbnZyYW1fc2Nhbl9wYXJ0aXRpb25zKCksIGJ1dCBuZWl0aGVy
+IG9mCj4gPj4gPj4gdGhlIGNhbGxlcnMgb2YgbnZyYW1fc2Nhbl9wYXJpdGlvbnMoKSBjaGVjayBp
+dHMgcmV0dXJuIHZhbHVlIG9yIHByaW50Cj4gPj4gPj4gYW55dGhpbmcgaWYgaXQgZmFpbHMuIFNv
+IHJlbW92aW5nIHRob3NlIG1lc3NhZ2VzIHdvdWxkIG1ha2UgdGhvc2UKPiA+PiA+PiBmYWlsdXJl
+cyBzaWxlbnQgd2hpY2ggaXMgbm90IHdoYXQgd2Ugd2FudC4KPiA+PiA+Cj4gPj4gPiAqIEhvdyBk
+byB5b3UgdGhpbmsgYWJvdXQgaW5mb3JtYXRpb24gbGlrZSB0aGUgZm9sbG93aW5nPwo+ID4+ID4g
+ICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxk
+cy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3MvY29kaW5nLXN0eWxlLnJzdD9p
+ZPM1OTI4Nzc2NWMwNDcxMWZmNTRmYmQxMTY0NTI3MWQ4ZTVmZjc2MyNuODgzCj4gPj4gPiDigJzi
+gKYKPiA+PiA+IFRoZXNlIGdlbmVyaWMgYWxsb2NhdGlvbiBmdW5jdGlvbnMgYWxsIGVtaXQgYSBz
+dGFjayBkdW1wIG9uIGZhaWx1cmUgd2hlbiB1c2VkCj4gPj4gPiB3aXRob3V0IF9fR0ZQX05PV0FS
+TiBzbyB0aGVyZSBpcyBubyB1c2UgaW4gZW1pdHRpbmcgYW4gYWRkaXRpb25hbCBmYWlsdXJlCj4g
+Pj4gPiBtZXNzYWdlIHdoZW4gTlVMTCBpcyByZXR1cm5lZC4KPiA+PiA+IOKApuKAnQo+ID4+IAo+
+ID4+IEFyZSB5b3Ugc3VyZSB0aGF0J3MgYWN0dWFsbHkgdHJ1ZT8KPiA+PiAKPiA+PiBBIHF1aWNr
+IGxvb2sgYXJvdW5kIGluIHNsdWIuYyBsZWFkcyBtZSB0bzoKPiA+PiAKPiA+PiBzbGFiX291dF9v
+Zl9tZW1vcnkoc3RydWN0IGttZW1fY2FjaGUgKnMsIGdmcF90IGdmcGZsYWdzLCBpbnQgbmlkKQo+
+ID4+IHsKPiA+PiAjaWZkZWYgQ09ORklHX1NMVUJfREVCVUcKPiA+Cj4gPiBZb3UgZmlyc3QgaGF2
+ZSB0byBlbmFibGUgRVhQRVJUIG1vZGUgYmVmb3JlIHlvdSBjYW4gZGlzYWJsZSBTTFVCX0RFQlVH
+Lgo+IAo+IEkgc2VlIH4xNzUgZGVmY29uZmlncyB3aXRoIENPTkZJR19FWFBFUlQ9eSwgc28gdGhh
+dCdzIG5vdCByZWFsbHkgYSBoaWdoCj4gYmFyIHVuZm9ydHVuYXRlbHkuCj4gCj4gQW5kIHRoZXJl
+J3MgMzggZGVmY29uZmlncyB3aXRoIFNMVUJfREVCVUc9bi4KPiAKPiBTbyBmb3Iga2VybmVscyBi
+dWlsdCB3aXRoIHRob3NlIGRlZmNvbmZpZ3MgdGhhdCBkb2N1bWVudGF0aW9uIGlzIHBsYWluCj4g
+d3JvbmcgYW5kIG1pc2xlYWRpbmcuCj4gCj4gQW5kIHRoZW4gdGhlcmUncyBTTE9CIHdoaWNoIGRv
+ZXNuJ3QgZHVtcCBzdGFjayBhbnl3aGVyZSBBRkFJQ1MuCj4gCj4gSW4gZmFjdCBzbGFiX291dF9v
+Zl9tZW1vcnkoKSBkb2Vzbid0IGVtaXQgYSBzdGFjayBkdW1wIGVpdGhlciwgaXQganVzdAo+IHBy
+aW50cyBhIGJ1bmNoIG9mIHNsYWIgcmVsYXRlZCBpbmZvIQo+IAo+ID4gU28gdGhhdCBob3BlZnVs
+bHkgbWVhbnMgeW91ICpyZWFsbHkqIHdhbnQgdG8gc2F2ZSBtZW1vcnkuICBJdCBkb2Vzbid0Cj4g
+PiBtYWtlIHNlbnNlIHRvIGFkZCBhIGJ1bmNoIG9mIG1lbW9yeSB3YXN0aW5nIHByaW50a3Mgd2hl
+biB0aGUgdXNlcnMgd2FudAo+ID4gdG8gZ28gdG8gZXh0cmEgbGVuZ3RocyB0byBjb25zZXJ2ZSBt
+ZW1vcnkuCj4gCj4gSSBhZ3JlZSB0aGF0IGluIG1hbnkgY2FzZXMgdGhvc2UgcHJpbnRrcyBhcmUg
+anVzdCBhIHdhc3RlIG9mIHNwYWNlIGluCj4gdGhlIHNvdXJjZSBhbmQgdGhlIGJpbmFyeSBhbmQg
+c2hvdWxkIGJlIHJlbW92ZWQuCj4gCj4gQnV0IEkgZGlzbGlrZSBiZWluZyB0b2xkICJ0aGVzZSBn
+ZW5lcmljIGFsbG9jYXRpb24gZnVuY3Rpb25zIGFsbCBlbWl0IGEKPiBzdGFjayBkdW1wIiBvbmx5
+IHRvIGZpbmQgb3V0IHRoYXQgYWN0dWFsbHkgdGhleSBkb24ndCwgdGhleSBwcmludCBzb21lCj4g
+b3RoZXIgZGVidWcgaW5mbywgYW5kIGRlcGVuZGluZyBvbiBjb25maWcgc2V0dGluZ3MgdGhleSBh
+Y3R1YWxseSBkb24ndAo+IHByaW50IF9hbnl0aGluZ18uCgpXYWl0Li4uICBJdCAqZG9lcyogcHJp
+bnQgYSBzdGFjayB0cmFjZS4gIFdlIG11c3QgYnV0IGxvb2tpbmcgYXQgdGhlCndyb25nIGZ1bmN0
+aW9uLiAgSHVoLi4uICBUaGUgc3RhY2sgdHJhY2UgY29tZXMgZnJvbSB3YXJuX2FsbG9jKCkuICBX
+aGF0CmhhcHBlbiBpcyB0aGlzOgoKbW0vc2x1Yi5jCiAgMjY3MyAgCiAgMjY3NCAgICAgICAgICBm
+cmVlbGlzdCA9IG5ld19zbGFiX29iamVjdHMocywgZ2ZwZmxhZ3MsIG5vZGUsICZjKTsKICAyNjc1
+ICAKICAyNjc2ICAgICAgICAgIGlmICh1bmxpa2VseSghZnJlZWxpc3QpKSB7CiAgMjY3NyAgICAg
+ICAgICAgICAgICAgIHNsYWJfb3V0X29mX21lbW9yeShzLCBnZnBmbGFncywgbm9kZSk7CiAgMjY3
+OCAgICAgICAgICAgICAgICAgIHJldHVybiBOVUxMOwogIDI2NzkgICAgICAgICAgfQogIDI2ODAg
+IAoKVGhlIG5ld19zbGFiX29iamVjdHMoKSB3aWxsIGNhbGwgYWxsb2NhdGVfc2xhYigpIHdoaWNo
+IGNhbGxzCl9fYWxsb2NfcGFnZXNfc2xvd3BhdGgoKSB3aGljaCBjYWxscyB3YXJuX2FsbG9jKCkg
+b24gZmFpbHVyZS4KClRoZXJlIGFyZSBzb21lIGVycm9yIHBhdGhzIGZyb20gYWxsb2NfcGFnZXMo
+KSB3aGljaCBsb29rIGxpa2UgdGhleQpjb3VsZCByZXR1cm4gd2l0aG91dCB0aGUgc3RhY2sgZHVt
+cCwgYnV0IHRob3NlIGFyZSBpbXBvc3NpYmxlIHBhdGhzIGZyb20Ka21hbGxvYyBvciBlcnJvciBp
+bmplY3Rpb24uCgpyZWdhcmRzLApkYW4gY2FycGVudGVyCg==
