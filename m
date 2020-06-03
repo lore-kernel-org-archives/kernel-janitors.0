@@ -1,21 +1,56 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 01 Jun 2020 08:37:23 +0000
-Subject: Re: [PATCH] pwm: img: call pm_runtime_put in pm_runtime_get_sync failed case
-Message-Id: <166b2437-748a-1c1a-2b7f-e1163e4855d0@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 14:04:31 +0000
+Subject: [PATCH] input: elantech: remove redundant assignments to variable error
+Message-Id: <20200603140431.131347-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dinghao Liu <dinghao.liu@zju.edu.cn>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Even in failed case of pm_runtime_get_sync, the usage_count
-> is incremented. In order to keep the usage_count with correct
-> value call appropriate put.
+From: Colin Ian King <colin.king@canonical.com>
 
-* I suggest to adjust the word “usage_count” in this change description.
+The variable error is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-* Would you like to add the tag “Fixes” to the commit message?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/mouse/elantech.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 2d8434b7b623..e4f394cc0520 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1897,7 +1897,7 @@ static bool elantech_use_host_notify(struct psmouse *psmouse,
+ int elantech_init_smbus(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
+-	int error = -EINVAL;
++	int error;
+ 
+ 	psmouse_reset(psmouse);
+ 
+@@ -2015,7 +2015,7 @@ static int elantech_setup_ps2(struct psmouse *psmouse,
+ int elantech_init_ps2(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
+-	int error = -EINVAL;
++	int error;
+ 
+ 	psmouse_reset(psmouse);
+ 
+@@ -2036,7 +2036,7 @@ int elantech_init_ps2(struct psmouse *psmouse)
+ int elantech_init(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
+-	int error = -EINVAL;
++	int error;
+ 
+ 	psmouse_reset(psmouse);
+ 
+-- 
+2.25.1
