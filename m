@@ -1,80 +1,38 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Tue, 23 Jun 2020 07:02:31 +0000
-Subject: Re: [PATCH v4] coccinelle: misc: add array_size_dup script to detect missed overflow checks
-Message-Id: <alpine.DEB.2.22.394.2006230902210.2367@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1108794673-1592895751=:2367"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 13:51:02 +0000
+Subject: [PATCH] input: ims-pcu: remove redundant assignment to variable 'error'
+Message-Id: <20200603135102.130436-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4014118b-90a6-68c5-048f-32485fa3e852@web.de>
-In-Reply-To: <4014118b-90a6-68c5-048f-32485fa3e852@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Kees Cook <keescook@chromium.org>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-1108794673-1592895751=:2367
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+The variable error is being initialized with a value that is
+never read and the -ENOMEM error return is being returned anyhow
+by the error exit path to label err_free_mem.  The assignment is
+redundant and can be removed.
 
-I don't agree with any of these comments.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/misc/ims-pcu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-julia
-
-On Tue, 23 Jun 2020, Markus Elfring wrote:
-
-> > Changes in v2:
-> …
-> > - assignment operator used
->
-> I prefer the distinction for the application of corresponding metavariables.
->
->
-> > Changes in v3:
-> …
-> >  - \(&E1\|&E2\) changed to &\(E1\|E2\)
->
-> Would it be more helpful to mention the movement of the ampersand
-> before SmPL disjunctions?
->
->
-> …
-> >+/// Three types of patterns for these functions:
->
-> Will another adjustment be needed according to your information “duplicates warning removed”?
->
->
-> …
-> > +virtual context
-> > +virtual report
-> > +virtual org
->
-> Can the following SmPL code variant ever become more attractive?
->
-> +virtual context, report, org
->
->
-> …
-> > +expression subE1 <= as.E1;
-> > +expression subE2 <= as.E2;
-> > +expression as.E1, as.E2, E3;
->
-> How do you think about the following SmPL code variant?
->
-> +expression subE1 <= as.E1,
-> +           subE2 <= as.E2,
-> +           as.E1, as.E2, E3;
->
->
-> …
-> > +msg = "WARNING: array_size is used later (line %s) to compute the same size" % (p2[0].line)
-> > +coccilib.report.print_report(p1[0], msg)
->
-> Please omit the extra Python variable “msg” for the passing of such simple message objects.
->
-> What does hinder you to take the proposed script variants better into account?
->
-> Regards,
-> Markus
->
---8323329-1108794673-1592895751=:2367--
+diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
+index d8dbfc030d0f..4ba68aa3d281 100644
+--- a/drivers/input/misc/ims-pcu.c
++++ b/drivers/input/misc/ims-pcu.c
+@@ -292,7 +292,6 @@ static int ims_pcu_setup_gamepad(struct ims_pcu *pcu)
+ 	if (!gamepad || !input) {
+ 		dev_err(pcu->dev,
+ 			"Not enough memory for gamepad device\n");
+-		error = -ENOMEM;
+ 		goto err_free_mem;
+ 	}
+ 
+-- 
+2.25.1
