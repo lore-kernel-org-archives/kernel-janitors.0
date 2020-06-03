@@ -1,46 +1,28 @@
-From: Andy Duan <fugang.duan@nxp.com>
-Date: Thu, 04 Jun 2020 02:36:28 +0000
-Subject: RE: [EXT] [PATCH net-next] net: ethernet: dwmac: Fix an error code in imx_dwmac_probe()
-Message-Id: <AM6PR0402MB360703C2D2EAC8A58D7BEF2DFF890@AM6PR0402MB3607.eurprd04.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 03 Jun 2020 12:31:13 +0000
+Subject: Re: [PATCH] pinctrl: imxl: Fix an error handling path in 'imx1_pinctrl_core_probe()'
+Message-Id: <CACRpkdYvoe8o8Db1mszfgcHA3XZF7LJ3P1u5pnKOfEfS99F0Ew@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603175025.GA19353@mwanda>
-In-Reply-To: <20200603175025.GA19353@mwanda>
+References: <20200530201952.585798-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530201952.585798-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com> Sent: Thursday, June 4, 2020 1:50 AM
-> The code is return PTR_ERR(NULL) which is zero or success.  We should
-> return -ENOMEM instead.
-> 
-> Fixes: 94abdad6974a5 ("net: ethernet: dwmac: add ethernet glue logic for
-> NXP imx8 chip")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sat, May 30, 2020 at 10:20 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Thanks!
+> When 'pinctrl_register()' has been turned into 'devm_pinctrl_register()',
+> an error handling path has not been updated.
+>
+> Axe a now unneeded 'pinctrl_unregister()'.
+>
+> Fixes: e55e025d1687 ("pinctrl: imxl: Use devm_pinctrl_register() for pinctrl registration")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-> b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-> index 5010af7dab4af..3c5df5eeed6c8 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-> @@ -225,7 +225,7 @@ static int imx_dwmac_probe(struct platform_device
-> *pdev)
-> 
->         dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac),
-> GFP_KERNEL);
->         if (!dwmac)
-> -               return PTR_ERR(dwmac);
-> +               return -ENOMEM;
-> 
->         plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
->         if (IS_ERR(plat_dat))
-> --
-> 2.26.2
+Patch applied.
+
+Yours,
+Linus Walleij
