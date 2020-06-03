@@ -1,25 +1,23 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 10 Jun 2020 02:41:19 +0000
-Subject: Re: [PATCH] scsi: acornscsi: Fix an error handling path in 'acornscsi_probe()'
-Message-Id: <159175686975.7062.3916571088976504463.b4-ty@oracle.com>
+From: "Andrew Jeffery" <andrew@aj.id.au>
+Date: Wed, 03 Jun 2020 12:21:26 +0000
+Subject: =?UTF-8?Q?Re:_[PATCH]_fsi:_master-ast-cf:_fix_spelling_mistake_"firwmare?= =?UTF-8?Q?"_->_"firmware"
+Message-Id: <443d4707-2344-4356-bafb-ca235687dccd@www.fastmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530081622.577888-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200530081622.577888-1-christophe.jaillet@wanadoo.fr>
+References: <20200603120526.16178-1-colin.king@canonical.com>
+In-Reply-To: <20200603120526.16178-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.ibm.com, linux@armlinux.org.uk, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Alistair Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 30 May 2020 10:16:22 +0200, Christophe JAILLET wrote:
 
-> 'ret' is known to be 0 at this point.
-> So, explicitly return -ENOMEM if one of the 'ecardm_iomap()' calls fail.
 
-Applied to 5.8/scsi-queue, thanks!
+On Wed, 3 Jun 2020, at 21:35, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a dev_err error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-[1/1] scsi: acornscsi: Fix an error handling path in acornscsi_probe()
-      https://git.kernel.org/mkp/scsi/c/7960c0b29626
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
