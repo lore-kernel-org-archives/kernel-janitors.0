@@ -1,50 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jun 2020 14:30:07 +0000
-Subject: [PATCH] media: allegro: Fix some NULL vs IS_ERR() checks in probe
-Message-Id: <20200619143007.GC267142@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 12:05:26 +0000
+Subject: [PATCH] fsi: master-ast-cf: fix spelling mistake "firwmare" -> "firmware"
+Message-Id: <20200603120526.16178-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Tretter <m.tretter@pengutronix.de>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Alistar Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The devm_ioremap() function doesn't return error pointers, it returns
-NULL on error.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: f20387dfd065 ("media: allegro: add Allegro DVT video IP core driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in a dev_err error message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/allegro-dvt/allegro-core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/fsi/fsi-master-ast-cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
-index 70f133a842dd..3ed66aae741d 100644
---- a/drivers/staging/media/allegro-dvt/allegro-core.c
-+++ b/drivers/staging/media/allegro-dvt/allegro-core.c
-@@ -3065,9 +3065,9 @@ static int allegro_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index 04d10ea8d343..85d9be38b32b 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -838,7 +838,7 @@ static int load_copro_firmware(struct fsi_master_acf *master)
+ 	rc = request_firmware(&fw, FW_FILE_NAME, master->dev);
+ 	if (rc) {
+ 		dev_err(
+-			master->dev, "Error %d to load firwmare '%s' !\n",
++			master->dev, "Error %d to load firmware '%s' !\n",
+ 			rc, FW_FILE_NAME);
+ 		return rc;
  	}
- 	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (IS_ERR(regs)) {
-+	if (!regs) {
- 		dev_err(&pdev->dev, "failed to map registers\n");
--		return PTR_ERR(regs);
-+		return -ENOMEM;
- 	}
- 	dev->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
- 					    &allegro_regmap_config);
-@@ -3085,9 +3085,9 @@ static int allegro_probe(struct platform_device *pdev)
- 	sram_regs = devm_ioremap(&pdev->dev,
- 				 sram_res->start,
- 				 resource_size(sram_res));
--	if (IS_ERR(sram_regs)) {
-+	if (!sram_regs) {
- 		dev_err(&pdev->dev, "failed to map sram\n");
--		return PTR_ERR(sram_regs);
-+		return -ENOMEM;
- 	}
- 	dev->sram = devm_regmap_init_mmio(&pdev->dev, sram_regs,
- 					  &allegro_sram_config);
 -- 
-2.27.0
+2.25.1
