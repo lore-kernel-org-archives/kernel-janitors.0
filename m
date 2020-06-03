@@ -1,26 +1,30 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 24 Jun 2020 04:30:22 +0000
-Subject: Re: [PATCH -next] scsi: ufs: ufs-exynos: Fix return value check in exynos_ufs_init()
-Message-Id: <159297300656.9917.6717865886612566021.b4-ty@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Jun 2020 18:52:27 +0000
+Subject: Re: [PATCH] dmaengine: stm32-mdma: call pm_runtime_put if pm_runtime_get_sync fails
+Message-Id: <873bfb31-52d8-7c9b-5480-4a94dc945307@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200618133837.127274-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200618133837.127274-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Seungwon Jeon <essuuj@gmail.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Avri Altman <avri.altman@wdc.com>, Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kiwoong Kim <kwmad.kim@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-samsung-soc@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Navid Emamdoost <navid.emamdoost@gmail.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, Dan Williams <dan.j.williams@intel.com>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 18 Jun 2020 13:38:37 +0000, Wei Yongjun wrote:
+> Calling pm_runtime_get_sync increments the counter even in case of
+> failure, causing incorrect ref count. Call pm_runtime_put if
+> pm_runtime_get_sync fails.
 
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
+Is it appropriate to copy a sentence from the change description
+into the patch subject?
 
-Applied to 5.9/scsi-queue, thanks!
+How do you think about a wording variant like the following?
 
-[1/1] scsi: ufs: ufs-exynos: Fix return value check in exynos_ufs_init()
-      https://git.kernel.org/mkp/scsi/c/b2bc2200e89b
+   The PM runtime reference counter is generally incremented by a call of
+   the function “pm_runtime_get_sync”.
+   Thus call the function “pm_runtime_put” also in two error cases
+   to keep the reference counting consistent.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+
+Would you like to add the tag “Fixes” to the commit message?
+
+Regards,
+Markus
