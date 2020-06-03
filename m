@@ -1,34 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Jun 2020 08:11:06 +0000
-Subject: [PATCH] topology: mark a function as __init to save some memory
-Message-Id: <20200621081106.881915-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 13:57:42 +0000
+Subject: [PATCH] input: alps: remove redundant assignment to variable ret
+Message-Id: <20200603135742.130852-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'topology_sysfs_init()' is only called via 'device_initcall'.
-It can be marked as __init to save a few bytes of memory.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable ret is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/base/topology.c | 2 +-
+ drivers/input/mouse/alps.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 4e033d4cc0dc..ad8d33c6077b 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -133,7 +133,7 @@ static int topology_remove_dev(unsigned int cpu)
- 	return 0;
- }
- 
--static int topology_sysfs_init(void)
-+static int __init topology_sysfs_init(void)
+diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+index 34700eda0429..b067bfd2699c 100644
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -1929,7 +1929,7 @@ static int alps_monitor_mode(struct psmouse *psmouse, bool enable)
+ static int alps_absolute_mode_v6(struct psmouse *psmouse)
  {
- 	return cpuhp_setup_state(CPUHP_TOPOLOGY_PREPARE,
- 				 "base/topology:prepare", topology_add_dev,
+ 	u16 reg_val = 0x181;
+-	int ret = -1;
++	int ret;
+ 
+ 	/* enter monitor mode, to write the register */
+ 	if (alps_monitor_mode(psmouse, true))
 -- 
 2.25.1
