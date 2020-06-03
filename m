@@ -1,50 +1,50 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Wed, 03 Jun 2020 18:18:45 +0000
-Subject: Re: [PATCH][next] dm zoned: fix memory leak of newly allocated zone on xa_insert failure
-Message-Id: <20200603181845.GA20491@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 15:21:51 +0000
+Subject: [PATCH][V2] input: ims-pcu: return error code rather than -ENOMEM
+Message-Id: <20200603152151.139337-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603160254.142222-1-colin.king@canonical.com>
-In-Reply-To: <20200603160254.142222-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com, Damien Le Moal <damien.lemoal@wdc.com>, Hannes Reinecke <hare@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 03 2020 at 12:02pm -0400,
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if an xa_insert fails then there is a memory lead of the
-> recently allocated zone object. Fix this by kfree'ing zone before
-> returning on the error return path.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 1a311efa3916 ("dm zoned: convert to xarray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/md/dm-zoned-metadata.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
-> index b23ff090c056..130b5a6d9f12 100644
-> --- a/drivers/md/dm-zoned-metadata.c
-> +++ b/drivers/md/dm-zoned-metadata.c
-> @@ -313,8 +313,10 @@ static struct dm_zone *dmz_insert(struct dmz_metadata *zmd,
->  	if (!zone)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	if (xa_insert(&zmd->zones, zone_id, zone, GFP_KERNEL))
-> +	if (xa_insert(&zmd->zones, zone_id, zone, GFP_KERNEL)) {
-> +		kfree(zone);
->  		return ERR_PTR(-EBUSY);
-> +	}
->  
->  	INIT_LIST_HEAD(&zone->link);
->  	atomic_set(&zone->refcount, 0);
-> -- 
-> 2.25.1
-> 
+Currently the assignment of -ENOMEM to error is redudant because error
+is not being read and -ENOMEM is being hard coded as an error return.
+Fix this by returning the error code in variable 'error'; this also
+allows the error code from a failed call to input_register_device to
+be preserved and returned to the caller rather than just returning
+a possibly inappropriate -ENOMEM.
 
-Thanks, I folded this in.
+Kudos to Dan Carpenter for the suggestion of an improved fix.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+
+V2: change subject line and return the error code rather than
+    removing the ENOMEM assignment to error. Thanks to Dan Carpenter
+    for explaining a better fix.
+
+---
+ drivers/input/misc/ims-pcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
+index d8dbfc030d0f..08b9b5cdb943 100644
+--- a/drivers/input/misc/ims-pcu.c
++++ b/drivers/input/misc/ims-pcu.c
+@@ -335,7 +335,7 @@ static int ims_pcu_setup_gamepad(struct ims_pcu *pcu)
+ err_free_mem:
+ 	input_free_device(input);
+ 	kfree(gamepad);
+-	return -ENOMEM;
++	return error;
+ }
+ 
+ static void ims_pcu_destroy_gamepad(struct ims_pcu *pcu)
+-- 
+2.25.1
