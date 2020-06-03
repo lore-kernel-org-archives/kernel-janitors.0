@@ -1,65 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 05 Jun 2020 06:43:16 +0000
-Subject: Re: [PATCH v2] coccinelle: api: add kzfree script
-Message-Id: <99e0349e-9392-b610-05b6-8f90986073fa@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Jun 2020 14:12:18 +0000
+Subject: [PATCH] input: sentelic: fix error return when fsp_reg_write fails
+Message-Id: <20200603141218.131663-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tai-hwa Liang <avatar@sentelic.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-> Check for memset()/memset_explicit() with 0 followed by
-> kfree()/vfree()/kvfree().
+From: Colin Ian King <colin.king@canonical.com>
 
-Another software evolution will become interesting here.
+Currently when the call to fsp_reg_write fails -EIO is not being returned
+because the count is being returned instead of the return value in retval.
+Fix this by returning the value in retval instead of count.
 
+Addresses-Coverity: ("Unused value")
+Fixes: fc69f4a6af49 ("Input: add new driver for Sentelic Finger Sensing Pad")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/mouse/sentelic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +/// memset_explicit with 0 followed by kfree
-
-How do you think about to extend this comment?
-
-
-Would you like to take the following SmPL code variants into account?
-
-
-> +virtual context
-> +virtual org
-> +virtual report
-> +virtual patch
-
-+virtual context, org, report, patch
-
-
-> +(
-> +- kfree(E);
-> ++ kzfree(E);
-> +|
-> +- vfree(E);
-> ++ kvfree_sensitive(E, size);
-> +|
-> +- kvfree(E);
-> ++ kvfree_sensitive(E, size);
-> +)
-
-+(
-+-kfree
-++kzfree
-+      (E);
-+|
-+-vfree
-++kvfree_sensitive
-+      (E
-++      , size
-+      );
-+|
-+-kvfree
-++kvfree_sensitive
-+       (E
-++       , size
-+       );
-+)
-
-
-Regards,
-Markus
+diff --git a/drivers/input/mouse/sentelic.c b/drivers/input/mouse/sentelic.c
+index e99d9bf1a267..e78c4c7eda34 100644
+--- a/drivers/input/mouse/sentelic.c
++++ b/drivers/input/mouse/sentelic.c
+@@ -441,7 +441,7 @@ static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
+ 
+ 	fsp_reg_write_enable(psmouse, false);
+ 
+-	return count;
++	return retval;
+ }
+ 
+ PSMOUSE_DEFINE_WO_ATTR(setreg, S_IWUSR, NULL, fsp_attr_set_setreg);
+-- 
+2.25.1
