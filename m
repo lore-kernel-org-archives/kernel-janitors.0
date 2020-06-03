@@ -1,31 +1,36 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 26 Jun 2020 06:08:04 +0000
-Subject: Re: [PATCH] crypto: img-hash: remove redundant initialization of variable err
-Message-Id: <20200626060803.GC20811@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Jun 2020 17:53:16 +0000
+Subject: [PATCH] net/mlx5: E-Switch, Fix an Oops error handling code
+Message-Id: <20200603175316.GC18931@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200618101625.11986-1-colin.king@canonical.com>
-In-Reply-To: <20200618101625.11986-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>, Vu Pham <vuhuong@mellanox.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Mark Bloch <markb@mellanox.com>, Parav Pandit <parav@mellanox.com>, Roi Dayan <roid@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 11:16:25AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/img-hash.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The error handling dereferences "vport".  There is nothing we can do if
+it is an error pointer except returning the error code.
 
-Patch applied.  Thanks.
+Fixes: 133dcfc577ea ("net/mlx5: E-Switch, Alloc and free unique metadata for match")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
+index 4e55d7225a265..857f6193f3b14 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
+@@ -301,8 +301,7 @@ int mlx5_esw_acl_ingress_vport_bond_update(struct mlx5_eswitch *esw, u16 vport_n
+ 
+ 	if (WARN_ON_ONCE(IS_ERR(vport))) {
+ 		esw_warn(esw->dev, "vport(%d) invalid!\n", vport_num);
+-		err = PTR_ERR(vport);
+-		goto out;
++		return PTR_ERR(vport);
+ 	}
+ 
+ 	esw_acl_ingress_ofld_rules_destroy(esw, vport);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.26.2
