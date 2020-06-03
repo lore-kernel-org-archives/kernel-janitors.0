@@ -1,45 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 08 Jun 2020 12:46:09 +0000
-Subject: Re: [PATCH] ASoC: meson: fix memory leak of links if allocation of ldata fails
-Message-Id: <159162036934.23368.2440967052610831030.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Jun 2020 17:50:25 +0000
+Subject: [PATCH net-next] net: ethernet: dwmac: Fix an error code in imx_dwmac_probe()
+Message-Id: <20200603175025.GA19353@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200604171216.60043-1-colin.king@canonical.com>
-In-Reply-To: <20200604171216.60043-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Colin King <colin.king@canonical.com>, linux-arm-kernel@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Fugang Duan <fugang.duan@nxp.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
 
-On Thu, 4 Jun 2020 18:12:16 +0100, Colin King wrote:
-> Currently if the allocation of ldata fails the error return path
-> does not kfree the allocated links object.  Fix this by adding
-> an error exit return path that performs the necessary kfree'ing.
+The code is return PTR_ERR(NULL) which is zero or success.  We should
+return -ENOMEM instead.
 
-Applied to
+Fixes: 94abdad6974a5 ("net: ethernet: dwmac: add ethernet glue logic for NXP imx8 chip")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: meson: fix memory leak of links if allocation of ldata fails
-      commit: 6e801dc411329aff592fbd48fb116183d0acdb00
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
+index 5010af7dab4af..3c5df5eeed6c8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
+@@ -225,7 +225,7 @@ static int imx_dwmac_probe(struct platform_device *pdev)
+ 
+ 	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
+ 	if (!dwmac)
+-		return PTR_ERR(dwmac);
++		return -ENOMEM;
+ 
+ 	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
+ 	if (IS_ERR(plat_dat))
+-- 
+2.26.2
