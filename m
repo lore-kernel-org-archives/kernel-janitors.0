@@ -1,34 +1,30 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 04 Jun 2020 12:18:35 +0000
-Subject: Re: [PATCH v2] crypto: cavium/nitrox - Fix 'nitrox_get_first_device()' when ndevlist is fully iterat
-Message-Id: <20200604121835.GB24286@gondor.apana.org.au>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 03 Jun 2020 17:30:46 +0000
+Subject: Re: [PATCH] clk: clk-st: Add missed return value checks in st_clk_probe()
+Message-Id: <f0d21bd6-6db7-d643-b662-6ca26efd28ba@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530133537.582843-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200530133537.582843-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, phemadri@marvell.com, jsrikanth@marvell.com, horia.geanta@nxp.com, gustavo@embeddedor.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Chuhong Yuan <hslester96@gmail.com>, linux-clk@vger.kernel.org
+Cc: Akshu Agrawal <Akshu.Agrawal@amd.com>, Daniel Kurtz <djkurtz@chromium.org>, Michael Turquette <mturquette@baylibre.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephen Boyd <sboyd@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, May 30, 2020 at 03:35:37PM +0200, Christophe JAILLET wrote:
-> When a list is completely iterated with 'list_for_each_entry(x, ...)', x is
-> not NULL at the end.
-> 
-> While at it, remove a useless initialization of the ndev variable. It
-> is overridden by 'list_for_each_entry'.
-> 
-> Fixes: f2663872f073 ("crypto: cavium - Register the CNN55XX supported crypto algorithms.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: Do not introduce an extra variable to check if the list has been fully
->     iterated. Test with "if (&ndev->list = &ndevlist)" instead
-> ---
->  drivers/crypto/cavium/nitrox/nitrox_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> st_clk_probe() has not check for clk_hw_register_mux(), clk_hw_register_gate()
+> and devm_clk_hw_register_clkdev().
+> Add the missed checks and return devm_clk_hw_register_clkdev()'s return value
+> to check errors.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+How do you think about another wording variant?
+
+   Return values were not checked after calls of the following functions.
+   - clk_hw_register_mux
+   - clk_hw_register_gate
+   - devm_clk_hw_register_clkdev
+
+   * Thus add error detection and the corresponding exception handling.
+
+   * Return the value from the function call “devm_clk_hw_register_clkdev”
+     at the end of this function implementation.
+
+Regards,
+Markus
