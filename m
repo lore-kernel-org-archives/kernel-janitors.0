@@ -1,36 +1,62 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Jun 2020 18:01:31 +0000
-Subject: Re: [PATCH v2] IB/hfi1: Fix hfi1_netdev_rx_init() error handling
-Message-Id: <20200601180131.GU22511@kadam>
+Date: Wed, 03 Jun 2020 09:06:37 +0000
+Subject: [bug report] crypto/chtls: IPv6 support for inline TLS
+Message-Id: <20200603090637.GA1760819@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BY5PR11MB3958CF61BB1F59A6F6B5234D868F0@BY5PR11MB3958.namprd11.prod.outlook.com>
- <20200530140224.GA1330098@mwanda>
- <20200601141450.GA24045@ziepe.ca>
-In-Reply-To: <20200601141450.GA24045@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>, Grzegorz Andrejczuk <grzegorz.andrejczuk@intel.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 01, 2020 at 11:14:50AM -0300, Jason Gunthorpe wrote:
-> On Sat, May 30, 2020 at 05:02:24PM +0300, Dan Carpenter wrote:
-> > The hfi1_vnic_up() function doesn't check whether hfi1_netdev_rx_init()
-> > returns errors.  In hfi1_vnic_init() we need to change the code to
-> > preserve the error code instead of returning success.
-> > 
-> > Fixes: 2280740f01ae ("IB/hfi1: Virtual Network Interface Controller (VNIC) HW support")
-> > Fixes: 4730f4a6c6b2 ("IB/hfi1: Activate the dummy netdev")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: Add error handling in hfi1_vnic_up() and add second fixes tag
-> > 
-> >  drivers/infiniband/hw/hfi1/vnic_main.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> Applied to for-next with the 'if (rc)' fixup, thanks
+Hello Vinay Kumar Yadav,
 
-Thanks.  I would have resent it, but it's a three day weekend here...
+The patch 6abde0b24122: "crypto/chtls: IPv6 support for inline TLS"
+from Jun 2, 2020, leads to the following static checker warning:
+
+	drivers/crypto/chelsio/chtls/chtls_cm.c:110 chtls_find_netdev()
+	warn: inconsistent indenting
+
+drivers/crypto/chelsio/chtls/chtls_cm.c
+    92  static struct net_device *chtls_find_netdev(struct chtls_dev *cdev,
+    93                                              struct sock *sk)
+    94  {
+    95          struct net_device *ndev = cdev->ports[0];
+    96          struct net_device *temp;
+    97          int addr_type;
+    98  
+    99          switch (sk->sk_family) {
+   100          case PF_INET:
+   101                  if (likely(!inet_sk(sk)->inet_rcv_saddr))
+   102                          return ndev;
+   103                  ndev = ip_dev_find(&init_net, inet_sk(sk)->inet_rcv_saddr);
+   104                  break;
+   105          case PF_INET6:
+   106                  addr_type = ipv6_addr_type(&sk->sk_v6_rcv_saddr);
+   107                  if (likely(addr_type = IPV6_ADDR_ANY))
+   108                          return ndev;
+   109  
+   110          for_each_netdev_rcu(&init_net, temp) {
+
+Probably this should be indented another tab.
+
+   111                  if (ipv6_chk_addr(&init_net, (struct in6_addr *)
+   112                                    &sk->sk_v6_rcv_saddr, temp, 1)) {
+   113                          ndev = temp;
+   114                          break;
+   115                  }
+   116          }
+   117          break;
+   118          default:
+   119                  return NULL;
+   120          }
+   121  
+   122          if (!ndev)
+   123                  return NULL;
+   124  
+   125          if (is_vlan_dev(ndev))
+   126                  return vlan_dev_real_dev(ndev);
+   127          return ndev;
+   128  }
 
 regards,
 dan carpenter
