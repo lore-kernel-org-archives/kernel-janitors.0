@@ -1,28 +1,18 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 27 Jun 2020 12:28:50 +0000
-Subject: =?UTF-8?Q?usb=3a_mtu3=3a_Checking_initialisation_of_the_variable_?= =?UTF-8?B?4oCcbWVw4oCdIGluIHR3by
-Message-Id: <8efdb7aa-1188-e94a-3075-ab1dd30768bb@web.de>
+Date: Wed, 03 Jun 2020 19:30:09 +0000
+Subject: Re: [PATCH] dm zoned: Fix memory leak of newly allocated zone on xa_insert failure
+Message-Id: <6ae5a0f1-68d3-a0f9-e7f0-5c9f008204a8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Colin Ian King <colin.king@canonical.com>, dm-devel@redhat.com
+Cc: Alasdair Kergon <agk@redhat.com>, Damien Le Moal <damien.lemoal@wdc.com>, Hannes Reinecke <hare@suse.de>, Mike Snitzer <snitzer@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+> Currently if an xa_insert fails then there is a memory lead of the
+> recently allocated zone object. =E2=80=A6
 
-A source code analysis approach by the means of the semantic patch language
-(Coccinelle software) pointed an implementation detail out for further
-development considerations.
-
-The functions “mtu3_gadget_ep_set_halt” and “mtu3_gadget_ep_set_wedge” check
-at the beginning if the input parameter “ep” is a null pointer.
-The error code “-EINVAL” will be returned then.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/mtu3/mtu3_gadget.c?id=1590a2e1c681b0991bd42c992cabfd380e0338f2#n371
-https://elixir.bootlin.com/linux/v5.7.2/source/drivers/usb/mtu3/mtu3_gadget.c#L371
-
-Can it be nicer to assign the variable “mep” only after a successful check
-instead of an initialisation before?
+I hope that a typo will be avoided for the final change description.
 
 Regards,
 Markus
