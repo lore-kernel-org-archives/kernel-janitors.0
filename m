@@ -1,43 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Jun 2020 10:19:58 +0000
-Subject: [PATCH] Staging: rtl8723bs: prevent buffer overflow in update_sta_support_rate()
-Message-Id: <20200603101958.GA1845750@mwanda>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Wed, 03 Jun 2020 17:56:18 +0000
+Subject: Re: [PATCH] Bluetooth: hci_qca: Fix an error pointer dereference
+Message-Id: <95074BC2-C7A8-44F7-9C14-0B82E26D05A9@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200529095948.GA1304852@mwanda>
+In-Reply-To: <20200529095948.GA1304852@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Denis Straghkov <d.straghkov@ispras.ru>, Nachammai Karuppiah <nachukannan@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Nishka Dasgupta <nishkadg.linux@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Rocky Liao <rjliao@codeaurora.org>, Johan Hedberg <johan.hedberg@gmail.com>, Bluez mailing list <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The "ie_len" variable is in the 0-255 range and it comes from the
-network.  If it's over NDIS_802_11_LENGTH_RATES_EX (16) then that will
-lead to memory corruption.
+Hi Dan,
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/rtl8723bs/core/rtw_wlan_util.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> When a function like devm_clk_get_optional() function returns both error
+> pointers on error and NULL then the NULL return means that the optional
+> feature is deliberately disabled.  It is a special sort of success and
+> should not trigger an error message.  The surrounding code should be
+> written to check for NULL and not crash.
+> 
+> On the other hand, if we encounter an error, then the probe from should
+> clean up and return a failure.
+> 
+> In this code, if devm_clk_get_optional() returns an error pointer then
+> the kernel will crash inside the call to:
+> 
+> 	clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
+> 
+> The error handling must be updated to prevent that.
+> 
+> Fixes: 77131dfec6af ("Bluetooth: hci_qca: Replace devm_gpiod_get() with devm_gpiod_get_optional()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Commit 77131dfec6af ("Bluetooth: hci_qca: Replace devm_gpiod_get() with
+> devm_gpiod_get_optional()") changed how qcadev->bt_en is handled as
+> well.  From a very strict perspective the new code is buggy because the
+> warnings should only be printed for error pointers, but currently errors
+> are ignored and warnings are printed for NULL.
+> 
+> However this bug does not lead to a crash so I have left it as is.
+> 
+> drivers/bluetooth/hci_qca.c | 18 +++++++++---------
+> 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-index 69bcd172b2987..a3ea7ce3e12e9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-@@ -1824,12 +1824,14 @@ int update_sta_support_rate(struct adapter *padapter, u8 *pvar_ie, uint var_ie_l
- 	pIE = (struct ndis_80211_var_ie *)rtw_get_ie(pvar_ie, _SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
- 	if (!pIE)
- 		return _FAIL;
-+	if (ie_len > sizeof(pmlmeinfo->FW_sta_info[cam_idx].SupportedRates))
-+		return _FAIL;
- 
- 	memcpy(pmlmeinfo->FW_sta_info[cam_idx].SupportedRates, pIE->data, ie_len);
- 	supportRateNum = ie_len;
- 
- 	pIE = (struct ndis_80211_var_ie *)rtw_get_ie(pvar_ie, _EXT_SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
--	if (pIE)
-+	if (pIE && (ie_len <= sizeof(pmlmeinfo->FW_sta_info[cam_idx].SupportedRates) - supportRateNum))
- 		memcpy((pmlmeinfo->FW_sta_info[cam_idx].SupportedRates + supportRateNum), pIE->data, ie_len);
- 
- 	return _SUCCESS;
--- 
-2.26.2
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
