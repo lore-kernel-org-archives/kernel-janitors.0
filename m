@@ -1,26 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 03 Jun 2020 02:31:35 +0000
-Subject: Re: [PATCH] scsi: qedf: remove redundant initialization of variable rc
-Message-Id: <159114947917.26776.1378073901882312431.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Jun 2020 14:39:02 +0000
+Subject: [PATCH][next] RDMA/mlx5: remove duplicated assignment to resp.response_length
+Message-Id: <20200604143902.56021-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200527115242.172344-1-colin.king@canonical.com>
-In-Reply-To: <20200527115242.172344-1-colin.king@canonical.com>
+References: <20200507151610.52636-1-colin.king@canonical.com>
+In-Reply-To: <20200507151610.52636-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.ibm.com>, Colin King <colin.king@canonical.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 27 May 2020 12:52:42 +0100, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The variable rc is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+The assignment to resp.response_length is never read since it is being
+updated again on the next statement. The assignment is redundant so
+removed it.
 
-Applied to 5.8/scsi-queue, thanks!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/mlx5/qp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-[1/1] scsi: qedf: Remove redundant initialization of variable rc
-      https://git.kernel.org/mkp/scsi/c/89523cb8a67c
-
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index 81bf6b975e0e..d61ca85033de 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -4162,8 +4162,6 @@ static int mlx5_ib_modify_dct(struct ib_qp *ibqp, struct ib_qp_attr *attr,
+ 
+ 		if (udata->outlen < min_resp_len)
+ 			return -EINVAL;
+-		resp.response_length = min_resp_len;
+-
+ 		/*
+ 		 * If we don't have enough space for the ECE options,
+ 		 * simply indicate it with resp.response_length.
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.25.1
