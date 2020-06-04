@@ -1,42 +1,33 @@
-From: John Scott Younger <william1noah12@gmail.com>
-Date: Sun, 28 Jun 2020 17:36:25 +0000
-Subject: Your attention to this news update.
-Message-Id: <CANHFD59G4uFO5yyorgcwoL12uyO5uk=dqu1bmCj4nez2uwypCQ@mail.gmail.com>
+From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
+Date: Thu, 04 Jun 2020 19:16:11 +0000
+Subject: RE: [Intel-wired-lan] [PATCH net-next] ice: Fix error return code in ice_add_prof()
+Message-Id: <MWHPR11MB1663790302E561B81C8767078C890@MWHPR11MB1663.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200427121228.12241-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200427121228.12241-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
--- 
-Your attention to this news update.
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Wei Yongjun
+> Sent: Monday, April 27, 2020 5:12 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>
+> Cc: intel-wired-lan@lists.osuosl.org; kernel-janitors@vger.kernel.org; Wei
+> Yongjun <weiyongjun1@huawei.com>; netdev@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH net-next] ice: Fix error return code in
+> ice_add_prof()
+> 
+> Fix to return a error code from the error handling case instead of 0, as done
+> elsewhere in this function.
+> 
+> Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-The report / analysis received from our correspondence shows that you
-have NOT received your PAYMENT, due to administrative injustice from
-unpatriotic and uncivil payment officials. Following the resolution of
-the U.S Department of State, you are mandated to kindly reinstate your
-fund acquisition details for accreditation.
-
-Sequel to the joint /collaborative effort by United Nations and US
-Department of State, to review, nullify and release all STOP ORDER on
-beneficiary transferred sum and consignment HELD at custom port
-authorities. At this juncture, you are advised to forward information
-of agencies that has put a HOLD on your consignment or STOP ORDER on
-your transferred sum.
-
-This office is commission to investigate/rectify ISSUES affecting
-beneficiaries whose payment is HELD/STOP unjustly with the intent of
-demanding un-official fees/levies. Be informed that all administrative
-injustice imposed on beneficiaries by some dubious person(s) has come
-to the knowledge of oversight committee of United Nations and US
-Department of State.
-
-Thus our objective is to resolve all challenges facing release of your
-payment. Therefore get back to my office with the required information
-for assessment.
-
-Our in service,
-
-John Scott Younger
-Human Right Activist
-Tel:- + 44 770 002 8251
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
