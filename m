@@ -1,30 +1,38 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 09 Jun 2020 14:20:09 +0000
-Subject: Re: [PATCH] lib: devres: add a comment about the devm_of_iomap() function
-Message-Id: <CAK8P3a0TivBERWMZcs8Kndb4=Fc41JH6vkxJzMp1FHsazvLfdQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Jun 2020 08:54:36 +0000
+Subject: [PATCH v2 bpf-next] bpf: Fix an error code in check_btf_func()
+Message-Id: <20200604085436.GA943001@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <20200609104642.GA43074@mwanda>
-In-Reply-To: <20200609104642.GA43074@mwanda>
+In-Reply-To: <CAADnVQJPwtan12Htu-0VhvuC3M-o_kbnPpN=SXVC-amn9BcZCw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Aisheng Dong <aisheng.dong@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Morton <akpm@linux-foundation.org>, Tuowen Zhao <ztuowen@gmail.com>, Denis Efremov <efremov@linux.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, BOUGH CHEN <haibo.chen@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 9, 2020 at 12:47 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We recently introduced a bug when we tried to convert of_iomap() to
-> devm_of_iomap().  The problem was that there were two drivers mapping
-> the same io region.  The first driver was using of_iomap() and the
-> second driver was using devm_of_iomap() and the kernel booted fine.
-> When we converted the first drive to use devm_of_iomap() then the second
-> driver failed with -EBUSY and the kernel couldn't boot.
->
-> Let's add a comment to prevent this sort of mistake in the future.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This code returns success if the "info_aux" allocation fails but it
+should return -ENOMEM.
 
-Good idea,
+Fixes: 8c1b6e69dcc1 ("bpf: Compare BTF types of functions arguments with actual types")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style change
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+ kernel/bpf/verifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 5c7bbaac81ef9..34cde841ab681 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7552,7 +7552,7 @@ static int check_btf_func(struct bpf_verifier_env *env,
+ 	const struct btf *btf;
+ 	void __user *urecord;
+ 	u32 prev_offset = 0;
+-	int ret = 0;
++	int ret = -ENOMEM;
+ 
+ 	nfuncs = attr->func_info_cnt;
+ 	if (!nfuncs)
+-- 
+2.26.2
