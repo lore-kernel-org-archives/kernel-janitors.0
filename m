@@ -1,58 +1,71 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 29 Jun 2020 08:10:47 +0000
-Subject: Re: [PATCH 1/2] usb: mtu3: disable USB2 LPM
-Message-Id: <20200629081047.GB1221843@kroah.com>
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Thu, 04 Jun 2020 19:27:05 +0000
+Subject: Re: MAINTAINERS: Wrong ordering in VIRTIO BALLOON
+Message-Id: <20200604152654-mutt-send-email-mst@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593410434-19406-1-git-send-email-chunfeng.yun@mediatek.com>
- <af16d716-8bb3-ea1f-e410-b27443f74c31@web.de>
-In-Reply-To: <af16d716-8bb3-ea1f-e410-b27443f74c31@web.de>
+References: <alpine.DEB.2.21.2005120717260.3701@felia>
+ <bb2eea77-72df-6c53-5397-de057ffc9dd8@redhat.com>
+ <80146d5713f8579a92b4da1e2b7d7626999dd9be.camel@perches.com>
+In-Reply-To: <80146d5713f8579a92b4da1e2b7d7626999dd9be.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>
+Cc: David Hildenbrand <david@redhat.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-On Mon, Jun 29, 2020 at 09:30:58AM +0200, Markus Elfring wrote:
-> > A SuperSpeed device shall include the USB 2.0 extension descriptor
-> > and shall support LPM when operating in USB 2.0 HS mode(see usb3.2
-> > spec9.6.2.1). But we always don't support it, so disable it by
-> > default, otherwise device will enter LPM suspend mode when
-> > connected to Win10 system.
+On Tue, May 12, 2020 at 09:23:45AM -0700, Joe Perches wrote:
+> On Tue, 2020-05-12 at 08:38 +0200, David Hildenbrand wrote:
+> > On 12.05.20 07:21, Lukas Bulwahn wrote:
+> > > Hi David,
+> > > 
+> > > with your commit 6d6b93b9afd8 ("MAINTAINERS: Add myself as virtio-balloon 
+> > > co-maintainer"), visible on next-20200508, ./scripts/checkpatch.pl -f 
+> > > MAINTAINERS complains:
+> > > 
+> > > WARNING: Misordered MAINTAINERS entry - list file patterns in alphabetic order
+> > > #17982: FILE: MAINTAINERS:17982:
+> > > +F:	include/uapi/linux/virtio_balloon.h
+> > > +F:	include/linux/balloon_compaction.h
+> > > 
+> > > This is due to wrong ordering of the entries in your submission. If you 
+> > > would like me to send you a patch fixing that, please just let me know.
+> > > 
+> > > It is a recent addition to checkpatch.pl to report ordering problems in 
+> > > MAINTAINERS, so you might have not seen that at submission time.
+> > 
+> > Thanks for the notification Lukas,
+> > 
+> > b962ee8622d0 ("checkpatch: additional MAINTAINER section entry ordering
+> > checks") is not in Linus' tree yet AFAIKS.
+> > 
+> > I can see that 3b50142d8528 ("MAINTAINERS: sort field names for all
+> > entries") is upstream. I do wonder if we should just do another batch
+> > update after the checkpatch patch is upstream instead, I guess more will
+> > pile up?
+> > 
+> > @mst, joe, what do you prefer?
+> > 
+> > 1. I can resend the original patch.
+> > 2. Lukas can send a fixup that we might want to squash.
+> > 3. We wait until the checkpatch change goes upstream and to a final
+> > batch update.
 > 
-> How do you think about a wording variant like the following?
+> A fixup patch would work.
 > 
->    Change description:
->    A SuperSpeed device shall include the USB 2.0 extension descriptor
->    and shall support Link Power Management when operating in USB 2.0
->    High Speed mode. (See also: USB 3.2 specification 9.6.2.1)
->    But we do not support it generally. Thus disable this functionality
->    by default.
->    Otherwise, the device will enter LPM suspend mode when connected
->    to Win10 system.
+> I think if Linus every once in awhile just before an -rc1 runs
+> scripts/parse-maintainers like:
 > 
+> commit 3b50142d8528 ("MAINTAINERS: sort field names for all entries")
 > 
-> Would you like to add the tag “Fixes” to the commit message?
+> then these sorts of individual patches would not matter much.
 > 
-> Regards,
-> Markus
+> This first time the script was run, I think there was just 1 patch
+> conflict from -next to Linus' tree, and that scripted change was
+> fairly large.
+> 
+> As the changes will generally be smaller in the future, it's unlikely
+> there will be a significant number of conflicts.
+> 
 
-Hi,
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+ok so just send a fixup patch pls.
