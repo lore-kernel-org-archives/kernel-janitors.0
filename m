@@ -1,24 +1,26 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 11 Jun 2020 15:16:02 +0000
-Subject: Re: [PATCH] pktcdvd: remove redundant initialization of variable ret
-Message-Id: <70a77fb7-ccfa-2843-c30b-beb5ba493856@kernel.dk>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 04 Jun 2020 18:48:16 +0000
+Subject: Re: [PATCH] ARM: socfpga: add missing put_device() call in socfpga_setup_ocram_self_refresh()
+Message-Id: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200611143014.925317-1-colin.king@canonical.com>
-In-Reply-To: <20200611143014.925317-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yu Kuai <yukuai3@huawei.com>, linux-arm-kernel@lists.infradead.org
+Cc: Alan Tull <atull@opensource.altera.com>, Dinh Nguyen <dinguyen@kernel.org>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <linux@armlinux.org.uk>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 6/11/20 8:30 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+> if of_find_device_by_node() succeed, socfpga_setup_ocram_self_refresh()
+> doesn't have a corresponding put_device(). Thus add a jump target to fix
+> the exception handling for this function implementation.
 
-Applied, thanks.
+Do you find a previous update suggestion interesting?
 
--- 
-Jens Axboe
+ARM: socfpga: PM: Add missing put_device() call in socfpga_setup_ocram_self_refresh()
+https://lore.kernel.org/linux-arm-kernel/c45a8e00-3fc9-adba-1a46-5f2c4149953e@web.de/
+https://lore.kernel.org/patchwork/patch/1151166/
+https://lkml.org/lkml/2019/11/9/156
+
+Do you propose to adjust the source code a bit more?
+
+Regards,
+Markus
