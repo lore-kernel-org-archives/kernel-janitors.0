@@ -1,8 +1,10 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Thu, 04 Jun 2020 18:48:16 +0000
 Subject: Re: [PATCH] ARM: socfpga: add missing put_device() call in socfpga_setup_ocram_self_refresh()
-Message-Id: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
+Message-Id: <22cf7c59-f689-f475-2170-48df94f671ee@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
+In-Reply-To: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
