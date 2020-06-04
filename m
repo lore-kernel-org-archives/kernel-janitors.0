@@ -1,23 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 04 Jun 2020 22:52:35 +0000
-Subject: Re: [PATCH net-next] net: ethernet: dwmac: Fix an error code in imx_dwmac_probe()
-Message-Id: <20200604.155235.1008812507143457607.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 04 Jun 2020 15:20:58 +0000
+Subject: Re: [PATCH] coccinelle: api: add kzfree script
+Message-Id: <96653281-3812-8b44-0dd8-6e7540a26a89@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603175025.GA19353@mwanda>
-In-Reply-To: <20200603175025.GA19353@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: peppe.cavallaro@st.com, fugang.duan@nxp.com, alexandre.torgue@st.com, joabreu@synopsys.com, kuba@kernel.org, mcoquelin.stm32@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Denis Efremov <efremov@linux.com>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 3 Jun 2020 20:50:25 +0300
+> Check for memset() with 0 followed by kfree().
 
-> The code is return PTR_ERR(NULL) which is zero or success.  We should
-> return -ENOMEM instead.
-> 
-> Fixes: 94abdad6974a5 ("net: ethernet: dwmac: add ethernet glue logic for NXP imx8 chip")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I suggest to simplify the SmPL code a bit like the following.
 
-Applied.
+
+> +virtual context
+> +virtual org
+> +virtual report
+> +virtual patch
+
++virtual context, org, report, patch
+
+
+…
+> +@@
+> +
+> +(
+> +* memset(E, 0, ...);
+> +|
+> +* memset(E, '\0', ...);
+> +)
+> +* kfree(E)@p;
+
++@@
++*memset(E, 0, ...);
++*kfree(E)@p;
+
+
+How does the SmPL asterisk functionality fit to the operation
+modes “org” and “report”?
+
+
+> +@@
+> +
+> +(
+> +- memset(E, 0, ...);
+> +|
+> +- memset(E, '\0', ...);
+> +)
+> +- kfree(E);
+> ++ kzfree(E);
+
++@@
++-memset(E, 0, ...);
++-kfree
+++kzfree
++       (E);
+
+I got the impression that the specification of a SmPL disjunction
+could be omitted because of the technical detail that the isomorphism
+“zero_multiple_format” should handle such an use case already.
+
+Would you like to tolerate any extra source code between these function calls?
+
+Regards,
+Markus
