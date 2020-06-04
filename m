@@ -1,29 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jun 2020 13:25:34 +0000
-Subject: Re: [bug report] mlxsw: spectrum: Adjust headroom buffers for 8x ports
-Message-Id: <20200619132534.GX4151@kadam>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 04 Jun 2020 19:07:55 +0000
+Subject: Re: [PATCH] ARM: imx6: add missing put_device() call in imx6q_suspend_init()
+Message-Id: <cf810c93-297c-c02c-9bba-8c3d097b8e31@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200619100907.GA246319@mwanda>
-In-Reply-To: <20200619100907.GA246319@mwanda>
+References: <5acd7308-f6e1-4b1e-c744-bb2e5fdca1be@web.de>
+In-Reply-To: <5acd7308-f6e1-4b1e-c744-bb2e5fdca1be@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Yu Kuai <yukuai3@huawei.com>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Cc: Anson Huang <Anson.Huang@nxp.com>, Fabio Estevam <festevam@gmail.com>, Russell King <linux@armlinux.org.uk>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Yi Zhang <yi.zhang@huawei.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 19, 2020 at 04:01:47PM +0300, Ido Schimmel wrote:
-> On Fri, Jun 19, 2020 at 01:09:07PM +0300, Dan Carpenter wrote:
-> > Hello Ido Schimmel,
-> > 
-> > The patch 60833d54d56c: "mlxsw: spectrum: Adjust headroom buffers for
-> > 8x ports" from Jun 16, 2020, leads to the following static checker
-> > warning:
-> 
-> Thanks for the report, Dan.
-> 
-> Colin already reported it to me and I have the below patch in my queue
-> to address the issue. WDYT?
+> if of_find_device_by_node() succeed, imx6q_suspend_init() doesn't have a
+> corresponding put_device(). Thus add a jump target to fix the exception
+> handling for this function implementation.
 
-Looks good.  Thanks!
+Do you find a previous update suggestion useful?
 
-regards,
-dan carpenter
+ARM: imx6: Add missing put_device() call in imx6q_suspend_init()
+https://lore.kernel.org/linux-arm-kernel/5acd7308-f6e1-4b1e-c744-bb2e5fdca1be@web.de/
+https://lore.kernel.org/patchwork/patch/1151158/
+https://lkml.org/lkml/2019/11/9/125
+
+Regards,
+Markus
