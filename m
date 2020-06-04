@@ -1,57 +1,34 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 22 Jun 2020 14:25:03 +0000
-Subject: Re: [PATCH v3] nbd: Fix memory leak in nbd_add_socket
-Message-Id: <d53f66d0-a122-017c-3f4a-3947adc13fd8@web.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Thu, 04 Jun 2020 12:18:35 +0000
+Subject: Re: [PATCH v2] crypto: cavium/nitrox - Fix 'nitrox_get_first_device()' when ndevlist is fully iterat
+Message-Id: <20200604121835.GB24286@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200622112001.105047-1-zhengbin13@huawei.com>
-In-Reply-To: <20200622112001.105047-1-zhengbin13@huawei.com>
+References: <20200530133537.582843-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530133537.582843-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zheng Bin <zhengbin13@huawei.com>, Navid Emamdoost <navid.emamdoost@gmail.com>, linux-block@vger.kernel.org
-Cc: nbd@other.debian.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <mccamant@cs.umn.edu>, Qiushi Wu <wu000273@umn.edu>, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Yi Zhang <yi.zhang@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, phemadri@marvell.com, jsrikanth@marvell.com, horia.geanta@nxp.com, gustavo@embeddedor.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> When adding first socket to nbd,   …
+On Sat, May 30, 2020 at 03:35:37PM +0200, Christophe JAILLET wrote:
+> When a list is completely iterated with 'list_for_each_entry(x, ...)', x is
+> not NULL at the end.
+> 
+> While at it, remove a useless initialization of the ndev variable. It
+> is overridden by 'list_for_each_entry'.
+> 
+> Fixes: f2663872f073 ("crypto: cavium - Register the CNN55XX supported crypto algorithms.")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> v2: Do not introduce an extra variable to check if the list has been fully
+>     iterated. Test with "if (&ndev->list = &ndevlist)" instead
+> ---
+>  drivers/crypto/cavium/nitrox/nitrox_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Can the term “network block device” matter for this change description?
-
-
-> … A memory leak will occur
-> then because the function "nbd_config_put" will free "config->socks" only
-> when "config->num_connections" is not zero.
-
-Will an additional imperative wording be helpful for the commit message?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=625d3449788f85569096780592549d0340e9c0c7#n151
-
-Regards,
-Markus
-
-
-…
-> +++ b/drivers/block/nbd.c
-> @@ -1033,25 +1033,26 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
-…
-> +	if (!nsock) {
-> +		err = -ENOMEM;
-> +		goto put_socket;
->  	}
-…
->  	return 0;
-> +
-
-I find that the exception handling can be improved a bit more
-by adding another jump target.
-
-+e_nomem:
-+	err = -ENOMEM;
-
-
-> +put_socket:
-> +	sockfd_put(sock);
-> +	return err;
->  }
-
-Would you like to apply any further fine-tuning?
-
-Regards,
-Markus
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
