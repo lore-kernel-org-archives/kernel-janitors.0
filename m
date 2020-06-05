@@ -1,25 +1,40 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 09 Jun 2020 20:45:39 +0000
-Subject: Re: [PATCH] clk: baikal-t1: remove redundant assignment to variable 'divider'
-Message-Id: <159173553955.242598.16478893358446362532@swboyd.mtv.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2020 11:04:13 +0000
+Subject: [PATCH net] ethtool: linkinfo: remove an unnecessary NULL check
+Message-Id: <20200605110413.GF978434@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200602172435.70282-1-colin.king@canonical.com>
-In-Reply-To: <20200602172435.70282-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Jakub Kicinski <kuba@kernel.org>, Michal Kubecek <mkubecek@suse.cz>, Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Colin King (2020-06-02 10:24:35)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable divider is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+This code generates a Smatch warning:
 
-Applied to clk-next
+    net/ethtool/linkinfo.c:143 ethnl_set_linkinfo()
+    warn: variable dereferenced before check 'info' (see line 119)
+
+Fortunately, the "info" pointer is never NULL so the check can be
+removed.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/ethtool/linkinfo.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/ethtool/linkinfo.c b/net/ethtool/linkinfo.c
+index 677068deb68c0..5eaf173eaaca5 100644
+--- a/net/ethtool/linkinfo.c
++++ b/net/ethtool/linkinfo.c
+@@ -140,8 +140,7 @@ int ethnl_set_linkinfo(struct sk_buff *skb, struct genl_info *info)
+ 
+ 	ret = __ethtool_get_link_ksettings(dev, &ksettings);
+ 	if (ret < 0) {
+-		if (info)
+-			GENL_SET_ERR_MSG(info, "failed to retrieve link settings");
++		GENL_SET_ERR_MSG(info, "failed to retrieve link settings");
+ 		goto out_ops;
+ 	}
+ 	lsettings = &ksettings.base;
+-- 
+2.26.2
