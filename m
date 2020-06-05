@@ -1,45 +1,34 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 10 Jun 2020 13:25:01 +0000
-Subject: Re: [PATCH] hwmon: i5k_amb: remove redundant assignment to variable res
-Message-Id: <20200610132501.GA112976@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2020 11:01:34 +0000
+Subject: [PATCH] ALSA: emu10k1: delete an unnecessary condition
+Message-Id: <20200605110134.GC978434@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200610123638.1133428-1-colin.king@canonical.com>
-In-Reply-To: <20200610123638.1133428-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Hariprasad Kelam <hariprasad.kelam@gmail.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 
-On Wed, Jun 10, 2020 at 01:36:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable res is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The "val" variable is an unsigned int so it's always <= UINT_MAX.  This
+check is always true so it can be removed.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/pci/emu10k1/emu10k1x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/i5k_amb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/i5k_amb.c b/drivers/hwmon/i5k_amb.c
-> index eeac4b04df27..cd5b62905eee 100644
-> --- a/drivers/hwmon/i5k_amb.c
-> +++ b/drivers/hwmon/i5k_amb.c
-> @@ -396,7 +396,7 @@ static int i5k_amb_hwmon_init(struct platform_device *pdev)
->  
->  static int i5k_amb_add(void)
->  {
-> -	int res = -ENODEV;
-> +	int res;
->  
->  	/* only ever going to be one of these */
->  	amb_pdev = platform_device_alloc(DRVNAME, 0);
+diff --git a/sound/pci/emu10k1/emu10k1x.c b/sound/pci/emu10k1/emu10k1x.c
+index ddb7c2ce3f7c9..def8161cde4c2 100644
+--- a/sound/pci/emu10k1/emu10k1x.c
++++ b/sound/pci/emu10k1/emu10k1x.c
+@@ -1040,7 +1040,7 @@ static void snd_emu10k1x_proc_reg_write(struct snd_info_entry *entry,
+ 		if (sscanf(line, "%x %x %x", &reg, &channel_id, &val) != 3)
+ 			continue;
+ 
+-		if (reg < 0x49 && val <= 0xffffffff && channel_id <= 2)
++		if (reg < 0x49 && channel_id <= 2)
+ 			snd_emu10k1x_ptr_write(emu, reg, channel_id, val);
+ 	}
+ }
+-- 
+2.26.2
