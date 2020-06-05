@@ -1,33 +1,65 @@
-From: "Bowers, AndrewX" <andrewx.bowers@intel.com>
-Date: Thu, 04 Jun 2020 19:16:11 +0000
-Subject: RE: [Intel-wired-lan] [PATCH net-next] ice: Fix error return code in ice_add_prof()
-Message-Id: <MWHPR11MB1663790302E561B81C8767078C890@MWHPR11MB1663.namprd11.prod.outlook.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jun 2020 06:43:16 +0000
+Subject: Re: [PATCH v2] coccinelle: api: add kzfree script
+Message-Id: <99e0349e-9392-b610-05b6-8f90986073fa@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200427121228.12241-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427121228.12241-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
-> Wei Yongjun
-> Sent: Monday, April 27, 2020 5:12 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Nguyen, Anthony L
-> <anthony.l.nguyen@intel.com>
-> Cc: intel-wired-lan@lists.osuosl.org; kernel-janitors@vger.kernel.org; Wei
-> Yongjun <weiyongjun1@huawei.com>; netdev@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH net-next] ice: Fix error return code in
-> ice_add_prof()
-> 
-> Fix to return a error code from the error handling case instead of 0, as done
-> elsewhere in this function.
-> 
-> Fixes: 31ad4e4ee1e4 ("ice: Allocate flow profile")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Check for memset()/memset_explicit() with 0 followed by
+> kfree()/vfree()/kvfree().
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Another software evolution will become interesting here.
+
+
+> +/// memset_explicit with 0 followed by kfree
+
+How do you think about to extend this comment?
+
+
+Would you like to take the following SmPL code variants into account?
+
+
+> +virtual context
+> +virtual org
+> +virtual report
+> +virtual patch
+
++virtual context, org, report, patch
+
+
+> +(
+> +- kfree(E);
+> ++ kzfree(E);
+> +|
+> +- vfree(E);
+> ++ kvfree_sensitive(E, size);
+> +|
+> +- kvfree(E);
+> ++ kvfree_sensitive(E, size);
+> +)
+
++(
++-kfree
+++kzfree
++      (E);
++|
++-vfree
+++kvfree_sensitive
++      (E
+++      , size
++      );
++|
++-kvfree
+++kvfree_sensitive
++       (E
+++       , size
++       );
++)
+
+
+Regards,
+Markus
