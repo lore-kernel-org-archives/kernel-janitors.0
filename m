@@ -1,65 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 26 Jun 2020 10:39:59 +0000
-Subject: [PATCH] drm/vmwgfx: Fix two list_for_each loop exit tests
-Message-Id: <20200626103959.GC314359@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jun 2020 10:15:32 +0000
+Subject: Re: ARM: imx6: add missing put_device() call in imx6q_suspend_init()
+Message-Id: <1542979d-f7f6-bcf1-53c3-22b7c076ddc7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cf810c93-297c-c02c-9bba-8c3d097b8e31@web.de>
+ <2ab2cc9f-c720-75ca-e20c-0e4236ff45fd@huawei.com>
+In-Reply-To: <2ab2cc9f-c720-75ca-e20c-0e4236ff45fd@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>
-Cc: Sinclair Yeh <syeh@vmware.com>, David Airlie <airlied@linux.ie>, Roland Scheidegger <sroland@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Yu Kuai <yukuai3@huawei.com>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Cc: Anson Huang <Anson.Huang@nxp.com>, Yi Zhang <yi.zhang@huawei.com>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, Russell King <linux@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>
 
-These if statements are supposed to be true if we ended the
-list_for_each_entry() loops without hitting a break statement but they
-don't work.
+>> Do you find a previous update suggestion useful?
+>>
+>> ARM: imx6: Add missing put_device() call in imx6q_suspend_init()
+>> https://lore.kernel.org/linux-arm-kernel/5acd7308-f6e1-4b1e-c744-bb2e5fd=
+ca1be@web.de/
+>> https://lore.kernel.org/patchwork/patch/1151158/
+>> https://lkml.org/lkml/2019/11/9/125
+=E2=80=A6
+> It is useful indeed.
 
-In the first loop, we increment "i" after the "if (i = unit)" condition
-so we don't necessarily know that "i" is not equal to unit at the end of
-the loop.
+Thanks for your positive feedback.
 
-In the second loop we exit when mode is not pointing to a valid
-drm_display_mode struct so it doesn't make sense to check "mode->type".
 
-Fixes: a278724aa23c ("drm/vmwgfx: Implement fbdev on kms v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I reversed the second condition as well, just because I was copy and
-pasting the exit condition.  Plus I always feel like error handling is
-better than success handling.  If anyone feel strongly, then I can send
-a v2.
+> Although I didn't run cocci script, since it can produce too many false r=
+esult
+> which is hard to filter out.
 
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Would you like to clarify any corresponding software analysis options?
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-index 3c97654b5a43..44168a7d7b44 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@ -2576,7 +2576,7 @@ int vmw_kms_fbdev_init_data(struct vmw_private *dev_priv,
- 		++i;
- 	}
- 
--	if (i != unit) {
-+	if (&con->head = &dev_priv->dev->mode_config.connector_list) {
- 		DRM_ERROR("Could not find initial display unit.\n");
- 		ret = -EINVAL;
- 		goto out_unlock;
-@@ -2600,13 +2600,13 @@ int vmw_kms_fbdev_init_data(struct vmw_private *dev_priv,
- 			break;
- 	}
- 
--	if (mode->type & DRM_MODE_TYPE_PREFERRED)
--		*p_mode = mode;
--	else {
-+	if (&mode->head = &con->modes) {
- 		WARN_ONCE(true, "Could not find initial preferred mode.\n");
- 		*p_mode = list_first_entry(&con->modes,
- 					   struct drm_display_mode,
- 					   head);
-+	} else {
-+		*p_mode = mode;
- 	}
- 
-  out_unlock:
--- 
-2.27.0
+
+> BTW, I see you haver done the work already, I guess I won't send any patc=
+hes
+> related to 'missing put_device after of_find_device_by_node()'.
+
+You may continue also with contributions in such a direction.
+I would like to point out that other developers occasionally got into the m=
+ood
+to improve implementation details in similar ways already.
+
+
+> Any idea why these pathes didn't get applied ?
+
+I can make assumptions about the reasons for the possibly questionable hand=
+ling
+of such patches.
+
+Regards,
+Markus
