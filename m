@@ -1,50 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 29 Jun 2020 18:15:28 +0000
-Subject: Re: [PATCH] MAINTAINERS: remove obsolete entry after file renaming
-Message-Id: <159345452820.54333.17324184729359258423.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2020 11:07:36 +0000
+Subject: [PATCH] khugepaged: selftests: fix timeout condition in wait_for_scan()
+Message-Id: <20200605110736.GH978434@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200628180229.5068-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200628180229.5068-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seth Forshee <seth.forshee@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Support Opensource <support.opensource@diasemi.com>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+To: Shuah Khan <shuah@kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Zi Yan <ziy@nvidia.com>, William Kucharski <william.kucharski@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Yang Shi <yang.shi@linux.alibaba.com>, John Hubbard <jhubbard@nvidia.com>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 28 Jun 2020 20:02:29 +0200, Lukas Bulwahn wrote:
-> Commit f16861b12fa0 ("regulator: rename da903x to da903x-regulator") missed
-> to adjust the DIALOG SEMICONDUCTOR DRIVERS section in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches    F:    drivers/regulator/da903x.c
-> 
-> [...]
+The loop exits with "timeout" set to -1 and not to 0 so the test needs
+to be fixed.
 
-Applied to
+Fixes: e7b592f6caca ("khugepaged: add self test")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ tools/testing/selftests/vm/khugepaged.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] MAINTAINERS: remove obsolete entry after file renaming
-      commit: 412847fb47336c58885ac6231a5f34ac7ac862a0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
+index 51b89cedd09d1..8b75821302a79 100644
+--- a/tools/testing/selftests/vm/khugepaged.c
++++ b/tools/testing/selftests/vm/khugepaged.c
+@@ -502,7 +502,7 @@ static bool wait_for_scan(const char *msg, char *p)
+ 
+ 	madvise(p, hpage_pmd_size, MADV_NOHUGEPAGE);
+ 
+-	return !timeout;
++	return timeout = -1;
+ }
+ 
+ static void alloc_at_fault(void)
+-- 
+2.26.2
