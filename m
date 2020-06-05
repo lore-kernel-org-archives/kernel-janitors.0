@@ -1,26 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 10 Jun 2020 02:02:44 +0000
-Subject: Re: [PATCH] cxlflash: remove an unnecessary NULL check
-Message-Id: <159175452258.16072.8552277193377320754.b4-ty@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2020 11:00:20 +0000
+Subject: [PATCH] soc: xilinx: Fix error code in zynqmp_pm_probe()
+Message-Id: <20200605110020.GA978434@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200605110258.GD978434@mwanda>
-In-Reply-To: <20200605110258.GD978434@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>, Dan Carpenter <dan.carpenter@oracle.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.ibm.com>, linux-kernel@vger.kernel.org, Uma Krishnan <ukrishn@linux.ibm.com>, linux-scsi@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>, Tejas Patel <tejas.patel@xilinx.com>
+Cc: Rajan Vaja <rajan.vaja@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jolly Shah <jolly.shah@xilinx.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, 5 Jun 2020 14:02:58 +0300, Dan Carpenter wrote:
+This should be returning PTR_ERR() but it returns IS_ERR() instead.
 
-> The "cmd" pointer was already dereferenced a couple lines earlier so
-> this NULL check is too late.  Fortunately, the pointer can never be NULL
-> and the check can be removed.
+Fixes: ffdbae28d9d1 ("drivers: soc: xilinx: Use mailbox IPI callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soc/xilinx/zynqmp_power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 5.8/scsi-queue, thanks!
-
-[1/1] scsi: cxlflash: Remove an unnecessary NULL check
-      https://git.kernel.org/mkp/scsi/c/89dd9ce784fb
-
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index 31ff49fcd078b..c556623dae024 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -205,7 +205,7 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
+ 		rx_chan = mbox_request_channel_byname(client, "rx");
+ 		if (IS_ERR(rx_chan)) {
+ 			dev_err(&pdev->dev, "Failed to request rx channel\n");
+-			return IS_ERR(rx_chan);
++			return PTR_ERR(rx_chan);
+ 		}
+ 	} else if (of_find_property(pdev->dev.of_node, "interrupts", NULL)) {
+ 		irq = platform_get_irq(pdev, 0);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.26.2
