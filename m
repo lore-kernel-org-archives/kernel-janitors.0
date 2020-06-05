@@ -1,26 +1,32 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 27 Jun 2020 03:09:22 +0000
-Subject: Re: [PATCH] scsi: cumana_2: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <159322718419.11145.4815572344428827274.b4-ty@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 05 Jun 2020 11:40:37 +0000
+Subject: Re: block: Fix use-after-free in blkdev_get()
+Message-Id: <63e57552-ab95-7bb4-b4f1-70a307b6381d@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530073555.577414-1-christophe.jaillet@wanadoo.fr>
- <20200625204730.943520-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200625204730.943520-1-christophe.jaillet@wanadoo.fr>
+References: <88676ff2-cb7e-70ec-4421-ecf8318990b1@web.de>
+ <5fa658bf-3028-9b5c-30cc-dbdef6bf8f7a@huawei.com>
+ <20200605094353.GS30374@kadam> <2ee6f2f7-eaec-e748-bead-0ad59f4c378b@web.de>
+ <20200605111039.GL22511@kadam>
+In-Reply-To: <20200605111039.GL22511@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.ibm.com, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Jason Yan <yanaijie@huawei.com>, hulkci@huawei.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
 
-On Thu, 25 Jun 2020 22:47:30 +0200, Christophe JAILLET wrote:
+>> I am trying to contribute a bit of patch review as usual.
+>
+> We have asked you again and again to stop commenting on commit messages.
 
-> The dev_id used in 'request_irq()' and 'free_irq()' should match.
-> Use 'info' in both cases.
+I am going to continue with constructive feedback at some places.
 
-Applied to 5.9/scsi-queue, thanks!
 
-[1/1] scsi: cumana_2: Fix different dev_id between request_irq() and free_irq()
-      https://git.kernel.org/mkp/scsi/c/040ab9c4fd00
+> New kernel developers have emailed me privately to say that your review
+> comments confused and discouraged them.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Did these contributors not dare to ask me directly about mentioned details?
+
+Some developers found parts of my reviews helpful, didn't they?
+
+Regards,
+Markus
