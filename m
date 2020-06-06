@@ -1,37 +1,31 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 04 Jun 2020 16:08:05 +0000
+Date: Sat, 06 Jun 2020 06:00:26 +0000
 Subject: Re: coccinelle: api: add kzfree script
-Message-Id: <e814fbbe-37a9-a059-fcbb-64cebba4c8e2@web.de>
+Message-Id: <e10d3917-da30-94d6-9f41-b0343daf3e23@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <96653281-3812-8b44-0dd8-6e7540a26a89@web.de>
- <alpine.DEB.2.21.2006041755360.2577@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2006041755360.2577@hadrien>
+References: <e814fbbe-37a9-a059-fcbb-64cebba4c8e2@web.de>
+In-Reply-To: <e814fbbe-37a9-a059-fcbb-64cebba4c8e2@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>> +virtual context
->>> +virtual org
->>> +virtual report
->>> +virtual patch
->>
->> +virtual context, org, report, patch
->
-> This is pointless.
+> Is avoiding transforming the case where E is not verified to be a pointer a concern?
 
-I find the proposed SmPL code variant more succinct.
+I imagine that answers to this question have got consequences also on
+the confidence level for such SmPL scripts.
+The desire and requirement to specify data type restrictions (for expressions)
+can influence data processing efforts in significant ways.
 
+* If it would be accepted to choose a simpler source code search approach,
+  there are corresponding risks to consider.
 
->> How does the SmPL asterisk functionality fit to the operation
->> modes “org” and “report”?
->
-> make coccicheck uses the option --no-show-diff for the org and report modes.
-
-Can it be nicer to avoid the usage of specific functionality
-in the SmPL script directly?
-Should the corresponding SmPL rule dependencies become clearer?
+* If you would like to reduce the general possibility for false positives
+  according to advanced software analysis, the amount of data processing
+  will increase because information from header files will probably be needed.
+  The run time characteristics will become more interesting then.
+  Additional program execution parameters will be relevant for this use case.
 
 Regards,
 Markus
