@@ -1,44 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 24 Jun 2020 16:39:57 +0000
-Subject: [PATCH] staging: most: avoid null pointer dereference when iface is null
-Message-Id: <20200624163957.11676-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 07 Jun 2020 06:42:42 +0000
+Subject: Re: Coccinelle: Improving software components around usage of SmPL disjunctions
+Message-Id: <e06c858b-80fe-9d7c-be48-882162a414fe@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <99ed463c-b7ba-0400-7cf7-5bcc1992baef@web.de>
+ <alpine.DEB.2.21.2006060944320.2578@hadrien>
+ <51a176d4-8c59-5da1-b4d2-c97b17b691a7@web.de>
+ <alpine.DEB.2.21.2006061307020.2578@hadrien>
+ <bf698c44-4384-e471-3ff0-e38587140b98@web.de>
+In-Reply-To: <bf698c44-4384-e471-3ff0-e38587140b98@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+>> But hiding information that could be apparent to the SmPL compiler
+>> and could be used to improve the performance of the matching
+>> process is not one of them.
+>
+> Will any software extensions become possible also in this area?
 
-In the case where the pointer iface is null then the reporting of this
-error will dereference iface when printing an error message causing which
-is not ideal.  Since the majority of callers to most_register_interface
-report an error when -EINVAL is returned a simple fix is to just remove
-the error message, I doubt it will be missed.
+You pointed out that SmPL disjunctions can trigger specific consequences
+according to functionality which is different from SmPL constraints.
+Both application areas support data processing for function name lists
+to some degree.
+Each element of a SmPL disjunction refers to a fragment of a detailed
+source code search pattern. We are discussing use cases where a search
+pattern is occasionally restricted in the way that only identifiers
+should be found at a specific place.
 
-Addresses-Coverity: ("Dereference after null check")
-Fixes: 57562a72414c ("Staging: most: add MOST driver's core module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/most/core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+* Does this detail provide the opportunity to improve the corresponding
+  software any more?
 
-diff --git a/drivers/most/core.c b/drivers/most/core.c
-index f781c46cd4af..353ab277cbc6 100644
---- a/drivers/most/core.c
-+++ b/drivers/most/core.c
-@@ -1283,10 +1283,8 @@ int most_register_interface(struct most_interface *iface)
- 	struct most_channel *c;
- 
- 	if (!iface || !iface->enqueue || !iface->configure ||
--	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS)) {
--		dev_err(iface->dev, "Bad interface or channel overflow\n");
-+	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS))
- 		return -EINVAL;
--	}
- 
- 	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
--- 
-2.27.0
+* Can a feature request like “Working with variables for case match
+  identification by SmPL disjunctions” become more interesting?
+  https://github.com/coccinelle/coccinelle/issues/159
+
+Regards,
+Markus
