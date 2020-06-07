@@ -1,206 +1,387 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 29 Jun 2020 20:29:26 +0000
-Subject: Re: [PATCH v2] coresight: cti: Fix error handling in probe
-Message-Id: <20200629202926.GA3732655@xps15>
+From: "Rodolfo C. Villordo" <rodolfovillordo@gmail.com>
+Date: Sun, 07 Jun 2020 22:41:56 +0000
+Subject: Forest Bond <forest@alittletooquiet.net>,Greg Kroah-Hartman <gregkh@linuxfoundation.org>,devel@drive
+Message-Id: <20200607224156.GA24090@ip-172-31-24-31.ec2.internal>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAJ9a7Vjn-1gvOY0h5eiffXgqiNu4rz=Z18hgV33WExGnLEV-nA@mail.gmail.com>
- <20200617171549.GA9686@kadam>
-In-Reply-To: <20200617171549.GA9686@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>
+To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rodolfovillordo@gmail.com
 
-On Wed, Jun 17, 2020 at 08:15:50PM +0300, Dan Carpenter wrote:
-> There were a couple problems with error handling in the probe function:
-> 1)  If the "drvdata" allocation failed then it lead to a NULL
->     dereference.
-> 2)  On several error paths we decremented "nr_cti_cpu" before it was
->     incremented which lead to a reference counting bug.
-> 
-> There were also some parts of the error handling which were not bugs but
-> were messy.  The error handling was confusing to read.  It printed some
-> unnecessary error messages.
-> 
-> The simplest way to fix these problems was to create a cti_pm_setup()
-> function that did all the power management setup in one go.  That way
-> when we call cti_pm_release() we don't have to deal with the
-> complications of a partially configured power management config.
-> 
-> I reversed the "if (drvdata->ctidev.cpu >= 0)" condition in cti_pm_release()
-> so that it mirros the new cti_pm_setup() function.
-> 
-> Fixes: 6a0953ce7de9 ("coresight: cti: Add CPU idle pm notifer to CTI devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: I accidentally introduced a bug in cti_pm_release() in v1.
+Multiple line over 80 characters fixes by splitting in multiple lines.
+Warning found by checkpatch.pl
 
-Thanks for the cleanup.  I'll send this to Greg for a 5.8 fixup.
+Signed-off-by: Rodolfo C. Villordo <rodolfovillordo@gmail.com>
+---
+ drivers/staging/vt6655/rxtx.c | 225 ++++++++++++++++++++++++----------
+ 1 file changed, 162 insertions(+), 63 deletions(-)
 
-Regards,
-Mathieu
-
-> 
->  drivers/hwtracing/coresight/coresight-cti.c | 96 ++++++++++++---------
->  1 file changed, 54 insertions(+), 42 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cti.c b/drivers/hwtracing/coresight/coresight-cti.c
-> index 40387d58c8e7..d2da5bf9f552 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti.c
-> @@ -747,17 +747,50 @@ static int cti_dying_cpu(unsigned int cpu)
->  	return 0;
->  }
->  
-> +static int cti_pm_setup(struct cti_drvdata *drvdata)
-> +{
-> +	int ret;
-> +
-> +	if (drvdata->ctidev.cpu = -1)
-> +		return 0;
-> +
-> +	if (nr_cti_cpu)
-> +		goto done;
-> +
-> +	cpus_read_lock();
-> +	ret = cpuhp_setup_state_nocalls_cpuslocked(
-> +			CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
-> +			"arm/coresight_cti:starting",
-> +			cti_starting_cpu, cti_dying_cpu);
-> +	if (ret) {
-> +		cpus_read_unlock();
-> +		return ret;
-> +	}
-> +
-> +	ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
-> +	cpus_read_unlock();
-> +	if (ret) {
-> +		cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
-> +		return ret;
-> +	}
-> +
-> +done:
-> +	nr_cti_cpu++;
-> +	cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
-> +
-> +	return 0;
-> +}
-> +
->  /* release PM registrations */
->  static void cti_pm_release(struct cti_drvdata *drvdata)
->  {
-> -	if (drvdata->ctidev.cpu >= 0) {
-> -		if (--nr_cti_cpu = 0) {
-> -			cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
-> +	if (drvdata->ctidev.cpu = -1)
-> +		return;
->  
-> -			cpuhp_remove_state_nocalls(
-> -				CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
-> -		}
-> -		cti_cpu_drvdata[drvdata->ctidev.cpu] = NULL;
-> +	cti_cpu_drvdata[drvdata->ctidev.cpu] = NULL;
-> +	if (--nr_cti_cpu = 0) {
-> +		cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
-> +		cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
->  	}
->  }
->  
-> @@ -823,19 +856,14 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->  
->  	/* driver data*/
->  	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata) {
-> -		ret = -ENOMEM;
-> -		dev_info(dev, "%s, mem err\n", __func__);
-> -		goto err_out;
-> -	}
-> +	if (!drvdata)
-> +		return -ENOMEM;
->  
->  	/* Validity for the resource is already checked by the AMBA core */
->  	base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(base)) {
-> -		ret = PTR_ERR(base);
-> -		dev_err(dev, "%s, remap err\n", __func__);
-> -		goto err_out;
-> -	}
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
->  	drvdata->base = base;
->  
->  	dev_set_drvdata(dev, drvdata);
-> @@ -854,8 +882,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->  	pdata = coresight_cti_get_platform_data(dev);
->  	if (IS_ERR(pdata)) {
->  		dev_err(dev, "coresight_cti_get_platform_data err\n");
-> -		ret =  PTR_ERR(pdata);
-> -		goto err_out;
-> +		return  PTR_ERR(pdata);
->  	}
->  
->  	/* default to powered - could change on PM notifications */
-> @@ -867,35 +894,20 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->  					       drvdata->ctidev.cpu);
->  	else
->  		cti_desc.name = coresight_alloc_device_name(&cti_sys_devs, dev);
-> -	if (!cti_desc.name) {
-> -		ret = -ENOMEM;
-> -		goto err_out;
-> -	}
-> +	if (!cti_desc.name)
-> +		return -ENOMEM;
->  
->  	/* setup CPU power management handling for CPU bound CTI devices. */
-> -	if (drvdata->ctidev.cpu >= 0) {
-> -		cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
-> -		if (!nr_cti_cpu++) {
-> -			cpus_read_lock();
-> -			ret = cpuhp_setup_state_nocalls_cpuslocked(
-> -				CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
-> -				"arm/coresight_cti:starting",
-> -				cti_starting_cpu, cti_dying_cpu);
-> -
-> -			if (!ret)
-> -				ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
-> -			cpus_read_unlock();
-> -			if (ret)
-> -				goto err_out;
-> -		}
-> -	}
-> +	ret = cti_pm_setup(drvdata);
-> +	if (ret)
-> +		return ret;
->  
->  	/* create dynamic attributes for connections */
->  	ret = cti_create_cons_sysfs(dev, drvdata);
->  	if (ret) {
->  		dev_err(dev, "%s: create dynamic sysfs entries failed\n",
->  			cti_desc.name);
-> -		goto err_out;
-> +		goto pm_release;
->  	}
->  
->  	/* set up coresight component description */
-> @@ -908,7 +920,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->  	drvdata->csdev = coresight_register(&cti_desc);
->  	if (IS_ERR(drvdata->csdev)) {
->  		ret = PTR_ERR(drvdata->csdev);
-> -		goto err_out;
-> +		goto pm_release;
->  	}
->  
->  	/* add to list of CTI devices */
-> @@ -927,7 +939,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->  	dev_info(&drvdata->csdev->dev, "CTI initialized\n");
->  	return 0;
->  
-> -err_out:
-> +pm_release:
->  	cti_pm_release(drvdata);
->  	return ret;
->  }
-> -- 
-> 2.27.0
+diff --git a/drivers/staging/vt6655/rxtx.c b/drivers/staging/vt6655/rxtx.c
+index cfab64d2b312..30ea29ea70cf 100644
+--- a/drivers/staging/vt6655/rxtx.c
++++ b/drivers/staging/vt6655/rxtx.c
+@@ -165,7 +165,8 @@ s_uGetTxRsvTime(
+ {
+ 	unsigned int uDataTime, uAckTime;
+ 
+-	uDataTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, cbFrameLength, wRate);
++	uDataTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++				      cbFrameLength, wRate);
+ 
+ 	if (!bNeedAck)
+ 		return uDataTime;
+@@ -206,28 +207,39 @@ s_uGetRTSCTSRsvTime(
+ 	unsigned int uAckTime = 0;
+ 	unsigned int uDataTime = 0;
+ 
+-	uDataTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, cbFrameLength, wCurrentRate);
++	uDataTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++				      cbFrameLength, wCurrentRate);
+ 	if (byRTSRsvType = 0) { /* RTSTxRrvTime_bb */
+-		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 20, pDevice->byTopCCKBasicRate);
+-		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
++		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     20, pDevice->byTopCCKBasicRate);
++		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
+ 		uCTSTime = uAckTime;
+ 	} else if (byRTSRsvType = 1) { /* RTSTxRrvTime_ba, only in 2.4GHZ */
+-		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 20, pDevice->byTopCCKBasicRate);
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
++		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     20, pDevice->byTopCCKBasicRate);
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
+ 	} else if (byRTSRsvType = 2) { /* RTSTxRrvTime_aa */
+-		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 20, pDevice->byTopOFDMBasicRate);
+-		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
++		uRTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     20, pDevice->byTopOFDMBasicRate);
++		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
+ 		uCTSTime = uAckTime;
+ 	} else if (byRTSRsvType = 3) { /* CTSTxRrvTime_ba, only in 2.4GHZ */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		uAckTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
+ 		uRrvTime = uCTSTime + uAckTime + uDataTime + 2 * pDevice->uSIFS;
+ 		return cpu_to_le16((u16)uRrvTime);
+ 	}
+ 
+ 	/* RTSRrvTime */
+-	uRrvTime = uRTSTime + uCTSTime + uAckTime + uDataTime + 3 * pDevice->uSIFS;
++	uRrvTime = uRTSTime + uCTSTime + uAckTime + uDataTime
++			+ 3 * pDevice->uSIFS;
+ 	return cpu_to_le16((u16)uRrvTime);
+ }
+ 
+@@ -350,72 +362,102 @@ s_uGetRTSCTSDuration(
+ 
+ 	switch (byDurType) {
+ 	case RTSDUR_BB:    /* RTSDuration_bb */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wRate, bNeedAck);
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		uDurTime = uCTSTime + 2 * pDevice->uSIFS
++				+ s_uGetTxRsvTime(pDevice, byPktType,
++						  cbFrameLength, wRate,
++						  bNeedAck);
+ 		break;
+ 
+ 	case RTSDUR_BA:    /* RTSDuration_ba */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wRate, bNeedAck);
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		uDurTime = uCTSTime + 2 * pDevice->uSIFS
++				+ s_uGetTxRsvTime(pDevice, byPktType,
++						  cbFrameLength, wRate,
++						  bNeedAck);
+ 		break;
+ 
+ 	case RTSDUR_AA:    /* RTSDuration_aa */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
+-		uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wRate, bNeedAck);
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
++		uDurTime = uCTSTime + 2 * pDevice->uSIFS
++				+ s_uGetTxRsvTime(pDevice, byPktType,
++						  cbFrameLength, wRate,
++						  bNeedAck);
+ 		break;
+ 
+ 	case CTSDUR_BA:    /* CTSDuration_ba */
+-		uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wRate, bNeedAck);
++		uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType,
++							    cbFrameLength,
++							    wRate, bNeedAck);
+ 		break;
+ 
+ 	case RTSDUR_BA_F0: /* RTSDuration_ba_f0 */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE0][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE0][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+ 
+ 	case RTSDUR_AA_F0: /* RTSDuration_aa_f0 */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE0][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE0][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+ 
+ 	case RTSDUR_BA_F1: /* RTSDuration_ba_f1 */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopCCKBasicRate);
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopCCKBasicRate);
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2*pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE1][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE1][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+ 
+ 	case RTSDUR_AA_F1: /* RTSDuration_aa_f1 */
+-		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType, 14, pDevice->byTopOFDMBasicRate);
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		uCTSTime = bb_get_frame_time(pDevice->byPreambleType, byPktType,
++					     14, pDevice->byTopOFDMBasicRate);
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE1][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = uCTSTime + 2 * pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE1][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+ 
+ 	case CTSDUR_BA_F0: /* CTSDuration_ba_f0 */
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE0][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE0][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+ 
+ 	case CTSDUR_BA_F1: /* CTSDuration_ba_f1 */
+-		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		if ((byFBOption = AUTO_FB_0) && (wRate >= RATE_18M) &&
++		    (wRate <= RATE_54M))
+ 			uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt0[FB_RATE1][wRate-RATE_18M], bNeedAck);
+-		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) && (wRate <= RATE_54M))
++		else if ((byFBOption = AUTO_FB_1) && (wRate >= RATE_18M) &&
++			 (wRate <= RATE_54M))
+ 			uDurTime = pDevice->uSIFS + s_uGetTxRsvTime(pDevice, byPktType, cbFrameLength, wFB_Opt1[FB_RATE1][wRate-RATE_18M], bNeedAck);
+ 
+ 		break;
+@@ -459,7 +501,8 @@ s_uFillDataHead(
+ 					  PK_TYPE_11B, &buf->b);
+ 
+ 			if (is_pspoll) {
+-				__le16 dur = cpu_to_le16(pDevice->current_aid | BIT(14) | BIT(15));
++				__le16 dur = cpu_to_le16(pDevice->current_aid |
++							 BIT(14) | BIT(15));
+ 
+ 				buf->duration_a = dur;
+ 				buf->duration_b = dur;
+@@ -477,8 +520,11 @@ s_uFillDataHead(
+ 									    uMACfragNum, byFBOption));
+ 			}
+ 
+-			buf->time_stamp_off_a = vnt_time_stamp_off(pDevice, wCurrentRate);
+-			buf->time_stamp_off_b = vnt_time_stamp_off(pDevice, pDevice->byTopCCKBasicRate);
++			buf->time_stamp_off_a +				vnt_time_stamp_off(pDevice, wCurrentRate);
++			buf->time_stamp_off_b +				vnt_time_stamp_off(pDevice,
++						   pDevice->byTopCCKBasicRate);
+ 
+ 			return buf->duration_a;
+ 		} else {
+@@ -501,8 +547,11 @@ s_uFillDataHead(
+ 			buf->duration_a_f1 = cpu_to_le16((u16)s_uGetDataDuration(pDevice, DATADUR_A_F1, cbFrameLength, byPktType,
+ 										 wCurrentRate, bNeedAck, uFragIdx, cbLastFragmentSize, uMACfragNum, byFBOption));
+ 
+-			buf->time_stamp_off_a = vnt_time_stamp_off(pDevice, wCurrentRate);
+-			buf->time_stamp_off_b = vnt_time_stamp_off(pDevice, pDevice->byTopCCKBasicRate);
++			buf->time_stamp_off_a +				vnt_time_stamp_off(pDevice, wCurrentRate);
++			buf->time_stamp_off_b +				vnt_time_stamp_off(pDevice,
++						   pDevice->byTopCCKBasicRate);
+ 
+ 			return buf->duration_a;
+ 		} /* if (byFBOption = AUTO_FB_NONE) */
+@@ -530,7 +579,8 @@ s_uFillDataHead(
+ 					  byPktType, &buf->ab);
+ 
+ 			if (is_pspoll) {
+-				__le16 dur = cpu_to_le16(pDevice->current_aid | BIT(14) | BIT(15));
++				__le16 dur = cpu_to_le16(pDevice->current_aid |
++							 BIT(14) | BIT(15));
+ 
+ 				buf->duration = dur;
+ 			} else {
+@@ -542,7 +592,8 @@ s_uFillDataHead(
+ 									    byFBOption));
+ 			}
+ 
+-			buf->time_stamp_off = vnt_time_stamp_off(pDevice, wCurrentRate);
++			buf->time_stamp_off +				vnt_time_stamp_off(pDevice, wCurrentRate);
+ 			return buf->duration;
+ 		}
+ 	} else {
+@@ -552,7 +603,8 @@ s_uFillDataHead(
+ 				  byPktType, &buf->ab);
+ 
+ 		if (is_pspoll) {
+-			__le16 dur = cpu_to_le16(pDevice->current_aid | BIT(14) | BIT(15));
++			__le16 dur = cpu_to_le16(pDevice->current_aid |
++						 BIT(14) | BIT(15));
+ 
+ 			buf->duration = dur;
+ 		} else {
+@@ -792,7 +844,8 @@ s_vFillCTSHead(
+ 	}
+ 
+ 	if (byPktType = PK_TYPE_11GB || byPktType = PK_TYPE_11GA) {
+-		if (byFBOption != AUTO_FB_NONE && uDMAIdx != TYPE_ATIMDMA && uDMAIdx != TYPE_BEACONDMA) {
++		if (byFBOption != AUTO_FB_NONE && uDMAIdx != TYPE_ATIMDMA &&
++		    uDMAIdx != TYPE_BEACONDMA) {
+ 			/* Auto Fall back */
+ 			struct vnt_cts_fb *buf = pvCTS;
+ 			/* Get SignalField, ServiceField & Length */
+@@ -921,50 +974,96 @@ s_vGenerateTxParameter(
+ 			/* Fill RsvTime */
+ 			struct vnt_rrv_time_rts *buf = pvRrvTime;
+ 
+-			buf->rts_rrv_time_aa = s_uGetRTSCTSRsvTime(pDevice, 2, byPktType, cbFrameSize, wCurrentRate);
+-			buf->rts_rrv_time_ba = s_uGetRTSCTSRsvTime(pDevice, 1, byPktType, cbFrameSize, wCurrentRate);
+-			buf->rts_rrv_time_bb = s_uGetRTSCTSRsvTime(pDevice, 0, byPktType, cbFrameSize, wCurrentRate);
+-			buf->rrv_time_a = vnt_rxtx_rsvtime_le16(pDevice, byPktType, cbFrameSize, wCurrentRate, bNeedACK);
+-			buf->rrv_time_b = vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B, cbFrameSize, pDevice->byTopCCKBasicRate, bNeedACK);
+-
+-			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize, bNeedACK, bDisCRC, psEthHeader, wCurrentRate, byFBOption);
++			buf->rts_rrv_time_aa +				s_uGetRTSCTSRsvTime(pDevice, 2, byPktType,
++						    cbFrameSize, wCurrentRate);
++			buf->rts_rrv_time_ba +				s_uGetRTSCTSRsvTime(pDevice, 1, byPktType,
++						    cbFrameSize, wCurrentRate);
++			buf->rts_rrv_time_bb +				s_uGetRTSCTSRsvTime(pDevice, 0, byPktType,
++						    cbFrameSize, wCurrentRate);
++			buf->rrv_time_a +				vnt_rxtx_rsvtime_le16(pDevice, byPktType,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
++			buf->rrv_time_b +				vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B,
++						      cbFrameSize,
++						      pDevice->byTopCCKBasicRate,
++						      bNeedACK);
++
++			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize,
++				       bNeedACK, bDisCRC, psEthHeader,
++				       wCurrentRate, byFBOption);
+ 		} else {/* RTS_needless, PCF mode */
+ 			struct vnt_rrv_time_cts *buf = pvRrvTime;
+ 
+-			buf->rrv_time_a = vnt_rxtx_rsvtime_le16(pDevice, byPktType, cbFrameSize, wCurrentRate, bNeedACK);
+-			buf->rrv_time_b = vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B, cbFrameSize, pDevice->byTopCCKBasicRate, bNeedACK);
+-			buf->cts_rrv_time_ba = s_uGetRTSCTSRsvTime(pDevice, 3, byPktType, cbFrameSize, wCurrentRate);
++			buf->rrv_time_a +				vnt_rxtx_rsvtime_le16(pDevice, byPktType,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
++			buf->rrv_time_b +				vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B,
++						      cbFrameSize,
++						      pDevice->byTopCCKBasicRate,
++						      bNeedACK);
++			buf->cts_rrv_time_ba +				s_uGetRTSCTSRsvTime(pDevice, 3, byPktType,
++						    cbFrameSize, wCurrentRate);
+ 
+ 			/* Fill CTS */
+-			s_vFillCTSHead(pDevice, uDMAIdx, byPktType, pvCTS, cbFrameSize, bNeedACK, bDisCRC, wCurrentRate, byFBOption);
++			s_vFillCTSHead(pDevice, uDMAIdx, byPktType, pvCTS,
++				       cbFrameSize, bNeedACK, bDisCRC,
++				       wCurrentRate, byFBOption);
+ 		}
+ 	} else if (byPktType = PK_TYPE_11A) {
+ 		if (pvRTS) {/* RTS_need, non PCF mode */
+ 			struct vnt_rrv_time_ab *buf = pvRrvTime;
+ 
+-			buf->rts_rrv_time = s_uGetRTSCTSRsvTime(pDevice, 2, byPktType, cbFrameSize, wCurrentRate);
+-			buf->rrv_time = vnt_rxtx_rsvtime_le16(pDevice, byPktType, cbFrameSize, wCurrentRate, bNeedACK);
++			buf->rts_rrv_time +				s_uGetRTSCTSRsvTime(pDevice, 2, byPktType,
++						    cbFrameSize, wCurrentRate);
++			buf->rrv_time +				vnt_rxtx_rsvtime_le16(pDevice, byPktType,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
+ 
+ 			/* Fill RTS */
+-			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize, bNeedACK, bDisCRC, psEthHeader, wCurrentRate, byFBOption);
++			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize,
++				       bNeedACK, bDisCRC, psEthHeader,
++				       wCurrentRate, byFBOption);
+ 		} else if (!pvRTS) {/* RTS_needless, non PCF mode */
+ 			struct vnt_rrv_time_ab *buf = pvRrvTime;
+ 
+-			buf->rrv_time = vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11A, cbFrameSize, wCurrentRate, bNeedACK);
++			buf->rrv_time +				vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11A,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
+ 		}
+ 	} else if (byPktType = PK_TYPE_11B) {
+ 		if (pvRTS) {/* RTS_need, non PCF mode */
+ 			struct vnt_rrv_time_ab *buf = pvRrvTime;
+ 
+-			buf->rts_rrv_time = s_uGetRTSCTSRsvTime(pDevice, 0, byPktType, cbFrameSize, wCurrentRate);
+-			buf->rrv_time = vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B, cbFrameSize, wCurrentRate, bNeedACK);
++			buf->rts_rrv_time +				s_uGetRTSCTSRsvTime(pDevice, 0, byPktType,
++						    cbFrameSize, wCurrentRate);
++			buf->rrv_time +				vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
+ 
+ 			/* Fill RTS */
+-			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize, bNeedACK, bDisCRC, psEthHeader, wCurrentRate, byFBOption);
++			s_vFillRTSHead(pDevice, byPktType, pvRTS, cbFrameSize,
++				       bNeedACK, bDisCRC, psEthHeader,
++				       wCurrentRate, byFBOption);
+ 		} else { /* RTS_needless, non PCF mode */
+ 			struct vnt_rrv_time_ab *buf = pvRrvTime;
+ 
+-			buf->rrv_time = vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B, cbFrameSize, wCurrentRate, bNeedACK);
++			buf->rrv_time +				vnt_rxtx_rsvtime_le16(pDevice, PK_TYPE_11B,
++						      cbFrameSize, wCurrentRate,
++						      bNeedACK);
+ 		}
+ 	}
+ }
+-- 
+2.17.1
