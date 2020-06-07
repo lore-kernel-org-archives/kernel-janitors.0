@@ -1,96 +1,44 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jun 2020 13:26:43 +0000
-Subject: Re: [PATCH v3] coccinelle: api: add kzfree script
-Message-Id: <a316f076-1686-25d8-18fe-1bbc0cf9a701@web.de>
+Date: Sun, 07 Jun 2020 14:02:35 +0000
+Subject: Re: Coccinelle: Extending capabilities for source file pre-selection
+Message-Id: <4c70ade8-1ab0-6a9a-30c0-d25b0e22ec8c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <99ed463c-b7ba-0400-7cf7-5bcc1992baef@web.de>
+ <alpine.DEB.2.21.2006060944320.2578@hadrien>
+ <cfb8a321-1f6e-8d0f-65c4-e7f73a1b111d@web.de>
+In-Reply-To: <cfb8a321-1f6e-8d0f-65c4-e7f73a1b111d@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, Julia Lawall <Julia.Lawall@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-…
-> +virtual context
-> +virtual patch
-> +virtual org
-> +virtual report
+>> Coccinelle is not able to optimize its search process
+>
+> The software contains some limitations which might be changeable.
+>
+>
+>> according to the information in constraints.
+>
+> Will related solution ideas become more interesting?
 
-+virtual context, patch, org, report
-
-Is such a SmPL code variant more succinct?
-
-
-…
-> +if (...)
-> +  \(memset@ok\|memzero_explicit@ok\)(...);
-
-Would you like to tolerate any extra source code around such a function call
-in an if branch?
+I propose to move parts of the mentioned concerns out of the way.
 
 
-…
-> +(
-> +* memset@m((T)E, 0, ...);
-> +|
-> +* memzero_explicit@m((T)E, ...);
-> +)
-…
+The software performs a source file pre-selection.
+https://github.com/coccinelle/coccinelle/blob/7cf2c23e64066d5249a64a316cc5347831f7a63f/docs/manual/spatch_options.tex#L183
 
-I suggest to move a semicolon.
+File indexes can become involved according to search tools like
+“GLIMPSE” and “GNU idutils”.
+They can restrict the support for desired queries on file contents.
 
-+(
-+*memset@m((T)E, 0, ...)
-+|
-+*memzero_explicit@m((T)E, ...)
-+);
+I got the impression that SmPL constraint variants can be specified in ways
+which would fit also to such data format restrictions.
+
+Higher level SmPL constraints can be more challenging to map to advanced queries.
 
 
-…
-> +- \(kfree\|vfree\|kvfree\)(E);
-> ++ kvfree_sensitive(E, size);
-…
-
-Would you like to increase the precision a bit for the change specification?
-
-+-\(kfree\|vfree\|kvfree\)
-++kvfree_sensitive
-+ (E
-++ , size
-+ );
-
-
-…
-> +(
-> +- kfree(E);
-> ++ kzfree(E);
-> +|
-> +- \(vfree\|kvfree\)(E);
-> ++ kvfree_sensitive(E, size);
-> +)
-…
-
-+(
-+-kfree
-++kzfree
-+      (E)
-+|
-+-\(vfree\|kvfree\)
-++kvfree_sensitive
-+ (E
-++ , size
-+ )
-+);
-
-
-…
-> +coccilib.org.print_todo(p[0],
-> +  "WARNING: opportunity for kzfree/kvfree_sensitive")
-
-I suggest to align the second function parameter.
-
-+coccilib.org.print_todo(p[0],
-+                        "WARNING: opportunity for kzfree/kvfree_sensitive")
-
+How are the chances to improve the software situation here?
 
 Regards,
 Markus
