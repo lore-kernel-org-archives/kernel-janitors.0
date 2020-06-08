@@ -1,37 +1,17 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 15 Jun 2020 11:27:19 +0000
-Subject: [PATCH] usb: gadget: udc: Potential Oops in error handling code
-Message-Id: <20200615112719.GA1207669@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 08 Jun 2020 18:40:13 +0000
+Subject: Re: [PATCH v2 3/4] coccinelle: api: filter out memdup_user definitions
+Message-Id: <623c6271-4cce-55c1-a15b-4a1ce4365fe8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Chao Xie <chao.xie@marvell.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If this is in "transceiver" mode the the ->qwork isn't required and is
-a NULL pointer.  This can lead to a NULL dereference when we call
-destroy_workqueue(udc->qwork).
+> Don't match original implementations.
 
-Fixes: 3517c31a8ece ("usb: gadget: mv_udc: use devm_xxx for probe")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/usb/gadget/udc/mv_udc_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I find such a change description insufficient.
 
-diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
-index cafde053788bb..80a1b52c656e0 100644
---- a/drivers/usb/gadget/udc/mv_udc_core.c
-+++ b/drivers/usb/gadget/udc/mv_udc_core.c
-@@ -2313,7 +2313,8 @@ static int mv_udc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_create_workqueue:
--	destroy_workqueue(udc->qwork);
-+	if (udc->qwork)
-+		destroy_workqueue(udc->qwork);
- err_destroy_dma:
- 	dma_pool_destroy(udc->dtd_pool);
- err_free_dma:
--- 
-2.26.2
+Regards,
+Markus
