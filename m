@@ -1,21 +1,36 @@
-From: Matthew Wilcox <willy@infradead.org>
-Date: Sun, 28 Jun 2020 16:35:39 +0000
-Subject: Re: [PATCH] mm: Free unused pages in kmalloc_order()
-Message-Id: <20200628163539.GA25523@casper.infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 08 Jun 2020 14:18:23 +0000
+Subject: [PATCH] drm/amd/powerplay: Fix buffer overflow in arcturus_get_unique_id()
+Message-Id: <20200608141823.GD1912173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5f54ce3-dad6-a2aa-d32a-cc7620676b76@web.de>
-In-Reply-To: <c5f54ce3-dad6-a2aa-d32a-cc7620676b76@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Long Li <lonuxli.64@gmail.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>
+To: Evan Quan <evan.quan@amd.com>, Kent Russell <kent.russell@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Sun, Jun 28, 2020 at 01:17:59PM +0200, Markus Elfring wrote:
-> > kmalloc(1024, GFP_HIGHUSER) can allocate memory normally,
-> > kmalloc(64*1024, GFP_HIGHUSER) will cause a memory leak,
-> 
-> Would you like to explain the influence of the selected allocation size
-> in a different way?
+The comments say that the "sn" buffer is used to hold a 16-digit HEX
+string so the buffer needs to be at least 17 characters to hold the
+NUL terminator.
 
-Markus, this is not useful.  Please stop.
+Fixes: 81a16241114b ("drm/amdgpu: Add unique_id and serial_number for Arcturus v3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+index df7b408319f76..a575cb9d1574c 100644
+--- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+@@ -2266,7 +2266,7 @@ static void arcturus_get_unique_id(struct smu_context *smu)
+ {
+ 	struct amdgpu_device *adev = smu->adev;
+ 	uint32_t top32, bottom32, smu_version, size;
+-	char sn[16];
++	char sn[20];
+ 	uint64_t id;
+ 
+ 	if (smu_get_smc_version(smu, NULL, &smu_version)) {
+-- 
+2.26.2
