@@ -1,65 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 17 Jun 2020 20:27:55 +0000
-Subject: Re: [PATCH] pcmcia/electra_cf: Fix some return values in 'electra_cf_probe()' in case of error
-Message-Id: <295b82c9-510d-262c-8b88-206372d839ed@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 08 Jun 2020 14:16:57 +0000
+Subject: [PATCH] drm/amd/display: Fix indenting in dcn30_set_output_transfer_func()
+Message-Id: <20200608141657.GB1912173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200617195326.732863-1-christophe.jaillet@wanadoo.fr>
- <CAOesGMjC_KttO0T89UbWpnsWsGqWeSnpqJr9JTEn2OtQ=xWtoQ@mail.gmail.com>
-In-Reply-To: <CAOesGMjC_KttO0T89UbWpnsWsGqWeSnpqJr9JTEn2OtQ=xWtoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Olof Johansson <olof@lixom.net>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Christoph Hellwig <hch@lst.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-Le 17/06/2020 à 22:10, Olof Johansson a écrit :
-> On Wed, Jun 17, 2020 at 12:54 PM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->> 'status' is known to be 0 at this point. It must be set to a meaningful
->> value in order to return an error code if one of the 'of_get_property()'
->> call fails.
->>
->> Return -EINVAL in such a case.
->>
->> Fixes: 2b571a066a2f("pcmcia: CompactFlash driver for PA Semi Electra boards")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/pcmcia/electra_cf.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/pcmcia/electra_cf.c b/drivers/pcmcia/electra_cf.c
->> index 35158cfd9c1a..40a5cffe24a4 100644
->> --- a/drivers/pcmcia/electra_cf.c
->> +++ b/drivers/pcmcia/electra_cf.c
->> @@ -229,6 +229,8 @@ static int electra_cf_probe(struct platform_device *ofdev)
->>
->>          cf->socket.pci_irq = cf->irq;
->>
->> +       status = -EINVAL;
->> +
->>          prop = of_get_property(np, "card-detect-gpio", NULL);
->>          if (!prop)
->>                  goto fail1;
-> The pcmcia_register_socket() call site sets status explicitly before
-> jumping to fail1, which is a bit clearer.
+These lines are a part of the if statement and they are supposed to
+be indented one more tab.
 
-Agreed, but as as you say below, this is not the most active driver in 
-the kernel and PCMCIA, well, does anyone still uses it?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Still, this is a legacy driver, I'm not sure there are any active
-> users of it these days, and surely nobody that's tinkering around and
-> editing the device tree (it comes from CFE on these systems, not from
-> a .dts in the kernel tree). The fix isn't invalid, but it's also not
-> likely to be an issue in the real world. So, let's just say:
-
-In fact this patch has been in my tree for years, because the driver is 
-mostly untouched and certainly used by no one, nowadays.
-However, 2 weeks ago, commit b274014c6d19 made me think of a revived 
-interest.
-So I decided to post the patch, just in case.
-
-> Acked-by: Olof Johansson <olof@lixom.net>
->
->
-> -Olof
->
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
+index ab20320ebc994..37c310dbb3665 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
+@@ -203,9 +203,9 @@ bool dcn30_set_output_transfer_func(struct dc *dc,
+ 					stream->out_transfer_func,
+ 					&mpc->blender_params, false))
+ 				params = &mpc->blender_params;
+-		 /* there are no ROM LUTs in OUTGAM */
+-		if (stream->out_transfer_func->type = TF_TYPE_PREDEFINED)
+-			BREAK_TO_DEBUGGER();
++			 /* there are no ROM LUTs in OUTGAM */
++			if (stream->out_transfer_func->type = TF_TYPE_PREDEFINED)
++				BREAK_TO_DEBUGGER();
+ 		}
+ 	}
+ 
+-- 
+2.26.2
