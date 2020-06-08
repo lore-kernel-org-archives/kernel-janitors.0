@@ -1,39 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Jun 2020 14:12:18 +0000
-Subject: [PATCH] input: sentelic: fix error return when fsp_reg_write fails
-Message-Id: <20200603141218.131663-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 08 Jun 2020 20:07:12 +0000
+Subject: Re: exfat: Fix use after free in exfat_load_upcase_table()
+Message-Id: <6ae85a8e-2cb6-214c-0bd9-5dd1ee949437@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
+ <20200608155243.GX19604@bombadil.infradead.org>
+In-Reply-To: <20200608155243.GX19604@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tai-hwa Liang <avatar@sentelic.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Matthew Wilcox <willy@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, Tetsuhiro Kohada <kohada.t2@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+>>> The brelse() should just be moved down a line.
+>>
+>> How do you think about a wording variant like the following?
+>>
+>>    Thus move a call of the function “brelse” one line down.
+>>
+>>
+>> Would you like to omit a word from the patch subject so that
+>> a typo will be avoided there?
+>
+> Markus, please go away.  This comment is entirely unhelpful.
 
-Currently when the call to fsp_reg_write fails -EIO is not being returned
-because the count is being returned instead of the return value in retval.
-Fix this by returning the value in retval instead of count.
+I hope that other contributors can get also more positive impressions
+(as it happened before).
 
-Addresses-Coverity: ("Unused value")
-Fixes: fc69f4a6af49 ("Input: add new driver for Sentelic Finger Sensing Pad")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/input/mouse/sentelic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/input/mouse/sentelic.c b/drivers/input/mouse/sentelic.c
-index e99d9bf1a267..e78c4c7eda34 100644
---- a/drivers/input/mouse/sentelic.c
-+++ b/drivers/input/mouse/sentelic.c
-@@ -441,7 +441,7 @@ static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
- 
- 	fsp_reg_write_enable(psmouse, false);
- 
--	return count;
-+	return retval;
- }
- 
- PSMOUSE_DEFINE_WO_ATTR(setreg, S_IWUSR, NULL, fsp_attr_set_setreg);
--- 
-2.25.1
+Regards,
+Markus
