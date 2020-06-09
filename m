@@ -1,43 +1,45 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Sun, 28 Jun 2020 03:23:12 +0000
-Subject: Re: [PATCH v3 04/14] irqchip/davinci-aintc: Fix potential resource leaks
-Message-Id: <e98e609b-1074-c57c-3b17-6fb635474762@loongson.cn>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Jun 2020 10:46:42 +0000
+Subject: [PATCH] lib: devres: add a comment about the devm_of_iomap() function
+Message-Id: <20200609104642.GA43074@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0e39761c-4673-d116-fc62-5573c2abae06@web.de>
-In-Reply-To: <0e39761c-4673-d116-fc62-5573c2abae06@web.de>
+In-Reply-To: <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-mips@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>, Aisheng Dong <aisheng.dong@nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Morton <akpm@linux-foundation.org>, Tuowen Zhao <ztuowen@gmail.com>, Denis Efremov <efremov@linux.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, BOUGH CHEN <haibo.chen@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 06/24/2020 09:12 PM, Markus Elfring wrote:
->> There exists potential resource leaks in the error path, fix them.
-> Would you like to reconsider this change description?
-> https://lore.kernel.org/linux-mips/be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn/
-> https://lkml.org/lkml/2020/6/24/498
->
->
-> …
->> +++ b/drivers/irqchip/irq-davinci-aintc.c
-> …
->> @@ -160,4 +160,13 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
->>   				       irq_base + irq_off, 32);
->>
->>   	set_handle_irq(davinci_aintc_handle_irq);
->> +
->> +err_domain_remove:
-> …
->
-> Are you sure that you would to like to release the allocated system resources
-> always in this function implementation?
->
-> Otherwise, I suggest to add a return statement before the source code section
-> for the desired exception handling.
+We recently introduced a bug when we tried to convert of_iomap() to
+devm_of_iomap().  The problem was that there were two drivers mapping
+the same io region.  The first driver was using of_iomap() and the
+second driver was using devm_of_iomap() and the kernel booted fine.
+When we converted the first drive to use devm_of_iomap() then the second
+driver failed with -EBUSY and the kernel couldn't boot.
 
-Thank you! Sorry for the late reply.
-I will add a return statement.
+Let's add a comment to prevent this sort of mistake in the future.
 
->
-> Regards,
-> Markus
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ lib/devres.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/lib/devres.c b/lib/devres.c
+index 6ef51f159c54b..0abe7c1cc4681 100644
+--- a/lib/devres.c
++++ b/lib/devres.c
+@@ -204,6 +204,12 @@ void __iomem *devm_ioremap_resource_wc(struct device *dev,
+  *	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
+  *	if (IS_ERR(base))
+  *		return PTR_ERR(base);
++ *
++ * Please Note: This is not a one-to-one replacement for of_iomap() because the
++ * of_iomap() function does not track whether the region is already mapped.  If
++ * two drivers try to map the same memory, the of_iomap() function will succeed
++ * but the the devm_of_iomap() function will return -EBUSY.
++ *
+  */
+ void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
+ 			    resource_size_t *size)
+-- 
+2.26.2
