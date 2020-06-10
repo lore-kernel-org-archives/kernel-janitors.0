@@ -1,25 +1,33 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 10 Jun 2020 02:41:21 +0000
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 10 Jun 2020 05:35:49 +0000
 Subject: Re: [PATCH] scsi: powertec: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <159175686974.7062.8526082970785072740.b4-ty@oracle.com>
+Message-Id: <08f63617-03df-71cf-70c4-00f08a9f51d8@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
+ <159175686974.7062.8526082970785072740.b4-ty@oracle.com>
+In-Reply-To: <159175686974.7062.8526082970785072740.b4-ty@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: jejb@linux.ibm.com, linux@armlinux.org.uk, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, jejb@linux.ibm.com, linux@armlinux.org.uk
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org
 
-On Sat, 30 May 2020 09:29:33 +0200, Christophe JAILLET wrote:
+Le 10/06/2020 à 04:41, Martin K. Petersen a écrit :
+> On Sat, 30 May 2020 09:29:33 +0200, Christophe JAILLET wrote:
+>
+>> The dev_id used in 'request_irq()' and 'free_irq()' should match.
+>> So use 'host' in both cases.
+> Applied to 5.8/scsi-queue, thanks!
+>
+> [1/1] scsi: powertec: Fix different dev_id between request_irq() and free_irq()
+>        https://git.kernel.org/mkp/scsi/c/af7b415a1ebf
+>
+Please revert, the patch is bogus, as spotted by Russell King - ARM 
+Linux admin <linux@armlinux.org.uk>.
+See [1].
 
-> The dev_id used in 'request_irq()' and 'free_irq()' should match.
-> So use 'host' in both cases.
+I'll try to send the correct fix by this week-end.
 
-Applied to 5.8/scsi-queue, thanks!
+CJ
 
-[1/1] scsi: powertec: Fix different dev_id between request_irq() and free_irq()
-      https://git.kernel.org/mkp/scsi/c/af7b415a1ebf
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+[1]: https://marc.info/?l=linux-scsi&m9083184215730&w=4
