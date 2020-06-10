@@ -1,35 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 Jun 2020 08:52:07 +0000
-Subject: [PATCH][next] drm/i915/selftests: fix spelling mistake "submited" -> "submitted"
-Message-Id: <20200617085207.167552-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 10 Jun 2020 02:41:19 +0000
+Subject: Re: [PATCH] scsi: acornscsi: Fix an error handling path in 'acornscsi_probe()'
+Message-Id: <159175686975.7062.3916571088976504463.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200530081622.577888-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530081622.577888-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jejb@linux.ibm.com, linux@armlinux.org.uk, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, 30 May 2020 10:16:22 +0200, Christophe JAILLET wrote:
 
-There is a spelling mistake in a pr_err message. Fix it.
+> 'ret' is known to be 0 at this point.
+> So, explicitly return -ENOMEM if one of the 'ecardm_iomap()' calls fail.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/gt/selftest_lrc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to 5.8/scsi-queue, thanks!
 
-diff --git a/drivers/gpu/drm/i915/gt/selftest_lrc.c b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-index b8b7b91019f4..547edf3d902b 100644
---- a/drivers/gpu/drm/i915/gt/selftest_lrc.c
-+++ b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-@@ -482,7 +482,7 @@ static int live_unlite_ring(void *arg)
- 		err = wait_for_submit(engine, rq, HZ / 2);
- 		i915_request_put(rq);
- 		if (err) {
--			pr_err("%s: preemption request was not submited\n",
-+			pr_err("%s: preemption request was not submitted\n",
- 			       engine->name);
- 			err = -ETIME;
- 		}
+[1/1] scsi: acornscsi: Fix an error handling path in acornscsi_probe()
+      https://git.kernel.org/mkp/scsi/c/7960c0b29626
+
 -- 
-2.27.0.rc0
+Martin K. Petersen	Oracle Linux Engineering
