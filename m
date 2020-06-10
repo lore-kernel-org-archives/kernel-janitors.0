@@ -1,53 +1,77 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 05 Jun 2020 12:14:38 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 10 Jun 2020 14:54:29 +0000
 Subject: Re: [PATCH] gpio: arizona: put pm_runtime in case of failure
-Message-Id: <11488e76-2ea0-6478-0800-deb0438f0136@web.de>
+Message-Id: <20200610145429.GB2102023@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <11488e76-2ea0-6478-0800-deb0438f0136@web.de>
+In-Reply-To: <11488e76-2ea0-6478-0800-deb0438f0136@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-I recommend to replace the word “pm_runtime” by the
-alternative “PM run time system” in the patch subject.
+On Fri, Jun 05, 2020 at 02:14:38PM +0200, Markus Elfring wrote:
+> I recommend to replace the word “pm_runtime” by the
+> alternative “PM run time system” in the patch subject.
+> 
+> 
+> > Calling pm_runtime_get_sync increments the counter even in case of
+> > failure, causing incorrect ref count if pm_runtime_put is not called in
+> > error handling paths.
+> 
+> Should the term “reference count” be used here?
+> 
+> 
+> > Call pm_runtime_put if pm_runtime_get_sync fails.
+> 
+> The diff hunks show an other function name.
+> 
+> 
+> …
+> > +++ b/drivers/gpio/gpio-arizona.c
+> > @@ -64,6 +64,7 @@  static int arizona_gpio_get(struct gpio_chip *chip, unsigned offset)
+> >  		ret = pm_runtime_get_sync(chip->parent);
+> >  		if (ret < 0) {
+> >  			dev_err(chip->parent, "Failed to resume: %d\n", ret);
+> > +			pm_runtime_put_autosuspend(chip->parent);
+> >  			return ret;
+> >  		}
+> 
+> You propose to use identical statements in three if branches.
+> Please add a corresponding jump target for better exception handling.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?idC5faf5c218a47fd6258187f62d9bb1009717896#n455
+> 
+> 
+> Would you like to add the tag “Fixes” to the commit message?
+> 
+> 
+> I find it amazing how many questionable implementation details
+> you pointed out recently.
+> Were these contributions triggered by an evolving source code analysis
+> tool like CheQ?
+> https://github.com/umnsec/cheq/
+> 
+> Regards,
+> Markus
 
+Hi,
 
-> Calling pm_runtime_get_sync increments the counter even in case of
-> failure, causing incorrect ref count if pm_runtime_put is not called in
-> error handling paths.
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-Should the term “reference count” be used here?
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
-> Call pm_runtime_put if pm_runtime_get_sync fails.
+thanks,
 
-The diff hunks show an other function name.
-
-
-…
-> +++ b/drivers/gpio/gpio-arizona.c
-> @@ -64,6 +64,7 @@  static int arizona_gpio_get(struct gpio_chip *chip, unsigned offset)
->  		ret = pm_runtime_get_sync(chip->parent);
->  		if (ret < 0) {
->  			dev_err(chip->parent, "Failed to resume: %d\n", ret);
-> +			pm_runtime_put_autosuspend(chip->parent);
->  			return ret;
->  		}
-
-You propose to use identical statements in three if branches.
-Please add a corresponding jump target for better exception handling.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=435faf5c218a47fd6258187f62d9bb1009717896#n455
-
-
-Would you like to add the tag “Fixes” to the commit message?
-
-
-I find it amazing how many questionable implementation details
-you pointed out recently.
-Were these contributions triggered by an evolving source code analysis
-tool like CheQ?
-https://github.com/umnsec/cheq/
-
-Regards,
-Markus
+greg k-h's patch email bot
