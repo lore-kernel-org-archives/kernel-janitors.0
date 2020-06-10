@@ -1,41 +1,42 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jun 2020 16:18:36 +0000
-Subject: Re: [PATCH v2] Input: bma150: fix ref count leak in bma150_open
-Message-Id: <3639cbd1-1ddc-2207-b119-b6a45723be04@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2020 17:23:59 +0000
+Subject: [PATCH 1/2] rsxx: Fix potential NULL dereference setting up debugfs
+Message-Id: <20200610172359.GB90634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-input@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <mccamant@cs.umn.edu>, Qiushi Wu <wu000273@umn.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Bakker <xc-racer2@live.ca>, =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joshua Morris <josh.h.morris@us.ibm.com>, Philip Kelleher <pjk1939@linux.ibm.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> in bma150_open, …
+The "card->gendisk" pointer is allocated in rsxx_setup_dev() but there
+is a module option "enable_blkdev" which lets people disable the block
+device.  In that situation the "card->gendisk" pointer is NULL and it
+would lead to a NULL dereference here.
 
-* Can the term “reference count” become relevant also for this commit message
-  besides other possible adjustments?
+Fixes: 36f988e978f8 ("rsxx: Adding in debugfs entries.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This patch is from static analysis.  The patch is obviously harmless.
+So far as I can tell, the bug is real.  But maybe a different solution
+is prefered?
 
-* Would you like to add the tag “Fixes”?
+ drivers/block/rsxx/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
-…
-> +++ b/drivers/input/misc/bma150.c
-…
-> @@ -357,10 +357,13 @@  static int bma150_open(struct input_dev *input)
->  	if (bma150->mode != BMA150_MODE_NORMAL) {
->  		error = bma150_set_mode(bma150, BMA150_MODE_NORMAL);
->  		if (error)
-> -			return error;
-> +			goto out;
->  	}
->
->  	return 0;
-> +out:
-> +	pm_runtime_put_noidle(&bma150->client->dev);
-> +	return error;
->  }
-…
-
-Perhaps use the label “put_runtime” instead?
-
-Regards,
-Markus
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index 10f6368117d81..6207449fa716f 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -228,6 +228,9 @@ static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
+ 	struct dentry *debugfs_pci_regs;
+ 	struct dentry *debugfs_cram;
+ 
++	if (!card->gendisk)
++		return;
++
+ 	card->debugfs_dir = debugfs_create_dir(card->gendisk->disk_name, NULL);
+ 	if (IS_ERR_OR_NULL(card->debugfs_dir))
+ 		goto failed_debugfs_dir;
+-- 
+2.26.2
