@@ -1,64 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Jun 2020 17:18:47 +0000
-Subject: Re: [PATCH net-next] ath11k: fix uninitialized return in ath11k_spectral_process_data()
-Message-Id: <20200622171846.GE4151@kadam>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Wed, 10 Jun 2020 02:41:21 +0000
+Subject: Re: [PATCH] scsi: powertec: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <159175686974.7062.8526082970785072740.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200619142922.GA267142@mwanda>
- <87a70vf923.fsf@codeaurora.org>
-In-Reply-To: <87a70vf923.fsf@codeaurora.org>
+References: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530072933.576851-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Karthikeyan Periyasamy <periyasa@codeaurora.org>, Jakub Kicinski <kuba@kernel.org>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+To: jejb@linux.ibm.com, linux@armlinux.org.uk, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 05:51:16PM +0300, Kalle Valo wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
-> 
-> > There is a success path where "ret" isn't initialized where we never
-> > have a ATH11K_SPECTRAL_TAG_SCAN_SEARCH and then ret isn't initialized.
-> >
-> > Fixes: 9d11b7bff950 ("ath11k: add support for spectral scan")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/net/wireless/ath/ath11k/spectral.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/wireless/ath/ath11k/spectral.c b/drivers/net/wireless/ath/ath11k/spectral.c
-> > index 1c5d65bb411f..bfbf905f7507 100644
-> > --- a/drivers/net/wireless/ath/ath11k/spectral.c
-> > +++ b/drivers/net/wireless/ath/ath11k/spectral.c
-> > @@ -677,7 +677,7 @@ static int ath11k_spectral_process_data(struct ath11k *ar,
-> >  	u32 data_len, i;
-> >  	u8 sign, tag;
-> >  	int tlv_len, sample_sz;
-> > -	int ret;
-> > +	int ret = 0;
-> >  	bool quit = false;
-> 
-> I try to avoid initialising ret variables so I would like find another
-> way. What about doing this (completely untested!) in the end of the
-> function:
-> 
->         return 0;
-> 
-> err:
-> 	kfree(fft_sample);
-> unlock:
-> 	spin_unlock_bh(&ar->spectral.lock);
-> 	return ret;
+On Sat, 30 May 2020 09:29:33 +0200, Christophe JAILLET wrote:
 
-I normally avoid it as well...  If I were to redo this patch, I would
-probably do:
+> The dev_id used in 'request_irq()' and 'free_irq()' should match.
+> So use 'host' in both cases.
 
-	ret = 0;
-err:
-	kfree(fft_sample);
-unlock:
-	spin_unlock_bh(&ar->spectral.lock);
-	return ret;
+Applied to 5.8/scsi-queue, thanks!
 
-Would that be better?
+[1/1] scsi: powertec: Fix different dev_id between request_irq() and free_irq()
+      https://git.kernel.org/mkp/scsi/c/af7b415a1ebf
 
-regards,
-dan carpenter
+-- 
+Martin K. Petersen	Oracle Linux Engineering
