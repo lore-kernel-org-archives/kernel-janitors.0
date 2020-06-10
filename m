@@ -1,89 +1,74 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 25 Jun 2020 20:19:47 +0000
-Subject: [PATCH] media: s5p-g2d: Fix a memory leak in an error handling path in 'g2d_probe()'
-Message-Id: <20200625201947.943043-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2020 08:56:53 +0000
+Subject: [PATCH v2] drm/amdgpu: Fix a buffer overflow handling the serial number
+Message-Id: <20200610085653.GA5439@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <DM6PR12MB26194168100E5F96FF94D066E4820@DM6PR12MB2619.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hverkuil@xs4all.nl, kyungmin.park@samsung.com, kamil@wypas.org, a.hajda@samsung.com, mchehab@kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Jack Xiao <Jack.Xiao@amd.com>, Jonathan Kim <jonathan.kim@amd.com>, Joseph Greathouse <Joseph.Greathouse@amd.com>, David Airlie <airlied@linux.ie>, Felix Kuehling <Felix.Kuehling@amd.com>, Tao Zhou <tao.zhou1@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, Le Ma <le.ma@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
 
-Memory allocated with 'v4l2_m2m_init()' must be freed by a corresponding
-call to 'v4l2_m2m_release()'
+The comments say that the serial number is a 16-digit HEX string so the
+buffer needs to be at least 17 characters to hold the NUL terminator.
 
-Also reorder the code at the end of the probe function so that
-'video_register_device()' is called last.
-Update the error handling path accordingly.
+The other issue is that "size" returned from sprintf() is the number of
+characters before the NUL terminator so the memcpy() wasn't copying the
+terminator.  The serial number needs to be NUL terminated so that it
+doesn't lead to a read overflow in amdgpu_device_get_serial_number().
+Also it's just cleaner and faster to sprintf() directly to adev->serial[]
+instead of using a temporary buffer.
 
-Fixes: 5ce60d790a24 ("[media] s5p-g2d: Add DT based discovery support")
-Fixes: 918847341af0 ("[media] v4l: add G2D driver for s5p device family")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 81a16241114b ("drm/amdgpu: Add unique_id and serial_number for Arcturus v3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-V2: Call 'video_register_device()' as required by Hans Verkuil <hverkuil@xs4all.nl>
+v2: Change adev->serial.  The original patch would have just moved the
+overflow until amdgpu_device_get_serial_number() is called.
 
-Compile tested only.
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 ---
- drivers/media/platform/s5p-g2d/g2d.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h          | 2 +-
+ drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 6 ++----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-index 6932fd47071b..fb2e48dbabd4 100644
---- a/drivers/media/platform/s5p-g2d/g2d.c
-+++ b/drivers/media/platform/s5p-g2d/g2d.c
-@@ -695,21 +695,13 @@ static int g2d_probe(struct platform_device *pdev)
- 	vfd->lock = &dev->mutex;
- 	vfd->v4l2_dev = &dev->v4l2_dev;
- 	vfd->device_caps = V4L2_CAP_VIDEO_M2M | V4L2_CAP_STREAMING;
--	ret = video_register_device(vfd, VFL_TYPE_VIDEO, 0);
--	if (ret) {
--		v4l2_err(&dev->v4l2_dev, "Failed to register video device\n");
--		goto rel_vdev;
--	}
--	video_set_drvdata(vfd, dev);
--	dev->vfd = vfd;
--	v4l2_info(&dev->v4l2_dev, "device registered as /dev/video%d\n",
--								vfd->num);
-+
- 	platform_set_drvdata(pdev, dev);
- 	dev->m2m_dev = v4l2_m2m_init(&g2d_m2m_ops);
- 	if (IS_ERR(dev->m2m_dev)) {
- 		v4l2_err(&dev->v4l2_dev, "Failed to init mem2mem device\n");
- 		ret = PTR_ERR(dev->m2m_dev);
--		goto unreg_video_dev;
-+		goto rel_vdev;
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+index 135530286f34f..905cf0bac100c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+@@ -986,7 +986,7 @@ struct amdgpu_device {
+ 	/* Chip product information */
+ 	char				product_number[16];
+ 	char				product_name[32];
+-	char				serial[16];
++	char				serial[20];
  
- 	def_frame.stride = (def_frame.width * def_frame.fmt->depth) >> 3;
-@@ -717,14 +709,24 @@ static int g2d_probe(struct platform_device *pdev)
- 	of_id = of_match_node(exynos_g2d_match, pdev->dev.of_node);
- 	if (!of_id) {
- 		ret = -ENODEV;
--		goto unreg_video_dev;
-+		goto free_m2m;
- 	}
- 	dev->variant = (struct g2d_variant *)of_id->data;
+ 	struct amdgpu_autodump		autodump;
  
-+	ret = video_register_device(vfd, VFL_TYPE_VIDEO, 0);
-+	if (ret) {
-+		v4l2_err(&dev->v4l2_dev, "Failed to register video device\n");
-+		goto free_m2m;
-+	}
-+	video_set_drvdata(vfd, dev);
-+	dev->vfd = vfd;
-+	v4l2_info(&dev->v4l2_dev, "device registered as /dev/video%d\n",
-+								vfd->num);
-+
- 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+index df7b408319f76..d58146a5fa21d 100644
+--- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+@@ -2265,8 +2265,7 @@ static void arcturus_i2c_eeprom_control_fini(struct i2c_adapter *control)
+ static void arcturus_get_unique_id(struct smu_context *smu)
+ {
+ 	struct amdgpu_device *adev = smu->adev;
+-	uint32_t top32, bottom32, smu_version, size;
+-	char sn[16];
++	uint32_t top32, bottom32, smu_version;
+ 	uint64_t id;
  
--unreg_video_dev:
--	video_unregister_device(dev->vfd);
-+free_m2m:
-+	v4l2_m2m_release(dev->m2m_dev);
- rel_vdev:
- 	video_device_release(vfd);
- unreg_v4l2_dev:
+ 	if (smu_get_smc_version(smu, NULL, &smu_version)) {
+@@ -2289,8 +2288,7 @@ static void arcturus_get_unique_id(struct smu_context *smu)
+ 	/* For Arcturus-and-later, unique_id = serial_number, so convert it to a
+ 	 * 16-digit HEX string for convenience and backwards-compatibility
+ 	 */
+-	size = sprintf(sn, "%llx", id);
+-	memcpy(adev->serial, &sn, size);
++	sprintf(adev->serial, "%llx", id);
+ }
+ 
+ static bool arcturus_is_baco_supported(struct smu_context *smu)
 -- 
-2.25.1
+2.26.2
