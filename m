@@ -1,23 +1,50 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 20 Jun 2020 08:30:54 +0000
-Subject: Re: [PATCH] perf list: Fix memory leak in print_sdt_events()
-Message-Id: <83ebb281-ffb5-483e-fba7-7278fc621af1@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2020 17:24:51 +0000
+Subject: [PATCH 2/2] rsxx: Return -EFAULT if copy_to_user() fails
+Message-Id: <20200610172451.GC90634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200610172359.GB90634@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Wei Li <liwei391@huawei.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hanjun Guo <guohanjun@huawei.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joshua Morris <josh.h.morris@us.ibm.com>, Philip Kelleher <pjk1939@linux.ibm.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Valgrind check info:
+The copy_to_user() function returns the number of bytes remaining but
+we want to return -EFAULT to the user if it can't complete the copy.
+The "st" variable only holds zero on success or negative error codes on
+failure so the type should be int.
 
-I suggest to improve this change description a bit.
+Fixes: 36f988e978f8 ("rsxx: Adding in debugfs entries.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/block/rsxx/core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-* Would an additional imperative wording be nice
-  (despite of the presented “leak summary”)?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=4333a9b0b67bb4e8bcd91bdd80da80b0ec151162#n151
-
-* Will the tag “Fixes” become helpful for the commit message?
-
-Regards,
-Markus
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index 6207449fa716f..558fa263acbc0 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -165,15 +165,17 @@ static ssize_t rsxx_cram_read(struct file *fp, char __user *ubuf,
+ {
+ 	struct rsxx_cardinfo *card = file_inode(fp)->i_private;
+ 	char *buf;
+-	ssize_t st;
++	int st;
+ 
+ 	buf = kzalloc(cnt, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+ 	st = rsxx_creg_read(card, CREG_ADD_CRAM + (u32)*ppos, cnt, buf, 1);
+-	if (!st)
+-		st = copy_to_user(ubuf, buf, cnt);
++	if (!st) {
++		if (copy_to_user(ubuf, buf, cnt))
++			st = -EFAULT;
++	}
+ 	kfree(buf);
+ 	if (st)
+ 		return st;
+-- 
+2.26.2
