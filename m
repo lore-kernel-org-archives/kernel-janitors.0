@@ -1,39 +1,36 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Fri, 12 Jun 2020 19:49:01 +0000
-Subject: Re: [v2] proc/fd: Remove unnecessary variable initialisations in seq_show()
-Message-Id: <20200612194901.GD23230@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2020 08:59:11 +0000
+Subject: [PATCH] virtio-mem: silence a static checker warning
+Message-Id: <20200610085911.GC5439@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200612160946.21187-1-pilgrimtao@gmail.com>
- <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
- <20200612170033.GF8681@bombadil.infradead.org>
- <80794080-138f-d015-39df-36832e9ab5d4@web.de>
- <20200612170431.GG8681@bombadil.infradead.org>
- <cd8f10b2-ffbd-e10f-4921-82d75d1760f4@web.de>
- <20200612182811.GH8681@bombadil.infradead.org>
- <d3d13ca7-754d-cf52-8f2c-9b82b8cc301f@web.de>
- <20200612184701.GI8681@bombadil.infradead.org>
- <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
-In-Reply-To: <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Matthew Wilcox <willy@infradead.org>, Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 09:00:14PM +0200, Markus Elfring wrote:
-> >> I suggest to take another look at published software development activities.
-> >
-> > Do you collateral evolution in the twenty?
-> 
-> Evolutions and software refactorings are just happening.
-> Can we continue to clarify the concrete programming items
-> also for a more constructive review of this patch variant?
+Smatch complains that "rc" can be uninitialized if we hit the "break;"
+statement on the first iteration through the loop.  I suspect that this
+can't happen in real life, but returning a zero literal is cleaner and
+silence the static checker warning.
 
-The really shocking part is that apparently this thing is _not_ a bot -
-according to the people who'd been unfortunate enough to meet it, it's
-hosted by wetware and behaviour is the same face-to-face...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/virtio/virtio_mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm still not convinced that it's not a sociology student collecting
-PhD material, though - something around strong programme crowd,
-with their religious avoidance of learning the subject matter, lest
-it taints their "research"...
+diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
+index f658fe9149beb..893ef18060a02 100644
+--- a/drivers/virtio/virtio_mem.c
++++ b/drivers/virtio/virtio_mem.c
+@@ -1192,7 +1192,7 @@ static int virtio_mem_mb_plug_any_sb(struct virtio_mem *vm, unsigned long mb_id,
+ 						VIRTIO_MEM_MB_STATE_OFFLINE);
+ 	}
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.26.2
