@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 11 Jun 2020 08:00:55 +0000
+Date: Thu, 11 Jun 2020 08:40:17 +0000
 Subject: Re: [PATCH v2] exfat: add missing brelse() calls on error paths
-Message-Id: <6e64100a-b623-a4d2-c5d0-cc9235669cdf@web.de>
+Message-Id: <420560fd-51bf-2d17-7a49-ac56653ec779@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200610172213.GA90634@mwanda>
 In-Reply-To: <20200610172213.GA90634@mwanda>
@@ -21,8 +21,9 @@ Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?Pal
 > +			return -EIO;
 …
 
-Can it become helpful to annotate such null pointer checks for branch prediction?
-Would you like to indicate a likelihood in any way?
+Will there be a need to reconsider the indentation for function call parameters
+in such source files?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=b29482fde649c72441d5478a4ea2c52c56d97a5e#n93
 
 Regards,
 Markus
