@@ -1,30 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jun 2020 18:24:27 +0000
-Subject: Re: [PATCH] media: budget-core: Improve exception handling in budget_register()
-Message-Id: <e3633733-8b83-d4ef-3256-e2b1117419f0@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Jun 2020 12:31:34 +0000
+Subject: [PATCH] xen: remove redundant initialization of variable irq
+Message-Id: <20200611123134.922395-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Chuhong Yuan <hslester96@gmail.com>, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Add the missed undo functions for error handling to fix it.
+From: Colin Ian King <colin.king@canonical.com>
 
-…
-> +++ b/drivers/media/pci/ttpci/budget-core.c
-> @@ -369,20 +369,25 @@  static int budget_register(struct budget *budget)
-…
->  	return 0;
-> +
-+err:
-> +	dvb_dmxdev_release(&budget->dmxdev);
-> +	dvb_dmx_release(&budget->demux);
-> +	return ret;
->  }
-…
+The variable irq is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Perhaps use the label “release_dmxdev” instead?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/pci/xen.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
+index e3f1ca316068..9f9aad42ccff 100644
+--- a/arch/x86/pci/xen.c
++++ b/arch/x86/pci/xen.c
+@@ -62,7 +62,7 @@ static int xen_pcifront_enable_irq(struct pci_dev *dev)
+ #ifdef CONFIG_ACPI
+ static int xen_register_pirq(u32 gsi, int triggering, bool set_pirq)
+ {
+-	int rc, pirq = -1, irq = -1;
++	int rc, pirq = -1, irq;
+ 	struct physdev_map_pirq map_irq;
+ 	int shareable = 0;
+ 	char *name;
+-- 
+2.27.0.rc0
