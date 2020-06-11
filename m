@@ -1,63 +1,62 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 19 Jun 2020 15:03:18 +0000
-Subject: Re: [PATCH v3] coccinelle: misc: add array_size_dup script to detect missed overflow checks
-Message-Id: <cf6ab028-4297-dfab-35a7-cb6589fe61ac@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Jun 2020 14:08:31 +0000
+Subject: [PATCH] media: atomisp: make const arrays static, makes object smaller
+Message-Id: <20200611140831.924488-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Changes in v2:
-…
-> - assignment operator used
+From: Colin Ian King <colin.king@canonical.com>
 
-I would prefer the distinction for the application of corresponding metavariables.
+Don't populate const arrays on the stack but instead make them
+static. Makes the object code smaller by 150 bytes.
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 111083	  23692	     64	 134839	  20eb7	atomisp/pci/atomisp_compat_css20.o
 
-> Changes in v3:
-…
->  - \(&E1\|&E2\) changed to &\(E1\|E2\)
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 110773	  23852	     64	 134689	  20e21	atomisp/pci/atomisp_compat_css20.o
 
-Would it be more helpful to mention the movement of the ampersand
-before SmPL disjunctions?
+After:
 
+(gcc version 9.3.0, amd64)
 
-…
-> +virtual context
-> +virtual report
-> +virtual org
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp_compat_css20.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Can the following SmPL code variant become more attractive?
-
-+virtual context, report, org
-
-
-…
-> +expression subE1 <= as.E1;
-> +expression subE2 <= as.E2;
-> +expression as.E1, as.E2, E3;
-
-How do you think about the following SmPL code variant?
-
-+expression subE1 <= as.E1,
-+           subE2 <= as.E2,
-+           as.E1,
-+           as.E2,
-+           E3;
-
-
-…
-> +coccilib.report.print_report(p2[0],
-> +f"WARNING: same struct_size (line {p1[0].line})")
-
-Please align such function parameters.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=5e857ce6eae7ca21b2055cca4885545e29228fe2#n93
-
-+coccilib.report.print_report(p2[0],
-+                             f"WARNING: same struct_size (line {p1[0].line})")
-
-
-Regards,
-Markus
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+index 71914d364ad9..9498aecf3be7 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+@@ -2410,13 +2410,13 @@ static void __configure_preview_pp_input(struct atomisp_sub_device *asd,
+ 	struct ia_css_resolution  *effective_res  		    &stream_config->input_config.effective_res;
+ 
+-	const struct bayer_ds_factor bds_fct[] = {{2, 1}, {3, 2}, {5, 4} };
++	static const struct bayer_ds_factor bds_fct[] = {{2, 1}, {3, 2}, {5, 4} };
+ 	/*
+ 	 * BZ201033: YUV decimation factor of 4 causes couple of rightmost
+ 	 * columns to be shaded. Remove this factor to work around the CSS bug.
+ 	 * const unsigned int yuv_dec_fct[] = {4, 2};
+ 	 */
+-	const unsigned int yuv_dec_fct[] = { 2 };
++	static const unsigned int yuv_dec_fct[] = { 2 };
+ 	unsigned int i;
+ 
+ 	if (width = 0 && height = 0)
+@@ -2536,7 +2536,7 @@ static void __configure_video_pp_input(struct atomisp_sub_device *asd,
+ 	struct ia_css_resolution  *effective_res  		    &stream_config->input_config.effective_res;
+ 
+-	const struct bayer_ds_factor bds_factors[] = {
++	static const struct bayer_ds_factor bds_factors[] = {
+ 		{8, 1}, {6, 1}, {4, 1}, {3, 1}, {2, 1}, {3, 2}
+ 	};
+ 	unsigned int i;
+-- 
+2.27.0.rc0
