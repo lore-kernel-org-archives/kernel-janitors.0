@@ -1,21 +1,28 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Thu, 11 Jun 2020 03:41:05 +0000
-Subject: RE: [PATCH v2] exfat: add missing brelse() calls on error paths
-Message-Id: <00a801d63fa2$230d14c0$69273e40$@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 11 Jun 2020 08:00:55 +0000
+Subject: Re: [PATCH v2] exfat: add missing brelse() calls on error paths
+Message-Id: <6e64100a-b623-a4d2-c5d0-cc9235669cdf@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200610172239epcas1p1facf5f0026208683a593eeb7271c8cce@epcas1p1.samsung.com>
-        <20200610172213.GA90634@mwanda>
+References: <20200610172213.GA90634@mwanda>
 In-Reply-To: <20200610172213.GA90634@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 'Sungjong Seo' <sj1557.seo@samsung.com>, =?iso-8859-1?Q?'Pali_Roh=E1r'?= <pali@kernel.org>, 'Markus Elfring' <Markus.Elfring@web.de>, 'Tetsuhiro Kohada' <kohada.t2@gmail.com>, 'Wei Yongjun' <weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>, Tetsuhiro Kohada <kohada.t2@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>
 
-> If the second exfat_get_dentry() call fails then we need to release "old_bh" before returning.  There
-> is a similar bug in exfat_move_file().
-> 
-> Fixes: 5f2aa075070c ("exfat: add inode operations")
-> Reported-by: Markus Elfring <Markus.Elfring@web.de>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied. Thanks!
+…
+> +++ b/fs/exfat/namei.c
+> @@ -1077,10 +1077,14 @@ static int exfat_rename_file(struct inode *inode, struct exfat_chain *p_dir,
+>
+>  		epold = exfat_get_dentry(sb, p_dir, oldentry + 1, &old_bh,
+>  			&sector_old);
+> +		if (!epold)
+> +			return -EIO;
+…
+
+Can it become helpful to annotate such null pointer checks for branch prediction?
+Would you like to indicate a likelihood in any way?
+
+Regards,
+Markus
