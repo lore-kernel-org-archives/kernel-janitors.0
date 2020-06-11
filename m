@@ -1,36 +1,47 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 18 Jun 2020 14:19:53 +0000
-Subject: [PATCH] iavf: fix error return code in iavf_init_get_resources()
-Message-Id: <20200618141953.29674-1-weiyongjun1@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Jun 2020 15:27:08 +0000
+Subject: [PATCH] char/mwave: remove redundant initialization of variable bRC
+Message-Id: <20200611152708.927344-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: b66c7bc1cd4d ("iavf: Refactor init state machine")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The variable bRC is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/iavf/iavf_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/mwave/smapi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/iavf/iavf_main.c b/drivers/net/ethernet/intel/iavf/iavf_main.c
-index fa82768e5eda..bc83e2d99944 100644
---- a/drivers/net/ethernet/intel/iavf/iavf_main.c
-+++ b/drivers/net/ethernet/intel/iavf/iavf_main.c
-@@ -1863,8 +1863,10 @@ static int iavf_init_get_resources(struct iavf_adapter *adapter)
+diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
+index 691f5898bb32..f8d79d393b69 100644
+--- a/drivers/char/mwave/smapi.c
++++ b/drivers/char/mwave/smapi.c
+@@ -126,7 +126,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
  
- 	adapter->rss_key = kzalloc(adapter->rss_key_size, GFP_KERNEL);
- 	adapter->rss_lut = kzalloc(adapter->rss_lut_size, GFP_KERNEL);
--	if (!adapter->rss_key || !adapter->rss_lut)
-+	if (!adapter->rss_key || !adapter->rss_lut) {
-+		err = -ENOMEM;
- 		goto err_mem;
-+	}
- 	if (RSS_AQ(adapter))
- 		adapter->aq_required |= IAVF_FLAG_AQ_CONFIGURE_RSS;
- 	else
+ int smapi_query_DSP_cfg(SMAPI_DSP_SETTINGS * pSettings)
+ {
+-	int bRC = -EIO;
++	int bRC;
+ 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
+ 	static const unsigned short ausDspBases[] = {
+ 		0x0030, 0x4E30, 0x8E30, 0xCE30,
+@@ -497,7 +497,7 @@ int smapi_set_DSP_cfg(void)
+ 
+ int smapi_set_DSP_power_state(bool bOn)
+ {
+-	int bRC = -EIO;
++	int bRC;
+ 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
+ 	unsigned short usPowerFunction;
+ 
+-- 
+2.27.0.rc0
