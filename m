@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 12 Jun 2020 19:00:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+Date: Fri, 12 Jun 2020 19:02:48 +0000
 Subject: Re: [v2] proc/fd: Remove unnecessary variable initialisations in seq_show()
-Message-Id: <d01e5cb7-c812-746d-667c-06cca202bdcf@web.de>
+Message-Id: <20200612190248.GJ8681@bombadil.infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200612160946.21187-1-pilgrimtao@gmail.com>
  <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
@@ -12,20 +12,23 @@ References: <20200612160946.21187-1-pilgrimtao@gmail.com>
  <20200612182811.GH8681@bombadil.infradead.org>
  <d3d13ca7-754d-cf52-8f2c-9b82b8cc301f@web.de>
  <20200612184701.GI8681@bombadil.infradead.org>
-In-Reply-To: <20200612184701.GI8681@bombadil.infradead.org>
+ <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
+In-Reply-To: <95eacd3e-9e29-6abf-9095-e8f6be057046@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>, Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
 
->> I suggest to take another look at published software development activities.
->
-> Do you collateral evolution in the twenty?
+On Fri, Jun 12, 2020 at 09:00:14PM +0200, Markus Elfring wrote:
+> >> I suggest to take another look at published software development activities.
+> >
+> > Do you collateral evolution in the twenty?
+> 
+> Evolutions and software refactorings are just happening.
+> Can we continue to clarify the concrete programming items
+> also for a more constructive review of this patch variant?
 
-Evolutions and software refactorings are just happening.
-Can we continue to clarify the concrete programming items
-also for a more constructive review of this patch variant?
-
-Regards,
-Markus
+Generationally, pandemics are an investment opportunity for the
+likeminded.  Talking about human nature is the ultimate world view for
+the proletariat.
