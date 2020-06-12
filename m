@@ -1,52 +1,55 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 08 Jun 2020 20:16:46 +0000
-Subject: Re: [PATCH] drm/amd/display: Fix indenting in dcn30_set_output_transfer_func()
-Message-Id: <CADnq5_Mg2kJOmD40VyVNqbKnKU89QaNRLJ7dbre_pLDX2NuXog@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 12 Jun 2020 07:36:09 +0000
+Subject: Re: [PATCH] drm/msm: Improve exception handling in msm_gpu_crashstate_capture()
+Message-Id: <56a615b6-9881-ff01-fa0f-8ea070fc03e7@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200608141657.GB1912173@mwanda>
-In-Reply-To: <20200608141657.GB1912173@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Leo Li <sunpeng.li@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bernard Zhao <bernard@vivo.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>
 
-On Mon, Jun 8, 2020 at 10:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> These lines are a part of the if statement and they are supposed to
-> be indented one more tab.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Function msm_gpu_crashstate_capture maybe called for several
+> times, and then the state->bos is a potential memleak. Also
+> the state->pos maybe alloc failed, but now without any handle.
+> This change is to fix some potential memleak and add error
+> handle when alloc failed.
 
-Applied.  thanks!
+I suggest to improve the provided information.
+How do you think about a wording variant like the following?
 
-Alex
+   The function “msm_gpu_crashstate_capture” can be called multiple times.
+   The members “comm”, “cmd” and “bos” of the data structure “msm_gpu_state”
+   are reassigned with pointers according to dynamic memory allocations
+   if the preprocessor symbol “CONFIG_DEV_COREDUMP” was defined.
+   But the function “kfree” was not called for them before.
 
-> ---
->  drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+   Thus add missing actions.
+   * Release previous objects.
+   * Use further null pointer checks.
+   * Complete the corresponding exception handling.
+
+
+Would you like to add the tag “Fixes” to the commit message?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n183
+
+
+…
+> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> @@ -366,8 +366,11 @@  static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
+>  			if (!should_dump(submit, submit->cmd[i].idx))
+>  				nr++;
 >
-> diff --git a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
-> index ab20320ebc994..37c310dbb3665 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn30/dcn30_hwseq.c
-> @@ -203,9 +203,9 @@ bool dcn30_set_output_transfer_func(struct dc *dc,
->                                         stream->out_transfer_func,
->                                         &mpc->blender_params, false))
->                                 params = &mpc->blender_params;
-> -                /* there are no ROM LUTs in OUTGAM */
-> -               if (stream->out_transfer_func->type = TF_TYPE_PREDEFINED)
-> -                       BREAK_TO_DEBUGGER();
-> +                        /* there are no ROM LUTs in OUTGAM */
-> +                       if (stream->out_transfer_func->type = TF_TYPE_PREDEFINED)
-> +                               BREAK_TO_DEBUGGER();
->                 }
->         }
->
-> --
-> 2.26.2
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> +		kfree(state->bos);
+>  		state->bos = kcalloc(nr,
+>  			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
+> +		if (!state->bos)
+> +			return;
+…
+
+Will there be a need to reconsider the indentation for function call parameters
+in such source files?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n93
+
+Regards,
+Markus
