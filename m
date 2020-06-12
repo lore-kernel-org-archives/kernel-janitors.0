@@ -1,14 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Jun 2020 12:11:33 +0000
-Subject: [PATCH] coresight: cti: Fix error handling in probe
-Message-Id: <20200612121133.GA1139533@mwanda>
+From: Walter Harms <wharms@bfs.de>
+Date: Fri, 12 Jun 2020 14:11:16 +0000
+Subject: AW: [PATCH] coresight: cti: Fix error handling in probe
+Message-Id: <6c59bdbc15714b089d256ad50aee58cb@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200612121047.GF4282@kadam>
+References: <20200612121047.GF4282@kadam>,<20200612121133.GA1139533@mwanda>
+In-Reply-To: <20200612121133.GA1139533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Leach <mike.leach@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Mike Leach <mike.leach@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+
+Hi Dan,
+
+nit picking in cti_pm_release()
+
+IMHO this should be done in 2 steps:
+      if (--nr_cti_cpu == 0)
+->
+  --nr_cti_cpu ;
+ if ( nr_cti_cpu == 0)
+
+the decrement is easy to miss (what i did first).
+
+yes, i noticed that it is also in the original code and
+it is not that important but while you are here ...
+
+jm2c,
+re,
+ wh
+________________________________________
+Von: kernel-janitors-owner@vger.kernel.org <kernel-janitors-owner@vger.kernel.org> im Auftrag von Dan Carpenter <dan.carpenter@oracle.com>
+Gesendet: Freitag, 12. Juni 2020 14:11:33
+An: Mike Leach
+Cc: Mathieu Poirier; Suzuki K Poulose; Alexander Shishkin; Greg Kroah-Hartman; linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+Betreff: [PATCH] coresight: cti: Fix error handling in probe
 
 There were a couple problems with error handling in the probe function:
 1)  If the "drvdata" allocation failed then it lead to a NULL
@@ -41,157 +67,157 @@ index 40387d58c8e7..d2da5bf9f552 100644
 --- a/drivers/hwtracing/coresight/coresight-cti.c
 +++ b/drivers/hwtracing/coresight/coresight-cti.c
 @@ -747,17 +747,50 @@ static int cti_dying_cpu(unsigned int cpu)
- 	return 0;
+        return 0;
  }
- 
+
 +static int cti_pm_setup(struct cti_drvdata *drvdata)
 +{
-+	int ret;
++       int ret;
 +
-+	if (drvdata->ctidev.cpu = -1)
-+		return 0;
++       if (drvdata->ctidev.cpu == -1)
++               return 0;
 +
-+	if (nr_cti_cpu)
-+		goto done;
++       if (nr_cti_cpu)
++               goto done;
 +
-+	cpus_read_lock();
-+	ret = cpuhp_setup_state_nocalls_cpuslocked(
-+			CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
-+			"arm/coresight_cti:starting",
-+			cti_starting_cpu, cti_dying_cpu);
-+	if (ret) {
-+		cpus_read_unlock();
-+		return ret;
-+	}
++       cpus_read_lock();
++       ret = cpuhp_setup_state_nocalls_cpuslocked(
++                       CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
++                       "arm/coresight_cti:starting",
++                       cti_starting_cpu, cti_dying_cpu);
++       if (ret) {
++               cpus_read_unlock();
++               return ret;
++       }
 +
-+	ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
-+	cpus_read_unlock();
-+	if (ret) {
-+		cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
-+		return ret;
-+	}
++       ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
++       cpus_read_unlock();
++       if (ret) {
++               cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
++               return ret;
++       }
 +
 +done:
-+	nr_cti_cpu++;
-+	cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
++       nr_cti_cpu++;
++       cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
 +
-+	return 0;
++       return 0;
 +}
 +
  /* release PM registrations */
  static void cti_pm_release(struct cti_drvdata *drvdata)
  {
--	if (drvdata->ctidev.cpu >= 0) {
--		if (--nr_cti_cpu = 0) {
--			cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
-+	if (drvdata->ctidev.cpu = -1)
-+		return;
- 
--			cpuhp_remove_state_nocalls(
--				CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
--		}
--		cti_cpu_drvdata[drvdata->ctidev.cpu] = NULL;
-+	cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
-+	if (--nr_cti_cpu = 0) {
-+		cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
-+		cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
- 	}
+-       if (drvdata->ctidev.cpu >= 0) {
+-               if (--nr_cti_cpu == 0) {
+-                       cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
++       if (drvdata->ctidev.cpu == -1)
++               return;
+
+-                       cpuhp_remove_state_nocalls(
+-                               CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
+-               }
+-               cti_cpu_drvdata[drvdata->ctidev.cpu] = NULL;
++       cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
++       if (--nr_cti_cpu == 0) {
++               cpu_pm_unregister_notifier(&cti_cpu_pm_nb);
++               cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_CTI_STARTING);
+        }
  }
- 
+
 @@ -823,19 +856,14 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	/* driver data*/
- 	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata) {
--		ret = -ENOMEM;
--		dev_info(dev, "%s, mem err\n", __func__);
--		goto err_out;
--	}
-+	if (!drvdata)
-+		return -ENOMEM;
- 
- 	/* Validity for the resource is already checked by the AMBA core */
- 	base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(base)) {
--		ret = PTR_ERR(base);
--		dev_err(dev, "%s, remap err\n", __func__);
--		goto err_out;
--	}
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
+
+        /* driver data*/
+        drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+-       if (!drvdata) {
+-               ret = -ENOMEM;
+-               dev_info(dev, "%s, mem err\n", __func__);
+-               goto err_out;
+-       }
++       if (!drvdata)
++               return -ENOMEM;
+
+        /* Validity for the resource is already checked by the AMBA core */
+        base = devm_ioremap_resource(dev, res);
+-       if (IS_ERR(base)) {
+-               ret = PTR_ERR(base);
+-               dev_err(dev, "%s, remap err\n", __func__);
+-               goto err_out;
+-       }
++       if (IS_ERR(base))
++               return PTR_ERR(base);
 +
- 	drvdata->base = base;
- 
- 	dev_set_drvdata(dev, drvdata);
+        drvdata->base = base;
+
+        dev_set_drvdata(dev, drvdata);
 @@ -854,8 +882,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
- 	pdata = coresight_cti_get_platform_data(dev);
- 	if (IS_ERR(pdata)) {
- 		dev_err(dev, "coresight_cti_get_platform_data err\n");
--		ret =  PTR_ERR(pdata);
--		goto err_out;
-+		return  PTR_ERR(pdata);
- 	}
- 
- 	/* default to powered - could change on PM notifications */
+        pdata = coresight_cti_get_platform_data(dev);
+        if (IS_ERR(pdata)) {
+                dev_err(dev, "coresight_cti_get_platform_data err\n");
+-               ret =  PTR_ERR(pdata);
+-               goto err_out;
++               return  PTR_ERR(pdata);
+        }
+
+        /* default to powered - could change on PM notifications */
 @@ -867,35 +894,20 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
- 					       drvdata->ctidev.cpu);
- 	else
- 		cti_desc.name = coresight_alloc_device_name(&cti_sys_devs, dev);
--	if (!cti_desc.name) {
--		ret = -ENOMEM;
--		goto err_out;
--	}
-+	if (!cti_desc.name)
-+		return -ENOMEM;
- 
- 	/* setup CPU power management handling for CPU bound CTI devices. */
--	if (drvdata->ctidev.cpu >= 0) {
--		cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
--		if (!nr_cti_cpu++) {
--			cpus_read_lock();
--			ret = cpuhp_setup_state_nocalls_cpuslocked(
--				CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
--				"arm/coresight_cti:starting",
--				cti_starting_cpu, cti_dying_cpu);
+                                               drvdata->ctidev.cpu);
+        else
+                cti_desc.name = coresight_alloc_device_name(&cti_sys_devs, dev);
+-       if (!cti_desc.name) {
+-               ret = -ENOMEM;
+-               goto err_out;
+-       }
++       if (!cti_desc.name)
++               return -ENOMEM;
+
+        /* setup CPU power management handling for CPU bound CTI devices. */
+-       if (drvdata->ctidev.cpu >= 0) {
+-               cti_cpu_drvdata[drvdata->ctidev.cpu] = drvdata;
+-               if (!nr_cti_cpu++) {
+-                       cpus_read_lock();
+-                       ret = cpuhp_setup_state_nocalls_cpuslocked(
+-                               CPUHP_AP_ARM_CORESIGHT_CTI_STARTING,
+-                               "arm/coresight_cti:starting",
+-                               cti_starting_cpu, cti_dying_cpu);
 -
--			if (!ret)
--				ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
--			cpus_read_unlock();
--			if (ret)
--				goto err_out;
--		}
--	}
-+	ret = cti_pm_setup(drvdata);
-+	if (ret)
-+		return ret;
- 
- 	/* create dynamic attributes for connections */
- 	ret = cti_create_cons_sysfs(dev, drvdata);
- 	if (ret) {
- 		dev_err(dev, "%s: create dynamic sysfs entries failed\n",
- 			cti_desc.name);
--		goto err_out;
-+		goto pm_release;
- 	}
- 
- 	/* set up coresight component description */
+-                       if (!ret)
+-                               ret = cpu_pm_register_notifier(&cti_cpu_pm_nb);
+-                       cpus_read_unlock();
+-                       if (ret)
+-                               goto err_out;
+-               }
+-       }
++       ret = cti_pm_setup(drvdata);
++       if (ret)
++               return ret;
+
+        /* create dynamic attributes for connections */
+        ret = cti_create_cons_sysfs(dev, drvdata);
+        if (ret) {
+                dev_err(dev, "%s: create dynamic sysfs entries failed\n",
+                        cti_desc.name);
+-               goto err_out;
++               goto pm_release;
+        }
+
+        /* set up coresight component description */
 @@ -908,7 +920,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
- 	drvdata->csdev = coresight_register(&cti_desc);
- 	if (IS_ERR(drvdata->csdev)) {
- 		ret = PTR_ERR(drvdata->csdev);
--		goto err_out;
-+		goto pm_release;
- 	}
- 
- 	/* add to list of CTI devices */
+        drvdata->csdev = coresight_register(&cti_desc);
+        if (IS_ERR(drvdata->csdev)) {
+                ret = PTR_ERR(drvdata->csdev);
+-               goto err_out;
++               goto pm_release;
+        }
+
+        /* add to list of CTI devices */
 @@ -927,7 +939,7 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
- 	dev_info(&drvdata->csdev->dev, "CTI initialized\n");
- 	return 0;
- 
+        dev_info(&drvdata->csdev->dev, "CTI initialized\n");
+        return 0;
+
 -err_out:
 +pm_release:
- 	cti_pm_release(drvdata);
- 	return ret;
+        cti_pm_release(drvdata);
+        return ret;
  }
--- 
+--
 2.27.0
