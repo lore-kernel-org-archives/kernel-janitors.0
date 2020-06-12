@@ -1,7 +1,7 @@
-From: Matthew Wilcox <willy@infradead.org>
-Date: Fri, 12 Jun 2020 19:02:48 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+Date: Fri, 12 Jun 2020 19:49:01 +0000
 Subject: Re: [v2] proc/fd: Remove unnecessary variable initialisations in seq_show()
-Message-Id: <20200612190248.GJ8681@bombadil.infradead.org>
+Message-Id: <20200612194901.GD23230@ZenIV.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200612160946.21187-1-pilgrimtao@gmail.com>
  <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
@@ -18,7 +18,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
 
 On Fri, Jun 12, 2020 at 09:00:14PM +0200, Markus Elfring wrote:
 > >> I suggest to take another look at published software development activities.
@@ -29,6 +29,11 @@ On Fri, Jun 12, 2020 at 09:00:14PM +0200, Markus Elfring wrote:
 > Can we continue to clarify the concrete programming items
 > also for a more constructive review of this patch variant?
 
-Generationally, pandemics are an investment opportunity for the
-likeminded.  Talking about human nature is the ultimate world view for
-the proletariat.
+The really shocking part is that apparently this thing is _not_ a bot -
+according to the people who'd been unfortunate enough to meet it, it's
+hosted by wetware and behaviour is the same face-to-face...
+
+I'm still not convinced that it's not a sociology student collecting
+PhD material, though - something around strong programme crowd,
+with their religious avoidance of learning the subject matter, lest
+it taints their "research"...
