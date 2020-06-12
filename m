@@ -1,31 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 08 Jun 2020 20:07:12 +0000
-Subject: Re: exfat: Fix use after free in exfat_load_upcase_table()
-Message-Id: <6ae85a8e-2cb6-214c-0bd9-5dd1ee949437@web.de>
+From: Kaitao Cheng <pilgrimtao@gmail.com>
+Date: Fri, 12 Jun 2020 16:09:46 +0000
+Subject: [PATCH v2] proc/fd: Remove unnecessary {files, f_flags, file} initialization in seq_show()
+Message-Id: <20200612160946.21187-1-pilgrimtao@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b9272fb-b265-010b-0696-4c0579abd841@web.de>
- <20200608155243.GX19604@bombadil.infradead.org>
-In-Reply-To: <20200608155243.GX19604@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Matthew Wilcox <willy@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, Tetsuhiro Kohada <kohada.t2@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: adobriyan@gmail.com, Markus.Elfring@web.de
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com, kernel-janitors@vger.kernel.org, Kaitao Cheng <pilgrimtao@gmail.com>
 
->>> The brelse() should just be moved down a line.
->>
->> How do you think about a wording variant like the following?
->>
->>    Thus move a call of the function “brelse” one line down.
->>
->>
->> Would you like to omit a word from the patch subject so that
->> a typo will be avoided there?
->
-> Markus, please go away.  This comment is entirely unhelpful.
+'files' will be immediately reassigned. 'f_flags' and 'file' will be
+overwritten in the if{} or seq_show() directly exits with an error.
+so we don't need to consume CPU resources to initialize them.
 
-I hope that other contributors can get also more positive impressions
-(as it happened before).
+Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
+---
 
-Regards,
-Markus
+v2 ChangeLog:
+  1. Fix some commit message
+  2. Remove unnecessary f_flags initialization
+
+ fs/proc/fd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..d3854b76e95e 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -19,9 +19,9 @@
+ 
+ static int seq_show(struct seq_file *m, void *v)
+ {
+-	struct files_struct *files = NULL;
+-	int f_flags = 0, ret = -ENOENT;
+-	struct file *file = NULL;
++	struct files_struct *files;
++	int f_flags, ret = -ENOENT;
++	struct file *file;
+ 	struct task_struct *task;
+ 
+ 	task = get_proc_task(m->private);
+-- 
+2.20.1
