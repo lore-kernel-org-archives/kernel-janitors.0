@@ -1,29 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Jun 2020 21:57:55 +0000
-Subject: Re: [PATCH] qed: add missing error test for DBG_STATUS_NO_MATCHING_FRAMING_MODE
-Message-Id: <20200624.145755.1271879668840297330.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 12 Jun 2020 16:45:57 +0000
+Subject: Re: [PATCH v2] proc/fd: Remove unnecessary variable initialisations in seq_show()
+Message-Id: <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200624101302.8316-1-colin.king@canonical.com>
-In-Reply-To: <20200624101302.8316-1-colin.king@canonical.com>
+References: <20200612160946.21187-1-pilgrimtao@gmail.com>
+In-Reply-To: <20200612160946.21187-1-pilgrimtao@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, kuba@kernel.org, michal.kalderon@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 24 Jun 2020 11:13:02 +0100
+> 'files' will be immediately reassigned. 'f_flags' and 'file' will be
+> overwritten in the if{} or seq_show() directly exits with an error.
+> so we don't need to consume CPU resources to initialize them.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The error DBG_STATUS_NO_MATCHING_FRAMING_MODE was added to the enum
-> enum dbg_status however there is a missing corresponding entry for
-> this in the array s_status_str. This causes an out-of-bounds read when
-> indexing into the last entry of s_status_str.  Fix this by adding in
-> the missing entry.
-> 
-> Addresses-Coverity: ("Out-of-bounds read").
-> Fixes: 2d22bc8354b1 ("qed: FW 8.42.2.0 debug features")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I suggest to improve also this change description.
 
-Applied, thank you.
+* Should the mentioned identifiers refer to variables?
+
+* Will another imperative wording be preferred?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n151
+
+* I propose to extend the patch a bit more.
+  How do you think about to convert the initialisation for the variable “ret”
+  also into a later assignment?
+
+Regards,
+Markus
