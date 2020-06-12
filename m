@@ -1,55 +1,50 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 12 Jun 2020 07:36:09 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Fri, 12 Jun 2020 10:01:32 +0000
 Subject: Re: [PATCH] drm/msm: Improve exception handling in msm_gpu_crashstate_capture()
-Message-Id: <56a615b6-9881-ff01-fa0f-8ea070fc03e7@web.de>
+Message-Id: <20200612100132.GB3157576@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <56a615b6-9881-ff01-fa0f-8ea070fc03e7@web.de>
+In-Reply-To: <56a615b6-9881-ff01-fa0f-8ea070fc03e7@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Bernard Zhao <bernard@vivo.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Sean Paul <sean@poorly.run>, opensource.kernel@vivo.com, David Airlie <airlied@linux.ie>, Bernard Zhao <bernard@vivo.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
 
-> Function msm_gpu_crashstate_capture maybe called for several
-> times, and then the state->bos is a potential memleak. Also
-> the state->pos maybe alloc failed, but now without any handle.
-> This change is to fix some potential memleak and add error
-> handle when alloc failed.
-
-I suggest to improve the provided information.
-How do you think about a wording variant like the following?
-
-   The function “msm_gpu_crashstate_capture” can be called multiple times.
-   The members “comm”, “cmd” and “bos” of the data structure “msm_gpu_state”
-   are reassigned with pointers according to dynamic memory allocations
-   if the preprocessor symbol “CONFIG_DEV_COREDUMP” was defined.
-   But the function “kfree” was not called for them before.
-
-   Thus add missing actions.
-   * Release previous objects.
-   * Use further null pointer checks.
-   * Complete the corresponding exception handling.
-
-
-Would you like to add the tag “Fixes” to the commit message?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n183
-
-
-…
-> +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> @@ -366,8 +366,11 @@  static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
->  			if (!should_dump(submit, submit->cmd[i].idx))
->  				nr++;
->
-> +		kfree(state->bos);
->  		state->bos = kcalloc(nr,
->  			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
-> +		if (!state->bos)
-> +			return;
-…
-
-Will there be a need to reconsider the indentation for function call parameters
-in such source files?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=b791d1bdf9212d944d749a5c7ff6febdba241771#n93
-
-Regards,
-Markus
+T24gRnJpLCBKdW4gMTIsIDIwMjAgYXQgMDk6MzY6MDlBTSArMDIwMCwgTWFya3VzIEVsZnJpbmcg
+d3JvdGU6Cj4gPiBGdW5jdGlvbiBtc21fZ3B1X2NyYXNoc3RhdGVfY2FwdHVyZSBtYXliZSBjYWxs
+ZWQgZm9yIHNldmVyYWwKPiA+IHRpbWVzLCBhbmQgdGhlbiB0aGUgc3RhdGUtPmJvcyBpcyBhIHBv
+dGVudGlhbCBtZW1sZWFrLiBBbHNvCj4gPiB0aGUgc3RhdGUtPnBvcyBtYXliZSBhbGxvYyBmYWls
+ZWQsIGJ1dCBub3cgd2l0aG91dCBhbnkgaGFuZGxlLgo+ID4gVGhpcyBjaGFuZ2UgaXMgdG8gZml4
+IHNvbWUgcG90ZW50aWFsIG1lbWxlYWsgYW5kIGFkZCBlcnJvcgo+ID4gaGFuZGxlIHdoZW4gYWxs
+b2MgZmFpbGVkLgo+IAo+IEkgc3VnZ2VzdCB0byBpbXByb3ZlIHRoZSBwcm92aWRlZCBpbmZvcm1h
+dGlvbi4KPiBIb3cgZG8geW91IHRoaW5rIGFib3V0IGEgd29yZGluZyB2YXJpYW50IGxpa2UgdGhl
+IGZvbGxvd2luZz8KPiAKPiAgICBUaGUgZnVuY3Rpb24g4oCcbXNtX2dwdV9jcmFzaHN0YXRlX2Nh
+cHR1cmXigJ0gY2FuIGJlIGNhbGxlZCBtdWx0aXBsZSB0aW1lcy4KPiAgICBUaGUgbWVtYmVycyDi
+gJxjb21t4oCdLCDigJxjbWTigJ0gYW5kIOKAnGJvc+KAnSBvZiB0aGUgZGF0YSBzdHJ1Y3R1cmUg
+4oCcbXNtX2dwdV9zdGF0ZeKAnQo+ICAgIGFyZSByZWFzc2lnbmVkIHdpdGggcG9pbnRlcnMgYWNj
+b3JkaW5nIHRvIGR5bmFtaWMgbWVtb3J5IGFsbG9jYXRpb25zCj4gICAgaWYgdGhlIHByZXByb2Nl
+c3NvciBzeW1ib2wg4oCcQ09ORklHX0RFVl9DT1JFRFVNUOKAnSB3YXMgZGVmaW5lZC4KPiAgICBC
+dXQgdGhlIGZ1bmN0aW9uIOKAnGtmcmVl4oCdIHdhcyBub3QgY2FsbGVkIGZvciB0aGVtIGJlZm9y
+ZS4KPiAKPiAgICBUaHVzIGFkZCBtaXNzaW5nIGFjdGlvbnMuCj4gICAgKiBSZWxlYXNlIHByZXZp
+b3VzIG9iamVjdHMuCj4gICAgKiBVc2UgZnVydGhlciBudWxsIHBvaW50ZXIgY2hlY2tzLgo+ICAg
+ICogQ29tcGxldGUgdGhlIGNvcnJlc3BvbmRpbmcgZXhjZXB0aW9uIGhhbmRsaW5nLgo+IAo+IAo+
+IFdvdWxkIHlvdSBsaWtlIHRvIGFkZCB0aGUgdGFnIOKAnEZpeGVz4oCdIHRvIHRoZSBjb21taXQg
+bWVzc2FnZT8KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dp
+dC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGlu
+Zy1wYXRjaGVzLnJzdD9pZLc5MWQxYmRmOTIxMmQ5NDRkNzQ5YTVjN2ZmNmZlYmRiYTI0MTc3MSNu
+MTgzCj4gCj4gCgpIaSwKClRoaXMgaXMgdGhlIHNlbWktZnJpZW5kbHkgcGF0Y2gtYm90IG9mIEdy
+ZWcgS3JvYWgtSGFydG1hbi4KCk1hcmt1cywgeW91IHNlZW0gdG8gaGF2ZSBzZW50IGEgbm9uc2Vu
+c2ljYWwgb3Igb3RoZXJ3aXNlIHBvaW50bGVzcwpyZXZpZXcgY29tbWVudCB0byBhIHBhdGNoIHN1
+Ym1pc3Npb24gb24gYSBMaW51eCBrZXJuZWwgZGV2ZWxvcGVyIG1haWxpbmcKbGlzdC4gIEkgc3Ry
+b25nbHkgc3VnZ2VzdCB0aGF0IHlvdSBub3QgZG8gdGhpcyBhbnltb3JlLiAgUGxlYXNlIGRvIG5v
+dApib3RoZXIgZGV2ZWxvcGVycyB3aG8gYXJlIGFjdGl2ZWx5IHdvcmtpbmcgdG8gcHJvZHVjZSBw
+YXRjaGVzIGFuZApmZWF0dXJlcyB3aXRoIGNvbW1lbnRzIHRoYXQsIGluIHRoZSBlbmQsIGFyZSBh
+IHdhc3RlIG9mIHRpbWUuCgpQYXRjaCBzdWJtaXR0ZXIsIHBsZWFzZSBpZ25vcmUgTWFya3VzJ3Mg
+c3VnZ2VzdGlvbjsgeW91IGRvIG5vdCBuZWVkIHRvCmZvbGxvdyBpdCBhdCBhbGwuICBUaGUgcGVy
+c29uL2JvdC9BSSB0aGF0IHNlbnQgaXQgaXMgYmVpbmcgaWdub3JlZCBieQphbG1vc3QgYWxsIExp
+bnV4IGtlcm5lbCBtYWludGFpbmVycyBmb3IgaGF2aW5nIGEgcGVyc2lzdGVudCBwYXR0ZXJuIG9m
+CmJlaGF2aW9yIG9mIHByb2R1Y2luZyBkaXN0cmFjdGluZyBhbmQgcG9pbnRsZXNzIGNvbW1lbnRh
+cnksIGFuZAppbmFiaWxpdHkgdG8gYWRhcHQgdG8gZmVlZGJhY2suICBQbGVhc2UgZmVlbCBmcmVl
+IHRvIGFsc28gaWdub3JlIGVtYWlscwpmcm9tIHRoZW0uCgp0aGFua3MsCgpncmVnIGstaCdzIHBh
+dGNoIGVtYWlsIGJvdA==
