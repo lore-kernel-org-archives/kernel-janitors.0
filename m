@@ -1,36 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jun 2020 13:27:44 +0000
-Subject: [PATCH] tty: serial: qcom_geni_serial: Clean up an ARRAY_SIZE() vs sizeof()
-Message-Id: <20200624132744.GD9972@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 13 Jun 2020 18:07:56 +0000
+Subject: [PATCH] ext4: Delete unnecessary checks before brelse()
+Message-Id: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The ARRAY_SIZE() is the number of elements but we want the number of
-bytes so sizeof() is more appropriate.  Fortunately, it's the same
-thing here because this is an array of u8 so this doesn't change
-runtime.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jun 2020 19:12:24 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The brelse() function tests whether its argument is NULL
+and then returns immediately.
+Thus remove the tests which are not needed around the shown calls.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/qcom_geni_serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/extents.c | 6 ++----
+ fs/ext4/xattr.c   | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 457c0bf8cbf8..1ed3d354e16d 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -718,7 +718,7 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
- 		u8 buf[sizeof(u32)];
- 		int c;
- 
--		memset(buf, 0, ARRAY_SIZE(buf));
-+		memset(buf, 0, sizeof(buf));
- 		tx_bytes = min_t(size_t, remaining, port->tx_bytes_pw);
- 
- 		for (c = 0; c < tx_bytes ; c++) {
--- 
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 221f240eae60..315276d50aa8 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -693,10 +693,8 @@ void ext4_ext_drop_refs(struct ext4_ext_path *path)
+ 		return;
+ 	depth = path->p_depth;
+ 	for (i = 0; i <= depth; i++, path++) {
+-		if (path->p_bh) {
+-			brelse(path->p_bh);
+-			path->p_bh = NULL;
+-		}
++		brelse(path->p_bh);
++		path->p_bh = NULL;
+ 	}
+ }
+
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 9b29a40738ac..eb997ce21be3 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1354,8 +1354,7 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
+
+ 	block = 0;
+ 	while (wsize < bufsize) {
+-		if (bh != NULL)
+-			brelse(bh);
++		brelse(bh);
+ 		csize = (bufsize - wsize) > blocksize ? blocksize :
+ 								bufsize - wsize;
+ 		bh = ext4_getblk(handle, ea_inode, block, 0);
+--
 2.27.0
