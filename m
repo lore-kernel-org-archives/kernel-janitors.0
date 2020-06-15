@@ -1,44 +1,96 @@
-From: Kaitao Cheng <pilgrimtao@gmail.com>
-Date: Fri, 12 Jun 2020 16:09:46 +0000
-Subject: [PATCH v2] proc/fd: Remove unnecessary {files, f_flags, file} initialization in seq_show()
-Message-Id: <20200612160946.21187-1-pilgrimtao@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 15 Jun 2020 13:26:43 +0000
+Subject: Re: [PATCH v3] coccinelle: api: add kzfree script
+Message-Id: <a316f076-1686-25d8-18fe-1bbc0cf9a701@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: adobriyan@gmail.com, Markus.Elfring@web.de
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, songmuchun@bytedance.com, kernel-janitors@vger.kernel.org, Kaitao Cheng <pilgrimtao@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'files' will be immediately reassigned. 'f_flags' and 'file' will be
-overwritten in the if{} or seq_show() directly exits with an error.
-so we don't need to consume CPU resources to initialize them.
+…
+> +virtual context
+> +virtual patch
+> +virtual org
+> +virtual report
 
-Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
----
++virtual context, patch, org, report
 
-v2 ChangeLog:
-  1. Fix some commit message
-  2. Remove unnecessary f_flags initialization
+Is such a SmPL code variant more succinct?
 
- fs/proc/fd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 81882a13212d..d3854b76e95e 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -19,9 +19,9 @@
- 
- static int seq_show(struct seq_file *m, void *v)
- {
--	struct files_struct *files = NULL;
--	int f_flags = 0, ret = -ENOENT;
--	struct file *file = NULL;
-+	struct files_struct *files;
-+	int f_flags, ret = -ENOENT;
-+	struct file *file;
- 	struct task_struct *task;
- 
- 	task = get_proc_task(m->private);
--- 
-2.20.1
+…
+> +if (...)
+> +  \(memset@ok\|memzero_explicit@ok\)(...);
+
+Would you like to tolerate any extra source code around such a function call
+in an if branch?
+
+
+…
+> +(
+> +* memset@m((T)E, 0, ...);
+> +|
+> +* memzero_explicit@m((T)E, ...);
+> +)
+…
+
+I suggest to move a semicolon.
+
++(
++*memset@m((T)E, 0, ...)
++|
++*memzero_explicit@m((T)E, ...)
++);
+
+
+…
+> +- \(kfree\|vfree\|kvfree\)(E);
+> ++ kvfree_sensitive(E, size);
+…
+
+Would you like to increase the precision a bit for the change specification?
+
++-\(kfree\|vfree\|kvfree\)
+++kvfree_sensitive
++ (E
+++ , size
++ );
+
+
+…
+> +(
+> +- kfree(E);
+> ++ kzfree(E);
+> +|
+> +- \(vfree\|kvfree\)(E);
+> ++ kvfree_sensitive(E, size);
+> +)
+…
+
++(
++-kfree
+++kzfree
++      (E)
++|
++-\(vfree\|kvfree\)
+++kvfree_sensitive
++ (E
+++ , size
++ )
++);
+
+
+…
+> +coccilib.org.print_todo(p[0],
+> +  "WARNING: opportunity for kzfree/kvfree_sensitive")
+
+I suggest to align the second function parameter.
+
++coccilib.org.print_todo(p[0],
++                        "WARNING: opportunity for kzfree/kvfree_sensitive")
+
+
+Regards,
+Markus
