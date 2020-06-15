@@ -1,33 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 02 Jun 2020 19:50:02 +0000
-Subject: [PATCH] sched/deadline: Fix a typo in a comment
-Message-Id: <20200602195002.677448-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 15 Jun 2020 11:27:54 +0000
+Subject: [PATCH] drm/vc4: Fix an error code vc4_create_object()
+Message-Id: <20200615112754.GB1207669@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Eric Anholt <eric@anholt.net>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-s/deadine/deadline/
+The vc4_create_object() needs to return NULL on error, not error
+pointers.  If it returns an error pointer then that will lead to an
+Oops in the callers.  Fortunately, in current kernels small allocations
+always succed so this will never happen.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: c826a6e10644 ("drm/vc4: Add a BO cache.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- kernel/sched/deadline.c | 2 +-
+ drivers/gpu/drm/vc4/vc4_bo.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 504d2f51b0d6..cc2066e25dcf 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1098,7 +1098,7 @@ void init_dl_task_timer(struct sched_dl_entity *dl_se)
-  * cannot use the runtime, and so it replenishes the task. This rule
-  * works fine for implicit deadline tasks (deadline = period), and the
-  * CBS was designed for implicit deadline tasks. However, a task with
-- * constrained deadline (deadine < period) might be awakened after the
-+ * constrained deadline (deadline < period) might be awakened after the
-  * deadline, but before the next period. In this case, replenishing the
-  * task would allow it to run for runtime / deadline. As in this case
-  * deadline < period, CBS enables a task to run for more than the
+diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
+index 72d30d90b856c..0af246a5609ca 100644
+--- a/drivers/gpu/drm/vc4/vc4_bo.c
++++ b/drivers/gpu/drm/vc4/vc4_bo.c
+@@ -389,7 +389,7 @@ struct drm_gem_object *vc4_create_object(struct drm_device *dev, size_t size)
+ 
+ 	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
+ 	if (!bo)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	bo->madv = VC4_MADV_WILLNEED;
+ 	refcount_set(&bo->usecnt, 0);
 -- 
-2.25.1
+2.26.2
