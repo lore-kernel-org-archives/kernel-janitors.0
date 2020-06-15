@@ -1,28 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 02 Jun 2020 10:23:14 +0000
-Subject: Re: [PATCH] media: staging: tegra-vde: add missing pm_runtime_put_autosuspend
-Message-Id: <248e05e2-1df9-70f2-a6ac-f1af7de59a06@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 15 Jun 2020 11:27:19 +0000
+Subject: [PATCH] usb: gadget: udc: Potential Oops in error handling code
+Message-Id: <20200615112719.GA1207669@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>, LKML <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Navid Emamdoost <emamd001@umn.edu>, Thierry Reding <thierry.reding@gmail.com>, Qiushi Wu <wu000273@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felipe Balbi <balbi@kernel.org>, Chao Xie <chao.xie@marvell.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Call to pm_runtime_get_sync increments counter even in case of
-> failure leading to incorrect ref count.
-> Call pm_runtime_put_autosuspend if pm_runtime_get_sync fails.
+If this is in "transceiver" mode the the ->qwork isn't required and is
+a NULL pointer.  This can lead to a NULL dereference when we call
+destroy_workqueue(udc->qwork).
 
-How do you think about a wording variant like the following?
+Fixes: 3517c31a8ece ("usb: gadget: mv_udc: use devm_xxx for probe")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/gadget/udc/mv_udc_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-   Change description:
-   The PM runtime reference counter is generally incremented by a call of
-   the function “pm_runtime_get_sync”.
-   Thus call the function “pm_runtime_put_autosuspend” also in one error case
-   to keep the reference counting consistent.
-
-
-Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
+index cafde053788bb..80a1b52c656e0 100644
+--- a/drivers/usb/gadget/udc/mv_udc_core.c
++++ b/drivers/usb/gadget/udc/mv_udc_core.c
+@@ -2313,7 +2313,8 @@ static int mv_udc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_create_workqueue:
+-	destroy_workqueue(udc->qwork);
++	if (udc->qwork)
++		destroy_workqueue(udc->qwork);
+ err_destroy_dma:
+ 	dma_pool_destroy(udc->dtd_pool);
+ err_free_dma:
+-- 
+2.26.2
