@@ -1,38 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 11 Jun 2020 15:31:08 +0000
-Subject: [PATCH] ttyprintk: remove redundant initialization of variable ret
-Message-Id: <20200611153108.927614-1-colin.king@canonical.com>
+From: Garrit Franke <garritfranke@gmail.com>
+Date: Mon, 15 Jun 2020 13:55:41 +0000
+Subject: [PATCH] staging: comedi: fix up missing whitespace in comment
+Message-Id: <20200615135541.46986-1-garritfranke@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: abbotti@mev.co.uk, hsweeten@visionengravers.com, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Cc: Garrit Franke <garritfranke+kernel@gmail.com>, Garrit Franke <garritfranke@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Garrit Franke <garritfranke+kernel@gmail.com>
 
-The variable ret is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+I noticed this missing whitespace in a comment inside ni_mio_common.c
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Garrit Franke <garritfranke@gmail.com>
 ---
- drivers/char/ttyprintk.c | 2 +-
+ drivers/staging/comedi/drivers/ni_mio_common.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-index 56db949a7b70..6a0059e508e3 100644
---- a/drivers/char/ttyprintk.c
-+++ b/drivers/char/ttyprintk.c
-@@ -172,7 +172,7 @@ static struct tty_driver *ttyprintk_driver;
- 
- static int __init ttyprintk_init(void)
- {
--	int ret = -ENOMEM;
-+	int ret;
- 
- 	spin_lock_init(&tpk_port.spinlock);
- 
+diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
+index d99f4065b96d..9266e13f6271 100644
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -2390,7 +2390,7 @@ static int ni_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
+ #endif
+ 			break;
+ 		case AIMODE_SAMPLE:
+-			/*generate FIFO interrupts on non-empty */
++			/* generate FIFO interrupts on non-empty */
+ 			ni_stc_writew(dev, NISTC_AI_MODE3_FIFO_MODE_NE,
+ 				      NISTC_AI_MODE3_REG);
+ 			break;
 -- 
-2.27.0.rc0
+2.25.1
