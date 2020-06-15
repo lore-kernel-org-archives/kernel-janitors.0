@@ -1,68 +1,44 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 10 Jun 2020 20:00:24 +0000
-Subject: Re: exfat: add missing brelse() calls on error paths
-Message-Id: <015e5093-d139-6bee-ca45-4cb0e871e65d@web.de>
+Date: Mon, 15 Jun 2020 16:27:50 +0000
+Subject: Re: coccinelle: api: add device_attr_show script
+Message-Id: <6ce5346f-127d-e2fd-c703-9adf21060e30@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200610172213.GA90634@mwanda>
- <740ce77a-5404-102b-832f-870cbec82d56@web.de> <20200610184517.GC4282@kadam>
- <b44caf20-d3fc-30ac-f716-2375ed55dc9a@web.de>
- <20200610192244.GK19604@bombadil.infradead.org>
-In-Reply-To: <20200610192244.GK19604@bombadil.infradead.org>
+References: <1f028ee6-b014-c240-21d8-0c1950334fe6@web.de>
+ <alpine.DEB.2.22.394.2006151742090.23306@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2006151742090.23306@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>, Tetsuhiro Kohada <kohada.t2@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> You're nitpicking commit messages.
+>> +virtual report, org, context, patch
+>>
+>> Is such a SmPL code variant more succinct?
+>
+> This doens't matter.
 
-I am occasionally trying to achieve corresponding improvements.
-
-
-> This is exactly the kind of thing which drives people away.
-
-Would you like to follow official patch process documentation?
-
-
-> Dan's commit message is fine.
-
-I have got the impression that he indicates another deviation from
-a well-known requirement. I am curious under which circumstances
-such a patch review concern will be taken into account finally.
+Can less duplicate code be a bit nicer?
 
 
-> It's actually hilarious because your emails are so unclear that I
-> can't understand them.
+>>> +ssize_t show(struct device *dev, struct device_attribute *attr, char *buf)
+>>> +{
+>>> +	<...
+>>> +*	return snprintf@p(...);
+>>> +	...>
+>>> +}
+>>
+>> I suggest to reconsider the selection of the SmPL nest construct.
+>> https://github.com/coccinelle/coccinelle/blob/e06b9156dfa02a28cf3cbf0913a10513f3d163ab/docs/manual/cocci_syntax.tex#L783
+>>
+>> Can the construct “<+... … ...+>” become relevant here?
+>
+> <... ...> is fine if the only thing that will be used afterwards is what
+> is inside the <... ...>
 
-I find such feedback surprising and interesting.
-I hope that we can reduce understanding difficulties together.
-
-
-> I have no idea what "collateral evolution" means
-
-This term expresses the situation that a single change can trigger
-further changes.
-
-Examples for programmers:
-A)
-* You add an argument to an used function.
-* How many function calls will need related adjustments?
-
-B)
-* Some function calls can fail.
-* How do you think about to complete error detection and the
-  corresponding exception handling?
-
-
-> and yet you use it in almost every email.
-
-You exaggerate here.
-
-
-> Why can't you use the same terminology the rest of us use?
-
-I got also used to some wording approaches.
-Which terminology variation do you prefer?
+I propose once more to distinguish better if the shown return statement
+may be really treated as optional for such a source code search approach
+(or not).
 
 Regards,
 Markus
