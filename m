@@ -1,40 +1,34 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 26 Jun 2020 03:59:48 +0000
-Subject: [PATCH V2] scsi: powertec: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <20200626035948.944148-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Jun 2020 09:19:49 +0000
+Subject: [PATCH] thermal: ti-soc-thermal: Fix reversed condition in ti_thermal_expose_sensor()
+Message-Id: <20200616091949.GA11940@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <08f63617-03df-71cf-70c4-00f08a9f51d8@wanadoo.fr>
-In-Reply-To: <08f63617-03df-71cf-70c4-00f08a9f51d8@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amit.kucheria@verdurent.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The dev_id used in 'request_irq()' and 'free_irq()' should match.
-So use 'info' in both cases.
+This condition is reversed and will cause breakage.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 7440f518dad9 ("thermal/drivers/ti-soc-thermal: Avoid dereferencing ERR_PTR")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-V2: update free_irq instead of request_irq in order not to obviously break
-    code
----
- drivers/scsi/arm/powertec.c | 2 +-
+ drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/arm/powertec.c b/drivers/scsi/arm/powertec.c
-index 772a13e5fd91..d99ef014528e 100644
---- a/drivers/scsi/arm/powertec.c
-+++ b/drivers/scsi/arm/powertec.c
-@@ -378,7 +378,7 @@ static int powertecscsi_probe(struct expansion_card *ec,
+diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+index 85776db4bf34..2ce4b19f312a 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
++++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+@@ -169,7 +169,7 @@ int ti_thermal_expose_sensor(struct ti_bandgap *bgp, int id,
  
- 	if (info->info.scsi.dma != NO_DMA)
- 		free_dma(info->info.scsi.dma);
--	free_irq(ec->irq, host);
-+	free_irq(ec->irq, info);
+ 	data = ti_bandgap_get_sensor_data(bgp, id);
  
-  out_release:
- 	fas216_release(host);
+-	if (!IS_ERR_OR_NULL(data))
++	if (IS_ERR_OR_NULL(data))
+ 		data = ti_thermal_build_data(bgp, id);
+ 
+ 	if (!data)
 -- 
-2.25.1
+2.27.0
