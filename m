@@ -1,36 +1,20 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 15 Jun 2020 15:57:38 +0000
-Subject: Re: [PATCH v2] drm/etnaviv: fix ref count leak via pm_runtime_get_sync
-Message-Id: <77698453-95ba-5e99-bba5-2ca4a4918026@web.de>
+Date: Tue, 16 Jun 2020 11:23:15 +0000
+Subject: Re: [PATCH 1/2] drm/amdgpu/debugfs: fix memory leak when pm_runtime_get_sync failed
+Message-Id: <ae59e47a-f981-9ae6-840d-1912c01b53cd@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux+etnaviv@armlinux.org.uk
-Cc: David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen McCamant <mccamant@cs.umn.edu>, Andy Shevchenko <andy.shevchenko@gmail.com>, Navid Emamdoost <emamd001@umn.edu>, Qiushi Wu <wu000273@umn.edu>
+To: Chen Tao <chentao107@huawei.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Tom St Denis <tom.stdenis@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, Jack Xiao <Jack.Xiao@amd.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Aditya Pakki <pakki001@umn.edu>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Yintian Tao <yttao@amd.com>
 
-…
-> In case of failure, decrement the ref count before returning.
+> Fix memory leak in amdgpu_debugfs_gpr_read not freeing data when
+> pm_runtime_get_sync failed.
 
-Can it be nicer to use the term “reference count” here?
+* Would you like to improve the exception handling any more for this software module?
 
-Will the tag “Fixes” become helpful for the commit message?
-
-
-…
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-…
-> @@ -1326,6 +1331,7 @@  struct dma_fence *etnaviv_gpu_submit(struct etnaviv_gem_submit *submit)
->  	ret = event_alloc(gpu, nr_events, event);
->  	if (ret) {
->  		DRM_ERROR("no free events\n");
-> +		pm_runtime_put_noidle(gpu->dev);
->  		return NULL;
->  	}
-
-I suggest to move a bit of exception handling code to the end of
-this function implementation so that it can be better reused after
-the addition of a jump target like “put_runtime”.
+* How do you think about calling the function “pm_runtime_put_noidle”?
 
 Regards,
 Markus
