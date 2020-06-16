@@ -1,77 +1,44 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 10 Jun 2020 14:54:29 +0000
-Subject: Re: [PATCH] gpio: arizona: put pm_runtime in case of failure
-Message-Id: <20200610145429.GB2102023@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 16 Jun 2020 11:42:21 +0000
+Subject: [PATCH] drm/i915/display: fix missing null check on allocated dsb object
+Message-Id: <20200616114221.73971-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11488e76-2ea0-6478-0800-deb0438f0136@web.de>
-In-Reply-To: <11488e76-2ea0-6478-0800-deb0438f0136@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Animesh Manna <animesh.manna@intel.com>, Maarten Lankhorst <maarten.lankhorst@intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 02:14:38PM +0200, Markus Elfring wrote:
-> I recommend to replace the word “pm_runtime” by the
-> alternative “PM run time system” in the patch subject.
-> 
-> 
-> > Calling pm_runtime_get_sync increments the counter even in case of
-> > failure, causing incorrect ref count if pm_runtime_put is not called in
-> > error handling paths.
-> 
-> Should the term “reference count” be used here?
-> 
-> 
-> > Call pm_runtime_put if pm_runtime_get_sync fails.
-> 
-> The diff hunks show an other function name.
-> 
-> 
-> …
-> > +++ b/drivers/gpio/gpio-arizona.c
-> > @@ -64,6 +64,7 @@  static int arizona_gpio_get(struct gpio_chip *chip, unsigned offset)
-> >  		ret = pm_runtime_get_sync(chip->parent);
-> >  		if (ret < 0) {
-> >  			dev_err(chip->parent, "Failed to resume: %d\n", ret);
-> > +			pm_runtime_put_autosuspend(chip->parent);
-> >  			return ret;
-> >  		}
-> 
-> You propose to use identical statements in three if branches.
-> Please add a corresponding jump target for better exception handling.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?idC5faf5c218a47fd6258187f62d9bb1009717896#n455
-> 
-> 
-> Would you like to add the tag “Fixes” to the commit message?
-> 
-> 
-> I find it amazing how many questionable implementation details
-> you pointed out recently.
-> Were these contributions triggered by an evolving source code analysis
-> tool like CheQ?
-> https://github.com/umnsec/cheq/
-> 
-> Regards,
-> Markus
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi,
+Currently there is no null check for a failed memory allocation
+on the dsb object and without this a null pointer dereference
+error can occur. Fix this by adding a null check.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Note: added a drm_err message in keeping with the error message style
+in the function.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+Addresses-Coverity: ("Dereference null return")
+Fixes: afeda4f3b1c8 ("drm/i915/dsb: Pre allocate and late cleanup of cmd buffer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/intel_dsb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+diff --git a/drivers/gpu/drm/i915/display/intel_dsb.c b/drivers/gpu/drm/i915/display/intel_dsb.c
+index 24e6d63e2d47..566fa72427b3 100644
+--- a/drivers/gpu/drm/i915/display/intel_dsb.c
++++ b/drivers/gpu/drm/i915/display/intel_dsb.c
+@@ -271,6 +271,10 @@ void intel_dsb_prepare(struct intel_crtc_state *crtc_state)
+ 		return;
+ 
+ 	dsb = kmalloc(sizeof(*dsb), GFP_KERNEL);
++	if (!dsb) {
++		drm_err(&i915->drm, "DSB object creation failed\n");
++		return;
++	}
+ 
+ 	wakeref = intel_runtime_pm_get(&i915->runtime_pm);
+ 
+-- 
+2.27.0.rc0
