@@ -1,36 +1,33 @@
-From: Igor Russkikh <irusskikh@marvell.com>
-Date: Thu, 25 Jun 2020 16:32:28 +0000
-Subject: Re: [EXT] [PATCH] qed: add missing error test for DBG_STATUS_NO_MATCHING_FRAMING_MODE
-Message-Id: <a562bb9e-f158-3cdb-f969-fcbf88a2fad8@marvell.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 17 Jun 2020 20:12:14 +0000
+Subject: [PATCH] ia64: Fix a typo in a comment
+Message-Id: <20200617201214.733262-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200624101302.8316-1-colin.king@canonical.com>
-In-Reply-To: <20200624101302.8316-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2 <GR-everest-linux-l2@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Michal Kalderon <mkalderon@marvell.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tony.luck@intel.com, fenghua.yu@intel.com, walken@google.com, vbabka@suse.cz, tglx@linutronix.de, namit@vmware.com, afzal.mohd.ma@gmail.com
+Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Colin!
+s/permfon/perfmon/
 
-Thanks for catching this, indeed this was missed!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/ia64/kernel/perfmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->  	/* DBG_STATUS_INVALID_FILTER_TRIGGER_DWORDS */
->  	"The filter/trigger constraint dword offsets are not enabled for 
-> recording",
-> -
-> +	/* DBG_STATUS_NO_MATCHING_FRAMING_MODE */
-> +	"No matching framing mode",
-> 
-
-Could you please however change the string to
-
-	"No matching framing mode found for the enabled blocks/Storms - use less
-dwords for blocks data",
-
-If you don't have much time, I can repost this for you. With this change it'll
- be in sync with our internal error descriptions.
-
-Thanks
-  Igor
+diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+index 971f166873aa..e8e30a408946 100644
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -4555,7 +4555,7 @@ pfm_exit_thread(struct task_struct *task)
+ }
+ 
+ /*
+- * functions MUST be listed in the increasing order of their index (see permfon.h)
++ * functions MUST be listed in the increasing order of their index (see perfmon.h)
+  */
+ #define PFM_CMD(name, flags, arg_count, arg_type, getsz) { name, #name, flags, arg_count, sizeof(arg_type), getsz }
+ #define PFM_CMD_S(name, flags) { name, #name, flags, 0, 0, NULL }
+-- 
+2.25.1
