@@ -1,30 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 18 Jun 2020 15:22:04 +0000
-Subject: Re: [PATCH] drm/arm: fix unintentional integer overflow on left shift
-Message-Id: <20200618152204.GU4151@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jun 2020 15:59:59 +0000
+Subject: [PATCH][next] drm/mm/selftests: fix unsigned comparison with less than zero
+Message-Id: <20200617155959.231740-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200618100400.11464-1-colin.king@canonical.com>
- <20200618121405.GJ159988@e110455-lin.cambridge.arm.com>
- <5d08fbec-75d8-d9a9-af61-e6ab98e77c80@canonical.com>
- <20200618142106.GK159988@e110455-lin.cambridge.arm.com>
- <CAD16O86ebsDkwbnuw2G04YZWfukqxJ=_Tex5OT07icEpfPdQNw@mail.gmail.com>
-In-Reply-To: <CAD16O86ebsDkwbnuw2G04YZWfukqxJ=_Tex5OT07icEpfPdQNw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Garrit Franke <garritfranke@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Colin Ian King <colin.king@canonical.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 04:36:51PM +0200, Garrit Franke wrote:
-> Hi all, newbie here.
-> Can the BIT macro be safely used on other parts of the kernel as well?
-> Just using git grep "1 <<" returns a ton of results where bit shifting
-> is used the old fashioned way.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah.  There is a checkpatch warning for it and everything.  :)
+Function get_insert_time can return error values that are cast
+to a u64. The checks of insert_time1 and insert_time2 check for
+the errors but because they are u64 variables the check for less
+than zero can never be true. Fix this by casting the value to s64
+to allow of the negative error check to succeed.
 
-But I like the way you think.  Start with patches to staging though.
-People don't necessarily like doing cleanups on ancient code.
+Addresses-Coverity: ("Unsigned compared against 0, no effect")
+Fixes: 6e60d5ded06b ("drm/mm: add ig_frag selftest")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/selftests/test-drm_mm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/selftests/test-drm_mm.c b/drivers/gpu/drm/selftests/test-drm_mm.c
+index 3846b0f5bae3..671a152a6df2 100644
+--- a/drivers/gpu/drm/selftests/test-drm_mm.c
++++ b/drivers/gpu/drm/selftests/test-drm_mm.c
+@@ -1124,12 +1124,12 @@ static int igt_frag(void *ignored)
+ 
+ 		insert_time1 = get_insert_time(&mm, insert_size,
+ 					       nodes + insert_size, mode);
+-		if (insert_time1 < 0)
++		if ((s64)insert_time1 < 0)
+ 			goto err;
+ 
+ 		insert_time2 = get_insert_time(&mm, (insert_size * 2),
+ 					       nodes + insert_size * 2, mode);
+-		if (insert_time2 < 0)
++		if ((s64)insert_time2 < 0)
+ 			goto err;
+ 
+ 		pr_info("%s fragmented insert of %u and %u insertions took %llu and %llu nsecs\n",
+-- 
+2.27.0.rc0
