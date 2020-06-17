@@ -1,162 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 25 Jun 2020 13:27:36 +0000
-Subject: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
-Message-Id: <20200625132736.88832-1-colin.king@canonical.com>
+Date: Wed, 17 Jun 2020 08:49:11 +0000
+Subject: [PATCH][next] scsi: ufs: ufs-exynos: fix spelling mistake "pa_granularty" -> "pa_granularity"
+Message-Id: <20200617084911.167359-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marek Vasut <marek.vasut@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Seungwon Jeon <essuuj@gmail.com>, Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are a several places where printing an error message of
-init.name occurs after init.name has been kfree'd. Also the failure
-message is duplicated each time in the code. Fix this by adding
-a registration error failure path for these cases, moving the
-duplicated error messages to one common point and kfree'ing init.name
-only after it has been used.
-
-Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  21057	   3960	     64	  25081	   61f9	drivers/clk/clk-versaclock5.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  20886	   3960	     64	  24910	   614e	drivers/clk/clk-versaclock5.o
-
-Addresses-Coverity: ("Use after free")
-Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multiple instances")
+There is a spelling mistake in a dev_warn message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/clk/clk-versaclock5.c | 51 +++++++++++++----------------------
- 1 file changed, 19 insertions(+), 32 deletions(-)
+ drivers/scsi/ufs/ufs-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 9a5fb3834b9a..1d8ee4b8b1f5 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -882,11 +882,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	init.parent_names = parent_names;
- 	vc5->clk_mux.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_mux);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
- 		/* Register frequency doubler */
-@@ -900,12 +898,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		init.num_parents = 1;
- 		vc5->clk_mul.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 	}
- 
- 	/* Register PFD */
-@@ -921,11 +916,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	init.num_parents = 1;
- 	vc5->clk_pfd.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
-@@ -939,11 +932,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	vc5->clk_pll.vc5 = vc5;
- 	vc5->clk_pll.hw.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pll.hw);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name); /* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	/* Register FODs */
- 	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
-@@ -960,12 +951,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		vc5->clk_fod[n].vc5 = vc5;
- 		vc5->clk_fod[n].hw.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_fod[n].hw);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 	}
- 
- 	/* Register MUX-connected OUT0_I2C_SELB output */
-@@ -981,11 +969,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	vc5->clk_out[0].vc5 = vc5;
- 	vc5->clk_out[0].hw.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[0].hw);
--	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
-+	if (ret)
-+		goto err_clk_register;
-+	kfree(init.name); /* clock framework made a copy of the name */
- 
- 	/* Register FOD-connected OUTx outputs */
- 	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
-@@ -1008,17 +994,15 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		vc5->clk_out[n].vc5 = vc5;
- 		vc5->clk_out[n].hw.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[n].hw);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 
- 		/* Fetch Clock Output configuration from DT (if specified) */
- 		ret = vc5_get_output_config(client, &vc5->clk_out[n]);
- 		if (ret)
- 			goto err_clk;
-+
- 	}
- 
- 	ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
-@@ -1029,6 +1013,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 
- 	return 0;
- 
-+err_clk_register:
-+	dev_err(&client->dev, "unable to register %s\n", init.name);
-+	kfree(init.name); /* clock framework made a copy of the name */
- err_clk:
- 	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
+diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
+index 440f2af83d9c..0a9e99084f2a 100644
+--- a/drivers/scsi/ufs/ufs-exynos.c
++++ b/drivers/scsi/ufs/ufs-exynos.c
+@@ -883,7 +883,7 @@ static int exynos_ufs_post_link(struct ufs_hba *hba)
+ 		if (attr->pa_granularity < 1 || attr->pa_granularity > 6) {
+ 			/* Valid range for granularity: 1 ~ 6 */
+ 			dev_warn(hba->dev,
+-				"%s: pa_granularty %d is invalid, assuming backwards compatibility\n",
++				"%s: pa_granularity %d is invalid, assuming backwards compatibility\n",
+ 				__func__,
+ 				attr->pa_granularity);
+ 			attr->pa_granularity = 6;
 -- 
-2.27.0
+2.27.0.rc0
