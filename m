@@ -1,29 +1,40 @@
-From: charles jackson <lisa.petel@sd73.bc.ca>
-Date: Tue, 30 Jun 2020 08:18:47 +0000
-Subject: =?UTF-8?Q?=5BPossible_Spam=5D_Covid?= =?UTF-8?Q?_19_Wohlt=C3=A4tigkeitsfon?= =?UTF-8?Q?ds?=
-Message-Id: <1785089970.67041389.1593505127941.JavaMail.zimbra@zimbra.sd73.bc.ca>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 Jun 2020 16:44:05 +0000
+Subject: [PATCH] drm/fbdev: fix a memory leak on the dmt_mode object
+Message-Id: <20200617164405.232639-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Object drm_mode is allocated by the call to drm_mode_find_dmt
+(via the call to drm_mode_duplicate and drm_mode_create). The
+object is never free'd and hence causes a small memory leak.
+Fix this by kfree'ing drm_mode once it is no longer required.
 
+Addresses-Coverity: ("Resource leak")
+Fixes: 1d42bbc8f7f9 ("drm/fbdev: fix cloning on fbcon")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_client_modeset.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+index b7e9e1c2564c..c0119e4db045 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -324,6 +324,8 @@ static bool drm_client_target_cloned(struct drm_device *dev,
+ 			can_clone = false;
+ 	}
+ 
++	kfree(dmt_mode);
++
+ 	if (can_clone) {
+ 		DRM_DEBUG_KMS("can clone using 1024x768\n");
+ 		return true;
 -- 
-Hallo
- 
- Ich bin Charles W. Jackson aus North Carolina, Vereinigte Staaten von Amerika, und ich bin der Gewinner des Mega-Millionen-Jackpots von 344 Millionen US-Dollar. Ich spende die Summe von 2.000.000 Millionen Euro als Teil der Hilfsgelder f&uuml;r das Corona-Virus.
- 
- Dies ist Ihr Spendencode: [CJ530342019]
- 
- www.youtube.com/watch?v=BSr8myiLPMQ
- 
- Bitte antworten Sie auf diese E-Mail mit dem SPENDERCODE:
- 
- charlesjacksonjr001@gmail.com
- 
- Ich hoffe, dass Sie und Ihre Familie dies durchkommen
- 
- 
- Herr Charles Jackson
+2.27.0.rc0
