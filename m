@@ -1,54 +1,60 @@
-From: "wanghai (M)" <wanghai38@huawei.com>
-Date: Wed, 03 Jun 2020 06:54:02 +0000
-Subject: Re: [PATCH] cxl: Fix kobject memory leak in cxl_sysfs_afu_new_cr()
-Message-Id: <0d51c5c2-80d7-610d-3866-6bc85eeaeadf@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jun 2020 13:38:37 +0000
+Subject: [PATCH -next] scsi: ufs: ufs-exynos: Fix return value check in exynos_ufs_init()
+Message-Id: <20200618133837.127274-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b9791ff3-8397-f6e9-ca88-59c9bbe8c78f@web.de>
- <25ad528b-beaf-820f-9738-ea304dcbc0d7@huawei.com>
- <20200603061443.GB531505@kroah.com>
- <20ae5516-7e41-f706-46ba-955e1936f183@huawei.com>
- <20200603065024.GA587198@kroah.com>
-In-Reply-To: <20200603065024.GA587198@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>, Ian Munsie <imunsie@au1.ibm.com>, Frederic Barrat <fbarrat@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Kiwoong Kim <kwmad.kim@samsung.com>, Seungwon
+ Jeon <essuuj@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-在 2020/6/3 14:50, Greg Kroah-Hartman 写道:
-> On Wed, Jun 03, 2020 at 02:34:07PM +0800, wanghai (M) wrote:
->> 在 2020/6/3 14:14, Greg Kroah-Hartman 写道:
->>> On Wed, Jun 03, 2020 at 09:42:41AM +0800, wanghai (M) wrote:
->>>> 在 2020/6/3 1:20, Markus Elfring 写道:
->>>>>> Fix it by adding a call to kobject_put() in the error path of
->>>>>> kobject_init_and_add().
->>>>> Thanks for another completion of the exception handling.
->>>>>
->>>>> Would an other patch subject be a bit nicer?
->>>> Thanks for the guidance, I will perfect this description and send a v2
->>> Please note that you are responding to someone that a lot of kernel
->>> developers and maintainers have blacklisted as being very annoying and
->>> not helpful at all.
->>>
->>> Please do not feel that you need to respond to, or change any patch in
->>> response to their emails at all.
->>>
->>> I strongly recommend you just add them to your filters to not have to
->>> see their messages.  That's what I have done.
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->>> .
->> Okay, so I don’t have to send the v2 patch.
-> No, all should be fine, I'll review the patch when after 5.8-rc1 is out,
-> and if I find any problems with it, will let you know then.
+Fixes: 55f4b1f73631 ("scsi: ufs: ufs-exynos: Add UFS host support for Exynos SoCs")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/scsi/ufs/ufs-exynos.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Got it. Thanks.
-
-
-thanks,
-
-Wang Hai
+diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
+index 440f2af83d9c..c918fbc6ca60 100644
+--- a/drivers/scsi/ufs/ufs-exynos.c
++++ b/drivers/scsi/ufs/ufs-exynos.c
+@@ -950,25 +950,25 @@ static int exynos_ufs_init(struct ufs_hba *hba)
+ 	/* exynos-specific hci */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vs_hci");
+ 	ufs->reg_hci = devm_ioremap_resource(dev, res);
+-	if (!ufs->reg_hci) {
++	if (IS_ERR(ufs->reg_hci)) {
+ 		dev_err(dev, "cannot ioremap for hci vendor register\n");
+-		return -ENOMEM;
++		return PTR_ERR(ufs->reg_hci);
+ 	}
+ 
+ 	/* unipro */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "unipro");
+ 	ufs->reg_unipro = devm_ioremap_resource(dev, res);
+-	if (!ufs->reg_unipro) {
++	if (IS_ERR(ufs->reg_unipro)) {
+ 		dev_err(dev, "cannot ioremap for unipro register\n");
+-		return -ENOMEM;
++		return PTR_ERR(ufs->reg_unipro);
+ 	}
+ 
+ 	/* ufs protector */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ufsp");
+ 	ufs->reg_ufsp = devm_ioremap_resource(dev, res);
+-	if (!ufs->reg_ufsp) {
++	if (IS_ERR(ufs->reg_ufsp)) {
+ 		dev_err(dev, "cannot ioremap for ufs protector register\n");
+-		return -ENOMEM;
++		return PTR_ERR(ufs->reg_ufsp);
+ 	}
+ 
+ 	ret = exynos_ufs_parse_dt(dev, ufs);
