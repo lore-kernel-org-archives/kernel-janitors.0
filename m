@@ -1,59 +1,43 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 13 Jun 2020 18:07:56 +0000
-Subject: [PATCH] ext4: Delete unnecessary checks before brelse()
-Message-Id: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Jun 2020 09:32:24 +0000
+Subject: [PATCH][next][V2] usb: xhci: fix spelling mistake in Kconfig "firwmare" -> "firmware"
+Message-Id: <20200618093224.10179-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jun 2020 19:12:24 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus remove the tests which are not needed around the shown calls.
+There are two spelling mistakes in the Kconfig text. Fix these.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ext4/extents.c | 6 ++----
- fs/ext4/xattr.c   | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 221f240eae60..315276d50aa8 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -693,10 +693,8 @@ void ext4_ext_drop_refs(struct ext4_ext_path *path)
- 		return;
- 	depth = path->p_depth;
- 	for (i = 0; i <= depth; i++, path++) {
--		if (path->p_bh) {
--			brelse(path->p_bh);
--			path->p_bh = NULL;
--		}
-+		brelse(path->p_bh);
-+		path->p_bh = NULL;
- 	}
- }
+V2: rework so that it cleanly applies against Greg's current USB repo
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 9b29a40738ac..eb997ce21be3 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1354,8 +1354,7 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
+---
+ drivers/usb/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- 	block = 0;
- 	while (wsize < bufsize) {
--		if (bh != NULL)
--			brelse(bh);
-+		brelse(bh);
- 		csize = (bufsize - wsize) > blocksize ? blocksize :
- 								bufsize - wsize;
- 		bh = ext4_getblk(handle, ea_inode, block, 0);
---
-2.27.0
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 1cb3004ea7b2..ab12c4bf0ef1 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -44,10 +44,10 @@ config USB_XHCI_PCI
+ 	default y
+ 
+ config USB_XHCI_PCI_RENESAS
+-	tristate "Support for additional Renesas xHCI controller with firwmare"
++	tristate "Support for additional Renesas xHCI controller with firmware"
+ 	help
+ 	  Say 'Y' to enable the support for the Renesas xHCI controller with
+-	  firwmare. Make sure you have the firwmare for the device and
++	  firmware. Make sure you have the firwmare for the device and
+ 	  installed on your system for this device to work.
+ 	  If unsure, say 'N'.
+ 
+-- 
+2.27.0.rc0
