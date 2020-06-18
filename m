@@ -1,49 +1,37 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Tue, 30 Jun 2020 15:11:18 +0000
-Subject: Re: [PATCH v2] Documentation: Coccinelle: fix typos and command example
-Message-Id: <efc8b0c9-db3b-3c9c-d876-897b53a9e278@infradead.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Jun 2020 10:12:29 +0000
+Subject: [PATCH] crypto: ccp: remove redundant assignment to variable ret
+Message-Id: <20200618101229.11772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
- <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
-In-Reply-To: <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tom Lendacky <thomas.lendacky@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 6/30/20 5:23 AM, Markus Elfring wrote:
-> …
->> +++ linux-next-20200629/Documentation/dev-tools/coccinelle.rst
-> …> @@ -177,13 +177,13 @@ For example, to check drivers/net/wirele
->>  To apply Coccinelle on a file basis, instead of a directory basis, the
->>  following command may be used::
->>
->> -    make C=1 CHECK="scripts/coccicheck"
->> +    make C=1 CHECK="scripts/coccicheck" path/to/file.c
-> 
-> I would like to clarify further software design aspects around such make functionality.
-> 
-> We might stumble on different interpretations according to the wording “file basis”.
-> Do you find a message like “make: Nothing to be done for 'path/to/file.c'.” interesting then?
-> 
-> * Would you like to add any links for information around the support for
->   source code checkers?
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile?id|30b859a947535f2213277e827d7ac7dcff9c84#n198
-> 
-> * How do you think about to enclose the path for the shown parameter
->   by single quotes instead of double quotes?
-> 
-> * Can such path specifications become more interesting occasionally
->   if also an other file extension would be chosen than “.c”?
->   Would you like to achieve any software extensions around suffix rules?
-> 
-> Regards,
-> Markus
+From: Colin Ian King <colin.king@canonical.com>
 
-Markus:
+The variable ret is being assigned with a value that is never read
+and it is being updated later with a new value.  The assignment is
+redundant and can be removed.
 
-Feel free to submit patches.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccp/ccp-ops.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/crypto/ccp/ccp-ops.c b/drivers/crypto/ccp/ccp-ops.c
+index 422193690fd4..d270aa792888 100644
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -1308,7 +1308,6 @@ ccp_run_des3_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
+ 			return -EINVAL;
+ 	}
+ 
+-	ret = -EIO;
+ 	/* Zero out all the fields of the command desc */
+ 	memset(&op, 0, sizeof(op));
+ 
 -- 
-~Randy
+2.27.0.rc0
