@@ -1,45 +1,32 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Thu, 18 Jun 2020 08:07:09 +0000
-Subject: Re: [PATCH] soc: xilinx: Fix error code in zynqmp_pm_probe()
-Message-Id: <e827b05b-c2ed-ef93-80ae-7d8bd0f0ac0d@xilinx.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jun 2020 13:46:50 +0000
+Subject: [PATCH] drm/panel: otm8009a: Drop unnessary backlight_device_unregister()
+Message-Id: <20200618134650.44311-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200605110020.GA978434@mwanda>
- <951de328-3647-ea49-ecec-1f0f98ceb4b1@xilinx.com>
-In-Reply-To: <951de328-3647-ea49-ecec-1f0f98ceb4b1@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Simek <michal.simek@xilinx.com>, Dan Carpenter <dan.carpenter@oracle.com>, Tejas Patel <tejas.patel@xilinx.com>
-Cc: Rajan Vaja <rajan.vaja@xilinx.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jolly Shah <jolly.shah@xilinx.com>, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Philippe CORNU <philippe.cornu@st.com>
+Cc: kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hulk Robot <hulkci@huawei.com>
 
+It's not necessary to unregister backlight device which
+registered with devm_backlight_device_register().
 
+Fixes: 12a6cbd4f3f1 ("drm/panel: otm8009a: Use new backlight API")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 05. 06. 20 13:07, Michal Simek wrote:
-> On 05. 06. 20 13:00, Dan Carpenter wrote:
->> This should be returning PTR_ERR() but it returns IS_ERR() instead.
->>
->> Fixes: ffdbae28d9d1 ("drivers: soc: xilinx: Use mailbox IPI callback")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->>  drivers/soc/xilinx/zynqmp_power.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
->> index 31ff49fcd078b..c556623dae024 100644
->> --- a/drivers/soc/xilinx/zynqmp_power.c
->> +++ b/drivers/soc/xilinx/zynqmp_power.c
->> @@ -205,7 +205,7 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
->>  		rx_chan = mbox_request_channel_byname(client, "rx");
->>  		if (IS_ERR(rx_chan)) {
->>  			dev_err(&pdev->dev, "Failed to request rx channel\n");
->> -			return IS_ERR(rx_chan);
->> +			return PTR_ERR(rx_chan);
->>  		}
->>  	} else if (of_find_property(pdev->dev.of_node, "interrupts", NULL)) {
->>  		irq = platform_get_irq(pdev, 0);
->>
-> 
-> Reviewed-by: Michal Simek <michal.simek@xilinx.com>
-
-Applied.
-M
+diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+index 895ee3d1371e..d956522f32ee 100644
+--- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
++++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+@@ -479,7 +479,6 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+ 	if (ret < 0) {
+ 		dev_err(dev, "mipi_dsi_attach failed. Is host ready?\n");
+ 		drm_panel_remove(&ctx->panel);
+-		backlight_device_unregister(ctx->bl_dev);
+ 		return ret;
+ 	}
