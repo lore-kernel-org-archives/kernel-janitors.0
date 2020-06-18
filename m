@@ -1,31 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Thu, 04 Jun 2020 07:41:01 +0000
-Subject: Re: [PATCH] mailbox: mailbox-test: Fix a potential Oops on allocation failure
-Message-Id: <20200604074101.GV3714@dell>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 18 Jun 2020 11:34:52 +0000
+Subject: Re: [PATCH v2] coccinelle: misc: add array_size_dup script to detect missed overflow checks
+Message-Id: <54ac89f1-5f38-8909-a652-c658a5a1f36b@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603103329.GB1845750@mwanda>
-In-Reply-To: <20200603103329.GB1845750@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Kees Cook <keescook@chromium.org>
 
-On Wed, 03 Jun 2020, Dan Carpenter wrote:
+Why did you repeat a typo from the previous patch subject?
 
-> The callers are expecting NULL on error so if we return an error pointer
-> it eventually results in an Oops.
-> 
-> Fixes: 8ea4484d0c2b ("mailbox: Add generic mechanism for testing Mailbox Controllers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/mailbox/mailbox-test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Lee Jones <lee.jones@linaro.org>
+> Changes in v2:
+…
+> - assignment operator used
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Did you add just a metavariable for this implementation detail?
+
+
+…
+> +expression subE1 <= as.E1;
+> +expression subE2 <= as.E2;
+> +expression as.E1, as.E2, E3;
+
+How do you think about to use the following SmPL code variant?
+
+expression subE1 <= as.E1, subE2 <= as.E2, as.E1, as.E2, E3;
+
+
+> +      when != \(&E1\|&E2\|&subE1\|&subE2\)
+
+I suggest to move the ampersand before the disjunction in such
+SmPL code exclusion specifications.
+
++      when != & \(E1 \| E2 \| subE1 \| subE2\)
+
+
+> +coccilib.report.print_report(p2[0],
+> +f"WARNING: array_size is already used (line {p1[0].line}) to compute \
+> +the same size")
+
+I would prefer an other code formatting at such places.
+
++coccilib.report.print_report(p2[0],
++                             f"WARNING: array_size is already used (line {p1[0].line}) to compute the same size.")
+
+
+Regards,
+Markus
