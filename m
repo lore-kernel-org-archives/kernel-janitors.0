@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
 Date: Thu, 18 Jun 2020 15:01:51 +0000
 Subject: Re: [PATCH v2] coccinelle: misc: add array_size_dup script to detect missed overflow checks
-Message-Id: <4e6083cc-01ed-caa2-a9fb-5f4645eb9503@web.de>
+Message-Id: <1200eae3-a6b0-cd6a-02b1-4f3034bb0fb5@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <54ac89f1-5f38-8909-a652-c658a5a1f36b@web.de>
  <759d33d2-25a2-f55f-7e3a-7481ab5dd0fc@linux.com>
