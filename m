@@ -1,42 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Jun 2020 17:23:59 +0000
-Subject: [PATCH 1/2] rsxx: Fix potential NULL dereference setting up debugfs
-Message-Id: <20200610172359.GB90634@mwanda>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 18 Jun 2020 14:19:53 +0000
+Subject: [PATCH] iavf: fix error return code in iavf_init_get_resources()
+Message-Id: <20200618141953.29674-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joshua Morris <josh.h.morris@us.ibm.com>, Philip Kelleher <pjk1939@linux.ibm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "card->gendisk" pointer is allocated in rsxx_setup_dev() but there
-is a module option "enable_blkdev" which lets people disable the block
-device.  In that situation the "card->gendisk" pointer is NULL and it
-would lead to a NULL dereference here.
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Fixes: 36f988e978f8 ("rsxx: Adding in debugfs entries.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: b66c7bc1cd4d ("iavf: Refactor init state machine")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-This patch is from static analysis.  The patch is obviously harmless.
-So far as I can tell, the bug is real.  But maybe a different solution
-is prefered?
+ drivers/net/ethernet/intel/iavf/iavf_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/block/rsxx/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 10f6368117d81..6207449fa716f 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -228,6 +228,9 @@ static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- 	struct dentry *debugfs_pci_regs;
- 	struct dentry *debugfs_cram;
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_main.c b/drivers/net/ethernet/intel/iavf/iavf_main.c
+index fa82768e5eda..bc83e2d99944 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_main.c
++++ b/drivers/net/ethernet/intel/iavf/iavf_main.c
+@@ -1863,8 +1863,10 @@ static int iavf_init_get_resources(struct iavf_adapter *adapter)
  
-+	if (!card->gendisk)
-+		return;
-+
- 	card->debugfs_dir = debugfs_create_dir(card->gendisk->disk_name, NULL);
- 	if (IS_ERR_OR_NULL(card->debugfs_dir))
- 		goto failed_debugfs_dir;
--- 
-2.26.2
+ 	adapter->rss_key = kzalloc(adapter->rss_key_size, GFP_KERNEL);
+ 	adapter->rss_lut = kzalloc(adapter->rss_lut_size, GFP_KERNEL);
+-	if (!adapter->rss_key || !adapter->rss_lut)
++	if (!adapter->rss_key || !adapter->rss_lut) {
++		err = -ENOMEM;
+ 		goto err_mem;
++	}
+ 	if (RSS_AQ(adapter))
+ 		adapter->aq_required |= IAVF_FLAG_AQ_CONFIGURE_RSS;
+ 	else
