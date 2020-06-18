@@ -1,49 +1,40 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 03 Jun 2020 12:20:30 +0000
-Subject: Re: NAK: [PATCH][next] usb: xhci: fix spelling mistake in Kconfig "firwmare" -> "firmware"
-Message-Id: <07fa7631-b26e-62b4-ae32-56158886ec1e@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 18 Jun 2020 10:04:00 +0000
+Subject: [PATCH] drm/arm: fix unintentional integer overflow on left shift
+Message-Id: <20200618100400.11464-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603121152.16550-1-colin.king@canonical.com>
- <ef00cbe5-d11a-d4d5-3797-173fbd125e14@canonical.com>
-In-Reply-To: <ef00cbe5-d11a-d4d5-3797-173fbd125e14@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org
+To: Liviu Dudau <liviu.dudau@arm.com>, Brian Starkey <brian.starkey@arm.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/06/2020 13:15, Colin Ian King wrote:
-> On 03/06/2020 13:11, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There are two spelling mistakes in the Kconfig text. Fix these.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/usb/host/Kconfig | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
->> index 62c348062e48..5f4b6c71392c 100644
->> --- a/drivers/usb/host/Kconfig
->> +++ b/drivers/usb/host/Kconfig
->> @@ -44,10 +44,10 @@ config USB_XHCI_PCI
->>  	default y
->>  
->>  config USB_XHCI_PCI_RENESAS
->> -	tristate "Support for additional Renesas xHCI controller with firwmare"
->> +	tristate "Support for additional Renesas xHCI controller with firmware"
->>  	---help---
->>  	  Say 'Y' to enable the support for the Renesas xHCI controller with
->> -	  firwmare. Make sure you have the firwmare for the device and
->> +	  firmware. Make sure you have the firwmare for the device and
->>  	  installed on your system for this device to work.
->>  	  If unsure, say 'N'.
->>  
->>
-> Spotted one more, I'll send a V2
-> 
-Please ignore the NAK, I was looking at the wrong file, doh.  The
-original patch is fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin
+Shifting the integer value 1 is evaluated using 32-bit arithmetic
+and then used in an expression that expects a long value leads to
+a potential integer overflow. Fix this by using the BIT macro to
+perform the shift to avoid the overflow.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: ad49f8602fe8 ("drm/arm: Add support for Mali Display Processors")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/arm/malidp_planes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
+index 37715cc6064e..ab45ac445045 100644
+--- a/drivers/gpu/drm/arm/malidp_planes.c
++++ b/drivers/gpu/drm/arm/malidp_planes.c
+@@ -928,7 +928,7 @@ int malidp_de_planes_init(struct drm_device *drm)
+ 	const struct malidp_hw_regmap *map = &malidp->dev->hw->map;
+ 	struct malidp_plane *plane = NULL;
+ 	enum drm_plane_type plane_type;
+-	unsigned long crtcs = 1 << drm->mode_config.num_crtc;
++	unsigned long crtcs = BIT(drm->mode_config.num_crtc);
+ 	unsigned long flags = DRM_MODE_ROTATE_0 | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_180 |
+ 			      DRM_MODE_ROTATE_270 | DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y;
+ 	unsigned int blend_caps = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+-- 
+2.27.0.rc0
