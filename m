@@ -1,43 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 18 Jun 2020 09:32:24 +0000
-Subject: [PATCH][next][V2] usb: xhci: fix spelling mistake in Kconfig "firwmare" -> "firmware"
-Message-Id: <20200618093224.10179-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jun 2020 14:30:07 +0000
+Subject: [PATCH] media: allegro: Fix some NULL vs IS_ERR() checks in probe
+Message-Id: <20200619143007.GC267142@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Tretter <m.tretter@pengutronix.de>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The devm_ioremap() function doesn't return error pointers, it returns
+NULL on error.
 
-There are two spelling mistakes in the Kconfig text. Fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f20387dfd065 ("media: allegro: add Allegro DVT video IP core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
+ drivers/staging/media/allegro-dvt/allegro-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-V2: rework so that it cleanly applies against Greg's current USB repo
-
----
- drivers/usb/host/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 1cb3004ea7b2..ab12c4bf0ef1 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -44,10 +44,10 @@ config USB_XHCI_PCI
- 	default y
- 
- config USB_XHCI_PCI_RENESAS
--	tristate "Support for additional Renesas xHCI controller with firwmare"
-+	tristate "Support for additional Renesas xHCI controller with firmware"
- 	help
- 	  Say 'Y' to enable the support for the Renesas xHCI controller with
--	  firwmare. Make sure you have the firwmare for the device and
-+	  firmware. Make sure you have the firwmare for the device and
- 	  installed on your system for this device to work.
- 	  If unsure, say 'N'.
- 
+diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
+index 70f133a842dd..3ed66aae741d 100644
+--- a/drivers/staging/media/allegro-dvt/allegro-core.c
++++ b/drivers/staging/media/allegro-dvt/allegro-core.c
+@@ -3065,9 +3065,9 @@ static int allegro_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+-	if (IS_ERR(regs)) {
++	if (!regs) {
+ 		dev_err(&pdev->dev, "failed to map registers\n");
+-		return PTR_ERR(regs);
++		return -ENOMEM;
+ 	}
+ 	dev->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
+ 					    &allegro_regmap_config);
+@@ -3085,9 +3085,9 @@ static int allegro_probe(struct platform_device *pdev)
+ 	sram_regs = devm_ioremap(&pdev->dev,
+ 				 sram_res->start,
+ 				 resource_size(sram_res));
+-	if (IS_ERR(sram_regs)) {
++	if (!sram_regs) {
+ 		dev_err(&pdev->dev, "failed to map sram\n");
+-		return PTR_ERR(sram_regs);
++		return -ENOMEM;
+ 	}
+ 	dev->sram = devm_regmap_init_mmio(&pdev->dev, sram_regs,
+ 					  &allegro_sram_config);
 -- 
-2.27.0.rc0
+2.27.0
