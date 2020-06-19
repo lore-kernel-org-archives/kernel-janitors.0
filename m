@@ -1,46 +1,37 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 16 Jun 2020 15:17:10 +0000
-Subject: Re: [PATCH] HID: usbhid: remove redundant assignment to variable retval
-Message-Id: <nycvar.YFH.7.76.2006161717030.13242@cbobk.fhfr.pm>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jun 2020 14:30:41 +0000
+Subject: [PATCH] scsi: qla2xxx: Fix a condition in qla2x00_find_all_fabric_devs()
+Message-Id: <20200619143041.GD267142@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200610123101.1133117-1-colin.king@canonical.com>
-In-Reply-To: <20200610123101.1133117-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nilesh Javali <njavali@marvell.com>, Darren Trapp <darren.trapp@cavium.com>
+Cc: GR-QLogic-Storage-Upstream@marvell.com, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@cavium.com>, Johannes Thumshirn <jthumshirn@suse.de>, Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 10 Jun 2020, Colin King wrote:
+This code doesn't make sense unless the correct "fcport" was found.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable retval is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hid/usbhid/hid-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
-> index 17a638f15082..17a29ee0ac6c 100644
-> --- a/drivers/hid/usbhid/hid-core.c
-> +++ b/drivers/hid/usbhid/hid-core.c
-> @@ -1667,7 +1667,7 @@ struct usb_interface *usbhid_find_interface(int minor)
->  
->  static int __init hid_init(void)
->  {
-> -	int retval = -ENOMEM;
-> +	int retval;
->  
->  	retval = hid_quirks_init(quirks_param, BUS_USB, MAX_USBHID_BOOT_QUIRKS);
->  	if (retval)
+Fixes: 9dd9686b1419 ("scsi: qla2xxx: Add changes for devloss timeout in driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis and review.  I'm not super familiar with
+the code and I can't test it.  Please review it extra carefully.
 
-Applied, thanks.
+ drivers/scsi/qla2xxx/qla_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 4576d3ae9937..2436a17f5cd9 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -5944,7 +5944,7 @@ qla2x00_find_all_fabric_devs(scsi_qla_host_t *vha)
+ 			break;
+ 		}
+ 
+-		if (NVME_TARGET(vha->hw, fcport)) {
++		if (found && NVME_TARGET(vha->hw, fcport)) {
+ 			if (fcport->disc_state = DSC_DELETE_PEND) {
+ 				qla2x00_set_fcport_disc_state(fcport, DSC_GNL);
+ 				vha->fcport_count--;
 -- 
-Jiri Kosina
-SUSE Labs
+2.27.0
