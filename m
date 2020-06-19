@@ -1,40 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 26 Jun 2020 04:05:53 +0000
-Subject: [PATCH V2] scsi: eesox: Fix different dev_id between 'request_irq()' and 'free_irq()'
-Message-Id: <20200626040553.944352-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jun 2020 14:29:40 +0000
+Subject: [PATCH] drm/virtio: Fix an IS_ERR() vs NULL check in virtio_gpu_object_shmem_init()
+Message-Id: <20200619142940.GB267142@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <26d388f5-be67-b643-c76c-b9fe52f111f7@wanadoo.fr>
-In-Reply-To: <26d388f5-be67-b643-c76c-b9fe52f111f7@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gerd Hoffmann <kraxel@redhat.com>
 
-The dev_id used in 'request_irq()' and 'free_irq()' should match.
-So use 'info' in both cases.
+The drm_gem_shmem_get_pages_sgt() function returns error pointers on
+error, it never returns NULL.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: d323bb44e4d2 ("drm/virtio: Call the right shmem helpers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-V2: update free_irq instead of request_irq in order not to obviously break
-    code
----
- drivers/scsi/arm/eesox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_object.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
-index 6e204a2e0c8d..591ae2a6dd74 100644
---- a/drivers/scsi/arm/eesox.c
-+++ b/drivers/scsi/arm/eesox.c
-@@ -571,7 +571,7 @@ static int eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+index 346cef5ce251..0cd5ecf4b3c0 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -151,9 +151,9 @@ static int virtio_gpu_object_shmem_init(struct virtio_gpu_device *vgdev,
+ 		return -EINVAL;
  
- 	if (info->info.scsi.dma != NO_DMA)
- 		free_dma(info->info.scsi.dma);
--	free_irq(ec->irq, host);
-+	free_irq(ec->irq, info);
+ 	shmem->pages = drm_gem_shmem_get_pages_sgt(&bo->base.base);
+-	if (!shmem->pages) {
++	if (IS_ERR(shmem->pages)) {
+ 		drm_gem_shmem_unpin(&bo->base.base);
+-		return -EINVAL;
++		return PTR_ERR(shmem->pages);
+ 	}
  
-  out_remove:
- 	fas216_remove(host);
+ 	if (use_dma_api) {
 -- 
-2.25.1
+2.27.0
