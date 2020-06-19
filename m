@@ -1,29 +1,66 @@
-From: dinghao.liu@zju.edu.cn
-Date: Wed, 03 Jun 2020 02:21:47 +0000
-Subject: Re: Re: [PATCH] drm/nouveau/clk/gm20b: Fix memory leak in gm20b_clk_new()
-Message-Id: <5d580094.f274c.17277fc124e.Coremail.dinghao.liu@zju.edu.cn>
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Fri, 19 Jun 2020 21:37:33 +0000
+Subject: Re: [PATCH v2 RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
+Message-Id: <20200619213733.GA1105008@furthur.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
- <40d8fb01.db721.17269d3d620.Coremail.dinghao.liu@zju.edu.cn>
- <20200602102955.GZ30374@kadam>
- <65e3d2b7-b0ad-f387-b8fe-d83ea816a0f6@web.de>
- <20200602153900.GW22511@kadam>
-In-Reply-To: <20200602153900.GW22511@kadam>
+References: <20200506053431.7464-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200506053431.7464-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Markus Elfring <Markus.Elfring@web.de>, Ben Skeggs <bskeggs@redhat.com>, Kangjie Lu <kjlu@umn.edu>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Jiri Kosina <trivial@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Cj4gT24gVHVlLCBKdW4gMDIsIDIwMjAgYXQgMDE6MTA6MzRQTSArMDIwMCwgTWFya3VzIEVsZnJp
-bmcgd3JvdGU6Cj4gPiA+IFRoZSBvcmlnaW5hbCBwYXRjaCB3YXMgYmFzaWNhbGx5IGZpbmUuCj4g
-PiAKPiA+IEkgcHJvcG9zZSB0byByZWNvbnNpZGVyIHRoZSBpbnRlcnByZXRhdGlvbiBvZiB0aGUg
-c29mdHdhcmUgc2l0dWF0aW9uIG9uY2UgbW9yZS4KPiA+IAo+ID4gKiBTaG91bGQgdGhlIGFsbG9j
-YXRlZCBjbG9jayBvYmplY3QgYmUga2VwdCB1c2FibGUgZXZlbiBhZnRlcgo+ID4gICBhIHN1Y2Nl
-c3NmdWwgcmV0dXJuIGZyb20gdGhpcyBmdW5jdGlvbj8KPiAKPiBIZWguICBZb3UncmUgcmlnaHQu
-ICBUaGUgcGF0Y2ggaXMgZnJlZWluZyAiY2xrIiBvbiB0aGUgc3VjY2VzcyBwYXRoIHNvCj4gdGhh
-dCBkb2Vzbid0IHdvcmsuCj4gCgpCZW4gaGFzIGV4cGxhaW5lZCB0aGlzIHByb2JsZW06Cmh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC8xMjQ5NTkyLwpTaW5jZSB0aGUgY2Fs
-bGVyIHdpbGwgY2hlY2sgInBjbGsiIG9uIGZhaWx1cmUsIHdlIGRvbid0IG5lZWQgdG8gZnJlZQoi
-Y2xrIiBpbiBnbTIwYl9jbGtfbmV3KCkgYW5kIEkgdGhpbmsgdGhpcyBwYXRjaCBpcyBubyBsb25n
-ZXIgbmVlZGVkLgoKUmVnYXJkcywKRGluZ2hhbw=
+On Wed, May 06, 2020 at 07:34:31AM +0200, Lukas Bulwahn wrote:
+> Commit 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+> added a file entry that does not point to the intended file location.
+> 
+> Since then, ./scripts/get_maintainer.pl --self-test complains:
+> 
+>   warning: no file matches F: linux/soc/mmp/
+> 
+> Rectify the MAINTAINERS entry now.
+> 
+> Fixes: 32adcaa010fa ("ARM: mmp: move cputype.h to include/linux/soc/")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Jiri, please pick this patch.
+
+Jiri, I'm wondering if you could apply this? Otherwise maybe Olof could
+queue this via arm-soc?
+
+Thanks
+Lubo
+
+> v1 & v1-RESEND: was ignored.
+> 
+> v1 -> v2:
+>   - v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
+>   ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
+>   ("MAINTAINERS: sort field names for all entries").
+>   - PATCH v2 applies on v5.7-rc1 now. Please pick v2 instead of v1.
+> 
+> v2-resend:
+>   - still applies on v5.7-rc4 and next-20200505
+>   - asking for inclusion through trivial tree, as maintainers are not
+>     responding.
+> 
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e64e5db31497..a0fef0c33ba5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11327,7 +11327,7 @@ S:	Odd Fixes
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lkundrak/linux-mmp.git
+>  F:	arch/arm/boot/dts/mmp*
+>  F:	arch/arm/mach-mmp/
+> -F:	linux/soc/mmp/
+> +F:	include/linux/soc/mmp/
+>  
+>  MMP USB PHY DRIVERS
+>  R:	Lubomir Rintel <lkundrak@v3.sk>
+> -- 
+> 2.17.1
+> 
