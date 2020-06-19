@@ -1,78 +1,63 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 29 Jun 2020 06:26:27 +0000
-Subject: Re: [PATCH v2] ext4: fix direct I/O read error
-Message-Id: <22f650fd-6348-30d8-763a-8e03b0772f10@web.de>
+Date: Fri, 19 Jun 2020 15:03:18 +0000
+Subject: Re: [PATCH v3] coccinelle: misc: add array_size_dup script to detect missed overflow checks
+Message-Id: <cf6ab028-4297-dfab-35a7-cb6589fe61ac@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593400165-114818-1-git-send-email-jiangying8582@126.com>
-In-Reply-To: <1593400165-114818-1-git-send-email-jiangying8582@126.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Jiang Ying <jiangying8582@126.com>, Wang Long <wanglong19@meituan.com>, linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Kees Cook <keescook@chromium.org>
 
-> Fixes: 9fe55eea7e4b ("Fix race when checking i_size on direct i/o read").
+> Changes in v2:
+…
+> - assignment operator used
 
-* I suggest to move this tag to the bottom of the commit message.
-
-* This specification is usually preferred without a dot at the line end.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9ebcfadb0610322ac537dd7aa5d9cbc2b2894c68#n183
+I would prefer the distinction for the application of corresponding metavariables.
 
 
-> This commit caused ext4 direct I/O read error when the read size is not
-> alignment with block size.
+> Changes in v3:
+…
+>  - \(&E1\|&E2\) changed to &\(E1\|E2\)
 
-Wording alternative:
-aligned …
-
-
-> (1) Make the file that is not alignment with block size:
-
-… a file … aligned …
-
-
-> (3) Compiling the script:
-
-(3) Compile the source file:
-
-
-> (4) Exec the script:
-
-(4) Run the test program:
-
-
-> … Thanks.
-
-I propose to omit this word here.
-
-
-> ---
->  fs/ext4/inode.c | 6 ++++++
-
-Would you like to add patch version descriptions here?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9ebcfadb0610322ac537dd7aa5d9cbc2b2894c68#n751
+Would it be more helpful to mention the movement of the ampersand
+before SmPL disjunctions?
 
 
 …
-> @@ -3821,6 +3821,12 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
->  	struct inode *inode = mapping->host;
->  	size_t count = iov_iter_count(iter);
->  	ssize_t ret;
-> +	loff_t offset = iocb->ki_pos;
-> +	loff_t size;
-> +
-> +	size = i_size_read(inode);
+> +virtual context
+> +virtual report
+> +virtual org
 
-How do you think about to use the following source code variant?
+Can the following SmPL code variant become more attractive?
 
-+	loff_t size = i_size_read(inode);
++virtual context, report, org
 
 
-> +	if (offset >= size)
-> +		return 0;
+…
+> +expression subE1 <= as.E1;
+> +expression subE2 <= as.E2;
+> +expression as.E1, as.E2, E3;
 
-Will any further fine-tuning matter for this function implementation?
+How do you think about the following SmPL code variant?
+
++expression subE1 <= as.E1,
++           subE2 <= as.E2,
++           as.E1,
++           as.E2,
++           E3;
+
+
+…
+> +coccilib.report.print_report(p2[0],
+> +f"WARNING: same struct_size (line {p1[0].line})")
+
+Please align such function parameters.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=5e857ce6eae7ca21b2055cca4885545e29228fe2#n93
+
++coccilib.report.print_report(p2[0],
++                             f"WARNING: same struct_size (line {p1[0].line})")
+
 
 Regards,
 Markus
