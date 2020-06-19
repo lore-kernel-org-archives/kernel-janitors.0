@@ -1,28 +1,22 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 03 Jun 2020 12:31:13 +0000
-Subject: Re: [PATCH] pinctrl: imxl: Fix an error handling path in 'imx1_pinctrl_core_probe()'
-Message-Id: <CACRpkdYvoe8o8Db1mszfgcHA3XZF7LJ3P1u5pnKOfEfS99F0Ew@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Fri, 19 Jun 2020 15:26:32 +0000
+Subject: Re: [PATCH] coccinelle: api/kstrdup: fix coccinelle position
+Message-Id: <0f221342-cd9c-04d2-da01-f86574d3de34@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200530201952.585798-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200530201952.585798-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, May 30, 2020 at 10:20 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+> There is a typo in rule r2. Position p1 should be attached to kzalloc() call.
 
-> When 'pinctrl_register()' has been turned into 'devm_pinctrl_register()',
-> an error handling path has not been updated.
->
-> Axe a now unneeded 'pinctrl_unregister()'.
->
-> Fixes: e55e025d1687 ("pinctrl: imxl: Use devm_pinctrl_register() for pinctrl registration")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I find such a suggestion reasonable for an implementation detail.
 
-Patch applied.
+I would find an other patch subject clearer.
 
-Yours,
-Linus Walleij
+
+How do you think about to move the specification “@p1” out of SmPL disjunctions?
+
+Regards,
+Markus
