@@ -1,69 +1,49 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Wed, 24 Jun 2020 12:07:55 +0000
-Subject: Re: [PATCH v3 03/14] irqchip/csky-mpintc: Fix potential resource leaks
-Message-Id: <be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jun 2020 10:09:07 +0000
+Subject: [bug report] mlxsw: spectrum: Adjust headroom buffers for 8x ports
+Message-Id: <20200619100907.GA246319@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a0ace7a8-5c26-ee20-fe76-7dff57a18ca3@web.de>
-In-Reply-To: <a0ace7a8-5c26-ee20-fe76-7dff57a18ca3@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-mips@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 06/24/2020 07:43 PM, Markus Elfring wrote:
->> There exists potential resource leaks in the error path, fix them.
-> I suggest to improve this change description.
-> How do you think about another wording variant?
->
->     Specific system resources were not released in a few error cases.
->     Thus add jump targets for the completion of the desired exception handling.
+Hello Ido Schimmel,
 
-OK, thank you, it looks good to me.
-Maybe I can use this description for other patches of this series.
+The patch 60833d54d56c: "mlxsw: spectrum: Adjust headroom buffers for
+8x ports" from Jun 16, 2020, leads to the following static checker
+warning:
 
->
->
-> …
-> +++ b/drivers/irqchip/irq-csky-mpintc.c
-> @@ -247,8 +247,10 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
-> …
->   		INTCG_base = ioremap(mfcr("cr<31, 14>"),
->   				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id>08a95294a4fb3702bb3d35ed08028433c37fe6#n257
->
->
-> …
-> +		if (INTCG_base = NULL) {
->
->
-> Would you like to use the following code variant?
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/checkpatch.pl?id>08a95294a4fb3702bb3d35ed08028433c37fe6#n5756
->
-> +		if (!INTCG_base) {
->
->
-> …
->> @@ -270,12 +274,22 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
->>
->>   #ifdef CONFIG_SMP
->>   	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
-> …
->> +	if (!ipi_irq) {
->> +		ret = -EIO;
->> +		goto err_domain_remove;
->> +	}
-> …
->
-> Can the function call “irq_domain_remove(root_domain)” become relevant
-> only if the preprocessor symbol “CONFIG_SMP” was defined?
+	drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c:785 mlxsw_sp_span_port_buffer_update()
+	warn: passing casted pointer '&buffsize' to 'mlxsw_sp_port_headroom_8x_adjust()' 32 vs 16.
 
-OK, I will do it in the next version.
+drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
+   769  static int
+   770  mlxsw_sp_span_port_buffer_update(struct mlxsw_sp_port *mlxsw_sp_port, u16 mtu)
+   771  {
+   772          struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port->mlxsw_sp;
+   773          char sbib_pl[MLXSW_REG_SBIB_LEN];
+   774          u32 buffsize;
+                ^^^^^^^^^^^^
 
->
-> Regards,
-> Markus
+   775          u32 speed;
+   776          int err;
+   777  
+   778          err = mlxsw_sp_port_speed_get(mlxsw_sp_port, &speed);
+   779          if (err)
+   780                  return err;
+   781          if (speed = SPEED_UNKNOWN)
+   782                  speed = 0;
+   783  
+   784          buffsize = mlxsw_sp_span_buffsize_get(mlxsw_sp, speed, mtu);
+   785          mlxsw_sp_port_headroom_8x_adjust(mlxsw_sp_port, (u16 *) &buffsize);
+                                                                ^^^^^^^^^^^^^^^^^
+This will work if 1) we are on a littel endian system and 2) "buffsize"
+is less than USHRT_MAX / 2 but it's super ugly...  :/
+
+   786          mlxsw_reg_sbib_pack(sbib_pl, mlxsw_sp_port->local_port, buffsize);
+   787          return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sbib), sbib_pl);
+   788  }
+
+regards,
+dan carpenter
