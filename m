@@ -1,21 +1,27 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Date: Thu, 25 Jun 2020 06:59:41 +0000
-Subject: Re: [PATCH] kernel/cpu_pm: mark 1 function as __init to save some memory
-Message-Id: <159306838110.62212.10303992077632246358@swboyd.mtv.corp.google.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 20 Jun 2020 09:20:24 +0000
+Subject: Re: [PATCH v2] drm/amdkfd: Fix memory leaks according to error branches
+Message-Id: <0e76e678-94b1-8f69-d52c-2b67608d5ef8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200621083315.883209-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200621083315.883209-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, bjorn.andersson@linaro.org, dianders@chromium.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Bernard Zhao <bernard@vivo.com>, opensource.kernel@vivo.com, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, =?UTF-8?Q?Felix_K=c3=bchling?= <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 
-Quoting Christophe JAILLET (2020-06-21 01:33:15)
-> 'cpu_pm_init()' is only called via 'core_initcall'.
-> It can be marked as __init to save a few bytes of memory.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+> The function kobject_init_and_add alloc memory like:
+> kobject_init_and_add->kobject_add_varg->kobject_set_name_vargs
+> ->kvasprintf_const->kstrdup_const->kstrdup->kmalloc_track_caller
+> ->kmalloc_slab, in err branch this memory not free. If use
+> kmemleak, this path maybe catched.
+> These changes are to add kobject_put in kobject_init_and_add
+> failed branch, fix potential memleak.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+I suggest to improve this change description.
+
+* Can an other wording variant be nicer?
+
+* Will the tag “Fixes” become helpful for the commit message?
+
+Regards,
+Markus
