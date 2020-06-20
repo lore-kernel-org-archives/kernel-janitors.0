@@ -1,37 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jun 2020 13:26:40 +0000
-Subject: [PATCH] mtd: rawnand: ingenic: cleanup ARRAY_SIZE() vs sizeof() use
-Message-Id: <20200624132640.GC9972@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 20 Jun 2020 16:14:44 +0000
+Subject: Re: [v2] drm/amdkfd: Fix memory leaks according to error branches
+Message-Id: <24b55845-6aac-fa4c-c65f-e479de1bbd6f@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0e76e678-94b1-8f69-d52c-2b67608d5ef8@web.de>
+ <alpine.DEB.2.22.394.2006201126130.2918@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2006201126130.2918@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+To: Julia Lawall <julia.lawall@inria.fr>, Bernard Zhao <bernard@vivo.com>, opensource.kernel@vivo.com, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Rob Clark <robdclark@chromium.org>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Felix_K=c3=bchling?= <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 
-The ARRAY_SIZE() is the number of elements but we want to use sizeof()
-here for the number of bytes.  Fortunately, they are the same thing
-because it's an array of u8 so this has no effect on runtime.
+> memleak is also not an English word.  Memory leak is only a few more
+> characters, and doesn't require the reader to make the small extra effort
+> to figure out what you mean.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/mtd/nand/raw/ingenic/jz4740_ecc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Would you like to achieve similar adjustments at any more places?
 
-diff --git a/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c b/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
-index 13fea645c7f0..54e377754a6c 100644
---- a/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
-+++ b/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
-@@ -90,8 +90,8 @@ static int jz4740_ecc_calculate(struct ingenic_ecc *ecc,
- 	 * If the written data is completely 0xff, we also want to write 0xff as
- 	 * ECC, otherwise we will get in trouble when doing subpage writes.
- 	 */
--	if (memcmp(ecc_code, empty_block_ecc, ARRAY_SIZE(empty_block_ecc)) = 0)
--		memset(ecc_code, 0xff, ARRAY_SIZE(empty_block_ecc));
-+	if (memcmp(ecc_code, empty_block_ecc, sizeof(empty_block_ecc)) = 0)
-+		memset(ecc_code, 0xff, sizeof(empty_block_ecc));
- 
- 	return 0;
- }
--- 
-2.27.0
+How do you think about effects from a corresponding jargon?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/msm/msm_submitqueue.c?id7d3819633cd520e3f95df541a04644aab4c657
+
+Regards,
+Markus
