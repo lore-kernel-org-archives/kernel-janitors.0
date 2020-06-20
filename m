@@ -1,87 +1,55 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Thu, 04 Jun 2020 15:56:38 +0000
-Subject: Re: [PATCH] coccinelle: api: add kzfree script
-Message-Id: <alpine.DEB.2.21.2006041755360.2577@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-914190676-1591286199=:2577"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 20 Jun 2020 12:05:53 +0000
+Subject: Re: [PATCH v2] nbd: Fix memory leak in nbd_add_socket
+Message-Id: <b55f8af2-b20c-214f-90f0-9b6efcb7273c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <96653281-3812-8b44-0dd8-6e7540a26a89@web.de>
-In-Reply-To: <96653281-3812-8b44-0dd8-6e7540a26a89@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-914190676-1591286199=:2577
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+To: Zheng Bin <zhengbin13@huawei.com>, linux-block@vger.kernel.org
+Cc: nbd@other.debian.org, Navid Emamdoost <navid.emamdoost@gmail.com>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <mccamant@cs.umn.edu>, Qiushi Wu <wu000273@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Yi Zhang <yi.zhang@huawei.com>
+
+> If we add first socket to nbd, config->socks is malloced but
+> num_connections does not update(nsock's allocation fail), the memory
+> is leaked. Cause in later nbd_config_put(), will only free config->socks
+> when num_connections is not 0.
+>
+> Let nsock's allocation first to avoid this.
+
+I suggest to improve this change description.
+Can an other wording variant be nicer?
 
 
+…
+> +++ b/drivers/block/nbd.c
+> @@ -1037,21 +1037,22 @@  static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+>  		return -EBUSY;
+>  	}
+>
+> +	nsock = kzalloc(sizeof(struct nbd_sock), GFP_KERNEL);
 
-On Thu, 4 Jun 2020, Markus Elfring wrote:
+Please use the following code variant.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=4333a9b0b67bb4e8bcd91bdd80da80b0ec151162#n854
 
-> > Check for memset() with 0 followed by kfree().
->
-> I suggest to simplify the SmPL code a bit like the following.
->
->
-> > +virtual context
-> > +virtual org
-> > +virtual report
-> > +virtual patch
->
-> +virtual context, org, report, patch
++	nsock = kzalloc(sizeof(*nsock), GFP_KERNEL);
 
-This is pointless.
 
->
->
-> …
-> > +@@
-> > +
-> > +(
-> > +* memset(E, 0, ...);
-> > +|
-> > +* memset(E, '\0', ...);
-> > +)
-> > +* kfree(E)@p;
->
-> +@@
-> +*memset(E, 0, ...);
-> +*kfree(E)@p;
->
->
-> How does the SmPL asterisk functionality fit to the operation
-> modes “org” and “report”?
+…
+>  	if (!socks) {
+>  		sockfd_put(sock);
+> +		kfree(nsock);
+>  		return -ENOMEM;
+>  	}
 
-make coccicheck uses the option --no-show-diff for the org and report
-modes.
+Please take another software design possibility into account.
 
->
-> > +@@
-> > +
-> > +(
-> > +- memset(E, 0, ...);
-> > +|
-> > +- memset(E, '\0', ...);
-> > +)
-> > +- kfree(E);
-> > ++ kzfree(E);
->
-> +@@
-> +-memset(E, 0, ...);
-> +-kfree
-> ++kzfree
-> +       (E);
->
-> I got the impression that the specification of a SmPL disjunction
-> could be omitted because of the technical detail that the isomorphism
-> “zero_multiple_format” should handle such an use case already.
->
-> Would you like to tolerate any extra source code between these function calls?
+ 	if (!socks) {
+-		sockfd_put(sock);
+-		return -ENOMEM;
++		kfree(nsock);
++		goto put_socket;
+ 	}
 
-I already addressed these issues.
 
-julia
---8323329-914190676-1591286199=:2577--
+Regards,
+Markus
