@@ -1,50 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Jun 2020 17:24:51 +0000
-Subject: [PATCH 2/2] rsxx: Return -EFAULT if copy_to_user() fails
-Message-Id: <20200610172451.GC90634@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jun 2020 08:11:06 +0000
+Subject: [PATCH] topology: mark a function as __init to save some memory
+Message-Id: <20200621081106.881915-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200610172359.GB90634@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joshua Morris <josh.h.morris@us.ibm.com>, Philip Kelleher <pjk1939@linux.ibm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, rafael@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The copy_to_user() function returns the number of bytes remaining but
-we want to return -EFAULT to the user if it can't complete the copy.
-The "st" variable only holds zero on success or negative error codes on
-failure so the type should be int.
+'topology_sysfs_init()' is only called via 'device_initcall'.
+It can be marked as __init to save a few bytes of memory.
 
-Fixes: 36f988e978f8 ("rsxx: Adding in debugfs entries.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/block/rsxx/core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/base/topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 6207449fa716f..558fa263acbc0 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -165,15 +165,17 @@ static ssize_t rsxx_cram_read(struct file *fp, char __user *ubuf,
+diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+index 4e033d4cc0dc..ad8d33c6077b 100644
+--- a/drivers/base/topology.c
++++ b/drivers/base/topology.c
+@@ -133,7 +133,7 @@ static int topology_remove_dev(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int topology_sysfs_init(void)
++static int __init topology_sysfs_init(void)
  {
- 	struct rsxx_cardinfo *card = file_inode(fp)->i_private;
- 	char *buf;
--	ssize_t st;
-+	int st;
- 
- 	buf = kzalloc(cnt, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
- 
- 	st = rsxx_creg_read(card, CREG_ADD_CRAM + (u32)*ppos, cnt, buf, 1);
--	if (!st)
--		st = copy_to_user(ubuf, buf, cnt);
-+	if (!st) {
-+		if (copy_to_user(ubuf, buf, cnt))
-+			st = -EFAULT;
-+	}
- 	kfree(buf);
- 	if (st)
- 		return st;
+ 	return cpuhp_setup_state(CPUHP_TOPOLOGY_PREPARE,
+ 				 "base/topology:prepare", topology_add_dev,
 -- 
-2.26.2
+2.25.1
