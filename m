@@ -1,28 +1,43 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 04 Jun 2020 18:48:16 +0000
-Subject: Re: [PATCH] ARM: socfpga: add missing put_device() call in socfpga_setup_ocram_self_refresh()
-Message-Id: <22cf7c59-f689-f475-2170-48df94f671ee@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Jun 2020 08:18:54 +0000
+Subject: [PATCH] drivers: base: power: mark 2 functions as __init to save some memory
+Message-Id: <20200621081854.882705-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
-In-Reply-To: <cb094a16-8017-704f-7811-530be8cfb16c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yu Kuai <yukuai3@huawei.com>, linux-arm-kernel@lists.infradead.org
-Cc: Alan Tull <atull@opensource.altera.com>, Dinh Nguyen <dinguyen@kernel.org>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <linux@armlinux.org.uk>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> if of_find_device_by_node() succeed, socfpga_setup_ocram_self_refresh()
-> doesn't have a corresponding put_device(). Thus add a jump target to fix
-> the exception handling for this function implementation.
+'early_resume_init()' and 'late_resume_init() 'are only called respectively
+via 'early_resume_init' and 'late_resume_init'.
+They can be marked as __init to save a few bytes of memory.
 
-Do you find a previous update suggestion interesting?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/base/power/trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-ARM: socfpga: PM: Add missing put_device() call in socfpga_setup_ocram_self_refresh()
-https://lore.kernel.org/linux-arm-kernel/c45a8e00-3fc9-adba-1a46-5f2c4149953e@web.de/
-https://lore.kernel.org/patchwork/patch/1151166/
-https://lkml.org/lkml/2019/11/9/156
-
-Do you propose to adjust the source code a bit more?
-
-Regards,
-Markus
+diff --git a/drivers/base/power/trace.c b/drivers/base/power/trace.c
+index 977d27bd1a22..a97f33d0c59f 100644
+--- a/drivers/base/power/trace.c
++++ b/drivers/base/power/trace.c
+@@ -265,14 +265,14 @@ static struct notifier_block pm_trace_nb = {
+ 	.notifier_call = pm_trace_notify,
+ };
+ 
+-static int early_resume_init(void)
++static int __init early_resume_init(void)
+ {
+ 	hash_value_early_read = read_magic_time();
+ 	register_pm_notifier(&pm_trace_nb);
+ 	return 0;
+ }
+ 
+-static int late_resume_init(void)
++static int __init late_resume_init(void)
+ {
+ 	unsigned int val = hash_value_early_read;
+ 	unsigned int user, file, dev;
+-- 
+2.25.1
