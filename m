@@ -1,31 +1,46 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 06 Jun 2020 06:00:26 +0000
-Subject: Re: coccinelle: api: add kzfree script
-Message-Id: <e10d3917-da30-94d6-9f41-b0343daf3e23@web.de>
+Date: Sun, 21 Jun 2020 12:45:10 +0000
+Subject: Re: [PATCH] media: media-request: Fix crash according to a failed memory allocation
+Message-Id: <b39653f6-9587-4027-35ed-53d341845cb2@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e814fbbe-37a9-a059-fcbb-64cebba4c8e2@web.de>
-In-Reply-To: <e814fbbe-37a9-a059-fcbb-64cebba4c8e2@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, syzbot+6bed2d543cf7e48b822b@syzkaller.appspotmail.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 
-> Is avoiding transforming the case where E is not verified to be a pointer a concern?
+> …, reorder media_request_alloc() such that …
 
-I imagine that answers to this question have got consequences also on
-the confidence level for such SmPL scripts.
-The desire and requirement to specify data type restrictions (for expressions)
-can influence data processing efforts in significant ways.
+Wording adjustments:
+…, reorder statements in the implementation of the function “media_request_alloc” so that …
 
-* If it would be accepted to choose a simpler source code search approach,
-  there are corresponding risks to consider.
 
-* If you would like to reduce the general possibility for false positives
-  according to advanced software analysis, the amount of data processing
-  will increase because information from header files will probably be needed.
-  The run time characteristics will become more interesting then.
-  Additional program execution parameters will be relevant for this use case.
+> … the last step thus
+
+… the last step.
+Thus media_request_close() …
+
+
+Would you like to add the tag “Fixes” to the commit message?
+
+
+…
+> +++ b/drivers/media/mc/mc-request.c
+> @@ -296,9 +296,18 @@ int media_request_alloc(struct media_device *mdev, int *alloc_fd)
+>  	if (WARN_ON(!mdev->ops->req_alloc ^ !mdev->ops->req_free))
+>  		return -ENOMEM;
+>
+> +	if (mdev->ops->req_alloc)
+> +		req = mdev->ops->req_alloc(mdev);
+> +	else
+> +		req = kzalloc(sizeof(*req), GFP_KERNEL);
+
+How do you think about to use a conditional operator?
+
++	req = (mdev->ops->req_alloc
+	       ? mdev->ops->req_alloc(mdev)
+	       : kzalloc(sizeof(*req), GFP_KERNEL));
+
 
 Regards,
 Markus
