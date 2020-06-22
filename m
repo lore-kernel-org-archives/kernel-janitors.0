@@ -1,38 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 14 Jun 2020 13:05:46 +0000
-Subject: Re: [PATCH] drm/amdgpu: fix ref count leak in amdgpu_display_crtc_set_config
-Message-Id: <241aaf11-d4a0-e5a9-9744-75839006c128@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 22 Jun 2020 16:31:44 +0000
+Subject: [PATCH] input: i8042: remove redundant assignment to variable retval
+Message-Id: <20200622163144.107815-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Andrey Grodzovsky <andrey.grodzovsky@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Shirish S <shirish.s@amd.com>, Navid Emamdoost <emamd001@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Alex Deucher <alexander.deucher@amd.com>, Yu Kuai <yukuai3@huawei.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>, Stephen Boyd <swboyd@chromium.org>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> in amdgpu_display_crtc_set_config, …
+From: Colin Ian King <colin.king@canonical.com>
 
-* Can the term “reference count” become relevant also for this commit message
-  besides other possible adjustments?
+The variable retval is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-* Can it be nicer to combine proposed updates for this software module
-  as a patch series (with a cover letter)?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/serio/i8042.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Would you like to add the tag “Fixes”?
-
-
-…
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-…
-> @@ -306,6 +306,7 @@  int amdgpu_display_crtc_set_config(struct drm_mode_set *set,
->  		adev->have_disp_power_ref = false;
->  	}
->
-> +out:
->  	/* drop the power reference we got coming in here */
->  	pm_runtime_put_autosuspend(dev->dev);
->  	return ret;
-
-Perhaps use the label “put_runtime” instead?
-
-Regards,
-Markus
+diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+index 0dddf273afd9..cbaae80065e1 100644
+--- a/drivers/input/serio/i8042.c
++++ b/drivers/input/serio/i8042.c
+@@ -796,7 +796,7 @@ static int __init i8042_toggle_aux(bool on)
+ 
+ static int __init i8042_check_aux(void)
+ {
+-	int retval = -1;
++	int retval;
+ 	bool irq_registered = false;
+ 	bool aux_loop_broken = false;
+ 	unsigned long flags;
+-- 
+2.27.0
