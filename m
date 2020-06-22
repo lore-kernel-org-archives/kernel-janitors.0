@@ -1,28 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 02 Jun 2020 09:05:07 +0000
-Subject: Re: [PATCH] spi: sprd: call pm_runtime_put if pm_runtime_get_sync fails
-Message-Id: <8ea80af8-e964-4488-25c6-837f2ac88493@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 22 Jun 2020 14:48:50 +0000
+Subject: [PATCH][next] mm: cma: remove redundant null check of the array cma->name
+Message-Id: <20200622144850.45952-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, linux-spi@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Baolin Wang <baolin.wang7@gmail.com>, Mark Brown <broonie@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Dinghao Liu <dinghao.liu@zju.edu.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>, Barry Song <song.bao.hua@hisilicon.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mike Kravetz <mike.kravetz@oracle.com>, Roman Gushchin <guro@fb.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Call to pm_runtime_get_sync increments counter even in case of
-> failure leading to incorrect ref count.
-> Call pm_runtime_put_noidle if pm_runtime_get_sync fails.
+From: Colin Ian King <colin.king@canonical.com>
 
-How do you think about a wording variant like the following?
+An earlier commit changed name from a pointer to an array so the
+cma->name null check is now redundant and can be removed.
 
-   Change description:
-   The PM runtime reference counter is generally incremented by a call of
-   the function “pm_runtime_get_sync”.
-   Thus call the function “pm_runtime_put_noidle” also in one error case
-   to keep the reference counting consistent.
+Addresses-Coverity: ("Array compared against 0")
+Fixes: e7f0557d7de9 ("mm: cma: fix the name of CMA areas")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/cma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+diff --git a/mm/cma.c b/mm/cma.c
+index 31a61d410c59..6cf08817bac6 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -52,7 +52,7 @@ unsigned long cma_get_size(const struct cma *cma)
+ 
+ const char *cma_get_name(const struct cma *cma)
+ {
+-	return cma->name ? cma->name : "(undefined)";
++	return cma->name;
+ }
+ 
+ static unsigned long cma_bitmap_aligned_mask(const struct cma *cma,
+-- 
+2.27.0
