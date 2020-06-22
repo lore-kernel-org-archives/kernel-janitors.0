@@ -1,32 +1,25 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 25 Jun 2020 19:48:33 +0000
-Subject: Re: [PATCH][V2] qed: add missing error test for DBG_STATUS_NO_MATCHING_FRAMING_MODE
-Message-Id: <20200625.124833.893666125631041346.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 22 Jun 2020 16:07:02 +0000
+Subject: Re: [PATCH] ASoC: fsl_mqs: Fix unchecked return value for clk_prepare_enable
+Message-Id: <3eab889e-75b6-6287-a668-a2eaa509834c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200625164505.115425-1-colin.king@canonical.com>
-In-Reply-To: <20200625164505.115425-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aelior@marvell.com, GR-everest-linux-l2@marvell.com, kuba@kernel.org, michal.kalderon@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, irusskikh@marvell.com
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+Cc: Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>, Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 25 Jun 2020 17:45:05 +0100
+> Fix unchecked return value for clk_prepare_enable.
+>
+> And because clk_prepare_enable and clk_disable_unprepare should
+> check input clock parameter is NULL or not, then we don't need
+> to check it before calling the function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The error DBG_STATUS_NO_MATCHING_FRAMING_MODE was added to the enum
-> enum dbg_status however there is a missing corresponding entry for
-> this in the array s_status_str. This causes an out-of-bounds read when
-> indexing into the last entry of s_status_str.  Fix this by adding in
-> the missing entry.
-> 
-> Addresses-Coverity: ("Out-of-bounds read").
-> Fixes: 2d22bc8354b1 ("qed: FW 8.42.2.0 debug features")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: use the error message as suggested by Igor Russkikh
+I propose to split the adjustment of two function implementations
+into separate update steps for a small patch series.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?idb5d3449788f85569096780592549d0340e9c0c7#n138
 
-I already applied your V1 so this patch no longer applies.
+I suggest to improve the change descriptions accordingly.
+
+Regards,
+Markus
