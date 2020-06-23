@@ -1,41 +1,21 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 14 Jun 2020 08:56:14 +0000
-Subject: Re: [PATCH] net: macb: fix ref count leaking via pm_runtime_get_sync
-Message-Id: <c145121b-3d69-a02a-17f5-f0eb2f166663@web.de>
+Date: Tue, 23 Jun 2020 09:42:35 +0000
+Subject: Re: [v4] coccinelle: misc: add array_size_dup script to detect missed overflow checks
+Message-Id: <6b9a8459-3b32-8d8d-596e-203a33d2982a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4014118b-90a6-68c5-048f-32485fa3e852@web.de>
+ <alpine.DEB.2.22.394.2006230902210.2367@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2006230902210.2367@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, netdev@vger.kernel.org
-Cc: Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, "David S. Miller" <davem@davemloft.net>, Nicolas Ferre <nicolas.ferre@microchip.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Kees Cook <keescook@chromium.org>
 
-> in macb_mdio_write, …
+> I don't agree with any of these comments.
 
-* Will a desire evolve to improve also this commit message?
-
-* Will the tag “Fixes” become helpful?
-
-
-…
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-…
-> @@ -3840,11 +3842,14 @@  static int at91ether_open(struct net_device *dev)
->
->  	ret = macb_phylink_connect(lp);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->
->  	netif_start_queue(dev);
->
->  	return 0;
-> +out:
-> +	pm_runtime_put(&lp->pdev->dev);
-> +	return ret;
->  }
-…
-
-Perhaps use the label “put_runtime” instead?
+Would we like to clarify each of the disagreements in more detail
+for a more constructive patch review?
 
 Regards,
 Markus
