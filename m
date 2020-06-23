@@ -1,36 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 22 Jun 2020 15:44:32 +0000
-Subject: [PATCH][next] mm/zswap: remove redundant assignment to variable dlen
-Message-Id: <20200622154432.50133-1-colin.king@canonical.com>
+From: Sarah Koffi <elnana194@gmail.com>
+Date: Tue, 23 Jun 2020 11:13:30 +0000
+Subject: Greetings From Mrs. Sarah Koffi
+Message-Id: <CA+NUCuTpRBCNhzPsUx6VPrOLF5ST46h_JaJQFi9zwqK2yEciSw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seth Jennings <sjenning@redhat.com>, Dan Streetman <ddstreet@ieee.org>, Vitaly Wool <vitaly.wool@konsulko.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sarahkoffi389@yahoo.co.jp
 
-From: Colin Ian King <colin.king@canonical.com>
+Greetings From Mrs. Sarah Koffi
 
-The variable dlen is being assigned a value that is never read, the
-assignment is redundant and can be removed.
+I'm contacting you based on your good profiles I read and for a good
+reasons, I am in search of a property to buy in your country as I
+intended to come over to your
+country for investment, Though I have not meet with you before but I
+believe that one has to risk confiding in someone to succeed sometimes
+in life.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/zswap.c | 1 -
- 1 file changed, 1 deletion(-)
+My name is Mrs. Sarah Koffi. My late husband deals on Crude Oil with
+Federal Government of Sudan and he has a personal Oil firm in Bentiu
+Oil zone town and Upper
+Nile city. What I have experience physically, I don't wish to
+experience it again in my life due to the recent civil Ethnic war
+cause by our President Mr. Salva Kiir
+and the rebel leader Mr Riek Machar, I have been Under United Nation
+refuge camp in chad to save my life and that of my little daughter.
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 14839cbac7ff..d63b90edd833 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1249,7 +1249,6 @@ static int zswap_frontswap_load(unsigned type, pgoff_t offset,
- 	sg_init_one(&output, dst, dlen);
- 	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, dlen);
- 	ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
--	dlen = acomp_ctx->req->dlen;
- 	mutex_unlock(&acomp_ctx->mutex);
- 
- 	kunmap(page);
--- 
-2.27.0
+Though, I do not know how you will feel to my proposal, but the truth
+is that I sneaked into Chad our neighboring country where I am living
+now as a refugee.
+I escaped with my little daughter when the rebels bust into our house
+and killed my husband as one of the big oil dealers in the country,
+ever since then, I have being on the run.
+
+I left my country and move to Chad our neighboring country with the
+little ceasefire we had, due to the face to face peace meeting accord
+coordinated by the US Secretary of State, Mr John Kerry and United
+Nations in Ethiopia (Addis Ababa) between our President Mr Salva Kiir
+and the rebel leader Mr Riek Machar to stop this war.
+
+I want to solicit for your partnership with trust to invest the $8
+million dollars deposited by my late husband in Bank because my life
+is no longer safe in our country, since the rebels are looking for the
+families of all the oil business men in the country to kill, saying
+that they are they one that is milking the country dry.
+
+I will offer you 20% of the total fund for your help while I will
+partner with you for the investment in your country.
+If I get your reply.
+
+I will wait to hear from you so as to give you details.With love from
+
+ i need you to contact me here sarahkoffi389@yahoo.co.jp
+
+Mrs. Sarah Koffi
