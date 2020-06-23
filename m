@@ -1,41 +1,64 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Tue, 30 Jun 2020 20:37:42 +0000
-Subject: Re: [PATCH] MAINTAINERS: rectify entry in ARM SMC WATCHDOG DRIVER
-Message-Id: <CAKXUXMxF8YwhGKjUr5h_c2ewmXiSz7saLYWvThn6VwyTYLKAeg@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 23 Jun 2020 06:12:39 +0000
+Subject: Re: [PATCH v4] coccinelle: misc: add array_size_dup script to detect missed overflow checks
+Message-Id: <4014118b-90a6-68c5-048f-32485fa3e852@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200602052104.7795-1-lukas.bulwahn@gmail.com>
- <828311d2-61ea-42cb-1449-a53f3772543d@roeck-us.net> <CAODwPW_oxDxF_5-icRs0eaRVLgtP+bDc_OSKa=EcfeSp=c6Fag@mail.gmail.com>
- <CAKz_xw0Tqr-idoZbNzg_didSCr5L+L1=76xjF=Sqj4DgpL9g7Q@mail.gmail.com>
- <CAKz_xw3KuWFSkcz-9hLHGZ2=S7nJ=K=AN6j2FJ6afZBFowJO7g@mail.gmail.com>
- <alpine.DEB.2.21.2006302156120.3966@felia> <20200630203245.GA19763@roeck-us.net>
-In-Reply-To: <20200630203245.GA19763@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Evan Benn <evanbenn@chromium.org>, Julius Werner <jwerner@chromium.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <julia.lawall@inria.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Kees Cook <keescook@chromium.org>
 
-On Tue, Jun 30, 2020 at 10:32 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Tue, Jun 30, 2020 at 09:59:51PM +0200, Lukas Bulwahn wrote:
-> >
-> >
-> > On Fri, 5 Jun 2020, Evan Benn wrote:
-> >
-> > > AFAICT this has now been merged upstream, I'm not sure what action to take:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id\24a28b4eb842ad1256496be6ae01bab15f1dcb
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?idra9e7fea5866fc471fda78f05f166595c8c6ba6
-> >
-> > This patch is still fully valid and still applies to next-20200630; it can
-> > be simply applied as any other bug fix to your driver code.
-> >
-> > Evan, can you please ask Wim as linux-watchdog maintainer to pick-up this
-> > patch, with the reviews below?
-> >
->
-> It is in my tree. Maybe it got lost in the back-and-forth. I'll send
-> a pull request to Wim in the next couple of weeks.
->
+> Changes in v2:
+…
+> - assignment operator used
 
-Great! Thanks, Guenter.
+I prefer the distinction for the application of corresponding metavariables.
+
+
+> Changes in v3:
+…
+>  - \(&E1\|&E2\) changed to &\(E1\|E2\)
+
+Would it be more helpful to mention the movement of the ampersand
+before SmPL disjunctions?
+
+
+…
+>+/// Three types of patterns for these functions:
+
+Will another adjustment be needed according to your information “duplicates warning removed”?
+
+
+…
+> +virtual context
+> +virtual report
+> +virtual org
+
+Can the following SmPL code variant ever become more attractive?
+
++virtual context, report, org
+
+
+…
+> +expression subE1 <= as.E1;
+> +expression subE2 <= as.E2;
+> +expression as.E1, as.E2, E3;
+
+How do you think about the following SmPL code variant?
+
++expression subE1 <= as.E1,
++           subE2 <= as.E2,
++           as.E1, as.E2, E3;
+
+
+…
+> +msg = "WARNING: array_size is used later (line %s) to compute the same size" % (p2[0].line)
+> +coccilib.report.print_report(p1[0], msg)
+
+Please omit the extra Python variable “msg” for the passing of such simple message objects.
+
+What does hinder you to take the proposed script variants better into account?
+
+Regards,
+Markus
