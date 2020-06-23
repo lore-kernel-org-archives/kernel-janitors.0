@@ -1,52 +1,37 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 18 Jun 2020 15:15:29 +0000
-Subject: Re: [PATCH] drm/amdgpu: remove redundant initialization of variable ret
-Message-Id: <CADnq5_OeVaKbr46WDQ0GcnLd1CE2EbwmRxyVOVqJcqwkJN5qNg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 23 Jun 2020 08:42:07 +0000
+Subject: [PATCH][next] libbpf: fix spelling mistake "kallasyms" -> "kallsyms"
+Message-Id: <20200623084207.149253-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200618102622.12256-1-colin.king@canonical.com>
-In-Reply-To: <20200618102622.12256-1-colin.king@canonical.com>
+References: <20190619162742.985-1-colin.king@canonical.com>
+In-Reply-To: <20190619162742.985-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 6:26 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable ret is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+There is a spelling mistake in a pr_warn message. Fix it.
 
-Alex
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-> index b2cdc8a1268f..58b76d3d7365 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-> @@ -1609,7 +1609,7 @@ static ssize_t amdgpu_set_pp_power_profile_mode(struct device *dev,
->                 const char *buf,
->                 size_t count)
->  {
-> -       int ret = 0xff;
-> +       int ret;
->         struct drm_device *ddev = dev_get_drvdata(dev);
->         struct amdgpu_device *adev = ddev->dev_private;
->         uint32_t parameter_size = 0;
-> --
-> 2.27.0.rc0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 18461deb1b19..deea27aadcef 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -5741,7 +5741,7 @@ static int bpf_object__read_kallsyms_file(struct bpf_object *obj)
+ 		if (ret = EOF && feof(f))
+ 			break;
+ 		if (ret != 3) {
+-			pr_warn("failed to read kallasyms entry: %d\n", ret);
++			pr_warn("failed to read kallsyms entry: %d\n", ret);
+ 			err = -EINVAL;
+ 			goto out;
+ 		}
+-- 
+2.27.0
