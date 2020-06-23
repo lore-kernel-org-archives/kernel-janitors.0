@@ -1,24 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 20 Jun 2020 03:26:36 +0000
-Subject: Re: [PATCH][next] scsi: ufs: ufs-exynos: fix spelling mistake "pa_granularty" -> "pa_granularity"
-Message-Id: <159262354734.7800.18123945491973468082.b4-ty@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 23 Jun 2020 16:26:15 +0000
+Subject: Re: [PATCH] afs: Fix the memory leak in afs_mkdir
+Message-Id: <91acdece-92a1-c23b-f835-34c8e8f3aad0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200617084911.167359-1-colin.king@canonical.com>
-In-Reply-To: <20200617084911.167359-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Avri Altman <avri.altman@wdc.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kiwoong Kim <kwmad.kim@samsung.com>, Colin King <colin.king@canonical.com>, Seungwon Jeon <essuuj@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.ibm.com>, Alim Akhtar <alim.akhtar@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Chen Tao <chentao107@huawei.com>, linux-afs@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, David Howells <dhowells@redhat.com>
 
-On Wed, 17 Jun 2020 09:49:11 +0100, Colin King wrote:
+…
+> +++ b/fs/afs/dir.c
+> @@ -1599,17 +1599,17 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+…
+>  	scb = kcalloc(2, sizeof(struct afs_status_cb), GFP_KERNEL);
+>  	if (!scb)
+>  		goto error_scb;
 
-> There is a spelling mistake in a dev_warn message. Fix it.
+I suggest to adjust also this jump target so that a call of the function “kfree”
+with a null pointer can be avoided.
 
-Applied to 5.9/scsi-queue, thanks!
 
-[1/1] scsi: ufs: ufs-exynos: Fix spelling mistake "pa_granularty" -> "pa_granularity"
-      https://git.kernel.org/mkp/scsi/c/393403efc360
+…
+> @@ -1645,10 +1645,10 @@  static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+…
+>  error_key:
+>  	key_put(key);
+> +error_scb:
+> +	kfree(scb);
+>  error:
+>  	d_drop(dentry);
+…
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Can an other label than “error” be nicer here?
+
+Regards,
+Markus
