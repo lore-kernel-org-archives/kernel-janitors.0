@@ -1,29 +1,30 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jun 2020 19:40:05 +0000
-Subject: Re: [PATCH v2] dmaengine: stm32-dma: call pm_runtime_put if pm_runtime_get_sync fails
-Message-Id: <8a751660-a268-1153-8d94-94d994772689@web.de>
+Date: Wed, 24 Jun 2020 12:21:39 +0000
+Subject: Re: [v3 03/14] irqchip/csky-mpintc: Fix potential resource leaks
+Message-Id: <4470b5f0-31ec-e43c-b841-5f8f3a3157b1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <873bfb31-52d8-7c9b-5480-4a94dc945307@web.de>
- <CAEkB2ET_gfNUAuoZHxiGWZX7d3CQaJYJJqS2Fspif5mFq4-xfA@mail.gmail.com>
-In-Reply-To: <CAEkB2ET_gfNUAuoZHxiGWZX7d3CQaJYJJqS2Fspif5mFq4-xfA@mail.gmail.com>
+References: <a0ace7a8-5c26-ee20-fe76-7dff57a18ca3@web.de>
+ <be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn>
+In-Reply-To: <be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, Dan Williams <dan.j.williams@intel.com>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
 
->> How do you think about a wording variant like the following?
-> Please stop proposing rewording on my patches!
+>> How do you think about another wording variant?
+>>
+>>     Specific system resources were not released in a few error cases.
+>>     Thus add jump targets for the completion of the desired exception handling.
+>
+> OK, thank you, it looks good to me.
 
-I am trying to remind you on open issues according to patch review concerns.
+Thanks for your positive feedback.
 
 
-> I will consider updating my patches only if a maintainer asks for it.
+> Maybe I can use this description for other patches of this series.
 
-* I hope that more contributors would like to improve the software quality
-  also for commit messages.
-
-* Would the adjusted patch prefix need a different version indication?
+Would you like to make any of the affected commit messages more “specific”?
 
 Regards,
 Markus
