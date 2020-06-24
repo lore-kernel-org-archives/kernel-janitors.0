@@ -1,28 +1,42 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Mon, 15 Jun 2020 10:35:05 +0000
-Subject: Re: [PATCH] media: pxa_camera: remove an impossible condition
-Message-Id: <877dw8borq.fsf@belgarion.home>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jun 2020 14:54:18 +0000
+Subject: [PATCH][next] drm/amdgpu: ensure 0 is returned for success in jpeg_v2_5_wait_for_idle
+Message-Id: <20200624145418.7794-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200610172615.GD90634@mwanda>
-In-Reply-To: <20200610172615.GD90634@mwanda> (Dan Carpenter's message of "Wed,
-        10 Jun 2020 20:26:15 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Chuhong Yuan <hslester96@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Leo Liu <leo.liu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> It's not possible for "pcdev->mclk" to be zero because we check for
-> that earlier and set it to 20000000 in that situation.  If it were
-> possible, that would be a problem because it could have lead to an Oops
-> in the error handling when we call v4l2_clk_unregister(pcdev->mclk_clk);
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+In the cases where adev->jpeg.num_jpeg_inst is zero or the condition
+adev->jpeg.harvest_config & (1 << i) is always non-zero the variable
+ret is never set to an error condition and the function returns
+an uninitialized value in ret.  Since the only exit condition at
+the end if the function is a success then explicitly return
+0 rather than a potentially uninitialized value in ret.
 
-Cheers.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 14f43e8f88c5 ("drm/amdgpu: move JPEG2.5 out from VCN2.5")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Robert
+diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
+index f74262a22a16..7a51c615d22d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
++++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
+@@ -462,7 +462,7 @@ static int jpeg_v2_5_wait_for_idle(void *handle)
+ 			return ret;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int jpeg_v2_5_set_clockgating_state(void *handle,
+-- 
+2.27.0
