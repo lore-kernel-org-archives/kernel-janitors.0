@@ -1,29 +1,44 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 28 Jun 2020 13:16:23 +0000
-Subject: Re: [PATCH v3] media: venus: core: Fix runtime PM imbalance in venus_probe()
-Message-Id: <9797fb44-e10e-61b5-b2cc-82d94cc98a3c@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jun 2020 16:39:57 +0000
+Subject: [PATCH] staging: most: avoid null pointer dereference when iface is null
+Message-Id: <20200624163957.11676-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dinghao Liu <dinghao.liu@zju.edu.cn>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Andy Gross <agross@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Gromm <christian.gromm@microchip.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> when it returns an error code. Thus a pairing decrement is needed on
+From: Colin Ian King <colin.king@canonical.com>
 
-* I find it more appropriate to use the word “corresponding” here
-  (if you do still not like previous wording suggestions).
+In the case where the pointer iface is null then the reporting of this
+error will dereference iface when printing an error message causing which
+is not ideal.  Since the majority of callers to most_register_interface
+report an error when -EINVAL is returned a simple fix is to just remove
+the error message, I doubt it will be missed.
 
-* Will it become helpful to add the tag “Fixes” to the commit message?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=719fdd32921fb7e3208db8832d32ae1c2d68900f#n183
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 57562a72414c ("Staging: most: add MOST driver's core module")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/most/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-* Would you like to improve the change description any more?
-
-
-> ---
->  drivers/media/platform/qcom/venus/core.c | 5 ++++-
-
-I suggest replace the triple dashes before this diffstat by a blank line.
-
-Regards,
-Markus
+diff --git a/drivers/most/core.c b/drivers/most/core.c
+index f781c46cd4af..353ab277cbc6 100644
+--- a/drivers/most/core.c
++++ b/drivers/most/core.c
+@@ -1283,10 +1283,8 @@ int most_register_interface(struct most_interface *iface)
+ 	struct most_channel *c;
+ 
+ 	if (!iface || !iface->enqueue || !iface->configure ||
+-	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS)) {
+-		dev_err(iface->dev, "Bad interface or channel overflow\n");
++	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS))
+ 		return -EINVAL;
+-	}
+ 
+ 	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
+ 	if (id < 0) {
+-- 
+2.27.0
