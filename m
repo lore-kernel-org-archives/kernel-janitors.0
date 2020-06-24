@@ -1,30 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 03 Jun 2020 05:04:37 +0000
-Subject: Re: drm/nouveau/clk/gm20b: Understanding challenges around gm20b_clk_new()
-Message-Id: <75a33776-cd69-edba-8d20-ffcf99ca1879@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Jun 2020 13:26:40 +0000
+Subject: [PATCH] mtd: rawnand: ingenic: cleanup ARRAY_SIZE() vs sizeof() use
+Message-Id: <20200624132640.GC9972@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dd729c13-fbc8-22e7-7d8e-e3e126f66943@web.de>
- <40d8fb01.db721.17269d3d620.Coremail.dinghao.liu@zju.edu.cn>
- <20200602102955.GZ30374@kadam> <65e3d2b7-b0ad-f387-b8fe-d83ea816a0f6@web.de>
- <20200602153900.GW22511@kadam>
- <5d580094.f274c.17277fc124e.Coremail.dinghao.liu@zju.edu.cn>
-In-Reply-To: <5d580094.f274c.17277fc124e.Coremail.dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dinghao Liu <dinghao.liu@zju.edu.cn>, Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Kangjie Lu <kjlu@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
 
-> Ben has explained this problem:
-> https://lore.kernel.org/patchwork/patch/1249592/
-> Since the caller will check "pclk" on failure, we don't need to free
-> "clk" in gm20b_clk_new() and I think this patch is no longer needed.
+The ARRAY_SIZE() is the number of elements but we want to use sizeof()
+here for the number of bytes.  Fortunately, they are the same thing
+because it's an array of u8 so this has no effect on runtime.
 
-* I am curious if it can become easier to see the relationships for
-  these variables according to mentioned “destructor” calls.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/nand/raw/ingenic/jz4740_ecc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-* Did you notice opportunities to improve source code analysis
-  (or software documentation) accordingly?
-
-Regards,
-Markus
+diff --git a/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c b/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
+index 13fea645c7f0..54e377754a6c 100644
+--- a/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
++++ b/drivers/mtd/nand/raw/ingenic/jz4740_ecc.c
+@@ -90,8 +90,8 @@ static int jz4740_ecc_calculate(struct ingenic_ecc *ecc,
+ 	 * If the written data is completely 0xff, we also want to write 0xff as
+ 	 * ECC, otherwise we will get in trouble when doing subpage writes.
+ 	 */
+-	if (memcmp(ecc_code, empty_block_ecc, ARRAY_SIZE(empty_block_ecc)) = 0)
+-		memset(ecc_code, 0xff, ARRAY_SIZE(empty_block_ecc));
++	if (memcmp(ecc_code, empty_block_ecc, sizeof(empty_block_ecc)) = 0)
++		memset(ecc_code, 0xff, sizeof(empty_block_ecc));
+ 
+ 	return 0;
+ }
+-- 
+2.27.0
