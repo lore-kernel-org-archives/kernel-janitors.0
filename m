@@ -1,39 +1,40 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 18 Jun 2020 07:56:54 +0000
-Subject: Re: [PATCH v2] crypto: hisilicon - allow smaller reads in debugfs
-Message-Id: <20200618075654.GD10091@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jun 2020 12:07:10 +0000
+Subject: [PATCH] drm/radeon: fix array out-of-bounds read and write issues
+Message-Id: <20200624120710.10957-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200602135409.GA59808@mwanda>
-In-Reply-To: <20200602135409.GA59808@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b6da310b-e633-9f74-f7af-7791d803aaf5@huawei.com
-Cc: Zhou Wang <wangzhou1@hisilicon.com>, Shukun Tan <tanshukun1@huawei.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 02, 2020 at 04:54:09PM +0300, Dan Carpenter wrote:
-> Originally this code rejected any read less than 256 bytes.  There
-> is no need for this artificial limit.  We should just use the normal
-> helper functions to read a string from the kernel.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Use simple_read_from_buffer().  The v1 was slightly half arsed
-> because I left the original check for:
-> 
-> 	if (*pos)
-> 		return 0;
-> 
-> So it could result in partial reads.  The new code means that if you
-> want to read the buffer one byte at a time, that's fine or if you want
-> to read it in one 256 byte chunk that's also fine.  Plus it deletes 21
-> lines of code and is a lot cleaner.
-> 
->  drivers/crypto/hisilicon/qm.c | 33 ++++++---------------------------
->  1 file changed, 6 insertions(+), 27 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+There is an off-by-one bounds check on the index into arrays
+table->mc_reg_address and table->mc_reg_table_entry[k].mc_data[j] that
+can lead to reads and writes outside of arrays. Fix the bound checking
+off-by-one error.
+
+Addresses-Coverity: ("Out-of-bounds read/write")
+Fixes: cc8dbbb4f62a ("drm/radeon: add dpm support for CI dGPUs (v2)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/radeon/ci_dpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
+index 134aa2b01f90..86ac032275bb 100644
+--- a/drivers/gpu/drm/radeon/ci_dpm.c
++++ b/drivers/gpu/drm/radeon/ci_dpm.c
+@@ -4351,7 +4351,7 @@ static int ci_set_mc_special_registers(struct radeon_device *rdev,
+ 					table->mc_reg_table_entry[k].mc_data[j] |= 0x100;
+ 			}
+ 			j++;
+-			if (j > SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
++			if (j >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
+ 				return -EINVAL;
+ 
+ 			if (!pi->mem_gddr5) {
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.27.0
