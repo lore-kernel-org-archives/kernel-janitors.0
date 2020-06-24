@@ -1,25 +1,33 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Thu, 25 Jun 2020 12:57:05 +0000
-Subject: Re: [PATCH] phy: sun4i-usb: fix dereference of pointer phy0 before it is null checked
-Message-Id: <20200625125655.GC6228@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 24 Jun 2020 08:42:53 +0000
+Subject: Re: [1/7] irqchip: Fix potential resource leaks
+Message-Id: <9ca22645-8bf3-008f-fe55-d432f962cac3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200625124428.83564-1-colin.king@canonical.com>
-In-Reply-To: <20200625124428.83564-1-colin.king@canonical.com>
+References: <65e734f7-c43c-f96b-3650-980e15edba60@web.de>
+ <d2111f53-ca52-fedf-0257-71f0aa89b093@loongson.cn>
+In-Reply-To: <d2111f53-ca52-fedf-0257-71f0aa89b093@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen <chenhc@lemote.com>, Jason Cooper <jason@lakedaemon.net>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
 
-On 25-06-20, 13:44, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer phy0 is being dereferenced via the assignment of
-> phy on the call to phy_get_drvdata before phy0 is null checked, this
-> can lead to a null pointer dereference. Fix this by performing the
-> null check on phy0 before the call to phy_get_drvdata. Also replace
-> the phy0 = NULL check with the more usual !phy0 idiom.
+>> Can it helpful to add jump targets so that a bit of exception handling
+>> can be better reused at the end of this function?
+>
+> OK, no problem, I will do it in the v2.
 
-Applied, thanks
--- 
-~Vinod
+It seems that the software evolution will be continued with another
+update suggestion like the following.
+
+[PATCH v3 10/14 RESEND] irqchip/nvic: Fix potential resource leaks
+https://lore.kernel.org/linux-mips/1592984711-3130-11-git-send-email-yangtiezhu@loongson.cn/
+https://lore.kernel.org/patchwork/patch/1263191/
+
+
+Can it matter to omit the word “potential” from change descriptions
+after you detected that specific function calls were missing
+in if branches?
+
+Regards,
+Markus
