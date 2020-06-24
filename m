@@ -1,50 +1,55 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 22 Jun 2020 07:52:22 +0000
-Subject: Re: [PATCH v2] nbd: Fix memory leak in nbd_add_socket
-Message-Id: <1a58ab81-3810-0763-7394-10b51add23ee@web.de>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Wed, 24 Jun 2020 14:46:04 +0000
+Subject: Re: [PATCH] media: s5p-g2d: Fix a memory leak in an error handling path in 'g2d_probe()'
+Message-Id: <6a59180f-b216-b2f5-0524-17eca8f53992@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b55f8af2-b20c-214f-90f0-9b6efcb7273c@web.de>
- <db17d022-a53a-3781-63d4-c38d5cf5b1e4@huawei.com>
-In-Reply-To: <db17d022-a53a-3781-63d4-c38d5cf5b1e4@huawei.com>
+References: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200426200631.42497-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Zheng Bin <zhengbin13@huawei.com>, linux-block@vger.kernel.org
-Cc: nbd@other.debian.org, Aditya Pakki <pakki001@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <mccamant@cs.umn.edu>, Qiushi Wu <wu000273@umn.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Yi Zhang <yi.zhang@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kyungmin.park@samsung.com, kamil@wypas.org, a.hajda@samsung.com, mchehab@kernel.org, s.nawrocki@samsung.com, sachin.kamat@linaro.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
->> Can an other wording variant be nicer?
->
-> em, how about this?
->
->
-> When adding first socket to nbd,
+On 26/04/2020 22:06, Christophe JAILLET wrote:
+> Memory allocated with 'v4l2_m2m_init()' must be freed by a corresponding
+> call to 'v4l2_m2m_release()'
+> 
+> Fixes: 5ce60d790a24 ("[media] s5p-g2d: Add DT based discovery support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/platform/s5p-g2d/g2d.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+> index 6932fd47071b..ded6fa24677c 100644
+> --- a/drivers/media/platform/s5p-g2d/g2d.c
+> +++ b/drivers/media/platform/s5p-g2d/g2d.c
+> @@ -717,12 +717,14 @@ static int g2d_probe(struct platform_device *pdev)
+>  	of_id = of_match_node(exynos_g2d_match, pdev->dev.of_node);
+>  	if (!of_id) {
+>  		ret = -ENODEV;
+> -		goto unreg_video_dev;
+> +		goto free_m2m;
+>  	}
+>  	dev->variant = (struct g2d_variant *)of_id->data;
+>  
+>  	return 0;
+>  
+> +free_m2m:
+> +	v4l2_m2m_release(dev->m2m_dev);
+>  unreg_video_dev:
+>  	video_unregister_device(dev->vfd);
+>  rel_vdev:
+> 
 
-How do you think about to replace abbreviations by terms?
+This isn't right. The real problem here is that video_register_device() is
+called before several other initialisations as done, such as v4l2_m2m_init and
+the of_match_node check.
 
-
-> if nsock's allocation fails,
-
-… failed,
-
-
-> config->socks is malloced
-
-The data structure member “config->socks” was reallocated.
-
-
-> but num_connections does not update,
-
-But the data structure member “config->num_connections” was not updated.
-
-
-> memory leak will occur(Function
-> nbd_config_put will only free config->socks when num_connections is not 0).
-
-A memory leak will occur then because the function “nbd_config_put”
-will free “config->socks” only when “num_connections” is not zero.
-
-Would you like to add an imperative wording to the commit message?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=625d3449788f85569096780592549d0340e9c0c7#n151
+To do this properly video_register_device() should be called last in the probe()
+function.
 
 Regards,
-Markus
+
+	Hans
