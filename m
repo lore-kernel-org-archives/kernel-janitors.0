@@ -1,51 +1,60 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Wed, 17 Jun 2020 13:59:54 +0000
-Subject: Re: [PATCH] dmaengine: stm32-mdma: call pm_runtime_put if pm_runtime_get_sync fails
-Message-Id: <20200617135940.GU2324254@vkoul-mobl>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 24 Jun 2020 11:43:03 +0000
+Subject: Re: [PATCH v3 03/14] irqchip/csky-mpintc: Fix potential resource leaks
+Message-Id: <a0ace7a8-5c26-ee20-fe76-7dff57a18ca3@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <873bfb31-52d8-7c9b-5480-4a94dc945307@web.de>
- <CAEkB2ET_gfNUAuoZHxiGWZX7d3CQaJYJJqS2Fspif5mFq4-xfA@mail.gmail.com>
-In-Reply-To: <CAEkB2ET_gfNUAuoZHxiGWZX7d3CQaJYJJqS2Fspif5mFq4-xfA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, Alexandre Torgue <alexandre.torgue@st.com>, Dan Williams <dan.j.williams@intel.com>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
 
-On 03-06-20, 14:17, Navid Emamdoost wrote:
-> On Wed, Jun 3, 2020 at 1:52 PM Markus Elfring <Markus.Elfring@web.de> wrote:
-> >
-> > > Calling pm_runtime_get_sync increments the counter even in case of
-> > > failure, causing incorrect ref count. Call pm_runtime_put if
-> > > pm_runtime_get_sync fails.
-> >
-> > Is it appropriate to copy a sentence from the change description
-> > into the patch subject?
-> >
-> > How do you think about a wording variant like the following?
-> Please stop proposing rewording on my patches!
-> 
-> I will consider updating my patches only if a maintainer asks for it.
+> There exists potential resource leaks in the error path, fix them.
 
-Yeah ignore these :) no one takes this 'bot' seriously, it is annoying
-yes :(
+I suggest to improve this change description.
+How do you think about another wording variant?
 
-> >
-> >    The PM runtime reference counter is generally incremented by a call of
-> >    the function “pm_runtime_get_sync”.
-> >    Thus call the function “pm_runtime_put” also in two error cases
-> >    to keep the reference counting consistent.
-> >
-> >
-> > Would you like to add the tag “Fixes” to the commit message?
-> >
-> > Regards,
-> > Markus
-> 
-> 
-> 
-> -- 
-> Navid.
+   Specific system resources were not released in a few error cases.
+   Thus add jump targets for the completion of the desired exception handling.
 
--- 
-~Vinod
+
+…
++++ b/drivers/irqchip/irq-csky-mpintc.c
+@@ -247,8 +247,10 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+…
+ 		INTCG_base = ioremap(mfcr("cr<31, 14>"),
+ 				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
+
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=3e08a95294a4fb3702bb3d35ed08028433c37fe6#n257
+
+
+…
++		if (INTCG_base == NULL) {
+
+
+Would you like to use the following code variant?
+
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/checkpatch.pl?id=3e08a95294a4fb3702bb3d35ed08028433c37fe6#n5756
+
++		if (!INTCG_base) {
+
+
+…
+> @@ -270,12 +274,22 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+>
+>  #ifdef CONFIG_SMP
+>  	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
+…
+> +	if (!ipi_irq) {
+> +		ret = -EIO;
+> +		goto err_domain_remove;
+> +	}
+…
+
+Can the function call “irq_domain_remove(root_domain)” become relevant
+only if the preprocessor symbol “CONFIG_SMP” was defined?
+
+Regards,
+Markus
