@@ -1,34 +1,38 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 24 Jun 2020 15:25:17 +0000
-Subject: Re: [PATCH v2] media: venus: core: Fix runtime PM imbalance in venus_probe
-Message-Id: <a955a3bc-61f0-06a7-6afa-e812d8e34d98@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jun 2020 14:05:16 +0000
+Subject: [PATCH][next] soc: qcom: fix off-by-one array index bounds check
+Message-Id: <20200624140516.5929-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dinghao Liu <dinghao.liu@zju.edu.cn>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Andy Gross <agross@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I propose to combine two tags in the previous patch subject.
+From: Colin Ian King <colin.king@canonical.com>
 
+The bounds check on model is off-by-one, leading to an array out
+of bounds read when model is 26. Fix this.
 
-> pm_runtime_get_sync() increments the runtime PM usage counter even
-> when it returns an error code. Thus a pairing decrement is needed on
-> the error handling path to keep the counter balanced. For other error
-> paths after this call, things are the same.
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: e9247e2ce577 ("soc: qcom: socinfo: fix printing of pmic_model")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/qcom/socinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-How do you think about a wording variant like the following?
-
-   Change description:
-   The PM runtime usage counter is incremented even if a call of
-   the function “pm_runtime_get_sync” failed. Thus decrement it also
-   in error cases so that the reference counting is kept consistent.
-
-   Add also a call of the function “pm_runtime_get_noresume”
-   in one if branch for the completion of the desired exception handling.
-
-
-Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index e19102f46302..4d29ea244e71 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -275,7 +275,7 @@ static int qcom_show_pmic_model(struct seq_file *seq, void *p)
+ 	if (model < 0)
+ 		return -EINVAL;
+ 
+-	if (model <= ARRAY_SIZE(pmic_models) && pmic_models[model])
++	if (model < ARRAY_SIZE(pmic_models) && pmic_models[model])
+ 		seq_printf(seq, "%s\n", pmic_models[model]);
+ 	else
+ 		seq_printf(seq, "unknown (%d)\n", model);
+-- 
+2.27.0
