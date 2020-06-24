@@ -1,49 +1,43 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sat, 20 Jun 2020 11:20:05 +0000
-Subject: Re: [PATCH] drm/panel: otm8009a: Drop unnessary backlight_device_unregister()
-Message-Id: <20200620112005.GA16901@ravnborg.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 24 Jun 2020 14:14:23 +0000
+Subject: [PATCH][next] drm: amdgpu: fix premature goto because of missing braces
+Message-Id: <20200624141423.6307-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200618134650.44311-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200618134650.44311-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Philippe CORNU <philippe.cornu@st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, Thierry Reding <thierry.reding@gmail.com>
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Nirmoy Das <nirmoy.das@amd.com>, Sonny Jiang <sonny.jiang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Wei.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, Jun 18, 2020 at 01:46:50PM +0000, Wei Yongjun wrote:
-> It's not necessary to unregister backlight device which
-> registered with devm_backlight_device_register().
-> 
-> Fixes: 12a6cbd4f3f1 ("drm/panel: otm8009a: Use new backlight API")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Currently the goto statement is skipping over a lot of setup code
+because it is outside of an if-block and should be inside it. Fix
+this by adding missing if statement braces.
 
-Thanks, pushed to drm-misc-next.
+Addresses-Coverity: ("Structurally dead code")
+Fixes: fd151ca5396d ("drm amdgpu: SI UVD v3_1")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-	Sam
-
-> ---
->  drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> index 895ee3d1371e..d956522f32ee 100644
-> --- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> +++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> @@ -479,7 +479,6 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
->  	if (ret < 0) {
->  		dev_err(dev, "mipi_dsi_attach failed. Is host ready?\n");
->  		drm_panel_remove(&ctx->panel);
-> -		backlight_device_unregister(ctx->bl_dev);
->  		return ret;
->  	}
-> 
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c b/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
+index 599719e89c31..7cf4b11a65c5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/uvd_v3_1.c
+@@ -642,9 +642,10 @@ static int uvd_v3_1_hw_init(void *handle)
+ 	uvd_v3_1_start(adev);
+ 
+ 	r = amdgpu_ring_test_helper(ring);
+-	if (r)
++	if (r) {
+ 		DRM_ERROR("amdgpu: UVD ring test fail (%d).\n", r);
+-	goto done;
++		goto done;
++	}
+ 
+ 	r = amdgpu_ring_alloc(ring, 10);
+ 	if (r) {
+-- 
+2.27.0
