@@ -1,39 +1,162 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 03 Jun 2020 17:57:14 +0000
-Subject: Re: [PATCH bpf-next] bpf: Fix an error code in check_btf_func()
-Message-Id: <CAADnVQJPwtan12Htu-0VhvuC3M-o_kbnPpN=SXVC-amn9BcZCw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 Jun 2020 13:27:36 +0000
+Subject: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
+Message-Id: <20200625132736.88832-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603175509.GE18931@mwanda>
-In-Reply-To: <20200603175509.GE18931@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Marek Vasut <marek.vasut@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 3, 2020 at 10:55 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This code returns success if kcalloc() but it should return -ENOMEM.
->
-> Fixes: 8c1b6e69dcc1 ("bpf: Compare BTF types of functions arguments with actual types")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  kernel/bpf/verifier.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 5c7bbaac81ef9..25363f134bf0c 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -7581,8 +7581,10 @@ static int check_btf_func(struct bpf_verifier_env *env,
->         if (!krecord)
->                 return -ENOMEM;
->         info_aux = kcalloc(nfuncs, sizeof(*info_aux), GFP_KERNEL | __GFP_NOWARN);
-> -       if (!info_aux)
-> +       if (!info_aux) {
-> +               ret = -ENOMEM;
->                 goto err_free;
-> +       }
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the fix.
-I think it's better to do 'int ret = -ENOMEM;' instead.
+There are a several places where printing an error message of
+init.name occurs after init.name has been kfree'd. Also the failure
+message is duplicated each time in the code. Fix this by adding
+a registration error failure path for these cases, moving the
+duplicated error messages to one common point and kfree'ing init.name
+only after it has been used.
+
+Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21057	   3960	     64	  25081	   61f9	drivers/clk/clk-versaclock5.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  20886	   3960	     64	  24910	   614e	drivers/clk/clk-versaclock5.o
+
+Addresses-Coverity: ("Use after free")
+Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multiple instances")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-versaclock5.c | 51 +++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 9a5fb3834b9a..1d8ee4b8b1f5 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -882,11 +882,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	init.parent_names = parent_names;
+ 	vc5->clk_mux.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_mux);
++	if (ret)
++		goto err_clk_register;
+ 	kfree(init.name);	/* clock framework made a copy of the name */
+-	if (ret) {
+-		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		goto err_clk;
+-	}
+ 
+ 	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
+ 		/* Register frequency doubler */
+@@ -900,12 +898,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		init.num_parents = 1;
+ 		vc5->clk_mul.init = &init;
+ 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
++		if (ret)
++			goto err_clk_register;
+ 		kfree(init.name); /* clock framework made a copy of the name */
+-		if (ret) {
+-			dev_err(&client->dev, "unable to register %s\n",
+-				init.name);
+-			goto err_clk;
+-		}
+ 	}
+ 
+ 	/* Register PFD */
+@@ -921,11 +916,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	init.num_parents = 1;
+ 	vc5->clk_pfd.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
++	if (ret)
++		goto err_clk_register;
+ 	kfree(init.name);	/* clock framework made a copy of the name */
+-	if (ret) {
+-		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		goto err_clk;
+-	}
+ 
+ 	/* Register PLL */
+ 	memset(&init, 0, sizeof(init));
+@@ -939,11 +932,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	vc5->clk_pll.vc5 = vc5;
+ 	vc5->clk_pll.hw.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pll.hw);
++	if (ret)
++		goto err_clk_register;
+ 	kfree(init.name); /* clock framework made a copy of the name */
+-	if (ret) {
+-		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		goto err_clk;
+-	}
+ 
+ 	/* Register FODs */
+ 	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
+@@ -960,12 +951,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		vc5->clk_fod[n].vc5 = vc5;
+ 		vc5->clk_fod[n].hw.init = &init;
+ 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_fod[n].hw);
++		if (ret)
++			goto err_clk_register;
+ 		kfree(init.name); /* clock framework made a copy of the name */
+-		if (ret) {
+-			dev_err(&client->dev, "unable to register %s\n",
+-				init.name);
+-			goto err_clk;
+-		}
+ 	}
+ 
+ 	/* Register MUX-connected OUT0_I2C_SELB output */
+@@ -981,11 +969,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	vc5->clk_out[0].vc5 = vc5;
+ 	vc5->clk_out[0].hw.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[0].hw);
+-	kfree(init.name);	/* clock framework made a copy of the name */
+-	if (ret) {
+-		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		goto err_clk;
+-	}
++	if (ret)
++		goto err_clk_register;
++	kfree(init.name); /* clock framework made a copy of the name */
+ 
+ 	/* Register FOD-connected OUTx outputs */
+ 	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
+@@ -1008,17 +994,15 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		vc5->clk_out[n].vc5 = vc5;
+ 		vc5->clk_out[n].hw.init = &init;
+ 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[n].hw);
++		if (ret)
++			goto err_clk_register;
+ 		kfree(init.name); /* clock framework made a copy of the name */
+-		if (ret) {
+-			dev_err(&client->dev, "unable to register %s\n",
+-				init.name);
+-			goto err_clk;
+-		}
+ 
+ 		/* Fetch Clock Output configuration from DT (if specified) */
+ 		ret = vc5_get_output_config(client, &vc5->clk_out[n]);
+ 		if (ret)
+ 			goto err_clk;
++
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
+@@ -1029,6 +1013,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 
+ 	return 0;
+ 
++err_clk_register:
++	dev_err(&client->dev, "unable to register %s\n", init.name);
++	kfree(init.name); /* clock framework made a copy of the name */
+ err_clk:
+ 	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
+ 		clk_unregister_fixed_rate(vc5->pin_xin);
+-- 
+2.27.0
