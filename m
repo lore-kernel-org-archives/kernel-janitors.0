@@ -1,30 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 24 Jun 2020 12:21:39 +0000
-Subject: Re: [v3 03/14] irqchip/csky-mpintc: Fix potential resource leaks
-Message-Id: <4470b5f0-31ec-e43c-b841-5f8f3a3157b1@web.de>
+From: Igor Russkikh <irusskikh@marvell.com>
+Date: Thu, 25 Jun 2020 17:00:13 +0000
+Subject: Re: [EXT] [PATCH][V2] qed: add missing error test for DBG_STATUS_NO_MATCHING_FRAMING_MODE
+Message-Id: <e113ec71-64ea-b819-9103-4008d20188c2@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a0ace7a8-5c26-ee20-fe76-7dff57a18ca3@web.de>
- <be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn>
-In-Reply-To: <be3acb13-2963-ddf1-a867-7e30fd23a0b4@loongson.cn>
+References: <20200625164505.115425-1-colin.king@canonical.com>
+In-Reply-To: <20200625164505.115425-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, linux-mips@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
-
->> How do you think about another wording variant?
->>
->>     Specific system resources were not released in a few error cases.
->>     Thus add jump targets for the completion of the desired exception handling.
->
-> OK, thank you, it looks good to me.
-
-Thanks for your positive feedback.
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2 <GR-everest-linux-l2@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Michal Kalderon <mkalderon@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-> Maybe I can use this description for other patches of this series.
 
-Would you like to make any of the affected commit messages more “specific”?
+On 25/06/2020 7:45 pm, Colin King wrote:
+> External Email
+> 
+> ----------------------------------------------------------------------
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The error DBG_STATUS_NO_MATCHING_FRAMING_MODE was added to the enum
+> enum dbg_status however there is a missing corresponding entry for
+> this in the array s_status_str. This causes an out-of-bounds read when
+> indexing into the last entry of s_status_str.  Fix this by adding in
+> the missing entry.
+> 
+> Addresses-Coverity: ("Out-of-bounds read").
+> Fixes: 2d22bc8354b1 ("qed: FW 8.42.2.0 debug features")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: use the error message as suggested by Igor Russkikh
+> 
+> ---
 
-Regards,
-Markus
+Thanks!
+
+Acked-by: Igor Russkikh <irusskikh@marvell.com>
