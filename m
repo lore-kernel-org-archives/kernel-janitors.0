@@ -1,50 +1,45 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 09 Jun 2020 09:36:02 +0000
-Subject: Re: [PATCH v2 4/4] coccinelle: api: add selfcheck for memdup_user rule
-Message-Id: <675f3bc3-99f4-1780-af04-cf7de2e9059a@web.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 Jun 2020 16:45:05 +0000
+Subject: [PATCH][V2] qed: add missing error test for DBG_STATUS_NO_MATCHING_FRAMING_MODE
+Message-Id: <20200625164505.115425-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1034b7b-12f9-a4c7-868e-1579668eb73e@web.de>
-In-Reply-To: <d1034b7b-12f9-a4c7-868e-1579668eb73e@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Michal Kalderon <michal.kalderon@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Igor Russkikh <irusskikh@marvell.com>
 
-…
-> +++ b/scripts/coccinelle/api/memdup_user.cocci
-> @@ -14,13 +14,24 @@ virtual patch
->  virtual context
->  virtual org
->  virtual report
-> +virtual selfcheck
+From: Colin Ian King <colin.king@canonical.com>
 
-Would you like to avoid the repetition of a SmPL key word here?
+The error DBG_STATUS_NO_MATCHING_FRAMING_MODE was added to the enum
+enum dbg_status however there is a missing corresponding entry for
+this in the array s_status_str. This causes an out-of-bounds read when
+indexing into the last entry of s_status_str.  Fix this by adding in
+the missing entry.
 
-+virtual patch, context, org, report, selfcheck
+Addresses-Coverity: ("Out-of-bounds read").
+Fixes: 2d22bc8354b1 ("qed: FW 8.42.2.0 debug features")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
+V2: use the error message as suggested by Igor Russkikh
 
-> @@ -117,3 +128,34 @@ p << rv.p;
->  @@
->
->  coccilib.report.print_report(p[0], "WARNING opportunity for vmemdup_user")
-> +
-> +@script:python depends on selfcheck@
-> +@@
-> +coccinelle.checked_files |= set(definitions.values()) & set(cocci.files())
+---
+ drivers/net/ethernet/qlogic/qed/qed_debug.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I suggest to reconsider the usage of the function “cocci.files()”.
-Can such a script rule determine for which file it should perform data processing?
-
-
-> +            print('SELF-CHECK: the pattern no longer matches ' \
-> +		  'definitions {} in file {}'.format(not_found, efile))
-
-Can the following code variant be a bit nicer?
-
-+            sys.stdout.write('SELF-CHECK: The pattern does not match definitions {} in file {} any more.\n' \
-+                             .format(not_found, efile))
-
-
-Regards,
-Markus
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+index 57a0dab88431..d9dfaf214f6b 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+@@ -5569,6 +5569,8 @@ static const char * const s_status_str[] = {
+ 	/* DBG_STATUS_INVALID_FILTER_TRIGGER_DWORDS */
+ 	"The filter/trigger constraint dword offsets are not enabled for recording",
+ 
++	/* DBG_STATUS_NO_MATCHING_FRAMING_MODE */
++	"No matching framing mode found for the enabled blocks/Storms - use less dwords for blocks data",
+ 
+ 	/* DBG_STATUS_VFC_READ_ERROR */
+ 	"Error reading from VFC",
+-- 
+2.27.0
