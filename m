@@ -1,45 +1,40 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 18 Jun 2020 08:40:26 +0000
-Subject: Re: [PATCH][next] usb: xhci: fix spelling mistake in Kconfig "firwmare" -> "firmware"
-Message-Id: <20200618084026.GA1073692@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 25 Jun 2020 20:47:30 +0000
+Subject: [PATCH] scsi: cumana_2: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <20200625204730.943520-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603121152.16550-1-colin.king@canonical.com>
-In-Reply-To: <20200603121152.16550-1-colin.king@canonical.com>
+References: <20200530073555.577414-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200530073555.577414-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 01:11:52PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two spelling mistakes in the Kconfig text. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/host/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 62c348062e48..5f4b6c71392c 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -44,10 +44,10 @@ config USB_XHCI_PCI
->  	default y
->  
->  config USB_XHCI_PCI_RENESAS
-> -	tristate "Support for additional Renesas xHCI controller with firwmare"
-> +	tristate "Support for additional Renesas xHCI controller with firmware"
->  	---help---
->  	  Say 'Y' to enable the support for the Renesas xHCI controller with
-> -	  firwmare. Make sure you have the firwmare for the device and
-> +	  firmware. Make sure you have the firwmare for the device and
->  	  installed on your system for this device to work.
->  	  If unsure, say 'N'.
->  
-> -- 
-> 2.25.1
-> 
+The dev_id used in 'request_irq()' and 'free_irq()' should match.
+Use 'info' in both cases.
 
-Does not apply to my tree :(
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: update free_irq instead of request_irq in order not to obviously break
+    code
+---
+ drivers/scsi/arm/cumana_2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/arm/cumana_2.c b/drivers/scsi/arm/cumana_2.c
+index 65691c21f133..29294f0ef8a9 100644
+--- a/drivers/scsi/arm/cumana_2.c
++++ b/drivers/scsi/arm/cumana_2.c
+@@ -450,7 +450,7 @@ static int cumanascsi2_probe(struct expansion_card *ec,
+ 
+ 	if (info->info.scsi.dma != NO_DMA)
+ 		free_dma(info->info.scsi.dma);
+-	free_irq(ec->irq, host);
++	free_irq(ec->irq, info);
+ 
+  out_release:
+ 	fas216_release(host);
+-- 
+2.25.1
