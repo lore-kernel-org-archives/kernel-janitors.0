@@ -1,38 +1,70 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Jun 2020 13:57:42 +0000
-Subject: [PATCH] input: alps: remove redundant assignment to variable ret
-Message-Id: <20200603135742.130852-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 25 Jun 2020 19:15:54 +0000
+Subject: [PATCH V2] firewire: nosy: Fix the amount of memory deallocated by some 'pci_free_consistent' calls
+Message-Id: <20200625191554.941614-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200624192325.940280-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200624192325.940280-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: stefanr@s5r6.in-berlin.de, krh@bitplanet.net, hch@infradead.org
+Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+'lynx->pci_device' is allocated with a size of RCV_BUFFER_SIZE. This is to
+say (16 * 1024).
 
-The variable ret is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+Pass the same size when it is freed.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 286468210d83 ("firewire: new driver: nosy - IEEE 1394 traffic sniffer")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/input/mouse/alps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: move the #define RCV_BUFFER_SIZE at the top of the file so that it is
+    defined when used in 'remove_card()'
+    Spotted by kernel test robot <lkp@intel.com>
+---
+ drivers/firewire/nosy.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
-index 34700eda0429..b067bfd2699c 100644
---- a/drivers/input/mouse/alps.c
-+++ b/drivers/input/mouse/alps.c
-@@ -1929,7 +1929,7 @@ static int alps_monitor_mode(struct psmouse *psmouse, bool enable)
- static int alps_absolute_mode_v6(struct psmouse *psmouse)
- {
- 	u16 reg_val = 0x181;
--	int ret = -1;
-+	int ret;
+diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
+index 5fd6a60b6741..2fe34a2ce7cc 100644
+--- a/drivers/firewire/nosy.c
++++ b/drivers/firewire/nosy.c
+@@ -36,6 +36,8 @@
  
- 	/* enter monitor mode, to write the register */
- 	if (alps_monitor_mode(psmouse, true))
+ static char driver_name[] = KBUILD_MODNAME;
+ 
++#define RCV_BUFFER_SIZE (16 * 1024)
++
+ /* this is the physical layout of a PCL, its size is 128 bytes */
+ struct pcl {
+ 	__le32 next;
+@@ -510,7 +512,7 @@ remove_card(struct pci_dev *dev)
+ 			    lynx->rcv_start_pcl, lynx->rcv_start_pcl_bus);
+ 	pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
+ 			    lynx->rcv_pcl, lynx->rcv_pcl_bus);
+-	pci_free_consistent(lynx->pci_device, PAGE_SIZE,
++	pci_free_consistent(lynx->pci_device, RCV_BUFFER_SIZE,
+ 			    lynx->rcv_buffer, lynx->rcv_buffer_bus);
+ 
+ 	iounmap(lynx->registers);
+@@ -518,8 +520,6 @@ remove_card(struct pci_dev *dev)
+ 	lynx_put(lynx);
+ }
+ 
+-#define RCV_BUFFER_SIZE (16 * 1024)
+-
+ static int
+ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
+ {
+@@ -668,7 +668,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
+ 		pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
+ 				lynx->rcv_pcl, lynx->rcv_pcl_bus);
+ 	if (lynx->rcv_buffer)
+-		pci_free_consistent(lynx->pci_device, PAGE_SIZE,
++		pci_free_consistent(lynx->pci_device, RCV_BUFFER_SIZE,
+ 				lynx->rcv_buffer, lynx->rcv_buffer_bus);
+ 	iounmap(lynx->registers);
+ 
 -- 
 2.25.1
