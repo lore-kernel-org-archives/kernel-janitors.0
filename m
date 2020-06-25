@@ -1,7 +1,7 @@
-From: Shyam Sundar <ssundar@marvell.com>
-Date: Wed, 24 Jun 2020 17:59:06 +0000
+From: Himanshu Madhani <himanshu.madhani@oracle.com>
+Date: Thu, 25 Jun 2020 14:11:04 +0000
 Subject: Re: [PATCH] scsi: qla2xxx: Fix a condition in qla2x00_find_all_fabric_devs()
-Message-Id: <06779DEF-C420-40F9-B675-99BB6CCE86BB@marvell.com>
+Message-Id: <6B3598A1-4F56-4D63-A672-644242B0A8F2@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200619143041.GD267142@mwanda>
 In-Reply-To: <20200619143041.GD267142@mwanda>
@@ -9,13 +9,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nilesh Javali <njavali@marvell.com>, Darren Trapp <darren.trapp@cavium.com>, GR-QLogic-Storage-Upstream <GR-QLogic-Storage-Upstream@marvell.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@cavium.com>, Johannes Thumshirn <jthumshirn@suse.de>, Hannes Reinecke <hare@suse.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-+1.
 
-Reviewed-by: Shyam Sundar <ssundar@marvell.com>
 
-> On Jun 19, 2020, at 7:30 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Jun 19, 2020, at 9:30 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
 > This code doesn't make sense unless the correct "fcport" was found.
 > 
@@ -44,3 +42,10 @@ Reviewed-by: Shyam Sundar <ssundar@marvell.com>
 > -- 
 > 2.27.0
 > 
+
+Looks Good. 
+
+Reviewed-by: Himanshu Madhani <himanshu.madhani@oracle.com>
+
+--
+Himanshu Madhani	Oracle Linux Engineering
