@@ -1,56 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Jun 2020 14:04:31 +0000
-Subject: [PATCH] input: elantech: remove redundant assignments to variable error
-Message-Id: <20200603140431.131347-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 26 Jun 2020 10:45:26 +0000
+Subject: [PATCH] media: uvcvideo: Fix loop exit condition in uvc_xu_ctrl_query()
+Message-Id: <20200626104526.GE314359@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The list_for_each_entry() loop exits when "entity" is a offset off the
+list head.  In that situation the "entity" pointer doesn't point to a
+valid uvc_entity struct, so it doesn't make sense to check "entity->id".
+Since the "entity->id" is a u8 it's plausible that it could be equal to
+"xqry->unit" by chance.
 
-The variable error is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/input/mouse/elantech.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/uvc/uvc_ctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index 2d8434b7b623..e4f394cc0520 100644
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1897,7 +1897,7 @@ static bool elantech_use_host_notify(struct psmouse *psmouse,
- int elantech_init_smbus(struct psmouse *psmouse)
- {
- 	struct elantech_device_info info;
--	int error = -EINVAL;
-+	int error;
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index e399b9fad757..47ab6c315db6 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1857,7 +1857,7 @@ int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+ 			break;
+ 	}
  
- 	psmouse_reset(psmouse);
- 
-@@ -2015,7 +2015,7 @@ static int elantech_setup_ps2(struct psmouse *psmouse,
- int elantech_init_ps2(struct psmouse *psmouse)
- {
- 	struct elantech_device_info info;
--	int error = -EINVAL;
-+	int error;
- 
- 	psmouse_reset(psmouse);
- 
-@@ -2036,7 +2036,7 @@ int elantech_init_ps2(struct psmouse *psmouse)
- int elantech_init(struct psmouse *psmouse)
- {
- 	struct elantech_device_info info;
--	int error = -EINVAL;
-+	int error;
- 
- 	psmouse_reset(psmouse);
- 
+-	if (entity->id != xqry->unit) {
++	if (&entity->chain = &chain->entities) {
+ 		uvc_trace(UVC_TRACE_CONTROL, "Extension unit %u not found.\n",
+ 			xqry->unit);
+ 		return -ENOENT;
 -- 
-2.25.1
+2.27.0
