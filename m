@@ -1,40 +1,37 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 22 Jun 2020 06:50:59 +0000
-Subject: Re: [PATCH] arch/x86: Check return value from a notify_die() call
-Message-Id: <615f79c5-5ca8-9dad-9ef7-85d8513a3e1b@web.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 26 Jun 2020 10:34:01 +0000
+Subject: [PATCH] drm/vc4: call ->post_disable() functions in vc4_dsi_encoder_disable()
+Message-Id: <20200626103401.GA314359@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ee99271a-6eb5-0dec-87d2-504b3ad4724d@web.de>
- <CAKq8=3LaX0tWs0BfdpCYvKRRz5Cqv4cOXo1wcVvpY72cQA8RGA@mail.gmail.com>
-In-Reply-To: <CAKq8=3LaX0tWs0BfdpCYvKRRz5Cqv4cOXo1wcVvpY72cQA8RGA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bo YU <tsu.yubo@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexandre Chartre <alexandre.chartre@oracle.com>, Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Eric Anholt <eric@anholt.net>, Boris Brezillon <boris.brezillon@collabora.com>
+Cc: David Airlie <airlied@linux.ie>, Andrzej Hajda <a.hajda@samsung.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
->>> This is detected by Coverity scan: #CID: 1464472(CHECKED_RETURN)
+The problem is that the iterator is already at the list head so the
+list_for_each_entry_from() loop is a no-op and we don't call the
+the iter->funcs->post_disable() functions.  This should be
+list_for_each_entry() instead.
 
-Can an additional imperative wording be helpful for the change description
-(besides an adjusted patch subject)?
+Fixes: 033bfe7538a1 ("drm/vc4: dsi: Fix bridge chain handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/vc4/vc4_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
->>> FIXES: c94082656dac7(x86: Use enum instead of literals for trap values)
->>
->> Is the following tag specification more appropriate?
->>
->> Fixes: c94082656dac7 ("x86: Use enum instead of literals for trap values")
-> Your description looks like more appropriate, thank you.
-
-Thanks for your positive feedback.
-
-
-> But I want to receive suggestions from other reviewers also. So I will
-> send V2 patch as your point once got confirmed. Sorry.
-
-Should the confirmation be sufficient from the available software documentation?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?idb5d3449788f85569096780592549d0340e9c0c7#n183
-
-I am curious if this patch review will clarify more aspects.
-
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.c
+index eaf276978ee7..f92d0e92fa72 100644
+--- a/drivers/gpu/drm/vc4/vc4_dsi.c
++++ b/drivers/gpu/drm/vc4/vc4_dsi.c
+@@ -754,7 +754,7 @@ static void vc4_dsi_encoder_disable(struct drm_encoder *encoder)
+ 
+ 	vc4_dsi_ulps(dsi, true);
+ 
+-	list_for_each_entry_from(iter, &dsi->bridge_chain, chain_node) {
++	list_for_each_entry(iter, &dsi->bridge_chain, chain_node) {
+ 		if (iter->funcs->post_disable)
+ 			iter->funcs->post_disable(iter);
+ 	}
+-- 
+2.27.0
