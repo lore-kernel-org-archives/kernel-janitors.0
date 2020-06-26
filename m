@@ -1,40 +1,40 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 04 Jun 2020 05:43:14 +0000
-Subject: Re: dmaengine: stm32-mdma: call pm_runtime_put if pm_runtime_get_sync fails
-Message-Id: <3eca8df2-22ae-06e0-5809-c11e459915d5@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 26 Jun 2020 04:05:53 +0000
+Subject: [PATCH V2] scsi: eesox: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <20200626040553.944352-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <873bfb31-52d8-7c9b-5480-4a94dc945307@web.de>
- <CAMuHMdU3wMT_pnh4NE9W9Su6qip_oObgd6OiRCwfuvouqjXKHA@mail.gmail.com>
-In-Reply-To: <CAMuHMdU3wMT_pnh4NE9W9Su6qip_oObgd6OiRCwfuvouqjXKHA@mail.gmail.com>
+References: <26d388f5-be67-b643-c76c-b9fe52f111f7@wanadoo.fr>
+In-Reply-To: <26d388f5-be67-b643-c76c-b9fe52f111f7@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Navid Emamdoost <navid.emamdoost@gmail.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, Dan Williams <dan.j.williams@intel.com>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux@armlinux.org.uk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
->>> Calling pm_runtime_get_sync increments the counter even in case of
->>> failure, causing incorrect ref count. Call pm_runtime_put if
->>> pm_runtime_get_sync fails.
->>
->> Is it appropriate to copy a sentence from the change description
->> into the patch subject?
->>
->> How do you think about a wording variant like the following?
->>
->>    The PM runtime reference counter is generally incremented by a call of
->>    the function “pm_runtime_get_sync”.
->>    Thus call the function “pm_runtime_put” also in two error cases
->>    to keep the reference counting consistent.
->
-> IMHO the important part is "even in case of failure", which you dropped.
-> Missing that point was the root cause of the issue being fixed.
-> Hence I prefer the original description, FWIW.
+The dev_id used in 'request_irq()' and 'free_irq()' should match.
+So use 'info' in both cases.
 
-Would you like to comment any more of the presented patch review concerns?
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: update free_irq instead of request_irq in order not to obviously break
+    code
+---
+ drivers/scsi/arm/eesox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can it make sense to combine any adjustments into a single patch
-according to the discussed software transformation pattern?
-https://lore.kernel.org/patchwork/project/lkml/list/?submitter=26544&state=*&q=engine%3A+stm32&archive=both
-
-Regards,
-Markus
+diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
+index 6e204a2e0c8d..591ae2a6dd74 100644
+--- a/drivers/scsi/arm/eesox.c
++++ b/drivers/scsi/arm/eesox.c
+@@ -571,7 +571,7 @@ static int eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 
+ 	if (info->info.scsi.dma != NO_DMA)
+ 		free_dma(info->info.scsi.dma);
+-	free_irq(ec->irq, host);
++	free_irq(ec->irq, info);
+ 
+  out_remove:
+ 	fas216_remove(host);
+-- 
+2.25.1
