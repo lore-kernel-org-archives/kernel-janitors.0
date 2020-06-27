@@ -1,17 +1,39 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Mon, 08 Jun 2020 18:40:13 +0000
-Subject: Re: [PATCH v2 3/4] coccinelle: api: filter out memdup_user definitions
-Message-Id: <623c6271-4cce-55c1-a15b-4a1ce4365fe8@web.de>
+From: helen <info.isaacgeorge@gmail.com>
+Date: Sat, 27 Jun 2020 21:54:31 +0000
+Subject: 
+Message-Id: <CAABX3N8zm7a58jU5g8fzjfpsKNf48aUsUHECRV0m9PDLWU814A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: zhang@intel.com
 
-> Don't match original implementations.
+MONEY-GRAM TRANSFERRED PAYMENT INFO:
 
-I find such a change description insufficient.
+Below is the sender=E2=80=99s information
 
-Regards,
-Markus
+
+
+1. MG. REFERENCE NO#: 36360857
+
+2. SENDER'S NAME: Johnson Williams
+
+3. AMOUNT TO PICKUP: US$10,000
+
+
+
+Go to any Money Gram office near you and pick up the payment Track the
+
+Reference Number by visiting and click the link below
+
+(https://secure.moneygram.com/embed/track) and enter the Reference
+
+Number: 36360857 and the Last Name: Williams, you will find the payment
+
+available for pickup instantly.
+
+Yours Sincerely,
+
+Mrs. Helen Marvis
+United Nations Liaison Office
+Directorate for International Payments
