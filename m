@@ -1,38 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jun 2020 14:29:40 +0000
-Subject: [PATCH] drm/virtio: Fix an IS_ERR() vs NULL check in virtio_gpu_object_shmem_init()
-Message-Id: <20200619142940.GB267142@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 27 Jun 2020 12:28:50 +0000
+Subject: =?UTF-8?Q?usb=3a_mtu3=3a_Checking_initialisation_of_the_variable_?= =?UTF-8?B?4oCcbWVw4oCdIGluIHR3by
+Message-Id: <8efdb7aa-1188-e94a-3075-ab1dd30768bb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gerd Hoffmann <kraxel@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The drm_gem_shmem_get_pages_sgt() function returns error pointers on
-error, it never returns NULL.
+Hello,
 
-Fixes: d323bb44e4d2 ("drm/virtio: Call the right shmem helpers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/virtio/virtgpu_object.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A source code analysis approach by the means of the semantic patch language
+(Coccinelle software) pointed an implementation detail out for further
+development considerations.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-index 346cef5ce251..0cd5ecf4b3c0 100644
---- a/drivers/gpu/drm/virtio/virtgpu_object.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-@@ -151,9 +151,9 @@ static int virtio_gpu_object_shmem_init(struct virtio_gpu_device *vgdev,
- 		return -EINVAL;
- 
- 	shmem->pages = drm_gem_shmem_get_pages_sgt(&bo->base.base);
--	if (!shmem->pages) {
-+	if (IS_ERR(shmem->pages)) {
- 		drm_gem_shmem_unpin(&bo->base.base);
--		return -EINVAL;
-+		return PTR_ERR(shmem->pages);
- 	}
- 
- 	if (use_dma_api) {
--- 
-2.27.0
+The functions “mtu3_gadget_ep_set_halt” and “mtu3_gadget_ep_set_wedge” check
+at the beginning if the input parameter “ep” is a null pointer.
+The error code “-EINVAL” will be returned then.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/mtu3/mtu3_gadget.c?id=1590a2e1c681b0991bd42c992cabfd380e0338f2#n371
+https://elixir.bootlin.com/linux/v5.7.2/source/drivers/usb/mtu3/mtu3_gadget.c#L371
+
+Can it be nicer to assign the variable “mep” only after a successful check
+instead of an initialisation before?
+
+Regards,
+Markus
