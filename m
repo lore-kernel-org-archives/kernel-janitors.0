@@ -1,51 +1,47 @@
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-Date: Wed, 10 Jun 2020 08:32:55 +0000
-Subject: Re: [PATCH] kvm: i8254: remove redundant assignment to pointer s
-Message-Id: <875zbzb9s8.fsf@vitty.brq.redhat.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 28 Jun 2020 11:17:59 +0000
+Subject: Re: [PATCH] mm: Free unused pages in kmalloc_order()
+Message-Id: <c5f54ce3-dad6-a2aa-d32a-cc7620676b76@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200609233121.1118683-1-colin.king@canonical.com>
-In-Reply-To: <20200609233121.1118683-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <sean.j.christopherson@intel.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Long Li <lonuxli.64@gmail.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>
 
-Colin King <colin.king@canonical.com> writes:
+> kmalloc(1024, GFP_HIGHUSER) can allocate memory normally,
+> kmalloc(64*1024, GFP_HIGHUSER) will cause a memory leak,
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer s is being assigned a value that is never read, the
-> assignment is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Would you like to explain the influence of the selected allocation size
+in a different way?
 
-It seems it wasn't used since the very beginning,
 
-Fixes: 7837699fa6d7 ("KVM: In kernel PIT model")
+> because alloc_pages returns highmem physical pages, but it cannot be directly
+> converted into a virtual address and return NULL, the pages has not
+> been released. Usually driver developers will not use the
+> GFP_HIGHUSER flag to allocate memory in kmalloc, but I think this
+> memory leak is not perfect, it is best to be fixed.
 
-QEMU code (from where KVM's implementation originates), however, 
-does make use of 's' here as it open codes pit_latch_status().
+I suggest to improve this change description.
 
-> ---
->  arch/x86/kvm/i8254.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/i8254.c b/arch/x86/kvm/i8254.c
-> index febca334c320..a6e218c6140d 100644
-> --- a/arch/x86/kvm/i8254.c
-> +++ b/arch/x86/kvm/i8254.c
-> @@ -462,7 +462,6 @@ static int pit_ioport_write(struct kvm_vcpu *vcpu,
->  		if (channel = 3) {
->  			/* Read-Back Command. */
->  			for (channel = 0; channel < 3; channel++) {
-> -				s = &pit_state->channels[channel];
->  				if (val & (2 << channel)) {
->  					if (!(val & 0x20))
->  						pit_latch_count(pit, channel);
+* Did you apply any special analysis tools?
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+* How do you think about to split the text into more sentences?
 
--- 
-Vitaly
+* Would you like to extend any software documentation?
+
+
+> This is the first time I have posted a patch,
+
+I find this information irrelevant for the proposed commit message.
+
+
+> there may be something wrong.
+
+There are usual risks to consider also for such software development.
+
+Will it become helpful to add the tag “Fixes”?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=719fdd32921fb7e3208db8832d32ae1c2d68900f#n183
+
+Regards,
+Markus
