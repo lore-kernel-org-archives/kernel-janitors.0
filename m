@@ -1,38 +1,47 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 20 Jun 2020 12:56:45 +0000
-Subject: Re: [PATCH v2] drm/amdkfd: Fix memory leaks according to error branches
-Message-Id: <8527c6b5-c3ed-340d-4ba0-6396d6cc5da2@web.de>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 28 Jun 2020 18:02:29 +0000
+Subject: [PATCH] MAINTAINERS: remove obsolete entry after file renaming
+Message-Id: <20200628180229.5068-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0e76e678-94b1-8f69-d52c-2b67608d5ef8@web.de>
- <alpine.DEB.2.22.394.2006201126130.2918@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2006201126130.2918@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>, Bernard Zhao <bernard@vivo.com>, opensource.kernel@vivo.com, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, =?UTF-8?Q?Felix_K=c3=bchling?= <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+To: Seth Forshee <seth.forshee@canonical.com>, Mark Brown <broonie@kernel.org>
+Cc: Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
->> I suggest to improve this change description.
->>
->> * Can an other wording variant be nicer?
->
-> Markus's suggestion is as usual extremely imprecise.
+Commit f16861b12fa0 ("regulator: rename da903x to da903x-regulator") missed
+to adjust the DIALOG SEMICONDUCTOR DRIVERS section in MAINTAINERS.
 
-I pointed a general possibility out. I did not propose an exact wording
-alternative as it happened for other patches.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
+  warning: no file matches    F:    drivers/regulator/da903x.c
 
-> However, I also find the message quite unclear.
+The da903x-regulator.c file is already covered by the pattern
+drivers/regulator/da9???-regulator.[ch] in the section.
 
-I find this response interesting.
+So, simply remove the non-matching file entry in MAINTAINERS.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20200626
 
-> It would be good to always use English words.
+Seth, please ack.
+Mark, please pick this minor non-urgent patch into your -next tree.
 
-I am curious how this review will evolve further with such information
-also after the third patch version.
-https://lore.kernel.org/lkml/20200620091152.11206-1-bernard@vivo.com/
-https://lore.kernel.org/patchwork/patch/1260303/
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 04fceaee5200..970136e262c2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5021,7 +5021,6 @@ F:	drivers/mfd/da91??-*.c
+ F:	drivers/pinctrl/pinctrl-da90??.c
+ F:	drivers/power/supply/da9052-battery.c
+ F:	drivers/power/supply/da91??-*.c
+-F:	drivers/regulator/da903x.c
+ F:	drivers/regulator/da9???-regulator.[ch]
+ F:	drivers/regulator/slg51000-regulator.[ch]
+ F:	drivers/rtc/rtc-da90??.c
+-- 
+2.17.1
