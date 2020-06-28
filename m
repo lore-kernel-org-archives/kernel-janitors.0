@@ -1,24 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 Jun 2020 18:33:51 +0000
-Subject: Re: [PATCH net-next] cxgb4: cleanup error code in setup_sge_queues_uld()
-Message-Id: <20200601.113351.412390872566987442.davem@davemloft.net>
+From: John Scott Younger <william1noah12@gmail.com>
+Date: Sun, 28 Jun 2020 17:36:25 +0000
+Subject: Your attention to this news update.
+Message-Id: <CANHFD59G4uFO5yyorgcwoL12uyO5uk=dqu1bmCj4nez2uwypCQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200528124957.GD1219412@mwanda>
-In-Reply-To: <20200528124957.GD1219412@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vishal@chelsio.com, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 May 2020 15:49:57 +0300
+-- 
+Your attention to this news update.
 
-> The caller doesn't care about the error codes, they only check for zero
-> vs non-zero.  Still, it's better to preserve the negative error codes
-> from alloc_uld_rxqs() instead of changing it to 1.  We can also return
-> directly if there is a failure.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The report / analysis received from our correspondence shows that you
+have NOT received your PAYMENT, due to administrative injustice from
+unpatriotic and uncivil payment officials. Following the resolution of
+the U.S Department of State, you are mandated to kindly reinstate your
+fund acquisition details for accreditation.
 
-Applied.
+Sequel to the joint /collaborative effort by United Nations and US
+Department of State, to review, nullify and release all STOP ORDER on
+beneficiary transferred sum and consignment HELD at custom port
+authorities. At this juncture, you are advised to forward information
+of agencies that has put a HOLD on your consignment or STOP ORDER on
+your transferred sum.
+
+This office is commission to investigate/rectify ISSUES affecting
+beneficiaries whose payment is HELD/STOP unjustly with the intent of
+demanding un-official fees/levies. Be informed that all administrative
+injustice imposed on beneficiaries by some dubious person(s) has come
+to the knowledge of oversight committee of United Nations and US
+Department of State.
+
+Thus our objective is to resolve all challenges facing release of your
+payment. Therefore get back to my office with the required information
+for assessment.
+
+Our in service,
+
+John Scott Younger
+Human Right Activist
+Tel:- + 44 770 002 8251
