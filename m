@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 24 Jun 2020 12:08:53 +0000
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Date: Sun, 28 Jun 2020 03:27:46 +0000
 Subject: Re: [1/7] irqchip: Fix potential resource leaks
-Message-Id: <c425c66a-d2fc-dad2-dc98-31659342a5fb@web.de>
+Message-Id: <61c969d7-8647-56c1-8123-9b000036ae66@loongson.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <65e734f7-c43c-f96b-3650-980e15edba60@web.de>
  <d2111f53-ca52-fedf-0257-71f0aa89b093@loongson.cn>
@@ -11,23 +11,29 @@ References: <65e734f7-c43c-f96b-3650-980e15edba60@web.de>
  <423f83e0-c533-c346-ab8b-f2c6ccc828a2@loongson.cn>
  <37ff7ca4-dc7c-6a43-94a3-9628efe69b25@web.de>
  <8556e402-52ae-849f-2f6e-e56406057dce@loongson.cn>
-In-Reply-To: <8556e402-52ae-849f-2f6e-e56406057dce@loongson.cn>
+ <c425c66a-d2fc-dad2-dc98-31659342a5fb@web.de>
+In-Reply-To: <c425c66a-d2fc-dad2-dc98-31659342a5fb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen <chenhc@lemote.com>, Jason Cooper <jason@lakedaemon.net>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
 
->> How do you think about to extend source code analysis tools accordingly?
+On 06/24/2020 08:08 PM, Markus Elfring wrote:
+>>> How do you think about to extend source code analysis tools accordingly?
+>> I have no good idea,
+>> maybe some simple match check tools can do this.
+> Would you like to help with any additional software development resources
+> (besides your current contribution)?
+
+I am glad to do it in my spare time.
+
 >
-> I have no good idea,
-> maybe some simple match check tools can do this.
+> Have you heard anything according to recent research (from computer science)
+> for this application domain?
 
-Would you like to help with any additional software development resources
-(besides your current contribution)?
+No.
 
-Have you heard anything according to recent research (from computer science)
-for this application domain?
-
-Regards,
-Markus
+>
+> Regards,
+> Markus
