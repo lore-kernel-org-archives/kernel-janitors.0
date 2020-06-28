@@ -1,39 +1,37 @@
-From: "Namjae Jeon" <namjae.jeon@samsung.com>
-Date: Tue, 09 Jun 2020 00:37:48 +0000
-Subject: RE: [PATCH] exfat: Fix pontential use after free in exfat_load_upcase_table()
-Message-Id: <00a401d63df6$3370adc0$9a520940$@samsung.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sun, 28 Jun 2020 02:30:55 +0000
+Subject: [PATCH -next] clk: qcom: Fix return value check in apss_ipq6018_probe()
+Message-Id: <20200628023055.50608-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200608141649epcas1p14558f3552afb0fcd3cd32a8c09afb880@epcas1p1.samsung.com>
-        <20200608141629.GA1912173@mwanda>
-In-Reply-To: <20200608141629.GA1912173@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>
-Cc: 'Sungjong Seo' <sj1557.seo@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Tetsuhiro Kohada' <kohada.t2@gmail.com>
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-> This code calls brelse(bh) and then dereferences "bh" on the next line resulting in a possible use
-> after free.  The brelse() should just be moved down a line.
-> 
-> Fixes: b676fdbcf4c8 ("exfat: standardize checksum calculation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied. Thanks!
-> ---
->  fs/exfat/nls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c index c1ec056954974..57b5a7a4d1f7a 100644
-> --- a/fs/exfat/nls.c
-> +++ b/fs/exfat/nls.c
-> @@ -692,8 +692,8 @@ static int exfat_load_upcase_table(struct super_block *sb,
->  				index++;
->  			}
->  		}
-> -		brelse(bh);
->  		chksum = exfat_calc_chksum32(bh->b_data, i, chksum, CS_DEFAULT);
-> +		brelse(bh);
->  	}
-> 
->  	if (index >= 0xFFFF && utbl_checksum = chksum)
-> --
-> 2.26.2
+In case of error, the function dev_get_regmap() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
+
+Fixes: 5e77b4ef1b19 ("clk: qcom: Add ipq6018 apss clock controller")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/qcom/apss-ipq6018.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+index 004f7e1ecdc2..d78ff2f310bf 100644
+--- a/drivers/clk/qcom/apss-ipq6018.c
++++ b/drivers/clk/qcom/apss-ipq6018.c
+@@ -87,8 +87,8 @@ static int apss_ipq6018_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 
+ 	regmap = dev_get_regmap(pdev->dev.parent, NULL);
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
++	if (!regmap)
++		return -ENODEV;
+ 
+ 	return qcom_cc_really_probe(pdev, &apss_ipq6018_desc, regmap);
+ }
