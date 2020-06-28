@@ -1,38 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 22 Jun 2020 16:31:44 +0000
-Subject: [PATCH] input: i8042: remove redundant assignment to variable retval
-Message-Id: <20200622163144.107815-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 28 Jun 2020 13:16:23 +0000
+Subject: Re: [PATCH v3] media: venus: core: Fix runtime PM imbalance in venus_probe()
+Message-Id: <9797fb44-e10e-61b5-b2cc-82d94cc98a3c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>, Stephen Boyd <swboyd@chromium.org>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dinghao Liu <dinghao.liu@zju.edu.cn>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Qiushi Wu <wu000273@umn.edu>, Andy Gross <agross@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+> when it returns an error code. Thus a pairing decrement is needed on
 
-The variable retval is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+* I find it more appropriate to use the word “corresponding” here
+  (if you do still not like previous wording suggestions).
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/input/serio/i8042.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Will it become helpful to add the tag “Fixes” to the commit message?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=719fdd32921fb7e3208db8832d32ae1c2d68900f#n183
 
-diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-index 0dddf273afd9..cbaae80065e1 100644
---- a/drivers/input/serio/i8042.c
-+++ b/drivers/input/serio/i8042.c
-@@ -796,7 +796,7 @@ static int __init i8042_toggle_aux(bool on)
- 
- static int __init i8042_check_aux(void)
- {
--	int retval = -1;
-+	int retval;
- 	bool irq_registered = false;
- 	bool aux_loop_broken = false;
- 	unsigned long flags;
--- 
-2.27.0
+* Would you like to improve the change description any more?
+
+
+> ---
+>  drivers/media/platform/qcom/venus/core.c | 5 ++++-
+
+I suggest replace the triple dashes before this diffstat by a blank line.
+
+Regards,
+Markus
