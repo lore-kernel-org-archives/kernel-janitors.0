@@ -1,47 +1,78 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 11 Jun 2020 15:27:08 +0000
-Subject: [PATCH] char/mwave: remove redundant initialization of variable bRC
-Message-Id: <20200611152708.927344-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 29 Jun 2020 06:26:27 +0000
+Subject: Re: [PATCH v2] ext4: fix direct I/O read error
+Message-Id: <22f650fd-6348-30d8-763a-8e03b0772f10@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1593400165-114818-1-git-send-email-jiangying8582@126.com>
+In-Reply-To: <1593400165-114818-1-git-send-email-jiangying8582@126.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jiang Ying <jiangying8582@126.com>, Wang Long <wanglong19@meituan.com>, linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
 
-From: Colin Ian King <colin.king@canonical.com>
+> Fixes: 9fe55eea7e4b ("Fix race when checking i_size on direct i/o read").
 
-The variable bRC is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+* I suggest to move this tag to the bottom of the commit message.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/char/mwave/smapi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+* This specification is usually preferred without a dot at the line end.
 
-diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
-index 691f5898bb32..f8d79d393b69 100644
---- a/drivers/char/mwave/smapi.c
-+++ b/drivers/char/mwave/smapi.c
-@@ -126,7 +126,7 @@ static int smapi_request(unsigned short inBX, unsigned short inCX,
- 
- int smapi_query_DSP_cfg(SMAPI_DSP_SETTINGS * pSettings)
- {
--	int bRC = -EIO;
-+	int bRC;
- 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
- 	static const unsigned short ausDspBases[] = {
- 		0x0030, 0x4E30, 0x8E30, 0xCE30,
-@@ -497,7 +497,7 @@ int smapi_set_DSP_cfg(void)
- 
- int smapi_set_DSP_power_state(bool bOn)
- {
--	int bRC = -EIO;
-+	int bRC;
- 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
- 	unsigned short usPowerFunction;
- 
--- 
-2.27.0.rc0
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9ebcfadb0610322ac537dd7aa5d9cbc2b2894c68#n183
+
+
+> This commit caused ext4 direct I/O read error when the read size is not
+> alignment with block size.
+
+Wording alternative:
+aligned …
+
+
+> (1) Make the file that is not alignment with block size:
+
+… a file … aligned …
+
+
+> (3) Compiling the script:
+
+(3) Compile the source file:
+
+
+> (4) Exec the script:
+
+(4) Run the test program:
+
+
+> … Thanks.
+
+I propose to omit this word here.
+
+
+> ---
+>  fs/ext4/inode.c | 6 ++++++
+
+Would you like to add patch version descriptions here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9ebcfadb0610322ac537dd7aa5d9cbc2b2894c68#n751
+
+
+…
+> @@ -3821,6 +3821,12 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
+>  	struct inode *inode = mapping->host;
+>  	size_t count = iov_iter_count(iter);
+>  	ssize_t ret;
+> +	loff_t offset = iocb->ki_pos;
+> +	loff_t size;
+> +
+> +	size = i_size_read(inode);
+
+How do you think about to use the following source code variant?
+
++	loff_t size = i_size_read(inode);
+
+
+> +	if (offset >= size)
+> +		return 0;
+
+Will any further fine-tuning matter for this function implementation?
+
+Regards,
+Markus
