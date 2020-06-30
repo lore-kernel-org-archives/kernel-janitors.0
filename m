@@ -1,39 +1,121 @@
-From: helen <info.isaacgeorge@gmail.com>
-Date: Sat, 27 Jun 2020 21:54:31 +0000
-Subject: 
-Message-Id: <CAABX3N8zm7a58jU5g8fzjfpsKNf48aUsUHECRV0m9PDLWU814A@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 30 Jun 2020 20:30:39 +0000
+Subject: Re: [PATCH SECOND RESEND] MAINTAINERS: adjust entries to moving CEC platform drivers
+Message-Id: <alpine.DEB.2.21.2006302228320.4753@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200525142946.8268-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200525142946.8268-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: zhang@intel.com
-
-MONEY-GRAM TRANSFERRED PAYMENT INFO:
-
-Below is the sender=E2=80=99s information
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, kernel-janitors@vger.kernel.org, Ettore Chimenti <ek5.chimenti@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Guenter Roeck <groeck@chromium.org>, linux-stm32@st-md-mailman.stormreply.com, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, Benson Leung <bleung@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>
 
 
 
-1. MG. REFERENCE NO#: 36360857
+On Mon, 25 May 2020, Lukas Bulwahn wrote:
 
-2. SENDER'S NAME: Johnson Williams
+> Commit 4be5e8648b0c ("media: move CEC platform drivers to a separate
+> directory") moved various files into a new directory structure, but did
+> not adjust the entries in MAINTAINERS.
+> 
+> Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+> 
+>   warning: no file matches F: drivers/media/platform/s5p-cec/
+>   warning: no file matches F: drivers/media/platform/tegra-cec/
+>   warning: no file matches F: drivers/media/platform/cec-gpio/
+>   warning: no file matches F: drivers/media/platform/meson/ao-cec-g12a.c
+>   warning: no file matches F: drivers/media/platform/meson/ao-cec.c
+>   warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.c
+>   warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.h
+>   warning: no file matches F: drivers/media/platform/sti/cec/
+> 
+> Update the MAINTAINERS entries to the new file locations.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Mauro, please pick this non-urgent minor clean-up patch on top of the
+> CEC platform driver moves.
+>  
 
-3. AMOUNT TO PICKUP: US$10,000
+Just a short ping for you, Mauro. Can you pick up this minor clean-up 
+patch?
 
+Lukas
 
-
-Go to any Money Gram office near you and pick up the payment Track the
-
-Reference Number by visiting and click the link below
-
-(https://secure.moneygram.com/embed/track) and enter the Reference
-
-Number: 36360857 and the Last Name: Williams, you will find the payment
-
-available for pickup instantly.
-
-Yours Sincerely,
-
-Mrs. Helen Marvis
-United Nations Liaison Office
-Directorate for International Payments
+> applies cleanly on next-20200417, next-20200505 and still on next-20200525
+> for this second resend.
+> 
+> v1 send here:
+> https://lore.kernel.org/lkml/20200418093630.6149-1-lukas.bulwahn@gmail.com/
+> 
+> v1 first resend here:
+> https://lore.kernel.org/lkml/20200506050744.4779-1-lukas.bulwahn@gmail.com/
+> 
+>  MAINTAINERS | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7a442b48f24b..bf5cb149101b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2403,7 +2403,7 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/media/s5p-cec.txt
+> -F:	drivers/media/platform/s5p-cec/
+> +F:	drivers/media/cec/platform/s5p/
+>  
+>  ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
+>  M:	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+> @@ -2548,7 +2548,7 @@ L:	linux-tegra@vger.kernel.org
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/media/tegra-cec.txt
+> -F:	drivers/media/platform/tegra-cec/
+> +F:	drivers/media/cec/platform/tegra/
+>  
+>  ARM/TETON BGA MACHINE SUPPORT
+>  M:	"Mark F. Brown" <mark.brown314@gmail.com>
+> @@ -3969,7 +3969,7 @@ S:	Supported
+>  W:	http://linuxtv.org
+>  T:	git git://linuxtv.org/media_tree.git
+>  F:	Documentation/devicetree/bindings/media/cec-gpio.txt
+> -F:	drivers/media/platform/cec-gpio/
+> +F:	drivers/media/cec/platform/cec-gpio/
+>  
+>  CELL BROADBAND ENGINE ARCHITECTURE
+>  M:	Arnd Bergmann <arnd@arndb.de>
+> @@ -11146,8 +11146,7 @@ S:	Supported
+>  W:	http://linux-meson.com/
+>  T:	git git://linuxtv.org/media_tree.git
+>  F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+> -F:	drivers/media/platform/meson/ao-cec-g12a.c
+> -F:	drivers/media/platform/meson/ao-cec.c
+> +F:	drivers/media/cec/platform/meson/
+>  
+>  MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+>  M:	Liang Yang <liang.yang@amlogic.com>
+> @@ -15212,8 +15211,7 @@ F:	drivers/mmc/host/sdricoh_cs.c
+>  SECO BOARDS CEC DRIVER
+>  M:	Ettore Chimenti <ek5.chimenti@gmail.com>
+>  S:	Maintained
+> -F:	drivers/media/platform/seco-cec/seco-cec.c
+> -F:	drivers/media/platform/seco-cec/seco-cec.h
+> +F:	drivers/media/cec/platform/seco/
+>  
+>  SECURE COMPUTING
+>  M:	Kees Cook <keescook@chromium.org>
+> @@ -16249,7 +16247,7 @@ STI CEC DRIVER
+>  M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/media/stih-cec.txt
+> -F:	drivers/media/platform/sti/cec/
+> +F:	drivers/media/cec/platform/sti/
+>  
+>  STK1160 USB VIDEO CAPTURE DRIVER
+>  M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+> -- 
+> 2.17.1
+> 
+> 
