@@ -1,43 +1,32 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 14 Jun 2020 07:12:35 +0000
-Subject: Re: [PATCH v2] proc/fd: Remove unnecessary variable initialisations in seq_show()
-Message-Id: <20200614071235.GA2629255@kroah.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 30 Jun 2020 08:04:27 +0000
+Subject: Re: [PATCH v2] Documentation: Coccinelle: fix typos and command example
+Message-Id: <3cedcc41-38b2-d17b-3ad5-5a5b8403f953@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200612160946.21187-1-pilgrimtao@gmail.com>
- <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
-In-Reply-To: <7fdada40-370d-37b3-3aab-bfbedaa1804f@web.de>
+References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
+In-Reply-To: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Kaitao Cheng <pilgrimtao@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Colin Ian King <colin.king@canonical.com>, Muchun Song <songmuchun@bytedance.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Masahiro Yamada <yamada.masahiro@socionext.com>, Jonathan Corbet <corbet@lwn.net>
 
-T24gRnJpLCBKdW4gMTIsIDIwMjAgYXQgMDY6NDU6NTdQTSArMDIwMCwgTWFya3VzIEVsZnJpbmcg
-d3JvdGU6Cj4gPiAnZmlsZXMnIHdpbGwgYmUgaW1tZWRpYXRlbHkgcmVhc3NpZ25lZC4gJ2ZfZmxh
-Z3MnIGFuZCAnZmlsZScgd2lsbCBiZQo+ID4gb3ZlcndyaXR0ZW4gaW4gdGhlIGlme30gb3Igc2Vx
-X3Nob3coKSBkaXJlY3RseSBleGl0cyB3aXRoIGFuIGVycm9yLgo+ID4gc28gd2UgZG9uJ3QgbmVl
-ZCB0byBjb25zdW1lIENQVSByZXNvdXJjZXMgdG8gaW5pdGlhbGl6ZSB0aGVtLgo+IAo+IEkgc3Vn
-Z2VzdCB0byBpbXByb3ZlIGFsc28gdGhpcyBjaGFuZ2UgZGVzY3JpcHRpb24uCj4gCj4gKiBTaG91
-bGQgdGhlIG1lbnRpb25lZCBpZGVudGlmaWVycyByZWZlciB0byB2YXJpYWJsZXM/Cj4gCj4gKiBX
-aWxsIGFub3RoZXIgaW1wZXJhdGl2ZSB3b3JkaW5nIGJlIHByZWZlcnJlZD8KPiAgIGh0dHBzOi8v
-Z2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4Lmdp
-dC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2lktzkx
-ZDFiZGY5MjEyZDk0NGQ3NDlhNWM3ZmY2ZmViZGJhMjQxNzcxI24xNTEKPiAKPiAqIEkgcHJvcG9z
-ZSB0byBleHRlbmQgdGhlIHBhdGNoIGEgYml0IG1vcmUuCj4gICBIb3cgZG8geW91IHRoaW5rIGFi
-b3V0IHRvIGNvbnZlcnQgdGhlIGluaXRpYWxpc2F0aW9uIGZvciB0aGUgdmFyaWFibGUg4oCccmV0
-4oCdCj4gICBhbHNvIGludG8gYSBsYXRlciBhc3NpZ25tZW50Pwo+IAo+IFJlZ2FyZHMsCj4gTWFy
-a3VzCgpIaSwKClRoaXMgaXMgdGhlIHNlbWktZnJpZW5kbHkgcGF0Y2gtYm90IG9mIEdyZWcgS3Jv
-YWgtSGFydG1hbi4KCk1hcmt1cywgeW91IHNlZW0gdG8gaGF2ZSBzZW50IGEgbm9uc2Vuc2ljYWwg
-b3Igb3RoZXJ3aXNlIHBvaW50bGVzcwpyZXZpZXcgY29tbWVudCB0byBhIHBhdGNoIHN1Ym1pc3Np
-b24gb24gYSBMaW51eCBrZXJuZWwgZGV2ZWxvcGVyIG1haWxpbmcKbGlzdC4gIEkgc3Ryb25nbHkg
-c3VnZ2VzdCB0aGF0IHlvdSBub3QgZG8gdGhpcyBhbnltb3JlLiAgUGxlYXNlIGRvIG5vdApib3Ro
-ZXIgZGV2ZWxvcGVycyB3aG8gYXJlIGFjdGl2ZWx5IHdvcmtpbmcgdG8gcHJvZHVjZSBwYXRjaGVz
-IGFuZApmZWF0dXJlcyB3aXRoIGNvbW1lbnRzIHRoYXQsIGluIHRoZSBlbmQsIGFyZSBhIHdhc3Rl
-IG9mIHRpbWUuCgpQYXRjaCBzdWJtaXR0ZXIsIHBsZWFzZSBpZ25vcmUgTWFya3VzJ3Mgc3VnZ2Vz
-dGlvbjsgeW91IGRvIG5vdCBuZWVkIHRvCmZvbGxvdyBpdCBhdCBhbGwuICBUaGUgcGVyc29uL2Jv
-dC9BSSB0aGF0IHNlbnQgaXQgaXMgYmVpbmcgaWdub3JlZCBieQphbG1vc3QgYWxsIExpbnV4IGtl
-cm5lbCBtYWludGFpbmVycyBmb3IgaGF2aW5nIGEgcGVyc2lzdGVudCBwYXR0ZXJuIG9mCmJlaGF2
-aW9yIG9mIHByb2R1Y2luZyBkaXN0cmFjdGluZyBhbmQgcG9pbnRsZXNzIGNvbW1lbnRhcnksIGFu
-ZAppbmFiaWxpdHkgdG8gYWRhcHQgdG8gZmVlZGJhY2suICBQbGVhc2UgZmVlbCBmcmVlIHRvIGFs
-c28gaWdub3JlIGVtYWlscwpmcm9tIHRoZW0uCgp0aGFua3MsCgpncmVnIGstaCdzIHBhdGNoIGVt
-YWlsIGJvdA==
+> @@ -177,13 +177,13 @@ For example, to check drivers/net/wirele
+>  To apply Coccinelle on a file basis, instead of a directory basis, the
+>  following command may be used::
+>
+> -    make C=1 CHECK="scripts/coccicheck"
+> +    make C=1 CHECK="scripts/coccicheck" path/to/file.c
+
+Can such information still be questionable according to usual make functionality?
+
+* Do you usually expect that such a source file does not need to be regenerated
+  (because it should be up-to-date already according a selected revision)?
+
+* Would you like to trigger the generation of a corresponding source code
+  analysis log file (or a “diff”)?
+
+* How do you think about to pass an other parameter to the build target “coccicheck”?
+
+Regards,
+Markus
