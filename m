@@ -1,57 +1,40 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Wed, 24 Jun 2020 01:44:51 +0000
-Subject: Re: [PATCH 1/7] irqchip: Fix potential resource leaks
-Message-Id: <d2111f53-ca52-fedf-0257-71f0aa89b093@loongson.cn>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jun 2020 14:27:46 +0000
+Subject: [PATCH][next] net/tls: fix sign extension issue when left shifting u16 value
+Message-Id: <20200630142746.516188-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <65e734f7-c43c-f96b-3650-980e15edba60@web.de>
-In-Reply-To: <65e734f7-c43c-f96b-3650-980e15edba60@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen <chenhc@lemote.com>, Jason Cooper <jason@lakedaemon.net>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Xuefeng Li <lixuefeng@loongson.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Boris Pismenny <borisp@mellanox.com>, Aviad Yehezkel <aviadye@mellanox.com>, John Fastabend <john.fastabend@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, "David S . Miller" <davem@davemloft.net>, Tariq Toukan <tariqt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/23/2020 11:55 PM, Markus Elfring wrote:
->> There exists some potential resource leaks in the error path, fix them.
-> Will the tag “Fixes” become relevant for the commit message?
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus,
+Left shifting the u16 value promotes it to a int and then it
+gets sign extended to a u64.  If len << 16 is greater than 0x7fffffff
+then the upper bits get set to 1 because of the implicit sign extension.
+Fix this by casting len to u64 before shifting it.
 
-Thanks for your reply and suggestion.
+Addresses-Coverity: ("integer handling issues")
+Fixes: ed9b7646b06a ("net/tls: Add asynchronous resync")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ include/net/tls.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch contains many files in drivers/irqchip,
-maybe I should split it into some small patches if use the tag "Fixes"?
-
->
->
-> …
->> +++ b/drivers/irqchip/irq-nvic.c
->> @@ -94,6 +94,7 @@ static int __init nvic_of_init(struct device_node *node,
->>
->>   	if (!nvic_irq_domain) {
->>   		pr_warn("Failed to allocate irq domain\n");
->> +		iounmap(nvic_base);
->>   		return -ENOMEM;
->>   	}
->>
->> @@ -103,6 +104,7 @@ static int __init nvic_of_init(struct device_node *node,
->>   	if (ret) {
->>   		pr_warn("Failed to allocate irq chips\n");
->>   		irq_domain_remove(nvic_irq_domain);
->> +		iounmap(nvic_base);
->>   		return ret;
->>   	}
-> Can it helpful to add jump targets so that a bit of exception handling
-> can be better reused at the end of this function?
-
-OK, no problem, I will do it in the v2.
-
-By the way, I have resent this patch series due to git send-email failed,
-https://lore.kernel.org/patchwork/cover/1261517/
-
-Thanks,
-Tiezhu
-
->
-> Regards,
-> Markus
+diff --git a/include/net/tls.h b/include/net/tls.h
+index c875c0a445a6..e5dac7e74e79 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -637,7 +637,7 @@ tls_offload_rx_resync_async_request_start(struct sock *sk, __be32 seq, u16 len)
+ 	struct tls_offload_context_rx *rx_ctx = tls_offload_ctx_rx(tls_ctx);
+ 
+ 	atomic64_set(&rx_ctx->resync_async->req, ((u64)ntohl(seq) << 32) |
+-		     (len << 16) | RESYNC_REQ | RESYNC_REQ_ASYNC);
++		     ((u64)len << 16) | RESYNC_REQ | RESYNC_REQ_ASYNC);
+ 	rx_ctx->resync_async->loglen = 0;
+ }
+ 
+-- 
+2.27.0
