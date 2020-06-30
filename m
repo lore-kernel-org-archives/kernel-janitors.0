@@ -1,19 +1,19 @@
-From: Tariq Toukan <tariqt@mellanox.com>
-Date: Tue, 30 Jun 2020 14:43:50 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 30 Jun 2020 20:37:12 +0000
 Subject: Re: [PATCH][next] net/tls: fix sign extension issue when left shifting u16 value
-Message-Id: <dfb6ef40-d5ee-fd21-afb8-1632ecb03b6d@mellanox.com>
+Message-Id: <20200630.133712.641790280086952744.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200630142746.516188-1-colin.king@canonical.com>
 In-Reply-To: <20200630142746.516188-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Pismenny <borisp@mellanox.com>, Aviad Yehezkel <aviadye@mellanox.com>, John Fastabend <john.fastabend@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, "David S . Miller" <davem@davemloft.net>, Saeed Mahameed <saeedm@mellanox.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: borisp@mellanox.com, aviadye@mellanox.com, john.fastabend@gmail.com, daniel@iogearbox.net, kuba@kernel.org, tariqt@mellanox.com, saeedm@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 Jun 2020 15:27:46 +0100
 
-
-On 6/30/2020 5:27 PM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Left shifting the u16 value promotes it to a int and then it
@@ -24,24 +24,5 @@ On 6/30/2020 5:27 PM, Colin King wrote:
 > Addresses-Coverity: ("integer handling issues")
 > Fixes: ed9b7646b06a ("net/tls: Add asynchronous resync")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   include/net/tls.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/net/tls.h b/include/net/tls.h
-> index c875c0a445a6..e5dac7e74e79 100644
-> --- a/include/net/tls.h
-> +++ b/include/net/tls.h
-> @@ -637,7 +637,7 @@ tls_offload_rx_resync_async_request_start(struct sock *sk, __be32 seq, u16 len)
->   	struct tls_offload_context_rx *rx_ctx = tls_offload_ctx_rx(tls_ctx);
->   
->   	atomic64_set(&rx_ctx->resync_async->req, ((u64)ntohl(seq) << 32) |
-> -		     (len << 16) | RESYNC_REQ | RESYNC_REQ_ASYNC);
-> +		     ((u64)len << 16) | RESYNC_REQ | RESYNC_REQ_ASYNC);
->   	rx_ctx->resync_async->loglen = 0;
->   }
->   
-> 
 
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Thanks!
+Applied, thanks Colin.
