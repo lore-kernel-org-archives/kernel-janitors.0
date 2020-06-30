@@ -1,38 +1,49 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 24 Jun 2020 14:05:16 +0000
-Subject: [PATCH][next] soc: qcom: fix off-by-one array index bounds check
-Message-Id: <20200624140516.5929-1-colin.king@canonical.com>
+Date: Tue, 30 Jun 2020 14:55:58 +0000
+Subject: [PATCH][next] thunderbolt: ensure left shift of 512 does not overflow a 32 bit int
+Message-Id: <20200630145558.516961-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org
+To: Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The bounds check on model is off-by-one, leading to an array out
-of bounds read when model is 26. Fix this.
+The 32 bit int value 512 is being left shifted and then used in a context
+that expects the expression to be a larger unsigned long. There may be
+a potential integer overflow, so make 512 a UL before shift to avoid
+any such issues.
 
-Addresses-Coverity: ("Out-of-bounds read")
-Fixes: e9247e2ce577 ("soc: qcom: socinfo: fix printing of pmic_model")
+Addresses-Coverity: ("Uninintentional integer overflow")
+Fixes: 3b1d8d577ca8 ("thunderbolt: Implement USB3 bandwidth negotiation routines")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/soc/qcom/socinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thunderbolt/usb4.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index e19102f46302..4d29ea244e71 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -275,7 +275,7 @@ static int qcom_show_pmic_model(struct seq_file *seq, void *p)
- 	if (model < 0)
- 		return -EINVAL;
+diff --git a/drivers/thunderbolt/usb4.c b/drivers/thunderbolt/usb4.c
+index d1a554fd09ae..ed609075cf66 100644
+--- a/drivers/thunderbolt/usb4.c
++++ b/drivers/thunderbolt/usb4.c
+@@ -909,7 +909,7 @@ static unsigned int usb3_bw_to_mbps(u32 bw, u8 scale)
+ {
+ 	unsigned long uframes;
  
--	if (model <= ARRAY_SIZE(pmic_models) && pmic_models[model])
-+	if (model < ARRAY_SIZE(pmic_models) && pmic_models[model])
- 		seq_printf(seq, "%s\n", pmic_models[model]);
- 	else
- 		seq_printf(seq, "unknown (%d)\n", model);
+-	uframes = bw * 512 << scale;
++	uframes = bw * 512UL << scale;
+ 	return DIV_ROUND_CLOSEST(uframes * 8000, 1000 * 1000);
+ }
+ 
+@@ -919,7 +919,7 @@ static u32 mbps_to_usb3_bw(unsigned int mbps, u8 scale)
+ 
+ 	/* 1 uframe is 1/8 ms (125 us) -> 1 / 8000 s */
+ 	uframes = ((unsigned long)mbps * 1000 *  1000) / 8000;
+-	return DIV_ROUND_UP(uframes, 512 << scale);
++	return DIV_ROUND_UP(uframes, 512UL << scale);
+ }
+ 
+ static int usb4_usb3_port_read_allocated_bandwidth(struct tb_port *port,
 -- 
 2.27.0
