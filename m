@@ -1,52 +1,42 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Mon, 01 Jun 2020 13:25:21 +0000
-Subject: Re: [PATCH] video: pxafb: Fix the function used to balance a 'dma_alloc_coherent()' call
-Message-Id: <b39fa7b2-fc01-be3e-f899-40b949aa11ee@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 30 Jun 2020 10:47:03 +0000
+Subject: Re: [PATCH v2] usb: mtu3: Fix NULL pointer dereferences
+Message-Id: <83ce087e-9da9-a8e1-8872-8520ccfc4108@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200429084519eucas1p2813ed7e76d573778607ac1270d8cb2e7@eucas1p2.samsung.com>
- <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200429084505.108897-1-christophe.jaillet@wanadoo.fr>
+References: <1593502942-24455-1-git-send-email-chunfeng.yun@mediatek.com>
+In-Reply-To: <1593502942-24455-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-fbdev@vger.kernel.org, corbet@lwn.net, jani.nikula@intel.com, viresh.kumar@linaro.org, rafael.j.wysocki@intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, eric.miao@marvell.com, mchehab+samsung@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+
+> Some pointers are dereferenced before successful checks.
+
+I propose to reconsider and improve also this change description.
+
+* Would a null pointer dereference be possible only with the variables “mep”
+  and “mreq” in the implementation of the function “mtu3_gadget_dequeue”?
+  (Can it make sense to split the patch according to this detail?)
+
+* How do you think about to convert any more variable initialisations
+  to later assignments?
+
+* Will it become helpful to add the tag “Fixes” to the commit message?
 
 
-On 4/29/20 10:45 AM, Christophe JAILLET wrote:
-> 'dma_alloc_coherent()' must be balanced by a call to 'dma_free_coherent()'
-> not 'dma_free_wc()'.
-> The correct dma_free_ function is already used in the error handling path
-> of the probe function.
-> 
-> Fixes: 77e196752bdd ("[ARM] pxafb: allow video memory size to be configurable")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+…
+> ---
+> v2: nothing changed, but abandon another patch
 
-Applied to drm-misc-next tree (patch should show up in v5.9), thanks.
+Are there chances to take any previous patch review comments better into account
+(besides the shown reduction of update steps)?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
 
 > ---
->  drivers/video/fbdev/pxafb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-> index 00b96a78676e..6f972bed410a 100644
-> --- a/drivers/video/fbdev/pxafb.c
-> +++ b/drivers/video/fbdev/pxafb.c
-> @@ -2417,8 +2417,8 @@ static int pxafb_remove(struct platform_device *dev)
->  
->  	free_pages_exact(fbi->video_mem, fbi->video_mem_size);
->  
-> -	dma_free_wc(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
-> -		    fbi->dma_buff_phys);
-> +	dma_free_coherent(&dev->dev, fbi->dma_buff_size, fbi->dma_buff,
-> +			  fbi->dma_buff_phys);
->  
->  	return 0;
->  }
-> 
+>  drivers/usb/mtu3/mtu3_gadget.c | 25 ++++++++++++++++++-------
+
+I suggest to replace the triple dashes before this diffstat by a blank line.
+
+Regards,
+Markus
