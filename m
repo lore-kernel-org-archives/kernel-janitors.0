@@ -1,42 +1,135 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Tue, 30 Jun 2020 10:47:03 +0000
-Subject: Re: [PATCH v2] usb: mtu3: Fix NULL pointer dereferences
-Message-Id: <83ce087e-9da9-a8e1-8872-8520ccfc4108@web.de>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 30 Jun 2020 20:25:31 +0000
+Subject: Status of MAINTAINERS clean-up
+Message-Id: <alpine.DEB.2.21.2006302214290.4085@felia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593502942-24455-1-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1593502942-24455-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: Colin Ian King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Some pointers are dereferenced before successful checks.
+Hi all,
 
-I propose to reconsider and improve also this change description.
+as Ralf Ramsauer and Pia Eichinger coincidently picked up and worked on 
+the same MAINTAINERS clean-up task, Ralf requested to get a quick report 
+on the state of the MAINTAINERS clean-up. Here you go.
 
-* Would a null pointer dereference be possible only with the variables “mep”
-  and “mreq” in the implementation of the function “mtu3_gadget_dequeue”?
-  (Can it make sense to split the patch according to this detail?)
+I regularly run ./scripts/get_maintainers.pl ./scripts/get_maintainer.pl 
+--self-test=patterns on Linus' tree and linux-next, address the issues and 
+send out minor patches or simply report to the committers after a basic 
+analysis.
 
-* How do you think about to convert any more variable initialisations
-  to later assignments?
+Currently on v5.8-rc3, we have 17 warnings. On next-20200629, we have 16 
+warnings with some overlap with the v5.8-rc3 warnings.
 
-* Will it become helpful to add the tag “Fixes” to the commit message?
-
-
-…
-> ---
-> v2: nothing changed, but abandon another patch
-
-Are there chances to take any previous patch review comments better into account
-(besides the shown reduction of update steps)?
+In more detail, here are all findings, put into categories and grouped 
+when addressed with one patch.
 
 
-> ---
->  drivers/usb/mtu3/mtu3_gadget.c | 25 ++++++++++++++++++-------
+WARNING ON v5.8-rc3, ADDRESSED IN next-20200629
 
-I suggest to replace the triple dashes before this diffstat by a blank line.
+./MAINTAINERS:3949: warning: no file matches	F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
+./MAINTAINERS:5493: warning: no file matches	F:	Documentation/devicetree/bindings/display/panel/raydium,rm67191.txt
+./MAINTAINERS:14577: warning: no file matches	F:	Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+./MAINTAINERS:14578: warning: no file matches	F:	Documentation/devicetree/bindings/thermal/rcar-thermal.txt
 
-Regards,
-Markus
+No further action required.
+
+
+WARNING ON v5.8-rc3 AND next-20200629, PATCH PENDING
+
+
+[PATCH] MAINTAINERS: rectify entry in ARM SMC WATCHDOG DRIVER
+./MAINTAINERS:1492: warning: no file matches	F:	devicetree/bindings/watchdog/arm-smc-wdt.yaml
+    Pending Patch: https://lore.kernel.org/linux-watchdog/20200602052104.7795-1-lukas.bulwahn@gmail.com/
+
+
+[PATCH v2 RESEND] MAINTAINERS: rectify MMP SUPPORT after moving cputype.h
+./MAINTAINERS:11487: warning: no file matches	F:	linux/soc/mmp/
+    Pending Patch: https://lore.kernel.org/lkml/20200506053431.7464-1-lukas.bulwahn@gmail.com/
+
+
+[PATCH SECOND RESEND] MAINTAINERS: adjust entries to moving CEC platform drivers
+./MAINTAINERS:2410: warning: no file matches	F:	drivers/media/platform/s5p-cec/
+./MAINTAINERS:2555: warning: no file matches	F:	drivers/media/platform/tegra-cec/
+./MAINTAINERS:3976: warning: no file matches	F:	drivers/media/platform/cec-gpio/
+./MAINTAINERS:11155: warning: no file matches	F:	drivers/media/platform/meson/ao-cec-g12a.c
+./MAINTAINERS:11156: warning: no file matches	F:	drivers/media/platform/meson/ao-cec.c
+./MAINTAINERS:15266: warning: no file matches	F:	drivers/media/platform/seco-cec/seco-cec.c
+./MAINTAINERS:15267: warning: no file matches	F:	drivers/media/platform/seco-cec/seco-cec.h
+./MAINTAINERS:16305: warning: no file matches	F:	drivers/media/platform/sti/cec/
+    Pending Patch: https://lore.kernel.org/lkml/20200525142946.8268-1-lukas.bulwahn@gmail.com/
+
+
+WARNING ON v5.8-rc3 AND next-20200629, UNADDRESSED
+
+
+./MAINTAINERS:11457: warning: no file matches	F:	drivers/*/*/*loongson2*
+./MAINTAINERS:11467: warning: no file matches	F:	drivers/*/*/*loongson3*
+./MAINTAINERS:11468: warning: no file matches	F:	drivers/*/*loongson3*
+
+I had a first look, it is a special case, the committer wants to be 
+informed on all loongson{2,3} files in drivers, but really in the last 
+two years, there is only one directory that appeared in the repository 
+and matched these patterns. So, one could probably just settle for naming 
+the file that is in the repository right now. I did not send a patch yet, 
+though.
+
+
+WARNING ONLY ON next-20200629, PATCH ACCEPTED
+
+
+[PATCH] MAINTAINERS: remove obsolete entry after file renaming
+./MAINTAINERS:5024: warning: no file matches	F:	drivers/regulator/da903x.c
+    Accepted Patch: https://lore.kernel.org/lkml/20200628180229.5068-1-lukas.bulwahn@gmail.com/
+
+No further action required.
+
+
+WARNING ONLY ON next-20200629, ADDRESSED DIFFERENTLY
+
+
+./MAINTAINERS:6874: warning: no file matches	F:	Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.txt
+    Warning just appeared recently, warnings on 
+Documentation/devicetree/bindings/ are usually addressed by devicetree 
+maintainers before the pull request. So, no action required for now.
+
+
+./MAINTAINERS:14057: warning: no file matches	F:	Documentation/networking/device_drivers/ethernet/qlogic/LICENSE.qla3xxx
+    Appeared with a recent commit of moving files in Documentation.
+
+    The real clean-up task for that file is described here: 
+https://lore.kernel.org/linux-spdx/alpine.DEB.2.21.2006300644130.4919@felia/
+
+
+SUMMARY
+
+At the moment, I do not see too much potential for others to really  
+contribute to this specific clean-up. Once the pending patches are picked 
+up, which is tricky part, i.e., resubmitting and reminding, there have 
+been so far not too many new warnings appearing, and the warnings on .txt 
+to .yaml conversions in Documentation/devicetree/bindings/ are usually  
+followed up by some devicetree maintainers and janitors.
+
+
+Other MAINTAINERS clean up topics, I see on a longer task list are:
+
+  - Go through the L: entries and address, "lists" that are 'email 
+forwarders', but not (public) mailing lists with archives.
+    Current idea is to either mark them special or make them M: or R: 
+entries.
+
+  - Assigning files to the "right" sections, not just having them lay 
+around in THE REST. This will be lots of manual work and needs some kind 
+of script-assisted approach, as many files are headers in include.
+
+  - Documenting the properties for a clean MAINTAINERS file and the 
+available checkers and tools
+
+Contribution to those tasks are welcome, but they are by no means quick 
+and easy fixes. They will need some thought and lots of persistence and 
+patience to get done.
+
+
+Lukas
