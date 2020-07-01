@@ -1,38 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Jul 2020 15:04:33 +0000
-Subject: [PATCH] net/packet: remove redundant initialization of variable err
-Message-Id: <20200701150433.551656-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 01 Jul 2020 19:45:15 +0000
+Subject: Re: [PATCH] net/packet: remove redundant initialization of variable err
+Message-Id: <20200701.124515.499720144057095714.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200701150433.551656-1-colin.king@canonical.com>
+In-Reply-To: <20200701150433.551656-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed,  1 Jul 2020 16:04:33 +0100
 
-The variable err is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable err is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/packet/af_packet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 29bd405adbbd..7b436ebde61d 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4293,7 +4293,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
- 	struct packet_ring_buffer *rb;
- 	struct sk_buff_head *rb_queue;
- 	__be16 num;
--	int err = -EINVAL;
-+	int err;
- 	/* Added to avoid minimal code churn */
- 	struct tpacket_req *req = &req_u->req;
- 
--- 
-2.27.0
+Applied to net-next, thanks.
