@@ -1,62 +1,50 @@
-From: Hyun Kwon <hyun.kwon@xilinx.com>
-Date: Wed, 29 Jul 2020 18:30:00 +0000
-Subject: Re: [PATCH -next] drm: xlnx: Fix typo in parameter description
-Message-Id: <20200729183000.GA30361@xilinx.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Jul 2020 14:59:05 +0000
+Subject: [PATCH] drm/amd/display: remove redundant initialization of variable result
+Message-Id: <20200701145905.551367-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200725063429.172139-1-weiyongjun1@huawei.com>
- <20200728223349.GT13753@pendragon.ideasonboard.com>
-In-Reply-To: <20200728223349.GT13753@pendragon.ideasonboard.com>
+References: <20171215105343.11372-1-colin.king@canonical.com>
+In-Reply-To: <20171215105343.11372-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Hulk Robot <hulkci@huawei.com>, Michal Simek <michals@xilinx.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Wei,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch.
+The variable result is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-On Tue, Jul 28, 2020 at 03:33:49PM -0700, Laurent Pinchart wrote:
-> Hi Wei,
-> 
-> Thank you for the patch.
-> 
-> On Sat, Jul 25, 2020 at 06:34:29AM +0000, Wei Yongjun wrote:
-> > Fix typo in parameter description.
-> > 
-> > Fixes: d76271d22694 ("drm: xlnx: DRM/KMS driver for Xilinx ZynqMP DisplayPort Subsystem")
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Hyun Kwon <hyun.kwon@xilinx.com>
-
-I'll commit this to drm-misc-next-fixes soon.
-
-Thanks,
--hyun
-
-> > ---
-> >  drivers/gpu/drm/xlnx/zynqmp_dp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > index 821f7a71e182..3d53638ab15e 100644
-> > --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > @@ -44,7 +44,7 @@ MODULE_PARM_DESC(aux_timeout_ms, "DP aux timeout value in msec (default: 50)");
-> >   */
-> >  static uint zynqmp_dp_power_on_delay_ms = 4;
-> >  module_param_named(power_on_delay_ms, zynqmp_dp_power_on_delay_ms, uint, 0444);
-> > -MODULE_PARM_DESC(aux_timeout_ms, "DP power on delay in msec (default: 4)");
-> > +MODULE_PARM_DESC(power_on_delay_ms, "DP power on delay in msec (default: 4)");
-> >  
-> >  /* Link configuration registers */
-> >  #define ZYNQMP_DP_LINK_BW_SET				0x0
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+index 1b3474aa380d..d0a23b72e604 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+@@ -151,7 +151,8 @@ bool edp_receiver_ready_T9(struct dc_link *link)
+ 	unsigned int tries = 0;
+ 	unsigned char sinkstatus = 0;
+ 	unsigned char edpRev = 0;
+-	enum dc_status result = DC_OK;
++	enum dc_status result;
++
+ 	result = core_link_read_dpcd(link, DP_EDP_DPCD_REV, &edpRev, sizeof(edpRev));
+ 
+      /* start from eDP version 1.2, SINK_STAUS indicate the sink is ready.*/
+@@ -177,7 +178,7 @@ bool edp_receiver_ready_T7(struct dc_link *link)
+ {
+ 	unsigned char sinkstatus = 0;
+ 	unsigned char edpRev = 0;
+-	enum dc_status result = DC_OK;
++	enum dc_status result;
+ 
+ 	/* use absolute time stamp to constrain max T7*/
+ 	unsigned long long enter_timestamp = 0;
+-- 
+2.27.0
