@@ -1,29 +1,30 @@
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Date: Tue, 21 Jul 2020 15:26:09 +0000
-Subject: Re: [PATCH][next] x86/ioperm: initialize pointer bitmap with NULL rather than 0
-Message-Id: <46011f9b-a5a6-b91c-f8c0-1c106ff5e60e@suse.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 01 Jul 2020 08:15:19 +0000
+Subject: Re: [PATCH v4 04/14] irqchip/davinci-aintc: Fix potential resource leaks
+Message-Id: <08cad331-0a17-586c-07a7-6e3843cb61a1@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200721100217.407975-1-colin.king@canonical.com>
-In-Reply-To: <20200721100217.407975-1-colin.king@canonical.com>
+References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
+ <1593569786-11500-5-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1593569786-11500-5-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 21.07.20 12:02, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer bitmap is being initialized with a plain integer 0,
-> fix this by initializing it with a NULL instead.
-> 
-> Cleans up sparse warning:
-> arch/x86/xen/enlighten_pv.c:876:27: warning: Using plain integer
-> as NULL pointer
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+…
+> +++ b/drivers/irqchip/irq-davinci-aintc.c
+> @@ -96,7 +96,7 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
+>  				     resource_size(&config->reg));
+>  	if (!davinci_aintc_base) {
+>  		pr_err("%s: unable to ioremap register range\n", __func__);
+> -		return;
+> +		goto err_release;
+>  	}
+…
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Can it help to return any error codes?
+Would you like to reconsider the function return type?
 
-
-Juergen
+Regards,
+Markus
