@@ -1,43 +1,44 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 28 Jul 2020 15:30:30 +0000
-Subject: Re: [PATCH] usb: hso: check for return value in hso_serial_common_create()
-Message-Id: <20200728153030.GB3656785@kroah.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 01 Jul 2020 07:49:21 +0000
+Subject: Re: [PATCH v4 03/14] irqchip/csky-mpintc: Fix potential resource leaks
+Message-Id: <35eae701-e6b1-96af-9be4-0993330a17dc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a42328b6-6d45-577f-f605-337b91c19f1a@web.de>
-In-Reply-To: <a42328b6-6d45-577f-f605-337b91c19f1a@web.de>
+References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
+ <1593569786-11500-4-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1593569786-11500-4-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Rustam Kovhaev <rkovhaev@gmail.com>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVHVlLCBKdWwgMjgsIDIwMjAgYXQgMDM6MTk6MDBQTSArMDIwMCwgTWFya3VzIEVsZnJpbmcg
-d3JvdGU6Cj4gPiBpbiBjYXNlIG9mIGFuIGVycm9yIHR0eV9yZWdpc3Rlcl9kZXZpY2VfYXR0cigp
-IHJldHVybnMgRVJSX1BUUigpLAo+ID4gYWRkIElTX0VSUigpIGNoZWNrCj4gCj4gSSBzdWdnZXN0
-IHRvIGltcHJvdmUgdGhpcyBjaGFuZ2UgZGVzY3JpcHRpb24gYSBiaXQuCj4gCj4gV2lsbCB0aGUg
-dGFnIOKAnEZpeGVz4oCdIGJlY29tZSBoZWxwZnVsIGZvciB0aGUgY29tbWl0IG1lc3NhZ2U/Cj4g
-Cj4gCj4g4oCmCj4gPiArKysgYi9kcml2ZXJzL25ldC91c2IvaHNvLmMKPiDigKYKPiA+IEBAIC0y
-MzExLDYgKzIzMTMsNyBAQCAgc3RhdGljIGludCBoc29fc2VyaWFsX2NvbW1vbl9jcmVhdGUoc3Ry
-dWN0IGhzb19zZXJpYWwgKnNlcmlhbCwgaW50IG51bV91cmJzLAo+ID4gIAlyZXR1cm4gMDsKPiA+
-ICBleGl0Ogo+ID4gIAloc29fc2VyaWFsX3R0eV91bnJlZ2lzdGVyKHNlcmlhbCk7Cj4gPiArZXhp
-dDI6Cj4gPiAgCWhzb19zZXJpYWxfY29tbW9uX2ZyZWUoc2VyaWFsKTsKPiA+ICAJcmV0dXJuIC0x
-Owo+ID4gIH0KPiAKPiBDYW4gb3RoZXIgbGFiZWxzIChsaWtlIOKAnHVucmVnaXN0ZXJfc2VyaWFs
-4oCdIGFuZCDigJxmcmVlX3NlcmlhbOKAnSkgYmUgcHJlZmVycmVkIGhlcmU/Cj4gaHR0cHM6Ly9n
-aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0
-L3RyZWUvRG9jdW1lbnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5yc3Q/aWSSZWQzMDE5MTk5
-MzJmNzc3NzEzYjkxNzJlNTI1Njc0MTU3ZTk4M2QjbjQ4NQo+IAo+IFJlZ2FyZHMsCj4gTWFya3Vz
-CgpIaSwKClRoaXMgaXMgdGhlIHNlbWktZnJpZW5kbHkgcGF0Y2gtYm90IG9mIEdyZWcgS3JvYWgt
-SGFydG1hbi4KCk1hcmt1cywgeW91IHNlZW0gdG8gaGF2ZSBzZW50IGEgbm9uc2Vuc2ljYWwgb3Ig
-b3RoZXJ3aXNlIHBvaW50bGVzcwpyZXZpZXcgY29tbWVudCB0byBhIHBhdGNoIHN1Ym1pc3Npb24g
-b24gYSBMaW51eCBrZXJuZWwgZGV2ZWxvcGVyIG1haWxpbmcKbGlzdC4gIEkgc3Ryb25nbHkgc3Vn
-Z2VzdCB0aGF0IHlvdSBub3QgZG8gdGhpcyBhbnltb3JlLiAgUGxlYXNlIGRvIG5vdApib3RoZXIg
-ZGV2ZWxvcGVycyB3aG8gYXJlIGFjdGl2ZWx5IHdvcmtpbmcgdG8gcHJvZHVjZSBwYXRjaGVzIGFu
-ZApmZWF0dXJlcyB3aXRoIGNvbW1lbnRzIHRoYXQsIGluIHRoZSBlbmQsIGFyZSBhIHdhc3RlIG9m
-IHRpbWUuCgpQYXRjaCBzdWJtaXR0ZXIsIHBsZWFzZSBpZ25vcmUgTWFya3VzJ3Mgc3VnZ2VzdGlv
-bjsgeW91IGRvIG5vdCBuZWVkIHRvCmZvbGxvdyBpdCBhdCBhbGwuICBUaGUgcGVyc29uL2JvdC9B
-SSB0aGF0IHNlbnQgaXQgaXMgYmVpbmcgaWdub3JlZCBieQphbG1vc3QgYWxsIExpbnV4IGtlcm5l
-bCBtYWludGFpbmVycyBmb3IgaGF2aW5nIGEgcGVyc2lzdGVudCBwYXR0ZXJuIG9mCmJlaGF2aW9y
-IG9mIHByb2R1Y2luZyBkaXN0cmFjdGluZyBhbmQgcG9pbnRsZXNzIGNvbW1lbnRhcnksIGFuZApp
-bmFiaWxpdHkgdG8gYWRhcHQgdG8gZmVlZGJhY2suICBQbGVhc2UgZmVlbCBmcmVlIHRvIGFsc28g
-aWdub3JlIGVtYWlscwpmcm9tIHRoZW0uCgp0aGFua3MsCgpncmVnIGstaCdzIHBhdGNoIGVtYWls
-IGJvdA==
+> exception handling. By the way, do some coding-style cleanups
+
+I propose to consider another bit of fine-tuning.
+
+
+…
+> +++ b/drivers/irqchip/irq-csky-mpintc.c
+…
+> @@ -270,12 +274,24 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+>
+>  #ifdef CONFIG_SMP
+>  	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
+> -	if (!ipi_irq)
+> -		return -EIO;
+> +	if (!ipi_irq) {
+> +		ret = -EIO;
+> +		goto err_domain_remove;
+
+How do you think about to use the following source code variant
+at this place?
+
++		irq_domain_remove(root_domain);
++		ret = -EIO;
++		goto err_iounmap;
+
+
+Would you like to avoid the repetition of the check “#ifdef CONFIG_SMP”?
+
+Regards,
+Markus
