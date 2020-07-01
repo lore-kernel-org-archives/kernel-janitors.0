@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Wed, 01 Jul 2020 19:15:13 +0000
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 01 Jul 2020 20:10:14 +0000
 Subject: Re: [v2] Documentation: Coccinelle: fix typos and command example
-Message-Id: <05f8cb2b-c76e-e2ba-24a8-5676c1792255@infradead.org>
+Message-Id: <5e83b473-8764-fbfc-394c-1acffa74943c@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
@@ -15,44 +15,59 @@ References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <65db3f88-1ac8-374d-e3fe-2ea0970ffd67@web.de>
  <30b722ca-1bd8-2b96-ca41-1e9bc7212b66@infradead.org>
  <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
-In-Reply-To: <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
+ <05f8cb2b-c76e-e2ba-24a8-5676c1792255@infradead.org>
+In-Reply-To: <05f8cb2b-c76e-e2ba-24a8-5676c1792255@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Masahiro Yamada <masahiroy@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 
-On 7/1/20 10:32 AM, Markus Elfring wrote:
->> None of that has anything to do with the current patch.
-> 
-> Did you test the specified make command for the display
-> of expected data processing results?
+>> Did you test the specified make command for the display
+>> of expected data processing results?
+>
+> Markus, if something doesn't work, just say so, OK?
 
-Markus, if something doesn't work, just say so, OK?
-Don't go all obtuse on us.
+Did a previous information fit to this expectation already?
+https://lore.kernel.org/linux-doc/c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de/
+https://lkml.org/lkml/2020/6/30/492
 
-> How much do you distinguish desired effects according to
-> the specification of file extensions for such build commands?
-
-I don't grok that.
-
-
-@Jon, Julia-
-I plan to submit a v3 without the addition of "path/to/file.c" in 2 places.
+“…
+make: Nothing to be done for 'path/to/file.c'.
+…”
 
 
-However, I thought that this:
-  To apply Coccinelle on a file basis, instead of a directory basis, the
-  following command may be used::
+> Don't go all obtuse on us.
 
-    make C=1 CHECK="scripts/coccicheck"
-
-meant that someone could run coccicheck on one source file, but I cannot
-get that to work.
-
-Julia, Markus- can you tell me how to run coccicheck on one source file?
+I am curious if involved communication difficulties can be resolved
+better by other means.
 
 
-Thanks.
--- 
-~Randy
+>> How much do you distinguish desired effects according to
+>> the specification of file extensions for such build commands?
+>
+> I don't grok that.
+
+I assume that you got used to the handling of specific file suffixes
+also for their application together with make scripts.
+
+One part of the discussed software documentation deals with
+the combination of compilation and further source code analysis,
+doesn't it?
+
+
+> Julia, Markus- can you tell me how to run coccicheck on one source file?
+
+You can choose between two methods.
+
+* Use the documented build target with appropriate parameters.
+  (How many Linux software modules do consist of only a single source file?)
+
+* Do you get further ideas from another concrete command example?
+  https://lore.kernel.org/linux-arm-kernel/5b693ee0-0cb1-7ff3-b562-bac6bcb6aae8@web.de/
+  https://lkml.org/lkml/2020/6/29/357
+
+  elfring@Sonne:~/Projekte/Linux/next-patched> make J=1 C=1 CHECK='scripts/coccicheck' MODE=context COCCI=~/Projekte/Linux/next-patched/scripts/coccinelle/null/show_pointer_usage_before_null_check-20200701.cocci drivers/usb/mtu3/mtu3_gadget.o
+
+Regards,
+Markus
