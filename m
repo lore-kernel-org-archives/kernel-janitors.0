@@ -1,61 +1,23 @@
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-Date: Tue, 21 Jul 2020 00:49:53 +0000
-Subject: RE: [PATCH][next] phy: samsung-ufs: fix check on failed devm_clk_get call for rx1_symbol_clk
-Message-Id: <042e01d65ef8$d34fefe0$79efcfa0$@samsung.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 01 Jul 2020 09:14:58 +0000
+Subject: Re: [PATCH v4 11/14] irqchip/omap-intc: Fix potential resource leak
+Message-Id: <fdbd6e18-37d4-cf29-a990-89c1974491cb@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20200720162959epcas5p1bf43c0c67ee0c098428b78b2d0ded2db@epcas5p1.samsung.com>
-        <20200720162952.339697-1-colin.king@canonical.com>
-In-Reply-To: <20200720162952.339697-1-colin.king@canonical.com>
+References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
+ <1593569786-11500-12-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1593569786-11500-12-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 'Colin King' <colin.king@canonical.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Vinod Koul' <vkoul@kernel.org>, 'Seungwon Jeon' <essuuj@gmail.com>, 'Kiwoong Kim' <kwmad.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Colin,
+> In the function omap_init_irq_of(), system resource "omap_irq_base"
+> was not released in the error case, fix it.
 
-> -----Original Message-----
-> From: Colin King <colin.king@canonical.com>
-> Sent: 20 July 2020 22:00
-> To: Kishon Vijay Abraham I <kishon@ti.com>; Vinod Koul <vkoul@kernel.org>;
-> Seungwon Jeon <essuuj@gmail.com>; Kiwoong Kim
-> <kwmad.kim@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH][next] phy: samsung-ufs: fix check on failed devm_clk_get call
-> for rx1_symbol_clk
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check to see if the call to devm_clk_get on rx1_symbol_clk is checking the
-> wrong variable, this looks like a copy-paste error. Fix this to check
-> phy->rx1_symbol instead of phy->rx0_symbol.
-> 
-This fix is already posted by Gustavo [1]
-[1] https://lkml.org/lkml/2020/7/20/617
+Another small wording adjustment:
+  … in an error case. Thus add a call of the function “iounmap”
+  in the if branch.
 
-Thanks!
-
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: bca21e930451 ("phy: samsung-ufs: add UFS PHY driver for samsung SoC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/phy/samsung/phy-samsung-ufs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c
-> b/drivers/phy/samsung/phy-samsung-ufs.c
-> index 43ef77d1d96c..9832599a0283 100644
-> --- a/drivers/phy/samsung/phy-samsung-ufs.c
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
-> @@ -147,7 +147,7 @@ static int samsung_ufs_phy_symbol_clk_init(struct
-> samsung_ufs_phy *phy)
->  	}
-> 
->  	phy->rx1_symbol_clk = devm_clk_get(phy->dev, "rx1_symbol_clk");
-> -	if (IS_ERR(phy->rx0_symbol_clk)) {
-> +	if (IS_ERR(phy->rx1_symbol_clk)) {
->  		dev_err(phy->dev, "failed to get rx1_symbol_clk clock\n");
->  		return PTR_ERR(phy->rx1_symbol_clk);
->  	}
-> --
-> 2.27.0
+Regards,
+Markus
