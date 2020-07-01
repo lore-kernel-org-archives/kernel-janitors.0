@@ -1,32 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 15 Jul 2020 10:40:15 +0000
-Subject: Re: [PATCH] iwlegacy: remove redundant initialization of variable tid
-Message-Id: <20200715104015.4BE75C43391@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Jul 2020 13:52:21 +0000
+Subject: [PATCH] iwlegacy: 4965: remove redundant initialization of variable tid
+Message-Id: <20200701135221.549700-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200701135221.549700-1-colin.king@canonical.com>
-In-Reply-To: <20200701135221.549700-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <stf_xl@wp.pl>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <stf_xl@wp.pl>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable tid is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The variable tid is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlegacy/4965-rs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ddfa943f246a iwlegacy: remove redundant initialization of variable tid
-
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-rs.c b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+index 0a02d8aca320..1f196665d21f 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+@@ -1749,7 +1749,7 @@ il4965_rs_rate_scale_perform(struct il_priv *il, struct sk_buff *skb,
+ 	u8 done_search = 0;
+ 	u16 high_low;
+ 	s32 sr;
+-	u8 tid = MAX_TID_COUNT;
++	u8 tid;
+ 	struct il_tid_data *tid_data;
+ 
+ 	D_RATE("rate scale calculate new rate for skb\n");
 -- 
-https://patchwork.kernel.org/patch/11636467/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
