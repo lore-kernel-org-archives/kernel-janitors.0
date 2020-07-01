@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 01 Jul 2020 15:32:06 +0000
+Date: Wed, 01 Jul 2020 17:32:16 +0000
 Subject: Re: [v2] Documentation: Coccinelle: fix typos and command example
-Message-Id: <f4a8c007-f572-aee1-c0a0-9f1d97be8ace@web.de>
+Message-Id: <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
@@ -16,22 +16,18 @@ References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <30b722ca-1bd8-2b96-ca41-1e9bc7212b66@infradead.org>
 In-Reply-To: <30b722ca-1bd8-2b96-ca41-1e9bc7212b66@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Masahiro Yamada <yamada.masahiro@socionext.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Masahiro Yamada <masahiroy@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 
->> Do we stumble on a target conflict according to a specific technical detail?
->>
->> How do you think about to compare source code analysis results
->> from programs like “sparse” and “spatch” (by the mentioned make command)?
->
 > None of that has anything to do with the current patch.
 
-Both analysis tools can (and should be) be invoked according to
-the command parameter “CHECK”.
-I hope that the relationship to the compilation of a single source file
-will be clarified better.
+Did you test the specified make command for the display
+of expected data processing results?
+
+How much do you distinguish desired effects according to
+the specification of file extensions for such build commands?
 
 Regards,
 Markus
