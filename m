@@ -1,27 +1,37 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 07 Jul 2020 00:38:38 +0000
-Subject: Re: [PATCH] input: elantech: remove redundant assignments to variable error
-Message-Id: <20200707003838.GA3273837@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Jul 2020 13:41:54 +0000
+Subject: [PATCH] drm/virtgpu: remove redundant assignments to width and height
+Message-Id: <20200701134154.549112-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603140431.131347-1-colin.king@canonical.com>
-In-Reply-To: <20200603140431.131347-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 03:04:31PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable error is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+Variables width and height are being assigned values that are never
+read. The assignments are redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_display.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index f3ce49c5a34c..bf80d8c23da7 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -165,8 +165,6 @@ static int virtio_gpu_conn_get_modes(struct drm_connector *connector)
+ 	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+ 
+ 	if (width = 0 || height = 0) {
+-		width = XRES_DEF;
+-		height = YRES_DEF;
+ 		drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+ 	} else {
+ 		DRM_DEBUG("add mode: %dx%d\n", width, height);
 -- 
-Dmitry
+2.27.0
