@@ -1,59 +1,38 @@
-From: Michael Tretter <m.tretter@pengutronix.de>
-Date: Wed, 22 Jul 2020 13:16:31 +0000
-Subject: Re: [PATCH][next][V2] media: allegro: fix potential null dereference on header
-Message-Id: <20200722131631.GA18419@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Jul 2020 15:04:33 +0000
+Subject: [PATCH] net/packet: remove redundant initialization of variable err
+Message-Id: <20200701150433.551656-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200722130903.818041-1-colin.king@canonical.com>
-In-Reply-To: <20200722130903.818041-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 22 Jul 2020 14:09:03 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer header is an alias to msg and msg is being null checked.
-> However, if msg is null then header is also null and this can lead to
-> a null pointer dereference on the assignment type = header->type. Fix
-> this just using header->type after the null check and removing the need
-> for type as it is only used once.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 3de16839669f ("media: allegro: add explicit mail encoding and decoding")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+The variable err is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-> ---
-> 
-> V2: remove need for variable type, as suggested by Michael Tretter
-> 
-> ---
->  drivers/staging/media/allegro-dvt/allegro-mail.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/allegro-dvt/allegro-mail.c b/drivers/staging/media/allegro-dvt/allegro-mail.c
-> index 4ac65de12463..9286d2162377 100644
-> --- a/drivers/staging/media/allegro-dvt/allegro-mail.c
-> +++ b/drivers/staging/media/allegro-dvt/allegro-mail.c
-> @@ -462,13 +462,12 @@ allegro_dec_encode_frame(struct mcu_msg_encode_frame_response *msg, u32 *src)
->  ssize_t allegro_encode_mail(u32 *dst, void *msg)
->  {
->  	const struct mcu_msg_header *header = msg;
-> -	enum mcu_msg_type type = header->type;
->  	ssize_t size;
->  
->  	if (!msg || !dst)
->  		return -EINVAL;
->  
-> -	switch (type) {
-> +	switch (header->type) {
->  	case MCU_MSG_TYPE_INIT:
->  		size = allegro_enc_init(&dst[1], msg);
->  		break;
-> -- 
-> 2.27.0
-> 
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/packet/af_packet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 29bd405adbbd..7b436ebde61d 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4293,7 +4293,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
+ 	struct packet_ring_buffer *rb;
+ 	struct sk_buff_head *rb_queue;
+ 	__be16 num;
+-	int err = -EINVAL;
++	int err;
+ 	/* Added to avoid minimal code churn */
+ 	struct tpacket_req *req = &req_u->req;
+ 
+-- 
+2.27.0
