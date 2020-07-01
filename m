@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 01 Jul 2020 17:32:16 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+Date: Wed, 01 Jul 2020 19:15:13 +0000
 Subject: Re: [v2] Documentation: Coccinelle: fix typos and command example
-Message-Id: <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
+Message-Id: <05f8cb2b-c76e-e2ba-24a8-5676c1792255@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
@@ -14,20 +14,45 @@ References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <34065299-03cf-5b62-db37-0acc9830be72@infradead.org>
  <65db3f88-1ac8-374d-e3fe-2ea0970ffd67@web.de>
  <30b722ca-1bd8-2b96-ca41-1e9bc7212b66@infradead.org>
-In-Reply-To: <30b722ca-1bd8-2b96-ca41-1e9bc7212b66@infradead.org>
+ <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
+In-Reply-To: <bd4033cd-f564-0414-4dbf-4ff58f841648@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, Masahiro Yamada <masahiroy@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-> None of that has anything to do with the current patch.
+On 7/1/20 10:32 AM, Markus Elfring wrote:
+>> None of that has anything to do with the current patch.
+> 
+> Did you test the specified make command for the display
+> of expected data processing results?
 
-Did you test the specified make command for the display
-of expected data processing results?
+Markus, if something doesn't work, just say so, OK?
+Don't go all obtuse on us.
 
-How much do you distinguish desired effects according to
-the specification of file extensions for such build commands?
+> How much do you distinguish desired effects according to
+> the specification of file extensions for such build commands?
 
-Regards,
-Markus
+I don't grok that.
+
+
+@Jon, Julia-
+I plan to submit a v3 without the addition of "path/to/file.c" in 2 places.
+
+
+However, I thought that this:
+  To apply Coccinelle on a file basis, instead of a directory basis, the
+  following command may be used::
+
+    make C=1 CHECK="scripts/coccicheck"
+
+meant that someone could run coccicheck on one source file, but I cannot
+get that to work.
+
+Julia, Markus- can you tell me how to run coccicheck on one source file?
+
+
+Thanks.
+-- 
+~Randy
