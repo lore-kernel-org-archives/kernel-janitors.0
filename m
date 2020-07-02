@@ -1,47 +1,41 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Mon, 06 Jul 2020 14:48:16 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: fix less than zero comparison on unsigned int computation
-Message-Id: <44692d32-d522-43ff-de74-a1faa432a911@broadcom.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 02 Jul 2020 01:55:52 +0000
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'adev'
+Message-Id: <20200702015552.42377-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200706130820.487271-1-colin.king@canonical.com>
-In-Reply-To: <20200706130820.487271-1-colin.king@canonical.com>
+References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch, sumit.semwal@linaro.org, tianci.yin@amd.com, kraxel@redhat.com, Likun.Gao@amd.com, Felix.Kuehling@amd.com, jgg@ziepe.ca, Hawking.Zhang@amd.com
+Cc: YueHaibing <yuehaibing@huawei.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org, linux-media@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 7/6/2020 6:08 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The expressions start_idx - dbg_cnt is evaluated using unsigned int
-> arthithmetic (since these variables are unsigned ints) and hence can
-> never be less than zero, so the less than comparison is never true.
-> Re-write the expression to check for start_idx being less than dbg_cnt.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/scsi/lpfc/lpfc_init.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-> index 7285b0114837..ce5afe7b11d0 100644
-> --- a/drivers/scsi/lpfc/lpfc_init.c
-> +++ b/drivers/scsi/lpfc/lpfc_init.c
-> @@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
->   		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
->   			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
->   		} else {
-> -			if ((start_idx - dbg_cnt) < 0) {
-> +			if (start_idx < dbg_cnt) {
->   				start_idx = DBG_LOG_SZ - (dbg_cnt - start_idx);
->   				temp_idx = 0;
->   			} else {
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_init_mem_type':
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:81:24: warning:
+ variable 'adev' set but not used [-Wunused-but-set-variable]
+  struct amdgpu_device *adev;
+                        ^
 
-Thanks Colin - I was about to send a patch for this. Has this fix and 
-one a couple of lines further down. I will post it shortly.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
--- james
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index bb95627ad2cc..8199702d3354 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -78,10 +78,6 @@
+ static int amdgpu_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
+ 				struct ttm_mem_type_manager *man)
+ {
+-	struct amdgpu_device *adev;
+-
+-	adev = amdgpu_ttm_adev(bdev);
+-
+ 	switch (type) {
+ 	case TTM_PL_SYSTEM:
+ 		/* System memory */
