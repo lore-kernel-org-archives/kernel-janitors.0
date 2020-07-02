@@ -1,7 +1,7 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 02 Jul 2020 06:01:59 +0000
+Date: Thu, 02 Jul 2020 08:22:27 +0000
 Subject: Re: [v2] Documentation: Coccinelle: fix typos and command example
-Message-Id: <33b47421-5966-2b5a-17ec-d55a1169d30b@web.de>
+Message-Id: <0b4bdb33-2b67-bc08-cfc1-0cd82c8551d0@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <c2c1dec0-2bd1-b0e2-1aa4-38d0e954d5ba@web.de>
@@ -20,55 +20,23 @@ References: <0616dd0c-bb86-be2b-3dc6-1c695a92c3ca@infradead.org>
  <alpine.DEB.2.22.394.2007012232510.2540@hadrien>
 In-Reply-To: <alpine.DEB.2.22.394.2007012232510.2540@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@inria.fr>, Randy Dunlap <rdunlap@infradead.org>, Coccinelle <cocci@systeme.lip6.fr>, linux-doc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Gilles Muller <Gilles.Muller@lip6.fr>
 
->>> Julia, Markus- can you tell me how to run coccicheck on one source file?
->>
->> You can choose between two methods.
->>
->> * Use the documented build target with appropriate parameters.
->>   (How many Linux software modules do consist of only a single source file?)
->
-> This is a useless piece of information.  What are "appropriate parameters".
-
-I propose to take another look at details from the discussed software documentation
-for the desired selection of useful settings.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?id=cd77006e01b3198c75fb7819b3d0ff89709539bb#n167
-
-It is mentioned there that the make variable “M” can be used
-to apply Coccinelle to a specific directory.
-
-* Which existing directories will contain a single source file for a while?
-
-* You can create folders on demand with one source file (or equivalent
-  symbolic links), can't you?
-
-
->> * Do you get further ideas from another concrete command example?
->>   https://lore.kernel.org/linux-arm-kernel/5b693ee0-0cb1-7ff3-b562-bac6bcb6aae8@web.de/
->>   https://lkml.org/lkml/2020/6/29/357
->>
 >>   elfring@Sonne:~/Projekte/Linux/next-patched> make J=1 C=1 CHECK='scripts/coccicheck' MODE=context COCCI=~/Projekte/Linux/next-patched/scripts/coccinelle/null/show_pointer_usage_before_null_check-20200701.cocci drivers/usb/mtu3/mtu3_gadget.o
 >
-> This is not what is intended.
+> This is not what is intended.  What is intended has never worked.  The
+> coccicheck script expects that the file name is received on its command
+> line, and that is not the case.
 
-I am curious how corresponding intentions will be adjusted.
+I suggest to take another look at information from the verbose execution variant
+for such a command example.
 
+* Do the generated program calls look more appropriate then?
 
-> What is intended has never worked.
-
-I wonder about this view.
-Did I get inappropriate impressions from the presented test example?
-
-
-> The coccicheck script expects that the file name is received on its command
-> line, and that is not the case.  I have asked the person who wrote the
-> code if he knows how to fix it.
-
-I am also curious how this area might evolve further.
+* Are you still missing any relevant data (or corresponding descriptions)?
 
 Regards,
 Markus
