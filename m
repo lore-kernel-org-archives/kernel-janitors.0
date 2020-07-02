@@ -1,34 +1,54 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 01 Jul 2020 13:04:19 +0000
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Date: Thu, 02 Jul 2020 01:18:25 +0000
 Subject: Re: [PATCH v4 02/14] irqchip/csky-apb-intc: Fix potential resource leaks
-Message-Id: <971c649e-fe07-3771-6fea-f5aaeaf090ad@web.de>
+Message-Id: <c7cc848a-1ce0-e877-aa44-ebafe4b5985c@loongson.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
  <1593569786-11500-3-git-send-email-yangtiezhu@loongson.cn>
  <564ffff9-6043-7191-2458-f425dd8d0c11@web.de>
  <1a0e007a-db94-501b-4ab9-0bb479ec093b@loongson.cn>
-In-Reply-To: <1a0e007a-db94-501b-4ab9-0bb479ec093b@loongson.cn>
+ <971c649e-fe07-3771-6fea-f5aaeaf090ad@web.de>
+In-Reply-To: <971c649e-fe07-3771-6fea-f5aaeaf090ad@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-PiBJZiByZW1vdmUgdGhlIGxvY2FsIHZhcmlhYmxlICJyZXQiLMKgIGl0IHdpbGwgbG9vayBsaWtl
-IHRoaXM6DQrigKYNCj4gKysrIGIvZHJpdmVycy9pcnFjaGlwL2lycS1jc2t5LWFwYi1pbnRjLmMN
-CuKApg0KPiBAQCAtMTE4LDE4ICsxMTYsMjMgQEAgY2tfaW50Y19pbml0X2NvbW0oc3RydWN0IGRl
-dmljZV9ub2RlICpub2RlLCBzdHJ1Y3QgZGV2aWNlX25vZGUgKnBhcmVudCkNCuKApg0KPiAtwqDC
-oMKgwqDCoMKgIHJldCA9IGlycV9hbGxvY19kb21haW5fZ2VuZXJpY19jaGlwcyhyb290X2RvbWFp
-biwgMzIsIDEsDQo+ICvCoMKgwqDCoMKgwqAgaWYgKGlycV9hbGxvY19kb21haW5fZ2VuZXJpY19j
-aGlwcyhyb290X2RvbWFpbiwgMzIsIDEsDQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgImNza3lfaW50YyIsIGhhbmRsZV9sZXZlbF9pcnEsDQo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBJUlFfTk9SRVFVRVNUIHwg
-SVJRX05PUFJPQkUgfCBJUlFfTk9BVVRPRU4sIDAsIDApOw0KPiAtwqDCoMKgwqDCoMKgIGlmIChy
-ZXQpIHsNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIElS
-UV9OT1JFUVVFU1QgfCBJUlFfTk9QUk9CRSB8IElSUV9OT0FVVE9FTiwgMCwgMCkpIHsNCj4gwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByX2VycigiQy1TS1kgSW50YyBpcnFfYWxsb2Nf
-Z2MgZmFpbGVkLlxuIik7DQrigKYNCg0KSSBzdWdnZXN0IHRvIHJlY2hlY2sgdGhlIHBhcmFtZXRl
-ciBhbGlnbm1lbnQgZm9yIHN1Y2ggYSBmdW5jdGlvbiBjYWxsLg0KaHR0cHM6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9j
-dW1lbnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5yc3Q/aWQ9N2MzMGI4NTlhOTQ3NTM1ZjIy
-MTMyNzdlODI3ZDdhYzdkY2ZmOWM4NCNuOTMNCg0KUmVnYXJkcywNCk1hcmt1cw0K
+On 07/01/2020 09:04 PM, Markus Elfring wrote:
+>> If remove the local variable "ret",  it will look like this:
+> …
+>> +++ b/drivers/irqchip/irq-csky-apb-intc.c
+> …
+>> @@ -118,18 +116,23 @@ ck_intc_init_comm(struct device_node *node, struct device_node *parent)
+> …
+>> -       ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
+>> +       if (irq_alloc_domain_generic_chips(root_domain, 32, 1,
+>>                          "csky_intc", handle_level_irq,
+>> -                       IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
+>> -       if (ret) {
+>> +                       IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0)) {
+>>                  pr_err("C-SKY Intc irq_alloc_gc failed.\n");
+> …
+>
+> I suggest to recheck the parameter alignment for such a function call.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id|30b859a947535f2213277e827d7ac7dcff9c84#n93
+
+OK, thank you, like this:
+
+-       ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
+-                       "csky_intc", handle_level_irq,
+-                       IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
+-       if (ret) {
++       if (irq_alloc_domain_generic_chips(root_domain, 32, 1,
++                                          "csky_intc", handle_level_irq,
++                                          IRQ_NOREQUEST | IRQ_NOPROBE | 
+IRQ_NOAUTOEN, 0, 0)) {
+                 pr_err("C-SKY Intc irq_alloc_gc failed.\n");
+-               return -ENOMEM;
++               goto err_domain_remove;
+         }
+
+>
+> Regards,
+> Markus
