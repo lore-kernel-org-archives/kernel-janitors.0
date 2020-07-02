@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 02 Jul 2020 07:19:33 +0000
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Date: Thu, 02 Jul 2020 08:05:39 +0000
 Subject: Re: [PATCH v4 02/14] irqchip/csky-apb-intc: Fix potential resource leaks
-Message-Id: <0467b59f-d3ec-619f-fdc6-eba1a9920fd0@web.de>
+Message-Id: <0726ddc2-6b01-2ac8-d5bf-74c3df36b6ef@loongson.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
  <1593569786-11500-3-git-send-email-yangtiezhu@loongson.cn>
@@ -9,30 +9,42 @@ References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
  <1a0e007a-db94-501b-4ab9-0bb479ec093b@loongson.cn>
  <971c649e-fe07-3771-6fea-f5aaeaf090ad@web.de>
  <c7cc848a-1ce0-e877-aa44-ebafe4b5985c@loongson.cn>
-In-Reply-To: <c7cc848a-1ce0-e877-aa44-ebafe4b5985c@loongson.cn>
+ <41b48aa5-e5b2-0257-8b3d-07e1b86634b4@web.de>
+In-Reply-To: <41b48aa5-e5b2-0257-8b3d-07e1b86634b4@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Pj4+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtY3NreS1hcGItaW50Yy5jDQrigKYNCj4+IEkg
-c3VnZ2VzdCB0byByZWNoZWNrIHRoZSBwYXJhbWV0ZXIgYWxpZ25tZW50IGZvciBzdWNoIGEgZnVu
-Y3Rpb24gY2FsbC4NCj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9jb2Rp
-bmctc3R5bGUucnN0P2lkPTdjMzBiODU5YTk0NzUzNWYyMjEzMjc3ZTgyN2Q3YWM3ZGNmZjljODQj
-bjkzDQo+IA0KPiBPSywgdGhhbmsgeW91LCBsaWtlIHRoaXM6DQo+IA0KPiAtwqDCoMKgwqDCoMKg
-IHJldCA9IGlycV9hbGxvY19kb21haW5fZ2VuZXJpY19jaGlwcyhyb290X2RvbWFpbiwgMzIsIDEs
-DQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiY3NreV9p
-bnRjIiwgaGFuZGxlX2xldmVsX2lycSwNCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIElSUV9OT1JFUVVFU1QgfCBJUlFfTk9QUk9CRSB8IElSUV9OT0FVVE9F
-TiwgMCwgMCk7DQo+IC3CoMKgwqDCoMKgwqAgaWYgKHJldCkgew0KPiArwqDCoMKgwqDCoMKgIGlm
-IChpcnFfYWxsb2NfZG9tYWluX2dlbmVyaWNfY2hpcHMocm9vdF9kb21haW4sIDMyLCAxLA0KPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiY3NreV9pbnRjIiwgaGFuZGxlX2xldmVsX2lycSwN
-Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgSVJRX05PUkVRVUVTVCB8IElSUV9OT1BST0JF
-IHwgSVJRX05PQVVUT0VOLCAwLCAwKSkgew0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgcHJfZXJyKCJDLVNLWSBJbnRjIGlycV9hbGxvY19nYyBmYWlsZWQuXG4iKTsNCuKApg0KDQpX
-b3VsZCB5b3UgbGlrZSB0byB1c2UgYWxzbyBob3Jpem9udGFsIHRhYiBjaGFyYWN0ZXJzIGZvciB0
-aGUgY29ycmVzcG9uZGluZyBpbmRlbnRhdGlvbj8NCg0KUmVnYXJkcywNCk1hcmt1cw0K
+On 07/02/2020 03:19 PM, Markus Elfring wrote:
+>>>> +++ b/drivers/irqchip/irq-csky-apb-intc.c
+> …
+>>> I suggest to recheck the parameter alignment for such a function call.
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id|30b859a947535f2213277e827d7ac7dcff9c84#n93
+>> OK, thank you, like this:
+>>
+>> -       ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
+>> -                       "csky_intc", handle_level_irq,
+>> -                       IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0);
+>> -       if (ret) {
+>> +       if (irq_alloc_domain_generic_chips(root_domain, 32, 1,
+>> +                                          "csky_intc", handle_level_irq,
+>> +                                          IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0)) {
+>>                  pr_err("C-SKY Intc irq_alloc_gc failed.\n");
+> …
+>
+> Would you like to use also horizontal tab characters for the corresponding indentation?
+
+Sorry, I do not quite understanding what you mean, maybe like this?
+
+         if (irq_alloc_domain_generic_chips(root_domain, 32, 1,
+                 "csky_intc", handle_level_irq,
+                 IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN, 0, 0)) {
+                 pr_err("C-SKY Intc irq_alloc_gc failed.\n");
+                 goto err_domain_remove;
+         }
+
+>
+> Regards,
+> Markus
