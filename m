@@ -1,29 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 12 Jul 2020 22:26:10 +0000
-Subject: Re: [PATCH] net: skge: switch from 'pci_' to 'dma_' API
-Message-Id: <20200712.152610.441299757997798699.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Jul 2020 14:22:23 +0000
+Subject: [PATCH][next] xen-netfront: remove redundant assignment to variable 'act'
+Message-Id: <20200702142223.48178-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200711203518.256545-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200711203518.256545-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: mlindner@marvell.com, stephen@networkplumber.org, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, xen-devel@lists.xenproject.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 11 Jul 2020 22:35:18 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GPF_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'skge_up()', GFP_KERNEL can be used because
-> some other memory allocations done a few lines below in 'skge_ring_alloc()'
-> already use this flag.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable act is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-Applied.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 468f3f6f1425..860a0cce346d 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -856,7 +856,7 @@ static u32 xennet_run_xdp(struct netfront_queue *queue, struct page *pdata,
+ {
+ 	struct xdp_frame *xdpf;
+ 	u32 len = rx->status;
+-	u32 act = XDP_PASS;
++	u32 act;
+ 	int err;
+ 
+ 	xdp->data_hard_start = page_address(pdata);
+-- 
+2.27.0
