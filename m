@@ -1,26 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Jul 2020 19:45:15 +0000
-Subject: Re: [PATCH] net/packet: remove redundant initialization of variable err
-Message-Id: <20200701.124515.499720144057095714.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Jul 2020 11:48:35 +0000
+Subject: [PATCH][next] ASoC: Intel: bxt-da7219-max98357a: return -EINVAL on unrecognized speaker amplifier
+Message-Id: <20200702114835.37889-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200701150433.551656-1-colin.king@canonical.com>
-In-Reply-To: <20200701150433.551656-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Cezary Rojewski <cezary.rojewski@intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  1 Jul 2020 16:04:33 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Currently if the ctx->spkamp is not recognized an error message is
+reported but the code continues to set up the device with uninitialized
+variables such as the number of widgets.  Fix this by returning -EINVAL
+for unrecognized speaker amplifier types.
 
-Applied to net-next, thanks.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: e1435a1feb18 ("ASoC: Intel: bxt-da7219-max98357a: support MAX98390 speaker amp")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/intel/boards/bxt_da7219_max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/boards/bxt_da7219_max98357a.c b/sound/soc/intel/boards/bxt_da7219_max98357a.c
+index 4d39253e796b..0c0a717823c4 100644
+--- a/sound/soc/intel/boards/bxt_da7219_max98357a.c
++++ b/sound/soc/intel/boards/bxt_da7219_max98357a.c
+@@ -677,7 +677,7 @@ static int bxt_card_late_probe(struct snd_soc_card *card)
+ 		break;
+ 	default:
+ 		dev_err(card->dev, "Invalid speaker amplifier %d\n", ctx->spkamp);
+-		break;
++		return -EINVAL;
+ 	}
+ 
+ 	err = snd_soc_dapm_new_controls(&card->dapm, widgets, num_widgets);
+-- 
+2.27.0
