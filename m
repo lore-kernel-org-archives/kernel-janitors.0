@@ -1,39 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Jul 2020 11:56:59 +0000
-Subject: [PATCH][next] regulator: fix null pointer check on regmap
-Message-Id: <20200702115659.38208-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 Jul 2020 15:47:07 +0000
+Subject: Re: [PATCH][next] regulator: fix null pointer check on regmap
+Message-Id: <159370481231.5599.12177973052182986447.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200702115659.38208-1-colin.king@canonical.com>
+In-Reply-To: <20200702115659.38208-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Wesley Cheng <wcheng@codeaurora.org>, linux-arm-msm@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Wesley Cheng <wcheng@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm@vger.kernel.org, Colin King <colin.king@canonical.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2 Jul 2020 12:56:59 +0100, Colin King wrote:
+> The null pointer check on regmap that checks for a dev_get_regmap failure
+> is currently returning -ENOENT if the regmap succeeded. Fix this by adding
+> in the missing ! operator.
 
-The null pointer check on regmap that checks for a dev_get_regmap failure
-is currently returning -ENOENT if the regmap succeeded. Fix this by adding
-in the missing ! operator.
+Applied to
 
-Addresses-Coverity: ("Dereference after null check")
-Fixes: 4fe66d5a62fb ("regulator: Add support for QCOM PMIC VBUS booster")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/qcom_usb_vbus-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-diff --git a/drivers/regulator/qcom_usb_vbus-regulator.c b/drivers/regulator/qcom_usb_vbus-regulator.c
-index 342d92373598..8ba947f3585f 100644
---- a/drivers/regulator/qcom_usb_vbus-regulator.c
-+++ b/drivers/regulator/qcom_usb_vbus-regulator.c
-@@ -49,7 +49,7 @@ static int qcom_usb_vbus_regulator_probe(struct platform_device *pdev)
- 	}
- 
- 	regmap = dev_get_regmap(dev->parent, NULL);
--	if (regmap) {
-+	if (!regmap) {
- 		dev_err(dev, "Failed to get regmap\n");
- 		return -ENOENT;
- 	}
--- 
-2.27.0
+Thanks!
+
+[1/1] regulator: fix null pointer check on regmap
+      commit: 94462138f368a5e079d53d578509276e4366d0c1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
