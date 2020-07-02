@@ -1,54 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Jul 2020 11:35:02 +0000
-Subject: [PATCH] md: raid0/linear: fix dereference before null check on pointer mddev
-Message-Id: <20200702113502.37408-1-colin.king@canonical.com>
+From: Guilherme Piccoli <gpiccoli@canonical.com>
+Date: Thu, 02 Jul 2020 14:40:51 +0000
+Subject: Re: [PATCH] md: raid0/linear: fix dereference before null check on pointer mddev
+Message-Id: <CAHD1Q_yy2gbBkd31oOJiJk2TU3K4wTV3gVtjLiQo1FW+e=5ivg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200702113502.37408-1-colin.king@canonical.com>
+In-Reply-To: <20200702113502.37408-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Song Liu <song@kernel.org>, NeilBrown <neilb@suse.de>, "Guilherme G . Piccoli" <gpiccoli@canonical.com>, linux-raid@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Song Liu <song@kernel.org>, NeilBrown <neilb@suse.de>, linux-raid <linux-raid@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Great catch Colin, thanks!
+Feel free to add my:
 
-Pointer mddev is being dereferenced with a test_bit call before mddev
-is being null checked, this may cause a null pointer dereference. Fix
-this by moving the null pointer checks to sanity check mddev before
-it is dereferenced.
+Reviewed-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: 62f7b1989c02 ("md raid0/linear: Mark array as 'broken' and fail BIOs if a member is gone")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/md/md.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 8bb69c61afe0..49452149ac72 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -470,17 +470,18 @@ static blk_qc_t md_submit_bio(struct bio *bio)
- 	struct mddev *mddev = bio->bi_disk->private_data;
- 	unsigned int sectors;
- 
--	if (unlikely(test_bit(MD_BROKEN, &mddev->flags)) && (rw = WRITE)) {
-+	if (mddev = NULL || mddev->pers = NULL) {
- 		bio_io_error(bio);
- 		return BLK_QC_T_NONE;
- 	}
- 
--	blk_queue_split(&bio);
--
--	if (mddev = NULL || mddev->pers = NULL) {
-+	if (unlikely(test_bit(MD_BROKEN, &mddev->flags)) && (rw = WRITE)) {
- 		bio_io_error(bio);
- 		return BLK_QC_T_NONE;
- 	}
-+
-+	blk_queue_split(&bio);
-+
- 	if (mddev->ro = 1 && unlikely(rw = WRITE)) {
- 		if (bio_sectors(bio) != 0)
- 			bio->bi_status = BLK_STS_IOERR;
--- 
-2.27.0
+P.S.  Not sure if it's only me, but the diff is soo much easier to
+read when git is set to use patience diff algorithm:
+https://termbin.com/f8ig
