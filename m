@@ -1,22 +1,26 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Fri, 17 Jul 2020 18:02:49 +0000
-Subject: Re: [PATCH v4 1/2] drivers: provide devm_platform_request_irq()
-Message-Id: <8c7fd5c5-e877-3cb3-8802-34d1b1eda395@web.de>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 03 Jul 2020 04:03:52 +0000
+Subject: Re: [PATCH V2] scsi: eesox: Fix different dev_id between 'request_irq()' and 'free_irq()'
+Message-Id: <159374899165.14731.1540154014107361984.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <26d388f5-be67-b643-c76c-b9fe52f111f7@wanadoo.fr>
+ <20200626040553.944352-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200626040553.944352-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dejin Zheng <zhengdejin5@gmail.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Grygorii Strashko <grygorii.strashko@ti.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: linux@armlinux.org.uk, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jejb@linux.ibm.com
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 
-> v3 -> v4:
-> 	- The patch v3 sent on May 27 may be lost somewhere in the
-> 	  world, so resend it.
+On Fri, 26 Jun 2020 06:05:53 +0200, Christophe JAILLET wrote:
 
-Can previous patch review aspects get any more attention?
+> The dev_id used in 'request_irq()' and 'free_irq()' should match.
+> So use 'info' in both cases.
 
-https://lore.kernel.org/cocci/5dad9b19-ceb5-1606-9f62-7626e5677971@web.de/
-https://lkml.org/lkml/2020/5/27/1326
+Applied to 5.9/scsi-queue, thanks!
 
-Regards,
-Markus
+[1/1] scsi: eesox: Fix different dev_id between request_irq() and free_irq()
+      https://git.kernel.org/mkp/scsi/c/86f2da1112cc
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
