@@ -1,49 +1,46 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Thu, 02 Jul 2020 14:40:49 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 03 Jul 2020 17:03:48 +0000
 Subject: Re: [PATCH][next] ASoC: Intel: bxt-da7219-max98357a: return -EINVAL on unrecognized speaker amplifie
-Message-Id: <d79c5d6b-5bb6-3552-d1a6-bbd40f6c3081@linux.intel.com>
+Message-Id: <159379581380.55795.4909094479360848314.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200702114835.37889-1-colin.king@canonical.com>
 In-Reply-To: <20200702114835.37889-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>, alsa-devel@alsa-project.org
+To: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Jie Yang <yang.jie@linux.intel.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, Colin King <colin.king@canonical.com>, Brent Lu <brent.lu@intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-On 7/2/20 6:48 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
+On Thu, 2 Jul 2020 12:48:35 +0100, Colin King wrote:
 > Currently if the ctx->spkamp is not recognized an error message is
 > reported but the code continues to set up the device with uninitialized
 > variables such as the number of widgets.  Fix this by returning -EINVAL
 > for unrecognized speaker amplifier types.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: e1435a1feb18 ("ASoC: Intel: bxt-da7219-max98357a: support MAX98390 speaker amp")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Sounds good, thanks Colin.
+Applied to
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> ---
->   sound/soc/intel/boards/bxt_da7219_max98357a.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/boards/bxt_da7219_max98357a.c b/sound/soc/intel/boards/bxt_da7219_max98357a.c
-> index 4d39253e796b..0c0a717823c4 100644
-> --- a/sound/soc/intel/boards/bxt_da7219_max98357a.c
-> +++ b/sound/soc/intel/boards/bxt_da7219_max98357a.c
-> @@ -677,7 +677,7 @@ static int bxt_card_late_probe(struct snd_soc_card *card)
->   		break;
->   	default:
->   		dev_err(card->dev, "Invalid speaker amplifier %d\n", ctx->spkamp);
-> -		break;
-> +		return -EINVAL;
->   	}
->   
->   	err = snd_soc_dapm_new_controls(&card->dapm, widgets, num_widgets);
-> 
+Thanks!
+
+[1/1] ASoC: Intel: bxt-da7219-max98357a: return -EINVAL on unrecognized speaker amplifier
+      commit: c950e9fcc79b8fedd3126ede4dcd70add8ea5339
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
