@@ -1,47 +1,52 @@
-From: Bingbu Cao <bingbu.cao@linux.intel.com>
-Date: Mon, 20 Jul 2020 02:17:36 +0000
-Subject: Re: [PATCH] staging: media: ipu3: Replace depracated MSI API.
-Message-Id: <8dc91dd2-b165-bd97-00f7-16c4cb266163@linux.intel.com>
+From: Wolfram Sang <wsa@kernel.org>
+Date: Sat, 04 Jul 2020 06:32:17 +0000
+Subject: Re: [PATCH] i2c: jz4780: remove redundant assignment to variable i
+Message-Id: <20200704063217.GG1041@kunai>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="w/VI3ydZO+RcZ3Ux"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200718133238.GA11982@blackclown>
-In-Reply-To: <20200718133238.GA11982@blackclown>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>, sakari.ailus@linux.intel.com, bingbu.cao@intel.com, tian.shu.qiu@intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20200610125901.1134204-1-colin.king@canonical.com>
+In-Reply-To: <20200610125901.1134204-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Paul Cercueil <paul@crapouillou.net>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Upadhyay,
 
-Thanks for your patch. Please correct the typo in message.
+--w/VI3ydZO+RcZ3Ux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/18/20 9:32 PM, Suraj Upadhyay wrote:
-> Replace depracated psi_enable_msi with pci_alloc_irq_vectors.
-> And as a result modify how the returned value is handled.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/staging/media/ipu3/ipu3.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
-> index ee1bba6bdcac..54690e7442be 100644
-> --- a/drivers/staging/media/ipu3/ipu3.c
-> +++ b/drivers/staging/media/ipu3/ipu3.c
-> @@ -602,9 +602,9 @@ static irqreturn_t imgu_isr(int irq, void *imgu_ptr)
->  static int imgu_pci_config_setup(struct pci_dev *dev)
->  {
->  	u16 pci_command;
-> -	int r = pci_enable_msi(dev);
-> +	int r = pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI);
->  
-> -	if (r) {
-> +	if (r < 0) {
->  		dev_err(&dev->dev, "failed to enable MSI (%d)\n", r);
->  		return r;
->  	}
-> 
+On Wed, Jun 10, 2020 at 01:59:01PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The variable i is being initialized with a value that is
+> never read and it is being updated later with a new value. The
+> initialization is redundant and can be removed.
+>=20
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
--- 
-Best regards,
-Bingbu Cao
+What about 'ret'? Doesn't the same reasoning apply for it?
+
+
+--w/VI3ydZO+RcZ3Ux
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8AInEACgkQFA3kzBSg
+Kbb+Bw/8DjdHpZF7hd2HqBySqH1zWA9Pq7rs0E0odz5AgngsAIREXgm9jq3NpF8q
+tN5W0f8rRuaBOyslXuR/v3FKU9ISAwGroDputlZW/O3yS4yYs6GPHxgiXqetKCq3
+sCB3my5jdtugp0pndjFn36UbzFxKANCxq3I15ZhQ2S3MVXbaKo6DzmBSiodihJY5
+QqG1RaKkLZoLCVlgO80CU6wCaoUOXkXlx4kurNuVSe8/3XhrbmHBylT9w8fMsxFq
+uWljyt1kLMhUlkBBcA9PQmGhwh31fCzWPBsP2T8Ti8oYm82oSqxlC69MLXZYYeEf
+3mIN+HjsVS1t4d2yW4li3UgMj7bBSFc1j1taOYFSxbGkxbGqMkcf6P7FnvNoIVum
+czPIXeA4JkYTsn3XZGM53l/sy+eSUr4/LF01DEqksHBcvTMBGAULlOLTuXWTGE97
+GEnM8aZ5fRqRa3ozV5BGbqDOhoMBvOgVoZR4jAhPVG2F8dat4UfRvu/e7V1dVS5P
+1vs5L/VNDIura6ZHofk5AMKZU2rDl5NQLkSeHlo7b2fhZaRBTn9329mIPm7rOixA
+jEw75Mu926qVeRnWhGRC0m4ADwSqZdsz3DGiR3WPZHY3G5JGQmqFNusfwhhJfOWj
+C+dDbTmVTKNSlAV9nhFuEOpW/GtyZ3PzQeFo0C5krvzglLUWpgs=
+=ZgOV
+-----END PGP SIGNATURE-----
+
+--w/VI3ydZO+RcZ3Ux--
