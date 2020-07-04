@@ -1,38 +1,27 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Thu, 23 Jul 2020 11:36:22 +0000
-Subject: [PATCH -next] phy: qualcomm: fix return value check in qcom_ipq806x_usb_phy_probe()
-Message-Id: <20200723113622.136752-1-weiyongjun1@huawei.com>
+From: Theresa Han <serena@lantermo.it>
+Date: Sat, 04 Jul 2020 18:56:47 +0000
+Subject: =?UTF-8?Q?Ich_gr=C3=BC=C3=9Fe_dich_im_Namen_des_Herrn?=
+Message-Id: <1765726647.4468369.1593889007868@mail.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vinod Koul <vkoul@kernel.org>, Ansuel Smith <ansuelsmth@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+Ich grüße dich im Namen des Herrn
 
-Fixes: ef19b117b834 ("phy: qualcomm: add qcom ipq806x dwc usb phy driver")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-index 71f257b4a7f5..092fd2d9c3f3 100644
---- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-+++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-@@ -505,9 +505,9 @@ static int qcom_ipq806x_usb_phy_probe(struct platform_device *pdev)
- 	size = resource_size(res);
- 	phy_dwc3->base = devm_ioremap(phy_dwc3->dev, res->start, size);
+Ich kann mir nicht vorstellen wie du dich fühlen wirst Sie einen plötzlichen Brief aus einem abgelegenen Land in der fernen Elfenbeinküste erhalten werden und wahrscheinlich von jemandem, mit dem Sie nicht gut verwandt sind. Ich appelliere an Sie, etwas Geduld zu üben und meinen Brief zu lesen Umgang mit Ihnen in dieser wichtigen Transaktion
  
--	if (IS_ERR(phy_dwc3->base)) {
-+	if (!phy_dwc3->base) {
- 		dev_err(phy_dwc3->dev, "failed to map reg\n");
--		return PTR_ERR(phy_dwc3->base);
-+		return -ENOMEM;
- 	}
+Ich bin Frau Theresa Han, 65 Jahre alt, in der Elfenbeinküste, an Krebsleiden leidend. Ich war mit Herrn Johnson Han verheiratet, der bei der Regierung von Elfenbeinküste als Auftragnehmer tätig war, bevor er nach einigen Tagen im Krankenhaus starb
  
- 	phy_dwc3->ref_clk = devm_clk_get(phy_dwc3->dev, "ref");
+Mein verstorbener Ehemann hat die Summe von US$2,5 Millionen (zwei Millionen fünfhunderttausend USD) bei einer Bank in der Elfenbeinküste hinterlegt. Ich habe an Krebs gelitten. Kürzlich sagte mir mein Arzt, dass ich aufgrund der Krebserkrankungen, an denen ich leide, nur noch begrenzte Lebenstage habe. Ich möchte wissen, ob ich Ihnen vertrauen kann, diese Mittel für Wohltätigkeit / Waisenhaus zu verwenden, und 20 Prozent werden für Sie als Entschädigung sein
+ 
+Ich habe diese Entscheidung getroffen, weil ich kein Kind habe, das dieses Geld erben würde, und mein Ehemann Verwandte sind bürgerliche und sehr wohlhabende Personen und ich möchte nicht, dass mein Ehemann hart verdientes Geld missbraucht wird
+ 
+Bitte nehmen Sie Kontakt mit mir auf, damit ich Ihnen weitere Einzelheiten mitteilen kann und jede Verzögerung Ihrer Antwort mir Raum geben wird, eine weitere gute Person für diesen Zweck zu gewinnen
+ 
+Warten auf Ihre dringende Antwort Mit Gott sind alle Dinge möglich
+ 
+Deine Schwester in Christus
+ 
+Frau Theresa Han
