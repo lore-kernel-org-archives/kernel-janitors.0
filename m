@@ -1,22 +1,38 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Tue, 07 Jul 2020 18:56:46 +0000
-Subject: Re: [PATCH] mtd: rawnand: ingenic: cleanup ARRAY_SIZE() vs sizeof() use
-Message-Id: <20200707185646.24105-1-miquel.raynal@bootlin.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 06 Jul 2020 06:14:58 +0000
+Subject: Re: [PATCH v5 03/14] irqchip/csky-mpintc: Fix potential resource leaks
+Message-Id: <3cdb3f12-0862-6985-2236-a724267ead81@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200624132640.GC9972@mwanda>
+References: <1593998365-25910-1-git-send-email-yangtiezhu@loongson.cn>
+ <1593998365-25910-4-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1593998365-25910-4-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Paul Cercueil <paul@crapouillou.net>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Denis Efremov <efremov@linux.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
-On Wed, 2020-06-24 at 13:26:40 UTC, Dan Carpenter wrote:
-> The ARRAY_SIZE() is the number of elements but we want to use sizeof()
-> here for the number of bytes.  Fortunately, they are the same thing
-> because it's an array of u8 so this has no effect on runtime.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> … Thus add jump targets for the completion of the desired
+> exception handling. By the way, do some coding-style cleanups
+> suggested by Markus.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+I propose to split these changes.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=dcb7fd82c75ee2d6e6f9d8cc71c52519ed52e258#n138
 
-Miquel
+Would you like to support easier back-porting of a fix
+besides another bit of possible source code beautification?
+
+
+…
++++ b/drivers/irqchip/irq-csky-mpintc.c
+@@ -241,14 +241,16 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+…
+ 		INTCG_base = ioremap(mfcr("cr<31, 14>"),
+-				     INTCL_SIZE*nr_cpu_ids + INTCG_SIZE);
+…
++				     INTCL_SIZE * nr_cpu_ids + INTCG_SIZE);
+
+Can any macro (or function) be helpful for such a size computation?
+
+Regards,
+Markus
