@@ -1,57 +1,63 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 06 Jul 2020 16:06:36 +0000
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'adev'
-Message-Id: <CADnq5_M35jhfPDCGaYxYBxMcptVJjcXw5qSy-PLTh0Z8vjSFZA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jul 2020 12:12:40 +0000
+Subject: [PATCH][next] bnx2x: fix spelling mistake "occurd" -> "occurred"
+Message-Id: <20200706121240.486132-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200702015552.42377-1-yuehaibing@huawei.com>
-In-Reply-To: <20200702015552.42377-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, "Kuehling, Felix" <Felix.Kuehling@amd.com>, tiancyin <tianci.yin@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Sumit Semwal <sumit.semwal@linaro.org>, "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>, Jason Gunthorpe <jgg@ziepe.ca>, Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Likun Gao <Likun.Gao@amd.com>, linux-media <linux-media@vger.kernel.org>, Christian Koenig <christian.koenig@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
+To: Ariel Elior <aelior@marvell.com>, Sudarsana Kalluru <skalluru@marvell.com>, GR-everest-linux-l2@marvell.com, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 3:25 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_init_mem_type':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:81:24: warning:
->  variable 'adev' set but not used [-Wunused-but-set-variable]
->   struct amdgpu_device *adev;
->                         ^
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-With our current -next tree, this patch is no longer applicable.
+There are spelling mistakes in various literal strings. Fix these.
 
-Alex
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_self_test.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> index bb95627ad2cc..8199702d3354 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> @@ -78,10 +78,6 @@
->  static int amdgpu_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
->                                 struct ttm_mem_type_manager *man)
->  {
-> -       struct amdgpu_device *adev;
-> -
-> -       adev = amdgpu_ttm_adev(bdev);
-> -
->         switch (type) {
->         case TTM_PL_SYSTEM:
->                 /* System memory */
->
->
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_self_test.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_self_test.c
+index 48f63ef2e6ea..3f8bdad3351c 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_self_test.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_self_test.c
+@@ -2218,31 +2218,31 @@ static struct st_record st_database[ST_DB_LINES] = {
+ /*line 352*/{(0x1E), 1, MISC_REG_AEU_SYS_KILL_OCCURRED,
+ 	NA, NA, NA, pneq,
+ 	NA, IDLE_CHK_ERROR,
+-	"MISC: system kill occurd;",
++	"MISC: system kill occurred;",
+ 	{NA, NA, 0, NA, NA, NA} },
+ 
+ /*line 353*/{(0x1E), 1, MISC_REG_AEU_SYS_KILL_STATUS_0,
+ 	NA, NA, NA, pneq,
+ 	NA, IDLE_CHK_ERROR,
+-	"MISC: system kill occurd; status_0 register",
++	"MISC: system kill occurred; status_0 register",
+ 	{NA, NA, 0, NA, NA, NA} },
+ 
+ /*line 354*/{(0x1E), 1, MISC_REG_AEU_SYS_KILL_STATUS_1,
+ 	NA, NA, NA, pneq,
+ 	NA, IDLE_CHK_ERROR,
+-	"MISC: system kill occurd; status_1 register",
++	"MISC: system kill occurred; status_1 register",
+ 	{NA, NA, 0, NA, NA, NA} },
+ 
+ /*line 355*/{(0x1E), 1, MISC_REG_AEU_SYS_KILL_STATUS_2,
+ 	NA, NA, NA, pneq,
+ 	NA, IDLE_CHK_ERROR,
+-	"MISC: system kill occurd; status_2 register",
++	"MISC: system kill occurred; status_2 register",
+ 	{NA, NA, 0, NA, NA, NA} },
+ 
+ /*line 356*/{(0x1E), 1, MISC_REG_AEU_SYS_KILL_STATUS_3,
+ 	NA, NA, NA, pneq,
+ 	NA, IDLE_CHK_ERROR,
+-	"MISC: system kill occurd; status_3 register",
++	"MISC: system kill occurred; status_3 register",
+ 	{NA, NA, 0, NA, NA, NA} },
+ 
+ /*line 357*/{(0x1E), 1, MISC_REG_PCIE_HOT_RESET,
+-- 
+2.27.0
