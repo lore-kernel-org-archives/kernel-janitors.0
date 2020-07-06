@@ -1,26 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 08 Jul 2020 06:06:47 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: fix inconsistent indenting
-Message-Id: <159418828150.5152.17012831289512414220.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jul 2020 16:30:31 +0000
+Subject: [PATCH] mmc: dw_mmc-exynos: remove redundant initialization of variable 'found'
+Message-Id: <20200706163031.503431-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200707150018.823350-1-colin.king@canonical.com>
-In-Reply-To: <20200707150018.823350-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, linux-scsi@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>, Colin King <colin.king@canonical.com>, James Smart <james.smart@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 7 Jul 2020 16:00:18 +0100, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Fix smatch warning:
-> drivers/scsi/lpfc/lpfc_sli.c:15156 lpfc_cq_poll_hdler() warn: inconsistent
-> indenting
+The variable 'found' is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Applied to 5.9/scsi-queue, thanks!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] scsi: lpfc: Fix inconsistent indenting
-      https://git.kernel.org/mkp/scsi/c/26e0b9aa3578
-
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 5e3d95b63676..99b900008a03 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -472,7 +472,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+ 	struct dw_mci_exynos_priv_data *priv = host->priv;
+ 	struct mmc_host *mmc = slot->mmc;
+ 	u8 start_smpl, smpl, candiates = 0;
+-	s8 found = -1;
++	s8 found;
+ 	int ret = 0;
+ 
+ 	start_smpl = dw_mci_exynos_get_clksmpl(host);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
