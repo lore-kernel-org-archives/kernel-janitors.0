@@ -1,32 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 17 Jul 2020 19:53:14 +0000
-Subject: Re: [PATCH] net: sun: cassini: switch from 'pci_' to 'dma_' API
-Message-Id: <20200717.125314.601518083747025983.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jul 2020 13:20:17 +0000
+Subject: [PATCH][next] staging: wfx: fix uninitialized variable bytes_done
+Message-Id: <20200706132017.487627-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200716190358.318180-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200716190358.318180-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, hkallweit1@gmail.com, jgg@ziepe.ca, chao@kernel.org, wu000273@umn.edu, weiyongjun1@huawei.com, yuehaibing@huawei.com, vaibhavgupta40@gmail.com, jonathan.lemon@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 16 Jul 2020 21:03:58 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'cas_tx_tiny_alloc()', GFP_KERNEL can be used
-> because a few lines below in its only caller, 'cas_alloc_rxds()', is also
-> called. This function makes an explicit use of GFP_KERNEL.
-> 
-> When memory is allocated in 'cas_init_one()', GFP_KERNEL can be used
-> because it is a probe function and no lock is acquired.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable bytes_done is not initialized and hence the first
+FIFO size check on bytes_done may be breaking prematurely from
+the loop if bytes_done contains a large bogus uninitialized value.
+Fix this by initializing bytes_done to zero.
 
-Applied, thank you.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: a9408ad79ff3 ("staging: wfx: load the firmware faster")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wfx/fwio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wfx/fwio.c b/drivers/staging/wfx/fwio.c
+index d9a886f3e64b..206c6cf6511c 100644
+--- a/drivers/staging/wfx/fwio.c
++++ b/drivers/staging/wfx/fwio.c
+@@ -177,7 +177,7 @@ static int wait_ncp_status(struct wfx_dev *wdev, u32 status)
+ static int upload_firmware(struct wfx_dev *wdev, const u8 *data, size_t len)
+ {
+ 	int ret;
+-	u32 offs, bytes_done;
++	u32 offs, bytes_done = 0;
+ 	ktime_t now, start;
+ 
+ 	if (len % DNLD_BLOCK_SIZE) {
+-- 
+2.27.0
