@@ -1,33 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 12 Jul 2020 22:26:20 +0000
-Subject: Re: [PATCH] net: sky2: switch from 'pci_' to 'dma_' API
-Message-Id: <20200712.152620.1377283252235621441.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jul 2020 13:08:20 +0000
+Subject: [PATCH][next] scsi: lpfc: fix less than zero comparison on unsigned int computation
+Message-Id: <20200706130820.487271-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200711204944.259152-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200711204944.259152-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: mlindner@marvell.com, stephen@networkplumber.org, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 11 Jul 2020 22:49:44 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GPF_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'sky2_alloc_buffers()', GFP_KERNEL can be used
-> because some other memory allocations in the same function already use this
-> flag.
-> 
-> When memory is allocated in 'sky2_probe()', GFP_KERNEL can be used
-> because another memory allocations in the same function already uses this
-> flag.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The expressions start_idx - dbg_cnt is evaluated using unsigned int
+arthithmetic (since these variables are unsigned ints) and hence can
+never be less than zero, so the less than comparison is never true.
+Re-write the expression to check for start_idx being less than dbg_cnt.
 
-Applied.
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 7285b0114837..ce5afe7b11d0 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
+ 		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
+ 			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
+ 		} else {
+-			if ((start_idx - dbg_cnt) < 0) {
++			if (start_idx < dbg_cnt) {
+ 				start_idx = DBG_LOG_SZ - (dbg_cnt - start_idx);
+ 				temp_idx = 0;
+ 			} else {
+-- 
+2.27.0
