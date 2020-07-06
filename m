@@ -1,42 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 22 Jul 2020 10:17:01 +0000
-Subject: [PATCH 1/2] ipw2100: Use GFP_KERNEL instead of GFP_ATOMIC in some memory allocation
-Message-Id: <20200722101701.26126-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 06 Jul 2020 07:43:35 +0000
+Subject: Re: [PATCH v5 00/14] irqchip: Fix potential resource leaks
+Message-Id: <097e0670-6725-0733-0cf2-3d3c897c4dee@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1593998365-25910-1-git-send-email-yangtiezhu@loongson.cn>
+ <ab1cd9280c7892a0230945ef5ff0880c@kernel.org>
+In-Reply-To: <ab1cd9280c7892a0230945ef5ff0880c@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: stas.yakovlev@gmail.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Marc Zyngier <maz@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The call chain is:
-   ipw2100_pci_init_one            (the probe function)
-     --> ipw2100_queues_allocate
-       --> ipw2100_tx_allocate
+>> v5:
+>> =C2=A0 - Modify the commit messages and do some code cleanups
+>
+> Please stop replying to Markus Elfring, and give people who actually
+> care a chance to review this code.
 
-No lock is taken in the between.
-So it is safe to use GFP_KERNEL in 'ipw2100_tx_allocate()'.
+You got the usual chances for the desired patch review.
 
-BTW, 'ipw2100_queues_allocate()' also calls 'ipw2100_msg_allocate()' which
-already allocates some memory using GFP_KERNEL.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>                                    Elfring will keep asking you to make
+> absolutely pointless changes until you are blue in the face
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-index 83d2f2acc0de..699deca745a2 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-@@ -4430,7 +4430,7 @@ static int ipw2100_tx_allocate(struct ipw2100_priv *priv)
- 
- 	priv->tx_buffers = kmalloc_array(TX_PENDED_QUEUE_LENGTH,
- 					 sizeof(struct ipw2100_tx_packet),
--					 GFP_ATOMIC);
-+					 GFP_KERNEL);
- 	if (!priv->tx_buffers) {
- 		bd_queue_free(priv, &priv->tx_queue);
- 		return -ENOMEM;
--- 
-2.25.1
+Can the circumstances evolve in ways under which you would admit
+the relevance of (my) suggestions for possible software improvements?
+
+Regards,
+Markus
