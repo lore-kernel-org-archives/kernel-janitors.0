@@ -1,32 +1,38 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Fri, 31 Jul 2020 19:28:21 +0000
-Subject: [PATCH] ALSA: doc: use correct config variable name
-Message-Id: <1596223701-7558-1-git-send-email-Julia.Lawall@inria.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Jul 2020 16:42:40 +0000
+Subject: [PATCH] can: mcba_usb: remove redundant initialization of variable err
+Message-Id: <20200706164240.518623-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-CONFIG_PCM_XRUN_DEBUG should be CONFIG_SND_PCM_XRUN_DEBUG
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The variable err is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- Documentation/sound/designs/procfile.rst |    2 +-
+ drivers/net/can/usb/mcba_usb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/sound/designs/procfile.rst b/Documentation/sound/designs/procfile.rst
-index 29a4668..e9f7e0c 100644
---- a/Documentation/sound/designs/procfile.rst
-+++ b/Documentation/sound/designs/procfile.rst
-@@ -91,7 +91,7 @@ PCM Proc Files
+diff --git a/drivers/net/can/usb/mcba_usb.c b/drivers/net/can/usb/mcba_usb.c
+index 21faa2ec4632..37ab3de43acc 100644
+--- a/drivers/net/can/usb/mcba_usb.c
++++ b/drivers/net/can/usb/mcba_usb.c
+@@ -793,7 +793,7 @@ static int mcba_usb_probe(struct usb_interface *intf,
+ {
+ 	struct net_device *netdev;
+ 	struct mcba_priv *priv;
+-	int err = -ENOMEM;
++	int err;
+ 	struct usb_device *usbdev = interface_to_usbdev(intf);
  
- ``card*/pcm*/xrun_debug``
- 	This file appears when ``CONFIG_SND_DEBUG=y`` and
--	``CONFIG_PCM_XRUN_DEBUG=y``.
-+	``CONFIG_SND_PCM_XRUN_DEBUG=y``.
- 	This shows the status of xrun (= buffer overrun/xrun) and
- 	invalid PCM position debug/check of ALSA PCM middle layer.
- 	It takes an integer value, can be changed by writing to this
+ 	netdev = alloc_candev(sizeof(struct mcba_priv), MCBA_MAX_TX_URBS);
+-- 
+2.27.0
