@@ -1,67 +1,32 @@
-From: <dan.carpenter@oracle.com>
-Date: Mon, 27 Jul 2020 11:17:59 +0000
-Subject: [bug report] cxgb4: add loopback ethtool self-test
-Message-Id: <20200727111759.GA389488@mwanda>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Tue, 07 Jul 2020 14:16:43 +0000
+Subject: =?UTF-8?Q?Re=3a_kbuild=3a_Improve_descriptions_for_the_make_paramet?= =?UTF-8?B?ZXIg4oCcQ+KAnQ==?=
+Message-Id: <f4012005-ade5-5c2f-c9b2-4c93fbc6b835@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e546930c-0022-c0ea-059f-0c5ec782b5ab@web.de>
+In-Reply-To: <e546930c-0022-c0ea-059f-0c5ec782b5ab@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org
+Cc: Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Julia Lawall <julia.lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Masahiro Yamada <masahiroy@kernel.org>, Matthew Wilcox <willy@infradead.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, Randy Dunlap <rdunlap@infradead.org>
 
-Hello Vishal Kulkarni,
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile?id=cdd3bb54332f82295ed90cd0c09c78cd0c0ee822#n201
+>
+> “…
+> # Use 'make C=1' to enable checking of only re-compiled files.
+> # Use 'make C=2' to enable checking of *all* source files, regardless
+> # of whether they are re-compiled or not.
+> …”
 
-The patch 7235ffae3d2c: "cxgb4: add loopback ethtool self-test" from
-Jul 23, 2020, leads to the following static checker warning:
+I got the impression that source files would be checked according to
+such build parameters before a corresponding compilation try.
+How do you think about to adjust descriptions which were added with
+the commit 1c7bafe7206d928eaccbcbd08d868733e0fb7054 ("kbuild: clarify
+"make C=" build option")?
+https://lkml.org/lkml/2006/9/24/176
+https://lore.kernel.org/patchwork/patch/65119/
+https://lore.kernel.org/lkml/115913270694-git-send-email-sam@ravnborg.org/
 
-	drivers/net/ethernet/chelsio/cxgb4/sge.c:2571 cxgb4_selftest_lb_pkt()
-	warn: struct type mismatch 'fw_eth_tx_pkt_wr vs tx_desc'
-
-drivers/net/ethernet/chelsio/cxgb4/sge.c
-  2542  int cxgb4_selftest_lb_pkt(struct net_device *netdev)
-  2543  {
-  2544          struct port_info *pi = netdev_priv(netdev);
-  2545          struct adapter *adap = pi->adapter;
-  2546          struct cxgb4_ethtool_lb_test *lb;
-  2547          int ret, i = 0, pkt_len, credits;
-  2548          struct fw_eth_tx_pkt_wr *wr;
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-  2549          struct cpl_tx_pkt_core *cpl;
-  2550          u32 ctrl0, ndesc, flits;
-  2551          struct sge_eth_txq *q;
-  2552          u8 *sgl;
-  2553  
-  2554          pkt_len = ETH_HLEN + sizeof(CXGB4_SELFTEST_LB_STR);
-  2555  
-  2556          flits = DIV_ROUND_UP(pkt_len + sizeof(struct cpl_tx_pkt) +
-  2557                               sizeof(*wr), sizeof(__be64));
-  2558          ndesc = flits_to_desc(flits);
-  2559  
-  2560          lb = &pi->ethtool_lb;
-  2561          lb->loopback = 1;
-  2562  
-  2563          q = &adap->sge.ethtxq[pi->first_qset];
-  2564  
-  2565          reclaim_completed_tx(adap, &q->q, -1, true);
-  2566          credits = txq_avail(&q->q) - ndesc;
-  2567          if (unlikely(credits < 0))
-  2568                  return -ENOMEM;
-  2569  
-  2570          wr = (void *)&q->q.desc[q->q.pidx];
-  2571          memset(wr, 0, sizeof(struct tx_desc));
-                              ^^^^^^^^^^^^^^^^^^^^^
-Is this type correct?
-
-  2572  
-  2573          wr->op_immdlen = htonl(FW_WR_OP_V(FW_ETH_TX_PKT_WR) |
-  2574                                 FW_WR_IMMDLEN_V(pkt_len +
-  2575                                 sizeof(*cpl)));
-  2576          wr->equiq_to_len16 = htonl(FW_WR_LEN16_V(DIV_ROUND_UP(flits, 2)));
-  2577          wr->r3 = cpu_to_be64(0);
-  2578  
-  2579          cpl = (void *)(wr + 1);
-  2580          sgl = (u8 *)(cpl + 1);
-  2581  
-
-regards,
-dan carpenter
+Regards,
+Markus
