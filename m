@@ -1,38 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Jul 2020 13:56:52 +0000
-Subject: [PATCH] media: gspca: remove redundant initialization of variable status
-Message-Id: <20200701135652.549979-1-colin.king@canonical.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Tue, 07 Jul 2020 18:56:46 +0000
+Subject: Re: [PATCH] mtd: rawnand: ingenic: cleanup ARRAY_SIZE() vs sizeof() use
+Message-Id: <20200707185646.24105-1-miquel.raynal@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20200624132640.GC9972@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Paul Cercueil <paul@crapouillou.net>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Harvey Hunt <harveyhuntnexus@gmail.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 2020-06-24 at 13:26:40 UTC, Dan Carpenter wrote:
+> The ARRAY_SIZE() is the number of elements but we want to use sizeof()
+> here for the number of bytes.  Fortunately, they are the same thing
+> because it's an array of u8 so this has no effect on runtime.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The variable status is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/gspca/sn9c2028.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/gspca/sn9c2028.c b/drivers/media/usb/gspca/sn9c2028.c
-index aff01b753853..dbd1d6da37f1 100644
---- a/drivers/media/usb/gspca/sn9c2028.c
-+++ b/drivers/media/usb/gspca/sn9c2028.c
-@@ -215,7 +215,7 @@ static int sd_config(struct gspca_dev *gspca_dev,
- /* this function is called at probe and resume time */
- static int sd_init(struct gspca_dev *gspca_dev)
- {
--	int status = -1;
-+	int status;
- 
- 	sn9c2028_read1(gspca_dev);
- 	sn9c2028_read1(gspca_dev);
--- 
-2.27.0
+Miquel
