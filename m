@@ -1,75 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Jul 2020 12:39:14 +0000
-Subject: [PATCH] media: mtk-mdp: Fix a refcounting bug on error in init
-Message-Id: <20200722123914.GB220681@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Jul 2020 08:36:16 +0000
+Subject: [PATCH][next] dmaengine: ioat: fix spelling mistake "idel" -> "idle"
+Message-Id: <20200707083616.573910-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Minghsiu Tsai <minghsiu.tsai@mediatek.com>
-Cc: Houlong Wei <houlong.wei@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Leonid Ravich <Leonid.Ravich@emc.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We need to call of_node_put(comp->dev_node); on the error paths in this
-function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c8eb2d7e8202 ("[media] media: Add Mediatek MDP Driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in the module parameter description for
+idle_timeout. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/mtk-mdp/mtk_mdp_comp.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/dma/ioat/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-index 362fff924aef..478ad034ef2a 100644
---- a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-+++ b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-@@ -57,6 +57,7 @@ int mtk_mdp_comp_init(struct device *dev, struct device_node *node,
- {
- 	struct device_node *larb_node;
- 	struct platform_device *larb_pdev;
-+	int ret;
- 	int i;
+diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
+index fd782aee02d9..863e2ddba75b 100644
+--- a/drivers/dma/ioat/dma.c
++++ b/drivers/dma/ioat/dma.c
+@@ -33,7 +33,7 @@ MODULE_PARM_DESC(completion_timeout,
+ int idle_timeout = 2000;
+ module_param(idle_timeout, int, 0644);
+ MODULE_PARM_DESC(idle_timeout,
+-		"set ioat idel timeout [msec] (default 2000 [msec])");
++		"set ioat idle timeout [msec] (default 2000 [msec])");
  
- 	comp->dev_node = of_node_get(node);
-@@ -67,8 +68,8 @@ int mtk_mdp_comp_init(struct device *dev, struct device_node *node,
- 		if (IS_ERR(comp->clk[i])) {
- 			if (PTR_ERR(comp->clk[i]) != -EPROBE_DEFER)
- 				dev_err(dev, "Failed to get clock\n");
--
--			return PTR_ERR(comp->clk[i]);
-+			ret = PTR_ERR(comp->clk[i]);
-+			goto put_dev;
- 		}
- 
- 		/* Only RDMA needs two clocks */
-@@ -87,20 +88,27 @@ int mtk_mdp_comp_init(struct device *dev, struct device_node *node,
- 	if (!larb_node) {
- 		dev_err(dev,
- 			"Missing mediadek,larb phandle in %pOF node\n", node);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_dev;
- 	}
- 
- 	larb_pdev = of_find_device_by_node(larb_node);
- 	if (!larb_pdev) {
- 		dev_warn(dev, "Waiting for larb device %pOF\n", larb_node);
- 		of_node_put(larb_node);
--		return -EPROBE_DEFER;
-+		ret = -EPROBE_DEFER;
-+		goto put_dev;
- 	}
- 	of_node_put(larb_node);
- 
- 	comp->larb_dev = &larb_pdev->dev;
- 
- 	return 0;
-+
-+put_dev:
-+	of_node_put(comp->dev_node);
-+
-+	return ret;
- }
- 
- void mtk_mdp_comp_deinit(struct device *dev, struct mtk_mdp_comp *comp)
+ #define IDLE_TIMEOUT msecs_to_jiffies(idle_timeout)
+ #define COMPLETION_TIMEOUT msecs_to_jiffies(completion_timeout)
 -- 
 2.27.0
