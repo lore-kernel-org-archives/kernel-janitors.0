@@ -1,348 +1,129 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 22 Jul 2020 10:45:34 +0000
-Subject: [PATCH] prism54: switch from 'pci_' to 'dma_' API
-Message-Id: <20200722104534.30760-1-christophe.jaillet@wanadoo.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 08 Jul 2020 17:30:38 +0000
+Subject: [PATCH] Coccinelle: Add a SmPL script for the reconsideration of function calls before return statem
+Message-Id: <de887f9e-8db2-7839-5665-8d38e75aaddc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4b3bb651-5db0-021c-cbea-347eda0e95e0@web.de>
+In-Reply-To: <4b3bb651-5db0-021c-cbea-347eda0e95e0@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mcgrof@kernel.org, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Coccinelle <cocci@systeme.lip6.fr>, kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Julia Lawall <Julia.Lawall@lip6.fr>, Masahiro Yamada <masahiroy@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Jul 2020 19:09:59 +0200
 
-The patch has been generated with the coccinelle script below and has been
-hand modified to replace GFP_ with a correct flag.
-It has been compile tested.
+It can happen that function implementations with the return type “void”
+call a special function at the end of if branches.
+Such calls are occasionally followed by an immediate return.
+The same function can be called at the end of the function implementation.
+Thus it can be helpful to replace previous function calls
+by goto statements.
 
-When memory is allocated in 'islpci_alloc_memory()' (islpci_dev.c),
-GFP_KERNEL can be used because it is only called from a probe function
-and no spin_lock is taken in the between.
+Provide design options for the adjustment of affected source code
+by the means of the semantic patch language (Coccinelle software).
 
-The call chain is:
-   prism54_probe                   (probe function, in 'islpci_hotplug.c')
-      --> islpci_setup             (in 'islpci_dev.c')
-         --> islpci_alloc_memory   (in 'islpci_dev.c')
-
-@@
-@@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@
-@@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@
-@@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-@@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
----
- .../wireless/intersil/prism54/islpci_dev.c    | 30 +++++++++----------
- .../wireless/intersil/prism54/islpci_eth.c    | 24 +++++++--------
- .../intersil/prism54/islpci_hotplug.c         |  2 +-
- .../wireless/intersil/prism54/islpci_mgt.c    | 21 ++++++-------
- 4 files changed, 36 insertions(+), 41 deletions(-)
+ .../misc/goto_last_function_call.cocci        | 89 +++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/goto_last_function_call.cocci
 
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_dev.c b/drivers/net/wireless/intersil/prism54/islpci_dev.c
-index a9bae69222dc..efd64e555bb5 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_dev.c
-+++ b/drivers/net/wireless/intersil/prism54/islpci_dev.c
-@@ -636,10 +636,10 @@ islpci_alloc_memory(islpci_private *priv)
- 	 */
- 
- 	/* perform the allocation */
--	priv->driver_mem_address = pci_alloc_consistent(priv->pdev,
--							HOST_MEM_BLOCK,
--							&priv->
--							device_host_address);
-+	priv->driver_mem_address = dma_alloc_coherent(&priv->pdev->dev,
-+						      HOST_MEM_BLOCK,
-+						      &priv->device_host_address,
-+						      GFP_KERNEL);
- 
- 	if (!priv->driver_mem_address) {
- 		/* error allocating the block of PCI memory */
-@@ -692,11 +692,9 @@ islpci_alloc_memory(islpci_private *priv)
- 
- 		/* map the allocated skb data area to pci */
- 		priv->pci_map_rx_address[counter] -		    pci_map_single(priv->pdev, (void *) skb->data,
--				   MAX_FRAGMENT_SIZE_RX + 2,
--				   PCI_DMA_FROMDEVICE);
--		if (pci_dma_mapping_error(priv->pdev,
--					  priv->pci_map_rx_address[counter])) {
-+		    dma_map_single(&priv->pdev->dev, (void *)skb->data,
-+				   MAX_FRAGMENT_SIZE_RX + 2, DMA_FROM_DEVICE);
-+		if (dma_mapping_error(&priv->pdev->dev, priv->pci_map_rx_address[counter])) {
- 			priv->pci_map_rx_address[counter] = 0;
- 			/* error mapping the buffer to device
- 			   accessible memory address */
-@@ -727,9 +725,9 @@ islpci_free_memory(islpci_private *priv)
- 
- 	/* free consistent DMA area... */
- 	if (priv->driver_mem_address)
--		pci_free_consistent(priv->pdev, HOST_MEM_BLOCK,
--				    priv->driver_mem_address,
--				    priv->device_host_address);
-+		dma_free_coherent(&priv->pdev->dev, HOST_MEM_BLOCK,
-+				  priv->driver_mem_address,
-+				  priv->device_host_address);
- 
- 	/* clear some dangling pointers */
- 	priv->driver_mem_address = NULL;
-@@ -741,8 +739,8 @@ islpci_free_memory(islpci_private *priv)
-         for (counter = 0; counter < ISL38XX_CB_MGMT_QSIZE; counter++) {
- 		struct islpci_membuf *buf = &priv->mgmt_rx[counter];
- 		if (buf->pci_addr)
--			pci_unmap_single(priv->pdev, buf->pci_addr,
--					 buf->size, PCI_DMA_FROMDEVICE);
-+			dma_unmap_single(&priv->pdev->dev, buf->pci_addr,
-+					 buf->size, DMA_FROM_DEVICE);
- 		buf->pci_addr = 0;
- 		kfree(buf->mem);
- 		buf->size = 0;
-@@ -752,10 +750,10 @@ islpci_free_memory(islpci_private *priv)
- 	/* clean up data rx buffers */
- 	for (counter = 0; counter < ISL38XX_CB_RX_QSIZE; counter++) {
- 		if (priv->pci_map_rx_address[counter])
--			pci_unmap_single(priv->pdev,
-+			dma_unmap_single(&priv->pdev->dev,
- 					 priv->pci_map_rx_address[counter],
- 					 MAX_FRAGMENT_SIZE_RX + 2,
--					 PCI_DMA_FROMDEVICE);
-+					 DMA_FROM_DEVICE);
- 		priv->pci_map_rx_address[counter] = 0;
- 
- 		if (priv->data_low_rx[counter])
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_eth.c b/drivers/net/wireless/intersil/prism54/islpci_eth.c
-index 8d680250a281..74dd65716afd 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_eth.c
-+++ b/drivers/net/wireless/intersil/prism54/islpci_eth.c
-@@ -50,9 +50,9 @@ islpci_eth_cleanup_transmit(islpci_private *priv,
- 			      skb, skb->data, skb->len, skb->truesize);
- #endif
- 
--			pci_unmap_single(priv->pdev,
-+			dma_unmap_single(&priv->pdev->dev,
- 					 priv->pci_map_tx_address[index],
--					 skb->len, PCI_DMA_TODEVICE);
-+					 skb->len, DMA_TO_DEVICE);
- 			dev_kfree_skb_irq(skb);
- 			skb = NULL;
- 		}
-@@ -176,10 +176,9 @@ islpci_eth_transmit(struct sk_buff *skb, struct net_device *ndev)
- #endif
- 
- 	/* map the skb buffer to pci memory for DMA operation */
--	pci_map_address = pci_map_single(priv->pdev,
--					 (void *) skb->data, skb->len,
--					 PCI_DMA_TODEVICE);
--	if (pci_dma_mapping_error(priv->pdev, pci_map_address)) {
-+	pci_map_address = dma_map_single(&priv->pdev->dev, (void *)skb->data,
-+					 skb->len, DMA_TO_DEVICE);
-+	if (dma_mapping_error(&priv->pdev->dev, pci_map_address)) {
- 		printk(KERN_WARNING "%s: cannot map buffer to PCI\n",
- 		       ndev->name);
- 		goto drop_free;
-@@ -323,9 +322,8 @@ islpci_eth_receive(islpci_private *priv)
- #endif
- 
- 	/* delete the streaming DMA mapping before processing the skb */
--	pci_unmap_single(priv->pdev,
--			 priv->pci_map_rx_address[index],
--			 MAX_FRAGMENT_SIZE_RX + 2, PCI_DMA_FROMDEVICE);
-+	dma_unmap_single(&priv->pdev->dev, priv->pci_map_rx_address[index],
-+			 MAX_FRAGMENT_SIZE_RX + 2, DMA_FROM_DEVICE);
- 
- 	/* update the skb structure and align the buffer */
- 	skb_put(skb, size);
-@@ -431,11 +429,9 @@ islpci_eth_receive(islpci_private *priv)
- 
- 		/* set the streaming DMA mapping for proper PCI bus operation */
- 		priv->pci_map_rx_address[index] -		    pci_map_single(priv->pdev, (void *) skb->data,
--				   MAX_FRAGMENT_SIZE_RX + 2,
--				   PCI_DMA_FROMDEVICE);
--		if (pci_dma_mapping_error(priv->pdev,
--					  priv->pci_map_rx_address[index])) {
-+		    dma_map_single(&priv->pdev->dev, (void *)skb->data,
-+				   MAX_FRAGMENT_SIZE_RX + 2, DMA_FROM_DEVICE);
-+		if (dma_mapping_error(&priv->pdev->dev, priv->pci_map_rx_address[index])) {
- 			/* error mapping the buffer to device accessible memory address */
- 			DEBUG(SHOW_ERROR_MESSAGES,
- 			      "Error mapping DMA address\n");
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_hotplug.c b/drivers/net/wireless/intersil/prism54/islpci_hotplug.c
-index 20291c0d962d..a8835c4507d9 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_hotplug.c
-+++ b/drivers/net/wireless/intersil/prism54/islpci_hotplug.c
-@@ -106,7 +106,7 @@ prism54_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	}
- 
- 	/* enable PCI DMA */
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
-+	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) {
- 		printk(KERN_ERR "%s: 32-bit PCI DMA not supported", DRV_NAME);
- 		goto do_pci_disable_device;
-         }
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_mgt.c b/drivers/net/wireless/intersil/prism54/islpci_mgt.c
-index e336eb106429..0c7fb76c7d1c 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_mgt.c
-+++ b/drivers/net/wireless/intersil/prism54/islpci_mgt.c
-@@ -115,10 +115,11 @@ islpci_mgmt_rx_fill(struct net_device *ndev)
- 			buf->size = MGMT_FRAME_SIZE;
- 		}
- 		if (buf->pci_addr = 0) {
--			buf->pci_addr = pci_map_single(priv->pdev, buf->mem,
-+			buf->pci_addr = dma_map_single(&priv->pdev->dev,
-+						       buf->mem,
- 						       MGMT_FRAME_SIZE,
--						       PCI_DMA_FROMDEVICE);
--			if (pci_dma_mapping_error(priv->pdev, buf->pci_addr)) {
-+						       DMA_FROM_DEVICE);
-+			if (dma_mapping_error(&priv->pdev->dev, buf->pci_addr)) {
- 				printk(KERN_WARNING
- 				       "Failed to make memory DMA'able.\n");
- 				return -ENOMEM;
-@@ -203,9 +204,9 @@ islpci_mgt_transmit(struct net_device *ndev, int operation, unsigned long oid,
- #endif
- 
- 	err = -ENOMEM;
--	buf.pci_addr = pci_map_single(priv->pdev, buf.mem, frag_len,
--				      PCI_DMA_TODEVICE);
--	if (pci_dma_mapping_error(priv->pdev, buf.pci_addr)) {
-+	buf.pci_addr = dma_map_single(&priv->pdev->dev, buf.mem, frag_len,
-+				      DMA_TO_DEVICE);
-+	if (dma_mapping_error(&priv->pdev->dev, buf.pci_addr)) {
- 		printk(KERN_WARNING "%s: cannot map PCI memory for mgmt\n",
- 		       ndev->name);
- 		goto error_free;
-@@ -302,8 +303,8 @@ islpci_mgt_receive(struct net_device *ndev)
- 		}
- 
- 		/* Ensure the results of device DMA are visible to the CPU. */
--		pci_dma_sync_single_for_cpu(priv->pdev, buf->pci_addr,
--					    buf->size, PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_cpu(&priv->pdev->dev, buf->pci_addr,
-+					buf->size, DMA_FROM_DEVICE);
- 
- 		/* Perform endianess conversion for PIMFOR header in-place. */
- 		header = pimfor_decode_header(buf->mem, frag_len);
-@@ -414,8 +415,8 @@ islpci_mgt_cleanup_transmit(struct net_device *ndev)
- 	for (; priv->index_mgmt_tx < curr_frag; priv->index_mgmt_tx++) {
- 		int index = priv->index_mgmt_tx % ISL38XX_CB_MGMT_QSIZE;
- 		struct islpci_membuf *buf = &priv->mgmt_tx[index];
--		pci_unmap_single(priv->pdev, buf->pci_addr, buf->size,
--				 PCI_DMA_TODEVICE);
-+		dma_unmap_single(&priv->pdev->dev, buf->pci_addr, buf->size,
-+				 DMA_TO_DEVICE);
- 		buf->pci_addr = 0;
- 		kfree(buf->mem);
- 		buf->mem = NULL;
--- 
-2.25.1
+diff --git a/scripts/coccinelle/misc/goto_last_function_call.cocci b/scripts/coccinelle/misc/goto_last_function_call.cocci
+new file mode 100644
+index 000000000000..92dcf3626c48
+--- /dev/null
++++ b/scripts/coccinelle/misc/goto_last_function_call.cocci
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++/// Reconsider function calls before a return statement in if branches.
++//
++// Keywords: duplicate function calls common exception handling
++// Confidence: Low
++// See also:
++// Clarification request “Adding labels without indentation before specific statements?”
++// https://lore.kernel.org/cocci/4b3bb651-5db0-021c-cbea-347eda0e95e0@web.de/
++
++virtual context, patch, report, org
++
++@display depends on context@
++expression action;
++expression list el;
++identifier work;
++@@
++ void work(...)
++ {
++ <+...
++ if (...)
++ {
++    ...
++*   action(el);
++*   return;
++ }
++ ...+>
++*action(el);
++ }
++
++@replacement depends on patch@
++expression action, condition;
++expression list el;
++identifier work;
++@@
++ void work(...)
++ {
++ <+...
++(
++-if (condition)
++-{
++-   action(el);
++-   return;
++-}
+++if (condition)
+++   goto last_action;
++|
++ if (...)
++ {
++    ...
++-   action(el);
++-   return;
+++   goto last_action;
++ }
++)
++ ...+>
+++last_action:
++ action(el);
++ }
++
++@or depends on org || report@
++expression action;
++expression list el;
++identifier work;
++position p;
++@@
++ void work(...)
++ {
++ <+...
++ if (...)
++ {
++    ...
++    action(el);
++    return;
++ }
++ ...+>
++ action@p(el);
++ }
++
++@script:python to_do depends on org@
++p << or.p;
++@@
++coccilib.org.print_todo(p[0],
++                        "WARNING: The same function was called at the end of an if branch before. Would you like to avoid duplicate function calls?")
++
++@script:python reporting depends on report@
++p << or.p;
++@@
++coccilib.report.print_report(p[0],
++                             "WARNING: The same function was called at the end of an if branch before. Would you like to avoid duplicate function calls?")
+--
+2.27.0
