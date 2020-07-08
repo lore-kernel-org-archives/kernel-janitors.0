@@ -1,32 +1,61 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Fri, 31 Jul 2020 19:35:29 +0000
-Subject: [PATCH] ALSA: docs: fix typo
-Message-Id: <1596224129-7699-1-git-send-email-Julia.Lawall@inria.fr>
+From: <dan.carpenter@oracle.com>
+Date: Wed, 08 Jul 2020 11:44:53 +0000
+Subject: [bug report] cpufreq: intel_pstate: Allow raw energy performance preference value
+Message-Id: <20200708114453.GA11282@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: kernel-janitors@vger.kernel.org
 
-GFP_KRENEL -> GFP_KERNEL
+Hello Srinivas Pandruvada,
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The patch f473bf398bf1: "cpufreq: intel_pstate: Allow raw energy
+performance preference value" from Jun 26, 2020, leads to the
+following static checker warning:
 
----
- Documentation/sound/kernel-api/writing-an-alsa-driver.rst |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	drivers/cpufreq/intel_pstate.c:731 store_energy_performance_preference()
+	error: uninitialized symbol 'epp'.
 
-diff --git a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
-index fa49688..aa9d5ab 100644
---- a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
-+++ b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
-@@ -3579,7 +3579,7 @@ dependent on the bus. For normal devices, pass the device pointer
- ``SNDRV_DMA_TYPE_DEV`` type. For the continuous buffer unrelated to the
- bus can be pre-allocated with ``SNDRV_DMA_TYPE_CONTINUOUS`` type.
- You can pass NULL to the device pointer in that case, which is the
--default mode implying to allocate with ``GFP_KRENEL`` flag.
-+default mode implying to allocate with ``GFP_KERNEL`` flag.
- If you need a different GFP flag, you can pass it by encoding the flag
- into the device pointer via a special macro
- :c:func:`snd_dma_continuous_data()`.
+drivers/cpufreq/intel_pstate.c
+   706  static ssize_t store_energy_performance_preference(
+   707                  struct cpufreq_policy *policy, const char *buf, size_t count)
+   708  {
+   709          struct cpudata *cpu_data = all_cpu_data[policy->cpu];
+   710          char str_preference[21];
+   711          bool raw = false;
+   712          u32 epp;
+                    ^^^
+   713          int ret;
+   714  
+   715          ret = sscanf(buf, "%20s", str_preference);
+   716          if (ret != 1)
+   717                  return -EINVAL;
+   718  
+   719          ret = match_string(energy_perf_strings, -1, str_preference);
+   720          if (ret < 0) {
+   721                  if (!boot_cpu_has(X86_FEATURE_HWP_EPP))
+   722                          return ret;
+   723  
+   724                  ret = kstrtouint(buf, 10, &epp);
+                                                  ^^^^
+
+   725                  if (ret)
+   726                          return ret;
+   727  
+   728                  raw = true;
+   729          }
+   730  
+   731          ret = intel_pstate_set_energy_pref_index(cpu_data, ret, raw, epp);
+                                                                             ^^^
+This will cause a KASan warning at runtime as well as a static checker
+warning.
+
+   732          if (ret)
+   733                  return ret;
+   734  
+   735          return count;
+   736  }
+
+regards,
+dan carpenter
