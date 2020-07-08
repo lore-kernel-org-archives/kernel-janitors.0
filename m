@@ -1,36 +1,42 @@
-From: Pkshih <pkshih@realtek.com>
-Date: Fri, 24 Jul 2020 05:14:25 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: remove redundant initialization of variables ant_num and single_ant_pat
-Message-Id: <1595567665.24550.0.camel@realtek.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 Jul 2020 18:37:23 +0000
+Subject: [PATCH][next] net: systemport: fix double shift of a vlan_tci by VLAN_PRIO_SHIFT
+Message-Id: <20200708183723.1212652-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200723163214.995226-1-colin.king@canonical.com>
-In-Reply-To: <20200723163214.995226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDIwLTA3LTIzIGF0IDE3OjMyICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
-IHZhcmlhYmxlcyBhbnRfbnVtIGFuZCBzaW5nbGVfYW50X3BhdGggYXJlIGJlaW5nIGluaXRpYWxp
-emVkIHdpdGggYQ0KPiB2YWx1ZSB0aGF0IGlzIG5ldmVyIHJlYWQgYW5kIGFyZSBiZWluZyB1cGRh
-dGVkIGxhdGVyIHdpdGggYSBuZXcgdmFsdWUuDQo+IFRoZSBpbml0aWFsaXphdGlvbnMgYXJlIHJl
-ZHVuZGFudCBhbmQgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgi
-VW51c2VkIHZhbHVlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtp
-bmdAY2Fub25pY2FsLmNvbT4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0
-ZWsuY29tPg0KDQpUaGFuayB5b3UNCg0KPiAtLS0NCj4gwqBkcml2ZXJzL25ldC93aXJlbGVzcy9y
-ZWFsdGVrL3J0bHdpZmkvYnRjb2V4aXN0L2hhbGJ0Y291dHNyYy5jIHwgMiArLQ0KPiDCoDEgZmls
-ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9idGNvZXhpc3QvaGFsYnRj
-b3V0c3JjLmMNCj4gYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4
-aXN0L2hhbGJ0Y291dHNyYy5jDQo+IGluZGV4IGE0OTQwYTM4NDJkZS4uNDk0OWY5OTg0NGI1IDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4
-aXN0L2hhbGJ0Y291dHNyYy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
-cnRsd2lmaS9idGNvZXhpc3QvaGFsYnRjb3V0c3JjLmMNCj4gQEAgLTEzMTgsNyArMTMxOCw3IEBA
-IGJvb2wgZXhoYWxidGNfYmluZF9idF9jb2V4X3dpdGhhZGFwdGVyKHZvaWQgKmFkYXB0ZXIpDQo+
-IMKgew0KPiDCoAlzdHJ1Y3QgcnRsX3ByaXYgKnJ0bHByaXYgPSBhZGFwdGVyOw0KPiDCoAlzdHJ1
-Y3QgYnRjX2NvZXhpc3QgKmJ0Y29leGlzdCA9IHJ0bF9idGNfY29leGlzdChydGxwcml2KTsNCj4g
-LQl1OCBhbnRfbnVtID0gMiwgY2hpcF90eXBlLCBzaW5nbGVfYW50X3BhdGggPSAwOw0KPiArCXU4
-IGFudF9udW0sIGNoaXBfdHlwZSwgc2luZ2xlX2FudF9wYXRoOw0KPiDCoA0KPiDCoAlpZiAoIWJ0
-Y29leGlzdCkNCj4gwqAJCXJldHVybiBmYWxzZTsNCg0KDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently the u16 skb->vlan_tci is being right  shifted twice by
+VLAN_PRIO_SHIFT, once in the macro skb_vlan_tag_get_pri and explicitly
+by VLAN_PRIO_SHIFT afterwards. The combined shift amount is larger than
+the u16 so the end result is always zero.  Remove the second explicit
+shift as this is extraneous.
+
+Fixes: 6e9fdb60d362 ("net: systemport: Add support for VLAN transmit acceleration")
+Addresses-Coverity: ("Operands don't affect result")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/bcmsysport.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index b470551bae4f..dfed9ade6950 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1250,8 +1250,7 @@ static struct sk_buff *bcm_sysport_insert_tsb(struct sk_buff *skb,
+ 	memset(tsb, 0, sizeof(*tsb));
+ 
+ 	if (skb_vlan_tag_present(skb)) {
+-		tsb->pcp_dei_vid = (skb_vlan_tag_get_prio(skb) >>
+-				    VLAN_PRIO_SHIFT & PCP_DEI_MASK);
++		tsb->pcp_dei_vid = skb_vlan_tag_get_prio(skb) & PCP_DEI_MASK;
+ 		tsb->pcp_dei_vid |= (u32)skb_vlan_tag_get_id(skb) << VID_SHIFT;
+ 	}
+ 
+-- 
+2.27.0
