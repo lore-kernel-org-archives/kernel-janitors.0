@@ -1,18 +1,36 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 15 Jul 2020 18:14:51 +0000
-Subject: Re: [PATCH] netfilter: nf_tables: Fix a use after free in nft_immediate_destroy()
-Message-Id: <20200715181451.GA17884@salvia>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2020 10:49:19 +0000
+Subject: [PATCH] scsi: lpfc: Fix a condition in lpfc_dmp_dbg()
+Message-Id: <20200709104919.GD20875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714105622.GB294318@mwanda>
-In-Reply-To: <20200714105622.GB294318@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 01:56:22PM +0300, Dan Carpenter wrote:
-> The nf_tables_rule_release() function frees "rule" so we have to use
-> the _safe() version of list_for_each_entry().
+These variables are unsigned so the result of the subtraction is also
+unsigned and thus can't be negative.  Change it to a comparison and
+remove the subtraction.
 
-Applied, thanks.
+Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/lpfc/lpfc_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 7285b0114837..2bb2c96e7784 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
+ 		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
+ 			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
+ 		} else {
+-			if ((start_idx - dbg_cnt) < 0) {
++			if (start_idx > dbg_cnt) {
+ 				start_idx = DBG_LOG_SZ - (dbg_cnt - start_idx);
+ 				temp_idx = 0;
+ 			} else {
+-- 
+2.27.0
