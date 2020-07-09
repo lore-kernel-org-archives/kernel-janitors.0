@@ -1,19 +1,19 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Wed, 08 Jul 2020 20:32:38 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 09 Jul 2020 20:07:17 +0000
 Subject: Re: [PATCH][next] net: systemport: fix double shift of a vlan_tci by VLAN_PRIO_SHIFT
-Message-Id: <3e581bfd-7447-881f-1e0b-9ab1ccd4496d@gmail.com>
+Message-Id: <20200709.130717.943617001507092696.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200708183723.1212652-1-colin.king@canonical.com>
 In-Reply-To: <20200708183723.1212652-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: f.fainelli@gmail.com, kuba@kernel.org, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin King <colin.king@canonical.com>
+Date: Wed,  8 Jul 2020 19:37:23 +0100
 
-
-On 7/8/2020 11:37 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Currently the u16 skb->vlan_tci is being right  shifted twice by
@@ -26,9 +26,4 @@ On 7/8/2020 11:37 AM, Colin King wrote:
 > Addresses-Coverity: ("Operands don't affect result")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-The change was forward ported from a 4.9 kernel where the shift is not
-done, I should have checked the helper usage, thanks!
--- 
-Florian
+Applied to net-next, thanks.
