@@ -1,41 +1,70 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Jul 2020 17:03:55 +0000
-Subject: [PATCH] fs/ufs: avoid potential u32 multiplication overflow
-Message-Id: <20200715170355.1081713-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2020 10:47:38 +0000
+Subject: [PATCH] mt76: mt7915: potential array overflow in mt7915_mcu_tx_rate_report()
+Message-Id: <20200709104738.GB20875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Dushistov <dushistov@mail.ru>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, YF Luo <yf.luo@mediatek.com>, Chih-Min Chen <chih-min.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yiwei Chung <yiwei.chung@mediatek.com>, linux-mediatek@lists.infradead.org, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Shayne Chen <shayne.chen@mediatek.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Smatch complains that this comes from the "wcidx" value comes from the
+network and thus cannot be trusted.  In this case, it actually seems to
+come from the firmware.  If your wireless firmware is malicious then
+probably no amount of carefulness can protect you.
 
-The 64 bit ino is being compared to the product of two u32
-values, however, the multiplication is being performed using
-a 32 bit multiply so there is a potential of an overflow. To
-be fully safe, cast uspi->s_ncg to a u64 to ensure a 64 bit
-multiplication occurs to avoid any chance of overflow.
+On the other hand, these days we still try to check the firmware as much
+as possible.  Verifying that the index is within bounds will silence a
+static checker warning.  And it's harmless and a good exercise in kernel
+hardening.  So I suggest that we do add a bounds check.
 
-Addresses-Coverity: ("Unintentional integer overflow")
-Fixes: f3e2a520f5fb ("ufs: NFS support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ufs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Normally for networking patches, when we change the declaration block,
+we must update the order to make sure it's in reverse Christmas tree
+format.  This code wasn't strictly in reverse Christmas tree order
+originally because we needed to initialize "wcidx" before we could
+initialize "wcid" etc.  Re-ordering the initializers makes the diff
+slightly larger than people might expect but it's a required part of
+networking patches.
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 1da0be667409..e3b69fb280e8 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -101,7 +101,7 @@ static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 gene
- 	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
- 	struct inode *inode;
+ .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+index c8c12c740c1a..8fb8255650a7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+@@ -505,15 +505,22 @@ static void
+ mt7915_mcu_tx_rate_report(struct mt7915_dev *dev, struct sk_buff *skb)
+ {
+ 	struct mt7915_mcu_ra_info *ra = (struct mt7915_mcu_ra_info *)skb->data;
+-	u16 wcidx = le16_to_cpu(ra->wlan_idx);
+-	struct mt76_wcid *wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
+-	struct mt7915_sta *msta = container_of(wcid, struct mt7915_sta, wcid);
+-	struct mt7915_sta_stats *stats = &msta->stats;
+-	struct mt76_phy *mphy = &dev->mphy;
+ 	struct rate_info rate = {}, prob_rate = {};
++	u16 probe = le16_to_cpu(ra->prob_up_rate);
+ 	u16 attempts = le16_to_cpu(ra->attempts);
+ 	u16 curr = le16_to_cpu(ra->curr_rate);
+-	u16 probe = le16_to_cpu(ra->prob_up_rate);
++	u16 wcidx = le16_to_cpu(ra->wlan_idx);
++	struct mt76_phy *mphy = &dev->mphy;
++	struct mt7915_sta_stats *stats;
++	struct mt7915_sta *msta;
++	struct mt76_wcid *wcid;
++
++	if (wcidx >= MT76_N_WCIDS)
++		return;
++
++	wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
++	msta = container_of(wcid, struct mt7915_sta, wcid);
++	stats = &msta->stats;
  
--	if (ino < UFS_ROOTINO || ino > uspi->s_ncg * uspi->s_ipg)
-+	if (ino < UFS_ROOTINO || ino > (u64)uspi->s_ncg * uspi->s_ipg)
- 		return ERR_PTR(-ESTALE);
- 
- 	inode = ufs_iget(sb, ino);
+ 	if (msta->wcid.ext_phy && dev->mt76.phy2)
+ 		mphy = dev->mt76.phy2;
 -- 
 2.27.0
