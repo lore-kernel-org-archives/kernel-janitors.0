@@ -1,29 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 09 Jul 2020 20:07:17 +0000
-Subject: Re: [PATCH][next] net: systemport: fix double shift of a vlan_tci by VLAN_PRIO_SHIFT
-Message-Id: <20200709.130717.943617001507092696.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2020 10:48:18 +0000
+Subject: [PATCH] kernel/smp: Fix an off by one in csd_lock_wait_toolong()
+Message-Id: <20200709104818.GC20875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200708183723.1212652-1-colin.king@canonical.com>
-In-Reply-To: <20200708183723.1212652-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: f.fainelli@gmail.com, kuba@kernel.org, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, Kaitao Cheng <pilgrimtao@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  8 Jul 2020 19:37:23 +0100
+The __per_cpu_offset[] array has "nr_cpu_ids" elements so change the >
+>= to prevent a read one element beyond the end of the array.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the u16 skb->vlan_tci is being right  shifted twice by
-> VLAN_PRIO_SHIFT, once in the macro skb_vlan_tag_get_pri and explicitly
-> by VLAN_PRIO_SHIFT afterwards. The combined shift amount is larger than
-> the u16 so the end result is always zero.  Remove the second explicit
-> shift as this is extraneous.
-> 
-> Fixes: 6e9fdb60d362 ("net: systemport: Add support for VLAN transmit acceleration")
-> Addresses-Coverity: ("Operands don't affect result")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 0504bc41a62c ("kernel/smp: Provide CSD lock timeout diagnostics")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/smp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to net-next, thanks.
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 78b602cae6c2..f49966713ac3 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -171,7 +171,7 @@ static __always_inline bool csd_lock_wait_toolong(call_single_data_t *csd, u64 t
+ 		*bug_id = atomic_inc_return(&csd_bug_count);
+ 	cpu = csd_lock_wait_getcpu(csd);
+ 	smp_mb(); // No stale cur_csd values!
+-	if (WARN_ONCE(cpu < 0 || cpu > nr_cpu_ids, "%s: cpu = %d\n", __func__, cpu))
++	if (WARN_ONCE(cpu < 0 || cpu >= nr_cpu_ids, "%s: cpu = %d\n", __func__, cpu))
+ 		cpu_cur_csd = READ_ONCE(per_cpu(cur_csd, 0));
+ 	else
+ 		cpu_cur_csd = READ_ONCE(per_cpu(cur_csd, cpu));
+-- 
+2.27.0
