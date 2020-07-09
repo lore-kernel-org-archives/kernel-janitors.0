@@ -1,52 +1,73 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 05 Jul 2020 11:59:35 +0000
-Subject: Re: [PATCH] iio: adc: ad7780: Fix a resource handling path in 'ad7780_probe()'
-Message-Id: <20200705125935.025cfa12@archlinux>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2020 11:04:35 +0000
+Subject: [PATCH v2] mt76: mt7915: potential array overflow in mt7915_mcu_tx_rate_report()
+Message-Id: <20200709110435.GM2549@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200517095953.278950-1-christophe.jaillet@wanadoo.fr>
-        <20200518022129.xkcuw4yxotnll7ym@renatolg>
-In-Reply-To: <20200518022129.xkcuw4yxotnll7ym@renatolg>
+In-Reply-To: <20200709104738.GB20875@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Renato Lui Geh <renatogeh@gmail.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Michael.Hennerich@analog.com, lars@metafoo.de, knaack.h@gmx.de, pmeerw@pmeerw.net, giuliano.belinassi@usp.br, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, YF Luo <yf.luo@mediatek.com>, Chih-Min Chen <chih-min.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yiwei Chung <yiwei.chung@mediatek.com>, linux-mediatek@lists.infradead.org, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Shayne Chen <shayne.chen@mediatek.com>
 
-On Sun, 17 May 2020 23:21:29 -0300
-Renato Lui Geh <renatogeh@gmail.com> wrote:
+Smatch complains that "wcidx" value comes from the network and thus
+cannot be trusted.  In this case, it actually seems to come from the
+firmware.  If your wireless firmware is malicious then probably no
+amount of carefulness can protect you.
 
-> Acked-by: Renato Lui Geh <renatogeh@gmail.com>
-> 
-> On 05/17, Christophe JAILLET wrote:
-> >If 'ad7780_init_gpios()' fails, we must not release some resources that
-> >have not been allocated yet. Return directly instead.
-> >
-> >Fixes: 5bb30e7daf00 ("staging: iio: ad7780: move regulator to after GPIO init")
-> >Fixes: 9085daa4abcc ("staging: iio: ad7780: add gain & filter gpio support")
-> >Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the fixes-togreg branch of iio.git.
+On the other hand, these days we still try to check the firmware as much
+as possible.  Verifying that the index is within bounds will silence a
+static checker warning.  And it's harmless and a good exercise in kernel
+hardening.  So I suggest that we do add a bounds check.
 
-Thanks,
+Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  Fix a typos in commit message.
 
-Jonathan
+Normally for networking patches, when we change the declaration block,
+we must update the order to make sure it's in reverse Christmas tree
+format.  This code wasn't strictly in reverse Christmas tree order
+originally because we needed to initialize "wcidx" before we could
+initialize "wcid" etc.  Re-ordering the initializers makes the diff
+slightly larger than people might expect but it's a required part of
+networking patches.
 
-> >---
-> > drivers/iio/adc/ad7780.c | 2 +-
-> > 1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >diff --git a/drivers/iio/adc/ad7780.c b/drivers/iio/adc/ad7780.c
-> >index f47606ebbbbe..b33fe6c3907e 100644
-> >--- a/drivers/iio/adc/ad7780.c
-> >+++ b/drivers/iio/adc/ad7780.c
-> >@@ -329,7 +329,7 @@ static int ad7780_probe(struct spi_device *spi)
-> >
-> > 	ret = ad7780_init_gpios(&spi->dev, st);
-> > 	if (ret)
-> >-		goto error_cleanup_buffer_and_trigger;
-> >+		return ret;
-> >
-> > 	st->reg = devm_regulator_get(&spi->dev, "avdd");
-> > 	if (IS_ERR(st->reg))
-> >-- 
-> >2.25.1
-> >  
+ .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+index c8c12c740c1a..8fb8255650a7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+@@ -505,15 +505,22 @@ static void
+ mt7915_mcu_tx_rate_report(struct mt7915_dev *dev, struct sk_buff *skb)
+ {
+ 	struct mt7915_mcu_ra_info *ra = (struct mt7915_mcu_ra_info *)skb->data;
+-	u16 wcidx = le16_to_cpu(ra->wlan_idx);
+-	struct mt76_wcid *wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
+-	struct mt7915_sta *msta = container_of(wcid, struct mt7915_sta, wcid);
+-	struct mt7915_sta_stats *stats = &msta->stats;
+-	struct mt76_phy *mphy = &dev->mphy;
+ 	struct rate_info rate = {}, prob_rate = {};
++	u16 probe = le16_to_cpu(ra->prob_up_rate);
+ 	u16 attempts = le16_to_cpu(ra->attempts);
+ 	u16 curr = le16_to_cpu(ra->curr_rate);
+-	u16 probe = le16_to_cpu(ra->prob_up_rate);
++	u16 wcidx = le16_to_cpu(ra->wlan_idx);
++	struct mt76_phy *mphy = &dev->mphy;
++	struct mt7915_sta_stats *stats;
++	struct mt7915_sta *msta;
++	struct mt76_wcid *wcid;
++
++	if (wcidx >= MT76_N_WCIDS)
++		return;
++
++	wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
++	msta = container_of(wcid, struct mt7915_sta, wcid);
++	stats = &msta->stats;
+ 
+ 	if (msta->wcid.ext_phy && dev->mt76.phy2)
+ 		mphy = dev->mt76.phy2;
+-- 
+2.27.0
