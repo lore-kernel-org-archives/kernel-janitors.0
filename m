@@ -1,45 +1,51 @@
-From: "Paul E. McKenney" <paulmck@kernel.org>
-Date: Thu, 09 Jul 2020 16:59:34 +0000
-Subject: Re: [PATCH] kernel/smp: Fix an off by one in csd_lock_wait_toolong()
-Message-Id: <20200709165934.GD9247@paulmck-ThinkPad-P72>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2020 10:29:36 +0000
+Subject: [PATCH] staging: comedi: verify array index is correct before using it
+Message-Id: <20200709102936.GA20875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200709104818.GC20875@mwanda>
-In-Reply-To: <20200709104818.GC20875@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kaitao Cheng <pilgrimtao@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 09, 2020 at 01:48:18PM +0300, Dan Carpenter wrote:
-> The __per_cpu_offset[] array has "nr_cpu_ids" elements so change the >
-> >= to prevent a read one element beyond the end of the array.
-> 
-> Fixes: 0504bc41a62c ("kernel/smp: Provide CSD lock timeout diagnostics")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This code reads from the array before verifying that "trig" is a valid
+index.  If the index is wildly out of bounds then reading from an
+invalid address could lead to an Oops.
 
-Good eyes, thank you!  Folding this into the original with
-attribution.
+Fixes: a8c66b684efa ("staging: comedi: addi_apci_1500: rewrite the subdevice support functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/comedi/drivers/addi_apci_1500.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-							Thanx, Paul
-
-> ---
->  kernel/smp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 78b602cae6c2..f49966713ac3 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -171,7 +171,7 @@ static __always_inline bool csd_lock_wait_toolong(call_single_data_t *csd, u64 t
->  		*bug_id = atomic_inc_return(&csd_bug_count);
->  	cpu = csd_lock_wait_getcpu(csd);
->  	smp_mb(); // No stale cur_csd values!
-> -	if (WARN_ONCE(cpu < 0 || cpu > nr_cpu_ids, "%s: cpu = %d\n", __func__, cpu))
-> +	if (WARN_ONCE(cpu < 0 || cpu >= nr_cpu_ids, "%s: cpu = %d\n", __func__, cpu))
->  		cpu_cur_csd = READ_ONCE(per_cpu(cur_csd, 0));
->  	else
->  		cpu_cur_csd = READ_ONCE(per_cpu(cur_csd, cpu));
-> -- 
-> 2.27.0
-> 
+diff --git a/drivers/staging/comedi/drivers/addi_apci_1500.c b/drivers/staging/comedi/drivers/addi_apci_1500.c
+index 45ad4ba92f94..689acd69a1b9 100644
+--- a/drivers/staging/comedi/drivers/addi_apci_1500.c
++++ b/drivers/staging/comedi/drivers/addi_apci_1500.c
+@@ -456,9 +456,9 @@ static int apci1500_di_cfg_trig(struct comedi_device *dev,
+ 	unsigned int lo_mask = data[5] << shift;
+ 	unsigned int chan_mask = hi_mask | lo_mask;
+ 	unsigned int old_mask = (1 << shift) - 1;
+-	unsigned int pm = devpriv->pm[trig] & old_mask;
+-	unsigned int pt = devpriv->pt[trig] & old_mask;
+-	unsigned int pp = devpriv->pp[trig] & old_mask;
++	unsigned int pm;
++	unsigned int pt;
++	unsigned int pp;
+ 
+ 	if (trig > 1) {
+ 		dev_dbg(dev->class_dev,
+@@ -471,6 +471,10 @@ static int apci1500_di_cfg_trig(struct comedi_device *dev,
+ 		return -EINVAL;
+ 	}
+ 
++	pm = devpriv->pm[trig] & old_mask;
++	pt = devpriv->pt[trig] & old_mask;
++	pp = devpriv->pp[trig] & old_mask;
++
+ 	switch (data[2]) {
+ 	case COMEDI_DIGITAL_TRIG_DISABLE:
+ 		/* clear trigger configuration */
+-- 
+2.27.0
