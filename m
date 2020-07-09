@@ -1,33 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jul 2020 12:40:23 +0000
-Subject: Re: [bug report] qed: sanitize PBL chains allocation
-Message-Id: <20200727124022.GZ2571@kadam>
+Date: Thu, 09 Jul 2020 10:58:26 +0000
+Subject: [PATCH v2] scsi: lpfc: Fix a condition in lpfc_dmp_dbg()
+Message-Id: <20200709105826.GH2571@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727103210.GA375660@mwanda>
-In-Reply-To: <20200727103210.GA375660@mwanda>
+In-Reply-To: <20200709105628.GG2571@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 02:21:17PM +0300, Alexander Lobakin wrote:
-> Data: Mon, 27 Jul 2020 13:32:00 +0300
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> > Hello Alexander Lobakin,
-> 
-> Hi Dan!
-> 
-> > The patch 9b6ee3cf95d3: "qed: sanitize PBL chains allocation" from Jul 23, 2020, leads to the following 
-> > static checker warning:
-> > 
-> > 	drivers/net/ethernet/qlogic/qed/qed_chain.c:299 qed_chain_alloc_pbl()
-> > 	error: uninitialized symbol 'pbl_virt'.
-> 
-> Oh Gosh, how could I miss that with W=1 C=1.
+These variables are unsigned so the result of the subtraction is also
+unsigned and thus can't be negative.  Change it to a comparison and
+remove the subtraction.
 
-It's a bug in GCC.  It initializes it to zero instead of complaining.
-It seems to have gotten worse in recent months...
+Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  I reverse the if statement in v1
 
-regards,
-dan carpenter
+ drivers/scsi/lpfc/lpfc_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 7285b0114837..2bb2c96e7784 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
+ 		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
+ 			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
+ 		} else {
+-			if ((start_idx - dbg_cnt) < 0) {
++			if (start_idx < dbg_cnt) {
+ 				start_idx = DBG_LOG_SZ - (dbg_cnt - start_idx);
+ 				temp_idx = 0;
+ 			} else {
+-- 
+2.27.0
