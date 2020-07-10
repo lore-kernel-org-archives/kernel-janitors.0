@@ -1,26 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 14 Jul 2020 04:58:40 +0000
-Subject: Re: [PATCH] scsi: cxgb4i: clean up a debug printk
-Message-Id: <159470266468.11195.15363487048120250219.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 10 Jul 2020 08:37:58 +0000
+Subject: [PATCH][next] drm/amdgpu: fix spelling mistake "Falied" -> "Failed"
+Message-Id: <20200710083758.3304139-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200713105100.GA251988@mwanda>
-In-Reply-To: <20200713105100.GA251988@mwanda>
+References: <20180322154144.31363-1-colin.king@canonical.com>
+In-Reply-To: <20180322154144.31363-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Varun Prakash <varun@chelsio.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, Austin Kim <austindh.kim@gmail.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, linux-scsi@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 13 Jul 2020 10:51:00 +0000 (UTC), Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The pr_fmt() at the top of the file already includes the __func__ so we
-> can remove the duplicative "cxgbi_conn_init_pdu:" from the string here.
-> Now it all fits on one  line as well.
+There is a spelling mistake in a DRM_ERROR error message. Fix it.
 
-Applied to 5.9/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] scsi: cxgb4i: Clean up a debug printk
-      https://git.kernel.org/mkp/scsi/c/30f259b4886a
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+index e20695b44dbe..40706334f7a8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -1984,7 +1984,7 @@ static int psp_suspend(void *handle)
+ 
+ 	ret = psp_tmr_terminate(psp);
+ 	if (ret) {
+-		DRM_ERROR("Falied to terminate tmr\n");
++		DRM_ERROR("Failed to terminate tmr\n");
+ 		return ret;
+ 	}
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
