@@ -1,37 +1,37 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Date: Mon, 06 Jul 2020 23:52:29 +0000
-Subject: Re: [PATCH] i2c: jz4780: remove redundant assignment to variable i
-Message-Id: <HNN2DQ.3HHBK0781A0A1@crapouillou.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Jul 2020 11:36:10 +0000
+Subject: [PATCH] xen/xenbus: Fix a double free in xenbus_map_ring_pv()
+Message-Id: <20200710113610.GA92345@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200610125901.1134204-1-colin.king@canonical.com>
-        <20200704063217.GG1041@kunai>
-In-Reply-To: <20200704063217.GG1041@kunai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wolfram Sang <wsa@kernel.org>
-Cc: Colin King <colin.king@canonical.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>
+Cc: Yan Yankovskyi <yyankovskyi@gmail.com>, Stefano Stabellini <sstabellini@kernel.org>, kernel-janitors@vger.kernel.org, Wei Liu <wl@xen.org>, xen-devel@lists.xenproject.org
 
-Hi,
+When there is an error the caller frees "info->node" so the free here
+will result in a double free.  We should just delete first kfree().
 
-Le sam. 4 juil. 2020 =E0 8:32, Wolfram Sang <wsa@kernel.org> a =E9crit :
-> On Wed, Jun 10, 2020 at 01:59:01PM +0100, Colin King wrote:
->>  From: Colin Ian King <colin.king@canonical.com>
->>=20
->>  The variable i is being initialized with a value that is
->>  never read and it is being updated later with a new value. The
->>  initialization is redundant and can be removed.
->>=20
->>  Addresses-Coverity: ("Unused value")
->>  Signed-off-by: Colin Ian King <colin.king@canonical.com>
->=20
-> What about 'ret'? Doesn't the same reasoning apply for it?
->=20
+Fixes: 3848e4e0a32a ("xen/xenbus: avoid large structs and arrays on the stack")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/xen/xenbus/xenbus_client.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-That's correct.
-
-Colin, could you respin the patch and do the same for the 'ret'=20
-variable?
-
-Thanks,
--Paul
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index 4f168b46fbca..786fbb7d8be0 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -693,10 +693,8 @@ static int xenbus_map_ring_pv(struct xenbus_device *dev,
+ 	bool leaked;
+ 
+ 	area = alloc_vm_area(XEN_PAGE_SIZE * nr_grefs, info->ptes);
+-	if (!area) {
+-		kfree(node);
++	if (!area)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < nr_grefs; i++)
+ 		info->phys_addrs[i] -- 
+2.27.0
