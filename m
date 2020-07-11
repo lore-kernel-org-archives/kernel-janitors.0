@@ -1,13 +1,15 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 11 Jul 2020 06:43:36 +0000
+Date: Sat, 11 Jul 2020 06:46:47 +0000
 Subject: [PATCH] rsxx: switch from 'pci_free_consistent()' to 'dma_free_coherent()'
-Message-Id: <20200711064336.247502-1-christophe.jaillet@wanadoo.fr>
+Message-Id: <20200711064647.247564-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200711064336.247502-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200711064336.247502-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xx@mail.com
-Cc: list@mail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: josh.h.morris@us.ibm.com, pjk1939@linux.ibm.com, axboe@kernel.dk, hch@infradead.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 The wrappers in include/linux/pci-dma-compat.h should go away.
 
