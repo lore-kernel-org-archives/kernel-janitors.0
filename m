@@ -1,94 +1,169 @@
 From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Tue, 14 Jul 2020 14:39:24 +0000
-Subject: Re: [PATCH] decnet: dn_dev: Remove an unnecessary label.
-Message-Id: <20200714142724.GC12651@blackclown>
+Date: Sat, 11 Jul 2020 12:58:33 +0000
+Subject: [PATCH] staging: qlge: Remove pci-dma-compat wrapper APIs.
+Message-Id: <20200711124633.GA16459@blackclown>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nmemrqcdn5VTmUEE"
+Content-Type: multipart/mixed; boundary="EeQfGwPcQSOJBaQU"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714141309.GA3184@blackclown>
- <alpine.DEB.2.22.394.2007141615490.2355@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2007141615490.2355@hadrien>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: manishrc@marvell.com, GR-Linux-NIC-Dev@marvell.com, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---nmemrqcdn5VTmUEE
+--EeQfGwPcQSOJBaQU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 14, 2020 at 04:16:15PM +0200, Julia Lawall wrote:
->=20
->=20
-> On Tue, 14 Jul 2020, Suraj Upadhyay wrote:
->=20
-> > Remove the unnecessary label from dn_dev_ioctl() and make its error
-> > handling simpler to read.
-> >
-> > Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> > ---
-> >  net/decnet/dn_dev.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/net/decnet/dn_dev.c b/net/decnet/dn_dev.c
-> > index 65abcf1b3210..64901bb9f314 100644
-> > --- a/net/decnet/dn_dev.c
-> > +++ b/net/decnet/dn_dev.c
-> > @@ -462,7 +462,9 @@ int dn_dev_ioctl(unsigned int cmd, void __user *arg)
-> >  	switch (cmd) {
-> >  	case SIOCGIFADDR:
-> >  		*((__le16 *)sdn->sdn_nodeaddr) =3D ifa->ifa_local;
-> > -		goto rarok;
-> > +		if (copy_to_user(arg, ifr, DN_IFREQ_SIZE))
-> > +			ret =3D -EFAULT;
-> > +			break;
->=20
-> The indentation on break does not look correct.
->=20
-> julia
+The legacy API wrappers in include/linux/pci-dma-compat.h
+should go away as it creates unnecessary midlayering
+for include/linux/dma-mapping.h APIs, instead use dma-mapping.h
+APIs directly.
 
-Thanks for your response and advise, sent a v2 patch.
+The patch has been generated with the coccinelle script below
+and compile-tested.
 
-Suraj Upadhyay.
+@@@@
+- PCI_DMA_BIDIRECTIONAL
++ DMA_BIDIRECTIONAL
 
-> >
-> >  	case SIOCSIFADDR:
-> >  		if (!ifa) {
-> > @@ -485,10 +487,6 @@ int dn_dev_ioctl(unsigned int cmd, void __user *ar=
-g)
-> >  	rtnl_unlock();
-> >
-> >  	return ret;
-> > -rarok:
-> > -	if (copy_to_user(arg, ifr, DN_IFREQ_SIZE))
-> > -		ret =3D -EFAULT;
-> > -	goto done;
-> >  }
-> >
-> >  struct net_device *dn_dev_get_default(void)
-> > --
-> > 2.17.1
-> >
-> >
+@@@@
+- PCI_DMA_TODEVICE
++ DMA_TO_DEVICE
 
---nmemrqcdn5VTmUEE
+@@@@
+- PCI_DMA_FROMDEVICE
++ DMA_FROM_DEVICE
+
+@@@@
+- PCI_DMA_NONE
++ DMA_NONE
+
+@@ expression E1, E2, E3; @@
+- pci_alloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
+
+@@ expression E1, E2, E3; @@
+- pci_zalloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_free_consistent(E1, E2, E3, E4)
++ dma_free_coherent(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_single(E1, E2, E3, E4)
++ dma_map_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_single(E1, E2, E3, E4)
++ dma_unmap_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4, E5; @@
+- pci_map_page(E1, E2, E3, E4, E5)
++ dma_map_page(&E1->dev, E2, E3, E4, (enum dma_data_direction)E5)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_page(E1, E2, E3, E4)
++ dma_unmap_page(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_sg(E1, E2, E3, E4)
++ dma_map_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_sg(E1, E2, E3, E4)
++ dma_unmap_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_cpu(E1, E2, E3, E4)
++ dma_sync_single_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_device(E1, E2, E3, E4)
++ dma_sync_single_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_cpu(E1, E2, E3, E4)
++ dma_sync_sg_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_device(E1, E2, E3, E4)
++ dma_sync_sg_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2; @@
+- pci_dma_mapping_error(E1, E2)
++ dma_mapping_error(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_consistent_dma_mask(E1, E2)
++ dma_set_coherent_mask(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_dma_mask(E1, E2)
++ dma_set_mask(&E1->dev, E2)
+
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
+	This change is proposed by Christoph Hellwig <hch@infradead.org>
+        in the post https://marc.info/?l=3Dkernel-janitors&m=3D158745678307=
+186&w=3D4
+        on kernel-janitors Mailing List.
+
+ drivers/staging/qlge/qlge_mpi.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/qlge/qlge_mpi.c b/drivers/staging/qlge/qlge_mp=
+i.c
+index fa178fc642a6..16a9bf818346 100644
+--- a/drivers/staging/qlge/qlge_mpi.c
++++ b/drivers/staging/qlge/qlge_mpi.c
+@@ -788,8 +788,9 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, void=
+ *buf,
+ 	char *my_buf;
+ 	dma_addr_t buf_dma;
+=20
+-	my_buf =3D pci_alloc_consistent(qdev->pdev, word_count * sizeof(u32),
+-				      &buf_dma);
++	my_buf =3D dma_alloc_coherent(&qdev->pdev->dev,
++				    word_count * sizeof(u32), &buf_dma,
++				    GFP_ATOMIC);
+ 	if (!my_buf)
+ 		return -EIO;
+=20
+@@ -797,8 +798,8 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, void=
+ *buf,
+ 	if (!status)
+ 		memcpy(buf, my_buf, word_count * sizeof(u32));
+=20
+-	pci_free_consistent(qdev->pdev, word_count * sizeof(u32), my_buf,
+-			    buf_dma);
++	dma_free_coherent(&qdev->pdev->dev, word_count * sizeof(u32), my_buf,
++			  buf_dma);
+ 	return status;
+ }
+=20
+--=20
+2.17.1
+
+
+--EeQfGwPcQSOJBaQU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl8NwMwACgkQ+gRsbIfe
-7448rw/8CA0mN5m4dMvP++UvjZdJ1C3W10rugWZhiILK1fXwPVSC2iq8TObE68/y
-cKa8wGLAys54MwDw4fdsOOFieElaJU0JQDJhOEd7aXWoEGlD4kYPUTbydcJ/v150
-iMJPsNYY/M5Ey5p7VYxkzidFlzNB+lFUJX8DQQNyk9SuYcNB0O+UWx3G2IoFL1WH
-e81mupXoy71MSVj1gPshhN1U8m9qWKTUI3o6ynZSq6enK7x8S6VZGRmn2/6vo6HN
-MOeHyhloMe6p1nbm9EyzvkrDXbM89E0v9NqKhk2ldcz5ZKABS2j6PSlsOlEFIBFj
-ds9qLL3qR1+yYRLx9snSu7AVu50+JhegouehaVjPgl/JDpsLfzHE3QFWMNZ8pFDC
-jiFCw+edOH9+sXC6Z3PgAN9LHBb2ruJ/X+OujW1LjJcAY5r506eCHLWk+NOEsioL
-/HUfuwuVISgjfOLCgBMRps7KnpgKCo0C+hIqNd//nre8JxD+xYfR5c3emyrrjI4s
-zMJlfdyIl8CCcI8VLF17Pkrl/s3qMzq6/+c4xdOBIJ1yEr62LLDamtFuyMxU7mMU
-ynYb22kqKj99dY4jf6JgZ2dCjknb3SO4APhoX4eQ1Sfbydty53Fo5U1G3ZT3NaQu
-LGucRfr/qnNlBzEe+pxod43+ZJkX6+A4tOSj/vTqdJeT79mENh0=
-=SLPg
+iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl8JtKkACgkQ+gRsbIfe
+747D0g//R1ChLyHMnDJc6GeilVs7gCG2zUGsdaMK4qr11DUt+48TbVyHwFp64/3p
+QKmTK3rsaIOTFIonk8mhSll/foS6mpVBv4NXFWpCOSeyqPSvyYiCWyH8ZoAr7l06
+k6mL6QYZwVczVRXt/+hStzVLef9ToEEjzmdLJbP9JWuew9xSqfVbyNDV4TvgERmi
+3JuzM6gFCBR/nLdisBkEVKU4hrjGwHc2DRO96bSFPJtwwLnTXwZc+QDv10H9r1JY
+tVzaGa8czpsYlJv67vBRZ3Isym4iGb4ri94kICBTSfvZGdyE/HaWPqpEZzobOALK
+kBwFP65T0r3j+i+QEOeK3r3DwI96BX8qjzMzWu4C9D/vzIwlD4weyvmg2MM/mD44
+YlEucF2PhOrqWYlkYE1/JApT/7h3AaOe2SQ9cYmvTeDHWeNUrfcfr9yc13LaVJwW
+NVpKez7TQxzQ5YupsSctM8fiZIrS5uxIzXA9JKLM7HW6f4OJ8sN9wux1O8cCnrv5
+RIJw4bME/C6ihNJMNZQU/v8VGS9L9v+Ryw2AU7gs4mSA5M0JZUT1SduejM/SFsp8
+oCH1WATqdz/EG7mBC6N+m9sI8zdUeKUaRZsIvIXjYsrvoeU0g6d0OY4gAQZwx37v
+Ohot02UCvSuBoqXngEb/IGyh0GnuPCug68YBOPTYZNyuFhgy80Q=
+=/Cjw
 -----END PGP SIGNATURE-----
 
---nmemrqcdn5VTmUEE--
+--EeQfGwPcQSOJBaQU--
