@@ -1,108 +1,167 @@
-From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Thu, 16 Jul 2020 02:58:27 +0000
-Subject: Re: [PATCH v2] ipvs: clean code for ip_vs_sync.c
-Message-Id: <20200716024627.GC14742@blackclown>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Jul 2020 07:31:20 +0000
+Subject: [PATCH] RDMA/usnic: switch from 'pci_' to 'dma_' API
+Message-Id: <20200711073120.249146-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1594864671-31512-1-git-send-email-zhouxudong8@huawei.com>
-In-Reply-To: <1594864671-31512-1-git-send-email-zhouxudong8@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: zhouxudong199 <zhouxudong8@huawei.com>
-Cc: wensong@linux-vs.org, horms@verge.net.au, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, rose.chen@huawei.com, zhaowei23@huawei.com
+To: benve@cisco.com, neescoba@cisco.com, pkaustub@cisco.com, dledford@redhat.com, jgg@ziepe.ca, hch@infradead.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Jul 16, 2020 at 01:57:51AM +0000, zhouxudong199 wrote:
-> v1 -> v2:
-> add missing spaces after Signed-off-by and ipvs: in the subject. 
-> i=0 changed to i = 0.  
->
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-You should write the version changes after "---" and before the first
-diff.
+The patch has been generated with the coccinelle script bellow.
+It has been compile tested.
 
-Also, looking at your patch I think your commit message should be
-something like this :
+When memory is allocated, GFP_ATOMIC should be used to be consistent with
+the surrounding code.
 
-"Use appropriate spaces around operators."
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-> Signed-off-by: zhouxudong199 <zhouxudong8@huawei.com>
-> ---
->  net/netfilter/ipvs/ip_vs_sync.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
-> index 605e0f6..885bab4 100644
-> --- a/net/netfilter/ipvs/ip_vs_sync.c
-> +++ b/net/netfilter/ipvs/ip_vs_sync.c
-> @@ -1077,10 +1077,10 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
->  	struct ip_vs_protocol *pp;
->  	struct ip_vs_conn_param param;
->  	__u32 flags;
-> -	unsigned int af, state, pe_data_len=0, pe_name_len=0;
-> -	__u8 *pe_data=NULL, *pe_name=NULL;
-> -	__u32 opt_flags=0;
-> -	int retc=0;
-> +	unsigned int af, state, pe_data_len = 0, pe_name_len = 0;
-> +	__u8 *pe_data = NULL, *pe_name = NULL;
-> +	__u32 opt_flags = 0;
-> +	int retc = 0;
->  
->  	s = (union ip_vs_sync_conn *) p;
->  
-> @@ -1089,7 +1089,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
->  		af = AF_INET6;
->  		p += sizeof(struct ip_vs_sync_v6);
->  #else
-> -		IP_VS_DBG(3,"BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
-> +		IP_VS_DBG(3, "BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
->  		retc = 10;
->  		goto out;
->  #endif
-> @@ -1129,7 +1129,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
->  			break;
->  
->  		case IPVS_OPT_PE_NAME:
-> -			if (ip_vs_proc_str(p, plen,&pe_name_len, &pe_name,
-> +			if (ip_vs_proc_str(p, plen, &pe_name_len, &pe_name,
->  					   IP_VS_PENAME_MAXLEN, &opt_flags,
->  					   IPVS_OPT_F_PE_NAME))
->  				return -70;
-> @@ -1155,7 +1155,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
->  	if (!(flags & IP_VS_CONN_F_TEMPLATE)) {
->  		pp = ip_vs_proto_get(s->v4.protocol);
->  		if (!pp) {
-> -			IP_VS_DBG(3,"BACKUP, Unsupported protocol %u\n",
-> +			IP_VS_DBG(3, "BACKUP, Unsupported protocol %u\n",
->  				s->v4.protocol);
->  			retc = 30;
->  			goto out;
-> @@ -1232,7 +1232,7 @@ static void ip_vs_process_message(struct netns_ipvs *ipvs, __u8 *buffer,
->  		msg_end = buffer + sizeof(struct ip_vs_sync_mesg);
->  		nr_conns = m2->nr_conns;
->  
-> -		for (i=0; i<nr_conns; i++) {
-> +		for (i = 0; i < nr_conns; i++) {
->  			union ip_vs_sync_conn *s;
->  			unsigned int size;
->  			int retc;
-> @@ -1444,7 +1444,7 @@ static int bind_mcastif_addr(struct socket *sock, struct net_device *dev)
->  	sin.sin_addr.s_addr  = addr;
->  	sin.sin_port         = 0;
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-I think you missed this one.
-should be
--        sin.sin_port         = 0;
-+	 sin.sin_port = 0
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
-Thanks and Cheers,
-Suraj Upadhyay.
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
 
-> -	return sock->ops->bind(sock, (struct sockaddr*)&sin, sizeof(sin));
-> +	return sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
->  }
->  
->  static void get_mcast_sockaddr(union ipvs_sockaddr *sa, int *salen,
-> -- 
-> 2.6.1.windows.1
-> 
-> 
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/infiniband/hw/usnic/usnic_fwd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/usnic/usnic_fwd.c b/drivers/infiniband/hw/usnic/usnic_fwd.c
+index 7875883621f4..398c4c00b932 100644
+--- a/drivers/infiniband/hw/usnic/usnic_fwd.c
++++ b/drivers/infiniband/hw/usnic/usnic_fwd.c
+@@ -214,7 +214,7 @@ usnic_fwd_alloc_flow(struct usnic_fwd_dev *ufdev, struct filter *filter,
+ 	if (!flow)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	tlv = pci_alloc_consistent(pdev, tlv_size, &tlv_pa);
++	tlv = dma_alloc_coherent(&pdev->dev, tlv_size, &tlv_pa, GFP_ATOMIC);
+ 	if (!tlv) {
+ 		usnic_err("Failed to allocate memory\n");
+ 		status = -ENOMEM;
+@@ -258,7 +258,7 @@ usnic_fwd_alloc_flow(struct usnic_fwd_dev *ufdev, struct filter *filter,
+ 
+ out_free_tlv:
+ 	spin_unlock(&ufdev->lock);
+-	pci_free_consistent(pdev, tlv_size, tlv, tlv_pa);
++	dma_free_coherent(&pdev->dev, tlv_size, tlv, tlv_pa);
+ 	if (!status)
+ 		return flow;
+ out_free_flow:
+-- 
+2.25.1
