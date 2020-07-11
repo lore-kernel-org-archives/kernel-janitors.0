@@ -1,52 +1,184 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Jul 2020 14:31:29 +0000
-Subject: Re: [PATCH] drm/i915/selftest: Fix an error code in live_noa_gpr()
-Message-Id: <20200714143129.GX2549@kadam>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Sat, 11 Jul 2020 12:47:33 +0000
+Subject: [PATCH] staging: comedi: s626: Remove pci-dma-compat wrapper APIs.
+Message-Id: <20200711123533.GA15038@blackclown>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="6c2NcOVqGQ03X4Wi"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714141216.GA314989@mwanda>
- <71508ba9-6cad-45f9-a3b1-b3401ac0a1d5@intel.com>
-In-Reply-To: <71508ba9-6cad-45f9-a3b1-b3401ac0a1d5@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+To: gregkh@linuxfoundation.org, abbotti@mev.co.uk, hsweeten@visionengravers.com
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-To: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
 
-On Tue, Jul 14, 2020 at 05:16:33PM +0300, Lionel Landwerlin wrote:
-> On 14/07/2020 17:12, Dan Carpenter wrote:
-> > The error code is not set on this error path.  It's either zero or
-> > uninitialized at this point.
-> >=20
-> > Fixes: ed2690a9ca89 ("drm/i915/selftest: Check that GPR are restored ac=
-ross noa_wait")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >   drivers/gpu/drm/i915/selftests/i915_perf.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/i915/selftests/i915_perf.c b/drivers/gpu/d=
-rm/i915/selftests/i915_perf.c
-> > index deb6dec1b5ab..7aa73bb03381 100644
-> > --- a/drivers/gpu/drm/i915/selftests/i915_perf.c
-> > +++ b/drivers/gpu/drm/i915/selftests/i915_perf.c
-> > @@ -329,6 +329,7 @@ static int live_noa_gpr(void *arg)
-> >   	cs =3D intel_ring_begin(rq, 2 * 32 + 2);
-> >   	if (IS_ERR(cs)) {
-> >   		i915_request_add(rq);
-> > +		err =3D PTR_ERR(cs);
-> >   		goto out_rq;
-> >   	}
->=20
-> Looks like there is another below :
->=20
-> cs =3D intel_ring_begin(rq, 4);
-> if (IS_ERR(cs)) {
-> =A0=A0=A0=A0=A0=A0=A0 i915_request_add(rq);
-> =A0=A0=A0=A0=A0=A0=A0 goto out_rq;
-> }
+The legacy API wrappers in include/linux/pci-dma-compat.h
+should go away as it creates unnecessary midlayering
+for include/linux/dma-mapping.h APIs, instead use dma-mapping.h
+APIs directly.
 
-Oh...  Hm...  I'm looking at linux-next now and you're right.  Also
-Colin already fixed the return that I fixed.  I'll resend.
+The patch has been generated with the coccinelle script below
+and compile-tested.
 
-regards,
-dan carpenter
+@@@@
+- PCI_DMA_BIDIRECTIONAL
++ DMA_BIDIRECTIONAL
+
+@@@@
+- PCI_DMA_TODEVICE
++ DMA_TO_DEVICE
+
+@@@@
+- PCI_DMA_FROMDEVICE
++ DMA_FROM_DEVICE
+
+@@@@
+- PCI_DMA_NONE
++ DMA_NONE
+
+@@ expression E1, E2, E3; @@
+- pci_alloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
+
+@@ expression E1, E2, E3; @@
+- pci_zalloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_free_consistent(E1, E2, E3, E4)
++ dma_free_coherent(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_single(E1, E2, E3, E4)
++ dma_map_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_single(E1, E2, E3, E4)
++ dma_unmap_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4, E5; @@
+- pci_map_page(E1, E2, E3, E4, E5)
++ dma_map_page(&E1->dev, E2, E3, E4, (enum dma_data_direction)E5)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_page(E1, E2, E3, E4)
++ dma_unmap_page(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_sg(E1, E2, E3, E4)
++ dma_map_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_sg(E1, E2, E3, E4)
++ dma_unmap_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_cpu(E1, E2, E3, E4)
++ dma_sync_single_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_device(E1, E2, E3, E4)
++ dma_sync_single_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_cpu(E1, E2, E3, E4)
++ dma_sync_sg_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_device(E1, E2, E3, E4)
++ dma_sync_sg_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
+
+@@ expression E1, E2; @@
+- pci_dma_mapping_error(E1, E2)
++ dma_mapping_error(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_consistent_dma_mask(E1, E2)
++ dma_set_coherent_mask(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_dma_mask(E1, E2)
++ dma_set_mask(&E1->dev, E2)
+
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
+	This change is proposed by Christoph Hellwig <hch@infradead.org>
+	in the post https://marc.info/?l=3Dkernel-janitors&m=3D158745678307186&w=
+=3D4
+	on kernel-janitors Mailing List.
+
+ drivers/staging/comedi/drivers/s626.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers/s626.c b/drivers/staging/comedi=
+/drivers/s626.c
+index 084a8e7b9fc2..c159416662fd 100644
+--- a/drivers/staging/comedi/drivers/s626.c
++++ b/drivers/staging/comedi/drivers/s626.c
+@@ -2130,13 +2130,15 @@ static int s626_allocate_dma_buffers(struct comedi_=
+device *dev)
+ 	void *addr;
+ 	dma_addr_t appdma;
+=20
+-	addr =3D pci_alloc_consistent(pcidev, S626_DMABUF_SIZE, &appdma);
++	addr =3D dma_alloc_coherent(&pcidev->dev, S626_DMABUF_SIZE, &appdma,
++				  GFP_ATOMIC);
+ 	if (!addr)
+ 		return -ENOMEM;
+ 	devpriv->ana_buf.logical_base =3D addr;
+ 	devpriv->ana_buf.physical_base =3D appdma;
+=20
+-	addr =3D pci_alloc_consistent(pcidev, S626_DMABUF_SIZE, &appdma);
++	addr =3D dma_alloc_coherent(&pcidev->dev, S626_DMABUF_SIZE, &appdma,
++				  GFP_ATOMIC);
+ 	if (!addr)
+ 		return -ENOMEM;
+ 	devpriv->rps_buf.logical_base =3D addr;
+@@ -2154,13 +2156,13 @@ static void s626_free_dma_buffers(struct comedi_dev=
+ice *dev)
+ 		return;
+=20
+ 	if (devpriv->rps_buf.logical_base)
+-		pci_free_consistent(pcidev, S626_DMABUF_SIZE,
+-				    devpriv->rps_buf.logical_base,
+-				    devpriv->rps_buf.physical_base);
++		dma_free_coherent(&pcidev->dev, S626_DMABUF_SIZE,
++				  devpriv->rps_buf.logical_base,
++				  devpriv->rps_buf.physical_base);
+ 	if (devpriv->ana_buf.logical_base)
+-		pci_free_consistent(pcidev, S626_DMABUF_SIZE,
+-				    devpriv->ana_buf.logical_base,
+-				    devpriv->ana_buf.physical_base);
++		dma_free_coherent(&pcidev->dev, S626_DMABUF_SIZE,
++				  devpriv->ana_buf.logical_base,
++				  devpriv->ana_buf.physical_base);
+ }
+=20
+ static int s626_initialize(struct comedi_device *dev)
+--=20
+2.17.1
+
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl8JsgwACgkQ+gRsbIfe
+7474BQ/4kb5fufct1WPXGSk5GazzpLTQpggErwbo+mTWR8xrR0hu0JEkSq3rlcJC
+PlyH5wxUTm6AJM6ub8UbDbrIiFCoGvFW/wPKyBgdVFnkrEf5GbPg4QuGD0eEOegC
+EDJ34j2meK2fPpOhvKh8I7mk/YXVl0uNB3CTul9GLzAC/NQG3GERX1g3JZsDo+Ib
+5sNly1D6mRr2WOxaTOGGLK+JI5PXeQ5jT8x40Q6TwEfZNDFA1A6diStFLOAusNA0
+txdSpArNNXJGjxSITQi7Gw4Ifp0g8MW0WnYjL/f4eYVqbGstVo6JYTjI+iwt1aPe
+pJpQlNYlXmELft+vVFIq++I6/mIbdxuRjzOKI5e5FJ5/GQpU9nnxlCaW00/c3p0A
+8ioeIhy0pI3JekPsDrw5pF5xUZZxXUbHiIxgzrts54g17isyQFwoh0mTnvmANlcz
+LTVV9U0xjeQEc3btQMG3c6JWGQ2gpyFDA89Out1769HJvBpuWBzbytUtFVnTKizp
+FFV+3c8RjyIih39KvNVE89zay2Y+EFSeiEl3oYhFX9digbSP+ErIQcu0YYaV4k+Q
+FjIMZB1j/tBHshL5TwWbU20naZXbrmgReJkvdJwCb292ehp/kFDfV35VFi9qTJD7
+D5TH075SMqXfsPrBMuZha868gzaO4dzfmiqAkZEcJ4QLNQ78Mg==
+=YDlr
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
