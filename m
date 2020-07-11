@@ -1,53 +1,198 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 22 Jul 2020 06:44:29 +0000
-Subject: Re: [v3 2/3] coccinelle: api: extend memdup_user rule with vmemdup_user()
-Message-Id: <c6809db7-2979-7057-5cac-d2d1a57e77e2@web.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 11 Jul 2020 06:43:36 +0000
+Subject: [PATCH] rsxx: switch from 'pci_free_consistent()' to 'dma_free_coherent()'
+Message-Id: <20200711064336.247502-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e3d2ffb9-2a47-3d77-0501-9d48845435bd@web.de>
- <alpine.DEB.2.22.394.2007211158310.2487@hadrien>
- <0b326e2b-723c-3482-c0ef-5d6592a9c6cb@web.de>
- <alpine.DEB.2.22.394.2007220801590.2918@hadrien>
- <07a06754-94dd-60b1-1ad1-9e602c86b1f8@web.de>
- <alpine.DEB.2.22.394.2007220823050.2918@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2007220823050.2918@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>, Denis Efremov <efremov@linux.com>, Coccinelle <cocci@systeme.lip6.fr>
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>, Masahiro Yamada <masahiroy@kernel.org>, Michal Marek <michal.lkml@markovi.net>, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: xx@mail.com
+Cc: list@mail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
->> Under which circumstances would you begin to care more for involved differences
->> in corresponding run time characteristics?
->
-> When the difference is hours vs seconds.
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Such a view can be influenced by execution environments in considerable ways.
+The patch has been generated with the coccinelle script bellow.
+It has been compile tested.
 
-
-> In this case, there are tradeoffs between the two options,
-
-I am trying to improve the awareness for possible software design variations.
+This also aligns code with what is in use in '/rsxx/dma.c'
 
 
-> andI don't know which would be faster,
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-I am curious if more contributors would get into the mood to compare
-data processing approaches a bit more.
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
-> but I think it is extremely unlikely that the difference is noticible.
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
 
-But the following effects may be known for the evaluation of a SmPL rule
-which was combined for two code parts.
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
 
-* The SmPL dependencies are checked only once.
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
 
-* Can the source code search efforts be reduced a bit?
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
 
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
 
-> But if you are concerned about it, you are welcome to try.
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
 
-Will anybody become interested to measure the software behaviour exactly?
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
 
-Regards,
-Markus
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+
+For an example of code used in '/rsxx/dma.c', see:
+   https://elixir.bootlin.com/linux/v5.7.8/source/drivers/block/rsxx/dma.c#L951
+---
+ drivers/block/rsxx/core.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index 9230f453bb8b..e631749e14ca 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -562,13 +562,15 @@ static int rsxx_eeh_frozen(struct pci_dev *dev)
+ 
+ 	for (i = 0; i < card->n_targets; i++) {
+ 		if (card->ctrl[i].status.buf)
+-			pci_free_consistent(card->dev, STATUS_BUFFER_SIZE8,
+-					    card->ctrl[i].status.buf,
+-					    card->ctrl[i].status.dma_addr);
++			dma_free_coherent(&card->dev->dev,
++					  STATUS_BUFFER_SIZE8,
++					  card->ctrl[i].status.buf,
++					  card->ctrl[i].status.dma_addr);
+ 		if (card->ctrl[i].cmd.buf)
+-			pci_free_consistent(card->dev, COMMAND_BUFFER_SIZE8,
+-					    card->ctrl[i].cmd.buf,
+-					    card->ctrl[i].cmd.dma_addr);
++			dma_free_coherent(&card->dev->dev,
++					  COMMAND_BUFFER_SIZE8,
++					  card->ctrl[i].cmd.buf,
++					  card->ctrl[i].cmd.dma_addr);
+ 	}
+ 
+ 	return 0;
+@@ -711,15 +713,15 @@ static pci_ers_result_t rsxx_slot_reset(struct pci_dev *dev)
+ failed_hw_buffers_init:
+ 	for (i = 0; i < card->n_targets; i++) {
+ 		if (card->ctrl[i].status.buf)
+-			pci_free_consistent(card->dev,
+-					STATUS_BUFFER_SIZE8,
+-					card->ctrl[i].status.buf,
+-					card->ctrl[i].status.dma_addr);
++			dma_free_coherent(&card->dev->dev,
++					  STATUS_BUFFER_SIZE8,
++					  card->ctrl[i].status.buf,
++					  card->ctrl[i].status.dma_addr);
+ 		if (card->ctrl[i].cmd.buf)
+-			pci_free_consistent(card->dev,
+-					COMMAND_BUFFER_SIZE8,
+-					card->ctrl[i].cmd.buf,
+-					card->ctrl[i].cmd.dma_addr);
++			dma_free_coherent(&card->dev->dev,
++					  COMMAND_BUFFER_SIZE8,
++					  card->ctrl[i].cmd.buf,
++					  card->ctrl[i].cmd.dma_addr);
+ 	}
+ failed_hw_setup:
+ 	rsxx_eeh_failure(dev);
+-- 
+2.25.1
