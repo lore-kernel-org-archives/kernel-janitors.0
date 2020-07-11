@@ -1,25 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Jul 2020 21:09:37 +0000
-Subject: Re: [PATCH] net: neterion: vxge: switch from 'pci_' to 'dma_' API
-Message-Id: <20200714.140937.912145621621201941.davem@davemloft.net>
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 11 Jul 2020 07:34:58 +0000
+Subject: [PATCH -next] xfs: remove duplicated include from xfs_buf_item.c
+Message-Id: <20200711073458.27029-1-yuehaibing@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714091412.300211-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200714091412.300211-1-christophe.jaillet@wanadoo.fr>
+References: <20191113022501.55816-1-yuehaibing@huawei.com>
+In-Reply-To: <20191113022501.55816-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jdmason@kudzu.us, kuba@kernel.org, mhabets@solarflare.com, snelson@pensando.io, mst@redhat.com, vaibhavgupta40@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 14 Jul 2020 11:14:12 +0200
+Remove duplicated include.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below. No GFP_
-> flag needs to be corrected.
-> It has been compile tested.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/xfs/xfs_buf_item.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Applied.
+diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
+index e9428c30862a..ed1bf1d99483 100644
+--- a/fs/xfs/xfs_buf_item.c
++++ b/fs/xfs/xfs_buf_item.c
+@@ -19,7 +19,6 @@
+ #include "xfs_quota.h"
+ #include "xfs_dquot_item.h"
+ #include "xfs_dquot.h"
+-#include "xfs_trans_priv.h"
+ #include "xfs_trace.h"
+ #include "xfs_log.h"
+ 
