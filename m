@@ -1,39 +1,38 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Tue, 28 Jul 2020 08:43:20 +0000
-Subject: Re: [PATCH] MAINTAINERS: update entry to thermal governors file name prefixing
-Message-Id: <d50f49c2-4d88-74f7-29e9-963b806c602e@linaro.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Jul 2020 21:14:04 +0000
+Subject: [PATCH 1/2] Crypto/chcr: Avoid some code duplication
+Message-Id: <20200712211404.276211-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200728045850.22661-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200728045850.22661-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-arm-msm@vger.kernel.org
-Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ayush.sawal@chelsio.com, vinay.yadav@chelsio.com, rohitm@chelsio.com, herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 28/07/2020 06:58, Lukas Bulwahn wrote:
-> Commit 0015d9a2a727 ("thermal/governors: Prefix all source files with
-> gov_") renamed power_allocator.c to gov_power_allocator.c in
-> ./drivers/thermal amongst some other file renames, but missed to adjust
-> the MAINTAINERS entry.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains:
->=20
->   warning: no file matches    F:    drivers/thermal/power_allocator.c
->=20
-> Update the file entry in MAINTAINERS to the new file name.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+The error handling path of 'chcr_authenc_setkey()' is the same as this
+error handling code.
 
+So just 'goto out' as done everywhere in the function to simplify the code.
 
-Applied, thanks
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
---=20
-<http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM =
-SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 4c2553672b6f..ba2469008dd9 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -3609,9 +3609,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 	base_hash  = chcr_alloc_shash(max_authsize);
+ 	if (IS_ERR(base_hash)) {
+ 		pr_err("chcr : Base driver cannot be loaded\n");
+-		aeadctx->enckey_len = 0;
+-		memzero_explicit(&keys, sizeof(keys));
+-		return -EINVAL;
++		goto out;
+ 	}
+ 	{
+ 		SHASH_DESC_ON_STACK(shash, base_hash);
+-- 
+2.25.1
