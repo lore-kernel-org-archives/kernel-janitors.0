@@ -1,98 +1,52 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 26 Jul 2020 10:58:31 +0000
-Subject: [PATCH 6/7] [media] tm6000: drop unnecessary list_empty
-Message-Id: <1595761112-11003-7-git-send-email-Julia.Lawall@inria.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Jul 2020 17:35:51 +0000
+Subject: [PATCH 2/2] nl80211: Simplify error handling path in 'nl80211_trigger_scan()'
+Message-Id: <20200712173551.274448-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: johannes@sipsolutions.net, davem@davemloft.net, kuba@kernel.org
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-list_for_each_entry is able to handle an empty list.
-The only effect of avoiding the loop is not initializing the
-index variable.
-Drop list_empty tests in cases where these variables are not
-used.
+Re-write the end of 'nl80211_trigger_scan()' with a more standard, easy to
+understand and future proof version.
 
-Note that list_for_each_entry is defined in terms of list_first_entry,
-which indicates that it should not be used on an empty list.  But in
-list_for_each_entry, the element obtained by list_first_entry is not
-really accessed, only the address of its list_head field is compared
-to the address of the list head, so the list_first_entry is safe.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-<smpl>
-@@
-expression x,e;
-iterator name list_for_each_entry;
-statement S;
-identifier i;
-@@
-
--if (!(list_empty(x))) {
-   list_for_each_entry(i,x,...) S
-- }
- ... when != i
-? i = e
-</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/usb/tm6000/tm6000-core.c |   24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
+ net/wireless/nl80211.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-core.c b/drivers/media/usb/tm6000/tm6000-core.c
-index 2c72370..5c8cbc5 100644
---- a/drivers/media/usb/tm6000/tm6000-core.c
-+++ b/drivers/media/usb/tm6000/tm6000-core.c
-@@ -853,11 +853,9 @@ int tm6000_call_fillbuf(struct tm6000_core *dev, enum tm6000_ops_type type,
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index a671ee5f5da7..898e5f53f263 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -7993,15 +7993,18 @@ static int nl80211_trigger_scan(struct sk_buff *skb, struct genl_info *info)
+ 	rdev->scan_req = request;
+ 	err = rdev_scan(rdev, request);
  
- 	/* FIXME: tm6000_extension_devlist_lock should be a spinlock */
+-	if (!err) {
+-		nl80211_send_scan_start(rdev, wdev);
+-		if (wdev->netdev)
+-			dev_hold(wdev->netdev);
+-	} else {
++	if (err)
++		goto out_free;
++
++	nl80211_send_scan_start(rdev, wdev);
++	if (wdev->netdev)
++		dev_hold(wdev->netdev);
++
++	return 0;
++
+  out_free:
+-		rdev->scan_req = NULL;
+-		kfree(request);
+-	}
++	rdev->scan_req = NULL;
++	kfree(request);
  
--	if (!list_empty(&tm6000_extension_devlist)) {
--		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
--			if (ops->fillbuf && ops->type = type)
--				ops->fillbuf(dev, buf, size);
--		}
-+	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
-+		if (ops->fillbuf && ops->type = type)
-+			ops->fillbuf(dev, buf, size);
- 	}
- 
- 	return 0;
-@@ -898,11 +896,9 @@ void tm6000_init_extension(struct tm6000_core *dev)
- 	struct tm6000_ops *ops = NULL;
- 
- 	mutex_lock(&tm6000_devlist_mutex);
--	if (!list_empty(&tm6000_extension_devlist)) {
--		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
--			if (ops->init)
--				ops->init(dev);
--		}
-+	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
-+		if (ops->init)
-+			ops->init(dev);
- 	}
- 	mutex_unlock(&tm6000_devlist_mutex);
+ 	return err;
  }
-@@ -912,11 +908,9 @@ void tm6000_close_extension(struct tm6000_core *dev)
- 	struct tm6000_ops *ops = NULL;
- 
- 	mutex_lock(&tm6000_devlist_mutex);
--	if (!list_empty(&tm6000_extension_devlist)) {
--		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
--			if (ops->fini)
--				ops->fini(dev);
--		}
-+	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
-+		if (ops->fini)
-+			ops->fini(dev);
- 	}
- 	mutex_unlock(&tm6000_devlist_mutex);
- }
+-- 
+2.25.1
