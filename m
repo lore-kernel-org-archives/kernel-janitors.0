@@ -1,44 +1,111 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 03 Jul 2020 17:03:59 +0000
-Subject: Re: [PATCH -next] ASoC: ti: j721e-evm: Fix missing unlock on error in j721e_audio_hw_params()
-Message-Id: <159379581381.55795.18016494611644548015.b4-ty@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 12 Jul 2020 21:14:24 +0000
+Subject: [PATCH 2/2] Crypto/chcr: Fix some pr_xxx messages
+Message-Id: <20200712211424.276263-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200703030910.75047-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200703030910.75047-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>, Jaroslav Kysela <perex@perex.cz>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Hulk Robot <hulkci@huawei.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ayush.sawal@chelsio.com, vinay.yadav@chelsio.com, rohitm@chelsio.com, herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 3 Jul 2020 03:09:10 +0000, Wei Yongjun wrote:
-> Add the missing unlock before return from function j721e_audio_hw_params()
-> in the error handling case.
+At the top this file, we have:
+   #define pr_fmt(fmt) "chcr:" fmt
 
-Applied to
+So there is no need to repeat "chcr : " in some error message when the
+pr_xxx macro is used.
+This would lead to log "chcr:chcr : blabla"
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-Thanks!
-
-[1/1] ASoC: ti: j721e-evm: Fix missing unlock on error in j721e_audio_hw_params()
-      commit: 59b44649a8f2380dfbf282db9922ef863c8812a6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index ba2469008dd9..e02b56bd43c6 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -1224,7 +1224,7 @@ static int chcr_handle_cipher_resp(struct skcipher_request *req,
+ 	wrparam.bytes = bytes;
+ 	skb = create_cipher_wr(&wrparam);
+ 	if (IS_ERR(skb)) {
+-		pr_err("chcr : %s : Failed to form WR. No memory\n", __func__);
++		pr_err("%s : Failed to form WR. No memory\n", __func__);
+ 		err = PTR_ERR(skb);
+ 		goto unmap;
+ 	}
+@@ -1556,7 +1556,7 @@ static int get_alg_config(struct algo_param *params,
+ 		params->result_size = SHA512_DIGEST_SIZE;
+ 		break;
+ 	default:
+-		pr_err("chcr : ERROR, unsupported digest size\n");
++		pr_err("ERROR, unsupported digest size\n");
+ 		return -EINVAL;
+ 	}
+ 	return 0;
+@@ -3571,7 +3571,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 		goto out;
+ 
+ 	if (get_alg_config(&param, max_authsize)) {
+-		pr_err("chcr : Unsupported digest size\n");
++		pr_err("Unsupported digest size\n");
+ 		goto out;
+ 	}
+ 	subtype = get_aead_subtype(authenc);
+@@ -3590,7 +3590,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 	} else if (keys.enckeylen = AES_KEYSIZE_256) {
+ 		ck_size = CHCR_KEYCTX_CIPHER_KEY_SIZE_256;
+ 	} else {
+-		pr_err("chcr : Unsupported cipher key\n");
++		pr_err("Unsupported cipher key\n");
+ 		goto out;
+ 	}
+ 
+@@ -3608,7 +3608,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 	}
+ 	base_hash  = chcr_alloc_shash(max_authsize);
+ 	if (IS_ERR(base_hash)) {
+-		pr_err("chcr : Base driver cannot be loaded\n");
++		pr_err("Base driver cannot be loaded\n");
+ 		goto out;
+ 	}
+ 	{
+@@ -3624,7 +3624,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 						  keys.authkeylen,
+ 						  o_ptr);
+ 			if (err) {
+-				pr_err("chcr : Base driver cannot be loaded\n");
++				pr_err("Base driver cannot be loaded\n");
+ 				goto out;
+ 			}
+ 			keys.authkeylen = max_authsize;
+@@ -3709,7 +3709,7 @@ static int chcr_aead_digest_null_setkey(struct crypto_aead *authenc,
+ 	} else if (keys.enckeylen = AES_KEYSIZE_256) {
+ 		ck_size = CHCR_KEYCTX_CIPHER_KEY_SIZE_256;
+ 	} else {
+-		pr_err("chcr : Unsupported cipher key %d\n", keys.enckeylen);
++		pr_err("Unsupported cipher key %d\n", keys.enckeylen);
+ 		goto out;
+ 	}
+ 	memcpy(aeadctx->key, keys.enckey, keys.enckeylen);
+@@ -3745,7 +3745,7 @@ static int chcr_aead_op(struct aead_request *req,
+ 
+ 	cdev = a_ctx(tfm)->dev;
+ 	if (!cdev) {
+-		pr_err("chcr : %s : No crypto device.\n", __func__);
++		pr_err("%s : No crypto device.\n", __func__);
+ 		return -ENXIO;
+ 	}
+ 
+@@ -4495,8 +4495,7 @@ static int chcr_register_alg(void)
+ 			break;
+ 		}
+ 		if (err) {
+-			pr_err("chcr : %s : Algorithm registration failed\n",
+-			       name);
++			pr_err("%s : Algorithm registration failed\n", name);
+ 			goto register_err;
+ 		} else {
+ 			driver_algs[i].is_registered = 1;
+-- 
+2.25.1
