@@ -1,169 +1,102 @@
-From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Sat, 11 Jul 2020 12:58:33 +0000
-Subject: [PATCH] staging: qlge: Remove pci-dma-compat wrapper APIs.
-Message-Id: <20200711124633.GA16459@blackclown>
+From: Benjamin Poirier <benjamin.poirier@gmail.com>
+Date: Mon, 13 Jul 2020 04:59:59 +0000
+Subject: Re: [PATCH] staging: qlge: Remove pci-dma-compat wrapper APIs.
+Message-Id: <20200713045959.GA7563@f3>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="EeQfGwPcQSOJBaQU"
+Content-Type: multipart/mixed; boundary="9jxsPFA5p3P2qPhR"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: manishrc@marvell.com, GR-Linux-NIC-Dev@marvell.com, gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200711124633.GA16459@blackclown>
+In-Reply-To: <20200711124633.GA16459@blackclown>
+To: Suraj Upadhyay <usuraj35@gmail.com>
+Cc: devel@driverdev.osuosl.org, GR-Linux-NIC-Dev@marvell.com, gregkh@linuxfoundation.org, manishrc@marvell.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
 
---EeQfGwPcQSOJBaQU
+--9jxsPFA5p3P2qPhR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The legacy API wrappers in include/linux/pci-dma-compat.h
-should go away as it creates unnecessary midlayering
-for include/linux/dma-mapping.h APIs, instead use dma-mapping.h
-APIs directly.
+On 2020-07-11 18:16 +0530, Suraj Upadhyay wrote:
+> The legacy API wrappers in include/linux/pci-dma-compat.h
+> should go away as it creates unnecessary midlayering
+> for include/linux/dma-mapping.h APIs, instead use dma-mapping.h
+> APIs directly.
+>=20
+> The patch has been generated with the coccinelle script below
+> and compile-tested.
+>=20
+[...]
+>=20
+> @@ expression E1, E2, E3, E4; @@
+> - pci_dma_sync_single_for_device(E1, E2, E3, E4)
+> + dma_sync_single_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E=
+4)
 
-The patch has been generated with the coccinelle script below
-and compile-tested.
+The qlge driver contains more usages of the deprecated pci_dma_* api
+than what this diff addresses. In particular, there are some calls to
+pci_dma_sync_single_for_cpu() which were not changed despite this
+expression being in the semantic patch.
 
-@@@@
-- PCI_DMA_BIDIRECTIONAL
-+ DMA_BIDIRECTIONAL
+Dunno what happened but it should be reviewed. After converting away
+=66rom all of the old api, the TODO file should also be updated.
 
-@@@@
-- PCI_DMA_TODEVICE
-+ DMA_TO_DEVICE
+[...]
 
-@@@@
-- PCI_DMA_FROMDEVICE
-+ DMA_FROM_DEVICE
-
-@@@@
-- PCI_DMA_NONE
-+ DMA_NONE
-
-@@ expression E1, E2, E3; @@
-- pci_alloc_consistent(E1, E2, E3)
-+ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
-
-@@ expression E1, E2, E3; @@
-- pci_zalloc_consistent(E1, E2, E3)
-+ dma_alloc_coherent(&E1->dev, E2, E3, GFP_ATOMIC)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_free_consistent(E1, E2, E3, E4)
-+ dma_free_coherent(&E1->dev, E2, E3, E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_map_single(E1, E2, E3, E4)
-+ dma_map_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_unmap_single(E1, E2, E3, E4)
-+ dma_unmap_single(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4, E5; @@
-- pci_map_page(E1, E2, E3, E4, E5)
-+ dma_map_page(&E1->dev, E2, E3, E4, (enum dma_data_direction)E5)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_unmap_page(E1, E2, E3, E4)
-+ dma_unmap_page(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_map_sg(E1, E2, E3, E4)
-+ dma_map_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_unmap_sg(E1, E2, E3, E4)
-+ dma_unmap_sg(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_dma_sync_single_for_cpu(E1, E2, E3, E4)
-+ dma_sync_single_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_dma_sync_single_for_device(E1, E2, E3, E4)
-+ dma_sync_single_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_dma_sync_sg_for_cpu(E1, E2, E3, E4)
-+ dma_sync_sg_for_cpu(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2, E3, E4; @@
-- pci_dma_sync_sg_for_device(E1, E2, E3, E4)
-+ dma_sync_sg_for_device(&E1->dev, E2, E3, (enum dma_data_direction)E4)
-
-@@ expression E1, E2; @@
-- pci_dma_mapping_error(E1, E2)
-+ dma_mapping_error(&E1->dev, E2)
-
-@@ expression E1, E2; @@
-- pci_set_consistent_dma_mask(E1, E2)
-+ dma_set_coherent_mask(&E1->dev, E2)
-
-@@ expression E1, E2; @@
-- pci_set_dma_mask(E1, E2)
-+ dma_set_mask(&E1->dev, E2)
-
-Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
----
-	This change is proposed by Christoph Hellwig <hch@infradead.org>
-        in the post https://marc.info/?l=3Dkernel-janitors&m=3D158745678307=
-186&w=3D4
-        on kernel-janitors Mailing List.
-
- drivers/staging/qlge/qlge_mpi.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/qlge/qlge_mpi.c b/drivers/staging/qlge/qlge_mp=
-i.c
-index fa178fc642a6..16a9bf818346 100644
---- a/drivers/staging/qlge/qlge_mpi.c
-+++ b/drivers/staging/qlge/qlge_mpi.c
-@@ -788,8 +788,9 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, void=
- *buf,
- 	char *my_buf;
- 	dma_addr_t buf_dma;
-=20
--	my_buf =3D pci_alloc_consistent(qdev->pdev, word_count * sizeof(u32),
--				      &buf_dma);
-+	my_buf =3D dma_alloc_coherent(&qdev->pdev->dev,
-+				    word_count * sizeof(u32), &buf_dma,
-+				    GFP_ATOMIC);
- 	if (!my_buf)
- 		return -EIO;
-=20
-@@ -797,8 +798,8 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, void=
- *buf,
- 	if (!status)
- 		memcpy(buf, my_buf, word_count * sizeof(u32));
-=20
--	pci_free_consistent(qdev->pdev, word_count * sizeof(u32), my_buf,
--			    buf_dma);
-+	dma_free_coherent(&qdev->pdev->dev, word_count * sizeof(u32), my_buf,
-+			  buf_dma);
- 	return status;
- }
-=20
---=20
-2.17.1
+>=20
+> diff --git a/drivers/staging/qlge/qlge_mpi.c b/drivers/staging/qlge/qlge_=
+mpi.c
+> index fa178fc642a6..16a9bf818346 100644
+> --- a/drivers/staging/qlge/qlge_mpi.c
+> +++ b/drivers/staging/qlge/qlge_mpi.c
+> @@ -788,8 +788,9 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, vo=
+id *buf,
+>  	char *my_buf;
+>  	dma_addr_t buf_dma;
+> =20
+> -	my_buf =3D pci_alloc_consistent(qdev->pdev, word_count * sizeof(u32),
+> -				      &buf_dma);
+> +	my_buf =3D dma_alloc_coherent(&qdev->pdev->dev,
+> +				    word_count * sizeof(u32), &buf_dma,
+> +				    GFP_ATOMIC);
+>  	if (!my_buf)
+>  		return -EIO;
+> =20
+> @@ -797,8 +798,8 @@ int ql_dump_risc_ram_area(struct ql_adapter *qdev, vo=
+id *buf,
+>  	if (!status)
+>  		memcpy(buf, my_buf, word_count * sizeof(u32));
+> =20
+> -	pci_free_consistent(qdev->pdev, word_count * sizeof(u32), my_buf,
+> -			    buf_dma);
+> +	dma_free_coherent(&qdev->pdev->dev, word_count * sizeof(u32), my_buf,
+> +			  buf_dma);
+>  	return status;
+>  }
+> =20
+> --=20
+> 2.17.1
+>=20
 
 
---EeQfGwPcQSOJBaQU
+
+--9jxsPFA5p3P2qPhR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl8JtKkACgkQ+gRsbIfe
-747D0g//R1ChLyHMnDJc6GeilVs7gCG2zUGsdaMK4qr11DUt+48TbVyHwFp64/3p
-QKmTK3rsaIOTFIonk8mhSll/foS6mpVBv4NXFWpCOSeyqPSvyYiCWyH8ZoAr7l06
-k6mL6QYZwVczVRXt/+hStzVLef9ToEEjzmdLJbP9JWuew9xSqfVbyNDV4TvgERmi
-3JuzM6gFCBR/nLdisBkEVKU4hrjGwHc2DRO96bSFPJtwwLnTXwZc+QDv10H9r1JY
-tVzaGa8czpsYlJv67vBRZ3Isym4iGb4ri94kICBTSfvZGdyE/HaWPqpEZzobOALK
-kBwFP65T0r3j+i+QEOeK3r3DwI96BX8qjzMzWu4C9D/vzIwlD4weyvmg2MM/mD44
-YlEucF2PhOrqWYlkYE1/JApT/7h3AaOe2SQ9cYmvTeDHWeNUrfcfr9yc13LaVJwW
-NVpKez7TQxzQ5YupsSctM8fiZIrS5uxIzXA9JKLM7HW6f4OJ8sN9wux1O8cCnrv5
-RIJw4bME/C6ihNJMNZQU/v8VGS9L9v+Ryw2AU7gs4mSA5M0JZUT1SduejM/SFsp8
-oCH1WATqdz/EG7mBC6N+m9sI8zdUeKUaRZsIvIXjYsrvoeU0g6d0OY4gAQZwx37v
-Ohot02UCvSuBoqXngEb/IGyh0GnuPCug68YBOPTYZNyuFhgy80Q=
-=/Cjw
+iQIzBAABCAAdFiEEkvpDtefvZykbqQVOaJBbS33YWS0FAl8L6koACgkQaJBbS33Y
+WS1JBA/+J9cy/Iz2PMdfWkQxIYA+Et7kUXCQ21Vc1Iaz+TslGD0tYqvp8jcZe8wg
+gzVTHeosvCxsTn9BuTjeXnHHPEIsFl6EMRlW7xoXOkvpV0iZ/ZJ1/nK2UT/C8haf
+yJo096ohW877MbE227k9wqrZZroC168padc6XGEepMoBhQ0W5Hs+soybKQj3od4J
+8WnOC/oF06Feu/KdvkUeqwAHVj0w2Vwlhw+lUyNlsrxY5ZPx6BkjZLm9rNTgplu7
+UuLgyhXzeq8RUtN6If06T15+tl4e0lDPFPmBQVM60J3aq+4wzGQg2lvXOzL27urL
+DUWywJ79h2diXPjDEfyJow5661c6ubIBRagvvgYd5fHFLmqcevo0Dtw/k3C0cNg+
+NmdyoMlU0/Db2Op3btgSjKdidlfMM0ImkuOiUYKR6FHf+rk2rxLQTt2z0/FK8QQi
+LdTGR5zHSofGsuWpCvkKVgTXuLMtCCseY9kvOkaIyBl7uv2BW6RbnjGoHpO+G+PF
+S20mH3WQojjD8+YwP7Dw0One+Lr+5aiM8tzqIXz7IMk4Q10XFWpKZpCYJCdPDiSg
+3H3jTDcBvH4ngEDIHP/6SmNpB8WLSBRpaoC13hUQcpEJKBtzkvpPisElsWgRwkRw
+J4IRtz70uN/bW/m4zRxpKDP28NDMZCfzHGbMtdJk10n4w8oFvxc=
+=TkyJ
 -----END PGP SIGNATURE-----
 
---EeQfGwPcQSOJBaQU--
+--9jxsPFA5p3P2qPhR--
