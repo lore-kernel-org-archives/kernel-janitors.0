@@ -1,25 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Tue, 21 Jul 2020 17:54:07 +0000
-Subject: Re: [PATCH][next] phy: qualcomm: fix setting of tx_deamp_3_5db when device property read fails
-Message-Id: <20200721174207.GP12965@vkoul-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jul 2020 10:53:24 +0000
+Subject: [PATCH] ALSA: echoaudio: re-enable IRQs on failure path
+Message-Id: <20200713105324.GB251988@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200721150613.416876-1-colin.king@canonical.com>
-In-Reply-To: <20200721150613.416876-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Ansuel Smith <ansuelsmth@gmail.com>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Mark Hills <mark@xwax.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Chuhong Yuan <hslester96@gmail.com>, Takashi Iwai <tiwai@suse.com>
 
-On 21-07-20, 16:06, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when reading of the device property for "qcom,tx-deamp_3_5db"
-> fails the default is being assigned incorrectly to phy_dwc3->rx_eq. This
-> looks like a copy-n-paste error and in fact should be assigning the
-> default instead to phy_dwc3->tx_deamp_3_5db
+This should be spin_unlock_irq() instead of spin_lock().
 
-Applied, thanks
+Fixes: 6c3312544873 ("ALSA: echoaudio: Prevent races in calls to set_audio_format()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/pci/echoaudio/echoaudio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index e81f42811f45..6aeb99aa2414 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -721,7 +721,7 @@ static int pcm_prepare(struct snd_pcm_substream *substream)
+ 	spin_lock_irq(&chip->lock);
+ 
+ 	if (snd_BUG_ON(!is_pipe_allocated(chip, pipe_index))) {
+-		spin_unlock(&chip->lock);
++		spin_unlock_irq(&chip->lock);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
-~Vinod
+2.27.0
