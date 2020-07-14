@@ -1,28 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Jul 2020 01:10:43 +0000
-Subject: Re: [PATCH][next] ionic: fix memory leak of object 'lid'
-Message-Id: <20200722.181043.1052337587227758653.davem@davemloft.net>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Tue, 14 Jul 2020 17:15:22 +0000
+Subject: Re: [Intel-gfx] [PATCH v2] drm/i915/selftest: Fix an error code in live_noa_gpr()
+Message-Id: <159474692212.3188.5286642208247298191@build.alporthouse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200722174003.962374-1-colin.king@canonical.com>
-In-Reply-To: <20200722174003.962374-1-colin.king@canonical.com>
+References: <20200714143652.GA337376@mwanda>
+ <29d5e25e-45e1-fca0-7d09-fd5e303b9eea@intel.com>
+In-Reply-To: <29d5e25e-45e1-fca0-7d09-fd5e303b9eea@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: snelson@pensando.io, drivers@pensando.io, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>, Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 22 Jul 2020 18:40:03 +0100
+Quoting Lionel Landwerlin (2020-07-14 15:39:21)
+> On 14/07/2020 17:36, Dan Carpenter wrote:
+> > The error code needs to be set on this path.  It currently returns
+> > success.
+> >
+> > Fixes: ed2690a9ca89 ("drm/i915/selftest: Check that GPR are restored across noa_wait")
+> > Reported-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > v2: Fix a different bug instead.  :P  Colin fixed mine already.
 
-> From: Colin Ian King <colin.king@canonical.com>
+I was thinking that Colin already sent the patch for this one...
+
+> >
+> >   drivers/gpu/drm/i915/selftests/i915_perf.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/i915/selftests/i915_perf.c b/drivers/gpu/drm/i915/selftests/i915_perf.c
+> > index 0aa151501fb3..c232194c60a2 100644
+> > --- a/drivers/gpu/drm/i915/selftests/i915_perf.c
+> > +++ b/drivers/gpu/drm/i915/selftests/i915_perf.c
+> > @@ -358,6 +358,7 @@ static int live_noa_gpr(void *arg)
+> >               cs = intel_ring_begin(rq, 4);
+> >               if (IS_ERR(cs)) {
+> >                       i915_request_add(rq);
+> > +                     err = PTR_ERR(cs);
+> >                       goto out_rq;
+> >               }
+> >   
 > 
-> Currently when netdev fails to allocate the error return path
-> fails to free the allocated object 'lid'.  Fix this by setting
-> err to the return error code and jumping to a new label that
-> performs the kfree of lid before returning.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 4b03b27349c0 ("ionic: get MTU from lif identity")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
 
-Applied.
+Ta,
+-Chris
