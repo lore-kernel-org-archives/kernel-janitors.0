@@ -1,31 +1,257 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 31 Jul 2020 07:28:52 +0000
-Subject: Re: [PATCH -next] crypto: sa2ul - fix wrong pointer passed to PTR_ERR()
-Message-Id: <20200731072852.GA17380@gondor.apana.org.au>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 14 Jul 2020 07:52:24 +0000
+Subject: [PATCH] lan743x: switch from 'pci_' to 'dma_' API
+Message-Id: <20200714075224.290759-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200725063440.172238-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200725063440.172238-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Keerthy <j-keerthy@ti.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: davem@davemloft.net, bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, Jul 25, 2020 at 06:34:40AM +0000, Wei Yongjun wrote:
-> PTR_ERR should access the value just tested by IS_ERR, otherwise
-> the wrong error code will be returned.
-> 
-> Fixes: 7694b6ca649f ("crypto: sa2ul - Add crypto driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/crypto/sa2ul.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Someone has sent a similar patch already.
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GPF_ with a correct flag.
+It has been compile tested.
 
-Thanks,
+When memory is allocated in 'lan743x_tx_ring_cleanup()' and
+'lan743x_rx_ring_init()', GFP_KERNEL can be used because this flag is
+already used to allocate some memory in these functions.
+
+While at it, remove a useless (void *) casting in the first hunk in so that
+the code is more consistent.
+
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/ethernet/microchip/lan743x_main.c | 46 +++++++++----------
+ 1 file changed, 22 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
+index 2373e72d2d29..f6479384dc4f 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -1742,10 +1742,9 @@ static int lan743x_tx_napi_poll(struct napi_struct *napi, int weight)
+ static void lan743x_tx_ring_cleanup(struct lan743x_tx *tx)
+ {
+ 	if (tx->head_cpu_ptr) {
+-		pci_free_consistent(tx->adapter->pdev,
+-				    sizeof(*tx->head_cpu_ptr),
+-				    (void *)(tx->head_cpu_ptr),
+-				    tx->head_dma_ptr);
++		dma_free_coherent(&tx->adapter->pdev->dev,
++				  sizeof(*tx->head_cpu_ptr), tx->head_cpu_ptr,
++				  tx->head_dma_ptr);
+ 		tx->head_cpu_ptr = NULL;
+ 		tx->head_dma_ptr = 0;
+ 	}
+@@ -1753,10 +1752,9 @@ static void lan743x_tx_ring_cleanup(struct lan743x_tx *tx)
+ 	tx->buffer_info = NULL;
+ 
+ 	if (tx->ring_cpu_ptr) {
+-		pci_free_consistent(tx->adapter->pdev,
+-				    tx->ring_allocation_size,
+-				    tx->ring_cpu_ptr,
+-				    tx->ring_dma_ptr);
++		dma_free_coherent(&tx->adapter->pdev->dev,
++				  tx->ring_allocation_size, tx->ring_cpu_ptr,
++				  tx->ring_dma_ptr);
+ 		tx->ring_allocation_size = 0;
+ 		tx->ring_cpu_ptr = NULL;
+ 		tx->ring_dma_ptr = 0;
+@@ -1780,8 +1778,8 @@ static int lan743x_tx_ring_init(struct lan743x_tx *tx)
+ 				     sizeof(struct lan743x_tx_descriptor),
+ 				     PAGE_SIZE);
+ 	dma_ptr = 0;
+-	cpu_ptr = pci_zalloc_consistent(tx->adapter->pdev,
+-					ring_allocation_size, &dma_ptr);
++	cpu_ptr = dma_alloc_coherent(&tx->adapter->pdev->dev,
++				     ring_allocation_size, &dma_ptr, GFP_KERNEL);
+ 	if (!cpu_ptr) {
+ 		ret = -ENOMEM;
+ 		goto cleanup;
+@@ -1798,8 +1796,9 @@ static int lan743x_tx_ring_init(struct lan743x_tx *tx)
+ 	}
+ 	tx->buffer_info = (struct lan743x_tx_buffer_info *)cpu_ptr;
+ 	dma_ptr = 0;
+-	cpu_ptr = pci_zalloc_consistent(tx->adapter->pdev,
+-					sizeof(*tx->head_cpu_ptr), &dma_ptr);
++	cpu_ptr = dma_alloc_coherent(&tx->adapter->pdev->dev,
++				     sizeof(*tx->head_cpu_ptr), &dma_ptr,
++				     GFP_KERNEL);
+ 	if (!cpu_ptr) {
+ 		ret = -ENOMEM;
+ 		goto cleanup;
+@@ -2281,10 +2280,9 @@ static void lan743x_rx_ring_cleanup(struct lan743x_rx *rx)
+ 	}
+ 
+ 	if (rx->head_cpu_ptr) {
+-		pci_free_consistent(rx->adapter->pdev,
+-				    sizeof(*rx->head_cpu_ptr),
+-				    rx->head_cpu_ptr,
+-				    rx->head_dma_ptr);
++		dma_free_coherent(&rx->adapter->pdev->dev,
++				  sizeof(*rx->head_cpu_ptr), rx->head_cpu_ptr,
++				  rx->head_dma_ptr);
+ 		rx->head_cpu_ptr = NULL;
+ 		rx->head_dma_ptr = 0;
+ 	}
+@@ -2293,10 +2291,9 @@ static void lan743x_rx_ring_cleanup(struct lan743x_rx *rx)
+ 	rx->buffer_info = NULL;
+ 
+ 	if (rx->ring_cpu_ptr) {
+-		pci_free_consistent(rx->adapter->pdev,
+-				    rx->ring_allocation_size,
+-				    rx->ring_cpu_ptr,
+-				    rx->ring_dma_ptr);
++		dma_free_coherent(&rx->adapter->pdev->dev,
++				  rx->ring_allocation_size, rx->ring_cpu_ptr,
++				  rx->ring_dma_ptr);
+ 		rx->ring_allocation_size = 0;
+ 		rx->ring_cpu_ptr = NULL;
+ 		rx->ring_dma_ptr = 0;
+@@ -2327,8 +2324,8 @@ static int lan743x_rx_ring_init(struct lan743x_rx *rx)
+ 				     sizeof(struct lan743x_rx_descriptor),
+ 				     PAGE_SIZE);
+ 	dma_ptr = 0;
+-	cpu_ptr = pci_zalloc_consistent(rx->adapter->pdev,
+-					ring_allocation_size, &dma_ptr);
++	cpu_ptr = dma_alloc_coherent(&rx->adapter->pdev->dev,
++				     ring_allocation_size, &dma_ptr, GFP_KERNEL);
+ 	if (!cpu_ptr) {
+ 		ret = -ENOMEM;
+ 		goto cleanup;
+@@ -2345,8 +2342,9 @@ static int lan743x_rx_ring_init(struct lan743x_rx *rx)
+ 	}
+ 	rx->buffer_info = (struct lan743x_rx_buffer_info *)cpu_ptr;
+ 	dma_ptr = 0;
+-	cpu_ptr = pci_zalloc_consistent(rx->adapter->pdev,
+-					sizeof(*rx->head_cpu_ptr), &dma_ptr);
++	cpu_ptr = dma_alloc_coherent(&rx->adapter->pdev->dev,
++				     sizeof(*rx->head_cpu_ptr), &dma_ptr,
++				     GFP_KERNEL);
+ 	if (!cpu_ptr) {
+ 		ret = -ENOMEM;
+ 		goto cleanup;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
