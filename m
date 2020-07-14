@@ -1,73 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Jul 2020 11:04:35 +0000
-Subject: [PATCH v2] mt76: mt7915: potential array overflow in mt7915_mcu_tx_rate_report()
-Message-Id: <20200709110435.GM2549@kadam>
+From: Roland Scheidegger <sroland@vmware.com>
+Date: Tue, 14 Jul 2020 01:16:10 +0000
+Subject: Re: [PATCH] drm/vmwgfx: Use correct vmw_legacy_display_unit pointer
+Message-Id: <359c2028-7768-5a7b-b319-48da111d4f77@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200709104738.GB20875@mwanda>
+References: <20200626103437.GB314359@mwanda>
+In-Reply-To: <20200626103437.GB314359@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, YF Luo <yf.luo@mediatek.com>, Chih-Min Chen <chih-min.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yiwei Chung <yiwei.chung@mediatek.com>, linux-mediatek@lists.infradead.org, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Shayne Chen <shayne.chen@mediatek.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, VMware Graphics <linux-graphics-maintainer@vmware.com>
+Cc: David Airlie <airlied@linux.ie>, Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Smatch complains that "wcidx" value comes from the network and thus
-cannot be trusted.  In this case, it actually seems to come from the
-firmware.  If your wireless firmware is malicious then probably no
-amount of carefulness can protect you.
+Sorry for the delay, finally got time to look at this, seems all correct
+to me, thanks. Applied to our vmvgfx-next tree. (I do wonder how this
+somehow was supposed to work for all this time...)
 
-On the other hand, these days we still try to check the firmware as much
-as possible.  Verifying that the index is within bounds will silence a
-static checker warning.  And it's harmless and a good exercise in kernel
-hardening.  So I suggest that we do add a bounds check.
+Roland
 
-Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  Fix a typos in commit message.
-
-Normally for networking patches, when we change the declaration block,
-we must update the order to make sure it's in reverse Christmas tree
-format.  This code wasn't strictly in reverse Christmas tree order
-originally because we needed to initialize "wcidx" before we could
-initialize "wcid" etc.  Re-ordering the initializers makes the diff
-slightly larger than people might expect but it's a required part of
-networking patches.
-
- .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index c8c12c740c1a..8fb8255650a7 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -505,15 +505,22 @@ static void
- mt7915_mcu_tx_rate_report(struct mt7915_dev *dev, struct sk_buff *skb)
- {
- 	struct mt7915_mcu_ra_info *ra = (struct mt7915_mcu_ra_info *)skb->data;
--	u16 wcidx = le16_to_cpu(ra->wlan_idx);
--	struct mt76_wcid *wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
--	struct mt7915_sta *msta = container_of(wcid, struct mt7915_sta, wcid);
--	struct mt7915_sta_stats *stats = &msta->stats;
--	struct mt76_phy *mphy = &dev->mphy;
- 	struct rate_info rate = {}, prob_rate = {};
-+	u16 probe = le16_to_cpu(ra->prob_up_rate);
- 	u16 attempts = le16_to_cpu(ra->attempts);
- 	u16 curr = le16_to_cpu(ra->curr_rate);
--	u16 probe = le16_to_cpu(ra->prob_up_rate);
-+	u16 wcidx = le16_to_cpu(ra->wlan_idx);
-+	struct mt76_phy *mphy = &dev->mphy;
-+	struct mt7915_sta_stats *stats;
-+	struct mt7915_sta *msta;
-+	struct mt76_wcid *wcid;
-+
-+	if (wcidx >= MT76_N_WCIDS)
-+		return;
-+
-+	wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
-+	msta = container_of(wcid, struct mt7915_sta, wcid);
-+	stats = &msta->stats;
- 
- 	if (msta->wcid.ext_phy && dev->mt76.phy2)
- 		mphy = dev->mt76.phy2;
--- 
-2.27.0
+Am 26.06.20 um 12:34 schrieb Dan Carpenter:
+> The "entry" pointer is an offset from the list head and it doesn't
+> point to a valid vmw_legacy_display_unit struct.  Presumably the
+> intent was to point to the last entry.
+> 
+> Also the "i++" wasn't used so I have removed that as well.
+> 
+> Fixes: d7e1958dbe4a ("drm/vmwgfx: Support older hardware.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> From static analysis.  Not tested.  This bug celebrated its tenth
+> birthday last month.  :)
+> 
+>  drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
+> index 16dafff5cab1..009f1742bed5 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
+> @@ -81,7 +81,7 @@ static int vmw_ldu_commit_list(struct vmw_private *dev_priv)
+>  	struct vmw_legacy_display_unit *entry;
+>  	struct drm_framebuffer *fb = NULL;
+>  	struct drm_crtc *crtc = NULL;
+> -	int i = 0;
+> +	int i;
+>  
+>  	/* If there is no display topology the host just assumes
+>  	 * that the guest will set the same layout as the host.
+> @@ -92,12 +92,11 @@ static int vmw_ldu_commit_list(struct vmw_private *dev_priv)
+>  			crtc = &entry->base.crtc;
+>  			w = max(w, crtc->x + crtc->mode.hdisplay);
+>  			h = max(h, crtc->y + crtc->mode.vdisplay);
+> -			i++;
+>  		}
+>  
+>  		if (crtc = NULL)
+>  			return 0;
+> -		fb = entry->base.crtc.primary->state->fb;
+> +		fb = crtc->primary->state->fb;
+>  
+>  		return vmw_kms_write_svga(dev_priv, w, h, fb->pitches[0],
+>  					  fb->format->cpp[0] * 8,
+> 
