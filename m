@@ -1,29 +1,36 @@
-From: ''Tayeb Souami'' <aguayenergia@tlalpan.gob.mx>
-Date: Tue, 28 Jul 2020 09:08:54 +0000
-Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
-Message-Id: <20200728090438.85F9E478E28@correo.tlalpan.gob.mx>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Jul 2020 10:57:32 +0000
+Subject: [PATCH] nvme: remove an unnecessary condition
+Message-Id: <20200714105732.GD294318@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@fb.com>, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org, Sagi Grimberg <sagi@grimberg.me>
 
-Lieber Freund,
+"v" is an unsigned int so it can't be more than UINT_MAX.  Removing this
+check makes it easier to preserve the error code as well.
 
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/nvme/host/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
-
-
-Das ist dein Spendencode: [TS530342018]
-
-
-Antworten Sie mit dem SPENDE-CODE an diese
-
-E-Mail:Tayebsouam.spende@gmail.com
-
-
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
-
-Grüße
-Herr Tayeb Souami
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 3d00ea4e7146..5fb5e8ba531b 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3586,8 +3586,8 @@ static ssize_t nvme_ctrl_reconnect_delay_store(struct device *dev,
+ 	int err;
+ 
+ 	err = kstrtou32(buf, 10, &v);
+-	if (err || v > UINT_MAX)
+-		return -EINVAL;
++	if (err)
++		return err;
+ 
+ 	ctrl->opts->reconnect_delay = v;
+ 	return count;
+-- 
+2.27.0
