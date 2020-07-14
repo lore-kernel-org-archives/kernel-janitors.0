@@ -1,40 +1,302 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Thu, 23 Jul 2020 01:46:37 +0000
-Subject: Re: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
-Message-Id: <159546879710.3847286.14955586064206205548@swboyd.mtv.corp.google.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 14 Jul 2020 18:35:01 +0000
+Subject: [PATCH] ksz884x: switch from 'pci_' to 'dma_' API
+Message-Id: <20200714183501.310949-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200625132736.88832-1-colin.king@canonical.com>
-In-Reply-To: <20200625132736.88832-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adam Ford <aford173@gmail.com>, Colin King <colin.king@canonical.com>, Marek Vasut <marek.vasut@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sumit.semwal@linaro.org, davem@davemloft.net, kuba@kernel.org, christian.koenig@amd.com, mhabets@solarflare.com, jwi@linux.ibm.com, zhongjiang@huawei.com, weiyongjun1@huawei.com, vaibhavgupta40@gmail.com
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-media@vger.kernel.org
 
-Quoting Colin King (2020-06-25 06:27:36)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a several places where printing an error message of
-> init.name occurs after init.name has been kfree'd. Also the failure
-> message is duplicated each time in the code. Fix this by adding
-> a registration error failure path for these cases, moving the
-> duplicated error messages to one common point and kfree'ing init.name
-> only after it has been used.
-> 
-> Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
-> 
-> Before:
->    text    data     bss     dec     hex filename
->   21057    3960      64   25081    61f9 drivers/clk/clk-versaclock5.o
-> 
-> After:
->    text    data     bss     dec     hex filename
->   20886    3960      64   24910    614e drivers/clk/clk-versaclock5.o
-> 
-> Addresses-Coverity: ("Use after free")
-> Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multiple instances")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Applied to clk-next
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'ksz_alloc_desc()', GFP_KERNEL can be used
+because a few lines below, GFP_KERNEL is also used in the
+'ksz_alloc_soft_desc()' calls.
+
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/ethernet/micrel/ksz884x.c | 68 ++++++++++++---------------
+ 1 file changed, 30 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/net/ethernet/micrel/ksz884x.c b/drivers/net/ethernet/micrel/ksz884x.c
+index 2ce7304d3753..bb646b65cc95 100644
+--- a/drivers/net/ethernet/micrel/ksz884x.c
++++ b/drivers/net/ethernet/micrel/ksz884x.c
+@@ -4390,9 +4390,9 @@ static int ksz_alloc_desc(struct dev_info *adapter)
+ 		DESC_ALIGNMENT;
+ 
+ 	adapter->desc_pool.alloc_virt -		pci_zalloc_consistent(adapter->pdev,
+-				      adapter->desc_pool.alloc_size,
+-				      &adapter->desc_pool.dma_addr);
++		dma_alloc_coherent(&adapter->pdev->dev,
++				   adapter->desc_pool.alloc_size,
++				   &adapter->desc_pool.dma_addr, GFP_KERNEL);
+ 	if (adapter->desc_pool.alloc_virt = NULL) {
+ 		adapter->desc_pool.alloc_size = 0;
+ 		return 1;
+@@ -4431,7 +4431,8 @@ static int ksz_alloc_desc(struct dev_info *adapter)
+ static void free_dma_buf(struct dev_info *adapter, struct ksz_dma_buf *dma_buf,
+ 	int direction)
+ {
+-	pci_unmap_single(adapter->pdev, dma_buf->dma, dma_buf->len, direction);
++	dma_unmap_single(&adapter->pdev->dev, dma_buf->dma, dma_buf->len,
++			 direction);
+ 	dev_kfree_skb(dma_buf->skb);
+ 	dma_buf->skb = NULL;
+ 	dma_buf->dma = 0;
+@@ -4456,16 +4457,15 @@ static void ksz_init_rx_buffers(struct dev_info *adapter)
+ 
+ 		dma_buf = DMA_BUFFER(desc);
+ 		if (dma_buf->skb && dma_buf->len != adapter->mtu)
+-			free_dma_buf(adapter, dma_buf, PCI_DMA_FROMDEVICE);
++			free_dma_buf(adapter, dma_buf, DMA_FROM_DEVICE);
+ 		dma_buf->len = adapter->mtu;
+ 		if (!dma_buf->skb)
+ 			dma_buf->skb = alloc_skb(dma_buf->len, GFP_ATOMIC);
+ 		if (dma_buf->skb && !dma_buf->dma)
+-			dma_buf->dma = pci_map_single(
+-				adapter->pdev,
+-				skb_tail_pointer(dma_buf->skb),
+-				dma_buf->len,
+-				PCI_DMA_FROMDEVICE);
++			dma_buf->dma = dma_map_single(&adapter->pdev->dev,
++						skb_tail_pointer(dma_buf->skb),
++						dma_buf->len,
++						DMA_FROM_DEVICE);
+ 
+ 		/* Set descriptor. */
+ 		set_rx_buf(desc, dma_buf->dma);
+@@ -4543,11 +4543,10 @@ static void ksz_free_desc(struct dev_info *adapter)
+ 
+ 	/* Free memory. */
+ 	if (adapter->desc_pool.alloc_virt)
+-		pci_free_consistent(
+-			adapter->pdev,
+-			adapter->desc_pool.alloc_size,
+-			adapter->desc_pool.alloc_virt,
+-			adapter->desc_pool.dma_addr);
++		dma_free_coherent(&adapter->pdev->dev,
++				  adapter->desc_pool.alloc_size,
++				  adapter->desc_pool.alloc_virt,
++				  adapter->desc_pool.dma_addr);
+ 
+ 	/* Reset resource pool. */
+ 	adapter->desc_pool.alloc_size = 0;
+@@ -4590,12 +4589,10 @@ static void ksz_free_buffers(struct dev_info *adapter,
+ static void ksz_free_mem(struct dev_info *adapter)
+ {
+ 	/* Free transmit buffers. */
+-	ksz_free_buffers(adapter, &adapter->hw.tx_desc_info,
+-		PCI_DMA_TODEVICE);
++	ksz_free_buffers(adapter, &adapter->hw.tx_desc_info, DMA_TO_DEVICE);
+ 
+ 	/* Free receive buffers. */
+-	ksz_free_buffers(adapter, &adapter->hw.rx_desc_info,
+-		PCI_DMA_FROMDEVICE);
++	ksz_free_buffers(adapter, &adapter->hw.rx_desc_info, DMA_FROM_DEVICE);
+ 
+ 	/* Free descriptors. */
+ 	ksz_free_desc(adapter);
+@@ -4657,9 +4654,8 @@ static void send_packet(struct sk_buff *skb, struct net_device *dev)
+ 
+ 		dma_buf->len = skb_headlen(skb);
+ 
+-		dma_buf->dma = pci_map_single(
+-			hw_priv->pdev, skb->data, dma_buf->len,
+-			PCI_DMA_TODEVICE);
++		dma_buf->dma = dma_map_single(&hw_priv->pdev->dev, skb->data,
++					      dma_buf->len, DMA_TO_DEVICE);
+ 		set_tx_buf(desc, dma_buf->dma);
+ 		set_tx_len(desc, dma_buf->len);
+ 
+@@ -4676,11 +4672,10 @@ static void send_packet(struct sk_buff *skb, struct net_device *dev)
+ 			dma_buf = DMA_BUFFER(desc);
+ 			dma_buf->len = skb_frag_size(this_frag);
+ 
+-			dma_buf->dma = pci_map_single(
+-				hw_priv->pdev,
+-				skb_frag_address(this_frag),
+-				dma_buf->len,
+-				PCI_DMA_TODEVICE);
++			dma_buf->dma = dma_map_single(&hw_priv->pdev->dev,
++						      skb_frag_address(this_frag),
++						      dma_buf->len,
++						      DMA_TO_DEVICE);
+ 			set_tx_buf(desc, dma_buf->dma);
+ 			set_tx_len(desc, dma_buf->len);
+ 
+@@ -4700,9 +4695,8 @@ static void send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	} else {
+ 		dma_buf->len = len;
+ 
+-		dma_buf->dma = pci_map_single(
+-			hw_priv->pdev, skb->data, dma_buf->len,
+-			PCI_DMA_TODEVICE);
++		dma_buf->dma = dma_map_single(&hw_priv->pdev->dev, skb->data,
++					      dma_buf->len, DMA_TO_DEVICE);
+ 		set_tx_buf(desc, dma_buf->dma);
+ 		set_tx_len(desc, dma_buf->len);
+ 	}
+@@ -4756,9 +4750,8 @@ static void transmit_cleanup(struct dev_info *hw_priv, int normal)
+ 		}
+ 
+ 		dma_buf = DMA_BUFFER(desc);
+-		pci_unmap_single(
+-			hw_priv->pdev, dma_buf->dma, dma_buf->len,
+-			PCI_DMA_TODEVICE);
++		dma_unmap_single(&hw_priv->pdev->dev, dma_buf->dma,
++				 dma_buf->len, DMA_TO_DEVICE);
+ 
+ 		/* This descriptor contains the last buffer in the packet. */
+ 		if (dma_buf->skb) {
+@@ -4991,9 +4984,8 @@ static inline int rx_proc(struct net_device *dev, struct ksz_hw* hw,
+ 	packet_len = status.rx.frame_len - 4;
+ 
+ 	dma_buf = DMA_BUFFER(desc);
+-	pci_dma_sync_single_for_cpu(
+-		hw_priv->pdev, dma_buf->dma, packet_len + 4,
+-		PCI_DMA_FROMDEVICE);
++	dma_sync_single_for_cpu(&hw_priv->pdev->dev, dma_buf->dma,
++				packet_len + 4, DMA_FROM_DEVICE);
+ 
+ 	do {
+ 		/* skb->data != skb->head */
+@@ -6935,8 +6927,8 @@ static int pcidev_init(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	result = -ENODEV;
+ 
+-	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) ||
+-			pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)))
++	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(32)) ||
++	    dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32)))
+ 		return result;
+ 
+ 	reg_base = pci_resource_start(pdev, 0);
+-- 
+2.25.1
