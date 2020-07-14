@@ -1,61 +1,38 @@
-From: Anna Schumaker <anna.schumaker@netapp.com>
-Date: Wed, 15 Jul 2020 16:40:18 +0000
-Subject: Re: [PATCH] xprtrdma: fix incorrect header size calcations
-Message-Id: <CAFX2Jfn75a8XENoqvztVnUe0aR9S2KGjpcGp3zyLeFS-h--9ag@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Jul 2020 14:36:52 +0000
+Subject: [PATCH v2] drm/i915/selftest: Fix an error code in live_noa_gpr()
+Message-Id: <20200714143652.GA337376@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200715162604.1080552-1-colin.king@canonical.com> <eb5d2ead-807b-3435-5024-b8cc4a1311f3@canonical.com>
-In-Reply-To: <eb5d2ead-807b-3435-5024-b8cc4a1311f3@canonical.com>
+In-Reply-To: <71508ba9-6cad-45f9-a3b1-b3401ac0a1d5@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
 
-No need for a v2, I can fix it up!
+The error code needs to be set on this path.  It currently returns
+success.
 
+Fixes: ed2690a9ca89 ("drm/i915/selftest: Check that GPR are restored across noa_wait")
+Reported-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Fix a different bug instead.  :P  Colin fixed mine already.
 
-On Wed, Jul 15, 2020 at 12:32 PM Colin Ian King
-<colin.king@canonical.com> wrote:
->
-> Bah, $SUBJECT typo "calcations" -> "calculations". can that be fixed up
-> when it's applied, or shall I send a V2?
->
-> On 15/07/2020 17:26, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the header size calculations are using an assignment
-> > operator instead of a += operator when accumulating the header
-> > size leading to incorrect sizes.  Fix this by using the correct
-> > operator.
-> >
-> > Addresses-Coverity: ("Unused value")
-> > Fixes: 302d3deb2068 ("xprtrdma: Prevent inline overflow")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  net/sunrpc/xprtrdma/rpc_rdma.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
-> > index 935bbef2f7be..453bacc99907 100644
-> > --- a/net/sunrpc/xprtrdma/rpc_rdma.c
-> > +++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-> > @@ -71,7 +71,7 @@ static unsigned int rpcrdma_max_call_header_size(unsigned int maxsegs)
-> >       size = RPCRDMA_HDRLEN_MIN;
-> >
-> >       /* Maximum Read list size */
-> > -     size = maxsegs * rpcrdma_readchunk_maxsz * sizeof(__be32);
-> > +     size += maxsegs * rpcrdma_readchunk_maxsz * sizeof(__be32);
-> >
-> >       /* Minimal Read chunk size */
-> >       size += sizeof(__be32); /* segment count */
-> > @@ -94,7 +94,7 @@ static unsigned int rpcrdma_max_reply_header_size(unsigned int maxsegs)
-> >       size = RPCRDMA_HDRLEN_MIN;
-> >
-> >       /* Maximum Write list size */
-> > -     size = sizeof(__be32);          /* segment count */
-> > +     size += sizeof(__be32);         /* segment count */
-> >       size += maxsegs * rpcrdma_segment_maxsz * sizeof(__be32);
-> >       size += sizeof(__be32); /* list discriminator */
-> >
-> >
->
+ drivers/gpu/drm/i915/selftests/i915_perf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/i915/selftests/i915_perf.c b/drivers/gpu/drm/i915/selftests/i915_perf.c
+index 0aa151501fb3..c232194c60a2 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_perf.c
++++ b/drivers/gpu/drm/i915/selftests/i915_perf.c
+@@ -358,6 +358,7 @@ static int live_noa_gpr(void *arg)
+ 		cs = intel_ring_begin(rq, 4);
+ 		if (IS_ERR(cs)) {
+ 			i915_request_add(rq);
++			err = PTR_ERR(cs);
+ 			goto out_rq;
+ 		}
+ 
+-- 
+2.27.0
