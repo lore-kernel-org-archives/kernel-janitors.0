@@ -1,37 +1,169 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Wed, 01 Jul 2020 09:19:28 +0000
-Subject: Re: [PATCH v4 04/14] irqchip/davinci-aintc: Fix potential resource leaks
-Message-Id: <879ce976-042d-b8d7-676e-304e02e7c965@loongson.cn>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Jul 2020 09:28:37 +0000
+Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+Message-Id: <20200714092837.173796-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
- <1593569786-11500-5-git-send-email-yangtiezhu@loongson.cn>
- <08cad331-0a17-586c-07a7-6e3843cb61a1@web.de>
-In-Reply-To: <08cad331-0a17-586c-07a7-6e3843cb61a1@web.de>
+References: <1513619372.31581.106.camel@perches.com>
+In-Reply-To: <1513619372.31581.106.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/01/2020 04:15 PM, Markus Elfring wrote:
-> …
->> +++ b/drivers/irqchip/irq-davinci-aintc.c
->> @@ -96,7 +96,7 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
->>   				     resource_size(&config->reg));
->>   	if (!davinci_aintc_base) {
->>   		pr_err("%s: unable to ioremap register range\n", __func__);
->> -		return;
->> +		goto err_release;
->>   	}
-> …
->
-> Can it help to return any error codes?
-> Would you like to reconsider the function return type?
+From: Colin Ian King <colin.king@canonical.com>
 
-No, the initial aim of this patch is just to fix the potential resource 
-leaks,
-so I think maybe no need to consider the function return type now.
+Here are some of the more common spelling mistakes and typos that I've
+found while fixing up spelling mistakes in the kernel since April 2020.
 
->
-> Regards,
-> Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/spelling.txt | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index c45e9afaab2d..f253681e7e2a 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -149,6 +149,7 @@ arbitary||arbitrary
+ architechture||architecture
+ arguement||argument
+ arguements||arguments
++arithmatic||arithmetic
+ aritmetic||arithmetic
+ arne't||aren't
+ arraival||arrival
+@@ -454,6 +455,7 @@ destorys||destroys
+ destroied||destroyed
+ detabase||database
+ deteced||detected
++detectt||detect
+ develope||develop
+ developement||development
+ developped||developed
+@@ -545,6 +547,7 @@ entires||entries
+ entites||entities
+ entrys||entries
+ enocded||encoded
++enought||enough
+ enterily||entirely
+ enviroiment||environment
+ enviroment||environment
+@@ -556,11 +559,14 @@ equivelant||equivalent
+ equivilant||equivalent
+ eror||error
+ errorr||error
++errror||error
+ estbalishment||establishment
+ etsablishment||establishment
+ etsbalishment||establishment
++evalution||evaluation
+ excecutable||executable
+ exceded||exceeded
++exceds||exceeds
+ exceeed||exceed
+ excellant||excellent
+ execeeded||exceeded
+@@ -583,6 +589,7 @@ explictly||explicitly
+ expresion||expression
+ exprimental||experimental
+ extened||extended
++exteneded||extended||extended
+ extensability||extensibility
+ extention||extension
+ extenstion||extension
+@@ -610,10 +617,12 @@ feautures||features
+ fetaure||feature
+ fetaures||features
+ fileystem||filesystem
++fimrware||firmware
+ fimware||firmware
+ firmare||firmware
+ firmaware||firmware
+ firware||firmware
++firwmare||firmware
+ finanize||finalize
+ findn||find
+ finilizes||finalizes
+@@ -661,6 +670,7 @@ globel||global
+ grabing||grabbing
+ grahical||graphical
+ grahpical||graphical
++granularty||granularity
+ grapic||graphic
+ grranted||granted
+ guage||gauge
+@@ -906,6 +916,7 @@ miximum||maximum
+ mmnemonic||mnemonic
+ mnay||many
+ modfiy||modify
++modifer||modifier
+ modulues||modules
+ momery||memory
+ memomry||memory
+@@ -915,6 +926,7 @@ monochromo||monochrome
+ monocrome||monochrome
+ mopdule||module
+ mroe||more
++multipler||multiplier
+ mulitplied||multiplied
+ multidimensionnal||multidimensional
+ multipe||multiple
+@@ -952,6 +964,7 @@ occassionally||occasionally
+ occationally||occasionally
+ occurance||occurrence
+ occurances||occurrences
++occurd||occurred
+ occured||occurred
+ occurence||occurrence
+ occure||occurred
+@@ -1058,6 +1071,7 @@ precission||precision
+ preemptable||preemptible
+ prefered||preferred
+ prefferably||preferably
++prefitler||prefilter
+ premption||preemption
+ prepaired||prepared
+ preperation||preparation
+@@ -1101,6 +1115,7 @@ pronunce||pronounce
+ propery||property
+ propigate||propagate
+ propigation||propagation
++propogation||propagation
+ propogate||propagate
+ prosess||process
+ protable||portable
+@@ -1316,6 +1331,7 @@ sturcture||structure
+ subdirectoires||subdirectories
+ suble||subtle
+ substract||subtract
++submited||submitted
+ submition||submission
+ suceed||succeed
+ succesfully||successfully
+@@ -1324,6 +1340,7 @@ successed||succeeded
+ successfull||successful
+ successfuly||successfully
+ sucessfully||successfully
++sucessful||successful
+ sucess||success
+ superflous||superfluous
+ superseeded||superseded
+@@ -1409,6 +1426,7 @@ transormed||transformed
+ trasfer||transfer
+ trasmission||transmission
+ treshold||threshold
++triggerd||triggered
+ trigerred||triggered
+ trigerring||triggering
+ trun||turn
+@@ -1421,6 +1439,7 @@ uknown||unknown
+ usccess||success
+ usupported||unsupported
+ uncommited||uncommitted
++uncompatible||incompatible
+ unconditionaly||unconditionally
+ undeflow||underflow
+ underun||underrun
+-- 
+2.27.0
