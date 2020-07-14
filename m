@@ -1,44 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Jul 2020 10:59:18 +0000
-Subject: Re: [PATCH -next] PM / devfreq: Fix missing unlock on error in devfreq_add_device()
-Message-Id: <20200714105918.GB2571@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 14 Jul 2020 11:00:27 +0000
+Subject: [PATCH] hippi: Fix a size used in a 'pci_free_consistent()' in an error handling path
+Message-Id: <20200714110027.301728-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714063025.118829-1-weiyongjun1@huawei.com>
- <20200714093758.GW2549@kadam>
-In-Reply-To: <20200714093758.GW2549@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: jes@trained-monkey.org, davem@davemloft.net, kuba@kernel.org
+Cc: linux-hippi@sunsite.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Jul 14, 2020 at 12:37:58PM +0300, Dan Carpenter wrote:
-> On Tue, Jul 14, 2020 at 06:30:25AM +0000, Wei Yongjun wrote:
-> > Add the missing unlock before return from function devfreq_add_device()
-> > in the error handling case.
-> > 
-> > Fixes: d7c46505a7ad ("PM / devfreq: Add support delayed timer for polling mode")
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/devfreq/devfreq.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> > index 5320c3b37f35..2b54a59bb281 100644
-> > --- a/drivers/devfreq/devfreq.c
-> > +++ b/drivers/devfreq/devfreq.c
-> > @@ -788,6 +788,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
-> >  
-> >  	if (devfreq->profile->timer < 0
-> >  		|| devfreq->profile->timer >= DEVFREQ_TIMER_NUM) {
-> > +		mutex_unlock(&devfreq->lock);
-> >  		goto err_out;
-> 
-> This should be "goto err_dev;" and the unlock is not required because
-> we free "devfreq".
+The size used when calling 'pci_alloc_consistent()' and
+'pci_free_consistent()' should match.
 
-Also the error code needs to be set on this error path.
+Fix it and have it consistent with the corresponding call in 'rr_close()'.
 
-regards,
-dan carpenter
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/hippi/rrunner.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+index 2a6ec5394966..d0d5100eeb0c 100644
+--- a/drivers/net/hippi/rrunner.c
++++ b/drivers/net/hippi/rrunner.c
+@@ -1242,7 +1242,7 @@ static int rr_open(struct net_device *dev)
+ 		rrpriv->info = NULL;
+ 	}
+ 	if (rrpriv->rx_ctrl) {
+-		pci_free_consistent(pdev, sizeof(struct ring_ctrl),
++		pci_free_consistent(pdev, 256 * sizeof(struct ring_ctrl),
+ 				    rrpriv->rx_ctrl, rrpriv->rx_ctrl_dma);
+ 		rrpriv->rx_ctrl = NULL;
+ 	}
+-- 
+2.25.1
