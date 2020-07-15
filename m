@@ -1,38 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Jul 2020 10:44:41 +0000
-Subject: [PATCH] NFS: remove redundant initialization of variable result
-Message-Id: <20200724104441.13532-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 15 Jul 2020 10:40:15 +0000
+Subject: Re: [PATCH] iwlegacy: remove redundant initialization of variable tid
+Message-Id: <20200715104015.4BE75C43391@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200701135221.549700-1-colin.king@canonical.com>
+In-Reply-To: <20200701135221.549700-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> wrote:
 
-The variable result is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable tid is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/nfs/direct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 1b79dd5cf661..2d30a4da49fa 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -896,7 +896,7 @@ static ssize_t nfs_direct_write_schedule_iovec(struct nfs_direct_req *dreq,
-  */
- ssize_t nfs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter)
- {
--	ssize_t result = -EINVAL, requested;
-+	ssize_t result, requested;
- 	size_t count;
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
+ddfa943f246a iwlegacy: remove redundant initialization of variable tid
+
 -- 
-2.27.0
+https://patchwork.kernel.org/patch/11636467/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
