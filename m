@@ -1,52 +1,67 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 12 Jul 2020 17:35:51 +0000
-Subject: [PATCH 2/2] nl80211: Simplify error handling path in 'nl80211_trigger_scan()'
-Message-Id: <20200712173551.274448-1-christophe.jaillet@wanadoo.fr>
+From: <dan.carpenter@oracle.com>
+Date: Wed, 15 Jul 2020 11:59:29 +0000
+Subject: [bug report] dpaa2-eth: send a scatter-gather FD instead of realloc-ing
+Message-Id: <20200715115929.GA390833@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: johannes@sipsolutions.net, davem@davemloft.net, kuba@kernel.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-Re-write the end of 'nl80211_trigger_scan()' with a more standard, easy to
-understand and future proof version.
+Hello Ioana Ciornei,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- net/wireless/nl80211.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+The patch d70446ee1f40: "dpaa2-eth: send a scatter-gather FD instead
+of realloc-ing" from Jun 29, 2020, leads to the following static
+checker warning:
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index a671ee5f5da7..898e5f53f263 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -7993,15 +7993,18 @@ static int nl80211_trigger_scan(struct sk_buff *skb, struct genl_info *info)
- 	rdev->scan_req = request;
- 	err = rdev_scan(rdev, request);
- 
--	if (!err) {
--		nl80211_send_scan_start(rdev, wdev);
--		if (wdev->netdev)
--			dev_hold(wdev->netdev);
--	} else {
-+	if (err)
-+		goto out_free;
-+
-+	nl80211_send_scan_start(rdev, wdev);
-+	if (wdev->netdev)
-+		dev_hold(wdev->netdev);
-+
-+	return 0;
-+
-  out_free:
--		rdev->scan_req = NULL;
--		kfree(request);
--	}
-+	rdev->scan_req = NULL;
-+	kfree(request);
- 
- 	return err;
- }
--- 
-2.25.1
+	drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:719 build_sg_fd_single_buf()
+	warn: overwrite may leak 'sgt_buf'
+
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+   694  static int build_sg_fd_single_buf(struct dpaa2_eth_priv *priv,
+   695                                    struct sk_buff *skb,
+   696                                    struct dpaa2_fd *fd)
+   697  {
+   698          struct device *dev = priv->net_dev->dev.parent;
+   699          struct dpaa2_eth_sgt_cache *sgt_cache;
+   700          struct dpaa2_sg_entry *sgt;
+   701          struct dpaa2_eth_swa *swa;
+   702          dma_addr_t addr, sgt_addr;
+   703          void *sgt_buf = NULL;
+   704          int sgt_buf_size;
+   705          int err;
+   706  
+   707          /* Prepare the HW SGT structure */
+   708          sgt_cache = this_cpu_ptr(priv->sgt_cache);
+   709          sgt_buf_size = priv->tx_data_offset + sizeof(struct dpaa2_sg_entry);
+   710  
+   711          if (sgt_cache->count = 0)
+   712                  sgt_buf = kzalloc(sgt_buf_size + DPAA2_ETH_TX_BUF_ALIGN,
+   713                                    GFP_ATOMIC);
+   714          else
+   715                  sgt_buf = sgt_cache->buf[--sgt_cache->count];
+   716          if (unlikely(!sgt_buf))
+   717                  return -ENOMEM;
+   718  
+   719          sgt_buf = PTR_ALIGN(sgt_buf, DPAA2_ETH_TX_BUF_ALIGN);
+
+Do we need to store the original "sgt_buf" pointer so we can kfree() it
+at the end?
+
+   720          sgt = (struct dpaa2_sg_entry *)(sgt_buf + priv->tx_data_offset);
+   721  
+   722          addr = dma_map_single(dev, skb->data, skb->len, DMA_BIDIRECTIONAL);
+   723          if (unlikely(dma_mapping_error(dev, addr))) {
+   724                  err = -ENOMEM;
+   725                  goto data_map_failed;
+   726          }
+   727  
+   728          /* Fill in the HW SGT structure */
+   729          dpaa2_sg_set_addr(sgt, addr);
+   730          dpaa2_sg_set_len(sgt, skb->len);
+   731          dpaa2_sg_set_final(sgt, true);
+   732  
+   733          /* Store the skb backpointer in the SGT buffer */
+
+regards,
+dan carpenter
