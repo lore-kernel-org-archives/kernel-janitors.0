@@ -1,58 +1,49 @@
-From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Sat, 18 Jul 2020 15:40:26 +0000
-Subject: Re: [PATCH] staging: rts5208: rtsx: Replace depracated MSI API
-Message-Id: <20200718152826.GE26780@blackclown>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Jul 2020 16:26:04 +0000
+Subject: [PATCH] xprtrdma: fix incorrect header size calcations
+Message-Id: <20200715162604.1080552-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200718131856.GA10837@blackclown>
-In-Reply-To: <20200718131856.GA10837@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 18, 2020 at 06:48:56PM +0530, Suraj Upadhyay wrote:
-> Replace depracated pci_enable_msi with pci_alloc_irq_vectors.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/staging/rts5208/rtsx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
-> index e28e162d004e..adc80e766412 100644
-> --- a/drivers/staging/rts5208/rtsx.c
-> +++ b/drivers/staging/rts5208/rtsx.c
-> @@ -310,7 +310,7 @@ static int __maybe_unused rtsx_resume(struct device *dev_d)
->  	pci_set_master(pci);
->  
->  	if (chip->msi_en) {
-> -		if (pci_enable_msi(pci) < 0)
-> +		if (pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI) < 0)
-The conversion is buggy, It changes variable name.
+From: Colin Ian King <colin.king@canonical.com>
 
->  			chip->msi_en = 0;
->  	}
->  
-> @@ -881,7 +881,7 @@ static int rtsx_probe(struct pci_dev *pci,
->  	dev_info(&pci->dev, "pci->irq = %d\n", pci->irq);
->  
->  	if (dev->chip->msi_en) {
-> -		if (pci_enable_msi(pci) < 0)
-> +		if (pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI) < 0)
+Currently the header size calculations are using an assignment
+operator instead of a += operator when accumulating the header
+size leading to incorrect sizes.  Fix this by using the correct
+operator.
 
-This has the same mistake.
+Addresses-Coverity: ("Unused value")
+Fixes: 302d3deb2068 ("xprtrdma: Prevent inline overflow")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sunrpc/xprtrdma/rpc_rdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->  			dev->chip->msi_en = 0;
->  	}
->  
-> -- 
-> 2.17.1
-> 
-
-Resending this patch.
-I hope this wasn't an annoyance.
-
-Thanks,
-
-Suraj Upadhyay
+diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
+index 935bbef2f7be..453bacc99907 100644
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -71,7 +71,7 @@ static unsigned int rpcrdma_max_call_header_size(unsigned int maxsegs)
+ 	size = RPCRDMA_HDRLEN_MIN;
+ 
+ 	/* Maximum Read list size */
+-	size = maxsegs * rpcrdma_readchunk_maxsz * sizeof(__be32);
++	size += maxsegs * rpcrdma_readchunk_maxsz * sizeof(__be32);
+ 
+ 	/* Minimal Read chunk size */
+ 	size += sizeof(__be32);	/* segment count */
+@@ -94,7 +94,7 @@ static unsigned int rpcrdma_max_reply_header_size(unsigned int maxsegs)
+ 	size = RPCRDMA_HDRLEN_MIN;
+ 
+ 	/* Maximum Write list size */
+-	size = sizeof(__be32);		/* segment count */
++	size += sizeof(__be32);		/* segment count */
+ 	size += maxsegs * rpcrdma_segment_maxsz * sizeof(__be32);
+ 	size += sizeof(__be32);	/* list discriminator */
+ 
+-- 
+2.27.0
