@@ -1,30 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Jul 2020 00:50:26 +0000
-Subject: Re: [PATCH] r6040: switch from 'pci_' to 'dma_' API
-Message-Id: <20200720.175026.817982249324339144.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 16 Jul 2020 20:52:42 +0000
+Subject: [PATCH] net: alteon: Avoid some useless memset
+Message-Id: <20200716205242.326486-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200720130242.366855-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200720130242.366855-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, kuba@kernel.org, jes@trained-monkey.org
+Cc: linux-acenic@sunsite.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 20 Jul 2020 15:02:42 +0200
+Avoid a memset after a call to 'dma_alloc_coherent()'.
+This is useless since
+commit 518a2f1925c3 ("dma-mapping: zero memory returned from dma_alloc_*")
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'r6040_open()', GFP_KERNEL can be used because
-> this is a net_device_ops' 'ndo_open' function. This function is protected
-> by the rtnl_lock() semaphore. So only a mutex is used and no spin_lock is
-> acquired.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Replace a kmalloc+memset with a corresponding kzalloc.
 
-Applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/alteon/acenic.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/alteon/acenic.c b/drivers/net/ethernet/alteon/acenic.c
+index 99431c9a899b..ac86fcae1582 100644
+--- a/drivers/net/ethernet/alteon/acenic.c
++++ b/drivers/net/ethernet/alteon/acenic.c
+@@ -1151,7 +1151,7 @@ static int ace_init(struct net_device *dev)
+ 	/*
+ 	 * Get the memory for the skb rings.
+ 	 */
+-	if (!(ap->skb = kmalloc(sizeof(struct ace_skb), GFP_KERNEL))) {
++	if (!(ap->skb = kzalloc(sizeof(struct ace_skb), GFP_KERNEL))) {
+ 		ecode = -EAGAIN;
+ 		goto init_error;
+ 	}
+@@ -1172,9 +1172,6 @@ static int ace_init(struct net_device *dev)
+ 	ap->last_mini_rx = 0;
+ #endif
+ 
+-	memset(ap->info, 0, sizeof(struct ace_info));
+-	memset(ap->skb, 0, sizeof(struct ace_skb));
+-
+ 	ecode = ace_load_firmware(dev);
+ 	if (ecode)
+ 		goto init_error;
+-- 
+2.25.1
