@@ -1,55 +1,45 @@
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Date: Mon, 20 Jul 2020 19:04:35 +0000
-Subject: Re: [PATCH][next] media: i2c: fix error check on max9286_read call
-Message-Id: <ac2e793b-0f29-ac7b-d29f-3a4695c2eedc@ideasonboard.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Jul 2020 14:38:56 +0000
+Subject: [PATCH][next] refperf: avoid null pointer dereference when buf fails to allocate
+Message-Id: <20200716143856.1708123-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200720161335.339174-1-colin.king@canonical.com>
-In-Reply-To: <20200720161335.339174-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: "Paul E . McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 20/07/2020 17:13, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the error return from the call to max9286_read is masked
-> with 0xf0 so the following check for a negative error return is
-> never true.  Fix this by checking for an error first, then masking
-> the return value for subsequent conflink_mask checking.
+Currently in the unlikely event that buf fails to be allocated it
+is dereferenced a few times.  Use the errexit flag to determine if
+buf should be written to to avoid the null pointer dereferences.
 
-Ooops!
+Addresses-Coverity: ("Dereference after null check")
+Fixes: f518f154ecef ("refperf: Dynamically allocate experiment-summary output buffer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/rcu/refscale.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> Addresses-Coverity: ("Logically dead code")
-> fixes: 66d8c9d2422d ("media: i2c: Add MAX9286 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks,
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/i2c/max9286.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index 47f280518fdb..b364a3f60486 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -405,10 +405,11 @@ static int max9286_check_config_link(struct max9286_priv *priv,
->  	 * to 5 milliseconds.
->  	 */
->  	for (i = 0; i < 10; i++) {
-> -		ret = max9286_read(priv, 0x49) & 0xf0;
-> +		ret = max9286_read(priv, 0x49);
->  		if (ret < 0)
->  			return -EIO;
->  
-> +		ret &= 0xf0;
->  		if (ret = conflink_mask)
->  			break;
->  
-> 
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index d9291f883b54..952595c678b3 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -546,9 +546,11 @@ static int main_func(void *arg)
+ 	// Print the average of all experiments
+ 	SCALEOUT("END OF TEST. Calculating average duration per loop (nanoseconds)...\n");
+ 
+-	buf[0] = 0;
+-	strcat(buf, "\n");
+-	strcat(buf, "Runs\tTime(ns)\n");
++	if (!errexit) {
++		buf[0] = 0;
++		strcat(buf, "\n");
++		strcat(buf, "Runs\tTime(ns)\n");
++	}
+ 
+ 	for (exp = 0; exp < nruns; exp++) {
+ 		u64 avg;
+-- 
+2.27.0
