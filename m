@@ -1,65 +1,86 @@
-From: Yonghong Song <yhs@fb.com>
-Date: Tue, 28 Jul 2020 19:12:47 +0000
-Subject: Re: [PATCH][next] bpf: fix swapped arguments in calls to check_buffer_access
-Message-Id: <7a0b563a-9853-9d6f-9d3a-0595e701c1b0@fb.com>
+From: zhouxudong199 <zhouxudong8@huawei.com>
+Date: Thu, 16 Jul 2020 01:57:51 +0000
+Subject: [PATCH v2] ipvs: clean code for ip_vs_sync.c
+Message-Id: <1594864671-31512-1-git-send-email-zhouxudong8@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727175411.155179-1-colin.king@canonical.com>
- <c9ea156a-20fa-5415-0d35-0521e8740ddc@fb.com>
- <882cd37d-0af2-3412-6bd7-73aa466df23c@iogearbox.net>
-In-Reply-To: <882cd37d-0af2-3412-6bd7-73aa466df23c@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Borkmann <daniel@iogearbox.net>, Colin King <colin.king@canonical.com>, Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: wensong@linux-vs.org, horms@verge.net.au
+Cc: netdev@vger.kernel.org, lvs-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, zhouxudong8@huawei.com, rose.chen@huawei.com, zhaowei23@huawei.com
 
+v1 -> v2:
+add missing spaces after Signed-off-by and ipvs: in the subject. 
+i=0 changed to i = 0.  
 
+Signed-off-by: zhouxudong199 <zhouxudong8@huawei.com>
+---
+ net/netfilter/ipvs/ip_vs_sync.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-On 7/28/20 3:43 AM, Daniel Borkmann wrote:
-> On 7/27/20 11:39 PM, Yonghong Song wrote:
->> On 7/27/20 10:54 AM, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> There are a couple of arguments of the boolean flag zero_size_allowed
->>> and the char pointer buf_info when calling to function 
->>> check_buffer_access
->>> that are swapped by mistake. Fix these by swapping them to correct
->>> the argument ordering.
->>>
->>> Addresses-Coverity: ("Array compared to 0")
->>> Fixes: afbf21dce668 ("bpf: Support readonly/readwrite buffers in 
->>> verifier")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> Thanks for the fix!
->> Acked-by: Yonghong Song <yhs@fb.com>
-> 
-> Sigh, thanks for the fix Colin, applied! Yonghong, could you follow-up with
-> BPF selftest test cases that exercise these paths? Thx
-
-This will be triggered with a verifier rejection path, e.g., negative 
-offset from the base. I will send a follow-up patch soon.
-
-BTW, using llvm to build the kernel (without this change), the compiler
-actually issues a warning:
-
--bash-4.4$ make -j100 LLVM=1 && make LLVM=1 vmlinux
-   GEN     Makefile
-...
-   CC      kernel/bpf/verifier.o
-/data/users/yhs/work/net-next/kernel/bpf/verifier.c:3481:18: warning: 
-expression which evaluates to zero treate$
-  as a null pointer constant of type 'const char *' 
-[-Wnon-literal-null-conversion]
-                                           "rdonly", false,
-                                                     ^~~~~
-/data/users/yhs/work/net-next/kernel/bpf/verifier.c:3487:16: warning: 
-expression which evaluates to zero treate$
-  as a null pointer constant of type 'const char *' 
-[-Wnon-literal-null-conversion]
-                                           "rdwr", false,
-                                                   ^~~~~
-2 warnings generated.
-   AR      kernel/bpf/built-in.a
-
-Looks like I need to use LLVM compiler more often...
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index 605e0f6..885bab4 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1077,10 +1077,10 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
+ 	struct ip_vs_protocol *pp;
+ 	struct ip_vs_conn_param param;
+ 	__u32 flags;
+-	unsigned int af, state, pe_data_len=0, pe_name_len=0;
+-	__u8 *pe_data=NULL, *pe_name=NULL;
+-	__u32 opt_flags=0;
+-	int retc=0;
++	unsigned int af, state, pe_data_len = 0, pe_name_len = 0;
++	__u8 *pe_data = NULL, *pe_name = NULL;
++	__u32 opt_flags = 0;
++	int retc = 0;
+ 
+ 	s = (union ip_vs_sync_conn *) p;
+ 
+@@ -1089,7 +1089,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
+ 		af = AF_INET6;
+ 		p += sizeof(struct ip_vs_sync_v6);
+ #else
+-		IP_VS_DBG(3,"BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
++		IP_VS_DBG(3, "BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
+ 		retc = 10;
+ 		goto out;
+ #endif
+@@ -1129,7 +1129,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
+ 			break;
+ 
+ 		case IPVS_OPT_PE_NAME:
+-			if (ip_vs_proc_str(p, plen,&pe_name_len, &pe_name,
++			if (ip_vs_proc_str(p, plen, &pe_name_len, &pe_name,
+ 					   IP_VS_PENAME_MAXLEN, &opt_flags,
+ 					   IPVS_OPT_F_PE_NAME))
+ 				return -70;
+@@ -1155,7 +1155,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
+ 	if (!(flags & IP_VS_CONN_F_TEMPLATE)) {
+ 		pp = ip_vs_proto_get(s->v4.protocol);
+ 		if (!pp) {
+-			IP_VS_DBG(3,"BACKUP, Unsupported protocol %u\n",
++			IP_VS_DBG(3, "BACKUP, Unsupported protocol %u\n",
+ 				s->v4.protocol);
+ 			retc = 30;
+ 			goto out;
+@@ -1232,7 +1232,7 @@ static void ip_vs_process_message(struct netns_ipvs *ipvs, __u8 *buffer,
+ 		msg_end = buffer + sizeof(struct ip_vs_sync_mesg);
+ 		nr_conns = m2->nr_conns;
+ 
+-		for (i=0; i<nr_conns; i++) {
++		for (i = 0; i < nr_conns; i++) {
+ 			union ip_vs_sync_conn *s;
+ 			unsigned int size;
+ 			int retc;
+@@ -1444,7 +1444,7 @@ static int bind_mcastif_addr(struct socket *sock, struct net_device *dev)
+ 	sin.sin_addr.s_addr  = addr;
+ 	sin.sin_port         = 0;
+ 
+-	return sock->ops->bind(sock, (struct sockaddr*)&sin, sizeof(sin));
++	return sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
+ }
+ 
+ static void get_mcast_sockaddr(union ipvs_sockaddr *sa, int *salen,
+-- 
+2.6.1.windows.1
