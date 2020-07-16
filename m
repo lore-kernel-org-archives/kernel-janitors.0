@@ -1,86 +1,82 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 26 Jul 2020 10:58:32 +0000
-Subject: [PATCH 7/7] ath: drop unnecessary list_empty
-Message-Id: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
+From: "Zhouxudong (EulerOS)" <zhouxudong8@huawei.com>
+Date: Thu, 16 Jul 2020 02:59:37 +0000
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYyXSBpcHZzOiBjbGVhbiBjb2RlIGZvciBpcF92c19z?= =?gb2312?Q?ync.c?=
+Message-Id: <69D1AB391AAC5746B9ECCF192D064D641A7949E1@DGGEMI521-MBX.china.huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+References: <1594864671-31512-1-git-send-email-zhouxudong8@huawei.com>
+ <20200716024627.GC14742@blackclown>
+In-Reply-To: <20200716024627.GC14742@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Suraj Upadhyay <usuraj35@gmail.com>
+Cc: "wensong@linux-vs.org" <wensong@linux-vs.org>, "horms@verge.net.au" <horms@verge.net.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "lvs-devel@vger.kernel.org" <lvs-devel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Chenxiang (EulerOS)" <rose.chen@huawei.com>, "Zhaowei (EulerOS)" <zhaowei23@huawei.com>
 
-list_for_each_entry{_safe} is able to handle an empty list.
-The only effect of avoiding the loop is not initializing the
-index variable.
-Drop list_empty tests in cases where these variables are not
-used.
-
-Note that list_for_each_entry{_safe} is defined in terms of
-list_first_entry, which indicates that it should not be used on an
-empty list.  But in list_for_each_entry{_safe}, the element obtained
-by list_first_entry is not really accessed, only the address of its
-list_head field is compared to the address of the list head, so the
-list_first_entry is safe.
-
-The semantic patch that makes this change for the list_for_each_entry
-case is as follows: (http://coccinelle.lip6.fr/)
-
-<smpl>
-@@
-expression x,e;
-statement S;
-identifier i;
-@@
-
--if (!(list_empty(x)))
-   list_for_each_entry(i,x,...) S
- ... when != i
-? i = e
-</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
----
- drivers/net/wireless/ath/dfs_pattern_detector.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
-index a274eb0..0813473 100644
---- a/drivers/net/wireless/ath/dfs_pattern_detector.c
-+++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
-@@ -253,17 +253,15 @@ static void channel_detector_exit(struct dfs_pattern_detector *dpd,
- static void dpd_reset(struct dfs_pattern_detector *dpd)
- {
- 	struct channel_detector *cd;
--	if (!list_empty(&dpd->channel_detectors))
--		list_for_each_entry(cd, &dpd->channel_detectors, head)
--			channel_detector_reset(dpd, cd);
-+	list_for_each_entry(cd, &dpd->channel_detectors, head)
-+		channel_detector_reset(dpd, cd);
- 
- }
- static void dpd_exit(struct dfs_pattern_detector *dpd)
- {
- 	struct channel_detector *cd, *cd0;
--	if (!list_empty(&dpd->channel_detectors))
--		list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
--			channel_detector_exit(dpd, cd);
-+	list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
-+		channel_detector_exit(dpd, cd);
- 	kfree(dpd);
- }
- 
-@@ -331,9 +329,8 @@ static bool dpd_set_domain(struct dfs_pattern_detector *dpd,
- 		return false;
- 
- 	/* delete all channel detectors for previous DFS domain */
--	if (!list_empty(&dpd->channel_detectors))
--		list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
--			channel_detector_exit(dpd, cd);
-+	list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
-+		channel_detector_exit(dpd, cd);
- 	dpd->radar_spec = rt->radar_types;
- 	dpd->num_radar_types = rt->num_radar_types;
- 
+VGhhbmsgeW91IGZvciBzdWdnZXN0aW9uLg0KSSB3aWxsIHNlbmQgdjMgcGF0Y2guDQoNCi0tLS0t
+08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBTdXJhaiBVcGFkaHlheSBbbWFpbHRvOnVzdXJhajM1QGdt
+YWlsLmNvbV0gDQq3osvNyrG85DogMjAyMMTqN9TCMTbI1SAxMDo0Ng0KytW8/sjLOiBaaG91eHVk
+b25nIChFdWxlck9TKSA8emhvdXh1ZG9uZzhAaHVhd2VpLmNvbT4NCrOty806IHdlbnNvbmdAbGlu
+dXgtdnMub3JnOyBob3Jtc0B2ZXJnZS5uZXQuYXU7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGx2
+cy1kZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7
+IENoZW54aWFuZyAoRXVsZXJPUykgPHJvc2UuY2hlbkBodWF3ZWkuY29tPjsgWmhhb3dlaSAoRXVs
+ZXJPUykgPHpoYW93ZWkyM0BodWF3ZWkuY29tPg0K1vfM4jogUmU6IFtQQVRDSCB2Ml0gaXB2czog
+Y2xlYW4gY29kZSBmb3IgaXBfdnNfc3luYy5jDQoNCk9uIFRodSwgSnVsIDE2LCAyMDIwIGF0IDAx
+OjU3OjUxQU0gKzAwMDAsIHpob3V4dWRvbmcxOTkgd3JvdGU6DQo+IHYxIC0+IHYyOg0KPiBhZGQg
+bWlzc2luZyBzcGFjZXMgYWZ0ZXIgU2lnbmVkLW9mZi1ieSBhbmQgaXB2czogaW4gdGhlIHN1Ympl
+Y3QuIA0KPiBpPTAgY2hhbmdlZCB0byBpID0gMC4gIA0KPg0KDQpZb3Ugc2hvdWxkIHdyaXRlIHRo
+ZSB2ZXJzaW9uIGNoYW5nZXMgYWZ0ZXIgIi0tLSIgYW5kIGJlZm9yZSB0aGUgZmlyc3QgZGlmZi4N
+Cg0KQWxzbywgbG9va2luZyBhdCB5b3VyIHBhdGNoIEkgdGhpbmsgeW91ciBjb21taXQgbWVzc2Fn
+ZSBzaG91bGQgYmUgc29tZXRoaW5nIGxpa2UgdGhpcyA6DQoNCiJVc2UgYXBwcm9wcmlhdGUgc3Bh
+Y2VzIGFyb3VuZCBvcGVyYXRvcnMuIg0KDQo+IFNpZ25lZC1vZmYtYnk6IHpob3V4dWRvbmcxOTkg
+PHpob3V4dWRvbmc4QGh1YXdlaS5jb20+DQo+IC0tLQ0KPiAgbmV0L25ldGZpbHRlci9pcHZzL2lw
+X3ZzX3N5bmMuYyB8IDE4ICsrKysrKysrKy0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDkg
+aW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9uZXQvbmV0
+ZmlsdGVyL2lwdnMvaXBfdnNfc3luYy5jIA0KPiBiL25ldC9uZXRmaWx0ZXIvaXB2cy9pcF92c19z
+eW5jLmMgaW5kZXggNjA1ZTBmNi4uODg1YmFiNCAxMDA2NDQNCj4gLS0tIGEvbmV0L25ldGZpbHRl
+ci9pcHZzL2lwX3ZzX3N5bmMuYw0KPiArKysgYi9uZXQvbmV0ZmlsdGVyL2lwdnMvaXBfdnNfc3lu
+Yy5jDQo+IEBAIC0xMDc3LDEwICsxMDc3LDEwIEBAIHN0YXRpYyBpbmxpbmUgaW50IGlwX3ZzX3By
+b2Nfc3luY19jb25uKHN0cnVjdCBuZXRuc19pcHZzICppcHZzLCBfX3U4ICpwLCBfX3U4ICptDQo+
+ICAJc3RydWN0IGlwX3ZzX3Byb3RvY29sICpwcDsNCj4gIAlzdHJ1Y3QgaXBfdnNfY29ubl9wYXJh
+bSBwYXJhbTsNCj4gIAlfX3UzMiBmbGFnczsNCj4gLQl1bnNpZ25lZCBpbnQgYWYsIHN0YXRlLCBw
+ZV9kYXRhX2xlbj0wLCBwZV9uYW1lX2xlbj0wOw0KPiAtCV9fdTggKnBlX2RhdGE9TlVMTCwgKnBl
+X25hbWU9TlVMTDsNCj4gLQlfX3UzMiBvcHRfZmxhZ3M9MDsNCj4gLQlpbnQgcmV0Yz0wOw0KPiAr
+CXVuc2lnbmVkIGludCBhZiwgc3RhdGUsIHBlX2RhdGFfbGVuID0gMCwgcGVfbmFtZV9sZW4gPSAw
+Ow0KPiArCV9fdTggKnBlX2RhdGEgPSBOVUxMLCAqcGVfbmFtZSA9IE5VTEw7DQo+ICsJX191MzIg
+b3B0X2ZsYWdzID0gMDsNCj4gKwlpbnQgcmV0YyA9IDA7DQo+ICANCj4gIAlzID0gKHVuaW9uIGlw
+X3ZzX3N5bmNfY29ubiAqKSBwOw0KPiAgDQo+IEBAIC0xMDg5LDcgKzEwODksNyBAQCBzdGF0aWMg
+aW5saW5lIGludCBpcF92c19wcm9jX3N5bmNfY29ubihzdHJ1Y3QgbmV0bnNfaXB2cyAqaXB2cywg
+X191OCAqcCwgX191OCAqbQ0KPiAgCQlhZiA9IEFGX0lORVQ2Ow0KPiAgCQlwICs9IHNpemVvZihz
+dHJ1Y3QgaXBfdnNfc3luY192Nik7DQo+ICAjZWxzZQ0KPiAtCQlJUF9WU19EQkcoMywiQkFDS1VQ
+LCBJUHY2IG1zZyByZWNlaXZlZCwgYW5kIElQVlMgaXMgbm90IGNvbXBpbGVkIGZvciBJUHY2XG4i
+KTsNCj4gKwkJSVBfVlNfREJHKDMsICJCQUNLVVAsIElQdjYgbXNnIHJlY2VpdmVkLCBhbmQgSVBW
+UyBpcyBub3QgY29tcGlsZWQgDQo+ICtmb3IgSVB2NlxuIik7DQo+ICAJCXJldGMgPSAxMDsNCj4g
+IAkJZ290byBvdXQ7DQo+ICAjZW5kaWYNCj4gQEAgLTExMjksNyArMTEyOSw3IEBAIHN0YXRpYyBp
+bmxpbmUgaW50IGlwX3ZzX3Byb2Nfc3luY19jb25uKHN0cnVjdCBuZXRuc19pcHZzICppcHZzLCBf
+X3U4ICpwLCBfX3U4ICptDQo+ICAJCQlicmVhazsNCj4gIA0KPiAgCQljYXNlIElQVlNfT1BUX1BF
+X05BTUU6DQo+IC0JCQlpZiAoaXBfdnNfcHJvY19zdHIocCwgcGxlbiwmcGVfbmFtZV9sZW4sICZw
+ZV9uYW1lLA0KPiArCQkJaWYgKGlwX3ZzX3Byb2Nfc3RyKHAsIHBsZW4sICZwZV9uYW1lX2xlbiwg
+JnBlX25hbWUsDQo+ICAJCQkJCSAgIElQX1ZTX1BFTkFNRV9NQVhMRU4sICZvcHRfZmxhZ3MsDQo+
+ICAJCQkJCSAgIElQVlNfT1BUX0ZfUEVfTkFNRSkpDQo+ICAJCQkJcmV0dXJuIC03MDsNCj4gQEAg
+LTExNTUsNyArMTE1NSw3IEBAIHN0YXRpYyBpbmxpbmUgaW50IGlwX3ZzX3Byb2Nfc3luY19jb25u
+KHN0cnVjdCBuZXRuc19pcHZzICppcHZzLCBfX3U4ICpwLCBfX3U4ICptDQo+ICAJaWYgKCEoZmxh
+Z3MgJiBJUF9WU19DT05OX0ZfVEVNUExBVEUpKSB7DQo+ICAJCXBwID0gaXBfdnNfcHJvdG9fZ2V0
+KHMtPnY0LnByb3RvY29sKTsNCj4gIAkJaWYgKCFwcCkgew0KPiAtCQkJSVBfVlNfREJHKDMsIkJB
+Q0tVUCwgVW5zdXBwb3J0ZWQgcHJvdG9jb2wgJXVcbiIsDQo+ICsJCQlJUF9WU19EQkcoMywgIkJB
+Q0tVUCwgVW5zdXBwb3J0ZWQgcHJvdG9jb2wgJXVcbiIsDQo+ICAJCQkJcy0+djQucHJvdG9jb2wp
+Ow0KPiAgCQkJcmV0YyA9IDMwOw0KPiAgCQkJZ290byBvdXQ7DQo+IEBAIC0xMjMyLDcgKzEyMzIs
+NyBAQCBzdGF0aWMgdm9pZCBpcF92c19wcm9jZXNzX21lc3NhZ2Uoc3RydWN0IG5ldG5zX2lwdnMg
+KmlwdnMsIF9fdTggKmJ1ZmZlciwNCj4gIAkJbXNnX2VuZCA9IGJ1ZmZlciArIHNpemVvZihzdHJ1
+Y3QgaXBfdnNfc3luY19tZXNnKTsNCj4gIAkJbnJfY29ubnMgPSBtMi0+bnJfY29ubnM7DQo+ICAN
+Cj4gLQkJZm9yIChpPTA7IGk8bnJfY29ubnM7IGkrKykgew0KPiArCQlmb3IgKGkgPSAwOyBpIDwg
+bnJfY29ubnM7IGkrKykgew0KPiAgCQkJdW5pb24gaXBfdnNfc3luY19jb25uICpzOw0KPiAgCQkJ
+dW5zaWduZWQgaW50IHNpemU7DQo+ICAJCQlpbnQgcmV0YzsNCj4gQEAgLTE0NDQsNyArMTQ0NCw3
+IEBAIHN0YXRpYyBpbnQgYmluZF9tY2FzdGlmX2FkZHIoc3RydWN0IHNvY2tldCAqc29jaywgc3Ry
+dWN0IG5ldF9kZXZpY2UgKmRldikNCj4gIAlzaW4uc2luX2FkZHIuc19hZGRyICA9IGFkZHI7DQo+
+ICAJc2luLnNpbl9wb3J0ICAgICAgICAgPSAwOw0KDQpJIHRoaW5rIHlvdSBtaXNzZWQgdGhpcyBv
+bmUuDQpzaG91bGQgYmUNCi0gICAgICAgIHNpbi5zaW5fcG9ydCAgICAgICAgID0gMDsNCisJIHNp
+bi5zaW5fcG9ydCA9IDANCg0KVGhhbmtzIGFuZCBDaGVlcnMsDQpTdXJhaiBVcGFkaHlheS4NCg0K
+PiAtCXJldHVybiBzb2NrLT5vcHMtPmJpbmQoc29jaywgKHN0cnVjdCBzb2NrYWRkciopJnNpbiwg
+c2l6ZW9mKHNpbikpOw0KPiArCXJldHVybiBzb2NrLT5vcHMtPmJpbmQoc29jaywgKHN0cnVjdCBz
+b2NrYWRkciAqKSZzaW4sIHNpemVvZihzaW4pKTsNCj4gIH0NCj4gIA0KPiAgc3RhdGljIHZvaWQg
+Z2V0X21jYXN0X3NvY2thZGRyKHVuaW9uIGlwdnNfc29ja2FkZHIgKnNhLCBpbnQgKnNhbGVuLA0K
+PiAtLQ0KPiAyLjYuMS53aW5kb3dzLjENCj4gDQo+IA0K
