@@ -1,213 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 27 Jul 2020 09:30:27 +0000
-Subject: [PATCH] crypto: hifn_795x - switch from 'pci_' to 'dma_' API
-Message-Id: <20200727093027.46331-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jul 2020 10:23:22 +0000
+Subject: Re: =?utf-8?B?562U5aSN?= =?utf-8?Q?=3A?= [PATCH v2] ipvs: clean code for ip_vs_sync.c
+Message-Id: <20200716102321.GC2549@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1594864671-31512-1-git-send-email-zhouxudong8@huawei.com>
+ <20200716024627.GC14742@blackclown>
+ <69D1AB391AAC5746B9ECCF192D064D641A7949E1@DGGEMI521-MBX.china.huawei.com>
+In-Reply-To: <69D1AB391AAC5746B9ECCF192D064D641A7949E1@DGGEMI521-MBX.china.huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "Zhouxudong (EulerOS)" <zhouxudong8@huawei.com>
+Cc: Suraj Upadhyay <usuraj35@gmail.com>, "wensong@linux-vs.org" <wensong@linux-vs.org>, "horms@verge.net.au" <horms@verge.net.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "lvs-devel@vger.kernel.org" <lvs-devel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Chenxiang (EulerOS)" <rose.chen@huawei.com>, "Zhaowei (EulerOS)" <zhaowei23@huawei.com>
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+It's probably better to start somewhere like drivers/staging for clean
+up work.  Networking people are pretty busy with their own things but
+staging is happy to take clean up patches.
 
-The patch has been generated with the coccinelle script below and has been
-hand modified to replace GFP_ with a correct flag.
-It has been compile tested.
+You need to use a proper legal name (like you would for signing
+documents for your From and Signed-off-by.
 
-When memory is allocated in 'hifn_probe()' GFP_KERNEL can be used
-because it is a probe function and no spin_lock is taken.
+> > @@ -1444,7 +1444,7 @@ static int bind_mcastif_addr(struct socket *sock, struct net_device *dev)
+> >  	sin.sin_addr.s_addr  = addr;
+> >  	sin.sin_port         = 0;
+> 
+> I think you missed this one.
+> should be
+> -        sin.sin_port         = 0;
+> +	 sin.sin_port = 0
 
-@@
-@@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
+That was done deliberately.  Just leave that one as-is, please.
 
-@@
-@@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@
-@@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-@@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
----
- drivers/crypto/hifn_795x.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/crypto/hifn_795x.c b/drivers/crypto/hifn_795x.c
-index 354836468c5d..3363ca4b1a98 100644
---- a/drivers/crypto/hifn_795x.c
-+++ b/drivers/crypto/hifn_795x.c
-@@ -1235,7 +1235,8 @@ static int hifn_setup_src_desc(struct hifn_device *dev, struct page *page,
- 	int idx;
- 	dma_addr_t addr;
- 
--	addr = pci_map_page(dev->pdev, page, offset, size, PCI_DMA_TODEVICE);
-+	addr = dma_map_page(&dev->pdev->dev, page, offset, size,
-+			    DMA_TO_DEVICE);
- 
- 	idx = dma->srci;
- 
-@@ -1293,7 +1294,8 @@ static void hifn_setup_dst_desc(struct hifn_device *dev, struct page *page,
- 	int idx;
- 	dma_addr_t addr;
- 
--	addr = pci_map_page(dev->pdev, page, offset, size, PCI_DMA_FROMDEVICE);
-+	addr = dma_map_page(&dev->pdev->dev, page, offset, size,
-+			    DMA_FROM_DEVICE);
- 
- 	idx = dma->dsti;
- 	dma->dstr[idx].p = __cpu_to_le32(addr);
-@@ -2470,7 +2472,7 @@ static int hifn_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return err;
- 	pci_set_master(pdev);
- 
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (err)
- 		goto err_out_disable_pci_device;
- 
-@@ -2514,8 +2516,9 @@ static int hifn_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		}
- 	}
- 
--	dev->desc_virt = pci_zalloc_consistent(pdev, sizeof(struct hifn_dma),
--					       &dev->desc_dma);
-+	dev->desc_virt = dma_alloc_coherent(&pdev->dev,
-+					    sizeof(struct hifn_dma),
-+					    &dev->desc_dma, GFP_KERNEL);
- 	if (!dev->desc_virt) {
- 		dev_err(&pdev->dev, "Failed to allocate descriptor rings.\n");
- 		err = -ENOMEM;
-@@ -2572,8 +2575,8 @@ static int hifn_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	free_irq(dev->irq, dev);
- 	tasklet_kill(&dev->tasklet);
- err_out_free_desc:
--	pci_free_consistent(pdev, sizeof(struct hifn_dma),
--			dev->desc_virt, dev->desc_dma);
-+	dma_free_coherent(&pdev->dev, sizeof(struct hifn_dma), dev->desc_virt,
-+			  dev->desc_dma);
- 
- err_out_unmap_bars:
- 	for (i = 0; i < 3; ++i)
-@@ -2610,8 +2613,8 @@ static void hifn_remove(struct pci_dev *pdev)
- 
- 		hifn_flush(dev);
- 
--		pci_free_consistent(pdev, sizeof(struct hifn_dma),
--				dev->desc_virt, dev->desc_dma);
-+		dma_free_coherent(&pdev->dev, sizeof(struct hifn_dma),
-+				  dev->desc_virt, dev->desc_dma);
- 		for (i = 0; i < 3; ++i)
- 			if (dev->bar[i])
- 				iounmap(dev->bar[i]);
--- 
-2.25.1
+regards,
+dan carpenter
