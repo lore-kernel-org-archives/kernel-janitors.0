@@ -1,47 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 09 Jul 2020 22:00:49 +0000
-Subject: Re: [PATCH][next] spi: atmel: remove redundant label out_free
-Message-Id: <159433204447.479.12927777803570869971.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 16 Jul 2020 15:29:00 +0000
+Subject: [PATCH] crypto: xts: use memmove to avoid overlapped memory copy
+Message-Id: <20200716152900.1709694-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200709101203.1374117-1-colin.king@canonical.com>
-In-Reply-To: <20200709101203.1374117-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Colin King <colin.king@canonical.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, linux-spi@vger.kernel.org, Tudor Ambarus <tudor.ambarus@microchip.com>, linux-arm-kernel@lists.infradead.org, Peng Fan <fanpeng@loongson.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 9 Jul 2020 11:12:03 +0100, Colin King wrote:
-> The error exit label out_free is no longer being used, it is redundant
-> and can be removed.
-> 
-> Cleans up warning:
-> drivers/spi/spi-atmel.c:1680:1: warning: label ‘out_free’ defined but not used [-Wunused-label]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+There is a memcpy that performs a potential overlapped memory copy
+from source b to destination b + 1.  Fix this by using the safer
+memmove instead.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Addresses-Coverity: ("Overlapping buffer in memory copy")
+Fixes: 8083b1bf8163 ("crypto: xts - add support for ciphertext stealing")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ crypto/xts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] spi: atmel: remove redundant label out_free
-      commit: 50f06cb1dd82f13a1d3897a327dcd7963ea75707
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/crypto/xts.c b/crypto/xts.c
+index 3565f3b863a6..fa3e6e7b7043 100644
+--- a/crypto/xts.c
++++ b/crypto/xts.c
+@@ -169,7 +169,7 @@ static int cts_final(struct skcipher_request *req,
+ 				      offset - XTS_BLOCK_SIZE);
+ 
+ 	scatterwalk_map_and_copy(b, rctx->tail, 0, XTS_BLOCK_SIZE, 0);
+-	memcpy(b + 1, b, tail);
++	memmove(b + 1, b, tail);
+ 	scatterwalk_map_and_copy(b, req->src, offset, tail, 0);
+ 
+ 	le128_xor(b, &rctx->t, b);
+-- 
+2.27.0
