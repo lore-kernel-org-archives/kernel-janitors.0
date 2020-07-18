@@ -1,55 +1,71 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 31 Jul 2020 06:20:57 +0000
-Subject: Re: [PATCH][next] habanalabs: fix incorrect check on failed workqueue create
-Message-Id: <20200731062057.GC1508201@kroah.com>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Sat, 18 Jul 2020 13:30:56 +0000
+Subject: [PATCH] staging: rts5208: rtsx: Replace depracated MSI API
+Message-Id: <20200718131856.GA10837@blackclown>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="a8Wt8u1KmwUX3Y2C"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200730082022.5557-1-colin.king@canonical.com>
- <CAFCwf101gsf3GK6f_ggNgPeKTFXEDdCYz-LugNq5mY342zc2Hw@mail.gmail.com>
-In-Reply-To: <CAFCwf101gsf3GK6f_ggNgPeKTFXEDdCYz-LugNq5mY342zc2Hw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oded Gabbay <oded.gabbay@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Tomer Tayar <ttayar@habana.ai>, Omer Shpigelman <oshpigelman@habana.ai>, Ofir Bitton <obitton@habana.ai>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 01:51:48PM +0300, Oded Gabbay wrote:
-> On Thu, Jul 30, 2020 at 11:20 AM Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The null check on a failed workqueue create is currently null checking
-> > hdev->cq_wq rather than the pointer hdev->cq_wq[i] and so the test
-> > will never be true on a failed workqueue create. Fix this by checking
-> > hdev->cq_wq[i].
-> >
-> > Addresses-Coverity: ("Dereference before null check")
-> > Fixes: 5574cb2194b1 ("habanalabs: Assign each CQ with its own work queue")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/misc/habanalabs/common/device.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/misc/habanalabs/common/device.c b/drivers/misc/habanalabs/common/device.c
-> > index be16b75bdfdb..35214a186913 100644
-> > --- a/drivers/misc/habanalabs/common/device.c
-> > +++ b/drivers/misc/habanalabs/common/device.c
-> > @@ -288,7 +288,7 @@ static int device_early_init(struct hl_device *hdev)
-> >         for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++) {
-> >                 snprintf(workq_name, 32, "hl-free-jobs-%u", i);
-> >                 hdev->cq_wq[i] = create_singlethread_workqueue(workq_name);
-> > -               if (hdev->cq_wq = NULL) {
-> > +               if (hdev->cq_wq[i] = NULL) {
-> >                         dev_err(hdev->dev, "Failed to allocate CQ workqueue\n");
-> >                         rc = -ENOMEM;
-> >                         goto free_cq_wq;
-> > --
-> > 2.27.0
-> >
-> 
-> This patch is:
-> Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-> 
-> Greg, can you please apply it directly to the char-misc-next branch ?
-> I don't want to send a pull request for 1 patch.
 
-Already merged :)
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Replace depracated pci_enable_msi with pci_alloc_irq_vectors.
+
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
+ drivers/staging/rts5208/rtsx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+index e28e162d004e..adc80e766412 100644
+--- a/drivers/staging/rts5208/rtsx.c
++++ b/drivers/staging/rts5208/rtsx.c
+@@ -310,7 +310,7 @@ static int __maybe_unused rtsx_resume(struct device *de=
+v_d)
+ 	pci_set_master(pci);
+=20
+ 	if (chip->msi_en) {
+-		if (pci_enable_msi(pci) < 0)
++		if (pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI) < 0)
+ 			chip->msi_en =3D 0;
+ 	}
+=20
+@@ -881,7 +881,7 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	dev_info(&pci->dev, "pci->irq =3D %d\n", pci->irq);
+=20
+ 	if (dev->chip->msi_en) {
+-		if (pci_enable_msi(pci) < 0)
++		if (pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI) < 0)
+ 			dev->chip->msi_en =3D 0;
+ 	}
+=20
+--=20
+2.17.1
+
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl8S9sAACgkQ+gRsbIfe
+747zJhAAnYwOribTqVdCoKelWsg/J1bRcpu3igKxafUf9i6Jdyk+XmaL4ZtRFsG4
+Gc5EQT8o6bhufzzW+We8doUAjusxMIpEBL4+TzN0vK0YdmNeN/Ebi8Be6JmsGa8U
+BEedBfiYtT6jVuRC2AdquNK3XJ3U4+8FXkSfG0NuGhwViwks0TzQHOAZJCxuS5Cq
++XFhBNXpjK8E+IOXOFKEUB1cngLfwYKOZopITObQO182b7NND2yWLR5U7TLJlBHX
+rE8Nv3Ie7On89qoXSfDUrYNZ7jHok9FRO3K5D2L7v7Uzdcy9JoarwG9cwN3nsWXy
+A1l40jF8ctR+VhukddlrMs6cl/lGoIX3j6oBW/rm7MuW/TgLRnefZLKi9ffAmq5s
+29JyX9k2ZuqyWUcuXkSLxri/hzqGzKv66Zg4QeeKjPVdNWc1Lg15zAtiXnkLT2j9
+coiA8+9d6FfPonwPsYHxwxtMK+BYxUtnAzfbII3uIBHB0av6GVpjjgSIaMvsPcRZ
+R/XnG4XO8zqXyttXxJqzS82BhGvVUvEbtSK/wdqbMeYGrX/4HGjMv6wA4TrCU5wH
+2t0J/yEE+timKORy0b00Q7paKNTrKO4fiYE3yEg48AHFNzjOIOmuPOJDffX/9imb
+4RkGNUBQLqgvUr8fMvzhqmH2yL39UnGW9j50TBnwfXH0GetHv/o=
+=PY3U
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
