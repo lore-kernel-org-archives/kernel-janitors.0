@@ -1,47 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jul 2020 15:54:15 +0000
-Subject: [PATCH] staging: unisys: visorhba: remove redundant initialization of variables scsicmd_id and rc
-Message-Id: <20200723155415.994036-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Jul 2020 07:02:46 +0000
+Subject: [PATCH 2/2] misc: hpilo: avoid a useless memset
+Message-Id: <20200718070246.338016-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Kershner <david.kershner@unisys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sparmaintainer@unisys.com, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Avoid a memset after a call to 'dma_alloc_coherent()'.
+This is useless since
+commit 518a2f1925c3 ("dma-mapping: zero memory returned from dma_alloc_*")
 
-The variables scsicmd_id and rc is being initialized with a value
-that is never read and are being updated later with a new value.
-The initializations are redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/unisys/visorhba/visorhba_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/hpilo.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/unisys/visorhba/visorhba_main.c b/drivers/staging/unisys/visorhba/visorhba_main.c
-index 99c57ceeb357..7ae5306b92fe 100644
---- a/drivers/staging/unisys/visorhba/visorhba_main.c
-+++ b/drivers/staging/unisys/visorhba/visorhba_main.c
-@@ -305,7 +305,7 @@ static int forward_taskmgmt_command(enum task_mgmt_types tasktype,
- 		(struct visorhba_devdata *)scsidev->host->hostdata;
- 	int notifyresult = 0xffff;
- 	wait_queue_head_t notifyevent;
--	int scsicmd_id = 0;
-+	int scsicmd_id;
+diff --git a/drivers/misc/hpilo.c b/drivers/misc/hpilo.c
+index c9539c89a925..fea3ae9d8686 100644
+--- a/drivers/misc/hpilo.c
++++ b/drivers/misc/hpilo.c
+@@ -281,8 +281,6 @@ static int ilo_ccb_setup(struct ilo_hwinfo *hw, struct ccb_data *data, int slot)
+ 	dma_va = (char *)data->dma_va;
+ 	dma_pa = data->dma_pa;
  
- 	if (devdata->serverdown || devdata->serverchangingstate)
- 		return FAILED;
-@@ -1186,7 +1186,7 @@ static struct visor_driver visorhba_driver = {
-  */
- static int visorhba_init(void)
- {
--	int rc = -ENOMEM;
-+	int rc;
+-	memset(dma_va, 0, data->dma_size);
+-
+ 	dma_va = (char *)roundup((unsigned long)dma_va, ILO_START_ALIGN);
+ 	dma_pa = roundup(dma_pa, ILO_START_ALIGN);
  
- 	visorhba_debugfs_dir = debugfs_create_dir("visorhba", NULL);
- 	if (!visorhba_debugfs_dir)
 -- 
-2.27.0
+2.25.1
