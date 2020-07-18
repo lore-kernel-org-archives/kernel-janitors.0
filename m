@@ -1,63 +1,172 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 28 Jul 2020 15:54:50 +0000
-Subject: Re: [PATCH] m68k/amiga: Add missing platform_device_unregister() call in amiga_init_devices()
-Message-Id: <20200728155450.GC4178776@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Jul 2020 07:02:24 +0000
+Subject: [PATCH 1/2] misc: hpilo: switch from 'pci_' to 'dma_' API
+Message-Id: <20200718070224.337964-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e12105b-aa72-11a2-74f6-c789f8ceaaa3@web.de>
-In-Reply-To: <1e12105b-aa72-11a2-74f6-c789f8ceaaa3@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Qinglang Miao <miaoqinglang@huawei.com>, linux-m68k@lists.linux-m68k.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Jul 28, 2020 at 04:50:06PM +0200, Markus Elfring wrote:
-> > Add the missing platform_device_unregister() before return
-> > from amiga_init_devices() in the error handling case.
-> 
-> Will the tag “Fixes” become helpful for the commit message?
-> 
-> 
-> …
-> > +++ b/arch/m68k/amiga/platform.c
-> > @@ -188,8 +188,10 @@  static int __init amiga_init_devices(void)
-> >  			return PTR_ERR(pdev);
-> >  		error = platform_device_add_data(pdev, &a1200_ide_pdata,
-> >  						 sizeof(a1200_ide_pdata));
-> > -		if (error)
-> > +		if (error) {
-> > +			platform_device_unregister(pdev);
-> >  			return error;
-> > +		}
-> >  	}
-> …
-> 
-> I suggest to add a jump target for the desired exception handling.
-> 
->  		if (error)
-> +			goto unregister_device;
-> 
-> 
-> Regards,
-> Markus
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Hi,
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+When memory is allocated in 'ilo_ccb_setup()' GFP_ATOMIC must be used
+because a spin_lock is hold in 'ilo_open()' before calling
+'ilo_ccb_setup()'
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-thanks,
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
-greg k-h's patch email bot
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/misc/hpilo.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/hpilo.c b/drivers/misc/hpilo.c
+index 10c975662f8b..c9539c89a925 100644
+--- a/drivers/misc/hpilo.c
++++ b/drivers/misc/hpilo.c
+@@ -256,7 +256,8 @@ static void ilo_ccb_close(struct pci_dev *pdev, struct ccb_data *data)
+ 	memset_io(device_ccb, 0, sizeof(struct ccb));
+ 
+ 	/* free resources used to back send/recv queues */
+-	pci_free_consistent(pdev, data->dma_size, data->dma_va, data->dma_pa);
++	dma_free_coherent(&pdev->dev, data->dma_size, data->dma_va,
++			  data->dma_pa);
+ }
+ 
+ static int ilo_ccb_setup(struct ilo_hwinfo *hw, struct ccb_data *data, int slot)
+@@ -272,8 +273,8 @@ static int ilo_ccb_setup(struct ilo_hwinfo *hw, struct ccb_data *data, int slot)
+ 			 2 * desc_mem_sz(NR_QENTRY) +
+ 			 ILO_START_ALIGN + ILO_CACHE_SZ;
+ 
+-	data->dma_va = pci_alloc_consistent(hw->ilo_dev, data->dma_size,
+-					    &data->dma_pa);
++	data->dma_va = dma_alloc_coherent(&hw->ilo_dev->dev, data->dma_size,
++					  &data->dma_pa, GFP_ATOMIC);
+ 	if (!data->dma_va)
+ 		return -ENOMEM;
+ 
+-- 
+2.25.1
