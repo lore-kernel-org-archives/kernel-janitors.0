@@ -1,37 +1,20 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Jul 2020 13:41:54 +0000
-Subject: [PATCH] drm/virtgpu: remove redundant assignments to width and height
-Message-Id: <20200701134154.549112-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 20 Jul 2020 11:07:53 +0000
+Subject: Re: [PATCH] ath11k: Fix memory leak in ath11k_qmi_init_service()
+Message-Id: <9379ef46-5931-5542-c424-916bb8476a92@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Wang Yufen <wangyufen@huawei.com>, brcm80211-dev-list@cypress.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Franky Lin <franky.lin@broadcom.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Wright Feng <wright.feng@cypress.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> When qmi_add_lookup fail, we should destroy the workqueue
 
-Variables width and height are being assigned values that are never
-read. The assignments are redundant and can be removed.
+Can the following wording variant be nicer for the change description?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/virtio/virtgpu_display.c | 2 --
- 1 file changed, 2 deletions(-)
+   Destroy the work queue object in an if branch
+   after a call of the function “qmi_add_lookup” failed.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index f3ce49c5a34c..bf80d8c23da7 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -165,8 +165,6 @@ static int virtio_gpu_conn_get_modes(struct drm_connector *connector)
- 	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
- 
- 	if (width = 0 || height = 0) {
--		width = XRES_DEF;
--		height = YRES_DEF;
- 		drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
- 	} else {
- 		DRM_DEBUG("add mode: %dx%d\n", width, height);
--- 
-2.27.0
+Regards,
+Markus
