@@ -1,48 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jul 2020 11:52:26 +0000
-Subject: Re: [PATCH] drm/amd/display: fix dp_dsc_clock_en_read() debugfs function
-Message-Id: <20200730115225.GG5493@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Jul 2020 16:38:04 +0000
+Subject: [PATCH][next] media: allegro: fix potential null dereference on header
+Message-Id: <20200720163804.340047-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200730114613.GA59409@mwanda>
-In-Reply-To: <20200730114613.GA59409@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>, Eryk Brol <eryk.brol@amd.com>
-Cc: Stylon Wang <stylon.wang@amd.com>, kernel-janitors@vger.kernel.org, Leo Li <sunpeng.li@amd.com>, Anthony Koo <Anthony.Koo@amd.com>, Qingqing Zhuo <qingqing.zhuo@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Bhanuprakash Modem <bhanuprakash.modem@intel.com>, Alex Deucher <alexander.deucher@amd.com>, Mikita Lipski <mikita.lipski@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+To: Michael Tretter <m.tretter@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The other debugfs functions should probably be updated as well...  I
-just did this one as an example of how these functions are normally
-implemented.
+From: Colin Ian King <colin.king@canonical.com>
 
-There are some other warnings we could look at as well.
+The pointer header is an alias to msg and msg is being null checked.
+However, if msg is null then header is also null and this can lead to
+a null pointer dereference on the assignment type = header->type. Fix
+this by only dereferencing header after the null check on msg.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 3de16839669f ("media: allegro: add explicit mail encoding and decoding")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/allegro-dvt/allegro-mail.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:683 dp_phy_test_pattern_debugfs_write() warn: we tested 'valid_test_pattern' before and it was 'true'
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1005 dp_dsc_clock_en_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1005 dp_dsc_clock_en_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1010 dp_dsc_clock_en_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1019 dp_dsc_clock_en_read() error: snprintf() is printing too much 30 vs 10
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1062 dp_dsc_slice_width_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1062 dp_dsc_slice_width_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1067 dp_dsc_slice_width_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1119 dp_dsc_slice_height_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1119 dp_dsc_slice_height_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1124 dp_dsc_slice_height_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1176 dp_dsc_bits_per_pixel_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1176 dp_dsc_bits_per_pixel_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1181 dp_dsc_bits_per_pixel_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1233 dp_dsc_pic_width_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1233 dp_dsc_pic_width_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1238 dp_dsc_pic_width_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1290 dp_dsc_pic_height_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1290 dp_dsc_pic_height_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1295 dp_dsc_pic_height_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1347 dp_dsc_chunk_size_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1347 dp_dsc_chunk_size_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1352 dp_dsc_chunk_size_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1404 dp_dsc_slice_bpg_offset_read() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1404 dp_dsc_slice_bpg_offset_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_debugfs.c:1409 dp_dsc_slice_bpg_offset_read() warn: address of 'aconnector->dc_link->dc->current_state->res_ctx.pipe_ctx[i]' is non-NULL
+diff --git a/drivers/staging/media/allegro-dvt/allegro-mail.c b/drivers/staging/media/allegro-dvt/allegro-mail.c
+index 4ac65de12463..4496e2a4da5c 100644
+--- a/drivers/staging/media/allegro-dvt/allegro-mail.c
++++ b/drivers/staging/media/allegro-dvt/allegro-mail.c
+@@ -462,12 +462,14 @@ allegro_dec_encode_frame(struct mcu_msg_encode_frame_response *msg, u32 *src)
+ ssize_t allegro_encode_mail(u32 *dst, void *msg)
+ {
+ 	const struct mcu_msg_header *header = msg;
+-	enum mcu_msg_type type = header->type;
++	enum mcu_msg_type type;
+ 	ssize_t size;
+ 
+ 	if (!msg || !dst)
+ 		return -EINVAL;
+ 
++	type = header->type;
++
+ 	switch (type) {
+ 	case MCU_MSG_TYPE_INIT:
+ 		size = allegro_enc_init(&dst[1], msg);
+-- 
+2.27.0
