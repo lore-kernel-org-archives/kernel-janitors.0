@@ -1,25 +1,24 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 13 Jul 2020 16:05:06 +0000
-Subject: Re: [PATCH] ALSA: echoaudio: re-enable IRQs on failure path
-Message-Id: <s5hy2nnwgct.wl-tiwai@suse.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 20 Jul 2020 12:07:50 +0000
+Subject: Re: [PATCH] ipmi: Remove duplicate code in __ipmi_bmc_register()
+Message-Id: <2084072d-e16c-d47c-6eed-f47e8f149c44@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200713105324.GB251988@mwanda>
-In-Reply-To: <20200713105324.GB251988@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Hills <mark@xwax.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Corey Minyard <cminyard@mvista.com>, Jing Xiangfeng <jingxiangfeng@huawei.com>, openipmi-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Corey Minyard <minyard@acm.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Mon, 13 Jul 2020 12:53:24 +0200,
-Dan Carpenter wrote:
-> 
-> This should be spin_unlock_irq() instead of spin_lock().
-> 
-> Fixes: 6c3312544873 ("ALSA: echoaudio: Prevent races in calls to set_audio_format()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > __ipmi_bmc_register() jumps to the label 'out_free_my_dev_name' in an
+> > error path. So we can remove duplicate code in the if (rv).
+>
+> Looks correct, queued for next release.
 
-Thanks, applied now.
+1. Can an imperative wording be preferred for the change description?
 
+2. Will the tag “Fixes” become helpful for the commit message?
 
-Takashi
+3. Did you avoid a typo in the patch subject?
+
+Regards,
+Markus
