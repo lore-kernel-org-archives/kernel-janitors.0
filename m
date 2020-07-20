@@ -1,56 +1,39 @@
-From: Akash Asthana <akashast@codeaurora.org>
-Date: Mon, 27 Jul 2020 07:59:12 +0000
-Subject: Re: [PATCH] i2c: qcom-geni: fix spelling mistake "unepxected" -> "unexpected"
-Message-Id: <ee839cf4-6310-aa4e-6ed2-322f20343953@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Jul 2020 16:29:52 +0000
+Subject: [PATCH][next] phy: samsung-ufs: fix check on failed devm_clk_get call for rx1_symbol_clk
+Message-Id: <20200720162952.339697-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20191103212204.13606-1-colin.king@canonical.com>
- <74e71d14-9f27-6a44-f253-4756ba124695@codeaurora.org>
-In-Reply-To: <74e71d14-9f27-6a44-f253-4756ba124695@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Alok Chauhan <alokc@codeaurora.org>, Andy Gross <agross@kernel.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kishon Vijay Abraham I <kishon@ti.com>, Vinod Koul <vkoul@kernel.org>, Seungwon Jeon <essuuj@gmail.com>, Kiwoong Kim <kwmad.kim@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 7/27/2020 1:25 PM, Akash Asthana wrote:
->
-> On 11/4/2019 2:52 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is a spelling mistake in an error message string, fix it.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   drivers/i2c/busses/i2c-qcom-geni.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c 
->> b/drivers/i2c/busses/i2c-qcom-geni.c
->> index 17abf60c94ae..387fb5a83471 100644
->> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->> @@ -98,7 +98,7 @@ static const struct geni_i2c_err_log gi2c_log[] = {
->>       [GP_IRQ0] = {-EIO, "Unknown I2C err GP_IRQ0"},
->>       [NACK] = {-ENXIO, "NACK: slv unresponsive, check its 
->> power/reset-ln"},
->>       [GP_IRQ2] = {-EIO, "Unknown I2C err GP IRQ2"},
->> -    [BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unepxected 
->> start/stop"},
->> +    [BUS_PROTO] = {-EPROTO, "Bus proto err, noisy/unexpected 
->> start/stop"},
->>       [ARB_LOST] = {-EAGAIN, "Bus arbitration lost, clock line 
->> undriveable"},
->>       [GP_IRQ5] = {-EIO, "Unknown I2C err GP IRQ5"},
->>       [GENI_OVERRUN] = {-EIO, "Cmd overrun, check GENI cmd-state 
->> machine"},
->
-> The patch is still applying cleanly on tip.
->
-> Reviewed-by: Akash Asthana <akashast@codeauror.org>
-Correct tag
+The check to see if the call to devm_clk_get on rx1_symbol_clk is checking
+the wrong variable, this looks like a copy-paste error. Fix this to check
+phy->rx1_symbol instead of phy->rx0_symbol.
 
-Reviewed-by: Akash Asthana <akashast@codeaurora.org>
+Addresses-Coverity: ("Copy-paste error")
+Fixes: bca21e930451 ("phy: samsung-ufs: add UFS PHY driver for samsung SoC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/phy/samsung/phy-samsung-ufs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+index 43ef77d1d96c..9832599a0283 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.c
++++ b/drivers/phy/samsung/phy-samsung-ufs.c
+@@ -147,7 +147,7 @@ static int samsung_ufs_phy_symbol_clk_init(struct samsung_ufs_phy *phy)
+ 	}
+ 
+ 	phy->rx1_symbol_clk = devm_clk_get(phy->dev, "rx1_symbol_clk");
+-	if (IS_ERR(phy->rx0_symbol_clk)) {
++	if (IS_ERR(phy->rx1_symbol_clk)) {
+ 		dev_err(phy->dev, "failed to get rx1_symbol_clk clock\n");
+ 		return PTR_ERR(phy->rx1_symbol_clk);
+ 	}
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+2.27.0
