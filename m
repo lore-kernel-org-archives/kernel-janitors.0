@@ -1,36 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Jul 2020 01:32:33 +0000
-Subject: Re: [PATCH] mISDN: switch from 'pci_' to 'dma_' API
-Message-Id: <20200720.183233.1523852489153157390.davem@davemloft.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Mon, 20 Jul 2020 14:19:06 +0000
+Subject: Re: [PATCH] clk: ti: clkctrl: add the missed kfree() for _ti_omap4_clkctrl_setup()
+Message-Id: <b7f0dcda-7ec8-b3d8-ba53-c2720799abbc@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200718103033.352247-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200718103033.352247-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: isdn@linux-pingi.de, sergey.senozhatsky@gmail.com, wangkefeng.wang@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jing Xiangfeng <jingxiangfeng@huawei.com>, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Jul 2020 12:30:33 +0200
+…
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -655,8 +655,10 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+>  		}
+>
+>  		hw = kzalloc(sizeof(*hw), GFP_KERNEL);
+> -		if (!hw)
+> +		if (!hw) {
+> +			kfree(clkctrl_name);
+>  			return;
+> +		}
+…
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'setup_hw()' (hfcpci.c) GFP_KERNEL can be used
-> because it is called from the probe function and no lock is taken.
-> The call chain is:
->    hfc_probe()
->    --> setup_card()
->    --> setup_hw()
-> 
-> When memory is allocated in 'inittiger()' (netjet.c) GFP_ATOMIC must be
-> used because a spin_lock is taken by the caller (i.e. 'nj_init_card()')
-> This is also consistent with the other allocations done in the function.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I suggest to use an additional label instead.
 
-Applied, thanks.
+ 		if (!hw)
+-			return;
++			goto free_control_name;
+
+
+By the way:
+How do you think about to replace the label “cleanup” by other jump targets
+for better exception handling in this function implementation?
+
+Regards,
+Markus
