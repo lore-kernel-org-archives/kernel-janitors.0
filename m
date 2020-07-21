@@ -1,23 +1,30 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Thu, 23 Jul 2020 05:33:41 +0000
-Subject: Re: [PATCH] mailbox: pcc: Put the PCCT table for error path
-Message-Id: <9e4f09a9-d14f-d76c-5318-d25501c0ec66@web.de>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Tue, 21 Jul 2020 13:13:53 +0000
+Subject: Re: [PATCH] thermal: ti-soc-thermal: Fix reversed condition in ti_thermal_expose_sensor()
+Message-Id: <145478f0-3db1-4121-ad7c-78bc67a69c66@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200616091949.GA11940@mwanda>
+In-Reply-To: <20200616091949.GA11940@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Hanjun Guo <guohanjun@huawei.com>, Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>, Eduardo Valentin <edubezval@gmail.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Kucheria <amit.kucheria@verdurent.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-…
-> In acpi_pcc_probe(), the PCCT table entries will be used as private
-> data for communication chan at runtime, but the table should be put
-> for error path.
+On 16/06/2020 11:19, Dan Carpenter wrote:
+> This condition is reversed and will cause breakage.
+>=20
+> Fixes: 7440f518dad9 ("thermal/drivers/ti-soc-thermal: Avoid dereferencing=
+ ERR_PTR")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+ Applied.
 
-* An imperative wording can be preferred for the change description,
-  can't it?
 
-* Will the tag “Fixes” become helpful for the commit message?
+--=20
+<http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM =
+SoCs
 
-Regards,
-Markus
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
