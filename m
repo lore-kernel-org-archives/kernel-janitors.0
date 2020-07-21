@@ -1,52 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 30 Jul 2020 22:28:36 +0000
-Subject: Re: [PATCH 0/7] drop unnecessary list_empty
-Message-Id: <159614804536.1473.16638498246526574558.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Jul 2020 15:06:13 +0000
+Subject: [PATCH][next] phy: qualcomm: fix setting of tx_deamp_3_5db when device property read fails
+Message-Id: <20200721150613.416876-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
-Cc: linux-wireless@vger.kernel.org, alsa-devel@alsa-project.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vinod Koul <vkoul@kernel.org>, Ansuel Smith <ansuelsmth@gmail.com>, linux-arm-msm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 26 Jul 2020 12:58:25 +0200, Julia Lawall wrote:
-> The various list iterators are able to handle an empty list.
-> The only effect of avoiding the loop is not initializing some
-> index variables.
-> Drop list_empty tests in cases where these variables are not
-> used.
-> 
-> The semantic patch that makes these changes is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> [...]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+Currently when reading of the device property for "qcom,tx-deamp_3_5db"
+fails the default is being assigned incorrectly to phy_dwc3->rx_eq. This
+looks like a copy-n-paste error and in fact should be assigning the
+default instead to phy_dwc3->tx_deamp_3_5db
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Copy-paste error")
+Fixes: ef19b117b834 ("phy: qualcomm: add qcom ipq806x dwc usb phy driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: Intel: drop unnecessary list_empty
-      commit: a383308e50244a28fe927b9c1acbe0a963bf186b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+index a7241bf110d7..71f257b4a7f5 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
++++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+@@ -531,7 +531,7 @@ static int qcom_ipq806x_usb_phy_probe(struct platform_device *pdev)
+ 
+ 	if (device_property_read_u32(&pdev->dev, "qcom,tx-deamp_3_5db",
+ 				     &phy_dwc3->tx_deamp_3_5db))
+-		phy_dwc3->rx_eq = SSPHY_TX_DEEMPH_3_5DB;
++		phy_dwc3->tx_deamp_3_5db = SSPHY_TX_DEEMPH_3_5DB;
+ 
+ 	if (device_property_read_u32(&pdev->dev, "qcom,mpll", &phy_dwc3->mpll))
+ 		phy_dwc3->mpll = SSPHY_MPLL_VALUE;
+-- 
+2.27.0
