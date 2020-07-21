@@ -1,27 +1,40 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Wed, 01 Jul 2020 09:40:32 +0000
-Subject: Re: [PATCH v4 11/14] irqchip/omap-intc: Fix potential resource leak
-Message-Id: <25e52567-bda4-e936-f04b-8126eb849520@loongson.cn>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Jul 2020 10:02:17 +0000
+Subject: [PATCH][next] x86/ioperm: initialize pointer bitmap with NULL rather than 0
+Message-Id: <20200721100217.407975-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
- <1593569786-11500-12-git-send-email-yangtiezhu@loongson.cn>
- <fdbd6e18-37d4-cf29-a990-89c1974491cb@web.de>
-In-Reply-To: <fdbd6e18-37d4-cf29-a990-89c1974491cb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/01/2020 05:14 PM, Markus Elfring wrote:
->> In the function omap_init_irq_of(), system resource "omap_irq_base"
->> was not released in the error case, fix it.
-> Another small wording adjustment:
->    … in an error case. Thus add a call of the function “iounmap”
->    in the if branch.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, thank you, I will do it in v5 of this patch #11 and next patch #12.
+The pointer bitmap is being initialized with a plain integer 0,
+fix this by initializing it with a NULL instead.
 
->
-> Regards,
-> Markus
+Cleans up sparse warning:
+arch/x86/xen/enlighten_pv.c:876:27: warning: Using plain integer
+as NULL pointer
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/xen/enlighten_pv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index c46b9f2e732f..2aab43a13a8c 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -873,7 +873,7 @@ static void xen_load_sp0(unsigned long sp0)
+ static void xen_invalidate_io_bitmap(void)
+ {
+ 	struct physdev_set_iobitmap iobitmap = {
+-		.bitmap = 0,
++		.bitmap = NULL,
+ 		.nr_ports = 0,
+ 	};
+ 
+-- 
+2.27.0
