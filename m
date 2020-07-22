@@ -1,92 +1,38 @@
-From: zhouxudong199 <zhouxudong8@huawei.com>
-Date: Thu, 16 Jul 2020 02:57:38 +0000
-Subject: [PATCH v3] ipvs: clean code for ip_vs_sync.c
-Message-Id: <1594868258-37160-1-git-send-email-zhouxudong8@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Jul 2020 15:16:30 +0000
+Subject: [PATCH] media: radio: remove redundant assignment to variable retval
+Message-Id: <20200722151630.958201-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wensong@linux-vs.org, horms@verge.net.au
-Cc: netdev@vger.kernel.org, lvs-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, zhouxudong8@huawei.com, rose.chen@huawei.com, zhaowei23@huawei.com
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use appropriate spaces around operators.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: zhouxudong199 <zhouxudong8@huawei.com>
+The variable retval is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v1 -> v2:
-add missing spaces after Signed-off-by and ipvs: in the subject.
-i=0 changed to i = 0.
+ drivers/media/radio/si4713/radio-usb-si4713.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2 -> v3:
-move version changes after Signed-off-by.
-change commit messages
-
- net/netfilter/ipvs/ip_vs_sync.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
-index 605e0f6..885bab4 100644
---- a/net/netfilter/ipvs/ip_vs_sync.c
-+++ b/net/netfilter/ipvs/ip_vs_sync.c
-@@ -1077,10 +1077,10 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
- 	struct ip_vs_protocol *pp;
- 	struct ip_vs_conn_param param;
- 	__u32 flags;
--	unsigned int af, state, pe_data_len=0, pe_name_len=0;
--	__u8 *pe_data=NULL, *pe_name=NULL;
--	__u32 opt_flags=0;
--	int retc=0;
-+	unsigned int af, state, pe_data_len = 0, pe_name_len = 0;
-+	__u8 *pe_data = NULL, *pe_name = NULL;
-+	__u32 opt_flags = 0;
-+	int retc = 0;
+diff --git a/drivers/media/radio/si4713/radio-usb-si4713.c b/drivers/media/radio/si4713/radio-usb-si4713.c
+index 33274189c83c..2cf36c8abdde 100644
+--- a/drivers/media/radio/si4713/radio-usb-si4713.c
++++ b/drivers/media/radio/si4713/radio-usb-si4713.c
+@@ -414,7 +414,7 @@ static int usb_si4713_probe(struct usb_interface *intf,
+ 	struct si4713_usb_device *radio;
+ 	struct i2c_adapter *adapter;
+ 	struct v4l2_subdev *sd;
+-	int retval = -ENOMEM;
++	int retval;
  
- 	s = (union ip_vs_sync_conn *) p;
- 
-@@ -1089,7 +1089,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
- 		af = AF_INET6;
- 		p += sizeof(struct ip_vs_sync_v6);
- #else
--		IP_VS_DBG(3,"BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
-+		IP_VS_DBG(3, "BACKUP, IPv6 msg received, and IPVS is not compiled for IPv6\n");
- 		retc = 10;
- 		goto out;
- #endif
-@@ -1129,7 +1129,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
- 			break;
- 
- 		case IPVS_OPT_PE_NAME:
--			if (ip_vs_proc_str(p, plen,&pe_name_len, &pe_name,
-+			if (ip_vs_proc_str(p, plen, &pe_name_len, &pe_name,
- 					   IP_VS_PENAME_MAXLEN, &opt_flags,
- 					   IPVS_OPT_F_PE_NAME))
- 				return -70;
-@@ -1155,7 +1155,7 @@ static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8 *p, __u8 *m
- 	if (!(flags & IP_VS_CONN_F_TEMPLATE)) {
- 		pp = ip_vs_proto_get(s->v4.protocol);
- 		if (!pp) {
--			IP_VS_DBG(3,"BACKUP, Unsupported protocol %u\n",
-+			IP_VS_DBG(3, "BACKUP, Unsupported protocol %u\n",
- 				s->v4.protocol);
- 			retc = 30;
- 			goto out;
-@@ -1232,7 +1232,7 @@ static void ip_vs_process_message(struct netns_ipvs *ipvs, __u8 *buffer,
- 		msg_end = buffer + sizeof(struct ip_vs_sync_mesg);
- 		nr_conns = m2->nr_conns;
- 
--		for (i=0; i<nr_conns; i++) {
-+		for (i = 0; i < nr_conns; i++) {
- 			union ip_vs_sync_conn *s;
- 			unsigned int size;
- 			int retc;
-@@ -1444,7 +1444,7 @@ static int bind_mcastif_addr(struct socket *sock, struct net_device *dev)
- 	sin.sin_addr.s_addr  = addr;
- 	sin.sin_port         = 0;
- 
--	return sock->ops->bind(sock, (struct sockaddr*)&sin, sizeof(sin));
-+	return sock->ops->bind(sock, (struct sockaddr *)&sin, sizeof(sin));
- }
- 
- static void get_mcast_sockaddr(union ipvs_sockaddr *sa, int *salen,
+ 	dev_info(&intf->dev, "Si4713 development board discovered: (%04X:%04X)\n",
+ 			id->idVendor, id->idProduct);
 -- 
-2.6.1.windows.1
+2.27.0
