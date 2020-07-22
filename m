@@ -1,41 +1,49 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Jul 2020 11:10:08 +0000
-Subject: [PATCH][next] drm/amdgpu: fix spelling mistake "Falied" -> "Failed"
-Message-Id: <20200724111008.14548-1-colin.king@canonical.com>
+Date: Wed, 22 Jul 2020 17:40:03 +0000
+Subject: [PATCH][next] ionic: fix memory leak of object 'lid'
+Message-Id: <20200722174003.962374-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180322154144.31363-1-colin.king@canonical.com>
-In-Reply-To: <20180322154144.31363-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Shannon Nelson <snelson@pensando.io>, Pensando Drivers <drivers@pensando.io>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a DRM_ERROR error message. Fix it.
+Currently when netdev fails to allocate the error return path
+fails to free the allocated object 'lid'.  Fix this by setting
+err to the return error code and jumping to a new label that
+performs the kfree of lid before returning.
 
+Addresses-Coverity: ("Resource leak")
+Fixes: 4b03b27349c0 ("ionic: get MTU from lif identity")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Can folk please use checkpatch, it should catch these errors.
-
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-index fe7d39bb975d..8034111acd9a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-@@ -1987,7 +1987,7 @@ static int psp_suspend(void *handle)
- 
- 	ret = psp_tmr_terminate(psp);
- 	if (ret) {
--		DRM_ERROR("Falied to terminate tmr\n");
-+		DRM_ERROR("Failed to terminate tmr\n");
- 		return ret;
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+index 7ad338a4653c..728dd6429d80 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -2034,7 +2034,8 @@ static struct ionic_lif *ionic_lif_alloc(struct ionic *ionic, unsigned int index
+ 				    ionic->ntxqs_per_lif, ionic->ntxqs_per_lif);
+ 	if (!netdev) {
+ 		dev_err(dev, "Cannot allocate netdev, aborting\n");
+-		return ERR_PTR(-ENOMEM);
++		err = -ENOMEM;
++		goto err_out_free_lid;
  	}
  
+ 	SET_NETDEV_DEV(netdev, dev);
+@@ -2120,6 +2121,7 @@ static struct ionic_lif *ionic_lif_alloc(struct ionic *ionic, unsigned int index
+ err_out_free_netdev:
+ 	free_netdev(lif->netdev);
+ 	lif = NULL;
++err_out_free_lid:
+ 	kfree(lid);
+ 
+ 	return ERR_PTR(err);
 -- 
 2.27.0
