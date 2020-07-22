@@ -1,47 +1,45 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Thu, 09 Jul 2020 14:43:17 +0000
-Subject: Re: [PATCH v2] scsi: lpfc: Fix a condition in lpfc_dmp_dbg()
-Message-Id: <3c46ca75-54d7-7f75-edfb-514b34b003dc@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Jul 2020 15:12:21 +0000
+Subject: [PATCH][next] lan743x: remove redundant initialization of variable current_head_index
+Message-Id: <20200722151221.957972-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200709105826.GH2571@kadam>
-In-Reply-To: <20200709105826.GH2571@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bryan Whitehead <bryan.whitehead@microchip.com>, Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 7/9/2020 3:58 AM, Dan Carpenter wrote:
-> These variables are unsigned so the result of the subtraction is also
-> unsigned and thus can't be negative.  Change it to a comparison and
-> remove the subtraction.
->
-> Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  I reverse the if statement in v1
->
->   drivers/scsi/lpfc/lpfc_init.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-> index 7285b0114837..2bb2c96e7784 100644
-> --- a/drivers/scsi/lpfc/lpfc_init.c
-> +++ b/drivers/scsi/lpfc/lpfc_init.c
-> @@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
->   		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
->   			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
->   		} else {
-> -			if ((start_idx - dbg_cnt) < 0) {
-> +			if (start_idx < dbg_cnt) {
->   				start_idx = DBG_LOG_SZ - (dbg_cnt - start_idx);
->   				temp_idx = 0;
->   			} else {
+From: Colin Ian King <colin.king@canonical.com>
 
-Already resolved/accepted.
+The variable current_head_index is being initialized with a value that
+is never read and it is being updated later with a new value.  Replace
+the initialization of -1 with the latter assignment.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git/commit/?idwdd7d7b3442
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/microchip/lan743x_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thank you though.
-
--- james
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
+index f6479384dc4f..de93cc6ebc1a 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -2046,14 +2046,13 @@ static int lan743x_rx_process_packet(struct lan743x_rx *rx)
+ {
+ 	struct skb_shared_hwtstamps *hwtstamps = NULL;
+ 	int result = RX_PROCESS_RESULT_NOTHING_TO_DO;
++	int current_head_index = *rx->head_cpu_ptr;
+ 	struct lan743x_rx_buffer_info *buffer_info;
+ 	struct lan743x_rx_descriptor *descriptor;
+-	int current_head_index = -1;
+ 	int extension_index = -1;
+ 	int first_index = -1;
+ 	int last_index = -1;
+ 
+-	current_head_index = *rx->head_cpu_ptr;
+ 	if (current_head_index < 0 || current_head_index >= rx->ring_size)
+ 		goto done;
+ 
+-- 
+2.27.0
