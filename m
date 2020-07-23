@@ -1,19 +1,17 @@
-From: Luca Ceresoli <luca@lucaceresoli.net>
-Date: Tue, 21 Jul 2020 10:10:07 +0000
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Thu, 23 Jul 2020 01:46:37 +0000
 Subject: Re: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
-Message-Id: <eb35ccc8-d3dc-a17c-a7b2-06475d310a4e@lucaceresoli.net>
+Message-Id: <159546879710.3847286.14955586064206205548@swboyd.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200625132736.88832-1-colin.king@canonical.com>
 In-Reply-To: <20200625132736.88832-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Marek Vasut <marek.vasut@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+To: Adam Ford <aford173@gmail.com>, Colin King <colin.king@canonical.com>, Marek Vasut <marek.vasut@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
-
-On 25/06/20 15:27, Colin King wrote:
+Quoting Colin King (2020-06-25 06:27:36)
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > There are a several places where printing an error message of
@@ -26,138 +24,17 @@ On 25/06/20 15:27, Colin King wrote:
 > Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
 > 
 > Before:
->    text	   data	    bss	    dec	    hex	filename
->   21057	   3960	     64	  25081	   61f9	drivers/clk/clk-versaclock5.o
+>    text    data     bss     dec     hex filename
+>   21057    3960      64   25081    61f9 drivers/clk/clk-versaclock5.o
 > 
 > After:
->    text	   data	    bss	    dec	    hex	filename
->   20886	   3960	     64	  24910	   614e	drivers/clk/clk-versaclock5.o
+>    text    data     bss     dec     hex filename
+>   20886    3960      64   24910    614e drivers/clk/clk-versaclock5.o
 > 
 > Addresses-Coverity: ("Use after free")
 > Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multiple instances")
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Woah, good catch!
-
 > ---
->  drivers/clk/clk-versaclock5.c | 51 +++++++++++++----------------------
->  1 file changed, 19 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index 9a5fb3834b9a..1d8ee4b8b1f5 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -882,11 +882,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	init.parent_names = parent_names;
->  	vc5->clk_mux.init = &init;
->  	ret = devm_clk_hw_register(&client->dev, &vc5->clk_mux);
-> +	if (ret)
-> +		goto err_clk_register;
->  	kfree(init.name);	/* clock framework made a copy of the name */
-> -	if (ret) {
-> -		dev_err(&client->dev, "unable to register %s\n", init.name);
-> -		goto err_clk;
-> -	}
->  
->  	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
->  		/* Register frequency doubler */
-> @@ -900,12 +898,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		init.num_parents = 1;
->  		vc5->clk_mul.init = &init;
->  		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
-> +		if (ret)
-> +			goto err_clk_register;
->  		kfree(init.name); /* clock framework made a copy of the name */
-> -		if (ret) {
-> -			dev_err(&client->dev, "unable to register %s\n",
-> -				init.name);
-> -			goto err_clk;
-> -		}
->  	}
->  
->  	/* Register PFD */
-> @@ -921,11 +916,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	init.num_parents = 1;
->  	vc5->clk_pfd.init = &init;
->  	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-> +	if (ret)
-> +		goto err_clk_register;
->  	kfree(init.name);	/* clock framework made a copy of the name */
-> -	if (ret) {
-> -		dev_err(&client->dev, "unable to register %s\n", init.name);
-> -		goto err_clk;
-> -	}
->  
->  	/* Register PLL */
->  	memset(&init, 0, sizeof(init));
-> @@ -939,11 +932,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	vc5->clk_pll.vc5 = vc5;
->  	vc5->clk_pll.hw.init = &init;
->  	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pll.hw);
-> +	if (ret)
-> +		goto err_clk_register;
->  	kfree(init.name); /* clock framework made a copy of the name */
-> -	if (ret) {
-> -		dev_err(&client->dev, "unable to register %s\n", init.name);
-> -		goto err_clk;
-> -	}
->  
->  	/* Register FODs */
->  	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
-> @@ -960,12 +951,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		vc5->clk_fod[n].vc5 = vc5;
->  		vc5->clk_fod[n].hw.init = &init;
->  		ret = devm_clk_hw_register(&client->dev, &vc5->clk_fod[n].hw);
-> +		if (ret)
-> +			goto err_clk_register;
->  		kfree(init.name); /* clock framework made a copy of the name */
-> -		if (ret) {
-> -			dev_err(&client->dev, "unable to register %s\n",
-> -				init.name);
-> -			goto err_clk;
-> -		}
->  	}
->  
->  	/* Register MUX-connected OUT0_I2C_SELB output */
-> @@ -981,11 +969,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	vc5->clk_out[0].vc5 = vc5;
->  	vc5->clk_out[0].hw.init = &init;
->  	ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[0].hw);
-> -	kfree(init.name);	/* clock framework made a copy of the name */
-> -	if (ret) {
-> -		dev_err(&client->dev, "unable to register %s\n", init.name);
-> -		goto err_clk;
-> -	}
-> +	if (ret)
-> +		goto err_clk_register;
-> +	kfree(init.name); /* clock framework made a copy of the name */
->  
->  	/* Register FOD-connected OUTx outputs */
->  	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
-> @@ -1008,17 +994,15 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		vc5->clk_out[n].vc5 = vc5;
->  		vc5->clk_out[n].hw.init = &init;
->  		ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[n].hw);
-> +		if (ret)
-> +			goto err_clk_register;
->  		kfree(init.name); /* clock framework made a copy of the name */
-> -		if (ret) {
-> -			dev_err(&client->dev, "unable to register %s\n",
-> -				init.name);
-> -			goto err_clk;
-> -		}
->  
->  		/* Fetch Clock Output configuration from DT (if specified) */
->  		ret = vc5_get_output_config(client, &vc5->clk_out[n]);
->  		if (ret)
->  			goto err_clk;
-> +
->  	}
 
-Stray newline. With it possibly fixed:
-
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-
--- 
-Luca
+Applied to clk-next
