@@ -1,50 +1,23 @@
-From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Sun, 19 Jul 2020 04:48:38 +0000
-Subject: Re: [PATCH] staging: media: atomisp: Replace depracated MSI API.
-Message-Id: <20200719043638.GC28510@blackclown>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 23 Jul 2020 20:15:16 +0000
+Subject: Re: [PATCH] media: davinci: vpif_capture: fix potential double free
+Message-Id: <b179ad63-b895-39f7-dc18-23636f77e1e4@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200718132632.GA11527@blackclown>
-In-Reply-To: <20200718132632.GA11527@blackclown>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Evgeny Novikov <novikov@ispras.ru>, ldv-project@linuxtesting.org, linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 
-On Sat, Jul 18, 2020 at 06:56:32PM +0530, Suraj Upadhyay wrote:
-> Replace depracated pci_enable_msi with pci_alloc_irq_vectors.
-> And as a result modify how the returned value is handled.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/staging/media/atomisp/pci/atomisp_v4l2.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Hii,
-Please don't merge this patch.
-It is still incomplete.
-It doesn't replace pci_disable_msi.
-I hope this wasn't an annoyance.
+> In case of errors vpif_probe_complete() releases memory for vpif_obj.sd
+> and unregisters the V4L2 device. But then this is done again by
+> vpif_probe() itself. The patch removes the cleaning from
+> vpif_probe_complete().
 
-Thanks,
+* An imperative wording can be preferred for the change description,
+  can't it?
 
-Suraj Upadhyay.
+* Would you like to add the tag “Fixes” to the commit message?
 
-> diff --git a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-> index d36809a0182c..b824c6f78a9c 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-> +++ b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-> @@ -1735,8 +1735,8 @@ static int atomisp_pci_probe(struct pci_dev *dev,
->  	pci_set_master(dev);
->  	pci_set_drvdata(dev, isp);
->  
-> -	err = pci_enable_msi(dev);
-> -	if (err) {
-> +	err = pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI);
-> +	if (err < 0) {
->  		dev_err(&dev->dev, "Failed to enable msi (%d)\n", err);
->  		goto enable_msi_fail;
->  	}
-> -- 
-> 2.17.1
-> 
+Regards,
+Markus
