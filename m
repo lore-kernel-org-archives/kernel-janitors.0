@@ -1,48 +1,40 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 14 Jul 2020 15:08:29 +0000
-Subject: Re: [PATCH] drm/amd/display: remove an unnecessary NULL check
-Message-Id: <CADnq5_PjbNie+rdxttjYuykhWSC4VrE+U+xFYeYurvYixeiPVA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jul 2020 14:26:14 +0000
+Subject: [PATCH] scsi: isci: remove redundant initialization of variable status
+Message-Id: <20200723142614.991416-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714105700.GC294318@mwanda>
-In-Reply-To: <20200714105700.GC294318@mwanda>
+References: <20180206141236.31651-1-colin.king@canonical.com>
+In-Reply-To: <20180206141236.31651-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, David Airlie <airlied@linux.ie>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, Yongqiang Sun <yongqiang.sun@amd.com>, Martin Leung <martin.leung@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Jun Lei <Jun.Lei@amd.com>, Harry Wentland <harry.wentland@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Anthony Koo <Anthony.Koo@amd.com>
+To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 6:57 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The "stream" pointer can't be NULL and it's dereferenced on the line
-> before so the check doesn't make sense.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  Thanks!
+The variable status is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Alex
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/isci/request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> index 4f97329d9daf..7e58f242dab9 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> @@ -2324,7 +2324,7 @@ static void commit_planes_for_stream(struct dc *dc,
->
->         if ((update_type != UPDATE_TYPE_FAST) && stream->update_flags.bits.dsc_changed)
->                 if (top_pipe_to_program->stream_res.tg->funcs->lock_doublebuffer_enable) {
-> -                       if (stream && should_use_dmub_lock(stream->link)) {
-> +                       if (should_use_dmub_lock(stream->link)) {
->                                 union dmub_hw_lock_flags hw_locks = { 0 };
->                                 struct dmub_hw_lock_inst_flags inst_flags = { 0 };
->
-> --
-> 2.27.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
+index 343d24c7e788..6561a07db189 100644
+--- a/drivers/scsi/isci/request.c
++++ b/drivers/scsi/isci/request.c
+@@ -3444,7 +3444,7 @@ struct isci_request *isci_tmf_request_from_tag(struct isci_host *ihost,
+ int isci_request_execute(struct isci_host *ihost, struct isci_remote_device *idev,
+ 			 struct sas_task *task, u16 tag)
+ {
+-	enum sci_status status = SCI_FAILURE_UNSUPPORTED_PROTOCOL;
++	enum sci_status status;
+ 	struct isci_request *ireq;
+ 	unsigned long flags;
+ 	int ret = 0;
+-- 
+2.27.0
