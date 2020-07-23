@@ -1,39 +1,38 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 10 Jul 2020 07:46:54 +0000
-Subject: Re: [PATCH] scsi: virtio_scsi: Remove unnecessary condition checks
-Message-Id: <d052b441-cc4d-4b2b-1442-b1a30bed2fdb@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jul 2020 16:32:14 +0000
+Subject: [PATCH] rtlwifi: btcoex: remove redundant initialization of variables ant_num and single_ant_path
+Message-Id: <20200723163214.995226-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a197f532-7020-0d8e-21bf-42bb66e8daec@web.de>
- <e87746e6-813e-7c0e-e21e-5921e759da5d@redhat.com>
- <8eb9a827-45f1-e71c-0cbf-1c29acd8e310@web.de>
- <58e3feb8-1ffb-f77f-cf3a-75222b3cd524@redhat.com>
- <9815ef2d-d0da-d197-49d7-83559d750ff1@web.de>
-In-Reply-To: <9815ef2d-d0da-d197-49d7-83559d750ff1@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Xianting Tian <xianting_tian@126.com>, linux-scsi@vger.kernel.org, virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.ibm.com>, Jason Wang <jasowang@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/07/20 09:40, Markus Elfring wrote:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/virtio_scsi.c?idBf82040ee66db13525dc6f14b8559890b2f4c1c#n980
->>>
->>>  	if (!virtscsi_cmd_cache) {
->>>  		pr_err("kmem_cache_create() for virtscsi_cmd_cache failed\n");
->>> -		goto error;
->>> +		return -ENOMEM;
->>>  	}
->>
->> Could be doable, but I don't see a particular benefit.
-> 
-> Can a bit more “compliance” (with the Linux coding style) matter here?
+From: Colin Ian King <colin.king@canonical.com>
 
-No.
+The variables ant_num and single_ant_path are being initialized with a
+value that is never read and are being updated later with a new value.
+The initializations are redundant and can be removed.
 
->> Having a single error loop is an advantage by itself.
-> 
-> I do not see that a loop is involved in the implementation of the function “init”.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-s/loop/label/ sorry.
-
-Paolo
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index a4940a3842de..4949f99844b5 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1318,7 +1318,7 @@ bool exhalbtc_bind_bt_coex_withadapter(void *adapter)
+ {
+ 	struct rtl_priv *rtlpriv = adapter;
+ 	struct btc_coexist *btcoexist = rtl_btc_coexist(rtlpriv);
+-	u8 ant_num = 2, chip_type, single_ant_path = 0;
++	u8 ant_num, chip_type, single_ant_path;
+ 
+ 	if (!btcoexist)
+ 		return false;
+-- 
+2.27.0
