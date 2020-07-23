@@ -1,35 +1,38 @@
-From: Evgeny Novikov <novikov@ispras.ru>
-Date: Fri, 24 Jul 2020 20:08:02 +0000
-Subject: Re: [PATCH] media: davinci: vpif_capture: fix potential double free
-Message-Id: <236161595621028@mail.yandex.ru>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jul 2020 16:15:41 +0000
+Subject: [PATCH] mfd: max14577: remove redundant initialization of variable current_bits
+Message-Id: <20200723161541.994669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b179ad63-b895-39f7-dc18-23636f77e1e4@web.de>
-In-Reply-To: <b179ad63-b895-39f7-dc18-23636f77e1e4@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <markus.elfring@web.de>, "ldv-project@linuxtesting.org" <ldv-project@linuxtesting.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-It seems that Lad Prabhakar detected a critical issue introduced by the patch instead of a minor bug fixed by it. So, we should take care of this first, but I will address your notes as well. 
+The variable current_bits is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
--- 
-Evgeny Novikov
-Linux Verification Center, ISP RAS
-http://linuxtesting.org
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mfd/max14577.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-23.07.2020, 23:15, "Markus Elfring" <markus.elfring@web.de>:
->>  In case of errors vpif_probe_complete() releases memory for vpif_obj.sd
->>  and unregisters the V4L2 device. But then this is done again by
->>  vpif_probe() itself. The patch removes the cleaning from
->>  vpif_probe_complete().
->
-> * An imperative wording can be preferred for the change description,
->   can't it?
->
-> * Would you like to add the tag “Fixes” to the commit message?
->
-> Regards,
-> Markus
+diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
+index fd8864cafd25..be185e9d5f16 100644
+--- a/drivers/mfd/max14577.c
++++ b/drivers/mfd/max14577.c
+@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(maxim_charger_currents);
+ int maxim_charger_calc_reg_current(const struct maxim_charger_current *limits,
+ 		unsigned int min_ua, unsigned int max_ua, u8 *dst)
+ {
+-	unsigned int current_bits = 0xf;
++	unsigned int current_bits;
+ 
+ 	if (min_ua > max_ua)
+ 		return -EINVAL;
+-- 
+2.27.0
