@@ -1,31 +1,38 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Tue, 28 Jul 2020 20:43:36 +0000
-Subject: RE: [PATCH 1/4] e1000/e1000_ethtool.c: Remove unnecessary usages of memset
-Message-Id: <DM6PR11MB2890145ABAA1BA9FEA288F8BBC730@DM6PR11MB2890.namprd11.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Jul 2020 15:22:40 +0000
+Subject: [PATCH] ceph: remove redundant initialization of variable mds
+Message-Id: <20200723152240.992946-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714194035.GA21382@blackclown>
-In-Reply-To: <20200714194035.GA21382@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> From: Suraj Upadhyay <usuraj35@gmail.com>
-> Sent: Tuesday, July 14, 2020 12:41 PM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; davem@davemloft.net;
-> kuba@kernel.org
-> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 1/4] e1000/e1000_ethtool.c: Remove unnecessary usages of
-> memset
-> 
-> Replace memsets of 1 byte with simple assignments.
-> Issue reported by checkpatch.pl.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+The variable mds is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ceph/debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 070ed8481340..48f5afb56c91 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -272,7 +272,7 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	struct ceph_auth_client *ac = fsc->client->monc.auth;
+ 	struct ceph_options *opt = fsc->client->options;
+-	int mds = -1;
++	int mds;
+ 
+ 	mutex_lock(&mdsc->mutex);
+ 
+-- 
+2.27.0
