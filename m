@@ -1,44 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 31 Jul 2020 17:13:42 +0000
-Subject: [PATCH][next] cifs: fix double free error on share and prefix
-Message-Id: <20200731171342.36636-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Thu, 23 Jul 2020 19:51:23 +0000
+Subject: Re: [PATCH] media: camss: fix memory leaks on error handling paths in probe
+Message-Id: <64581990-1f68-131d-2e38-8d3e0b9cbd2a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>, Paulo Alcantara <pc@cjr.nz>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Evgeny Novikov <novikov@ispras.ru>, Anton Vasilyev <vasilyev@ispras.ru>, ldv-project@linuxtesting.org, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.too@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> camss_probe() does not free camss on error handling paths. The patch
+> introduces an additional error label for this purpose.
 
-Currently if the call dfs_cache_get_tgt_share fails we cannot
-fully guarantee that share and prefix are set to NULL and the
-next iteration of the loop can end up potentially double freeing
-these pointers. Since the semantics of dfs_cache_get_tgt_share
-are ambiguous for failure cases with the setting of share and
-prefix (currently now and the possibly the future), it seems
-prudent to set the pointers to NULL when the objects are
-free'd to avoid any double frees.
+* I suggest to use an imperative wording for the change description.
 
-Addresses-Coverity: ("Double free")
-Fixes: 96296c946a2a ("cifs: handle RESP_GET_DFS_REFERRAL.PathConsumed in reconnect")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/connect.c | 2 ++
- 1 file changed, 2 insertions(+)
+* Would you like to use also a jump target like the following
+  at the end of this function implementation?
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 3c4dd4e1b9eb..4b2f5f5b3a8e 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -5574,6 +5574,8 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon, const stru
- 
- 		kfree(share);
- 		kfree(prefix);
-+		share = NULL;
-+		prefix = NULL;
- 
- 		rc = dfs_cache_get_tgt_share(tcon->dfs_path + 1, it, &share, &prefix);
- 		if (rc) {
--- 
-2.27.0
++e_nomem:
++	ret = -ENOMEM;
++	goto err_free;
+
+
+* Will the tag “Fixes” become helpful for the commit message?
+
+
+>                                                        Besides, it
+> removes call of v4l2_async_notifier_cleanup() from
+> camss_of_parse_ports() since its caller, camss_probe(), cleans up all
+> its resources itself.
+
+I propose to offer such a change by a separate update step.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=d15be546031cf65a0fc34879beca02fd90fe7ac7#n138
+
+
+Regards,
+Markus
