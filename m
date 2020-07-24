@@ -1,38 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Jul 2020 16:32:14 +0000
-Subject: [PATCH] rtlwifi: btcoex: remove redundant initialization of variables ant_num and single_ant_path
-Message-Id: <20200723163214.995226-1-colin.king@canonical.com>
+From: Pkshih <pkshih@realtek.com>
+Date: Fri, 24 Jul 2020 05:14:25 +0000
+Subject: Re: [PATCH] rtlwifi: btcoex: remove redundant initialization of variables ant_num and single_ant_pat
+Message-Id: <1595567665.24550.0.camel@realtek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200723163214.995226-1-colin.king@canonical.com>
+In-Reply-To: <20200723163214.995226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "colin.king@canonical.com" <colin.king@canonical.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The variables ant_num and single_ant_path are being initialized with a
-value that is never read and are being updated later with a new value.
-The initializations are redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index a4940a3842de..4949f99844b5 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1318,7 +1318,7 @@ bool exhalbtc_bind_bt_coex_withadapter(void *adapter)
- {
- 	struct rtl_priv *rtlpriv = adapter;
- 	struct btc_coexist *btcoexist = rtl_btc_coexist(rtlpriv);
--	u8 ant_num = 2, chip_type, single_ant_path = 0;
-+	u8 ant_num, chip_type, single_ant_path;
- 
- 	if (!btcoexist)
- 		return false;
--- 
-2.27.0
+T24gVGh1LCAyMDIwLTA3LTIzIGF0IDE3OjMyICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
+IHZhcmlhYmxlcyBhbnRfbnVtIGFuZCBzaW5nbGVfYW50X3BhdGggYXJlIGJlaW5nIGluaXRpYWxp
+emVkIHdpdGggYQ0KPiB2YWx1ZSB0aGF0IGlzIG5ldmVyIHJlYWQgYW5kIGFyZSBiZWluZyB1cGRh
+dGVkIGxhdGVyIHdpdGggYSBuZXcgdmFsdWUuDQo+IFRoZSBpbml0aWFsaXphdGlvbnMgYXJlIHJl
+ZHVuZGFudCBhbmQgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgi
+VW51c2VkIHZhbHVlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtp
+bmdAY2Fub25pY2FsLmNvbT4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0
+ZWsuY29tPg0KDQpUaGFuayB5b3UNCg0KPiAtLS0NCj4gwqBkcml2ZXJzL25ldC93aXJlbGVzcy9y
+ZWFsdGVrL3J0bHdpZmkvYnRjb2V4aXN0L2hhbGJ0Y291dHNyYy5jIHwgMiArLQ0KPiDCoDEgZmls
+ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9idGNvZXhpc3QvaGFsYnRj
+b3V0c3JjLmMNCj4gYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4
+aXN0L2hhbGJ0Y291dHNyYy5jDQo+IGluZGV4IGE0OTQwYTM4NDJkZS4uNDk0OWY5OTg0NGI1IDEw
+MDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvYnRjb2V4
+aXN0L2hhbGJ0Y291dHNyYy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
+cnRsd2lmaS9idGNvZXhpc3QvaGFsYnRjb3V0c3JjLmMNCj4gQEAgLTEzMTgsNyArMTMxOCw3IEBA
+IGJvb2wgZXhoYWxidGNfYmluZF9idF9jb2V4X3dpdGhhZGFwdGVyKHZvaWQgKmFkYXB0ZXIpDQo+
+IMKgew0KPiDCoAlzdHJ1Y3QgcnRsX3ByaXYgKnJ0bHByaXYgPSBhZGFwdGVyOw0KPiDCoAlzdHJ1
+Y3QgYnRjX2NvZXhpc3QgKmJ0Y29leGlzdCA9IHJ0bF9idGNfY29leGlzdChydGxwcml2KTsNCj4g
+LQl1OCBhbnRfbnVtID0gMiwgY2hpcF90eXBlLCBzaW5nbGVfYW50X3BhdGggPSAwOw0KPiArCXU4
+IGFudF9udW0sIGNoaXBfdHlwZSwgc2luZ2xlX2FudF9wYXRoOw0KPiDCoA0KPiDCoAlpZiAoIWJ0
+Y29leGlzdCkNCj4gwqAJCXJldHVybiBmYWxzZTsNCg0KDQo
