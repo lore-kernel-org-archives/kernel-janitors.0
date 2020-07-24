@@ -1,42 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 16 Jul 2020 15:47:20 +0000
-Subject: [PATCH] staging: rtl8192u: fix a dubious looking mask before a shift
-Message-Id: <20200716154720.1710252-1-colin.king@canonical.com>
+From: "CHRISTOPHER WANG" <christopherwang36@gmail.com>
+Date: Fri, 24 Jul 2020 14:55:15 +0000
+Subject: INVESTMENT
+Message-Id: <WIN-DAONO245HJFNr1S008eed86@WIN-DAONO245HJF>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently the masking of ret with 0xff and followed by a right shift
-of 8 bits always leaves a zero result.  It appears the mask of 0xff
-is incorrect and should be 0xff00, but I don't have the hardware to
-test this. Fix this to mask the upper 8 bits before shifting.
 
-[ Not tested ]
+Good day,
 
-Addresses-Coverity: ("Operands don't affect result")
-Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192u/r8192U_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You were recommended by a mutual associate. I write you regarding an investment of bearer bonds I made on behalf of a client. 
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index fcfb9024a83f..6ec65187bef9 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2374,7 +2374,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
- 				ret = eprom_read(dev, (EEPROM_TX_PW_INDEX_CCK >> 1));
- 				if (ret < 0)
- 					return ret;
--				priv->EEPROMTxPowerLevelCCK = ((u16)ret & 0xff) >> 8;
-+				priv->EEPROMTxPowerLevelCCK = ((u16)ret & 0xff00) >> 8;
- 			} else
- 				priv->EEPROMTxPowerLevelCCK = 0x10;
- 			RT_TRACE(COMP_EPROM, "CCK Tx Power Levl: 0x%02x\n", priv->EEPROMTxPowerLevelCCK);
--- 
-2.27.0
+       The investment was made in 2009 and has been under my management. The said investor is deceased. The window is now available to assign these bonds to any name or company of my choice. I have all the necessary information to achieve this within 10 banking days.
+      
+       The total value of the bond is 100million pounds sterling, in a million pound denominations.
+      
+        If you can handle this, do contact me at your earliest convenience via my email christopherwang36@gmail.com
+So we can discuss the final details Thank you.
+ 
+Mr CHRISTOPHER WANG
