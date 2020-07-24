@@ -1,15 +1,25 @@
-From: Garrit Franke <garritfranke@gmail.com>
-Date: Fri, 24 Jul 2020 16:20:52 +0000
-Subject: [PATCH] trivial: acpi: replace some bitshifts with BIT macro
-Message-Id: <20200724162050.18077-2-garritfranke@gmail.com>
+From: "Moore, Robert" <robert.moore@intel.com>
+Date: Fri, 24 Jul 2020 16:29:14 +0000
+Subject: RE: [PATCH] trivial: acpi: replace some bitshifts with BIT macro
+Message-Id: <BYAPR11MB325604ACC5F3BCCEB89A58AA87770@BYAPR11MB3256.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.21.2007241814450.2834@hadrien>
-In-Reply-To: <alpine.DEB.2.21.2007241814450.2834@hadrien>
+ <20200724162050.18077-2-garritfranke@gmail.com>
+In-Reply-To: <20200724162050.18077-2-garritfranke@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org, trivial@kernel.org, linux-acpi@vger.kernel.org, devel@acpica.org, kernel-janitors@vger.kernel.org
+To: Garrit Franke <garritfranke@gmail.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, "lenb@kernel.org" <lenb@kernel.org>, "trivial@kernel.org" <trivial@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "devel@acpica.org" <devel@acpica.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+Where is "BIT" defined?
+
+
+-----Original Message-----
+From: Garrit Franke <garritfranke@gmail.com> 
+Sent: Friday, July 24, 2020 9:21 AM
+To: Moore, Robert <robert.moore@intel.com>; Wysocki, Rafael J <rafael.j.wysocki@intel.com>; lenb@kernel.org; trivial@kernel.org; linux-acpi@vger.kernel.org; devel@acpica.org; kernel-janitors@vger.kernel.org
 Cc: Garrit Franke <garritfranke@gmail.com>
+Subject: [PATCH] trivial: acpi: replace some bitshifts with BIT macro
 
 Signed-off-by: Garrit Franke <garritfranke@gmail.com>
 ---
@@ -19,8 +29,7 @@ Signed-off-by: Garrit Franke <garritfranke@gmail.com>
  drivers/acpi/sleep.c            | 2 +-
  4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/acpica/exfldio.c b/drivers/acpi/acpica/exfldio.c
-index ade35ff1c7..92fc702456 100644
+diff --git a/drivers/acpi/acpica/exfldio.c b/drivers/acpi/acpica/exfldio.c index ade35ff1c7..92fc702456 100644
 --- a/drivers/acpi/acpica/exfldio.c
 +++ b/drivers/acpi/acpica/exfldio.c
 @@ -298,7 +298,7 @@ acpi_ex_register_overflow(union acpi_operand_object *obj_desc, u64 value)
@@ -32,8 +41,7 @@ index ade35ff1c7..92fc702456 100644
  		/*
  		 * The Value is larger than the maximum value that can fit into
  		 * the register.
-diff --git a/drivers/acpi/acpica/utownerid.c b/drivers/acpi/acpica/utownerid.c
-index d3525ef8ed..c4e2db2f54 100644
+diff --git a/drivers/acpi/acpica/utownerid.c b/drivers/acpi/acpica/utownerid.c index d3525ef8ed..c4e2db2f54 100644
 --- a/drivers/acpi/acpica/utownerid.c
 +++ b/drivers/acpi/acpica/utownerid.c
 @@ -74,13 +74,13 @@ acpi_status acpi_ut_allocate_owner_id(acpi_owner_id *owner_id)
@@ -51,8 +59,7 @@ index d3525ef8ed..c4e2db2f54 100644
 +				acpi_gbl_owner_id_mask[j] |= (u32)BIT(k);
  
  				acpi_gbl_last_owner_id_index = (u8)j;
- 				acpi_gbl_next_owner_id_offset = (u8)(k + 1);
-@@ -171,7 +171,7 @@ void acpi_ut_release_owner_id(acpi_owner_id *owner_id_ptr)
+ 				acpi_gbl_next_owner_id_offset = (u8)(k + 1); @@ -171,7 +171,7 @@ void acpi_ut_release_owner_id(acpi_owner_id *owner_id_ptr)
  	/* Decode ID to index/offset pair */
  
  	index = ACPI_DIV_32(owner_id);
@@ -61,8 +68,7 @@ index d3525ef8ed..c4e2db2f54 100644
  
  	/* Free the owner ID only if it is valid */
  
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index 54002670cb..39ead80c45 100644
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c index 54002670cb..39ead80c45 100644
 --- a/drivers/acpi/bus.c
 +++ b/drivers/acpi/bus.c
 @@ -233,7 +233,7 @@ acpi_status acpi_run_osc(acpi_handle handle, struct acpi_osc_context *context)
@@ -73,13 +79,10 @@ index 54002670cb..39ead80c45 100644
 +	errors = *((u32 *)out_obj->buffer.pointer) & BIT(0);
  	if (errors) {
  		if (errors & OSC_REQUEST_ERROR)
- 			acpi_print_osc_error(handle, context,
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index aff13bf4d9..38f5210313 100644
+ 			acpi_print_osc_error(handle, context, diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c index aff13bf4d9..38f5210313 100644
 --- a/drivers/acpi/sleep.c
 +++ b/drivers/acpi/sleep.c
-@@ -880,7 +880,7 @@ static void acpi_sleep_run_lps0_dsm(unsigned int func)
- {
+@@ -880,7 +880,7 @@ static void acpi_sleep_run_lps0_dsm(unsigned int func)  {
  	union acpi_object *out_obj;
  
 -	if (!(lps0_dsm_func_mask & (1 << func)))
@@ -87,5 +90,5 @@ index aff13bf4d9..38f5210313 100644
  		return;
  
  	out_obj = acpi_evaluate_dsm(lps0_device_handle, &lps0_dsm_guid, 1, func, NULL);
--- 
+--
 2.25.1
