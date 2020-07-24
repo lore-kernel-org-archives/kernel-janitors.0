@@ -1,38 +1,38 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Fri, 31 Jul 2020 17:09:33 +0000
-Subject: Re: [PATCH] docs: ia64: correct typo
-Message-Id: <20200731110933.4edfc99c@lwn.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Jul 2020 12:17:53 +0000
+Subject: [PATCH] sctp: remove redundant initialization of variable status
+Message-Id: <20200724121753.16721-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1596104250-32673-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1596104250-32673-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 30 Jul 2020 12:17:30 +0200
-Julia Lawall <Julia.Lawall@inria.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Replace RTC_WKLAM_RD with RTC_WKALM_RD.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  Documentation/ia64/efirtc.rst |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ia64/efirtc.rst b/Documentation/ia64/efirtc.rst
-> index 2f7ff50..fd83284 100644
-> --- a/Documentation/ia64/efirtc.rst
-> +++ b/Documentation/ia64/efirtc.rst
-> @@ -113,7 +113,7 @@ We have added 2 new ioctl()s that are specific to the EFI driver:
->  
->  	Read the current state of the alarm::
->  
-> -		ioctl(d, RTC_WKLAM_RD, &wkt)
-> +		ioctl(d, RTC_WKALM_RD, &wkt)
+The variable status is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Applied to the docs tree, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sctp/protocol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-jon
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 7ecaf7d575c0..a0448f7c64b9 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1368,7 +1368,7 @@ static struct pernet_operations sctp_ctrlsock_ops = {
+ static __init int sctp_init(void)
+ {
+ 	int i;
+-	int status = -EINVAL;
++	int status;
+ 	unsigned long goal;
+ 	unsigned long limit;
+ 	unsigned long nr_pages = totalram_pages();
+-- 
+2.27.0
