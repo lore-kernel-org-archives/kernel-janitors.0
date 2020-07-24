@@ -1,15 +1,17 @@
-From: garritfra <garritfranke@gmail.com>
-Date: Fri, 24 Jul 2020 16:02:39 +0000
+From: Garrit Franke <garritfranke@gmail.com>
+Date: Fri, 24 Jul 2020 16:20:52 +0000
 Subject: [PATCH] trivial: acpi: replace some bitshifts with BIT macro
-Message-Id: <20200724160239.16284-1-garritfranke@gmail.com>
+Message-Id: <20200724162050.18077-2-garritfranke@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.21.2007241814450.2834@hadrien>
+In-Reply-To: <alpine.DEB.2.21.2007241814450.2834@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org, trivial@kernel.org, linux-acpi@vger.kernel.org, devel@acpica.org, kernel-janitors@vger.kernel.org
-Cc: garritfra <garritfranke@gmail.com>
+Cc: Garrit Franke <garritfranke@gmail.com>
 
-Signed-off-by: garritfra <garritfranke@gmail.com>
+Signed-off-by: Garrit Franke <garritfranke@gmail.com>
 ---
  drivers/acpi/acpica/exfldio.c   | 2 +-
  drivers/acpi/acpica/utownerid.c | 6 +++---
