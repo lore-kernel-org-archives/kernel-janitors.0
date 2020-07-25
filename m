@@ -1,28 +1,21 @@
-From: "MOORE GATES LTD" <TEXT@TEXT.COM>
-Date: Mon, 20 Jul 2020 21:32:09 +0000
-Subject: FROM MR. MOORE
-Message-Id: <87$0p4$18hv2895-w2--65lk0@53h4kawp.2ww6>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="CFA3__C0.46A.8EAB"
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 25 Jul 2020 10:50:29 +0000
+Subject: Re: [PATCH] nbd: add missed destroy_workqueue when nbd_start_device fails
+Message-Id: <d7b60d29-4a02-ae2a-fa9d-0c4918eba91a@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Li Heng <liheng40@huawei.com>, linux-block@vger.kernel.org, nbd@other.debian.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>
 
+> destroy_workqueue() should be called to destroy ndev->tx_wq
+> when nbd_start_device init resources fails.
 
---CFA3__C0.46A.8EAB
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+* An imperative wording can be preferred for the change description,
+  can't it?
 
-Dear Beloved,
-Peace of the Lord be with you and family, I am Fitzpatrick Moore a
-United Kingdom Citizen, I have ($ 25M) Twenty five Million united
-states dollars with a finance House in United State. I will want you
-to help me collect this deposit and dispatch it to charity
-organizations. You will take out 30% of these funds for your
-assistance to help ME disburse this fund to charities. I will like you
-to acknowledge the receipt of this e-mail as soon as possible and
-treats with absolute confidentiality and sincerity. Please reply to my
-Email: (moorefitzpatrick@gmail.com)
-Yours Sincerely,
-Fitzpatrick Moore
+* Would you like to add the tag “Fixes” to the commit message?
 
---CFA3__C0.46A.8EAB--
+Regards,
+Markus
