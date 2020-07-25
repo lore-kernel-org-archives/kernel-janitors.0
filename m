@@ -1,24 +1,34 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 25 Jul 2020 11:27:56 +0000
-Subject: Re: [PATCH] sh: sh4: Fix reference count leak in sq_dev_add
-Message-Id: <12d84b44-96c8-ee11-fff8-b1a7ea6b0d7c@web.de>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 25 Jul 2020 06:34:40 +0000
+Subject: [PATCH -next] crypto: sa2ul - fix wrong pointer passed to PTR_ERR()
+Message-Id: <20200725063440.172238-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1595636246-15392-1-git-send-email-wang.yi59@zte.com.cn>
-In-Reply-To: <1595636246-15392-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Yi Wang <wang.yi59@zte.com.cn>, Liao Pingfang <liao.pingfang@zte.com.cn>, linux-sh@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Rich Felker <dalias@libc.org>, Wang Liang <wang.liang82@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, Keerthy <j-keerthy@ti.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-> kobject_init_and_add() takes reference even when it fails. If this
-> function returns an error, kobject_put() must be called to properly
-> clean up the memory associated with the object.
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
-* An imperative wording can be preferred for the change description,
-  can't it?
+Fixes: 7694b6ca649f ("crypto: sa2ul - Add crypto driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/crypto/sa2ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Would you like to add the tag “Fixes” to the commit message?
-
-Regards,
-Markus
+diff --git a/drivers/crypto/sa2ul.c b/drivers/crypto/sa2ul.c
+index ebcdffcdb686..5bc099052bd2 100644
+--- a/drivers/crypto/sa2ul.c
++++ b/drivers/crypto/sa2ul.c
+@@ -2259,7 +2259,7 @@ static int sa_dma_init(struct sa_crypto_data *dd)
+ 
+ 	dd->dma_tx = dma_request_chan(dd->dev, "tx");
+ 	if (IS_ERR(dd->dma_tx)) {
+-		if (PTR_ERR(dd->dma_rx1) != -EPROBE_DEFER)
++		if (PTR_ERR(dd->dma_tx) != -EPROBE_DEFER)
+ 			dev_err(dd->dev, "Unable to request tx DMA channel\n");
+ 		ret = PTR_ERR(dd->dma_tx);
+ 		goto err_dma_tx;
