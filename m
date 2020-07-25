@@ -1,39 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Jul 2020 10:56:28 +0000
-Subject: Re: [PATCH] scsi: lpfc: Fix a condition in lpfc_dmp_dbg()
-Message-Id: <20200709105628.GG2571@kadam>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Sat, 25 Jul 2020 06:34:16 +0000
+Subject: [PATCH -next] mtd: fix missing unlock on error in mtdchar_compat_ioctl()
+Message-Id: <20200725063416.172037-1-weiyongjun1@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200709104919.GD20875@mwanda>
-In-Reply-To: <20200709104919.GD20875@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-On Thu, Jul 09, 2020 at 01:49:19PM +0300, Dan Carpenter wrote:
-> These variables are unsigned so the result of the subtraction is also
-> unsigned and thus can't be negative.  Change it to a comparison and
-> remove the subtraction.
-> 
-> Fixes: 372c187b8a70 ("scsi: lpfc: Add an internal trace log buffer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/scsi/lpfc/lpfc_init.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-> index 7285b0114837..2bb2c96e7784 100644
-> --- a/drivers/scsi/lpfc/lpfc_init.c
-> +++ b/drivers/scsi/lpfc/lpfc_init.c
-> @@ -14152,7 +14152,7 @@ void lpfc_dmp_dbg(struct lpfc_hba *phba)
->  		if ((start_idx + dbg_cnt) > (DBG_LOG_SZ - 1)) {
->  			temp_idx = (start_idx + dbg_cnt) % DBG_LOG_SZ;
->  		} else {
-> -			if ((start_idx - dbg_cnt) < 0) {
-> +			if (start_idx > dbg_cnt) {
+Add the missing unlock before return from function mtdchar_compat_ioctl()
+in the error handling case.
 
-Nope.  That's reversed.  I'm dumb.  Let me resend.
+Fixes: 210bec567936 ("mtd: properly check all write ioctls for permissions")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/mtd/mtdchar.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index 52c120f9fb0d..b40f46a43fc6 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -1064,8 +1064,10 @@ static long mtdchar_compat_ioctl(struct file *file, unsigned int cmd,
+ 		struct mtd_oob_buf32 buf;
+ 		struct mtd_oob_buf32 __user *buf_user = argp;
+ 
+-		if (!(file->f_mode & FMODE_WRITE))
+-			return -EPERM;
++		if (!(file->f_mode & FMODE_WRITE)) {
++			ret = -EPERM;
++			break;
++		}
+ 
+ 		if (copy_from_user(&buf, argp, sizeof(buf)))
+ 			ret = -EFAULT;
