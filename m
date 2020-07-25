@@ -1,32 +1,24 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Date: Fri, 10 Jul 2020 15:40:53 +0000
-Subject: Re: [PATCH] xen/xenbus: Fix a double free in xenbus_map_ring_pv()
-Message-Id: <0c55ff06-4129-4e25-449a-2b310eca39ba@oracle.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sat, 25 Jul 2020 11:27:56 +0000
+Subject: Re: [PATCH] sh: sh4: Fix reference count leak in sq_dev_add
+Message-Id: <69b70f2a-c4c9-6dd2-95c7-5858873037b8@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200710113610.GA92345@mwanda>
- <3434e219-216f-ba50-c001-35a066d20db4@suse.com>
-In-Reply-To: <3434e219-216f-ba50-c001-35a066d20db4@suse.com>
+References: <1595636246-15392-1-git-send-email-wang.yi59@zte.com.cn>
+In-Reply-To: <1595636246-15392-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yan Yankovskyi <yyankovskyi@gmail.com>, Stefano Stabellini <sstabellini@kernel.org>, kernel-janitors@vger.kernel.org, Wei Liu <wl@xen.org>, xen-devel@lists.xenproject.org
+To: Yi Wang <wang.yi59@zte.com.cn>, Liao Pingfang <liao.pingfang@zte.com.cn>, linux-sh@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Rich Felker <dalias@libc.org>, Wang Liang <wang.liang82@zte.com.cn>, Xue Zhihong <xue.zhihong@zte.com.cn>, Yoshinori Sato <ysato@users.sourceforge.jp>
 
-On 7/10/20 8:15 AM, Jürgen Groß wrote:
-> On 10.07.20 13:36, Dan Carpenter wrote:
->> When there is an error the caller frees "info->node" so the free here
->> will result in a double free.  We should just delete first kfree().
->>
->> Fixes: 3848e4e0a32a ("xen/xenbus: avoid large structs and arrays on
->> the stack")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Thanks for spotting this!
->
-> Reviewed-by: Juergen Gross <jgross@suse.com> 
+> kobject_init_and_add() takes reference even when it fails. If this
+> function returns an error, kobject_put() must be called to properly
+> clean up the memory associated with the object.
 
+* An imperative wording can be preferred for the change description,
+  can't it?
 
-Applied to for-linus-5.8b
+* Would you like to add the tag “Fixes” to the commit message?
 
-
--boris
+Regards,
+Markus
