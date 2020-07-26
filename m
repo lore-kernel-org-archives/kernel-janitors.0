@@ -1,29 +1,45 @@
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Fri, 31 Jul 2020 20:18:59 +0000
-Subject: Re: [PATCH] KVM: SVM: Fix sev_pin_memory() error handling
-Message-Id: <20200731201859.GF31451@linux.intel.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 26 Jul 2020 05:58:43 +0000
+Subject: [PATCH] MAINTAINERS: adjust kprobes.rst entry to new location
+Message-Id: <20200726055843.10783-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714142351.GA315374@mwanda>
-In-Reply-To: <20200714142351.GA315374@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Tue, Jul 14, 2020 at 05:23:51PM +0300, Dan Carpenter wrote:
-> The sev_pin_memory() function was modified to return error pointers
-> instead of NULL but there are two problems.  The first problem is that
-> if "npages" is zero then it still returns NULL.  Secondly, several of
-> the callers were not updated to check for error pointers instead of
-> NULL.
-> 
-> Either one of these issues will lead to an Oops.
-> 
-> Fixes: a8d908b5873c ("KVM: x86: report sev_pin_memory errors with PTR_ERR")
+Commit 2165b82fde82 ("docs: Move kprobes.rst from staging/ to trace/")
+moved kprobes.rst, but missed to adjust the MAINTAINERS entry.
 
-Explicit Cc: to stable needed for KVM patches.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+  warning: no file matches    F:    Documentation/staging/kprobes.rst
 
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Adjust the entry to the new file location.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Naveen, Masami-san, please ack.
+Jonathan, please pick this minor non-urgent patch into docs-next.
+
+applies cleanly on next-20200724
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 960f7d43f9d7..416fc4555834 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9676,7 +9676,7 @@ M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+ M:	"David S. Miller" <davem@davemloft.net>
+ M:	Masami Hiramatsu <mhiramat@kernel.org>
+ S:	Maintained
+-F:	Documentation/staging/kprobes.rst
++F:	Documentation/trace/kprobes.rst
+ F:	include/asm-generic/kprobes.h
+ F:	include/linux/kprobes.h
+ F:	kernel/kprobes.c
+-- 
+2.17.1
