@@ -1,63 +1,86 @@
-From: Roland Scheidegger <sroland@vmware.com>
-Date: Tue, 14 Jul 2020 01:16:10 +0000
-Subject: Re: [PATCH] drm/vmwgfx: Use correct vmw_legacy_display_unit pointer
-Message-Id: <359c2028-7768-5a7b-b319-48da111d4f77@vmware.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 10:58:32 +0000
+Subject: [PATCH 7/7] ath: drop unnecessary list_empty
+Message-Id: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200626103437.GB314359@mwanda>
-In-Reply-To: <20200626103437.GB314359@mwanda>
+References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, VMware Graphics <linux-graphics-maintainer@vmware.com>
-Cc: David Airlie <airlied@linux.ie>, Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sorry for the delay, finally got time to look at this, seems all correct
-to me, thanks. Applied to our vmvgfx-next tree. (I do wonder how this
-somehow was supposed to work for all this time...)
+list_for_each_entry{_safe} is able to handle an empty list.
+The only effect of avoiding the loop is not initializing the
+index variable.
+Drop list_empty tests in cases where these variables are not
+used.
 
-Roland
+Note that list_for_each_entry{_safe} is defined in terms of
+list_first_entry, which indicates that it should not be used on an
+empty list.  But in list_for_each_entry{_safe}, the element obtained
+by list_first_entry is not really accessed, only the address of its
+list_head field is compared to the address of the list head, so the
+list_first_entry is safe.
 
-Am 26.06.20 um 12:34 schrieb Dan Carpenter:
-> The "entry" pointer is an offset from the list head and it doesn't
-> point to a valid vmw_legacy_display_unit struct.  Presumably the
-> intent was to point to the last entry.
-> 
-> Also the "i++" wasn't used so I have removed that as well.
-> 
-> Fixes: d7e1958dbe4a ("drm/vmwgfx: Support older hardware.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  Not tested.  This bug celebrated its tenth
-> birthday last month.  :)
-> 
->  drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
-> index 16dafff5cab1..009f1742bed5 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
-> @@ -81,7 +81,7 @@ static int vmw_ldu_commit_list(struct vmw_private *dev_priv)
->  	struct vmw_legacy_display_unit *entry;
->  	struct drm_framebuffer *fb = NULL;
->  	struct drm_crtc *crtc = NULL;
-> -	int i = 0;
-> +	int i;
->  
->  	/* If there is no display topology the host just assumes
->  	 * that the guest will set the same layout as the host.
-> @@ -92,12 +92,11 @@ static int vmw_ldu_commit_list(struct vmw_private *dev_priv)
->  			crtc = &entry->base.crtc;
->  			w = max(w, crtc->x + crtc->mode.hdisplay);
->  			h = max(h, crtc->y + crtc->mode.vdisplay);
-> -			i++;
->  		}
->  
->  		if (crtc = NULL)
->  			return 0;
-> -		fb = entry->base.crtc.primary->state->fb;
-> +		fb = crtc->primary->state->fb;
->  
->  		return vmw_kms_write_svga(dev_priv, w, h, fb->pitches[0],
->  					  fb->format->cpp[0] * 8,
-> 
+The semantic patch that makes this change for the list_for_each_entry
+case is as follows: (http://coccinelle.lip6.fr/)
+
+<smpl>
+@@
+expression x,e;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x)))
+   list_for_each_entry(i,x,...) S
+ ... when != i
+? i = e
+</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/net/wireless/ath/dfs_pattern_detector.c |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
+index a274eb0..0813473 100644
+--- a/drivers/net/wireless/ath/dfs_pattern_detector.c
++++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
+@@ -253,17 +253,15 @@ static void channel_detector_exit(struct dfs_pattern_detector *dpd,
+ static void dpd_reset(struct dfs_pattern_detector *dpd)
+ {
+ 	struct channel_detector *cd;
+-	if (!list_empty(&dpd->channel_detectors))
+-		list_for_each_entry(cd, &dpd->channel_detectors, head)
+-			channel_detector_reset(dpd, cd);
++	list_for_each_entry(cd, &dpd->channel_detectors, head)
++		channel_detector_reset(dpd, cd);
+ 
+ }
+ static void dpd_exit(struct dfs_pattern_detector *dpd)
+ {
+ 	struct channel_detector *cd, *cd0;
+-	if (!list_empty(&dpd->channel_detectors))
+-		list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
+-			channel_detector_exit(dpd, cd);
++	list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
++		channel_detector_exit(dpd, cd);
+ 	kfree(dpd);
+ }
+ 
+@@ -331,9 +329,8 @@ static bool dpd_set_domain(struct dfs_pattern_detector *dpd,
+ 		return false;
+ 
+ 	/* delete all channel detectors for previous DFS domain */
+-	if (!list_empty(&dpd->channel_detectors))
+-		list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
+-			channel_detector_exit(dpd, cd);
++	list_for_each_entry_safe(cd, cd0, &dpd->channel_detectors, head)
++		channel_detector_exit(dpd, cd);
+ 	dpd->radar_spec = rt->radar_types;
+ 	dpd->num_radar_types = rt->num_radar_types;
+ 
