@@ -1,29 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 17 Jul 2020 19:57:41 +0000
-Subject: Re: [PATCH] net: alteon: switch from 'pci_' to 'dma_' API
-Message-Id: <20200717.125741.1362531111425041030.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 18:43:40 +0000
+Subject: [PATCH] docs: filesystems: vfs: correct flag name
+Message-Id: <1595789020-12941-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200716204802.326057-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200716204802.326057-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, jes@trained-monkey.org, linux-acenic@sunsite.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 16 Jul 2020 22:48:02 +0200
+There is no flag REMAP_CAN_SHORTEN.  Commit eca3654e3cc7 ("vfs: enable
+remap callers that can handle short operations") that introduces this
+text also introduces the flag REMAP_FILE_CAN_SHORTEN.  Change the name
+in the documentation accordingly.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'ace_allocate_descriptors()' and
-> 'ace_init()' GFP_KERNEL can be used because both functions are called from
-> the probe function and no lock is acquired.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Applied.
+---
+ Documentation/filesystems/vfs.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index da4b735..d08357d 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -1116,7 +1116,7 @@ otherwise noted.
+ 	before any bytes were remapped.  The remap_flags parameter
+ 	accepts REMAP_FILE_* flags.  If REMAP_FILE_DEDUP is set then the
+ 	implementation must only remap if the requested file ranges have
+-	identical contents.  If REMAP_CAN_SHORTEN is set, the caller is
++	identical contents.  If REMAP_FILE_CAN_SHORTEN is set, the caller is
+ 	ok with the implementation shortening the request length to
+ 	satisfy alignment or EOF requirements (or any other reason).
+ 
