@@ -1,101 +1,153 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 28 Jul 2020 09:25:47 +0000
-Subject: Re: [PATCH 2/2] media: bt8xx: avoid a useless memset
-Message-Id: <2480b12b85f9560060cd155de222d42d40150ae7.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 10:58:25 +0000
+Subject: [PATCH 0/7] drop unnecessary list_empty
+Message-Id: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727135151.54757-1-christophe.jaillet@wanadoo.fr>
-         <0897d9bec8865859694c917f3f72ab8fd12321ff.camel@perches.com>
-         <30618c986727e5f8a9806f663b4e6f4aa80065ae.camel@perches.com>
-         <d5759bd3-5e8a-a557-cd3e-0a2ae4d124e9@wanadoo.fr>
-In-Reply-To: <d5759bd3-5e8a-a557-cd3e-0a2ae4d124e9@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mchehab@kernel.org, akpm@linux-foundation.org, rppt@kernel.org, hverkuil-cisco@xs4all.nl
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 
-On Tue, 2020-07-28 at 10:05 +0200, Christophe JAILLET wrote:
-> Le 27/07/2020 =E0 18:16, Joe Perches a =E9crit :
-> > On Mon, 2020-07-27 at 09:09 -0700, Joe Perches wrote:
-> > > On Mon, 2020-07-27 at 15:51 +0200, Christophe JAILLET wrote:
-> > > > Avoid a memset after a call to 'dma_alloc_coherent()'.
-> > > > This is useless since
-> > > > commit 518a2f1925c3 ("dma-mapping: zero memory returned from dma_al=
-loc_*")
-> > > []
-> > > > diff --git a/drivers/media/pci/bt8xx/btcx-risc.c b/drivers/media/pc=
-i/bt8xx/btcx-risc.c
-> > > []
-> > > > @@ -73,7 +73,6 @@ int btcx_riscmem_alloc(struct pci_dev *pci,
-> > > >   		dprintk("btcx: riscmem alloc [%d] dma=3D%lx cpu=3D%p size=3D%d\=
-n",
-> > > >   			memcnt, (unsigned long)dma, cpu, size);
-> > > >   	}
-> > > > -	memset(risc->cpu,0,risc->size);
-> > > >   	return 0;
-> > > >   }
-> > >=20
-> > > Likely NAK.
-> > >=20
-> > > This is not useless as risc->cpu may be reused
-> > > and the alloc may not have been done.
-> >=20
-> > Perhaps a little rewrite for clarity:
-> > ---
-> >   drivers/media/pci/bt8xx/btcx-risc.c | 24 +++++++++++++-----------
-> >   1 file changed, 13 insertions(+), 11 deletions(-)
-> >=20
-> > diff --git a/drivers/media/pci/bt8xx/btcx-risc.c b/drivers/media/pci/bt=
-8xx/btcx-risc.c
-> > index 51257980f539..311f4ca2a108 100644
-> > --- a/drivers/media/pci/bt8xx/btcx-risc.c
-> > +++ b/drivers/media/pci/bt8xx/btcx-risc.c
-> > @@ -56,24 +56,26 @@ int btcx_riscmem_alloc(struct pci_dev *pci,
-> >   		       struct btcx_riscmem *risc,
-> >   		       unsigned int size)
-> >   {
-> > -	__le32 *cpu;
-> > -	dma_addr_t dma =3D 0;
-> > -
-> > -	if (NULL !=3D risc->cpu && risc->size < size)
-> > -		btcx_riscmem_free(pci,risc);
-> > -	if (NULL =3D risc->cpu) {
-> > -		cpu =3D pci_alloc_consistent(pci, size, &dma);
-> > -		if (NULL =3D cpu)
-> > +	if (risc->cpu && risc->size < size)
-> > +		btcx_riscmem_free(pci, risc);
-> > +
-> > +	if (risc->cpu) {
-> > +		memset(risc->cpu, 0, risc->size);
-> > +	} else {
-> > +		dma_addr_t dma =3D 0;
-> > +
-> > +		risc->cpu =3D pci_alloc_consistent(pci, size, &dma);
-> > +		if (!risc->cpu)
-> >   			return -ENOMEM;
-> > -		risc->cpu  =3D cpu;
-> > +
-> >   		risc->dma  =3D dma;
-> >   		risc->size =3D size;
-> >  =20
-> >   		memcnt++;
-> >   		dprintk("btcx: riscmem alloc [%d] dma=3D%lx cpu=3D%p size=3D%d\n",
-> > -			memcnt, (unsigned long)dma, cpu, size);
-> > +			memcnt, (unsigned long)dma, risc->cpu, size);
-> >   	}
-> > -	memset(risc->cpu,0,risc->size);
-> > +
-> >   	return 0;
-> >   }
-> >  =20
-> >=20
-> >=20
-> Looks good to me.
->=20
-> Just note, that this will not apply after patch 1/2 is applied, because=20
-> it turns pci_alloc_consistent() into dma_alloc_coherent().
+The various list iterators are able to handle an empty list.
+The only effect of avoiding the loop is not initializing some
+index variables.
+Drop list_empty tests in cases where these variables are not
+used.
 
-Just a suggestion.
+The semantic patch that makes these changes is as follows:
+(http://coccinelle.lip6.fr/)
 
-As it's dependent on your first patch, perhaps
-you could make the appropriate change.
+<smpl>
+@@
+expression x,e;
+iterator name list_for_each_entry;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x))) {
+   list_for_each_entry(i,x,...) S
+- }
+ ... when != i
+? i = e
+
+@@
+expression x,e;
+iterator name list_for_each_entry_safe;
+statement S;
+identifier i,j;
+@@
+
+-if (!(list_empty(x))) {
+   list_for_each_entry_safe(i,j,x,...) S
+- }
+ ... when != i
+     when != j
+(
+  i = e;
+|
+? j = e;
+)
+
+@@
+expression x,e;
+iterator name list_for_each;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x))) {
+   list_for_each(i,x) S
+- }
+ ... when != i
+? i = e
+
+@@
+expression x,e;
+iterator name list_for_each_safe;
+statement S;
+identifier i,j;
+@@
+
+-if (!(list_empty(x))) {
+   list_for_each_safe(i,j,x) S
+- }
+ ... when != i
+     when != j
+(
+  i = e;
+|
+? j = e;
+)
+
+// -------------------
+
+@@
+expression x,e;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x)))
+   list_for_each_entry(i,x,...) S
+ ... when != i
+? i = e
+
+@@
+expression x,e;
+statement S;
+identifier i,j;
+@@
+
+-if (!(list_empty(x)))
+   list_for_each_entry_safe(i,j,x,...) S
+ ... when != i
+     when != j
+(
+  i = e;
+|
+? j = e;
+)
+
+@@
+expression x,e;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x)))
+   list_for_each(i,x) S
+ ... when != i
+? i = e
+
+@@
+expression x,e;
+statement S;
+identifier i,j;
+@@
+
+-if (!(list_empty(x)))
+   list_for_each_safe(i,j,x) S
+ ... when != i
+     when != j
+(
+  i = e;
+|
+? j = e;
+)
+</smpl>
+
+---
+
+ drivers/media/pci/saa7134/saa7134-core.c                      |   14 ++---
+ drivers/media/usb/cx231xx/cx231xx-core.c                      |   16 ++----
+ drivers/media/usb/tm6000/tm6000-core.c                        |   24 +++-------
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c |   13 ++---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c    |    5 --
+ drivers/net/ethernet/sfc/ptp.c                                |   20 +++-----
+ drivers/net/wireless/ath/dfs_pattern_detector.c               |   15 ++----
+ sound/soc/intel/atom/sst/sst_loader.c                         |   10 +---
+ sound/soc/intel/skylake/skl-pcm.c                             |    8 +--
+ sound/soc/intel/skylake/skl-topology.c                        |    5 --
+ 10 files changed, 53 insertions(+), 77 deletions(-)
