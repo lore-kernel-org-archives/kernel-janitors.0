@@ -1,34 +1,42 @@
-From: Jason Gunthorpe <jgg@nvidia.com>
-Date: Thu, 16 Jul 2020 18:44:35 +0000
-Subject: Re: [PATCH] RDMA/usnic: switch from 'pci_' to 'dma_' API
-Message-Id: <20200716184435.GA2670424@nvidia.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 08:25:33 +0000
+Subject: [PATCH] ASoC: SOF: imx: use resource_size
+Message-Id: <1595751933-4952-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200711073120.249146-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200711073120.249146-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benve@cisco.com, neescoba@cisco.com, pkaustub@cisco.com, dledford@redhat.com, hch@infradead.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, linux-arm-kernel@lists.infradead.org, sound-open-firmware@alsa-project.org
 
-On Sat, Jul 11, 2020 at 09:31:20AM +0200, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script bellow.
-> It has been compile tested.
-> 
-> When memory is allocated, GFP_ATOMIC should be used to be consistent with
-> the surrounding code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m8745678307186&w=4
-> ---
->  drivers/infiniband/hw/usnic/usnic_fwd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Use resource_size rather than a verbose computation on
+the end and start fields.
 
-I checked the GFP and it looks OK to me, thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied to for-next
+<smpl>
+@@ struct resource ptr; @@
+- (ptr.end - ptr.start + 1)
++ resource_size(&ptr)
+</smpl>
 
-Jason
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ sound/soc/sof/imx/imx8m.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/sound/soc/sof/imx/imx8m.c b/sound/soc/sof/imx/imx8m.c
+--- a/sound/soc/sof/imx/imx8m.c
++++ b/sound/soc/sof/imx/imx8m.c
+@@ -188,8 +188,7 @@ static int imx8m_probe(struct snd_sof_de
+ 	}
+ 
+ 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
+-							  res.end - res.start +
+-							  1);
++							  resource_size(&res));
+ 	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
+ 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
+ 			base, size);
