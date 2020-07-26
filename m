@@ -1,56 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 27 Jul 2020 13:35:58 +0000
-Subject: Re: [PATCH] mtd: unlock on error in ioctl
-Message-Id: <20200727133558.GA28751@kroah.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 15:47:35 +0000
+Subject: [PATCH] PCI: correct flag name
+Message-Id: <1595778455-12132-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727112050.GF389488@mwanda>
-In-Reply-To: <20200727112050.GF389488@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 02:20:50PM +0300, Dan Carpenter wrote:
-> We need to unlock before returning on this error path.
-> 
-> Fixes: 210bec567936 ("mtd: properly check all write ioctls for permissions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/mtd/mtdchar.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-> index 52c120f9fb0d..05f9218592df 100644
-> --- a/drivers/mtd/mtdchar.c
-> +++ b/drivers/mtd/mtdchar.c
-> @@ -1064,8 +1064,10 @@ static long mtdchar_compat_ioctl(struct file *file, unsigned int cmd,
->  		struct mtd_oob_buf32 buf;
->  		struct mtd_oob_buf32 __user *buf_user = argp;
->  
-> -		if (!(file->f_mode & FMODE_WRITE))
-> -			return -EPERM;
-> +		if (!(file->f_mode & FMODE_WRITE)) {
-> +			ret = -EPERM;
-> +			goto unlock;
-> +		}
->  
->  		if (copy_from_user(&buf, argp, sizeof(buf)))
->  			ret = -EFAULT;
-> @@ -1117,6 +1119,7 @@ static long mtdchar_compat_ioctl(struct file *file, unsigned int cmd,
->  		ret = mtdchar_ioctl(file, cmd, (unsigned long)argp);
->  	}
->  
-> +unlock:
->  	mutex_unlock(&mtd_mutex);
->  
->  	return ret;
-> -- 
-> 2.27.0
-> 
+RESOURCE_IO does not exist.  Rename to IORESOURCE_IO.
 
-I think this is already fixed up in the mtd tree.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-thanks,
+---
+Just a guess based on the most similar name...
 
-greg k-h
+ Documentation/filesystems/sysfs-pci.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/sysfs-pci.rst b/Documentation/filesystems/sysfs-pci.rst
+index a265f3e..742fbd2 100644
+--- a/Documentation/filesystems/sysfs-pci.rst
++++ b/Documentation/filesystems/sysfs-pci.rst
+@@ -63,7 +63,7 @@ files, each with their own function.
+   binary - file contains binary data
+   cpumask - file contains a cpumask type
+ 
+-.. [1] rw for RESOURCE_IO (I/O port) regions only
++.. [1] rw for IORESOURCE_IO (I/O port) regions only
+ 
+ The read only files are informational, writes to them will be ignored, with
+ the exception of the 'rom' file.  Writable files can be used to perform
