@@ -1,70 +1,98 @@
-From: Ritesh Harjani <riteshh@linux.ibm.com>
-Date: Wed, 08 Jul 2020 11:27:11 +0000
-Subject: Re: [PATCH] ext4: Delete unnecessary checks before brelse()
-Message-Id: <20200708111512.97DF5A405C@b06wcsmtp001.portsmouth.uk.ibm.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 10:58:31 +0000
+Subject: [PATCH 6/7] [media] tm6000: drop unnecessary list_empty
+Message-Id: <1595761112-11003-7-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
-In-Reply-To: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
+References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+list_for_each_entry is able to handle an empty list.
+The only effect of avoiding the loop is not initializing the
+index variable.
+Drop list_empty tests in cases where these variables are not
+used.
 
+Note that list_for_each_entry is defined in terms of list_first_entry,
+which indicates that it should not be used on an empty list.  But in
+list_for_each_entry, the element obtained by list_first_entry is not
+really accessed, only the address of its list_head field is compared
+to the address of the list head, so the list_first_entry is safe.
 
-On 6/13/20 11:37 PM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 Jun 2020 19:12:24 +0200
-> 
-> The brelse() function tests whether its argument is NULL
-> and then returns immediately.
-> Thus remove the tests which are not needed around the shown calls.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Sure, LGTM. Feel free to add
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+<smpl>
+@@
+expression x,e;
+iterator name list_for_each_entry;
+statement S;
+identifier i;
+@@
 
+-if (!(list_empty(x))) {
+   list_for_each_entry(i,x,...) S
+- }
+ ... when != i
+? i = e
+</smpl>
 
-> ---
->   fs/ext4/extents.c | 6 ++----
->   fs/ext4/xattr.c   | 3 +--
->   2 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 221f240eae60..315276d50aa8 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -693,10 +693,8 @@ void ext4_ext_drop_refs(struct ext4_ext_path *path)
->   		return;
->   	depth = path->p_depth;
->   	for (i = 0; i <= depth; i++, path++) {
-> -		if (path->p_bh) {
-> -			brelse(path->p_bh);
-> -			path->p_bh = NULL;
-> -		}
-> +		brelse(path->p_bh);
-> +		path->p_bh = NULL;
->   	}
->   }
-> 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 9b29a40738ac..eb997ce21be3 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -1354,8 +1354,7 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
-> 
->   	block = 0;
->   	while (wsize < bufsize) {
-> -		if (bh != NULL)
-> -			brelse(bh);
-> +		brelse(bh);
->   		csize = (bufsize - wsize) > blocksize ? blocksize :
->   								bufsize - wsize;
->   		bh = ext4_getblk(handle, ea_inode, block, 0);
-> --
-> 2.27.0
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/media/usb/tm6000/tm6000-core.c |   24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/usb/tm6000/tm6000-core.c b/drivers/media/usb/tm6000/tm6000-core.c
+index 2c72370..5c8cbc5 100644
+--- a/drivers/media/usb/tm6000/tm6000-core.c
++++ b/drivers/media/usb/tm6000/tm6000-core.c
+@@ -853,11 +853,9 @@ int tm6000_call_fillbuf(struct tm6000_core *dev, enum tm6000_ops_type type,
+ 
+ 	/* FIXME: tm6000_extension_devlist_lock should be a spinlock */
+ 
+-	if (!list_empty(&tm6000_extension_devlist)) {
+-		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
+-			if (ops->fillbuf && ops->type = type)
+-				ops->fillbuf(dev, buf, size);
+-		}
++	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
++		if (ops->fillbuf && ops->type = type)
++			ops->fillbuf(dev, buf, size);
+ 	}
+ 
+ 	return 0;
+@@ -898,11 +896,9 @@ void tm6000_init_extension(struct tm6000_core *dev)
+ 	struct tm6000_ops *ops = NULL;
+ 
+ 	mutex_lock(&tm6000_devlist_mutex);
+-	if (!list_empty(&tm6000_extension_devlist)) {
+-		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
+-			if (ops->init)
+-				ops->init(dev);
+-		}
++	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
++		if (ops->init)
++			ops->init(dev);
+ 	}
+ 	mutex_unlock(&tm6000_devlist_mutex);
+ }
+@@ -912,11 +908,9 @@ void tm6000_close_extension(struct tm6000_core *dev)
+ 	struct tm6000_ops *ops = NULL;
+ 
+ 	mutex_lock(&tm6000_devlist_mutex);
+-	if (!list_empty(&tm6000_extension_devlist)) {
+-		list_for_each_entry(ops, &tm6000_extension_devlist, next) {
+-			if (ops->fini)
+-				ops->fini(dev);
+-		}
++	list_for_each_entry(ops, &tm6000_extension_devlist, next) {
++		if (ops->fini)
++			ops->fini(dev);
+ 	}
+ 	mutex_unlock(&tm6000_devlist_mutex);
+ }
