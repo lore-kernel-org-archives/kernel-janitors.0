@@ -1,28 +1,91 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 17 Jul 2020 19:57:05 +0000
-Subject: Re: [PATCH] net: sungem: switch from 'pci_' to 'dma_' API
-Message-Id: <20200717.125705.1415014926641759296.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 26 Jul 2020 10:58:29 +0000
+Subject: [PATCH 4/7] net/mlx5: drop unnecessary list_empty
+Message-Id: <1595761112-11003-5-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200716192821.321233-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200716192821.321233-1-christophe.jaillet@wanadoo.fr>
+References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, hkallweit1@gmail.com, mst@redhat.com, vaibhavgupta40@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@mellanox.com>
+Cc: kernel-janitors@vger.kernel.org, Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 16 Jul 2020 21:28:21 +0200
+list_for_each_entry is able to handle an empty list.
+The only effect of avoiding the loop is not initializing the
+index variable.
+Drop list_empty tests in cases where these variables are not
+used.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'gem_init_one()', GFP_KERNEL can be used
-> because it is a probe function and no lock is acquired.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Note that list_for_each_entry is defined in terms of list_first_entry,
+which indicates that it should not be used on an empty list.  But in
+list_for_each_entry, the element obtained by list_first_entry is not
+really accessed, only the address of its list_head field is compared
+to the address of the list head, so the list_first_entry is safe.
 
-Applied.
+The semantic patch that makes this change is as follows (with another
+variant for the no brace case): (http://coccinelle.lip6.fr/)
+
+<smpl>
+@@
+expression x,e;
+iterator name list_for_each_entry;
+statement S;
+identifier i;
+@@
+
+-if (!(list_empty(x))) {
+   list_for_each_entry(i,x,...) S
+- }
+ ... when != i
+? i = e
+</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c |   13 ++++------
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c    |    5 +--
+ 2 files changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c
+index 31abcbb..23a1172 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c
+@@ -474,14 +474,13 @@ static int dr_matcher_add_to_tbl(struct mlx5dr_matcher *matcher)
+ 	int ret;
+ 
+ 	next_matcher = NULL;
+-	if (!list_empty(&tbl->matcher_list))
+-		list_for_each_entry(tmp_matcher, &tbl->matcher_list, matcher_list) {
+-			if (tmp_matcher->prio >= matcher->prio) {
+-				next_matcher = tmp_matcher;
+-				break;
+-			}
+-			first = false;
++	list_for_each_entry(tmp_matcher, &tbl->matcher_list, matcher_list) {
++		if (tmp_matcher->prio >= matcher->prio) {
++			next_matcher = tmp_matcher;
++			break;
+ 		}
++		first = false;
++	}
+ 
+ 	prev_matcher = NULL;
+ 	if (next_matcher && !first)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c
+index cd708dc..6ec5106 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c
+@@ -574,9 +574,8 @@ void mlx5dr_rule_update_rule_member(struct mlx5dr_ste *ste,
+ {
+ 	struct mlx5dr_rule_member *rule_mem;
+ 
+-	if (!list_empty(&ste->rule_list))
+-		list_for_each_entry(rule_mem, &ste->rule_list, use_ste_list)
+-			rule_mem->ste = new_ste;
++	list_for_each_entry(rule_mem, &ste->rule_list, use_ste_list)
++		rule_mem->ste = new_ste;
+ }
+ 
+ static void dr_rule_clean_rule_members(struct mlx5dr_rule *rule,
