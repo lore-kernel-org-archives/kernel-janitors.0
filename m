@@ -1,40 +1,38 @@
-From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Date: Tue, 14 Jul 2020 14:39:21 +0000
-Subject: Re: [PATCH v2] drm/i915/selftest: Fix an error code in live_noa_gpr()
-Message-Id: <29d5e25e-45e1-fca0-7d09-fd5e303b9eea@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Jul 2020 11:23:44 +0000
+Subject: [PATCH] NFSv4.2: Fix an error code in nfs4_xattr_cache_init()
+Message-Id: <20200727112344.GH389488@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200714143652.GA337376@mwanda>
-In-Reply-To: <20200714143652.GA337376@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Frank van der Linden <fllinden@amazon.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14/07/2020 17:36, Dan Carpenter wrote:
-> The error code needs to be set on this path.  It currently returns
-> success.
->
-> Fixes: ed2690a9ca89 ("drm/i915/selftest: Check that GPR are restored across noa_wait")
-> Reported-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Fix a different bug instead.  :P  Colin fixed mine already.
->
->   drivers/gpu/drm/i915/selftests/i915_perf.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_perf.c b/drivers/gpu/drm/i915/selftests/i915_perf.c
-> index 0aa151501fb3..c232194c60a2 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_perf.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_perf.c
-> @@ -358,6 +358,7 @@ static int live_noa_gpr(void *arg)
->   		cs = intel_ring_begin(rq, 4);
->   		if (IS_ERR(cs)) {
->   			i915_request_add(rq);
-> +			err = PTR_ERR(cs);
->   			goto out_rq;
->   		}
->   
+This should return -ENOMEM on failure instead of success.
 
-Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Fixes: 95ad37f90c33 ("NFSv4.2: add client side xattr caching.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+---
+ fs/nfs/nfs42xattr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
+index 23fdab977a2a..e75c4bb70266 100644
+--- a/fs/nfs/nfs42xattr.c
++++ b/fs/nfs/nfs42xattr.c
+@@ -1040,8 +1040,10 @@ int __init nfs4_xattr_cache_init(void)
+ 		goto out2;
+ 
+ 	nfs4_xattr_cache_wq = alloc_workqueue("nfs4_xattr", WQ_MEM_RECLAIM, 0);
+-	if (nfs4_xattr_cache_wq = NULL)
++	if (nfs4_xattr_cache_wq = NULL) {
++		ret = -ENOMEM;
+ 		goto out1;
++	}
+ 
+ 	ret = register_shrinker(&nfs4_xattr_cache_shrinker);
+ 	if (ret)
+-- 
+2.27.0
