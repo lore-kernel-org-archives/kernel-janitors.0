@@ -1,36 +1,72 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Jul 2020 19:46:52 +0000
-Subject: Re: [PATCH] qed: fix assignment of n_rq_elems to incorrect params field
-Message-Id: <20200727.124652.1347094721322555381.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Jul 2020 13:39:40 +0000
+Subject: [PATCH] drm/amd/powerplay: off by one bugs in smu_cmn_to_asic_specific_index()
+Message-Id: <20200727133940.GA391897@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727141712.112906-1-colin.king@canonical.com>
-        <20200727161739.GA60250@nvidia.com>
-In-Reply-To: <20200727161739.GA60250@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jgg@nvidia.com
-Cc: colin.king@canonical.com, mkalderon@marvell.com, aelior@marvell.com, dledford@redhat.com, irusskikh@marvell.com, alobakin@marvell.com, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Evan Quan <evan.quan@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-From: Jason Gunthorpe <jgg@nvidia.com>
-Date: Mon, 27 Jul 2020 13:17:39 -0300
+These tables have _COUNT number of elements so the comparisons should be
+>= instead of > to prevent reading one element beyond the end of the
+array.
 
-> On Mon, Jul 27, 2020 at 03:17:12PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> Currently n_rq_elems is being assigned to params.elem_size instead of the
->> field params.num_elems.  Coverity is detecting this as a double assingment
->> to params.elem_size and reporting this as an usused value on the first
->> assignment.  Fix this.
->> 
->> Addresses-Coverity: ("Unused value")
->> Fixes: b6db3f71c976 ("qed: simplify chain allocation with init params struct")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/infiniband/hw/qedr/verbs.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> DaveM will need to take this since the Fixed patch is in his tree,
-> thanks.
+Fixes: 8264ee69f0d8 ("drm/amd/powerplay: drop unused code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/powerplay/smu_cmn.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Applied to net-next, thanks everyone.
+diff --git a/drivers/gpu/drm/amd/powerplay/smu_cmn.c b/drivers/gpu/drm/amd/powerplay/smu_cmn.c
+index be4b678d0e60..5c23c44c33bd 100644
+--- a/drivers/gpu/drm/amd/powerplay/smu_cmn.c
++++ b/drivers/gpu/drm/amd/powerplay/smu_cmn.c
+@@ -166,7 +166,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
+ 
+ 	switch (type) {
+ 	case CMN2ASIC_MAPPING_MSG:
+-		if (index > SMU_MSG_MAX_COUNT ||
++		if (index >= SMU_MSG_MAX_COUNT ||
+ 		    !smu->message_map)
+ 			return -EINVAL;
+ 
+@@ -181,7 +181,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
+ 		return msg_mapping.map_to;
+ 
+ 	case CMN2ASIC_MAPPING_CLK:
+-		if (index > SMU_CLK_COUNT ||
++		if (index >= SMU_CLK_COUNT ||
+ 		    !smu->clock_map)
+ 			return -EINVAL;
+ 
+@@ -192,7 +192,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
+ 		return mapping.map_to;
+ 
+ 	case CMN2ASIC_MAPPING_FEATURE:
+-		if (index > SMU_FEATURE_COUNT ||
++		if (index >= SMU_FEATURE_COUNT ||
+ 		    !smu->feature_map)
+ 			return -EINVAL;
+ 
+@@ -203,7 +203,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
+ 		return mapping.map_to;
+ 
+ 	case CMN2ASIC_MAPPING_TABLE:
+-		if (index > SMU_TABLE_COUNT ||
++		if (index >= SMU_TABLE_COUNT ||
+ 		    !smu->table_map)
+ 			return -EINVAL;
+ 
+@@ -214,7 +214,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
+ 		return mapping.map_to;
+ 
+ 	case CMN2ASIC_MAPPING_PWR:
+-		if (index > SMU_POWER_SOURCE_COUNT ||
++		if (index >= SMU_POWER_SOURCE_COUNT ||
+ 		    !smu->pwr_src_map)
+ 			return -EINVAL;
+ 
+-- 
+2.27.0
