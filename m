@@ -1,47 +1,34 @@
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Date: Wed, 01 Jul 2020 09:23:29 +0000
-Subject: Re: [PATCH v4 03/14] irqchip/csky-mpintc: Fix potential resource leaks
-Message-Id: <6a468fb4-74b0-4bf3-49bc-cfc62d734e24@loongson.cn>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Jul 2020 13:51:51 +0000
+Subject: [PATCH 2/2] media: bt8xx: avoid a useless memset
+Message-Id: <20200727135151.54757-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1593569786-11500-1-git-send-email-yangtiezhu@loongson.cn>
- <1593569786-11500-4-git-send-email-yangtiezhu@loongson.cn>
- <35eae701-e6b1-96af-9be4-0993330a17dc@web.de>
-In-Reply-To: <35eae701-e6b1-96af-9be4-0993330a17dc@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mchehab@kernel.org, akpm@linux-foundation.org, rppt@kernel.org, hverkuil-cisco@xs4all.nl
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 07/01/2020 03:49 PM, Markus Elfring wrote:
->> exception handling. By the way, do some coding-style cleanups
-> I propose to consider another bit of fine-tuning.
->
->
-> …
->> +++ b/drivers/irqchip/irq-csky-mpintc.c
-> …
->> @@ -270,12 +274,24 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
->>
->>   #ifdef CONFIG_SMP
->>   	ipi_irq = irq_create_mapping(root_domain, IPI_IRQ);
->> -	if (!ipi_irq)
->> -		return -EIO;
->> +	if (!ipi_irq) {
->> +		ret = -EIO;
->> +		goto err_domain_remove;
-> How do you think about to use the following source code variant
-> at this place?
->
-> +		irq_domain_remove(root_domain);
-> +		ret = -EIO;
-> +		goto err_iounmap;
->
->
-> Would you like to avoid the repetition of the check “#ifdef CONFIG_SMP”?
+Avoid a memset after a call to 'dma_alloc_coherent()'.
+This is useless since
+commit 518a2f1925c3 ("dma-mapping: zero memory returned from dma_alloc_*")
 
-OK, thank you, it looks good to me, I will do it in v5.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/pci/bt8xx/btcx-risc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->
-> Regards,
-> Markus
+diff --git a/drivers/media/pci/bt8xx/btcx-risc.c b/drivers/media/pci/bt8xx/btcx-risc.c
+index 13bb1490a568..b3179038b900 100644
+--- a/drivers/media/pci/bt8xx/btcx-risc.c
++++ b/drivers/media/pci/bt8xx/btcx-risc.c
+@@ -73,7 +73,6 @@ int btcx_riscmem_alloc(struct pci_dev *pci,
+ 		dprintk("btcx: riscmem alloc [%d] dma=%lx cpu=%p size=%d\n",
+ 			memcnt, (unsigned long)dma, cpu, size);
+ 	}
+-	memset(risc->cpu,0,risc->size);
+ 	return 0;
+ }
+ 
+-- 
+2.25.1
