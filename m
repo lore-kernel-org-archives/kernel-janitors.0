@@ -1,43 +1,41 @@
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 23 Jul 2020 17:24:11 +0000
-Subject: Re: [PATCH] ceph: remove redundant initialization of variable mds
-Message-Id: <853430a6bb4216a5e4a0d734a18b8401b89e7f4b.camel@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Jul 2020 14:06:00 +0000
+Subject: [PATCH][next] counter: microchip-tcb-capture: remove ATMEL_TC_ETRGEDG_NONE bit check
+Message-Id: <20200727140600.112562-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200723152240.992946-1-colin.king@canonical.com>
-In-Reply-To: <20200723152240.992946-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+To: Kamel Bouhara <kamel.bouhara@bootlin.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2020-07-23 at 16:22 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable mds is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/ceph/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index 070ed8481340..48f5afb56c91 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -272,7 +272,7 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_auth_client *ac = fsc->client->monc.auth;
->  	struct ceph_options *opt = fsc->client->options;
-> -	int mds = -1;
-> +	int mds;
->  
->  	mutex_lock(&mdsc->mutex);
->  
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, merged into testing branch.
+The macro ATMEL_TC_ETRGEDG_NONE is defined as 0 << 8 which is zero and
+hence the check cmr & ATMEL_TC_ETRGEDG_NONE can never be true. Since
+*action is already assigned MCHP_TC_SYNAPSE_ACTION_NONE then this check
+and set is redundant dead code and can be removed.
+
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/counter/microchip-tcb-capture.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
+index f7b7743ddb94..119640d6d6ab 100644
+--- a/drivers/counter/microchip-tcb-capture.c
++++ b/drivers/counter/microchip-tcb-capture.c
+@@ -185,9 +185,7 @@ static int mchp_tc_count_action_get(struct counter_device *counter,
+ 
+ 	*action = MCHP_TC_SYNAPSE_ACTION_NONE;
+ 
+-	if (cmr & ATMEL_TC_ETRGEDG_NONE)
+-		*action = MCHP_TC_SYNAPSE_ACTION_NONE;
+-	else if (cmr & ATMEL_TC_ETRGEDG_RISING)
++	if (cmr & ATMEL_TC_ETRGEDG_RISING)
+ 		*action = MCHP_TC_SYNAPSE_ACTION_RISING_EDGE;
+ 	else if (cmr & ATMEL_TC_ETRGEDG_FALLING)
+ 		*action = MCHP_TC_SYNAPSE_ACTION_FALLING_EDGE;
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.27.0
