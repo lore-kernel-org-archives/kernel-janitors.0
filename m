@@ -1,50 +1,40 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 07 Jul 2020 07:15:25 +0000
-Subject: Re: [PATCH] mmc: dw_mmc-exynos: remove redundant initialization of variable 'found'
-Message-Id: <CAPDyKFqtcw+zccgR4LOPqYAs3dQ02Hu7SmpNq7aNgOs23dzJ5g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Jul 2020 17:40:54 +0000
+Subject: [PATCH][next] binfmt_elf: fix unsigned regset0_size compared to less than zero
+Message-Id: <20200727174054.154765-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200706163031.503431-1-colin.king@canonical.com>
-In-Reply-To: <20200706163031.503431-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 6 Jul 2020 at 18:30, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable 'found' is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for next, thanks!
+Variable regset0_size is an unsigned int and it is being checked
+for an error by checking if it is less than zero, and hence this
+check is always going to be false.  Fix this by making the variable
+regset0_size signed.
 
-Kind regards
-Uffe
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 0f17865d8847 ("introduction of regset ->get() wrappers, switching ELF coredumps to those")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/binfmt_elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> ---
->  drivers/mmc/host/dw_mmc-exynos.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 5e3d95b63676..99b900008a03 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -472,7 +472,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
->         struct dw_mci_exynos_priv_data *priv = host->priv;
->         struct mmc_host *mmc = slot->mmc;
->         u8 start_smpl, smpl, candiates = 0;
-> -       s8 found = -1;
-> +       s8 found;
->         int ret = 0;
->
->         start_smpl = dw_mci_exynos_get_clksmpl(host);
-> --
-> 2.27.0
->
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 6a171a28bdf7..13d053982dd7 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1821,7 +1821,7 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 				 long signr, size_t *total)
+ {
+ 	unsigned int i;
+-	unsigned int regset0_size;
++	int regset0_size;
+ 
+ 	/*
+ 	 * NT_PRSTATUS is the one special case, because the regset data
+-- 
+2.27.0
