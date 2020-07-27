@@ -1,86 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 27 Jul 2020 19:00:55 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: off by one bugs in smu_cmn_to_asic_specific_index()
-Message-Id: <CADnq5_MDcYC08SRMhPPRR0QK70_ZeywtSY4f8ztAP3qCBkwTsA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Jul 2020 17:54:11 +0000
+Subject: [PATCH][next] bpf: fix swapped arguments in calls to check_buffer_access
+Message-Id: <20200727175411.155179-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200727133940.GA391897@mwanda>
-In-Reply-To: <20200727133940.GA391897@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Evan Quan <evan.quan@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 9:42 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> These tables have _COUNT number of elements so the comparisons should be
-> >= instead of > to prevent reading one element beyond the end of the
-> array.
->
-> Fixes: 8264ee69f0d8 ("drm/amd/powerplay: drop unused code")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  Thanks!
+There are a couple of arguments of the boolean flag zero_size_allowed
+and the char pointer buf_info when calling to function check_buffer_access
+that are swapped by mistake. Fix these by swapping them to correct
+the argument ordering.
 
-Alex
+Addresses-Coverity: ("Array compared to 0")
+Fixes: afbf21dce668 ("bpf: Support readonly/readwrite buffers in verifier")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/bpf/verifier.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/powerplay/smu_cmn.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smu_cmn.c b/drivers/gpu/drm/amd/powerplay/smu_cmn.c
-> index be4b678d0e60..5c23c44c33bd 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smu_cmn.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smu_cmn.c
-> @@ -166,7 +166,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
->
->         switch (type) {
->         case CMN2ASIC_MAPPING_MSG:
-> -               if (index > SMU_MSG_MAX_COUNT ||
-> +               if (index >= SMU_MSG_MAX_COUNT ||
->                     !smu->message_map)
->                         return -EINVAL;
->
-> @@ -181,7 +181,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
->                 return msg_mapping.map_to;
->
->         case CMN2ASIC_MAPPING_CLK:
-> -               if (index > SMU_CLK_COUNT ||
-> +               if (index >= SMU_CLK_COUNT ||
->                     !smu->clock_map)
->                         return -EINVAL;
->
-> @@ -192,7 +192,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
->                 return mapping.map_to;
->
->         case CMN2ASIC_MAPPING_FEATURE:
-> -               if (index > SMU_FEATURE_COUNT ||
-> +               if (index >= SMU_FEATURE_COUNT ||
->                     !smu->feature_map)
->                         return -EINVAL;
->
-> @@ -203,7 +203,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
->                 return mapping.map_to;
->
->         case CMN2ASIC_MAPPING_TABLE:
-> -               if (index > SMU_TABLE_COUNT ||
-> +               if (index >= SMU_TABLE_COUNT ||
->                     !smu->table_map)
->                         return -EINVAL;
->
-> @@ -214,7 +214,7 @@ int smu_cmn_to_asic_specific_index(struct smu_context *smu,
->                 return mapping.map_to;
->
->         case CMN2ASIC_MAPPING_PWR:
-> -               if (index > SMU_POWER_SOURCE_COUNT ||
-> +               if (index >= SMU_POWER_SOURCE_COUNT ||
->                     !smu->pwr_src_map)
->                         return -EINVAL;
->
-> --
-> 2.27.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index cd14e70f2d07..88bb25d08bf8 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3477,14 +3477,14 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
+ 				regno, reg_type_str[reg->type]);
+ 			return -EACCES;
+ 		}
+-		err = check_buffer_access(env, reg, regno, off, size, "rdonly",
+-					  false,
++		err = check_buffer_access(env, reg, regno, off, size, false,
++					  "rdonly",
+ 					  &env->prog->aux->max_rdonly_access);
+ 		if (!err && value_regno >= 0)
+ 			mark_reg_unknown(env, regs, value_regno);
+ 	} else if (reg->type = PTR_TO_RDWR_BUF) {
+-		err = check_buffer_access(env, reg, regno, off, size, "rdwr",
+-					  false,
++		err = check_buffer_access(env, reg, regno, off, size, false,
++					  "rdwr",
+ 					  &env->prog->aux->max_rdwr_access);
+ 		if (!err && t = BPF_READ && value_regno >= 0)
+ 			mark_reg_unknown(env, regs, value_regno);
+-- 
+2.27.0
