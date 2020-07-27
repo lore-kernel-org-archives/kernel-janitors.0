@@ -1,73 +1,178 @@
-From: Benjamin Poirier <benjamin.poirier@gmail.com>
-Date: Mon, 13 Jul 2020 06:48:35 +0000
-Subject: Re: [PATCH] staging: qlge: Remove pci-dma-compat wrapper APIs.
-Message-Id: <20200713064835.GA11354@f3>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mYCpIKhGyMATD0i+"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Jul 2020 10:34:21 +0000
+Subject: [PATCH 1/2] drm/radeon: switch from 'pci_' to 'dma_' API
+Message-Id: <20200727103421.50739-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200711124633.GA16459@blackclown> <20200713045959.GA7563@f3>
- <20200713054424.GD12262@blackclown>
-In-Reply-To: <20200713054424.GD12262@blackclown>
-To: Suraj Upadhyay <usuraj35@gmail.com>
-Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+
+The wrappers in include/linux/pci-dma-compat.h should go away.
+
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'radeon_gart_table_ram_alloc()' GFP_KERNEL
+can be used because its callers already use this flag.
+
+Both 'r100_pci_gart_init()' (r100.c) and 'rs400_gart_init()' (rs400.c)
+call 'radeon_gart_init()'.
+This function uses 'vmalloc'.
 
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-On 2020-07-13 11:14 +0530, Suraj Upadhyay wrote:
-> On Mon, Jul 13, 2020 at 01:59:59PM +0900, Benjamin Poirier wrote:
-> > On 2020-07-11 18:16 +0530, Suraj Upadhyay wrote:
-> > > The legacy API wrappers in include/linux/pci-dma-compat.h
-> > > should go away as it creates unnecessary midlayering
-> > > for include/linux/dma-mapping.h APIs, instead use dma-mapping.h
-> > > APIs directly.
-> > >=20
-> > > The patch has been generated with the coccinelle script below
-> > > and compile-tested.
-> > >=20
-> > [...]
-> > >=20
-> > > @@ expression E1, E2, E3, E4; @@
-> > > - pci_dma_sync_single_for_device(E1, E2, E3, E4)
-> > > + dma_sync_single_for_device(&E1->dev, E2, E3, (enum dma_data_directi=
-on)E4)
-> >=20
-> > The qlge driver contains more usages of the deprecated pci_dma_* api
-> > than what this diff addresses. In particular, there are some calls to
-> > pci_dma_sync_single_for_cpu() which were not changed despite this
-> > expression being in the semantic patch.
->=20
-> Hii Ben,
->         I couldn't find any instances of pci_dma_sync_single_for_cpu in
-> the drivers/staging/qlge/ driver, I ran a simple `git grep pci_dma_sync_s=
-ingle_for_cpu/device`
-> and got nothing.
-> If I am wrong, please send the line number of the usages.
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-You're right, sorry. I was missing commit e955a071b9b3 ("staging: qlge:
-replace deprecated apis pci_dma_*") in my tree.
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
 
------BEGIN PGP SIGNATURE-----
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
 
-iQIzBAABCAAdFiEEkvpDtefvZykbqQVOaJBbS33YWS0FAl8MA8MACgkQaJBbS33Y
-WS3Viw/9F4tUPBlh3yVIBpSQ1Ax5GZhlnpGL3XUpFA7Z1aBtZIU+1W9EbDXmZNOo
-KO5Nbqr0CfNDPeKJRpB2K+YVriga9F7B299BVvnqKvEvv5NcxSGfVzpEWpyJL3RL
-tmjpcquRyY6huKBbYVyfa3D0iUkrURoGmPm9QbpA1JNcKGs55qIyHbwqI+3nYrZt
-DZYf5VruMkqQh7gqhW9koHjUyANhWAL4qCLSoQsZAC+HNsY7UsAWLU8sPqD18UaZ
-yE1tSSqOyl4R52tGVzaH5WFMbT8xYhCZ7ZXc862LjoEcPoB4jPeHDdDxxq8w2VhS
-Kt2O3b5HC8VFByaA32sHVRYpG1iFtMY8MEb6VM+N6qTUmZVNkVJkNTDYpEHSfJ/U
-x+j0bunXKUUdnaS14vuzgpfG/L2XAFq9wezZUWvoVg8NWTabHOyeRlNPF1aVYeGr
-eJsJ2wtGPNEVPcDpZMo9nSCZeSevun1/9OyFYEkXKO/OQ1vXORY54jik2rv4pPx6
-vmYS413oRgOru8drLJR5jiRoZuGjk2RsiEVwdrqkj7pdf7FJ7fr6tYbnoHeWJPz4
-h6Wa2prcQ16lPhndAtne+xjc77/O8zqDUmBLShf2ca/5+QgQPuJv6+kC0S9DIK/7
-DcAik0SP5lG9iiOAuRxPgQUCYu+prWCBuRcR+2ITbnDd4s2A5cY=
-=YM6/
------END PGP SIGNATURE-----
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
 
---mYCpIKhGyMATD0i+--
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/gpu/drm/radeon/radeon_gart.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_gart.c b/drivers/gpu/drm/radeon/radeon_gart.c
+index f178ba321715..b7ce254e5663 100644
+--- a/drivers/gpu/drm/radeon/radeon_gart.c
++++ b/drivers/gpu/drm/radeon/radeon_gart.c
+@@ -72,8 +72,8 @@ int radeon_gart_table_ram_alloc(struct radeon_device *rdev)
+ {
+ 	void *ptr;
+ 
+-	ptr = pci_alloc_consistent(rdev->pdev, rdev->gart.table_size,
+-				   &rdev->gart.table_addr);
++	ptr = dma_alloc_coherent(&rdev->pdev->dev, rdev->gart.table_size,
++				 &rdev->gart.table_addr, GFP_KERNEL);
+ 	if (ptr = NULL) {
+ 		return -ENOMEM;
+ 	}
+@@ -110,9 +110,8 @@ void radeon_gart_table_ram_free(struct radeon_device *rdev)
+ 			      rdev->gart.table_size >> PAGE_SHIFT);
+ 	}
+ #endif
+-	pci_free_consistent(rdev->pdev, rdev->gart.table_size,
+-			    (void *)rdev->gart.ptr,
+-			    rdev->gart.table_addr);
++	dma_free_coherent(&rdev->pdev->dev, rdev->gart.table_size,
++			  (void *)rdev->gart.ptr, rdev->gart.table_addr);
+ 	rdev->gart.ptr = NULL;
+ 	rdev->gart.table_addr = 0;
+ }
+-- 
+2.25.1
