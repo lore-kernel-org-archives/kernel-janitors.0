@@ -1,39 +1,45 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 26 Jul 2020 19:22:21 +0000
-Subject: [PATCH] docs: filesystems: vfs: correct sync_mode flag names
-Message-Id: <1595791341-13209-1-git-send-email-Julia.Lawall@inria.fr>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Date: Mon, 27 Jul 2020 01:49:20 +0000
+Subject: Re: [PATCH] docs: filesystems: vfs: correct flag name
+Message-Id: <20200727014920.GN7625@magnolia>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1595789020-12941-1-git-send-email-Julia.Lawall@inria.fr>
 In-Reply-To: <1595789020-12941-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Jonathan Corbet <corbet@lwn.net>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Change the nonexistent flag names WBC_SYNC_ALL and WBC_SYNC_NONE to
-WB_SYNC_ALL and WB_SYNC_NONE, respectively, as used in the code with
-wbc->sync_mode.
+On Sun, Jul 26, 2020 at 08:43:40PM +0200, Julia Lawall wrote:
+> There is no flag REMAP_CAN_SHORTEN.  Commit eca3654e3cc7 ("vfs: enable
+> remap callers that can handle short operations") that introduces this
+> text also introduces the flag REMAP_FILE_CAN_SHORTEN.  Change the name
+> in the documentation accordingly.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+D'oh.  Good catch!
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
----
- Documentation/filesystems/vfs.rst |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--D
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index da4b735..57e9b51 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -766,9 +766,9 @@ cache in your filesystem.  The following members are defined:
- 
- ``writepages``
- 	called by the VM to write out pages associated with the
--	address_space object.  If wbc->sync_mode is WBC_SYNC_ALL, then
-+	address_space object.  If wbc->sync_mode is WB_SYNC_ALL, then
- 	the writeback_control will specify a range of pages that must be
--	written out.  If it is WBC_SYNC_NONE, then a nr_to_write is
-+	written out.  If it is WB_SYNC_NONE, then a nr_to_write is
- 	given and that many pages should be written if possible.  If no
- 	->writepages is given, then mpage_writepages is used instead.
- 	This will choose pages from the address space that are tagged as
+> 
+> ---
+>  Documentation/filesystems/vfs.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index da4b735..d08357d 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -1116,7 +1116,7 @@ otherwise noted.
+>  	before any bytes were remapped.  The remap_flags parameter
+>  	accepts REMAP_FILE_* flags.  If REMAP_FILE_DEDUP is set then the
+>  	implementation must only remap if the requested file ranges have
+> -	identical contents.  If REMAP_CAN_SHORTEN is set, the caller is
+> +	identical contents.  If REMAP_FILE_CAN_SHORTEN is set, the caller is
+>  	ok with the implementation shortening the request length to
+>  	satisfy alignment or EOF requirements (or any other reason).
+>  
+> 
