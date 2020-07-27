@@ -1,58 +1,254 @@
-From: Michael Tretter <m.tretter@pengutronix.de>
-Date: Wed, 01 Jul 2020 07:06:29 +0000
-Subject: Re: [PATCH] media: allegro: Fix some NULL vs IS_ERR() checks in probe
-Message-Id: <20200701070629.GA16164@pengutronix.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 27 Jul 2020 13:51:37 +0000
+Subject: [PATCH 1/2] media: bt8xx: switch from 'pci_' to 'dma_' API
+Message-Id: <20200727135137.54702-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200619143007.GC267142@mwanda>
-In-Reply-To: <20200619143007.GC267142@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: mchehab@kernel.org, akpm@linux-foundation.org, rppt@kernel.org, hverkuil-cisco@xs4all.nl
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 19 Jun 2020 17:30:07 +0300, Dan Carpenter wrote:
-> The devm_ioremap() function doesn't return error pointers, it returns
-> NULL on error.
-> 
-> Fixes: f20387dfd065 ("media: allegro: add Allegro DVT video IP core driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-> ---
->  drivers/staging/media/allegro-dvt/allegro-core.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
-> index 70f133a842dd..3ed66aae741d 100644
-> --- a/drivers/staging/media/allegro-dvt/allegro-core.c
-> +++ b/drivers/staging/media/allegro-dvt/allegro-core.c
-> @@ -3065,9 +3065,9 @@ static int allegro_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> -	if (IS_ERR(regs)) {
-> +	if (!regs) {
->  		dev_err(&pdev->dev, "failed to map registers\n");
-> -		return PTR_ERR(regs);
-> +		return -ENOMEM;
->  	}
->  	dev->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
->  					    &allegro_regmap_config);
-> @@ -3085,9 +3085,9 @@ static int allegro_probe(struct platform_device *pdev)
->  	sram_regs = devm_ioremap(&pdev->dev,
->  				 sram_res->start,
->  				 resource_size(sram_res));
-> -	if (IS_ERR(sram_regs)) {
-> +	if (!sram_regs) {
->  		dev_err(&pdev->dev, "failed to map sram\n");
-> -		return PTR_ERR(sram_regs);
-> +		return -ENOMEM;
->  	}
->  	dev->sram = devm_regmap_init_mmio(&pdev->dev, sram_regs,
->  					  &allegro_sram_config);
-> -- 
-> 2.27.0
-> 
-> 
+When memory is allocated in 'bt878_mem_alloc()' (bt878.c), GFP_KERNEL can
+be used because it is only called from the probe function (i.e.
+'bt878_probe()') and no lock is taken.
+
+
+When memory is allocated in 'btcx_riscmem_alloc()' (btcx-risc.c),
+GFP_KERNEL can be used because all the callers either already use
+GFP_KERNEL or are called from a probe function or are called from a
+.buf_prepare function.
+
+The 4 callers are all in 'bttv-risc.c'.
+   - bttv_risc_packed() and bttv_risc_planar(): only called from
+        'videobuf_queue_ops''s '.buf_prepare' functions.
+        The call chains are:
+
+        .buf_prepare                     (in 'bttv-driver.c')
+           --> buffer_prepare            (in 'bttv-driver.c')
+              --> bttv_prepare_buffer
+                 --> bttv_buffer_risc
+                    --> bttv_risc_packed (x8 times)
+                    --> bttv_risc_planar (x6 times)
+
+        .buf_prepare                     (in 'bttv-vbi.c')
+           --> vbi_buffer_prepare        (in 'bttv-vbi.c')
+              --> bttv_risc_packed       (x2 times)
+
+   - bttv_risc_overlay(): already uses GFP_KERNEL
+   - bttv_risc_init_main(): only called from the 'bttv_probe()' probe
+        function and no spin_lock is taken in the between
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/media/pci/bt8xx/bt878.c       | 16 ++++++++--------
+ drivers/media/pci/bt8xx/btcx-risc.c   |  4 ++--
+ drivers/media/pci/bt8xx/bttv-driver.c |  2 +-
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/pci/bt8xx/bt878.c b/drivers/media/pci/bt8xx/bt878.c
+index 79ba15a9385a..78dd35c9b65d 100644
+--- a/drivers/media/pci/bt8xx/bt878.c
++++ b/drivers/media/pci/bt8xx/bt878.c
+@@ -67,14 +67,14 @@ EXPORT_SYMBOL(bt878);
+ static void bt878_mem_free(struct bt878 *bt)
+ {
+ 	if (bt->buf_cpu) {
+-		pci_free_consistent(bt->dev, bt->buf_size, bt->buf_cpu,
+-				    bt->buf_dma);
++		dma_free_coherent(&bt->dev->dev, bt->buf_size, bt->buf_cpu,
++				  bt->buf_dma);
+ 		bt->buf_cpu = NULL;
+ 	}
+ 
+ 	if (bt->risc_cpu) {
+-		pci_free_consistent(bt->dev, bt->risc_size, bt->risc_cpu,
+-				    bt->risc_dma);
++		dma_free_coherent(&bt->dev->dev, bt->risc_size, bt->risc_cpu,
++				  bt->risc_dma);
+ 		bt->risc_cpu = NULL;
+ 	}
+ }
+@@ -84,16 +84,16 @@ static int bt878_mem_alloc(struct bt878 *bt)
+ 	if (!bt->buf_cpu) {
+ 		bt->buf_size = 128 * 1024;
+ 
+-		bt->buf_cpu = pci_zalloc_consistent(bt->dev, bt->buf_size,
+-						    &bt->buf_dma);
++		bt->buf_cpu = dma_alloc_coherent(&bt->dev->dev, bt->buf_size,
++						 &bt->buf_dma, GFP_KERNEL);
+ 		if (!bt->buf_cpu)
+ 			return -ENOMEM;
+ 	}
+ 
+ 	if (!bt->risc_cpu) {
+ 		bt->risc_size = PAGE_SIZE;
+-		bt->risc_cpu = pci_zalloc_consistent(bt->dev, bt->risc_size,
+-						     &bt->risc_dma);
++		bt->risc_cpu = dma_alloc_coherent(&bt->dev->dev, bt->risc_size,
++						  &bt->risc_dma, GFP_KERNEL);
+ 		if (!bt->risc_cpu) {
+ 			bt878_mem_free(bt);
+ 			return -ENOMEM;
+diff --git a/drivers/media/pci/bt8xx/btcx-risc.c b/drivers/media/pci/bt8xx/btcx-risc.c
+index 51257980f539..13bb1490a568 100644
+--- a/drivers/media/pci/bt8xx/btcx-risc.c
++++ b/drivers/media/pci/bt8xx/btcx-risc.c
+@@ -48,7 +48,7 @@ void btcx_riscmem_free(struct pci_dev *pci,
+ 	dprintk("btcx: riscmem free [%d] dma=%lx\n",
+ 		memcnt, (unsigned long)risc->dma);
+ 
+-	pci_free_consistent(pci, risc->size, risc->cpu, risc->dma);
++	dma_free_coherent(&pci->dev, risc->size, risc->cpu, risc->dma);
+ 	memset(risc,0,sizeof(*risc));
+ }
+ 
+@@ -62,7 +62,7 @@ int btcx_riscmem_alloc(struct pci_dev *pci,
+ 	if (NULL != risc->cpu && risc->size < size)
+ 		btcx_riscmem_free(pci,risc);
+ 	if (NULL = risc->cpu) {
+-		cpu = pci_alloc_consistent(pci, size, &dma);
++		cpu = dma_alloc_coherent(&pci->dev, size, &dma, GFP_KERNEL);
+ 		if (NULL = cpu)
+ 			return -ENOMEM;
+ 		risc->cpu  = cpu;
+diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
+index 9144f795fb93..0315fb7458b0 100644
+--- a/drivers/media/pci/bt8xx/bttv-driver.c
++++ b/drivers/media/pci/bt8xx/bttv-driver.c
+@@ -4015,7 +4015,7 @@ static int bttv_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
+ 		pr_warn("%d: Can't enable device\n", btv->c.nr);
+ 		return -EIO;
+ 	}
+-	if (pci_set_dma_mask(dev, DMA_BIT_MASK(32))) {
++	if (dma_set_mask(&dev->dev, DMA_BIT_MASK(32))) {
+ 		pr_warn("%d: No suitable DMA available\n", btv->c.nr);
+ 		return -EIO;
+ 	}
+-- 
+2.25.1
