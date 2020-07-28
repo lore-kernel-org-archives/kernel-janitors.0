@@ -1,41 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Jul 2020 00:54:54 +0000
-Subject: Re: [PATCH] pcnet32: switch from 'pci_' to 'dma_' API
-Message-Id: <20200713.175454.2187017553694804805.davem@davemloft.net>
+From: ''Tayeb Souami'' <aguayenergia@tlalpan.gob.mx>
+Date: Tue, 28 Jul 2020 09:08:54 +0000
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+Message-Id: <20200728090438.85F9E478E28@correo.tlalpan.gob.mx>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200713201846.282847-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200713201846.282847-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: pcnet32@frontier.com, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 13 Jul 2020 22:18:45 +0200
+Lieber Freund,
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GPF_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'pcnet32_realloc_tx_ring()' and
-> 'pcnet32_realloc_rx_ring()', GFP_ATOMIC must be used because a spin_lock is
-> hold.
-> The call chain is:
->    pcnet32_set_ringparam
->    ** spin_lock_irqsave(&lp->lock, flags);
->    --> pcnet32_realloc_tx_ring
->    --> pcnet32_realloc_rx_ring
->    ** spin_unlock_irqrestore(&lp->lock, flags);
-> 
-> When memory is in 'pcnet32_probe1()' and 'pcnet32_alloc_ring()', GFP_KERNEL
-> can be used.
-> 
-> While at it, update a few comments and pr_err messages to be more in line
-> with the new function names.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
 
-Applied, thank you.
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+
+
+Das ist dein Spendencode: [TS530342018]
+
+
+Antworten Sie mit dem SPENDE-CODE an diese
+
+E-Mail:Tayebsouam.spende@gmail.com
+
+
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+
+Grüße
+Herr Tayeb Souami
