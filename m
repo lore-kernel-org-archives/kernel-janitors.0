@@ -1,57 +1,41 @@
-From: Frank van der Linden <fllinden@amazon.com>
-Date: Mon, 27 Jul 2020 16:34:23 +0000
+From: Trond Myklebust <trondmy@hammerspace.com>
+Date: Tue, 28 Jul 2020 15:17:12 +0000
 Subject: Re: [PATCH] NFSv4.2: Fix an error code in nfs4_xattr_cache_init()
-Message-Id: <20200727163423.GA7563@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+Message-Id: <4bb93c1413151ccbd918cc371c67555042763e11.camel@hammerspace.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200727112344.GH389488@mwanda>
-In-Reply-To: <20200727112344.GH389488@mwanda>
+         <20200727163423.GA7563@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+In-Reply-To: <20200727163423.GA7563@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "fllinden@amazon.com" <fllinden@amazon.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Cc: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
 
-Hi Dan,
-
-On Mon, Jul 27, 2020 at 02:23:44PM +0300, Dan Carpenter wrote:
-> 
-> 
-> This should return -ENOMEM on failure instead of success.
-> 
-> Fixes: 95ad37f90c33 ("NFSv4.2: add client side xattr caching.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> ---
->  fs/nfs/nfs42xattr.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
-> index 23fdab977a2a..e75c4bb70266 100644
-> --- a/fs/nfs/nfs42xattr.c
-> +++ b/fs/nfs/nfs42xattr.c
-> @@ -1040,8 +1040,10 @@ int __init nfs4_xattr_cache_init(void)
->                 goto out2;
-> 
->         nfs4_xattr_cache_wq = alloc_workqueue("nfs4_xattr", WQ_MEM_RECLAIM, 0);
-> -       if (nfs4_xattr_cache_wq = NULL)
-> +       if (nfs4_xattr_cache_wq = NULL) {
-> +               ret = -ENOMEM;
->                 goto out1;
-> +       }
-> 
->         ret = register_shrinker(&nfs4_xattr_cache_shrinker);
->         if (ret)
-> --
-> 2.27.0
-> 
-
-Thanks for catching that one. Since this is against linux-next via Trond,
-I assume Trond will add it to his tree (right?)
-
-In any case:
-
-
-Reviewed-by: Frank van der Linden <fllinden@amazon.com>
-
-
-- Frank
+T24gTW9uLCAyMDIwLTA3LTI3IGF0IDE2OjM0ICswMDAwLCBGcmFuayB2YW4gZGVyIExpbmRlbiB3
+cm90ZToNCj4gSGkgRGFuLA0KPiANCj4gT24gTW9uLCBKdWwgMjcsIDIwMjAgYXQgMDI6MjM6NDRQ
+TSArMDMwMCwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gPiANCj4gPiBUaGlzIHNob3VsZCByZXR1
+cm4gLUVOT01FTSBvbiBmYWlsdXJlIGluc3RlYWQgb2Ygc3VjY2Vzcy4NCj4gPiANCj4gPiBGaXhl
+czogOTVhZDM3ZjkwYzMzICgiTkZTdjQuMjogYWRkIGNsaWVudCBzaWRlIHhhdHRyIGNhY2hpbmcu
+IikNCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNs
+ZS5jb20+DQo+ID4gLS0tDQo+ID4gLS0tDQo+ID4gIGZzL25mcy9uZnM0MnhhdHRyLmMgfCA0ICsr
+Ky0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
+PiA+IA0KPiA+IGRpZmYgLS1naXQgYS9mcy9uZnMvbmZzNDJ4YXR0ci5jIGIvZnMvbmZzL25mczQy
+eGF0dHIuYw0KPiA+IGluZGV4IDIzZmRhYjk3N2EyYS4uZTc1YzRiYjcwMjY2IDEwMDY0NA0KPiA+
+IC0tLSBhL2ZzL25mcy9uZnM0MnhhdHRyLmMNCj4gPiArKysgYi9mcy9uZnMvbmZzNDJ4YXR0ci5j
+DQo+ID4gQEAgLTEwNDAsOCArMTA0MCwxMCBAQCBpbnQgX19pbml0IG5mczRfeGF0dHJfY2FjaGVf
+aW5pdCh2b2lkKQ0KPiA+ICAgICAgICAgICAgICAgICBnb3RvIG91dDI7DQo+ID4gDQo+ID4gICAg
+ICAgICBuZnM0X3hhdHRyX2NhY2hlX3dxID0gYWxsb2Nfd29ya3F1ZXVlKCJuZnM0X3hhdHRyIiwN
+Cj4gPiBXUV9NRU1fUkVDTEFJTSwgMCk7DQo+ID4gLSAgICAgICBpZiAobmZzNF94YXR0cl9jYWNo
+ZV93cSA9PSBOVUxMKQ0KPiA+ICsgICAgICAgaWYgKG5mczRfeGF0dHJfY2FjaGVfd3EgPT0gTlVM
+TCkgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSAtRU5PTUVNOw0KPiA+ICAgICAgICAgICAg
+ICAgICBnb3RvIG91dDE7DQo+ID4gKyAgICAgICB9DQo+ID4gDQo+ID4gICAgICAgICByZXQgPSBy
+ZWdpc3Rlcl9zaHJpbmtlcigmbmZzNF94YXR0cl9jYWNoZV9zaHJpbmtlcik7DQo+ID4gICAgICAg
+ICBpZiAocmV0KQ0KPiA+IC0tDQo+ID4gMi4yNy4wDQo+ID4gDQo+IA0KPiBUaGFua3MgZm9yIGNh
+dGNoaW5nIHRoYXQgb25lLiBTaW5jZSB0aGlzIGlzIGFnYWluc3QgbGludXgtbmV4dCB2aWENCj4g
+VHJvbmQsDQo+IEkgYXNzdW1lIFRyb25kIHdpbGwgYWRkIGl0IHRvIGhpcyB0cmVlIChyaWdodD8p
+DQo+IA0KPiBJbiBhbnkgY2FzZToNCj4gDQo+IA0KPiBSZXZpZXdlZC1ieTogRnJhbmsgdmFuIGRl
+ciBMaW5kZW4gPGZsbGluZGVuQGFtYXpvbi5jb20+DQo+IA0KPiANCj4gLSBGcmFuaw0KDQpGcmFu
+aywgd2h5IGRvIHdlIG5lZWQgYSB3b3JrcXVldWUgaGVyZSBhdCBhbGw/DQoNCi0tIA0KVHJvbmQg
+TXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9u
+ZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
