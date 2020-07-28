@@ -1,160 +1,127 @@
-From: Frank van der Linden <fllinden@amazon.com>
-Date: Tue, 28 Jul 2020 18:13:09 +0000
+From: Trond Myklebust <trondmy@hammerspace.com>
+Date: Tue, 28 Jul 2020 18:21:19 +0000
 Subject: Re: [PATCH] NFSv4.2: Fix an error code in nfs4_xattr_cache_init()
-Message-Id: <20200728181309.GA14661@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+Message-Id: <d006b84e722cbebf9a94b8816bd59e11bc7d5219.camel@hammerspace.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200727112344.GH389488@mwanda>
- <20200727163423.GA7563@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <4bb93c1413151ccbd918cc371c67555042763e11.camel@hammerspace.com>
- <20200728160953.GA1208@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <61d4e88c18818cd94dfbd14f054e6a2cb8858c8d.camel@hammerspace.com>
- <20200728180051.GA10902@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <13f86f29cc05944894813632bd537e559859e254.camel@hammerspace.com>
-In-Reply-To: <13f86f29cc05944894813632bd537e559859e254.camel@hammerspace.com>
+         <20200727163423.GA7563@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+         <4bb93c1413151ccbd918cc371c67555042763e11.camel@hammerspace.com>
+         <20200728160953.GA1208@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+         <61d4e88c18818cd94dfbd14f054e6a2cb8858c8d.camel@hammerspace.com>
+         <20200728180051.GA10902@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+         <13f86f29cc05944894813632bd537e559859e254.camel@hammerspace.com>
+         <20200728181309.GA14661@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+In-Reply-To: <20200728181309.GA14661@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trondmy@hammerspace.com>
+To: "fllinden@amazon.com" <fllinden@amazon.com>
 Cc: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
 
-On Tue, Jul 28, 2020 at 06:04:21PM +0000, Trond Myklebust wrote:
-> On Tue, 2020-07-28 at 18:00 +0000, Frank van der Linden wrote:
-> > On Tue, Jul 28, 2020 at 05:10:34PM +0000, Trond Myklebust wrote:
-> > > On Tue, 2020-07-28 at 16:09 +0000, Frank van der Linden wrote:
-> > > > Hi Trond,
-> > > >
-> > > > On Tue, Jul 28, 2020 at 03:17:12PM +0000, Trond Myklebust wrote:
-> > > > > On Mon, 2020-07-27 at 16:34 +0000, Frank van der Linden wrote:
-> > > > > > Hi Dan,
-> > > > > >
-> > > > > > On Mon, Jul 27, 2020 at 02:23:44PM +0300, Dan Carpenter
-> > > > > > wrote:
-> > > > > > > This should return -ENOMEM on failure instead of success.
-> > > > > > >
-> > > > > > > Fixes: 95ad37f90c33 ("NFSv4.2: add client side xattr
-> > > > > > > caching.")
-> > > > > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > > > > ---
-> > > > > > > ---
-> > > > > > >  fs/nfs/nfs42xattr.c | 4 +++-
-> > > > > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
-> > > > > > > index 23fdab977a2a..e75c4bb70266 100644
-> > > > > > > --- a/fs/nfs/nfs42xattr.c
-> > > > > > > +++ b/fs/nfs/nfs42xattr.c
-> > > > > > > @@ -1040,8 +1040,10 @@ int __init
-> > > > > > > nfs4_xattr_cache_init(void)
-> > > > > > >                 goto out2;
-> > > > > > >
-> > > > > > >         nfs4_xattr_cache_wq = alloc_workqueue("nfs4_xattr",
-> > > > > > > WQ_MEM_RECLAIM, 0);
-> > > > > > > -       if (nfs4_xattr_cache_wq = NULL)
-> > > > > > > +       if (nfs4_xattr_cache_wq = NULL) {
-> > > > > > > +               ret = -ENOMEM;
-> > > > > > >                 goto out1;
-> > > > > > > +       }
-> > > > > > >
-> > > > > > >         ret > > > > > > > register_shrinker(&nfs4_xattr_cache_shrinker);
-> > > > > > >         if (ret)
-> > > > > > > --
-> > > > > > > 2.27.0
-> > > > > > >
-> > > > > >
-> > > > > > Thanks for catching that one. Since this is against linux-
-> > > > > > next
-> > > > > > via
-> > > > > > Trond,
-> > > > > > I assume Trond will add it to his tree (right?)
-> > > > > >
-> > > > > > In any case:
-> > > > > >
-> > > > > >
-> > > > > > Reviewed-by: Frank van der Linden <fllinden@amazon.com>
-> > > > > >
-> > > > > >
-> > > > > > - Frank
-> > > > >
-> > > > > Frank, why do we need a workqueue here at all?
-> > > >
-> > > > The xattr caches are per-inode, and get created on demand.
-> > > > Invalidating
-> > > > a cache is done by setting the invalidate flag (as it is for
-> > > > other
-> > > > cached attribues and data).
-> > > >
-> > > > When nfs4_xattr_get_cache() sees an invalidated cache, it will
-> > > > just
-> > > > unlink it
-> > > > from the inode, and create a new one if needed.
-> > > >
-> > > > The old cache then still needs to be freed. Theoretically, there
-> > > > can
-> > > > be
-> > > > quite a few entries in it, and nfs4_xattr_get_cache() will be
-> > > > called
-> > > > in
-> > > > the get/setxattr systemcall path. So my reasoning here was that
-> > > > it's
-> > > > better
-> > > > to use a workqueue to free the old invalidated cache instead of
-> > > > wasting
-> > > > cycles in the I/O path.
-> > > >
-> > > > - Frank
-> > >
-> > > I think we might want to explore the reasons for this argument. We
-> > > do
-> > > not offload any other cache invalidations, and that includes the
-> > > case
-> > > when we have to invalidate the entire inode data cache before
-> > > reading.
-> > >
-> > > So what is special about xattrs that causes invalidation to be a
-> > > problem in the I/O path? Why do we expect them to grow so large
-> > > that
-> > > they are more unwieldy than the inode data cache?
-> >
-> > In the case of inode data, so you should probably invalidate it
-> > immediately, or accept that you're serving up known-stale data. So
-> > offloading it doesn't seem like a good idea, and you'll just have to
-> > accept
-> > the extra cycles you're using to do it.
-> >
-> > For this particular case, you're just reaping a cache that is no
-> > longer
-> > being used. There is no correctness gain in doing it in the I/O path
-> > -
-> > the cache has already been orphaned and new getxattr/listxattr calls
-> > will not see it. So there doesn't seem to be a reason to do it in the
-> > I/O path at all.
-> >
-> > The caches shouldn't become very large, no. In the normal case, there
-> > shouldn't be much of a performance difference.
-> >
-> > Then again, what do you gain by doing the reaping of the cache in the
-> > I/O path,
-> > instead of using a work queue? I concluded that there wasn't an
-> > upside, only
-> > a downside, so that's why I implemented it that way.
-> >
-> > If you think it's better to do it inline, I'm happy to change it, of
-> > course.
-> > It would just mean getting rid of the work queue and the reap_cache
-> > function,
-> > and calling discard_cache directly, instead of reap_cache.
-> >
-> > - Frank
-> 
-> I think we should start with doing the freeing of the old cache inline.
-> If it turns out to be a real performance problem, then we can later
-> revisit using a work queue, however in that case, I'd prefer to use
-> nfsiod rather than adding a special workqueue that is reserved for
-> xattrs.
-
-Sure, I can do that.
-
-Do you want me to send a new version of the patch series, or an
-incremental patch?
-
-- Frank
+T24gVHVlLCAyMDIwLTA3LTI4IGF0IDE4OjEzICswMDAwLCBGcmFuayB2YW4gZGVyIExpbmRlbiB3
+cm90ZToNCj4gT24gVHVlLCBKdWwgMjgsIDIwMjAgYXQgMDY6MDQ6MjFQTSArMDAwMCwgVHJvbmQg
+TXlrbGVidXN0IHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAyMC0wNy0yOCBhdCAxODowMCArMDAwMCwg
+RnJhbmsgdmFuIGRlciBMaW5kZW4gd3JvdGU6DQo+ID4gPiBPbiBUdWUsIEp1bCAyOCwgMjAyMCBh
+dCAwNToxMDozNFBNICswMDAwLCBUcm9uZCBNeWtsZWJ1c3Qgd3JvdGU6DQo+ID4gPiA+IE9uIFR1
+ZSwgMjAyMC0wNy0yOCBhdCAxNjowOSArMDAwMCwgRnJhbmsgdmFuIGRlciBMaW5kZW4gd3JvdGU6
+DQo+ID4gPiA+ID4gSGkgVHJvbmQsDQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gT24gVHVlLCBKdWwg
+MjgsIDIwMjAgYXQgMDM6MTc6MTJQTSArMDAwMCwgVHJvbmQgTXlrbGVidXN0DQo+ID4gPiA+ID4g
+d3JvdGU6DQo+ID4gPiA+ID4gPiBPbiBNb24sIDIwMjAtMDctMjcgYXQgMTY6MzQgKzAwMDAsIEZy
+YW5rIHZhbiBkZXIgTGluZGVuDQo+ID4gPiA+ID4gPiB3cm90ZToNCj4gPiA+ID4gPiA+ID4gSGkg
+RGFuLA0KPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gT24gTW9uLCBKdWwgMjcsIDIwMjAg
+YXQgMDI6MjM6NDRQTSArMDMwMCwgRGFuIENhcnBlbnRlcg0KPiA+ID4gPiA+ID4gPiB3cm90ZToN
+Cj4gPiA+ID4gPiA+ID4gPiBUaGlzIHNob3VsZCByZXR1cm4gLUVOT01FTSBvbiBmYWlsdXJlIGlu
+c3RlYWQgb2YNCj4gPiA+ID4gPiA+ID4gPiBzdWNjZXNzLg0KPiA+ID4gPiA+ID4gPiA+IA0KPiA+
+ID4gPiA+ID4gPiA+IEZpeGVzOiA5NWFkMzdmOTBjMzMgKCJORlN2NC4yOiBhZGQgY2xpZW50IHNp
+ZGUgeGF0dHINCj4gPiA+ID4gPiA+ID4gPiBjYWNoaW5nLiIpDQo+ID4gPiA+ID4gPiA+ID4gU2ln
+bmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+
+ID4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ID4gPiA+ICBm
+cy9uZnMvbmZzNDJ4YXR0ci5jIHwgNCArKystDQo+ID4gPiA+ID4gPiA+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPiA+ID4gPiA+ID4gPiANCj4g
+PiA+ID4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvbmZzL25mczQyeGF0dHIuYyBiL2ZzL25mcy9u
+ZnM0MnhhdHRyLmMNCj4gPiA+ID4gPiA+ID4gPiBpbmRleCAyM2ZkYWI5NzdhMmEuLmU3NWM0YmI3
+MDI2NiAxMDA2NDQNCj4gPiA+ID4gPiA+ID4gPiAtLS0gYS9mcy9uZnMvbmZzNDJ4YXR0ci5jDQo+
+ID4gPiA+ID4gPiA+ID4gKysrIGIvZnMvbmZzL25mczQyeGF0dHIuYw0KPiA+ID4gPiA+ID4gPiA+
+IEBAIC0xMDQwLDggKzEwNDAsMTAgQEAgaW50IF9faW5pdA0KPiA+ID4gPiA+ID4gPiA+IG5mczRf
+eGF0dHJfY2FjaGVfaW5pdCh2b2lkKQ0KPiA+ID4gPiA+ID4gPiA+ICAgICAgICAgICAgICAgICBn
+b3RvIG91dDI7DQo+ID4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+ID4gICAgICAgICBuZnM0
+X3hhdHRyX2NhY2hlX3dxID0NCj4gPiA+ID4gPiA+ID4gPiBhbGxvY193b3JrcXVldWUoIm5mczRf
+eGF0dHIiLA0KPiA+ID4gPiA+ID4gPiA+IFdRX01FTV9SRUNMQUlNLCAwKTsNCj4gPiA+ID4gPiA+
+ID4gPiAtICAgICAgIGlmIChuZnM0X3hhdHRyX2NhY2hlX3dxID09IE5VTEwpDQo+ID4gPiA+ID4g
+PiA+ID4gKyAgICAgICBpZiAobmZzNF94YXR0cl9jYWNoZV93cSA9PSBOVUxMKSB7DQo+ID4gPiA+
+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHJldCA9IC1FTk9NRU07DQo+ID4gPiA+ID4gPiA+ID4g
+ICAgICAgICAgICAgICAgIGdvdG8gb3V0MTsNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgIH0NCj4g
+PiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gPiAgICAgICAgIHJldCA9DQo+ID4gPiA+ID4g
+PiA+ID4gcmVnaXN0ZXJfc2hyaW5rZXIoJm5mczRfeGF0dHJfY2FjaGVfc2hyaW5rZXIpOw0KPiA+
+ID4gPiA+ID4gPiA+ICAgICAgICAgaWYgKHJldCkNCj4gPiA+ID4gPiA+ID4gPiAtLQ0KPiA+ID4g
+PiA+ID4gPiA+IDIuMjcuMA0KPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiANCj4gPiA+
+ID4gPiA+ID4gVGhhbmtzIGZvciBjYXRjaGluZyB0aGF0IG9uZS4gU2luY2UgdGhpcyBpcyBhZ2Fp
+bnN0DQo+ID4gPiA+ID4gPiA+IGxpbnV4LQ0KPiA+ID4gPiA+ID4gPiBuZXh0DQo+ID4gPiA+ID4g
+PiA+IHZpYQ0KPiA+ID4gPiA+ID4gPiBUcm9uZCwNCj4gPiA+ID4gPiA+ID4gSSBhc3N1bWUgVHJv
+bmQgd2lsbCBhZGQgaXQgdG8gaGlzIHRyZWUgKHJpZ2h0PykNCj4gPiA+ID4gPiA+ID4gDQo+ID4g
+PiA+ID4gPiA+IEluIGFueSBjYXNlOg0KPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gPiA+IFJldmlld2VkLWJ5OiBGcmFuayB2YW4gZGVyIExpbmRlbiA8ZmxsaW5kZW5A
+YW1hem9uLmNvbT4NCj4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4g
+PiAtIEZyYW5rDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IEZyYW5rLCB3aHkgZG8gd2UgbmVl
+ZCBhIHdvcmtxdWV1ZSBoZXJlIGF0IGFsbD8NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBUaGUgeGF0
+dHIgY2FjaGVzIGFyZSBwZXItaW5vZGUsIGFuZCBnZXQgY3JlYXRlZCBvbiBkZW1hbmQuDQo+ID4g
+PiA+ID4gSW52YWxpZGF0aW5nDQo+ID4gPiA+ID4gYSBjYWNoZSBpcyBkb25lIGJ5IHNldHRpbmcg
+dGhlIGludmFsaWRhdGUgZmxhZyAoYXMgaXQgaXMgZm9yDQo+ID4gPiA+ID4gb3RoZXINCj4gPiA+
+ID4gPiBjYWNoZWQgYXR0cmlidWVzIGFuZCBkYXRhKS4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBX
+aGVuIG5mczRfeGF0dHJfZ2V0X2NhY2hlKCkgc2VlcyBhbiBpbnZhbGlkYXRlZCBjYWNoZSwgaXQN
+Cj4gPiA+ID4gPiB3aWxsDQo+ID4gPiA+ID4ganVzdA0KPiA+ID4gPiA+IHVubGluayBpdA0KPiA+
+ID4gPiA+IGZyb20gdGhlIGlub2RlLCBhbmQgY3JlYXRlIGEgbmV3IG9uZSBpZiBuZWVkZWQuDQo+
+ID4gPiA+ID4gDQo+ID4gPiA+ID4gVGhlIG9sZCBjYWNoZSB0aGVuIHN0aWxsIG5lZWRzIHRvIGJl
+IGZyZWVkLiBUaGVvcmV0aWNhbGx5LA0KPiA+ID4gPiA+IHRoZXJlDQo+ID4gPiA+ID4gY2FuDQo+
+ID4gPiA+ID4gYmUNCj4gPiA+ID4gPiBxdWl0ZSBhIGZldyBlbnRyaWVzIGluIGl0LCBhbmQgbmZz
+NF94YXR0cl9nZXRfY2FjaGUoKSB3aWxsIGJlDQo+ID4gPiA+ID4gY2FsbGVkDQo+ID4gPiA+ID4g
+aW4NCj4gPiA+ID4gPiB0aGUgZ2V0L3NldHhhdHRyIHN5c3RlbWNhbGwgcGF0aC4gU28gbXkgcmVh
+c29uaW5nIGhlcmUgd2FzDQo+ID4gPiA+ID4gdGhhdA0KPiA+ID4gPiA+IGl0J3MNCj4gPiA+ID4g
+PiBiZXR0ZXINCj4gPiA+ID4gPiB0byB1c2UgYSB3b3JrcXVldWUgdG8gZnJlZSB0aGUgb2xkIGlu
+dmFsaWRhdGVkIGNhY2hlIGluc3RlYWQNCj4gPiA+ID4gPiBvZg0KPiA+ID4gPiA+IHdhc3RpbmcN
+Cj4gPiA+ID4gPiBjeWNsZXMgaW4gdGhlIEkvTyBwYXRoLg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+
+IC0gRnJhbmsNCj4gPiA+ID4gDQo+ID4gPiA+IEkgdGhpbmsgd2UgbWlnaHQgd2FudCB0byBleHBs
+b3JlIHRoZSByZWFzb25zIGZvciB0aGlzIGFyZ3VtZW50Lg0KPiA+ID4gPiBXZQ0KPiA+ID4gPiBk
+bw0KPiA+ID4gPiBub3Qgb2ZmbG9hZCBhbnkgb3RoZXIgY2FjaGUgaW52YWxpZGF0aW9ucywgYW5k
+IHRoYXQgaW5jbHVkZXMNCj4gPiA+ID4gdGhlDQo+ID4gPiA+IGNhc2UNCj4gPiA+ID4gd2hlbiB3
+ZSBoYXZlIHRvIGludmFsaWRhdGUgdGhlIGVudGlyZSBpbm9kZSBkYXRhIGNhY2hlIGJlZm9yZQ0K
+PiA+ID4gPiByZWFkaW5nLg0KPiA+ID4gPiANCj4gPiA+ID4gU28gd2hhdCBpcyBzcGVjaWFsIGFi
+b3V0IHhhdHRycyB0aGF0IGNhdXNlcyBpbnZhbGlkYXRpb24gdG8gYmUNCj4gPiA+ID4gYQ0KPiA+
+ID4gPiBwcm9ibGVtIGluIHRoZSBJL08gcGF0aD8gV2h5IGRvIHdlIGV4cGVjdCB0aGVtIHRvIGdy
+b3cgc28gbGFyZ2UNCj4gPiA+ID4gdGhhdA0KPiA+ID4gPiB0aGV5IGFyZSBtb3JlIHVud2llbGR5
+IHRoYW4gdGhlIGlub2RlIGRhdGEgY2FjaGU/DQo+ID4gPiANCj4gPiA+IEluIHRoZSBjYXNlIG9m
+IGlub2RlIGRhdGEsIHNvIHlvdSBzaG91bGQgcHJvYmFibHkgaW52YWxpZGF0ZSBpdA0KPiA+ID4g
+aW1tZWRpYXRlbHksIG9yIGFjY2VwdCB0aGF0IHlvdSdyZSBzZXJ2aW5nIHVwIGtub3duLXN0YWxl
+IGRhdGEuDQo+ID4gPiBTbw0KPiA+ID4gb2ZmbG9hZGluZyBpdCBkb2Vzbid0IHNlZW0gbGlrZSBh
+IGdvb2QgaWRlYSwgYW5kIHlvdSdsbCBqdXN0IGhhdmUNCj4gPiA+IHRvDQo+ID4gPiBhY2NlcHQN
+Cj4gPiA+IHRoZSBleHRyYSBjeWNsZXMgeW91J3JlIHVzaW5nIHRvIGRvIGl0Lg0KPiA+ID4gDQo+
+ID4gPiBGb3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UsIHlvdSdyZSBqdXN0IHJlYXBpbmcgYSBjYWNo
+ZSB0aGF0IGlzIG5vDQo+ID4gPiBsb25nZXINCj4gPiA+IGJlaW5nIHVzZWQuIFRoZXJlIGlzIG5v
+IGNvcnJlY3RuZXNzIGdhaW4gaW4gZG9pbmcgaXQgaW4gdGhlIEkvTw0KPiA+ID4gcGF0aA0KPiA+
+ID4gLQ0KPiA+ID4gdGhlIGNhY2hlIGhhcyBhbHJlYWR5IGJlZW4gb3JwaGFuZWQgYW5kIG5ldyBn
+ZXR4YXR0ci9saXN0eGF0dHINCj4gPiA+IGNhbGxzDQo+ID4gPiB3aWxsIG5vdCBzZWUgaXQuIFNv
+IHRoZXJlIGRvZXNuJ3Qgc2VlbSB0byBiZSBhIHJlYXNvbiB0byBkbyBpdCBpbg0KPiA+ID4gdGhl
+DQo+ID4gPiBJL08gcGF0aCBhdCBhbGwuDQo+ID4gPiANCj4gPiA+IFRoZSBjYWNoZXMgc2hvdWxk
+bid0IGJlY29tZSB2ZXJ5IGxhcmdlLCBuby4gSW4gdGhlIG5vcm1hbCBjYXNlLA0KPiA+ID4gdGhl
+cmUNCj4gPiA+IHNob3VsZG4ndCBiZSBtdWNoIG9mIGEgcGVyZm9ybWFuY2UgZGlmZmVyZW5jZS4N
+Cj4gPiA+IA0KPiA+ID4gVGhlbiBhZ2Fpbiwgd2hhdCBkbyB5b3UgZ2FpbiBieSBkb2luZyB0aGUg
+cmVhcGluZyBvZiB0aGUgY2FjaGUgaW4NCj4gPiA+IHRoZQ0KPiA+ID4gSS9PIHBhdGgsDQo+ID4g
+PiBpbnN0ZWFkIG9mIHVzaW5nIGEgd29yayBxdWV1ZT8gSSBjb25jbHVkZWQgdGhhdCB0aGVyZSB3
+YXNuJ3QgYW4NCj4gPiA+IHVwc2lkZSwgb25seQ0KPiA+ID4gYSBkb3duc2lkZSwgc28gdGhhdCdz
+IHdoeSBJIGltcGxlbWVudGVkIGl0IHRoYXQgd2F5Lg0KPiA+ID4gDQo+ID4gPiBJZiB5b3UgdGhp
+bmsgaXQncyBiZXR0ZXIgdG8gZG8gaXQgaW5saW5lLCBJJ20gaGFwcHkgdG8gY2hhbmdlIGl0LA0K
+PiA+ID4gb2YNCj4gPiA+IGNvdXJzZS4NCj4gPiA+IEl0IHdvdWxkIGp1c3QgbWVhbiBnZXR0aW5n
+IHJpZCBvZiB0aGUgd29yayBxdWV1ZSBhbmQgdGhlDQo+ID4gPiByZWFwX2NhY2hlDQo+ID4gPiBm
+dW5jdGlvbiwNCj4gPiA+IGFuZCBjYWxsaW5nIGRpc2NhcmRfY2FjaGUgZGlyZWN0bHksIGluc3Rl
+YWQgb2YgcmVhcF9jYWNoZS4NCj4gPiA+IA0KPiA+ID4gLSBGcmFuaw0KPiA+IA0KPiA+IEkgdGhp
+bmsgd2Ugc2hvdWxkIHN0YXJ0IHdpdGggZG9pbmcgdGhlIGZyZWVpbmcgb2YgdGhlIG9sZCBjYWNo
+ZQ0KPiA+IGlubGluZS4NCj4gPiBJZiBpdCB0dXJucyBvdXQgdG8gYmUgYSByZWFsIHBlcmZvcm1h
+bmNlIHByb2JsZW0sIHRoZW4gd2UgY2FuIGxhdGVyDQo+ID4gcmV2aXNpdCB1c2luZyBhIHdvcmsg
+cXVldWUsIGhvd2V2ZXIgaW4gdGhhdCBjYXNlLCBJJ2QgcHJlZmVyIHRvIHVzZQ0KPiA+IG5mc2lv
+ZCByYXRoZXIgdGhhbiBhZGRpbmcgYSBzcGVjaWFsIHdvcmtxdWV1ZSB0aGF0IGlzIHJlc2VydmVk
+IGZvcg0KPiA+IHhhdHRycy4NCj4gDQo+IFN1cmUsIEkgY2FuIGRvIHRoYXQuDQo+IA0KPiBEbyB5
+b3Ugd2FudCBtZSB0byBzZW5kIGEgbmV3IHZlcnNpb24gb2YgdGhlIHBhdGNoIHNlcmllcywgb3Ig
+YW4NCj4gaW5jcmVtZW50YWwgcGF0Y2g/DQoNClBsZWFzZSBqdXN0IHNlbmQgYXMgYW4gaW5jcmVt
+ZW50YWwgcGF0Y2guDQoNClRoYW5rcyENCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5G
+UyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJz
+cGFjZS5jb20NCg0KDQo
