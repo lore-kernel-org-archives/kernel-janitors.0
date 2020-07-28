@@ -1,21 +1,19 @@
-From: daniel@ffwll.ch
-Date: Tue, 28 Jul 2020 22:02:05 +0000
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Tue, 28 Jul 2020 22:33:49 +0000
 Subject: Re: [PATCH -next] drm: xlnx: Fix typo in parameter description
-Message-Id: <20200728220205.GJ6419@phenom.ffwll.local>
+Message-Id: <20200728223349.GT13753@pendragon.ideasonboard.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200725063429.172139-1-weiyongjun1@huawei.com>
 In-Reply-To: <20200725063429.172139-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Hyun Kwon <hyun.kwon@xilinx.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Hyun Kwon,
+Hi Wei,
 
-Are you all sorted with drm-misc commit rights so you can push the 3
-(maybe there's more) xlnx fixup patches to drm-misc-next-fixes?
-
-Cheers, Daniel
+Thank you for the patch.
 
 On Sat, Jul 25, 2020 at 06:34:29AM +0000, Wei Yongjun wrote:
 > Fix typo in parameter description.
@@ -23,6 +21,9 @@ On Sat, Jul 25, 2020 at 06:34:29AM +0000, Wei Yongjun wrote:
 > Fixes: d76271d22694 ("drm: xlnx: DRM/KMS driver for Xilinx ZynqMP DisplayPort Subsystem")
 > Reported-by: Hulk Robot <hulkci@huawei.com>
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
 >  drivers/gpu/drm/xlnx/zynqmp_dp.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -40,11 +41,8 @@ On Sat, Jul 25, 2020 at 06:34:29AM +0000, Wei Yongjun wrote:
 >  
 >  /* Link configuration registers */
 >  #define ZYNQMP_DP_LINK_BW_SET				0x0
-> 
-> 
-> 
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards,
+
+Laurent Pinchart
