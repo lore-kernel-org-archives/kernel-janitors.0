@@ -1,26 +1,53 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 25 Jul 2020 02:50:33 +0000
-Subject: Re: [PATCH] scsi: isci: remove redundant initialization of variable status
-Message-Id: <159564519423.31464.662630080230658791.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Jul 2020 10:05:25 +0000
+Subject: [PATCH] staging: rtl8723bs: remove redundant assignment to variable ret
+Message-Id: <20200729100525.573500-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200723142614.991416-1-colin.king@canonical.com>
-In-Reply-To: <20200723142614.991416-1-colin.king@canonical.com>
+References: <20170413141346.9791-1-colin.king@canonical.com>
+In-Reply-To: <20170413141346.9791-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artur Paszkiewicz <artur.paszkiewicz@intel.com>, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.ibm.com>, Intel SCU Linux support <intel-linux-scu@intel.com>, Colin King <colin.king@canonical.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 23 Jul 2020 15:26:14 +0100, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The variable status is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+The variable ret is being assigned an error return value that is never
+read, the control passes to a return statement and ret is never referenced.
+Remove the redundant assignment. Also remove an empty line.
 
-Applied to 5.9/scsi-queue, thanks!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/os_dep/osdep_service.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-[1/1] scsi: isci: Remove redundant initialization of variable 'status'
-      https://git.kernel.org/mkp/scsi/c/584d902eb10e
-
+diff --git a/drivers/staging/rtl8723bs/os_dep/osdep_service.c b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+index 6d443197a0cf..f61ad9200960 100644
+--- a/drivers/staging/rtl8723bs/os_dep/osdep_service.c
++++ b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+@@ -146,10 +146,8 @@ int rtw_change_ifname(struct adapter *padapter, const char *ifname)
+ 	rereg_priv->old_pnetdev = cur_pnetdev;
+ 
+ 	pnetdev = rtw_init_netdev(padapter);
+-	if (!pnetdev)  {
+-		ret = -1;
++	if (!pnetdev)
+ 		goto error;
+-	}
+ 
+ 	SET_NETDEV_DEV(pnetdev, dvobj_to_dev(adapter_to_dvobj(padapter)));
+ 
+@@ -170,9 +168,7 @@ int rtw_change_ifname(struct adapter *padapter, const char *ifname)
+ 	return 0;
+ 
+ error:
+-
+ 	return -1;
+-
+ }
+ 
+ void rtw_buf_free(u8 **buf, u32 *buf_len)
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
