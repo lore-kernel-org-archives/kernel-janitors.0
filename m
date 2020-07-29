@@ -1,38 +1,21 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 06 Jul 2020 16:42:40 +0000
-Subject: [PATCH] can: mcba_usb: remove redundant initialization of variable err
-Message-Id: <20200706164240.518623-1-colin.king@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 29 Jul 2020 07:49:51 +0000
+Subject: Re: [PATCH] net: nixge: fix potential memory leak in nixge_probe()
+Message-Id: <81c16524-29f0-4331-5843-9b2e2c0ee22e@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lu Wei <luwei32@huawei.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alex Williams <alex.williams@ni.com>, Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Moritz Fischer <mdf@kernel.org>, Yunjian Wang <wangyunjian@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+> If some processes in nixge_probe() fail, free_netdev(dev)
+> needs to be called to aviod a memory leak.
 
-The variable err is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+* Would you like to avoid a typo in this change description?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/can/usb/mcba_usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* An imperative wording can be preferred here, can't it?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?idka1b005ffc388c2aeaddae20da29e4810dea298#n151
 
-diff --git a/drivers/net/can/usb/mcba_usb.c b/drivers/net/can/usb/mcba_usb.c
-index 21faa2ec4632..37ab3de43acc 100644
---- a/drivers/net/can/usb/mcba_usb.c
-+++ b/drivers/net/can/usb/mcba_usb.c
-@@ -793,7 +793,7 @@ static int mcba_usb_probe(struct usb_interface *intf,
- {
- 	struct net_device *netdev;
- 	struct mcba_priv *priv;
--	int err = -ENOMEM;
-+	int err;
- 	struct usb_device *usbdev = interface_to_usbdev(intf);
- 
- 	netdev = alloc_candev(sizeof(struct mcba_priv), MCBA_MAX_TX_URBS);
--- 
-2.27.0
+Regards,
+Markus
