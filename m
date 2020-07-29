@@ -1,42 +1,23 @@
 From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 29 Jul 2020 08:38:37 +0000
-Subject: Re: [PATCH] ethernet: fix potential memory leak in gemini_ethernet_port_probe()
-Message-Id: <c9c7e5a3-4909-e0c9-1c69-0ad3643ca3f5@web.de>
+Date: Wed, 29 Jul 2020 18:36:32 +0000
+Subject: Re: [PATCH] net/mlx5e: fix bpf_prog reference count leaks in mlx5e_alloc_rq
+Message-Id: <810e5783-ba95-6d2f-0f89-171dd3b688df@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Lu Wei <luwei32@huawei.com>, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jakub Kicinski <kuba@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-
-> If some processes in gemini_ethernet_port_probe() fail,
-> free_netdev(dev) needs to be called to avoid a memory leak.
-
-Would you like to use an imperative wording for this change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=6ba1b005ffc388c2aeaddae20da29e4810dea298#n151
-
+To: Xin Xiong <xiongx18@fudan.edu.cn>, Xiyu Yang <xiyuyang19@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>, bpf@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, Leon Romanovsky <leon@kernel.org>, Martin KaFai Lau <kafai@fb.com>, Saeed Mahameed <saeedm@mellanox.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, Yuan Zhang <yuanxzhang@fudan.edu.cn>
 
 …
-> +++ b/drivers/net/ethernet/cortina/gemini.c
-> @@ -2501,8 +2513,10 @@  static int gemini_ethernet_port_probe(struct platform_device *pdev)
->  					IRQF_SHARED,
->  					port_names[port->id],
->  					port);
-> -	if (ret)
-> +	if (ret) {
-> +		free_netdev(netdev);
->  		return ret;
-> +	}
->
->  	ret = register_netdev(netdev);
-…
+> The refcount leak issues take place in two error handling paths.
 
-I suggest to add a jump target for the desired exception handling
-in this function implementation.
+Can an other wording be a bit nicer for the commit message?
 
- 	if (ret)
--		return ret;
-+		goto free_netdev;
+
+> Fix the issue by …
+
+I suggest to replace this wording by the tag “Fixes”.
 
 Regards,
 Markus
