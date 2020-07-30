@@ -1,169 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 14 Jul 2020 09:28:37 +0000
-Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
-Message-Id: <20200714092837.173796-1-colin.king@canonical.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Thu, 30 Jul 2020 19:27:32 +0000
+Subject: Re: [PATCH v4] coccinelle: api: add kvfree script
+Message-Id: <alpine.DEB.2.22.394.2007302125580.2548@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1513619372.31581.106.camel@perches.com>
-In-Reply-To: <1513619372.31581.106.camel@perches.com>
+References: <75532a99-4498-c64a-de34-c9033782aa9e@web.de>
+In-Reply-To: <75532a99-4498-c64a-de34-c9033782aa9e@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+> > +msg = "WARNING: kmalloc is used to allocate this memory at line %s" % (k[0].line)
+> > +coccilib.org.print_todo(p[0], msg)
+>
+> * I find the diagnostic text insufficient.
 
-Here are some of the more common spelling mistakes and typos that I've
-found while fixing up spelling mistakes in the kernel since April 2020.
+I also find the message not very informative.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- scripts/spelling.txt | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+All of the other comments are not useful, and some are simply incorrect.
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index c45e9afaab2d..f253681e7e2a 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -149,6 +149,7 @@ arbitary||arbitrary
- architechture||architecture
- arguement||argument
- arguements||arguments
-+arithmatic||arithmetic
- aritmetic||arithmetic
- arne't||aren't
- arraival||arrival
-@@ -454,6 +455,7 @@ destorys||destroys
- destroied||destroyed
- detabase||database
- deteced||detected
-+detectt||detect
- develope||develop
- developement||development
- developped||developed
-@@ -545,6 +547,7 @@ entires||entries
- entites||entities
- entrys||entries
- enocded||encoded
-+enought||enough
- enterily||entirely
- enviroiment||environment
- enviroment||environment
-@@ -556,11 +559,14 @@ equivelant||equivalent
- equivilant||equivalent
- eror||error
- errorr||error
-+errror||error
- estbalishment||establishment
- etsablishment||establishment
- etsbalishment||establishment
-+evalution||evaluation
- excecutable||executable
- exceded||exceeded
-+exceds||exceeds
- exceeed||exceed
- excellant||excellent
- execeeded||exceeded
-@@ -583,6 +589,7 @@ explictly||explicitly
- expresion||expression
- exprimental||experimental
- extened||extended
-+exteneded||extended||extended
- extensability||extensibility
- extention||extension
- extenstion||extension
-@@ -610,10 +617,12 @@ feautures||features
- fetaure||feature
- fetaures||features
- fileystem||filesystem
-+fimrware||firmware
- fimware||firmware
- firmare||firmware
- firmaware||firmware
- firware||firmware
-+firwmare||firmware
- finanize||finalize
- findn||find
- finilizes||finalizes
-@@ -661,6 +670,7 @@ globel||global
- grabing||grabbing
- grahical||graphical
- grahpical||graphical
-+granularty||granularity
- grapic||graphic
- grranted||granted
- guage||gauge
-@@ -906,6 +916,7 @@ miximum||maximum
- mmnemonic||mnemonic
- mnay||many
- modfiy||modify
-+modifer||modifier
- modulues||modules
- momery||memory
- memomry||memory
-@@ -915,6 +926,7 @@ monochromo||monochrome
- monocrome||monochrome
- mopdule||module
- mroe||more
-+multipler||multiplier
- mulitplied||multiplied
- multidimensionnal||multidimensional
- multipe||multiple
-@@ -952,6 +964,7 @@ occassionally||occasionally
- occationally||occasionally
- occurance||occurrence
- occurances||occurrences
-+occurd||occurred
- occured||occurred
- occurence||occurrence
- occure||occurred
-@@ -1058,6 +1071,7 @@ precission||precision
- preemptable||preemptible
- prefered||preferred
- prefferably||preferably
-+prefitler||prefilter
- premption||preemption
- prepaired||prepared
- preperation||preparation
-@@ -1101,6 +1115,7 @@ pronunce||pronounce
- propery||property
- propigate||propagate
- propigation||propagation
-+propogation||propagation
- propogate||propagate
- prosess||process
- protable||portable
-@@ -1316,6 +1331,7 @@ sturcture||structure
- subdirectoires||subdirectories
- suble||subtle
- substract||subtract
-+submited||submitted
- submition||submission
- suceed||succeed
- succesfully||successfully
-@@ -1324,6 +1340,7 @@ successed||succeeded
- successfull||successful
- successfuly||successfully
- sucessfully||successfully
-+sucessful||successful
- sucess||success
- superflous||superfluous
- superseeded||superseded
-@@ -1409,6 +1426,7 @@ transormed||transformed
- trasfer||transfer
- trasmission||transmission
- treshold||threshold
-+triggerd||triggered
- trigerred||triggered
- trigerring||triggering
- trun||turn
-@@ -1421,6 +1439,7 @@ uknown||unknown
- usccess||success
- usupported||unsupported
- uncommited||uncommitted
-+uncompatible||incompatible
- unconditionaly||unconditionally
- undeflow||underflow
- underun||underrun
--- 
-2.27.0
+julia
