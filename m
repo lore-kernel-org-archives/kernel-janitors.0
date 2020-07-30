@@ -1,153 +1,52 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 26 Jul 2020 10:58:25 +0000
-Subject: [PATCH 0/7] drop unnecessary list_empty
-Message-Id: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 30 Jul 2020 22:28:36 +0000
+Subject: Re: [PATCH 0/7] drop unnecessary list_empty
+Message-Id: <159614804536.1473.16638498246526574558.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1595761112-11003-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc: linux-wireless@vger.kernel.org, alsa-devel@alsa-project.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 
-The various list iterators are able to handle an empty list.
-The only effect of avoiding the loop is not initializing some
-index variables.
-Drop list_empty tests in cases where these variables are not
-used.
+On Sun, 26 Jul 2020 12:58:25 +0200, Julia Lawall wrote:
+> The various list iterators are able to handle an empty list.
+> The only effect of avoiding the loop is not initializing some
+> index variables.
+> Drop list_empty tests in cases where these variables are not
+> used.
+> 
+> The semantic patch that makes these changes is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> [...]
 
-The semantic patch that makes these changes is as follows:
-(http://coccinelle.lip6.fr/)
+Applied to
 
-<smpl>
-@@
-expression x,e;
-iterator name list_for_each_entry;
-statement S;
-identifier i;
-@@
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--if (!(list_empty(x))) {
-   list_for_each_entry(i,x,...) S
-- }
- ... when != i
-? i = e
+Thanks!
 
-@@
-expression x,e;
-iterator name list_for_each_entry_safe;
-statement S;
-identifier i,j;
-@@
+[1/1] ASoC: Intel: drop unnecessary list_empty
+      commit: a383308e50244a28fe927b9c1acbe0a963bf186b
 
--if (!(list_empty(x))) {
-   list_for_each_entry_safe(i,j,x,...) S
-- }
- ... when != i
-     when != j
-(
-  i = e;
-|
-? j = e;
-)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-@@
-expression x,e;
-iterator name list_for_each;
-statement S;
-identifier i;
-@@
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
--if (!(list_empty(x))) {
-   list_for_each(i,x) S
-- }
- ... when != i
-? i = e
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-@@
-expression x,e;
-iterator name list_for_each_safe;
-statement S;
-identifier i,j;
-@@
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
--if (!(list_empty(x))) {
-   list_for_each_safe(i,j,x) S
-- }
- ... when != i
-     when != j
-(
-  i = e;
-|
-? j = e;
-)
-
-// -------------------
-
-@@
-expression x,e;
-statement S;
-identifier i;
-@@
-
--if (!(list_empty(x)))
-   list_for_each_entry(i,x,...) S
- ... when != i
-? i = e
-
-@@
-expression x,e;
-statement S;
-identifier i,j;
-@@
-
--if (!(list_empty(x)))
-   list_for_each_entry_safe(i,j,x,...) S
- ... when != i
-     when != j
-(
-  i = e;
-|
-? j = e;
-)
-
-@@
-expression x,e;
-statement S;
-identifier i;
-@@
-
--if (!(list_empty(x)))
-   list_for_each(i,x) S
- ... when != i
-? i = e
-
-@@
-expression x,e;
-statement S;
-identifier i,j;
-@@
-
--if (!(list_empty(x)))
-   list_for_each_safe(i,j,x) S
- ... when != i
-     when != j
-(
-  i = e;
-|
-? j = e;
-)
-</smpl>
-
----
-
- drivers/media/pci/saa7134/saa7134-core.c                      |   14 ++---
- drivers/media/usb/cx231xx/cx231xx-core.c                      |   16 ++----
- drivers/media/usb/tm6000/tm6000-core.c                        |   24 +++-------
- drivers/net/ethernet/mellanox/mlx5/core/steering/dr_matcher.c |   13 ++---
- drivers/net/ethernet/mellanox/mlx5/core/steering/dr_rule.c    |    5 --
- drivers/net/ethernet/sfc/ptp.c                                |   20 +++-----
- drivers/net/wireless/ath/dfs_pattern_detector.c               |   15 ++----
- sound/soc/intel/atom/sst/sst_loader.c                         |   10 +---
- sound/soc/intel/skylake/skl-pcm.c                             |    8 +--
- sound/soc/intel/skylake/skl-topology.c                        |    5 --
- 10 files changed, 53 insertions(+), 77 deletions(-)
+Thanks,
+Mark
