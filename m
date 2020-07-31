@@ -1,64 +1,40 @@
-From: Suraj Upadhyay <usuraj35@gmail.com>
-Date: Thu, 02 Jul 2020 08:52:22 +0000
-Subject: [PATCH] staging: qlge: qlge_ethtool.c: Proper indentation.
-Message-Id: <20200702084022.GA1586@blackclown>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="45Z9DzgjV8m4Oswq"
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Fri, 31 Jul 2020 14:38:42 +0000
+Subject: Re: [v4] coccinelle: api: add kvfree script
+Message-Id: <alpine.DEB.2.22.394.2007311637570.2455@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: manishc@marvell.com, gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, GR-Linux-NIC-Dev@marvell.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <75532a99-4498-c64a-de34-c9033782aa9e@web.de>
+ <alpine.DEB.2.22.394.2007302125580.2548@hadrien>
+ <96a71d0e-ae6f-9355-b02a-b1a084376f1e@web.de>
+ <alpine.DEB.2.22.394.2007311044340.2439@hadrien>
+ <06eaa1fe-5047-89f7-3995-a38d80030e7f@web.de>
+In-Reply-To: <06eaa1fe-5047-89f7-3995-a38d80030e7f@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Remove extra indentations from if-statement.
+On Fri, 31 Jul 2020, Markus Elfring wrote:
 
-Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
----
- drivers/staging/qlge/qlge_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>> +msg = "WARNING: kmalloc is used to allocate this memory at line %s" % (k[0].line)
+> >>>>> +coccilib.org.print_todo(p[0], msg)
+> >>>>
+> >>>> * I find the diagnostic text insufficient.
+> >>>
+> >>> I also find the message not very informative.
+> >>
+> >> Is it interesting how quick such views can change?
+> >
+> > Yes.  If one looks at something in context, one and understand it better
+> > than the extract that you provided.
+>
+> Should the provided information (and its intention) be understandable from
+> the diagnostic message alone already?
 
-diff --git a/drivers/staging/qlge/qlge_ethtool.c b/drivers/staging/qlge/qlg=
-e_ethtool.c
-index 949abd53a7a9..16fcdefa9687 100644
---- a/drivers/staging/qlge/qlge_ethtool.c
-+++ b/drivers/staging/qlge/qlge_ethtool.c
-@@ -528,8 +528,8 @@ void ql_check_lb_frame(struct ql_adapter *qdev,
- 	if ((*(skb->data + 3) =3D=3D 0xFF) &&
- 	    (*(skb->data + frame_size / 2 + 10) =3D=3D 0xBE) &&
- 	    (*(skb->data + frame_size / 2 + 12) =3D=3D 0xAF)) {
--			atomic_dec(&qdev->lb_count);
--			return;
-+		atomic_dec(&qdev->lb_count);
-+		return;
- 	}
- }
-=20
---=20
-2.17.1
+It is understandable from the message and from the positions that are
+indicated.  That's good enough.
 
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE7AbCa0kOsMJ4cx0j+gRsbIfe744FAl79nW0ACgkQ+gRsbIfe
-746epxAAqhB9h48Tx5kPCpUxqOqszOxrTaar0H8mC+KqZmVXOyjquvNRKpeV6Lg/
-D5ImRvLVMkWzMu7hqxFY0S89Mg/CQznGJJeaBaU8WyVfR7UJJOTk5mlRDMPc5IlW
-E++xnUQtf786os2G7DZBYoBWGompSWFVb8/aI+nef9yBPaUSJVmxcp3HNM+UW3pb
-Sl0h7oiHfHVDSgvV1mWNurUSX9u6sGutK0DXPkeeJEbt33x3GPRNcKbIDTH19mfA
-GHYY+aE+xpLim9Jt9oVFjR2d/Q2YGz7bgxoQaEIBmRpHU4xTPKwph31cTmO/e6PJ
-ebHHsFaeEQVIEWYoSKZI+1fi1FY2NWk8ySnbclCqG/itFLCDlXomV9rhBeEYT0KY
-xEEPZYTtmTuECjPuDAyw5ii7KwTDWE0ja2rqrt515kEr5uV5RCHNucmzUn9kH6+3
-HLsk8JfzQU2y1uCwI8QfXSF5nSJSOFp4QWoScF5vHvhpC3u4TSQELzXv7iyunXNV
-Cy2OBT9HgdK+HF/XvmyQ/dQUHkAH+UB5sif8Pdjod7z+KKnqjTO1vHR7sCqTjrUO
-wB/zIJWiSd4mz4aMoDiLyoHE9HiBLvDFbSwF2ueqGGEEGMQv9nn7EG7FaGN9vQ1P
-cSpXrKQ2zwfG2HrLjZ7SB5bAx26rhnd/cCgvwvzveuQlfhOnUIM=
-=blIl
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+julia
