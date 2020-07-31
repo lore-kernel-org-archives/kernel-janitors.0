@@ -1,36 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Jul 2020 08:36:16 +0000
-Subject: [PATCH][next] dmaengine: ioat: fix spelling mistake "idel" -> "idle"
-Message-Id: <20200707083616.573910-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Fri, 31 Jul 2020 19:35:29 +0000
+Subject: [PATCH] ALSA: docs: fix typo
+Message-Id: <1596224129-7699-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Leonid Ravich <Leonid.Ravich@emc.com>, dmaengine@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+GFP_KRENEL -> GFP_KERNEL
 
-There is a spelling mistake in the module parameter description for
-idle_timeout. Fix it.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/ioat/dma.c | 2 +-
+ Documentation/sound/kernel-api/writing-an-alsa-driver.rst |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
-index fd782aee02d9..863e2ddba75b 100644
---- a/drivers/dma/ioat/dma.c
-+++ b/drivers/dma/ioat/dma.c
-@@ -33,7 +33,7 @@ MODULE_PARM_DESC(completion_timeout,
- int idle_timeout = 2000;
- module_param(idle_timeout, int, 0644);
- MODULE_PARM_DESC(idle_timeout,
--		"set ioat idel timeout [msec] (default 2000 [msec])");
-+		"set ioat idle timeout [msec] (default 2000 [msec])");
- 
- #define IDLE_TIMEOUT msecs_to_jiffies(idle_timeout)
- #define COMPLETION_TIMEOUT msecs_to_jiffies(completion_timeout)
--- 
-2.27.0
+diff --git a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
+index fa49688..aa9d5ab 100644
+--- a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
++++ b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
+@@ -3579,7 +3579,7 @@ dependent on the bus. For normal devices, pass the device pointer
+ ``SNDRV_DMA_TYPE_DEV`` type. For the continuous buffer unrelated to the
+ bus can be pre-allocated with ``SNDRV_DMA_TYPE_CONTINUOUS`` type.
+ You can pass NULL to the device pointer in that case, which is the
+-default mode implying to allocate with ``GFP_KRENEL`` flag.
++default mode implying to allocate with ``GFP_KERNEL`` flag.
+ If you need a different GFP flag, you can pass it by encoding the flag
+ into the device pointer via a special macro
+ :c:func:`snd_dma_continuous_data()`.
