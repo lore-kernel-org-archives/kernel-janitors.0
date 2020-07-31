@@ -1,70 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Jul 2020 10:47:38 +0000
-Subject: [PATCH] mt76: mt7915: potential array overflow in mt7915_mcu_tx_rate_report()
-Message-Id: <20200709104738.GB20875@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 31 Jul 2020 17:13:42 +0000
+Subject: [PATCH][next] cifs: fix double free error on share and prefix
+Message-Id: <20200731171342.36636-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felix Fietkau <nbd@nbd.name>, Ryder Lee <ryder.lee@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, YF Luo <yf.luo@mediatek.com>, Chih-Min Chen <chih-min.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yiwei Chung <yiwei.chung@mediatek.com>, linux-mediatek@lists.infradead.org, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Shayne Chen <shayne.chen@mediatek.com>
+To: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>, Paulo Alcantara <pc@cjr.nz>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains that this comes from the "wcidx" value comes from the
-network and thus cannot be trusted.  In this case, it actually seems to
-come from the firmware.  If your wireless firmware is malicious then
-probably no amount of carefulness can protect you.
+From: Colin Ian King <colin.king@canonical.com>
 
-On the other hand, these days we still try to check the firmware as much
-as possible.  Verifying that the index is within bounds will silence a
-static checker warning.  And it's harmless and a good exercise in kernel
-hardening.  So I suggest that we do add a bounds check.
+Currently if the call dfs_cache_get_tgt_share fails we cannot
+fully guarantee that share and prefix are set to NULL and the
+next iteration of the loop can end up potentially double freeing
+these pointers. Since the semantics of dfs_cache_get_tgt_share
+are ambiguous for failure cases with the setting of share and
+prefix (currently now and the possibly the future), it seems
+prudent to set the pointers to NULL when the objects are
+free'd to avoid any double frees.
 
-Fixes: e57b7901469f ("mt76: add mac80211 driver for MT7915 PCIe-based chipsets")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Double free")
+Fixes: 96296c946a2a ("cifs: handle RESP_GET_DFS_REFERRAL.PathConsumed in reconnect")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Normally for networking patches, when we change the declaration block,
-we must update the order to make sure it's in reverse Christmas tree
-format.  This code wasn't strictly in reverse Christmas tree order
-originally because we needed to initialize "wcidx" before we could
-initialize "wcid" etc.  Re-ordering the initializers makes the diff
-slightly larger than people might expect but it's a required part of
-networking patches.
+ fs/cifs/connect.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index c8c12c740c1a..8fb8255650a7 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -505,15 +505,22 @@ static void
- mt7915_mcu_tx_rate_report(struct mt7915_dev *dev, struct sk_buff *skb)
- {
- 	struct mt7915_mcu_ra_info *ra = (struct mt7915_mcu_ra_info *)skb->data;
--	u16 wcidx = le16_to_cpu(ra->wlan_idx);
--	struct mt76_wcid *wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
--	struct mt7915_sta *msta = container_of(wcid, struct mt7915_sta, wcid);
--	struct mt7915_sta_stats *stats = &msta->stats;
--	struct mt76_phy *mphy = &dev->mphy;
- 	struct rate_info rate = {}, prob_rate = {};
-+	u16 probe = le16_to_cpu(ra->prob_up_rate);
- 	u16 attempts = le16_to_cpu(ra->attempts);
- 	u16 curr = le16_to_cpu(ra->curr_rate);
--	u16 probe = le16_to_cpu(ra->prob_up_rate);
-+	u16 wcidx = le16_to_cpu(ra->wlan_idx);
-+	struct mt76_phy *mphy = &dev->mphy;
-+	struct mt7915_sta_stats *stats;
-+	struct mt7915_sta *msta;
-+	struct mt76_wcid *wcid;
-+
-+	if (wcidx >= MT76_N_WCIDS)
-+		return;
-+
-+	wcid = rcu_dereference(dev->mt76.wcid[wcidx]);
-+	msta = container_of(wcid, struct mt7915_sta, wcid);
-+	stats = &msta->stats;
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 3c4dd4e1b9eb..4b2f5f5b3a8e 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -5574,6 +5574,8 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon, const stru
  
- 	if (msta->wcid.ext_phy && dev->mt76.phy2)
- 		mphy = dev->mt76.phy2;
+ 		kfree(share);
+ 		kfree(prefix);
++		share = NULL;
++		prefix = NULL;
+ 
+ 		rc = dfs_cache_get_tgt_share(tcon->dfs_path + 1, it, &share, &prefix);
+ 		if (rc) {
 -- 
 2.27.0
