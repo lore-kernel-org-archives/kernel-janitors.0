@@ -1,51 +1,57 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Date: Thu, 27 Aug 2020 16:38:51 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/vlv_dsi_pll: fix spelling mistake "Cant" -> "Can't"
-Message-Id: <20200827163851.GU6112@intel.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 01 Aug 2020 14:49:43 +0000
+Subject: Re: [PATCH][next] cifs: fix double free error on share and prefix
+Message-Id: <CAH2r5mv8pWOcQfKknec=JksKVLvLTu2NbowAKwSguAb5-eojSw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200810095952.60968-1-colin.king@canonical.com>
-In-Reply-To: <20200810095952.60968-1-colin.king@canonical.com>
+References: <20200731171342.36636-1-colin.king@canonical.com>
+In-Reply-To: <20200731171342.36636-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>, Paulo Alcantara <pc@cjr.nz>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 10, 2020 at 10:59:52AM +0100, Colin King wrote:
+merged into cifs-2.6.git for-next
+
+On Fri, Jul 31, 2020 at 12:15 PM Colin King <colin.king@canonical.com> wrote:
+>
 > From: Colin Ian King <colin.king@canonical.com>
->=20
-> There is a spelling mistake in a drm_err message. Fix it.
-
-Thanks. Applied to dinq.
-
->=20
+>
+> Currently if the call dfs_cache_get_tgt_share fails we cannot
+> fully guarantee that share and prefix are set to NULL and the
+> next iteration of the loop can end up potentially double freeing
+> these pointers. Since the semantics of dfs_cache_get_tgt_share
+> are ambiguous for failure cases with the setting of share and
+> prefix (currently now and the possibly the future), it seems
+> prudent to set the pointers to NULL when the objects are
+> free'd to avoid any double frees.
+>
+> Addresses-Coverity: ("Double free")
+> Fixes: 96296c946a2a ("cifs: handle RESP_GET_DFS_REFERRAL.PathConsumed in reconnect")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/gpu/drm/i915/display/vlv_dsi_pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/display/vlv_dsi_pll.c b/drivers/gpu/drm=
-/i915/display/vlv_dsi_pll.c
-> index d0a514301575..4070b00c3690 100644
-> --- a/drivers/gpu/drm/i915/display/vlv_dsi_pll.c
-> +++ b/drivers/gpu/drm/i915/display/vlv_dsi_pll.c
-> @@ -483,7 +483,7 @@ int bxt_dsi_pll_compute(struct intel_encoder *encoder,
-> =20
->  	if (dsi_ratio < dsi_ratio_min || dsi_ratio > dsi_ratio_max) {
->  		drm_err(&dev_priv->drm,
-> -			"Cant get a suitable ratio from DSI PLL ratios\n");
-> +			"Can't get a suitable ratio from DSI PLL ratios\n");
->  		return -ECHRNG;
->  	} else
->  		drm_dbg_kms(&dev_priv->drm, "DSI PLL calculation is Done!!\n");
-> --=20
+>  fs/cifs/connect.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+> index 3c4dd4e1b9eb..4b2f5f5b3a8e 100644
+> --- a/fs/cifs/connect.c
+> +++ b/fs/cifs/connect.c
+> @@ -5574,6 +5574,8 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon, const stru
+>
+>                 kfree(share);
+>                 kfree(prefix);
+> +               share = NULL;
+> +               prefix = NULL;
+>
+>                 rc = dfs_cache_get_tgt_share(tcon->dfs_path + 1, it, &share, &prefix);
+>                 if (rc) {
+> --
 > 2.27.0
->=20
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+>
 
---=20
-Ville Syrj=E4l=E4
-Intel
+
+-- 
+Thanks,
+
+Steve
