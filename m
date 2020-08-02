@@ -1,29 +1,54 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 21 Aug 2020 07:56:02 +0000
-Subject: Re: [PATCH] crypto: ingenic - Drop kfree for memory allocated with devm_kzalloc
-Message-Id: <20200821075602.GF25143@gondor.apana.org.au>
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Sun, 02 Aug 2020 07:44:09 +0000
+Subject: [PATCH -next v3] virtio_ring: Avoid loop when vq is broken in virtqueue_poll
+Message-Id: <1596354249-96204-1-git-send-email-wenan.mao@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804081153.45342-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200804081153.45342-1-weiyongjun1@huawei.com>
+References: <20200802022549-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20200802022549-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: mpm@selenic.com, arnd@arndb.de, gregkh@linuxfoundation.org, zhouyanjie@wanyeetech.com, prasannatsmkumar@gmail.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: mst@redhat.com, jasowang@redhat.com
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
 
-On Tue, Aug 04, 2020 at 08:11:53AM +0000, Wei Yongjun wrote:
-> It's not necessary to free memory allocated with devm_kzalloc
-> and using kfree leads to a double free.
-> 
-> Fixes: 190873a0ea45 ("crypto: ingenic - Add hardware RNG for Ingenic JZ4780 and X1000")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/char/hw_random/ingenic-rng.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
+The loop may exist if vq->broken is true,
+virtqueue_get_buf_ctx_packed or virtqueue_get_buf_ctx_split
+will return NULL, so virtnet_poll will reschedule napi to
+receive packet, it will lead cpu usage(si) to 100%.
 
-Patch applied.  Thanks.
+call trace as below:
+virtnet_poll
+	virtnet_receive
+		virtqueue_get_buf_ctx
+			virtqueue_get_buf_ctx_packed
+			virtqueue_get_buf_ctx_split
+	virtqueue_napi_complete
+		virtqueue_poll           //return true
+		virtqueue_napi_schedule //it will reschedule napi
+
+to fix this, return false if vq is broken in virtqueue_poll.
+
+Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ v2->v3: change subject, original is : "virtio_net: Avoid loop in virtnet_poll"
+ v1->v2: fix it in virtqueue_poll suggested by Michael S. Tsirkin <mst@redhat.com>
+ drivers/virtio/virtio_ring.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 58b96ba..4f7c73e 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -1960,6 +1960,9 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned last_used_idx)
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
+ 
++	if (unlikely(vq->broken))
++		return false;
++
+ 	virtio_mb(vq->weak_barriers);
+ 	return vq->packed_ring ? virtqueue_poll_packed(_vq, last_used_idx) :
+ 				 virtqueue_poll_split(_vq, last_used_idx);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.8.3.1
