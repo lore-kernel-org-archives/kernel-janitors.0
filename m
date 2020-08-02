@@ -1,51 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 14 Aug 2020 13:29:48 +0000
-Subject: Re: [PATCH v2] scripts: coccicheck: Change default value for parallelism
-Message-Id: <20200814132948.GA62819@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Aug 2020 15:10:59 +0000
+Subject: [PATCH] atm: idt77252: Fix the size used in a 'dma_alloc_coherent()' call
+Message-Id: <20200802151059.699977-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7733e0b3-91f2-0033-75d6-77947253bfeb@web.de>
-In-Reply-To: <7733e0b3-91f2-0033-75d6-77947253bfeb@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: 3chas3@gmail.com
+Cc: linux-atm-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Aug 14, 2020 at 03:06:06PM +0200, Markus Elfring wrote:
-> > a decrease in performance is noted. The elapsed time is  minimum
->=20
-> Can the following wording variant be more appropriate?
->=20
->   a decrease was noticed in the software performance. The elapsed time is=
- minimal
->=20
->=20
-> > respectively for two separate runs. =E2=80=A6
->=20
-> Can such information trigger further considerations for benchmarking appr=
-oaches?
->=20
-> Regards,
-> Markus
+This should be TSQSIZE in order to be consistent with the surrounding code
+and the corresponding 'dma_free_coherent()' in 'deinit_tsq()'
 
+This is harmless because RSQSIZE and TSQSIZE have the same value (i.e.
+8192)
 
-Hi,
+Fixes: 	1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/atm/idt77252.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index df51680e8931..f459fafa902a 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -1373,7 +1373,7 @@ init_tsq(struct idt77252_dev *card)
+ {
+ 	struct tsq_entry *tsqe;
+ 
+-	card->tsq.base = dma_alloc_coherent(&card->pcidev->dev, RSQSIZE,
++	card->tsq.base = dma_alloc_coherent(&card->pcidev->dev, TSQSIZE,
+ 					    &card->tsq.paddr, GFP_KERNEL);
+ 	if (card->tsq.base = NULL) {
+ 		printk("%s: can't allocate TSQ.\n", card->name);
+-- 
+2.25.1
