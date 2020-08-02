@@ -1,42 +1,35 @@
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date: Tue, 25 Aug 2020 09:17:34 +0000
-Subject: Re: [PATCH][next] staging: spmi: hisi-spmi-controller: fix spelling mistake "controlller" -> "contro
-Message-Id: <20200825111734.40c13380@coco.lan>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Aug 2020 14:15:23 +0000
+Subject: [PATCH] gve: Fix the size used in a 'dma_free_coherent()' call
+Message-Id: <20200802141523.691565-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200820075136.186199-1-colin.king@canonical.com>
-In-Reply-To: <20200820075136.186199-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: csully@google.com, sagis@google.com, jonolson@google.com, davem@davemloft.net, kuba@kernel.org, lrizzo@google.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Em Thu, 20 Aug 2020 08:51:36 +0100
-Colin King <colin.king@canonical.com> escreveu:
+Update the size used in 'dma_free_coherent()' in order to match the one
+used in the corresponding 'dma_alloc_coherent()'.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the MODULE_ALIAS, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: 893ce44df5 ("gve: Add basic driver framework for Compute Engine Virtual NIC")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/google/gve/gve_adminq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/staging/hikey9xx/hisi-spmi-controller.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-> index 66a0b296e06f..b132b2a5d939 100644
-> --- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
-> +++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-> @@ -354,4 +354,4 @@ module_exit(spmi_controller_exit);
->  
->  MODULE_LICENSE("GPL v2");
->  MODULE_VERSION("1.0");
-> -MODULE_ALIAS("platform:spmi_controlller");
-> +MODULE_ALIAS("platform:spmi_controller");
-
-
-
-Thanks,
-Mauro
+diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
+index c3ba7baf0107..883e173f5ca0 100644
+--- a/drivers/net/ethernet/google/gve/gve_adminq.c
++++ b/drivers/net/ethernet/google/gve/gve_adminq.c
+@@ -322,7 +322,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 	priv->default_num_queues = be16_to_cpu(descriptor->default_num_queues);
+ 
+ free_device_descriptor:
+-	dma_free_coherent(&priv->pdev->dev, sizeof(*descriptor), descriptor,
++	dma_free_coherent(&priv->pdev->dev, PAGE_SIZE, descriptor,
+ 			  descriptor_bus);
+ 	return err;
+ }
+-- 
+2.25.1
