@@ -1,23 +1,35 @@
-From: maowenan <wenan.mao@linux.alibaba.com>
-Date: Sun, 02 Aug 2020 07:31:38 +0000
-Subject: Re: [PATCH -next v2] virtio_net: Avoid loop in virtnet_poll
-Message-Id: <6543a874-7f2f-ea73-8c24-b75788ea6379@linux.alibaba.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Aug 2020 14:56:48 +0000
+Subject: [PATCH] crypto: ixp4xx - Fix the size used in a 'dma_free_coherent()' call
+Message-Id: <20200802145648.699335-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200802003818-mutt-send-email-mst@kernel.org>
- <1596347793-55894-1-git-send-email-wenan.mao@linux.alibaba.com>
- <20200802022549-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20200802022549-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: jasowang@redhat.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, chohnstaedt@innominate.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Update the size used in 'dma_free_coherent()' in order to match the one
+used in the corresponding 'dma_alloc_coherent()', in 'setup_crypt_desc()'.
 
+Fixes: 81bef0150074 ("crypto: ixp4xx - Hardware crypto support for IXP4xx CPUs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/ixp4xx_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 8/2/20 2:26 PM, Michael S. Tsirkin wrote:
-> 
-> Just noticed the subject is wrong: this is no longer
-> a virtio_net patch.
-
-thanks, I will change the subject and send v3.
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index f478bb0a566a..276012e7c482 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -528,7 +528,7 @@ static void release_ixp_crypto(struct device *dev)
+ 
+ 	if (crypt_virt) {
+ 		dma_free_coherent(dev,
+-			NPE_QLEN_TOTAL * sizeof( struct crypt_ctl),
++			NPE_QLEN * sizeof(struct crypt_ctl),
+ 			crypt_virt, crypt_phys);
+ 	}
+ }
+-- 
+2.25.1
