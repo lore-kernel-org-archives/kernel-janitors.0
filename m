@@ -1,24 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Aug 2020 23:02:46 +0000
-Subject: Re: [PATCH] net: mscc: ocelot: remove duplicate "the the" phrase in Kconfig text
-Message-Id: <20200818.160246.1027858919793094945.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Aug 2020 11:07:21 +0000
+Subject: [PATCH] scsi: qla2xxx: Fix the size used in a 'dma_free_coherent()' call
+Message-Id: <20200802110721.677707-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200817224042.5826-1-colin.king@canonical.com>
-In-Reply-To: <20200817224042.5826-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: UNGLinuxDriver@microchip.com, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com, alexandre.belloni@bootlin.com, andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: QLogic-Storage-Upstream@qlogic.com, jejb@linux.ibm.com, martin.petersen@oracle.com, vikas.chaudhary@qlogic.com, lalit.chandivade@qlogic.com, michaelc@cs.wisc.edu, JBottomley@Parallels.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 17 Aug 2020 23:40:42 +0100
+Update the size used in 'dma_free_coherent()' in order to match the one
+used in the corresponding 'dma_alloc_coherent()'.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The Kconfig help text contains the phrase "the the" in the help
-> text. Fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+While at it, remove a memset after a call to 'dma_alloc_coherent()'.
+This is useless since
+commit 518a2f1925c3 ("dma-mapping: zero memory returned from dma_alloc_*")
 
-Applied.
+Fixes: 4161cee52df8 ("[SCSI] qla4xxx: Add host statistics support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The memset has been added in the same commit, so I think it is ok to
+remove it in the same path.
+---
+ drivers/scsi/qla2xxx/qla_mbx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index 73883435ab58..a43d7229f9a1 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -4933,8 +4933,6 @@ qla25xx_set_els_cmds_supported(scsi_qla_host_t *vha)
+ 		return QLA_MEMORY_ALLOC_FAILED;
+ 	}
+ 
+-	memset(els_cmd_map, 0, ELS_CMD_MAP_SIZE);
+-
+ 	/* List of Purex ELS */
+ 	cmd_opcode[0] = ELS_FPIN;
+ 	cmd_opcode[1] = ELS_RDP;
+@@ -4966,7 +4964,7 @@ qla25xx_set_els_cmds_supported(scsi_qla_host_t *vha)
+ 		    "Done %s.\n", __func__);
+ 	}
+ 
+-	dma_free_coherent(&ha->pdev->dev, DMA_POOL_SIZE,
++	dma_free_coherent(&ha->pdev->dev, ELS_CMD_MAP_SIZE,
+ 	   els_cmd_map, els_cmd_map_dma);
+ 
+ 	return rval;
+-- 
+2.25.1
