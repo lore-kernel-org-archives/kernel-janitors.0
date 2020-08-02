@@ -1,27 +1,33 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 26 Aug 2020 13:29:43 +0000
-Subject: Re: [PATCH] rnbd: Fix an error code in process_rdma()
-Message-Id: <172d1b3a-58e6-1a50-2b6a-1e797135d5af@kernel.dk>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Aug 2020 17:50:07 +0000
+Subject: [PATCH] spi: a3700: Remove a useless memset
+Message-Id: <20200802175007.703995-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200826113242.GC393664@mwanda>
-In-Reply-To: <20200826113242.GC393664@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Danil Kipnis <danil.kipnis@cloud.ionos.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: broonie@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 8/26/20 5:32 AM, Dan Carpenter wrote:
-> The error code is uninitialized on this error path.
+Memory allocated by 'spi_alloc_master()' is already zeroed.
+Remove a redundant memset.
 
-The fix is in Linus's tree:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spi-armada-3700.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-commit 17bc10300c69bd51b82983cdadafa0a7791f074e
-Author: Nathan Chancellor <natechancellor@gmail.com>
-Date:   Mon Aug 17 23:49:25 2020 -0700
-
-    block/rnbd: Ensure err is always initialized in process_rdma
-
-
+diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
+index fcde419e480c..46feafe4e201 100644
+--- a/drivers/spi/spi-armada-3700.c
++++ b/drivers/spi/spi-armada-3700.c
+@@ -848,7 +848,6 @@ static int a3700_spi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, master);
+ 
+ 	spi = spi_master_get_devdata(master);
+-	memset(spi, 0, sizeof(struct a3700_spi));
+ 
+ 	spi->master = master;
+ 
 -- 
-Jens Axboe
+2.25.1
