@@ -1,50 +1,52 @@
-From: Wolfram Sang <wsa@kernel.org>
-Date: Wed, 05 Aug 2020 22:08:42 +0000
-Subject: Re: [PATCH] macintosh: windfarm: fix spelling mistake "detatch" -> "detach"
-Message-Id: <20200805220842.GC2182@kunai>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Fig2xvG2VGoz8o/s"
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Sun, 02 Aug 2020 05:56:33 +0000
+Subject: [PATCH -next v2] virtio_net: Avoid loop in virtnet_poll
+Message-Id: <1596347793-55894-1-git-send-email-wenan.mao@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200805104337.16104-1-colin.king@canonical.com>
-In-Reply-To: <20200805104337.16104-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20200802003818-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20200802003818-mutt-send-email-mst@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mst@redhat.com, jasowang@redhat.com
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
 
+The loop may exist if vq->broken is true,
+virtqueue_get_buf_ctx_packed or virtqueue_get_buf_ctx_split
+will return NULL, so virtnet_poll will reschedule napi to
+receive packet, it will lead cpu usage(si) to 100%.
 
---Fig2xvG2VGoz8o/s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+call trace as below:
+virtnet_poll
+	virtnet_receive
+		virtqueue_get_buf_ctx
+			virtqueue_get_buf_ctx_packed
+			virtqueue_get_buf_ctx_split
+	virtqueue_napi_complete
+		virtqueue_poll           //return true
+		virtqueue_napi_schedule //it will reschedule napi
 
-On Wed, Aug 05, 2020 at 11:43:37AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There are spelling mistakes in DBG messages. Fix them.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+To fix this, return false if vq is broken in virtqueue_poll.
 
-These comments can go entirely. i2c_detach is long history. And for
-remove, we have debugging output in the driver core meanwhile.
+Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
+---
+ v1->v2: fix it in virtqueue_poll suggested by Michael S. Tsirkin <mst@redhat.com>
+ drivers/virtio/virtio_ring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
---Fig2xvG2VGoz8o/s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8rLeoACgkQFA3kzBSg
-Kbbf3A//dxQuXCMIP+fM3FpsD9xa0D6BvZJ9uye6lcytP3aB4nYwiyQH1Xa2chW4
-DJPf0EYPgesQtRj6/VeAwrjt3I/a4TJcsPrTEPh42f+5lnBtdrjRPWI71ng37Ex8
-PftsLWt0XWcveo/b1dfw3v33xLSGDq/+Ivz3perRsQjbW1+YdMXIy3WnfyxkLJDr
-ZapgqtZAjIuJNGMym3RYIe6JYzHVJHzBXyNOB5IA99IdG5CvCu0IEMsX+35bCMhD
-iCnA9Vnltejf73dv+ELfn5HjBCU2h813GxhZ/Wejl4E5sdgh+a0P+35ML6zOiq2O
-wggmD98tGLXgshqnhJE/zEukOZY5b1rLWGvE9kWT6IMn8Z80pbgUloiF7RvddnP7
-4LsG8z+soDJh0hZxDcWBZOgEg4xb97MF+7+0vS3miv8SYLqS8fwAjsJgOG/slaiC
-aRCd68ndJIC4z25jkkjDIMBbY9yDI2vxUjG4igilXMUJEIEsDFGvf81uuXyZ496I
-RBci3lH9ERyT5KW7xkd8WTfR/JxxHp39kOdD3g4NTh52J47YT5c8Io2StwQj+fxQ
-NdQGiGR9d1oXVOXHcO/k/T8qoTUMctb5uOc8rfSUYycw0v2TgMb+AwgISq4ovw6L
-2t+THEjAWKxIcej9U6b69Bj+DskSo3zoRHZZf4AukUr8awGp1NA=
-=luwO
------END PGP SIGNATURE-----
-
---Fig2xvG2VGoz8o/s--
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 58b96ba..4f7c73e 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -1960,6 +1960,9 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned last_used_idx)
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
+ 
++	if (unlikely(vq->broken))
++		return false;
++
+ 	virtio_mb(vq->weak_barriers);
+ 	return vq->packed_ring ? virtqueue_poll_packed(_vq, last_used_idx) :
+ 				 virtqueue_poll_split(_vq, last_used_idx);
+-- 
+1.8.3.1
