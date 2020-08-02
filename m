@@ -1,7 +1,7 @@
 From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Sun, 02 Aug 2020 06:25:42 +0000
+Date: Sun, 02 Aug 2020 06:26:16 +0000
 Subject: Re: [PATCH -next v2] virtio_net: Avoid loop in virtnet_poll
-Message-Id: <20200802022521-mutt-send-email-mst@kernel.org>
+Message-Id: <20200802022549-mutt-send-email-mst@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200802003818-mutt-send-email-mst@kernel.org>
  <1596347793-55894-1-git-send-email-wenan.mao@linux.alibaba.com>
@@ -11,6 +11,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mao Wenan <wenan.mao@linux.alibaba.com>
 Cc: jasowang@redhat.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+
+Just noticed the subject is wrong: this is no longer
+a virtio_net patch.
 
 On Sun, Aug 02, 2020 at 01:56:33PM +0800, Mao Wenan wrote:
 > The loop may exist if vq->broken is true,
@@ -31,10 +35,6 @@ On Sun, Aug 02, 2020 at 01:56:33PM +0800, Mao Wenan wrote:
 > To fix this, return false if vq is broken in virtqueue_poll.
 > 
 > Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
-
-Looks good:
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
 > ---
 >  v1->v2: fix it in virtqueue_poll suggested by Michael S. Tsirkin <mst@redhat.com>
 >  drivers/virtio/virtio_ring.c | 3 +++
