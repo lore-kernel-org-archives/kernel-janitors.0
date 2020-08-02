@@ -1,28 +1,151 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 06 Aug 2020 22:36:21 +0000
-Subject: Re: [PATCH] input: sentelic: fix error return when fsp_reg_write fails
-Message-Id: <20200806223621.GM1665100@dtor-ws>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sun, 02 Aug 2020 14:57:27 +0000
+Subject: Re: [PATCH] p54: switch from 'pci_' to 'dma_' API
+Message-Id: <20200802145727.04FFEC433CA@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603141218.131663-1-colin.king@canonical.com>
-In-Reply-To: <20200603141218.131663-1-colin.king@canonical.com>
+References: <20200722102707.27486-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200722102707.27486-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Tai-hwa Liang <avatar@sentelic.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: chunkeey@googlemail.com, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 03:12:18PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when the call to fsp_reg_write fails -EIO is not being returned
-> because the count is being returned instead of the return value in retval.
-> Fix this by returning the value in retval instead of count.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: fc69f4a6af49 ("Input: add new driver for Sentelic Finger Sensing Pad")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Applied, thank you.
+> The wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below and has been
+> hand modified to replace GFP_ with a correct flag.
+> It has been compile tested.
+> 
+> When memory is allocated in 'p54p_probe()', GFP_KERNEL can be used because
+> it is the probe function and no spin_lock is taken in the between.
+> 
+> 
+> @@
+> @@
+> -    PCI_DMA_BIDIRECTIONAL
+> +    DMA_BIDIRECTIONAL
+> 
+> @@
+> @@
+> -    PCI_DMA_TODEVICE
+> +    DMA_TO_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_FROMDEVICE
+> +    DMA_FROM_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_NONE
+> +    DMA_NONE
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_alloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_zalloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_free_consistent(e1, e2, e3, e4)
+> +    dma_free_coherent(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_single(e1, e2, e3, e4)
+> +    dma_map_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_single(e1, e2, e3, e4)
+> +    dma_unmap_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4, e5;
+> @@
+> -    pci_map_page(e1, e2, e3, e4, e5)
+> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_page(e1, e2, e3, e4)
+> +    dma_unmap_page(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_sg(e1, e2, e3, e4)
+> +    dma_map_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_sg(e1, e2, e3, e4)
+> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
+> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
+> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_dma_mapping_error(e1, e2)
+> +    dma_mapping_error(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_consistent_dma_mask(e1, e2)
+> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+ba78405ecaac p54: switch from 'pci_' to 'dma_' API
 
 -- 
-Dmitry
+https://patchwork.kernel.org/patch/11678115/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
