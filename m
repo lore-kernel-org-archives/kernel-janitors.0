@@ -1,24 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 03 Aug 2020 23:01:26 +0000
-Subject: Re: [PATCH 1/2] net: spider_net: Fix the size used in a 'dma_free_coherent()' call
-Message-Id: <20200803.160126.133073905443244906.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Aug 2020 14:36:07 +0000
+Subject: [PATCH] memory: jz4780_nemc: Fix an error pointer vs NULL check in probe()
+Message-Id: <20200803143607.GC346925@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200802135333.690991-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200802135333.690991-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kou.ishizaki@toshiba.co.jp, kuba@kernel.org, linas@austin.ibm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun,  2 Aug 2020 15:53:33 +0200
+The devm_ioremap() function returns NULL on error, it doesn't return
+error pointers.  This bug could lead to an Oops during probe.
 
-> Update the size used in 'dma_free_coherent()' in order to match the one
-> used in the corresponding 'dma_alloc_coherent()', in
-> 'spider_net_init_chain()'.
-> 
-> Fixes: d4ed8f8d1fb7 ("Spidernet DMA coalescing")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: f046e4a3f0b9 ("memory: jz4780_nemc: Only request IO memory the driver will use")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/memory/jz4780-nemc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+index 3ec5cb0fce1e..608ae925e641 100644
+--- a/drivers/memory/jz4780-nemc.c
++++ b/drivers/memory/jz4780-nemc.c
+@@ -304,9 +304,9 @@ static int jz4780_nemc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	nemc->base = devm_ioremap(dev, res->start, NEMC_REG_LEN);
+-	if (IS_ERR(nemc->base)) {
++	if (!nemc->base) {
+ 		dev_err(dev, "failed to get I/O memory\n");
+-		return PTR_ERR(nemc->base);
++		return -ENOMEM;
+ 	}
+ 
+ 	writel(0, nemc->base + NEMC_NFCSR);
+-- 
+2.27.0
