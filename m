@@ -1,79 +1,35 @@
-From: Song Liu <song@kernel.org>
-Date: Thu, 06 Aug 2020 00:20:39 +0000
-Subject: Re: [PATCH] md-cluster: Fix potential error pointer dereference in resize_bitmaps()
-Message-Id: <CAPhsuW4EKCMhL0T=1iMbVYrh1azZOD-jQ-vXDMmZ5cy2m-oW4g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Aug 2020 14:35:19 +0000
+Subject: [PATCH] drm/amd/display: Indent an if statement
+Message-Id: <20200803143519.GB346925@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804101645.GB392148@mwanda> <824849e0-c98d-1f22-817c-7a76d3ee22b1@cloud.ionos.com>
- <20200804111549.GN5493@kadam>
-In-Reply-To: <20200804111549.GN5493@kadam>
+References: <20171104061232.5bq5hwr2p2ca2cl7@mwanda>
+In-Reply-To: <20171104061232.5bq5hwr2p2ca2cl7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, Shaohua Li <shli@fb.com>, NeilBrown <neilb@suse.com>, linux-raid <linux-raid@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Harry Wentland <harry.wentland@amd.com>, Mauro Rossi <issor.oruam@gmail.com>
+Cc: Charlene Liu <Charlene.Liu@amd.com>, Aric Cyr <aric.cyr@amd.com>, Reza Amini <Reza.Amini@amd.com>, Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Samson Tam <Samson.Tam@amd.com>, David Airlie <airlied@linux.ie>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Martin Leung <martin.leung@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Tue, Aug 4, 2020 at 4:16 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Tue, Aug 04, 2020 at 12:40:18PM +0200, Guoqing Jiang wrote:
-> >
-> >
-> > On 8/4/20 12:16 PM, Dan Carpenter wrote:
-> > > The error handling calls md_bitmap_free(bitmap) which checks for NULL
-> > > but will Oops if we pass an error pointer.  Let's set "bitmap" to NULL
-> > > on this error path.
-> > >
-> > > Fixes: afd756286083 ("md-cluster/raid10: resize all the bitmaps before start reshape")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >   drivers/md/md-cluster.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-> > > index 73fd50e77975..d50737ec4039 100644
-> > > --- a/drivers/md/md-cluster.c
-> > > +++ b/drivers/md/md-cluster.c
-> > > @@ -1139,6 +1139,7 @@ static int resize_bitmaps(struct mddev *mddev, sector_t newsize, sector_t oldsiz
-> > >             bitmap = get_bitmap_from_slot(mddev, i);
-> > >             if (IS_ERR(bitmap)) {
-> > >                     pr_err("can't get bitmap from slot %d\n", i);
-> > > +                   bitmap = NULL;
-> > >                     goto out;
-> > >             }
-> > >             counts = &bitmap->counts;
-> >
-> > Thanks for the catch, Reviewed-by: Guoqing Jiang
-> > <guoqing.jiang@cloud.ionos.com>
-> >
-> > BTW, seems there could be memory leak in the function since it keeps
-> > allocate bitmap
-> > in the loop ..., will send a format patch.
-> >
-> >
-> > diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-> > index 73fd50e77975..89d7b32489d8 100644
-> > --- a/drivers/md/md-cluster.c
-> > +++ b/drivers/md/md-cluster.c
-> > @@ -1165,6 +1165,8 @@ static int resize_bitmaps(struct mddev *mddev,
-> > sector_t newsize, sector_t oldsiz
-> >                          * can't resize bitmap
-> >                          */
-> >                         goto out;
-> > +
-> > +               md_bitmap_free(bitmap);
->
-> Hm...  I'm now not at all certain my patch is correct.  Although it's
-> obviously harmless and fixes an Oops.  I had thought that that the call
-> to update_bitmap_size(mddev, oldsize) would free the rest of the loop.
->
-> I really suspect adding a free like you're suggesting will break the
-> success path.
->
-> I'm not familiar with this code at all.
+The if statement wasn't indented so it's confusing.
 
-Thanks Dan and Guoqing. I applied Dans' patch to md-next.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think we are leaking bitmap in resize_bitmaps(). But we gonna need
-more complex fix than the md_bitmap_free() above.
-
-Thanks,
-Song
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index ca26714c800e..c6b737dd8425 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -71,7 +71,7 @@ enum dce_version resource_parse_asic_id(struct hw_asic_id asic_id)
+ 		if (ASIC_REV_IS_TAHITI_P(asic_id.hw_internal_rev) ||
+ 		    ASIC_REV_IS_PITCAIRN_PM(asic_id.hw_internal_rev) ||
+ 		    ASIC_REV_IS_CAPEVERDE_M(asic_id.hw_internal_rev))
+-		dc_version = DCE_VERSION_6_0;
++			dc_version = DCE_VERSION_6_0;
+ 		else if (ASIC_REV_IS_OLAND_M(asic_id.hw_internal_rev))
+ 			dc_version = DCE_VERSION_6_4;
+ 		else
+-- 
+2.27.0
