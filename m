@@ -1,45 +1,49 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 14 Aug 2020 05:55:01 +0000
-Subject: [PATCH] usb: gadget: f_tcm: Fix some resource leaks in some error paths
-Message-Id: <20200814055501.763821-1-christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 04 Aug 2020 17:39:12 +0000
+Subject: NAK: [PATCH][next] drm/amd/display: fix spelling mistake "Usupported" -> "Unsupported"
+Message-Id: <0d337d6e-55d1-4940-3406-c2e8e39e5eb3@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200804173421.401415-1-colin.king@canonical.com>
+In-Reply-To: <20200804173421.401415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org, sudhakar.panneerselvam@oracle.com, jpawar@cadence.com, gustavoars@kernel.org, Thinh.Nguyen@synopsys.com, bigeasy@linutronix.de, nab@linux-iscsi.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If a memory allocation fails within a 'usb_ep_alloc_request()' call, the
-already allocated memory must be released.
+On 04/08/2020 18:34, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are spelling mistakes in two DRM_ERROR error messages. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 27579443cdc5..fe5f6350e288 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -1549,7 +1549,7 @@ static int amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
+>  		break;
+>  #endif
+>  	default:
+> -		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
+> +		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
+>  		goto fail;
+>  	}
+>  
+> @@ -1743,7 +1743,7 @@ static int dm_early_init(void *handle)
+>  		break;
+>  #endif
+>  	default:
+> -		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
+> +		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
+>  		return -EINVAL;
+>  	}
+>  
+> 
+Nack. I was on the wrong repo.
 
-Fix a mix-up in the code and free the correct requests.
-
-Fixes: c52661d60f63 ("usb-gadget: Initial merge of target module for UASP + BOT")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/usb/gadget/function/f_tcm.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
-index d94b814328c8..184165e27908 100644
---- a/drivers/usb/gadget/function/f_tcm.c
-+++ b/drivers/usb/gadget/function/f_tcm.c
-@@ -753,12 +753,13 @@ static int uasp_alloc_stream_res(struct f_uas *fu, struct uas_stream *stream)
- 		goto err_sts;
- 
- 	return 0;
-+
- err_sts:
--	usb_ep_free_request(fu->ep_status, stream->req_status);
--	stream->req_status = NULL;
--err_out:
- 	usb_ep_free_request(fu->ep_out, stream->req_out);
- 	stream->req_out = NULL;
-+err_out:
-+	usb_ep_free_request(fu->ep_in, stream->req_in);
-+	stream->req_in = NULL;
- out:
- 	return -ENOMEM;
- }
--- 
-2.25.1
+Colin
