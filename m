@@ -1,48 +1,201 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Tue, 25 Aug 2020 13:08:07 +0000
-Subject: AW: [PATCH v2] HID: roccat: add bounds checking in kone_sysfs_write_settings()
-Message-Id: <4b0f8fc9b361495c8678de81b1cba381@bfs.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 04 Aug 2020 20:19:24 +0000
+Subject: [PATCH] farsync: switch from 'pci_' to 'dma_' API
+Message-Id: <20200804201924.717142-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1597819984.4101.16.camel@web.de> <20200824085735.GA208317@mwanda>
- <ab4625b2b2ea41dd83ff9e192a027f41@bfs.de>,<20200825072903.GQ1793@kadam>
-In-Reply-To: <20200825072903.GQ1793@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kevin.curtis@farsite.co.uk, davem@davemloft.net, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-lets hope the maintainer picks that up.
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-re,
- wh
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-________________________________________
-Von: Dan Carpenter [dan.carpenter@oracle.com]
-Gesendet: Dienstag, 25. August 2020 09:29
-An: Walter Harms
-Cc: Stefan Achatz; Jiri Kosina; Benjamin Tissoires; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Betreff: Re: [PATCH v2] HID: roccat: add bounds checking in kone_sysfs_write_settings()
+When memory is allocated in 'fst_add_one()', GFP_KERNEL can be used
+because it is a probe function and no lock is acquired.
 
-On Mon, Aug 24, 2020 at 03:35:16PM +0000, Walter Harms wrote:
-> hello Dan,
->
-> i notice that you can shorten the line to:
-> (line above checks for count==sizeof(struct kone_settings))
->
-> difference = memcmp(settings, &kone->settings, count);
->
-> nothing special just to shorten the line and make use of count.
->
-> and just to save one indent level and because its  readabel nicely:
->     if ( ! difference )
->           goto unlock;
->
-> hope that helps
 
-Yeah.  I wrote that version and I wanted to send it, but then I decided
-not to change the style too much.  I definitely agree with you, but I
-figured I would keep the patch less intrusive.
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-regards,
-dan carpenter
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/wan/farsync.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/wan/farsync.c b/drivers/net/wan/farsync.c
+index 5ff249b76525..b50cf11d197d 100644
+--- a/drivers/net/wan/farsync.c
++++ b/drivers/net/wan/farsync.c
+@@ -2553,16 +2553,16 @@ fst_add_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		 * Allocate a dma buffer for transmit and receives
+ 		 */
+ 		card->rx_dma_handle_host -		    pci_alloc_consistent(card->device, FST_MAX_MTU,
+-					 &card->rx_dma_handle_card);
++		    dma_alloc_coherent(&card->device->dev, FST_MAX_MTU,
++				       &card->rx_dma_handle_card, GFP_KERNEL);
+ 		if (card->rx_dma_handle_host = NULL) {
+ 			pr_err("Could not allocate rx dma buffer\n");
+ 			err = -ENOMEM;
+ 			goto rx_dma_fail;
+ 		}
+ 		card->tx_dma_handle_host -		    pci_alloc_consistent(card->device, FST_MAX_MTU,
+-					 &card->tx_dma_handle_card);
++		    dma_alloc_coherent(&card->device->dev, FST_MAX_MTU,
++				       &card->tx_dma_handle_card, GFP_KERNEL);
+ 		if (card->tx_dma_handle_host = NULL) {
+ 			pr_err("Could not allocate tx dma buffer\n");
+ 			err = -ENOMEM;
+@@ -2572,9 +2572,8 @@ fst_add_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	return 0;		/* Success */
+ 
+ tx_dma_fail:
+-	pci_free_consistent(card->device, FST_MAX_MTU,
+-			    card->rx_dma_handle_host,
+-			    card->rx_dma_handle_card);
++	dma_free_coherent(&card->device->dev, FST_MAX_MTU,
++			  card->rx_dma_handle_host, card->rx_dma_handle_card);
+ rx_dma_fail:
+ 	fst_disable_intr(card);
+ 	for (i = 0 ; i < card->nports ; i++)
+@@ -2625,12 +2624,12 @@ fst_remove_one(struct pci_dev *pdev)
+ 		/*
+ 		 * Free dma buffers
+ 		 */
+-		pci_free_consistent(card->device, FST_MAX_MTU,
+-				    card->rx_dma_handle_host,
+-				    card->rx_dma_handle_card);
+-		pci_free_consistent(card->device, FST_MAX_MTU,
+-				    card->tx_dma_handle_host,
+-				    card->tx_dma_handle_card);
++		dma_free_coherent(&card->device->dev, FST_MAX_MTU,
++				  card->rx_dma_handle_host,
++				  card->rx_dma_handle_card);
++		dma_free_coherent(&card->device->dev, FST_MAX_MTU,
++				  card->tx_dma_handle_host,
++				  card->tx_dma_handle_card);
+ 	}
+ 	fst_card_array[card->card_no] = NULL;
+ }
+-- 
+2.25.1
