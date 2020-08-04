@@ -1,35 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 05 Aug 2020 13:14:58 +0000
-Subject: [PATCH] usb: gadget: fix spelling mistake "Dectected" -> "Detected"
-Message-Id: <20200805131458.21289-1-colin.king@canonical.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Tue, 04 Aug 2020 07:49:52 +0000
+Subject: Re: [PATCH v3] coccinelle: api: add kvmalloc script
+Message-Id: <alpine.DEB.2.22.394.2008040949360.2575@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <12b09b8f-7c73-1827-8bf3-63e6041b63fd@web.de>
+In-Reply-To: <12b09b8f-7c73-1827-8bf3-63e6041b63fd@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Li Yang <leoyang.li@nxp.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a literal string. Fix it.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 4 Aug 2020, Markus Elfring wrote:
 
-diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
-index b2638e83bb49..c79407f2d577 100644
---- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -2061,7 +2061,7 @@ static int fsl_proc_read(struct seq_file *m, void *v)
- 			"Sleep Enable: %d SOF Received Enable: %d "
- 			"Reset Enable: %d\n"
- 			"System Error Enable: %d "
--			"Port Change Dectected Enable: %d\n"
-+			"Port Change Detected Enable: %d\n"
- 			"USB Error Intr Enable: %d USB Intr Enable: %d\n\n",
- 			(tmp_reg & USB_INTR_DEVICE_SUSPEND) ? 1 : 0,
- 			(tmp_reg & USB_INTR_SOF_EN) ? 1 : 0,
--- 
-2.27.0
+> > Changes in v3:
+> > - kvfree rules added
+>
+> I find it interesting to you found such an addition needed for this SmPL script.
+> I imagine that it can be helpful to support such a source code search by
+> a separate script for the semantic patch language.
+>
+> I am curious if my patch review comments for the second version got also a bit
+> of your software development attention.
+>
+> Another implementation detail is relevant for further clarification.
+> The SmPL rules for patch generation differ in search functionality
+> which is provided for other operation modes.
+> Can these deviations influence the confidence level?
+
+I see no useful information in this review, nor in the v2 review.
+
+julia
