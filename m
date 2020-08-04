@@ -1,49 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 04 Aug 2020 17:39:12 +0000
-Subject: NAK: [PATCH][next] drm/amd/display: fix spelling mistake "Usupported" -> "Unsupported"
-Message-Id: <0d337d6e-55d1-4940-3406-c2e8e39e5eb3@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Aug 2020 17:43:16 +0000
+Subject: [PATCH] powerpc/oprofile: fix spelling mistake "contex" -> "context"
+Message-Id: <20200804174316.402425-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804173421.401415-1-colin.king@canonical.com>
-In-Reply-To: <20200804173421.401415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Robert Richter <rric@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, oprofile-list@lists.sf.net, linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/08/2020 18:34, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are spelling mistakes in two DRM_ERROR error messages. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 27579443cdc5..fe5f6350e288 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -1549,7 +1549,7 @@ static int amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
->  		break;
->  #endif
->  	default:
-> -		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-> +		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
->  		goto fail;
->  	}
->  
-> @@ -1743,7 +1743,7 @@ static int dm_early_init(void *handle)
->  		break;
->  #endif
->  	default:
-> -		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-> +		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
->  		return -EINVAL;
->  	}
->  
-> 
-Nack. I was on the wrong repo.
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin
+There is a spelling mistake in a pr_debug message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/powerpc/oprofile/cell/spu_task_sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/oprofile/cell/spu_task_sync.c b/arch/powerpc/oprofile/cell/spu_task_sync.c
+index df59d0bb121f..489f993100d5 100644
+--- a/arch/powerpc/oprofile/cell/spu_task_sync.c
++++ b/arch/powerpc/oprofile/cell/spu_task_sync.c
+@@ -572,7 +572,7 @@ void spu_sync_buffer(int spu_num, unsigned int *samples,
+ 		 * samples are recorded.
+ 		 * No big deal -- so we just drop a few samples.
+ 		 */
+-		pr_debug("SPU_PROF: No cached SPU contex "
++		pr_debug("SPU_PROF: No cached SPU context "
+ 			  "for SPU #%d. Dropping samples.\n", spu_num);
+ 		goto out;
+ 	}
+-- 
+2.27.0
