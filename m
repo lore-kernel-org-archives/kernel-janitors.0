@@ -1,48 +1,291 @@
-From: Jason Gunthorpe <jgg@nvidia.com>
-Date: Mon, 24 Aug 2020 16:42:24 +0000
-Subject: Re: [PATCH 0/4] Infiniband Subsystem: Remove pci-dma-compat wrapper APIs.
-Message-Id: <20200824164224.GA3180344@nvidia.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 04 Aug 2020 20:08:09 +0000
+Subject: [PATCH] wan: wanxl: switch from 'pci_' to 'dma_' API
+Message-Id: <20200804200809.714999-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1596957073.git.usuraj35@gmail.com>
-In-Reply-To: <cover.1596957073.git.usuraj35@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>
-Cc: dledford@redhat.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: khc@pm.waw.pl, davem@davemloft.net, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Aug 09, 2020 at 12:54:28PM +0530, Suraj Upadhyay wrote:
-> Hii Developers,
-> 
-> 	This patch series will replace all the legacy pci-dma-compat wrappers
-> with the dma-mapping APIs directly in the INFINIBAND Subsystem.
-> 
-> This task is done through a coccinelle script which is described in each commit
-> message.
-> 
-> The changes are compile tested.
-> 
-> Thanks,
-> 
-> Suraj Upadhyay.
-> 
-> Suraj Upadhyay (4):
->   IB/hfi1: Remove pci-dma-compat wrapper APIs
->   IB/mthca: Remove pci-dma-compat wrapper APIs
->   RDMA/qib: Remove pci-dma-compat wrapper APIs
->   RDMA/pvrdma: Remove pci-dma-compat wrapper APIs
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Aside from Joe's notes it doesn't apply either:
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
- Applying: RDMA/efa : Remove pci-dma-compat wrapper APIs
- Using index info to reconstruct a base tree...
- error: patch failed: drivers/infiniband/hw/efa/efa_main.c:405
- error: drivers/infiniband/hw/efa/efa_main.c: patch does not apply
- error: Did you hand edit your patch?
- It does not apply to blobs recorded in its index.
+When memory is allocated in 'wanxl_pci_init_one()', GFP_KERNEL can be used
+because it is a probe function and no lock is acquired.
+Moreover, just a few lines above, GFP_KERNEL is already used.
 
-Try to avoid hand editing patches..
 
-Please resend
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-Jason
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/wan/wanxl.c | 54 ++++++++++++++++++++---------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/net/wan/wanxl.c b/drivers/net/wan/wanxl.c
+index 499f7cd19a4a..dc0cc953c4af 100644
+--- a/drivers/net/wan/wanxl.c
++++ b/drivers/net/wan/wanxl.c
+@@ -99,7 +99,7 @@ static inline port_status_t *get_status(struct port *port)
+ static inline dma_addr_t pci_map_single_debug(struct pci_dev *pdev, void *ptr,
+ 					      size_t size, int direction)
+ {
+-	dma_addr_t addr = pci_map_single(pdev, ptr, size, direction);
++	dma_addr_t addr = dma_map_single(&pdev->dev, ptr, size, direction);
+ 	if (addr + size > 0x100000000LL)
+ 		pr_crit("%s: pci_map_single() returned memory at 0x%llx!\n",
+ 			pci_name(pdev), (unsigned long long)addr);
+@@ -180,8 +180,8 @@ static inline void wanxl_tx_intr(struct port *port)
+ 			dev->stats.tx_bytes += skb->len;
+ 		}
+                 desc->stat = PACKET_EMPTY; /* Free descriptor */
+-		pci_unmap_single(port->card->pdev, desc->address, skb->len,
+-				 PCI_DMA_TODEVICE);
++		dma_unmap_single(&port->card->pdev->dev, desc->address,
++				 skb->len, DMA_TO_DEVICE);
+ 		dev_consume_skb_irq(skb);
+                 port->tx_in = (port->tx_in + 1) % TX_BUFFERS;
+         }
+@@ -207,9 +207,9 @@ static inline void wanxl_rx_intr(struct card *card)
+ 			if (!skb)
+ 				dev->stats.rx_dropped++;
+ 			else {
+-				pci_unmap_single(card->pdev, desc->address,
+-						 BUFFER_LENGTH,
+-						 PCI_DMA_FROMDEVICE);
++				dma_unmap_single(&card->pdev->dev,
++						 desc->address, BUFFER_LENGTH,
++						 DMA_FROM_DEVICE);
+ 				skb_put(skb, desc->length);
+ 
+ #ifdef DEBUG_PKT
+@@ -227,9 +227,10 @@ static inline void wanxl_rx_intr(struct card *card)
+ 			if (!skb) {
+ 				skb = dev_alloc_skb(BUFFER_LENGTH);
+ 				desc->address = skb ?
+-					pci_map_single(card->pdev, skb->data,
++					dma_map_single(&card->pdev->dev,
++						       skb->data,
+ 						       BUFFER_LENGTH,
+-						       PCI_DMA_FROMDEVICE) : 0;
++						       DMA_FROM_DEVICE) : 0;
+ 				card->rx_skbs[card->rx_in] = skb;
+ 			}
+ 		}
+@@ -291,8 +292,8 @@ static netdev_tx_t wanxl_xmit(struct sk_buff *skb, struct net_device *dev)
+ #endif
+ 
+ 	port->tx_skbs[port->tx_out] = skb;
+-	desc->address = pci_map_single(port->card->pdev, skb->data, skb->len,
+-				       PCI_DMA_TODEVICE);
++	desc->address = dma_map_single(&port->card->pdev->dev, skb->data,
++				       skb->len, DMA_TO_DEVICE);
+ 	desc->length = skb->len;
+ 	desc->stat = PACKET_FULL;
+ 	writel(1 << (DOORBELL_TO_CARD_TX_0 + port->node),
+@@ -451,9 +452,9 @@ static int wanxl_close(struct net_device *dev)
+ 
+ 		if (desc->stat != PACKET_EMPTY) {
+ 			desc->stat = PACKET_EMPTY;
+-			pci_unmap_single(port->card->pdev, desc->address,
+-					 port->tx_skbs[i]->len,
+-					 PCI_DMA_TODEVICE);
++			dma_unmap_single(&port->card->pdev->dev,
++					 desc->address, port->tx_skbs[i]->len,
++					 DMA_TO_DEVICE);
+ 			dev_kfree_skb(port->tx_skbs[i]);
+ 		}
+ 	}
+@@ -524,9 +525,9 @@ static void wanxl_pci_remove_one(struct pci_dev *pdev)
+ 
+ 	for (i = 0; i < RX_QUEUE_LENGTH; i++)
+ 		if (card->rx_skbs[i]) {
+-			pci_unmap_single(card->pdev,
++			dma_unmap_single(&card->pdev->dev,
+ 					 card->status->rx_descs[i].address,
+-					 BUFFER_LENGTH, PCI_DMA_FROMDEVICE);
++					 BUFFER_LENGTH, DMA_FROM_DEVICE);
+ 			dev_kfree_skb(card->rx_skbs[i]);
+ 		}
+ 
+@@ -534,8 +535,8 @@ static void wanxl_pci_remove_one(struct pci_dev *pdev)
+ 		iounmap(card->plx);
+ 
+ 	if (card->status)
+-		pci_free_consistent(pdev, sizeof(struct card_status),
+-				    card->status, card->status_address);
++		dma_free_coherent(&pdev->dev, sizeof(struct card_status),
++				  card->status, card->status_address);
+ 
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+@@ -579,8 +580,8 @@ static int wanxl_pci_init_one(struct pci_dev *pdev,
+ 	   We set both dma_mask and consistent_dma_mask to 28 bits
+ 	   and pray pci_alloc_consistent() will use this info. It should
+ 	   work on most platforms */
+-	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(28)) ||
+-	    pci_set_dma_mask(pdev, DMA_BIT_MASK(28))) {
++	if (dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(28)) ||
++	    dma_set_mask(&pdev->dev, DMA_BIT_MASK(28))) {
+ 		pr_err("No usable DMA configuration\n");
+ 		pci_disable_device(pdev);
+ 		return -EIO;
+@@ -608,9 +609,9 @@ static int wanxl_pci_init_one(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, card);
+ 	card->pdev = pdev;
+ 
+-	card->status = pci_alloc_consistent(pdev,
+-					    sizeof(struct card_status),
+-					    &card->status_address);
++	card->status = dma_alloc_coherent(&pdev->dev,
++					  sizeof(struct card_status),
++					  &card->status_address, GFP_KERNEL);
+ 	if (card->status = NULL) {
+ 		wanxl_pci_remove_one(pdev);
+ 		return -ENOBUFS;
+@@ -625,8 +626,8 @@ static int wanxl_pci_init_one(struct pci_dev *pdev,
+ 	/* FIXME when PCI/DMA subsystems are fixed.
+ 	   We set both dma_mask and consistent_dma_mask back to 32 bits
+ 	   to indicate the card can do 32-bit DMA addressing */
+-	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)) ||
+-	    pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
++	if (dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32)) ||
++	    dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) {
+ 		pr_err("No usable DMA configuration\n");
+ 		wanxl_pci_remove_one(pdev);
+ 		return -EIO;
+@@ -699,9 +700,8 @@ static int wanxl_pci_init_one(struct pci_dev *pdev,
+ 		card->rx_skbs[i] = skb;
+ 		if (skb)
+ 			card->status->rx_descs[i].address -				pci_map_single(card->pdev, skb->data,
+-					       BUFFER_LENGTH,
+-					       PCI_DMA_FROMDEVICE);
++				dma_map_single(&card->pdev->dev, skb->data,
++					       BUFFER_LENGTH, DMA_FROM_DEVICE);
+ 	}
+ 
+ 	mem = ioremap(mem_phy, PDM_OFFSET + sizeof(firmware));
+-- 
+2.25.1
