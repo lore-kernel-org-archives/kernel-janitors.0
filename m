@@ -1,29 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Aug 2020 10:19:59 +0000
-Subject: Re: [PATCH net-next] ath11k: return -ENOMEM on allocation failure
-Message-Id: <20200827101959.C95A3C433C6@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Aug 2020 11:31:55 +0000
+Subject: [PATCH] drm/vmwgfx: fix spelling mistake "Cound" -> "Could"
+Message-Id: <20200805113155.18006-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200826113417.GE393664@mwanda>
-In-Reply-To: <20200826113417.GE393664@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Govind Singh <govinds@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Roland Scheidegger <sroland@vmware.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Returning PTR_ERR(NULL) means success, but we should return -ENOMEM.
-> 
-> Fixes: 1399fb87ea3e ("ath11k: register MHI controller device for QCA6390")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+There is a spelling mistake in a DRM_ERROR message. Fix it.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-fd0a09097233 ath11k: return -ENOMEM on allocation failure
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 4284c4bd444d..e67e2e8f6e6f 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -3037,7 +3037,7 @@ static int vmw_cmd_dx_bind_streamoutput(struct vmw_private *dev_priv,
+ 	res = vmw_dx_streamoutput_lookup(vmw_context_res_man(ctx_node->ctx),
+ 					 cmd->body.soid);
+ 	if (IS_ERR(res)) {
+-		DRM_ERROR("Cound not find streamoutput to bind.\n");
++		DRM_ERROR("Could not find streamoutput to bind.\n");
+ 		return PTR_ERR(res);
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/11738005/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
