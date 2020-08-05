@@ -1,44 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 18 Aug 2020 16:55:50 +0000
-Subject: Re: [PATCH] sound: remove duplicate "the the" phrase in Kconfig text
-Message-Id: <159776961933.56094.6016392996060777072.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Aug 2020 10:38:57 +0000
+Subject: [PATCH] power: pm2301_charger: fix spelling mistake "chargind" -> "charging"
+Message-Id: <20200805103857.15725-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200817224706.6139-1-colin.king@canonical.com>
-In-Reply-To: <20200817224706.6139-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Simek <michal.simek@xilinx.com>, Colin King <colin.king@canonical.com>, linux-arm-kernel@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 17 Aug 2020 23:47:06 +0100, Colin King wrote:
-> There are a couple of occurrences of "the the" in the Kconfig
-> text. Fix these.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+There is a spelling mistake in a dev_dbg message. Fix it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/pm2301_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] sound: remove duplicate "the the" phrase in Kconfig text
-      commit: 466a806a7d2beffa6a79d61dbabac8a48685c3e2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/power/supply/pm2301_charger.c b/drivers/power/supply/pm2301_charger.c
+index 17749fc90e16..787867805944 100644
+--- a/drivers/power/supply/pm2301_charger.c
++++ b/drivers/power/supply/pm2301_charger.c
+@@ -396,7 +396,7 @@ static int pm2_int_reg3(void *pm2_data, int val)
+ 
+ 	if (val & (PM2XXX_INT4_ITCHARGINGON)) {
+ 		dev_dbg(pm2->dev ,
+-			"chargind operation has started\n");
++			"charging operation has started\n");
+ 	}
+ 
+ 	if (val & (PM2XXX_INT4_ITVRESUME)) {
+-- 
+2.27.0
