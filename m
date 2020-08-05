@@ -1,33 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Aug 2020 11:20:03 +0000
-Subject: [PATCH] scsi: aacraid: remove erroneous fallthrough annotation
-Message-Id: <20200825112003.GD285523@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Aug 2020 10:28:05 +0000
+Subject: [PATCH] omapfb: fix spelling mistake "propert" -> "property"
+Message-Id: <20200805102805.15353-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, Dave Carroll <David.Carroll@microsemi.com>, Johannes Thumshirn <jthumshirn@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This fallthrough annotation is unreachable so we can delete it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c4e2fbca374b ("scsi: aacraid: Reworked scsi command submission path")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in a pr_err message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/aacraid/aachba.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/dss/venc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
-index fd6ae5c38086..2fb1881954c7 100644
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -3253,7 +3253,6 @@ int aac_scsi_cmd(struct scsi_cmnd * scsicmd)
- 	case START_STOP:
- 		return aac_start_stop(scsicmd);
- 
--		fallthrough;
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/venc.c b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
+index 0b0ad20afd63..f560fa4d7786 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/venc.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
+@@ -787,7 +787,7 @@ static int venc_probe_of(struct platform_device *pdev)
+ 		venc.type = OMAP_DSS_VENC_TYPE_SVIDEO;
+ 		break;
  	default:
- 	/*
- 	 *	Unhandled commands
+-		dev_err(&pdev->dev, "bad channel propert '%d'\n", channels);
++		dev_err(&pdev->dev, "bad channel property '%d'\n", channels);
+ 		r = -EINVAL;
+ 		goto err;
+ 	}
 -- 
-2.28.0
+2.27.0
