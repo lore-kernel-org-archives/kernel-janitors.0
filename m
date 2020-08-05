@@ -1,43 +1,87 @@
-From: Alex Elder <elder@linaro.org>
-Date: Wed, 05 Aug 2020 12:58:06 +0000
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: audio: Uninitialized variable in gbaudio_remove_controls
-Message-Id: <655f7d92-308e-6c33-e517-2142f767d114@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Aug 2020 09:55:01 +0000
+Subject: [PATCH] HID: roccat: add bounds checking in kone_sysfs_write_settings()
+Message-Id: <20200805095501.GD483832@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804101601.GA392148@mwanda>
-In-Reply-To: <20200804101601.GA392148@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Johan Hovold <johan@kernel.org>, Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Cc: devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org, Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org
+To: Stefan Achatz <erazor_de@users.sourceforge.net>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 8/4/20 5:16 AM, Dan Carpenter wrote:
-> The "err" variable is not meaningful so there is no need to print it.
-> It's uninitialized on the first iteration through the loop.
-> 
-> Fixes: 510e340efe0c ("staging: greybus: audio: Add helper APIs for dynamic audio modules")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the original code we didn't check if the new value for
+"settings->startup_profile" was within bounds that could possibly
+result in an out of bounds array acccess.  What we did was we checked if
+we could write the data to the firmware and it's possibly the firmware
+checks these values but there is no way to know.  It's safer and easier
+to read if we check it in the kernel as well.
 
-This is a good fix, thanks.
+I also added a check to ensure that "settings->size" was correct.  The
+comments say that the only valid value is 36 which is sizeof(struct
+kone_settings).
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+Fixes: 14bf62cde794 ("HID: add driver for Roccat Kone gaming mouse")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This isn't tested.  Checking settings->size seems like a good idea, but
+there is a slight risky because maybe invalid values used to be allowed
+and I don't want to break user space.
 
-> ---
->  drivers/staging/greybus/audio_helper.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/greybus/audio_helper.c b/drivers/staging/greybus/audio_helper.c
-> index 8b100a71f02e..237531ba60f3 100644
-> --- a/drivers/staging/greybus/audio_helper.c
-> +++ b/drivers/staging/greybus/audio_helper.c
-> @@ -173,8 +173,7 @@ static int gbaudio_remove_controls(struct snd_card *card, struct device *dev,
->  		id.index = control->index;
->  		kctl = snd_ctl_find_id(card, &id);
->  		if (!kctl) {
-> -			dev_err(dev, "%d: Failed to find %s\n", err,
-> -				control->name);
-> +			dev_err(dev, "Failed to find %s\n", control->name);
->  			continue;
->  		}
->  		err = snd_ctl_remove(card, kctl);
-> 
+ drivers/hid/hid-roccat-kone.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/hid/hid-roccat-kone.c b/drivers/hid/hid-roccat-kone.c
+index 1a6e600197d0..5e8e1517f23c 100644
+--- a/drivers/hid/hid-roccat-kone.c
++++ b/drivers/hid/hid-roccat-kone.c
+@@ -294,31 +294,41 @@ static ssize_t kone_sysfs_write_settings(struct file *fp, struct kobject *kobj,
+ 	struct kone_device *kone = hid_get_drvdata(dev_get_drvdata(dev));
+ 	struct usb_device *usb_dev = interface_to_usbdev(to_usb_interface(dev));
+ 	int retval = 0, difference, old_profile;
++	struct kone_settings *settings = (struct kone_settings *)buf;
+ 
+ 	/* I need to get my data in one piece */
+ 	if (off != 0 || count != sizeof(struct kone_settings))
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&kone->kone_lock);
+-	difference = memcmp(buf, &kone->settings, sizeof(struct kone_settings));
++	difference = memcmp(settings, &kone->settings,
++			    sizeof(struct kone_settings));
+ 	if (difference) {
+-		retval = kone_set_settings(usb_dev,
+-				(struct kone_settings const *)buf);
+-		if (retval) {
+-			mutex_unlock(&kone->kone_lock);
+-			return retval;
++		if (settings->size != sizeof(struct kone_settings) ||
++		    settings->startup_profile < 1 ||
++		    settings->startup_profile > 5) {
++			retval = -EINVAL;
++			goto unlock;
+ 		}
+ 
++		retval = kone_set_settings(usb_dev, settings);
++		if (retval)
++			goto unlock;
++
+ 		old_profile = kone->settings.startup_profile;
+-		memcpy(&kone->settings, buf, sizeof(struct kone_settings));
++		memcpy(&kone->settings, settings, sizeof(struct kone_settings));
+ 
+ 		kone_profile_activated(kone, kone->settings.startup_profile);
+ 
+ 		if (kone->settings.startup_profile != old_profile)
+ 			kone_profile_report(kone, kone->settings.startup_profile);
+ 	}
++unlock:
+ 	mutex_unlock(&kone->kone_lock);
+ 
++	if (retval)
++		return retval;
++
+ 	return sizeof(struct kone_settings);
+ }
+ static BIN_ATTR(settings, 0660, kone_sysfs_read_settings,
+-- 
+2.27.0
