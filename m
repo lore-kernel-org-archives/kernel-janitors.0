@@ -1,38 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Aug 2020 08:59:33 +0000
-Subject: [PATCH] scsi: libcxgbi: Fix a use after free in cxgbi_conn_xmit_pdu()
-Message-Id: <20200824085933.GD208317@mwanda>
+Date: Wed, 05 Aug 2020 09:52:07 +0000
+Subject: [PATCH] cifs: Fix an error pointer dereference in cifs_mount()
+Message-Id: <20200805095207.GC483832@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Austin Kim <austindh.kim@gmail.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>
+Cc: Aurelien Aptel <aaptel@suse.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-We accidentally move this logging printk after the free, but that leads
-to a use after free.
+The error handling calls kfree(full_path) so we can't let it be a NULL
+pointer.  There used to be a NULL assignment here but we accidentally
+deleted it.  Add it back.
 
-Fixes: e33c2482289b ("scsi: cxgb4i: Add support for iSCSI segmentation offload")
+Fixes: 7efd08158261 ("cifs: document and cleanup dfs mount")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/scsi/cxgbi/libcxgbi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/connect.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
-index 71aebaf533ea..0e8621a6956d 100644
---- a/drivers/scsi/cxgbi/libcxgbi.c
-+++ b/drivers/scsi/cxgbi/libcxgbi.c
-@@ -2457,10 +2457,10 @@ int cxgbi_conn_xmit_pdu(struct iscsi_task *task)
- 		return err;
- 	}
- 
--	__kfree_skb(skb);
- 	log_debug(1 << CXGBI_DBG_ISCSI | 1 << CXGBI_DBG_PDU_TX,
- 		  "itt 0x%x, skb 0x%p, len %u/%u, xmit err %d.\n",
- 		  task->itt, skb, skb->len, skb->data_len, err);
-+	__kfree_skb(skb);
- 	iscsi_conn_printk(KERN_ERR, task->conn, "xmit err %d.\n", err);
- 	iscsi_conn_failure(task->conn, ISCSI_ERR_XMIT_FAILED);
- 	return err;
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 0ad1309e88d3..a275ee399dce 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -4886,6 +4886,7 @@ int cifs_mount(struct cifs_sb_info *cifs_sb, struct smb_vol *vol)
+ 		full_path = build_unc_path_to_root(vol, cifs_sb, !!count);
+ 		if (IS_ERR(full_path)) {
+ 			rc = PTR_ERR(full_path);
++			full_path = NULL;
+ 			break;
+ 		}
+ 		/* Chase referral */
 -- 
-2.28.0
+2.27.0
