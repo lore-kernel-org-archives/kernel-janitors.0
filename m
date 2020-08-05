@@ -1,52 +1,35 @@
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 14 Aug 2020 19:48:25 +0000
-Subject: Re: [PATCH][V2] of/address: check for invalid range.cpu_addr
-Message-Id: <CAL_Jsq+hBnFui6fOoY9jv4YFYX7MdiPhdA_dWHiFrMzLXJOYbw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 05 Aug 2020 14:14:59 +0000
+Subject: [PATCH] RDMA/usnic: fix spelling mistake "transistion" -> "transition"
+Message-Id: <20200805141459.23069-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200813114344.67730-1-colin.king@canonical.com>
-In-Reply-To: <20200813114344.67730-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Christian Benvenuti <benve@cisco.com>, Nelson Escobar <neescoba@cisco.com>, Parvi Kaustubhi <pkaustub@cisco.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 13, 2020 at 5:43 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently invalid CPU addresses are not being sanity checked resulting in
-> SATA setup failure on a SynQuacer SC2A11 development machine. The original
-> check was removed by and earlier commit, so add a sanity check back in
-> to avoid this regression.
->
-> Fixes: 7a8b64d17e35 ("of/address: use range parser for of_dma_get_range")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/of/address.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index 590493e04b01..6ffbf7b99e92 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -985,6 +985,10 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
->                         /* Don't error out as we'd break some existing DTs */
->                         continue;
->                 }
-> +               if (range.cpu_addr = OF_BAD_ADDR) {
-> +                       pr_err("Translation of CPU address failed on node (%pOF)\n", node);
-> +                       continue;
-> +               }
->                 dma_offset = range.cpu_addr - range.bus_addr;
->
->                 /* Take lower and upper limits */
-> --
->
-> V2: print message using pr_err and don't print range.cpu_addr as it's always
->     going to be OF_BAD_ADDR so the information is pointless.
+From: Colin Ian King <colin.king@canonical.com>
 
-Shouldn't we print the bus_addr like the original message did?
-Otherwise, we don't really know what entry is problematic.
+There is a spelling mistake in a usnic_err error message. Fix it.
 
-Rob
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/usnic/usnic_ib_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+index c9abe1c01e4e..662e7fc7f628 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+@@ -120,7 +120,7 @@ static void usnic_ib_qp_grp_modify_active_to_err(struct usnic_ib_dev *us_ibdev)
+ 								IB_QPS_ERR,
+ 								NULL);
+ 				if (status) {
+-					usnic_err("Failed to transistion qp grp %u from %s to %s\n",
++					usnic_err("Failed to transition qp grp %u from %s to %s\n",
+ 						qp_grp->grp_id,
+ 						usnic_ib_qp_grp_state_to_string
+ 						(cur_state),
+-- 
+2.27.0
