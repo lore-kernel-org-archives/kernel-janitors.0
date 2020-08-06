@@ -1,45 +1,199 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Wed, 05 Aug 2020 10:20:02 +0000
-Subject: Re: [PATCH] habanalabs: Fix a loop in gaudi_extract_ecc_info()
-Message-Id: <CAFCwf12iuz-q8U7_VEJvxKZpzfauKASjMDHOk7HMncuBnAyo4w@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 06 Aug 2020 05:44:04 +0000
+Subject: [PATCH] tty: synclink_gt: switch from 'pci_' to 'dma_' API
+Message-Id: <20200806054404.728854-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200805095105.GA483832@mwanda>
-In-Reply-To: <20200805095105.GA483832@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Omer Shpigelman <oshpigelman@habana.ai>, Ofir Bitton <obitton@habana.ai>, Tomer Tayar <ttayar@habana.ai>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Aug 5, 2020 at 12:51 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The condition was reversed.  It should have been less than instead of
-> greater than.  The result is that we never enter the loop.
->
-> Fixes: fcc6a4e60678 ("habanalabs: Extract ECC information from FW")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-> index 00a0a7238d81..de2f81b80ced 100644
-> --- a/drivers/misc/habanalabs/gaudi/gaudi.c
-> +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-> @@ -5215,7 +5215,7 @@ static int gaudi_extract_ecc_info(struct hl_device *hdev,
->         *memory_wrapper_idx = 0xFF;
->
->         /* Iterate through memory wrappers, a single bit must be set */
-> -       for (i = 0 ; i > num_mem_regs ; i++) {
-> +       for (i = 0 ; i < num_mem_regs ; i++) {
->                 err_addr += i * 4;
->                 err_word = RREG32(err_addr);
->                 if (err_word) {
-> --
-> 2.27.0
->
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Thanks!
-Applied to -fixes
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'alloc_desc()' and 'alloc_bufs()', GFP_KERNEL
+can be used because it is only called from a probe function and no lock is
+acquired.
+The call chain is:
+   init_one                    (the probe function)
+      --> device_init
+         --> alloc_dma_bufs
+            --> alloc_desc
+            --> alloc_bufs
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/tty/synclink_gt.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
+index b794177ccfb9..1edf06653148 100644
+--- a/drivers/tty/synclink_gt.c
++++ b/drivers/tty/synclink_gt.c
+@@ -3341,8 +3341,8 @@ static int alloc_desc(struct slgt_info *info)
+ 	unsigned int pbufs;
+ 
+ 	/* allocate memory to hold descriptor lists */
+-	info->bufs = pci_zalloc_consistent(info->pdev, DESC_LIST_SIZE,
+-					   &info->bufs_dma_addr);
++	info->bufs = dma_alloc_coherent(&info->pdev->dev, DESC_LIST_SIZE,
++					&info->bufs_dma_addr, GFP_KERNEL);
+ 	if (info->bufs = NULL)
+ 		return -ENOMEM;
+ 
+@@ -3384,7 +3384,8 @@ static int alloc_desc(struct slgt_info *info)
+ static void free_desc(struct slgt_info *info)
+ {
+ 	if (info->bufs != NULL) {
+-		pci_free_consistent(info->pdev, DESC_LIST_SIZE, info->bufs, info->bufs_dma_addr);
++		dma_free_coherent(&info->pdev->dev, DESC_LIST_SIZE,
++				  info->bufs, info->bufs_dma_addr);
+ 		info->bufs  = NULL;
+ 		info->rbufs = NULL;
+ 		info->tbufs = NULL;
+@@ -3395,7 +3396,9 @@ static int alloc_bufs(struct slgt_info *info, struct slgt_desc *bufs, int count)
+ {
+ 	int i;
+ 	for (i=0; i < count; i++) {
+-		if ((bufs[i].buf = pci_alloc_consistent(info->pdev, DMABUFSIZE, &bufs[i].buf_dma_addr)) = NULL)
++		bufs[i].buf = dma_alloc_coherent(&info->pdev->dev, DMABUFSIZE,
++						 &bufs[i].buf_dma_addr, GFP_KERNEL);
++		if (!bufs[i].buf)
+ 			return -ENOMEM;
+ 		bufs[i].pbuf  = cpu_to_le32((unsigned int)bufs[i].buf_dma_addr);
+ 	}
+@@ -3408,7 +3411,8 @@ static void free_bufs(struct slgt_info *info, struct slgt_desc *bufs, int count)
+ 	for (i=0; i < count; i++) {
+ 		if (bufs[i].buf = NULL)
+ 			continue;
+-		pci_free_consistent(info->pdev, DMABUFSIZE, bufs[i].buf, bufs[i].buf_dma_addr);
++		dma_free_coherent(&info->pdev->dev, DMABUFSIZE, bufs[i].buf,
++				  bufs[i].buf_dma_addr);
+ 		bufs[i].buf = NULL;
+ 	}
+ }
+-- 
+2.25.1
