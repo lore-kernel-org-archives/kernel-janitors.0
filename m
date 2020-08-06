@@ -1,45 +1,48 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 13 Aug 2020 17:34:58 +0000
-Subject: [PATCH] staging: rtl8192u: Do not use GFP_KERNEL in atomic context
-Message-Id: <20200813173458.758284-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Aug 2020 16:43:22 +0000
+Subject: [PATCH][next] thermal: mediatek: remove redundant initialization of variables
+Message-Id: <20200806164322.91568-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, stephen@brennan.io, rohitsarkar5398@gmail.com, pterjan@google.com, paulo.miguel.almeida.rodenas@gmail.com, okash.khawaja@gmail.com
-Cc: devel@driverdev.osuosl.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'rtl8192_irq_rx_tasklet()' is a tasklet initialized in
-'rtl8192_init_priv_task()'.
-From this function it is possible to allocate some memory with the
-GFP_KERNEL flag, which is not allowed in the atomic context of a tasklet.
+From: Colin Ian King <colin.king@canonical.com>
 
-Use GFP_ATOMIC instead.
+There are several variables that are being initialized with values
+that are never read and the variables are being re-assigned later
+on. Remove the redundant initializations.
 
-The call chain is:
-  rtl8192_irq_rx_tasklet            (in r8192U_core.c)
-    --> rtl8192_rx_nomal            (in r8192U_core.c)
-      --> ieee80211_rx              (in ieee80211/ieee80211_rx.c)
-        --> RxReorderIndicatePacket (in ieee80211/ieee80211_rx.c)
-
-Fixes: 79a5ccd97209 ("staging: rtl8192u: fix large frame size compiler warning")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/mtk_thermal.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index 195d963c4fbb..b6fee7230ce0 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -597,7 +597,7 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
+diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
+index 0bd7aa564bc2..88f3cf75af0d 100644
+--- a/drivers/thermal/mtk_thermal.c
++++ b/drivers/thermal/mtk_thermal.c
+@@ -573,12 +573,12 @@ static int raw_to_mcelsius_v1(struct mtk_thermal *mt, int sensno, s32 raw)
  
- 	prxbIndicateArray = kmalloc_array(REORDER_WIN_SIZE,
- 					  sizeof(struct ieee80211_rxb *),
--					  GFP_KERNEL);
-+					  GFP_ATOMIC);
- 	if (!prxbIndicateArray)
- 		return;
+ static int raw_to_mcelsius_v2(struct mtk_thermal *mt, int sensno, s32 raw)
+ {
+-	s32 format_1 = 0;
+-	s32 format_2 = 0;
+-	s32 g_oe = 1;
+-	s32 g_gain = 1;
+-	s32 g_x_roomt = 0;
+-	s32 tmp = 0;
++	s32 format_1;
++	s32 format_2;
++	s32 g_oe;
++	s32 g_gain;
++	s32 g_x_roomt;
++	s32 tmp;
  
+ 	if (raw = 0)
+ 		return 0;
 -- 
-2.25.1
+2.27.0
