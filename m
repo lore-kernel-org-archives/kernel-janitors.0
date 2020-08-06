@@ -1,42 +1,28 @@
-From: "Timo A. Aranjo" <timo.aranjo@aol.com>
-Date: Wed, 26 Aug 2020 01:21:01 +0000
-Subject: [PATCH] Staging: sm750fb: Fix basic coding style issues
-Message-Id: <20200826012101.12162-1-timo.aranjo@aol.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Thu, 06 Aug 2020 22:36:21 +0000
+Subject: Re: [PATCH] input: sentelic: fix error return when fsp_reg_write fails
+Message-Id: <20200806223621.GM1665100@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200603141218.131663-1-colin.king@canonical.com>
+In-Reply-To: <20200603141218.131663-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Tai-hwa Liang <avatar@sentelic.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The word "enought" was changed to read as "enough".
-In addition to this, there was a missing new-line after varaible
-declarations within a function.
+On Wed, Jun 03, 2020 at 03:12:18PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently when the call to fsp_reg_write fails -EIO is not being returned
+> because the count is being returned instead of the return value in retval.
+> Fix this by returning the value in retval instead of count.
+> 
+> Addresses-Coverity: ("Unused value")
+> Fixes: fc69f4a6af49 ("Input: add new driver for Sentelic Finger Sensing Pad")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Timo A. Aranjo <timo.aranjo@aol.com>
----
- drivers/staging/sm750fb/sm750.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applied, thank you.
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index 84fb585a5739..029f0d09e966 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -411,6 +411,7 @@ static int __maybe_unused lynxfb_suspend(struct device *dev)
- {
- 	struct fb_info *info;
- 	struct sm750_dev *sm750_dev;
-+
- 	sm750_dev = dev_get_drvdata(dev);
- 
- 	console_lock();
-@@ -500,7 +501,7 @@ static int lynxfb_ops_check_var(struct fb_var_screeninfo *var,
- 	var->height = var->width = -1;
- 	var->accel_flags = 0;/* FB_ACCELF_TEXT; */
- 
--	/* check if current fb's video memory big enought to hold the onscreen*/
-+	/* check if current fb's video memory big enough to hold the onscreen*/
- 	request = var->xres_virtual * (var->bits_per_pixel >> 3);
- 	/* defaulty crtc->channel go with par->index */
- 
 -- 
-2.25.1
+Dmitry
