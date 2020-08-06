@@ -1,33 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 02 Aug 2020 14:54:02 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: remove redundant initialization of variables
-Message-Id: <20200802145402.1BAD0C433C6@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Aug 2020 11:50:59 +0000
+Subject: [PATCH] mmc: sdhci-pci-o2micro: fix spelling mistake "unsupport" -> "unsupported"
+Message-Id: <20200806115059.59241-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200723163214.995226-1-colin.king@canonical.com>
-In-Reply-To: <20200723163214.995226-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variables ant_num and single_ant_path are being initialized with a
-> value that is never read and are being updated later with a new value.
-> The initializations are redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+There is a spelling mistake in a pr_info message. Fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sdhci-pci-o2micro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-56b06d4da812 rtlwifi: btcoex: remove redundant initialization of variables ant_num and single_ant_path
-
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index fa76748d8929..4eca8d2d0599 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -469,7 +469,7 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
+ 
+ 	ret = pci_find_capability(chip->pdev, PCI_CAP_ID_MSI);
+ 	if (!ret) {
+-		pr_info("%s: unsupport msi, use INTx irq\n",
++		pr_info("%s: unsupported msi, use INTx irq\n",
+ 			mmc_hostname(host->mmc));
+ 		return;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/11681295/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
