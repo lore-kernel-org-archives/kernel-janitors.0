@@ -1,55 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 14 Aug 2020 15:05:22 +0000
-Subject: Re: [PATCH 7/7] ath: drop unnecessary list_empty
-Message-Id: <20200814150522.C0936C43391@smtp.codeaurora.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Thu, 06 Aug 2020 22:34:53 +0000
+Subject: Re: [PATCH][V2] input: ims-pcu: return error code rather than -ENOMEM
+Message-Id: <20200806223453.GK1665100@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
+References: <20200603152151.139337-1-colin.king@canonical.com>
+In-Reply-To: <20200603152151.139337-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@inria.fr> wrote:
+On Wed, Jun 03, 2020 at 04:21:51PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the assignment of -ENOMEM to error is redudant because error
+> is not being read and -ENOMEM is being hard coded as an error return.
+> Fix this by returning the error code in variable 'error'; this also
+> allows the error code from a failed call to input_register_device to
+> be preserved and returned to the caller rather than just returning
+> a possibly inappropriate -ENOMEM.
+> 
+> Kudos to Dan Carpenter for the suggestion of an improved fix.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
 
-> list_for_each_entry{_safe} is able to handle an empty list.
-> The only effect of avoiding the loop is not initializing the
-> index variable.
-> Drop list_empty tests in cases where these variables are not
-> used.
-> 
-> Note that list_for_each_entry{_safe} is defined in terms of
-> list_first_entry, which indicates that it should not be used on an
-> empty list.  But in list_for_each_entry{_safe}, the element obtained
-> by list_first_entry is not really accessed, only the address of its
-> list_head field is compared to the address of the list head, so the
-> list_first_entry is safe.
-> 
-> The semantic patch that makes this change for the list_for_each_entry
-> case is as follows: (http://coccinelle.lip6.fr/)
-> 
-> <smpl>
-> @@
-> expression x,e;
-> statement S;
-> identifier i;
-> @@
-> 
-> -if (!(list_empty(x)))
->    list_for_each_entry(i,x,...) S
->  ... when != i
-> ? i = e
-> </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-
-Patch applied to ath-next branch of ath.git, thanks.
-
-18c25b4019ca ath: drop unnecessary list_empty
+Applied, thank you.
 
 -- 
-https://patchwork.kernel.org/patch/11685677/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Dmitry
