@@ -1,35 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Aug 2020 07:50:52 +0000
-Subject: [PATCH][next] soc: ti: omap-prm: fix spelling mistake "unusupported" -> "unsupported"
-Message-Id: <20200819075052.48833-1-colin.king@canonical.com>
+From: tytso@mit.edu
+Date: Thu, 06 Aug 2020 04:09:36 +0000
+Subject: Re: [PATCH] ext4: Delete unnecessary checks before brelse()
+Message-Id: <20200806040936.GA7657@mit.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
+In-Reply-To: <0d713702-072f-a89c-20ec-ca70aa83a432@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, Jun 13, 2020 at 08:07:56PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 13 Jun 2020 19:12:24 +0200
+> 
+> The brelse() function tests whether its argument is NULL
+> and then returns immediately.
+> Thus remove the tests which are not needed around the shown calls.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-There is a spelling mistake in a dev_warn warning. Fix it.
+Applied, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/soc/ti/omap_prm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/ti/omap_prm.c b/drivers/soc/ti/omap_prm.c
-index 980b04c38fd9..30862fc174ae 100644
---- a/drivers/soc/ti/omap_prm.c
-+++ b/drivers/soc/ti/omap_prm.c
-@@ -343,7 +343,7 @@ static int omap_prm_domain_attach_dev(struct generic_pm_domain *domain,
- 		return ret;
- 
- 	if (pd_args.args_count != 0)
--		dev_warn(dev, "%s: unusupported #power-domain-cells: %i\n",
-+		dev_warn(dev, "%s: unsupported #power-domain-cells: %i\n",
- 			 prmd->pd.name, pd_args.args_count);
- 
- 	genpd_data = dev_gpd_data(dev);
--- 
-2.27.0
+						- Ted
