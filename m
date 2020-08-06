@@ -1,57 +1,49 @@
-From: info@furshetcrimea.ru
-Date: Fri, 07 Aug 2020 16:09:14 +0000
-Subject: Bei Interesse antworten.
-Message-Id: <auto-000011168862@furshetcrimea.ru>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Aug 2020 11:33:26 +0000
+Subject: [PATCH] wl1251, wlcore: fix spelling mistake "buld" -> "build"
+Message-Id: <20200806113326.53779-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <auto-000011097438@furshetcrimea.ru>
-In-Reply-To: <auto-000011097438@furshetcrimea.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sch=F6ne Gr=FC=DFe,
+From: Colin Ian King <colin.king@canonical.com>
 
-Mein Name ist MATTIAS SJOBORG, ich bin Schweizer Staatsb=FCrger und (Vorsit=
-zender des Verg=FCtungs- und Nominierungsausschusses) von Tethys Petroleum,=
- einem multinationalen =D6lkonzern mit Sitz in London-England, Gro=DFbritan=
-nien. Ich bitte Sie um Ihre Hilfe, um die Summe von vierzig Millionen Dolla=
-r abzurufen, die aus zwei Sendungsboxen besteht.
+There are spelling mistakes in warning messages. Fix these.
 
-Dieses Geld wurde von der Firma erworben und von einem Diplomaten begleitet=
- und korrekt in einer Sicherheitsfirma in Amerika hinterlegt. Mein Grund da=
-f=FCr ist, dass ich von der Firma zu lange um meine Anspr=FCche betrogen wu=
-rde, nur weil ich kein bin Britisch. Die Kontaktdaten des Diplomaten erhalt=
-en Sie, wenn Sie Ihr Interesse bekunden, mir zu helfen.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ti/wl1251/main.c | 2 +-
+ drivers/net/wireless/ti/wlcore/cmd.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Jede der Schachteln enth=E4lt 20 Mio. USD. F=FCr Ihre Hilfe bin ich bereit,=
- 40% an Sie freizugeben. Aus Sicherheitsgr=FCnden wurde die Sendung als VER=
-TRAULICHE DIPLOMATISCHE DOKUMENTE registriert, und ich kann erkl=E4ren, war=
-um dies so erkl=E4rt wurde. Denken Sie daran, dass der Diplomat den Inhalt =
-der Sendung nicht kennt. Er ist seit einem Monat dort, w=E4hrend ich nach e=
-inem zuverl=E4ssigen Partner suchen m=F6chte. Ich werde das Land verlassen,=
- sobald die Sendung f=FCr Sie an Sie geliefert wird Private Investitionen u=
-nd ich haben geschworen, niemals nach London zur=FCckzukehren. Bitte, ich b=
-rauche Ihre dringende Antwort, bevor meine Pl=E4ne, das Unternehmen zu verl=
-assen, entdeckt werden.
-
-www.tethyspetroleum.com/tethys/static/EN_US/au_seniormanagement.html
-
-Im Moment ist die sicherste Form der Korrespondenz meine eigene E-Mail-Adre=
-sse. Bitte antworten Sie im Interesse der Vertraulichkeit nur =FCber meine =
-direkte E-Mail-Adresse. Antworten Sie zusammen mit Ihrer direkten Telefon- =
-und Faxnummer, unter der ich Sie alternativ erreichen kann.
-
-Bitte, wenn Sie nicht bereit und interessiert sind, mir zu helfen, l=F6sche=
-n Sie bitte diese E-Mail aus Ihrer E-Mail und tun Sie so, als h=E4tten Sie =
-sie nie erhalten.
-
-Freundliche Gr=FC=DFe,
-Mr.Mattias Sjoborg
-(Vorsitzender des Verg=FCtungs- und Nominierungsausschusses)
-Tethys Petroleum.
-London, England
-
---=20
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+diff --git a/drivers/net/wireless/ti/wl1251/main.c b/drivers/net/wireless/ti/wl1251/main.c
+index 480a8d084878..136a0d3b23c9 100644
+--- a/drivers/net/wireless/ti/wl1251/main.c
++++ b/drivers/net/wireless/ti/wl1251/main.c
+@@ -558,7 +558,7 @@ static int wl1251_build_null_data(struct wl1251 *wl)
+ out:
+ 	dev_kfree_skb(skb);
+ 	if (ret)
+-		wl1251_warning("cmd buld null data failed: %d", ret);
++		wl1251_warning("cmd build null data failed: %d", ret);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
+index 6ef8fc9ae627..93424a1dffc9 100644
+--- a/drivers/net/wireless/ti/wlcore/cmd.c
++++ b/drivers/net/wireless/ti/wlcore/cmd.c
+@@ -1080,7 +1080,7 @@ int wl12xx_cmd_build_null_data(struct wl1271 *wl, struct wl12xx_vif *wlvif)
+ out:
+ 	dev_kfree_skb(skb);
+ 	if (ret)
+-		wl1271_warning("cmd buld null data failed %d", ret);
++		wl1271_warning("cmd build null data failed %d", ret);
+ 
+ 	return ret;
+ 
+-- 
+2.27.0
