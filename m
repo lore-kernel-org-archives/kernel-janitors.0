@@ -1,58 +1,90 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 04 Aug 2020 02:42:56 +0000
-Subject: Re: [PATCH -next v3] virtio_ring: Avoid loop when vq is broken in virtqueue_poll
-Message-Id: <12bf457d-1283-62c6-6901-29e7a14831ca@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Aug 2020 16:08:28 +0000
+Subject: [PATCH][next] vdpa/mlx5: fix memory allocation failure checks
+Message-Id: <20200806160828.90463-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200802022549-mutt-send-email-mst@kernel.org>
- <1596354249-96204-1-git-send-email-wenan.mao@linux.alibaba.com>
-In-Reply-To: <1596354249-96204-1-git-send-email-wenan.mao@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Mao Wenan <wenan.mao@linux.alibaba.com>, mst@redhat.com
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Eli Cohen <eli@mellanox.com>, Parav Pandit <parav@mellanox.com>, virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2020/8/2 下午3:44, Mao Wenan wrote:
-> The loop may exist if vq->broken is true,
-> virtqueue_get_buf_ctx_packed or virtqueue_get_buf_ctx_split
-> will return NULL, so virtnet_poll will reschedule napi to
-> receive packet, it will lead cpu usage(si) to 100%.
->
-> call trace as below:
-> virtnet_poll
-> 	virtnet_receive
-> 		virtqueue_get_buf_ctx
-> 			virtqueue_get_buf_ctx_packed
-> 			virtqueue_get_buf_ctx_split
-> 	virtqueue_napi_complete
-> 		virtqueue_poll           //return true
-> 		virtqueue_napi_schedule //it will reschedule napi
->
-> to fix this, return false if vq is broken in virtqueue_poll.
->
-> Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->   v2->v3: change subject, original is : "virtio_net: Avoid loop in virtnet_poll"
->   v1->v2: fix it in virtqueue_poll suggested by Michael S. Tsirkin <mst@redhat.com>
->   drivers/virtio/virtio_ring.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 58b96ba..4f7c73e 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1960,6 +1960,9 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned last_used_idx)
->   {
->   	struct vring_virtqueue *vq = to_vvq(_vq);
->   
-> +	if (unlikely(vq->broken))
-> +		return false;
-> +
->   	virtio_mb(vq->weak_barriers);
->   	return vq->packed_ring ? virtqueue_poll_packed(_vq, last_used_idx) :
->   				 virtqueue_poll_split(_vq, last_used_idx);
+The memory allocation failure checking for in and out is currently
+checking if the pointers are valid rather than the contents of what
+they point to. Hence the null check on failed memory allocations is
+incorrect.  Fix this by adding the missing indirection in the check.
+Also for the default case, just set the *in and *out to null as
+these don't have any thing allocated to kfree. Finally remove the
+redundant *in and *out check as these have been already done on each
+allocation in the case statement.
 
+Addresses-Coverity: ("Null pointer dereference")
+Fixes: 1a86b377aa21 ("vdpa/mlx5: Add VDPA driver for supported mlx5 devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index 3ec44a4f0e45..55bc58e1dae9 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -867,7 +867,7 @@ static void alloc_inout(struct mlx5_vdpa_net *ndev, int cmd, void **in, int *inl
+ 		*outlen = MLX5_ST_SZ_BYTES(qp_2rst_out);
+ 		*in = kzalloc(*inlen, GFP_KERNEL);
+ 		*out = kzalloc(*outlen, GFP_KERNEL);
+-		if (!in || !out)
++		if (!*in || !*out)
+ 			goto outerr;
+ 
+ 		MLX5_SET(qp_2rst_in, *in, opcode, cmd);
+@@ -879,7 +879,7 @@ static void alloc_inout(struct mlx5_vdpa_net *ndev, int cmd, void **in, int *inl
+ 		*outlen = MLX5_ST_SZ_BYTES(rst2init_qp_out);
+ 		*in = kzalloc(*inlen, GFP_KERNEL);
+ 		*out = kzalloc(MLX5_ST_SZ_BYTES(rst2init_qp_out), GFP_KERNEL);
+-		if (!in || !out)
++		if (!*in || !*out)
+ 			goto outerr;
+ 
+ 		MLX5_SET(rst2init_qp_in, *in, opcode, cmd);
+@@ -896,7 +896,7 @@ static void alloc_inout(struct mlx5_vdpa_net *ndev, int cmd, void **in, int *inl
+ 		*outlen = MLX5_ST_SZ_BYTES(init2rtr_qp_out);
+ 		*in = kzalloc(*inlen, GFP_KERNEL);
+ 		*out = kzalloc(MLX5_ST_SZ_BYTES(init2rtr_qp_out), GFP_KERNEL);
+-		if (!in || !out)
++		if (!*in || !*out)
+ 			goto outerr;
+ 
+ 		MLX5_SET(init2rtr_qp_in, *in, opcode, cmd);
+@@ -914,7 +914,7 @@ static void alloc_inout(struct mlx5_vdpa_net *ndev, int cmd, void **in, int *inl
+ 		*outlen = MLX5_ST_SZ_BYTES(rtr2rts_qp_out);
+ 		*in = kzalloc(*inlen, GFP_KERNEL);
+ 		*out = kzalloc(MLX5_ST_SZ_BYTES(rtr2rts_qp_out), GFP_KERNEL);
+-		if (!in || !out)
++		if (!*in || !*out)
+ 			goto outerr;
+ 
+ 		MLX5_SET(rtr2rts_qp_in, *in, opcode, cmd);
+@@ -927,16 +927,15 @@ static void alloc_inout(struct mlx5_vdpa_net *ndev, int cmd, void **in, int *inl
+ 		MLX5_SET(qpc, qpc, rnr_retry, 7);
+ 		break;
+ 	default:
+-		goto outerr;
++		goto outerr_nullify;
+ 	}
+-	if (!*in || !*out)
+-		goto outerr;
+ 
+ 	return;
+ 
+ outerr:
+ 	kfree(*in);
+ 	kfree(*out);
++outerr_nullify:
+ 	*in = NULL;
+ 	*out = NULL;
+ }
+-- 
+2.27.0
