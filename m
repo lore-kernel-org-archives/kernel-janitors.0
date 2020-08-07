@@ -1,43 +1,55 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 18 Aug 2020 12:52:28 +0000
-Subject: Re: [PATCH] mwifiex: Do not use GFP_KERNEL in atomic context
-Message-Id: <20200818125228.4CFD3C433AF@smtp.codeaurora.org>
+From: info@furshetcrimea.ru
+Date: Fri, 07 Aug 2020 13:22:04 +0000
+Subject: Bei Interesse antworten.
+Message-Id: <auto-000011097438@furshetcrimea.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200809092906.744621-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200809092906.744621-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: amitkarwar@gmail.com, ganapathi.bhat@nxp.com, huxinming820@gmail.com, davem@davemloft.net, kuba@kernel.org, yogeshp@marvell.com, bzhao@marvell.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Sch=F6ne Gr=FC=DFe,
 
-> A possible call chain is as follow:
->   mwifiex_sdio_interrupt                            (sdio.c)
->     --> mwifiex_main_process                        (main.c)
->       --> mwifiex_process_cmdresp                   (cmdevt.c)
->         --> mwifiex_process_sta_cmdresp             (sta_cmdresp.c)
->           --> mwifiex_ret_802_11_scan               (scan.c)
->             --> mwifiex_parse_single_response_buf   (scan.c)
-> 
-> 'mwifiex_sdio_interrupt()' is an interrupt function.
-> 
-> Also note that 'mwifiex_ret_802_11_scan()' already uses GFP_ATOMIC.
-> 
-> So use GFP_ATOMIC instead of GFP_KERNEL when memory is allocated in
-> 'mwifiex_parse_single_response_buf()'.
-> 
-> Fixes: 7c6fa2a843c5 ("mwifiex: use cfg80211 dynamic scan table and cfg80211_get_bss API")
-> or
-> Fixes: 601216e12c65e ("mwifiex: process RX packets in SDIO IRQ thread directly")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Mein Name ist MATTIAS SJOBORG, ich bin Schweizer Staatsb=FCrger und (Vorsit=
+zender des Verg=FCtungs- und Nominierungsausschusses) von Tethys Petroleum,=
+ einem multinationalen =D6lkonzern mit Sitz in London-England, Gro=DFbritan=
+nien. Ich bitte Sie um Ihre Hilfe, um die Summe von vierzig Millionen Dolla=
+r abzurufen, die aus zwei Sendungsboxen besteht.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Dieses Geld wurde von der Firma erworben und von einem Diplomaten begleitet=
+ und korrekt in einer Sicherheitsfirma in Amerika hinterlegt. Mein Grund da=
+f=FCr ist, dass ich von der Firma zu lange um meine Anspr=FCche betrogen wu=
+rde, nur weil ich kein bin Britisch. Die Kontaktdaten des Diplomaten erhalt=
+en Sie, wenn Sie Ihr Interesse bekunden, mir zu helfen.
 
-d2ab7f00f432 mwifiex: Do not use GFP_KERNEL in atomic context
+Jede der Schachteln enth=E4lt 20 Mio. USD. F=FCr Ihre Hilfe bin ich bereit,=
+ 40% an Sie freizugeben. Aus Sicherheitsgr=FCnden wurde die Sendung als VER=
+TRAULICHE DIPLOMATISCHE DOKUMENTE registriert, und ich kann erkl=E4ren, war=
+um dies so erkl=E4rt wurde. Denken Sie daran, dass der Diplomat den Inhalt =
+der Sendung nicht kennt. Er ist seit einem Monat dort, w=E4hrend ich nach e=
+inem zuverl=E4ssigen Partner suchen m=F6chte. Ich werde das Land verlassen,=
+ sobald die Sendung f=FCr Sie an Sie geliefert wird Private Investitionen u=
+nd ich haben geschworen, niemals nach London zur=FCckzukehren. Bitte, ich b=
+rauche Ihre dringende Antwort, bevor meine Pl=E4ne, das Unternehmen zu verl=
+assen, entdeckt werden.
 
--- 
-https://patchwork.kernel.org/patch/11706587/
+www.tethyspetroleum.com/tethys/static/EN_US/au_seniormanagement.html
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Im Moment ist die sicherste Form der Korrespondenz meine eigene E-Mail-Adre=
+sse. Bitte antworten Sie im Interesse der Vertraulichkeit nur =FCber meine =
+direkte E-Mail-Adresse. Antworten Sie zusammen mit Ihrer direkten Telefon- =
+und Faxnummer, unter der ich Sie alternativ erreichen kann.
+
+Bitte, wenn Sie nicht bereit und interessiert sind, mir zu helfen, l=F6sche=
+n Sie bitte diese E-Mail aus Ihrer E-Mail und tun Sie so, als h=E4tten Sie =
+sie nie erhalten.
+
+Freundliche Gr=FC=DFe,
+Mr.Mattias Sjoborg
+(Vorsitzender des Verg=FCtungs- und Nominierungsausschusses)
+Tethys Petroleum.
+London, England
+
+--=20
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
