@@ -1,54 +1,43 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Tue, 04 Aug 2020 08:11:53 +0000
-Subject: [PATCH] crypto: ingenic - Drop kfree for memory allocated with devm_kzalloc
-Message-Id: <20200804081153.45342-1-weiyongjun1@huawei.com>
+From: Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Date: Fri, 07 Aug 2020 15:57:27 +0000
+Subject: Re: [PATCH] crypto: ingenic - Drop kfree for memory allocated with devm_kzalloc
+Message-Id: <dc81addf-28db-72ef-1181-5b6425374e3c@wanyeetech.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200804081153.45342-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200804081153.45342-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, zhouyanjie@wanyeetech.com, prasannatsmkumar@gmail.com
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+To: Wei Yongjun <weiyongjun1@huawei.com>, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, prasannatsmkumar@gmail.com
+Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-It's not necessary to free memory allocated with devm_kzalloc
-and using kfree leads to a double free.
-
-Fixes: 190873a0ea45 ("crypto: ingenic - Add hardware RNG for Ingenic JZ4780 and X1000")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/char/hw_random/ingenic-rng.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/char/hw_random/ingenic-rng.c b/drivers/char/hw_random/ingenic-rng.c
-index d704cef64b64..055cfe59f519 100644
---- a/drivers/char/hw_random/ingenic-rng.c
-+++ b/drivers/char/hw_random/ingenic-rng.c
-@@ -92,8 +92,7 @@ static int ingenic_rng_probe(struct platform_device *pdev)
- 	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base)) {
- 		pr_err("%s: Failed to map RNG registers\n", __func__);
--		ret = PTR_ERR(priv->base);
--		goto err_free_rng;
-+		return PTR_ERR(priv->base);
- 	}
- 
- 	priv->version = (enum ingenic_rng_version)of_device_get_match_data(&pdev->dev);
-@@ -106,17 +105,13 @@ static int ingenic_rng_probe(struct platform_device *pdev)
- 	ret = hwrng_register(&priv->rng);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register hwrng\n");
--		goto err_free_rng;
-+		return ret;
- 	}
- 
- 	platform_set_drvdata(pdev, priv);
- 
- 	dev_info(&pdev->dev, "Ingenic RNG driver registered\n");
- 	return 0;
--
--err_free_rng:
--	kfree(priv);
--	return ret;
- }
- 
- static int ingenic_rng_remove(struct platform_device *pdev)
+SGVsbG8sCgrU2iAyMDIwLzgvNCDPws7nNDoxMSwgV2VpIFlvbmdqdW4g0LS1wDoKPiBJdCdzIG5v
+dCBuZWNlc3NhcnkgdG8gZnJlZSBtZW1vcnkgYWxsb2NhdGVkIHdpdGggZGV2bV9remFsbG9jCj4g
+YW5kIHVzaW5nIGtmcmVlIGxlYWRzIHRvIGEgZG91YmxlIGZyZWUuCgoKVGhhbmtzIGZvciBmaXgg
+aXQuCgpSZXZpZXdlZC1ieTog1tzn/L3cIChaaG91IFlhbmppZSkgPHpob3V5YW5qaWVAd2FueWVl
+dGVjaC5jb20+Cgo+Cj4gRml4ZXM6IDE5MDg3M2EwZWE0NSAoImNyeXB0bzogaW5nZW5pYyAtIEFk
+ZCBoYXJkd2FyZSBSTkcgZm9yIEluZ2VuaWMgSlo0NzgwIGFuZCBYMTAwMCIpCj4gUmVwb3J0ZWQt
+Ynk6IEh1bGsgUm9ib3QgPGh1bGtjaUBodWF3ZWkuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFdlaSBZ
+b25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPgo+IC0tLQo+ICAgZHJpdmVycy9jaGFyL2h3
+X3JhbmRvbS9pbmdlbmljLXJuZy5jIHwgOSArKy0tLS0tLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAy
+IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9j
+aGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jIGIvZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9pbmdl
+bmljLXJuZy5jCj4gaW5kZXggZDcwNGNlZjY0YjY0Li4wNTVjZmU1OWY1MTkgMTAwNjQ0Cj4gLS0t
+IGEvZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jCj4gKysrIGIvZHJpdmVycy9j
+aGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jCj4gQEAgLTkyLDggKzkyLDcgQEAgc3RhdGljIGlu
+dCBpbmdlbmljX3JuZ19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgCXBy
+aXYtPmJhc2UgPSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UocGRldiwgMCk7Cj4gICAJ
+aWYgKElTX0VSUihwcml2LT5iYXNlKSkgewo+ICAgCQlwcl9lcnIoIiVzOiBGYWlsZWQgdG8gbWFw
+IFJORyByZWdpc3RlcnNcbiIsIF9fZnVuY19fKTsKPiAtCQlyZXQgPSBQVFJfRVJSKHByaXYtPmJh
+c2UpOwo+IC0JCWdvdG8gZXJyX2ZyZWVfcm5nOwo+ICsJCXJldHVybiBQVFJfRVJSKHByaXYtPmJh
+c2UpOwo+ICAgCX0KPiAgIAo+ICAgCXByaXYtPnZlcnNpb24gPSAoZW51bSBpbmdlbmljX3JuZ192
+ZXJzaW9uKW9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YSgmcGRldi0+ZGV2KTsKPiBAQCAtMTA2LDE3
+ICsxMDUsMTMgQEAgc3RhdGljIGludCBpbmdlbmljX3JuZ19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQo+ICAgCXJldCA9IGh3cm5nX3JlZ2lzdGVyKCZwcml2LT5ybmcpOwo+ICAg
+CWlmIChyZXQpIHsKPiAgIAkJZGV2X2VycigmcGRldi0+ZGV2LCAiRmFpbGVkIHRvIHJlZ2lzdGVy
+IGh3cm5nXG4iKTsKPiAtCQlnb3RvIGVycl9mcmVlX3JuZzsKPiArCQlyZXR1cm4gcmV0Owo+ICAg
+CX0KPiAgIAo+ICAgCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHByaXYpOwo+ICAgCj4gICAJ
+ZGV2X2luZm8oJnBkZXYtPmRldiwgIkluZ2VuaWMgUk5HIGRyaXZlciByZWdpc3RlcmVkXG4iKTsK
+PiAgIAlyZXR1cm4gMDsKPiAtCj4gLWVycl9mcmVlX3JuZzoKPiAtCWtmcmVlKHByaXYpOwo+IC0J
+cmV0dXJuIHJldDsKPiAgIH0KPiAgIAo+ICAgc3RhdGljIGludCBpbmdlbmljX3JuZ19yZW1vdmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPgo+
