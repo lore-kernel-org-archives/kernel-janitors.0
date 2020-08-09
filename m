@@ -1,29 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 04 Aug 2020 23:17:52 +0000
-Subject: Re: [PATCH] wan: wanxl: switch from 'pci_' to 'dma_' API
-Message-Id: <20200804.161752.751928646102837799.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 09 Aug 2020 07:19:12 +0000
+Subject: [PATCH] watchdog: pcwd_usb: Avoid GFP_ATOMIC where it is not needed
+Message-Id: <20200809071912.742836-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804200809.714999-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200804200809.714999-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: khc@pm.waw.pl, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue,  4 Aug 2020 22:08:09 +0200
+There is no need to use GFP_ATOMIC here. It is a probe function, no
+spinlock is taken and GFP_KERNEL is used just before and just after this
+'usb_alloc_coherent()' call.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'wanxl_pci_init_one()', GFP_KERNEL can be used
-> because it is a probe function and no lock is acquired.
-> Moreover, just a few lines above, GFP_KERNEL is already used.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/watchdog/pcwd_usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/watchdog/pcwd_usb.c b/drivers/watchdog/pcwd_usb.c
+index 2f44af1831d0..ea67b98ed35d 100644
+--- a/drivers/watchdog/pcwd_usb.c
++++ b/drivers/watchdog/pcwd_usb.c
+@@ -657,7 +657,7 @@ static int usb_pcwd_probe(struct usb_interface *interface,
+ 
+ 	/* set up the memory buffer's */
+ 	usb_pcwd->intr_buffer = usb_alloc_coherent(udev, usb_pcwd->intr_size,
+-					GFP_ATOMIC, &usb_pcwd->intr_dma);
++					GFP_KERNEL, &usb_pcwd->intr_dma);
+ 	if (!usb_pcwd->intr_buffer) {
+ 		pr_err("Out of memory\n");
+ 		goto error;
+-- 
+2.25.1
