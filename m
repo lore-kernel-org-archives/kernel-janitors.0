@@ -1,37 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Aug 2020 18:53:24 +0000
-Subject: Re: [PATCH 1/3] drm/amdgpu/si: Fix buffer overflow in si_get_register_value()
-Message-Id: <20200825185324.GW5493@kadam>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Sun, 09 Aug 2020 07:36:28 +0000
+Subject: [PATCH 0/4] Infiniband Subsystem: Remove pci-dma-compat wrapper APIs.
+Message-Id: <cover.1596957073.git.usuraj35@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200825111843.GA285523@mwanda>
- <CADnq5_O0f7NdR92PSKFS0zrN4oFb_WJXX1E_HQ9uHzM-4NL2OQ@mail.gmail.com>
-In-Reply-To: <CADnq5_O0f7NdR92PSKFS0zrN4oFb_WJXX1E_HQ9uHzM-4NL2OQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Jivin <alex.jivin@amd.com>, Frederick Lawler <fred@fredlawl.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, Sonny Jiang <sonny.jiang@amd.com>, Bjorn Helgaas <bhelgaas@google.com>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Monk Liu <Monk.Liu@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
+To: dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 25, 2020 at 11:53:25AM -0400, Alex Deucher wrote:
-> On Tue, Aug 25, 2020 at 7:21 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > The values for "se_num" and "sh_num" come from the user in the ioctl.
-> > They can be in the 0-255 range but if they're more than
-> > AMDGPU_GFX_MAX_SE (4) or AMDGPU_GFX_MAX_SH_PER_SE (2) then it results in
-> > an out of bounds read.
-> >
-> > I split this function into to two to make the error handling simpler.
-> >
-> > Fixes: dd5dfa61b4ff ("drm/amdgpu: refine si_read_register")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Good catch.  This is more defensive, but It's a much simpler check to
-> validate these in the caller.  See the attached patch.
-> 
+Hii Developers,
 
-That works too.
+	This patch series will replace all the legacy pci-dma-compat wrappers
+with the dma-mapping APIs directly in the INFINIBAND Subsystem.
 
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
+This task is done through a coccinelle script which is described in each commit
+message.
 
-regards,
-dan carpenter
+The changes are compile tested.
+
+Thanks,
+
+Suraj Upadhyay.
+
+Suraj Upadhyay (4):
+  IB/hfi1: Remove pci-dma-compat wrapper APIs
+  IB/mthca: Remove pci-dma-compat wrapper APIs
+  RDMA/qib: Remove pci-dma-compat wrapper APIs
+  RDMA/pvrdma: Remove pci-dma-compat wrapper APIs
+
+ drivers/infiniband/hw/hfi1/pcie.c             |  8 +++----
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c     | 13 +++++------
+ drivers/infiniband/hw/mthca/mthca_eq.c        | 21 +++++++++--------
+ drivers/infiniband/hw/mthca/mthca_main.c      |  8 +++----
+ drivers/infiniband/hw/mthca/mthca_memfree.c   | 23 +++++++++++--------
+ drivers/infiniband/hw/qib/qib_file_ops.c      | 12 +++++-----
+ drivers/infiniband/hw/qib/qib_init.c          |  4 ++--
+ drivers/infiniband/hw/qib/qib_pcie.c          |  8 +++----
+ drivers/infiniband/hw/qib/qib_user_pages.c    | 12 +++++-----
+ .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    |  6 ++---
+ 10 files changed, 59 insertions(+), 56 deletions(-)
+
+-- 
+2.17.1
