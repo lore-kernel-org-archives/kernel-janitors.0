@@ -1,43 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 10 Aug 2020 18:57:52 +0000
-Subject: Re: [PATCH] regulator: fix spelling mistake "Cant" -> "Can't"
-Message-Id: <159708587290.21583.4925368980262499422.b4-ty@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 09 Aug 2020 09:29:06 +0000
+Subject: [PATCH] mwifiex: Do not use GFP_KERNEL in atomic context
+Message-Id: <20200809092906.744621-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200810093931.50624-1-colin.king@canonical.com>
-In-Reply-To: <20200810093931.50624-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: amitkarwar@gmail.com, ganapathi.bhat@nxp.com, huxinming820@gmail.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, yogeshp@marvell.com, bzhao@marvell.com, linville@tuxdriver.com
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, 10 Aug 2020 10:39:31 +0100, Colin King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+A possible call chain is as follow:
+  mwifiex_sdio_interrupt                            (sdio.c)
+    --> mwifiex_main_process                        (main.c)
+      --> mwifiex_process_cmdresp                   (cmdevt.c)
+        --> mwifiex_process_sta_cmdresp             (sta_cmdresp.c)
+          --> mwifiex_ret_802_11_scan               (scan.c)
+            --> mwifiex_parse_single_response_buf   (scan.c)
 
-Applied to
+'mwifiex_sdio_interrupt()' is an interrupt function.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Also note that 'mwifiex_ret_802_11_scan()' already uses GFP_ATOMIC.
 
-Thanks!
+So use GFP_ATOMIC instead of GFP_KERNEL when memory is allocated in
+'mwifiex_parse_single_response_buf()'.
 
-[1/1] regulator: fix spelling mistake "Cant" -> "Can't"
-      commit: 09dad81e0f1701ea26babe2442a1478d6ad447d3
+Fixes: 7c6fa2a843c5 ("mwifiex: use cfg80211 dynamic scan table and cfg80211_get_bss API")
+or
+Fixes: 601216e12c65e ("mwifiex: process RX packets in SDIO IRQ thread directly")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is completely speculative. I don't know if the call chain given above
+if possible in RL application.
+So review carefully :)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+I'm not sure of the Fixes tag. If I'm correct:
+ - The first one is when the GFP_KERNEL has been introduced.
+ - the 2nd one is when some logic has been changed to call interrupt
+   handler directly instead of existing workqueue
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Note that if my analysis is completely broken, it is likely that
+'mwifiex_ret_802_11_scan()' could use GFP_KERNEL in order to relax some
+memory allocation constrains.
+---
+ drivers/net/wireless/marvell/mwifiex/scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index ff932627a46c..2fb69a590bd8 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -1889,7 +1889,7 @@ mwifiex_parse_single_response_buf(struct mwifiex_private *priv, u8 **bss_info,
+ 					    chan, CFG80211_BSS_FTYPE_UNKNOWN,
+ 					    bssid, timestamp,
+ 					    cap_info_bitmap, beacon_period,
+-					    ie_buf, ie_len, rssi, GFP_KERNEL);
++					    ie_buf, ie_len, rssi, GFP_ATOMIC);
+ 			if (bss) {
+ 				bss_priv = (struct mwifiex_bss_priv *)bss->priv;
+ 				bss_priv->band = band;
+-- 
+2.25.1
