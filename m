@@ -1,62 +1,178 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 31 Aug 2020 06:07:30 +0000
-Subject: [PATCH] MAINTAINERS: add headers and doc to SCHEDULER
-Message-Id: <20200831060730.17461-1-lukas.bulwahn@gmail.com>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Sun, 09 Aug 2020 07:41:27 +0000
+Subject: [PATCH 1/4] IB/hfi1: Remove pci-dma-compat wrapper APIs
+Message-Id: <1d74b57647f511de3d5ab96dbb4149fdbce58f64.1596957073.git.usuraj35@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1596957073.git.usuraj35@gmail.com>
+In-Reply-To: <cover.1596957073.git.usuraj35@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: dledford@redhat.com, jgg@ziepe.ca, mike.marciniszyn@intel.com, dennis.dalessandro@intel.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Various files in include/linux/sched/ and include/uapi/linux/sched/ are
-identified as part of THE REST according to MAINTAINERS, but they really
-belong to SCHEDULER.
+The legacy API wrappers in include/linux/pci-dma-compat.h
+should go away as it creates unnecessary midlayering
+for include/linux/dma-mapping.h APIs.
 
-Add those headers and Documentation to the SCHEDULER section.
+Instead use dma-mapping.h APIs directly.
 
-This was identified with a small script that finds all files belonging to
-THE REST according to the current MAINTAINERS file, and I investigated
-upon its output.
+The patch has been generated with the coccinelle script below
+and compile-tested.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+@@@@
+- PCI_DMA_BIDIRECTIONAL
++ DMA_BIDIRECTIONAL
+
+@@@@
+- PCI_DMA_TODEVICE
++ DMA_TO_DEVICE
+
+@@@@
+- PCI_DMA_FROMDEVICE
++ DMA_FROM_DEVICE
+
+@@@@
+- PCI_DMA_NONE
++ DMA_NONE
+
+@@ expression E1, E2, E3; @@
+- pci_alloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_)
+
+@@ expression E1, E2, E3; @@
+- pci_zalloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_free_consistent(E1, E2, E3, E4)
++ dma_free_coherent(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_single(E1, E2, E3, E4)
++ dma_map_single(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_single(E1, E2, E3, E4)
++ dma_unmap_single(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4, E5; @@
+- pci_map_page(E1, E2, E3, E4, E5)
++ dma_map_page(&E1->dev, E2, E3, E4, E5)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_page(E1, E2, E3, E4)
++ dma_unmap_page(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_sg(E1, E2, E3, E4)
++ dma_map_sg(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_sg(E1, E2, E3, E4)
++ dma_unmap_sg(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_cpu(E1, E2, E3, E4)
++ dma_sync_single_for_cpu(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_device(E1, E2, E3, E4)
++ dma_sync_single_for_device(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_cpu(E1, E2, E3, E4)
++ dma_sync_sg_for_cpu(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_device(E1, E2, E3, E4)
++ dma_sync_sg_for_device(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2; @@
+- pci_dma_mapping_error(E1, E2)
++ dma_mapping_error(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_consistent_dma_mask(E1, E2)
++ dma_set_coherent_mask(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_dma_mask(E1, E2)
++ dma_set_mask(&E1->dev, E2)
+
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
 ---
-RFC v1: https://lore.kernel.org/lkml/20200308174931.9118-1-lukas.bulwahn@gmail.com/
-  - no feedback.
+ drivers/infiniband/hw/hfi1/pcie.c         |  8 ++++----
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c | 13 ++++++-------
+ 2 files changed, 10 insertions(+), 11 deletions(-)
 
-RFC v2: https://lore.kernel.org/lkml/20200413112603.5257-1-lukas.bulwahn@gmail.com/
-  - RFC v1 does not apply after reordering MAINTAINERS, i.e., commit 4400b7d68f6e
-    ("MAINTAINERS: sort entries by entry name") and commit 3b50142d8528
-    ("MAINTAINERS: sort field names for all entries").
-  - does not need to reorder entries anymore.
-  - applies cleanly on v5.7-rc1
-  - no feedback.
-
-v1:
-  - rebased to v5.9-rc3
-  - minor wording: s/SCHEDULER entry/SCHEDULER section/
-  - increase recipients to all scheduler maintainers to get some feedback
-
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4647c84c987..36c8e7671b70 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15359,10 +15359,13 @@ R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-+F:	Documentation/scheduler/
- F:	include/linux/preempt.h
- F:	include/linux/sched.h
-+F:	include/linux/sched/
- F:	include/linux/wait.h
- F:	include/uapi/linux/sched.h
-+F:	include/uapi/linux/sched/
- F:	kernel/sched/
+diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
+index 18d32f053d26..a2356bfa1485 100644
+--- a/drivers/infiniband/hw/hfi1/pcie.c
++++ b/drivers/infiniband/hw/hfi1/pcie.c
+@@ -92,21 +92,21 @@ int hfi1_pcie_init(struct hfi1_devdata *dd)
+ 		goto bail;
+ 	}
  
- SCR24X CHIP CARD INTERFACE DRIVER
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (ret) {
+ 		/*
+ 		 * If the 64 bit setup fails, try 32 bit.  Some systems
+ 		 * do not setup 64 bit maps on systems with 2GB or less
+ 		 * memory installed.
+ 		 */
+-		ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (ret) {
+ 			dd_dev_err(dd, "Unable to set DMA mask: %d\n", ret);
+ 			goto bail;
+ 		}
+-		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
++		ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	} else {
+-		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
++		ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	}
+ 	if (ret) {
+ 		dd_dev_err(dd, "Unable to set DMA consistent mask: %d\n", ret);
+diff --git a/drivers/infiniband/hw/hfi1/user_exp_rcv.c b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+index f81ca20f4b69..fe737da3d1dc 100644
+--- a/drivers/infiniband/hw/hfi1/user_exp_rcv.c
++++ b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+@@ -175,8 +175,8 @@ static void unpin_rcv_pages(struct hfi1_filedata *fd,
+ 	struct hfi1_devdata *dd = fd->uctxt->dd;
+ 
+ 	if (mapped) {
+-		pci_unmap_single(dd->pcidev, node->dma_addr,
+-				 node->npages * PAGE_SIZE, PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&dd->pcidev->dev, node->dma_addr,
++				 node->npages * PAGE_SIZE, DMA_FROM_DEVICE);
+ 		pages = &node->pages[idx];
+ 	} else {
+ 		pages = &tidbuf->pages[idx];
+@@ -735,9 +735,8 @@ static int set_rcvarray_entry(struct hfi1_filedata *fd,
+ 	if (!node)
+ 		return -ENOMEM;
+ 
+-	phys = pci_map_single(dd->pcidev,
+-			      __va(page_to_phys(pages[0])),
+-			      npages * PAGE_SIZE, PCI_DMA_FROMDEVICE);
++	phys = dma_map_single(&dd->pcidev->dev, __va(page_to_phys(pages[0])),
++			      npages * PAGE_SIZE, DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(&dd->pcidev->dev, phys)) {
+ 		dd_dev_err(dd, "Failed to DMA map Exp Rcv pages 0x%llx\n",
+ 			   phys);
+@@ -779,8 +778,8 @@ static int set_rcvarray_entry(struct hfi1_filedata *fd,
+ 	hfi1_cdbg(TID, "Failed to insert RB node %u 0x%lx, 0x%lx %d",
+ 		  node->rcventry, node->notifier.interval_tree.start,
+ 		  node->phys, ret);
+-	pci_unmap_single(dd->pcidev, phys, npages * PAGE_SIZE,
+-			 PCI_DMA_FROMDEVICE);
++	dma_unmap_single(&dd->pcidev->dev, phys, npages * PAGE_SIZE,
++			 DMA_FROM_DEVICE);
+ 	kfree(node);
+ 	return -EFAULT;
+ }
 -- 
 2.17.1
