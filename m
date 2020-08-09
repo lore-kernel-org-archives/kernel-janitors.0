@@ -1,50 +1,36 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Wed, 12 Aug 2020 12:10:40 +0000
-Subject: Re: [PATCH] perf bench: fix a couple of spelling mistakes in options text
-Message-Id: <20200812121040.GD13995@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 09 Aug 2020 20:34:06 +0000
+Subject: [PATCH] drm: amdgpu: Use the correct size when allocating memory
+Message-Id: <20200809203406.751971-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200812064647.200132-1-colin.king@canonical.com>
-In-Reply-To: <20200812064647.200132-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch, sumit.semwal@linaro.org, colton.w.lewis@protonmail.com, Ori.Messinger@amd.com, m.szyprowski@samsung.com, bernard@vivo.com, dri-devel@lists.freedesktop.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
 
-Em Wed, Aug 12, 2020 at 07:46:47AM +0100, Colin King escreveu:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of spelling mistakes in the text. Fix these.
+When '*sgt' is allocated, we must allocated 'sizeof(**sgt)' bytes instead
+of 'sizeof(*sg)'. 'sg' (i.e. struct scatterlist) is smaller than
+'sgt' (i.e struct sg_table), so this could lead to memory corruption.
 
-Thanks, applied.
+Fixes: f44ffd677fb3 ("drm/amdgpu: add support for exporting VRAM using DMA-buf v3")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Arnaldo
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
+index 134cc36e30c5..0739e259bf91 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
+@@ -462,7 +462,7 @@ int amdgpu_vram_mgr_alloc_sgt(struct amdgpu_device *adev,
+ 	unsigned int pages;
+ 	int i, r;
  
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/perf/bench/find-bit-bench.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/bench/find-bit-bench.c b/tools/perf/bench/find-bit-bench.c
-> index fa90f3e9d368..73b5bcc5946a 100644
-> --- a/tools/perf/bench/find-bit-bench.c
-> +++ b/tools/perf/bench/find-bit-bench.c
-> @@ -17,9 +17,9 @@ static unsigned int inner_iterations = 100000;
->  
->  static const struct option options[] = {
->  	OPT_UINTEGER('i', "outer-iterations", &outer_iterations,
-> -		"Number of outerer iterations used"),
-> +		"Number of outer iterations used"),
->  	OPT_UINTEGER('j', "inner-iterations", &inner_iterations,
-> -		"Number of outerer iterations used"),
-> +		"Number of inner iterations used"),
->  	OPT_END()
->  };
->  
-> -- 
-> 2.27.0
-> 
-
+-	*sgt = kmalloc(sizeof(*sg), GFP_KERNEL);
++	*sgt = kmalloc(sizeof(**sgt), GFP_KERNEL);
+ 	if (!*sgt)
+ 		return -ENOMEM;
+ 
 -- 
-
-- Arnaldo
+2.25.1
