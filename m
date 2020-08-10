@@ -1,35 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Aug 2020 09:39:31 +0000
-Subject: [PATCH] regulator: fix spelling mistake "Cant" -> "Can't"
-Message-Id: <20200810093931.50624-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 10 Aug 2020 18:57:52 +0000
+Subject: Re: [PATCH] regulator: fix spelling mistake "Cant" -> "Can't"
+Message-Id: <159708587290.21583.4925368980262499422.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200810093931.50624-1-colin.king@canonical.com>
+In-Reply-To: <20200810093931.50624-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 10 Aug 2020 10:39:31 +0100, Colin King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
 
-There is a spelling mistake in a dev_err message. Fix it.
+Applied to
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/fixed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index d54830e48b8d..142a70a89153 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -182,7 +182,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 
- 		drvdata->enable_clock = devm_clk_get(dev, NULL);
- 		if (IS_ERR(drvdata->enable_clock)) {
--			dev_err(dev, "Cant get enable-clock from devicetree\n");
-+			dev_err(dev, "Can't get enable-clock from devicetree\n");
- 			return -ENOENT;
- 		}
- 	} else {
--- 
-2.27.0
+Thanks!
+
+[1/1] regulator: fix spelling mistake "Cant" -> "Can't"
+      commit: 09dad81e0f1701ea26babe2442a1478d6ad447d3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
