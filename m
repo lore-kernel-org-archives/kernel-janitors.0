@@ -1,38 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 25 Aug 2020 00:33:33 +0000
-Subject: Re: [PATCH] typhoon: switch from 'pci_' to 'dma_' API
-Message-Id: <20200824.173333.548043755025064224.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Aug 2020 10:12:38 +0000
+Subject: [PATCH] lpfc: fix spelling mistake "Cant" -> "Can't"
+Message-Id: <20200810101238.61787-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200823061150.162135-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200823061150.162135-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: dave@thedillows.org, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 23 Aug 2020 08:11:50 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'typhoon_init_one()' GFP_KERNEL can be used
-> because it is a probe function and no lock is acquired.
-> 
-> When memory is allocated in 'typhoon_download_firmware()', GFP_ATOMIC
-> must be used because it can be called from a .ndo_tx_timeout function.
-> So this function can be called with the 'netif_tx_lock' acquired.
-> The call chain is:
->   --> typhoon_tx_timeout                 (.ndo_tx_timeout function)
->     --> typhoon_start_runtime
->       --> typhoon_download_firmware
-> 
-> While at is, update some comments accordingly.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in an error message. Fix it.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index ae0a8252128c..d6c07eeedd69 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -5944,7 +5944,7 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 					    phba, &lpfc_debugfs_op_lockstat);
+ 		if (!phba->debug_lockstat) {
+ 			lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
+-					 "4610 Cant create debugfs lockstat\n");
++					 "4610 Can't create debugfs lockstat\n");
+ 			goto debug_failed;
+ 		}
+ #endif
+-- 
+2.27.0
