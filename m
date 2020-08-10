@@ -1,43 +1,39 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Date: Mon, 10 Aug 2020 09:36:45 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Aug 2020 15:42:13 +0000
 Subject: Re: [PATCH] drm: amdgpu: Use the correct size when allocating memory
-Message-Id: <b4117d15-d563-5e1e-d8ce-edded2db77a1@amd.com>
+Message-Id: <20200810154213.GM1793@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200809203406.751971-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20200809203406.751971-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch, sumit.semwal@linaro.org, colton.w.lewis@protonmail.com, Ori.Messinger@amd.com, m.szyprowski@samsung.com, bernard@vivo.com, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Ori.Messinger@amd.com, airlied@linux.ie, bernard@vivo.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org, colton.w.lewis@protonmail.com, amd-gfx@lists.freedesktop.org, daniel@ffwll.ch, alexander.deucher@amd.com, christian.koenig@amd.com, m.szyprowski@samsung.com
 
-Am 09.08.20 um 22:34 schrieb Christophe JAILLET:
+On Sun, Aug 09, 2020 at 10:34:06PM +0200, Christophe JAILLET wrote:
 > When '*sgt' is allocated, we must allocated 'sizeof(**sgt)' bytes instead
 > of 'sizeof(*sg)'. 'sg' (i.e. struct scatterlist) is smaller than
 > 'sgt' (i.e struct sg_table), so this could lead to memory corruption.
->
-> Fixes: f44ffd677fb3 ("drm/amdgpu: add support for exporting VRAM using DM=
-A-buf v3")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Good catch, Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+The sizeof(*sg) is bigger than sizeof(**sgt) so this wastes memory but
+it won't lead to corruption.
 
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c b/drivers/gpu/d=
-rm/amd/amdgpu/amdgpu_vram_mgr.c
-> index 134cc36e30c5..0739e259bf91 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
-> @@ -462,7 +462,7 @@ int amdgpu_vram_mgr_alloc_sgt(struct amdgpu_device *a=
-dev,
->   	unsigned int pages;
->   	int i, r;
->  =20
-> -	*sgt =3D kmalloc(sizeof(*sg), GFP_KERNEL);
-> +	*sgt =3D kmalloc(sizeof(**sgt), GFP_KERNEL);
->   	if (!*sgt)
->   		return -ENOMEM;
->  =20
+    11  struct scatterlist {
+    12          unsigned long   page_link;
+    13          unsigned int    offset;
+    14          unsigned int    length;
+    15          dma_addr_t      dma_address;
+    16  #ifdef CONFIG_NEED_SG_DMA_LENGTH
+    17          unsigned int    dma_length;
+    18  #endif
+    19  };
+
+    42  struct sg_table {
+    43          struct scatterlist *sgl;        /* the list */
+    44          unsigned int nents;             /* number of mapped entries */
+    45          unsigned int orig_nents;        /* original size of list */
+    46  };
+
+regards,
+dan carpenter
