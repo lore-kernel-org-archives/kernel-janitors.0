@@ -1,45 +1,35 @@
-From: "Mr. Scott Donald" <confianzayrentabilidad@gmail.com>
-Date: Fri, 14 Aug 2020 10:24:44 +0000
-Subject: Hello. Please
-Message-Id: <CANrrfX7NgvzMSv0r9BFStYz=A7CYoxkwkRKcVp2mPSHPE6rovw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Aug 2020 09:59:52 +0000
+Subject: [PATCH] drm/i915/vlv_dsi_pll: fix spelling mistake "Cant" -> "Can't"
+Message-Id: <20200810095952.60968-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in a drm_err message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/vlv_dsi_pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/display/vlv_dsi_pll.c b/drivers/gpu/drm/i915/display/vlv_dsi_pll.c
+index d0a514301575..4070b00c3690 100644
+--- a/drivers/gpu/drm/i915/display/vlv_dsi_pll.c
++++ b/drivers/gpu/drm/i915/display/vlv_dsi_pll.c
+@@ -483,7 +483,7 @@ int bxt_dsi_pll_compute(struct intel_encoder *encoder,
+ 
+ 	if (dsi_ratio < dsi_ratio_min || dsi_ratio > dsi_ratio_max) {
+ 		drm_err(&dev_priv->drm,
+-			"Cant get a suitable ratio from DSI PLL ratios\n");
++			"Can't get a suitable ratio from DSI PLL ratios\n");
+ 		return -ECHRNG;
+ 	} else
+ 		drm_dbg_kms(&dev_priv->drm, "DSI PLL calculation is Done!!\n");
 -- 
-Dear Friend,
-
-I'm Mr. Scott Donald a Successful businessMan dealing with
-Exportation, I got your mail contact through search to let you know my
-intension and my Ugly Situation Am a dying Man here in Los Angeles
-California Hospital Bed in (USA), I Lost my Wife and my only Daughter
-for Covid-19 and I also have a problem in my Health and I can die
-anytime I Know,
-
-I have a project that I am about to hand over to you. and I already
-instructed the Bankia S.A. Madrid, Spain(BSA) to transfer my fund sum
-of £3,7M GBP. Equivalent to €4,077,033.91 EUR, to you as to enable you
-to give 50% of this fund to Charitable Home in your State and take 50%
-don't think otherwise and why would anybody send someone you barely
-know to help you deliver a message, help me do this for the happiness
-of my soul and for God to mercy me and my Family and give Us a good
-place.
-
-please, do as I said there was someone from your State that I deeply
-love so very very much and I miss her so badly I have no means to
-reach any Charitable Home there. that is why I go for a personal
-search of the Country and State and I got your mail contact through
-search to let you know my Bitterness and please, help me is getting
-Dark I ask my Doctor to help me keep you notice failure for me to
-reach you in person Your urgent Response, here is my Doctor Whats-app
-Number for urgent notice +13019692737
-
-Hope To Hear From You. I'm sending this email to you for the second
-time yet no response from you.
-
-My Regards.
-
-Mr. Scott Donald
-CEO
+2.27.0
