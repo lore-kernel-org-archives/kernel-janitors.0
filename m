@@ -1,37 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sun, 02 Aug 2020 15:19:25 +0000
-Subject: Re: [PATCH 1/2] ipw2100: Use GFP_KERNEL instead of GFP_ATOMIC in some memory allocation
-Message-Id: <20200802151925.81F7EC433C9@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Aug 2020 07:55:08 +0000
+Subject: [PATCH] x86/resctrl: fix spelling mistake "Could't" -> "Couldn't"
+Message-Id: <20200810075508.46490-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200722101701.26126-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200722101701.26126-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: stas.yakovlev@gmail.com, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The call chain is:
->    ipw2100_pci_init_one            (the probe function)
->      --> ipw2100_queues_allocate
->        --> ipw2100_tx_allocate
-> 
-> No lock is taken in the between.
-> So it is safe to use GFP_KERNEL in 'ipw2100_tx_allocate()'.
-> 
-> BTW, 'ipw2100_queues_allocate()' also calls 'ipw2100_msg_allocate()' which
-> already allocates some memory using GFP_KERNEL.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There are spelling mistakes in pr_warn messages. Fix these.
 
-2 patches applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/cpu/resctrl/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-9130559cf8db ipw2100: Use GFP_KERNEL instead of GFP_ATOMIC in some memory allocation
-e52525c0c320 ipw2x00: switch from 'pci_' to 'dma_' API
-
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 6a9df71c1b9e..98606689f5ca 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -562,7 +562,7 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
+ 
+ 	d = rdt_find_domain(r, id, &add_pos);
+ 	if (IS_ERR(d)) {
+-		pr_warn("Could't find cache id for cpu %d\n", cpu);
++		pr_warn("Couldn't find cache id for cpu %d\n", cpu);
+ 		return;
+ 	}
+ 
+@@ -607,7 +607,7 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
+ 
+ 	d = rdt_find_domain(r, id, NULL);
+ 	if (IS_ERR_OR_NULL(d)) {
+-		pr_warn("Could't find cache id for cpu %d\n", cpu);
++		pr_warn("Couldn't find cache id for cpu %d\n", cpu);
+ 		return;
+ 	}
+ 
 -- 
-https://patchwork.kernel.org/patch/11678101/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
