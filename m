@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 05 Aug 2020 11:31:55 +0000
-Subject: [PATCH] drm/vmwgfx: fix spelling mistake "Cound" -> "Could"
-Message-Id: <20200805113155.18006-1-colin.king@canonical.com>
+Date: Mon, 10 Aug 2020 10:04:01 +0000
+Subject: [PATCH] drm/vmwgfx: fix spelling mistake "Cant" -> "Can't"
+Message-Id: <20200810100401.61209-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200805113155.18006-1-colin.king@canonical.com>
+In-Reply-To: <20200805113155.18006-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -15,21 +17,21 @@ There is a spelling mistake in a DRM_ERROR message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index 4284c4bd444d..e67e2e8f6e6f 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -3037,7 +3037,7 @@ static int vmw_cmd_dx_bind_streamoutput(struct vmw_private *dev_priv,
- 	res = vmw_dx_streamoutput_lookup(vmw_context_res_man(ctx_node->ctx),
- 					 cmd->body.soid);
- 	if (IS_ERR(res)) {
--		DRM_ERROR("Cound not find streamoutput to bind.\n");
-+		DRM_ERROR("Could not find streamoutput to bind.\n");
- 		return PTR_ERR(res);
- 	}
- 
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+index bbce45d142aa..471836672312 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@ -186,7 +186,7 @@ void vmw_kms_cursor_snoop(struct vmw_surface *srf,
+ 		/* TODO handle none page aligned offsets */
+ 		/* TODO handle more dst & src != 0 */
+ 		/* TODO handle more then one copy */
+-		DRM_ERROR("Cant snoop dma request for cursor!\n");
++		DRM_ERROR("Can't snoop dma request for cursor!\n");
+ 		DRM_ERROR("(%u, %u, %u) (%u, %u, %u) (%ux%ux%u) %u %u\n",
+ 			  box->srcx, box->srcy, box->srcz,
+ 			  box->x, box->y, box->z,
 -- 
 2.27.0
