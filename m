@@ -1,42 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Aug 2020 09:59:08 +0000
-Subject: Re: [PATCH] mwifiex: Clean up some err and dbg messages
-Message-Id: <20200827095908.630E9C433A1@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Aug 2020 09:39:31 +0000
+Subject: [PATCH] regulator: fix spelling mistake "Cant" -> "Can't"
+Message-Id: <20200810093931.50624-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200819071853.113185-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200819071853.113185-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: amitkarwar@gmail.com, ganapathi.bhat@nxp.com, huxinming820@gmail.com, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The error message if 'pci_set_consistent_dma_mask()' fails is misleading.
-> The function call uses 32 bits, but the error message reports 64.
-> 
-> Moreover, according to the comment above 'dma_set_mask_and_coherent()'
-> definition, such an error can never happen.
-> 
-> So, simplify code, axe the misleading message and use
-> 'dma_set_mask_and_coherent()' instead of 'dma_set_mask()' +
-> 'dma_set_coherent_mask()'
-> 
-> While at it, make some clean-up:
->    - add # when reporting allocated length to be consistent between
->      functions
->    - s/consistent/coherent/
->    - s/unsigned int/u32/ to be consistent between functions
->    - align some code
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in a dev_err message. Fix it.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/regulator/fixed.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-5f8a3ed38bec mwifiex: Clean up some err and dbg messages
-
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index d54830e48b8d..142a70a89153 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -182,7 +182,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 
+ 		drvdata->enable_clock = devm_clk_get(dev, NULL);
+ 		if (IS_ERR(drvdata->enable_clock)) {
+-			dev_err(dev, "Cant get enable-clock from devicetree\n");
++			dev_err(dev, "Can't get enable-clock from devicetree\n");
+ 			return -ENOENT;
+ 		}
+ 	} else {
 -- 
-https://patchwork.kernel.org/patch/11723131/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
