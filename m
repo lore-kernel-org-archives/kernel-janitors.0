@@ -1,35 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Aug 2020 10:56:16 +0000
-Subject: [PATCH] can: grcan: fix spelling mistake "buss" -> "bus"
-Message-Id: <20200806105616.46790-1-colin.king@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 11 Aug 2020 08:22:18 +0000
+Subject: Re: [PATCH v4] documentation: coccinelle: Improve command example for make C={1, 2}
+Message-Id: <20200811082218.GB113774@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ed46e96e-a24b-b3f3-3bdc-cd8f0d50bac9@web.de>
+In-Reply-To: <ed46e96e-a24b-b3f3-3bdc-cd8f0d50bac9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Jonathan Corbet <corbet@lwn.net>, Nicolas Palix <nicolas.palix@imag.fr>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Randy Dunlap <rdunlap@infradead.org>, Gilles Muller <Gilles.Muller@lip6.fr>, Sam Ravnborg <sam@ravnborg.org>, Coccinelle <cocci@systeme.lip6.fr>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Aug 11, 2020 at 10:00:20AM +0200, Markus Elfring wrote:
+> > +This variable can be used to run scripts for the entire kernel, a
+> > +specific directory, or for a single file.
+> 
+> I imagine that this wording can be improved another bit (as I indicated it before).
 
-There is a spelling mistake in a netdev_err error message. Fix it.
+Hi,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/can/grcan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-diff --git a/drivers/net/can/grcan.c b/drivers/net/can/grcan.c
-index 378200b682fa..5d1f15843181 100644
---- a/drivers/net/can/grcan.c
-+++ b/drivers/net/can/grcan.c
-@@ -726,7 +726,7 @@ static void grcan_err(struct net_device *dev, u32 sources, u32 status)
- 			txrx = "on rx ";
- 			stats->rx_errors++;
- 		}
--		netdev_err(dev, "Fatal AHB buss error %s- halting device\n",
-+		netdev_err(dev, "Fatal AHB bus error %s- halting device\n",
- 			   txrx);
- 
- 		spin_lock_irqsave(&priv->lock, flags);
--- 
-2.27.0
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
