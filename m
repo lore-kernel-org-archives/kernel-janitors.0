@@ -1,35 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Aug 2020 10:07:50 +0000
-Subject: [PATCH] ktest.pl: fix spelling mistake "Cant" -> "Can't"
-Message-Id: <20200810100750.61475-1-colin.king@canonical.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Wed, 12 Aug 2020 09:27:45 +0000
+Subject: Re: [RFC PATCH] coccinelle: misc: add uninitialized_var.cocci script
+Message-Id: <alpine.DEB.2.22.394.2008121127120.2572@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1b8537dd-8bf3-d3b6-4c10-af2fa623f1fe@web.de>
+In-Reply-To: <1b8537dd-8bf3-d3b6-4c10-af2fa623f1fe@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Kees Cook <keescook@chromium.org>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in an error message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/testing/ktest/ktest.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 12 Aug 2020, Markus Elfring wrote:
 
-diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index 917810fa4c85..0817464fa363 100755
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -1540,7 +1540,7 @@ sub create_pty {
-     my $TIOCGPTN = 0x80045430;
- 
-     sysopen($ptm, "/dev/ptmx", O_RDWR | O_NONBLOCK) or
--	dodie "Cant open /dev/ptmx";
-+	dodie "Can't open /dev/ptmx";
- 
-     # unlockpt()
-     $tmp = pack("i", 0);
--- 
-2.27.0
+> > +@r@
+> > +identifier var;
+> > +type T;
+> > +position p;
+> > +@@
+> > +
+> > +(
+> > +* T var@p = var;
+> > +|
+> > +* T var@p = *(&(var));
+>
+> I suggest to simplify such code for the semantic patch language a bit.
+> Can an other variant be more succinct for the application of a SmPL disjunction?
+>
+> +*T var@p = \( var \| *(&(var)) \);
+
+It's fine as is.
+
+julia
