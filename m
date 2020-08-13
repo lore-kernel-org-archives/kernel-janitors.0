@@ -1,46 +1,40 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 04 Aug 2020 20:33:04 +0000
-Subject: Re: [PATCH] drm/amd/display: Indent an if statement
-Message-Id: <CADnq5_OCkSv5dgtxy2r1VApwTKXQe6oZapA+1VF2aj4Ux77-wQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Aug 2020 14:12:53 +0000
+Subject: [PATCH] ath9k: Fix potential out of bounds in ath9k_htc_txcompletion_cb()
+Message-Id: <20200813141253.GA457408@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200803143519.GB346925@mwanda>
-In-Reply-To: <20200803143519.GB346925@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Charlene Liu <Charlene.Liu@amd.com>, Aric Cyr <aric.cyr@amd.com>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Mauro Rossi <issor.oruam@gmail.com>, kernel-janitors@vger.kernel.org, Samson Tam <Samson.Tam@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, David Airlie <airlied@linux.ie>, Reza Amini <Reza.Amini@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Martin Leung <martin.leung@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, Jakub Kicinski <kuba@kernel.org>, Vasanthakumar Thiagarajan <vasanth@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, Senthil Balasubramanian <senthilkumar@atheros.com>, Sujith <Sujith.Manoharan@atheros.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+The value of "htc_hdr->endpoint_id" comes from skb->data so Smatch marks
+it as untrusted so we have to check it before using it as an array
+offset.
 
-Alex
+This is similar to a bug that syzkaller found in commit e4ff08a4d727
+("ath9k: Fix use-after-free Write in ath9k_htc_rx_msg") so it is
+probably a real issue.
 
-On Mon, Aug 3, 2020 at 10:35 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The if statement wasn't indented so it's confusing.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-> index ca26714c800e..c6b737dd8425 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-> @@ -71,7 +71,7 @@ enum dce_version resource_parse_asic_id(struct hw_asic_id asic_id)
->                 if (ASIC_REV_IS_TAHITI_P(asic_id.hw_internal_rev) ||
->                     ASIC_REV_IS_PITCAIRN_PM(asic_id.hw_internal_rev) ||
->                     ASIC_REV_IS_CAPEVERDE_M(asic_id.hw_internal_rev))
-> -               dc_version = DCE_VERSION_6_0;
-> +                       dc_version = DCE_VERSION_6_0;
->                 else if (ASIC_REV_IS_OLAND_M(asic_id.hw_internal_rev))
->                         dc_version = DCE_VERSION_6_4;
->                 else
-> --
-> 2.27.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/ath9k/htc_hst.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
+index d2e062eaf561..510e61e97dbc 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_hst.c
++++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
+@@ -339,6 +339,8 @@ void ath9k_htc_txcompletion_cb(struct htc_target *htc_handle,
+ 
+ 	if (skb) {
+ 		htc_hdr = (struct htc_frame_hdr *) skb->data;
++		if (htc_hdr->endpoint_id >= ARRAY_SIZE(htc_handle->endpoint))
++			goto ret;
+ 		endpoint = &htc_handle->endpoint[htc_hdr->endpoint_id];
+ 		skb_pull(skb, sizeof(struct htc_frame_hdr));
+ 
+-- 
+2.28.0
