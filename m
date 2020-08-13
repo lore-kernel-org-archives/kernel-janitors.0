@@ -1,37 +1,42 @@
-From: =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>
-Date: Thu, 20 Aug 2020 09:13:05 +0000
-Subject: Re: [PATCH 4/6] staging: wfx/debug.c: Fix spelling mistake "carefull" => "careful"
-Message-Id: <3146523.GL6Gmh1C2x@pc-42>
+From: ''Tayeb Souami'' <danny.puetate@mail.hmvi.gob.ec>
+Date: Thu, 13 Aug 2020 17:32:14 +0000
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+Message-Id: <20200813173237.75C4AC035909E@mail.hmvi.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <834139101223e627665c939388cd7c542920c531.1597913333.git.usuraj35@gmail.com> <ec3e765875adfe59f1d8d8ef2c610d6423116f55.1597913333.git.usuraj35@gmail.com>
-In-Reply-To: <ec3e765875adfe59f1d8d8ef2c610d6423116f55.1597913333.git.usuraj35@gmail.com>
+References: <20200728090438.85F9E478E28@correo.tlalpan.gob.mx>
+In-Reply-To: <20200728090438.85F9E478E28@correo.tlalpan.gob.mx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: gregkh@linuxfoundation.org, Suraj Upadhyay <usuraj35@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Thursday 20 August 2020 10:50:57 CEST Suraj Upadhyay wrote:
->=20
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/staging/wfx/debug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/wfx/debug.c b/drivers/staging/wfx/debug.c
-> index 3f1712b7c919..5772e2375370 100644
-> --- a/drivers/staging/wfx/debug.c
-> +++ b/drivers/staging/wfx/debug.c
-> @@ -299,7 +299,7 @@ static ssize_t wfx_send_hif_msg_read(struct file *fil=
-e, char __user *user_buf,
->                 return ret;
->         if (context->ret < 0)
->                 return context->ret;
-> -       // Be carefull, write() is waiting for a full message while read()
-> +       // Be careful, write() is waiting for a full message while read()
+Lieber Freund,
 
-Already fixed by commit c9638363f02d ("staging: wfx: fix a handful of
-spelling mistakes").
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika,
+der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich
+an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre
+E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines
+Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und
+Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die
+Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden,
+um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite
+unten.
 
---=20
-J=E9r=F4me Pouiller
+
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+
+
+Das ist dein Spendencode: [TS530342018]
+
+
+Antworten Sie mit dem SPENDE-CODE an diese
+
+E-Mail:Tayebsouam.spende@gmail.com
+
+
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+
+
+Grüße
+
+Herr Tayeb Souami
