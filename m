@@ -1,65 +1,45 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 14 Aug 2020 05:13:48 +0000
-Subject: [PATCH] xhci: Do not use GFP_KERNEL in (potentially) atomic context
-Message-Id: <20200814051348.763199-1-christophe.jaillet@wanadoo.fr>
+Date: Fri, 14 Aug 2020 05:55:01 +0000
+Subject: [PATCH] usb: gadget: f_tcm: Fix some resource leaks in some error paths
+Message-Id: <20200814055501.763821-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, sudhakar.panneerselvam@oracle.com, jpawar@cadence.com, gustavoars@kernel.org, Thinh.Nguyen@synopsys.com, bigeasy@linutronix.de, nab@linux-iscsi.org
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'xhci_urb_enqueue()' is passed a 'mem_flags' argument, because "URBs may be
-submitted in interrupt context" (see comment related to 'usb_submit_urb()'
-in 'drivers/usb/core/urb.c')
+If a memory allocation fails within a 'usb_ep_alloc_request()' call, the
+already allocated memory must be released.
 
-So this flag should be used in all the calling chain.
-Up to now, 'xhci_check_maxpacket()' which is only called from
-'xhci_urb_enqueue()', uses GFP_KERNEL.
+Fix a mix-up in the code and free the correct requests.
 
-Be safe and pass the mem_flags to this function as well.
-
-Fixes: ddba5cd0aeff ("xhci: Use command structures when queuing commands on the command ring")
+Fixes: c52661d60f63 ("usb-gadget: Initial merge of target module for UASP + BOT")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I'm not 100% sure of the Fixes tag. The commit is the only that introduced
-this GFP_KERNEL, but I've not checked what was the behavior before that.
+ drivers/usb/gadget/function/f_tcm.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-If the patch is correct, I guess that a cc stable should be welcome.
----
- drivers/usb/host/xhci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 3c41b14ecce7..b536f18e4cfd 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1382,7 +1382,7 @@ static int xhci_configure_endpoint(struct xhci_hcd *xhci,
-  * we need to issue an evaluate context command and wait on it.
-  */
- static int xhci_check_maxpacket(struct xhci_hcd *xhci, unsigned int slot_id,
--		unsigned int ep_index, struct urb *urb)
-+		unsigned int ep_index, struct urb *urb, gfp_t mem_flags)
- {
- 	struct xhci_container_ctx *out_ctx;
- 	struct xhci_input_control_ctx *ctrl_ctx;
-@@ -1413,7 +1413,7 @@ static int xhci_check_maxpacket(struct xhci_hcd *xhci, unsigned int slot_id,
- 		 * changes max packet sizes.
- 		 */
+diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
+index d94b814328c8..184165e27908 100644
+--- a/drivers/usb/gadget/function/f_tcm.c
++++ b/drivers/usb/gadget/function/f_tcm.c
+@@ -753,12 +753,13 @@ static int uasp_alloc_stream_res(struct f_uas *fu, struct uas_stream *stream)
+ 		goto err_sts;
  
--		command = xhci_alloc_command(xhci, true, GFP_KERNEL);
-+		command = xhci_alloc_command(xhci, true, mem_flags);
- 		if (!command)
- 			return -ENOMEM;
- 
-@@ -1509,7 +1509,7 @@ static int xhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
- 		 */
- 		if (urb->dev->speed = USB_SPEED_FULL) {
- 			ret = xhci_check_maxpacket(xhci, slot_id,
--					ep_index, urb);
-+					ep_index, urb, mem_flags);
- 			if (ret < 0) {
- 				xhci_urb_free_priv(urb_priv);
- 				urb->hcpriv = NULL;
+ 	return 0;
++
+ err_sts:
+-	usb_ep_free_request(fu->ep_status, stream->req_status);
+-	stream->req_status = NULL;
+-err_out:
+ 	usb_ep_free_request(fu->ep_out, stream->req_out);
+ 	stream->req_out = NULL;
++err_out:
++	usb_ep_free_request(fu->ep_in, stream->req_in);
++	stream->req_in = NULL;
+ out:
+ 	return -ENOMEM;
+ }
 -- 
 2.25.1
