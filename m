@@ -1,35 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 06 Aug 2020 11:42:56 +0000
-Subject: [PATCH] net: hns3: fix spelling mistake "could'nt" -> "couldn't"
-Message-Id: <20200806114256.58845-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 14 Aug 2020 15:05:22 +0000
+Subject: Re: [PATCH 7/7] ath: drop unnecessary list_empty
+Message-Id: <20200814150522.C0936C43391@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1595761112-11003-8-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
 
-There is a spelling mistake in a dev_err message. Fix it.
+> list_for_each_entry{_safe} is able to handle an empty list.
+> The only effect of avoiding the loop is not initializing the
+> index variable.
+> Drop list_empty tests in cases where these variables are not
+> used.
+> 
+> Note that list_for_each_entry{_safe} is defined in terms of
+> list_first_entry, which indicates that it should not be used on an
+> empty list.  But in list_for_each_entry{_safe}, the element obtained
+> by list_first_entry is not really accessed, only the address of its
+> list_head field is compared to the address of the list head, so the
+> list_first_entry is safe.
+> 
+> The semantic patch that makes this change for the list_for_each_entry
+> case is as follows: (http://coccinelle.lip6.fr/)
+> 
+> <smpl>
+> @@
+> expression x,e;
+> statement S;
+> identifier i;
+> @@
+> 
+> -if (!(list_empty(x)))
+>    list_for_each_entry(i,x,...) S
+>  ... when != i
+> ? i = e
+> </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 9162856de1b1..e972138a14ad 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1728,7 +1728,7 @@ static int hclgevf_reset_wait(struct hclgevf_dev *hdev)
- 	/* hardware completion status should be available by this time */
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
--			"could'nt get reset done status from h/w, timeout!\n");
-+			"couldn't get reset done status from h/w, timeout!\n");
- 		return ret;
- 	}
- 
+18c25b4019ca ath: drop unnecessary list_empty
+
 -- 
-2.27.0
+https://patchwork.kernel.org/patch/11685677/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
