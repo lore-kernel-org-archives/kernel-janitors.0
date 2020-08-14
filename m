@@ -1,72 +1,77 @@
 From: Denis Efremov <efremov@linux.com>
-Date: Fri, 14 Aug 2020 08:50:35 +0000
+Date: Fri, 14 Aug 2020 14:36:34 +0000
 Subject: Re: [PATCH] coccinelle: api: add sprintf() support to device_attr_show
-Message-Id: <8e76e81f-970b-b1f7-840d-10506dc3311a@linux.com>
+Message-Id: <0a9015b6-9037-59c5-31f2-cd2b32c86b50@linux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ed9a8046-4c21-e849-f68b-9e08991b701d@web.de>
-In-Reply-To: <ed9a8046-4c21-e849-f68b-9e08991b701d@web.de>
+ <8e76e81f-970b-b1f7-840d-10506dc3311a@linux.com>
+ <48ffa436-6e73-88b2-07bc-89942f3c6d8e@web.de>
+In-Reply-To: <48ffa436-6e73-88b2-07bc-89942f3c6d8e@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Julia Lawall <julia.lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, Coccinelle <cocci@systeme.lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
 
-Markus, I think that CCing new people and spam them with mails they
-are obviously not interested in doesn't bring an additional value to
-the discussion. linux-kernel and cocci mailing lists are enough
-in my opinion. This also will allow us to keep "threaded" mail
-order.
 
-On 8/14/20 11:30 AM, Markus Elfring wrote:
->> Interesting enough that with this patch coccinelle starts to skip
->> patch generation in some cases. For example, it skips patch for
->> drivers/base/core.c This is an unexpected result for me.
+On 8/14/20 3:30 PM, Markus Elfring wrote:
+>>> You propose to use a nested SmPL disjunction for desired adjustments.
+>>> I suggest to start a corresponding case distinction behind
+>>> the key word “return” instead of repeating it three times.
+>>
+>> It doesn't work.
 > 
-> Would you like to point questionable differences for such patch hunks out?
+> How do you think about to apply a SmPL rule variant like the following?
+> 
+> @rp depends on patch@
+> identifier show, dev, attr, buf;
+> constant str;
+> @@
+> 
+> ssize_t show(struct device *dev, struct device_attribute *attr, char *buf)
+> {
+> 	<...
+> 	return
+> (
+> -		snprintf
+> +		sprintf
+> 			(
+> 			buf,
+> -			\(PAGE_SIZE\|PAGE_SIZE - 1\),
+> (			str
+> |
+> (			"%i"\|"%i\n"\|"%li"\|"%li\n"\|"%lli"\|"%lli\n"\|
+> 			"%d"\|"%d\n"\|"%ld"\|"%ld\n"\|"%lld"\|"%lld\n"\|
+> 			"%u"\|"%u\n"\|"%lu"\|"%lu\n"\|"%llu"\|"%llu\n"\|
+> 			"%x"\|"%x\n"\|"%lx"\|"%lx\n"\|"%llx"\|"%llx\n"\|
+> 			"%X"\|"%X\n"\|"%lX"\|"%lX\n"\|"%llX"\|"%llX\n"\|
+> 			"0x%x"\|"0x%x\n"\|"0x%lx"\|"0x%lx\n"\|"0x%llx"\|"0x%llx\n"\|
+> 			"0x%X"\|"0x%X\n"\|"0x%lX"\|"0x%lX\n"\|"0x%llX"\|"0x%llX\n"\|
+> 			"%02x\n"\|"%03x\n"\|"%04x\n"\|"%08x\n"\|
+> 			"%02X\n"\|"%03X\n"\|"%04X\n"\|"%08X\n"\|
+> 			"0x%02x\n"\|"0x%03x\n"\|"0x%04x\n"\|"0x%08x\n"\|
+> 			"0x%02X\n"\|"0x%03X\n"\|"0x%04X\n"\|"0x%08X\n"\|
+> 			"%zd"\|"%zd\n"\|"%zu"\|"%zu\n"\|"%zx"\|"%zx\n"\|
+> 			"%c"\|"%c\n"\|"%p"\|"%p\n"\|"%pU\n"\|"%pUl\n"\|"%hu\n"
+> )			,
+> 			...
+> )
+> 			)
+> |
+> -		snprintf
+> +		scnprintf
+> 			(...)
+> );
+> 	...>
+> }
+> 
 
-Without this patch the script generates:
-$ spatch -D patch --no-includes --include-headers --cocci-file scripts/coccinelle/api/device_attr_show.cocci drivers/base/core.c
---- drivers/base/core.c
-+++ /tmp/cocci-output-63510-2f17ff-core.c
-@@ -1713,7 +1713,7 @@ ssize_t device_show_ulong(struct device
-char *buf)
-{
-struct dev_ext_attribute *ea = to_ext_attr(attr);
--       return snprintf(buf, PAGE_SIZE, "%lx\n", *(unsigned long *)(ea->var));
-+       return scnprintf(buf, PAGE_SIZE, "%lx\n", *(unsigned long *)(ea->var));
-}
-EXPORT_SYMBOL_GPL(device_show_ulong);
+3 levels of nested disjunctions makes this pattern completely unreadable
+and gives no comparable benefits. I don't think we should care much about
+number of characters in the kernel sources, gzip will do a better job
+anyway.
 
-@@ -1743,7 +1743,7 @@ ssize_t device_show_int(struct device *d
-{
-struct dev_ext_attribute *ea = to_ext_attr(attr);
-
--       return snprintf(buf, PAGE_SIZE, "%d\n", *(int *)(ea->var));
-+       return scnprintf(buf, PAGE_SIZE, "%d\n", *(int *)(ea->var));
-}
-EXPORT_SYMBOL_GPL(device_show_int);
-
-@@ -1764,7 +1764,7 @@ ssize_t device_show_bool(struct device *
-{
-struct dev_ext_attribute *ea = to_ext_attr(attr);
-
--       return snprintf(buf, PAGE_SIZE, "%d\n", *(bool *)(ea->var));
-+       return scnprintf(buf, PAGE_SIZE, "%d\n", *(bool *)(ea->var));
-}
-EXPORT_SYMBOL_GPL(device_show_bool);
-
-With this patch it generates nothing. I would expect spatch to generate
-a different patch with sprintf instead of scnprintf, because I think 
-... is enough to match "*(int *)(ea->var)". Even if it can't match sprintf
-pattern it should fallback to scnprintf pattern.
-
-> You propose to use a nested SmPL disjunction for desired adjustments.
-> I suggest to start a corresponding case distinction behind
-> the key word “return” instead of repeating it three times.
-
-It doesn't work.
 
 Thanks,
 Denis
