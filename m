@@ -1,45 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 13 Aug 2020 11:43:44 +0000
-Subject: [PATCH][V2] of/address: check for invalid range.cpu_addr
-Message-Id: <20200813114344.67730-1-colin.king@canonical.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 14 Aug 2020 19:48:25 +0000
+Subject: Re: [PATCH][V2] of/address: check for invalid range.cpu_addr
+Message-Id: <CAL_Jsq+hBnFui6fOoY9jv4YFYX7MdiPhdA_dWHiFrMzLXJOYbw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200813114344.67730-1-colin.king@canonical.com>
+In-Reply-To: <20200813114344.67730-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Aug 13, 2020 at 5:43 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently invalid CPU addresses are not being sanity checked resulting in
+> SATA setup failure on a SynQuacer SC2A11 development machine. The original
+> check was removed by and earlier commit, so add a sanity check back in
+> to avoid this regression.
+>
+> Fixes: 7a8b64d17e35 ("of/address: use range parser for of_dma_get_range")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/of/address.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 590493e04b01..6ffbf7b99e92 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -985,6 +985,10 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
+>                         /* Don't error out as we'd break some existing DTs */
+>                         continue;
+>                 }
+> +               if (range.cpu_addr = OF_BAD_ADDR) {
+> +                       pr_err("Translation of CPU address failed on node (%pOF)\n", node);
+> +                       continue;
+> +               }
+>                 dma_offset = range.cpu_addr - range.bus_addr;
+>
+>                 /* Take lower and upper limits */
+> --
+>
+> V2: print message using pr_err and don't print range.cpu_addr as it's always
+>     going to be OF_BAD_ADDR so the information is pointless.
 
-Currently invalid CPU addresses are not being sanity checked resulting in
-SATA setup failure on a SynQuacer SC2A11 development machine. The original
-check was removed by and earlier commit, so add a sanity check back in
-to avoid this regression.
+Shouldn't we print the bus_addr like the original message did?
+Otherwise, we don't really know what entry is problematic.
 
-Fixes: 7a8b64d17e35 ("of/address: use range parser for of_dma_get_range")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/of/address.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index 590493e04b01..6ffbf7b99e92 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -985,6 +985,10 @@ int of_dma_get_range(struct device_node *np, u64 *dma_addr, u64 *paddr, u64 *siz
- 			/* Don't error out as we'd break some existing DTs */
- 			continue;
- 		}
-+		if (range.cpu_addr = OF_BAD_ADDR) {
-+			pr_err("Translation of CPU address failed on node (%pOF)\n", node);
-+			continue;
-+		}
- 		dma_offset = range.cpu_addr - range.bus_addr;
- 
- 		/* Take lower and upper limits */
--- 
-
-V2: print message using pr_err and don't print range.cpu_addr as it's always
-    going to be OF_BAD_ADDR so the information is pointless.
---
-2.27.0
+Rob
