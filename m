@@ -1,35 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Aug 2020 10:46:23 +0000
-Subject: [PATCH] ASoC: hdac_hdmi: tidy up a memset()
-Message-Id: <20200825104623.GA278587@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 15 Aug 2020 06:12:37 +0000
+Subject: [PATCH] media: mceusb: Avoid GFP_ATOMIC where it is not needed
+Message-Id: <20200815061237.765171-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>, alsa-devel@alsa-project.org, Kai Vehmanen <kai.vehmanen@linux.intel.com>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>, Brent Lu <brent.lu@intel.com>
+To: sean@mess.org, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The ARRAY_SIZE() is the number of the elements but we want to use the
-number of bytes.  Fortunately, in this case the value is the same so it
-doesn't affect runtime.
+There is no point in using GFP_ATOMIC here.
+It is a probe function, and GFP_KERNEL is already used the line before
+and the line after.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use GFP_KERNEL instead.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/hdac_hdmi.c | 2 +-
+ drivers/media/rc/mceusb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index 869d1547ae5d..c61cce53f513 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -1474,7 +1474,7 @@ static int hdac_hdmi_eld_ctl_get(struct snd_kcontrol *kcontrol,
- 	struct hdac_hdmi_port *port;
- 	struct hdac_hdmi_eld *eld;
+diff --git a/drivers/media/rc/mceusb.c b/drivers/media/rc/mceusb.c
+index f9616158bcf4..98681ba10428 100644
+--- a/drivers/media/rc/mceusb.c
++++ b/drivers/media/rc/mceusb.c
+@@ -1726,7 +1726,7 @@ static int mceusb_dev_probe(struct usb_interface *intf,
+ 		goto mem_alloc_fail;
  
--	memset(ucontrol->value.bytes.data, 0, ARRAY_SIZE(ucontrol->value.bytes.data));
-+	memset(ucontrol->value.bytes.data, 0, sizeof(ucontrol->value.bytes.data));
+ 	ir->pipe_in = pipe;
+-	ir->buf_in = usb_alloc_coherent(dev, maxp, GFP_ATOMIC, &ir->dma_in);
++	ir->buf_in = usb_alloc_coherent(dev, maxp, GFP_KERNEL, &ir->dma_in);
+ 	if (!ir->buf_in)
+ 		goto buf_in_alloc_fail;
  
- 	pcm = get_hdmi_pcm_from_id(hdmi, kcontrol->id.device);
- 	if (!pcm) {
 -- 
-2.28.0
+2.25.1
