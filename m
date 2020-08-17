@@ -1,36 +1,40 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Wed, 12 Aug 2020 09:27:45 +0000
-Subject: Re: [RFC PATCH] coccinelle: misc: add uninitialized_var.cocci script
-Message-Id: <alpine.DEB.2.22.394.2008121127120.2572@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Aug 2020 22:37:13 +0000
+Subject: [PATCH] mailbox: remove duplicate "the the" phrase in Kconfig text
+Message-Id: <20200817223713.5659-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1b8537dd-8bf3-d3b6-4c10-af2fa623f1fe@web.de>
-In-Reply-To: <1b8537dd-8bf3-d3b6-4c10-af2fa623f1fe@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Kees Cook <keescook@chromium.org>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The Kconfig help text contains the phrase "the the" in the help
+text. Fix this and reformat a couple of lines.
 
-On Wed, 12 Aug 2020, Markus Elfring wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > +@r@
-> > +identifier var;
-> > +type T;
-> > +position p;
-> > +@@
-> > +
-> > +(
-> > +* T var@p = var;
-> > +|
-> > +* T var@p = *(&(var));
->
-> I suggest to simplify such code for the semantic patch language a bit.
-> Can an other variant be more succinct for the application of a SmPL disjunction?
->
-> +*T var@p = \( var \| *(&(var)) \);
-
-It's fine as is.
-
-julia
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index 05b1009e2820..581ad9154a4a 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -47,9 +47,9 @@ config ARMADA_37XX_RWTM_MBOX
+ 	depends on ARCH_MVEBU || COMPILE_TEST
+ 	depends on OF
+ 	help
+-	  Mailbox implementation for communication with the the firmware
+-	  running on the Cortex-M3 rWTM secure processor of the Armada 37xx
+-	  SOC. Say Y here if you are building for such a device (for example
++	  Mailbox implementation for communication with the firmware running
++	  on the Cortex-M3 rWTM secure processor of the Armada 37xx SOC.
++	  Say Y here if you are building for such a device (for example
+ 	  the Turris Mox router).
+ 
+ config OMAP2PLUS_MBOX
+-- 
+2.27.0
