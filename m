@@ -1,23 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 20 Aug 2020 21:15:10 +0000
-Subject: Re: [PATCH] epic100: switch from 'pci_' to 'dma_' API
-Message-Id: <20200820.141510.1395453798289903622.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Aug 2020 22:44:25 +0000
+Subject: [PATCH] net: ipv4: remove duplicate "the the" phrase in Kconfig text
+Message-Id: <20200817224425.5988-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200806201935.733641-1-christophe.jaillet@wanadoo.fr>
-        <20200806.142311.94169513118353100.davem@davemloft.net>
-        <9b8ad131-3c2e-37b7-392c-79fab1a2f2bb@wanadoo.fr>
-In-Reply-To: <9b8ad131-3c2e-37b7-392c-79fab1a2f2bb@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, snelson@pensando.io, mhabets@solarflare.com, vaibhavgupta40@gmail.com, mst@redhat.com, mkubecek@suse.cz, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 20 Aug 2020 18:28:25 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> should I resend the few conversion patches sent at the wrong time or
-> are they stored somewhere, and will be processed when some time is
-> available for it?
+The Kconfig help text contains the phrase "the the" in the help
+text. Fix this and reformat the block of help text.
 
-Please resend, thank you.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
+index 60db5a6487cc..87983e70f03f 100644
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -661,13 +661,13 @@ config TCP_CONG_BBR
+ 
+ 	  BBR (Bottleneck Bandwidth and RTT) TCP congestion control aims to
+ 	  maximize network utilization and minimize queues. It builds an explicit
+-	  model of the the bottleneck delivery rate and path round-trip
+-	  propagation delay. It tolerates packet loss and delay unrelated to
+-	  congestion. It can operate over LAN, WAN, cellular, wifi, or cable
+-	  modem links. It can coexist with flows that use loss-based congestion
+-	  control, and can operate with shallow buffers, deep buffers,
+-	  bufferbloat, policers, or AQM schemes that do not provide a delay
+-	  signal. It requires the fq ("Fair Queue") pacing packet scheduler.
++	  model of the bottleneck delivery rate and path round-trip propagation
++	  delay. It tolerates packet loss and delay unrelated to congestion. It
++	  can operate over LAN, WAN, cellular, wifi, or cable modem links. It can
++	  coexist with flows that use loss-based congestion control, and can
++	  operate with shallow buffers, deep buffers, bufferbloat, policers, or
++	  AQM schemes that do not provide a delay signal. It requires the fq
++	  ("Fair Queue") pacing packet scheduler.
+ 
+ choice
+ 	prompt "Default TCP congestion control"
+-- 
+2.27.0
