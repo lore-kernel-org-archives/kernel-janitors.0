@@ -1,33 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 25 Aug 2020 00:33:44 +0000
-Subject: Re: [PATCH] starfire: switch from 'pci_' to 'dma_' API
-Message-Id: <20200824.173344.243536176380574391.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Aug 2020 10:42:56 +0000
+Subject: [PATCH][next] selinux: fix allocation failure check on newpolicy->sidtab
+Message-Id: <20200819104256.51499-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200823062641.163283-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200823062641.163283-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: ionut@badula.org, kuba@kernel.org, snelson@pensando.io, leon@kernel.org, hkallweit1@gmail.com, vaibhavgupta40@gmail.com, mst@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 23 Aug 2020 08:26:41 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'netdev_open()', GFP_ATOMIC must be used
-> because it can be called from a .ndo_tx_timeout function.
-> So this function can be called with the 'netif_tx_lock' acquired.
-> The call chain is:
->   --> tx_timeout                 (.ndo_tx_timeout function)
->     --> netdev_open
-> 
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The allocation check of newpolicy->sidtab is null checking if
+newpolicy is null and not newpolicy->sidtab. Fix this.
 
-Applied.
+Addresses-Coverity: ("Logically dead code")
+Fixes: c7c556f1e81b ("selinux: refactor changing booleans")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/selinux/ss/services.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index f6f78c65f53f..d310910fb639 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -2224,7 +2224,7 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len,
+ 		return -ENOMEM;
+ 
+ 	newpolicy->sidtab = kzalloc(sizeof(*newpolicy->sidtab), GFP_KERNEL);
+-	if (!newpolicy)
++	if (!newpolicy->sidtab)
+ 		goto err;
+ 
+ 	rc = policydb_read(&newpolicy->policydb, fp);
+-- 
+2.27.0
