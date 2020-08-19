@@ -1,16 +1,35 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 27 Aug 2020 07:22:50 +0000
-Subject: Re: [PATCH] dma-pool: Fix an uninitialized variable bug in atomic_pool_expand()
-Message-Id: <20200827072250.GA5618@lst.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Aug 2020 07:47:29 +0000
+Subject: [PATCH][next] ath11k: fix spelling mistake "moniter" -> "monitor"
+Message-Id: <20200819074729.48591-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200826113330.GD393664@mwanda>
-In-Reply-To: <20200826113330.GD393664@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks,
+From: Colin Ian King <colin.king@canonical.com>
 
-applied to the dma-mapping for-linux tree.
+There is a spelling mistake in an ath11k_warn warning message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/debug.c b/drivers/net/wireless/ath/ath11k/debug.c
+index 0a3cfa716390..0ba234ad99b2 100644
+--- a/drivers/net/wireless/ath/ath11k/debug.c
++++ b/drivers/net/wireless/ath/ath11k/debug.c
+@@ -1097,7 +1097,7 @@ static ssize_t ath11k_write_pktlog_filter(struct file *file,
+ 						       DP_RX_BUFFER_SIZE, &tlv_filter);
+ 
+ 		if (ret) {
+-			ath11k_warn(ab, "failed to set rx filter for moniter status ring\n");
++			ath11k_warn(ab, "failed to set rx filter for monitor status ring\n");
+ 			goto out;
+ 		}
+ 	}
+-- 
+2.27.0
