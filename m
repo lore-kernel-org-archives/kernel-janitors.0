@@ -1,47 +1,40 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 09 Aug 2020 08:10:46 +0000
-Subject: Re: [PATCH 5/4] RDMA/efa : Remove pci-dma-compat wrapper APIs
-Message-Id: <91159e176c090f2d7ada6957af342c4b6d787973.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Aug 2020 10:57:12 +0000
+Subject: [PATCH][next] ath11k: fix error check on return from call to ath11k_core_firmware_request
+Message-Id: <20200819105712.51886-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1596957073.git.usuraj35@gmail.com>
-         <20200809074517.GA4419@blackclown>
-In-Reply-To: <20200809074517.GA4419@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>, dledford@redhat.com, jgg@ziepe.ca, galpress@amazon.com, sleybo@amazon.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2020-08-09 at 13:15 +0530, Suraj Upadhyay wrote:
-> The legacy API wrappers in include/linux/pci-dma-compat.h
-> should go away as it creates unnecessary midlayering
-> for include/linux/dma-mapping.h APIs.
-> 
-> Instead use dma-mapping.h APIs directly.
-> 
-> The patch has been generated with the coccinelle script below
-> and compile-tested.
-[]
-> diff --git a/drivers/infiniband/hw/efa/efa_main.c b/drivers/infiniband/hw/efa/efa_main.c
-[]
-> @@ -405,13 +405,13 @@ static int efa_device_init(struct efa_com_dev *edev, struct pci_dev *pdev)
->                 return err;
->         }
-> 
-> -       err = pci_set_dma_mask(pdev, DMA_BIT_MASK(dma_width));
-> +       err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(dma_width));
->         if (err) {
->                 dev_err(&pdev->dev, "pci_set_dma_mask failed %d\n", err);
+From: Colin Ian King <colin.king@canonical.com>
 
-Coccinelle is great for some things, but not
-necessarily for these sorts of changes in an
-completely automated way.
+The call to ath11k_core_firmware_request is returning a pointer that
+can be set to an error code, however, this is not being checked.
+Instead ret is being incorrecly checked for the error return. Fix the
+error checking.
 
-The dev_err messages also need to be changed
-as the format string contains the old name.
+Addresses-Coverity: ("Logically dead code")
+Fixes: 7b57b2ddec21 ("ath11k: create a common function to request all firmware files")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/qmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -       err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(dma_width));
-> +       err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(dma_width));
->         if (err) {
->                 dev_err(&pdev->dev,
->                         "err_pci_set_consistent_dma_mask failed %d\n",
+diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+index 91134510364c..4792857678b9 100644
+--- a/drivers/net/wireless/ath/ath11k/qmi.c
++++ b/drivers/net/wireless/ath/ath11k/qmi.c
+@@ -1886,7 +1886,7 @@ ath11k_qmi_prepare_bdf_download(struct ath11k_base *ab, int type,
+ 		break;
+ 	case ATH11K_QMI_FILE_TYPE_CALDATA:
+ 		fw_entry = ath11k_core_firmware_request(ab, ATH11K_DEFAULT_CAL_FILE);
+-		if (ret) {
++		if (PTR_ERR(fw_entry)) {
+ 			ath11k_warn(ab, "failed to load %s: %d\n",
+ 				    ATH11K_DEFAULT_CAL_FILE, ret);
+ 			goto out;
+-- 
+2.27.0
