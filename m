@@ -1,33 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 06 Aug 2020 22:34:53 +0000
-Subject: Re: [PATCH][V2] input: ims-pcu: return error code rather than -ENOMEM
-Message-Id: <20200806223453.GK1665100@dtor-ws>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Thu, 20 Aug 2020 08:50:30 +0000
+Subject: [PATCH 2/6] staging: wfx/main.c: Fix a spelling mistake "negociate" => "negotiate"
+Message-Id: <99deaab6dbe1d1a8325ec7f340109d9f9b5026fb.1597913333.git.usuraj35@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200603152151.139337-1-colin.king@canonical.com>
-In-Reply-To: <20200603152151.139337-1-colin.king@canonical.com>
+References: <834139101223e627665c939388cd7c542920c531.1597913333.git.usuraj35@gmail.com>
+In-Reply-To: <834139101223e627665c939388cd7c542920c531.1597913333.git.usuraj35@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jerome.pouiller@silabs.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 04:21:51PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the assignment of -ENOMEM to error is redudant because error
-> is not being read and -ENOMEM is being hard coded as an error return.
-> Fix this by returning the error code in variable 'error'; this also
-> allows the error code from a failed call to input_register_device to
-> be preserved and returned to the caller rather than just returning
-> a possibly inappropriate -ENOMEM.
-> 
-> Kudos to Dan Carpenter for the suggestion of an improved fix.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
+ drivers/staging/wfx/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thank you.
-
+diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
+index 11dfa088fc86..4263f912760b 100644
+--- a/drivers/staging/wfx/main.c
++++ b/drivers/staging/wfx/main.c
+@@ -384,7 +384,7 @@ int wfx_probe(struct wfx_dev *wdev)
+ 	err = wfx_sl_init(wdev);
+ 	if (err && wdev->hw_caps.capabilities.link_mode = SEC_LINK_ENFORCED) {
+ 		dev_err(wdev->dev,
+-			"chip require secure_link, but can't negociate it\n");
++			"chip require secure_link, but can't negotiate it\n");
+ 		goto err0;
+ 	}
+ 
 -- 
-Dmitry
+2.17.1
