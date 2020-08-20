@@ -1,160 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Aug 2020 10:02:15 +0000
-Subject: Re: [PATCH] rtw88: switch from 'pci_' to 'dma_' API
-Message-Id: <20200827100215.17B8AC433CB@smtp.codeaurora.org>
+From: Suraj Upadhyay <usuraj35@gmail.com>
+Date: Thu, 20 Aug 2020 08:51:33 +0000
+Subject: [PATCH 4/6] staging: wfx/debug.c: Fix spelling mistake "carefull" => "careful"
+Message-Id: <ec3e765875adfe59f1d8d8ef2c610d6423116f55.1597913333.git.usuraj35@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200820150643.148219-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200820150643.148219-1-christophe.jaillet@wanadoo.fr>
+References: <834139101223e627665c939388cd7c542920c531.1597913333.git.usuraj35@gmail.com>
+In-Reply-To: <834139101223e627665c939388cd7c542920c531.1597913333.git.usuraj35@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: yhchuang@realtek.com, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jerome.pouiller@silabs.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+---
+ drivers/staging/wfx/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'rtw_pci_init_tx_ring()' and
-> 'rtw_pci_init_rx_ring()' GFP_KERNEL can be used because both functions are
-> called from a probe function and no spinlock is taken.
-> 
-> The call chain is:
->   rtw_pci_probe
->     --> rtw_pci_setup_resource
->       --> rtw_pci_init
->         --> rtw_pci_init_trx_ring
->           --> rtw_pci_init_tx_ring
->           --> rtw_pci_init_rx_ring
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-24712ea996d8 rtw88: switch from 'pci_' to 'dma_' API
-
+diff --git a/drivers/staging/wfx/debug.c b/drivers/staging/wfx/debug.c
+index 3f1712b7c919..5772e2375370 100644
+--- a/drivers/staging/wfx/debug.c
++++ b/drivers/staging/wfx/debug.c
+@@ -299,7 +299,7 @@ static ssize_t wfx_send_hif_msg_read(struct file *file, char __user *user_buf,
+ 		return ret;
+ 	if (context->ret < 0)
+ 		return context->ret;
+-	// Be carefull, write() is waiting for a full message while read()
++	// Be careful, write() is waiting for a full message while read()
+ 	// only return a payload
+ 	if (copy_to_user(user_buf, context->reply, count))
+ 		return -EFAULT;
 -- 
-https://patchwork.kernel.org/patch/11726423/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.17.1
