@@ -1,7 +1,7 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 07 Aug 2020 05:50:37 +0000
+Date: Thu, 20 Aug 2020 16:28:25 +0000
 Subject: Re: [PATCH] epic100: switch from 'pci_' to 'dma_' API
-Message-Id: <bbb337c9-7cb7-0809-2b25-b0c5bd6fd82a@wanadoo.fr>
+Message-Id: <9b8ad131-3c2e-37b7-392c-79fab1a2f2bb@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200806201935.733641-1-christophe.jaillet@wanadoo.fr>
  <20200806.142311.94169513118353100.davem@davemloft.net>
@@ -26,7 +26,9 @@ Le 06/08/2020 à 23:23, David Miller a écrit :
 > 
 > 
 
-
-Sure, sorry for the inconvenience.
+Hi,
+should I resend the few conversion patches sent at the wrong time or are 
+they stored somewhere, and will be processed when some time is available 
+for it?
 
 CJ
