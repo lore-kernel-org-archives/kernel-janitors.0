@@ -1,35 +1,32 @@
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 17 Aug 2020 19:30:12 +0000
-Subject: Re: [PATCH][V3] of/address: check for invalid range.cpu_addr
-Message-Id: <20200817193012.GA1405869@bogus>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Aug 2020 07:51:36 +0000
+Subject: [PATCH][next] staging: spmi: hisi-spmi-controller: fix spelling mistake "controlller" -> "controller
+Message-Id: <20200820075136.186199-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200817113208.523805-1-colin.king@canonical.com>
-In-Reply-To: <20200817113208.523805-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 17 Aug 2020 12:32:08 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently invalid CPU addresses are not being sanity checked resulting in
-> SATA setup failure on a SynQuacer SC2A11 development machine. The original
-> check was removed by and earlier commit, so add a sanity check back in
-> to avoid this regression.
-> 
-> Fixes: 7a8b64d17e35 ("of/address: use range parser for of_dma_get_range")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: print message using pr_err and don't print range.cpu_addr as it's always
->     going to be OF_BAD_ADDR so the information is pointless.
-> V3: print the bus address to help diagnose issues
-> 
-> ---
->  drivers/of/address.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+There is a spelling mistake in the MODULE_ALIAS, fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/hikey9xx/hisi-spmi-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+index 66a0b296e06f..b132b2a5d939 100644
+--- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
++++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+@@ -354,4 +354,4 @@ module_exit(spmi_controller_exit);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_VERSION("1.0");
+-MODULE_ALIAS("platform:spmi_controlller");
++MODULE_ALIAS("platform:spmi_controller");
+-- 
+2.27.0
