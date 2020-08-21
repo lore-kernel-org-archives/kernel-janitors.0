@@ -1,35 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 25 Aug 2020 00:33:55 +0000
-Subject: Re: [PATCH] net: atheros: switch from 'pci_' to 'dma_' API
-Message-Id: <20200824.173355.1151795672938918588.davem@davemloft.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 21 Aug 2020 13:03:39 +0000
+Subject: Re: [PATCH] ms_block: fix spelling mistake "doesn'" -> "doesn't"
+Message-Id: <CAPDyKFrS0798_ftgBti+hJY3F2UpSFmDkTQcPzRNXtFAALfDVA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200823080353.169306-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200823080353.169306-1-christophe.jaillet@wanadoo.fr>
+References: <20200810080247.47024-1-colin.king@canonical.com>
+In-Reply-To: <20200810080247.47024-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, kuba@kernel.org, yanaijie@huawei.com, hkallweit1@gmail.com, mhabets@solarflare.com, mst@redhat.com, leon@kernel.org, colin.king@canonical.com, yuehaibing@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 23 Aug 2020 10:03:53 +0200
+On Mon, 10 Aug 2020 at 10:02, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a debug message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'atl1e_setup_ring_resources()' (atl1e_main.c),
-> 'atl1_setup_ring_resources()' (atl1.c) and 'atl2_setup_ring_resources()'
-> (atl2.c) GFP_KERNEL can be used because it can be called from a .ndo_open.
-> 
-> 'atl1_setup_ring_resources()' (atl1.c) can also be called from a
-> '.set_ringparam' (see struct ethtool_ops) where sleep is also allowed.
-> 
-> Both cases are protected by 'rtnl_lock()' which is a mutex. So these
-> function can sleep.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Applied for next, thanks!
 
-Applied.
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/memstick/core/ms_block.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+> index d9ee8e3dc72d..ad1c6f2db089 100644
+> --- a/drivers/memstick/core/ms_block.c
+> +++ b/drivers/memstick/core/ms_block.c
+> @@ -1223,7 +1223,7 @@ static int msb_read_boot_blocks(struct msb_data *msb)
+>                 }
+>
+>                 if (be16_to_cpu(page->header.block_id) != MS_BLOCK_BOOT_ID) {
+> -                       dbg("the pba at %d doesn' contain boot block ID", pba);
+> +                       dbg("the pba at %d doesn't contain boot block ID", pba);
+>                         continue;
+>                 }
+>
+> --
+> 2.27.0
+>
