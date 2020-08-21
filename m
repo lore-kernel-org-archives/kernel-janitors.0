@@ -1,24 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Aug 2020 23:02:50 +0000
-Subject: Re: [PATCH] net: ipv4: remove duplicate "the the" phrase in Kconfig text
-Message-Id: <20200818.160250.265313829967231070.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 21 Aug 2020 07:58:19 +0000
+Subject: [PATCH] nvmet-fc: Fix a missed _irqsave version of spin_lock in 'nvmet_fc_fod_op_done()'
+Message-Id: <20200821075819.152474-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200817224425.5988-1-colin.king@canonical.com>
-In-Reply-To: <20200817224425.5988-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: james.smart@broadcom.com, hch@lst.de, sagi@grimberg.me, chaitanya.kulkarni@wdc.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 17 Aug 2020 23:44:25 +0100
+The way 'spin_lock()' and 'spin_lock_irqsave()' are used is not consistent
+in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The Kconfig help text contains the phrase "the the" in the help
-> text. Fix this and reformat the block of help text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Use 'spin_lock_irqsave()' also here, as there is no guarantee that
+interruptions are disabled at that point, according to surrounding code.
 
-Applied.
+Fixes: a97ec51b37ef ("nvmet_fc: Rework target side abort handling")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not tested, only based on what looks logical to me according to
+surrounding code
+---
+ drivers/nvme/target/fc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+index 55bafd56166a..e6861cc10e7d 100644
+--- a/drivers/nvme/target/fc.c
++++ b/drivers/nvme/target/fc.c
+@@ -2342,9 +2342,9 @@ nvmet_fc_fod_op_done(struct nvmet_fc_fcp_iod *fod)
+ 			return;
+ 		if (fcpreq->fcp_error ||
+ 		    fcpreq->transferred_length != fcpreq->transfer_length) {
+-			spin_lock(&fod->flock);
++			spin_lock_irqsave(&fod->flock, flags);
+ 			fod->abort = true;
+-			spin_unlock(&fod->flock);
++			spin_unlock_irqrestore(&fod->flock, flags);
+ 
+ 			nvmet_req_complete(&fod->req, NVME_SC_INTERNAL);
+ 			return;
+-- 
+2.25.1
