@@ -1,43 +1,29 @@
-From: Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Date: Fri, 07 Aug 2020 15:57:27 +0000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 21 Aug 2020 07:56:02 +0000
 Subject: Re: [PATCH] crypto: ingenic - Drop kfree for memory allocated with devm_kzalloc
-Message-Id: <dc81addf-28db-72ef-1181-5b6425374e3c@wanyeetech.com>
+Message-Id: <20200821075602.GF25143@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200804081153.45342-1-weiyongjun1@huawei.com>
 In-Reply-To: <20200804081153.45342-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-To: Wei Yongjun <weiyongjun1@huawei.com>, mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de, gregkh@linuxfoundation.org, prasannatsmkumar@gmail.com
-Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: mpm@selenic.com, arnd@arndb.de, gregkh@linuxfoundation.org, zhouyanjie@wanyeetech.com, prasannatsmkumar@gmail.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
 
-SGVsbG8sCgrU2iAyMDIwLzgvNCDPws7nNDoxMSwgV2VpIFlvbmdqdW4g0LS1wDoKPiBJdCdzIG5v
-dCBuZWNlc3NhcnkgdG8gZnJlZSBtZW1vcnkgYWxsb2NhdGVkIHdpdGggZGV2bV9remFsbG9jCj4g
-YW5kIHVzaW5nIGtmcmVlIGxlYWRzIHRvIGEgZG91YmxlIGZyZWUuCgoKVGhhbmtzIGZvciBmaXgg
-aXQuCgpSZXZpZXdlZC1ieTog1tzn/L3cIChaaG91IFlhbmppZSkgPHpob3V5YW5qaWVAd2FueWVl
-dGVjaC5jb20+Cgo+Cj4gRml4ZXM6IDE5MDg3M2EwZWE0NSAoImNyeXB0bzogaW5nZW5pYyAtIEFk
-ZCBoYXJkd2FyZSBSTkcgZm9yIEluZ2VuaWMgSlo0NzgwIGFuZCBYMTAwMCIpCj4gUmVwb3J0ZWQt
-Ynk6IEh1bGsgUm9ib3QgPGh1bGtjaUBodWF3ZWkuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFdlaSBZ
-b25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPgo+IC0tLQo+ICAgZHJpdmVycy9jaGFyL2h3
-X3JhbmRvbS9pbmdlbmljLXJuZy5jIHwgOSArKy0tLS0tLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAy
-IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9j
-aGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jIGIvZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9pbmdl
-bmljLXJuZy5jCj4gaW5kZXggZDcwNGNlZjY0YjY0Li4wNTVjZmU1OWY1MTkgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jCj4gKysrIGIvZHJpdmVycy9j
-aGFyL2h3X3JhbmRvbS9pbmdlbmljLXJuZy5jCj4gQEAgLTkyLDggKzkyLDcgQEAgc3RhdGljIGlu
-dCBpbmdlbmljX3JuZ19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgCXBy
-aXYtPmJhc2UgPSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UocGRldiwgMCk7Cj4gICAJ
-aWYgKElTX0VSUihwcml2LT5iYXNlKSkgewo+ICAgCQlwcl9lcnIoIiVzOiBGYWlsZWQgdG8gbWFw
-IFJORyByZWdpc3RlcnNcbiIsIF9fZnVuY19fKTsKPiAtCQlyZXQgPSBQVFJfRVJSKHByaXYtPmJh
-c2UpOwo+IC0JCWdvdG8gZXJyX2ZyZWVfcm5nOwo+ICsJCXJldHVybiBQVFJfRVJSKHByaXYtPmJh
-c2UpOwo+ICAgCX0KPiAgIAo+ICAgCXByaXYtPnZlcnNpb24gPSAoZW51bSBpbmdlbmljX3JuZ192
-ZXJzaW9uKW9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YSgmcGRldi0+ZGV2KTsKPiBAQCAtMTA2LDE3
-ICsxMDUsMTMgQEAgc3RhdGljIGludCBpbmdlbmljX3JuZ19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2KQo+ICAgCXJldCA9IGh3cm5nX3JlZ2lzdGVyKCZwcml2LT5ybmcpOwo+ICAg
-CWlmIChyZXQpIHsKPiAgIAkJZGV2X2VycigmcGRldi0+ZGV2LCAiRmFpbGVkIHRvIHJlZ2lzdGVy
-IGh3cm5nXG4iKTsKPiAtCQlnb3RvIGVycl9mcmVlX3JuZzsKPiArCQlyZXR1cm4gcmV0Owo+ICAg
-CX0KPiAgIAo+ICAgCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHByaXYpOwo+ICAgCj4gICAJ
-ZGV2X2luZm8oJnBkZXYtPmRldiwgIkluZ2VuaWMgUk5HIGRyaXZlciByZWdpc3RlcmVkXG4iKTsK
-PiAgIAlyZXR1cm4gMDsKPiAtCj4gLWVycl9mcmVlX3JuZzoKPiAtCWtmcmVlKHByaXYpOwo+IC0J
-cmV0dXJuIHJldDsKPiAgIH0KPiAgIAo+ICAgc3RhdGljIGludCBpbmdlbmljX3JuZ19yZW1vdmUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPgo+
+On Tue, Aug 04, 2020 at 08:11:53AM +0000, Wei Yongjun wrote:
+> It's not necessary to free memory allocated with devm_kzalloc
+> and using kfree leads to a double free.
+> 
+> Fixes: 190873a0ea45 ("crypto: ingenic - Add hardware RNG for Ingenic JZ4780 and X1000")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/char/hw_random/ingenic-rng.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
