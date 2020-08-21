@@ -1,57 +1,152 @@
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 01 Aug 2020 14:49:43 +0000
-Subject: Re: [PATCH][next] cifs: fix double free error on share and prefix
-Message-Id: <CAH2r5mv8pWOcQfKknec=JksKVLvLTu2NbowAKwSguAb5-eojSw@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 21 Aug 2020 07:55:03 +0000
+Subject: Re: [PATCH] crypto: hifn_795x - switch from 'pci_' to 'dma_' API
+Message-Id: <20200821075503.GA25143@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200731171342.36636-1-colin.king@canonical.com>
-In-Reply-To: <20200731171342.36636-1-colin.king@canonical.com>
+References: <20200727093027.46331-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200727093027.46331-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Steve French <sfrench@samba.org>, Aurelien Aptel <aaptel@suse.com>, Paulo Alcantara <pc@cjr.nz>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-
-On Fri, Jul 31, 2020 at 12:15 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently if the call dfs_cache_get_tgt_share fails we cannot
-> fully guarantee that share and prefix are set to NULL and the
-> next iteration of the loop can end up potentially double freeing
-> these pointers. Since the semantics of dfs_cache_get_tgt_share
-> are ambiguous for failure cases with the setting of share and
-> prefix (currently now and the possibly the future), it seems
-> prudent to set the pointers to NULL when the objects are
-> free'd to avoid any double frees.
->
-> Addresses-Coverity: ("Double free")
-> Fixes: 96296c946a2a ("cifs: handle RESP_GET_DFS_REFERRAL.PathConsumed in reconnect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Mon, Jul 27, 2020 at 11:30:27AM +0200, Christophe JAILLET wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below and has been
+> hand modified to replace GFP_ with a correct flag.
+> It has been compile tested.
+> 
+> When memory is allocated in 'hifn_probe()' GFP_KERNEL can be used
+> because it is a probe function and no spin_lock is taken.
+> 
+> @@
+> @@
+> -    PCI_DMA_BIDIRECTIONAL
+> +    DMA_BIDIRECTIONAL
+> 
+> @@
+> @@
+> -    PCI_DMA_TODEVICE
+> +    DMA_TO_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_FROMDEVICE
+> +    DMA_FROM_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_NONE
+> +    DMA_NONE
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_alloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_zalloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_free_consistent(e1, e2, e3, e4)
+> +    dma_free_coherent(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_single(e1, e2, e3, e4)
+> +    dma_map_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_single(e1, e2, e3, e4)
+> +    dma_unmap_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4, e5;
+> @@
+> -    pci_map_page(e1, e2, e3, e4, e5)
+> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_page(e1, e2, e3, e4)
+> +    dma_unmap_page(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_sg(e1, e2, e3, e4)
+> +    dma_map_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_sg(e1, e2, e3, e4)
+> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
+> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
+> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_dma_mapping_error(e1, e2)
+> +    dma_mapping_error(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_consistent_dma_mask(e1, e2)
+> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  fs/cifs/connect.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index 3c4dd4e1b9eb..4b2f5f5b3a8e 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -5574,6 +5574,8 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon, const stru
->
->                 kfree(share);
->                 kfree(prefix);
-> +               share = NULL;
-> +               prefix = NULL;
->
->                 rc = dfs_cache_get_tgt_share(tcon->dfs_path + 1, it, &share, &prefix);
->                 if (rc) {
-> --
-> 2.27.0
->
+> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+>    https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+> ---
+>  drivers/crypto/hifn_795x.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
 
-
+Patch applied.  Thanks.
 -- 
-Thanks,
-
-Steve
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
