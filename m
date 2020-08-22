@@ -1,17 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Aug 2020 09:27:52 +0000
-Subject: Re: [PATCH] Staging: sm750fb: Fixed a coding style issue
-Message-Id: <20200825092752.GT1793@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 22 Aug 2020 13:11:24 +0000
+Subject: [PATCH] media: staging/intel-ipu3: css: Correctly reset some memory
+Message-Id: <20200822131124.157917-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1b596369-7c83-73ff-fd4e-ed0d7a714219@aol.com>
-In-Reply-To: <1b596369-7c83-73ff-fd4e-ed0d7a714219@aol.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: sakari.ailus@linux.intel.com, bingbu.cao@intel.com, tian.shu.qiu@intel.com, mchehab@kernel.org, gregkh@linuxfoundation.org, yong.zhi@intel.com
+Cc: devel@driverdev.osuosl.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 
-This commit is corrupted.  Please read the first bit of
-Documentation/process/email-clients.rst
+The intent here is to reset the whole 'scaler_coeffs_luma' array, not just
+the first element.
 
-regards,
-dan carpenter
+Fixes: 	e11110a5b744 ("media: staging/intel-ipu3: css: Compute and program ccs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/media/ipu3/ipu3-css-params.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/ipu3/ipu3-css-params.c b/drivers/staging/media/ipu3/ipu3-css-params.c
+index fbd53d7c097c..e9d6bd9e9332 100644
+--- a/drivers/staging/media/ipu3/ipu3-css-params.c
++++ b/drivers/staging/media/ipu3/ipu3-css-params.c
+@@ -159,7 +159,7 @@ imgu_css_scaler_calc(u32 input_width, u32 input_height, u32 target_width,
+ 
+ 	memset(&cfg->scaler_coeffs_chroma, 0,
+ 	       sizeof(cfg->scaler_coeffs_chroma));
+-	memset(&cfg->scaler_coeffs_luma, 0, sizeof(*cfg->scaler_coeffs_luma));
++	memset(&cfg->scaler_coeffs_luma, 0, sizeof(cfg->scaler_coeffs_luma));
+ 	do {
+ 		phase_step_correction++;
+ 
+-- 
+2.25.1
