@@ -1,124 +1,151 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Aug 2020 14:06:04 +0000
-Subject: [PATCH net] can: peak_usb: add range checking in decode operations
-Message-Id: <20200813140604.GA456946@mwanda>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 22 Aug 2020 01:08:08 +0000
+Subject: Re: [Cocci] coccinelle: Convert comma to semicolons (was Re: [PATCH] checkpatch: Add test for comma 
+Message-Id: <744af177c09f8ce22c99d6e1df458bced558518b.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200818184107.f8af232fb58b17160c570874@linux-foundation.org>
+ <3bf27caf462007dfa75647b040ab3191374a59de.camel@perches.com>
+ <b0fd63e4b379eda69ee85ab098353582b8c054bb.camel@perches.com>
+ <alpine.DEB.2.22.394.2008201021400.2524@hadrien>
+ <a5713d8597065ef986f780499428fcc4cd31c003.camel@perches.com>
+ <alpine.DEB.2.22.394.2008201856110.2524@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2008201856110.2524@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>, Stephane Grosjean <s.grosjean@peak-system.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Andri Yngvason <andri.yngvason@marel.com>, Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@inria.fr>, kernel-janitors <kernel-janitors@vger.kernel.org>, kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-kernel-mentees@lists.linuxfoundation.org
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Whitcroft <apw@shadowen.org>, cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>
 
-These values come from skb->data so Smatch considers them untrusted.  I
-believe Smatch is correct but I don't have a way to test this.
+(forwarding on to kernel-janitors/mentees and kernelnewbies)
 
-The usb_if->dev[] array has 2 elements but the index is in the 0-15
-range without checks.  The cfd->len can be up to 255 but the maximum
-valid size is CANFD_MAX_DLEN (64) so that could lead to memory
-corruption.
+Just fyi for anyone that cares:
 
-Fixes: 0a25e1f4f185 ("can: peak_usb: add support for PEAK new CANFD USB adapters")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/can/usb/peak_usb/pcan_usb_fd.c | 48 +++++++++++++++++-----
- 1 file changed, 37 insertions(+), 11 deletions(-)
+A janitorial task for someone might be to use Julia's coccinelle
+script below to convert the existing instances of commas that
+separate statements into semicolons.
 
-diff --git a/drivers/net/can/usb/peak_usb/pcan_usb_fd.c b/drivers/net/can/usb/peak_usb/pcan_usb_fd.c
-index 47cc1ff5b88e..dee3e689b54d 100644
---- a/drivers/net/can/usb/peak_usb/pcan_usb_fd.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb_fd.c
-@@ -468,12 +468,18 @@ static int pcan_usb_fd_decode_canmsg(struct pcan_usb_fd_if *usb_if,
- 				     struct pucan_msg *rx_msg)
- {
- 	struct pucan_rx_msg *rm = (struct pucan_rx_msg *)rx_msg;
--	struct peak_usb_device *dev = usb_if->dev[pucan_msg_get_channel(rm)];
--	struct net_device *netdev = dev->netdev;
-+	struct peak_usb_device *dev;
-+	struct net_device *netdev;
- 	struct canfd_frame *cfd;
- 	struct sk_buff *skb;
- 	const u16 rx_msg_flags = le16_to_cpu(rm->flags);
- 
-+	if (pucan_msg_get_channel(rm) >= ARRAY_SIZE(usb_if->dev))
-+		return -ENOMEM;
-+
-+	dev = usb_if->dev[pucan_msg_get_channel(rm)];
-+	netdev = dev->netdev;
-+
- 	if (rx_msg_flags & PUCAN_MSG_EXT_DATA_LEN) {
- 		/* CANFD frame case */
- 		skb = alloc_canfd_skb(netdev, &cfd);
-@@ -519,15 +525,21 @@ static int pcan_usb_fd_decode_status(struct pcan_usb_fd_if *usb_if,
- 				     struct pucan_msg *rx_msg)
- {
- 	struct pucan_status_msg *sm = (struct pucan_status_msg *)rx_msg;
--	struct peak_usb_device *dev = usb_if->dev[pucan_stmsg_get_channel(sm)];
--	struct pcan_usb_fd_device *pdev -			container_of(dev, struct pcan_usb_fd_device, dev);
-+	struct pcan_usb_fd_device *pdev;
- 	enum can_state new_state = CAN_STATE_ERROR_ACTIVE;
- 	enum can_state rx_state, tx_state;
--	struct net_device *netdev = dev->netdev;
-+	struct peak_usb_device *dev;
-+	struct net_device *netdev;
- 	struct can_frame *cf;
- 	struct sk_buff *skb;
- 
-+	if (pucan_stmsg_get_channel(sm) >= ARRAY_SIZE(usb_if->dev))
-+		return -ENOMEM;
-+
-+	dev = usb_if->dev[pucan_stmsg_get_channel(sm)];
-+	pdev = container_of(dev, struct pcan_usb_fd_device, dev);
-+	netdev = dev->netdev;
-+
- 	/* nothing should be sent while in BUS_OFF state */
- 	if (dev->can.state = CAN_STATE_BUS_OFF)
- 		return 0;
-@@ -579,9 +591,14 @@ static int pcan_usb_fd_decode_error(struct pcan_usb_fd_if *usb_if,
- 				    struct pucan_msg *rx_msg)
- {
- 	struct pucan_error_msg *er = (struct pucan_error_msg *)rx_msg;
--	struct peak_usb_device *dev = usb_if->dev[pucan_ermsg_get_channel(er)];
--	struct pcan_usb_fd_device *pdev -			container_of(dev, struct pcan_usb_fd_device, dev);
-+	struct pcan_usb_fd_device *pdev;
-+	struct peak_usb_device *dev;
-+
-+	if (pucan_ermsg_get_channel(er) >= ARRAY_SIZE(usb_if->dev))
-+		return -EINVAL;
-+
-+	dev = usb_if->dev[pucan_ermsg_get_channel(er)];
-+	pdev = container_of(dev, struct pcan_usb_fd_device, dev);
- 
- 	/* keep a trace of tx and rx error counters for later use */
- 	pdev->bec.txerr = er->tx_err_cnt;
-@@ -595,11 +612,17 @@ static int pcan_usb_fd_decode_overrun(struct pcan_usb_fd_if *usb_if,
- 				      struct pucan_msg *rx_msg)
- {
- 	struct pcan_ufd_ovr_msg *ov = (struct pcan_ufd_ovr_msg *)rx_msg;
--	struct peak_usb_device *dev = usb_if->dev[pufd_omsg_get_channel(ov)];
--	struct net_device *netdev = dev->netdev;
-+	struct peak_usb_device *dev;
-+	struct net_device *netdev;
- 	struct can_frame *cf;
- 	struct sk_buff *skb;
- 
-+	if (pufd_omsg_get_channel(ov) >= ARRAY_SIZE(usb_if->dev))
-+		return -EINVAL;
-+
-+	dev = usb_if->dev[pufd_omsg_get_channel(ov)];
-+	netdev = dev->netdev;
-+
- 	/* allocate an skb to store the error frame */
- 	skb = alloc_can_err_skb(netdev, &cf);
- 	if (!skb)
-@@ -716,6 +739,9 @@ static int pcan_usb_fd_encode_msg(struct peak_usb_device *dev,
- 	u16 tx_msg_size, tx_msg_flags;
- 	u8 can_dlc;
- 
-+	if (cfd->len > CANFD_MAX_DLEN)
-+		return -EINVAL;
-+
- 	tx_msg_size = ALIGN(sizeof(struct pucan_tx_msg) + cfd->len, 4);
- 	tx_msg->size = cpu_to_le16(tx_msg_size);
- 	tx_msg->type = cpu_to_le16(PUCAN_MSG_CAN_TX);
--- 
-2.28.0
+https://lore.kernel.org/lkml/alpine.DEB.2.22.394.2008201856110.2524@hadrien/
+
+On Thu, 2020-08-20 at 19:03 +0200, Julia Lawall wrote:
+> > > I have a bunch of variations of this that are more complicated than I
+> > > would have expected.  One shorter variant that I have is:
+> > > 
+> > > @@
+> > > expression e1,e2;
+> > > statement S;
+> > > @@
+> > > 
+> > >  S
+> > >  e1
+> > > -,
+> > > +;
+> > >   (<+... e2 ...+>);
+> > > 
+> > > This will miss cases where the first statement is the comma thing.  But I
+> > > think it is possible to improve this now.  I will check.
+> > 
+> > Hi Julia.
+> > 
+> > Right, thanks, this adds a dependency on a statement
+> > before the expression.  Any stragglers would be easily
+> > found using slightly different form.
+> > There are not very many of these in linux kernel.
+> > 
+> > Another nicety would be to allow the s/,/;/ conversion to
+> > find both b and c in this sequence:
+> > 	a = 1;
+> > 	b = 2,
+> > 	c = 3,
+> > 	d = 4;
+> > without running the script multiple times.
+> > There are many dozen uses of this style in linux kernel.
+> > 
+> > I tried variants of adding a comma after the e2 expression,
+> > but cocci seems to have parsing problems with:
+> > 
+> > @@
+> > expression e1;
+> > expression e2;
+> > @@
+> > 	e1
+> > -	,
+> > +	;
+> > 	e2,
+> 
+> This doesn't work because it's not a valid expression.
+> 
+> The problem is solved by doing:
+> 
+>   e1
+> - ,
+> + ;
+>   e2
+>   ... when any
+> 
+> But that doesn't work in the current version of Coccinelle.  I have fixed
+> the problem, though and it will work shortly.
+> 
+> > I do appreciate that coccinelle adds braces for multiple
+> > expression comma use after an if.
+> > 
+> > i.e.:
+> > 	if (foo)
+> > 		a = 1, b = 2;
+> > becomes
+> > 	if (foo) {
+> > 		a = 1; b = 2;
+> > 	}
+> 
+> I wasn't sure what was wanted for such things.  Should b = 2 now be on a
+> separate line?
+> 
+> I took the strategy of avoiding the problem and leaving those cases as is.
+> That also solves the LIST_HEAD problem.  But if it is wanted to change
+> these commas under ifs, then that is probably possible too.
+> 
+> My current complete solution is as follows.  The first rule avoids changing
+> commas in macros, where thebody of the macro is just an expression.  The
+> second rule uses position variables to ensure that the two expression are
+> on different lines.
+> 
+> @r@
+> expression e1,e2;
+> statement S;
+> position p;
+> @@
+> 
+> e1 ,@S@p e2;
+> 
+> @@
+> expression e1,e2;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { not((List.hd p1).line_end = (List.hd p2).line) };
+> statement S;
+> position r.p;
+> @@
+> 
+> e1@p1
+> -,@S@p
+> +;
+> e2@p2
+> ... when any
+> 
+> The generated patch is below.
+> 
+> julia
+> 
+> diff -u -p a/drivers/reset/hisilicon/reset-hi3660.c b/drivers/reset/hisilicon/reset-hi3660.c
+> --- a/drivers/reset/hisilicon/reset-hi3660.c
+> +++ b/drivers/reset/hisilicon/reset-hi3660.c
+> @@ -89,7 +89,7 @@ static int hi3660_reset_probe(struct pla
+>  		return PTR_ERR(rc->map);
+>  	}
+> 
+> -	rc->rst.ops = &hi3660_reset_ops,
+> +	rc->rst.ops = &hi3660_reset_ops;
+>  	rc->rst.of_node = np;
+>  	rc->rst.of_reset_n_cells = 2;
+>  	rc->rst.of_xlate = hi3660_reset_xlate;
+
+The rest of the changes are in the link above...
