@@ -1,38 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 02 Aug 2020 15:10:59 +0000
-Subject: [PATCH] atm: idt77252: Fix the size used in a 'dma_alloc_coherent()' call
-Message-Id: <20200802151059.699977-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Aug 2020 08:59:33 +0000
+Subject: [PATCH] scsi: libcxgbi: Fix a use after free in cxgbi_conn_xmit_pdu()
+Message-Id: <20200824085933.GD208317@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 3chas3@gmail.com
-Cc: linux-atm-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Austin Kim <austindh.kim@gmail.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This should be TSQSIZE in order to be consistent with the surrounding code
-and the corresponding 'dma_free_coherent()' in 'deinit_tsq()'
+We accidentally move this logging printk after the free, but that leads
+to a use after free.
 
-This is harmless because RSQSIZE and TSQSIZE have the same value (i.e.
-8192)
-
-Fixes: 	1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: e33c2482289b ("scsi: cxgb4i: Add support for iSCSI segmentation offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/atm/idt77252.c | 2 +-
+ drivers/scsi/cxgbi/libcxgbi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
-index df51680e8931..f459fafa902a 100644
---- a/drivers/atm/idt77252.c
-+++ b/drivers/atm/idt77252.c
-@@ -1373,7 +1373,7 @@ init_tsq(struct idt77252_dev *card)
- {
- 	struct tsq_entry *tsqe;
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index 71aebaf533ea..0e8621a6956d 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -2457,10 +2457,10 @@ int cxgbi_conn_xmit_pdu(struct iscsi_task *task)
+ 		return err;
+ 	}
  
--	card->tsq.base = dma_alloc_coherent(&card->pcidev->dev, RSQSIZE,
-+	card->tsq.base = dma_alloc_coherent(&card->pcidev->dev, TSQSIZE,
- 					    &card->tsq.paddr, GFP_KERNEL);
- 	if (card->tsq.base = NULL) {
- 		printk("%s: can't allocate TSQ.\n", card->name);
+-	__kfree_skb(skb);
+ 	log_debug(1 << CXGBI_DBG_ISCSI | 1 << CXGBI_DBG_PDU_TX,
+ 		  "itt 0x%x, skb 0x%p, len %u/%u, xmit err %d.\n",
+ 		  task->itt, skb, skb->len, skb->data_len, err);
++	__kfree_skb(skb);
+ 	iscsi_conn_printk(KERN_ERR, task->conn, "xmit err %d.\n", err);
+ 	iscsi_conn_failure(task->conn, ISCSI_ERR_XMIT_FAILED);
+ 	return err;
 -- 
-2.25.1
+2.28.0
