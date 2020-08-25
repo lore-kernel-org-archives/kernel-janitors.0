@@ -1,22 +1,33 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Wed, 05 Aug 2020 06:40:47 +0000
-Subject: Re: [PATCH -next] phy: qualcomm: fix return value check in qcom_ipq806x_usb_phy_probe()
-Message-Id: <20200805062847.GT12965@vkoul-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Aug 2020 11:20:03 +0000
+Subject: [PATCH] scsi: aacraid: remove erroneous fallthrough annotation
+Message-Id: <20200825112003.GD285523@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200723113622.136752-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200723113622.136752-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Ansuel Smith <ansuelsmth@gmail.com>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, Dave Carroll <David.Carroll@microsemi.com>, Johannes Thumshirn <jthumshirn@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 23-07-20, 11:36, Wei Yongjun wrote:
-> In case of error, the function devm_ioremap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
+This fallthrough annotation is unreachable so we can delete it.
 
-Applied, thanks
+Fixes: c4e2fbca374b ("scsi: aacraid: Reworked scsi command submission path")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/aacraid/aachba.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index fd6ae5c38086..2fb1881954c7 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -3253,7 +3253,6 @@ int aac_scsi_cmd(struct scsi_cmnd * scsicmd)
+ 	case START_STOP:
+ 		return aac_start_stop(scsicmd);
+ 
+-		fallthrough;
+ 	default:
+ 	/*
+ 	 *	Unhandled commands
 -- 
-~Vinod
+2.28.0
