@@ -1,32 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 20 Aug 2020 07:51:36 +0000
-Subject: [PATCH][next] staging: spmi: hisi-spmi-controller: fix spelling mistake "controlller" -> "controller
-Message-Id: <20200820075136.186199-1-colin.king@canonical.com>
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Tue, 25 Aug 2020 09:17:34 +0000
+Subject: Re: [PATCH][next] staging: spmi: hisi-spmi-controller: fix spelling mistake "controlller" -> "contro
+Message-Id: <20200825111734.40c13380@coco.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200820075136.186199-1-colin.king@canonical.com>
+In-Reply-To: <20200820075136.186199-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Em Thu, 20 Aug 2020 08:51:36 +0100
+Colin King <colin.king@canonical.com> escreveu:
 
-There is a spelling mistake in the MODULE_ALIAS, fix it.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the MODULE_ALIAS, fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/hikey9xx/hisi-spmi-controller.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  drivers/staging/hikey9xx/hisi-spmi-controller.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+> index 66a0b296e06f..b132b2a5d939 100644
+> --- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
+> +++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+> @@ -354,4 +354,4 @@ module_exit(spmi_controller_exit);
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_VERSION("1.0");
+> -MODULE_ALIAS("platform:spmi_controlller");
+> +MODULE_ALIAS("platform:spmi_controller");
 
-diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-index 66a0b296e06f..b132b2a5d939 100644
---- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
-+++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-@@ -354,4 +354,4 @@ module_exit(spmi_controller_exit);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_VERSION("1.0");
--MODULE_ALIAS("platform:spmi_controlller");
-+MODULE_ALIAS("platform:spmi_controller");
--- 
-2.27.0
+
+
+Thanks,
+Mauro
