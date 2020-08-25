@@ -1,35 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 05 Aug 2020 14:11:11 +0000
-Subject: [PATCH] RDMA/hns: fix spelling mistake "epmty" -> "empty"
-Message-Id: <20200805141111.22804-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 25 Aug 2020 05:38:28 +0000
+Subject: [PATCH v2] MAINTAINERS: update QUALCOMM IOMMU after Arm SMMU drivers move
+Message-Id: <20200825053828.4166-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lijun Ou <oulijun@huawei.com>, Wei Hu <huwei87@hisilicon.com>, Weihang Li <liweihang@huawei.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc: linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-team@android.com, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit e86d1aa8b60f ("iommu/arm-smmu: Move Arm SMMU drivers into their own
+subdirectory") moved drivers/iommu/qcom_iommu.c to
+drivers/iommu/arm/arm-smmu/qcom_iommu.c amongst other moves, adjusted some
+sections in MAINTAINERS, but missed adjusting the QUALCOMM IOMMU section.
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  warning: no file matches    F:    drivers/iommu/qcom_iommu.c
+
+Update the file entry in MAINTAINERS to the new location.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Acked-by: Will Deacon <will@kernel.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 2 +-
+v1: https://lore.kernel.org/lkml/20200802065320.7470-1-lukas.bulwahn@gmail.com/
+v1 -> v2: typo fixed; added Will's Ack.
+
+Joerg, please pick this minor non-urgent patch for your -next branch.
+
+applies cleanly on next-20200731
+
+ MAINTAINERS | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-index 07b4c85d341d..aeb3a6fa7d47 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-@@ -535,7 +535,7 @@ static void hns_roce_set_sdb_ext(struct hns_roce_dev *hr_dev, u32 ext_sdb_alept,
- 	roce_write(hr_dev, ROCEE_EXT_DB_SQ_H_REG, val);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1469cb81261d..e175c0741653 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14358,7 +14358,7 @@ M:	Rob Clark <robdclark@gmail.com>
+ L:	iommu@lists.linux-foundation.org
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+-F:	drivers/iommu/qcom_iommu.c
++F:	drivers/iommu/arm/arm-smmu/qcom_iommu.c
  
- 	dev_dbg(dev, "ext SDB depth: 0x%x\n", db->ext_db->esdb_dep);
--	dev_dbg(dev, "ext SDB threshold: epmty: 0x%x, ful: 0x%x\n",
-+	dev_dbg(dev, "ext SDB threshold: empty: 0x%x, ful: 0x%x\n",
- 		ext_sdb_alept, ext_sdb_alful);
- }
- 
+ QUALCOMM IPCC MAILBOX DRIVER
+ M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 -- 
-2.27.0
+2.17.1
