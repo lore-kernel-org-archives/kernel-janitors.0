@@ -1,25 +1,45 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 31 Aug 2020 17:41:07 +0000
-Subject: Re: [PATCH] scsi: csiostor: fix fix spelling mistake "couldnt" -> "couldn't"
-Message-Id: <159889566024.22322.9093103790427296260.b4-ty@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Aug 2020 10:47:07 +0000
+Subject: [PATCH] memory: omap-gpmc: Fix a couple off by ones
+Message-Id: <20200825104707.GB278587@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200810090843.49553-1-colin.king@canonical.com>
-In-Reply-To: <20200810090843.49553-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nathan Chancellor <natechancellor@gmail.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Colin King <colin.king@canonical.com>, linux-scsi@vger.kernel.org
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jon Hunter <jon-hunter@ti.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 10 Aug 2020 10:08:43 +0100, Colin King wrote:
+These comparisons should be >= instead of > to prevent reading one
+element beyond the end of the gpmc_cs[] array.
 
-> There are spelling mistakes in two comments and a csio_err error
-> message. Fix these.
+Fixes: cdd6928c589a ("ARM: OMAP2+: Add device-tree support for NOR flash")
+Fixes: f37e4580c409 ("ARM: OMAP2: Dynamic allocator for GPMC memory space")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/memory/omap-gpmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to 5.10/scsi-queue, thanks!
-
-[1/1] scsi: csiostor: Fix spelling mistake "couldnt" -> "couldn't"
-      https://git.kernel.org/mkp/scsi/c/29779a22af6f
-
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index cd9e80748591..fd245b82163a 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -989,7 +989,7 @@ static int gpmc_cs_remap(int cs, u32 base)
+ 	int ret;
+ 	u32 old_base, size;
+ 
+-	if (cs > gpmc_cs_num) {
++	if (cs >= gpmc_cs_num) {
+ 		pr_err("%s: requested chip-select is disabled\n", __func__);
+ 		return -ENODEV;
+ 	}
+@@ -1024,7 +1024,7 @@ int gpmc_cs_request(int cs, unsigned long size, unsigned long *base)
+ 	struct resource *res = &gpmc->mem;
+ 	int r = -1;
+ 
+-	if (cs > gpmc_cs_num) {
++	if (cs >= gpmc_cs_num) {
+ 		pr_err("%s: requested chip-select is disabled\n", __func__);
+ 		return -ENODEV;
+ 	}
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.28.0
