@@ -1,28 +1,68 @@
-From: "shenyang (M)" <shenyang39@huawei.com>
-Date: Fri, 07 Aug 2020 08:06:04 +0000
-Subject: Re: [v4 01/10] crypto: hisilicon/qm - fix wrong release after using strsep
-Message-Id: <a22bb80b-5dce-3e62-e805-8406564d3903@huawei.com>
+From: qianli zhao <zhaoqianligood@gmail.com>
+Date: Tue, 25 Aug 2020 08:55:52 +0000
+Subject: Re: [PATCH v2] workqueue: Warn when work flush own workqueue
+Message-Id: <CAPx_LQEaVq_LFXdhTAkyc_EczurqkLzKcVhb6YKFw6V_0jQbvg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <96ffa633-dda1-7ad1-72da-5563906c1561@web.de>
- <425f4bdd-cf55-6537-28bf-0377564b531b@huawei.com>
- <5554863d-f0d7-a396-7d13-e187fa9ca6bf@web.de>
- <e470a745-c59e-2baa-426d-816ae64d052f@huawei.com>
- <c28f472c-4d7b-0afd-5ad7-3cc322aad404@web.de>
-In-Reply-To: <c28f472c-4d7b-0afd-5ad7-3cc322aad404@web.de>
+References: <74f570e0aab48b86f7a157d87c16715289d457f4.1598323824.git.zhaoqianli@xiaomi.com>
+ <8aef74ea-5b28-07e1-d66b-91ed9e0920e9@web.de>
+In-Reply-To: <8aef74ea-5b28-07e1-d66b-91ed9e0920e9@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, Sihang Chen <chensihang1@hisilicon.com>, linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Zaibo Xu <xuzaibo@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Qianli Zhao <zhaoqianli@xiaomi.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Markus
 
+Thanks for your suggestion,and sorry for my poor wording.
 
-On 2020/8/6 15:23, Markus Elfring wrote:
-> Would you become interested to look if any other software components
-> would be similarly affected?
+On Tue, Aug 25, 2020 at 4:00 PM Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> > Flushing own workqueue or work self in work context will lead to
+> > a deadlock.
+>
+> I imagine that the wording “or work self” can become clearer another bit.
+>
+>
+> > Catch this incorrect usage and issue a warning when issue happened
+>
+> * Would you like to mark the end of such a sentence with a dot?
+>
+> * How do you think about to adjust the repetition of the word “issue”?
 
-Yeah, I'll check the rest and fix if any and send those in  a
-clean up patch.
+How about below changelog?
 
-Thanks,
-Yang
+workqueue: Warn when work flush own workqueue
+
+Flushing itself or own workqueue in work context will
+lead to a deadlock.
+Catch this incorrect usage and warning when issue happened.
+
+>
+>
+> …
+> > - update comment
+> > ---
+> >  kernel/workqueue.c | 10 +++++++---
+>
+> I suggest to replace these triple dashes by a blank line.
+Ok
+>
+>
+> …
+> > @@ -2585,6 +2585,7 @@ static int rescuer_thread(void *__rescuer)
+> >   * @target_work: work item being flushed (NULL for workqueue flushes)
+> >   *
+> >   * %current is trying to flush the whole @target_wq or @target_work on it.
+> > + * If a work flushing own workqueue or itself will lead to a deadlock.
+>
+> I stumble on understanding challenges for the wording “work flushing”.
+> Can an adjustment help in comparison to the term “work item”?
+
+How about below comment?
+
+* If a work item flushing own workqueue or itself will lead to a deadlock.
+
+>
+> Regards,
+> Markus
