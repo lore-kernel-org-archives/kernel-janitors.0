@@ -1,35 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Aug 2020 09:52:07 +0000
-Subject: [PATCH] cifs: Fix an error pointer dereference in cifs_mount()
-Message-Id: <20200805095207.GC483832@mwanda>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 25 Aug 2020 10:00:31 +0000
+Subject: Re: [PATCH] USB: PHY: JZ4770: Fix static checker warning
+Message-Id: <20200825100030.GA1347872@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <96687bd5-aa10-b908-471a-31e8daa01472@web.de>
+In-Reply-To: <96687bd5-aa10-b908-471a-31e8daa01472@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>
-Cc: Aurelien Aptel <aaptel@suse.com>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: =?utf-8?B?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dongsheng Qiu <dongsheng.qiu@ingenic.com>, Felipe Balbi <balbi@kernel.org>, qipengzhen <aric.pzqi@ingenic.com>, Rick Tyliu <rick.tyliu@ingenic.com>, Yanfei Li <yanfei.li@ingenic.com>, zhenwenjin@gmail.com, =?utf-8?B?5ZGo5q2j?= <sernia.zhou@foxmail.com>
 
-The error handling calls kfree(full_path) so we can't let it be a NULL
-pointer.  There used to be a NULL assignment here but we accidentally
-deleted it.  Add it back.
+On Tue, Aug 25, 2020 at 11:35:16AM +0200, Markus Elfring wrote:
+> > The commit 2a6c0b82e651 ("USB: PHY: JZ4770: Add support for new
+> > Ingenic SoCs.") introduced the initialization function for different
+> > chips, but left the relevant code involved in the resetting process
+> > in the original function, resulting in uninitialized variable calls.
+>=20
+> * Can another imperative wording be helpful for the change description?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?id=D012a7190fc1fd72ed48911e77=
+ca97ba4521bccd#n151
+>=20
+> * How do you think about to mention any source code analysis tool here?
+>=20
+> * Would an other commit subject be more appropriate?
+>=20
+>=20
+> > Fixes: 2a6c0b82e651 ("USB: PHY: JZ4770: Add support for new
+> > Ingenic SoCs.").
+>=20
+> Please omit a line break for this tag.
+>=20
+>=20
+> I find that a single patch would not need a cover letter.
 
-Fixes: 7efd08158261 ("cifs: document and cleanup dfs mount")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/cifs/connect.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 0ad1309e88d3..a275ee399dce 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -4886,6 +4886,7 @@ int cifs_mount(struct cifs_sb_info *cifs_sb, struct smb_vol *vol)
- 		full_path = build_unc_path_to_root(vol, cifs_sb, !!count);
- 		if (IS_ERR(full_path)) {
- 			rc = PTR_ERR(full_path);
-+			full_path = NULL;
- 			break;
- 		}
- 		/* Chase referral */
--- 
-2.27.0
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
