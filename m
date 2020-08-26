@@ -1,44 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Aug 2020 08:59:02 +0000
-Subject: [PATCH] crypto/chtls: Fix double free in chtls_pass_accept_request()
-Message-Id: <20200824085902.GC208317@mwanda>
+From: "Timo A. Aranjo" <timo.aranjo@aol.com>
+Date: Wed, 26 Aug 2020 01:21:01 +0000
+Subject: [PATCH] Staging: sm750fb: Fix basic coding style issues
+Message-Id: <20200826012101.12162-1-timo.aranjo@aol.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ayush Sawal <ayush.sawal@chelsio.com>
-Cc: Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Florian Westphal <fw@strlen.de>, Eric Dumazet <edumazet@google.com>, Shahjada Abul Husain <shahjada@chelsio.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-The chtls_recv_sock() function frees "oreq" so the free here is a double
-free.
+The word "enought" was changed to read as "enough".
+In addition to this, there was a missing new-line after varaible
+declarations within a function.
 
-Fixes: 6abde0b24122 ("crypto/chtls: IPv6 support for inline TLS")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Timo A. Aranjo <timo.aranjo@aol.com>
 ---
- drivers/crypto/chelsio/chtls/chtls_cm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
-index 05520dccd906..140342024bd1 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
-@@ -1381,7 +1381,7 @@ static void chtls_pass_accept_request(struct sock *sk,
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 84fb585a5739..029f0d09e966 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -411,6 +411,7 @@ static int __maybe_unused lynxfb_suspend(struct device *dev)
+ {
+ 	struct fb_info *info;
+ 	struct sm750_dev *sm750_dev;
++
+ 	sm750_dev = dev_get_drvdata(dev);
  
- 	newsk = chtls_recv_sock(sk, oreq, network_hdr, req, cdev);
- 	if (!newsk)
--		goto free_oreq;
-+		goto reject;
+ 	console_lock();
+@@ -500,7 +501,7 @@ static int lynxfb_ops_check_var(struct fb_var_screeninfo *var,
+ 	var->height = var->width = -1;
+ 	var->accel_flags = 0;/* FB_ACCELF_TEXT; */
  
- 	if (chtls_get_module(newsk))
- 		goto reject;
-@@ -1397,8 +1397,6 @@ static void chtls_pass_accept_request(struct sock *sk,
- 	kfree_skb(skb);
- 	return;
+-	/* check if current fb's video memory big enought to hold the onscreen*/
++	/* check if current fb's video memory big enough to hold the onscreen*/
+ 	request = var->xres_virtual * (var->bits_per_pixel >> 3);
+ 	/* defaulty crtc->channel go with par->index */
  
--free_oreq:
--	chtls_reqsk_free(oreq);
- reject:
- 	mk_tid_release(reply_skb, 0, tid);
- 	cxgb4_ofld_send(cdev->lldi->ports[0], reply_skb);
 -- 
-2.28.0
+2.25.1
