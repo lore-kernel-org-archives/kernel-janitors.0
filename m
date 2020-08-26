@@ -1,84 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Aug 2020 10:04:58 +0000
-Subject: Re: [PATCH v2] workqueue: Warn when work flush own workqueue
-Message-Id: <20200825100458.GV1793@kadam>
+Date: Wed, 26 Aug 2020 11:32:14 +0000
+Subject: [PATCH] afs: Remove erroneous fallthough annotation
+Message-Id: <20200826113214.GB393664@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74f570e0aab48b86f7a157d87c16715289d457f4.1598323824.git.zhaoqianli@xiaomi.com>
- <8aef74ea-5b28-07e1-d66b-91ed9e0920e9@web.de>
- <CAPx_LQEaVq_LFXdhTAkyc_EczurqkLzKcVhb6YKFw6V_0jQbvg@mail.gmail.com>
-In-Reply-To: <CAPx_LQEaVq_LFXdhTAkyc_EczurqkLzKcVhb6YKFw6V_0jQbvg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: qianli zhao <zhaoqianligood@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Qianli Zhao <zhaoqianli@xiaomi.com>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Howells <dhowells@redhat.com>
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We have asked Markus to stop harrassing people about commit messages but
-he refuses so I think he was banned from vger at the start of the month.
+The fall through annotation comes after a return statement so it's not
+reachable.
 
-On Tue, Aug 25, 2020 at 04:55:52PM +0800, qianli zhao wrote:
-> Markus
-> 
-> Thanks for your suggestion,and sorry for my poor wording.
-> 
-> On Tue, Aug 25, 2020 at 4:00 PM Markus Elfring <Markus.Elfring@web.de> wrote:
-> >
-> > > Flushing own workqueue or work self in work context will lead to
-> > > a deadlock.
-> >
-> > I imagine that the wording “or work self” can become clearer another bit.
-> >
-> >
-> > > Catch this incorrect usage and issue a warning when issue happened
-> >
-> > * Would you like to mark the end of such a sentence with a dot?
-> >
-> > * How do you think about to adjust the repetition of the word “issue”?
-> 
-> How about below changelog?
-> 
-> workqueue: Warn when work flush own workqueue
-> 
-> Flushing itself or own workqueue in work context will
-> lead to a deadlock.
-> Catch this incorrect usage and warning when issue happened.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/afs/flock.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-"If a workqueue flushes itself then that will lead to a deadlock.  Print
-a warning and a stack trace when this happens."
-
-> 
-> >
-> >
-> > …
-> > > - update comment
-> > > ---
-> > >  kernel/workqueue.c | 10 +++++++---
-> >
-> > I suggest to replace these triple dashes by a blank line.
-> Ok
-
-This does not matter at all.  Keep the dashes or remove them.  It
-doesn't matter at all.
-
-> >
-> >
-> > …
-> > > @@ -2585,6 +2585,7 @@ static int rescuer_thread(void *__rescuer)
-> > >   * @target_work: work item being flushed (NULL for workqueue flushes)
-> > >   *
-> > >   * %current is trying to flush the whole @target_wq or @target_work on it.
-> > > + * If a work flushing own workqueue or itself will lead to a deadlock.
-> >
-> > I stumble on understanding challenges for the wording “work flushing”.
-> > Can an adjustment help in comparison to the term “work item”?
-> 
-> How about below comment?
-> 
-> * If a work item flushing own workqueue or itself will lead to a deadlock.
-
-Write this:
-
-	* If a work queue flushes itself, that will lead to a deadlock
-
-regards,
-dan carpenter
+diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+index eff82a6839e4..cb3054c7843e 100644
+--- a/fs/afs/flock.c
++++ b/fs/afs/flock.c
+@@ -376,7 +376,6 @@ void afs_lock_work(struct work_struct *work)
+ 		spin_unlock(&vnode->lock);
+ 		return;
+ 
+-		fallthrough;
+ 	default:
+ 		/* Looks like a lock request was withdrawn. */
+ 		spin_unlock(&vnode->lock);
+-- 
+2.28.0
