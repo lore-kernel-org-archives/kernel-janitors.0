@@ -1,28 +1,33 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 21 Aug 2020 07:55:52 +0000
-Subject: Re: [PATCH] crypto: ixp4xx - Fix the size used in a 'dma_free_coherent()' call
-Message-Id: <20200821075552.GE25143@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Aug 2020 11:32:42 +0000
+Subject: [PATCH] rnbd: Fix an error code in process_rdma()
+Message-Id: <20200826113242.GC393664@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200802145648.699335-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200802145648.699335-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, chohnstaedt@innominate.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Jens Axboe <axboe@kernel.dk>, Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 02, 2020 at 04:56:48PM +0200, Christophe JAILLET wrote:
-> Update the size used in 'dma_free_coherent()' in order to match the one
-> used in the corresponding 'dma_alloc_coherent()', in 'setup_crypt_desc()'.
-> 
-> Fixes: 81bef0150074 ("crypto: ixp4xx - Hardware crypto support for IXP4xx CPUs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/ixp4xx_crypto.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The error code is uninitialized on this error path.
 
-Patch applied.  Thanks.
+Fixes: 735d77d4fd28 ("rnbd: remove rnbd_dev_submit_io")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/block/rnbd/rnbd-srv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
+index 0fb94843a495..5b69bc56b225 100644
+--- a/drivers/block/rnbd/rnbd-srv.c
++++ b/drivers/block/rnbd/rnbd-srv.c
+@@ -149,6 +149,7 @@ static int process_rdma(struct rtrs_srv *sess,
+ 	bio = rnbd_bio_map_kern(data, sess_dev->rnbd_dev->ibd_bio_set, datalen, GFP_KERNEL);
+ 	if (IS_ERR(bio)) {
+ 		rnbd_srv_err(sess_dev, "Failed to generate bio, err: %ld\n", PTR_ERR(bio));
++		err = PTR_ERR(bio);
+ 		goto sess_dev_put;
+ 	}
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.28.0
