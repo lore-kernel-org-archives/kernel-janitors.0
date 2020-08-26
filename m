@@ -1,50 +1,35 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 13 Aug 2020 21:40:29 +0000
-Subject: Re: [PATCH] staging: media: ipu3: Replace depracated MSI API.
-Message-Id: <20200813214028.GB24582@paasikivi.fi.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 26 Aug 2020 08:59:07 +0000
+Subject: [PATCH][next] selftests/bpf: fix spelling mistake "scoket" -> "socket"
+Message-Id: <20200826085907.43095-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200718133238.GA11982@blackclown>
-In-Reply-To: <20200718133238.GA11982@blackclown>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suraj Upadhyay <usuraj35@gmail.com>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, bingbu.cao@intel.com, mchehab@kernel.org, tian.shu.qiu@intel.com, linux-media@vger.kernel.org
+To: Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jiri Olsa <jolsa@kernel.org>, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Suraj,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch.
+There is a spelling mistake an a check error message. Fix it.
 
-On Sat, Jul 18, 2020 at 07:02:38PM +0530, Suraj Upadhyay wrote:
-> Replace depracated psi_enable_msi with pci_alloc_irq_vectors.
-> And as a result modify how the returned value is handled.
-> 
-> Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
-> ---
->  drivers/staging/media/ipu3/ipu3.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
-> index ee1bba6bdcac..54690e7442be 100644
-> --- a/drivers/staging/media/ipu3/ipu3.c
-> +++ b/drivers/staging/media/ipu3/ipu3.c
-> @@ -602,9 +602,9 @@ static irqreturn_t imgu_isr(int irq, void *imgu_ptr)
->  static int imgu_pci_config_setup(struct pci_dev *dev)
->  {
->  	u16 pci_command;
-> -	int r = pci_enable_msi(dev);
-> +	int r = pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_MSI);
->  
-> -	if (r) {
-> +	if (r < 0) {
->  		dev_err(&dev->dev, "failed to enable MSI (%d)\n", r);
->  		return r;
->  	}
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/bpf/prog_tests/d_path.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I believe fixing this requires also releasing it, i.e. a call to
-pci_free_irq_vectors(). This seems to have been missing.
-
+diff --git a/tools/testing/selftests/bpf/prog_tests/d_path.c b/tools/testing/selftests/bpf/prog_tests/d_path.c
+index 058765da17e6..4ce2bb799afb 100644
+--- a/tools/testing/selftests/bpf/prog_tests/d_path.c
++++ b/tools/testing/selftests/bpf/prog_tests/d_path.c
+@@ -38,7 +38,7 @@ static int trigger_fstat_events(pid_t pid)
+ 		return ret;
+ 	/* unmountable pseudo-filesystems */
+ 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+-	if (CHECK(sockfd < 0, "trigger", "scoket failed\n"))
++	if (CHECK(sockfd < 0, "trigger", "socket failed\n"))
+ 		goto out_close;
+ 	/* mountable pseudo-filesystems */
+ 	procfd = open("/proc/self/comm", O_RDONLY);
 -- 
-Kind regards,
-
-Sakari Ailus
+2.27.0
