@@ -1,7 +1,7 @@
-From: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Date: Wed, 26 Aug 2020 13:13:26 +0000
+From: Jens Axboe <axboe@kernel.dk>
+Date: Wed, 26 Aug 2020 13:29:43 +0000
 Subject: Re: [PATCH] rnbd: Fix an error code in process_rdma()
-Message-Id: <85d5a2a9-a304-a32e-1bfd-143f42cd0b50@cloud.ionos.com>
+Message-Id: <172d1b3a-58e6-1a50-2b6a-1e797135d5af@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200826113242.GC393664@mwanda>
 In-Reply-To: <20200826113242.GC393664@mwanda>
@@ -9,32 +9,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>, Danil Kipnis <danil.kipnis@cloud.ionos.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-On 8/26/20 13:32, Dan Carpenter wrote:
+On 8/26/20 5:32 AM, Dan Carpenter wrote:
 > The error code is uninitialized on this error path.
->
-> Fixes: 735d77d4fd28 ("rnbd: remove rnbd_dev_submit_io")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/block/rnbd/rnbd-srv.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-> index 0fb94843a495..5b69bc56b225 100644
-> --- a/drivers/block/rnbd/rnbd-srv.c
-> +++ b/drivers/block/rnbd/rnbd-srv.c
-> @@ -149,6 +149,7 @@ static int process_rdma(struct rtrs_srv *sess,
->   	bio = rnbd_bio_map_kern(data, sess_dev->rnbd_dev->ibd_bio_set, datalen, GFP_KERNEL);
->   	if (IS_ERR(bio)) {
->   		rnbd_srv_err(sess_dev, "Failed to generate bio, err: %ld\n", PTR_ERR(bio));
-> +		err = PTR_ERR(bio);
->   		goto sess_dev_put;
->   	}
->   
 
-Thanks for the fix, Acked-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+The fix is in Linus's tree:
 
-Guoqing
+commit 17bc10300c69bd51b82983cdadafa0a7791f074e
+Author: Nathan Chancellor <natechancellor@gmail.com>
+Date:   Mon Aug 17 23:49:25 2020 -0700
+
+    block/rnbd: Ensure err is always initialized in process_rdma
+
+
+-- 
+Jens Axboe
