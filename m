@@ -1,55 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Aug 2020 08:50:57 +0000
-Subject: [PATCH] scsi: bnx2fc: fix spelling mistake "couldnt" -> "couldn't"
-Message-Id: <20200810085057.49039-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Mon, 31 Aug 2020 17:41:06 +0000
+Subject: Re: [PATCH] scsi: bnx2fc: fix spelling mistake "couldnt" -> "couldn't"
+Message-Id: <159889566024.22322.17285471107702169784.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171201093725.9274-1-colin.king@canonical.com>
-In-Reply-To: <20171201093725.9274-1-colin.king@canonical.com>
+References: <20200810085057.49039-1-colin.king@canonical.com>
+In-Reply-To: <20200810085057.49039-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, QLogic-Storage-Upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, linux-scsi@vger.kernel.org
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 10 Aug 2020 09:50:57 +0100, Colin King wrote:
 
-There are spelling mistakes in various printk messages. Fix these.
+> There are spelling mistakes in various printk messages. Fix these.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/bnx2fc/bnx2fc_io.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied to 5.10/scsi-queue, thanks!
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
-index 1aba5897ccb0..1a0dc18d6915 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-@@ -864,7 +864,7 @@ int bnx2fc_initiate_abts(struct bnx2fc_cmd *io_req)
- 
- 	abts_io_req = bnx2fc_elstm_alloc(tgt, BNX2FC_ABTS);
- 	if (!abts_io_req) {
--		printk(KERN_ERR PFX "abts: couldnt allocate cmd\n");
-+		printk(KERN_ERR PFX "abts: couldn't allocate cmd\n");
- 		rc = FAILED;
- 		goto abts_err;
- 	}
-@@ -957,7 +957,7 @@ int bnx2fc_initiate_seq_cleanup(struct bnx2fc_cmd *orig_io_req, u32 offset,
- 
- 	seq_clnp_req = bnx2fc_elstm_alloc(tgt, BNX2FC_SEQ_CLEANUP);
- 	if (!seq_clnp_req) {
--		printk(KERN_ERR PFX "cleanup: couldnt allocate cmd\n");
-+		printk(KERN_ERR PFX "cleanup: couldn't allocate cmd\n");
- 		rc = -ENOMEM;
- 		kfree(cb_arg);
- 		goto cleanup_err;
-@@ -1015,7 +1015,7 @@ int bnx2fc_initiate_cleanup(struct bnx2fc_cmd *io_req)
- 
- 	cleanup_io_req = bnx2fc_elstm_alloc(tgt, BNX2FC_CLEANUP);
- 	if (!cleanup_io_req) {
--		printk(KERN_ERR PFX "cleanup: couldnt allocate cmd\n");
-+		printk(KERN_ERR PFX "cleanup: couldn't allocate cmd\n");
- 		rc = -1;
- 		goto cleanup_err;
- 	}
+[1/1] scsi: bnx2fc: Fix spelling mistake "couldnt" -> "couldn't"
+      https://git.kernel.org/mkp/scsi/c/886a0b54f8e6
+
 -- 
-2.27.0
+Martin K. Petersen	Oracle Linux Engineering
