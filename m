@@ -1,48 +1,79 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:12 +0000
-Subject: [PATCH 02/18] ipmi:bt-bmc: use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-3-git-send-email-Julia.Lawall@inria.fr>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Wed, 02 Sep 2020 07:24:00 +0000
+Subject: Re: [PATCH] coccinelle: ifnullfree: add vfree(), kvfree*() functions
+Message-Id: <alpine.DEB.2.22.394.2009020921500.2528@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-1962328576-1599031440=:2528"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Corey Minyard <minyard@acm.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <99e82f65-e02e-988a-4e78-4d438ff8e28e@web.de>
+In-Reply-To: <99e82f65-e02e-988a-4e78-4d438ff8e28e@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Kees Cook <keescook@chromium.org>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+--8323329-1962328576-1599031440=:2528
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
----
- drivers/char/ipmi/bt-bmc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/ipmi/bt-bmc.c b/drivers/char/ipmi/bt-bmc.c
-index a395e2e70dc5..6e3d247b55d1 100644
---- a/drivers/char/ipmi/bt-bmc.c
-+++ b/drivers/char/ipmi/bt-bmc.c
-@@ -462,9 +462,9 @@ static int bt_bmc_probe(struct platform_device *pdev)
- 	mutex_init(&bt_bmc->mutex);
- 	init_waitqueue_head(&bt_bmc->queue);
- 
--	bt_bmc->miscdev.minor	= MISC_DYNAMIC_MINOR,
--	bt_bmc->miscdev.name	= DEVICE_NAME,
--	bt_bmc->miscdev.fops	= &bt_bmc_fops,
-+	bt_bmc->miscdev.minor	= MISC_DYNAMIC_MINOR;
-+	bt_bmc->miscdev.name	= DEVICE_NAME;
-+	bt_bmc->miscdev.fops	= &bt_bmc_fops;
- 	bt_bmc->miscdev.parent = dev;
- 	rc = misc_register(&bt_bmc->miscdev);
- 	if (rc) {
+On Wed, 2 Sep 2020, Markus Elfring wrote:
+
+> …
+> > +++ b/scripts/coccinelle/free/ifnullfree.cocci
+> > @@ -20,8 +20,14 @@ expression E;
+> >  - if (E != NULL)
+> >  (
+> >    kfree(E);
+> > +|
+> > +  kvfree(E);
+> >  |
+> >    kfree_sensitive(E);
+> > +|
+> > +  kvfree_sensitive(E, ...);
+> > +|
+> > +  vfree(E);
+> >  |
+> >    debugfs_remove(E);
+> >  |
+>
+> Would you ever get into the development mood to move the source code search
+> specification “(E);” out of the SmPL disjunction (as it happened for the rule “r”)?
+>
+>
+> > @@ -42,9 +48,10 @@ position p;
+> >  @@
+> >
+> >  * if (E != NULL)
+> > -*	\(kfree@p\|kfree_sensitive@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|
+> > +*	\(kfree@p\|kvfree@p\|kfree_sensitive@p\|kvfree_sensitive@p\|vfree@p\|
+> > +*         debugfs_remove@p\|debugfs_remove_recursive@p\|
+> >  *         usb_free_urb@p\|kmem_cache_destroy@p\|mempool_destroy@p\|
+> > -*         dma_pool_destroy@p\)(E);
+> > +*         dma_pool_destroy@p\)(E, ...);
+> …
+>
+> How do you think about to attach the position variable to the opening parenthesis
+> instead of each function name?
+>
+> +*         dma_pool_destroy\)(@p E, ...);
+
+While it probably impacts few people, this is a really bad idea for org
+mode, because org mode colors the thing that the position variable is
+attached to.  Having the ( colored would not be very visible.
+
+But even for report mode, this is probably not a good idea for the rare
+case where the function name and the argument list are on different lines.
+
+julia
+
+>
+>
+> Would the number of function call parameters influence such SmPL code any more?
+>
+> Regards,
+> Markus
+>
+--8323329-1962328576-1599031440=:2528--
