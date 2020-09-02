@@ -1,27 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 02 Sep 2020 19:39:23 +0000
-Subject: Re: [PATCH] RDMA/ucma: fix memory leak of mc on an xa_alloc failure
-Message-Id: <a86f5b1b-29f8-991f-a46b-fabc3566b15d@canonical.com>
+From: Tianxianting <tian.xianting@h3c.com>
+Date: Wed, 02 Sep 2020 08:34:50 +0000
+Subject: RE: [PATCH] clocksource: Return negative error code in h8300_8timer_init()
+Message-Id: <bf571d3088a4419dac147729e4206574@h3c.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3d9ee4ee-b145-5776-aec5-cfb6124e6a6b@web.de>
-In-Reply-To: <3d9ee4ee-b145-5776-aec5-cfb6124e6a6b@web.de>
+References: <7356d489-2320-2a75-0999-0b3f0f8ac373@web.de>
+In-Reply-To: <7356d489-2320-2a75-0999-0b3f0f8ac373@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <Markus.Elfring@web.de>, "uclinux-h8-devel@lists.sourceforge.jp" <uclinux-h8-devel@lists.sourceforge.jp>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Yoshinori Sato <ysato@users.sourceforge.jp>
 
-On 02/09/2020 20:03, Markus Elfring wrote:
->> Currently when an xa_alloc failure occurs the error exit path leaks
->> the allocated object mc.  Fix this by adding an error return path
->> that frees mc and rename error exit paths err3 to err4 and err2 to err3.
->=20
-> I propose to choose further alternatives for numbered labels.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/coding-style.rst?id=9C7d619be5a002ea29c172df5e3c1227c2=
-2cbb41#n485
->=20
-> Regards,
-> Markus
->=20
-That's nice
+SGkgTWFya3VzLA0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLg0KTm8gcmVhbCBmaXgsIGFzIG5v
+cm1hbGx5ICwgd2Ugc2hvdWxkIHJldHVybiBhIG5lZ2F0aXZlIGNvZGUsDQpJbiBmdW5jdGlvbiBo
+ODMwMF84dGltZXJfaW5pdCgpLCAgaXQgc2V0ICcgcmV0ID0gLUVJTlZBTCAnLCAnIHJldCA9IEVO
+WElPJyAsIGl0IHNob3VsZCBiZSBhbGlnbiB3aXRoIGEgbmVnYXRpdmUgY29kZQ0KDQpzdGF0aWMg
+aW50IF9faW5pdCBoODMwMF84dGltZXJfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpDQp7
+DQoNCiAgICAgICAgcmV0ID0gRU5YSU87ICA8PDwNCiAgICAgICAgYmFzZSA9IG9mX2lvbWFwKG5v
+ZGUsIDApOw0KICAgICAgICBpZiAoIWJhc2UpIHsNCiAgICAgICAgICAgICAgICBwcl9lcnIoImZh
+aWxlZCB0byBtYXAgcmVnaXN0ZXJzIGZvciBjbG9ja2V2ZW50XG4iKTsNCiAgICAgICAgICAgICAg
+ICBnb3RvIGZyZWVfY2xrOw0KICAgICAgICB9DQoNCiAgICAgICAgcmV0ID0gLUVJTlZBTDsgIDw8
+PCAgDQogICAgICAgIGlycSA9IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5vZGUsIDApOw0KICAgICAg
+ICBpZiAoIWlycSkgew0KICAgICAgICAgICAgICAgIHByX2VycigiZmFpbGVkIHRvIGdldCBpcnEg
+Zm9yIGNsb2NrZXZlbnRcbiIpOw0KICAgICAgICAgICAgICAgIGdvdG8gdW5tYXBfcmVnOw0KICAg
+ICAgICB9DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBNYXJrdXMgRWxmcmlu
+ZyBbbWFpbHRvOk1hcmt1cy5FbGZyaW5nQHdlYi5kZV0gDQpTZW50OiBUdWVzZGF5LCBTZXB0ZW1i
+ZXIgMDEsIDIwMjAgMTA6NDYgUE0NClRvOiB0aWFueGlhbnRpbmcgKFJEKSA8dGlhbi54aWFudGlu
+Z0BoM2MuY29tPjsgdWNsaW51eC1oOC1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5qcA0KQ2M6IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5v
+cmc7IERhbmllbCBMZXpjYW5vIDxkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPjsgVGhvbWFzIEds
+ZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+OyBZb3NoaW5vcmkgU2F0byA8eXNhdG9AdXNlcnMu
+c291cmNlZm9yZ2UuanA+DQpTdWJqZWN0OiBSZTogW1BBVENIXSBjbG9ja3NvdXJjZTogUmV0dXJu
+IG5lZ2F0aXZlIGVycm9yIGNvZGUgaW4gaDgzMDBfOHRpbWVyX2luaXQoKQ0KDQo+IEEgbmVnYXRp
+dmUgZXJyb3IgY29kZSBzaG91bGQgYmUgcmV0dXJuZWQNCg0KKiBDYW4gYW4gb3RoZXIgaW1wZXJh
+dGl2ZSB3b3JkaW5nIGJlY29tZSBoZWxwZnVsIGZvciB0aGUgY2hhbmdlIGRlc2NyaXB0aW9uPw0K
+DQoqIFdvdWxkIHlvdSBsaWtlIHRvIGFkZCB0aGUgdGFnIOKAnEZpeGVz4oCdIHRvIHRoZSBjb21t
+aXQgbWVzc2FnZT8NCg0KUmVnYXJkcywNCk1hcmt1cw0K
