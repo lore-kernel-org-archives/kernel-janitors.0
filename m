@@ -1,46 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 23 Sep 2020 15:16:20 +0000
-Subject: Re: [PATCH 00/14] drop double zeroing
-Message-Id: <20200923151620.GC5707@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="NU0Ex4SbNnrxsi6C"
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 02 Sep 2020 16:13:32 +0000
+Subject: [PATCH][next] xsk: fix incorrect memory allocation failure check on dma_map->dma_pages
+Message-Id: <20200902161332.199961-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
- <160070750168.56292.17961674601916397869.b4-ty@kernel.org>
- <c3b33526-936d-ffa4-c301-4d0485822be1@reintjes.nrw>
-In-Reply-To: <c3b33526-936d-ffa4-c301-4d0485822be1@reintjes.nrw>
-To: Rolf Reintjes <lists2.rolf@reintjes.nrw>
-Cc: linux-spi@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, linux-serial@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-block@vger.kernel.org, Yossi Leybovich <sleybo@amazon.com>, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, dmaengine@vger.kernel.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, rds-devel@oss.oracle.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---NU0Ex4SbNnrxsi6C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The failed memory allocation check for dma_map->dma_pages is incorrect,
+it is null checking dma_map and not dma_map->dma_pages. Fix this.
 
-On Wed, Sep 23, 2020 at 05:10:33PM +0200, Rolf Reintjes wrote:
-> On 21.09.20 18:58, Mark Brown wrote:
+Addresses-Coverity: ("Logicall dead code")
+Fixes: 921b68692abb ("xsk: Enable sharing of dma mappings")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/xdp/xsk_buff_pool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I do not understand which of the 14 patches you applied. Your mail responds
-> to the 00/14 mail.
-
-As the mail you're replying to says:
-
-> > [1/1] spi/topcliff-pch: drop double zeroing
-> >        commit: ca03dba30f2b8ff45a2972c6691e4c96d8c52b3b
-
---NU0Ex4SbNnrxsi6C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl9rZsMACgkQJNaLcl1U
-h9AxAgf/UlZBlBEQmArmMghyqM+HNmgNqZcFWWNnNQSmBBrgl8128+pLwAgIeZLw
-0l6J3hL0JAr1ozAMpm1RGS/xj2CD8a6QFiRw+9wAgL9eY3DAdognRwtwLJlW6zq3
-nj2VF+7+R6LhZGxqub8TnxUZLSdlop3wn9ZuAnTRZjjhPq2iidr4iYPWYsGqo+j5
-svVy+eYILC3/Y6X31PpT2OXujQXkrrCGlONZz2ieOMTLSLNQhL8pZh8tkJB9s/F5
-U60+SPDeI7yrVh6k5/iCldI5JHQyjXAmHza4R6BzKTc6kgSDvUlzrVOZxw1aaGy+
-EFLE4qdwQYEPaeRMZ+XVpSUbf3dGUw==
-=Rrao
------END PGP SIGNATURE-----
-
---NU0Ex4SbNnrxsi6C--
+diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+index 795d7c81c0ca..5b00bc5707f2 100644
+--- a/net/xdp/xsk_buff_pool.c
++++ b/net/xdp/xsk_buff_pool.c
+@@ -287,7 +287,7 @@ static struct xsk_dma_map *xp_create_dma_map(struct device *dev, struct net_devi
+ 		return NULL;
+ 
+ 	dma_map->dma_pages = kvcalloc(nr_pages, sizeof(*dma_map->dma_pages), GFP_KERNEL);
+-	if (!dma_map) {
++	if (!dma_map->dma_pages) {
+ 		kfree(dma_map);
+ 		return NULL;
+ 	}
+-- 
+2.27.0
