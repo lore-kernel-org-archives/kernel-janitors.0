@@ -1,34 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 09 Sep 2020 03:17:29 +0000
-Subject: Re: [PATCH] net: tc35815: switch from 'pci_' to 'dma_' API
-Message-Id: <20200908.201729.542237023404934204.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Sep 2020 12:52:06 +0000
+Subject: [PATCH] blk-mq: Fix refcounting leak in __blk_mq_register_dev()
+Message-Id: <20200905125206.GE183976@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200908202747.330007-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200908202747.330007-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: hkallweit1@gmail.com, kuba@kernel.org, mhabets@solarflare.com, tony.felice@timesys.com, mst@redhat.com, gustavo@embeddedor.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue,  8 Sep 2020 22:27:47 +0200
+There is a kobject_add() hidden in the call to kobject_add().
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'tc35815_init_queues()' GFP_ATOMIC must be used
-> because it can be called from 'tc35815_restart()' where some spinlock are
-> taken.
-> The call chain is:
->   tc35815_restart
->     --> tc35815_clear_queues
->       --> tc35815_init_queues
-> 
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+	ret = kobject_add(q->mq_kobj, kobject_get(&dev->kobj), "%s", "mq");
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
 
-Applied.
+It needs to be release on the error path.
+
+Fixes: 320ae51feed5 ("blk-mq: new multi-queue block IO queueing mechanism")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ block/blk-mq-sysfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
+index 062229395a50..5a63659163c1 100644
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -321,7 +321,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
+ 
+ 	ret = kobject_add(q->mq_kobj, kobject_get(&dev->kobj), "%s", "mq");
+ 	if (ret < 0)
+-		goto out;
++		goto out_kobj;
+ 
+ 	kobject_uevent(q->mq_kobj, KOBJ_ADD);
+ 
+@@ -333,8 +333,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
+ 
+ 	q->mq_sysfs_init_done = true;
+ 
+-out:
+-	return ret;
++	return 0;
+ 
+ unreg:
+ 	while (--i >= 0)
+@@ -342,6 +341,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
+ 
+ 	kobject_uevent(q->mq_kobj, KOBJ_REMOVE);
+ 	kobject_del(q->mq_kobj);
++out_kobj:
+ 	kobject_put(&dev->kobj);
+ 	return ret;
+ }
+-- 
+2.28.0
