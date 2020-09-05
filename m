@@ -1,48 +1,46 @@
-From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Date: Fri, 11 Sep 2020 13:02:28 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/selftests: test the correct variable in igt_gem_ww_ctx()
-Message-Id: <2c117e1e-2d51-a649-62df-7f9034dfe6cd@linux.intel.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 05 Sep 2020 10:37:00 +0000
+Subject: [PATCH] MAINTAINERS: repair reference in LYNX PCS MODULE
+Message-Id: <20200905103700.17162-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200911113414.GC367487@mwanda>
-In-Reply-To: <20200911113414.GC367487@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= <thomas.hellstrom@intel.com>, Matthew Auld <matthew.auld@intel.com>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+Commit 0da4c3d393e4 ("net: phy: add Lynx PCS module") added the files in
+./drivers/net/pcs/, but the new LYNX PCS MODULE section refers to
+./drivers/net/phy/.
 
-On 11/09/2020 12:34, Dan Carpenter wrote:
-> There is a copy and paste error here.  The "obj" should be "obj2".  The
-> current code could result in an Oops.
-> 
-> Fixes: 80f0b679d6f0 ("drm/i915: Add an implementation for i915_gem_ww_ctx locking, v2.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/gpu/drm/i915/selftests/i915_gem.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/i915/selftests/i915_gem.c
-> index 23a6132c5f4e..412e21604a05 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
-> @@ -211,8 +211,8 @@ static int igt_gem_ww_ctx(void *arg)
->   		return PTR_ERR(obj);
->   
->   	obj2 = i915_gem_object_create_internal(i915, PAGE_SIZE);
-> -	if (IS_ERR(obj)) {
-> -		err = PTR_ERR(obj);
-> +	if (IS_ERR(obj2)) {
-> +		err = PTR_ERR(obj2);
->   		goto put1;
->   	}
->   
-> 
-Oopsie I did point this out in review! (msgid 
-c03481f1-92c2-24ad-b56e-a92fbb70f9fe@linux.intel.com)
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+  warning: no file matches    F:    drivers/net/phy/pcs-lynx.c
 
-Regards,
+Repair the LYNX PCS MODULE section by referring to the right location.
 
-Tvrtko
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20200903
+
+Ioana, please ack.
+David, please pick this minor non-urgent patch into your net-next.
+ 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bb0cb31d323b..918deaa1d96e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10350,7 +10350,7 @@ LYNX PCS MODULE
+ M:	Ioana Ciornei <ioana.ciornei@nxp.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
+-F:	drivers/net/phy/pcs-lynx.c
++F:	drivers/net/pcs/pcs-lynx.c
+ F:	include/linux/pcs-lynx.h
+ 
+ M68K ARCHITECTURE
+-- 
+2.17.1
