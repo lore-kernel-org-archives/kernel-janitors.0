@@ -1,20 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Sep 2020 08:37:00 +0000
-Subject: Re: [PATCH] lib/scatterlist: Fix memory leak in sgl_alloc_order()
-Message-Id: <20200921083700.GB4282@kadam>
+Date: Sat, 05 Sep 2020 12:58:36 +0000
+Subject: [PATCH] scsi: libsas: Fix error path in sas_notify_lldd_dev_found()
+Message-Id: <20200905125836.GF183976@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e69e9865-a599-5bd9-95b1-7d57c7e2e90c@web.de>
- <1608a0b7-6960-afce-aa39-6785036b01e0@interlog.com>
-In-Reply-To: <1608a0b7-6960-afce-aa39-6785036b01e0@interlog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Douglas Gilbert <dgilbert@interlog.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
+To: "James E.J. Bottomley" <jejb@linux.ibm.com>, Dan Williams <dan.j.williams@intel.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, John Garry <john.garry@huawei.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jason Yan <yanaijie@huawei.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We asked Markus over and over to stop sending these emails but he
-refused so eventually he had to be banned from vger.  Unless you're
-directly mentioned in the CC list then you can't see his emails.
+In sas_notify_lldd_dev_found(), if we can't find a device, then it seems
+like the wrong thing to mark the device as found and to increment the
+reference count.  None of the callers ever drop the reference in that
+situation.
 
-regards,
-dan carpenter
+Fixes: 735f7d2fedf5 ("[SCSI] libsas: fix domain_device leak")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/libsas/sas_discover.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index cd7c7d269f6f..d0f9e90e3279 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -182,10 +182,11 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
+ 		pr_warn("driver on host %s cannot handle device %016llx, error:%d\n",
+ 			dev_name(sas_ha->dev),
+ 			SAS_ADDR(dev->sas_addr), res);
++		return res;
+ 	}
+ 	set_bit(SAS_DEV_FOUND, &dev->state);
+ 	kref_get(&dev->kref);
+-	return res;
++	return 0;
+ }
+ 
+ 
+-- 
+2.28.0
