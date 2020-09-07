@@ -1,48 +1,127 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:40 +0000
-Subject: [PATCH 17/20] media: dib0700: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-18-git-send-email-Julia.Lawall@inria.fr>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Mon, 07 Sep 2020 12:00:19 +0000
+Subject: =?UTF-8?Q?Re=3A_=5BCocci=5D_=5BPATCH=5D_Coccinelle=3A_api=3A_Ad?= =?UTF-8?Q?d_SmPL_script_=E2=80=9Cu
+Message-Id: <alpine.DEB.2.22.394.2009071357140.2476@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+References: <25b804fd-0d04-475d-f614-26c03c9fd544@web.de>
+ <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
+In-Reply-To: <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Dejin Zheng <zhengdejin5@gmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Mon, 7 Sep 2020, Markus Elfring wrote:
 
----
- drivers/media/usb/dvb-usb/dib0700_devices.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 7 Sep 2020 13:14:44 +0200
+>
+> Another wrapper function is available since the commit 890cc39a879906b63912482dfc41944579df2dc6
+> ("drivers: provide devm_platform_get_and_ioremap_resource()").
+> Provide design options for the adjustment of affected source code
+> by the means of the semantic patch language (Coccinelle software).
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  ...vm_platform_get_and_ioremap_resource.cocci | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
+>
+> diff --git a/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
+> new file mode 100644
+> index 000000000000..8e67359f6b76
+> --- /dev/null
+> +++ b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
+> @@ -0,0 +1,71 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/// Simplify a function call combination by using a known wrapper function.
+> +//
+> +// Keywords: wrapper function conversion ioremap resources
+> +// Confidence: High
+> +
+> +virtual context, patch, report, org
+> +
+> +@display depends on context@
+> +expression base, device1, device2, index, private, resource;
+> +@@
+> +(
+> +*resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base > +*       devm_ioremap_resource
+> +                             (&device1->dev, resource);
 
-diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
-index d3288c107906..710c1afe3e85 100644
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -3074,8 +3074,8 @@ static int nim7090_tuner_attach(struct dvb_usb_adapter *adap)
- 	struct dib0700_adapter_state *st = adap->priv;
- 	struct i2c_adapter *tun_i2c = st->dib7000p_ops.get_i2c_tuner(adap->fe_adap[0].fe);
- 
--	nim7090_dib0090_config.reset = st->dib7000p_ops.tuner_sleep,
--	nim7090_dib0090_config.sleep = st->dib7000p_ops.tuner_sleep,
-+	nim7090_dib0090_config.reset = st->dib7000p_ops.tuner_sleep;
-+	nim7090_dib0090_config.sleep = st->dib7000p_ops.tuner_sleep;
- 	nim7090_dib0090_config.get_adc_power = st->dib7000p_ops.get_adc_power;
- 
- 	if (dvb_attach(dib0090_register, adap->fe_adap[0].fe, tun_i2c, &nim7090_dib0090_config) = NULL)
+Why do you require these statements to be next to each other?
+
+> +|
+> +*private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base > +*       devm_ioremap_resource
+> +                             (device2, private->res);
+
+Why do you have this special case?
+
+> +)
+> +
+> +@replacement depends on patch@
+> +expression base, device1, device2, index, private, resource;
+> +@@
+> +(
+> +-resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base > +-       devm_ioremap_resource
+> ++       devm_platform_get_and_ioremap_resource
+> +                             (
+> +-                             &
+> +                               device1
+> +-                                     ->dev
+> +                              ,
+> +-                             resource
+> ++                             index, &resource
+> +                             );
+> +|
+> +-private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base > +-       devm_ioremap_resource
+> ++       devm_platform_get_and_ioremap_resource
+> +                             (device2,
+
+It is very suspicious that in one case you change the first argument of
+devm_platform_get_and_ioremap_resource and in one case you don't.  If you
+don't know how to make the change in some cases, it would be better to do
+nothing at all.
+
+julia
+
+> +-                             private->res
+> ++                             index, &private->res
+> +                             );
+> +)
+> +
+> +@or depends on org || report@
+> +expression base, device1, device2, index, private, resource;
+> +position p;
+> +@@
+> +(
+> + resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base = devm_ioremap_resource@p(&device1->dev, resource);
+> +|
+> + private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> + base = devm_ioremap_resource@p(device2, private->res);
+> +)
+> +
+> +@script:python to_do depends on org@
+> +p << or.p;
+> +@@
+> +coccilib.org.print_todo(p[0], "WARNING: opportunity for devm_platform_get_and_ioremap_resource()")
+> +
+> +@script:python reporting depends on report@
+> +p << or.p;
+> +@@
+> +coccilib.report.print_report(p[0], "WARNING: opportunity for devm_platform_get_and_ioremap_resource()")
+> --
+> 2.28.0
+>
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
