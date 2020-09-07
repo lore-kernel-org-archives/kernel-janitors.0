@@ -1,71 +1,120 @@
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 30 Sep 2020 16:03:33 +0000
-Subject: Re: [PATCH][next][resend] lib/mpi: fix off-by-one check on index "no"
-Message-Id: <CAMj1kXF2AzFkcyWzUHagq4xD_4BHpiscrPurndmJmJyp2KgXJg@mail.gmail.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Mon, 07 Sep 2020 13:11:31 +0000
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_Coccinelle=3A_api=3A_Add_SmPL_scr?= =?UTF-8?Q?ipt_=E2=80=9Cuse=5Fdevm=5F
+Message-Id: <alpine.DEB.2.22.394.2009071506350.2476@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-1914540151-1599484292=:2476"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200930130123.8064-1-colin.king@canonical.com> <CAAUqJDuDsgLZ_7i=knqFNkqWJn+G3FqE3Yv=RBLr27mBMJk1Cg@mail.gmail.com>
-In-Reply-To: <CAAUqJDuDsgLZ_7i=knqFNkqWJn+G3FqE3Yv=RBLr27mBMJk1Cg@mail.gmail.com>
-MIME-Version: 1.0
+References: <25b804fd-0d04-475d-f614-26c03c9fd544@web.de>
+ <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
+ <alpine.DEB.2.22.394.2009071357140.2476@hadrien>
+ <477abcea-e008-e509-d03f-f2753ebdfb20@web.de>
+In-Reply-To: <477abcea-e008-e509-d03f-f2753ebdfb20@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Dejin Zheng <zhengdejin5@gmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1914540151-1599484292=:2476
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Herbert Xu <herbert@gondor.apana.org.au>, Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, Waiman Long <longman@redhat.com>, kernel-janitors@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-
-On Wed, 30 Sep 2020 at 16:36, Ondrej Mosnáček <omosnacek@gmail.com> wrote:
->
-> st 30. 9. 2020 o 15:04 Colin King <colin.king@canonical.com> napísal(a):
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is an off-by-one range check on the upper limit of
-> > index "no".  Fix this by changing the > comparison to >=
->
-> Note that this doesn't completely fix the bug though... (see below)
->
-
-And by the same reasoning, it does not address the coverity issue
-either, since the out of bounds read is still executed.
 
 
+
+On Mon, 7 Sep 2020, Markus Elfring wrote:
+
+> >> +@display depends on context@
+> >> +expression base, device1, device2, index, private, resource;
+> >> +@@
+> >> +(
+> >> +*resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >> + base =
+> >> +*       devm_ioremap_resource
+> >> +                             (&device1->dev, resource);
 > >
-> > Addresses-Coverity: ("Out-of-bounds read")
-> > Fixes: a8ea8bdd9df9 ("lib/mpi: Extend the MPI library")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >
-> > resend to Cc linux-crypto
-> >
-> > ---
-> >  lib/mpi/mpiutil.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/lib/mpi/mpiutil.c b/lib/mpi/mpiutil.c
-> > index 3c63710c20c6..632d0a4bf93f 100644
-> > --- a/lib/mpi/mpiutil.c
-> > +++ b/lib/mpi/mpiutil.c
-> > @@ -69,7 +69,7 @@ postcore_initcall(mpi_init);
-> >   */
-> >  MPI mpi_const(enum gcry_mpi_constants no)
-> >  {
-> > -       if ((int)no < 0 || no > MPI_NUMBER_OF_CONSTANTS)
-> > +       if ((int)no < 0 || no >= MPI_NUMBER_OF_CONSTANTS)
-> >                 pr_err("MPI: invalid mpi_const selector %d\n", no);
+> > Why do you require these statements to be next to each other?
 >
-> What the code does is it just logs an error if the value is out of
-> range, but then it happily continues dereferencing the array anyway...
-> In the original libgcrypt code [1] (which BTW needs this patch, too),
-> there is log_bug() instead of pr_err(), which doesn't just log the
-> error, but also abort()'s the program. BUG() would be the correct
-> kernel equivalent for log_bug(). It seems the whole kernel's MPI
-> library clone should be re-audited for other instances of pr_*()'s
-> that should in fact be BUG()'s (or even better, WARN_ONCE()'s with
-> proper error handling, but that might diverge the code from libgcrypt
-> too much...).
+> I would appreciate indications for a general change acceptance
+> also according to such a simple transformation approach.
+> I imagine that it will become more challenging to tolerate extra
+> source code between these function calls (by the specification
+> of special SmPL filters).
 >
-> [1] https://github.com/gpg/libgcrypt/blob/9cd92ebae21900e54cc3d8b607c8ed1afbf2eb9b/mpi/mpiutil.c#L773
 >
-> >         if (!constants[no])
-> >                 pr_err("MPI: MPI subsystem not initialized\n");
-> > --
-> > 2.27.0
+> >> +|
+> >> +*private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >> + base =
+> >> +*       devm_ioremap_resource
+> >> +                             (device2, private->res);
 > >
+> > Why do you have this special case?
+>
+> The usage of the data structure member “res” triggers corresponding
+> software design consequences.
+
+I don't think this is a reliable rule.  You included two examples below.
+They involve structures of different types. It seems unlikely that there
+is a guarantee that the res field of all structures is used in the same
+way.  Furthermore, this is the context case.  What is the purpose of
+making the distinction?  The user will have to figure out what to do by
+hand in any case.
+
+> The expressions which are passed as the first function call parameters
+> can be different.
+>
+>
+> >> +@replacement depends on patch@
+> >> +expression base, device1, device2, index, private, resource;
+> >> +@@
+> >> +(
+> >> +-resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >> + base =
+> >> +-       devm_ioremap_resource
+> >> ++       devm_platform_get_and_ioremap_resource
+> >> +                             (
+> >> +-                             &
+> >> +                               device1
+> >> +-                                     ->dev
+> >> +                              ,
+> >> +-                             resource
+> >> ++                             index, &resource
+> >> +                             );
+> >> +|
+> >> +-private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >> + base =
+> >> +-       devm_ioremap_resource
+> >> ++       devm_platform_get_and_ioremap_resource
+> >> +                             (device2,
+> >
+> > It is very suspicious that in one case you change the first argument of
+> > devm_platform_get_and_ioremap_resource and in one case you don't.
+>
+> I noticed a few special cases during my source code analysis approach.
+
+This is not a reasonable answer.  Does the rule work correctly or not?  If
+it doesn't work correctly, it needs to be removed.
+
+> > If you don't know how to make the change in some cases, it would be better
+> > to do nothing at all.
+>
+> How do you think about to take another look at any update candidates?
+>
+> Examples:
+> * mvebu_sei_probe
+>   https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/irqchip/irq-mvebu-sei.c#L368
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/irqchip/irq-mvebu-sei.c?id=f4d51dffc6c01a9e94650d95ce0104964f8ae822#n368
+
+I don't see any purpose to providing two links for everything.
+
+julia
+
+>
+> * hi655x_pmic_probe
+>   https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/mfd/hi655x-pmic.c#L92
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mfd/hi655x-pmic.c?id=f4d51dffc6c01a9e94650d95ce0104964f8ae822#n92
+>
+> Regards,
+> Markus
+>
+--8323329-1914540151-1599484292=:2476--
