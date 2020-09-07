@@ -1,120 +1,58 @@
 From: Julia Lawall <julia.lawall@inria.fr>
-Date: Mon, 07 Sep 2020 13:11:31 +0000
+Date: Mon, 07 Sep 2020 13:46:44 +0000
 Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_Coccinelle=3A_api=3A_Add_SmPL_scr?= =?UTF-8?Q?ipt_=E2=80=9Cuse=5Fdevm=5F
-Message-Id: <alpine.DEB.2.22.394.2009071506350.2476@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1914540151-1599484292=:2476"
+Message-Id: <alpine.DEB.2.22.394.2009071544460.2476@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <25b804fd-0d04-475d-f614-26c03c9fd544@web.de>
  <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
  <alpine.DEB.2.22.394.2009071357140.2476@hadrien>
  <477abcea-e008-e509-d03f-f2753ebdfb20@web.de>
-In-Reply-To: <477abcea-e008-e509-d03f-f2753ebdfb20@web.de>
+ <alpine.DEB.2.22.394.2009071506350.2476@hadrien>
+ <46d314d5-822e-3d73-2d70-015794556e56@web.de>
+In-Reply-To: <46d314d5-822e-3d73-2d70-015794556e56@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Markus Elfring <Markus.Elfring@web.de>
 Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Dejin Zheng <zhengdejin5@gmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1914540151-1599484292=:2476
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-
-
-On Mon, 7 Sep 2020, Markus Elfring wrote:
-
-> >> +@display depends on context@
-> >> +expression base, device1, device2, index, private, resource;
-> >> +@@
-> >> +(
-> >> +*resource = platform_get_resource(device1, IORESOURCE_MEM, index);
-> >> + base =
-> >> +*       devm_ioremap_resource
-> >> +                             (&device1->dev, resource);
+> >>>> +@replacement depends on patch@
+> >>>> +expression base, device1, device2, index, private, resource;
+> >>>> +@@
+> >>>> +(
+> >>>> +-resource = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >>>> + base > >>>> +-       devm_ioremap_resource
+> >>>> ++       devm_platform_get_and_ioremap_resource
+> >>>> +                             (
+> >>>> +-                             &
+> >>>> +                               device1
+> >>>> +-                                     ->dev
+> >>>> +                              ,
+> >>>> +-                             resource
+> >>>> ++                             index, &resource
+> >>>> +                             );
+> >>>> +|
+> >>>> +-private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
+> >>>> + base > >>>> +-       devm_ioremap_resource
+> >>>> ++       devm_platform_get_and_ioremap_resource
+> >>>> +                             (device2,
+> >>>
+> >>> It is very suspicious that in one case you change the first argument of
+> >>> devm_platform_get_and_ioremap_resource and in one case you don't.
+> >>
+> >> I noticed a few special cases during my source code analysis approach.
 > >
-> > Why do you require these statements to be next to each other?
+> > This is not a reasonable answer.  Does the rule work correctly or not?
+> > If it doesn't work correctly, it needs to be removed.
 >
-> I would appreciate indications for a general change acceptance
-> also according to such a simple transformation approach.
-> I imagine that it will become more challenging to tolerate extra
-> source code between these function calls (by the specification
-> of special SmPL filters).
->
->
-> >> +|
-> >> +*private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
-> >> + base =
-> >> +*       devm_ioremap_resource
-> >> +                             (device2, private->res);
-> >
-> > Why do you have this special case?
->
-> The usage of the data structure member “res” triggers corresponding
-> software design consequences.
+> Both source code change patterns from these branches of a SmPL disjunction
+> work as I would expect it by the current Coccinelle software.
+> Would you like to clarify any remaining related open issues?
 
-I don't think this is a reliable rule.  You included two examples below.
-They involve structures of different types. It seems unlikely that there
-is a guarantee that the res field of all structures is used in the same
-way.  Furthermore, this is the context case.  What is the purpose of
-making the distinction?  The user will have to figure out what to do by
-hand in any case.
-
-> The expressions which are passed as the first function call parameters
-> can be different.
->
->
-> >> +@replacement depends on patch@
-> >> +expression base, device1, device2, index, private, resource;
-> >> +@@
-> >> +(
-> >> +-resource = platform_get_resource(device1, IORESOURCE_MEM, index);
-> >> + base =
-> >> +-       devm_ioremap_resource
-> >> ++       devm_platform_get_and_ioremap_resource
-> >> +                             (
-> >> +-                             &
-> >> +                               device1
-> >> +-                                     ->dev
-> >> +                              ,
-> >> +-                             resource
-> >> ++                             index, &resource
-> >> +                             );
-> >> +|
-> >> +-private->res = platform_get_resource(device1, IORESOURCE_MEM, index);
-> >> + base =
-> >> +-       devm_ioremap_resource
-> >> ++       devm_platform_get_and_ioremap_resource
-> >> +                             (device2,
-> >
-> > It is very suspicious that in one case you change the first argument of
-> > devm_platform_get_and_ioremap_resource and in one case you don't.
->
-> I noticed a few special cases during my source code analysis approach.
-
-This is not a reasonable answer.  Does the rule work correctly or not?  If
-it doesn't work correctly, it needs to be removed.
-
-> > If you don't know how to make the change in some cases, it would be better
-> > to do nothing at all.
->
-> How do you think about to take another look at any update candidates?
->
-> Examples:
-> * mvebu_sei_probe
->   https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/irqchip/irq-mvebu-sei.c#L368
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/irqchip/irq-mvebu-sei.c?id=f4d51dffc6c01a9e94650d95ce0104964f8ae822#n368
-
-I don't see any purpose to providing two links for everything.
+In one case the first argument of devm_ioremap_resource has to be changed
+to produce the first argument of devm_platform_get_and_ioremap_resource
+and in the other case there is no such change.  "work as I would expect"
+is not a proper explanation of why this is correct.  Maybe you can point
+to some previous commits that have made the change in this way.
 
 julia
-
->
-> * hi655x_pmic_probe
->   https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/mfd/hi655x-pmic.c#L92
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mfd/hi655x-pmic.c?id=f4d51dffc6c01a9e94650d95ce0104964f8ae822#n92
->
-> Regards,
-> Markus
->
---8323329-1914540151-1599484292=:2476--
