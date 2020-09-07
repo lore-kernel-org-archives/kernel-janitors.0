@@ -1,12 +1,14 @@
 From: Julia Lawall <julia.lawall@inria.fr>
-Date: Mon, 07 Sep 2020 17:03:05 +0000
-Subject: =?UTF-8?Q?Re=3A_=5BCocci=5D_=5BPATCH_v2=5D_Coccinelle=3A_api=3A?= =?UTF-8?Q?_Add_SmPL_script_=E2=80=
-Message-Id: <alpine.DEB.2.22.394.2009071900450.2476@hadrien>
+Date: Mon, 07 Sep 2020 17:31:40 +0000
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2=5D_Coccinelle=3A_api=3A_Add_SmPL?= =?UTF-8?Q?_script_=E2=80=9Cuse=5Fdevm
+Message-Id: <alpine.DEB.2.22.394.2009071930510.2476@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <25b804fd-0d04-475d-f614-26c03c9fd544@web.de>
  <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
  <4b505afc-ae48-d8eb-f4e1-8e3f7192f73d@web.de>
-In-Reply-To: <4b505afc-ae48-d8eb-f4e1-8e3f7192f73d@web.de>
+ <alpine.DEB.2.22.394.2009071900450.2476@hadrien>
+ <8fb7782c-538b-b657-af13-da71124e6afa@web.de>
+In-Reply-To: <8fb7782c-538b-b657-af13-da71124e6afa@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -17,97 +19,21 @@ Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gil
 
 On Mon, 7 Sep 2020, Markus Elfring wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 7 Sep 2020 18:38:04 +0200
+> >> +++ b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
+> >> @@ -0,0 +1,48 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/// Simplify a function call combination by using a known wrapper function.
+> >> +//
+> >> +// Keywords: wrapper function conversion ioremap resources
+> >> +// Confidence: High
+> >
+> > Shouldn't there be some options?  --no-includes and perhaps
+> > --include-headers would seem reasonable.
 >
-> Another wrapper function is available since the commit 890cc39a879906b63912482dfc41944579df2dc6
-> ("drivers: provide devm_platform_get_and_ioremap_resource()").
-> Provide safe design options for the adjustment of affected source code
-> by the means of the semantic patch language (Coccinelle software).
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v2:
-> Julia Lawall requested to omit case distinctions (disjunctions) from
-> the first SmPL script.
-> The usage of different expression metavariables for the first parameter
-> of function calls was too questionable for the proposed source
-> code transformation.
->
->
->  ...vm_platform_get_and_ioremap_resource.cocci | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
->
-> diff --git a/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
-> new file mode 100644
-> index 000000000000..319583716ac8
-> --- /dev/null
-> +++ b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/// Simplify a function call combination by using a known wrapper function.
-> +//
-> +// Keywords: wrapper function conversion ioremap resources
-> +// Confidence: High
+> I imagine that the proposed source code transformation can work also without
+> additional semantic patch command options.
 
-Shouldn't there be some options?  --no-includes and perhaps
---include-headers would seem reasonable.
-
-Please also remove all of the rule names except for "or" which is
-necessary.  The rest just add clutter and make it harder to find the
-useful information, which is the depends on.  Rules only need names if
-some other rule inherits their metavariables.
+It can.  But it will be more efficient and more exhaustive if you include
+them.
 
 julia
-
-> +
-> +virtual context, patch, report, org
-> +
-> +@display depends on context@
-> +expression base, device, index, resource;
-> +@@
-> +*resource = platform_get_resource(device, IORESOURCE_MEM, index);
-> + base > +*       devm_ioremap_resource
-> +                             (&device->dev, resource);
-> +
-> +@replacement depends on patch@
-> +expression base, device, index, resource;
-> +@@
-> +-resource = platform_get_resource(device, IORESOURCE_MEM, index);
-> + base > +-       devm_ioremap_resource
-> ++       devm_platform_get_and_ioremap_resource
-> +                             (
-> +-                             &
-> +                               device
-> +-                                    ->dev
-> +                              ,
-> +-                             resource
-> ++                             index, &resource
-> +                             );
-> +
-> +@or depends on org || report@
-> +expression base, device, index, resource;
-> +position p;
-> +@@
-> + resource = platform_get_resource(device, IORESOURCE_MEM, index);
-> + base = devm_ioremap_resource@p(&device->dev, resource);
-> +
-> +@script:python to_do depends on org@
-> +p << or.p;
-> +@@
-> +coccilib.org.print_todo(p[0], "WARNING: opportunity for devm_platform_get_and_ioremap_resource()")
-> +
-> +@script:python reporting depends on report@
-> +p << or.p;
-> +@@
-> +coccilib.report.print_report(p[0], "WARNING: opportunity for devm_platform_get_and_ioremap_resource()")
-> --
-> 2.28.0
->
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
->
