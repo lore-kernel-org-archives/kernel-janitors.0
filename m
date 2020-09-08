@@ -1,49 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 29 Sep 2020 13:38:19 +0000
-Subject: [PATCH][next] crypto: sun8i-ss@: fix memory leak on pointer d
-Message-Id: <20200929133819.156092-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Sep 2020 07:25:57 +0000
+Subject: [PATCH] PM / devfreq: tegra30:  disable clock on error in probe
+Message-Id: <20200908072557.GC294938@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This error path needs to call clk_disable_unprepare().
 
-Currently the error return path on a failed dma_mapping_error call
-is not kfree'ing memory allocated to d. Add an extra error exit label
-to end of the function where the kfree and return occurs to fix this
-issue.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: ac2614d721de ("crypto: sun8i-ss - Add support for the PRNG")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c | 4 +++-
+---
+ drivers/devfreq/tegra30-devfreq.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-index 08a1473b2145..42b02720dbbf 100644
---- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-+++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-@@ -103,7 +103,8 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
- 	dma_iv = dma_map_single(ss->dev, ctx->seed, ctx->slen, DMA_TO_DEVICE);
- 	if (dma_mapping_error(ss->dev, dma_iv)) {
- 		dev_err(ss->dev, "Cannot DMA MAP IV\n");
--		return -EFAULT;
-+		err = -EFAULT;
-+		goto err_free;
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index e94a27804c20..dedd39de7367 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+ 	if (rate < 0) {
+ 		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+-		return rate;
++		err = rate;
++		goto disable_clk;
  	}
  
- 	dma_dst = dma_map_single(ss->dev, d, todo, DMA_FROM_DEVICE);
-@@ -167,6 +168,7 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
- 		memcpy(ctx->seed, d + dlen, ctx->slen);
- 	}
- 	memzero_explicit(d, todo);
-+err_free:
- 	kfree(d);
+ 	tegra->max_freq = rate / KHZ;
+@@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+ 
+ 	reset_control_reset(tegra->reset);
++disable_clk:
+ 	clk_disable_unprepare(tegra->clock);
  
  	return err;
 -- 
-2.27.0
+2.28.0
