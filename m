@@ -1,88 +1,50 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 28 Sep 2020 17:57:22 +0000
-Subject: Re: [PATCH 03/18] [ARM] pata_icside: use semicolons rather than commas to separate statements
-Message-Id: <25aa56e1f7943f9ac535fa184465a752aa00a4b4.camel@perches.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Date: Tue, 08 Sep 2020 13:02:28 +0000
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+Message-Id: <0d7fd969-8957-5db0-8c4d-2077e924181b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-         <1601233948-11629-4-git-send-email-Julia.Lawall@inria.fr>
-         <8cf2fad1659acd756703deb106d55483bd1e1eb9.camel@perches.com>
-         <alpine.DEB.2.22.394.2009281909000.2650@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2009281909000.2650@hadrien>
+References: <20200908072557.GC294938@mwanda>
+In-Reply-To: <20200908072557.GC294938@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2020-09-28 at 19:11 +0200, Julia Lawall wrote:
+08.09.2020 10:25, Dan Carpenter пишет:
+> This error path needs to call clk_disable_unprepare().
 > 
-> On Mon, 28 Sep 2020, Joe Perches wrote:
+> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> > On Sun, 2020-09-27 at 21:12 +0200, Julia Lawall wrote:
-> > > Replace commas with semicolons.  What is done is essentially described by
-> > > the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> > 
-> > Hi Julia.
-> > 
-> > How did you decide on this patch subject header line?
-> > 
-> > It's certainly reasonable, but not what I would expect
-> > from any automation.
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index e94a27804c20..dedd39de7367 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>  	if (rate < 0) {
+>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+> -		return rate;
+> +		err = rate;
+> +		goto disable_clk;
+>  	}
+>  
+>  	tegra->max_freq = rate / KHZ;
+> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>  
+>  	reset_control_reset(tegra->reset);
+> +disable_clk:
+>  	clk_disable_unprepare(tegra->clock);
+>  
+>  	return err;
 > 
-> Most of the patches on this file touch other files as well.  There are
-> four that only touch this file.  One has no subsystem.  One has dma as the
-> subsystem.  Two have pata_icside, so that was chosen.
 
-So did you select the patch subject without any automation
-or did you create a tool that looks only at commits for
-individual files?
+Hello, Dan! Thank you for the patch!
 
-> > $ git log --no-merges --format='%s' drivers/ata/pata_icside.c | \
-> >   cut -f1 -d":" | sort | uniq -c | sort -rn
-> >      10 libata
-> >       5 libata-sff
-> >       2 [ARM] pata_icside
-> >       2 [ARM] ecard
-> >       2 [ARM] dma
-
-Yeah...
-
-Something like the script below and some examples of its use?
-
-$ cat find_best_header.sh
-#!/bin/bash
-
-# Show possible patch subject prefixes for a file in git
-
-# use commits that modify only the single file argument and
-# emit up to the 5 most common commit prefixes
-
-git log --no-merges --format='%h' -- $1 |
-    while read commit ; do
-	if [[ $(git log --format='%h' --name-only -1 $commit | wc -l) = 3 ]] ; then
-	    git log --format='%s' -1 $commit
-	fi
-    done |
-    cut -f1 -d":" | cut -f1-3 -d" " | sort | uniq -c | sort -rn | head -5
-
-$ ./find_best_header.sh drivers/ata/pata_icside.c
-      2 [ARM] pata_icside
-      1 Fix pata_icside build
-      1 [ARM] dma
-
-$ ./find_best_header.sh kernel/fork.c
-     36 fork
-     14 kernel/fork.c
-      6 mm
-      4 pidns
-      4 [PATCH] unshare system
-
-$ ./find_best_header.sh kernel/sched/core.c
-    150 sched
-    110 sched/core
-     12 sched/uclamp
-     12 sched/debug
-     10 sched/deadline
-
-$ ./find_best_header.sh drivers/iio/pressure/mpl115.c
-      3 iio
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
