@@ -1,37 +1,109 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Sep 2020 14:33:38 +0000
-Subject: [PATCH] staging: spmi: hisi-spmi-controller: Use devm_ version of ioremap().
-Message-Id: <20200918143338.GE909725@mwanda>
+Date: Tue, 08 Sep 2020 07:18:41 +0000
+Subject: [PATCH] rpmsg: smd: Fix a kobj leak in in qcom_smd_parse_edge()
+Message-Id: <20200908071841.GA294938@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Mayulong <mayulong1@huawei.com>
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The ioremap() was never unmapped in the probe error handling or in the
-remove function.  The fix is to use the devm_ioremap() function so it
-gets cleaned up automatically.
+We need to call of_node_put(node) on the error paths for this function.
 
-Fixes: 70f59c90c819 ("staging: spmi: add Hikey 970 SPMI controller driver")
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/hikey9xx/hisi-spmi-controller.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rpmsg/qcom_smd.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-index 5ffe79f45d9a..f831c43f4783 100644
---- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
-+++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-@@ -281,7 +281,8 @@ static int spmi_controller_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 4abbeea782fa..19903de6268d 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1338,7 +1338,7 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 	ret = of_property_read_u32(node, key, &edge->edge_id);
+ 	if (ret) {
+ 		dev_err(dev, "edge missing %s property\n", key);
+-		return -EINVAL;
++		goto put_node;
  	}
  
--	spmi_controller->base = ioremap(iores->start, resource_size(iores));
-+	spmi_controller->base = devm_ioremap(&pdev->dev, iores->start,
-+					     resource_size(iores));
- 	if (!spmi_controller->base) {
- 		dev_err(&pdev->dev, "can not remap base addr!\n");
- 		return -EADDRNOTAVAIL;
+ 	edge->remote_pid = QCOM_SMEM_HOST_ANY;
+@@ -1349,32 +1349,37 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 	edge->mbox_client.knows_txdone = true;
+ 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+ 	if (IS_ERR(edge->mbox_chan)) {
+-		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
+-			return PTR_ERR(edge->mbox_chan);
++		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
++			ret = PTR_ERR(edge->mbox_chan);
++			goto put_node;
++		}
+ 
+ 		edge->mbox_chan = NULL;
+ 
+ 		syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
+ 		if (!syscon_np) {
+ 			dev_err(dev, "no qcom,ipc node\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto put_node;
+ 		}
+ 
+ 		edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
+-		if (IS_ERR(edge->ipc_regmap))
+-			return PTR_ERR(edge->ipc_regmap);
++		if (IS_ERR(edge->ipc_regmap)) {
++			ret = PTR_ERR(edge->ipc_regmap);
++			goto put_node;
++		}
+ 
+ 		key = "qcom,ipc";
+ 		ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
+ 		if (ret < 0) {
+ 			dev_err(dev, "no offset in %s\n", key);
+-			return -EINVAL;
++			goto put_node;
+ 		}
+ 
+ 		ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
+ 		if (ret < 0) {
+ 			dev_err(dev, "no bit in %s\n", key);
+-			return -EINVAL;
++			goto put_node;
+ 		}
+ 	}
+ 
+@@ -1385,7 +1390,8 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 	irq = irq_of_parse_and_map(node, 0);
+ 	if (irq < 0) {
+ 		dev_err(dev, "required smd interrupt missing\n");
+-		return -EINVAL;
++		ret = irq;
++		goto put_node;
+ 	}
+ 
+ 	ret = devm_request_irq(dev, irq,
+@@ -1393,12 +1399,18 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 			       node->name, edge);
+ 	if (ret) {
+ 		dev_err(dev, "failed to request smd irq\n");
+-		return ret;
++		goto put_node;
+ 	}
+ 
+ 	edge->irq = irq;
+ 
+ 	return 0;
++
++put_node:
++	of_node_put(node);
++	edge->of_node = NULL;
++
++	return ret;
+ }
+ 
+ /*
 -- 
 2.28.0
