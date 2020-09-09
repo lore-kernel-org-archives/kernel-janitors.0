@@ -1,27 +1,64 @@
-From: Yang Yang <yang.yang@vivo.com>
-Date: Tue, 15 Sep 2020 08:34:38 +0000
-Subject: Re: [PATCH] blk-mq: fix hang issue in blk_queue_enter()
-Message-Id: <63816f52-4850-f586-ce73-3775ecc38da9@vivo.com>
+From: Sumera Priyadarsini <sylphrenadin@gmail.com>
+Date: Wed, 09 Sep 2020 08:21:39 +0000
+Subject: [PATCH V2] scripts: coccicheck: Do not use shift command when rule is specfified
+Message-Id: <20200909080939.bhkgluvo5zw2kder@adolin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11a3283f-7857-0448-7424-8840fb5f2ea7@web.de>
-In-Reply-To: <11a3283f-7857-0448-7424-8840fb5f2ea7@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, onlyfever@icloud.com, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
+Cc: michal.lkml@markovi.net, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia.Lawall@lip6.fr
 
-On 2020/9/14 21:35, Markus Elfring wrote:
-> …
->> The solution is to wake up the mq_freeze_wq after runtime suspend
->> completed, make blk_pm_request_resume() reexamine the q->rpm_status flag.
-> 
-> * Would an imperative wording become helpful for the change description?
-> 
-> * How do you think about to add the tag “Fixes” to the commit message?
-> 
+The command "make coccicheck C=1 CHECK=scripts/coccicheck" results in the
+error:
+	./scripts/coccicheck: line 65: -1: shift count out of range
 
-Thank you for your suggestions.
+This happens because every time the C variable is specified,
+the shell arguments need to be "shifted" in order to take only
+the last argument, which is the C file to test. These shell arguments
+mostly comprise flags that have been set in the Makefile. However,
+when coccicheck is specified in the make command as a rule, the
+number of shell arguments is zero, thus passing the invalid value -1
+to the shift command, resulting in an error.
 
---
-Yang Yang
+Modify coccicheck to use the shift command only when
+number of shell arguments is not zero.
+
+Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+
+---
+Changes in V2:
+	- Fix spelling errors as suggested by Markus Elfring
+---
+ scripts/coccicheck | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/coccicheck b/scripts/coccicheck
+index e04d328210ac..5c8df337e1e3 100755
+--- a/scripts/coccicheck
++++ b/scripts/coccicheck
+@@ -61,9 +61,19 @@ COCCIINCLUDE=${COCCIINCLUDE// -include/ --include}
+ if [ "$C" = "1" -o "$C" = "2" ]; then
+     ONLINE=1
+ 
+-    # Take only the last argument, which is the C file to test
+-    shift $(( $# - 1 ))
+-    OPTIONS="$COCCIINCLUDE $1"
++    # If the rule coccicheck is specified when calling make, number of
++    # arguments is zero
++    if [ $# -ne 0 ]; then
++	    # Take only the last argument, which is the C file to test
++	    shift $(( $# -1 ))
++	    OPTIONS="$COCCIINCLUDE $1"
++    else
++	if [ "$KBUILD_EXTMOD" = "" ] ; then
++		OPTIONS="--dir $srctree $COCCIINCLUDE"
++	else
++		OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
++	fi
++    fi
+ 
+     # No need to parallelize Coccinelle since this mode takes one input file.
+     NPROC=1
+-- 
+2.25.1
