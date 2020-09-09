@@ -1,53 +1,24 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 28 Sep 2020 09:47:24 +0000
-Subject: Re: [PATCH 10/18] clk: meson: use semicolons rather than commas to separate statements
-Message-Id: <1j1rimjkr7.fsf@starbuckisacylon.baylibre.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Wed, 09 Sep 2020 13:27:41 +0000
+Subject: Re: [PATCH][V2] macintosh: windfarm: remove detatch debug containing spelling mistakes
+Message-Id: <159965716592.808686.16632951735856644964.b4-ty@ellerman.id.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
+References: <20200806102901.44988-1-colin.king@canonical.com>
+In-Reply-To: <20200806102901.44988-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Neil Armstrong <narmstrong@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Wolfram Sang <wsa@kernel.org>, Colin King <colin.king@canonical.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Thu, 6 Aug 2020 11:29:01 +0100, Colin King wrote:
+> There are spelling mistakes in two debug messages. As recommended
+> by Wolfram Sang, these can be removed as there is plenty of debug
+> in the driver core.
 
-On Sun 27 Sep 2020 at 21:12, Julia Lawall <Julia.Lawall@inria.fr> wrote:
+Applied to powerpc/next.
 
-Hi Stephen,
+[1/1] macintosh: windfarm: remove detatch debug containing spelling mistakes
+      https://git.kernel.org/powerpc/c/7db0a07273e8f581d0b3e8a102d3d9dd99f43528
 
-Do you want to take all the clock related patches directly ?
-
-
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
->
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
-> ---
->  drivers/clk/meson/meson-aoclk.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-> index bf8bea675d24..3a6d84cd6601 100644
-> --- a/drivers/clk/meson/meson-aoclk.c
-> +++ b/drivers/clk/meson/meson-aoclk.c
-> @@ -57,7 +57,7 @@ int meson_aoclkc_probe(struct platform_device *pdev)
->  	rstc->data = data;
->  	rstc->regmap = regmap;
->  	rstc->reset.ops = &meson_aoclk_reset_ops;
-> -	rstc->reset.nr_resets = data->num_reset,
-> +	rstc->reset.nr_resets = data->num_reset;
->  	rstc->reset.of_node = dev->of_node;
->  	ret = devm_reset_controller_register(dev, &rstc->reset);
->  	if (ret) {
+cheers
