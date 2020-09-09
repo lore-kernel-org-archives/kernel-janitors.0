@@ -1,52 +1,49 @@
-From: Pavel Machek <pavel@denx.de>
-Date: Sun, 20 Sep 2020 20:51:11 +0000
-Subject: Re: [PATCH] 6lowpan: Add missing locking
-Message-Id: <20200920205111.GA31185@duo.ucw.cz>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Wed, 09 Sep 2020 09:01:18 +0000
+Subject: Re: [Cocci] [PATCH v2] scripts: coccicheck: Do not use shift command when rule is specified
+Message-Id: <alpine.DEB.2.22.394.2009091059311.2651@hadrien>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
+Content-Type: multipart/mixed; boundary="8323329-688164862-1599642079=:2651"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2325b986-a4ea-9aa3-40ba-702ebe9b519c@web.de>
-In-Reply-To: <2325b986-a4ea-9aa3-40ba-702ebe9b519c@web.de>
+References: <1a2ddefa-59dc-460c-59d5-5c6c1754d20b@web.de>
+In-Reply-To: <1a2ddefa-59dc-460c-59d5-5c6c1754d20b@web.de>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, syzbot+96414aa0033c363d8458@syzkaller.appspotmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lihong Kou <koulihong@huawei.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-688164862-1599642079=:2651
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun 2020-09-20 16:14:22, Markus Elfring wrote:
-> > I believe set_lock should be taken in exit function, too.
->=20
-> * Would an imperative wording become helpful for the change description?
->=20
-> * How do you think about to add the tag =E2=80=9CFixes=E2=80=9D to the co=
-mmit message?
+On Wed, 9 Sep 2020, Markus Elfring wrote:
 
-Hi,
+> > Modify coccicheck to use the shift command only when
+> > number of shell arguments is not zero.
+>
+> I suggest to add the tag “Fixes” to the commit message.
 
-This is the semi-friendly notice stolen from Greg Kroah-Hartman.
+I don't think there is any need for that.  This is not a patch that should
+be backported.  The previous situation did not cause any problem with the
+execution of make coccicheck, only a tiresome warning message.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+julia
 
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2fAvwAKCRAw5/Bqldv6
-8ojgAJ9etw8H04JUAZoA7SzA9c1syP1y5QCgtou+ksIF2mZDV68WLpZQ5/Chvg4=
-=kOI6
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+>
+>
+> > Changes in V2:
+> > 	- Fix spelling errors as suggested by Markus Elfring
+>
+> Would you like to adjust the last word in the previous patch subject accordingly?
+>
+> Regards,
+> Markus
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
+--8323329-688164862-1599642079=:2651--
