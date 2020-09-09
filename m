@@ -1,31 +1,32 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Mon, 14 Sep 2020 17:49:52 +0000
-Subject: Re: [PATCH] Input: imx6ul_tsc - clean up some errors in imx6ul_tsc_resume()
-Message-Id: <20200914174952.GS1665100@dtor-ws>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Wed, 09 Sep 2020 06:35:52 +0000
+Subject: Re: [PATCH v2] HID: roccat: add bounds checking in kone_sysfs_write_settings()
+Message-Id: <nycvar.YFH.7.76.2009090835410.4671@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200905124942.GC183976@mwanda>
-In-Reply-To: <20200905124942.GC183976@mwanda>
+References: <20200824085735.GA208317@mwanda>
+In-Reply-To: <20200824085735.GA208317@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Sep 05, 2020 at 03:49:42PM +0300, Dan Carpenter wrote:
-> If imx6ul_tsc_init() fails then we need to clean up the clocks.
+On Mon, 24 Aug 2020, Dan Carpenter wrote:
+
+> This code doesn't check if "settings->startup_profile" is within bounds
+> and that could result in an out of bounds array access.  What the code
+> does do is it checks if the settings can be written to the firmware, so
+> it's possible that the firmware has a bounds check?  It's safer and
+> easier to verify when the bounds checking is done in the kernel.
 > 
-> I reversed the "if (input_dev->users) {" condition to make the code a
-> bit simpler.
-> 
-> Fixes: 6cc527b05847 ("Input: imx6ul_tsc - propagate the errors")
+> Fixes: 14bf62cde794 ("HID: add driver for Roccat Kone gaming mouse")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2:  In the v1 patch I added a check against settings->size but that's
+> potentially too strict so it was removed.
 
-Applied, thank you.
-
-There is also an opportunity to factor out some common code from
-open/close and suspend/resume, I'll send out a patch in a moment.
-
-Thanks.
+Applied, thanks Dan.
 
 -- 
-Dmitry
+Jiri Kosina
+SUSE Labs
