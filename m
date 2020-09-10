@@ -1,61 +1,107 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 16 Sep 2020 09:19:03 +0000
-Subject: Re: [PATCH] MAINTAINERS: make linux-aspeed list remarks consistent
-Message-Id: <20200916091903.GZ438822@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Sep 2020 10:08:25 +0000
+Subject: [PATCH] drm/vc4: hdmi: Fix NULL vs IS_ERR() checks in vc5_hdmi_init_resources()
+Message-Id: <20200910100825.GC79916@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200912183334.22683-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200912183334.22683-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-aspeed@lists.ozlabs.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>, Joe Perches <joe@perches.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
+To: Eric Anholt <eric@anholt.duckdns.org>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>
 
-On Sat, Sep 12, 2020 at 08:33:34PM +0200, Lukas Bulwahn wrote:
-> Commit f15a3ea80391 ("MAINTAINERS: Add ASPEED BMC GFX DRM driver entry")
-> does not mention that linux-aspeed@lists.ozlabs.org is moderated for
-> non-subscribers, but the other three entries for
-> linux-aspeed@lists.ozlabs.org do.
-> 
-> By 'majority vote' among entries, let us assume it was just missed here and
-> adjust it to be consistent with others.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on master and next-20200911
-> 
-> Joel, please ack.
-> David, Daniel, please pick this minor non-urgent clean-up patch.
+The devm_ioremap() function never returns error pointers, it returns
+NULL.
 
-Pushed to drm-misc-next, thanks.
--Daniel
+Fixes: 8323989140f3 ("drm/vc4: hdmi: Support the BCM2711 HDMI controllers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-> This patch submission will also show me if linux-aspeed is moderated or
-> not. I have not subscribed to linux-aspeed and if it shows up quickly in
-> the archive, the list is probably not moderated; and if it takes longer,
-> it is moderated, and hence, validating the patch.
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 26af84f97353..f2561c3fc9db 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5448,7 +5448,7 @@ F:	drivers/gpu/drm/panel/panel-arm-versatile.c
->  
->  DRM DRIVER FOR ASPEED BMC GFX
->  M:	Joel Stanley <joel@jms.id.au>
-> -L:	linux-aspeed@lists.ozlabs.org
-> +L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
->  S:	Supported
->  T:	git git://anongit.freedesktop.org/drm/drm-misc
->  F:	Documentation/devicetree/bindings/gpu/aspeed-gfx.txt
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index d0792915436c..03825596a308 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -1545,64 +1545,64 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi *vc4_hdmi)
+ 
+ 	vc4_hdmi->hdmicore_regs = devm_ioremap(dev, res->start,
+ 					       resource_size(res));
+-	if (IS_ERR(vc4_hdmi->hdmicore_regs))
+-		return PTR_ERR(vc4_hdmi->hdmicore_regs);
++	if (!vc4_hdmi->hdmicore_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hd");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->hd_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->hd_regs))
+-		return PTR_ERR(vc4_hdmi->hd_regs);
++	if (!vc4_hdmi->hd_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cec");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->cec_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->cec_regs))
+-		return PTR_ERR(vc4_hdmi->cec_regs);
++	if (!vc4_hdmi->cec_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "csc");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->csc_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->csc_regs))
+-		return PTR_ERR(vc4_hdmi->csc_regs);
++	if (!vc4_hdmi->csc_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dvp");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->dvp_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->dvp_regs))
+-		return PTR_ERR(vc4_hdmi->dvp_regs);
++	if (!vc4_hdmi->dvp_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->phy_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->phy_regs))
+-		return PTR_ERR(vc4_hdmi->phy_regs);
++	if (!vc4_hdmi->phy_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "packet");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->ram_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->ram_regs))
+-		return PTR_ERR(vc4_hdmi->ram_regs);
++	if (!vc4_hdmi->ram_regs)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rm");
+ 	if (!res)
+ 		return -ENODEV;
+ 
+ 	vc4_hdmi->rm_regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(vc4_hdmi->rm_regs))
+-		return PTR_ERR(vc4_hdmi->rm_regs);
++	if (!vc4_hdmi->rm_regs)
++		return -ENOMEM;
+ 
+ 	vc4_hdmi->hsm_clock = devm_clk_get(dev, "hdmi");
+ 	if (IS_ERR(vc4_hdmi->hsm_clock)) {
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.28.0
