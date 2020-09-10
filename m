@@ -1,49 +1,38 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 22 Sep 2020 12:50:12 +0000
-Subject: Re: [PATCH v2] PCI: brcmstb: fix a missing if statement on a return error check
-Message-Id: <22b12b8a-4c16-5377-043d-00750597f822@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 Sep 2020 15:12:21 +0000
+Subject: [PATCH][next] binder: remove redundant assignment to pointer n
+Message-Id: <20200910151221.751464-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fe38fa7c-8ff7-8e83-968f-91007c058fcc@web.de>
- <CA+-6iNyGbL2jn1qUdX=AN17Xy5uX1-P=+Xi2NLSxHX-1FwLOwg@mail.gmail.com>
-In-Reply-To: <CA+-6iNyGbL2jn1qUdX=AN17Xy5uX1-P=+Xi2NLSxHX-1FwLOwg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jim Quinlan <james.quinlan@broadcom.com>, Markus Elfring <Markus.Elfring@web.de>
-Cc: Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, Jim Quinlan <jquinlan@broadcom.com>, Alex Dewar <alex.dewar90@gmail.com>, "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <christian@brauner.io>, Hridya Valsaraju <hridya@google.com>, Suren Baghdasaryan <surenb@google.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 22/09/2020 13:43, Jim Quinlan wrote:
-> On Tue, Sep 22, 2020 at 7:49 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->>
->>> The error return ret is not being check with an if statement and
->>
->> Wording alternative:
->> The return value from a call of the function “brcm_phy_start” was not checked and
->>
->>
->>> V2: disable clock as noted by Florian Fainelli and suggested by
->>>     Jim Quinlan.
->>
->> Alex Dewar contributed another update suggestion.
->>
->> [PATCH v2] PCI: brcmstb: Add missing if statement and error path
->> https://lore.kernel.org/linux-arm-kernel/20200921211623.33908-1-alex.dewar90@gmail.com/
->> https://lore.kernel.org/patchwork/patch/1309860/
->>
->> The exception handling needs further development considerations
->> for this function implementation.
-> Hello,
-> 
-> I agree with Alex's patch.  I should have suggested this at the
-> beginning but as our upstream STB suspend/resume is not yet functional
-> and the one-line change would have worked until we fixed
-> suspend/resume..  But this is the proper modification.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yup, go with Alex's patch. That one is correct.
+The pointer n is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/android/binder_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Thanks,
-> Jim
->> Regards,
->> Markus
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 910c53ba2c91..2f846b7ae8b8 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -347,7 +347,7 @@ static void debug_low_async_space_locked(struct binder_alloc *alloc, int pid)
+ 	 * and at some point we'll catch them in the act. This is more efficient
+ 	 * than keeping a map per pid.
+ 	 */
+-	struct rb_node *n = alloc->free_buffers.rb_node;
++	struct rb_node *n;
+ 	struct binder_buffer *buffer;
+ 	size_t total_alloc_size = 0;
+ 	size_t num_buffers = 0;
+-- 
+2.27.0
