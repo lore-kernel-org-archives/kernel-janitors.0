@@ -1,45 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Sep 2020 10:07:48 +0000
-Subject: [PATCH] drm/vc4: hdmi: Fix off by ones in vc4_hdmi_read/write()
-Message-Id: <20200910100748.GA79916@mwanda>
+From: Maxime Ripard <maxime@cerno.tech>
+Date: Thu, 10 Sep 2020 10:19:50 +0000
+Subject: Re: [PATCH] drm/vc4: hdmi: Fix off by ones in vc4_hdmi_read/write()
+Message-Id: <20200910101950.vgolpbskn64evnyk@gilmour.lan>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="tq5daj5t3ijdco2q"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric Anholt <eric@anholt.duckdns.org>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>
+References: <20200910100748.GA79916@mwanda>
+In-Reply-To: <20200910100748.GA79916@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.duckdns.org>
 
-The variant->registers[] has ->num_registers elements so the >
-comparison needs to be changes to >= to prevent an out of bounds
-access.
 
-Fixes: 311e305fdb4e ("drm/vc4: hdmi: Implement a register layout abstraction")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--tq5daj5t3ijdco2q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi_regs.h b/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-index a5f1354e3e06..47364bd3960d 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-@@ -398,7 +398,7 @@ static inline u32 vc4_hdmi_read(struct vc4_hdmi *hdmi,
- 	const struct vc4_hdmi_variant *variant = hdmi->variant;
- 	void __iomem *base;
- 
--	if (reg > variant->num_registers) {
-+	if (reg >= variant->num_registers) {
- 		dev_warn(&hdmi->pdev->dev,
- 			 "Invalid register ID %u\n", reg);
- 		return 0;
-@@ -424,7 +424,7 @@ static inline void vc4_hdmi_write(struct vc4_hdmi *hdmi,
- 	const struct vc4_hdmi_variant *variant = hdmi->variant;
- 	void __iomem *base;
- 
--	if (reg > variant->num_registers) {
-+	if (reg >= variant->num_registers) {
- 		dev_warn(&hdmi->pdev->dev,
- 			 "Invalid register ID %u\n", reg);
- 		return;
--- 
-2.28.0
+On Thu, Sep 10, 2020 at 01:07:48PM +0300, Dan Carpenter wrote:
+> The variant->registers[] has ->num_registers elements so the >
+> comparison needs to be changes to >=3D to prevent an out of bounds
+> access.
+>=20
+> Fixes: 311e305fdb4e ("drm/vc4: hdmi: Implement a register layout abstract=
+ion")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied, thanks!
+Maxime
+
+--tq5daj5t3ijdco2q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX1n9xgAKCRDj7w1vZxhR
+xbQTAQDUfacjuhgX28Cj9vVmIezT6QLQoMhITiWlhN7fLiKYFgD9GTqvCdM3B2Nv
+TfTH7a+W93y4WcNIvcdtGV78EaNejgA=
+=F0K8
+-----END PGP SIGNATURE-----
+
+--tq5daj5t3ijdco2q--
