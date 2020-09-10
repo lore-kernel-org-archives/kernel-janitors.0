@@ -1,48 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 21 Sep 2020 21:15:55 +0000
-Subject: [PATCH][V2][next] PCI: brcmstb: fix a missing if statement on a return error check
-Message-Id: <20200921211555.383458-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Sep 2020 08:40:48 +0000
+Subject: [bug report] mfd: ene-kb3930: Add driver for ENE KB3930 Embedded Controller
+Message-Id: <20200910084048.GA64765@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Jim Quinlan <jquinlan@broadcom.com>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Lubomir Rintel,
 
-The error return ret is not being check with an if statement and
-currently the code always returns leaving the following code as
-dead code. Fix this by adding in the missing if statement and
-clean up with the clk_disable_unprepare call.
+The patch 753bd752e181: "mfd: ene-kb3930: Add driver for ENE KB3930
+Embedded Controller" from Jul 10, 2020, leads to the following static
+checker warning:
 
-Kudos to Florian Fainelli for noting that the clock needed disabling.
+	drivers/mfd/ene-kb3930.c:165 kb3930_probe()
+	warn: 'ddata->off_gpios' can also be NULL
 
-Addresses-Coverity: ("Structurally dead code")
-Fixes: ad3d29c77e1e ("PCI: brcmstb: Add control of rescal reset")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
+drivers/mfd/ene-kb3930.c
+   152  
+   153          ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO,
+   154                                     ariel_ec_cells,
+   155                                     ARRAY_SIZE(ariel_ec_cells),
+   156                                     NULL, 0, NULL);
+   157          if (ret)
+   158                  return ret;
+   159  
+   160          if (of_property_read_bool(np, "system-power-controller")) {
+   161                  ddata->off_gpios    162                          devm_gpiod_get_array_optional(dev, "off", GPIOD_IN);
 
-V2: disable clock as noted by Florian Fainelli and suggested by
-    Jim Quinlan.
----
- drivers/pci/controller/pcie-brcmstb.c | 3 +++
- 1 file changed, 3 insertions(+)
+The devm_gpiod_get_array_optional() function can return NULL in the
+sitation where the optional array is not there.  It's not an error
+because it's an optional thing, but there is also no valid pointer to
+return.  So because it's not an error pointer, or a valid pointer then
+it's NULL.
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 7a3ff4632e7c..25f46f87b36f 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -1154,7 +1154,10 @@ static int brcm_pcie_resume(struct device *dev)
- 	clk_prepare_enable(pcie->clk);
- 
- 	ret = brcm_phy_start(pcie);
-+	if (ret) {
-+		clk_disable_unprepare(pcie->clk);
- 		return ret;
-+	}
- 
- 	/* Take bridge out of reset so we can access the SERDES reg */
- 	pcie->bridge_sw_init_set(pcie, 0);
--- 
-2.27.0
+   163                  if (IS_ERR(ddata->off_gpios))
+   164                          return PTR_ERR(ddata->off_gpios);
+   165                  if (ddata->off_gpios->ndescs < 2) {
+   166                          dev_err(dev, "invalid off-gpios property\n");
+   167                          return -EINVAL;
+   168                  }
+   169          }
+   170  
+   171          if (ddata->off_gpios) {
+   172                  register_restart_handler(&kb3930_restart_nb);
+   173                  if (!pm_power_off)
+   174                          pm_power_off = kb3930_pm_power_off;
+   175          }
+   176  
+   177          return 0;
+
+regards,
+dan carpenter
