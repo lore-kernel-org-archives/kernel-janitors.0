@@ -1,43 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 18 Sep 2020 13:14:34 +0000
-Subject: Re: [PATCH][next] regmap: fix return of unintialized value in variable ret
-Message-Id: <20200918131434.GG5703@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="+sHJum3is6Tsg7/J"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 Sep 2020 15:04:10 +0000
+Subject: [PATCH] spi: qup: remove redundant assignment to variable ret
+Message-Id: <20200910150410.750959-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200918131158.24083-1-colin.king@canonical.com>
-In-Reply-To: <20200918131158.24083-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Gross <agross@kernel.org>, Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---+sHJum3is6Tsg7/J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The variable ret is being initialized with a value that is
+never read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-On Fri, Sep 18, 2020 at 02:11:58PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> A recent commit removed the intialization of ret and now the !config
-> error return path returns a bogus uninitialized value in ret. Fix
-> this by explicitly setting ret to -EINVAL for this error exit path.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-qup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I already applied a patch for this.
-
---+sHJum3is6Tsg7/J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl9ksrkACgkQJNaLcl1U
-h9BZggf/X73CVmpulLjsNipt985pXNKkibPt9bWqQsWTiwbhU9j06StCCD1axGQR
-fZdX2Lk+kb9aVd7BSc7V4Ri5GRAJoi4y/mbypUEQszMuvq63LpLPvjzhbMc36md1
-5aDhaPEQbtQTVpmTPkdtZO0nFnZfrUSQCRk03F+oHVM1iXt3Ua6ftOnWgjzVtlOA
-jCYhkmeLBmD9PdWlfK/H90VHaKDyw2h/d8sCsSFOtWAkUwtLHxU0sqJLh6qVGFLB
-TP7IUipcCOpGxQw3gxFOptLogC8L4G+xHeUulrnT0fxjDxNHVvMRjevc3ZiW4o4w
-7xgoGuso1q5asbs3KKBz940WN6E5ig==
-=ng5Z
------END PGP SIGNATURE-----
-
---+sHJum3is6Tsg7/J--
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index a364b99497e2..8dcb2e70735c 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -848,7 +848,7 @@ static int spi_qup_transfer_one(struct spi_master *master,
+ {
+ 	struct spi_qup *controller = spi_master_get_devdata(master);
+ 	unsigned long timeout, flags;
+-	int ret = -EIO;
++	int ret;
+ 
+ 	ret = spi_qup_io_prep(spi, xfer);
+ 	if (ret)
+-- 
+2.27.0
