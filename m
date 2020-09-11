@@ -1,58 +1,37 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:11 +0000
-Subject: [PATCH 01/18] clk: uniphier: use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-2-git-send-email-Julia.Lawall@inria.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Sep 2020 11:34:14 +0000
+Subject: [PATCH] drm/i915/selftests: test the correct variable in igt_gem_ww_ctx()
+Message-Id: <20200911113414.GC367487@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Stephen Boyd <sboyd@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@intel.com>, Matthew Auld <matthew.auld@intel.com>
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+There is a copy and paste error here.  The "obj" should be "obj2".  The
+current code could result in an Oops.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Fixes: 80f0b679d6f0 ("drm/i915: Add an implementation for i915_gem_ww_ctx locking, v2.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/clk/uniphier/clk-uniphier-cpugear.c |    2 +-
- drivers/clk/uniphier/clk-uniphier-mux.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/selftests/i915_gem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-cpugear.c b/drivers/clk/uniphier/clk-uniphier-cpugear.c
-index 1a33a08abf2f..a2f01a4da127 100644
---- a/drivers/clk/uniphier/clk-uniphier-cpugear.c
-+++ b/drivers/clk/uniphier/clk-uniphier-cpugear.c
-@@ -90,7 +90,7 @@ struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
- 	init.ops = &uniphier_clk_cpugear_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
- 	init.parent_names = data->parent_names;
--	init.num_parents = data->num_parents,
-+	init.num_parents = data->num_parents;
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/i915/selftests/i915_gem.c
+index 23a6132c5f4e..412e21604a05 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
+@@ -211,8 +211,8 @@ static int igt_gem_ww_ctx(void *arg)
+ 		return PTR_ERR(obj);
  
- 	gear->regmap = regmap;
- 	gear->regbase = data->regbase;
-diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-index c0f4631601e2..462c84321b2d 100644
---- a/drivers/clk/uniphier/clk-uniphier-mux.c
-+++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-@@ -70,7 +70,7 @@ struct clk_hw *uniphier_clk_register_mux(struct device *dev,
- 	init.ops = &uniphier_clk_mux_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
- 	init.parent_names = data->parent_names;
--	init.num_parents = data->num_parents,
-+	init.num_parents = data->num_parents;
+ 	obj2 = i915_gem_object_create_internal(i915, PAGE_SIZE);
+-	if (IS_ERR(obj)) {
+-		err = PTR_ERR(obj);
++	if (IS_ERR(obj2)) {
++		err = PTR_ERR(obj2);
+ 		goto put1;
+ 	}
  
- 	mux->regmap = regmap;
- 	mux->reg = data->reg;
+-- 
+2.28.0
