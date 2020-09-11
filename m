@@ -1,39 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 21 Sep 2020 02:09:29 +0000
-Subject: Re: [PATCH 03/14] dpaa2-eth: drop double zeroing
-Message-Id: <20200920.190929.1753681394804258381.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 Sep 2020 10:23:21 +0000
+Subject: [PATCH] mtd: remove redundant assignment to pointer eb
+Message-Id: <20200911102321.22515-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
-        <1600601186-7420-4-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-4-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@inria.fr
-Cc: ioana.ciornei@nxp.com, kernel-janitors@vger.kernel.org, ruxandra.radulescu@nxp.com, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 20 Sep 2020 13:26:15 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> sg_init_table zeroes its first argument, so the allocation of that argument
-> doesn't have to.
-> 
-> the semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,n,flags;
-> @@
-> 
-> x = 
-> - kcalloc
-> + kmalloc_array
->   (n,sizeof(struct scatterlist),flags)
-> ...
-> sg_init_table(x,n)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Pointer eb is being assigned a value that is never read, the assignment
+is redundant and can be removed.
 
-Applied.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/mtdswap.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+index 58eefa43af14..795dec4483c2 100644
+--- a/drivers/mtd/mtdswap.c
++++ b/drivers/mtd/mtdswap.c
+@@ -1053,7 +1053,6 @@ static int mtdswap_writesect(struct mtd_blktrans_dev *dev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	eb = d->eb_data + (newblock / d->pages_per_eblk);
+ 	d->page_data[page] = newblock;
+ 
+ 	return 0;
+-- 
+2.27.0
