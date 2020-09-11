@@ -1,44 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 22 Sep 2020 00:06:06 +0000
-Subject: Re: [PATCH] regulator: fix indentation issue
-Message-Id: <160073316153.6369.11968491435935833807.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Sep 2020 11:33:26 +0000
+Subject: [PATCH] mfd: sm501: Fix leaks in probe()
+Message-Id: <20200911113326.GB367487@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200920142454.33352-1-colin.king@canonical.com>
-In-Reply-To: <20200920142454.33352-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Ben Dooks <ben@fluff.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Vincent Sanders <vince@arm.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 20 Sep 2020 15:24:54 +0100, Colin King wrote:
-> There is a return statement that is indented with an extra
-> space, fix this by removing it.
+This code should clean up if sm501_init_dev() fails.
 
-Applied to
+Fixes: b6d6454fdb66 ("[PATCH] mfd: SM501 core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mfd/sm501.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: fix indentation issue
-      commit: be35cc4695aa1b26d00b30bfd1d8408eddd357ec
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index ccd62b963952..6d2f4a0a901d 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1415,8 +1415,14 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 		goto err_claim;
+ 	}
+ 
+-	return sm501_init_dev(sm);
++	ret = sm501_init_dev(sm);
++	if (ret)
++		goto err_unmap;
++
++	return 0;
+ 
++ err_unmap:
++	iounmap(sm->regs);
+  err_claim:
+ 	release_mem_region(sm->io_res->start, 0x100);
+  err_res:
+-- 
+2.28.0
