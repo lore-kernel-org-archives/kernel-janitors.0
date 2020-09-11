@@ -1,46 +1,45 @@
-From: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Date: Thu, 10 Sep 2020 20:14:19 +0000
-Subject: Re: [PATCH] drm/i915: Fix an error code i915_gem_object_copy_blt()
-Message-Id: <87363p4cf8.fsf@gaia.fi.intel.com>
+From: Andi Shyti <andi@etezian.org>
+Date: Fri, 11 Sep 2020 12:11:07 +0000
+Subject: Re: [Intel-gfx] [PATCH] drm/i915/selftests: test the correct variable in igt_gem_ww_ctx()
+Message-Id: <20200911121107.GA2330@jack.zhora.eu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200910100850.GD79916@mwanda>
-In-Reply-To: <20200910100850.GD79916@mwanda>
+References: <20200911113414.GC367487@mwanda>
+In-Reply-To: <20200911113414.GC367487@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Thomas =?iso-8859-15?Q?Hellstr=F6m?= <thomas.hellstrom@intel.com>, Matthew Auld <matthew.auld@intel.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Hi Dan,
 
-> This code should use "vma[1]" instead of "vma".  The "vma" is a variable
-> is a valid pointer.
-
-Not quite getting the last sentence with my non native english parser.
-"vma" is array would make sense.
-
->
-> Fixes: 6b05030496f7 ("drm/i915: Convert i915_gem_object/client_blt.c to use ww locking as well, v2.")
+> There is a copy and paste error here.  The "obj" should be "obj2".  The
+> current code could result in an Oops.
+> 
+> Fixes: 80f0b679d6f0 ("drm/i915: Add an implementation for i915_gem_ww_ctx locking, v2.")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-
 > ---
->  drivers/gpu/drm/i915/gem/i915_gem_object_blt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c b/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
-> index d93eb36160c9..aee7ad3cc3c6 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
-> @@ -364,7 +364,7 @@ int i915_gem_object_copy_blt(struct drm_i915_gem_object *src,
+>  drivers/gpu/drm/i915/selftests/i915_gem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/i915/selftests/i915_gem.c
+> index 23a6132c5f4e..412e21604a05 100644
+> --- a/drivers/gpu/drm/i915/selftests/i915_gem.c
+> +++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
+> @@ -211,8 +211,8 @@ static int igt_gem_ww_ctx(void *arg)
+>  		return PTR_ERR(obj);
 >  
->  	vma[1] = i915_vma_instance(dst, vm, NULL);
->  	if (IS_ERR(vma[1]))
-> -		return PTR_ERR(vma);
-> +		return PTR_ERR(vma[1]);
->  
->  	i915_gem_ww_ctx_init(&ww, true);
->  	intel_engine_pm_get(ce->engine);
-> -- 
-> 2.28.0
+>  	obj2 = i915_gem_object_create_internal(i915, PAGE_SIZE);
+> -	if (IS_ERR(obj)) {
+> -		err = PTR_ERR(obj);
+> +	if (IS_ERR(obj2)) {
+> +		err = PTR_ERR(obj2);
+>  		goto put1;
+>  	}
+
+ops...
+
+Reviewed-by: Andi Shyti <andi.shyti@intel.com>
+
+Thanks,
+Andi
