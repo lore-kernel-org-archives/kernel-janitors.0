@@ -1,54 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Sep 2020 23:15:32 +0000
-Subject: Re: [PATCH] drm/i915: Uninitialized variable in i915_gem_object_map_page()
-Message-Id: <20200925091532.71ba87d4@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/eQPpKG3fwyzGW7y9XzMq/C9"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Sep 2020 07:52:43 +0000
+Subject: [PATCH v2] drm/i915: Fix an error code i915_gem_object_copy_blt()
+Message-Id: <20200911075243.GG12635@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200924081830.GA1568157@mwanda>
-In-Reply-To: <20200924081830.GA1568157@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Dave Airlie <airlied@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>
+In-Reply-To: <87363p4cf8.fsf@gaia.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>
 
---Sig_/eQPpKG3fwyzGW7y9XzMq/C9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This code should use "vma[1]" instead of "vma".  The "vma" variable is a
+valid pointer.
 
-Hi Dan,
+Fixes: 6b05030496f7 ("drm/i915: Convert i915_gem_object/client_blt.c to use ww locking as well, v2.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+---
+v2: Fix confusing typo in the commit message
 
-On Thu, 24 Sep 2020 11:18:30 +0300 Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
->
-> The "i" iterator is never set to zero.  This probably doesn't affect
-> testing because GCC sometimes initializes variables and also we have a
-> new pluggin to initialize stack variables to zero.
->=20
-> Fixes: 7edd32a9e614 ("drm/i915: use vmap in i915_gem_object_map")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Hi Andrew, this should probably go through the -mm tree and get folded
-> into the original patch.
+ drivers/gpu/drm/i915/gem/i915_gem_object_blt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Added to linux-next today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/eQPpKG3fwyzGW7y9XzMq/C9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9tKJQACgkQAVBC80lX
-0GxICwf+O7nALSW2YNzsYpFHHJ6OdT58gcC8y81KGx6ZLHXVkc939hnK58waJe1C
-5hqeYI1asKx5zLWYh6wKqDblPelbRmY8U+oPeaJDzT1fyCzAgZuUWPxZ2Nf7khk7
-ewrQuU2k6ndzE0C3PZDYtfLZ01eGYGrIJqujN79OQX9IDKBuE0f8JtRDkKYbTtte
-n9g6tmzLRp+OLjwmnb6ePJX2sEJLszPiq7iLOWZlR19ZCa8+g0MPwJrdNWqtd6Jz
-SdN1xtF4QyokJBTsXY4LFZ8Kjc9JCEUEmzFLaZIiNgulCUQI86nHnO13KIvdYmi4
-6ghnhUfnW/mQM7apj8wiL7Tcwc6CAA==
-=3vsg
------END PGP SIGNATURE-----
-
---Sig_/eQPpKG3fwyzGW7y9XzMq/C9--
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c b/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
+index d93eb36160c9..aee7ad3cc3c6 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object_blt.c
+@@ -364,7 +364,7 @@ int i915_gem_object_copy_blt(struct drm_i915_gem_object *src,
+ 
+ 	vma[1] = i915_vma_instance(dst, vm, NULL);
+ 	if (IS_ERR(vma[1]))
+-		return PTR_ERR(vma);
++		return PTR_ERR(vma[1]);
+ 
+ 	i915_gem_ww_ctx_init(&ww, true);
+ 	intel_engine_pm_get(ce->engine);
+-- 
+2.28.0
