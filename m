@@ -1,34 +1,309 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Mon, 28 Sep 2020 01:42:40 +0000
-Subject: Re: [PATCH 06/18] hwrng: iproc-rng200 - use semicolons rather than commas to separate statements
-Message-Id: <793939ba-520a-8041-b3c7-20900a21f308@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Sep 2020 07:43:58 +0000
+Subject: [PATCH] tlan: switch from 'pci_' to 'dma_' API
+Message-Id: <20200912074359.334234-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Matt Mackall <mpm@selenic.com>
-Cc: =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-crypto@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: davem@davemloft.net, kuba@kernel.org, chessman@tux.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+The wrappers in include/linux/pci-dma-compat.h should go away.
+
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'tlan_init()' GFP_KERNEL can be used because
+it is only called from a probe function or a module_init function and no
+lock is taken in the between.
+The call chain is:
+  tlan_probe                        (module_init function)
+    --> tlan_eisa_probe
+or
+  tlan_init_one                     (probe function)
+
+then in both cases:
+    --> tlan_probe1
+      --> tlan_init
 
 
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-On 9/27/2020 12:12 PM, Julia Lawall wrote:
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/ethernet/ti/tlan.c | 61 ++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
+index 76a342ea3797..1203a3c0febb 100644
+--- a/drivers/net/ethernet/ti/tlan.c
++++ b/drivers/net/ethernet/ti/tlan.c
+@@ -305,9 +305,8 @@ static void tlan_remove_one(struct pci_dev *pdev)
+ 	unregister_netdev(dev);
+ 
+ 	if (priv->dma_storage) {
+-		pci_free_consistent(priv->pci_dev,
+-				    priv->dma_size, priv->dma_storage,
+-				    priv->dma_storage_dma);
++		dma_free_coherent(&priv->pci_dev->dev, priv->dma_size,
++				  priv->dma_storage, priv->dma_storage_dma);
+ 	}
+ 
+ #ifdef CONFIG_PCI
+@@ -482,7 +481,7 @@ static int tlan_probe1(struct pci_dev *pdev, long ioaddr, int irq, int rev,
+ 
+ 		priv->adapter = &board_info[ent->driver_data];
+ 
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (rc) {
+ 			pr_err("No suitable PCI mapping available\n");
+ 			goto err_out_free_dev;
+@@ -584,8 +583,8 @@ static int tlan_probe1(struct pci_dev *pdev, long ioaddr, int irq, int rev,
+ 	return 0;
+ 
+ err_out_uninit:
+-	pci_free_consistent(priv->pci_dev, priv->dma_size, priv->dma_storage,
+-			    priv->dma_storage_dma);
++	dma_free_coherent(&priv->pci_dev->dev, priv->dma_size,
++			  priv->dma_storage, priv->dma_storage_dma);
+ err_out_free_dev:
+ 	free_netdev(dev);
+ err_out_regions:
+@@ -609,9 +608,9 @@ static void tlan_eisa_cleanup(void)
+ 		dev = tlan_eisa_devices;
+ 		priv = netdev_priv(dev);
+ 		if (priv->dma_storage) {
+-			pci_free_consistent(priv->pci_dev, priv->dma_size,
+-					    priv->dma_storage,
+-					    priv->dma_storage_dma);
++			dma_free_coherent(&priv->pci_dev->dev, priv->dma_size,
++					  priv->dma_storage,
++					  priv->dma_storage_dma);
+ 		}
+ 		release_region(dev->base_addr, 0x10);
+ 		unregister_netdev(dev);
+@@ -826,9 +825,8 @@ static int tlan_init(struct net_device *dev)
+ 
+ 	dma_size = (TLAN_NUM_RX_LISTS + TLAN_NUM_TX_LISTS)
+ 		* (sizeof(struct tlan_list));
+-	priv->dma_storage = pci_alloc_consistent(priv->pci_dev,
+-						 dma_size,
+-						 &priv->dma_storage_dma);
++	priv->dma_storage = dma_alloc_coherent(&priv->pci_dev->dev, dma_size,
++					       &priv->dma_storage_dma, GFP_KERNEL);
+ 	priv->dma_size = dma_size;
+ 
+ 	if (priv->dma_storage = NULL) {
+@@ -1069,9 +1067,9 @@ static netdev_tx_t tlan_start_tx(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	tail_list->forward = 0;
+ 
+-	tail_list->buffer[0].address = pci_map_single(priv->pci_dev,
++	tail_list->buffer[0].address = dma_map_single(&priv->pci_dev->dev,
+ 						      skb->data, txlen,
+-						      PCI_DMA_TODEVICE);
++						      DMA_TO_DEVICE);
+ 	tlan_store_skb(tail_list, skb);
+ 
+ 	tail_list->frame_size = (u16) txlen;
+@@ -1365,10 +1363,10 @@ static u32 tlan_handle_tx_eof(struct net_device *dev, u16 host_int)
+ 		struct sk_buff *skb = tlan_get_skb(head_list);
+ 
+ 		ack++;
+-		pci_unmap_single(priv->pci_dev, head_list->buffer[0].address,
+-				 max(skb->len,
+-				     (unsigned int)TLAN_MIN_FRAME_SIZE),
+-				 PCI_DMA_TODEVICE);
++		dma_unmap_single(&priv->pci_dev->dev,
++				 head_list->buffer[0].address,
++				 max(skb->len, (unsigned int)TLAN_MIN_FRAME_SIZE),
++				 DMA_TO_DEVICE);
+ 		dev_kfree_skb_any(skb);
+ 		head_list->buffer[8].address = 0;
+ 		head_list->buffer[9].address = 0;
+@@ -1511,8 +1509,8 @@ static u32 tlan_handle_rx_eof(struct net_device *dev, u16 host_int)
+ 			goto drop_and_reuse;
+ 
+ 		skb = tlan_get_skb(head_list);
+-		pci_unmap_single(priv->pci_dev, frame_dma,
+-				 TLAN_MAX_FRAME_SIZE, PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&priv->pci_dev->dev, frame_dma,
++				 TLAN_MAX_FRAME_SIZE, DMA_FROM_DEVICE);
+ 		skb_put(skb, frame_size);
+ 
+ 		dev->stats.rx_bytes += frame_size;
+@@ -1521,8 +1519,8 @@ static u32 tlan_handle_rx_eof(struct net_device *dev, u16 host_int)
+ 		netif_rx(skb);
+ 
+ 		head_list->buffer[0].address -			pci_map_single(priv->pci_dev, new_skb->data,
+-				       TLAN_MAX_FRAME_SIZE, PCI_DMA_FROMDEVICE);
++			dma_map_single(&priv->pci_dev->dev, new_skb->data,
++				       TLAN_MAX_FRAME_SIZE, DMA_FROM_DEVICE);
+ 
+ 		tlan_store_skb(head_list, new_skb);
+ drop_and_reuse:
+@@ -1923,10 +1921,10 @@ static void tlan_reset_lists(struct net_device *dev)
+ 		if (!skb)
+ 			break;
+ 
+-		list->buffer[0].address = pci_map_single(priv->pci_dev,
++		list->buffer[0].address = dma_map_single(&priv->pci_dev->dev,
+ 							 skb->data,
+ 							 TLAN_MAX_FRAME_SIZE,
+-							 PCI_DMA_FROMDEVICE);
++							 DMA_FROM_DEVICE);
+ 		tlan_store_skb(list, skb);
+ 		list->buffer[1].count = 0;
+ 		list->buffer[1].address = 0;
+@@ -1954,12 +1952,10 @@ static void tlan_free_lists(struct net_device *dev)
+ 		list = priv->tx_list + i;
+ 		skb = tlan_get_skb(list);
+ 		if (skb) {
+-			pci_unmap_single(
+-				priv->pci_dev,
+-				list->buffer[0].address,
+-				max(skb->len,
+-				    (unsigned int)TLAN_MIN_FRAME_SIZE),
+-				PCI_DMA_TODEVICE);
++			dma_unmap_single(&priv->pci_dev->dev,
++					 list->buffer[0].address,
++					 max(skb->len, (unsigned int)TLAN_MIN_FRAME_SIZE),
++					 DMA_TO_DEVICE);
+ 			dev_kfree_skb_any(skb);
+ 			list->buffer[8].address = 0;
+ 			list->buffer[9].address = 0;
+@@ -1970,10 +1966,9 @@ static void tlan_free_lists(struct net_device *dev)
+ 		list = priv->rx_list + i;
+ 		skb = tlan_get_skb(list);
+ 		if (skb) {
+-			pci_unmap_single(priv->pci_dev,
++			dma_unmap_single(&priv->pci_dev->dev,
+ 					 list->buffer[0].address,
+-					 TLAN_MAX_FRAME_SIZE,
+-					 PCI_DMA_FROMDEVICE);
++					 TLAN_MAX_FRAME_SIZE, DMA_FROM_DEVICE);
+ 			dev_kfree_skb_any(skb);
+ 			list->buffer[8].address = 0;
+ 			list->buffer[9].address = 0;
 -- 
-Florian
+2.25.1
