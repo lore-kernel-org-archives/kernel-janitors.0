@@ -1,50 +1,418 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 20 Sep 2020 11:26:14 +0000
-Subject: [PATCH 02/14] target/rd: drop double zeroing
-Message-Id: <1600601186-7420-3-git-send-email-Julia.Lawall@inria.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Sep 2020 19:46:25 +0000
+Subject: [PATCH] natsemi: switch from 'pci_' to 'dma_' API
+Message-Id: <20200912194625.345319-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: davem@davemloft.net, kuba@kernel.org, mst@redhat.com, vaibhavgupta40@gmail.com, gustavoars@kernel.org, arnd@arndb.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-sg_init_table zeroes its first argument, so the allocation of that argument
-doesn't have to.
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-the semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-// <smpl>
+When memory is allocated in 'alloc_ring()' (natsemi.c) GFP_KERNEL can be
+used because it is only called from 'netdev_open()', which is a '.ndo_open'
+function. Such function are synchronized with the rtnl_lock() semaphore.
+
+When memory is allocated in 'alloc_ring()' (natsemi.c) GFP_KERNEL can be
+used because it is only called from 'netdev_open()', which is a '.ndo_open'
+function. Such function are synchronized with the rtnl_lock() semaphore.
+
+When memory is allocated in 'ns83820_init_one()' (natsemi.c) GFP_KERNEL can
+be used because it is a probe function and no lock is taken in the between.
+
+
 @@
-expression x,n,flags;
 @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-x = 
-- kcalloc
-+ kmalloc_array
-  (n,sizeof(*x),flags)
-...
-sg_init_table(x,n)
-// </smpl>
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/target/target_core_rd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/net/ethernet/natsemi/natsemi.c | 63 +++++++++++++-------------
+ drivers/net/ethernet/natsemi/ns83820.c | 61 +++++++++++++------------
+ 2 files changed, 62 insertions(+), 62 deletions(-)
 
-diff -u -p a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
---- a/drivers/target/target_core_rd.c
-+++ b/drivers/target/target_core_rd.c
-@@ -131,7 +131,7 @@ static int rd_allocate_sgl_table(struct
- 		if (sg_per_table < total_sg_needed)
- 			chain_entry = 1;
+diff --git a/drivers/net/ethernet/natsemi/natsemi.c b/drivers/net/ethernet/natsemi/natsemi.c
+index 3de8430ee8c5..05d43fd7ea98 100644
+--- a/drivers/net/ethernet/natsemi/natsemi.c
++++ b/drivers/net/ethernet/natsemi/natsemi.c
+@@ -1916,9 +1916,9 @@ static void ns_tx_timeout(struct net_device *dev, unsigned int txqueue)
+ static int alloc_ring(struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+-	np->rx_ring = pci_alloc_consistent(np->pci_dev,
+-		sizeof(struct netdev_desc) * (RX_RING_SIZE+TX_RING_SIZE),
+-		&np->ring_dma);
++	np->rx_ring = dma_alloc_coherent(&np->pci_dev->dev,
++					 sizeof(struct netdev_desc) * (RX_RING_SIZE + TX_RING_SIZE),
++					 &np->ring_dma, GFP_KERNEL);
+ 	if (!np->rx_ring)
+ 		return -ENOMEM;
+ 	np->tx_ring = &np->rx_ring[RX_RING_SIZE];
+@@ -1939,10 +1939,10 @@ static void refill_rx(struct net_device *dev)
+ 			np->rx_skbuff[entry] = skb;
+ 			if (skb = NULL)
+ 				break; /* Better luck next round. */
+-			np->rx_dma[entry] = pci_map_single(np->pci_dev,
+-				skb->data, buflen, PCI_DMA_FROMDEVICE);
+-			if (pci_dma_mapping_error(np->pci_dev,
+-						  np->rx_dma[entry])) {
++			np->rx_dma[entry] = dma_map_single(&np->pci_dev->dev,
++							   skb->data, buflen,
++							   DMA_FROM_DEVICE);
++			if (dma_mapping_error(&np->pci_dev->dev, np->rx_dma[entry])) {
+ 				dev_kfree_skb_any(skb);
+ 				np->rx_skbuff[entry] = NULL;
+ 				break; /* Better luck next round. */
+@@ -2013,9 +2013,8 @@ static void drain_tx(struct net_device *dev)
  
--		sg = kcalloc(sg_per_table + chain_entry, sizeof(*sg),
-+		sg = kmalloc_array(sg_per_table + chain_entry, sizeof(*sg),
- 				GFP_KERNEL);
- 		if (!sg)
- 			return -ENOMEM;
+ 	for (i = 0; i < TX_RING_SIZE; i++) {
+ 		if (np->tx_skbuff[i]) {
+-			pci_unmap_single(np->pci_dev,
+-				np->tx_dma[i], np->tx_skbuff[i]->len,
+-				PCI_DMA_TODEVICE);
++			dma_unmap_single(&np->pci_dev->dev, np->tx_dma[i],
++					 np->tx_skbuff[i]->len, DMA_TO_DEVICE);
+ 			dev_kfree_skb(np->tx_skbuff[i]);
+ 			dev->stats.tx_dropped++;
+ 		}
+@@ -2034,9 +2033,9 @@ static void drain_rx(struct net_device *dev)
+ 		np->rx_ring[i].cmd_status = 0;
+ 		np->rx_ring[i].addr = cpu_to_le32(0xBADF00D0); /* An invalid address. */
+ 		if (np->rx_skbuff[i]) {
+-			pci_unmap_single(np->pci_dev, np->rx_dma[i],
+-				buflen + NATSEMI_PADDING,
+-				PCI_DMA_FROMDEVICE);
++			dma_unmap_single(&np->pci_dev->dev, np->rx_dma[i],
++					 buflen + NATSEMI_PADDING,
++					 DMA_FROM_DEVICE);
+ 			dev_kfree_skb(np->rx_skbuff[i]);
+ 		}
+ 		np->rx_skbuff[i] = NULL;
+@@ -2052,9 +2051,9 @@ static void drain_ring(struct net_device *dev)
+ static void free_ring(struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+-	pci_free_consistent(np->pci_dev,
+-		sizeof(struct netdev_desc) * (RX_RING_SIZE+TX_RING_SIZE),
+-		np->rx_ring, np->ring_dma);
++	dma_free_coherent(&np->pci_dev->dev,
++			  sizeof(struct netdev_desc) * (RX_RING_SIZE + TX_RING_SIZE),
++			  np->rx_ring, np->ring_dma);
+ }
+ 
+ static void reinit_rx(struct net_device *dev)
+@@ -2101,9 +2100,9 @@ static netdev_tx_t start_tx(struct sk_buff *skb, struct net_device *dev)
+ 	entry = np->cur_tx % TX_RING_SIZE;
+ 
+ 	np->tx_skbuff[entry] = skb;
+-	np->tx_dma[entry] = pci_map_single(np->pci_dev,
+-				skb->data,skb->len, PCI_DMA_TODEVICE);
+-	if (pci_dma_mapping_error(np->pci_dev, np->tx_dma[entry])) {
++	np->tx_dma[entry] = dma_map_single(&np->pci_dev->dev, skb->data,
++					   skb->len, DMA_TO_DEVICE);
++	if (dma_mapping_error(&np->pci_dev->dev, np->tx_dma[entry])) {
+ 		np->tx_skbuff[entry] = NULL;
+ 		dev_kfree_skb_irq(skb);
+ 		dev->stats.tx_dropped++;
+@@ -2169,9 +2168,8 @@ static void netdev_tx_done(struct net_device *dev)
+ 				dev->stats.tx_window_errors++;
+ 			dev->stats.tx_errors++;
+ 		}
+-		pci_unmap_single(np->pci_dev,np->tx_dma[entry],
+-					np->tx_skbuff[entry]->len,
+-					PCI_DMA_TODEVICE);
++		dma_unmap_single(&np->pci_dev->dev, np->tx_dma[entry],
++				 np->tx_skbuff[entry]->len, DMA_TO_DEVICE);
+ 		/* Free the original skb. */
+ 		dev_consume_skb_irq(np->tx_skbuff[entry]);
+ 		np->tx_skbuff[entry] = NULL;
+@@ -2359,21 +2357,22 @@ static void netdev_rx(struct net_device *dev, int *work_done, int work_to_do)
+ 			    (skb = netdev_alloc_skb(dev, pkt_len + RX_OFFSET)) != NULL) {
+ 				/* 16 byte align the IP header */
+ 				skb_reserve(skb, RX_OFFSET);
+-				pci_dma_sync_single_for_cpu(np->pci_dev,
+-					np->rx_dma[entry],
+-					buflen,
+-					PCI_DMA_FROMDEVICE);
++				dma_sync_single_for_cpu(&np->pci_dev->dev,
++							np->rx_dma[entry],
++							buflen,
++							DMA_FROM_DEVICE);
+ 				skb_copy_to_linear_data(skb,
+ 					np->rx_skbuff[entry]->data, pkt_len);
+ 				skb_put(skb, pkt_len);
+-				pci_dma_sync_single_for_device(np->pci_dev,
+-					np->rx_dma[entry],
+-					buflen,
+-					PCI_DMA_FROMDEVICE);
++				dma_sync_single_for_device(&np->pci_dev->dev,
++							   np->rx_dma[entry],
++							   buflen,
++							   DMA_FROM_DEVICE);
+ 			} else {
+-				pci_unmap_single(np->pci_dev, np->rx_dma[entry],
++				dma_unmap_single(&np->pci_dev->dev,
++						 np->rx_dma[entry],
+ 						 buflen + NATSEMI_PADDING,
+-						 PCI_DMA_FROMDEVICE);
++						 DMA_FROM_DEVICE);
+ 				skb_put(skb = np->rx_skbuff[entry], pkt_len);
+ 				np->rx_skbuff[entry] = NULL;
+ 			}
+diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
+index 8e24c7acf79b..d171b5180201 100644
+--- a/drivers/net/ethernet/natsemi/ns83820.c
++++ b/drivers/net/ethernet/natsemi/ns83820.c
+@@ -526,8 +526,8 @@ static inline int ns83820_add_rx_skb(struct ns83820 *dev, struct sk_buff *skb)
+ 
+ 	dev->rx_info.next_empty = (next_empty + 1) % NR_RX_DESC;
+ 	cmdsts = REAL_RX_BUF_SIZE | CMDSTS_INTR;
+-	buf = pci_map_single(dev->pci_dev, skb->data,
+-			     REAL_RX_BUF_SIZE, PCI_DMA_FROMDEVICE);
++	buf = dma_map_single(&dev->pci_dev->dev, skb->data, REAL_RX_BUF_SIZE,
++			     DMA_FROM_DEVICE);
+ 	build_rx_desc(dev, sg, 0, buf, cmdsts, 0);
+ 	/* update link of previous rx */
+ 	if (likely(next_empty != dev->rx_info.next_rx))
+@@ -858,8 +858,8 @@ static void rx_irq(struct net_device *ndev)
+ 		mb();
+ 		clear_rx_desc(dev, next_rx);
+ 
+-		pci_unmap_single(dev->pci_dev, bufptr,
+-				 RX_BUF_SIZE, PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&dev->pci_dev->dev, bufptr, RX_BUF_SIZE,
++				 DMA_FROM_DEVICE);
+ 		len = cmdsts & CMDSTS_LEN_MASK;
+ #ifdef NS83820_VLAN_ACCEL_SUPPORT
+ 		/* NH: As was mentioned below, this chip is kinda
+@@ -985,17 +985,13 @@ static void do_tx_done(struct net_device *ndev)
+ 		len = cmdsts & CMDSTS_LEN_MASK;
+ 		addr = desc_addr_get(desc + DESC_BUFPTR);
+ 		if (skb) {
+-			pci_unmap_single(dev->pci_dev,
+-					addr,
+-					len,
+-					PCI_DMA_TODEVICE);
++			dma_unmap_single(&dev->pci_dev->dev, addr, len,
++					 DMA_TO_DEVICE);
+ 			dev_consume_skb_irq(skb);
+ 			atomic_dec(&dev->nr_tx_skbs);
+ 		} else
+-			pci_unmap_page(dev->pci_dev,
+-					addr,
+-					len,
+-					PCI_DMA_TODEVICE);
++			dma_unmap_page(&dev->pci_dev->dev, addr, len,
++				       DMA_TO_DEVICE);
+ 
+ 		tx_done_idx = (tx_done_idx + 1) % NR_TX_DESC;
+ 		dev->tx_done_idx = tx_done_idx;
+@@ -1023,10 +1019,10 @@ static void ns83820_cleanup_tx(struct ns83820 *dev)
+ 		dev->tx_skbs[i] = NULL;
+ 		if (skb) {
+ 			__le32 *desc = dev->tx_descs + (i * DESC_SIZE);
+-			pci_unmap_single(dev->pci_dev,
+-					desc_addr_get(desc + DESC_BUFPTR),
+-					le32_to_cpu(desc[DESC_CMDSTS]) & CMDSTS_LEN_MASK,
+-					PCI_DMA_TODEVICE);
++			dma_unmap_single(&dev->pci_dev->dev,
++					 desc_addr_get(desc + DESC_BUFPTR),
++					 le32_to_cpu(desc[DESC_CMDSTS]) & CMDSTS_LEN_MASK,
++					 DMA_TO_DEVICE);
+ 			dev_kfree_skb_irq(skb);
+ 			atomic_dec(&dev->nr_tx_skbs);
+ 		}
+@@ -1121,7 +1117,8 @@ static netdev_tx_t ns83820_hard_start_xmit(struct sk_buff *skb,
+ 	len = skb->len;
+ 	if (nr_frags)
+ 		len -= skb->data_len;
+-	buf = pci_map_single(dev->pci_dev, skb->data, len, PCI_DMA_TODEVICE);
++	buf = dma_map_single(&dev->pci_dev->dev, skb->data, len,
++			     DMA_TO_DEVICE);
+ 
+ 	first_desc = dev->tx_descs + (free_idx * DESC_SIZE);
+ 
+@@ -1902,12 +1899,12 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
+ 
+ 	/* See if we can set the dma mask early on; failure is fatal. */
+ 	if (sizeof(dma_addr_t) = 8 &&
+-		!pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64))) {
++		!dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(64))) {
+ 		using_dac = 1;
+-	} else if (!pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32))) {
++	} else if (!dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32))) {
+ 		using_dac = 0;
+ 	} else {
+-		dev_warn(&pci_dev->dev, "pci_set_dma_mask failed!\n");
++		dev_warn(&pci_dev->dev, "dma_set_mask failed!\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -1938,10 +1935,12 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
+ 	pci_set_master(pci_dev);
+ 	addr = pci_resource_start(pci_dev, 1);
+ 	dev->base = ioremap(addr, PAGE_SIZE);
+-	dev->tx_descs = pci_alloc_consistent(pci_dev,
+-			4 * DESC_SIZE * NR_TX_DESC, &dev->tx_phy_descs);
+-	dev->rx_info.descs = pci_alloc_consistent(pci_dev,
+-			4 * DESC_SIZE * NR_RX_DESC, &dev->rx_info.phy_descs);
++	dev->tx_descs = dma_alloc_coherent(&pci_dev->dev,
++					   4 * DESC_SIZE * NR_TX_DESC,
++					   &dev->tx_phy_descs, GFP_KERNEL);
++	dev->rx_info.descs = dma_alloc_coherent(&pci_dev->dev,
++						4 * DESC_SIZE * NR_RX_DESC,
++						&dev->rx_info.phy_descs, GFP_KERNEL);
+ 	err = -ENOMEM;
+ 	if (!dev->base || !dev->tx_descs || !dev->rx_info.descs)
+ 		goto out_disable;
+@@ -2183,8 +2182,10 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
+ out_disable:
+ 	if (dev->base)
+ 		iounmap(dev->base);
+-	pci_free_consistent(pci_dev, 4 * DESC_SIZE * NR_TX_DESC, dev->tx_descs, dev->tx_phy_descs);
+-	pci_free_consistent(pci_dev, 4 * DESC_SIZE * NR_RX_DESC, dev->rx_info.descs, dev->rx_info.phy_descs);
++	dma_free_coherent(&pci_dev->dev, 4 * DESC_SIZE * NR_TX_DESC,
++			  dev->tx_descs, dev->tx_phy_descs);
++	dma_free_coherent(&pci_dev->dev, 4 * DESC_SIZE * NR_RX_DESC,
++			  dev->rx_info.descs, dev->rx_info.phy_descs);
+ 	pci_disable_device(pci_dev);
+ out_free:
+ 	free_netdev(ndev);
+@@ -2205,10 +2206,10 @@ static void ns83820_remove_one(struct pci_dev *pci_dev)
+ 	unregister_netdev(ndev);
+ 	free_irq(dev->pci_dev->irq, ndev);
+ 	iounmap(dev->base);
+-	pci_free_consistent(dev->pci_dev, 4 * DESC_SIZE * NR_TX_DESC,
+-			dev->tx_descs, dev->tx_phy_descs);
+-	pci_free_consistent(dev->pci_dev, 4 * DESC_SIZE * NR_RX_DESC,
+-			dev->rx_info.descs, dev->rx_info.phy_descs);
++	dma_free_coherent(&dev->pci_dev->dev, 4 * DESC_SIZE * NR_TX_DESC,
++			  dev->tx_descs, dev->tx_phy_descs);
++	dma_free_coherent(&dev->pci_dev->dev, 4 * DESC_SIZE * NR_RX_DESC,
++			  dev->rx_info.descs, dev->rx_info.phy_descs);
+ 	pci_disable_device(dev->pci_dev);
+ 	free_netdev(ndev);
+ }
+-- 
+2.25.1
