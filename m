@@ -1,12 +1,14 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Sep 2020 07:43:58 +0000
+Date: Sat, 12 Sep 2020 10:25:18 +0000
 Subject: [PATCH] tlan: switch from 'pci_' to 'dma_' API
-Message-Id: <20200912074359.334234-1-christophe.jaillet@wanadoo.fr>
+Message-Id: <20200912102519.337303-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200912074359.334234-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200912074359.334234-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, kuba@kernel.org, chessman@tux.org
+To: davem@davemloft.net, kuba@kernel.org, andy@greyhouse.net
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 The wrappers in include/linux/pci-dma-compat.h should go away.
