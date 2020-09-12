@@ -1,41 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 24 Sep 2020 01:06:15 +0000
-Subject: Re: [PATCH net-next] tipc: potential memory corruption in tipc_crypto_key_rcv()
-Message-Id: <20200923.180615.357823799741297427.davem@davemloft.net>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sat, 12 Sep 2020 18:33:34 +0000
+Subject: [PATCH] MAINTAINERS: make linux-aspeed list remarks consistent
+Message-Id: <20200912183334.22683-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200923083017.GA1454948@mwanda>
-In-Reply-To: <20200923083017.GA1454948@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, kuba@kernel.org, tuong.t.lien@dektech.com.au, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, keescook@chromium.org
+To: Joel Stanley <joel@jms.id.au>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 23 Sep 2020 11:30:17 +0300
+Commit f15a3ea80391 ("MAINTAINERS: Add ASPEED BMC GFX DRM driver entry")
+does not mention that linux-aspeed@lists.ozlabs.org is moderated for
+non-subscribers, but the other three entries for
+linux-aspeed@lists.ozlabs.org do.
 
-> This code uses "skey->keylen" as an memcpy() size and then checks that
-> it is valid on the next line.  The other problem is that the check has
-> a potential integer overflow, it's better to use struct_size() for this.
-> 
-> Fixes: 23700da29b83 ("tipc: add automatic rekeying for encryption key")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Hey Kees and Julia,
-> 
-> It would be nice to change tipc_aead_key_size() but I'm not sure how the
-> UAPI stuff works.  My first attempt at to change it to
-> 
-> 	return struct_size(key, key, key->keylen);
-> 
-> broke the build.  I think you guys used Coccinelle to automatically
-> update these calculations.  Probably this wasn't updated because you
-> didn't want to break the build either?
+By 'majority vote' among entries, let us assume it was just missed here and
+adjust it to be consistent with others.
 
-If it is subject to overflows, the tipc_aead_key_size() helper
-shouldn't be used as-is by userspace either.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on master and next-20200911
 
-Right?
+Joel, please ack.
+David, Daniel, please pick this minor non-urgent clean-up patch.
 
-Please find a way to fix that inline function instead without breaking
-UAPI, thank you.
+This patch submission will also show me if linux-aspeed is moderated or
+not. I have not subscribed to linux-aspeed and if it shows up quickly in
+the archive, the list is probably not moderated; and if it takes longer,
+it is moderated, and hence, validating the patch.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 26af84f97353..f2561c3fc9db 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5448,7 +5448,7 @@ F:	drivers/gpu/drm/panel/panel-arm-versatile.c
+ 
+ DRM DRIVER FOR ASPEED BMC GFX
+ M:	Joel Stanley <joel@jms.id.au>
+-L:	linux-aspeed@lists.ozlabs.org
++L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+ S:	Supported
+ T:	git git://anongit.freedesktop.org/drm/drm-misc
+ F:	Documentation/devicetree/bindings/gpu/aspeed-gfx.txt
+-- 
+2.17.1
