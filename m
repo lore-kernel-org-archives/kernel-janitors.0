@@ -1,64 +1,277 @@
-From: Sumera Priyadarsini <sylphrenadin@gmail.com>
-Date: Wed, 09 Sep 2020 08:21:39 +0000
-Subject: [PATCH V2] scripts: coccicheck: Do not use shift command when rule is specfified
-Message-Id: <20200909080939.bhkgluvo5zw2kder@adolin>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 13 Sep 2020 20:43:56 +0000
+Subject: [PATCH] media: ngene: switch from 'pci_' to 'dma_' API
+Message-Id: <20200913204356.364837-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
-Cc: michal.lkml@markovi.net, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia.Lawall@lip6.fr
+To: mchehab@kernel.org, allen.lkml@gmail.com, hverkuil-cisco@xs4all.nl, romain.perier@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The command "make coccicheck C=1 CHECK=scripts/coccicheck" results in the
-error:
-	./scripts/coccicheck: line 65: -1: shift count out of range
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-This happens because every time the C variable is specified,
-the shell arguments need to be "shifted" in order to take only
-the last argument, which is the C file to test. These shell arguments
-mostly comprise flags that have been set in the Makefile. However,
-when coccicheck is specified in the make command as a rule, the
-number of shell arguments is zero, thus passing the invalid value -1
-to the shift command, resulting in an error.
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-Modify coccicheck to use the shift command only when
-number of shell arguments is not zero.
+When memory is allocated, GFP_KERNEL can be used because in all cases,
+it is called from a probe function and no lock is taken in the between.
 
-Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+The call chain is:
+  ngene_probe                       (probe function, used in ngene-cards.c)
+    --> ngene_get_buffers
+      --> AllocateRingBuffers                 (call dma_alloc_coherent)
+        --> create_ring_buffer                (call dma_alloc_coherent)
+      --> AllocCommonBuffers                  (call dma_alloc_coherent)
 
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Changes in V2:
-	- Fix spelling errors as suggested by Markus Elfring
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
 ---
- scripts/coccicheck | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/media/pci/ngene/ngene-core.c | 56 ++++++++++++++--------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/scripts/coccicheck b/scripts/coccicheck
-index e04d328210ac..5c8df337e1e3 100755
---- a/scripts/coccicheck
-+++ b/scripts/coccicheck
-@@ -61,9 +61,19 @@ COCCIINCLUDE=${COCCIINCLUDE// -include/ --include}
- if [ "$C" = "1" -o "$C" = "2" ]; then
-     ONLINE=1
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index f9f94f47d76b..07f342db6701 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -763,23 +763,22 @@ static void free_ringbuffer(struct ngene *dev, struct SRingBufferDescriptor *rb)
  
--    # Take only the last argument, which is the C file to test
--    shift $(( $# - 1 ))
--    OPTIONS="$COCCIINCLUDE $1"
-+    # If the rule coccicheck is specified when calling make, number of
-+    # arguments is zero
-+    if [ $# -ne 0 ]; then
-+	    # Take only the last argument, which is the C file to test
-+	    shift $(( $# -1 ))
-+	    OPTIONS="$COCCIINCLUDE $1"
-+    else
-+	if [ "$KBUILD_EXTMOD" = "" ] ; then
-+		OPTIONS="--dir $srctree $COCCIINCLUDE"
-+	else
-+		OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
-+	fi
-+    fi
+ 	for (j = 0; j < rb->NumBuffers; j++, Cur = Cur->Next) {
+ 		if (Cur->Buffer1)
+-			pci_free_consistent(dev->pci_dev,
+-					    rb->Buffer1Length,
+-					    Cur->Buffer1,
+-					    Cur->scList1->Address);
++			dma_free_coherent(&dev->pci_dev->dev,
++					  rb->Buffer1Length, Cur->Buffer1,
++					  Cur->scList1->Address);
  
-     # No need to parallelize Coccinelle since this mode takes one input file.
-     NPROC=1
+ 		if (Cur->Buffer2)
+-			pci_free_consistent(dev->pci_dev,
+-					    rb->Buffer2Length,
+-					    Cur->Buffer2,
+-					    Cur->scList2->Address);
++			dma_free_coherent(&dev->pci_dev->dev,
++					  rb->Buffer2Length, Cur->Buffer2,
++					  Cur->scList2->Address);
+ 	}
+ 
+ 	if (rb->SCListMem)
+-		pci_free_consistent(dev->pci_dev, rb->SCListMemSize,
+-				    rb->SCListMem, rb->PASCListMem);
++		dma_free_coherent(&dev->pci_dev->dev, rb->SCListMemSize,
++				  rb->SCListMem, rb->PASCListMem);
+ 
+-	pci_free_consistent(dev->pci_dev, rb->MemSize, rb->Head, rb->PAHead);
++	dma_free_coherent(&dev->pci_dev->dev, rb->MemSize, rb->Head,
++			  rb->PAHead);
+ }
+ 
+ static void free_idlebuffer(struct ngene *dev,
+@@ -813,15 +812,13 @@ static void free_common_buffers(struct ngene *dev)
+ 	}
+ 
+ 	if (dev->OverflowBuffer)
+-		pci_free_consistent(dev->pci_dev,
+-				    OVERFLOW_BUFFER_SIZE,
+-				    dev->OverflowBuffer, dev->PAOverflowBuffer);
++		dma_free_coherent(&dev->pci_dev->dev, OVERFLOW_BUFFER_SIZE,
++				  dev->OverflowBuffer, dev->PAOverflowBuffer);
+ 
+ 	if (dev->FWInterfaceBuffer)
+-		pci_free_consistent(dev->pci_dev,
+-				    4096,
+-				    dev->FWInterfaceBuffer,
+-				    dev->PAFWInterfaceBuffer);
++		dma_free_coherent(&dev->pci_dev->dev, 4096,
++				  dev->FWInterfaceBuffer,
++				  dev->PAFWInterfaceBuffer);
+ }
+ 
+ /****************************************************************************/
+@@ -848,7 +845,7 @@ static int create_ring_buffer(struct pci_dev *pci_dev,
+ 	if (MemSize < 4096)
+ 		MemSize = 4096;
+ 
+-	Head = pci_alloc_consistent(pci_dev, MemSize, &tmp);
++	Head = dma_alloc_coherent(&pci_dev->dev, MemSize, &tmp, GFP_KERNEL);
+ 	PARingBufferHead = tmp;
+ 
+ 	if (!Head)
+@@ -899,7 +896,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 	if (SCListMemSize < 4096)
+ 		SCListMemSize = 4096;
+ 
+-	SCListMem = pci_alloc_consistent(pci_dev, SCListMemSize, &tmp);
++	SCListMem = dma_alloc_coherent(&pci_dev->dev, SCListMemSize, &tmp,
++				       GFP_KERNEL);
+ 
+ 	PASCListMem = tmp;
+ 	if (SCListMem = NULL)
+@@ -918,8 +916,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 	for (i = 0; i < pRingBuffer->NumBuffers; i += 1, Cur = Cur->Next) {
+ 		u64 PABuffer;
+ 
+-		void *Buffer = pci_alloc_consistent(pci_dev, Buffer1Length,
+-						    &tmp);
++		void *Buffer = dma_alloc_coherent(&pci_dev->dev,
++						  Buffer1Length, &tmp, GFP_KERNEL);
+ 		PABuffer = tmp;
+ 
+ 		if (Buffer = NULL)
+@@ -951,7 +949,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 		if (!Buffer2Length)
+ 			continue;
+ 
+-		Buffer = pci_alloc_consistent(pci_dev, Buffer2Length, &tmp);
++		Buffer = dma_alloc_coherent(&pci_dev->dev, Buffer2Length,
++					    &tmp, GFP_KERNEL);
+ 		PABuffer = tmp;
+ 
+ 		if (Buffer = NULL)
+@@ -1040,17 +1039,18 @@ static int AllocCommonBuffers(struct ngene *dev)
+ {
+ 	int status = 0, i;
+ 
+-	dev->FWInterfaceBuffer = pci_alloc_consistent(dev->pci_dev, 4096,
+-						     &dev->PAFWInterfaceBuffer);
++	dev->FWInterfaceBuffer = dma_alloc_coherent(&dev->pci_dev->dev, 4096,
++						    &dev->PAFWInterfaceBuffer,
++						    GFP_KERNEL);
+ 	if (!dev->FWInterfaceBuffer)
+ 		return -ENOMEM;
+ 	dev->hosttongene = dev->FWInterfaceBuffer;
+ 	dev->ngenetohost = dev->FWInterfaceBuffer + 256;
+ 	dev->EventBuffer = dev->FWInterfaceBuffer + 512;
+ 
+-	dev->OverflowBuffer = pci_zalloc_consistent(dev->pci_dev,
+-						    OVERFLOW_BUFFER_SIZE,
+-						    &dev->PAOverflowBuffer);
++	dev->OverflowBuffer = dma_alloc_coherent(&dev->pci_dev->dev,
++						 OVERFLOW_BUFFER_SIZE,
++						 &dev->PAOverflowBuffer, GFP_KERNEL);
+ 	if (!dev->OverflowBuffer)
+ 		return -ENOMEM;
+ 
 -- 
 2.25.1
