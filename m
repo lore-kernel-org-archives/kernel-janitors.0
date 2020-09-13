@@ -1,59 +1,214 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 20 Sep 2020 11:26:23 +0000
-Subject: [PATCH 11/14] spi/topcliff-pch: drop double zeroing
-Message-Id: <1600601186-7420-12-git-send-email-Julia.Lawall@inria.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 13 Sep 2020 14:57:16 +0000
+Subject: [PATCH] media: mantis: switch from 'pci_' to 'dma_' API
+Message-Id: <20200913145716.361507-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@kernel.org, romain.perier@gmail.com, hverkuil-cisco@xs4all.nl, allen.lkml@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-sg_init_table zeroes its first argument, so the allocation of that argument
-doesn't have to.
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-the semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-// <smpl>
+When memory is allocated in 'mantis_alloc_buffers()' (mantis_dma.c)
+GFP_KERNEL can be used because it is called from 'mantis_dma_init()' which
+is only called from probe functions and no lock is taken in the between.
+
+
 @@
-expression x,n,flags;
 @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-x = 
-- kcalloc
-+ kmalloc_array
-  (n,sizeof(*x),flags)
-...
-sg_init_table(x,n)
-// </smpl>
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
 
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/spi/spi-topcliff-pch.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/media/pci/mantis/mantis_dma.c | 20 ++++++++++----------
+ drivers/media/pci/mantis/mantis_pci.c |  2 +-
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff -u -p a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1002,7 +1002,7 @@ static void pch_spi_handle_dma(struct pc
- 	spin_unlock_irqrestore(&data->lock, flags);
+diff --git a/drivers/media/pci/mantis/mantis_dma.c b/drivers/media/pci/mantis/mantis_dma.c
+index 4df571ff272b..80c843936493 100644
+--- a/drivers/media/pci/mantis/mantis_dma.c
++++ b/drivers/media/pci/mantis/mantis_dma.c
+@@ -52,8 +52,8 @@ int mantis_dma_exit(struct mantis_pci *mantis)
+ 			 mantis->buf_cpu,
+ 			 MANTIS_BUF_SIZE);
  
- 	/* RX */
--	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
-+	dma->sg_rx_p = kmalloc_array(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
- 	if (!dma->sg_rx_p)
- 		return;
+-		pci_free_consistent(mantis->pdev, MANTIS_BUF_SIZE,
+-				    mantis->buf_cpu, mantis->buf_dma);
++		dma_free_coherent(&mantis->pdev->dev, MANTIS_BUF_SIZE,
++				  mantis->buf_cpu, mantis->buf_dma);
  
-@@ -1065,7 +1065,7 @@ static void pch_spi_handle_dma(struct pc
- 		head = 0;
+ 		mantis->buf_cpu = NULL;
+ 	}
+@@ -64,8 +64,8 @@ int mantis_dma_exit(struct mantis_pci *mantis)
+ 			mantis->risc_cpu,
+ 			MANTIS_RISC_SIZE);
+ 
+-		pci_free_consistent(mantis->pdev, MANTIS_RISC_SIZE,
+-				    mantis->risc_cpu, mantis->risc_dma);
++		dma_free_coherent(&mantis->pdev->dev, MANTIS_RISC_SIZE,
++				  mantis->risc_cpu, mantis->risc_dma);
+ 
+ 		mantis->risc_cpu = NULL;
+ 	}
+@@ -77,9 +77,9 @@ EXPORT_SYMBOL_GPL(mantis_dma_exit);
+ static inline int mantis_alloc_buffers(struct mantis_pci *mantis)
+ {
+ 	if (!mantis->buf_cpu) {
+-		mantis->buf_cpu = pci_alloc_consistent(mantis->pdev,
+-						       MANTIS_BUF_SIZE,
+-						       &mantis->buf_dma);
++		mantis->buf_cpu = dma_alloc_coherent(&mantis->pdev->dev,
++						     MANTIS_BUF_SIZE,
++						     &mantis->buf_dma, GFP_KERNEL);
+ 		if (!mantis->buf_cpu) {
+ 			dprintk(MANTIS_ERROR, 1,
+ 				"DMA buffer allocation failed");
+@@ -92,9 +92,9 @@ static inline int mantis_alloc_buffers(struct mantis_pci *mantis)
+ 			mantis->buf_cpu, MANTIS_BUF_SIZE);
+ 	}
+ 	if (!mantis->risc_cpu) {
+-		mantis->risc_cpu = pci_alloc_consistent(mantis->pdev,
+-							MANTIS_RISC_SIZE,
+-							&mantis->risc_dma);
++		mantis->risc_cpu = dma_alloc_coherent(&mantis->pdev->dev,
++						      MANTIS_RISC_SIZE,
++						      &mantis->risc_dma, GFP_KERNEL);
+ 
+ 		if (!mantis->risc_cpu) {
+ 			dprintk(MANTIS_ERROR, 1,
+diff --git a/drivers/media/pci/mantis/mantis_pci.c b/drivers/media/pci/mantis/mantis_pci.c
+index 3bfb3e99c93a..9fbce74b00c8 100644
+--- a/drivers/media/pci/mantis/mantis_pci.c
++++ b/drivers/media/pci/mantis/mantis_pci.c
+@@ -55,7 +55,7 @@ int mantis_pci_init(struct mantis_pci *mantis)
+ 		goto fail0;
  	}
  
--	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
-+	dma->sg_tx_p = kmalloc_array(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
- 	if (!dma->sg_tx_p)
- 		return;
- 
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
++	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (err != 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Unable to obtain 32 bit DMA <%i>", err);
+ 		ret = -ENOMEM;
+-- 
+2.25.1
