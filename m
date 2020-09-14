@@ -1,20 +1,19 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 14 Sep 2020 05:39:40 +0000
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Date: Mon, 14 Sep 2020 09:25:36 +0000
 Subject: Re: [PATCH] MAINTAINERS: make linux-mediatek list remarks consistent
-Message-Id: <alpine.DEB.2.21.2009140738570.24617@felia>
+Message-Id: <f6bc41d3-5ce4-b9ea-e2bb-e0cee4de3179@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, Joe Perches <joe@perches.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: Joe Perches <joe@perches.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org
 
 
 
-On Mon, 14 Sep 2020, Lukas Bulwahn wrote:
-
+On 14/09/2020 07:31, Lukas Bulwahn wrote:
 > Commit 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller
 > support") does not mention that linux-mediatek@lists.infradead.org is
 > moderated for non-subscribers, but the other eight entries for
@@ -23,6 +22,14 @@ On Mon, 14 Sep 2020, Lukas Bulwahn wrote:
 > Adjust this entry to be consistent with all others.
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Maybe rephrase the commit message to something like:
+"Mark linux-mediatek@lists.infraded.org as moderated for the MediaTek PCIe host 
+controller entry, as the list actually is moderated."
+
+Anyway:
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
 > ---
 > applies cleanly on v5.9-rc5 and next-20200911
 > 
@@ -34,17 +41,24 @@ On Mon, 14 Sep 2020, Lukas Bulwahn wrote:
 > not. I have not subscribed to linux-mediatek and if it shows up quickly in
 > the archive, the list is probably not moderated; and if it takes longer, it
 > is moderated, and hence, validating the patch.
+
+I can affirm the list is moderated :)
+
 > 
-
-Okay, my patch showed up within seconds in the archive:
-
-https://lore.kernel.org/linux-mediatek/20200914053110.23286-1-lukas.bulwahn@gmail.com/
-
-
-I think the linux-mediatek list is actually NOT _moderated for 
-non-subscribers_.
-
-Please IGNORE this patch until someone can confirm if it is moderated or 
-not. I will then send the patch that reflects the actual state.
-
-Thanks, Lukas
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5e6e36542c62..83c83d7ef2a5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13485,7 +13485,7 @@ F:	drivers/pci/controller/dwc/pcie-histb.c
+>   PCIE DRIVER FOR MEDIATEK
+>   M:	Ryder Lee <ryder.lee@mediatek.com>
+>   L:	linux-pci@vger.kernel.org
+> -L:	linux-mediatek@lists.infradead.org
+> +L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+>   S:	Supported
+>   F:	Documentation/devicetree/bindings/pci/mediatek*
+>   F:	drivers/pci/controller/*mediatek*
+> 
