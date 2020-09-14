@@ -1,72 +1,48 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 21 Sep 2020 21:03:33 +0000
-Subject: Re: [PATCH][next] PCI: brcmstb: fix a missing if statement on a return error check
-Message-Id: <2702aa0d-7f60-05c1-7b9b-cfe313024886@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Sep 2020 13:56:46 +0000
+Subject: [PATCH][next] misc: hisi_hikey_usb: fix return of uninitialized ret status variable
+Message-Id: <20200914135646.99334-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200921144017.334602-1-colin.king@canonical.com>
- <c9d7435b-42a1-2e40-7d40-62d227523f79@gmail.com>
- <CA+-6iNyg16dEfnJZpSppRHO6Z6fsWyQdjyzoVsBRW4W1x_4Yeg@mail.gmail.com>
-In-Reply-To: <CA+-6iNyg16dEfnJZpSppRHO6Z6fsWyQdjyzoVsBRW4W1x_4Yeg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jim Quinlan <james.quinlan@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, Jim Quinlan <jquinlan@broadcom.com>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21/09/2020 21:53, Jim Quinlan wrote:
-> Hello,
-> I am fine with Colin's suggested change or Florians as well:
-> 
->          ret = brcm_phy_start(pcie);
-> +        if (ret) {
-> +                clk_disable_unprepare(pcie->clk);
->                  return ret;
-> +        }
-> 
-> Currently, our STB upstream suspend/resume is not functional yet and
-> this is how this omission slipped by testing.
-> 
-> Thanks,
-> Jim Quinlan
-> Broadcom STB
-> 
-> On Mon, Sep 21, 2020 at 3:43 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->>
->> On 9/21/20 7:40 AM, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The error return ret is not being check with an if statement and
->>> currently the code always returns leaving the following code as
->>> dead code. Fix this by adding in the missing if statement.
->>>
->>> Addresses-Coverity: ("Structurally dead code")
->>> Fixes: ad3d29c77e1e ("PCI: brcmstb: Add control of rescal reset")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/pci/controller/pcie-brcmstb.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
->>> index 7a3ff4632e7c..cb0c11b7308e 100644
->>> --- a/drivers/pci/controller/pcie-brcmstb.c
->>> +++ b/drivers/pci/controller/pcie-brcmstb.c
->>> @@ -1154,6 +1154,7 @@ static int brcm_pcie_resume(struct device *dev)
->>>       clk_prepare_enable(pcie->clk);
->>>
->>>       ret = brcm_phy_start(pcie);
->>> +     if (ret)
->>>               return ret;
->>
->> Maybe this should also disable the clock if we failed to start the PHY
->> somehow.
-> 
-> Hi Florian,
-> 
-> I'm fine with Colin's change as
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-I'll send a V2 in a short while
-> 
->>
->> --
->> Florian
+Currently the return value from ret is uninitialized so the function
+hisi_hikey_usb_parse_kirin970 is returning a garbage value when
+succeeding. Since ret is not used anywhere else in the function, remove
+it and just return 0 success at the end of the function.
+
+Addresses-Coverity: ("Uninitialixed scalar variable")
+Fixes: d210a0023590 ("misc: hisi_hikey_usb: add support for Hikey 970")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/hisi_hikey_usb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
+index 2ddd4072788d..5759e7209023 100644
+--- a/drivers/misc/hisi_hikey_usb.c
++++ b/drivers/misc/hisi_hikey_usb.c
+@@ -151,7 +151,6 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
+ 					 struct hisi_hikey_usb *hisi_hikey_usb)
+ {
+ 	struct regulator *regulator;
+-	int ret;
+ 
+ 	regulator = devm_regulator_get(&pdev->dev, "hub-vdd");
+ 	if (IS_ERR(regulator)) {
+@@ -172,7 +171,7 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
+ 	if (IS_ERR(hisi_hikey_usb->reset))
+ 		return PTR_ERR(hisi_hikey_usb->reset);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int hisi_hikey_usb_probe(struct platform_device *pdev)
+-- 
+2.27.0
