@@ -1,17 +1,20 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Tue, 08 Sep 2020 13:02:28 +0000
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Mon, 14 Sep 2020 06:57:06 +0000
 Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-Message-Id: <0d7fd969-8957-5db0-8c4d-2077e924181b@gmail.com>
+Message-Id: <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200908072557.GC294938@mwanda>
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+        <20200908072557.GC294938@mwanda>
 In-Reply-To: <20200908072557.GC294938@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-08.09.2020 10:25, Dan Carpenter пишет:
+Hi,
+
+On 9/8/20 4:25 PM, Dan Carpenter wrote:
 > This error path needs to call clk_disable_unprepare().
 > 
 > Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
@@ -41,10 +44,15 @@ Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsun
 >  	reset_control_reset(tegra->reset);
 > +disable_clk:
 >  	clk_disable_unprepare(tegra->clock);
+
+Is it doesn't need to reset with reset_contrl_reset()?
+
 >  
 >  	return err;
 > 
 
-Hello, Dan! Thank you for the patch!
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
