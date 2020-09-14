@@ -1,48 +1,106 @@
-From: Eddie James <eajames@linux.ibm.com>
-Date: Wed, 30 Sep 2020 13:38:31 +0000
-Subject: Re: [PATCH] soc: aspeed: xdma: Return -EFAULT if copy_from_user() fails
-Message-Id: <65b1447e-8f37-69f9-4049-25d130a281f8@linux.ibm.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 14 Sep 2020 06:13:53 +0000
+Subject: [PATCH] MAINTAINERS: mark linux-samsung-soc list non-moderated
+Message-Id: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200930090334.GB621698@mwanda>
-In-Reply-To: <20200930090334.GB621698@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>, kernel-janitors@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+In fifteen entries mentioning linux-samsung-soc@vger.kernel.org in
+MAINTAINERS, seven entries mention the list being moderated for
+non-subscribers and eight entries do not. Clearly only one can be right,
+though.
 
-On 9/30/20 4:03 AM, Dan Carpenter wrote:
-> The copy_from_user() function returns the number of bytes remaining
-> which we weren't able to copy.  This should return -EFAULT to the
-> user.
+Joe Perches suggested that all vger.kernel.org are not moderated for
+non-subscribers.
 
+Remove all the remarks from the entries following Joe's suggestion.
 
-Thanks,
+Link: https://lore.kernel.org/lkml/da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com/
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on v5.9-rc5 and next-20200911
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Krzysztof, please pick this minor non-urgent cleanup patch.
 
+This patch submission will also show me if linux-samsung-soc is moderated
+or not. I have not subscribed to linux-samsung-soc and if it shows up
+quickly in the archive, the list is probably not moderated, and hence,
+validating the patch.
 
->
-> Fixes: 86609baa4217 ("soc: aspeed: xdma: Add user interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/soc/aspeed/aspeed-xdma.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/soc/aspeed/aspeed-xdma.c b/drivers/soc/aspeed/aspeed-xdma.c
-> index 91b51a3de8df..e6b4744bda64 100644
-> --- a/drivers/soc/aspeed/aspeed-xdma.c
-> +++ b/drivers/soc/aspeed/aspeed-xdma.c
-> @@ -569,9 +569,8 @@ static ssize_t aspeed_xdma_write(struct file *file, const char __user *buf,
->   	if (len != sizeof(op))
->   		return -EINVAL;
->   
-> -	rc = copy_from_user(&op, buf, len);
-> -	if (rc)
-> -		return rc;
-> +	if (copy_from_user(&op, buf, len))
-> +		return -EFAULT;
->   
->   	if (!op.len || op.len > client->size ||
->   	    op.direction > ASPEED_XDMA_DIRECTION_UPSTREAM)
+ MAINTAINERS | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0d0862b19ce5..de8741d24cb0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2399,7 +2399,7 @@ ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ F:	Documentation/arm/samsung/
+@@ -2441,7 +2441,7 @@ F:	drivers/media/platform/s5p-g2d/
+ 
+ ARM/SAMSUNG S5P SERIES HDMI CEC SUBSYSTEM SUPPORT
+ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/s5p-cec.txt
+@@ -13321,7 +13321,7 @@ PCI DRIVER FOR SAMSUNG EXYNOS
+ M:	Jingoo Han <jingoohan1@gmail.com>
+ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/pci/controller/dwc/pci-exynos.c
+ 
+@@ -13729,7 +13729,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+@@ -15275,7 +15275,7 @@ F:	include/linux/mfd/samsung/
+ SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
+ M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+ L:	linux-media@vger.kernel.org
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/platform/s3c-camif/
+ F:	include/media/drv-intf/s3c_camif.h
+@@ -15324,7 +15324,7 @@ SAMSUNG SOC CLOCK DRIVERS
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+ F:	Documentation/devicetree/bindings/clock/exynos*.txt
+@@ -15338,7 +15338,7 @@ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Andi Shyti <andi@etezian.org>
+ L:	linux-spi@vger.kernel.org
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
+ F:	drivers/spi/spi-s3c*
+-- 
+2.17.1
