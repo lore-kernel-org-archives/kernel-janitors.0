@@ -1,75 +1,42 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Date: Tue, 15 Sep 2020 08:41:54 +0000
-Subject: Re: [PATCH] MAINTAINERS: make linux-mediatek list remarks consistent
-Message-Id: <14193442-3b41-29f2-4380-e2cbcc00e5d4@gmail.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Mon, 14 Sep 2020 06:21:23 +0000
+Subject: Re: [Cocci] [RFC PATCH] scripts: coccicheck: Improve error feedback when coccicheck fails
+Message-Id: <alpine.DEB.2.22.394.2009140821041.2357@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-922379930-1600064484=:2357"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
- <f6bc41d3-5ce4-b9ea-e2bb-e0cee4de3179@gmail.com>
- <alpine.DEB.2.21.2009141208200.17999@felia>
- <9c5aaa15-bdd8-ae4f-0642-092566ab08ba@gmail.com>
- <alpine.DEB.2.21.2009141552570.17999@felia>
- <7da64c0975c345f1f45034410c9ed7d509ba9831.camel@infradead.org>
-In-Reply-To: <7da64c0975c345f1f45034410c9ed7d509ba9831.camel@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: David Woodhouse <dwmw2@infradead.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-mediatek@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
+References: <44ab7442-1473-f267-4487-af98631a9338@web.de>
+In-Reply-To: <44ab7442-1473-f267-4487-af98631a9338@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-922379930-1600064484=:2357
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
 
-On 14/09/2020 16:12, David Woodhouse wrote:
-> On Mon, 2020-09-14 at 16:01 +0200, Lukas Bulwahn wrote:
->>>> I am not subscribed to linux-mediatek. When I sent an email to the lis=
-t,
->>>> it showed up really seconds later in the lore.kernel.org of the
->>>> linux-mediatek public-inbox repository. So, either it was delivered
->>>> quickly as it is not moderated or my check with lore.kernel.org is wro=
-ng,
->>>> e.g., mails show up in the lore.kernel.org archive, even they were not
->>>> yet permitted on the actual list.
->>>>
->>>
->>> I'm the moderator and I get requests to moderate emails. I suppose I ad=
-ded you
->>> to the accepted list because of earlier emails you send.
->>>
->>
->> Okay, I see. I did send some clean-up patch in the past, but I completely
->> forgot that, but my mailbox did not forget. So, now it is clear to me why
->> that mail showed up so quickly.
->>
->> Thanks for the explanation.
->=20
-> AFAICT the linux-mediatek list isn't configured to automatically
-> moderate messages from non-subscribers. Its generic_nonmember_action
-> setting is 'Accept'. That is the default setting for lists on
-> infradead.org and I strongly encourage list maintainers to leave it
-> that way.
+On Mon, 14 Sep 2020, Markus Elfring wrote:
 
-Ok, thanks for clarification. I never bothered too much with all the=20
-configuration option of the list. :|
+> …
+> > +++ b/scripts/coccicheck
+> > @@ -126,8 +126,14 @@ run_cmd_parmap() {
+> >  	if [ $VERBOSE -ne 0 ] ; then
+> >  		echo "Running ($NPROC in parallel): $@"
+> >  	fi
+> > -	echo $@ >>$DEBUG_FILE
+> > -	$@ 2>>$DEBUG_FILE
+> > +	if [ "$DEBUG_FILE" != "/dev/null" -a "$DEBUG_FILE" != "" ]; then
+> …
+>
+> How do you think about to use the following check variant?
+>
+> +	if [ "${DEBUG_FILE}" != '/dev/null' -a "${DEBUG_FILE}" != '' ]; then
 
->=20
-> Lukas, I don't see your address in the allowlist either.
+What difference does it make?
 
-I tried to find that in the web interface, but wasn't able to find the list.
-
-Regards,
-Matthias
-
->=20
-> There are other reasons why some messages get might trapped for
-> moderation =E2=80=94 the message size, number of recipients, spam score, =
-etc.
->=20
-> The mere fact that *some* messages are moderated does not mean that the
-> list is "moderated for non-subscribers" in the sense that the
-> MAINTAINERS file lists.
->=20
->> Bjorn, with that confirmation and Reviewed-by from Matthias, could you
->> please pick this patch?
->=20
-> I think we should be fixing the ones that *do* say it's moderated for
-> non-subscribers, not the one that correctly didn't :)
->=20
+julia
+--8323329-922379930-1600064484=:2357--
