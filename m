@@ -1,38 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 Sep 2020 15:04:10 +0000
-Subject: [PATCH] spi: qup: remove redundant assignment to variable ret
-Message-Id: <20200910150410.750959-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Sep 2020 14:51:58 +0000
+Subject: Re: [PATCH] spi: qup: remove redundant assignment to variable ret
+Message-Id: <160009511676.5702.4493764455278443968.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200910150410.750959-1-colin.king@canonical.com>
+In-Reply-To: <20200910150410.750959-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org, Colin King <colin.king@canonical.com>, Andy Gross <agross@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 10 Sep 2020 16:04:10 +0100, Colin King wrote:
+> The variable ret is being initialized with a value that is
+> never read and it is being updated later with a new value. The
+> initialization is redundant and can be removed.
 
-The variable ret is being initialized with a value that is
-never read and it is being updated later with a new value. The
-initialization is redundant and can be removed.
+Applied to
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-qup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
-index a364b99497e2..8dcb2e70735c 100644
---- a/drivers/spi/spi-qup.c
-+++ b/drivers/spi/spi-qup.c
-@@ -848,7 +848,7 @@ static int spi_qup_transfer_one(struct spi_master *master,
- {
- 	struct spi_qup *controller = spi_master_get_devdata(master);
- 	unsigned long timeout, flags;
--	int ret = -EIO;
-+	int ret;
- 
- 	ret = spi_qup_io_prep(spi, xfer);
- 	if (ret)
--- 
-2.27.0
+Thanks!
+
+[1/1] spi: qup: remove redundant assignment to variable ret
+      commit: 4a6c7d6f940107d6383291e2cb450039790b752d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
