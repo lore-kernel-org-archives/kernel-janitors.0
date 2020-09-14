@@ -1,60 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2020 09:13:00 +0000
-Subject: [PATCH] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
-Message-Id: <20200928091300.GD377727@mwanda>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 14 Sep 2020 05:31:10 +0000
+Subject: [PATCH] MAINTAINERS: make linux-mediatek list remarks consistent
+Message-Id: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>
-Cc: Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Jayamohan Kallickal <jayamohank@HDRedirect-LB5-1afb6e2973825a56.elb.us-east-1.amazonaws.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ryder Lee <ryder.lee@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
 
-The be_fill_queue() function can only fail when "eq_vaddress" is NULL
-and since it's non-NULL here that means the function call can't fail.
-But imagine if it could, then in that situation we would want to store
-the "paddr" so that dma memory can be released.
+Commit 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller
+support") does not mention that linux-mediatek@lists.infradead.org is
+moderated for non-subscribers, but the other eight entries for
+linux-mediatek@lists.infradead.org do.
 
-Fixes: bfead3b2cb46 ("[SCSI] be2iscsi: Adding msix and mcc_rings V3")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Adjust this entry to be consistent with all others.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/scsi/be2iscsi/be_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+applies cleanly on v5.9-rc5 and next-20200911
 
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 5c3513a4b450..202ba925c494 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -3020,6 +3020,7 @@ static int beiscsi_create_eqs(struct beiscsi_hba *phba,
- 			goto create_eq_error;
- 		}
- 
-+		mem->dma = paddr;
- 		mem->va = eq_vaddress;
- 		ret = be_fill_queue(eq, phba->params.num_eq_entries,
- 				    sizeof(struct be_eq_entry), eq_vaddress);
-@@ -3029,7 +3030,6 @@ static int beiscsi_create_eqs(struct beiscsi_hba *phba,
- 			goto create_eq_error;
- 		}
- 
--		mem->dma = paddr;
- 		ret = beiscsi_cmd_eq_create(&phba->ctrl, eq,
- 					    BEISCSI_EQ_DELAY_DEF);
- 		if (ret) {
-@@ -3086,6 +3086,7 @@ static int beiscsi_create_cqs(struct beiscsi_hba *phba,
- 			goto create_cq_error;
- 		}
- 
-+		mem->dma = paddr;
- 		ret = be_fill_queue(cq, phba->params.num_cq_entries,
- 				    sizeof(struct sol_cqe), cq_vaddress);
- 		if (ret) {
-@@ -3095,7 +3096,6 @@ static int beiscsi_create_cqs(struct beiscsi_hba *phba,
- 			goto create_cq_error;
- 		}
- 
--		mem->dma = paddr;
- 		ret = beiscsi_cmd_cq_create(&phba->ctrl, cq, eq, false,
- 					    false, 0);
- 		if (ret) {
+Ryder, please ack.
+
+Bjorn, Matthias, please pick this minor non-urgent clean-up patch.
+
+This patch submission will also show me if linux-mediatek is moderated or
+not. I have not subscribed to linux-mediatek and if it shows up quickly in
+the archive, the list is probably not moderated; and if it takes longer, it
+is moderated, and hence, validating the patch.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5e6e36542c62..83c83d7ef2a5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13485,7 +13485,7 @@ F:	drivers/pci/controller/dwc/pcie-histb.c
+ PCIE DRIVER FOR MEDIATEK
+ M:	Ryder Lee <ryder.lee@mediatek.com>
+ L:	linux-pci@vger.kernel.org
+-L:	linux-mediatek@lists.infradead.org
++L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ F:	Documentation/devicetree/bindings/pci/mediatek*
+ F:	drivers/pci/controller/*mediatek*
 -- 
-2.28.0
+2.17.1
