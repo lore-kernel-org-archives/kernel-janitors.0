@@ -1,7 +1,7 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 14 Sep 2020 15:31:38 +0000
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Date: Tue, 15 Sep 2020 08:41:54 +0000
 Subject: Re: [PATCH] MAINTAINERS: make linux-mediatek list remarks consistent
-Message-Id: <alpine.DEB.2.21.2009141731030.17999@felia>
+Message-Id: <14193442-3b41-29f2-4380-e2cbcc00e5d4@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
  <f6bc41d3-5ce4-b9ea-e2bb-e0cee4de3179@gmail.com>
@@ -9,58 +9,67 @@ References: <20200914053110.23286-1-lukas.bulwahn@gmail.com>
  <9c5aaa15-bdd8-ae4f-0642-092566ab08ba@gmail.com>
  <alpine.DEB.2.21.2009141552570.17999@felia>
  <7da64c0975c345f1f45034410c9ed7d509ba9831.camel@infradead.org>
- <alpine.DEB.2.21.2009141615020.17999@felia>
- <f511570405799df421397ff65847e927745dad08.camel@infradead.org>
- <alpine.DEB.2.21.2009141717470.17999@felia>
- <bc5ba52bb0c123d0ed038e5dce9474f27ac2f750.camel@infradead.org>
-In-Reply-To: <bc5ba52bb0c123d0ed038e5dce9474f27ac2f750.camel@infradead.org>
+In-Reply-To: <7da64c0975c345f1f45034410c9ed7d509ba9831.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, Joe Perches <joe@perches.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: David Woodhouse <dwmw2@infradead.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-mediatek@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
 
 
 
-On Mon, 14 Sep 2020, David Woodhouse wrote:
+On 14/09/2020 16:12, David Woodhouse wrote:
+> On Mon, 2020-09-14 at 16:01 +0200, Lukas Bulwahn wrote:
+>>>> I am not subscribed to linux-mediatek. When I sent an email to the lis=
+t,
+>>>> it showed up really seconds later in the lore.kernel.org of the
+>>>> linux-mediatek public-inbox repository. So, either it was delivered
+>>>> quickly as it is not moderated or my check with lore.kernel.org is wro=
+ng,
+>>>> e.g., mails show up in the lore.kernel.org archive, even they were not
+>>>> yet permitted on the actual list.
+>>>>
+>>>
+>>> I'm the moderator and I get requests to moderate emails. I suppose I ad=
+ded you
+>>> to the accepted list because of earlier emails you send.
+>>>
+>>
+>> Okay, I see. I did send some clean-up patch in the past, but I completely
+>> forgot that, but my mailbox did not forget. So, now it is clear to me why
+>> that mail showed up so quickly.
+>>
+>> Thanks for the explanation.
+>=20
+> AFAICT the linux-mediatek list isn't configured to automatically
+> moderate messages from non-subscribers. Its generic_nonmember_action
+> setting is 'Accept'. That is the default setting for lists on
+> infradead.org and I strongly encourage list maintainers to leave it
+> that way.
 
-> On Mon, 2020-09-14 at 17:23 +0200, Lukas Bulwahn wrote:
-> > >  # /usr/lib/mailman/bin/config_list -o- linux-mediatek | grep -B5 ^generic_nonmember_action
-> > > # legal values are:
-> > > #    0 = "Accept"
-> > > #    1 = "Hold"
-> > > #    2 = "Reject"
-> > > #    3 = "Discard"
-> > > generic_nonmember_action = 0
-> >
-> > David, I guess if you have access to the ground truth on 
-> > lists.infradead.org, maybe you can dump the actual setting for all those 
-> > lists?
-> 
-> ath10k:generic_nonmember_action = 0
-> ath11k:generic_nonmember_action = 0
-> b43-dev:generic_nonmember_action = 0
-> kexec:generic_nonmember_action = 0
-> libertas-dev:generic_nonmember_action = 0
-> linux-afs:generic_nonmember_action = 0
-> linux-amlogic:generic_nonmember_action = 0
-> linux-arm-kernel:generic_nonmember_action = 0
-> linux-geode:generic_nonmember_action = 1
-> linux-i3c:generic_nonmember_action = 1
-> linux-mediatek:generic_nonmember_action = 0
-> linux-mtd:generic_nonmember_action = 0
-> linux-nvme:generic_nonmember_action = 0
-> linux-parport:generic_nonmember_action = 1
-> linux-realtek-soc:generic_nonmember_action = 1
-> linux-riscv:generic_nonmember_action = 0
-> linux-rockchip:generic_nonmember_action = 0
-> linux-rpi-kernel:generic_nonmember_action = 0
-> linux-snps-arc:generic_nonmember_action = 0
-> linux-um:generic_nonmember_action = 0
-> linux-unisoc:generic_nonmember_action = 1
-> wcn36xx:generic_nonmember_action = 0
-> 
+Ok, thanks for clarification. I never bothered too much with all the=20
+configuration option of the list. :|
 
-Thanks, I will provide a suitable patch for MAINTAINERS.
+>=20
+> Lukas, I don't see your address in the allowlist either.
 
-Lukas
+I tried to find that in the web interface, but wasn't able to find the list.
+
+Regards,
+Matthias
+
+>=20
+> There are other reasons why some messages get might trapped for
+> moderation =E2=80=94 the message size, number of recipients, spam score, =
+etc.
+>=20
+> The mere fact that *some* messages are moderated does not mean that the
+> list is "moderated for non-subscribers" in the sense that the
+> MAINTAINERS file lists.
+>=20
+>> Bjorn, with that confirmation and Reviewed-by from Matthias, could you
+>> please pick this patch?
+>=20
+> I think we should be fixing the ones that *do* say it's moderated for
+> non-subscribers, not the one that correctly didn't :)
+>=20
