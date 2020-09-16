@@ -1,68 +1,35 @@
-From: Ming Lei <ming.lei@redhat.com>
-Date: Mon, 07 Sep 2020 07:19:46 +0000
-Subject: Re: [PATCH] blk-mq: Fix refcounting leak in __blk_mq_register_dev()
-Message-Id: <20200907071946.GA1058569@T590>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Sep 2020 14:32:28 +0000
+Subject: [PATCH] i40e, xsk: uninitialized variable in i40e_clean_rx_irq_zc()
+Message-Id: <20200916143228.GA764370@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200905125206.GE183976@mwanda>
-In-Reply-To: <20200905125206.GE183976@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 05, 2020 at 03:52:06PM +0300, Dan Carpenter wrote:
-> There is a kobject_add() hidden in the call to kobject_add().
-> 
-> 	ret = kobject_add(q->mq_kobj, kobject_get(&dev->kobj), "%s", "mq");
->                                       ^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> It needs to be release on the error path.
-> 
-> Fixes: 320ae51feed5 ("blk-mq: new multi-queue block IO queueing mechanism")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  block/blk-mq-sysfs.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
-> index 062229395a50..5a63659163c1 100644
-> --- a/block/blk-mq-sysfs.c
-> +++ b/block/blk-mq-sysfs.c
-> @@ -321,7 +321,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
->  
->  	ret = kobject_add(q->mq_kobj, kobject_get(&dev->kobj), "%s", "mq");
->  	if (ret < 0)
-> -		goto out;
-> +		goto out_kobj;
->  
->  	kobject_uevent(q->mq_kobj, KOBJ_ADD);
->  
-> @@ -333,8 +333,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
->  
->  	q->mq_sysfs_init_done = true;
->  
-> -out:
-> -	return ret;
-> +	return 0;
->  
->  unreg:
->  	while (--i >= 0)
-> @@ -342,6 +341,7 @@ int __blk_mq_register_dev(struct device *dev, struct request_queue *q)
->  
->  	kobject_uevent(q->mq_kobj, KOBJ_REMOVE);
->  	kobject_del(q->mq_kobj);
-> +out_kobj:
->  	kobject_put(&dev->kobj);
->  	return ret;
->  }
-> -- 
-> 2.28.0
-> 
+The "failure" variable is used without being initialized.  It should be
+set to false.
 
-Looks good fix:
+Fixes: 8cbf74149903 ("i40e, xsk: move buffer allocation out of the Rx processing loop")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+index 6acede0acdca..567fd67e900e 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+@@ -281,8 +281,8 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
+ 	unsigned int total_rx_bytes = 0, total_rx_packets = 0;
+ 	u16 cleaned_count = I40E_DESC_UNUSED(rx_ring);
+ 	unsigned int xdp_res, xdp_xmit = 0;
++	bool failure = false;
+ 	struct sk_buff *skb;
+-	bool failure;
+ 
+ 	while (likely(total_rx_packets < (unsigned int)budget)) {
+ 		union i40e_rx_desc *rx_desc;
 -- 
-Ming
+2.28.0
