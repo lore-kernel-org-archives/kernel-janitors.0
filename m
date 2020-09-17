@@ -1,108 +1,131 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Wed, 16 Sep 2020 19:07:46 +0000
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Thu, 17 Sep 2020 02:32:10 +0000
 Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-Message-Id: <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+Message-Id: <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
- <20200908072557.GC294938@mwanda>
- <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
- <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
- <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
- <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
- <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
- <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
-In-Reply-To: <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+        <20200908072557.GC294938@mwanda>
+        <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+        <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+        <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+        <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+        <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+        <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+        <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+In-Reply-To: <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Chanwoo Choi <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-16.09.2020 05:38, Chanwoo Choi пишет:
-> On 9/16/20 2:01 AM, Dmitry Osipenko wrote:
->> 15.09.2020 05:13, Chanwoo Choi пишет:
->>> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
->>>> Hi Dmitry,
->>>>
->>>> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
->>>>> 14.09.2020 10:09, Chanwoo Choi пишет:
->>>>>> Hi,
->>>>>>
->>>>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
->>>>>>> This error path needs to call clk_disable_unprepare().
->>>>>>>
->>>>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
->>>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>>>> ---
->>>>>>> ---
->>>>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
->>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->>>>>>> index e94a27804c20..dedd39de7367 100644
->>>>>>> --- a/drivers/devfreq/tegra30-devfreq.c
->>>>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>>>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->>>>>>>  	if (rate < 0) {
->>>>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
->>>>>>> -		return rate;
->>>>>>> +		err = rate;
->>>>>>> +		goto disable_clk;
->>>>>>>  	}
->>>>>>>  
->>>>>>>  	tegra->max_freq = rate / KHZ;
->>>>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
->>>>>>>  
->>>>>>>  	reset_control_reset(tegra->reset);
->>>>>>> +disable_clk:
->>>>>>>  	clk_disable_unprepare(tegra->clock);
->>>>>>
->>>>>> Is it doesn't need to reset with reset_contrl_reset()?
+On 9/17/20 4:07 AM, Dmitry Osipenko wrote:
+> 16.09.2020 05:38, Chanwoo Choi пишет:
+>> On 9/16/20 2:01 AM, Dmitry Osipenko wrote:
+>>> 15.09.2020 05:13, Chanwoo Choi пишет:
+>>>> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
+>>>>> Hi Dmitry,
 >>>>>
->>>>> Hello, Chanwoo!
+>>>>> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
+>>>>>> 14.09.2020 10:09, Chanwoo Choi пишет:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
+>>>>>>>> This error path needs to call clk_disable_unprepare().
+>>>>>>>>
+>>>>>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+>>>>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>>>>>> ---
+>>>>>>>> ---
+>>>>>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>>>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>>>>>>>> index e94a27804c20..dedd39de7367 100644
+>>>>>>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>>>>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>>>>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>>>>>>>>  	if (rate < 0) {
+>>>>>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+>>>>>>>> -		return rate;
+>>>>>>>> +		err = rate;
+>>>>>>>> +		goto disable_clk;
+>>>>>>>>  	}
+>>>>>>>>  
+>>>>>>>>  	tegra->max_freq = rate / KHZ;
+>>>>>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>>>>>>>>  
+>>>>>>>>  	reset_control_reset(tegra->reset);
+>>>>>>>> +disable_clk:
+>>>>>>>>  	clk_disable_unprepare(tegra->clock);
+>>>>>>>
+>>>>>>> Is it doesn't need to reset with reset_contrl_reset()?
+>>>>>>
+>>>>>> Hello, Chanwoo!
+>>>>>>
+>>>>>> It's reset just before the clk_round_rate() invocation, hence there
+>>>>>> shouldn't be a need to reset it second time.
 >>>>>
->>>>> It's reset just before the clk_round_rate() invocation, hence there
->>>>> shouldn't be a need to reset it second time.
->>>>
->>>> Do you mean that reset is deasserted automatically
->>>> when invoke clk_round_rate() on tegra?
->>
->> I only mean that the tegra30-devfreq driver deasserts the reset before
->> the clk_round_rate():
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
->>
->>>> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
+>>>>> Do you mean that reset is deasserted automatically
+>>>>> when invoke clk_round_rate() on tegra?
 >>>
->>> I'm sorry for my typo. s/tree/true.
+>>> I only mean that the tegra30-devfreq driver deasserts the reset before
+>>> the clk_round_rate():
 >>>
->>>> is not needed on 'remove_opp:' goto. Because already reset deassertion
->>>> is invoked by clk_round_rate(), it seems that doesn't need to invoke
->>>> anymore during exception case.
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
+>>>
+>>>>> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
 >>>>
->>>> Actually, it is not clear in my case.
+>>>> I'm sorry for my typo. s/tree/true.
+>>>>
+>>>>> is not needed on 'remove_opp:' goto. Because already reset deassertion
+>>>>> is invoked by clk_round_rate(), it seems that doesn't need to invoke
+>>>>> anymore during exception case.
+>>>>>
+>>>>> Actually, it is not clear in my case.
+>>>
+>>> The reset_control_reset() in the error path of the driver probe function
+>>> is placed that way to make the tear-down order match the driver removal
+>>> order. Perhaps the reset could be moved before the remove_opp, but this
+>>> change won't make any real difference, hence it already should be good
+>>> as-is.
+>>>
+>>>
 >>
->> The reset_control_reset() in the error path of the driver probe function
->> is placed that way to make the tear-down order match the driver removal
->> order. Perhaps the reset could be moved before the remove_opp, but this
->> change won't make any real difference, hence it already should be good
->> as-is.
+>> I have one more question.
+>> When failed to enable clock on line829[1],
+>> does it need any reset_control invocation?
+>> In this case on line829, just return without any restoration 
+>> about reset control.
 >>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n829
 >>
 > 
-> I have one more question.
-> When failed to enable clock on line829[1],
-> does it need any reset_control invocation?
-> In this case on line829, just return without any restoration 
-> about reset control.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n829
-> 
+> There is no need to deassert the reset if clk-enable fails because reset
+> control of tegra30-devfreq is exclusive, i.e it isn't shared with any
+> other peripherals, and thus, reset control could asserted/deasserted at
+> any time by the devfreq driver. If clk-enable fails, then reset will
+> stay asserted and it will be fine to re-assert it again.
+>
 
-There is no need to deassert the reset if clk-enable fails because reset
-control of tegra30-devfreq is exclusive, i.e it isn't shared with any
-other peripherals, and thus, reset control could asserted/deasserted at
-any time by the devfreq driver. If clk-enable fails, then reset will
-stay asserted and it will be fine to re-assert it again.
+Thanks for the detailed explanation. 
+But, I think that almost people don't know the detailed h/w information.
+If possible, how about matching the pair when clk-enable fails as following?
+
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -828,6 +828,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+        if (err) {
+                dev_err(&pdev->dev,
+                        "Failed to prepare and enable ACTMON clock\n");
++               reset_control_deassert(tegra->reset);
+                return err;
+        }
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
