@@ -1,59 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 22 Sep 2020 13:19:16 +0000
-Subject: Re: [PATCH] drm/gma500: clean up indentation issues
-Message-Id: <20200922131916.GM438822@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Sep 2020 21:51:26 +0000
+Subject: [PATCH] rhashtable: fix indentation of a continue statement
+Message-Id: <20200918215126.49236-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200920141407.32672-1-colin.king@canonical.com>
-In-Reply-To: <20200920141407.32672-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Sep 20, 2020 at 03:14:07PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of statements that are indented too deeply,
-> remove the extraneous tabs and also an empty line.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed to drm-misc-next, thanks for your patch.
--Daniel
+A continue statement is indented incorrectly, add in the missing
+tab.
 
-> ---
->  drivers/gpu/drm/gma500/cdv_intel_dp.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
-> index 720a767118c9..50016a754172 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
-> @@ -1501,8 +1501,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
->  	clock_recovery = false;
->  
->  	DRM_DEBUG_KMS("Start train\n");
-> -		reg = DP | DP_LINK_TRAIN_PAT_1;
-> -
-> +	reg = DP | DP_LINK_TRAIN_PAT_1;
->  
->  	for (;;) {
->  		/* Use intel_dp->train_set[0] to set the voltage and pre emphasis values */
-> @@ -1575,7 +1574,7 @@ cdv_intel_dp_complete_link_train(struct gma_encoder *encoder)
->  	cr_tries = 0;
->  
->  	DRM_DEBUG_KMS("\n");
-> -		reg = DP | DP_LINK_TRAIN_PAT_2;
-> +	reg = DP | DP_LINK_TRAIN_PAT_2;
->  
->  	for (;;) {
->  
-> -- 
-> 2.27.0
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/test_rhashtable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
+index c5a6fef7b45d..76c607ee6db5 100644
+--- a/lib/test_rhashtable.c
++++ b/lib/test_rhashtable.c
+@@ -434,7 +434,7 @@ static int __init test_rhltable(unsigned int entries)
+ 		} else {
+ 			if (WARN(err != -ENOENT, "removed non-existent element, error %d not %d",
+ 				 err, -ENOENT))
+-			continue;
++				continue;
+ 		}
+ 	}
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.27.0
