@@ -1,41 +1,53 @@
-From: Maxime Ripard <maxime@cerno.tech>
-Date: Thu, 10 Sep 2020 10:20:05 +0000
-Subject: Re: [PATCH] drm/vc4: hdmi: Fix NULL vs IS_ERR() checks in vc5_hdmi_init_resources()
-Message-Id: <20200910102005.puj7gscpnfczdrll@gilmour.lan>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ry3egkt6pariiyt3"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Sep 2020 14:27:56 +0000
+Subject: [PATCH] ipmi: msghandler: Fix a signedness bug
+Message-Id: <20200918142756.GB909725@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200910100825.GC79916@mwanda>
-In-Reply-To: <20200910100825.GC79916@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.duckdns.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+The type for the completion codes should be unsigned char instead of
+char.  If it is declared as a normal char then the conditions in
+__get_device_id() are impossible because the IPMI_DEVICE_IN_FW_UPDATE_ERR
+error codes are higher than 127.
 
---ry3egkt6pariiyt3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    drivers/char/ipmi/ipmi_msghandler.c:2449 __get_device_id()
+    warn: impossible condition '(bmc->cc = 209) => ((-128)-127 = 209)'
 
-On Thu, Sep 10, 2020 at 01:08:25PM +0300, Dan Carpenter wrote:
-> The devm_ioremap() function never returns error pointers, it returns
-> NULL.
->=20
-> Fixes: 8323989140f3 ("drm/vc4: hdmi: Support the BCM2711 HDMI controllers=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: f8910ffa81b0 ("ipmi:msghandler: retry to get device id on an error")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 2 +-
+ drivers/char/ipmi/ipmi_si_intf.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks!
-Maxime
-
---ry3egkt6pariiyt3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX1n91QAKCRDj7w1vZxhR
-xVV4AQD88CcY9D0XYtm4MoYKOItUhKdUW84yZ2VzgqVPja0a8AEA6EoiURAIXd0L
-ZlJXZg8kdHtpbegQw4NfyW8cwZ0oywk=
-=lspq
------END PGP SIGNATURE-----
-
---ry3egkt6pariiyt3--
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 555c3b1e4926..8774a3b8ff95 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -319,7 +319,7 @@ struct bmc_device {
+ 	int                    dyn_guid_set;
+ 	struct kref	       usecount;
+ 	struct work_struct     remove_work;
+-	char		       cc; /* completion code */
++	unsigned char	       cc; /* completion code */
+ };
+ #define to_bmc_device(x) container_of((x), struct bmc_device, pdev.dev)
+ 
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index 164f85007080..0b3dbc7e39fd 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -1344,7 +1344,7 @@ static int try_get_dev_id(struct smi_info *smi_info)
+ 			resp + 2, resp_len - 2, &smi_info->device_id);
+ 	if (rv) {
+ 		/* record completion code */
+-		char cc = *(resp + 2);
++		unsigned char cc = *(resp + 2);
+ 
+ 		if ((cc = IPMI_DEVICE_IN_FW_UPDATE_ERR
+ 		    || cc = IPMI_DEVICE_IN_INIT_ERR
+-- 
+2.28.0
