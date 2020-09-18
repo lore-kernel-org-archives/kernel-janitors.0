@@ -1,59 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date: Mon, 14 Sep 2020 14:13:32 +0000
-Subject: Re: [PATCH][next] misc: hisi_hikey_usb: fix return of uninitialized ret status variable
-Message-Id: <20200914161332.2796e7b1@coco.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Sep 2020 14:27:32 +0000
+Subject: [PATCH] ath6kl: wmi: prevent a shift wrapping bug in ath6kl_wmi_delete_pstream_cmd()
+Message-Id: <20200918142732.GA909725@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200914135646.99334-1-colin.king@canonical.com>
-In-Reply-To: <20200914135646.99334-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Em Mon, 14 Sep 2020 14:56:46 +0100
-Colin King <colin.king@canonical.com> escreveu:
+The "tsid" is a user controlled u8 which comes from debugfs.  Values
+more than 15 are invalid because "active_tsids" is a 16 bit variable.
+If the value of "tsid" is more than 31 then that leads to a shift
+wrapping bug.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the return value from ret is uninitialized so the function
-> hisi_hikey_usb_parse_kirin970 is returning a garbage value when
-> succeeding. Since ret is not used anywhere else in the function, remove
-> it and just return 0 success at the end of the function.
-> 
-> Addresses-Coverity: ("Uninitialixed scalar variable")
-> Fixes: d210a0023590 ("misc: hisi_hikey_usb: add support for Hikey 970")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 8fffd9e5ec9e ("ath6kl: Implement support for QOS-enable and QOS-disable from userspace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+In the current code if the TSID bit isn't set it returns -ENODATA but
+returning -EINVAL here should be fine.
 
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+ drivers/net/wireless/ath/ath6kl/wmi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> ---
->  drivers/misc/hisi_hikey_usb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
-> index 2ddd4072788d..5759e7209023 100644
-> --- a/drivers/misc/hisi_hikey_usb.c
-> +++ b/drivers/misc/hisi_hikey_usb.c
-> @@ -151,7 +151,6 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
->  					 struct hisi_hikey_usb *hisi_hikey_usb)
->  {
->  	struct regulator *regulator;
-> -	int ret;
->  
->  	regulator = devm_regulator_get(&pdev->dev, "hub-vdd");
->  	if (IS_ERR(regulator)) {
-> @@ -172,7 +171,7 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
->  	if (IS_ERR(hisi_hikey_usb->reset))
->  		return PTR_ERR(hisi_hikey_usb->reset);
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int hisi_hikey_usb_probe(struct platform_device *pdev)
-
-
-
-Thanks,
-Mauro
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
+index a4339cca661f..dbc47702a268 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.c
++++ b/drivers/net/wireless/ath/ath6kl/wmi.c
+@@ -2639,6 +2639,11 @@ int ath6kl_wmi_delete_pstream_cmd(struct wmi *wmi, u8 if_idx, u8 traffic_class,
+ 		return -EINVAL;
+ 	}
+ 
++	if (tsid >= 16) {
++		ath6kl_err("invalid tsid: %d\n", tsid);
++		return -EINVAL;
++	}
++
+ 	skb = ath6kl_wmi_get_new_buf(sizeof(*cmd));
+ 	if (!skb)
+ 		return -ENOMEM;
+-- 
+2.28.0
