@@ -1,24 +1,97 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 09 Sep 2020 02:17:23 +0000
-Subject: Re: [PATCH] scsi: aacraid: remove erroneous fallthrough annotation
-Message-Id: <159961781205.6233.7483987254461010117.b4-ty@oracle.com>
+From: Sasha Levin <sashal@kernel.org>
+Date: Fri, 18 Sep 2020 01:58:53 +0000
+Subject: [PATCH AUTOSEL 5.4 193/330] perf cpumap: Fix snprintf overflow check
+Message-Id: <20200918020110.2063155-193-sashal@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200825112003.GD285523@mwanda>
-In-Reply-To: <20200825112003.GD285523@mwanda>
+References: <20200918020110.2063155-1-sashal@kernel.org>
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Adaptec OEM Raid Solutions <aacraid@microsemi.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, linux-scsi@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>, "James E.J. Bottomley" <jejb@linux.ibm.com>, kernel-janitors@vger.kernel.org, Dave Carroll <David.Carroll@microsemi.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Laight <David.Laight@ACULAB.COM>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Don Zickus <dzickus@redhat.com>, He Zhe <zhe.he@windriver.com>, Jan Stancek <jstancek@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, Sasha Levin <sashal@kernel.org>
 
-On Tue, 25 Aug 2020 14:20:03 +0300, Dan Carpenter wrote:
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> This fallthrough annotation is unreachable so we can delete it.
+[ Upstream commit d74b181a028bb5a468f0c609553eff6a8fdf4887 ]
 
-Applied to 5.10/scsi-queue, thanks!
+'snprintf' returns the number of characters which would be generated for
+the given input.
 
-[1/1] scsi: aacraid: Remove erroneous fallthrough annotation
-      https://git.kernel.org/mkp/scsi/c/cfd3d2225aa5
+If the returned value is *greater than* or equal to the buffer size, it
+means that the output has been truncated.
 
+Fix the overflow test accordingly.
+
+Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: He Zhe <zhe.he@windriver.com>
+Cc: Jan Stancek <jstancek@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lore.kernel.org/lkml/20200324070319.10901-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/cpumap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index a22c1114e880d..324ec0456c83f 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -299,7 +299,7 @@ static void set_max_cpu_num(void)
+ 
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -310,7 +310,7 @@ static void set_max_cpu_num(void)
+ 
+ 	/* get the highest present cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -338,7 +338,7 @@ static void set_max_node_num(void)
+ 
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -423,7 +423,7 @@ int cpu__setup_cpunode_map(void)
+ 		return 0;
+ 
+ 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
+-	if (n = PATH_MAX) {
++	if (n >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		return -1;
+ 	}
+@@ -438,7 +438,7 @@ int cpu__setup_cpunode_map(void)
+ 			continue;
+ 
+ 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
+-		if (n = PATH_MAX) {
++		if (n >= PATH_MAX) {
+ 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 			continue;
+ 		}
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.25.1
