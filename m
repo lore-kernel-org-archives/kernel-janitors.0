@@ -1,50 +1,33 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 20 Sep 2020 11:26:21 +0000
-Subject: [PATCH 09/14] dmaengine: rcar-dmac: drop double zeroing
-Message-Id: <1600601186-7420-10-git-send-email-Julia.Lawall@inria.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Sep 2020 14:34:05 +0000
+Subject: [PATCH] misc: hisi_hikey_usb: delete a stray tab
+Message-Id: <20200918143405.GF909725@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vkoul@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: John Stultz <john.stultz@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-sg_init_table zeroes its first argument, so the allocation of that argument
-doesn't have to.
+This return statement is indented one tab too far.
 
-the semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,n,flags;
-@@
-
-x = 
-- kcalloc
-+ kmalloc_array
-  (n,sizeof(*x),flags)
-...
-sg_init_table(x,n)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/dma/sh/rcar-dmac.c |    2 +-
+ drivers/misc/hisi_hikey_usb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1227,7 +1227,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_cha
- 	 * Allocate the sg list dynamically as it would consume too much stack
- 	 * space.
- 	 */
--	sgl = kcalloc(sg_len, sizeof(*sgl), GFP_NOWAIT);
-+	sgl = kmalloc_array(sg_len, sizeof(*sgl), GFP_NOWAIT);
- 	if (!sgl)
- 		return NULL;
+diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
+index 2ddd4072788d..0913509d2628 100644
+--- a/drivers/misc/hisi_hikey_usb.c
++++ b/drivers/misc/hisi_hikey_usb.c
+@@ -163,7 +163,7 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
+ 		dev_err(&pdev->dev,
+ 			"get hub-vdd-supply failed with error %ld\n",
+ 			PTR_ERR(regulator));
+-			return PTR_ERR(regulator);
++		return PTR_ERR(regulator);
+ 	}
+ 	hisi_hikey_usb->regulator = regulator;
  
+-- 
+2.28.0
