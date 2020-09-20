@@ -1,27 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 11 Sep 2020 21:48:42 +0000
-Subject: Re: [PATCH] ipv6: remove redundant assignment to variable err
-Message-Id: <20200911.144842.1644303060226035755.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 20 Sep 2020 14:17:16 +0000
+Subject: [PATCH] HID: alps: clean up indentation issue
+Message-Id: <20200920141716.32919-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200911103509.22907-1-colin.king@canonical.com>
-In-Reply-To: <20200911103509.22907-1-colin.king@canonical.com>
+References: <20190925111904.8900-1-colin.king@canonical.com>
+In-Reply-To: <20190925111904.8900-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 11 Sep 2020 11:35:09 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read and
-> it is being updated later with a new value. The initialization is redundant
-> and can be removed.  Also re-order variable declarations in reverse
-> Christmas tree ordering.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is an if statement that is indented too deeply, fix
+this by removing the extraneous tab.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-alps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index a9c2de95c5e2..3feaece13ade 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -526,7 +526,7 @@ static int u1_init(struct hid_device *hdev, struct alps_dev *pri_data)
+ 
+ 	ret = u1_read_write_register(hdev, ADDRESS_U1_NUM_SENS_Y,
+ 			&sen_line_num_y, 0, true);
+-		if (ret < 0) {
++	if (ret < 0) {
+ 		dev_err(&hdev->dev, "failed U1_NUM_SENS_Y (%d)\n", ret);
+ 		goto exit;
+ 	}
+-- 
+2.27.0
