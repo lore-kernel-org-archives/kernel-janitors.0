@@ -1,44 +1,59 @@
-From: Sumera Priyadarsini <sylphrenadin@gmail.com>
-Date: Wed, 09 Sep 2020 07:50:36 +0000
-Subject: Re: [PATCH] scripts: coccicheck: Do not use shift command when rule is specified
-Message-Id: <20200909073836.yrsqb6o4i3c47xd4@adolin>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:23 +0000
+Subject: [PATCH 11/14] spi/topcliff-pch: drop double zeroing
+Message-Id: <1600601186-7420-12-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <036792a4-0454-732a-8a0e-83123713445c@web.de>
-In-Reply-To: <036792a4-0454-732a-8a0e-83123713445c@web.de>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 09, 2020 at 08:52:19AM +0200, Markus Elfring wrote:
-> I find it helpful to avoid typos (like the following) in the change description.
-> 
-> 
-> > … Makfeile. …
-> 
-> … Makefile. …
-> 
-> 
-> > … paasing …
-> 
-> … passing …
-> 
-> 
-> > …, resuting …
-> 
-> …, resulting …
-> 
-> 
-> > This patch modifies coccicheck …
-> 
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-I did make those errors but I also rectified them. This is strange
-because my commit message shows the rectified version.
-Either way, I will send a v2. Thanks for pointing this out.
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> Would an imperative wording be preferred for the commit message?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id4d4ddd359dbcdf6c5fb3f85a179243d7a1cb7f8#n151
-> 
-> Regards,
-> Markus
+// <smpl>
+@@
+expression x,n,flags;
+@@
+
+x = 
+- kcalloc
++ kmalloc_array
+  (n,sizeof(*x),flags)
+...
+sg_init_table(x,n)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/spi/spi-topcliff-pch.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1002,7 +1002,7 @@ static void pch_spi_handle_dma(struct pc
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 
+ 	/* RX */
+-	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
++	dma->sg_rx_p = kmalloc_array(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
+ 	if (!dma->sg_rx_p)
+ 		return;
+ 
+@@ -1065,7 +1065,7 @@ static void pch_spi_handle_dma(struct pc
+ 		head = 0;
+ 	}
+ 
+-	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
++	dma->sg_tx_p = kmalloc_array(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
+ 	if (!dma->sg_tx_p)
+ 		return;
+ 
