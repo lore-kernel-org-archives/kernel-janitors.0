@@ -1,30 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 13 Sep 2020 21:21:22 +0000
-Subject: Re: [PATCH] tulip: windbond-840: switch from 'pci_' to 'dma_' API
-Message-Id: <20200913.142122.633959947177815577.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Sep 2020 07:15:44 +0000
+Subject: [PATCH] lib/scatterlist: Avoid a double memset
+Message-Id: <20200920071544.368841-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200913065711.351802-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200913065711.351802-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, hkallweit1@gmail.com, gustavoars@kernel.org, vaibhavgupta40@gmail.com, mst@redhat.com, leon@kernel.org, linux-parisc@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: akpm@linux-foundation.org, natechancellor@gmail.com, geert+renesas@glider.be
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 13 Sep 2020 08:57:11 +0200
+'sgl' is zeroed a few lines below in 'sg_init_table()'. There is no need to
+clear it twice.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'alloc_ringdesc()' GFP_KERNEL can be used
-> because it is only called from 'netdev_open()' which is a '.ndo_open'
-> function. Such functions are synchronized using the rtnl_lock() semaphore
-> and no lock is taken in the between.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Remove the redundant initialization.
 
-Applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index 5d63a8857f36..d94628fa3349 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -504,7 +504,7 @@ struct scatterlist *sgl_alloc_order(unsigned long long length,
+ 		nalloc++;
+ 	}
+ 	sgl = kmalloc_array(nalloc, sizeof(struct scatterlist),
+-			    (gfp & ~GFP_DMA) | __GFP_ZERO);
++			    gfp & ~GFP_DMA);
+ 	if (!sgl)
+ 		return NULL;
+ 
+-- 
+2.25.1
