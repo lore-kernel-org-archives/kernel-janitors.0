@@ -1,44 +1,52 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:19 +0000
-Subject: [PATCH 09/18] clk: mvebu: ap80x-cpu: use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-10-git-send-email-Julia.Lawall@inria.fr>
+From: Pavel Machek <pavel@denx.de>
+Date: Sun, 20 Sep 2020 20:51:11 +0000
+Subject: Re: [PATCH] 6lowpan: Add missing locking
+Message-Id: <20200920205111.GA31185@duo.ucw.cz>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <2325b986-a4ea-9aa3-40ba-702ebe9b519c@web.de>
+In-Reply-To: <2325b986-a4ea-9aa3-40ba-702ebe9b519c@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, syzbot+96414aa0033c363d8458@syzkaller.appspotmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lihong Kou <koulihong@huawei.com>, Marcel Holtmann <marcel@holtmann.org>
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Sun 2020-09-20 16:14:22, Markus Elfring wrote:
+> > I believe set_lock should be taken in exit function, too.
+>=20
+> * Would an imperative wording become helpful for the change description?
+>=20
+> * How do you think about to add the tag =E2=80=9CFixes=E2=80=9D to the co=
+mmit message?
 
----
- drivers/clk/mvebu/ap-cpu-clk.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
-index 6b394302c76a..b4259b60dcfd 100644
---- a/drivers/clk/mvebu/ap-cpu-clk.c
-+++ b/drivers/clk/mvebu/ap-cpu-clk.c
-@@ -197,7 +197,7 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	stable_bit = BIT(clk->pll_regs->ratio_state_offset +
- 			 clk->cluster *
--			 clk->pll_regs->ratio_state_cluster_offset),
-+			 clk->pll_regs->ratio_state_cluster_offset);
- 	ret = regmap_read_poll_timeout(clk->pll_cr_base,
- 				       clk->pll_regs->ratio_state_reg, reg,
- 				       reg & stable_bit, STATUS_POLL_PERIOD_US,
+This is the semi-friendly notice stolen from Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2fAvwAKCRAw5/Bqldv6
+8ojgAJ9etw8H04JUAZoA7SzA9c1syP1y5QCgtou+ksIF2mZDV68WLpZQ5/Chvg4=
+=kOI6
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
