@@ -1,55 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Sep 2020 08:40:48 +0000
-Subject: [bug report] mfd: ene-kb3930: Add driver for ENE KB3930 Embedded Controller
-Message-Id: <20200910084048.GA64765@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Sep 2020 07:57:22 +0000
+Subject: [PATCH] scsi: pmcraid: Fix memory allocation in 'pmcraid_alloc_sglist()'
+Message-Id: <20200920075722.376644-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jejb@linux.ibm.com, martin.petersen@oracle.com, bvanassche@acm.org, jthumshirn@suse.de, hare@suse.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello Lubomir Rintel,
+When the scatter list is allocated in 'pmcraid_alloc_sglist()', the
+corresponding pointer should be stored in 'scatterlist' within the
+'pmcraid_sglist' structure. Otherwise, 'scatterlist' is NULL.
 
-The patch 753bd752e181: "mfd: ene-kb3930: Add driver for ENE KB3930
-Embedded Controller" from Jul 10, 2020, leads to the following static
-checker warning:
+This leads to a potential memory leak and NULL pointer dereference.
 
-	drivers/mfd/ene-kb3930.c:165 kb3930_probe()
-	warn: 'ddata->off_gpios' can also be NULL
+Fixes: ed4414cef2ad ("scsi: pmcraid: Use sgl_alloc_order() and sgl_free_order()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is completely speculative and untested.
 
-drivers/mfd/ene-kb3930.c
-   152  
-   153          ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO,
-   154                                     ariel_ec_cells,
-   155                                     ARRAY_SIZE(ariel_ec_cells),
-   156                                     NULL, 0, NULL);
-   157          if (ret)
-   158                  return ret;
-   159  
-   160          if (of_property_read_bool(np, "system-power-controller")) {
-   161                  ddata->off_gpios    162                          devm_gpiod_get_array_optional(dev, "off", GPIOD_IN);
+Should it be correct, I think that their should be some trouble somewhere.
+Either NULL pointer dereference or incorrect behavior.
+The patch that introduced this potential bug is 2 years 1/2 old. This
+should have been spotted earlier.
 
-The devm_gpiod_get_array_optional() function can return NULL in the
-sitation where the optional array is not there.  It's not an error
-because it's an optional thing, but there is also no valid pointer to
-return.  So because it's not an error pointer, or a valid pointer then
-it's NULL.
+So unless this driver is mostly unused, this looks odd to me.
+Feedback appreciated.
+---
+ drivers/scsi/pmcraid.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-   163                  if (IS_ERR(ddata->off_gpios))
-   164                          return PTR_ERR(ddata->off_gpios);
-   165                  if (ddata->off_gpios->ndescs < 2) {
-   166                          dev_err(dev, "invalid off-gpios property\n");
-   167                          return -EINVAL;
-   168                  }
-   169          }
-   170  
-   171          if (ddata->off_gpios) {
-   172                  register_restart_handler(&kb3930_restart_nb);
-   173                  if (!pm_power_off)
-   174                          pm_power_off = kb3930_pm_power_off;
-   175          }
-   176  
-   177          return 0;
-
-regards,
-dan carpenter
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index d99568fdf4af..00e155c88f03 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -3230,8 +3230,9 @@ static struct pmcraid_sglist *pmcraid_alloc_sglist(int buflen)
+ 		return NULL;
+ 
+ 	sglist->order = order;
+-	sgl_alloc_order(buflen, order, false,
+-			GFP_KERNEL | GFP_DMA | __GFP_ZERO, &sglist->num_sg);
++	sglist->scatterlist = sgl_alloc_order(buflen, order, false,
++					      GFP_KERNEL | GFP_DMA | __GFP_ZERO,
++					      &sglist->num_sg);
+ 
+ 	return sglist;
+ }
+-- 
+2.25.1
