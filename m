@@ -1,44 +1,36 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:24 +0000
-Subject: [PATCH 14/18] regmap: debugfs: use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-15-git-send-email-Julia.Lawall@inria.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 20 Sep 2020 14:20:46 +0000
+Subject: [PATCH] misc: hisi_hikey_usb: clean up indentation issue
+Message-Id: <20200920142046.33123-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
+To: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+From: Colin Ian King <colin.king@canonical.com>
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+There is a return statement that is indented too deeply,
+fix this by removing the extraneous tab.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/base/regmap/regmap-debugfs.c |    2 +-
+ drivers/misc/hisi_hikey_usb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index b6d63ef16b44..8dfac7f3ed7a 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -183,7 +183,7 @@ static inline void regmap_calc_tot_len(struct regmap *map,
- {
- 	/* Calculate the length of a fixed format  */
- 	if (!map->debugfs_tot_len) {
--		map->debugfs_reg_len = regmap_calc_reg_len(map->max_register),
-+		map->debugfs_reg_len = regmap_calc_reg_len(map->max_register);
- 		map->debugfs_val_len = 2 * map->format.val_bytes;
- 		map->debugfs_tot_len = map->debugfs_reg_len +
- 			map->debugfs_val_len + 3;      /* : \n */
+diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
+index 5759e7209023..cc93569e601c 100644
+--- a/drivers/misc/hisi_hikey_usb.c
++++ b/drivers/misc/hisi_hikey_usb.c
+@@ -162,7 +162,7 @@ static int hisi_hikey_usb_parse_kirin970(struct platform_device *pdev,
+ 		dev_err(&pdev->dev,
+ 			"get hub-vdd-supply failed with error %ld\n",
+ 			PTR_ERR(regulator));
+-			return PTR_ERR(regulator);
++		return PTR_ERR(regulator);
+ 	}
+ 	hisi_hikey_usb->regulator = regulator;
+ 
+-- 
+2.27.0
