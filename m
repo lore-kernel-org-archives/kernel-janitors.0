@@ -1,28 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Sep 2020 23:54:20 +0000
-Subject: Re: [PATCH RESEND] epic100: switch from 'pci_' to 'dma_' API
-Message-Id: <20200903.165420.1235227173707691043.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:13 +0000
+Subject: [PATCH 01/14] pch_uart: drop double zeroing
+Message-Id: <1600601186-7420-2-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200903200509.296149-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200903200509.296149-1-christophe.jaillet@wanadoo.fr>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, mst@redhat.com, mkubecek@suse.cz, snelson@pensando.io, vaibhavgupta40@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu,  3 Sep 2020 22:05:09 +0200
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'epic_init_one()', GFP_KERNEL can be used
-> because it is a probe function and no lock is acquired.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied.
+// <smpl>
+@@
+expression x,n,flags;
+@@
+
+x = 
+- kcalloc
++ kmalloc_array
+  (n,sizeof(struct scatterlist),flags)
+...
+sg_init_table(x,n)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/tty/serial/pch_uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -981,7 +981,7 @@ static unsigned int dma_handle_tx(struct
+ 
+ 	priv->tx_dma_use = 1;
+ 
+-	priv->sg_tx_p = kcalloc(num, sizeof(struct scatterlist), GFP_ATOMIC);
++	priv->sg_tx_p = kmalloc_array(num, sizeof(struct scatterlist), GFP_ATOMIC);
+ 	if (!priv->sg_tx_p) {
+ 		dev_err(priv->port.dev, "%s:kzalloc Failed\n", __func__);
+ 		return 0;
