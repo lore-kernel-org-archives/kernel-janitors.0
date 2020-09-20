@@ -1,28 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Sep 2020 13:47:09 +0000
-Subject: Re: [PATCH] mm/hmm/test: use after free in dmirror_allocate_chunk()
-Message-Id: <20200924134709.GK4282@kadam>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:26 +0000
+Subject: [PATCH 14/14] PCI/P2PDMA: drop double zeroing
+Message-Id: <1600601186-7420-15-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200922081234.GA1274646@mwanda>
- <c25729e4-8a53-07e3-ae98-d77919f3ac21@nvidia.com>
-In-Reply-To: <c25729e4-8a53-07e3-ae98-d77919f3ac21@nvidia.com>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralph Campbell <rcampbell@nvidia.com>
-Cc: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Wei Yongjun <weiyongjun1@huawei.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 22, 2020 at 10:31:01AM -0700, Ralph Campbell wrote:
-> > @@ -471,30 +487,16 @@ static bool dmirror_allocate_chunk(struct dmirror_device *mdevice,
-> >   				sizeof(new_chunks[0]) * new_capacity,
-> >   				GFP_KERNEL);
-> >   		if (!new_chunks)
-> 
-> Need to call mutex_unlock(&mdevice->devmem_lock).
-> In fact, why not make this goto err_unlock and add
-> err_unlock: mutex_unlock() before the err_release:.
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-Ugh...  Thanks for catching that.
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression x;
+@@
+
+x - kzalloc
++ kmalloc
+ (...)
+...
+sg_init_table(x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/pci/p2pdma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -762,7 +762,7 @@ struct scatterlist *pci_p2pmem_alloc_sgl
+ 	struct scatterlist *sg;
+ 	void *addr;
+ 
+-	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
++	sg = kmalloc(sizeof(*sg), GFP_KERNEL);
+ 	if (!sg)
+ 		return NULL;
+ 
