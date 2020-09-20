@@ -1,109 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Sep 2020 07:18:41 +0000
-Subject: [PATCH] rpmsg: smd: Fix a kobj leak in in qcom_smd_parse_edge()
-Message-Id: <20200908071841.GA294938@mwanda>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:21 +0000
+Subject: [PATCH 09/14] dmaengine: rcar-dmac: drop double zeroing
+Message-Id: <1600601186-7420-10-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vinod Koul <vkoul@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We need to call of_node_put(node) on the error paths for this function.
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,n,flags;
+@@
+
+x = 
+- kcalloc
++ kmalloc_array
+  (n,sizeof(*x),flags)
+...
+sg_init_table(x,n)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- drivers/rpmsg/qcom_smd.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ drivers/dma/sh/rcar-dmac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 4abbeea782fa..19903de6268d 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1338,7 +1338,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	ret = of_property_read_u32(node, key, &edge->edge_id);
- 	if (ret) {
- 		dev_err(dev, "edge missing %s property\n", key);
--		return -EINVAL;
-+		goto put_node;
- 	}
+diff -u -p a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1227,7 +1227,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_cha
+ 	 * Allocate the sg list dynamically as it would consume too much stack
+ 	 * space.
+ 	 */
+-	sgl = kcalloc(sg_len, sizeof(*sgl), GFP_NOWAIT);
++	sgl = kmalloc_array(sg_len, sizeof(*sgl), GFP_NOWAIT);
+ 	if (!sgl)
+ 		return NULL;
  
- 	edge->remote_pid = QCOM_SMEM_HOST_ANY;
-@@ -1349,32 +1349,37 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	edge->mbox_client.knows_txdone = true;
- 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
- 	if (IS_ERR(edge->mbox_chan)) {
--		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
--			return PTR_ERR(edge->mbox_chan);
-+		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
-+			ret = PTR_ERR(edge->mbox_chan);
-+			goto put_node;
-+		}
- 
- 		edge->mbox_chan = NULL;
- 
- 		syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
- 		if (!syscon_np) {
- 			dev_err(dev, "no qcom,ipc node\n");
--			return -ENODEV;
-+			ret = -ENODEV;
-+			goto put_node;
- 		}
- 
- 		edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
--		if (IS_ERR(edge->ipc_regmap))
--			return PTR_ERR(edge->ipc_regmap);
-+		if (IS_ERR(edge->ipc_regmap)) {
-+			ret = PTR_ERR(edge->ipc_regmap);
-+			goto put_node;
-+		}
- 
- 		key = "qcom,ipc";
- 		ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
- 		if (ret < 0) {
- 			dev_err(dev, "no offset in %s\n", key);
--			return -EINVAL;
-+			goto put_node;
- 		}
- 
- 		ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
- 		if (ret < 0) {
- 			dev_err(dev, "no bit in %s\n", key);
--			return -EINVAL;
-+			goto put_node;
- 		}
- 	}
- 
-@@ -1385,7 +1390,8 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	irq = irq_of_parse_and_map(node, 0);
- 	if (irq < 0) {
- 		dev_err(dev, "required smd interrupt missing\n");
--		return -EINVAL;
-+		ret = irq;
-+		goto put_node;
- 	}
- 
- 	ret = devm_request_irq(dev, irq,
-@@ -1393,12 +1399,18 @@ static int qcom_smd_parse_edge(struct device *dev,
- 			       node->name, edge);
- 	if (ret) {
- 		dev_err(dev, "failed to request smd irq\n");
--		return ret;
-+		goto put_node;
- 	}
- 
- 	edge->irq = irq;
- 
- 	return 0;
-+
-+put_node:
-+	of_node_put(node);
-+	edge->of_node = NULL;
-+
-+	return ret;
- }
- 
- /*
--- 
-2.28.0
