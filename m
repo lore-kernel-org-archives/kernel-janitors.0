@@ -1,39 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 13 Sep 2020 21:15:53 +0000
-Subject: Re: [PATCH V2] natsemi: switch from 'pci_' to 'dma_' API
-Message-Id: <20200913.141553.1778331693564031642.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:18 +0000
+Subject: [PATCH 06/14] block: drop double zeroing
+Message-Id: <1600601186-7420-7-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200912194625.345319-1-christophe.jaillet@wanadoo.fr>
-        <christophe.jaillet@wanadoo.fr>
-        <20200913054628.346243-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200913054628.346243-1-christophe.jaillet@wanadoo.fr>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, mst@redhat.com, vaibhavgupta40@gmail.com, gustavoars@kernel.org, arnd@arndb.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: kernel-janitors@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 13 Sep 2020 07:46:28 +0200
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'alloc_ring()' (natsemi.c) GFP_KERNEL can be
-> used because it is only called from 'netdev_open()', which is a '.ndo_open'
-> function. Such function are synchronized with the rtnl_lock() semaphore.
-> 
-> When memory is allocated in 'ns83820_init_one()' (ns83820.c) GFP_KERNEL can
-> be used because it is a probe function and no lock is taken in the between.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m8745678307186&w=4
-> 
-> V2: fix description (duplicated comment and wrong file name)
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied, thank you.
+// <smpl>
+@@
+expression x;
+@@
+
+x - kzalloc
++ kmalloc
+ (...)
+...
+sg_init_table(x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ block/bsg-lib.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/block/bsg-lib.c b/block/bsg-lib.c
+--- a/block/bsg-lib.c
++++ b/block/bsg-lib.c
+@@ -207,7 +207,7 @@ static int bsg_map_buffer(struct bsg_buf
+ 
+ 	BUG_ON(!req->nr_phys_segments);
+ 
+-	buf->sg_list = kzalloc(sz, GFP_KERNEL);
++	buf->sg_list = kmalloc(sz, GFP_KERNEL);
+ 	if (!buf->sg_list)
+ 		return -ENOMEM;
+ 	sg_init_table(buf->sg_list, req->nr_phys_segments);
