@@ -1,29 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 13 Sep 2020 01:27:13 +0000
-Subject: Re: [PATCH] rocker: switch from 'pci_' to 'dma_' API
-Message-Id: <20200912.182713.1372047210957486381.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 20 Sep 2020 11:26:20 +0000
+Subject: [PATCH 08/14] xprtrdma: drop double zeroing
+Message-Id: <1600601186-7420-9-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200912114418.340728-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200912114418.340728-1-christophe.jaillet@wanadoo.fr>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, jiri@resnulli.us, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Sep 2020 13:44:18 +0200
+sg_init_table zeroes its first argument, so the allocation of that argument
+doesn't have to.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'rocker_dma_ring_create()' GFP_KERNEL can be
-> used because it is already used in the same function just a few lines
-> above.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+the semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied.
+// <smpl>
+@@
+expression x,n,flags;
+@@
+
+x = 
+- kcalloc
++ kmalloc_array
+  (n,sizeof(*x),flags)
+...
+sg_init_table(x,n)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ net/sunrpc/xprtrdma/frwr_ops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/net/sunrpc/xprtrdma/frwr_ops.c b/net/sunrpc/xprtrdma/frwr_ops.c
+--- a/net/sunrpc/xprtrdma/frwr_ops.c
++++ b/net/sunrpc/xprtrdma/frwr_ops.c
+@@ -124,7 +124,7 @@ int frwr_mr_init(struct rpcrdma_xprt *r_
+ 	if (IS_ERR(frmr))
+ 		goto out_mr_err;
+ 
+-	sg = kcalloc(depth, sizeof(*sg), GFP_NOFS);
++	sg = kmalloc_array(depth, sizeof(*sg), GFP_NOFS);
+ 	if (!sg)
+ 		goto out_list_err;
+ 
