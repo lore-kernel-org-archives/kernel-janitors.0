@@ -1,40 +1,59 @@
 From: Douglas Gilbert <dgilbert@interlog.com>
-Date: Sun, 20 Sep 2020 19:35:18 +0000
+Date: Mon, 21 Sep 2020 00:57:19 +0000
 Subject: Re: [PATCH] lib/scatterlist: Fix memory leak in sgl_alloc_order()
-Message-Id: <1608a0b7-6960-afce-aa39-6785036b01e0@interlog.com>
+Message-Id: <9ee6e304-0f96-ea5b-f1ca-84e57345b237@interlog.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e69e9865-a599-5bd9-95b1-7d57c7e2e90c@web.de>
-In-Reply-To: <e69e9865-a599-5bd9-95b1-7d57c7e2e90c@web.de>
+ <1608a0b7-6960-afce-aa39-6785036b01e0@interlog.com>
+ <d8eb3d0e-52e2-1dab-ac02-774fdbd9c18c@web.de>
+In-Reply-To: <d8eb3d0e-52e2-1dab-ac02-774fdbd9c18c@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
 
-On 2020-09-20 1:09 p.m., Markus Elfring wrote:
->> Noticed that when sgl_alloc_order() failed with order > 0 that
->> free memory on my machine shrank. That function shouldn't call
->> sgl_free() on its error path since that is only correct when
->> order=0 .
-> 
-> * Would an imperative wording become helpful for the change description?
-
-No passive tense there. Or do you mean usage like: "Go to hell" or
-"Fix memory leak in ..."? I studied French and Latin at school; at a
-guess, my mother tongue got its grammar from the former. My mother
-taught English grammar and the term "imperative wording" rings no
-bells in my grammatical education. Google agrees with me.
-Please define: "imperative wording".
-> * How do you think about to add the tag “Fixes” to the commit message?r
-
-In the workflow I'm used to, others (closer to LT) make that decision.
-Why waste my time?
-
-> * Will an other patch subject be more appropriate?
-
-Twas testing a 6 GB allocation with said function on my 8 GB laptop.
-It failed and free told me 5 GB had disappeared (and
-'cat /sys/kernel/debug/kmemleak' told me _nothing_). Umm, it is
-potentially a HUGE f@#$ing memory LEAK! Best to call a spade a spade.
-
-Doug Gilbert
+T24gMjAyMC0wOS0yMCA0OjExIHAubS4sIE1hcmt1cyBFbGZyaW5nIHdyb3RlOgo+Pj4+IE5vdGlj
+ZWQgdGhhdCB3aGVuIHNnbF9hbGxvY19vcmRlcigpIGZhaWxlZCB3aXRoIG9yZGVyID4gMCB0aGF0
+Cj4+Pj4gZnJlZSBtZW1vcnkgb24gbXkgbWFjaGluZSBzaHJhbmsuIFRoYXQgZnVuY3Rpb24gc2hv
+dWxkbid0IGNhbGwKPj4+PiBzZ2xfZnJlZSgpIG9uIGl0cyBlcnJvciBwYXRoIHNpbmNlIHRoYXQg
+aXMgb25seSBjb3JyZWN0IHdoZW4KPj4+PiBvcmRlcj0wIC4KPj4+Cj4+PiAqIFdvdWxkIGFuIGlt
+cGVyYXRpdmUgd29yZGluZyBiZWNvbWUgaGVscGZ1bCBmb3IgdGhlIGNoYW5nZSBkZXNjcmlwdGlv
+bj8KPiDigKYKPj4g4oCmIGFuZCB0aGUgdGVybSAiaW1wZXJhdGl2ZSB3b3JkaW5nIiByaW5ncyBu
+bwo+PiBiZWxscyBpbiBteSBncmFtbWF0aWNhbCBlZHVjYXRpb24uIOKApgo+IAo+IEkgc3VnZ2Vz
+dCB0byB0YWtlIGFub3RoZXIgbG9vayBhdCB0aGUgcHVibGlzaGVkIExpbnV4IGRldmVsb3BtZW50
+IGRvY3VtZW50YXRpb24uCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N1
+Ym1pdHRpbmctcGF0Y2hlcy5yc3Q/aWS9Y2YxMWRlOGY3NzYxNTJjODJkMjE5N2IyNTVjMmQwNDYw
+M2Y5NzYjbjE1MQo+IAo+IAo+Pj4gKiBIb3cgZG8geW91IHRoaW5rIGFib3V0IHRvIGFkZCB0aGUg
+dGFnIOKAnEZpeGVz4oCdIHRvIHRoZSBjb21taXQgbWVzc2FnZT9yCj4+Cj4+IEluIHRoZSB3b3Jr
+ZmxvdyBJJ20gdXNlZCB0bywgb3RoZXJzIChjbG9zZXIgdG8gTFQpIG1ha2UgdGhhdCBkZWNpc2lv
+bi4KPj4gV2h5IHdhc3RlIG15IHRpbWU/Cj4gCj4gSSBmaW5kIGFub3RoZXIgYml0IG9mIGd1aWRh
+bmNlIHJlbGV2YW50Lgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
+ZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJt
+aXR0aW5nLXBhdGNoZXMucnN0P2lkvWNmMTFkZThmNzc2MTUyYzgyZDIxOTdiMjU1YzJkMDQ2MDNm
+OTc2I24xODMKPiAKPiAKPj4+ICogV2lsbCBhbiBvdGhlciBwYXRjaCBzdWJqZWN0IGJlIG1vcmUg
+YXBwcm9wcmlhdGU/Cj4+Cj4+IFR3YXMgdGVzdGluZyBhIDYgR0IgYWxsb2NhdGlvbiB3aXRoIHNh
+aWQgZnVuY3Rpb24gb24gbXkgOCBHQiBsYXB0b3AuCj4+IEl0IGZhaWxlZCBhbmQgZnJlZSB0b2xk
+IG1lIDUgR0IgaGFkIGRpc2FwcGVhcmVkIOKApgo+IOKApgo+IAo+IEhhdmUgd2UgZ290IGFueSBk
+aWZmZXJlbnQgZXhwZWN0YXRpb25zIGZvciB0aGUgY2Fub25pY2FsIHBhdGNoIHN1YmplY3QgbGlu
+ZT8KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2
+YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRj
+aGVzLnJzdD9pZL1jZjExZGU4Zjc3NjE1MmM4MmQyMTk3YjI1NWMyZDA0NjAzZjk3NiNuNjg0Cj4g
+Cj4gSSBhbSBjdXJpb3VzIGhvdyB0aGUgc29mdHdhcmUgd2lsbCBldm9sdmUgZnVydGhlciBhbHNv
+IGFjY29yZGluZyB0byB5b3VyCj4gc3lzdGVtIHRlc3QgZXhwZXJpZW5jZXMuCgpTb3JyeSwgSSBk
+aWRuJ3QgY29tZSBkb3duIGluIHRoZSBsYXN0IHNob3dlciwgaXQncyBub3QgbXkgZmlyc3QgYnVn
+IGZpeC4KVHJ5IGNvbnN1bHRpbmcgJ2dpdCBsb2cnIGFuZCBsb29rIGZvciBteSBuYW1lIG9yIHRo
+ZSBNQUlOVEFJTkVSUyBmaWxlLgpUaGUgY3VscHJpdHMgYXJlIHVzdWFsbHkgaGFwcHkgYXMgd2Fz
+IHRoZSBjYXNlIHdpdGggdGhpcyBwYXRjaC4gSXQncwphY2stZWQgYW5kIEkgd291bGQgYmUgdmVy
+eSBzdXJwcmlzZWQgaWYgSmVucyBBeGJvZSBkb2Vzbid0IGFjY2VwdCBpdC4KCkl0IGlzIGFuIG9i
+dmlvdXMgZmxhdy4gRml4IGl0IGFuZCBtb3ZlIG9uLiBBbHRlcm5hdGl2ZWx5IHN1cHBseSB5b3Vy
+IG93bgpwYXRjaCB0aGF0IHRpY2tzIGFsbCB0aGUgYWJvdmUgYm94ZXMuCgoKSWYgeW91IHdhbnQg
+dG8gdGFsayBhYm91dCBzb21ldGhpbmcgc3Vic3RhbnRpYWwsIHRoZW4gd2h5IGRvIHdlIGhhdmUg
+YQpmdW5jdGlvbiBuYW1lZCBzZ2xfZnJlZSgpIHRoYXQgb25seSB3b3JrcyBwcm9wZXJseSBpZiwg
+Zm9yIGV4YW1wbGUsIHRoZQpzZ2xfYWxsb2Nfb3JkZXIoKSBmdW5jdGlvbiBjcmVhdGluZyB0aGUg
+c2dsIHVzZWQgb3JkZXI9MCA/IElNTyBzZ2xfZnJlZSgpCnNob3VsZCBiZSByZW1vdmVkIG9yIHJl
+bmFtZWQuCgpEb3VnIEdpbGJlcnQKCgpCVFcgVGhlICJpbXBlcmF0aXZlIG1vb2QiIHN0dWZmIGlu
+IHRoYXQgZG9jdW1lbnQgaXMgbm9uc2Vuc2UsIGF0IGxlYXN0CmluIEVuZ2xpc2guIFdpa2lwZWRp
+YSBtYXBzIHRoYXQgdGVybSBiYWNrIHRvICJ0aGUgaW1wZXJhdGl2ZSIgYXMgaW4KIkdldCB0aGVl
+IHRvIGEgbnVubmVyeSIgYW5kICJFdCB0dSwgQnJ1dGUiLgo=
