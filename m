@@ -1,29 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 13 Sep 2020 01:27:00 +0000
-Subject: Re: [PATCH] sc92031: switch from 'pci_' to 'dma_' API
-Message-Id: <20200912.182700.120125082750514250.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 21 Sep 2020 14:40:17 +0000
+Subject: [PATCH][next] PCI: brcmstb: fix a missing if statement on a return error check
+Message-Id: <20200921144017.334602-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200912112858.339548-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200912112858.339548-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, hkallweit1@gmail.com, mst@redhat.com, mhabets@solarflare.com, vaibhavgupta40@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Jim Quinlan <jquinlan@broadcom.com>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Sep 2020 13:28:58 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'sc92031_open()' GFP_KERNEL can be used
-> because it is a '.ndo_open' function and no lock is taken in the between.
-> '.ndo_open' functions are synchronized with the rtnl_lock() semaphore.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The error return ret is not being check with an if statement and
+currently the code always returns leaving the following code as
+dead code. Fix this by adding in the missing if statement.
 
-Applied.
+Addresses-Coverity: ("Structurally dead code")
+Fixes: ad3d29c77e1e ("PCI: brcmstb: Add control of rescal reset")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/controller/pcie-brcmstb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index 7a3ff4632e7c..cb0c11b7308e 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -1154,6 +1154,7 @@ static int brcm_pcie_resume(struct device *dev)
+ 	clk_prepare_enable(pcie->clk);
+ 
+ 	ret = brcm_phy_start(pcie);
++	if (ret)
+ 		return ret;
+ 
+ 	/* Take bridge out of reset so we can access the SERDES reg */
+-- 
+2.27.0
