@@ -1,29 +1,42 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Wed, 02 Sep 2020 23:59:09 +0000
-Subject: Re: [PATCH][next] RDMA/ucma: fix memory leak of mc on an xa_alloc failure
-Message-Id: <20200902235909.GK24045@ziepe.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Sep 2020 08:32:35 +0000
+Subject: [PATCH] soundwire: remove an unnecessary NULL check
+Message-Id: <20200923083235.GB1454948@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200902162805.200436-1-colin.king@canonical.com>
-In-Reply-To: <20200902162805.200436-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Doug Ledford <dledford@redhat.com>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: Sanyog Kale <sanyog.r.kale@intel.com>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org
 
-On Wed, Sep 02, 2020 at 05:28:05PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when an xa_alloc failure occurs the error exit path leaks
-> the allocated object mc.  Fix this by adding an error return path
-> that frees mc and rename error exit paths err3 to err4 and err2 to err3.
-> 
-> Fixes: 95fe51096b7a ("RDMA/ucma: Remove mc_list and rely on xarray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/core/ucma.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+The "bus" pointer isn't NULL so the address to a non-zero offset in
+middle of "bus" cannot be NULL.  Delete the NULL check.
 
-Alex beat you too it, so I will use his patch, thanks
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soundwire/generic_bandwidth_allocation.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Jason
+diff --git a/drivers/soundwire/generic_bandwidth_allocation.c b/drivers/soundwire/generic_bandwidth_allocation.c
+index 6088775b67a5..fdc0db71360e 100644
+--- a/drivers/soundwire/generic_bandwidth_allocation.c
++++ b/drivers/soundwire/generic_bandwidth_allocation.c
+@@ -342,15 +342,11 @@ static int sdw_select_row_col(struct sdw_bus *bus, int clk_freq)
+ static int sdw_compute_bus_params(struct sdw_bus *bus)
+ {
+ 	unsigned int max_dr_freq, curr_dr_freq = 0;
+-	struct sdw_master_prop *mstr_prop = NULL;
++	struct sdw_master_prop *mstr_prop = &bus->prop;
+ 	int i, clk_values, ret;
+ 	bool is_gear = false;
+ 	u32 *clk_buf;
+ 
+-	mstr_prop = &bus->prop;
+-	if (!mstr_prop)
+-		return -EINVAL;
+-
+ 	if (mstr_prop->num_clk_gears) {
+ 		clk_values = mstr_prop->num_clk_gears;
+ 		clk_buf = mstr_prop->clk_gears;
+-- 
+2.28.0
