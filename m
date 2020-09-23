@@ -1,32 +1,35 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 30 Sep 2020 10:12:54 +0000
-Subject: Re: [PATCH][next] lib/mpi: fix off-by-one check on index "no"
-Message-Id: <20200930101253.GB25359@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Sep 2020 11:27:52 +0000
+Subject: [PATCH net-next] can: mcp25xxfd: fix a leak in mcp25xxfd_ring_free()
+Message-Id: <20200923112752.GA1473821@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200929131828.155691-1-colin.king@canonical.com>
-In-Reply-To: <20200929131828.155691-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Waiman Long <longman@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp <thomas.kopp@microchip.com>, Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 02:18:28PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an off-by-one range check on the upper limit of
-> index "no".  Fix this by changing the > comparison to >> 
-> Addresses-Coverity: ("Out-of-bounds read")
-> Fixes: a8ea8bdd9df9 ("lib/mpi: Extend the MPI library")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  lib/mpi/mpiutil.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This loop doesn't free the first element of the array.  The "i > 0" has
+to be changed to "i >= 0".
 
-Could you resend this with a cc to linux-crypto?
+Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxFD SPI CAN")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/can/spi/mcp25xxfd/mcp25xxfd-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/net/can/spi/mcp25xxfd/mcp25xxfd-core.c b/drivers/net/can/spi/mcp25xxfd/mcp25xxfd-core.c
+index bd2ba981ae36..7e094afaac04 100644
+--- a/drivers/net/can/spi/mcp25xxfd/mcp25xxfd-core.c
++++ b/drivers/net/can/spi/mcp25xxfd/mcp25xxfd-core.c
+@@ -377,7 +377,7 @@ static void mcp25xxfd_ring_free(struct mcp25xxfd_priv *priv)
+ {
+ 	int i;
+ 
+-	for (i = ARRAY_SIZE(priv->rx) - 1; i > 0; i--) {
++	for (i = ARRAY_SIZE(priv->rx) - 1; i >= 0; i--) {
+ 		kfree(priv->rx[i]);
+ 		priv->rx[i] = NULL;
+ 	}
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.28.0
