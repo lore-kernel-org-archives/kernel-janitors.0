@@ -1,64 +1,75 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Wed, 23 Sep 2020 00:23:52 +0000
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Wed, 23 Sep 2020 00:42:12 +0000
 Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-Message-Id: <cc3523ad-1295-cccb-12da-f0ea7c129e7a@gmail.com>
+Message-Id: <10303589-a40d-f295-e35e-5c2cf6c8f2e0@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
- <20200908072557.GC294938@mwanda>
- <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
- <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
- <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
- <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
- <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
- <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
- <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
- <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
- <57e8ccad-f0d5-febb-7a31-8d34430a5cb8@gmail.com>
- <64f4b682-00b7-60f2-902f-e50a40a04a55@samsung.com>
- <c80c6f3a-bbbf-f18b-33c8-62e63397df9c@gmail.com>
-In-Reply-To: <c80c6f3a-bbbf-f18b-33c8-62e63397df9c@gmail.com>
+        <20200908072557.GC294938@mwanda>
+        <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+        <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+        <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+        <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+        <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+        <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+        <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+        <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
+        <57e8ccad-f0d5-febb-7a31-8d34430a5cb8@gmail.com>
+        <64f4b682-00b7-60f2-902f-e50a40a04a55@samsung.com>
+        <c80c6f3a-bbbf-f18b-33c8-62e63397df9c@gmail.com>
+        <cc3523ad-1295-cccb-12da-f0ea7c129e7a@gmail.com>
+In-Reply-To: <cc3523ad-1295-cccb-12da-f0ea7c129e7a@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Chanwoo Choi <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-21.09.2020 00:37, Dmitry Osipenko пишет:
-> 18.09.2020 12:23, Chanwoo Choi пишет:
-> ...
->>> Hence if we want to improve the code, I think we can make this change:
+On 9/23/20 9:23 AM, Dmitry Osipenko wrote:
+> 21.09.2020 00:37, Dmitry Osipenko пишет:
+>> 18.09.2020 12:23, Chanwoo Choi пишет:
+>> ...
+>>>> Hence if we want to improve the code, I think we can make this change:
+>>>>
+>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>>> b/drivers/devfreq/tegra30-devfreq.c
+>>>> index ee274daa57ac..4e3ac23e6850 100644
+>>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>>> @@ -891,8 +891,6 @@ static int tegra_devfreq_probe(struct
+>>>> platform_device *pdev)
+>>>>  		return err;
+>>>>  	}
+>>>>
+>>>> -	reset_control_assert(tegra->reset);
+>>>> -
+>>>>  	err = clk_prepare_enable(tegra->clock);
+>>>>  	if (err) {
+>>>>  		dev_err(&pdev->dev,
+>>>> @@ -900,7 +898,7 @@ static int tegra_devfreq_probe(struct
+>>>> platform_device *pdev)
+>>>>  		return err;
+>>>>  	}
+>>>>
+>>>> -	reset_control_deassert(tegra->reset);
+>>>> +	reset_control_reset(tegra->reset);
+>>>>
+>>>>  	for (i = 0; i < mc->num_timings; i++) {
+>>>>  		/*
 >>>
->>> diff --git a/drivers/devfreq/tegra30-devfreq.c
->>> b/drivers/devfreq/tegra30-devfreq.c
->>> index ee274daa57ac..4e3ac23e6850 100644
->>> --- a/drivers/devfreq/tegra30-devfreq.c
->>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>> @@ -891,8 +891,6 @@ static int tegra_devfreq_probe(struct
->>> platform_device *pdev)
->>>  		return err;
->>>  	}
->>>
->>> -	reset_control_assert(tegra->reset);
->>> -
->>>  	err = clk_prepare_enable(tegra->clock);
->>>  	if (err) {
->>>  		dev_err(&pdev->dev,
->>> @@ -900,7 +898,7 @@ static int tegra_devfreq_probe(struct
->>> platform_device *pdev)
->>>  		return err;
->>>  	}
->>>
->>> -	reset_control_deassert(tegra->reset);
->>> +	reset_control_reset(tegra->reset);
->>>
->>>  	for (i = 0; i < mc->num_timings; i++) {
->>>  		/*
+>>> It looks good to me for improving the readability
+>>> for everyone who don't know the detailed h/w information.
 >>
->> It looks good to me for improving the readability
->> for everyone who don't know the detailed h/w information.
+>> Okay, I'll make a patch sometime soon.
 > 
-> Okay, I'll make a patch sometime soon.
+> Chanwoo, I want to clarify that the Dan's v1 patch is still good to me
+> and should be applied. I'll improve the readability on top of the Dan's
+> change.
+> 
+> 
 
-Chanwoo, I want to clarify that the Dan's v1 patch is still good to me
-and should be applied. I'll improve the readability on top of the Dan's
-change.
+OK. Applied it. Thanks.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
