@@ -1,73 +1,55 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:39 +0000
-Subject: [PATCH 16/20] media: dvbsky: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-17-git-send-email-Julia.Lawall@inria.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Sep 2020 08:42:03 +0000
+Subject: [PATCH] cfg80211: regulatory: remove a bogus initialization
+Message-Id: <20200923084203.GC1454948@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+The the __freq_reg_info() never returns NULL and the callers don't check
+for NULL.  This initialization to set "reg_rule = NULL;" is just there
+to make GCC happy but it's not required in current GCCs.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+The problem is that Smatch sees the initialization and concludes that
+this function can return NULL so it complains that the callers are not
+checking for it.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Smatch used to be able to parse this correctly but we recently changed
+the code from:
 
+-       for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
++       for (bw = MHZ_TO_KHZ(bws[i]); bw >= min_bw; bw = MHZ_TO_KHZ(bws[i--])) {
+
+Originally Smatch used to understand that this code always iterates
+through the loop once, but the change from "MHZ_TO_KHZ(20)" to
+"MHZ_TO_KHZ(bws[i])" is too complicated for Smatch.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/dvb-usb-v2/dvbsky.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Feel free to throw this patch into the bit bucket if you want...  I
+don't feel strongly about it either way.  Just a piece of functional
+art.
 
-diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-index 0d9657f7f29d..689829f1b52a 100644
---- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-@@ -287,8 +287,8 @@ static int dvbsky_s960_attach(struct dvb_usb_adapter *adap)
- 	m88ds3103_pdata.ts_clk = 16000;
- 	m88ds3103_pdata.ts_clk_pol = 0;
- 	m88ds3103_pdata.agc = 0x99;
--	m88ds3103_pdata.lnb_hv_pol = 1,
--	m88ds3103_pdata.lnb_en_pol = 1,
-+	m88ds3103_pdata.lnb_hv_pol = 1;
-+	m88ds3103_pdata.lnb_en_pol = 1;
+
+ net/wireless/reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 6043a9d33d61..3dab859641e1 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -1616,8 +1616,8 @@ static const struct ieee80211_reg_rule *
+ __freq_reg_info(struct wiphy *wiphy, u32 center_freq, u32 min_bw)
+ {
+ 	const struct ieee80211_regdomain *regd = reg_get_regdomain(wiphy);
+-	const struct ieee80211_reg_rule *reg_rule = NULL;
+ 	const u32 bws[] = {0, 1, 2, 4, 5, 8, 10, 16, 20};
++	const struct ieee80211_reg_rule *reg_rule;
+ 	int i = ARRAY_SIZE(bws) - 1;
+ 	u32 bw;
  
- 	state->i2c_client_demod = dvb_module_probe("m88ds3103", NULL,
- 						   &d->i2c_adap,
-@@ -383,15 +383,15 @@ static int dvbsky_s960c_attach(struct dvb_usb_adapter *adap)
- 	struct sp2_config sp2_config = {};
- 
- 	/* attach demod */
--	m88ds3103_pdata.clk = 27000000,
--	m88ds3103_pdata.i2c_wr_max = 33,
--	m88ds3103_pdata.clk_out = 0,
--	m88ds3103_pdata.ts_mode = M88DS3103_TS_CI,
--	m88ds3103_pdata.ts_clk = 10000,
--	m88ds3103_pdata.ts_clk_pol = 1,
--	m88ds3103_pdata.agc = 0x99,
--	m88ds3103_pdata.lnb_hv_pol = 0,
--	m88ds3103_pdata.lnb_en_pol = 1,
-+	m88ds3103_pdata.clk = 27000000;
-+	m88ds3103_pdata.i2c_wr_max = 33;
-+	m88ds3103_pdata.clk_out = 0;
-+	m88ds3103_pdata.ts_mode = M88DS3103_TS_CI;
-+	m88ds3103_pdata.ts_clk = 10000;
-+	m88ds3103_pdata.ts_clk_pol = 1;
-+	m88ds3103_pdata.agc = 0x99;
-+	m88ds3103_pdata.lnb_hv_pol = 0;
-+	m88ds3103_pdata.lnb_en_pol = 1;
- 
- 	state->i2c_client_demod = dvb_module_probe("m88ds3103", NULL,
- 						   &d->i2c_adap,
+-- 
+2.28.0
