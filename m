@@ -1,30 +1,113 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Thu, 24 Sep 2020 12:40:30 +0000
-Subject: Re: [PATCH] mfd: sm501: Fix leaks in probe()
-Message-Id: <20200924124030.GK4678@dell>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Sep 2020 13:46:51 +0000
+Subject: [PATCH v2] mm/hmm/test: use after free in dmirror_allocate_chunk()
+Message-Id: <20200924134651.GA1586456@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200911113326.GB367487@mwanda>
-In-Reply-To: <20200911113326.GB367487@mwanda>
+In-Reply-To: <c25729e4-8a53-07e3-ae98-d77919f3ac21@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ben Dooks <ben@fluff.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Vincent Sanders <vince@arm.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Jason Gunthorpe <jgg@ziepe.ca>, Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 11 Sep 2020, Dan Carpenter wrote:
+The error handling code does this:
 
-> This code should clean up if sm501_init_dev() fails.
-> 
-> Fixes: b6d6454fdb66 ("[PATCH] mfd: SM501 core driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/mfd/sm501.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+err_free:
+	kfree(devmem);
+        ^^^^^^^^^^^^^
+err_release:
+	release_mem_region(devmem->pagemap.range.start, range_len(&devmem->pagemap.range));
+                           ^^^^^^^^
+The problem is that when we use "devmem->pagemap.range.start" the
+"devmem" pointer is either NULL or freed.
 
-Applied, thanks.
+Neither the allocation nor the call to request_free_mem_region() has to
+be done under the lock so I moved those to the start of the function.
 
+Fixes: b2ef9f5a5cb3 ("mm/hmm/test: add selftest driver for HMM")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  The first version introduced a locking bug
+
+ lib/test_hmm.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index c8133f50160b..e151a7f10519 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -459,6 +459,22 @@ static bool dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 	unsigned long pfn_last;
+ 	void *ptr;
+ 
++	devmem = kzalloc(sizeof(*devmem), GFP_KERNEL);
++	if (!devmem)
++		return -ENOMEM;
++
++	res = request_free_mem_region(&iomem_resource, DEVMEM_CHUNK_SIZE,
++				      "hmm_dmirror");
++	if (IS_ERR(res))
++		goto err_devmem;
++
++	devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
++	devmem->pagemap.range.start = res->start;
++	devmem->pagemap.range.end = res->end;
++	devmem->pagemap.nr_range = 1;
++	devmem->pagemap.ops = &dmirror_devmem_ops;
++	devmem->pagemap.owner = mdevice;
++
+ 	mutex_lock(&mdevice->devmem_lock);
+ 
+ 	if (mdevice->devmem_count = mdevice->devmem_capacity) {
+@@ -471,30 +487,14 @@ static bool dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 				sizeof(new_chunks[0]) * new_capacity,
+ 				GFP_KERNEL);
+ 		if (!new_chunks)
+-			goto err;
++			goto err_release;
+ 		mdevice->devmem_capacity = new_capacity;
+ 		mdevice->devmem_chunks = new_chunks;
+ 	}
+ 
+-	res = request_free_mem_region(&iomem_resource, DEVMEM_CHUNK_SIZE,
+-					"hmm_dmirror");
+-	if (IS_ERR(res))
+-		goto err;
+-
+-	devmem = kzalloc(sizeof(*devmem), GFP_KERNEL);
+-	if (!devmem)
+-		goto err_release;
+-
+-	devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
+-	devmem->pagemap.range.start = res->start;
+-	devmem->pagemap.range.end = res->end;
+-	devmem->pagemap.nr_range = 1;
+-	devmem->pagemap.ops = &dmirror_devmem_ops;
+-	devmem->pagemap.owner = mdevice;
+-
+ 	ptr = memremap_pages(&devmem->pagemap, numa_node_id());
+ 	if (IS_ERR(ptr))
+-		goto err_free;
++		goto err_release;
+ 
+ 	devmem->mdevice = mdevice;
+ 	pfn_first = devmem->pagemap.range.start >> PAGE_SHIFT;
+@@ -525,12 +525,12 @@ static bool dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 
+ 	return true;
+ 
+-err_free:
+-	kfree(devmem);
+ err_release:
+-	release_mem_region(devmem->pagemap.range.start, range_len(&devmem->pagemap.range));
+-err:
+ 	mutex_unlock(&mdevice->devmem_lock);
++	release_mem_region(devmem->pagemap.range.start, range_len(&devmem->pagemap.range));
++err_devmem:
++	kfree(devmem);
++
+ 	return false;
+ }
+ 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.28.0
