@@ -1,35 +1,46 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Sep 2020 07:35:30 +0000
-Subject: Re: [PATCH v2] soc: renesas: rmobile-sysc: Fix some leaks in rmobile_init_pm_domains()
-Message-Id: <CAMuHMdVgZTLExon1JCDmAZaM+iB_yngTQvoXEuFYw7fRF39aGw@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 24 Sep 2020 20:19:03 +0000
+Subject: Re: [Cocci] coccinelle: Convert comma to semicolons (was Re: [PATCH] checkpatch: Add test for comma 
+Message-Id: <87tuvn6i88.fsf@nanos.tec.linutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAMuHMdXyM1dUPJ7ZDAk6-cEjaG_bVBfsE=bqdpf7pA0ChdRLVw@mail.gmail.com>
- <20200923113142.GC1473821@mwanda>
-In-Reply-To: <20200923113142.GC1473821@mwanda>
+References: <20200818184107.f8af232fb58b17160c570874@linux-foundation.org>
+ <3bf27caf462007dfa75647b040ab3191374a59de.camel@perches.com>
+ <b0fd63e4b379eda69ee85ab098353582b8c054bb.camel@perches.com>
+ <alpine.DEB.2.22.394.2008201021400.2524@hadrien>
+ <a5713d8597065ef986f780499428fcc4cd31c003.camel@perches.com>
+ <alpine.DEB.2.22.394.2008201856110.2524@hadrien>
+ <744af177c09f8ce22c99d6e1df458bced558518b.camel@perches.com>
+ <162653.1598067338@turing-police>
+ <3836b482434bd0b9a609959d3696cc6113a93f2f.camel@perches.com>
+ <alpine.DEB.2.22.394.2008220905460.3150@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2008220905460.3150@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms+renesas@verge.net.au>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@inria.fr>, Joe Perches <joe@perches.com>
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernelnewbies <kernelnewbies@kernelnewbies.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Andy Whitcroft <apw@shadowen.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel-mentees@lists.linuxfoundation.org, cocci <cocci@systeme.lip6.fr>
 
-On Wed, Sep 23, 2020 at 1:31 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This code needs to call iounmap() on one error path.
+On Sat, Aug 22 2020 at 09:07, Julia Lawall wrote:
+> On Fri, 21 Aug 2020, Joe Perches wrote:
+>> True enough for a general statement, though the coccinelle
+>> script Julia provided does not change a single instance of
+>> for loop expressions with commas.
+>>
+>> As far as I can tell, no logic defect is introduced by the
+>> script at all.
 >
-> Fixes: 2173fc7cb681 ("ARM: shmobile: R-Mobile: Add DT support for PM domains")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  The v1 patch potentially led to a use after free.
+> The script has a rule to ensure that what is changed is part of a top
+> level statement that has the form e1, e2;.  I put that in to avoid
+> transforming cases where the comma is the body of a macro, but it protects
+> against for loop headers as well.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.11.
+Right. I went through the lot and did not find something dodgy. Except
+for two hunks this still applies. Can someone please send a proper patch
+with changelog/SOB etc. for this?
 
-Gr{oetje,eeting}s,
+And of course that script really wants to be part of the kernel cocci
+checks to catch further instances.
 
-                        Geert
+Thanks,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        tglx
