@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Thu, 24 Sep 2020 20:21:38 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 24 Sep 2020 20:33:06 +0000
 Subject: Re: [Cocci] coccinelle: Convert comma to semicolons (was Re: [PATCH] checkpatch: Add test for comma 
-Message-Id: <alpine.DEB.2.22.394.2009242221020.2615@hadrien>
+Message-Id: <6d5383a3ec02d89dd05797c3ae158aebdc0c88ae.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200818184107.f8af232fb58b17160c570874@linux-foundation.org>
  <3bf27caf462007dfa75647b040ab3191374a59de.camel@perches.com>
@@ -18,41 +18,30 @@ In-Reply-To: <87tuvn6i88.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernelnewbies <kernelnewbies@kernelnewbies.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Andy Whitcroft <apw@shadowen.org>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel-mentees@lists.linuxfoundation.org, cocci <cocci@systeme.lip6.fr>
+To: Thomas Gleixner <tglx@linutronix.de>, Julia Lawall <julia.lawall@inria.fr>
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernelnewbies <kernelnewbies@kernelnewbies.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Andy Whitcroft <apw@shadowen.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel-mentees@lists.linuxfoundation.org, cocci <cocci@systeme.lip6.fr>
 
-
-
-On Thu, 24 Sep 2020, Thomas Gleixner wrote:
-
+On Thu, 2020-09-24 at 22:19 +0200, Thomas Gleixner wrote:
 > On Sat, Aug 22 2020 at 09:07, Julia Lawall wrote:
 > > On Fri, 21 Aug 2020, Joe Perches wrote:
-> >> True enough for a general statement, though the coccinelle
-> >> script Julia provided does not change a single instance of
-> >> for loop expressions with commas.
-> >>
-> >> As far as I can tell, no logic defect is introduced by the
-> >> script at all.
-> >
+> > > True enough for a general statement, though the coccinelle
+> > > script Julia provided does not change a single instance of
+> > > for loop expressions with commas.
+> > > 
+> > > As far as I can tell, no logic defect is introduced by the
+> > > script at all.
+> > 
 > > The script has a rule to ensure that what is changed is part of a top
 > > level statement that has the form e1, e2;.  I put that in to avoid
 > > transforming cases where the comma is the body of a macro, but it protects
 > > against for loop headers as well.
->
+> 
 > Right. I went through the lot and did not find something dodgy. Except
 > for two hunks this still applies. Can someone please send a proper patch
 > with changelog/SOB etc. for this?
->
-> And of course that script really wants to be part of the kernel cocci
-> checks to catch further instances.
 
-I will try to get to it soon.  Thanks for checking all the cases.
+Treewide?
 
-julia
-
-
->
-> Thanks,
->
->         tglx
->
+Somebody no doubt would complain, but there
+_really should_ be some mechanism for these
+trivial and correct treewide changes...
