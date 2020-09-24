@@ -1,39 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 02 Sep 2020 22:41:44 +0000
-Subject: Re: [PATCH net] net: gemini: Fix another missing clk_disable_unprepare() in probe
-Message-Id: <20200902.154144.1959394275972532074.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Sep 2020 08:18:30 +0000
+Subject: [PATCH] drm/i915: Uninitialized variable in i915_gem_object_map_page()
+Message-Id: <20200924081830.GA1568157@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200902115631.GA286978@mwanda>
-In-Reply-To: <20200902115631.GA286978@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ulli.kroll@googlemail.com, wanghai38@huawei.com, linus.walleij@linaro.org, kuba@kernel.org, mirq-linux@rere.qmqm.pl, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Dave Airlie <airlied@redhat.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 2 Sep 2020 14:56:31 +0300
+The "i" iterator is never set to zero.  This probably doesn't affect
+testing because GCC sometimes initializes variables and also we have a
+new pluggin to initialize stack variables to zero.
 
-> We recently added some calls to clk_disable_unprepare() but we missed
-> the last error path if register_netdev() fails.
-> 
-> I made a couple cleanups so we avoid mistakes like this in the future.
-> First I reversed the "if (!ret)" condition and pulled the code in one
-> indent level.  Also, the "port->netdev = NULL;" is not required because
-> "port" isn't used again outside this function so I deleted that line.
-> 
-> Fixes: 4d5ae32f5e1e ("net: ethernet: Add a driver for Gemini gigabit ethernet")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 7edd32a9e614 ("drm/i915: use vmap in i915_gem_object_map")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Hi Andrew, this should probably go through the -mm tree and get folded
+into the original patch.
 
-Applied and queued up for -stable, thanks.
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Unrelated to your patch but...
-
->  	ret = register_netdev(netdev);
- ...
-> +	ret = gmac_setup_phy(netdev);
-
-Should we really be setting up the PHY after registering the netdev?
-
-The moment we register it, entities can try to bring the interface up
-and shouldn't we have the PHY bits all squared away before that?
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+index 90029ea83aed..12bedabc1daa 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+@@ -266,6 +266,7 @@ static void *i915_gem_object_map_page(struct drm_i915_gem_object *obj,
+ 			return NULL;
+ 	}
+ 
++	i = 0;
+ 	for_each_sgt_page(page, iter, obj->mm.pages)
+ 		pages[i++] = page;
+ 	vaddr = vmap(pages, n_pages, 0, pgprot);
+@@ -291,6 +292,7 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj)
+ 			return NULL;
+ 	}
+ 
++	i = 0;
+ 	for_each_sgt_daddr(addr, iter, obj->mm.pages)
+ 		pfns[i++] = (iomap + addr) >> PAGE_SHIFT;
+ 	vaddr = vmap_pfn(pfns, n_pfn, pgprot_writecombine(PAGE_KERNEL_IO));
+-- 
+2.28.0
