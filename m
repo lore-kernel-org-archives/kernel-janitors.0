@@ -1,36 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Sep 2020 12:27:41 +0000
-Subject: Re: [PATCH] staging: vchiq: silence an uninitialized variable warning
-Message-Id: <20200930122741.GB4282@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Sep 2020 13:22:24 +0000
+Subject: [PATCH] qtnfmac: fix resource leaks on unsupported iftype error return path
+Message-Id: <20200925132224.21638-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200930090238.GA621698@mwanda>
- <CAK8P3a1m3kaGK17A2ADgA7b9i7GeEYhX=xVoU=Yet8_T93Q2JA@mail.gmail.com>
-In-Reply-To: <CAK8P3a1m3kaGK17A2ADgA7b9i7GeEYhX=xVoU=Yet8_T93Q2JA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: driverdevel <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Jamal Shareef <jamal.k.shareef@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Igor Mitsyanko <imitsyanko@quantenna.com>, Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Avinash Patil <avinashp@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 12:22:37PM +0200, Arnd Bergmann wrote:
-> On Wed, Sep 30, 2020 at 11:02 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > Smatch complains that "userdata" can be passed to vchiq_bulk_transfer()
-> > without being initialized.  Smatch is correct, however, in that
-> > situation the "userdata" is not used so it doesn't cause a problem.
-> > Passing an uninitialized variable will trigger a UBSan warning at
-> > runtime so this warning is worth silencing by setting "userdata" to
-> > NULL.
-> >
-> > Fixes: a4367cd2b231 ("staging: vchiq: convert compat bulk transfer")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> The change looks fine, but I wonder if it's actually worse and the
-> uninitialized pointer can end up getting copied back to user space
-> in the completion.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah... Wow.  You're right.  I think I really need to resend this with a
-more accurate commit message.
+Currently if an unsupported iftype is detected the error return path
+does not free the cmd_skb leading to a resource leak. Fix this by
+free'ing cmd_skb.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Resource leak")
+Fixes: 805b28c05c8e ("qtnfmac: prepare for AP_VLAN interface type support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/commands.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index f40d8c3c3d9e..f3ccbd2b1084 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -869,6 +869,7 @@ int qtnf_cmd_send_del_intf(struct qtnf_vif *vif)
+ 	default:
+ 		pr_warn("VIF%u.%u: unsupported iftype %d\n", vif->mac->macid,
+ 			vif->vifid, vif->wdev.iftype);
++		dev_kfree_skb(cmd_skb);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1924,6 +1925,7 @@ int qtnf_cmd_send_change_sta(struct qtnf_vif *vif, const u8 *mac,
+ 		break;
+ 	default:
+ 		pr_err("unsupported iftype %d\n", vif->wdev.iftype);
++		dev_kfree_skb(cmd_skb);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.27.0
