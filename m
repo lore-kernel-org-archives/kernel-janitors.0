@@ -1,106 +1,78 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 25 Sep 2020 17:26:27 +0000
+From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+Date: Sat, 26 Sep 2020 19:11:44 +0000
 Subject: Re: [Cocci] coccinelle: Convert comma to semicolons (was Re: [PATCH] checkpatch: Add test for comma 
-Message-Id: <58673398c6b836ebd7509f787e6f0d10bfd751bc.camel@perches.com>
+Message-Id: <173999.1601147504@turing-police>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="==_Exmh_1601147504_3912P"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <87r1qqvo2d.fsf@nanos.tec.linutronix.de>
  <a53048f738dacc1c58654eb94e229de79d4f94c2.camel@perches.com>
  <alpine.DEB.2.22.394.2009251904540.2772@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2009251904540.2772@hadrien>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernelnewbies <kernelnewbies@kernelnewbies.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, cocci <cocci@systeme.lip6.fr>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel-mentees@lists.linuxfoundation.org, Andrew Morton <akpm@linux-foundation.org>
+ <58673398c6b836ebd7509f787e6f0d10bfd751bc.camel@perches.com>
+In-Reply-To: <58673398c6b836ebd7509f787e6f0d10bfd751bc.camel@perches.com>
+To: Joe Perches <joe@perches.com>
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, kernelnewbies <kernelnewbies@kernelnewbies.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, cocci <cocci@systeme.lip6.fr>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel-mentees@lists.linuxfoundation.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, 2020-09-25 at 19:06 +0200, Julia Lawall wrote:
-> On Thu, 24 Sep 2020, Joe Perches wrote:
-> > On Thu, 2020-09-24 at 23:53 +0200, Thomas Gleixner wrote:
-> > > On Thu, Sep 24 2020 at 13:33, Joe Perches wrote:
-> > > > On Thu, 2020-09-24 at 22:19 +0200, Thomas Gleixner wrote:
-> > > > > On Sat, Aug 22 2020 at 09:07, Julia Lawall wrote:
-> > > > > > On Fri, 21 Aug 2020, Joe Perches wrote:
-> > > > > > > True enough for a general statement, though the coccinelle
-> > > > > > > script Julia provided does not change a single instance of
-> > > > > > > for loop expressions with commas.
-> > > > > > > 
-> > > > > > > As far as I can tell, no logic defect is introduced by the
-> > > > > > > script at all.
-> > > > > > 
-> > > > > > The script has a rule to ensure that what is changed is part of a top
-> > > > > > level statement that has the form e1, e2;.  I put that in to avoid
-> > > > > > transforming cases where the comma is the body of a macro, but it protects
-> > > > > > against for loop headers as well.
-> > > > > 
-> > > > > Right. I went through the lot and did not find something dodgy. Except
-> > > > > for two hunks this still applies. Can someone please send a proper patch
-> > > > > with changelog/SOB etc. for this?
-> > > > 
-> > > > Treewide?
-> > > > 
-> > > > Somebody no doubt would complain, but there
-> > > > _really should_ be some mechanism for these
-> > > > trivial and correct treewide changes...
-> > > 
-> > > There are lots of mechanisms:
-> > 
-> > I've tried them all.
-> > 
-> > None of them work particularly well,
-> > especially the individual patch route.
-> > 
-> > >  - Andrew picks such changes up
-> > 
-> > Generally not treewide.
-> > 
-> > >  - With a few competent eyeballs on it (reviewers) this can go thorugh
-> > >    the trivial tree as well. It's more than obvious after all.
-> > 
-> > Jiri is almost non-existent when it comes to
-> > trivial treewide patches.
-> > 
-> > >  - Send the script to Linus with a proper change log attached and ask
-> > >    him to run it.
-> > 
-> > Linus has concerns about backports and what he
-> > deems trivialities.  Generally overblown IMO.
-> > 
-> > >  - In the worst case if nobody feels responsible, I'll take care.
-> > 
-> > If Julia doesn't send a new patch in the next few
-> > days, I will do the apply, fixup and resend of hers.
-> > 
-> > So, you're on-deck, nearly up...
-> > 
-> > > All of the above is better than trying to get the attention of a
-> > > gazillion of maintainters.
-> > 
-> > True.
-> > 
-> > And all of the treewide changes depend on some
-> > generic acceptance of value in the type of change.
-> > 
-> > Some believe that comma->semicolon conversions
-> > aren't useful as there isn't a logical change and
-> > the compiler output wouldn't be different.
-> 
-> I have a script that will cut up the patches and send them to the
-> appropriate maintainers, so I have no problem with that route.
+--==_Exmh_1601147504_3912P
+Content-Type: text/plain; charset=us-ascii
 
-I have a script that does that too.
+On Fri, 25 Sep 2020 10:26:27 -0700, Joe Perches said:
+> And the generic individual maintainer apply rate for
+> each specific patch is always less than 50%.
+>
+> For instance the patches that converted the comma uses
+> in if/do/while statements to use braces and semicolons
+> from a month ago:
 
-The complaint I get about its use is
-"OMG: My specific commit header style isn't followed"
+> 29 patches, 13 applied.
 
-And the generic individual maintainer apply rate for
-each specific patch is always less than 50%.
+To be fair, it's *always* been hard to get pure style patches applied, because
+they usually hit one of two types of code, with different results:
 
-For instance the patches that converted the comma uses
-in if/do/while statements to use braces and semicolons
-from a month ago:
+Some of them hit code that's been stable for a long time - and those patches
+don't get applied because of the (admittedly small) risk that a "style" patch
+may actually break something - yes, that *does* happen often enough to worry a
+risk-adverse subtree maintainer.
 
-https://lore.kernel.org/lkml/cover.1598331148.git.joe@perches.com/
+Some of them hit code that's actively being worked on - and those patches don't
+get applied because they can cause merge conflicts.
 
-29 patches, 13 applied.
+This is a hard problem to fix, because it's difficult to say that either of
+those viewpoints is *totally* wrong. At best, you can make the case that some
+maintainers are a tad over-zealous on their attitude. And since its *hard* to
+find good maintainers, it's not possible to fix the problem by just putting
+somebody else in charge of a subtree. It's theoretically possible to bypass a
+problematic maintainer by sending the patch to the person one level up, or
+directly to Linus - but although that usually works if you have an urgent patch
+and the maintainer is on vacation or stubborn or whatever, that's got
+essentially zero chance of succeeding for a mere style patch.
 
-Best of luck.
+Unfortunately, although I understand the problem, I don't have a solution. It's
+easy to tactfully say "this code is wrong, and here is the fix".  It's a lot
+harder to find a tactful way to say "This person is wrong and should do it this
+way", because code doesn't fight back when you offer constructive criticism....
+
+
+
+--==_Exmh_1601147504_3912P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBX2+ScAdmEQWDXROgAQI8Ag//YKel+oxk8JlWyUFEbQz41v44EhWHlykN
+LLlOnRINghANJbunFpoUgD+KW9I9mPy8MmbdF+SeQq8fT+g5qfIwsYNsTeJI/Bu8
+K3ksbdy6qcuqO5ZmfqS9d1VYykaAXbIi1OqTa6gkX60EU+c1zLuCo78gFyO0c27T
+193bWbUG7iCkEXN3261e+a8p1XvQOUtRULuedBbyUQ9GmIEv8oLOMErq4YSBVx5t
+k/FKSrRfu5ZesBbxOOzGpPQXMpq64vwatpcZlNs6fKZjnzgmCYtnSzMCZ13bhkGE
+zPQQs1Ak0c1GmBVTlZVYHUNNLG4SKdHchF9yKZ5gooqLu1eWEg6O5WxeMWAjIQ1d
+qbxKveWY0E8xj0PM//BgyZraCRrAT8KGcpXjFEWtsw07dKD3hnpdXg2PlrX972v2
+BPk+M7pGEe/qZJPdGiptefli6zxtuv+hQI9sVif99+FRQ3RlKx4/xte1O7iKn3/N
+wzXNZ7pFG0UPGIkM5pEzUWv1VmBXoZqDT9qqanHNZDkRjYuv0IouI0QWaZ5v363E
+SOK0YBnHPUHA+bMOek59eof91yAwzgCqUrmAlZ3T/AKKHY1jUIujKbr/zVhAfa9b
+x0mn/NSmOmLc86BSgNKrAhxkbfoOzPnwnMVx1AHMhzZ43mlsaNyDz09SomWDWkzX
+GcnpFZnyRSo=
+=Cdbo
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1601147504_3912P--
