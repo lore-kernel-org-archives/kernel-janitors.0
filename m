@@ -1,45 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Sep 2020 12:30:36 +0000
-Subject: [PATCH v2] staging: vchiq: Fix an uninitialized variable
-Message-Id: <20200930123036.GC4282@kadam>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:14 +0000
+Subject: [PATCH 04/18] hwrng: stm32 - use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-5-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <CAK8P3a1m3kaGK17A2ADgA7b9i7GeEYhX=xVoU=Yet8_T93Q2JA@mail.gmail.com>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc: devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Matt Mackall <mpm@selenic.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alexandre Torgue <alexandre.torgue@st.com>
 
-Smatch complains that "userdata" can be passed to vchiq_bulk_transfer()
-without being initialized.  This leads to a potential information leak
-later on.
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-Fixes: a4367cd2b231 ("staging: vchiq: convert compat bulk transfer")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
-v2: update commit message.
+ drivers/char/hw_random/stm32-rng.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 590415561b73..71b962777da5 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -952,7 +952,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- {
- 	struct vchiq_service *service;
- 	struct bulk_waiter_node *waiter = NULL;
--	void *userdata;
-+	void *userdata = NULL;
- 	int status = 0;
- 	int ret;
+diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
+index 38324c2ddda1..bc22178f83e8 100644
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -145,12 +145,12 @@ static int stm32_rng_probe(struct platform_device *ofdev)
  
--- 
-2.28.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ 	dev_set_drvdata(dev, priv);
+ 
+-	priv->rng.name = dev_driver_string(dev),
++	priv->rng.name = dev_driver_string(dev);
+ #ifndef CONFIG_PM
+-	priv->rng.init = stm32_rng_init,
+-	priv->rng.cleanup = stm32_rng_cleanup,
++	priv->rng.init = stm32_rng_init;
++	priv->rng.cleanup = stm32_rng_cleanup;
+ #endif
+-	priv->rng.read = stm32_rng_read,
++	priv->rng.read = stm32_rng_read;
+ 	priv->rng.priv = (unsigned long) dev;
+ 	priv->rng.quality = 900;
+ 
