@@ -1,161 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 09 Sep 2020 07:33:38 +0000
-Subject: Re: [PATCH v2] rtlwifi: switch from 'pci_' to 'dma_' API
-Message-Id: <0101017471c8ca79-31863cec-baa0-43f6-96c2-bd34f321a002-000000@us-west-2.amazonses.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:20 +0000
+Subject: [PATCH 10/18] clk: meson: use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200907193828.318233-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200907193828.318233-1-christophe.jaillet@wanadoo.fr>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: pkshih@realtek.com, davem@davemloft.net, kuba@kernel.org, Larry.Finger@lwfinger.net, straube.linux@gmail.com, zhengbin13@huawei.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Joe Perches <joe@perches.com>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> The only file where some GFP_ flags are updated is 'pci.c'.
-> 
-> When memory is allocated in '_rtl_pci_init_tx_ring()' and
-> '_rtl_pci_init_rx_ring()' GFP_KERNEL can be used because both functions are
-> called from a probe function and no spinlock is taken.
-> 
-> The call chain is:
->   rtl_pci_probe
->     --> rtl_pci_init
->       --> _rtl_pci_init_trx_ring
->         --> _rtl_pci_init_rx_ring
->         --> _rtl_pci_init_tx_ring
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-0dc0b5c29be2 rtlwifi: switch from 'pci_' to 'dma_' API
+---
+ drivers/clk/meson/meson-aoclk.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-https://patchwork.kernel.org/patch/11762141/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index bf8bea675d24..3a6d84cd6601 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -57,7 +57,7 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 	rstc->data = data;
+ 	rstc->regmap = regmap;
+ 	rstc->reset.ops = &meson_aoclk_reset_ops;
+-	rstc->reset.nr_resets = data->num_reset,
++	rstc->reset.nr_resets = data->num_reset;
+ 	rstc->reset.of_node = dev->of_node;
+ 	ret = devm_reset_controller_register(dev, &rstc->reset);
+ 	if (ret) {
