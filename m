@@ -1,34 +1,46 @@
-From: Ralph Campbell <rcampbell@nvidia.com>
-Date: Thu, 24 Sep 2020 19:25:11 +0000
-Subject: Re: [PATCH v2] mm/hmm/test: use after free in dmirror_allocate_chunk()
-Message-Id: <eb06e0c8-327e-6677-c393-139dffdf0dbe@nvidia.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:22 +0000
+Subject: [PATCH 12/18] ACPI: use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-13-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200924134651.GA1586456@mwanda>
-In-Reply-To: <20200924134651.GA1586456@mwanda>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-On 9/24/20 6:46 AM, Dan Carpenter wrote:
-> The error handling code does this:
-> 
-> err_free:
-> 	kfree(devmem);
->          ^^^^^^^^^^^^^
-> err_release:
-> 	release_mem_region(devmem->pagemap.range.start, range_len(&devmem->pagemap.range));
->                             ^^^^^^^^
-> The problem is that when we use "devmem->pagemap.range.start" the
-> "devmem" pointer is either NULL or freed.
-> 
-> Neither the allocation nor the call to request_free_mem_region() has to
-> be done under the lock so I moved those to the start of the function.
-> 
-> Fixes: b2ef9f5a5cb3 ("mm/hmm/test: add selftest driver for HMM")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Looks good.
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/acpi/processor_idle.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index f66236cff69b..85502143f506 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -1077,7 +1077,9 @@ static int acpi_processor_get_lpi_info(struct acpi_processor *pr)
+ 		/* flatten all the LPI states in this level of hierarchy */
+ 		flatten_lpi_states(pr, curr, prev);
+ 
+-		tmp = prev, prev = curr, curr = tmp;
++		tmp = prev;
++		prev = curr;
++		curr = tmp;
+ 
+ 		status = acpi_get_parent(handle, &pr_ahandle);
+ 	}
