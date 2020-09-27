@@ -1,33 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 09 Sep 2020 03:17:16 +0000
-Subject: Re: [PATCH] hippi: switch from 'pci_' to 'dma_' API
-Message-Id: <20200908.201716.965139535841943259.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:25 +0000
+Subject: [PATCH 15/18] counter: use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-16-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200908200839.323530-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200908200839.323530-1-christophe.jaillet@wanadoo.fr>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jes@trained-monkey.org, kuba@kernel.org, linux-hippi@sunsite.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue,  8 Sep 2020 22:08:39 +0200
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'rr_init_one()' GFP_KERNEL can be used because
-> it is a probe function and no spinlock is taken in the between.
-> 
-> When memory is allocated in 'rr_open()' GFP_KERNEL can be used because
-> it is a '.ndo_open' function (see struct net_device_ops) and no spinlock is
-> taken in the between.
-> '.ndo_open' functions are synchronized using the rtnl_lock() semaphore.
- ...
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/counter/ti-eqep.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
+index 1ff07faef27f..e27771df8e23 100644
+--- a/drivers/counter/ti-eqep.c
++++ b/drivers/counter/ti-eqep.c
+@@ -439,7 +439,7 @@ static int ti_eqep_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 
+ 	counter_unregister(&priv->counter);
+-	pm_runtime_put_sync(dev),
++	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+ 
+ 	return 0;
