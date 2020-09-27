@@ -1,50 +1,44 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Date: Wed, 02 Sep 2020 11:04:27 +0000
-Subject: Re: [PATCH] rpmsg: Avoid double-free in mtk_rpmsg_register_device()
-Message-Id: <CANMq1KBJTpnYG59B1V=y_emqD3dtMZQAPY9bWJOC8FW2fNRgsA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:19 +0000
+Subject: [PATCH 09/18] clk: mvebu: ap80x-cpu: use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-10-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9f4fb922-4aa3-0b63-6d81-c83daefd13b9@web.de>
-In-Reply-To: <9f4fb922-4aa3-0b63-6d81-c83daefd13b9@web.de>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, kernel-janitors@vger.kernel.org, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Pi-Hsun Shih <pihsun@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 2, 2020 at 5:33 PM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > If rpmsg_register_device fails, it will call
-> > mtk_rpmsg_release_device which already frees mdev.
->
-> Can another imperative wording become helpful for the change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=9c7d619be5a002ea29c172df5e3c1227c22cbb41#n151
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-Looking at your posting history, I'll leave it up to the maintainer.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-> …
-> > +++ b/drivers/rpmsg/mtk_rpmsg.c
-> > @@ -220,10 +220,8 @@  static int mtk_rpmsg_register_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-> >       rpdev->dev.release = mtk_rpmsg_release_device;
-> >
-> >       ret = rpmsg_register_device(rpdev);
-> > -     if (ret) {
-> > -             kfree(mdev);
-> > +     if (ret)
-> >               return ret;
-> > -     }
-> >
-> >       return 0;
-> >  }
->
->
-> * How do you think about to use the following code variant instead?
->
->         return rpmsg_register_device(rpdev);
->
-> * Would you like to omit the variable “ret” for this function implementation?
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-That's a good suggestion, I'll update and send a v2.
+---
+ drivers/clk/mvebu/ap-cpu-clk.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Regards,
-> Markus
+diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
+index 6b394302c76a..b4259b60dcfd 100644
+--- a/drivers/clk/mvebu/ap-cpu-clk.c
++++ b/drivers/clk/mvebu/ap-cpu-clk.c
+@@ -197,7 +197,7 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	stable_bit = BIT(clk->pll_regs->ratio_state_offset +
+ 			 clk->cluster *
+-			 clk->pll_regs->ratio_state_cluster_offset),
++			 clk->pll_regs->ratio_state_cluster_offset);
+ 	ret = regmap_read_poll_timeout(clk->pll_cr_base,
+ 				       clk->pll_regs->ratio_state_reg, reg,
+ 				       reg & stable_bit, STATUS_POLL_PERIOD_US,
