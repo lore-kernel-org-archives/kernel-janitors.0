@@ -1,33 +1,50 @@
-From: Saeed Mahameed <saeed@kernel.org>
-Date: Mon, 28 Sep 2020 23:21:47 +0000
-Subject: Re: [PATCH net-next] net/mlx5e: Fix a use after free on error in mlx5_tc_ct_shared_counter_get()
-Message-Id: <1017ab3724b83818c03dfa7661b3f31827a7f62f.camel@kernel.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:16 +0000
+Subject: [PATCH 06/18] hwrng: iproc-rng200 - use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200928090556.GA377727@mwanda>
-         <20200928.122952.688062131867166420.davem@davemloft.net>
-In-Reply-To: <20200928.122952.688062131867166420.davem@davemloft.net>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, dan.carpenter@oracle.com
-Cc: leon@kernel.org, kuba@kernel.org, roid@mellanox.com, ozsh@mellanox.com, paulb@mellanox.com, elibr@mellanox.com, lariel@nvidia.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-crypto@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 
-On Mon, 2020-09-28 at 12:29 -0700, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Mon, 28 Sep 2020 12:05:56 +0300
-> 
-> > This code frees "shared_counter" and then dereferences on the next
-> line
-> > to get the error code.
-> > 
-> > Fixes: 1edae2335adf ("net/mlx5e: CT: Use the same counter for both
-> directions")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Saeed, I assume you will pick this up.
-> 
-> Thank you.
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-Applied to net-next-mlx5.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Thanks
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/char/hw_random/iproc-rng200.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/hw_random/iproc-rng200.c b/drivers/char/hw_random/iproc-rng200.c
+index 32d9fe61a225..01583faf9893 100644
+--- a/drivers/char/hw_random/iproc-rng200.c
++++ b/drivers/char/hw_random/iproc-rng200.c
+@@ -195,10 +195,10 @@ static int iproc_rng200_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->base);
+ 	}
+ 
+-	priv->rng.name = "iproc-rng200",
+-	priv->rng.read = iproc_rng200_read,
+-	priv->rng.init = iproc_rng200_init,
+-	priv->rng.cleanup = iproc_rng200_cleanup,
++	priv->rng.name = "iproc-rng200";
++	priv->rng.read = iproc_rng200_read;
++	priv->rng.init = iproc_rng200_init;
++	priv->rng.cleanup = iproc_rng200_cleanup;
+ 
+ 	/* Register driver */
+ 	ret = devm_hwrng_register(dev, &priv->rng);
