@@ -1,199 +1,63 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 01 Sep 2020 09:35:21 +0000
-Subject: Re: [PATCH] rtlwifi: switch from 'pci_' to 'dma_' API
-Message-Id: <20200901093521.0FB3EC43391@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 27 Sep 2020 19:12:13 +0000
+Subject: [PATCH 03/18] [ARM] pata_icside: use semicolons rather than commas to separate statements
+Message-Id: <1601233948-11629-4-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200820144604.144521-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200820144604.144521-1-christophe.jaillet@wanadoo.fr>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: pkshih@realtek.com, davem@davemloft.net, kuba@kernel.org, Larry.Finger@lwfinger.net, straube.linux@gmail.com, zhengbin13@huawei.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> The only file where some GFP_ flags are updated is 'pci.c'.
-> 
-> When memory is allocated in '_rtl_pci_init_tx_ring()' and
-> '_rtl_pci_init_rx_ring()' GFP_KERNEL can be used because both functions are
-> called from a probe function and no spinlock is taken.
-> 
-> The call chain is:
->   rtl_pci_probe
->     --> rtl_pci_init
->       --> _rtl_pci_init_trx_ring
->         --> _rtl_pci_init_rx_ring
->         --> _rtl_pci_init_tx_ring
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Tested-by: Larry Finger <Larry.Finger@lwfinger.net> for rtl8821ae.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Failed to apply, please rebase on top of wireless-drivers-next.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Recorded preimage for 'drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c'
-Recorded preimage for 'drivers/net/wireless/realtek/rtlwifi/rtl8192ce/trx.c'
-Recorded preimage for 'drivers/net/wireless/realtek/rtlwifi/rtl8723be/trx.c'
-error: Failed to merge in the changes.
-Applying: rtlwifi: switch from 'pci_' to 'dma_' API
-Using index info to reconstruct a base tree...
-M	drivers/net/wireless/realtek/rtlwifi/pci.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8192ce/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8192se/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8723ae/trx.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-M	drivers/net/wireless/realtek/rtlwifi/rtl8723be/trx.c
-Falling back to patching base and 3-way merge...
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8723be/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8723be/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8723ae/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8723ae/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8192se/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8192se/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8192ce/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8192ce/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
-Auto-merging drivers/net/wireless/realtek/rtlwifi/pci.c
-Patch failed at 0001 rtlwifi: switch from 'pci_' to 'dma_' API
-The copy of the patch that failed is found in: .git/rebase-apply/patch
+---
+ drivers/ata/pata_icside.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Patch set to Changes Requested.
-
--- 
-https://patchwork.kernel.org/patch/11726377/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/ata/pata_icside.c b/drivers/ata/pata_icside.c
+index 08543aeb0093..498383cb6e29 100644
+--- a/drivers/ata/pata_icside.c
++++ b/drivers/ata/pata_icside.c
+@@ -202,14 +202,19 @@ static void pata_icside_set_dmamode(struct ata_port *ap, struct ata_device *adev
+ 	 * Choose the IOMD cycle timing which ensure that the interface
+ 	 * satisfies the measured active, recovery and cycle times.
+ 	 */
+-	if (t.active <= 50 && t.recover <= 375 && t.cycle <= 425)
+-		iomd_type = 'D', cycle = 187;
+-	else if (t.active <= 125 && t.recover <= 375 && t.cycle <= 500)
+-		iomd_type = 'C', cycle = 250;
+-	else if (t.active <= 200 && t.recover <= 550 && t.cycle <= 750)
+-		iomd_type = 'B', cycle = 437;
+-	else
+-		iomd_type = 'A', cycle = 562;
++	if (t.active <= 50 && t.recover <= 375 && t.cycle <= 425) {
++		iomd_type = 'D';
++		cycle = 187;
++	} else if (t.active <= 125 && t.recover <= 375 && t.cycle <= 500) {
++		iomd_type = 'C';
++		cycle = 250;
++	} else if (t.active <= 200 && t.recover <= 550 && t.cycle <= 750) {
++		iomd_type = 'B';
++		cycle = 437;
++	} else {
++		iomd_type = 'A';
++		cycle = 562;
++	}
+ 
+ 	ata_dev_info(adev, "timings: act %dns rec %dns cyc %dns (%c)\n",
+ 		     t.active, t.recover, t.cycle, iomd_type);
