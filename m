@@ -1,24 +1,83 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 13 Sep 2020 21:21:28 +0000
-Subject: Re: [PATCH] tulip: windbond-840: Fix a debug message
-Message-Id: <20200913.142128.1235029815519306771.davem@davemloft.net>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 28 Sep 2020 12:44:57 +0000
+Subject: [PATCH -next for tip:x86/pti] x86/tlb: drop unneeded local vars in enable_l1d_flush_for_task()
+Message-Id: <20200928124457.27289-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200913070107.352166-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200913070107.352166-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: kuba@kernel.org, hkallweit1@gmail.com, gustavoars@kernel.org, vaibhavgupta40@gmail.com, mst@redhat.com, leon@kernel.org, linux-parisc@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Balbir Singh <sblbir@amazon.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 13 Sep 2020 09:01:07 +0200
+Commit b6724f118d44 ("prctl: Hook L1D flushing in via prctl") checks the
+validity for enable_l1d_flush_for_task() and introduces some superfluous
+local variables for that implementation.
 
-> 'w89c840_open()' is incorrectly reported in a debug message. Use __func__
-> instead.
-> 
-> While at it, fix some style issue in the same function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+make clang-analyzer on x86_64 tinyconfig caught my attention with:
 
-Applied.
+  arch/x86/mm/tlb.c:332:2: warning: Value stored to 'cpu' is never read \
+  [clang-analyzer-deadcode.DeadStores]
+
+Compilers will detect these superfluous local variables and assignment and
+optimize this anyway. So, the resulting binary is identical before and
+after this change.
+
+Simplify the code and remove superfluous local variables to make
+clang-analyzer happy.
+
+No functional change. No change in binary with supported compilers.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20200925
+
+Balbir, please review and ack.
+Thomas, please pick this minor non-urgent clean-up patch into the x86/pti
+branch of tip as follow-up to: 
+https://lore.kernel.org/lkml/160026187842.15536.285514864386042510.tip-bot2@tip-bot2/
+
+I quickly confirmed that the binary did not change with this change to the
+source code; The hash of tlb.o remained the same before and after the change.
+
+So, in my setup:
+md5sum tlb.o
+7c7e096bab0fd87bd2c8437d8c7dc3fa  tlb.o
+
+linux-safety, please verify and validate this change.
+
+ arch/x86/mm/tlb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 6b0f4c88b07c..90515c04d90a 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -316,7 +316,7 @@ EXPORT_SYMBOL_GPL(leave_mm);
+ 
+ int enable_l1d_flush_for_task(struct task_struct *tsk)
+ {
+-	int cpu, ret = 0, i;
++	int i;
+ 
+ 	/*
+ 	 * Do not enable L1D_FLUSH_OUT if
+@@ -329,7 +329,7 @@ int enable_l1d_flush_for_task(struct task_struct *tsk)
+ 			!static_cpu_has(X86_FEATURE_FLUSH_L1D))
+ 		return -EINVAL;
+ 
+-	cpu = get_cpu();
++	get_cpu();
+ 
+ 	for_each_cpu(i, &tsk->cpus_mask) {
+ 		if (cpu_data(i).smt_active = true) {
+@@ -340,7 +340,7 @@ int enable_l1d_flush_for_task(struct task_struct *tsk)
+ 
+ 	set_ti_thread_flag(&tsk->thread_info, TIF_SPEC_L1D_FLUSH);
+ 	put_cpu();
+-	return ret;
++	return 0;
+ }
+ 
+ int disable_l1d_flush_for_task(struct task_struct *tsk)
+-- 
+2.17.1
