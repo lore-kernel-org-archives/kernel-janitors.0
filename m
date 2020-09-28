@@ -1,50 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2020 17:41:53 +0000
-Subject: [PATCH 1/2 net-next] net/mlx5e: TC: Fix IS_ERR() vs NULL checks
-Message-Id: <20200928174153.GA446008@mwanda>
+From: Ariel Levkovich <lariel@nvidia.com>
+Date: Mon, 28 Sep 2020 18:31:04 +0000
+Subject: Re: [PATCH 1/2 net-next] net/mlx5e: TC: Fix IS_ERR() vs NULL checks
+Message-Id: <3F057952-3C88-452F-BFC5-4DC2B87FAD67@nvidia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20200928174153.GA446008@mwanda>
+In-Reply-To: <20200928174153.GA446008@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Roi Dayan <roid@mellanox.com>, Ariel Levkovich <lariel@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Roi Dayan <roid@mellanox.com>, Ariel Levkovich <lariel@mellanox.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The mlx5_tc_ct_init() function doesn't return error pointers it returns
-NULL.  Also we need to set the error codes on this path.
-
-Fixes: aedd133d17bc ("net/mlx5e: Support CT offload for tc nic flows")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-index 104b1c339de0..438fbcf478d1 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-@@ -5224,8 +5224,10 @@ int mlx5e_tc_nic_init(struct mlx5e_priv *priv)
- 
- 	tc->ct = mlx5_tc_ct_init(priv, tc->chains, &priv->fs.tc.mod_hdr,
- 				 MLX5_FLOW_NAMESPACE_KERNEL);
--	if (IS_ERR(tc->ct))
-+	if (!tc->ct) {
-+		err = -ENOMEM;
- 		goto err_ct;
-+	}
- 
- 	tc->netdevice_nb.notifier_call = mlx5e_tc_netdev_event;
- 	err = register_netdevice_notifier_dev_net(priv->netdev,
-@@ -5300,8 +5300,10 @@ int mlx5e_tc_esw_init(struct rhashtable *tc_ht)
- 					       esw_chains(esw),
- 					       &esw->offloads.mod_hdr,
- 					       MLX5_FLOW_NAMESPACE_FDB);
--	if (IS_ERR(uplink_priv->ct_priv))
-+	if (!uplink_priv->ct_priv) {
-+		err = -ENOMEM;
- 		goto err_ct;
-+	}
- 
- 	mapping = mapping_create(sizeof(struct tunnel_match_key),
- 				 TUNNEL_INFO_BITS_MASK, true);
--- 
-2.28.0
+T24gU2VwIDI4LCAyMDIwLCBhdCAxMzo0MiwgRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
+cmFjbGUuY29tPiB3cm90ZToNCj4gDQo+IO+7v1RoZSBtbHg1X3RjX2N0X2luaXQoKSBmdW5jdGlv
+biBkb2Vzbid0IHJldHVybiBlcnJvciBwb2ludGVycyBpdCByZXR1cm5zDQo+IE5VTEwuICBBbHNv
+IHdlIG5lZWQgdG8gc2V0IHRoZSBlcnJvciBjb2RlcyBvbiB0aGlzIHBhdGguDQo+IA0KPiBGaXhl
+czogYWVkZDEzM2QxN2JjICgibmV0L21seDVlOiBTdXBwb3J0IENUIG9mZmxvYWQgZm9yIHRjIG5p
+YyBmbG93cyIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJA
+b3JhY2xlLmNvbT4NCj4gLS0tDQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUv
+Y29yZS9lbl90Yy5jIHwgOCArKysrKystLQ0KPiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25z
+KCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVy
+bmV0L21lbGxhbm94L21seDUvY29yZS9lbl90Yy5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVs
+bGFub3gvbWx4NS9jb3JlL2VuX3RjLmMNCj4gaW5kZXggMTA0YjFjMzM5ZGUwLi40MzhmYmNmNDc4
+ZDEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29y
+ZS9lbl90Yy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29y
+ZS9lbl90Yy5jDQo+IEBAIC01MjI0LDggKzUyMjQsMTAgQEAgaW50IG1seDVlX3RjX25pY19pbml0
+KHN0cnVjdCBtbHg1ZV9wcml2ICpwcml2KQ0KPiANCj4gICAgdGMtPmN0ID0gbWx4NV90Y19jdF9p
+bml0KHByaXYsIHRjLT5jaGFpbnMsICZwcml2LT5mcy50Yy5tb2RfaGRyLA0KPiAgICAgICAgICAg
+ICAgICAgTUxYNV9GTE9XX05BTUVTUEFDRV9LRVJORUwpOw0KPiAtICAgIGlmIChJU19FUlIodGMt
+PmN0KSkNCj4gKyAgICBpZiAoIXRjLT5jdCkgew0KPiArICAgICAgICBlcnIgPSAtRU5PTUVNOw0K
+PiAgICAgICAgZ290byBlcnJfY3Q7DQo+ICsgICAgfQ0KDQpIaSBEYW4sDQpUaGF0IHdhcyBpbXBs
+ZW1lbnQgbGlrZSB0aGF0IG9uIHB1cnBvc2UuIElmIG1seDVfdGNfaW5pdF9jdCByZXR1cm5zIE5V
+TEwgaXQgbWVhbnMgdGhlIGRldmljZSBkb2VzbuKAmXQgc3VwcG9ydCBDVCBvZmZsb2FkIHdoaWNo
+IGNhbiBoYXBwZW4gd2l0aCBvbGRlciBkZXZpY2VzIG9yIG9sZCBGVyBvbiB0aGUgZGV2aWNlcy4N
+Ckhvd2V2ZXIsIGluIHRoaXMgY2FzZSB3ZSB3YW50IHRvIGNvbnRpbnVlIHdpdGggdGhlIHJlc3Qg
+b2YgdGhlIFRjIGluaXRpYWxpemF0aW9uIGJlY2F1c2Ugd2UgY2FuIHN0aWxsIHN1cHBvcnQgb3Ro
+ZXIgVEMgb2ZmbG9hZHMuIE5vIG5lZWQgdG8gZmFpbCB0aGUgZW50aXJlIFRDIGluaXQgaW4gdGhp
+cyBjYXNlLiBPbmx5IGlmIG1seDVfdGNfaW5pdF9jdCByZXR1cm4gZXJyX3B0ciB0aGF0IG1lYW5z
+IHRoZSB0YyBpbml0IGZhaWxlZCBub3QgYmVjYXVzZSBvZiBsYWNrIG9mIHN1cHBvcnQgYnV0IGR1
+ZSB0byBhIHJlYWwgZXJyb3IgYW5kIG9ubHkgdGhlbiB3ZSB3YW50IHRvIGZhaWwgdGhlIHJlc3Qg
+b2YgdGhlIHRjIGluaXQuDQoNCllvdXIgY2hhbmdlIHdpbGwgYnJlYWsgY29tcGF0aWJpbGl0eSBm
+b3IgZGV2aWNlcy9GVyB2ZXJzaW9ucyB0aGF0IGRvbuKAmXQgaGF2ZSBDVCBvZmZsb2FkIHN1cHBv
+cnQuDQoNCkFyaWVsDQoNCj4gDQo+ICAgIHRjLT5uZXRkZXZpY2VfbmIubm90aWZpZXJfY2FsbCA9
+IG1seDVlX3RjX25ldGRldl9ldmVudDsNCj4gICAgZXJyID0gcmVnaXN0ZXJfbmV0ZGV2aWNlX25v
+dGlmaWVyX2Rldl9uZXQocHJpdi0+bmV0ZGV2LA0KPiBAQCAtNTMwMCw4ICs1MzAwLDEwIEBAIGlu
+dCBtbHg1ZV90Y19lc3dfaW5pdChzdHJ1Y3Qgcmhhc2h0YWJsZSAqdGNfaHQpDQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgZXN3X2NoYWlucyhlc3cpLA0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICZlc3ctPm9mZmxvYWRzLm1vZF9oZHIsDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgTUxYNV9GTE9XX05BTUVTUEFDRV9GREIpOw0KPiAtICAgIGlmIChJU19FUlIodXBsaW5rX3By
+aXYtPmN0X3ByaXYpKQ0KPiArICAgIGlmICghdXBsaW5rX3ByaXYtPmN0X3ByaXYpIHsNCj4gKyAg
+ICAgICAgZXJyID0gLUVOT01FTTsNCj4gICAgICAgIGdvdG8gZXJyX2N0Ow0KPiArICAgIH0NCj4g
+DQo+ICAgIG1hcHBpbmcgPSBtYXBwaW5nX2NyZWF0ZShzaXplb2Yoc3RydWN0IHR1bm5lbF9tYXRj
+aF9rZXkpLA0KPiAgICAgICAgICAgICAgICAgVFVOTkVMX0lORk9fQklUU19NQVNLLCB0cnVlKTsN
+Cj4gLS0gDQo+IDIuMjguMA0KPiANCg=
