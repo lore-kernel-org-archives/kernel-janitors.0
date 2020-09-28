@@ -1,63 +1,80 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:13 +0000
-Subject: [PATCH 03/18] [ARM] pata_icside: use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-4-git-send-email-Julia.Lawall@inria.fr>
+From: Joe Perches <joe@perches.com>
+Date: Mon, 28 Sep 2020 16:47:45 +0000
+Subject: Re: [PATCH 03/18] [ARM] pata_icside: use semicolons rather than commas to separate statements
+Message-Id: <8cf2fad1659acd756703deb106d55483bd1e1eb9.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+         <1601233948-11629-4-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-4-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+On Sun, 2020-09-27 at 21:12 +0200, Julia Lawall wrote:
+> Replace commas with semicolons.  What is done is essentially described by
+> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+Hi Julia.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+How did you decide on this patch subject header line?
 
----
- drivers/ata/pata_icside.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+It's certainly reasonable, but not what I would expect
+from any automation.
 
-diff --git a/drivers/ata/pata_icside.c b/drivers/ata/pata_icside.c
-index 08543aeb0093..498383cb6e29 100644
---- a/drivers/ata/pata_icside.c
-+++ b/drivers/ata/pata_icside.c
-@@ -202,14 +202,19 @@ static void pata_icside_set_dmamode(struct ata_port *ap, struct ata_device *adev
- 	 * Choose the IOMD cycle timing which ensure that the interface
- 	 * satisfies the measured active, recovery and cycle times.
- 	 */
--	if (t.active <= 50 && t.recover <= 375 && t.cycle <= 425)
--		iomd_type = 'D', cycle = 187;
--	else if (t.active <= 125 && t.recover <= 375 && t.cycle <= 500)
--		iomd_type = 'C', cycle = 250;
--	else if (t.active <= 200 && t.recover <= 550 && t.cycle <= 750)
--		iomd_type = 'B', cycle = 437;
--	else
--		iomd_type = 'A', cycle = 562;
-+	if (t.active <= 50 && t.recover <= 375 && t.cycle <= 425) {
-+		iomd_type = 'D';
-+		cycle = 187;
-+	} else if (t.active <= 125 && t.recover <= 375 && t.cycle <= 500) {
-+		iomd_type = 'C';
-+		cycle = 250;
-+	} else if (t.active <= 200 && t.recover <= 550 && t.cycle <= 750) {
-+		iomd_type = 'B';
-+		cycle = 437;
-+	} else {
-+		iomd_type = 'A';
-+		cycle = 562;
-+	}
- 
- 	ata_dev_info(adev, "timings: act %dns rec %dns cyc %dns (%c)\n",
- 		     t.active, t.recover, t.cycle, iomd_type);
+A somewhat common method of finding the most commonly used
+"git log" subject line doesn't easily provide a similar heading.
+
+$ git log --no-merges --format='%s' drivers/ata/pata_icside.c
+treewide: Add SPDX license identifier for more missed files
+libata: remove ata_sff_data_xfer_noirq()
+scsi: rename SCSI_MAX_{SG, SG_CHAIN}_SEGMENTS
+Drivers: ata: remove __dev* attributes.
+ata: Convert ata_<foo>_printk(KERN_<LEVEL> to ata_<foo>_<level>
+libata-sff: separate out BMDMA irq handler
+libata-sff: separate out BMDMA EH
+libata-sff: clean up BMDMA initialization
+libata-sff: clean up inheritance in several drivers
+include cleanup: Update gfp.h and slab.h includes to prepare for breaking implicit slab.h inclusion from percpu.h
+[libata] convert drivers to use ata.h mode mask defines
+[ARM] dma: Use sensible DMA parameters for Acorn drivers
+[ARM] dma: pata_icside's contiguous sg array is now redundant
+libata-sff: Fix oops reported in kerneloops.org for pnp devices with no ctl
+libata: rename SFF port ops
+libata: rename SFF functions
+libata: make reset related methods proper port operations
+libata: implement and use ops inheritance
+libata: implement and use SHT initializers
+libata: implement and use ata_noop_irq_clear()
+libata: eliminate the home grown dma padding in favour of
+libata: convert to chained sg
+Fix pata_icside build for recent libata API changes
+libata: implement and use ata_port_desc() to report port configuration
+[libata] Remove ->port_disable() hook
+[libata] Remove ->irq_ack() hook, and ata_dummy_irq_on()
+[ARM] pata_icside: fix the FIXMEs
+[libata] PATA drivers: remove ATA_FLAG_SRST
+[ARM] pata_icside: fix build errors
+[ARM] ecard: add ecardm_iomap() / ecardm_iounmap()
+[ARM] ecard: add helper function for setting ecard irq ops
+[ARM] Add support for ICSIDE interface on RiscPC
+
+$ git log --no-merges --format='%s' drivers/ata/pata_icside.c | \
+  cut -f1 -d":" | sort | uniq -c | sort -rn
+     10 libata
+      5 libata-sff
+      2 [ARM] pata_icside
+      2 [ARM] ecard
+      2 [ARM] dma
+      1 treewide
+      1 scsi
+      1 [libata] Remove ->port_disable() hook
+      1 [libata] Remove ->irq_ack() hook, and ata_dummy_irq_on()
+      1 [libata] PATA drivers
+      1 [libata] convert drivers to use ata.h mode mask defines
+      1 include cleanup
+      1 Fix pata_icside build for recent libata API changes
+      1 Drivers
+      1 ata
+      1 [ARM] Add support for ICSIDE interface on RiscPC
