@@ -1,62 +1,44 @@
-From: "SAM THONG" <samthong5555@gmail.com>
-Date: Thu, 24 Sep 2020 17:10:09 +0000
-Subject: Business Acquisition 1
-Message-Id: <WIN-DAONO245HJFgoRr00e6fb78@WIN-DAONO245HJF>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2020 17:45:15 +0000
+Subject: [bug report] dpaa2-mac: add PCS support through the Lynx module
+Message-Id: <20200928174515.GB446603@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hello Ioana Ciornei,
 
+The patch 94ae899b2096: "dpaa2-mac: add PCS support through the Lynx
+module" from Sep 23, 2020, leads to the following static checker
+warning:
 
-Dear sir
+	drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c:296 dpaa2_pcs_destroy()
+	warn: variable dereferenced before check 'pcs' (see line 294)
 
-Our underwriter company is seeking the attention of genuine and reliable persons, companies
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c
+   291  static void dpaa2_pcs_destroy(struct dpaa2_mac *mac)
+   292  {
+   293          struct lynx_pcs *pcs = mac->pcs;
+   294          struct device *dev = &pcs->mdio->dev;
+                                      ^^^^^^^^^
+Dereference
 
-who are indeed in need of funds as investment capital or business expansion in form of a
+   295  
+   296          if (pcs) {
+                    ^^^
+Checked too late.  It looks like "pcs" can be NULL because I get a
+warning in the caller as well.
 
-direct loan to partner with us and benefit in our new Loan and Project funding programs.
+  drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c:389 dpaa2_mac_connect()
+  error: we previously assumed 'mac->pcs' could be null (see line 373)
 
+   297                  lynx_pcs_destroy(pcs);
+   298                  put_device(dev);
+   299                  mac->pcs = NULL;
+   300          }
+   301  }
 
-
-We offer flexible loans and funding for various projects at very affordable low interest
-
-rate of 3% annually for a period of 1-15 years on Non collateral loan/funding . We offer
-
-loan/funding from a minimum of Euro ? / USD$ 1 Million to Euro ? / USD$ 1 Billion. Max,
-
-depending on the nature of business/project.
-
-We are currently funding for:-
-
-
-
-* Starting up a Franchise
-
-* Business Acquisition
-
-* Business Expansion
-
-* Commercial Real Estate purchase
-
-* Consultancy and Contract Execution, Marine , ETC.
-
-
-
-Kindly get in touch for further details and procedure. samthong5555@yahoo.com 
-
-
-
-Respectfully,
-
-
-SAM THONG
-
-
-
-
-
-
-
-	
+regards,
+dan carpenter
