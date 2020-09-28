@@ -1,88 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2020 09:11:03 +0000
-Subject: [PATCH] staging: vchiq: Fix list_for_each exit tests
-Message-Id: <20200928091103.GC377727@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 28 Sep 2020 15:52:37 +0000
+Subject: [PATCH][next] net/mlx5: fix dereference on pointer flow before null check
+Message-Id: <20200928155237.130739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>
+To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Vlad Buslov <vladbu@nvidia.com>, Roi Dayan <roid@mellanox.com>, Ariel Levkovich <lariel@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This code code here used to be list_for_each() and after the loop then
-the "entry" pointer was non-NULL if we found the correct entry or NULL
-if we couldn't find it.  Then we changed the code to use list_for_each_entry()
-and so now the "entry" pointer is always non-NULL when we exit the loop.
+From: Colin Ian King <colin.king@canonical.com>
 
-I have introduced a new "found" variable to say if we found the correct
-enty or not.  I fixed one test by making it an else statement because
-that was more readable than testing "if (!found)".
+Currently pointer flow is being dereferenced before it is being
+null checked. Fix this by adding a null check for flow and parse_attr
+earlier.  Also change the err_free path to explicitly return -ENOMEM
+and remove the need for the err return variable.
 
-Fixes: 46e4b9ec4fa4 ("staging: vchiq_arm: use list_for_each_entry when accessing bulk_waiter_list")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Dereference before null")
+Fixes: c620b772152b ("net/mlx5: Refactor tc flow attributes structure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c    | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index bb0cc9cb96e9..c25fc559cd36 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -430,6 +430,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 	struct vchiq_service *service;
- 	enum vchiq_status status;
- 	struct bulk_waiter_node *waiter = NULL;
-+	bool found = false;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index f815b0c60a6c..a2fa2d22d695 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -4534,20 +4534,20 @@ mlx5e_alloc_flow(struct mlx5e_priv *priv, int attr_size,
+ 	struct mlx5e_tc_flow_parse_attr *parse_attr;
+ 	struct mlx5_flow_attr *attr;
+ 	struct mlx5e_tc_flow *flow;
+-	int out_index, err;
++	int out_index;
  
- 	service = find_service_by_handle(handle);
- 	if (!service)
-@@ -443,12 +444,13 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 	list_for_each_entry(waiter, &instance->bulk_waiter_list, list) {
- 		if (waiter->pid = current->pid) {
- 			list_del(&waiter->list);
-+			found = true;
- 			break;
- 		}
- 	}
- 	mutex_unlock(&instance->bulk_waiter_list_mutex);
+ 	flow = kzalloc(sizeof(*flow), GFP_KERNEL);
+ 	parse_attr = kvzalloc(sizeof(*parse_attr), GFP_KERNEL);
++	if (!parse_attr || !flow)
++		goto err_free;
  
--	if (waiter) {
-+	if (found) {
- 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
+ 	flow->flags = flow_flags;
+ 	flow->cookie = f->cookie;
+ 	flow->priv = priv;
  
- 		if (bulk) {
-@@ -464,9 +466,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 				spin_unlock(&bulk_waiter_spinlock);
- 			}
- 		}
+ 	attr = mlx5_alloc_flow_attr(get_flow_name_space(flow));
+-	if (!parse_attr || !flow || !attr) {
+-		err = -ENOMEM;
+-		goto err_free;
 -	}
--
--	if (!waiter) {
-+	} else {
- 		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
- 		if (!waiter) {
- 			vchiq_log_error(vchiq_core_log_level,
-@@ -945,6 +945,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- {
- 	struct vchiq_service *service;
- 	struct bulk_waiter_node *waiter = NULL;
-+	bool found = false;
- 	int status = 0;
- 	int ret;
++	if (!attr)
++		goto err_free_flow;
+ 	flow->attr = attr;
  
-@@ -967,11 +968,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- 				    list) {
- 			if (waiter->pid = current->pid) {
- 				list_del(&waiter->list);
-+				found = true;
- 				break;
- 			}
- 		}
- 		mutex_unlock(&instance->bulk_waiter_list_mutex);
--		if (!waiter) {
-+		if (!found) {
- 			vchiq_log_error(vchiq_arm_log_level,
- 				"no bulk_waiter found for pid %d",
- 				current->pid);
+ 	for (out_index = 0; out_index < MLX5_MAX_FLOW_FWD_VPORTS; out_index++)
+@@ -4562,11 +4562,12 @@ mlx5e_alloc_flow(struct mlx5e_priv *priv, int attr_size,
+ 
+ 	return 0;
+ 
+-err_free:
++err_free_flow:
+ 	kfree(flow);
++err_free:
+ 	kvfree(parse_attr);
+ 	kfree(attr);
+-	return err;
++	return -ENOMEM;
+ }
+ 
+ static void
 -- 
-2.28.0
+2.27.0
