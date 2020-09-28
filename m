@@ -1,65 +1,60 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 29 Sep 2020 01:25:57 +0000
-Subject: Re: [PATCH v3] mm/hmm/test: use after free in dmirror_allocate_chunk()
-Message-Id: <CAPcyv4gnUrpGrrk=zq8_OTU6+448AMue+w93vB2dQM-uauR7RQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2020 09:13:00 +0000
+Subject: [PATCH] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
+Message-Id: <20200928091300.GD377727@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1b31586-426a-e0b1-803e-3eff30196c05@web.de> <20200926121402.GA7467@kadam>
- <20200926221720.GK9916@ziepe.ca> <20200928175237.6b3024fe6ad96d70c75d5de1@linux-foundation.org>
-In-Reply-To: <20200928175237.6b3024fe6ad96d70c75d5de1@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, Markus Elfring <Markus.Elfring@web.de>, Wei Yongjun <weiyongjun1@huawei.com>, Ralph Campbell <rcampbell@nvidia.com>, Linux MM <linux-mm@kvack.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>
+Cc: Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Jayamohan Kallickal <jayamohank@HDRedirect-LB5-1afb6e2973825a56.elb.us-east-1.amazonaws.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 5:52 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Sat, 26 Sep 2020 19:17:20 -0300 Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> > On Sat, Sep 26, 2020 at 03:14:02PM +0300, Dan Carpenter wrote:
-> > > The error handling code does this:
-> > >
-> > > err_free:
-> > >     kfree(devmem);
-> > >         ^^^^^^^^^^^^^
-> > > err_release:
-> > >     release_mem_region(devmem->pagemap.range.start, range_len(&devmem->pagemap.range));
-> > >                            ^^^^^^^^
-> > > The problem is that when we use "devmem->pagemap.range.start" the
-> > > "devmem" pointer is either NULL or freed.
-> > >
-> > > Neither the allocation nor the call to request_free_mem_region() has to
-> > > be done under the lock so I moved those to the start of the function.
-> > >
-> > > Fixes: 1f9c4bb986d9 ("mm/memremap_pages: convert to 'struct range'")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
-> > > ---
-> > > v2: The first version introduced a locking bug
-> > > v3: Markus Elfring pointed out that the Fixes tag was wrong.  This bug
-> > > was in the original commit and then fixed and then re-introduced.  I was
-> > > quite bothered by how this bug lasted so long in the source code, but
-> > > now we know.  As soon as it is introduced we fixed it.
-> > >
-> > > One problem with the kernel QC process is that I think everyone marks
-> > > the bug as "old/dealt with" so it was only because I was added a new
-> > > check for resource leaks that it was found when it was re-introduced.
-> > >
-> > >  lib/test_hmm.c | 44 ++++++++++++++++++++++----------------------
-> > >  1 file changed, 22 insertions(+), 22 deletions(-)
-> >
-> > Hi Andrew,
-> >
-> > I don't have have any hmm related patches this cycle, can you take
-> > this into your tree?
-> >
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->
-> Thanks.
->
-> It's actually a fix against Dan Williams' -mm patch "mm/memremap_pages:
-> convert to 'struct range'"
+The be_fill_queue() function can only fail when "eq_vaddress" is NULL
+and since it's non-NULL here that means the function call can't fail.
+But imagine if it could, then in that situation we would want to store
+the "paddr" so that dma memory can be released.
 
-Yes, sorry, for the fix:
+Fixes: bfead3b2cb46 ("[SCSI] be2iscsi: Adding msix and mcc_rings V3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/be2iscsi/be_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index 5c3513a4b450..202ba925c494 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -3020,6 +3020,7 @@ static int beiscsi_create_eqs(struct beiscsi_hba *phba,
+ 			goto create_eq_error;
+ 		}
+ 
++		mem->dma = paddr;
+ 		mem->va = eq_vaddress;
+ 		ret = be_fill_queue(eq, phba->params.num_eq_entries,
+ 				    sizeof(struct be_eq_entry), eq_vaddress);
+@@ -3029,7 +3030,6 @@ static int beiscsi_create_eqs(struct beiscsi_hba *phba,
+ 			goto create_eq_error;
+ 		}
+ 
+-		mem->dma = paddr;
+ 		ret = beiscsi_cmd_eq_create(&phba->ctrl, eq,
+ 					    BEISCSI_EQ_DELAY_DEF);
+ 		if (ret) {
+@@ -3086,6 +3086,7 @@ static int beiscsi_create_cqs(struct beiscsi_hba *phba,
+ 			goto create_cq_error;
+ 		}
+ 
++		mem->dma = paddr;
+ 		ret = be_fill_queue(cq, phba->params.num_cq_entries,
+ 				    sizeof(struct sol_cqe), cq_vaddress);
+ 		if (ret) {
+@@ -3095,7 +3096,6 @@ static int beiscsi_create_cqs(struct beiscsi_hba *phba,
+ 			goto create_cq_error;
+ 		}
+ 
+-		mem->dma = paddr;
+ 		ret = beiscsi_cmd_cq_create(&phba->ctrl, cq, eq, false,
+ 					    false, 0);
+ 		if (ret) {
+-- 
+2.28.0
