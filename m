@@ -1,32 +1,45 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Wed, 09 Sep 2020 06:35:52 +0000
-Subject: Re: [PATCH v2] HID: roccat: add bounds checking in kone_sysfs_write_settings()
-Message-Id: <nycvar.YFH.7.76.2009090835410.4671@cbobk.fhfr.pm>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2020 09:05:56 +0000
+Subject: [PATCH net-next] net/mlx5e: Fix a use after free on error in mlx5_tc_ct_shared_counter_get()
+Message-Id: <20200928090556.GA377727@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200824085735.GA208317@mwanda>
-In-Reply-To: <20200824085735.GA208317@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Roi Dayan <roid@mellanox.com>, Oz Shlomo <ozsh@mellanox.com>, Paul Blakey <paulb@mellanox.com>, Eli Britstein <elibr@mellanox.com>, Ariel Levkovich <lariel@nvidia.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 24 Aug 2020, Dan Carpenter wrote:
+This code frees "shared_counter" and then dereferences on the next line
+to get the error code.
 
-> This code doesn't check if "settings->startup_profile" is within bounds
-> and that could result in an out of bounds array access.  What the code
-> does do is it checks if the settings can be written to the firmware, so
-> it's possible that the firmware has a bounds check?  It's safer and
-> easier to verify when the bounds checking is done in the kernel.
-> 
-> Fixes: 14bf62cde794 ("HID: add driver for Roccat Kone gaming mouse")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  In the v1 patch I added a check against settings->size but that's
-> potentially too strict so it was removed.
+Fixes: 1edae2335adf ("net/mlx5e: CT: Use the same counter for both directions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied, thanks Dan.
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c
+index b5f8ed30047b..cea2070af9af 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c
+@@ -739,6 +739,7 @@ mlx5_tc_ct_shared_counter_get(struct mlx5_tc_ct_priv *ct_priv,
+ 	struct mlx5_core_dev *dev = ct_priv->dev;
+ 	struct mlx5_ct_entry *rev_entry;
+ 	__be16 tmp_port;
++	int ret;
+ 
+ 	/* get the reversed tuple */
+ 	tmp_port = rev_tuple.port.src;
+@@ -778,8 +779,9 @@ mlx5_tc_ct_shared_counter_get(struct mlx5_tc_ct_priv *ct_priv,
+ 	shared_counter->counter = mlx5_fc_create(dev, true);
+ 	if (IS_ERR(shared_counter->counter)) {
+ 		ct_dbg("Failed to create counter for ct entry");
++		ret = PTR_ERR(shared_counter->counter);
+ 		kfree(shared_counter);
+-		return ERR_PTR(PTR_ERR(shared_counter->counter));
++		return ERR_PTR(ret);
+ 	}
+ 
+ 	refcount_set(&shared_counter->refcount, 1);
 -- 
-Jiri Kosina
-SUSE Labs
+2.28.0
