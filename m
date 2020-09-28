@@ -1,63 +1,38 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:29 +0000
-Subject: [PATCH 06/20] media: gspca: ov534-ov772x: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-7-git-send-email-Julia.Lawall@inria.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2020 17:42:37 +0000
+Subject: [PATCH 2/2 net-next] net/mlx5e: TC: Fix potential Oops in mlx5e_tc_unoffload_from_slow_path()
+Message-Id: <20200928174237.GA446603@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <20200928174153.GA446008@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Vlad Buslov <vladbu@nvidia.com>, Ariel Levkovich <lariel@mellanox.com>, Roi Dayan <roid@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+If "slow_attr" is NULL then this function will Oops.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Fixes: c620b772152b ("net/mlx5: Refactor tc flow attributes structure")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/gspca/ov534.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/gspca/ov534.c b/drivers/media/usb/gspca/ov534.c
-index 9a11158f38da..8b6a57f170d0 100644
---- a/drivers/media/usb/gspca/ov534.c
-+++ b/drivers/media/usb/gspca/ov534.c
-@@ -1220,9 +1220,9 @@ static int sd_init_controls(struct gspca_dev *gspca_dev)
- 	int hflip_def;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index 438fbcf478d1..854153d02778 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -1238,8 +1238,10 @@ mlx5e_tc_unoffload_from_slow_path(struct mlx5_eswitch *esw,
+ 	struct mlx5_flow_attr *slow_attr;
  
- 	if (sd->sensor = SENSOR_OV767x) {
--		saturation_min = 0,
--		saturation_max = 6,
--		saturation_def = 3,
-+		saturation_min = 0;
-+		saturation_max = 6;
-+		saturation_def = 3;
- 		brightness_min = -127;
- 		brightness_max = 127;
- 		brightness_def = 0;
-@@ -1233,9 +1233,9 @@ static int sd_init_controls(struct gspca_dev *gspca_dev)
- 		exposure_def = 0x13;
- 		hflip_def = 1;
- 	} else {
--		saturation_min = 0,
--		saturation_max = 255,
--		saturation_def = 64,
-+		saturation_min = 0;
-+		saturation_max = 255;
-+		saturation_def = 64;
- 		brightness_min = 0;
- 		brightness_max = 255;
- 		brightness_def = 0;
+ 	slow_attr = mlx5_alloc_flow_attr(MLX5_FLOW_NAMESPACE_FDB);
+-	if (!slow_attr)
++	if (!slow_attr) {
+ 		mlx5_core_warn(flow->priv->mdev, "Unable to unoffload slow path rule\n");
++		return;
++	}
+ 
+ 	memcpy(slow_attr, flow->attr, ESW_FLOW_ATTR_SZ);
+ 	slow_attr->action = MLX5_FLOW_CONTEXT_ACTION_FWD_DEST;
+-- 
+2.28.0
