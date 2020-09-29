@@ -1,18 +1,20 @@
 From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:21 +0000
-Subject: [PATCH 11/18] clocksource/drivers/mps2-timer: use semicolons rather than commas to separate statemen
-Message-Id: <1601233948-11629-12-git-send-email-Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:36 +0000
+Subject: [PATCH 13/20] media: radio-sf16fmr2: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-14-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Liviu Dudau <liviu.dudau@arm.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
 // <smpl>
 @@ expression e1,e2; @@
@@ -26,23 +28,19 @@ e2
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/clocksource/mps2-timer.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/radio/radio-sf16fmr2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/mps2-timer.c b/drivers/clocksource/mps2-timer.c
-index 2e64d984c83a..efe8cad8f2a5 100644
---- a/drivers/clocksource/mps2-timer.c
-+++ b/drivers/clocksource/mps2-timer.c
-@@ -149,9 +149,9 @@ static int __init mps2_clockevent_init(struct device_node *np)
- 	ce->clkevt.rating = 200;
- 	ce->clkevt.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
- 	ce->clkevt.cpumask = cpu_possible_mask;
--	ce->clkevt.set_state_shutdown	= mps2_timer_shutdown,
--	ce->clkevt.set_state_periodic	= mps2_timer_set_periodic,
--	ce->clkevt.set_state_oneshot	= mps2_timer_shutdown,
-+	ce->clkevt.set_state_shutdown	= mps2_timer_shutdown;
-+	ce->clkevt.set_state_periodic	= mps2_timer_set_periodic;
-+	ce->clkevt.set_state_oneshot	= mps2_timer_shutdown;
- 	ce->clkevt.set_next_event	= mps2_timer_set_next_event;
+diff --git a/drivers/media/radio/radio-sf16fmr2.c b/drivers/media/radio/radio-sf16fmr2.c
+index bd323e640f1a..0388894cfe41 100644
+--- a/drivers/media/radio/radio-sf16fmr2.c
++++ b/drivers/media/radio/radio-sf16fmr2.c
+@@ -215,7 +215,7 @@ static int fmr2_probe(struct fmr2 *fmr2, struct device *pdev, int io)
+ 			return -EBUSY;
  
- 	/* Ensure timer is disabled */
+ 	strscpy(fmr2->v4l2_dev.name, "radio-sf16fmr2",
+-		sizeof(fmr2->v4l2_dev.name)),
++		sizeof(fmr2->v4l2_dev.name));
+ 	fmr2->io = io;
+ 
+ 	if (!request_region(fmr2->io, 2, fmr2->v4l2_dev.name)) {
