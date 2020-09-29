@@ -1,37 +1,46 @@
-From: Keita Suzuki <keitasuzuki.park@sslab.ics.keio.ac.jp>
-Date: Fri, 11 Sep 2020 12:49:46 +0000
-Subject: Re: [PATCH] qedr: fix resource leak in qedr_create_qp
-Message-Id: <CAEYrHjmsd4Sp2R54y55pVL3CXr1KXedoBnTEczCBkpE9+SsFNg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:38 +0000
+Subject: [PATCH 15/20] media: au0828: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-16-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f79159af-4408-dc2f-6efa-45c5b45cf2d9@web.de> <CAEYrHj=pfGB7OuHt90t2aaawr31W9XZCHeHJurt3o0rK44jZ+A@mail.gmail.com>
- <59440849-23b1-9c69-ecf6-78f8a0b82c7a@web.de>
-In-Reply-To: <59440849-23b1-9c69-ecf6-78f8a0b82c7a@web.de>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-rdma@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Ariel Elior <aelior@marvell.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Michal Kalderon <mkalderon@marvell.com>, Takafumi Kubota <takafumi@sslab.ics.keio.ac.jp>, Yuval Bason <yuval.bason@cavium.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-thank you for the comment.
-I will fix the line break and re-post the patch
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-Thanks,
-Keita
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-2020年9月11日(金) 4:48 Markus Elfring <Markus.Elfring@web.de>:
->
-> > I will re-label the goto statements and post the patch as version 2.
->
-> Thanks for such a positive feedback.
->
->
-> Another suggestion:
->
-> > > Fixes: 1212767e23bb ("qedr: Add wrapping generic structure for qpidr and
-> > > adjust idr routines.")
->
-> Please omit a line break for this tag.
->
-> Regards,
-> Markus
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/media/usb/au0828/au0828-video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index aa5bc6a2ae20..5c4bac5a4ec7 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -248,7 +248,7 @@ static int au0828_init_isoc(struct au0828_dev *dev, int max_packets,
+ 		memset(dev->isoc_ctl.transfer_buffer[i], 0, sb_size);
+ 
+ 		pipe = usb_rcvisocpipe(dev->usbdev,
+-				       dev->isoc_in_endpointaddr),
++				       dev->isoc_in_endpointaddr);
+ 
+ 		usb_fill_int_urb(urb, dev->usbdev, pipe,
+ 				 dev->isoc_ctl.transfer_buffer[i], sb_size,
