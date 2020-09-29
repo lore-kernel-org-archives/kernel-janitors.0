@@ -1,47 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 Sep 2020 21:47:31 +0000
-Subject: [PATCH] staging/emxx_udc: fix indenting issue on a couple of statements
-Message-Id: <20200918214731.48750-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:42 +0000
+Subject: [PATCH 19/20] media: exynos4-is: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-20-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-A couple of statements are indented too deeply, remove the
-extraneous tabs.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- drivers/staging/emxx_udc/emxx_udc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-core.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
-index 4ceaf1ead123..a30b4f5b199b 100644
---- a/drivers/staging/emxx_udc/emxx_udc.c
-+++ b/drivers/staging/emxx_udc/emxx_udc.c
-@@ -2163,8 +2163,8 @@ static int _nbu2ss_enable_controller(struct nbu2ss_udc *udc)
- 
- 	_nbu2ss_writel(&udc->p_regs->AHBSCTR, WAIT_MODE);
- 
--		_nbu2ss_writel(&udc->p_regs->AHBMCTR,
--			       HBUSREQ_MODE | HTRANS_MODE | WBURST_TYPE);
-+	_nbu2ss_writel(&udc->p_regs->AHBMCTR,
-+		       HBUSREQ_MODE | HTRANS_MODE | WBURST_TYPE);
- 
- 	while (!(_nbu2ss_readl(&udc->p_regs->EPCTR) & PLL_LOCK)) {
- 		waitcnt++;
-@@ -2175,7 +2175,7 @@ static int _nbu2ss_enable_controller(struct nbu2ss_udc *udc)
+diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
+index 08d1f39a914c..db6e548fe08e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/exynos4-is/fimc-core.c
+@@ -214,11 +214,13 @@ static int fimc_get_scaler_factor(u32 src, u32 tar, u32 *ratio, u32 *shift)
+ 	while (sh--) {
+ 		u32 tmp = 1 << sh;
+ 		if (src >= tar * tmp) {
+-			*shift = sh, *ratio = tmp;
++			*shift = sh;
++			*ratio = tmp;
+ 			return 0;
  		}
  	}
+-	*shift = 0, *ratio = 1;
++	*shift = 0;
++	*ratio = 1;
+ 	return 0;
+ }
  
--		_nbu2ss_bitset(&udc->p_regs->UTMI_CHARACTER_1, USB_SQUSET);
-+	_nbu2ss_bitset(&udc->p_regs->UTMI_CHARACTER_1, USB_SQUSET);
- 
- 	_nbu2ss_bitset(&udc->p_regs->USB_CONTROL, (INT_SEL | SOF_RCV));
- 
--- 
-2.27.0
