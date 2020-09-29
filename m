@@ -1,18 +1,20 @@
 From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 27 Sep 2020 19:12:17 +0000
-Subject: [PATCH 07/18] hwrng: mxc-rnga - use semicolons rather than commas to separate statements
-Message-Id: <1601233948-11629-8-git-send-email-Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:37 +0000
+Subject: [PATCH 14/20] media: mt2060: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-15-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Mackall <mpm@selenic.com>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace commas with semicolons.  What is done is essentially described by
-the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
 // <smpl>
 @@ expression e1,e2; @@
@@ -26,23 +28,19 @@ e2
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/char/hw_random/mxc-rnga.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/tuners/mt2060.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/hw_random/mxc-rnga.c b/drivers/char/hw_random/mxc-rnga.c
-index 025083c838f5..008763c988ed 100644
---- a/drivers/char/hw_random/mxc-rnga.c
-+++ b/drivers/char/hw_random/mxc-rnga.c
-@@ -143,9 +143,9 @@ static int __init mxc_rnga_probe(struct platform_device *pdev)
- 	mxc_rng->dev = &pdev->dev;
- 	mxc_rng->rng.name = "mxc-rnga";
- 	mxc_rng->rng.init = mxc_rnga_init;
--	mxc_rng->rng.cleanup = mxc_rnga_cleanup,
--	mxc_rng->rng.data_present = mxc_rnga_data_present,
--	mxc_rng->rng.data_read = mxc_rnga_data_read,
-+	mxc_rng->rng.cleanup = mxc_rnga_cleanup;
-+	mxc_rng->rng.data_present = mxc_rnga_data_present;
-+	mxc_rng->rng.data_read = mxc_rnga_data_read;
+diff --git a/drivers/media/tuners/mt2060.c b/drivers/media/tuners/mt2060.c
+index 0e7ac2b49990..204e6186bf71 100644
+--- a/drivers/media/tuners/mt2060.c
++++ b/drivers/media/tuners/mt2060.c
+@@ -215,7 +215,7 @@ static int mt2060_set_params(struct dvb_frontend *fe)
+ 	f_lo2 = f_lo1 - freq - IF2;
+ 	// From the Comtech datasheet, the step used is 50kHz. The tuner chip could be more precise
+ 	f_lo2 = ((f_lo2 + 25) / 50) * 50;
+-	priv->frequency =  (f_lo1 - f_lo2 - IF2) * 1000,
++	priv->frequency =  (f_lo1 - f_lo2 - IF2) * 1000;
  
- 	mxc_rng->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(mxc_rng->clk)) {
+ #ifdef MT2060_SPURCHECK
+ 	// LO-related spurs detection and correction
