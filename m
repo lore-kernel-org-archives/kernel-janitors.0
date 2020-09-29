@@ -1,44 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2020 17:45:15 +0000
-Subject: [bug report] dpaa2-mac: add PCS support through the Lynx module
-Message-Id: <20200928174515.GB446603@mwanda>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:41 +0000
+Subject: [PATCH 18/20] media: rtl2832: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-19-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Ioana Ciornei,
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-The patch 94ae899b2096: "dpaa2-mac: add PCS support through the Lynx
-module" from Sep 23, 2020, leads to the following static checker
-warning:
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-	drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c:296 dpaa2_pcs_destroy()
-	warn: variable dereferenced before check 'pcs' (see line 294)
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c
-   291  static void dpaa2_pcs_destroy(struct dpaa2_mac *mac)
-   292  {
-   293          struct lynx_pcs *pcs = mac->pcs;
-   294          struct device *dev = &pcs->mdio->dev;
-                                      ^^^^^^^^^
-Dereference
+---
+ drivers/media/dvb-frontends/rtl2832.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-   295  
-   296          if (pcs) {
-                    ^^^
-Checked too late.  It looks like "pcs" can be NULL because I get a
-warning in the caller as well.
-
-  drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c:389 dpaa2_mac_connect()
-  error: we previously assumed 'mac->pcs' could be null (see line 373)
-
-   297                  lynx_pcs_destroy(pcs);
-   298                  put_device(dev);
-   299                  mac->pcs = NULL;
-   300          }
-   301  }
-
-regards,
-dan carpenter
+diff --git a/drivers/media/dvb-frontends/rtl2832.c b/drivers/media/dvb-frontends/rtl2832.c
+index e5bffaaeed38..01dcc7f1b9b2 100644
+--- a/drivers/media/dvb-frontends/rtl2832.c
++++ b/drivers/media/dvb-frontends/rtl2832.c
+@@ -1056,13 +1056,13 @@ static int rtl2832_probe(struct i2c_client *client,
+ 	dev->sleeping = true;
+ 	INIT_DELAYED_WORK(&dev->i2c_gate_work, rtl2832_i2c_gate_work);
+ 	/* create regmap */
+-	dev->regmap_config.reg_bits =  8,
+-	dev->regmap_config.val_bits =  8,
+-	dev->regmap_config.volatile_reg = rtl2832_volatile_reg,
+-	dev->regmap_config.max_register = 5 * 0x100,
+-	dev->regmap_config.ranges = regmap_range_cfg,
+-	dev->regmap_config.num_ranges = ARRAY_SIZE(regmap_range_cfg),
+-	dev->regmap_config.cache_type = REGCACHE_NONE,
++	dev->regmap_config.reg_bits =  8;
++	dev->regmap_config.val_bits =  8;
++	dev->regmap_config.volatile_reg = rtl2832_volatile_reg;
++	dev->regmap_config.max_register = 5 * 0x100;
++	dev->regmap_config.ranges = regmap_range_cfg;
++	dev->regmap_config.num_ranges = ARRAY_SIZE(regmap_range_cfg);
++	dev->regmap_config.cache_type = REGCACHE_NONE;
+ 	dev->regmap = regmap_init_i2c(client, &dev->regmap_config);
+ 	if (IS_ERR(dev->regmap)) {
+ 		ret = PTR_ERR(dev->regmap);
