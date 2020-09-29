@@ -1,9 +1,9 @@
 From: Julia Lawall <julia.lawall@inria.fr>
-Date: Tue, 29 Sep 2020 16:56:49 +0000
+Date: Tue, 29 Sep 2020 18:43:18 +0000
 Subject: Re: [PATCH 10/20] media: lmedm04: use semicolons rather than commas to separate statements
-Message-Id: <alpine.DEB.2.22.394.2009291855580.2808@hadrien>
+Message-Id: <alpine.DEB.2.22.394.2009292041580.2808@hadrien>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1035064695-1601398610=:2808"
+Content-Type: multipart/mixed; boundary="8323329-67389560-1601404999=:2808"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr> <1601385283-26144-11-git-send-email-Julia.Lawall@inria.fr> <8d73748e-be82-4c30-4550-b5f4eecb3055@wanadoo.fr> <c79b36c12c978d38f3ad89b1c659871a@perches.com>
 In-Reply-To: <c79b36c12c978d38f3ad89b1c659871a@perches.com>
@@ -13,7 +13,7 @@ Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Malcolm Priestley <tvbox
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-1035064695-1601398610=:2808
+--8323329-67389560-1601404999=:2808
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
@@ -66,9 +66,10 @@ On Tue, 29 Sep 2020, Joe Perches wrote:
 > Julia?  Did you do this one by hand?  This actually changes logic which I did
 > not expectthe cocci script to do.
 
-Joe already submitted this patch so please ignore my version:
-
-https://lkml.org/lkml/2020/8/23/178
+I think that there is something wrong with the implementation of the rule
+that considers the case where the two statements are not on the same line.
+For some reason, it is not triggering the addition of {}.  I will have to
+look into it.  Otherwise, all of the {}s were put there automatically.
 
 julia
---8323329-1035064695-1601398610=:2808--
+--8323329-67389560-1601404999=:2808--
