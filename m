@@ -1,40 +1,174 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Tue, 29 Sep 2020 11:46:19 +0000
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 29 Sep 2020 12:20:00 +0000
 Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate statements
-Message-Id: <alpine.DEB.2.22.394.2009291344590.2808@hadrien>
+Message-Id: <CAMj1kXGh+CzuXkAnqsoMO2A3T1p=D6uFOV347Ym5+VFn5U1gWg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr> <160132172369.55460.9237357219623604216.b4-ty@kernel.org> <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com> <20200929113745.GB4799@sirena.org.uk>
-In-Reply-To: <20200929113745.GB4799@sirena.org.uk>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: Joe Perches <joe@perches.com>, linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, linux-stm32@st-md-mailman.stormreply.com, linux-crypto@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com, openipmi-developer@lists.sourceforge.net, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-wireless@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: linux-iio@vger.kernel.org, drbd-dev@lists.linbit.com, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, David Lechner <david@lechnology.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-wireless@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com, linux-block@vger.kernel.org, linux-ide@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Joe Perches <joe@perches.com>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>
 
-
-
-On Tue, 29 Sep 2020, Mark Brown wrote:
-
-> On Mon, Sep 28, 2020 at 05:45:24PM -0700, Joe Perches wrote:
-> > On Mon, 2020-09-28 at 20:35 +0100, Mark Brown wrote:
+On Sun, 27 Sep 2020 at 21:56, Julia Lawall <Julia.Lawall@inria.fr> wrote:
 >
-> > > [1/1] regmap: debugfs: use semicolons rather than commas to separate statements
-> > >       commit: 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
->
-> > Rather than replying to the 0/n cover letter to a patch
-> > series, can you reply to each of the specific patches in
-> > the patch series you are applying?
->
-> > Otherwise, it's a bit difficult to figure out which patches
-> > you are applying.
->
-> Feel free to submit patches to b4.  Ideally things like this wouldn't be
-> being sent as serieses in the first place, there's no dependencies or
-> interactions between the patches.
+> These patches replace commas by semicolons.
 
-It was suggested (a long time ago, not with respect to this patch in
-particular) that sending such patches in a series is useful because it
-allows people who are not interested in the 18 patches to skip over them
-more easily.  So there are two conflicting needs...
 
-julia
+Why?
+
+
+> This was done using the
+> Coccinelle semantic patch (http://coccinelle.lip6.fr/) shown below.
+>
+> This semantic patch ensures that commas inside for loop headers will not be
+> transformed.  It also doesn't touch macro definitions.
+>
+> Coccinelle ensures that braces are added as needed when a single-statement
+> branch turns into a multi-statement one.
+>
+> This semantic patch has a few false positives, for variable delcarations
+> such as:
+>
+> LIST_HEAD(x), *y;
+>
+> The semantic patch could be improved to avoid these, but for the moment
+> they have been removed manually (2 occurrences).
+>
+> // <smpl>
+> @initialize:ocaml@
+> @@
+>
+> let infunction p >   (* avoid macros *)
+>   (List.hd p).current_element <> "something_else"
+>
+> let combined p1 p2 >   (List.hd p1).line_end = (List.hd p2).line ||
+>   (((List.hd p1).line_end < (List.hd p2).line) &&
+>    ((List.hd p1).col < (List.hd p2).col))
+>
+> @bad@
+> statement S;
+> declaration d;
+> position p;
+> @@
+>
+> S@p
+> d
+>
+> // special cases where newlines are needed (hope for no more than 5)
+> @@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && combined p1 p2 };
+> @@
+>
+> - e1@p1,@S@p e2@p2;
+> + e1; e2;
+>
+> @@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && combined p1 p2 };
+> @@
+>
+> - e1@p1,@S@p e2@p2;
+> + e1; e2;
+>
+> @@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && combined p1 p2 };
+> @@
+>
+> - e1@p1,@S@p e2@p2;
+> + e1; e2;
+>
+> @@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && combined p1 p2 };
+> @@
+>
+> - e1@p1,@S@p e2@p2;
+> + e1; e2;
+>
+> @@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && combined p1 p2 };
+> @@
+>
+> - e1@p1,@S@p e2@p2;
+> + e1; e2;
+>
+> @r@
+> expression e1,e2;
+> statement S;
+> position p != bad.p;
+> @@
+>
+> e1 ,@S@p e2;
+>
+> @@
+> expression e1,e2;
+> position p1;
+> position p2 :
+>     script:ocaml(p1) { infunction p1 && not(combined p1 p2) };
+> statement S;
+> position r.p;
+> @@
+>
+> e1@p1
+> -,@S@p
+> +;
+> e2@p2
+> ... when any
+> // </smpl>
+>
+> ---
+>
+>  drivers/acpi/processor_idle.c               |    4 +++-
+>  drivers/ata/pata_icside.c                   |   21 +++++++++++++--------
+>  drivers/base/regmap/regmap-debugfs.c        |    2 +-
+>  drivers/bcma/driver_pci_host.c              |    4 ++--
+>  drivers/block/drbd/drbd_receiver.c          |    6 ++++--
+>  drivers/char/agp/amd-k7-agp.c               |    2 +-
+>  drivers/char/agp/nvidia-agp.c               |    2 +-
+>  drivers/char/agp/sworks-agp.c               |    2 +-
+>  drivers/char/hw_random/iproc-rng200.c       |    8 ++++----
+>  drivers/char/hw_random/mxc-rnga.c           |    6 +++---
+>  drivers/char/hw_random/stm32-rng.c          |    8 ++++----
+>  drivers/char/ipmi/bt-bmc.c                  |    6 +++---
+>  drivers/clk/meson/meson-aoclk.c             |    2 +-
+>  drivers/clk/mvebu/ap-cpu-clk.c              |    2 +-
+>  drivers/clk/uniphier/clk-uniphier-cpugear.c |    2 +-
+>  drivers/clk/uniphier/clk-uniphier-mux.c     |    2 +-
+>  drivers/clocksource/mps2-timer.c            |    6 +++---
+>  drivers/clocksource/timer-armada-370-xp.c   |    8 ++++----
+>  drivers/counter/ti-eqep.c                   |    2 +-
+>  drivers/crypto/amcc/crypto4xx_alg.c         |    2 +-
+>  drivers/crypto/atmel-tdes.c                 |    2 +-
+>  drivers/crypto/hifn_795x.c                  |    4 ++--
+>  drivers/crypto/talitos.c                    |    8 ++++----
+>  23 files changed, 60 insertions(+), 51 deletions(-)
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
