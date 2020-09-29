@@ -1,71 +1,97 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:25 +0000
-Subject: [PATCH 02/20] media: em28xx-audio: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-3-git-send-email-Julia.Lawall@inria.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 29 Sep 2020 10:58:38 +0000
+Subject: [PATCH 5.4 187/388] perf cpumap: Fix snprintf overflow check
+Message-Id: <20200929110019.529864567@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+References: <20200929110010.467764689@linuxfoundation.org>
+In-Reply-To: <20200929110010.467764689@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Laight <David.Laight@ACULAB.COM>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Don Zickus <dzickus@redhat.com>, He Zhe <zhe.he@windriver.com>, Jan Stancek <jstancek@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, Sasha Levin <sashal@kernel.org>
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+[ Upstream commit d74b181a028bb5a468f0c609553eff6a8fdf4887 ]
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+'snprintf' returns the number of characters which would be generated for
+the given input.
 
+If the returned value is *greater than* or equal to the buffer size, it
+means that the output has been truncated.
+
+Fix the overflow test accordingly.
+
+Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: He Zhe <zhe.he@windriver.com>
+Cc: Jan Stancek <jstancek@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lore.kernel.org/lkml/20200324070319.10901-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/em28xx/em28xx-audio.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/perf/util/cpumap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
-index dc968fd5ace9..4d5ab1433b44 100644
---- a/drivers/media/usb/em28xx/em28xx-audio.c
-+++ b/drivers/media/usb/em28xx/em28xx-audio.c
-@@ -583,9 +583,9 @@ static int em28xx_cvol_new(struct snd_card *card, struct em28xx *dev,
- 	struct snd_kcontrol_new tmp;
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index a22c1114e880d..324ec0456c83f 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -299,7 +299,7 @@ static void set_max_cpu_num(void)
  
- 	memset(&tmp, 0, sizeof(tmp));
--	tmp.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	tmp.private_value = id,
--	tmp.name  = ctl_name,
-+	tmp.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
-+	tmp.private_value = id;
-+	tmp.name  = ctl_name;
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -310,7 +310,7 @@ static void set_max_cpu_num(void)
  
- 	/* Add Mute Control */
- 	sprintf(ctl_name, "%s Switch", name);
-@@ -600,16 +600,16 @@ static int em28xx_cvol_new(struct snd_card *card, struct em28xx *dev,
- 		ctl_name, id);
+ 	/* get the highest present cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -338,7 +338,7 @@ static void set_max_node_num(void)
  
- 	memset(&tmp, 0, sizeof(tmp));
--	tmp.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	tmp.private_value = id,
--	tmp.name  = ctl_name,
-+	tmp.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
-+	tmp.private_value = id;
-+	tmp.name  = ctl_name;
+ 	/* get the highest possible cpu number for a sparse allocation */
+ 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
+-	if (ret = PATH_MAX) {
++	if (ret >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		goto out;
+ 	}
+@@ -423,7 +423,7 @@ int cpu__setup_cpunode_map(void)
+ 		return 0;
  
- 	/* Add Volume Control */
- 	sprintf(ctl_name, "%s Volume", name);
- 	tmp.get   = em28xx_vol_get;
- 	tmp.put   = em28xx_vol_put;
- 	tmp.info  = em28xx_vol_info;
--	tmp.tlv.p = em28xx_db_scale,
-+	tmp.tlv.p = em28xx_db_scale;
- 	kctl = snd_ctl_new1(&tmp, dev);
- 	err = snd_ctl_add(card, kctl);
- 	if (err < 0)
+ 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
+-	if (n = PATH_MAX) {
++	if (n >= PATH_MAX) {
+ 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 		return -1;
+ 	}
+@@ -438,7 +438,7 @@ int cpu__setup_cpunode_map(void)
+ 			continue;
+ 
+ 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
+-		if (n = PATH_MAX) {
++		if (n >= PATH_MAX) {
+ 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+ 			continue;
+ 		}
+-- 
+2.25.1
