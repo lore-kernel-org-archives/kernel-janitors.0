@@ -1,97 +1,49 @@
-From: Sasha Levin <sashal@kernel.org>
-Date: Fri, 18 Sep 2020 02:11:25 +0000
-Subject: [PATCH AUTOSEL 4.14 072/127] perf cpumap: Fix snprintf overflow check
-Message-Id: <20200918021220.2066485-72-sashal@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 29 Sep 2020 13:38:19 +0000
+Subject: [PATCH][next] crypto: sun8i-ss@: fix memory leak on pointer d
+Message-Id: <20200929133819.156092-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200918021220.2066485-1-sashal@kernel.org>
-In-Reply-To: <20200918021220.2066485-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Laight <David.Laight@ACULAB.COM>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Don Zickus <dzickus@redhat.com>, He Zhe <zhe.he@windriver.com>, Jan Stancek <jstancek@redhat.com>, Jiri Olsa <jolsa@redhat.com>, Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, Sasha Levin <sashal@kernel.org>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit d74b181a028bb5a468f0c609553eff6a8fdf4887 ]
+Currently the error return path on a failed dma_mapping_error call
+is not kfree'ing memory allocated to d. Add an extra error exit label
+to end of the function where the kfree and return occurs to fix this
+issue.
 
-'snprintf' returns the number of characters which would be generated for
-the given input.
-
-If the returned value is *greater than* or equal to the buffer size, it
-means that the output has been truncated.
-
-Fix the overflow test accordingly.
-
-Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
-Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Suggested-by: David Laight <David.Laight@ACULAB.COM>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Don Zickus <dzickus@redhat.com>
-Cc: He Zhe <zhe.he@windriver.com>
-Cc: Jan Stancek <jstancek@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20200324070319.10901-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Addresses-Coverity: ("Resource leak")
+Fixes: ac2614d721de ("crypto: sun8i-ss - Add support for the PRNG")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/perf/util/cpumap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index f93846edc1e0d..827d844f4efb1 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -462,7 +462,7 @@ static void set_max_cpu_num(void)
- 
- 	/* get the highest possible cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
+diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
+index 08a1473b2145..42b02720dbbf 100644
+--- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
++++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
+@@ -103,7 +103,8 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
+ 	dma_iv = dma_map_single(ss->dev, ctx->seed, ctx->slen, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(ss->dev, dma_iv)) {
+ 		dev_err(ss->dev, "Cannot DMA MAP IV\n");
+-		return -EFAULT;
++		err = -EFAULT;
++		goto err_free;
  	}
-@@ -473,7 +473,7 @@ static void set_max_cpu_num(void)
  
- 	/* get the highest present cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
+ 	dma_dst = dma_map_single(ss->dev, d, todo, DMA_FROM_DEVICE);
+@@ -167,6 +168,7 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
+ 		memcpy(ctx->seed, d + dlen, ctx->slen);
  	}
-@@ -501,7 +501,7 @@ static void set_max_node_num(void)
+ 	memzero_explicit(d, todo);
++err_free:
+ 	kfree(d);
  
- 	/* get the highest possible cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
--	if (ret = PATH_MAX) {
-+	if (ret >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		goto out;
- 	}
-@@ -586,7 +586,7 @@ int cpu__setup_cpunode_map(void)
- 		return 0;
- 
- 	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
--	if (n = PATH_MAX) {
-+	if (n >= PATH_MAX) {
- 		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 		return -1;
- 	}
-@@ -601,7 +601,7 @@ int cpu__setup_cpunode_map(void)
- 			continue;
- 
- 		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
--		if (n = PATH_MAX) {
-+		if (n >= PATH_MAX) {
- 			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
- 			continue;
- 		}
+ 	return err;
 -- 
-2.25.1
+2.27.0
