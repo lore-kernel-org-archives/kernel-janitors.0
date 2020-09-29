@@ -1,62 +1,46 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 18 Sep 2020 16:39:45 +0000
-Subject: Re: [PATCH][next] drm/panel: fix null pointer dereference on pointer mode
-Message-Id: <32528660-a9b0-75b2-264d-26d6dc90180c@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:33 +0000
+Subject: [PATCH 10/20] media: lmedm04: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-11-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200918155136.28958-1-colin.king@canonical.com>
- <20200918162249.GA292461@bogon.m.sigxcpu.org>
-In-Reply-To: <20200918162249.GA292461@bogon.m.sigxcpu.org>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?UTF-8?Q?Guido_G=c3=bcnther?= <guido.gunther@puri.sm>
-Cc: Purism Kernel Team <kernel@puri.sm>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Malcolm Priestley <tvboxspy@gmail.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 18/09/2020 17:22, Guido G=C3=BCnther wrote:
-> Hi,
-> On Fri, Sep 18, 2020 at 04:51:36PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently a null pointer check on pointer mode is passing mode to
->> function drm_mode_vrefresh and this causes a null pointer dereference
->> on mode.  Fix this by not calling drm_mode_vrefresh since the call
->> is only required for error reporting.
->>
->> Addresses-Coverity: ("Dereference after null check")
->> Fixes: 72967d5616d3 ("drm/panel: Add panel driver for the Mantix MLAF057=
-WE51-X DSI panel")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/=
-gpu/drm/panel/panel-mantix-mlaf057we51.c
->> index 3482e28e30fc..be4761a643f9 100644
->> --- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
->> +++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
->> @@ -202,9 +202,8 @@ static int mantix_get_modes(struct drm_panel *panel,
->> =20
->>  	mode =3D drm_mode_duplicate(connector->dev, &default_mode);
->>  	if (!mode) {
->> -		dev_err(ctx->dev, "Failed to add mode %ux%u@%u\n",
->> -			default_mode.hdisplay, default_mode.vdisplay,
->> -			drm_mode_vrefresh(mode));
->> +		dev_err(ctx->dev, "Failed to add mode %ux%u\n",
->> +			default_mode.hdisplay, default_mode.vdisplay);
->>  		return -ENOMEM;
->>  	}
->=20
-> drm_mode_vrefresh(&default_mode) gives some more clue what's going on -
-> I have had a fix queued up in my tree already but if you send a v2
-> that's fine.
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-I'll defer to your queued up fix.
->=20
-> Thanks!
->  -- Guido
->=20
->> =20
->> --=20
->> 2.27.0
->>
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/media/usb/dvb-usb-v2/lmedm04.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+index 5a7a9522d46d..9ddda8d68ee0 100644
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -391,7 +391,7 @@ static int lme2510_int_read(struct dvb_usb_adapter *adap)
+ 	ep = usb_pipe_endpoint(d->udev, lme_int->lme_urb->pipe);
+ 
+ 	if (usb_endpoint_type(&ep->desc) = USB_ENDPOINT_XFER_BULK)
+-		lme_int->lme_urb->pipe = usb_rcvbulkpipe(d->udev, 0xa),
++		lme_int->lme_urb->pipe = usb_rcvbulkpipe(d->udev, 0xa);
+ 
+ 	usb_submit_urb(lme_int->lme_urb, GFP_ATOMIC);
+ 	info("INT Interrupt Service Started");
