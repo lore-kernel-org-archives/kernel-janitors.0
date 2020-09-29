@@ -1,24 +1,46 @@
 From: Joe Perches <joe@perches.com>
-Date: Sun, 27 Sep 2020 20:08:25 +0000
+Date: Tue, 29 Sep 2020 00:45:24 +0000
 Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate statements
-Message-Id: <9f6ebf51253bf420c8f6f8974a82283ae3e9e446.camel@perches.com>
+Message-Id: <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+         <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+In-Reply-To: <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, linux-iio@vger.kernel.org
-Cc: Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, David Lechner <david@lechnology.com>, linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-crypto@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc: linux-stm32@st-md-mailman.stormreply.com, linux-crypto@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>, Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com, openipmi-developer@lists.sourceforge.net, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-wireless@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
 
-On Sun, 2020-09-27 at 21:12 +0200, Julia Lawall wrote:
-> These patches replace commas by semicolons.  This was done using the
-> Coccinelle semantic patch (http://coccinelle.lip6.fr/) shown below.
+On Mon, 2020-09-28 at 20:35 +0100, Mark Brown wrote:
+> On Sun, 27 Sep 2020 21:12:10 +0200, Julia Lawall wrote:
+> > These patches replace commas by semicolons.  This was done using the
+> > Coccinelle semantic patch (http://coccinelle.lip6.fr/) shown below.
+> > 
+> > This semantic patch ensures that commas inside for loop headers will not be
+> > transformed.  It also doesn't touch macro definitions.
+> > 
+> > Coccinelle ensures that braces are added as needed when a single-statement
+> > branch turns into a multi-statement one.
+> > 
+> > [...]
 > 
-> This semantic patch ensures that commas inside for loop headers will not be
-> transformed.  It also doesn't touch macro definitions.
+> Applied to
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+> 
+> Thanks!
+> 
+> [1/1] regmap: debugfs: use semicolons rather than commas to separate statements
+>       commit: 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
 
-Thanks.
+Hi Mark.
 
-All of these appear to be correct and without effect
-except for __LINE__ number changes where braces are added.
+Rather than replying to the 0/n cover letter to a patch
+series, can you reply to each of the specific patches in
+the patch series you are applying?
+
+Otherwise, it's a bit difficult to figure out which patches
+you are applying.
+
+thanks
