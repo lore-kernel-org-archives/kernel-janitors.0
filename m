@@ -1,75 +1,37 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Tue, 29 Sep 2020 16:46:06 +0000
-Subject: Re: [PATCH 04/20] media: saa7134: use semicolons rather than commas to separate statements
-Message-Id: <alpine.DEB.2.22.394.2009291845160.2808@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-400160347-1601397967=:2808"
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 29 Sep 2020 13:18:28 +0000
+Subject: [PATCH][next] lib/mpi: fix off-by-one check on index "no"
+Message-Id: <20200929131828.155691-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr> <1601385283-26144-5-git-send-email-Julia.Lawall@inria.fr> <8a2e3c47-76d1-f959-fb7c-3a02641a57e2@wanadoo.fr>
-In-Reply-To: <8a2e3c47-76d1-f959-fb7c-3a02641a57e2@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, Waiman Long <longman@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Colin Ian King <colin.king@canonical.com>
 
---8323329-400160347-1601397967=:2808
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+There is an off-by-one range check on the upper limit of
+index "no".  Fix this by changing the > comparison to >
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: a8ea8bdd9df9 ("lib/mpi: Extend the MPI library")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/mpi/mpiutil.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-On Tue, 29 Sep 2020, Christophe JAILLET wrote:
-
-> Le 29/09/2020 à 15:14, Julia Lawall a écrit :
-> > Replace commas with semicolons.  Commas introduce unnecessary
-> > variability in the code structure and are hard to see.  What is done
-> > is essentially described by the following Coccinelle semantic patch
-> > (http://coccinelle.lip6.fr/):
-> >
-> > // <smpl>
-> > @@ expression e1,e2; @@
-> > e1
-> > -,
-> > +;
-> > e2
-> > ... when any
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > ---
-> >   drivers/media/pci/saa7134/saa7134-video.c |    7 +++++--
-> >   1 file changed, 5 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/pci/saa7134/saa7134-video.c
-> > b/drivers/media/pci/saa7134/saa7134-video.c
-> > index 9a6a6b68f8e3..2ca963b04b3f 100644
-> > --- a/drivers/media/pci/saa7134/saa7134-video.c
-> > +++ b/drivers/media/pci/saa7134/saa7134-video.c
-> > @@ -868,8 +868,11 @@ static int buffer_activate(struct saa7134_dev *dev,
-> >   		lines_uv = dev->height >> dev->fmt->vshift;
-> >   		base2    = base + bpl * dev->height;
-> >   		base3    = base2 + bpl_uv * lines_uv;
-> > -		if (dev->fmt->uvswap)
-> > -			tmp = base2, base2 = base3, base3 = tmp;
-> > +		if (dev->fmt->uvswap) {
-> > +			tmp = base2;
-> > +			base2 = base3;
-> > +			base3 = tmp;
-> > +		}
-> >   		video_dbg("uv: bpl=%ld lines=%ld base2/3=%ld/%ld\n",
-> >   			bpl_uv,lines_uv,base2,base3);
-> >   		if (V4L2_FIELD_HAS_BOTH(dev->field)) {
-> >
-> >
-> Hi,
-> this could be turned into a simpler:
->    swap(base2, base3);
-
-Yes.  The conclusion is probably that it could be worth searching for swap
-opportunities after this.  There are a lot of patches to send on these
-commas, and I would rather not deviate to something else...
-
-julia
---8323329-400160347-1601397967=:2808--
+diff --git a/lib/mpi/mpiutil.c b/lib/mpi/mpiutil.c
+index 3c63710c20c6..632d0a4bf93f 100644
+--- a/lib/mpi/mpiutil.c
++++ b/lib/mpi/mpiutil.c
+@@ -69,7 +69,7 @@ postcore_initcall(mpi_init);
+  */
+ MPI mpi_const(enum gcry_mpi_constants no)
+ {
+-	if ((int)no < 0 || no > MPI_NUMBER_OF_CONSTANTS)
++	if ((int)no < 0 || no >= MPI_NUMBER_OF_CONSTANTS)
+ 		pr_err("MPI: invalid mpi_const selector %d\n", no);
+ 	if (!constants[no])
+ 		pr_err("MPI: MPI subsystem not initialized\n");
+-- 
+2.27.0
