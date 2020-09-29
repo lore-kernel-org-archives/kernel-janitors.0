@@ -1,27 +1,46 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Sat, 05 Sep 2020 20:36:35 +0000
-Subject: Re: [PATCH] MAINTAINERS: repair reference in LYNX PCS MODULE
-Message-Id: <20200905133635.497c3663@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:24 +0000
+Subject: [PATCH 01/20] media: coda: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-2-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200905103700.17162-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20200905103700.17162-1-lukas.bulwahn@gmail.com>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat,  5 Sep 2020 12:37:00 +0200 Lukas Bulwahn wrote:
-> Commit 0da4c3d393e4 ("net: phy: add Lynx PCS module") added the files in
-> ./drivers/net/pcs/, but the new LYNX PCS MODULE section refers to
-> ./drivers/net/phy/.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches    F:    drivers/net/phy/pcs-lynx.c
-> 
-> Repair the LYNX PCS MODULE section by referring to the right location.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-Applied, thanks!
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/media/platform/coda/coda-common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index eeba6c060981..1bb16cc0a823 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -2861,7 +2861,7 @@ static int coda_register_device(struct coda_dev *dev, int i)
+ 	strscpy(vfd->name, dev->devtype->vdevs[i]->name, sizeof(vfd->name));
+ 	vfd->fops	= &coda_fops;
+ 	vfd->ioctl_ops	= &coda_ioctl_ops;
+-	vfd->release	= video_device_release_empty,
++	vfd->release	= video_device_release_empty;
+ 	vfd->lock	= &dev->dev_mutex;
+ 	vfd->v4l2_dev	= &dev->v4l2_dev;
+ 	vfd->vfl_dir	= VFL_DIR_M2M;
