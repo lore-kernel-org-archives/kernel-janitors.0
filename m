@@ -1,64 +1,73 @@
-From: Sumera Priyadarsini <sylphrenadin@gmail.com>
-Date: Wed, 09 Sep 2020 10:41:15 +0000
-Subject: [PATCH V3] scripts: coccicheck: Do not use shift command when rule is specified
-Message-Id: <20200909102915.jzwe754pd7i65r6u@adolin>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 29 Sep 2020 13:14:39 +0000
+Subject: [PATCH 16/20] media: dvbsky: use semicolons rather than commas to separate statements
+Message-Id: <1601385283-26144-17-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
-Cc: michal.lkml@markovi.net, Gilles.Muller@lip6.fr, kernel-janitors@vger.kernel.org, nicolas.palix@imag.fr, linux-kernel@vger.kernel.org, Julia.Lawall@lip6.fr
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The command "make coccicheck C=1 CHECK=scripts/coccicheck" results in the
-error:
-	./scripts/coccicheck: line 65: -1: shift count out of range
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-This happens because every time the C variable is specified,
-the shell arguments need to be "shifted" in order to take only
-the last argument, which is the C file to test. These shell arguments
-mostly comprise flags that have been set in the Makefile. However,
-when coccicheck is specified in the make command as a rule, the
-number of shell arguments is zero, thus passing the invalid value -1
-to the shift command, resulting in an error.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Modify coccicheck to use the shift command only when
-number of shell arguments is not zero.
-
-Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
-Changes in V2:
-	- Fix spelling errors as suggested by Markus Elfring
----
- scripts/coccicheck | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/media/usb/dvb-usb-v2/dvbsky.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/scripts/coccicheck b/scripts/coccicheck
-index e04d328210ac..5c8df337e1e3 100755
---- a/scripts/coccicheck
-+++ b/scripts/coccicheck
-@@ -61,9 +61,19 @@ COCCIINCLUDE=${COCCIINCLUDE// -include/ --include}
- if [ "$C" = "1" -o "$C" = "2" ]; then
-     ONLINE=1
+diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+index 0d9657f7f29d..689829f1b52a 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
++++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+@@ -287,8 +287,8 @@ static int dvbsky_s960_attach(struct dvb_usb_adapter *adap)
+ 	m88ds3103_pdata.ts_clk = 16000;
+ 	m88ds3103_pdata.ts_clk_pol = 0;
+ 	m88ds3103_pdata.agc = 0x99;
+-	m88ds3103_pdata.lnb_hv_pol = 1,
+-	m88ds3103_pdata.lnb_en_pol = 1,
++	m88ds3103_pdata.lnb_hv_pol = 1;
++	m88ds3103_pdata.lnb_en_pol = 1;
  
--    # Take only the last argument, which is the C file to test
--    shift $(( $# - 1 ))
--    OPTIONS="$COCCIINCLUDE $1"
-+    # If the rule coccicheck is specified when calling make, number of
-+    # arguments is zero
-+    if [ $# -ne 0 ]; then
-+	    # Take only the last argument, which is the C file to test
-+	    shift $(( $# -1 ))
-+	    OPTIONS="$COCCIINCLUDE $1"
-+    else
-+	if [ "$KBUILD_EXTMOD" = "" ] ; then
-+		OPTIONS="--dir $srctree $COCCIINCLUDE"
-+	else
-+		OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
-+	fi
-+    fi
+ 	state->i2c_client_demod = dvb_module_probe("m88ds3103", NULL,
+ 						   &d->i2c_adap,
+@@ -383,15 +383,15 @@ static int dvbsky_s960c_attach(struct dvb_usb_adapter *adap)
+ 	struct sp2_config sp2_config = {};
  
-     # No need to parallelize Coccinelle since this mode takes one input file.
-     NPROC=1
--- 
-2.25.1
+ 	/* attach demod */
+-	m88ds3103_pdata.clk = 27000000,
+-	m88ds3103_pdata.i2c_wr_max = 33,
+-	m88ds3103_pdata.clk_out = 0,
+-	m88ds3103_pdata.ts_mode = M88DS3103_TS_CI,
+-	m88ds3103_pdata.ts_clk = 10000,
+-	m88ds3103_pdata.ts_clk_pol = 1,
+-	m88ds3103_pdata.agc = 0x99,
+-	m88ds3103_pdata.lnb_hv_pol = 0,
+-	m88ds3103_pdata.lnb_en_pol = 1,
++	m88ds3103_pdata.clk = 27000000;
++	m88ds3103_pdata.i2c_wr_max = 33;
++	m88ds3103_pdata.clk_out = 0;
++	m88ds3103_pdata.ts_mode = M88DS3103_TS_CI;
++	m88ds3103_pdata.ts_clk = 10000;
++	m88ds3103_pdata.ts_clk_pol = 1;
++	m88ds3103_pdata.agc = 0x99;
++	m88ds3103_pdata.lnb_hv_pol = 0;
++	m88ds3103_pdata.lnb_en_pol = 1;
+ 
+ 	state->i2c_client_demod = dvb_module_probe("m88ds3103", NULL,
+ 						   &d->i2c_adap,
