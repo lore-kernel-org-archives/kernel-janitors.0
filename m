@@ -1,27 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 09 Sep 2020 07:27:02 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8723ae: Delete a stray tab
-Message-Id: <0101017471c2c0d1-407bc407-d1d8-41a6-b6a8-3c17f5ac4659-000000@us-west-2.amazonses.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 Sep 2020 13:01:23 +0000
+Subject: [PATCH][next][resend] lib/mpi: fix off-by-one check on index "no"
+Message-Id: <20200930130123.8064-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200905124758.GB183976@mwanda>
-In-Reply-To: <20200905124758.GB183976@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Jakub Kicinski <kuba@kernel.org>, Qiujun Huang <hqjagain@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Herbert Xu <herbert@gondor.apana.org.au>, Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, Waiman Long <longman@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This line is indented too far.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is an off-by-one range check on the upper limit of
+index "no".  Fix this by changing the > comparison to >
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: a8ea8bdd9df9 ("lib/mpi: Extend the MPI library")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-Patch applied to wireless-drivers-next.git, thanks.
+resend to Cc linux-crypto
 
-587231ee81d6 rtlwifi: rtl8723ae: Delete a stray tab
+---
+ lib/mpi/mpiutil.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/lib/mpi/mpiutil.c b/lib/mpi/mpiutil.c
+index 3c63710c20c6..632d0a4bf93f 100644
+--- a/lib/mpi/mpiutil.c
++++ b/lib/mpi/mpiutil.c
+@@ -69,7 +69,7 @@ postcore_initcall(mpi_init);
+  */
+ MPI mpi_const(enum gcry_mpi_constants no)
+ {
+-	if ((int)no < 0 || no > MPI_NUMBER_OF_CONSTANTS)
++	if ((int)no < 0 || no >= MPI_NUMBER_OF_CONSTANTS)
+ 		pr_err("MPI: invalid mpi_const selector %d\n", no);
+ 	if (!constants[no])
+ 		pr_err("MPI: MPI subsystem not initialized\n");
 -- 
-https://patchwork.kernel.org/patch/11759069/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
