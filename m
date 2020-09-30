@@ -1,39 +1,45 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Mon, 07 Sep 2020 17:31:40 +0000
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2=5D_Coccinelle=3A_api=3A_Add_SmPL?= =?UTF-8?Q?_script_=E2=80=9Cuse=5Fdevm
-Message-Id: <alpine.DEB.2.22.394.2009071930510.2476@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Sep 2020 12:30:36 +0000
+Subject: [PATCH v2] staging: vchiq: Fix an uninitialized variable
+Message-Id: <20200930123036.GC4282@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <25b804fd-0d04-475d-f614-26c03c9fd544@web.de>
- <5f9fdd59-4b0b-1cb5-c3a2-92efc5bb3841@web.de>
- <4b505afc-ae48-d8eb-f4e1-8e3f7192f73d@web.de>
- <alpine.DEB.2.22.394.2009071900450.2476@hadrien>
- <8fb7782c-538b-b657-af13-da71124e6afa@web.de>
-In-Reply-To: <8fb7782c-538b-b657-af13-da71124e6afa@web.de>
+In-Reply-To: <CAK8P3a1m3kaGK17A2ADgA7b9i7GeEYhX=xVoU=Yet8_T93Q2JA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Dejin Zheng <zhengdejin5@gmail.com>, Nicolas Palix <nicolas.palix@imag.fr>, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc: devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>, linux-arm-kernel@lists.infradead.org
 
+Smatch complains that "userdata" can be passed to vchiq_bulk_transfer()
+without being initialized.  This leads to a potential information leak
+later on.
 
+Fixes: a4367cd2b231 ("staging: vchiq: convert compat bulk transfer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: update commit message.
 
-On Mon, 7 Sep 2020, Markus Elfring wrote:
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >> +++ b/scripts/coccinelle/api/use_devm_platform_get_and_ioremap_resource.cocci
-> >> @@ -0,0 +1,48 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/// Simplify a function call combination by using a known wrapper function.
-> >> +//
-> >> +// Keywords: wrapper function conversion ioremap resources
-> >> +// Confidence: High
-> >
-> > Shouldn't there be some options?  --no-includes and perhaps
-> > --include-headers would seem reasonable.
->
-> I imagine that the proposed source code transformation can work also without
-> additional semantic patch command options.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 590415561b73..71b962777da5 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -952,7 +952,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ {
+ 	struct vchiq_service *service;
+ 	struct bulk_waiter_node *waiter = NULL;
+-	void *userdata;
++	void *userdata = NULL;
+ 	int status = 0;
+ 	int ret;
+ 
+-- 
+2.28.0
 
-It can.  But it will be more efficient and more exhaustive if you include
-them.
-
-julia
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
