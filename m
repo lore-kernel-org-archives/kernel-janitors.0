@@ -1,7 +1,7 @@
 From: "Singh, Balbir" <sblbir@amazon.com>
-Date: Wed, 30 Sep 2020 22:59:48 +0000
+Date: Wed, 30 Sep 2020 23:49:30 +0000
 Subject: Re: [PATCH -next for tip:x86/pti] x86/tlb: drop unneeded local vars in enable_l1d_flush_for_task()
-Message-Id: <9b700b03-6bbd-b969-abb8-a004c813446d@amazon.com>
+Message-Id: <19f57cbe-ba33-17d5-440c-2765e670782f@amazon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200928124457.27289-1-lukas.bulwahn@gmail.com>
  <20200929071211.GJ2628@hirez.programming.kicks-ass.net>
@@ -19,7 +19,7 @@ To: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
 Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "clang-built-linux@googlegroups.com" <clang-built-linux@googlegroups.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-safety@lists.elisa.tech" <linux-safety@lists.elisa.tech>
 
 On 1/10/20 7:38 am, Thomas Gleixner wrote:
-> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
+
 > 
 > 
 > 
@@ -125,20 +125,6 @@ On 1/10/20 7:38 am, Thomas Gleixner wrote:
 >                 l1d_flush_hw();
 > 
 > That fails to flush when SMT is disabled globally. Balbir?
-
-It should have been 
-
-!sched_smt_active() || (cond)
-
-and not
-
-sched_smt_active && (cond)
-
-I'll fix that up, but your simplification below works as well.
-
-
-
-
 > 
 > Of course this should be:
 > 
@@ -156,9 +142,77 @@ I'll fix that up, but your simplification below works as well.
 > And that task work clears the flag and sends a signal. We're not going
 > to send a signal from switch_mm() ....
 > 
+> Thanks,
+> 
 
-Yes, I see MCE handling uses a similar pattern, so SIGBUS for a task that migrates/moves
-to a SMT disabled core?
 
-Thanks,
-Balbir
+So this is the change I am playing with, I don't like the idea of killing the task, but it's better than silently not flushing, I guess system administrators will learn with time not to correctly the affinity of tasks flushing
+L1D. For the affinity bits, not being able to change the affinity is better, but not being able to provide feedback on as to why is a bit weird as well, but I wonder if there are other cases where we might want to lock the affinity of a task for it's lifetime.
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 6b0f4c88b07c..6b0d0a9cd447 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -320,26 +320,15 @@ int enable_l1d_flush_for_task(struct task_struct *tsk)
+ 
+ 	/*
+ 	 * Do not enable L1D_FLUSH_OUT if
+-	 * b. The CPU is not affected by the L1TF bug
+-	 * c. The CPU does not have L1D FLUSH feature support
+-	 * c. The task's affinity is on cores with SMT on.
++	 * a. The CPU is not affected by the L1TF bug
++	 * b. The CPU does not have L1D FLUSH feature support
+ 	 */
+ 
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF) ||
+-			!static_cpu_has(X86_FEATURE_FLUSH_L1D))
++		!boot_cpu_has(X86_FEATURE_FLUSH_L1D))
+ 		return -EINVAL;
+ 
+-	cpu = get_cpu();
+-
+-	for_each_cpu(i, &tsk->cpus_mask) {
+-		if (cpu_data(i).smt_active = true) {
+-			put_cpu();
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	set_ti_thread_flag(&tsk->thread_info, TIF_SPEC_L1D_FLUSH);
+-	put_cpu();
+ 	return ret;
+ }
+ 
+@@ -349,6 +338,12 @@ int disable_l1d_flush_for_task(struct task_struct *tsk)
+ 	return 0;
+ }
+ 
++static void l1d_flush_kill(struct callback_head *ch)
++{
++	clear_ti_thread_flag(&current->thread_info, TIF_SPEC_L1D_FLUSH);
++	force_signal(SIGBUS);
++}
++
+ void switch_mm(struct mm_struct *prev, struct mm_struct *next,
+ 	       struct task_struct *tsk)
+ {
+@@ -443,12 +438,14 @@ static void cond_mitigation(struct task_struct *next)
+ 	}
+ 
+ 	/*
+-	 * Flush only if SMT is disabled as per the contract, which is checked
+-	 * when the feature is enabled.
++	 * Flush only if SMT is disabled, if flushing is enabled
++	 * and we are on an SMT enabled core, kill the task
+ 	 */
+-	if (sched_smt_active() && !this_cpu_read(cpu_info.smt_active) &&
+-		(prev_mm & LAST_USER_MM_L1D_FLUSH))
+-		l1d_flush_hw();
++	if (unlikely(prev_mm & LAST_USER_MM_L1D_FLUSH)) {
++		if (!this_cpu_read(cpu_info.smt_active))
++			l1d_flush_hw();
++		else
++			task_work_add(prev, l1d_flush_kill, true);
+ 
+ 	this_cpu_write(cpu_tlbstate.last_user_mm_spec, next_mm);
+ }
