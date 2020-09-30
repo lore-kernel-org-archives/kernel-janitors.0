@@ -1,99 +1,31 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue, 29 Sep 2020 08:37:09 +0000
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Wed, 30 Sep 2020 15:40:08 +0000
 Subject: Re: [PATCH -next for tip:x86/pti] x86/tlb: drop unneeded local vars in enable_l1d_flush_for_task()
-Message-Id: <20200929083709.GC2651@hirez.programming.kicks-ass.net>
+Message-Id: <87eemji887.fsf@nanos.tec.linutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200928124457.27289-1-lukas.bulwahn@gmail.com>
- <20200929071211.GJ2628@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200929071211.GJ2628@hirez.programming.kicks-ass.net>
+References: <20200928124457.27289-1-lukas.bulwahn@gmail.com> <20200929071211.GJ2628@hirez.programming.kicks-ass.net> <20200929083709.GC2651@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200929083709.GC2651@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Balbir Singh <sblbir@amazon.com>, Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
+To: Peter Zijlstra <peterz@infradead.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Balbir Singh <sblbir@amazon.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
 
-On Tue, Sep 29, 2020 at 09:12:11AM +0200, Peter Zijlstra wrote:
-> On Mon, Sep 28, 2020 at 02:44:57PM +0200, Lukas Bulwahn wrote:
-> > diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> > index 6b0f4c88b07c..90515c04d90a 100644
-> > --- a/arch/x86/mm/tlb.c
-> > +++ b/arch/x86/mm/tlb.c
-> > @@ -316,7 +316,7 @@ EXPORT_SYMBOL_GPL(leave_mm);
-> >  
-> >  int enable_l1d_flush_for_task(struct task_struct *tsk)
-> >  {
-> > -	int cpu, ret = 0, i;
-> > +	int i;
-> >  
-> >  	/*
-> >  	 * Do not enable L1D_FLUSH_OUT if
-> > @@ -329,7 +329,7 @@ int enable_l1d_flush_for_task(struct task_struct *tsk)
-> >  			!static_cpu_has(X86_FEATURE_FLUSH_L1D))
-> >  		return -EINVAL;
-> >  
-> > -	cpu = get_cpu();
-> > +	get_cpu();
-> >  
-> >  	for_each_cpu(i, &tsk->cpus_mask) {
-> >  		if (cpu_data(i).smt_active = true) {
-> > @@ -340,7 +340,7 @@ int enable_l1d_flush_for_task(struct task_struct *tsk)
-> >  
-> >  	set_ti_thread_flag(&tsk->thread_info, TIF_SPEC_L1D_FLUSH);
-> >  	put_cpu();
-> > -	return ret;
-> > +	return 0;
-> >  }
-> 
-> If you don't use the return value of get_cpu(), then change it over to
-> preempt_{dis,en}able(), but this got me looking at the function, wtf is
-> that garbage supposed to do in the first place
-> 
-> What do we need to disable preemption for?
-> 
-> Please explain the desired semantics against sched_setaffinity().
+On Tue, Sep 29 2020 at 10:37, Peter Zijlstra wrote:
+> Here, I fixed it..
 
-Here, I fixed it..
+Well, no. What Balbir is trying to do here is to establish whether a
+task runs on a !SMT core. sched_smt_active() is system wide, but their
+setup is to have a bunch of SMT enabled cores and cores where SMT is off
+because the sibling is offlined. They affine these processes to non SMT
+cores and the check there validates that before it enabled that flush
+thingy.
 
----
- arch/x86/mm/tlb.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+Of course this is best effort voodoo because if all CPUs in the mask are
+offlined then the task is moved to a SMT enabled one where L1D flush is
+useless. Though offlining their workhorse CPUs is probably not the daily
+business for obvious raisins.
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6b0f4c88b07c..f02a2f1909da 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -316,31 +316,13 @@ EXPORT_SYMBOL_GPL(leave_mm);
- 
- int enable_l1d_flush_for_task(struct task_struct *tsk)
- {
--	int cpu, ret = 0, i;
--
--	/*
--	 * Do not enable L1D_FLUSH_OUT if
--	 * b. The CPU is not affected by the L1TF bug
--	 * c. The CPU does not have L1D FLUSH feature support
--	 * c. The task's affinity is on cores with SMT on.
--	 */
--
- 	if (!boot_cpu_has_bug(X86_BUG_L1TF) ||
--			!static_cpu_has(X86_FEATURE_FLUSH_L1D))
-+	    !boot_cpu_has(X86_FEATURE_FLUSH_L1D) ||
-+	    sched_smt_active());
- 		return -EINVAL;
- 
--	cpu = get_cpu();
--
--	for_each_cpu(i, &tsk->cpus_mask) {
--		if (cpu_data(i).smt_active = true) {
--			put_cpu();
--			return -EINVAL;
--		}
--	}
--
- 	set_ti_thread_flag(&tsk->thread_info, TIF_SPEC_L1D_FLUSH);
--	put_cpu();
--	return ret;
-+	return 0;
- }
- 
- int disable_l1d_flush_for_task(struct task_struct *tsk)
+Thanks,
+
+        tglx
