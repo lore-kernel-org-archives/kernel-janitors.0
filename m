@@ -1,55 +1,21 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:26 +0000
-Subject: [PATCH 03/20] media: rtl28xxu: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-4-git-send-email-Julia.Lawall@inria.fr>
+From: "Mrs. Susan Carter" <test@mail.bless.gov.my>
+Date: Wed, 30 Sep 2020 10:35:25 +0000
+Subject: Good day,
+Message-Id: <20200930103506.7AB5A6852452@mail.bless.gov.my>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+Good day,
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+My name are Mrs. Susan Carter an America but a United Kingdom Citizen, I???m 57 years old, widow, married to late Eng Martins Carter who is a British, who until his death worked with Dutch Filtration for Twenty-Six years before he died in the year 2015 after a brief illness that lasted only five days.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+When my late husband was alive he deposited the sum of US$50 Million in bank USA through his Financial Lawyer in the United State of America and we all agreed as a couple to donate all of that to charity. Following my health (Lung Cancer), my Doctor told me that I may not live longer than required due to my health condition.
 
----
- drivers/media/usb/dvb-usb-v2/rtl28xxu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looking forward to seeing someone who can use the money for charitable work.
 
-diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-index 91460e4d0c30..3952cc534b4a 100644
---- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-+++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
-@@ -955,7 +955,7 @@ static int rtl2832u_frontend_attach(struct dvb_usb_adapter *adap)
- 			struct mn88472_config mn88472_config = {};
- 
- 			mn88472_config.fe = &adap->fe[1];
--			mn88472_config.i2c_wr_max = 22,
-+			mn88472_config.i2c_wr_max = 22;
- 			strscpy(info.type, "mn88472", I2C_NAME_SIZE);
- 			mn88472_config.xtal = 20500000;
- 			mn88472_config.ts_mode = SERIAL_TS_MODE;
-@@ -980,7 +980,7 @@ static int rtl2832u_frontend_attach(struct dvb_usb_adapter *adap)
- 			struct mn88473_config mn88473_config = {};
- 
- 			mn88473_config.fe = &adap->fe[1];
--			mn88473_config.i2c_wr_max = 22,
-+			mn88473_config.i2c_wr_max = 22;
- 			strscpy(info.type, "mn88473", I2C_NAME_SIZE);
- 			info.addr = 0x18;
- 			info.platform_data = &mn88473_config;
+Best Regards
+Yours sincerely
+Mrs. Susan Carter
