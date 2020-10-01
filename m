@@ -1,25 +1,37 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 05 Oct 2020 04:48:39 +0000
-Subject: Re: [PATCH 09/14] dmaengine: rcar-dmac: drop double zeroing
-Message-Id: <20201005044832.GK2968@vkoul-mobl>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 01 Oct 2020 13:24:11 +0000
+Subject: Re: [PATCH 05/18] bcma: use semicolons rather than commas to separate statements
+Message-Id: <20201001132411.C6DF9C433FE@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
- <1600601186-7420-10-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-10-git-send-email-Julia.Lawall@inria.fr>
+References: <1601233948-11629-6-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-6-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, =?utf-8?q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20-09-20, 13:26, Julia Lawall wrote:
-> sg_init_table zeroes its first argument, so the allocation of that argument
-> doesn't have to.
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
+
+> Replace commas with semicolons.  What is done is essentially described by
+> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 > 
-> the semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
+> // <smpl>
+> @@ expression e1,e2; @@
+> e1
+> -,
+> +;
+> e2
+> ... when any
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Applied, thanks
+Patch applied to wireless-drivers-next.git, thanks.
+
+703314b2db3b bcma: use semicolons rather than commas to separate statements
 
 -- 
-~Vinod
+https://patchwork.kernel.org/patch/11802381/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
