@@ -1,34 +1,39 @@
-From: Will Deacon <will@kernel.org>
-Date: Mon, 05 Oct 2020 08:26:04 +0000
-Subject: Re: [PATCH][next] perf: arm-cmn: fix less than zero check on unsigned dtc->irq
-Message-Id: <20201005082603.GA23480@willie-the-truck>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 02 Oct 2020 19:28:01 +0000
+Subject: [PATCH] ASoC: tlv320adcx140: Fix a typo in a comment
+Message-Id: <20201002192801.639743-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201002154800.92607-1-colin.king@canonical.com>
-In-Reply-To: <20201002154800.92607-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, kernel-janitors@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, dmurphy@ti.com, robh@kernel.org, grandmaster@al2klimov.de
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 04:48:00PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the failure check on dtc->irq is always false because
-> dtc->irq is an unsigned int. Fix this by using a temporary signed
-> int for the less than zero error check.
->=20
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 0ba64770a2f2 ("perf: Add Arm CMN-600 PMU driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/perf/arm-cmn.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+It is likely that this header file is about the TLV320ADCX140. (0 and 4
+swapped)
+While at it fix a missing "H" in a comment related to the include guard.
 
-Cheers, but Gustavo beat you to it and I had a crack at a different fix
-which should now be in -next:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/codecs/tlv320adcx140.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/commit/?h=
-=3Dfor-next/core&id=D9ef632fab9ba81b708763bcbcfdbea9a55c95d2
-
-Will
+diff --git a/sound/soc/codecs/tlv320adcx140.h b/sound/soc/codecs/tlv320adcx140.h
+index eedbc1d7221f..cafcbc0dd5fd 100644
+--- a/sound/soc/codecs/tlv320adcx140.h
++++ b/sound/soc/codecs/tlv320adcx140.h
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+-// TLV320ADCX104 Sound driver
++// TLV320ADCX140 Sound driver
+ // Copyright (C) 2020 Texas Instruments Incorporated - https://www.ti.com/
+ 
+ #ifndef _TLV320ADCX140_H
+@@ -145,4 +145,4 @@
+ #define ADCX140_GPO_CFG_MAX		4
+ #define ADCX140_GPO_DRV_MAX		5
+ 
+-#endif /* _TLV320ADCX140_ */
++#endif /* _TLV320ADCX140_H */
+-- 
+2.25.1
