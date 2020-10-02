@@ -1,27 +1,40 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 27 Oct 2020 11:32:32 +0000
-Subject: Re: [PATCH] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
-Message-Id: <160379780345.96488.3985201259905259323.b4-ty@bootlin.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Oct 2020 16:54:22 +0000
+Subject: [PATCH][next] net: phy: dp83869: fix unsigned comparisons against less than zero values
+Message-Id: <20201002165422.94328-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201022070451.GA2817669@mwanda>
-In-Reply-To: <20201022070451.GA2817669@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, kernel-janitors@vger.kernel.org, linux-rtc@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Dan Murphy <dmurphy@ti.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 22 Oct 2020 10:04:51 +0300, Dan Carpenter wrote:
-> These functions should return zero on success.  Non-zero returns are
-> treated as error.  On some paths, this doesn't matter but in
-> nvmem_cell_read() a non-zero return would be passed to ERR_PTR() and
-> lead to an Oops.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+Currently the comparisons of u16 integers value and sopass_val with
+less than zero for error checking is always false because the values
+are unsigned. Fix this by making these variables int.  This does not
+affect the shift and mask operations performed on these variables
 
-[1/1] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
-      commit: ba1c30bf3f2536f248d262c6f257b5a787305991
+Addresses-Coverity: ("Unsigned compared against zero")
+Fixes: 49fc23018ec6 ("net: phy: dp83869: support Wake on LAN")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/phy/dp83869.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+index 0aee5f645b71..cf6dec7b7d8e 100644
+--- a/drivers/net/phy/dp83869.c
++++ b/drivers/net/phy/dp83869.c
+@@ -305,7 +305,7 @@ static int dp83869_set_wol(struct phy_device *phydev,
+ static void dp83869_get_wol(struct phy_device *phydev,
+ 			    struct ethtool_wolinfo *wol)
+ {
+-	u16 value, sopass_val;
++	int value, sopass_val;
+ 
+ 	wol->supported = (WAKE_UCAST | WAKE_BCAST | WAKE_MAGIC |
+ 			WAKE_MAGICSECURE);
 -- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+2.27.0
