@@ -1,18 +1,18 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 12 Oct 2020 09:26:18 +0000
-Subject: Re: [PATCH 1/8] ASoC: wm8350: use semicolons rather than commas to separate statements
-Message-Id: <20201012092618.GY10899@ediswmail.ad.cirrus.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 02 Oct 2020 11:55:51 +0000
+Subject: Re: [PATCH 06/18] hwrng: iproc-rng200 - use semicolons rather than commas to separate statements
+Message-Id: <20201002115551.GK1205@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
- <1602407979-29038-2-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1602407979-29038-2-git-send-email-Julia.Lawall@inria.fr>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+ <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: alsa-devel@alsa-project.org, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Scott Branden <sbranden@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 
-On Sun, Oct 11, 2020 at 11:19:32AM +0200, Julia Lawall wrote:
+On Sun, Sep 27, 2020 at 09:12:16PM +0200, Julia Lawall wrote:
 > Replace commas with semicolons.  What is done is essentially described by
 > the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 > 
@@ -28,8 +28,11 @@ On Sun, Oct 11, 2020 at 11:19:32AM +0200, Julia Lawall wrote:
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
 > ---
+>  drivers/char/hw_random/iproc-rng200.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
