@@ -1,54 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Oct 2020 18:26:28 +0000
-Subject: Re: [PATCH][next] net: phy: dp83869: fix unsigned comparisons against less than zero values
-Message-Id: <20201006182628.GI4282@kadam>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 02 Oct 2020 19:47:43 +0000
+Subject: [PATCH] net: typhoon: Fix a typo Typoon --> Typhoon
+Message-Id: <20201002194743.640440-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201002165422.94328-1-colin.king@canonical.com>
- <1ffbf497-cb07-4302-8a79-236338f00383@ti.com>
-In-Reply-To: <1ffbf497-cb07-4302-8a79-236338f00383@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Colin King <colin.king@canonical.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dave@thedillows.org, davem@davemloft.net, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Oct 02, 2020 at 12:26:49PM -0500, Dan Murphy wrote:
-> Colin
-> 
-> On 10/2/20 11:54 AM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the comparisons of u16 integers value and sopass_val with
-> > less than zero for error checking is always false because the values
-> > are unsigned. Fix this by making these variables int.  This does not
-> > affect the shift and mask operations performed on these variables
-> > 
-> > Addresses-Coverity: ("Unsigned compared against zero")
-> > Fixes: 49fc23018ec6 ("net: phy: dp83869: support Wake on LAN")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/net/phy/dp83869.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-> > index 0aee5f645b71..cf6dec7b7d8e 100644
-> > --- a/drivers/net/phy/dp83869.c
-> > +++ b/drivers/net/phy/dp83869.c
-> > @@ -305,7 +305,7 @@ static int dp83869_set_wol(struct phy_device *phydev,
-> >   static void dp83869_get_wol(struct phy_device *phydev,
-> >   			    struct ethtool_wolinfo *wol)
-> >   {
-> > -	u16 value, sopass_val;
-> > +	int value, sopass_val;
-> >   	wol->supported = (WAKE_UCAST | WAKE_BCAST | WAKE_MAGIC |
-> >   			WAKE_MAGICSECURE);
-> 
-> Wonder why this was not reported before as the previous comparison issue
-> reported by zero day.
+s/Typoon/Typhoon/
 
-It was reported on Sep 25.  I forward those zero day bot emails.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/3com/typhoon.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://lore.kernel.org/lkml/20200925123858.GX18329@kadam/
-
-regards,
-dan carpenter
+diff --git a/drivers/net/ethernet/3com/typhoon.h b/drivers/net/ethernet/3com/typhoon.h
+index 2f634c64d5d1..38e6dcab4e94 100644
+--- a/drivers/net/ethernet/3com/typhoon.h
++++ b/drivers/net/ethernet/3com/typhoon.h
+@@ -33,7 +33,7 @@ struct basic_ring {
+ 	u32 lastWrite;
+ };
+ 
+-/* The Typoon transmit ring -- same as a basic ring, plus:
++/* The Typhoon transmit ring -- same as a basic ring, plus:
+  * lastRead:      where we're at in regard to cleaning up the ring
+  * writeRegister: register to use for writing (different for Hi & Lo rings)
+  */
+-- 
+2.25.1
