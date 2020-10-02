@@ -1,79 +1,57 @@
 From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Fri, 02 Oct 2020 07:32:53 +0000
+Date: Fri, 02 Oct 2020 13:07:56 +0000
 Subject: Re: [PATCH] selftests/ftrace: check for do_sys_openat2 in user-memory test
-Message-Id: <20201002163253.13feb38f8a1e4f148afca5de@kernel.org>
+Message-Id: <20201002220756.b62653d1e6aba102521054d2@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201001085641.51130-1-colin.king@canonical.com>
-        <20201001104448.427a0eaa@gandalf.local.home>
-        <80cee321-d8ed-31fd-2f53-d9306b1d9545@canonical.com>
-In-Reply-To: <80cee321-d8ed-31fd-2f53-d9306b1d9545@canonical.com>
+In-Reply-To: <20201001085641.51130-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Tom Zanussi <zanussi@kernel.org>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>, Tom Zanussi <zanussi@kernel.org>, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 1 Oct 2020 16:40:33 +0100
-Colin Ian King <colin.king@canonical.com> wrote:
+On Thu,  1 Oct 2020 09:56:41 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-> On 01/10/2020 15:44, Steven Rostedt wrote:
-> > On Thu,  1 Oct 2020 09:56:41 +0100
-> > Colin King <colin.king@canonical.com> wrote:
-> > 
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> More recent libc implementations are now using openat/openat2 system
-> >> calls so also add do_sys_openat2 to the tracing so that the test
-> >> passes on these systems because do_sys_open may not be called.
-> >>
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>  .../testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc  | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
-> >> index a30a9c07290d..cf1b4c3e9e6b 100644
-> >> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
-> >> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
-> >> @@ -9,6 +9,8 @@ grep -A10 "fetcharg:" README | grep -q '\[u\]<offset>' || exit_unsupported
-> >>  :;: "user-memory access syntax and ustring working on user memory";:
-> >>  echo 'p:myevent do_sys_open path=+0($arg2):ustring path2=+u0($arg2):string' \
-> >>  	> kprobe_events  
-> >> +echo 'p:myevent2 do_sys_openat2 path=+0($arg2):ustring path2=+u0($arg2):string' \
-> >> +	> kprobe_events
-> >>
-> > 
-> > This still wont work, because the rest of the code only enables the myevent
-> > event, and not the one you just added.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Yep, I botched this and tested the wrong fix.
+> More recent libc implementations are now using openat/openat2 system
+> calls so also add do_sys_openat2 to the tracing so that the test
+> passes on these systems because do_sys_open may not be called.
 > 
-> > 
-> > Did you see this broken before, and this patch fixes it?
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  .../testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc  | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> So this test breaks with a recent libc and support tools built against
-> libc.  I believe the do_sys_open is not being detected because
-> do_sys_openat2 is being called instead.
-> 
-> Not sure now of the correct way to fix this.
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
+> index a30a9c07290d..cf1b4c3e9e6b 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_user.tc
+> @@ -9,6 +9,8 @@ grep -A10 "fetcharg:" README | grep -q '\[u\]<offset>' || exit_unsupported
+>  :;: "user-memory access syntax and ustring working on user memory";:
+>  echo 'p:myevent do_sys_open path=+0($arg2):ustring path2=+u0($arg2):string' \
+>  	> kprobe_events
 
-Hmm, this actually just try to catch the user-string. So the another
-function which accepts any user-string, is OK.
-Let me try to use another one. 
+OK, at first, you need to check the kernel has do_sys_openat2 from
+/proc/kallsyms (grep -qw will help you), because it is new syscall.
 
-Thank you for reporting!
+> +echo 'p:myevent2 do_sys_openat2 path=+0($arg2):ustring path2=+u0($arg2):string' \
+> +	> kprobe_events
 
+Also, you need to append (">>") it instead overwrite (">") to kprobe_events.
 
-> 
-> > 
-> > -- Steve
-> > 
-> >  
-> >>  grep myevent kprobe_events | \
-> >>  	grep -q 'path=+0($arg2):ustring path2=+u0($arg2):string'
-> > 
-> 
+>  
+>  grep myevent kprobe_events | \
+>  	grep -q 'path=+0($arg2):ustring path2=+u0($arg2):string'
 
+And also you have to enable both myevent and myevent2 (if exists) after
+this.
+
+Then I think your patch will work correctly.
+
+Thank you!
 
 -- 
 Masami Hiramatsu <mhiramat@kernel.org>
