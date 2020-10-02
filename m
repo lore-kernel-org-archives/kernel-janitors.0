@@ -1,49 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 01 Oct 2020 11:01:50 +0000
+From: Shuah Khan <skhan@linuxfoundation.org>
+Date: Fri, 02 Oct 2020 16:47:13 +0000
 Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate statements
-Message-Id: <20201001110150.GA6715@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="CE+1k2dSO48ffgeK"
+Message-Id: <81b94c3a-43d6-c9f5-0bc0-43bf65b3d5fc@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
- <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
- <20200929113745.GB4799@sirena.org.uk>
- <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
-In-Reply-To: <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
-To: Joe Perches <joe@perches.com>
-Cc: linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, linux-stm32@st-md-mailman.stormreply.com, linux-crypto@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com, openipmi-developer@lists.sourceforge.net, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-wireless@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
+ <CAMj1kXGh+CzuXkAnqsoMO2A3T1p=D6uFOV347Ym5+VFn5U1gWg@mail.gmail.com>
+ <20200929124108.GY4282@kadam>
+ <alpine.DEB.2.22.394.2009291445050.2808@hadrien>
+ <5f0d2b20f5088281363bb4a35c5652a2c087f159.camel@perches.com>
+ <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
+In-Reply-To: <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@inria.fr>, Dan Carpenter <dan.carpenter@oracle.com>, Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, linux-iio@vger.kernel.org, drbd-dev@tron.linbit.com, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, David Lechner <david@lechnology.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com, linux-block@vger.kernel.org, linux-ide@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>
 
+On 9/29/20 7:42 AM, Shuah Khan wrote:
+> On 9/29/20 7:34 AM, Joe Perches wrote:
+>> On Tue, 2020-09-29 at 14:47 +0200, Julia Lawall wrote:
+>>> On Tue, 29 Sep 2020, Dan Carpenter wrote:
+>>>> The times where commas are used deliberately to replace curly braces 
+>>>> are
+>>>> just evil.  Either way the code is cleaner with semi-colons.
+>>>
+>>> I also found exaamples like the following to be particularly unforunate:
+>>>
+>>>                                  fprintf(stderr,
+>>>                                          "page_nr %lu wrong count %Lu 
+>>> %Lu\n",
+>>>                                         page_nr, count,
+>>>                                         count_verify[page_nr]), exit(1);
+>>>
+>>> The exit is very hard to see, unless you know to look for it.
+>>
+>> I sent that patch last month.
+>> https://patchwork.kernel.org/patch/11734877/
+>>
+> 
+> I see what happened. This patch touches lib, cpupower, and selftests.
+> Guess lost in the limbo of who takes it.
+> 
+>   tools/lib/subcmd/help.c                    |  10 +-
+>   tools/power/cpupower/utils/cpufreq-set.c   |  14 +-
+>   tools/testing/selftests/vm/gup_benchmark.c |  18 +-
+>   tools/testing/selftests/vm/userfaultfd.c   | 296 +++++++++++++--------
+>   4 files changed, 210 insertions(+), 128 deletions(-)
+> 
+> I can take it through one of my trees.
+> 
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Rafael, Andrew,
 
-On Wed, Sep 30, 2020 at 12:33:39PM -0700, Joe Perches wrote:
-> On Tue, 2020-09-29 at 12:37 +0100, Mark Brown wrote:
+This patch is now applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
+fixes branch.
 
-> > Feel free to submit patches to b4.
+This spans pm, kselftest-mm tests and tools/lib and has been
+in limbo for a few weeks for that reason.
 
-> Have you tried the existing option to send
-> thank you's on a specific ranges of patches?
+I decided to take this through kselftest tree to avoid having
+Joe split the patches.
 
-I am relying on b4 to identify which patches that I've downloaded are in
-the pushed branches.  Given that it explicitly lists the patches that
-are applied it appears to be doing an OK job here.
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl91tx4ACgkQJNaLcl1U
-h9D1IAf/a6Dh+mjW+LjpuCd+hkWCJa8iJTLmYSy9suf32mX9fM1T/gbOLQ1RJtu4
-ZQP0A5w52htIbRIWtYHrgtZQGXrq2SIm+peRmnKP0DXly+Fj0/G0zxg4lqxKzXtV
-+XpQjLbvcjF6JIV1ok5ScRg5HH8bfLJQvbGBbpmL9pvI+WniF4smB5bQRwd3qWEf
-MrBNI79S+kr1Cvjxnya+/TP7O4TtOQzzpB695ejEGvqxlTJQM5GGaZTLNJlBivOz
-ygXvOFlrffOajvN1K7URe41xznaDG4+c8pfziFXllSoEGp3yzANBNTtCGEvny0SY
-Nx0W3O8/sebfFJPHQ89w2atWG/nVEQ==
-=onQ8
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+thanks,
+-- Shuah
