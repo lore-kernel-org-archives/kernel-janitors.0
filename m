@@ -1,28 +1,34 @@
-From: "Bharathi, Divya" <Divya.Bharathi@Dell.com>
-Date: Thu, 29 Oct 2020 13:35:19 +0000
-Subject: RE: [PATCH] MAINTAINERS: rectify DELL WMI SYSMAN DRIVERS section
-Message-Id: <CY4PR19MB125445B8D71FFEF6E234D40285140@CY4PR19MB1254.namprd19.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 03 Oct 2020 05:57:09 +0000
+Subject: [PATCH] scsi: isci: Fix a typo in a comment
+Message-Id: <20201003055709.766119-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
-Cc: "Limonciello, Mario" <Mario.Limonciello@dell.com>, "Ksr, Prasanth" <Prasanth.Ksr@dell.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: intel-linux-scu@intel.com, artur.paszkiewicz@intel.com, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> 
-> Commit e8a60aa7404b ("platform/x86: Introduce support for Systems
-> Management Driver over WMI for Dell Systems") added a new section DELL
-> WMI SYSMAN DRIVERS in MAINTAINERS, but slipped in a typo.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches    F:    drivers/platform/x86/dell-wmi-syman/*
-> 
-> Point the file entry to the right location and add an entry for its
-> Documentation while at it.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+s/remtoe/remote/
+and add a missing '.'
 
-Acked-by: Divya Bharathi <divya.bharathi@dell.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/isci/remote_node_table.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/isci/remote_node_table.h b/drivers/scsi/isci/remote_node_table.h
+index 721ab982d2ac..0ddfdda2b248 100644
+--- a/drivers/scsi/isci/remote_node_table.h
++++ b/drivers/scsi/isci/remote_node_table.h
+@@ -61,7 +61,7 @@
+ /**
+  *
+  *
+- * Remote node sets are sets of remote node index in the remtoe node table The
++ * Remote node sets are sets of remote node index in the remote node table. The
+  * SCU hardware requires that STP remote node entries take three consecutive
+  * remote node index so the table is arranged in sets of three. The bits are
+  * used as 0111 0111 to make a byte and the bits define the set of three remote
+-- 
+2.25.1
