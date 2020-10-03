@@ -1,37 +1,25 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 01 Oct 2020 13:24:11 +0000
-Subject: Re: [PATCH 05/18] bcma: use semicolons rather than commas to separate statements
-Message-Id: <20201001132411.C6DF9C433FE@smtp.codeaurora.org>
+From: Mrs Maria Abdullah <admin@huclangia.tk>
+Date: Sat, 03 Oct 2020 08:36:18 +0000
+Subject: Hello!
+Message-Id: <20201003043618.E4C92C4AA9AFDF7C@huclangia.tk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-6-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-6-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, =?utf-8?q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@inria.fr> wrote:
+Hello,
 
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+My Name is Mrs.Maria Abdullah from Wales United Kingdom,
 
-Patch applied to wireless-drivers-next.git, thanks.
+I would like to work with you to carry out a promise i made to 
+God by willing all that i have to the charity because i am very 
+sick now (Covid-19 Virus Infection)
 
-703314b2db3b bcma: use semicolons rather than commas to separate statements
+Get back to me for more details via my private email.
 
--- 
-https://patchwork.kernel.org/patch/11802381/
+Email: mariabdullah101@taxrag.com
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Thanks and God bless you.
+
+Maria
