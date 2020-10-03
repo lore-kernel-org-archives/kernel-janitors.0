@@ -1,66 +1,123 @@
-From: Shuah Khan <skhan@linuxfoundation.org>
-Date: Fri, 02 Oct 2020 16:47:13 +0000
+From: Joe Perches <joe@perches.com>
+Date: Sat, 03 Oct 2020 18:40:48 +0000
 Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate statements
-Message-Id: <81b94c3a-43d6-c9f5-0bc0-43bf65b3d5fc@linuxfoundation.org>
+Message-Id: <f44d19ad596f261c0287c9ab18c45161003efb43.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <CAMj1kXGh+CzuXkAnqsoMO2A3T1p=D6uFOV347Ym5+VFn5U1gWg@mail.gmail.com>
- <20200929124108.GY4282@kadam>
- <alpine.DEB.2.22.394.2009291445050.2808@hadrien>
- <5f0d2b20f5088281363bb4a35c5652a2c087f159.camel@perches.com>
- <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
-In-Reply-To: <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
+         <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+         <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
+         <20200929113745.GB4799@sirena.org.uk>
+         <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
+         <20201001110150.GA6715@sirena.org.uk>
+In-Reply-To: <20201001110150.GA6715@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@inria.fr>, Dan Carpenter <dan.carpenter@oracle.com>, Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-iio@vger.kernel.org, drbd-dev@tron.linbit.com, =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>, David Lechner <david@lechnology.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com, linux-block@vger.kernel.org, linux-ide@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>, tools@linux.kernel.org, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, linux-stm32@st-md-mailman.stormreply.com, linux-crypto@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>, Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com, openipmi-developer@lists.sourceforge.net, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-wireless@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
 
-On 9/29/20 7:42 AM, Shuah Khan wrote:
-> On 9/29/20 7:34 AM, Joe Perches wrote:
->> On Tue, 2020-09-29 at 14:47 +0200, Julia Lawall wrote:
->>> On Tue, 29 Sep 2020, Dan Carpenter wrote:
->>>> The times where commas are used deliberately to replace curly braces 
->>>> are
->>>> just evil.  Either way the code is cleaner with semi-colons.
->>>
->>> I also found exaamples like the following to be particularly unforunate:
->>>
->>>                                  fprintf(stderr,
->>>                                          "page_nr %lu wrong count %Lu 
->>> %Lu\n",
->>>                                         page_nr, count,
->>>                                         count_verify[page_nr]), exit(1);
->>>
->>> The exit is very hard to see, unless you know to look for it.
->>
->> I sent that patch last month.
->> https://patchwork.kernel.org/patch/11734877/
->>
+(Adding tools and Konstantin Ryabitsev)
+
+There seems to be some mismatch between b4's use of the
+cover letter to a patch series and what maintainers that
+apply a subset of the patches in the patch series.
+
+The merge description shows the entire patch series as
+applied, but the actual merge is only a subset of the
+series.
+
+Can this be improved in b4?
+
+For example, regarding:
+
+https://lore.kernel.org/linux-amlogic/160132172369.55460.9237357219623604216.b4-ty@kernel.org/
+https://lore.kernel.org/lkml/b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com/#t
+
+On Thu, 2020-10-01 at 12:01 +0100, Mark Brown wrote:
+> On Wed, Sep 30, 2020 at 12:33:39PM -0700, Joe Perches wrote:
+> > On Tue, 2020-09-29 at 12:37 +0100, Mark Brown wrote:
+> > > Feel free to submit patches to b4.
+> > Have you tried the existing option to send
+> > thank you's on a specific ranges of patches?
 > 
-> I see what happened. This patch touches lib, cpupower, and selftests.
-> Guess lost in the limbo of who takes it.
-> 
->   tools/lib/subcmd/help.c                    |  10 +-
->   tools/power/cpupower/utils/cpufreq-set.c   |  14 +-
->   tools/testing/selftests/vm/gup_benchmark.c |  18 +-
->   tools/testing/selftests/vm/userfaultfd.c   | 296 +++++++++++++--------
->   4 files changed, 210 insertions(+), 128 deletions(-)
-> 
-> I can take it through one of my trees.
-> 
+> I am relying on b4 to identify which patches that I've downloaded are in
+> the pushed branches.  Given that it explicitly lists the patches that
+> are applied it appears to be doing an OK job here.
 
-Rafael, Andrew,
+I'm not so sure about that.
 
-This patch is now applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
-fixes branch.
+The commit merge description in -next shows 23 files
+modified but the commit range shown in the merge shows
+only a single patch applied:
 
-This spans pm, kselftest-mm tests and tools/lib and has been
-in limbo for a few weeks for that reason.
+From next-20201002:
 
-I decided to take this through kselftest tree to avoid having
-Joe split the patches.
+(I've removed some of the commit description below)
 
-thanks,
--- Shuah
+$ git log --stat -1 2defc3fa18a68963a330187f5386968e50832d06
+commit 2defc3fa18a68963a330187f5386968e50832d06
+Merge: eb45df24fe82 7f4a122d0b50
+Author: Mark Brown <broonie@kernel.org>
+Date:   Mon Sep 28 18:28:48 2020 +0100
+
+    Merge series "use semicolons rather than commas to separate statements" from Julia Lawall <Julia.Lawall@inria.fr>:
+    
+    These patches replace commas by semicolons.  This was done using the
+    Coccinelle semantic patch (http://coccinelle.lip6.fr/) shown below.
+
+[some of the long description elided]
+
+        ---
+    
+     drivers/acpi/processor_idle.c               |    4 +++-
+     drivers/ata/pata_icside.c                   |   21 +++++++++++++--------
+     drivers/base/regmap/regmap-debugfs.c        |    2 +-
+     drivers/bcma/driver_pci_host.c              |    4 ++--
+     drivers/block/drbd/drbd_receiver.c          |    6 ++++--
+     drivers/char/agp/amd-k7-agp.c               |    2 +-
+     drivers/char/agp/nvidia-agp.c               |    2 +-
+     drivers/char/agp/sworks-agp.c               |    2 +-
+     drivers/char/hw_random/iproc-rng200.c       |    8 ++++----
+     drivers/char/hw_random/mxc-rnga.c           |    6 +++---
+     drivers/char/hw_random/stm32-rng.c          |    8 ++++----
+     drivers/char/ipmi/bt-bmc.c                  |    6 +++---
+     drivers/clk/meson/meson-aoclk.c             |    2 +-
+     drivers/clk/mvebu/ap-cpu-clk.c              |    2 +-
+     drivers/clk/uniphier/clk-uniphier-cpugear.c |    2 +-
+     drivers/clk/uniphier/clk-uniphier-mux.c     |    2 +-
+     drivers/clocksource/mps2-timer.c            |    6 +++---
+     drivers/clocksource/timer-armada-370-xp.c   |    8 ++++----
+     drivers/counter/ti-eqep.c                   |    2 +-
+     drivers/crypto/amcc/crypto4xx_alg.c         |    2 +-
+     drivers/crypto/atmel-tdes.c                 |    2 +-
+     drivers/crypto/hifn_795x.c                  |    4 ++--
+     drivers/crypto/talitos.c                    |    8 ++++----
+     23 files changed, 60 insertions(+), 51 deletions(-)
+
+But the commit range of the merge shows only the single commit:
+
+$ git log --stat eb45df24fe82..7f4a122d0b50
+commit 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
+Author: Julia Lawall <Julia.Lawall@inria.fr>
+Date:   Sun Sep 27 21:12:24 2020 +0200
+
+    regmap: debugfs: use semicolons rather than commas to separate statements
+    
+    Replace commas with semicolons.  What is done is essentially described by
+    the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
+    
+    // <smpl>
+    @@ expression e1,e2; @@
+    e1
+    -,
+    +;
+    e2
+    ... when any
+    // </smpl>
+    
+    Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+    Link: https://lore.kernel.org/r/1601233948-11629-15-git-send-email-Julia.La>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+ drivers/base/regmap/regmap-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
