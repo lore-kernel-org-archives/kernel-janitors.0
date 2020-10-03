@@ -1,72 +1,75 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Sat, 24 Oct 2020 14:48:33 +0000
-Subject: Re: [PATCH] arch/Kconfig: fix a few trivial spelling mistakes in Kconfig
-Message-Id: <92ed2fc0-0894-55ec-2cba-885acc66662f@infradead.org>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Sat, 03 Oct 2020 21:51:02 +0000
+Subject: Re: [PATCH][next] power: supply: fix spelling mistake "unprecise" -> "imprecise"
+Message-Id: <20201003215102.5hl5lvidyki2xu7b@earth.universe>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="uy4xpfjn2exzd2kp"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201024125549.78254-1-colin.king@canonical.com>
-In-Reply-To: <20201024125549.78254-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200902101656.57676-1-colin.king@canonical.com>
+In-Reply-To: <20200902101656.57676-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/24/20 5:55 AM, Colin King wrote:
+
+--uy4xpfjn2exzd2kp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Sep 02, 2020 at 11:16:56AM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a couple of trivial spelling mistakes, fix these.
-> 
+>=20
+> There is a spelling mistake in a dev_info message. Fix it.
+>=20
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
 > ---
->  arch/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 56b6ccc0e32d..ce4e84366418 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -261,7 +261,7 @@ config ARCH_HAS_SET_DIRECT_MAP
->  
->  #
->  # Select if the architecture provides the arch_dma_set_uncached symbol to
-> -# either provide an uncached segement alias for a DMA allocation, or
-> +# either provide an uncached segment alias for a DMA allocation, or
->  # to remap the page tables in place.
->  #
->  config ARCH_HAS_DMA_SET_UNCACHED
-> @@ -314,14 +314,14 @@ config ARCH_32BIT_OFF_T
->  config HAVE_ASM_MODVERSIONS
->  	bool
->  	help
-> -	  This symbol should be selected by an architecure if it provides
-> +	  This symbol should be selected by an architecture if it provides
->  	  <asm/asm-prototypes.h> to support the module versioning for symbols
->  	  exported from assembly code.
->  
->  config HAVE_REGS_AND_STACK_ACCESS_API
->  	bool
->  	help
-> -	  This symbol should be selected by an architecure if it supports
-> +	  This symbol should be selected by an architecture if it supports
->  	  the API needed to access registers and stack entries from pt_regs,
->  	  declared in asm/ptrace.h
->  	  For example the kprobes-based event tracer needs this API.
-> @@ -336,7 +336,7 @@ config HAVE_RSEQ
->  config HAVE_FUNCTION_ARG_ACCESS_API
->  	bool
->  	help
-> -	  This symbol should be selected by an architecure if it supports
-> +	  This symbol should be selected by an architecture if it supports
->  	  the API needed to access function arguments from pt_regs,
->  	  declared in asm/ptrace.h
->  
-> 
 
+Thanks, queued.
 
--- 
-~Randy
+-- Sebastian
+
+>  drivers/power/supply/rn5t618_power.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/rn5t618_power.c b/drivers/power/supply/=
+rn5t618_power.c
+> index 424d2817bee5..dee520f0fdf5 100644
+> --- a/drivers/power/supply/rn5t618_power.c
+> +++ b/drivers/power/supply/rn5t618_power.c
+> @@ -487,7 +487,7 @@ static int rn5t618_power_probe(struct platform_device=
+ *pdev)
+>  		 * gauge will get decalibrated.
+>  		 */
+>  		dev_info(&pdev->dev, "Fuel gauge not enabled, enabling now\n");
+> -		dev_info(&pdev->dev, "Expect unprecise results\n");
+> +		dev_info(&pdev->dev, "Expect imprecise results\n");
+>  		regmap_update_bits(info->rn5t618->regmap, RN5T618_CONTROL,
+>  				   FG_ENABLE, FG_ENABLE);
+>  	}
+> --=20
+> 2.27.0
+>=20
+
+--uy4xpfjn2exzd2kp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl948kYACgkQ2O7X88g7
++pqMJxAAiGvBhfmEp5rFXXboapypV5IeBY0hUJZap2U9RBq7Is5ZYAE/LWwK8Gp5
+ukXhlWlZzzUfZ58mTRqwXxV3xxVA98ua2wa3/TmV0GulZo5DcwjJT8PutZL2CTly
+4OjJheAjRdmL2pp+qc6u4sID0hrH3baeOcL9ahuhhQC/QJushuOc4As9Y6ExEALR
+16x99xP/AIKhe1fxY1KKu/NLhjHB2xj/Vov+mJBM6GAQb/6LWox5otbCGQFo9q9D
+KKlqqc1MBwdCa6/vX3ykXrXTfClURVK8yLbuNAoAdUuuPxingIIdTSUxClv50v+E
+9uQN9GI41qFAuE5eYH6RlvfkLeLvint2i2GdhL8CUZ3FopZ31ix6Qzy8EM5plueS
+Ko6UEBAYlf8eWmpnnfxbZNFagKouJnI03908iQCuLNPLHVtKNdEZVLMA90aqgJTd
+PszHiMfTITrEpR7KqHyJ9J/AmCO8ONdAQqCH5jxZmPFYAp63Ybh9JF8G8+olnDS2
+0GrWDNzNh8RiCjZQjizN/JuYxvHEXg6/jkt0NV4FqGEBcUnEmufL3oxzXmHR41kf
+6hOK+nHtQo1EQGKtYijeCgSO/1M6pMX1shD7Mt6Dlu/Wo473Fc0syb2mLoB6rmuB
+l2DmdXJE246VyylrQYjBa4Qobr38yZj1M5Mw0ND5jB7pGI+ICtI=
+=r7CH
+-----END PGP SIGNATURE-----
+
+--uy4xpfjn2exzd2kp--
