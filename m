@@ -1,51 +1,28 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Fri, 02 Oct 2020 17:39:20 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 04 Oct 2020 00:09:14 +0000
 Subject: Re: [PATCH][next] net: phy: dp83869: fix unsigned comparisons against less than zero values
-Message-Id: <20201002173920.GF3996795@lunn.ch>
+Message-Id: <20201003.170914.694797784124863729.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201002165422.94328-1-colin.king@canonical.com>
- <1ffbf497-cb07-4302-8a79-236338f00383@ti.com>
-In-Reply-To: <1ffbf497-cb07-4302-8a79-236338f00383@ti.com>
+In-Reply-To: <20201002165422.94328-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Colin King <colin.king@canonical.com>, Heiner Kallweit <hkallweit1@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, kuba@kernel.org, dmurphy@ti.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 12:26:49PM -0500, Dan Murphy wrote:
-> Colin
+From: Colin King <colin.king@canonical.com>
+Date: Fri,  2 Oct 2020 17:54:22 +0100
+
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> On 10/2/20 11:54 AM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the comparisons of u16 integers value and sopass_val with
-> > less than zero for error checking is always false because the values
-> > are unsigned. Fix this by making these variables int.  This does not
-> > affect the shift and mask operations performed on these variables
-> > 
-> > Addresses-Coverity: ("Unsigned compared against zero")
-> > Fixes: 49fc23018ec6 ("net: phy: dp83869: support Wake on LAN")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/net/phy/dp83869.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-> > index 0aee5f645b71..cf6dec7b7d8e 100644
-> > --- a/drivers/net/phy/dp83869.c
-> > +++ b/drivers/net/phy/dp83869.c
-> > @@ -305,7 +305,7 @@ static int dp83869_set_wol(struct phy_device *phydev,
-> >   static void dp83869_get_wol(struct phy_device *phydev,
-> >   			    struct ethtool_wolinfo *wol)
-> >   {
-> > -	u16 value, sopass_val;
-> > +	int value, sopass_val;
-> >   	wol->supported = (WAKE_UCAST | WAKE_BCAST | WAKE_MAGIC |
-> >   			WAKE_MAGICSECURE);
+> Currently the comparisons of u16 integers value and sopass_val with
+> less than zero for error checking is always false because the values
+> are unsigned. Fix this by making these variables int.  This does not
+> affect the shift and mask operations performed on these variables
 > 
-> Wonder why this was not reported before as the previous comparison issue
-> reported by zero day.
+> Addresses-Coverity: ("Unsigned compared against zero")
+> Fixes: 49fc23018ec6 ("net: phy: dp83869: support Wake on LAN")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I think it needs W=1
-
-  Andrew
+Applied, thank you.
