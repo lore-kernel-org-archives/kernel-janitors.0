@@ -1,94 +1,65 @@
-From: "Paraschiv, Andra-Irina" <andraprs@amazon.com>
-Date: Fri, 30 Oct 2020 15:23:18 +0000
-Subject: Re: [bug report] nitro_enclaves: Add logic for setting an enclave vCPU
-Message-Id: <6ed3d5cb-e49c-677e-80d4-e02ab14b251a@amazon.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 04 Oct 2020 12:58:27 +0000
+Subject: [PATCH] mm/vmscan: drop unneeded assignment in kswapd()
+Message-Id: <20201004125827.17679-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201030113033.GA3251003@mwanda>
-In-Reply-To: <20201030113033.GA3251003@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-CgpPbiAzMC8xMC8yMDIwIDEzOjMwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+Cj4gSGVsbG8gQW5k
-cmEgUGFyYXNjaGl2LAo+Cj4gVGhlIHBhdGNoIGZmOGE0ZDNlM2E5OTogIm5pdHJvX2VuY2xhdmVz
-OiBBZGQgbG9naWMgZm9yIHNldHRpbmcgYW4KPiBlbmNsYXZlIHZDUFUiIGZyb20gU2VwIDIxLCAy
-MDIwLCBsZWFkcyB0byB0aGUgZm9sbG93aW5nIHN0YXRpYwo+IGNoZWNrZXIgd2FybmluZzoKPgo+
-ICAgICAgICAgIGRyaXZlcnMvdmlydC9uaXRyb19lbmNsYXZlcy9uZV9taXNjX2Rldi5jOjQ3MSBu
-ZV9kb25hdGVkX2NwdSgpCj4gICAgICAgICAgZXJyb3I6IHBhc3NpbmcgdW50cnVzdGVkIGRhdGEg
-J2NwdScgdG8gJ2NwdW1hc2tfdGVzdF9jcHUoKScKPgo+IGRyaXZlcnMvdmlydC9uaXRyb19lbmNs
-YXZlcy9uZV9taXNjX2Rldi5jCj4gICAgMTA5MyAgICAgICAgICBzd2l0Y2ggKGNtZCkgewo+ICAg
-IDEwOTQgICAgICAgICAgY2FzZSBORV9BRERfVkNQVTogewo+ICAgIDEwOTUgICAgICAgICAgICAg
-ICAgICBpbnQgcmMgPSAtRUlOVkFMOwo+ICAgIDEwOTYgICAgICAgICAgICAgICAgICB1MzIgdmNw
-dV9pZCA9IDA7Cj4gICAgMTA5Nwo+ICAgIDEwOTggICAgICAgICAgICAgICAgICBpZiAoY29weV9m
-cm9tX3VzZXIoJnZjcHVfaWQsICh2b2lkIF9fdXNlciAqKWFyZywgc2l6ZW9mKHZjcHVfaWQpKSkK
-PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eCj4K
-PiAgICAxMDk5ICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVGQVVMVDsKPiAgICAx
-MTAwCj4gICAgMTEwMSAgICAgICAgICAgICAgICAgIG11dGV4X2xvY2soJm5lX2VuY2xhdmUtPmVu
-Y2xhdmVfaW5mb19tdXRleCk7Cj4gICAgMTEwMgo+ICAgIDExMDMgICAgICAgICAgICAgICAgICBp
-ZiAobmVfZW5jbGF2ZS0+c3RhdGUgIT0gTkVfU1RBVEVfSU5JVCkgewo+ICAgIDExMDQgICAgICAg
-ICAgICAgICAgICAgICAgICAgIGRldl9lcnJfcmF0ZWxpbWl0ZWQobmVfbWlzY19kZXYudGhpc19k
-ZXZpY2UsCj4gICAgMTEwNSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAiRW5jbGF2ZSBpcyBub3QgaW4gaW5pdCBzdGF0ZVxuIik7Cj4gICAgMTEwNgo+ICAgIDEx
-MDcgICAgICAgICAgICAgICAgICAgICAgICAgIG11dGV4X3VubG9jaygmbmVfZW5jbGF2ZS0+ZW5j
-bGF2ZV9pbmZvX211dGV4KTsKPiAgICAxMTA4Cj4gICAgMTEwOSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgcmV0dXJuIC1ORV9FUlJfTk9UX0lOX0lOSVRfU1RBVEU7Cj4gICAgMTExMCAgICAgICAg
-ICAgICAgICAgIH0KPiAgICAxMTExCj4gICAgMTExMiAgICAgICAgICAgICAgICAgIGlmICh2Y3B1
-X2lkID49IChuZV9lbmNsYXZlLT5ucl9wYXJlbnRfdm1fY29yZXMgKgo+ICAgIDExMTMgICAgICAg
-ICAgICAgICAgICAgICAgbmVfZW5jbGF2ZS0+bnJfdGhyZWFkc19wZXJfY29yZSkpIHsKPgo+IFRv
-IHByZXZlbnQgYSBidWZmZXIgb3ZlcmZsb3cgdmNwdV9pZCBoYXMgdG8gYmUgbGVzcyB0aGFuICJu
-cl9jcHVfaWRzIi4KPiBJcyAibmVfZW5jbGF2ZS0+bnJfcGFyZW50X3ZtX2NvcmVzICogbmVfZW5j
-bGF2ZS0+bnJfdGhyZWFkc19wZXJfY29yZSIKPiA8PSBucl9jcHVfaWRzPyAgSWYgc28gdGhlbiBp
-dCdzIGZpbmUuCgpIaSBEYW4sCgpUaGFua3MgZm9yIHJlYWNoaW5nIG91dCB3aXRoIHJlZ2FyZCB0
-byB0aGlzIHJlcG9ydGVkIGlzc3VlIGZyb20gdGhlIApzdGF0aWMgYW5hbHlzaXMuCgoibnJfY3B1
-X2lkcyIgaXMgdXNlZCB3aGVuIHRoZSBudW1iZXIgb2YgY29yZXMgaXMgaW5pdGlhbGl6ZWQsIHNv
-IGl0IApzaG91bGQgYmUgZmluZS4gTGV0IG1lIGtub3cgaWYgSSBtaXNzIHNvbWV0aGluZyBhbmQg
-YSBjaGVjayBoYXMgdG8gYmUgCmFkZGVkIHRvIGRpcmVjdGx5IGNvbXBhcmUgdG8gIm5yX2NwdV9p
-ZHMiLgoKVGhlIGluaXRpYWxpemF0aW9uIGZsb3cgZm9yIHRoZSBhYm92ZSB2YXJpYWJsZXMgbG9v
-a3MgbGlrZSB0aGlzOgoKWzFdIHxuZV9zZXR1cF9jcHVfcG9vbCgpfHx8Cgp8CgoJLyogQ2FsY3Vs
-YXRlIHRoZSBudW1iZXIgb2YgdGhyZWFkcyBmcm9tIGEgZnVsbCBDUFUgY29yZS4gKi8KCWNwdSAg
-PSAgY3B1bWFza19hbnkoY3B1X3Bvb2wpOwoJZm9yX2VhY2hfY3B1KGNwdV9zaWJsaW5nLCAgdG9w
-b2xvZ3lfc2libGluZ19jcHVtYXNrKGNwdSkpCgkJbmVfY3B1X3Bvb2wubnJfdGhyZWFkc19wZXJf
-Y29yZSsrOwoKCW5lX2NwdV9wb29sLm5yX3BhcmVudF92bV9jb3JlcyAgPSAgbnJfY3B1X2lkcyAg
-LyAgbmVfY3B1X3Bvb2wubnJfdGhyZWFkc19wZXJfY29yZTt8CgpbMl0gbmVfY3JlYXRlX3ZtX2lv
-Y3RsKCl8fAoKfAoKCW5lX2VuY2xhdmUtPm5yX3BhcmVudF92bV9jb3JlcyAgPSAgbmVfY3B1X3Bv
-b2wubnJfcGFyZW50X3ZtX2NvcmVzOwoJbmVfZW5jbGF2ZS0+bnJfdGhyZWFkc19wZXJfY29yZSAg
-PSAgbmVfY3B1X3Bvb2wubnJfdGhyZWFkc19wZXJfY29yZTt8CgoKVGhhbmtzLApBbmRyYQoKWzFd
-IApodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxk
-cy9saW51eC5naXQvdHJlZS9kcml2ZXJzL3ZpcnQvbml0cm9fZW5jbGF2ZXMvbmVfbWlzY19kZXYu
-Yz9oPXY1LjEwLXJjMSNuMjc5ClsyXSAKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
-bnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvZHJpdmVycy92aXJ0L25pdHJv
-X2VuY2xhdmVzL25lX21pc2NfZGV2LmM/aD12NS4xMC1yYzEjbjE1NzEKCj4KPiAgICAxMTE0ICAg
-ICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyX3JhdGVsaW1pdGVkKG5lX21pc2NfZGV2LnRo
-aXNfZGV2aWNlLAo+ICAgIDExMTUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgInZDUFUgaWQgaGlnaGVyIHRoYW4gbWF4IENQVSBpZFxuIik7Cj4gICAgMTExNgo+
-ICAgIDExMTcgICAgICAgICAgICAgICAgICAgICAgICAgIG11dGV4X3VubG9jaygmbmVfZW5jbGF2
-ZS0+ZW5jbGF2ZV9pbmZvX211dGV4KTsKPiAgICAxMTE4Cj4gICAgMTExOSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgcmV0dXJuIC1ORV9FUlJfSU5WQUxJRF9WQ1BVOwo+ICAgIDExMjAgICAgICAg
-ICAgICAgICAgICB9Cj4gICAgMTEyMQo+ICAgIDExMjIgICAgICAgICAgICAgICAgICBpZiAoIXZj
-cHVfaWQpIHsKPiAgICAxMTIzICAgICAgICAgICAgICAgICAgICAgICAgICAvKiBVc2UgdGhlIENQ
-VSBwb29sIGZvciBjaG9vc2luZyBhIENQVSBmb3IgdGhlIGVuY2xhdmUuICovCj4gICAgMTEyNCAg
-ICAgICAgICAgICAgICAgICAgICAgICAgcmMgPSBuZV9nZXRfY3B1X2Zyb21fY3B1X3Bvb2wobmVf
-ZW5jbGF2ZSwgJnZjcHVfaWQpOwo+ICAgIDExMjUgICAgICAgICAgICAgICAgICAgICAgICAgIGlm
-IChyYyA8IDApIHsKPiAgICAxMTI2ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRl
-dl9lcnJfcmF0ZWxpbWl0ZWQobmVfbWlzY19kZXYudGhpc19kZXZpY2UsCj4gICAgMTEyNyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJFcnJvciBp
-biBnZXQgQ1BVIGZyb20gcG9vbCBbcmM9JWRdXG4iLAo+ICAgIDExMjggICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByYyk7Cj4gICAgMTEyOQo+ICAg
-IDExMzAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbXV0ZXhfdW5sb2NrKCZuZV9l
-bmNsYXZlLT5lbmNsYXZlX2luZm9fbXV0ZXgpOwo+ICAgIDExMzEKPiAgICAxMTMyICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByYzsKPiAgICAxMTMzICAgICAgICAgICAg
-ICAgICAgICAgICAgICB9Cj4gICAgMTEzNCAgICAgICAgICAgICAgICAgIH0gZWxzZSB7Cj4gICAg
-MTEzNSAgICAgICAgICAgICAgICAgICAgICAgICAgLyogQ2hlY2sgaWYgdGhlIHByb3ZpZGVkIHZD
-UFUgaXMgYXZhaWxhYmxlIGluIHRoZSBORSBDUFUgcG9vbC4gKi8KPiAgICAxMTM2ICAgICAgICAg
-ICAgICAgICAgICAgICAgICByYyA9IG5lX2NoZWNrX2NwdV9pbl9jcHVfcG9vbChuZV9lbmNsYXZl
-LCB2Y3B1X2lkKTsKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeXl5eXl5eCj4gVGhpcyB3aWxsIGxlYWQg
-dG8gdGhlIG91dCBvZiBib3VuZHMgaWYgdmNwdV9pZCBpcyBtb3JlIHRoYW4KPiBucl9jcHVfaWRz
-Lgo+Cj4gICAgMTEzNyAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHJjIDwgMCkgewo+ICAg
-IDExMzggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2Vycl9yYXRlbGltaXRl
-ZChuZV9taXNjX2Rldi50aGlzX2RldmljZSwKPgo+IHJlZ2FyZHMsCj4gZGFuIGNhcnBlbnRlcgoK
-CgoKQW1hem9uIERldmVsb3BtZW50IENlbnRlciAoUm9tYW5pYSkgUy5SLkwuIHJlZ2lzdGVyZWQg
-b2ZmaWNlOiAyN0EgU2YuIExhemFyIFN0cmVldCwgVUJDNSwgZmxvb3IgMiwgSWFzaSwgSWFzaSBD
-b3VudHksIDcwMDA0NSwgUm9tYW5pYS4gUmVnaXN0ZXJlZCBpbiBSb21hbmlhLiBSZWdpc3RyYXRp
-b24gbnVtYmVyIEoyMi8yNjIxLzIwMDUuCg=
+The refactoring to kswapd() in commit e716f2eb24de ("mm, vmscan: prevent
+kswapd sleeping prematurely due to mismatched classzone_idx") turned an
+assignment to reclaim_order into a dead store, as in all further paths,
+reclaim_order will be assigned again before it is used.
+
+make clang-analyzer on x86_64 tinyconfig caught my attention with:
+
+  mm/vmscan.c: warning: Although the value stored to 'reclaim_order' is
+  used in the enclosing expression, the value is never actually read from
+  'reclaim_order' [clang-analyzer-deadcode.DeadStores]
+
+Compilers will detect this unneeded assignment and optimize this anyway.
+So, the resulting binary is identical before and after this change.
+
+Simplify the code and remove unneeded assignment to make clang-analyzer
+happy.
+
+No functional change. No change in binary code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201002
+
+Mel, please ack.
+Andrew, please pick this minor non-urgent clean-up patch.
+
+I quickly confirmed that the binary did not change with this change to the
+source code; The hash of mm/vmscan.o remained the same before and after
+the change.
+
+So, in my setup:
+md5sum mm/vmscan.o
+7da4675477f186263e36b726cc2b859d  mm/vmscan.o
+
+linux-safety, please verify and validate this change.
+
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 466fc3144fff..130ee40c1255 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3896,7 +3896,7 @@ static int kswapd(void *p)
+ 					highest_zoneidx);
+ 
+ 		/* Read the new order and highest_zoneidx */
+-		alloc_order = reclaim_order = READ_ONCE(pgdat->kswapd_order);
++		alloc_order = READ_ONCE(pgdat->kswapd_order);
+ 		highest_zoneidx = kswapd_highest_zoneidx(pgdat,
+ 							highest_zoneidx);
+ 		WRITE_ONCE(pgdat->kswapd_order, 0);
+-- 
+2.17.1
