@@ -1,7 +1,7 @@
 From: Mel Gorman <mgorman@techsingularity.net>
-Date: Mon, 05 Oct 2020 07:56:07 +0000
+Date: Mon, 05 Oct 2020 07:59:03 +0000
 Subject: Re: [PATCH] mm/vmscan: drop unneeded assignment in kswapd()
-Message-Id: <20201005075606.GG3227@techsingularity.net>
+Message-Id: <20201005075903.GH3227@techsingularity.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201004125827.17679-1-lukas.bulwahn@gmail.com>
  <20201004192437.GF3227@techsingularity.net>
@@ -60,26 +60,9 @@ On Mon, Oct 05, 2020 at 08:58:53AM +0200, Lukas Bulwahn wrote:
 > before kswap_try_to_sleep(...).
 > 
 
-After your patch, the code is
+Bah, I misread the patch because I'm an idiot.
 
-	unsigned int alloc_order, reclaim_order;
-	...
-
-	for ( ; ; ) {
-                alloc_order = READ_ONCE(pgdat->kswapd_order);
-                highest_zoneidx = kswapd_highest_zoneidx(pgdat,
-                                                        highest_zoneidx);
-
-kswapd_try_sleep:
-                kswapd_try_to_sleep(pgdat, alloc_order, reclaim_order,
-                                        highest_zoneidx);
-	...
-		reclaim_order = balance_pgdat(pgdat, alloc_order,
-                                                highest_zoneidx);
-
-reclaim_order is declared, not initialised at the start of the loop and
-passed into kswapd_try_to_sleep. There is a sequence where it is not used
-so it does not matter but it depends on the compiler figuring that out.
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
 -- 
 Mel Gorman
