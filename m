@@ -1,33 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 30 Oct 2020 06:49:33 +0000
-Subject: Re: [PATCH] crypto: inside-secure: Fix sizeof() mismatch
-Message-Id: <20201030064933.GE25453@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Oct 2020 17:06:00 +0000
+Subject: [PATCH][next] power: supply: bq25980: remove redundant zero check on ret
+Message-Id: <20201006170600.545361-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201010164736.12871-1-colin.king@canonical.com>
-In-Reply-To: <20201010164736.12871-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Antoine Tenart <atenart@kernel.org>, "David S . Miller" <davem@davemloft.net>, Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Dan Murphy <dmurphy@ti.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 10, 2020 at 05:47:36PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An incorrect sizeof() is being used, sizeof(priv->ring[i].rdr_req) is
-> not correct, it should be sizeof(*priv->ring[i].rdr_req). Note that
-> since the size of ** is the same size as * this is not causing any
-> issues.
-> 
-> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-> Fixes: 9744fec95f06 ("crypto: inside-secure - remove request list to improve performance")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/inside-secure/safexcel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Currently ret is assigned to zero and the following statement checks
+if it is non-zero. This check is redundant and can be removed
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: 5069185fc18e ("power: supply: bq25980: Add support for the BQ259xx family")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/bq25980_charger.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/power/supply/bq25980_charger.c b/drivers/power/supply/bq25980_charger.c
+index 3995fb7cf060..f04f9acdb13b 100644
+--- a/drivers/power/supply/bq25980_charger.c
++++ b/drivers/power/supply/bq25980_charger.c
+@@ -613,9 +613,6 @@ static int bq25980_set_battery_property(struct power_supply *psy,
+ 	struct bq25980_device *bq = power_supply_get_drvdata(psy);
+ 	int ret = 0;
+ 
+-	if (ret)
+-		return ret;
+-
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
+ 		ret = bq25980_set_const_charge_curr(bq, val->intval);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.27.0
