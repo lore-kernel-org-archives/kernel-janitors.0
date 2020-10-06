@@ -1,125 +1,35 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Fri, 23 Oct 2020 21:15:09 +0000
-Subject: Re: [PATCH] hwmon: (pmbus/max20730) use scnprintf() instead of snprintf()
-Message-Id: <20201023211509.GA28238@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Oct 2020 15:20:24 +0000
+Subject: [PATCH][next] ASoC: mchp-spdifrx: fix spelling mistake "overrrun" -> "overrun"
+Message-Id: <20201006152024.542418-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201022070824.GC2817762@mwanda>
-In-Reply-To: <20201022070824.GC2817762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ugur Usug <Ugur.Usug@maximintegrated.com>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 10:08:24AM +0300, Dan Carpenter wrote:
-> The snprintf() function returns the number of characters which would
-> have been printed if there were enough space, but the scnprintf()
-> returns the number of characters which were actually printed.  If the
-> buffer is not large enough, then using snprintf() would result in a
-> read overflow and an information leak.
-> 
-> Fixes: 8910c0bd533d ("hwmon: (pmbus/max20730) add device monitoring via debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+There is a spelling mistake in a dev_warn message. Fix it.
 
-Thanks,
-Guenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/atmel/mchp-spdifrx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/hwmon/pmbus/max20730.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/max20730.c b/drivers/hwmon/pmbus/max20730.c
-> index 57923d72490c..be83b98411c7 100644
-> --- a/drivers/hwmon/pmbus/max20730.c
-> +++ b/drivers/hwmon/pmbus/max20730.c
-> @@ -122,8 +122,8 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  	switch (idx) {
->  	case MAX20730_DEBUGFS_VOUT_MIN:
->  		ret = VOLT_FROM_REG(data->mfr_voutmin * 10000);
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d.%d\n",
-> -			       ret / 10000, ret % 10000);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d.%d\n",
-> +				ret / 10000, ret % 10000);
->  		break;
->  	case MAX20730_DEBUGFS_FREQUENCY:
->  		val = (data->mfr_devset1 & MAX20730_MFR_DEVSET1_FSW_MASK)
-> @@ -141,7 +141,7 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  			ret = 800;
->  		else
->  			ret = 900;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_PG_DELAY:
->  		val = (data->mfr_devset1 & MAX20730_MFR_DEVSET1_TSTAT_MASK)
-> @@ -223,7 +223,7 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  	case MAX20730_DEBUGFS_OC_PROTECT_MODE:
->  		ret = (data->mfr_devset2 & MAX20730_MFR_DEVSET2_OCPM_MASK)
->  			>> MAX20730_MFR_DEVSET2_OCPM_BIT_POS;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_SS_TIMING:
->  		val = (data->mfr_devset2 & MAX20730_MFR_DEVSET2_SS_MASK)
-> @@ -241,32 +241,32 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  	case MAX20730_DEBUGFS_IMAX:
->  		ret = (data->mfr_devset2 & MAX20730_MFR_DEVSET2_IMAX_MASK)
->  			>> MAX20730_MFR_DEVSET2_IMAX_BIT_POS;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_OPERATION:
->  		ret = i2c_smbus_read_byte_data(psu->client, PMBUS_OPERATION);
->  		if (ret < 0)
->  			return ret;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_ON_OFF_CONFIG:
->  		ret = i2c_smbus_read_byte_data(psu->client, PMBUS_ON_OFF_CONFIG);
->  		if (ret < 0)
->  			return ret;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_SMBALERT_MASK:
->  		ret = i2c_smbus_read_word_data(psu->client,
->  					       PMBUS_SMB_ALERT_MASK);
->  		if (ret < 0)
->  			return ret;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_VOUT_MODE:
->  		ret = i2c_smbus_read_byte_data(psu->client, PMBUS_VOUT_MODE);
->  		if (ret < 0)
->  			return ret;
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", ret);
->  		break;
->  	case MAX20730_DEBUGFS_VOUT_COMMAND:
->  		ret = i2c_smbus_read_word_data(psu->client, PMBUS_VOUT_COMMAND);
-> @@ -274,8 +274,8 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  			return ret;
->  
->  		ret = VOLT_FROM_REG(ret * 10000);
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX,
-> -			       "%d.%d\n", ret / 10000, ret % 10000);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX,
-> +				"%d.%d\n", ret / 10000, ret % 10000);
->  		break;
->  	case MAX20730_DEBUGFS_VOUT_MAX:
->  		ret = i2c_smbus_read_word_data(psu->client, PMBUS_VOUT_MAX);
-> @@ -283,8 +283,8 @@ static ssize_t max20730_debugfs_read(struct file *file, char __user *buf,
->  			return ret;
->  
->  		ret = VOLT_FROM_REG(ret * 10000);
-> -		len = snprintf(tbuf, DEBUG_FS_DATA_MAX,
-> -			       "%d.%d\n", ret / 10000, ret % 10000);
-> +		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX,
-> +				"%d.%d\n", ret / 10000, ret % 10000);
->  		break;
->  	default:
->  		len = strlcpy(tbuf, "Invalid\n", DEBUG_FS_DATA_MAX);
+diff --git a/sound/soc/atmel/mchp-spdifrx.c b/sound/soc/atmel/mchp-spdifrx.c
+index 726e4951d9a5..e6ded6f8453f 100644
+--- a/sound/soc/atmel/mchp-spdifrx.c
++++ b/sound/soc/atmel/mchp-spdifrx.c
+@@ -338,7 +338,7 @@ static irqreturn_t mchp_spdif_interrupt(int irq, void *dev_id)
+ 	}
+ 
+ 	if (pending & SPDIFRX_IR_OVERRUN) {
+-		dev_warn(dev->dev, "Overrrun detected\n");
++		dev_warn(dev->dev, "Overrun detected\n");
+ 		ret = IRQ_HANDLED;
+ 	}
+ 
+-- 
+2.27.0
