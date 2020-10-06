@@ -1,35 +1,21 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 06 Oct 2020 15:20:24 +0000
-Subject: [PATCH][next] ASoC: mchp-spdifrx: fix spelling mistake "overrrun" -> "overrun"
-Message-Id: <20201006152024.542418-1-colin.king@canonical.com>
+From: <Codrin.Ciubotariu@microchip.com>
+Date: Tue, 06 Oct 2020 15:44:13 +0000
+Subject: Re: [PATCH][next] ASoC: mchp-spdifrx: fix spelling mistake "overrrun" -> "overrun"
+Message-Id: <69436582-3b11-b063-dffa-9975773617ff@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201006152024.542418-1-colin.king@canonical.com>
+In-Reply-To: <20201006152024.542418-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+To: colin.king@canonical.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a dev_warn message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/atmel/mchp-spdifrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/atmel/mchp-spdifrx.c b/sound/soc/atmel/mchp-spdifrx.c
-index 726e4951d9a5..e6ded6f8453f 100644
---- a/sound/soc/atmel/mchp-spdifrx.c
-+++ b/sound/soc/atmel/mchp-spdifrx.c
-@@ -338,7 +338,7 @@ static irqreturn_t mchp_spdif_interrupt(int irq, void *dev_id)
- 	}
- 
- 	if (pending & SPDIFRX_IR_OVERRUN) {
--		dev_warn(dev->dev, "Overrrun detected\n");
-+		dev_warn(dev->dev, "Overrun detected\n");
- 		ret = IRQ_HANDLED;
- 	}
- 
--- 
-2.27.0
+T24gMDYuMTAuMjAyMCAxODoyMCwgQ29saW4gS2luZyB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6
+IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0
+aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2lu
+Z0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEg
+ZGV2X3dhcm4gbWVzc2FnZS4gRml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFu
+IEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENvZHJpbiBD
+aXVib3Rhcml1IDxjb2RyaW4uY2l1Ym90YXJpdUBtaWNyb2NoaXAuY29tPg0KDQpUaGFuayB5b3Ug
+Q29saW4hDQoNCkJlc3QgcmVnYXJkcywNCkNvZHJpbg0K
