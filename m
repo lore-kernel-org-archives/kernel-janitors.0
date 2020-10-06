@@ -1,51 +1,89 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Mon, 26 Oct 2020 10:50:44 +0000
-Subject: Re: [PATCH 1/2] usb: typec: stusb160x: fix an IS_ERR() vs NULL check in probe
-Message-Id: <20201026105044.GA1442058@kuha.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 06 Oct 2020 13:47:48 +0000
+Subject: [PATCH v2] staging: vchiq: Fix list_for_each exit tests
+Message-Id: <20201006134748.GA2076872@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023112347.GC282278@mwanda>
-In-Reply-To: <20201023112347.GC282278@mwanda>
+In-Reply-To: <20201001085650.GA1832570@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amelie Delaunay <amelie.delaunay@st.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>
 
-On Fri, Oct 23, 2020 at 02:23:47PM +0300, Dan Carpenter wrote:
-> The typec_register_port() function doesn't return error pointers, it
-> returns error pointers.
-> 
-> Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+After a list_for_each_entry() loop, the list iterator is always non-NULL
+so these conditions don't work.  If the "waiter" is not found then this
+results in an out of bounds access.
 
-You do need to fix the commit message like Sergei pointed out.
-Otherwise, FWIW:
+I have fixed it by introducing a new "found" variable.  In one case, I
+used an else statement for readability.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Fixes: 46e4b9ec4fa4 ("staging: vchiq_arm: use list_for_each_entry when accessing bulk_waiter_list")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: rebase on latest linux-next
 
-> ---
->  drivers/usb/typec/stusb160x.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
-> index ce0bd7b3ad88..f7369e371dd4 100644
-> --- a/drivers/usb/typec/stusb160x.c
-> +++ b/drivers/usb/typec/stusb160x.c
-> @@ -729,8 +729,8 @@ static int stusb160x_probe(struct i2c_client *client)
->  	}
->  
->  	chip->port = typec_register_port(chip->dev, &chip->capability);
-> -	if (!chip->port) {
-> -		ret = -ENODEV;
-> +	if (IS_ERR(chip->port)) {
-> +		ret = PTR_ERR(chip->port);
->  		goto all_reg_disable;
->  	}
->  
-> -- 
-> 2.28.0
+ .../vc04_services/interface/vchiq_arm/vchiq_arm.c    | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-thanks,
-
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 590415561b73..e6a9aab66f4a 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -432,6 +432,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
+ 	struct vchiq_service *service;
+ 	enum vchiq_status status;
+ 	struct bulk_waiter_node *waiter = NULL;
++	bool found = false;
+ 
+ 	service = find_service_by_handle(handle);
+ 	if (!service)
+@@ -445,12 +446,13 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
+ 	list_for_each_entry(waiter, &instance->bulk_waiter_list, list) {
+ 		if (waiter->pid = current->pid) {
+ 			list_del(&waiter->list);
++			found = true;
+ 			break;
+ 		}
+ 	}
+ 	mutex_unlock(&instance->bulk_waiter_list_mutex);
+ 
+-	if (waiter) {
++	if (found) {
+ 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
+ 
+ 		if (bulk) {
+@@ -467,9 +469,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
+ 				spin_unlock(&bulk_waiter_spinlock);
+ 			}
+ 		}
+-	}
+-
+-	if (!waiter) {
++	} else {
+ 		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
+ 		if (!waiter) {
+ 			vchiq_log_error(vchiq_core_log_level,
+@@ -952,6 +952,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ {
+ 	struct vchiq_service *service;
+ 	struct bulk_waiter_node *waiter = NULL;
++	bool found = false;
+ 	void *userdata;
+ 	int status = 0;
+ 	int ret;
+@@ -975,11 +976,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ 				    list) {
+ 			if (waiter->pid = current->pid) {
+ 				list_del(&waiter->list);
++				found = true;
+ 				break;
+ 			}
+ 		}
+ 		mutex_unlock(&instance->bulk_waiter_list_mutex);
+-		if (!waiter) {
++		if (!found) {
+ 			vchiq_log_error(vchiq_arm_log_level,
+ 				"no bulk_waiter found for pid %d",
+ 				current->pid);
 -- 
-heikki
+2.28.0
