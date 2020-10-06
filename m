@@ -1,31 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Oct 2020 22:42:46 +0000
-Subject: Re: [PATCH] scsi: sym53c8xx_2: fix sizeof mismatch
-Message-Id: <160262862435.3018.4642298428321942870.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Oct 2020 11:47:00 +0000
+Subject: [PATCH][next] RDMA/bnxt_re: fix sizeof mismatch for allocation of pbl_tbl.
+Message-Id: <20201006114700.537916-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006110252.536641-1-colin.king@canonical.com>
-In-Reply-To: <20201006110252.536641-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.ibm.com>, Matthew Wilcox <willy@infradead.org>, Colin King <colin.king@canonical.com>, linux-scsi@vger.kernel.org
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Eddie Wai <eddie.wai@broadcom.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 6 Oct 2020 12:02:52 +0100, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> An incorrect sizeof is being used, struct sym_ccb ** is not correct,
-> it should be struct sym_ccb *. Note that since ** is the same size as
-> * this is not causing any issues.  Improve this fix by using the
-> idiom sizeof(*np->ccbh) as this allows one to not even reference the
-> type of the pointer.
-> 
-> [ Note: this is an ancient 2005 buglet, the sha is from the
->   tglx/history repo ]
+An incorrect sizeof is being used, u64 * is not correct, it should be
+just u64 for a table of umem_pgs number of u64 items in the pbl_tbl.
+Use the idiom sizeof(*pbl_tbl) to get the object type without the need
+to explicitly use u64.
 
-Applied to 5.10/scsi-queue, thanks!
+Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] scsi: sym53c8xx_2: Fix sizeof() mismatch
-      https://git.kernel.org/mkp/scsi/c/1725ba8d6ff1
-
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index a0e8d93595d8..dc7de0863c77 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -3856,7 +3856,7 @@ struct ib_mr *bnxt_re_reg_user_mr(struct ib_pd *ib_pd, u64 start, u64 length,
+ 	}
+ 
+ 	umem_pgs = ib_umem_num_dma_blocks(umem, page_size);
+-	pbl_tbl = kcalloc(umem_pgs, sizeof(u64 *), GFP_KERNEL);
++	pbl_tbl = kcalloc(umem_pgs, sizeof(*pbl_tbl), GFP_KERNEL);
+ 	if (!pbl_tbl) {
+ 		rc = -ENOMEM;
+ 		goto free_umem;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
