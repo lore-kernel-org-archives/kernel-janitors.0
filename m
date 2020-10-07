@@ -1,45 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 07 Oct 2020 11:02:43 +0000
-Subject: [PATCH] ima: Fix sizeof mismatches
-Message-Id: <20201007110243.19033-1-colin.king@canonical.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 07 Oct 2020 12:38:43 +0000
+Subject: RE: [PATCH] ima: Fix sizeof mismatches
+Message-Id: <cf66956ac2df49e6b51cacf94a8a31b9@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201007110243.19033-1-colin.king@canonical.com>
+In-Reply-To: <20201007110243.19033-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@polito.it>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@polito.it>, "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-An incorrect sizeof is being used, sizeof(*fields) is not correct,
-it should be sizeof(**fields). This is not causing a problem since
-the size of these is the same. Fix this in the kmalloc_array and
-memcpy calls.
-
-Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-Fixes: 1bd7face7439 ("ima: allocate field pointers array on demand in template_desc_init_fields()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/integrity/ima/ima_template.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 1e89e2d3851f..8884bbf03b43 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -216,11 +216,11 @@ int template_desc_init_fields(const char *template_fmt,
- 	}
- 
- 	if (fields && num_fields) {
--		*fields = kmalloc_array(i, sizeof(*fields), GFP_KERNEL);
-+		*fields = kmalloc_array(i, sizeof(**fields), GFP_KERNEL);
- 		if (*fields = NULL)
- 			return -ENOMEM;
- 
--		memcpy(*fields, found_fields, i * sizeof(*fields));
-+		memcpy(*fields, found_fields, i * sizeof(**fields));
- 		*num_fields = i;
- 	}
- 
--- 
-2.27.0
+PiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBT
+ZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgNywgMjAyMCAxOjAzIFBNDQo+IEZyb206IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBBbiBpbmNvcnJlY3Qgc2l6
+ZW9mIGlzIGJlaW5nIHVzZWQsIHNpemVvZigqZmllbGRzKSBpcyBub3QgY29ycmVjdCwNCj4gaXQg
+c2hvdWxkIGJlIHNpemVvZigqKmZpZWxkcykuIFRoaXMgaXMgbm90IGNhdXNpbmcgYSBwcm9ibGVt
+IHNpbmNlDQo+IHRoZSBzaXplIG9mIHRoZXNlIGlzIHRoZSBzYW1lLiBGaXggdGhpcyBpbiB0aGUg
+a21hbGxvY19hcnJheSBhbmQNCj4gbWVtY3B5IGNhbGxzLg0KPiANCj4gQWRkcmVzc2VzLUNvdmVy
+aXR5OiAoIlNpemVvZiBub3QgcG9ydGFibGUgKFNJWkVPRl9NSVNNQVRDSCkiKQ0KPiBGaXhlczog
+MWJkN2ZhY2U3NDM5ICgiaW1hOiBhbGxvY2F0ZSBmaWVsZCBwb2ludGVycyBhcnJheSBvbiBkZW1h
+bmQgaW4NCj4gdGVtcGxhdGVfZGVzY19pbml0X2ZpZWxkcygpIikNCj4gU2lnbmVkLW9mZi1ieTog
+Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KVGhhbmtzIENvbGlu
+Lg0KDQpSZXZpZXdlZC1ieTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29t
+Pg0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJC
+IDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQoN
+Cj4gLS0tDQo+ICBzZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1wbGF0ZS5jIHwgNCArKy0t
+DQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3RlbXBsYXRlLmMNCj4g
+Yi9zZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1wbGF0ZS5jDQo+IGluZGV4IDFlODllMmQz
+ODUxZi4uODg4NGJiZjAzYjQzIDEwMDY0NA0KPiAtLS0gYS9zZWN1cml0eS9pbnRlZ3JpdHkvaW1h
+L2ltYV90ZW1wbGF0ZS5jDQo+ICsrKyBiL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3RlbXBs
+YXRlLmMNCj4gQEAgLTIxNiwxMSArMjE2LDExIEBAIGludCB0ZW1wbGF0ZV9kZXNjX2luaXRfZmll
+bGRzKGNvbnN0IGNoYXINCj4gKnRlbXBsYXRlX2ZtdCwNCj4gIAl9DQo+IA0KPiAgCWlmIChmaWVs
+ZHMgJiYgbnVtX2ZpZWxkcykgew0KPiAtCQkqZmllbGRzID0ga21hbGxvY19hcnJheShpLCBzaXpl
+b2YoKmZpZWxkcyksIEdGUF9LRVJORUwpOw0KPiArCQkqZmllbGRzID0ga21hbGxvY19hcnJheShp
+LCBzaXplb2YoKipmaWVsZHMpLCBHRlBfS0VSTkVMKTsNCj4gIAkJaWYgKCpmaWVsZHMgPT0gTlVM
+TCkNCj4gIAkJCXJldHVybiAtRU5PTUVNOw0KPiANCj4gLQkJbWVtY3B5KCpmaWVsZHMsIGZvdW5k
+X2ZpZWxkcywgaSAqIHNpemVvZigqZmllbGRzKSk7DQo+ICsJCW1lbWNweSgqZmllbGRzLCBmb3Vu
+ZF9maWVsZHMsIGkgKiBzaXplb2YoKipmaWVsZHMpKTsNCj4gIAkJKm51bV9maWVsZHMgPSBpOw0K
+PiAgCX0NCj4gDQo+IC0tDQo+IDIuMjcuMA0KDQo
