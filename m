@@ -1,46 +1,40 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Tue, 29 Sep 2020 13:14:31 +0000
-Subject: [PATCH 08/20] media: sun4i-csi: use semicolons rather than commas to separate statements
-Message-Id: <1601385283-26144-9-git-send-email-Julia.Lawall@inria.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Oct 2020 07:49:28 +0000
+Subject: [PATCH] ALSA: bebob: potential info leak in hwdep_read()
+Message-Id: <20201007074928.GA2529578@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxime Ripard <mripard@kernel.org>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+The "count" variable needs to be capped on every path so that we don't
+copy too much information to the user.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Fixes: 618eabeae711 ("ALSA: bebob: Add hwdep interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/firewire/bebob/bebob_hwdep.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c b/drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c
-index 8f4e254b6a41..1a2f65d83a6c 100644
---- a/drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c
-+++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c
-@@ -363,7 +363,7 @@ int sun4i_csi_v4l2_register(struct sun4i_csi *csi)
- 	vdev->lock = &csi->lock;
+diff --git a/sound/firewire/bebob/bebob_hwdep.c b/sound/firewire/bebob/bebob_hwdep.c
+index 45b740f44c45..c362eb38ab90 100644
+--- a/sound/firewire/bebob/bebob_hwdep.c
++++ b/sound/firewire/bebob/bebob_hwdep.c
+@@ -36,12 +36,11 @@ hwdep_read(struct snd_hwdep *hwdep, char __user *buf,  long count,
+ 	}
  
- 	/* Set a default format */
--	csi->fmt.pixelformat = sun4i_csi_formats[0].fourcc,
-+	csi->fmt.pixelformat = sun4i_csi_formats[0].fourcc;
- 	csi->fmt.width = CSI_DEFAULT_WIDTH;
- 	csi->fmt.height = CSI_DEFAULT_HEIGHT;
- 	_sun4i_csi_try_fmt(csi, &csi->fmt);
+ 	memset(&event, 0, sizeof(event));
++	count = min_t(long, count, sizeof(event.lock_status));
+ 	if (bebob->dev_lock_changed) {
+ 		event.lock_status.type = SNDRV_FIREWIRE_EVENT_LOCK_STATUS;
+ 		event.lock_status.status = (bebob->dev_lock_count > 0);
+ 		bebob->dev_lock_changed = false;
+-
+-		count = min_t(long, count, sizeof(event.lock_status));
+ 	}
+ 
+ 	spin_unlock_irq(&bebob->lock);
+-- 
+2.28.0
