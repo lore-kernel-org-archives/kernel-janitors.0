@@ -1,49 +1,41 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Wed, 28 Oct 2020 12:29:17 +0000
-Subject: Re: [PATCH 1/2 v2] usb: typec: stusb160x: fix an IS_ERR() vs NULL check in probe
-Message-Id: <24d4a1f5-89fa-114d-8e3d-66d40d5dd1a6@st.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Oct 2020 11:46:15 +0000
+Subject: [PATCH] PCI: fix a potential uninitentional integer overflow issue
+Message-Id: <20201007114615.19966-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023114017.GE18329@kadam>
-In-Reply-To: <20201023114017.GE18329@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Stephen Bates <sbates@raithlin.com>, Logan Gunthorpe <logang@deltatee.com>, Alex Williamson <alex.williamson@redhat.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patch!
+The shift of 1 by align_order is evaluated using 32 bit arithmetic
+and the result is assigned to a resource_size_t type variable that
+is a 64 bit unsigned integer on 64 bit platforms. Fix an overflow
+before widening issue by using the BIT_ULL macro to perform the
+shift.
 
-On 10/23/20 1:40 PM, Dan Carpenter wrote:
-> The typec_register_port() function doesn't return NULL, it returns error
-> pointers.
-> 
-> Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Uninitentional integer overflow")
+Fixes: 07d8d7e57c28 ("PCI: Make specifying PCI devices in kernel parameters reusable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Amelie Delaunay <amelie.delaunay@st.com>
-
-> ---
-> v2: Fix a typo in the commit message.  s/return error pointers/return NULL/.
->      Thanks, Walter!
-> 
->   drivers/usb/typec/stusb160x.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
-> index ce0bd7b3ad88..f7369e371dd4 100644
-> --- a/drivers/usb/typec/stusb160x.c
-> +++ b/drivers/usb/typec/stusb160x.c
-> @@ -729,8 +729,8 @@ static int stusb160x_probe(struct i2c_client *client)
->   	}
->   
->   	chip->port = typec_register_port(chip->dev, &chip->capability);
-> -	if (!chip->port) {
-> -		ret = -ENODEV;
-> +	if (IS_ERR(chip->port)) {
-> +		ret = PTR_ERR(chip->port);
->   		goto all_reg_disable;
->   	}
->   
-> 
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 6d4d5a2f923d..1a5844d7af35 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6209,7 +6209,7 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 			if (align_order = -1)
+ 				align = PAGE_SIZE;
+ 			else
+-				align = 1 << align_order;
++				align = BIT_ULL(align_order);
+ 			break;
+ 		} else if (ret < 0) {
+ 			pr_err("PCI: Can't parse resource_alignment parameter: %s\n",
+-- 
+2.27.0
