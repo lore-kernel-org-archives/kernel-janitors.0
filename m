@@ -1,49 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Oct 2020 22:05:55 +0000
-Subject: [PATCH] drm/nouveau/bios/init: make two const arrays static, makes object smaller
-Message-Id: <20201016220555.686446-1-colin.king@canonical.com>
+From: "Mr. Hashim Bin" <financialcapability6@gmail.com>
+Date: Wed, 07 Oct 2020 10:50:54 +0000
+Subject: Low Rate Loan./mmm,
+Message-Id: <20201007105110.BCA4861D82@mx.metalurgs.lv>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Dear,
 
-Don't populate const arrays on the stack but instead make them
-static. Makes the object code smaller by 7 bytes.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 104041	   8284	      0	 112325	  1b6c5	drm/nouveau/nvkm/subdev/bios/init.o
+We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
- 103874	   8444	      0	 112318	  1b6be	drm/nouveau/nvkm/subdev/bios/init.o
 
-(gcc version 10.2.0)
+We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-index 9de74f41dcd2..dc8625eff20a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-@@ -546,9 +546,9 @@ init_tmds_reg(struct nvbios_init *init, u8 tmds)
- 	 * CR58 for CR57 = 0 to index a table of offsets to the basic
- 	 * 0x6808b0 address, and then flip the offset by 8.
- 	 */
--	const int pramdac_offset[13] = {
-+	static const int pramdac_offset[13] = {
- 		0, 0, 0x8, 0, 0x2000, 0, 0, 0, 0x2008, 0, 0, 0, 0x2000 };
--	const u32 pramdac_table[4] = {
-+	static const u32 pramdac_table[4] = {
- 		0x6808b0, 0x6808b8, 0x6828b0, 0x6828b8 };
- 
- 	if (tmds >= 0x80) {
--- 
-2.27.0
+Please get back to me if you are interested for more
+
+details.
+
+
+Yours faithfully,
+
+Hashim Murrah
