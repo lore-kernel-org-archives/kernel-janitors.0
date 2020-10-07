@@ -1,37 +1,61 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 08 Oct 2020 10:52:45 +0000
-Subject: Re: [PATCH][next] ath11k: fix memory leak of 'combinations'
-Message-Id: <20201008105245.EB687C43382@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Oct 2020 07:51:48 +0000
+Subject: [PATCH] hwmon: (acpi_power_meter) clean up freeing code
+Message-Id: <20201007075148.GB2529578@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006174225.545919-1-colin.king@canonical.com>
-In-Reply-To: <20201006174225.545919-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean Delvare <jdelvare@suse.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+This code works okay but Smatch flagged it as a double free.  I've
+changed three things to make it more clear.  1)  Remove the call to
+free_capabilities() in acpi_power_meter_add().  This call is a no-op
+because the capabilities have not been allocated yet.  2)  Set "*str" to
+NULL in free_capabilities() so that way the function can be called twice
+in a row without leading to a double free.  3)  Call free_capabilities()
+in read_capabilities() instead of open coding the free.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the error return path when 'limits' fails to allocate
-> does not free the memory allocated for 'combinations'. Fix this
-> by adding a kfree before returning.
->=20
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 2626c269702e ("ath11k: add interface_modes to hw_params")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hwmon/acpi_power_meter.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Alex already sent an identical patch:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next=
-.git/commit/?id=8431350eee2e27ae60f5250e0437ab298329070e
-
-Patch set to Superseded.
-
---=20
-https://patchwork.kernel.org/patch/11819025/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+index a270b975e90b..848718ab7312 100644
+--- a/drivers/hwmon/acpi_power_meter.c
++++ b/drivers/hwmon/acpi_power_meter.c
+@@ -725,8 +725,10 @@ static void free_capabilities(struct acpi_power_meter_resource *resource)
+ 	int i;
+ 
+ 	str = &resource->model_number;
+-	for (i = 0; i < 3; i++, str++)
++	for (i = 0; i < 3; i++, str++) {
+ 		kfree(*str);
++		*str = NULL;
++	}
+ }
+ 
+ static int read_capabilities(struct acpi_power_meter_resource *resource)
+@@ -801,9 +803,7 @@ static int read_capabilities(struct acpi_power_meter_resource *resource)
+ 	dev_info(&resource->acpi_dev->dev, "Found ACPI power meter.\n");
+ 	goto end;
+ error:
+-	str = &resource->model_number;
+-	for (i = 0; i < 3; i++, str++)
+-		kfree(*str);
++	free_capabilities(resource);
+ end:
+ 	kfree(buffer.pointer);
+ 	return res;
+@@ -874,7 +874,6 @@ static int acpi_power_meter_add(struct acpi_device *device)
+ 	strcpy(acpi_device_class(device), ACPI_POWER_METER_CLASS);
+ 	device->driver_data = resource;
+ 
+-	free_capabilities(resource);
+ 	res = read_capabilities(resource);
+ 	if (res)
+ 		goto exit_free;
+-- 
+2.28.0
