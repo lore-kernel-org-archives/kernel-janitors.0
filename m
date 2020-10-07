@@ -1,38 +1,55 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 28 Oct 2020 11:44:10 +0000
-Subject: [PATCH][next] net/sunrpc: fix unsigned size_t comparison to less than zero
-Message-Id: <20201028114410.108759-1-colin.king@canonical.com>
+Date: Wed, 07 Oct 2020 12:16:28 +0000
+Subject: [PATCH] media: m88rs6000t: avoid potential out-of-bounds reads on arrays
+Message-Id: <20201007121628.20676-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Artur Molchanov <arturmolchanov@gmail.com>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, "nibble . max" <nibble.max@gmail.com>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the check for *lenp < 0 is always true since the type is a size_t
-and can never be negative. Fix this by casting it to ssize_t.
+There a 3 array for-loops that don't check the upper bounds of the
+index into arrays and this may lead to potential out-of-bounds
+reads.  Fix this by adding array size upper bounds checks to be
+full safe.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: c09f56b8f68d ("net/sunrpc: Fix return value for sysctl sunrpc.transports")
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: 333829110f1d ("[media] m88rs6000t: add new dvb-s/s2 tuner for integrated chip M88RS6000")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/sunrpc/sysctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/tuners/m88rs6000t.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/sunrpc/sysctl.c b/net/sunrpc/sysctl.c
-index a18b36b5422d..bb62badef6bc 100644
---- a/net/sunrpc/sysctl.c
-+++ b/net/sunrpc/sysctl.c
-@@ -72,7 +72,7 @@ static int proc_do_xprt(struct ctl_table *table, int write,
- 	len = svc_print_xprts(tmpbuf, sizeof(tmpbuf));
- 	*lenp = memory_read_from_buffer(buffer, *lenp, ppos, tmpbuf, len);
+diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
+index b3505f402476..8647c50b66e5 100644
+--- a/drivers/media/tuners/m88rs6000t.c
++++ b/drivers/media/tuners/m88rs6000t.c
+@@ -525,7 +525,7 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	PGA2_cri = PGA2_GC >> 2;
+ 	PGA2_crf = PGA2_GC & 0x03;
  
--	if (*lenp < 0) {
-+	if ((ssize_t)*lenp < 0) {
- 		*lenp = 0;
- 		return -EINVAL;
- 	}
+-	for (i = 0; i <= RF_GC; i++)
++	for (i = 0; i <= RF_GC && i < ARRAY_SIZE(RFGS); i++)
+ 		RFG += RFGS[i];
+ 
+ 	if (RF_GC = 0)
+@@ -537,12 +537,12 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	if (RF_GC = 3)
+ 		RFG += 100;
+ 
+-	for (i = 0; i <= IF_GC; i++)
++	for (i = 0; i <= IF_GC && i < ARRAY_SIZE(IFGS); i++)
+ 		IFG += IFGS[i];
+ 
+ 	TIAG = TIA_GC * TIA_GS;
+ 
+-	for (i = 0; i <= BB_GC; i++)
++	for (i = 0; i <= BB_GC && i < ARRAY_SIZE(BBGS); i++)
+ 		BBG += BBGS[i];
+ 
+ 	PGA2G = PGA2_cri * PGA2_cri_GS + PGA2_crf * PGA2_crf_GS;
 -- 
 2.27.0
