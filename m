@@ -1,34 +1,24 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 03 Oct 2020 05:57:09 +0000
-Subject: [PATCH] scsi: isci: Fix a typo in a comment
-Message-Id: <20201003055709.766119-1-christophe.jaillet@wanadoo.fr>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 08 Oct 2020 03:09:46 +0000
+Subject: Re: [PATCH] scsi: isci: Fix a typo in a comment
+Message-Id: <yq1ft6pwgzv.fsf@ca-mkp.ca.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201003055709.766119-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201003055709.766119-1-christophe.jaillet@wanadoo.fr>
+        (Christophe JAILLET's message of "Sat, 3 Oct 2020 07:57:09 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: intel-linux-scu@intel.com, artur.paszkiewicz@intel.com, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: intel-linux-scu@intel.com, artur.paszkiewicz@intel.com, jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-s/remtoe/remote/
-and add a missing '.'
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/isci/remote_node_table.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Christophe,
 
-diff --git a/drivers/scsi/isci/remote_node_table.h b/drivers/scsi/isci/remote_node_table.h
-index 721ab982d2ac..0ddfdda2b248 100644
---- a/drivers/scsi/isci/remote_node_table.h
-+++ b/drivers/scsi/isci/remote_node_table.h
-@@ -61,7 +61,7 @@
- /**
-  *
-  *
-- * Remote node sets are sets of remote node index in the remtoe node table The
-+ * Remote node sets are sets of remote node index in the remote node table. The
-  * SCU hardware requires that STP remote node entries take three consecutive
-  * remote node index so the table is arranged in sets of three. The bits are
-  * used as 0111 0111 to make a byte and the bits define the set of three remote
+> s/remtoe/remote/
+> and add a missing '.'
+
+Applied to 5.10/scsi-staging, thanks!
+
 -- 
-2.25.1
+Martin K. Petersen	Oracle Linux Engineering
