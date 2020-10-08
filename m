@@ -1,89 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Oct 2020 13:47:48 +0000
-Subject: [PATCH v2] staging: vchiq: Fix list_for_each exit tests
-Message-Id: <20201006134748.GA2076872@mwanda>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 08 Oct 2020 09:38:04 +0000
+Subject: Re: [PATCH v2] staging: vchiq: Fix list_for_each exit tests
+Message-Id: <ba10795b535daf1b430db97d3b1388c7407f0058.camel@suse.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-bJZNEHK0zokYDxMMYOJM"
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20201001085650.GA1832570@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+References: <20201006134748.GA2076872@mwanda>
+In-Reply-To: <20201006134748.GA2076872@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>
 
-After a list_for_each_entry() loop, the list iterator is always non-NULL
-so these conditions don't work.  If the "waiter" is not found then this
-results in an out of bounds access.
 
-I have fixed it by introducing a new "found" variable.  In one case, I
-used an else statement for readability.
+--=-bJZNEHK0zokYDxMMYOJM
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 46e4b9ec4fa4 ("staging: vchiq_arm: use list_for_each_entry when accessing bulk_waiter_list")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: rebase on latest linux-next
+On Tue, 2020-10-06 at 16:47 +0300, Dan Carpenter wrote:
+> After a list_for_each_entry() loop, the list iterator is always non-NULL
+> so these conditions don't work.  If the "waiter" is not found then this
+> results in an out of bounds access.
+>=20
+> I have fixed it by introducing a new "found" variable.  In one case, I
+> used an else statement for readability.
+>=20
+> Fixes: 46e4b9ec4fa4 ("staging: vchiq_arm: use list_for_each_entry when ac=
+cessing bulk_waiter_list")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
 
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c    | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 590415561b73..e6a9aab66f4a 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -432,6 +432,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 	struct vchiq_service *service;
- 	enum vchiq_status status;
- 	struct bulk_waiter_node *waiter = NULL;
-+	bool found = false;
- 
- 	service = find_service_by_handle(handle);
- 	if (!service)
-@@ -445,12 +446,13 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 	list_for_each_entry(waiter, &instance->bulk_waiter_list, list) {
- 		if (waiter->pid = current->pid) {
- 			list_del(&waiter->list);
-+			found = true;
- 			break;
- 		}
- 	}
- 	mutex_unlock(&instance->bulk_waiter_list_mutex);
- 
--	if (waiter) {
-+	if (found) {
- 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
- 
- 		if (bulk) {
-@@ -467,9 +469,7 @@ vchiq_blocking_bulk_transfer(unsigned int handle, void *data,
- 				spin_unlock(&bulk_waiter_spinlock);
- 			}
- 		}
--	}
--
--	if (!waiter) {
-+	} else {
- 		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
- 		if (!waiter) {
- 			vchiq_log_error(vchiq_core_log_level,
-@@ -952,6 +952,7 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- {
- 	struct vchiq_service *service;
- 	struct bulk_waiter_node *waiter = NULL;
-+	bool found = false;
- 	void *userdata;
- 	int status = 0;
- 	int ret;
-@@ -975,11 +976,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- 				    list) {
- 			if (waiter->pid = current->pid) {
- 				list_del(&waiter->list);
-+				found = true;
- 				break;
- 			}
- 		}
- 		mutex_unlock(&instance->bulk_waiter_list_mutex);
--		if (!waiter) {
-+		if (!found) {
- 			vchiq_log_error(vchiq_arm_log_level,
- 				"no bulk_waiter found for pid %d",
- 				current->pid);
--- 
-2.28.0
+
+--=-bJZNEHK0zokYDxMMYOJM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl9+3fwACgkQlfZmHno8
+x/577Qf/daJSMYN1mVGd6kbFmgeUNSamil+eQQmoE3RQSpYvT4Z7pCUFg7RggER3
+0aRrcagMt0mZ2qrQdr+CEEMz2Xx9nK9s/bn1HX1QqyTpitm3zDCIDqlpqLBy8bBU
+tI8Ba6sFktxj4wS4bahtGG8vQvYQDu9shuip+8jUDNqLj9ufp6rhMpDuiyPfXrKj
+4IMs8tohRI6eED/MvLrTqg6hjjZOPYDH7brsszdoJqf4OjPA7Od9VkErR439zkaZ
+G5REV/XkIShJo5IOf+toT6IAEl7eDR8xzKr2goe7hN+miLVoKtd22uM05NWINBnI
+uavRa8OK57hu/cZVUcEB2PgavmZjBA==
+=45fL
+-----END PGP SIGNATURE-----
+
+--=-bJZNEHK0zokYDxMMYOJM--
