@@ -1,61 +1,25 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Wed, 28 Oct 2020 13:05:41 +0000
-Subject: [PATCH] kernel/hung_task.c: make type annotations consistent
-Message-Id: <20201028130541.20320-1-lukas.bulwahn@gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 08 Oct 2020 02:31:52 +0000
+Subject: Re: [PATCH 02/14] target/rd: drop double zeroing
+Message-Id: <yq11ri9zbvz.fsf@ca-mkp.ca.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+        <1600601186-7420-3-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-3-git-send-email-Julia.Lawall@inria.fr> (Julia
+        Lawall's message of "Sun, 20 Sep 2020 13:26:14 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Andrey Ignatov <rdna@fb.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
-removed various __user annotations from function signatures as part of its
-refactoring.
 
-It also removed the __user annotation for proc_dohung_task_timeout_secs()
-at its declaration in ./sched/sysctl.h, but not at its definition in
-./kernel/hung_task.c.
+Julia,
 
-Hence, sparse complains:
+> sg_init_table zeroes its first argument, so the allocation of that argument
+> doesn't have to.
 
-  kernel/hung_task.c:271:5: error: \
-  symbol 'proc_dohung_task_timeout_secs' redeclared with different type \
-  (incompatible argument 3 (different address spaces))
+Applied to 5.10/scsi-staging, thanks!
 
-Adjust the annotation at the definition fitting to that refactoring to make
-sparse happy again, which also resolves this warning from sparse:
-
-  kernel/hung_task.c:277:52: warning: incorrect type in argument 3 \
-    (different address spaces)
-  kernel/hung_task.c:277:52:    expected void *
-  kernel/hung_task.c:277:52:    got void [noderef] __user *buffer
-
-No functional change. No change in object code.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on current master and next-20201028
-
-Christoph, can I get quick ack from you on a fix to your refactoring?
-Andrew, please pick this minor non-urgent clean-up patch.
-
- kernel/hung_task.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index a672db830a94..bb2e3e15c84c 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -269,8 +269,7 @@ static long hung_timeout_jiffies(unsigned long last_checked,
-  * Process updating of timeout sysctl
-  */
- int proc_dohung_task_timeout_secs(struct ctl_table *table, int write,
--				  void __user *buffer,
--				  size_t *lenp, loff_t *ppos)
-+				  void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
- 
 -- 
-2.17.1
+Martin K. Petersen	Oracle Linux Engineering
