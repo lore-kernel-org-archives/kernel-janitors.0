@@ -1,34 +1,41 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Mon, 12 Oct 2020 07:03:35 +0000
-Subject: Re: [PATCH 1/5] rxrpc: use semicolons rather than commas to separate statements
-Message-Id: <alpine.DEB.2.22.394.2010120903170.2901@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Oct 2020 17:11:51 +0000
+Subject: [PATCH] xhci: Fix sizeof() mismatch
+Message-Id: <20201008171151.198996-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602412498-32025-2-git-send-email-Julia.Lawall@inria.fr> <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr> <1215803.1602486055@warthog.procyon.org.uk>
-In-Reply-To: <1215803.1602486055@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+An incorrect sizeof() is being used, sizeof(rhub->ports) is not
+correct, it should be sizeof(*rhub->ports).  This bug did not
+cause any issues because it just so happens the sizes are the same.
 
-On Mon, 12 Oct 2020, David Howells wrote:
+Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
+Fixes: bcaa9d5c5900 ("xhci: Create new structures to store xhci port information")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/host/xhci-mem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> > -		call->completion = compl,
-> > +		call->completion = compl;
->
-> Looks good.  Do you want me to pick up the patch or send it yourself?
-
-Please pick it up.  Thanks.
-
-julia
-
->
-> If the latter:
->
-> Acked-by: David Howells <dhowells@redhat.com>
->
->
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index fe405cd38dbc..138ba4528dd3 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -2252,8 +2252,8 @@ static void xhci_create_rhub_port_array(struct xhci_hcd *xhci,
+ 
+ 	if (!rhub->num_ports)
+ 		return;
+-	rhub->ports = kcalloc_node(rhub->num_ports, sizeof(rhub->ports), flags,
+-			dev_to_node(dev));
++	rhub->ports = kcalloc_node(rhub->num_ports, sizeof(*rhub->ports),
++			flags, dev_to_node(dev));
+ 	for (i = 0; i < HCS_MAX_PORTS(xhci->hcs_params1); i++) {
+ 		if (xhci->hw_ports[i].rhub != rhub ||
+ 		    xhci->hw_ports[i].hcd_portnum = DUPLICATE_ENTRY)
+-- 
+2.27.0
