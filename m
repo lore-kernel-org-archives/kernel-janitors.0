@@ -1,46 +1,44 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Fri, 23 Oct 2020 21:14:10 +0000
-Subject: Re: [PATCH] hwmon: (pmbus/max20730) delete some dead code
-Message-Id: <20201023211410.GA28103@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Oct 2020 09:52:04 +0000
+Subject: [PATCH] IB/rdmavt: Fix sizeof mismatch
+Message-Id: <20201008095204.82683-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201022070659.GA2817762@mwanda>
-In-Reply-To: <20201022070659.GA2817762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ugur Usug <Ugur.Usug@maximintegrated.com>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Ira Weiny <ira.weiny@intel.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 10:06:59AM +0300, Dan Carpenter wrote:
-> The debugfs_create_dir() function never returns NULL.  Normal users are
-> not supposed to check the return value so the correct fix is just to
-> delete this check.
-> 
-> In the case where the debugfs_create_dir() fails, the function returns
-> NULL.  The other debugfs function check for NULL directory and handle
-> it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+An incorrect sizeof is being used, struct rvt_ibport ** is not correct,
+it should be struct rvt_ibport *. Note that since ** is the same size as
+* this is not causing any issues.  Improve this fix by using
+sizeof(*rdi->ports) as this allows us to not even reference the type
+of the pointer.  Also remove line breaks as the entire statement can
+fit on one line.
 
-Thanks,
-Guenter
+Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
+Fixes: ff6acd69518e ("IB/rdmavt: Add device structure allocation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/sw/rdmavt/vt.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->  drivers/hwmon/pmbus/max20730.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/max20730.c b/drivers/hwmon/pmbus/max20730.c
-> index be83b98411c7..00fea16acab4 100644
-> --- a/drivers/hwmon/pmbus/max20730.c
-> +++ b/drivers/hwmon/pmbus/max20730.c
-> @@ -328,8 +328,6 @@ static int max20730_init_debugfs(struct i2c_client *client,
->  		return -ENOENT;
->  
->  	max20730_dir = debugfs_create_dir(client->name, debugfs);
-> -	if (!max20730_dir)
-> -		return -ENOENT;
->  
->  	for (i = 0; i < MAX20730_DEBUGFS_NUM_ENTRIES; ++i)
->  		psu->debugfs_entries[i] = i;
+diff --git a/drivers/infiniband/sw/rdmavt/vt.c b/drivers/infiniband/sw/rdmavt/vt.c
+index f904bb34477a..2d534c450f3c 100644
+--- a/drivers/infiniband/sw/rdmavt/vt.c
++++ b/drivers/infiniband/sw/rdmavt/vt.c
+@@ -95,9 +95,7 @@ struct rvt_dev_info *rvt_alloc_device(size_t size, int nports)
+ 	if (!rdi)
+ 		return rdi;
+ 
+-	rdi->ports = kcalloc(nports,
+-			     sizeof(struct rvt_ibport **),
+-			     GFP_KERNEL);
++	rdi->ports = kcalloc(nports, sizeof(*rdi->ports), GFP_KERNEL);
+ 	if (!rdi->ports)
+ 		ib_dealloc_device(&rdi->ibdev);
+ 
+-- 
+2.27.0
