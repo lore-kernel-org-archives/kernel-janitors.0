@@ -1,31 +1,39 @@
-From: Valentin Schneider <valentin.schneider@arm.com>
-Date: Thu, 29 Oct 2020 15:42:58 +0000
-Subject: Re: [PATCH][next] sched/debug: fix memory corruption caused by multiple small reads of flags
-Message-Id: <jhjeelhox6l.mognet@arm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 08 Oct 2020 18:32:39 +0000
+Subject: [PATCH] scsi: qla2xxx: fix return of uninitialized value in rval
+Message-Id: <20201008183239.200358-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029151103.373410-1-colin.king@canonical.com> <jhjft5xoxtd.mognet@arm.com>
-In-Reply-To: <jhjft5xoxtd.mognet@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@oracle.com>, Pavel Machek <pavel@denx.de>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 29/10/20 15:29, Valentin Schneider wrote:
->> @@ -269,17 +269,17 @@ static int sd_ctl_doflags(struct ctl_table *table, int write,
->>               return 0;
->>       }
->>
->> -	tmp = kcalloc(data_size + 1, sizeof(*tmp), GFP_KERNEL);
-> [...]
->> -	tmp += *ppos;
-> [...]
->> -	kfree(tmp);
->
-> Yeah, that's downright sloppy :( I can't remember which one it was in a
-> hurry, but I was "inspired" by another proc handler somewhere; I'll try to
-> find out if there's any issue in that one or if I really cannot shift the
-> blame elsewhere.
+A previous change removed the initialization of rval and there is
+now an error where an uninitialized rval is being returned on an
+error return path. Fix this by returning -ENODEV.
 
-Nope, blame is all mine.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: b994718760fa ("scsi: qla2xxx: Use constant when it is known")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_nvme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
+index ae47e0eb0311..1f9005125313 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -561,7 +561,7 @@ static int qla_nvme_post_cmd(struct nvme_fc_local_port *lport,
+ 	vha = fcport->vha;
+ 
+ 	if (!(fcport->nvme_flag & NVME_FLAG_REGISTERED))
+-		return rval;
++		return -ENODEV;
+ 
+ 	if (test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) ||
+ 	    (qpair && !qpair->fw_started) || fcport->deleted)
+-- 
+2.27.0
