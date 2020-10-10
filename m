@@ -1,28 +1,40 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Date: Mon, 26 Oct 2020 13:46:20 +0000
-Subject: Re: [PATCH] xhci: Fix sizeof() mismatch
-Message-Id: <43dc0950-c76e-713d-8d51-cdc3be9c9f46@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Oct 2020 20:08:12 +0000
+Subject: [PATCH] mm/hmm/test: Fix an error code in dmirror_allocate_chunk()
+Message-Id: <20201010200812.GA1886610@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201008171151.198996-1-colin.king@canonical.com>
-In-Reply-To: <20201008171151.198996-1-colin.king@canonical.com>
+References: <20200513094225.GE347693@mwanda>
+In-Reply-To: <20200513094225.GE347693@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ralph Campbell <rcampbell@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Dan Williams <dan.j.williams@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-On 8.10.2020 20.11, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An incorrect sizeof() is being used, sizeof(rhub->ports) is not
-> correct, it should be sizeof(*rhub->ports).  This bug did not
-> cause any issues because it just so happens the sizes are the same.
-> 
-> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-> Fixes: bcaa9d5c5900 ("xhci: Create new structures to store xhci port information")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+This is supposed to return false on failure, not a negative error code.
 
-Thanks, added
+Fixes: 170e38548b81 ("mm/hmm/test: use after free in dmirror_allocate_chunk()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I messed this up earlier...  My devel version of Smatch prints too much
+garbage so I missed the warning when I first wrote the patch.  :/
+Sorry.
 
--Mathias
+ lib/test_hmm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index e151a7f10519..80a78877bd93 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -461,7 +461,7 @@ static bool dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 
+ 	devmem = kzalloc(sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+-		return -ENOMEM;
++		return false;
+ 
+ 	res = request_free_mem_region(&iomem_resource, DEVMEM_CHUNK_SIZE,
+ 				      "hmm_dmirror");
+-- 
+2.28.0
