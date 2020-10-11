@@ -1,55 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Oct 2020 11:52:30 +0000
-Subject: [PATCH] media: rc: validate that "rc_proto" is reasonable
-Message-Id: <20201030115230.GF3251003@mwanda>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 10:34:58 +0000
+Subject: [PATCH 5/5] net/tls: use semicolons rather than commas to separate statements
+Message-Id: <1602412498-32025-6-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sean Young <sean@mess.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boris Pismenny <borisp@nvidia.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Aviad Yehezkel <aviadye@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains that "rc_proto" comes from the user and it can result
-in shift wrapping in ir_raw_encode_scancode()
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-    drivers/media/rc/rc-ir-raw.c:526 ir_raw_encode_scancode()
-    error: undefined (user controlled) shift '1 << protocol'
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-This is true, but I reviewed the surrounding code and it appears
-harmless.  Anyway, let's verify that "rc_proto" is valid as a kernel
-hardenning measure.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/rc/lirc_dev.c | 3 ++-
- include/uapi/linux/lirc.h   | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ net/tls/tls_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/lirc.h b/include/uapi/linux/lirc.h
-index f99d9dcae667..c1eb960adde3 100644
---- a/include/uapi/linux/lirc.h
-+++ b/include/uapi/linux/lirc.h
-@@ -226,6 +226,7 @@ enum rc_proto {
- 	RC_PROTO_RCMM24		= 25,
- 	RC_PROTO_RCMM32		= 26,
- 	RC_PROTO_XBOX_DVD	= 27,
-+	RC_PROTO_MAX		= RC_PROTO_XBOX_DVD,
- };
+diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+index 002b0859fed5..8d93cea99f2c 100644
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -869,7 +869,7 @@ static int __init tls_register(void)
  
- #endif
-diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
-index 220363b9a868..116daf90c858 100644
---- a/drivers/media/rc/lirc_dev.c
-+++ b/drivers/media/rc/lirc_dev.c
-@@ -263,7 +263,8 @@ static ssize_t lirc_transmit(struct file *file, const char __user *buf,
- 			goto out_unlock;
- 		}
+ 	tls_sw_proto_ops = inet_stream_ops;
+ 	tls_sw_proto_ops.splice_read = tls_sw_splice_read;
+-	tls_sw_proto_ops.sendpage_locked   = tls_sw_sendpage_locked,
++	tls_sw_proto_ops.sendpage_locked   = tls_sw_sendpage_locked;
  
--		if (scan.flags || scan.keycode || scan.timestamp) {
-+		if (scan.flags || scan.keycode || scan.timestamp ||
-+		    scan.rc_proto > RC_PROTO_MAX) {
- 			ret = -EINVAL;
- 			goto out_unlock;
- 		}
--- 
-2.28.0
+ 	tls_device_init();
+ 	tcp_register_ulp(&tcp_tls_ulp_ops);
