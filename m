@@ -1,27 +1,58 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 07 Oct 2020 03:47:48 +0000
-Subject: Re: [PATCH] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
-Message-Id: <160204240578.16940.13402401013800356061.b4-ty@oracle.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 09:19:33 +0000
+Subject: [PATCH 2/8] ALSA: hda: use semicolons rather than commas to separate statements
+Message-Id: <1602407979-29038-3-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200928091300.GD377727@mwanda>
-In-Reply-To: <20200928091300.GD377727@mwanda>
+References: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, kernel-janitors@vger.kernel.org, Jayamohan Kallickal <jayamohank@HDRedirect-LB5-1afb6e2973825a56.elb.us-east-1.amazonaws.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, 28 Sep 2020 12:13:00 +0300, Dan Carpenter wrote:
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-> The be_fill_queue() function can only fail when "eq_vaddress" is NULL
-> and since it's non-NULL here that means the function call can't fail.
-> But imagine if it could, then in that situation we would want to store
-> the "paddr" so that dma memory can be released.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Applied to 5.10/scsi-queue, thanks!
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-[1/1] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
-      https://git.kernel.org/mkp/scsi/c/38b2db564d9a
+---
+ sound/pci/hda/patch_ca0132.c |    2 +-
+ sound/pci/hda/patch_hdmi.c   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 9779978e4bc7..2b38b2a716a1 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -3114,7 +3114,7 @@ static int dspxfr_one_seg(struct hda_codec *codec,
+ 	}
+ 
+ 	data = fls->data;
+-	chip_addx = fls->chip_addr,
++	chip_addx = fls->chip_addr;
+ 	words_to_write = fls->count;
+ 
+ 	if (!words_to_write)
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 055440740184..0ffbfcb91256 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -2451,7 +2451,7 @@ static int alloc_generic_hdmi(struct hda_codec *codec)
+ 	spec->chmap.ops.get_chmap = hdmi_get_chmap;
+ 	spec->chmap.ops.set_chmap = hdmi_set_chmap;
+ 	spec->chmap.ops.is_pcm_attached = is_hdmi_pcm_attached;
+-	spec->chmap.ops.get_spk_alloc = hdmi_get_spk_alloc,
++	spec->chmap.ops.get_spk_alloc = hdmi_get_spk_alloc;
+ 
+ 	codec->spec = spec;
+ 	hdmi_array_init(spec, 4);
