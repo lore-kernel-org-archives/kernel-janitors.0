@@ -1,43 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 08 Oct 2020 22:01:56 +0000
-Subject: Re: [PATCH][next] ASoC: mchp-spdifrx: fix spelling mistake "overrrun" -> "overrun"
-Message-Id: <160219448330.29664.4641489072692300066.b4-ty@kernel.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 09:19:38 +0000
+Subject: [PATCH 7/8] ASoC: madera: use semicolons rather than commas to separate statements
+Message-Id: <1602407979-29038-8-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006152024.542418-1-colin.king@canonical.com>
-In-Reply-To: <20201006152024.542418-1-colin.king@canonical.com>
+References: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, Colin King <colin.king@canonical.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, alsa-devel@alsa-project.org, Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: alsa-devel@alsa-project.org, =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 
-On Tue, 6 Oct 2020 16:20:24 +0100, Colin King wrote:
-> There is a spelling mistake in a dev_warn message. Fix it.
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-Applied to
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Thanks!
+---
+ sound/soc/codecs/madera.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] ASoC: mchp-spdifrx: fix spelling mistake "overrrun" -> "overrun"
-      commit: 6db282c8a9edcbf84e699e45ec087baf07be2236
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/sound/soc/codecs/madera.c b/sound/soc/codecs/madera.c
+index 680f31a6493a..f4ed7e04673f 100644
+--- a/sound/soc/codecs/madera.c
++++ b/sound/soc/codecs/madera.c
+@@ -3019,11 +3019,11 @@ static int madera_hw_params_rate(struct snd_pcm_substream *substream,
+ 		tar = 2 << MADERA_AIF1_RATE_SHIFT;
+ 		break;
+ 	case MADERA_CLK_ASYNCCLK_1:
+-		reg = MADERA_ASYNC_SAMPLE_RATE_1,
++		reg = MADERA_ASYNC_SAMPLE_RATE_1;
+ 		tar = 8 << MADERA_AIF1_RATE_SHIFT;
+ 		break;
+ 	case MADERA_CLK_ASYNCCLK_2:
+-		reg = MADERA_ASYNC_SAMPLE_RATE_2,
++		reg = MADERA_ASYNC_SAMPLE_RATE_2;
+ 		tar = 9 << MADERA_AIF1_RATE_SHIFT;
+ 		break;
+ 	default:
