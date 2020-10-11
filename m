@@ -1,176 +1,46 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Sun, 18 Oct 2020 16:20:04 +0000
-Subject: Re: [Cocci] Determination of an usage statistic for memory     allocation calls
-Message-Id: <alpine.DEB.2.22.394.2010181819210.2759@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1982622638-1603038004=:2759"
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 10:34:55 +0000
+Subject: [PATCH 2/5] mac80211: use semicolons rather than commas to separate statements
+Message-Id: <1602412498-32025-3-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3528117.7ODa3CK5J5@sonne> <2774601.u91sIFNy1E@sonne>
-In-Reply-To: <2774601.u91sIFNy1E@sonne>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, Alexander Popov <alex.popov@linux.com>
+References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
---8323329-1982622638-1603038004=:2759
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
+---
+ net/mac80211/debugfs_sta.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, 18 Oct 2020, Markus Elfring wrote:
-
-> > …
-> > > +    E = \(kmalloc\|kzalloc\|krealloc\|kcalloc\|
-> > > +          kmalloc_node\|kzalloc_node\|kmalloc_array\|
-> > > +          kmalloc_array_node\|kcalloc_node\)(...)@kok
-> > …
-> >
-> > How do you think about the possibility for any adjustments according to the order
-> > of the mentioned function names in proposed disjunctions for the semantic patch language?
->
->
-> I would like to share another source code analysis approach.
-> I hope that this contribution can trigger further helpful software development ideas.
->
->
-> @initialize:python@
-> @@
-> import sys
->
-> def write_identifier(source, call):
->     names = []
->     for x in source:
->        names.append(call)
->
->     sys.stdout.write("\n".join(names) + "\n")
->
-> @find1@
-> expression e;
-> identifier call, x;
-> position pos;
-> type rt;
-> @@
->  rt x(...)
->  {
->  <+...
->  e =@pos
-> (kzalloc@call
-> |kmalloc@call
-> |kcalloc@call
-> |kmalloc_array@call
-> |kmemdup@call
-> |kstrdup@call
-> |vmalloc@call
-> |vzalloc@call
-> |kzalloc_node@call
-> |kvmalloc@call
-> |krealloc@call
-> |kmalloc_node@call
-> |kcalloc_node@call
-> |__vmalloc@call
-> |vmalloc_user@call
-> |vzalloc_node@call
-> |vmalloc_32@call
-> |__vmalloc_node_range@call
-> |vmalloc_node@call
-> |kmalloc_array_node@call
-> |__vmalloc_node@call
-> |vmalloc_32_user@call
-> |vmalloc_exec@call
-> )(...)
->  ...+>
->  }
->
-> @script:python collection1@
-> call << find1.call;
-> place << find1.pos;
-> @@
-> write_identifier(place, call)
->
-> @find2@
-> identifier call, var, x;
-> position pos;
-> type rt, vt;
-> @@
->  rt x(...)
->  {
->  <+...
->  vt var =@pos
-> (kzalloc@call
-> |kmalloc@call
-> |kcalloc@call
-> |kmalloc_array@call
-> |kmemdup@call
-> |kstrdup@call
-> |vmalloc@call
-> |vzalloc@call
-> |kzalloc_node@call
-> |kvmalloc@call
-> |krealloc@call
-> |kmalloc_node@call
-> |kcalloc_node@call
-> |__vmalloc@call
-> |vmalloc_user@call
-> |vzalloc_node@call
-> |vmalloc_32@call
-> |__vmalloc_node_range@call
-> |vmalloc_node@call
-> |kmalloc_array_node@call
-> |__vmalloc_node@call
-> |vmalloc_32_user@call
-> |vmalloc_exec@call
-> )(...);
->  ...+>
->  }
->
-> @script:python collection2@
-> call << find2.call;
-> place << find2.pos;
-> @@
-> write_identifier(place, call)
->
->
-> Test result:
-> elfring@Sonne:~/Projekte/Linux/next-patched> git checkout next-20201016 && XX=$(date) && time spatch --timeout 23 --python python3 --jobs 4 --chunksize 1 --include-headers --no-includes --dir . ~/Projekte/Coccinelle/janitor/report_memory_allocation_calls4.cocci 2> ~/Projekte/Bau/Linux/scripts/Coccinelle/call_checks/20201016/report_memory_allocation_calls4-errors.txt | echo "$(echo 'call' && cat)" | csvsql --query 'select call, count(*) from stdin group by call order by count(*) desc'; YY=$(date) && echo "$XX | $YY"
-> …
-> call,count(*)
-> kzalloc,12652
-> kmalloc,4902
-> kcalloc,2564
-> kmalloc_array,859
-> kmemdup,797
-> kstrdup,469
-> vmalloc,405
-> vzalloc,359
-> kzalloc_node,177
-> kvmalloc,154
-> krealloc,151
-> kmalloc_node,49
-> kcalloc_node,44
-> __vmalloc,34
-> vmalloc_user,28
-> vzalloc_node,21
-> vmalloc_32,9
-> __vmalloc_node_range,8
-> vmalloc_node,7
-> kmalloc_array_node,5
-> __vmalloc_node,4
-> vmalloc_32_user,1
->
-> real	22m25,049s
-> user	84m11,257s
-> sys	0m12,168s
-> So 18. Okt 16:55:08 CEST 2020 | So 18. Okt 17:17:33 CEST 2020
->
->
-> The log file contains the information “9211 files match”.
-> Can such facts influence the specification of efficient SmPL disjunctions another bit?
-
-On my machine, putting the three functions that you have foudn to be the
-most frequent at the end of each disjunction has no impact on the
-performance.  So what do you suggest?
-
-julia
---8323329-1982622638-1603038004=:2759--
+diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
+index 829dcad69c2c..6a51b8b58f9e 100644
+--- a/net/mac80211/debugfs_sta.c
++++ b/net/mac80211/debugfs_sta.c
+@@ -274,7 +274,7 @@ static ssize_t sta_aql_read(struct file *file, char __user *userbuf,
+ 		"Q limit[low/high]: VO: %u/%u VI: %u/%u BE: %u/%u BK: %u/%u\n",
+ 		q_depth[0], q_depth[1], q_depth[2], q_depth[3],
+ 		q_limit_l[0], q_limit_h[0], q_limit_l[1], q_limit_h[1],
+-		q_limit_l[2], q_limit_h[2], q_limit_l[3], q_limit_h[3]),
++		q_limit_l[2], q_limit_h[2], q_limit_l[3], q_limit_h[3]);
+ 
+ 	rv = simple_read_from_buffer(userbuf, count, ppos, buf, p - buf);
+ 	kfree(buf);
