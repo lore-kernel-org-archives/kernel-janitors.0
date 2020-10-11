@@ -1,46 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 07 Oct 2020 12:33:45 +0000
-Subject: Re: [PATCH] PCI: fix a potential uninitentional integer overflow issue
-Message-Id: <20201007123045.GS4282@kadam>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 09:19:32 +0000
+Subject: [PATCH 1/8] ASoC: wm8350: use semicolons rather than commas to separate statements
+Message-Id: <1602407979-29038-2-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201007114615.19966-1-colin.king@canonical.com>
-In-Reply-To: <20201007114615.19966-1-colin.king@canonical.com>
+References: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Stephen Bates <sbates@raithlin.com>, Logan Gunthorpe <logang@deltatee.com>, Alex Williamson <alex.williamson@redhat.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 12:46:15PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The shift of 1 by align_order is evaluated using 32 bit arithmetic
-> and the result is assigned to a resource_size_t type variable that
-> is a 64 bit unsigned integer on 64 bit platforms. Fix an overflow
-> before widening issue by using the BIT_ULL macro to perform the
-> shift.
-> 
-> Addresses-Coverity: ("Uninitentional integer overflow")
-> Fixes: 07d8d7e57c28 ("PCI: Make specifying PCI devices in kernel parameters reusable")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pci/pci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 6d4d5a2f923d..1a5844d7af35 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -6209,7 +6209,7 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
->  			if (align_order = -1)
->  				align = PAGE_SIZE;
->  			else
-> -				align = 1 << align_order;
-> +				align = BIT_ULL(align_order);
+Replace commas with semicolons.  What is done is essentially described by
+the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
 
-"align_order" comes from sscanf() so Smatch thinks it's not trusted.
-Anything above 63 is undefined behavior.  There should be a bounds check
-on this but I don't know what the valid values of "align" are.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ sound/soc/codecs/wm8350.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/wm8350.c b/sound/soc/codecs/wm8350.c
+index a6aa212fa0c8..15d42ce3b21d 100644
+--- a/sound/soc/codecs/wm8350.c
++++ b/sound/soc/codecs/wm8350.c
+@@ -218,7 +218,8 @@ static void wm8350_pga_work(struct work_struct *work)
+ 
+ 	/* PGA volumes have 6 bits of resolution to ramp */
+ 	for (i = 0; i <= 63; i++) {
+-		out1_complete = 1, out2_complete = 1;
++		out1_complete = 1;
++		out2_complete = 1;
+ 		if (out1->ramp != WM8350_RAMP_NONE)
+ 			out1_complete = wm8350_out1_ramp_step(wm8350_data);
+ 		if (out2->ramp != WM8350_RAMP_NONE)
