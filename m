@@ -1,34 +1,46 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 15 Oct 2020 15:18:52 +0000
-Subject: Re: [PATCH] tools: net: traceevent: Fix 'snprintf' return value check in 'tep_filter_strerror'
-Message-Id: <20201015111852.355049b1@gandalf.local.home>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 10:34:57 +0000
+Subject: [PATCH 4/5] net/ipv6: use semicolons rather than commas to separate statements
+Message-Id: <1602412498-32025-5-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201015142959.GA18281@laptop>
-        <d489b145997147fd961050321b17d85d@bfs.de>
-In-Reply-To: <d489b145997147fd961050321b17d85d@bfs.de>
+References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Fedor Tokarev <ftokarev@gmail.com>, "acme@redhat.com" <acme@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 15 Oct 2020 15:12:53 +0000
-Walter Harms <wharms@bfs.de> wrote:
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-> i guess the whole thing can be made more simple 
-> 
-> we have len and buflen
-> 
-> len=strlen(filter->error_buffer);
-> if (len >= buflen )
->   return -1;
-> 
-> strcpy(buf, filter->error_buffer);
->
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Either is fine, but we are moving libtraceevent into it's own library,
-which is located here:
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/
+---
+ net/ipv6/calipso.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- Steve
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index 8d3f66c310db..78f766019b7e 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -761,7 +761,7 @@ static int calipso_genopt(unsigned char *buf, u32 start, u32 buf_len,
+ 	calipso[1] = len - 2;
+ 	*(__be32 *)(calipso + 2) = htonl(doi_def->doi);
+ 	calipso[6] = (len - CALIPSO_HDR_LEN) / 4;
+-	calipso[7] = secattr->attr.mls.lvl,
++	calipso[7] = secattr->attr.mls.lvl;
+ 	crc = ~crc_ccitt(0xffff, calipso, len);
+ 	calipso[8] = crc & 0xff;
+ 	calipso[9] = (crc >> 8) & 0xff;
