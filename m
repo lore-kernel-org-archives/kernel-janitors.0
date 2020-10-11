@@ -1,40 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 01 Oct 2020 11:39:00 +0000
-Subject: [PATCH] x86/events/amd/iommu: fix sizeof mismatch
-Message-Id: <20201001113900.58889-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 10:34:56 +0000
+Subject: [PATCH 3/5] tcp: use semicolons rather than commas to separate statements
+Message-Id: <1602412498-32025-4-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Dumazet <edumazet@google.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-An incorrect sizeof is being used, struct attribute ** is not correct,
-it should be struct attribute *. Note that since ** is the same size as
-* this is not causing any issues.  Improve this fix by using sizeof(*attrs)
-as this allows us to not even reference the type of the pointer.
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-Fixes: 51686546304f ("x86/events/amd/iommu: Fix sysfs perf attribute groups")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- arch/x86/events/amd/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |    3 ++-
+ net/ipv4/tcp_vegas.c |    8 ++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
-index fb616203ce42..be50ef8572cc 100644
---- a/arch/x86/events/amd/iommu.c
-+++ b/arch/x86/events/amd/iommu.c
-@@ -379,7 +379,7 @@ static __init int _init_events_attrs(void)
- 	while (amd_iommu_v2_event_descs[i].attr.attr.name)
- 		i++;
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 02d0e2fb77c0..7ff9be52c061 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4418,7 +4418,8 @@ static void tcp_sack_maybe_coalesce(struct tcp_sock *tp)
+ 				sp[i] = sp[i + 1];
+ 			continue;
+ 		}
+-		this_sack++, swalk++;
++		this_sack++;
++		swalk++;
+ 	}
+ }
  
--	attrs = kcalloc(i + 1, sizeof(struct attribute **), GFP_KERNEL);
-+	attrs = kcalloc(i + 1, sizeof(*attrs), GFP_KERNEL);
- 	if (!attrs)
- 		return -ENOMEM;
+diff --git a/net/ipv4/tcp_vegas.c b/net/ipv4/tcp_vegas.c
+index 3f51e781562a..c8003c8aad2c 100644
+--- a/net/ipv4/tcp_vegas.c
++++ b/net/ipv4/tcp_vegas.c
+@@ -293,10 +293,10 @@ size_t tcp_vegas_get_info(struct sock *sk, u32 ext, int *attr,
+ 	const struct vegas *ca = inet_csk_ca(sk);
  
--- 
-2.27.0
+ 	if (ext & (1 << (INET_DIAG_VEGASINFO - 1))) {
+-		info->vegas.tcpv_enabled = ca->doing_vegas_now,
+-		info->vegas.tcpv_rttcnt = ca->cntRTT,
+-		info->vegas.tcpv_rtt = ca->baseRTT,
+-		info->vegas.tcpv_minrtt = ca->minRTT,
++		info->vegas.tcpv_enabled = ca->doing_vegas_now;
++		info->vegas.tcpv_rttcnt = ca->cntRTT;
++		info->vegas.tcpv_rtt = ca->baseRTT;
++		info->vegas.tcpv_minrtt = ca->minRTT;
+ 
+ 		*attr = INET_DIAG_VEGASINFO;
+ 		return sizeof(struct tcpvegas_info);
