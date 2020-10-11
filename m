@@ -1,46 +1,46 @@
-From: LABBE Corentin <clabbe@baylibre.com>
-Date: Mon, 05 Oct 2020 10:50:41 +0000
-Subject: Re: [PATCH][next] media: zoran: fix spelling mistake and make error message more meaningful
-Message-Id: <20201005105041.GB29306@Red>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sun, 11 Oct 2020 10:34:54 +0000
+Subject: [PATCH 1/5] rxrpc: use semicolons rather than commas to separate statements
+Message-Id: <1602412498-32025-2-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201002101620.86156-1-colin.king@canonical.com>
-In-Reply-To: <20201002101620.86156-1-colin.king@canonical.com>
+References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mjpeg-users@lists.sourceforge.net, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-afs@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 11:16:20AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a pci_err error message. Fix this and
-> make the error message a little more meaningful.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/media/zoran/zoran_driver.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/zoran/zoran_driver.c b/drivers/staging/media/zoran/zoran_driver.c
-> index 808196ea5b81..d9f8b21edf6a 100644
-> --- a/drivers/staging/media/zoran/zoran_driver.c
-> +++ b/drivers/staging/media/zoran/zoran_driver.c
-> @@ -666,7 +666,7 @@ static int zoran_g_selection(struct file *file, void *__fh, struct v4l2_selectio
->  
->  	if (sel->type != V4L2_BUF_TYPE_VIDEO_OUTPUT &&
->  	    sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) {
-> -		pci_err(zr->pci_dev, "%s invalid combinaison\n", __func__);
-> +		pci_err(zr->pci_dev, "%s invalid selection type combination\n", __func__);
->  		return -EINVAL;
->  	}
->  
-> -- 
-> 2.27.0
-> 
+Replace commas with semicolons.  Commas introduce unnecessary
+variability in the code structure and are hard to see.  What is done
+is essentially described by the following Coccinelle semantic patch
+(http://coccinelle.lip6.fr/):
 
-Hello
+// <smpl>
+@@ expression e1,e2; @@
+e1
+-,
++;
+e2
+... when any
+// </smpl>
 
-Acked-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Thanks
+---
+ net/rxrpc/recvmsg.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/rxrpc/recvmsg.c b/net/rxrpc/recvmsg.c
+index c4684dde1f16..acc4660cfa5b 100644
+--- a/net/rxrpc/recvmsg.c
++++ b/net/rxrpc/recvmsg.c
+@@ -69,7 +69,7 @@ bool __rxrpc_set_call_completion(struct rxrpc_call *call,
+ 	if (call->state < RXRPC_CALL_COMPLETE) {
+ 		call->abort_code = abort_code;
+ 		call->error = error;
+-		call->completion = compl,
++		call->completion = compl;
+ 		call->state = RXRPC_CALL_COMPLETE;
+ 		trace_rxrpc_call_complete(call);
+ 		wake_up(&call->waitq);
