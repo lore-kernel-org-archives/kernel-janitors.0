@@ -1,65 +1,25 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 20 Oct 2020 16:55:38 +0000
-Subject: Re: [PATCH] cifs: make const array static, makes object smaller
-Message-Id: <CAH2r5muM5K802hub3WYJYcC5Mqi8K2S2HJa1hgW_mo+oW0toMA@mail.gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 13 Oct 2020 22:42:52 +0000
+Subject: Re: [PATCH 00/14] drop double zeroing
+Message-Id: <160262862433.3018.13907233755506910409.b4-ty@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201020141936.52272-1-colin.king@canonical.com>
-In-Reply-To: <20201020141936.52272-1-colin.king@canonical.com>
+References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
+In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-spi@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, target-devel@vger.kernel.org, linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-serial@vger.kernel.org, linux-nfs@vger.kernel.org, linux-scsi@vger.kernel.org, Yossi Leybovich <sleybo@amazon.com>, linux-block@vger.kernel.org, rds-devel@oss.oracle.com
 
-added Aurelien's Reviewed-by and merged into cifs-2.6.git for-next
+On Sun, 20 Sep 2020 13:26:12 +0200, Julia Lawall wrote:
 
-On Tue, Oct 20, 2020 at 9:22 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate const array smb3_create_tag_posix on the stack but
-> instead make it static. Makes the object code smaller by 50 bytes.
->
-> Before:
->    text    data     bss     dec     hex filename
->  150184   47167       0  197351   302e7 fs/cifs/smb2pdu.o
->
-> After:
->     text           data     bss     dec     hex filename
->  150070   47231       0  197301   302b5 fs/cifs/smb2pdu.o
->
-> (gcc version 10.2.0)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2pdu.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index d504bc296349..be8696abd871 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -1971,9 +1971,11 @@ smb2_parse_contexts(struct TCP_Server_Info *server,
->         unsigned int next;
->         unsigned int remaining;
->         char *name;
-> -       const char smb3_create_tag_posix[] = {0x93, 0xAD, 0x25, 0x50, 0x9C,
-> -                                       0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
-> -                                       0xDE, 0x96, 0x8B, 0xCD, 0x7C};
-> +       static const char smb3_create_tag_posix[] = {
-> +               0x93, 0xAD, 0x25, 0x50, 0x9C,
-> +               0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
-> +               0xDE, 0x96, 0x8B, 0xCD, 0x7C
-> +       };
->
->         *oplock = 0;
->         data_offset = (char *)rsp + le32_to_cpu(rsp->CreateContextsOffset);
-> --
-> 2.27.0
->
+> sg_init_table zeroes its first argument, so the allocation of that argument
+> doesn't have to.
 
+Applied to 5.10/scsi-queue, thanks!
+
+[02/14] scsi: target: rd: Drop double zeroing
+        https://git.kernel.org/mkp/scsi/c/4b217e015b75
 
 -- 
-Thanks,
-
-Steve
+Martin K. Petersen	Oracle Linux Engineering
