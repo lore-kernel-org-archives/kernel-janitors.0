@@ -1,29 +1,39 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sat, 17 Oct 2020 01:25:45 +0000
-Subject: Re: [PATCH] hwmon: (acpi_power_meter) clean up freeing code
-Message-Id: <20201017012545.GA195203@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Oct 2020 11:55:50 +0000
+Subject: [PATCH][next] io_uring: fix flags check for the REQ_F_WORK_INITIALIZED setting
+Message-Id: <20201015115550.485235-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201007075148.GB2529578@mwanda>
-In-Reply-To: <20201007075148.GB2529578@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 10:51:48AM +0300, Dan Carpenter wrote:
-> This code works okay but Smatch flagged it as a double free.  I've
-> changed three things to make it more clear.  1)  Remove the call to
-> free_capabilities() in acpi_power_meter_add().  This call is a no-op
-> because the capabilities have not been allocated yet.  2)  Set "*str" to
-> NULL in free_capabilities() so that way the function can be called twice
-> in a row without leading to a double free.  3)  Call free_capabilities()
-> in read_capabilities() instead of open coding the free.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Hmm, somehow this patch slipped throigh the cracks.
-Sorry for that. Applied.
+Currently the check for REQ_F_WORK_INITIALIZED is always true because
+the | operator is being used. I believe this check should be checking
+if the bit is set using the & operator.
 
-Thanks,
-Guenter
+Addresses-Coverity: ("Wrong operator used")
+Fixes: 9c357fed168a ("io_uring: fix REQ_F_COMP_LOCKED by killing it")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 01d0b35415dc..5ef54df03d7c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1813,7 +1813,7 @@ static void __io_fail_links(struct io_kiocb *req)
+ 		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
+ 		 * work.fs->lock.
+ 		 */
+-		if (link->flags | REQ_F_WORK_INITIALIZED)
++		if (link->flags & REQ_F_WORK_INITIALIZED)
+ 			io_put_req_deferred(link, 2);
+ 		else
+ 			io_double_put_req(link);
+-- 
+2.27.0
