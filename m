@@ -1,16 +1,22 @@
-From: Sov Chan <prueba@reduno.com.bo>
-Date: Mon, 12 Oct 2020 14:04:14 +0000
-Subject: Good
-Message-Id: <20201012143622.4E86B8056198C@mail.reduno.com.bo>
+From: Kim Leang <mechanik@kilargo.pl>
+Date: Thu, 15 Oct 2020 13:46:07 +0000
+Subject: Greeting! !!
+Message-Id: <aa98e79bfe4947f3a6b17d26ce381627@mail.kilargo.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello,
+Greeting!
 
-I have a business proposal to share with you. Contact me for more details.
+I am contacting you to receive and share with me an abandoned fund ( $21,537.000.00 ) left in our bank by a deceased customer. I was going through the Internet search when I found your email address. My name is Mr. Kim Leang.
 
-Kind regards,
-Sov
+I want to utilize this opportunity and make use of this fund if I should present your name to the bank to stand as his business associate/ trustee for the fund to be released to you via Visa card for easy withdrawals in any VISA ATM machine anywhere in the World.
+
+The bank will also give you international online transfer options. With these you can transfer the funds without any risk.
+
+Should you be interested in working with me in this project? Please reply back and let's benefit from this golden opportunity.You are my first contact. I shall wait a few days and if I do not hear from you, I shall look for another person.
+
+Thanks and have a nice day,
+Mr. Kim Leang.
