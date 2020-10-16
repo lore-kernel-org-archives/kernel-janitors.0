@@ -1,50 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 26 Oct 2020 23:47:14 +0000
-Subject: Re: [PATCH] regulator: lp872x: make a const array static, makes object smaller
-Message-Id: <160375603445.32304.3851545649708481770.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Oct 2020 22:49:13 +0000
+Subject: [PATCH] ALSA: hda/ca0132: make some const arrays static, makes object smaller
+Message-Id: <20201016224913.687724-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201016222235.686981-1-colin.king@canonical.com>
-In-Reply-To: <20201016222235.686981-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Colin King <colin.king@canonical.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Connor McAdams <conmanx360@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 16 Oct 2020 23:22:35 +0100, Colin King wrote:
-> Don't populate const array lp872x_num_regulators  on the stack but
-> instead make it static. Makes the object code smaller by 29 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   18441	   4624	     64	  23129	   5a59	drivers/regulator/lp872x.o
-> 
-> [...]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+Don't populate const arrays on the stack but instead make them
+static. Makes the object code smaller by 57 bytes.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 173256	  38016	    192	 211464	  33a08	sound/pci/hda/patch_ca0132.o
 
-Thanks!
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 172879	  38336	    192	 211407	  339cf	sound/pci/hda/patch_ca0132.o
 
-[1/1] regulator: lp872x: make a const array static, makes object smaller
-      commit: 390d828f56a602c9201601bff1170d9d2bf5801c
+(gcc version 10.2.0)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/hda/patch_ca0132.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 2b38b2a716a1..e0c38f2735c6 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -7910,8 +7910,12 @@ static void ae7_post_dsp_asi_stream_setup(struct hda_codec *codec)
+ 
+ static void ae7_post_dsp_pll_setup(struct hda_codec *codec)
+ {
+-	const unsigned int addr[] = { 0x41, 0x45, 0x40, 0x43, 0x51 };
+-	const unsigned int data[] = { 0xc8, 0xcc, 0xcb, 0xc7, 0x8d };
++	static const unsigned int addr[] = {
++		0x41, 0x45, 0x40, 0x43, 0x51
++	};
++	static const unsigned int data[] = {
++		0xc8, 0xcc, 0xcb, 0xc7, 0x8d
++	};
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(addr); i++) {
+@@ -7925,10 +7929,12 @@ static void ae7_post_dsp_pll_setup(struct hda_codec *codec)
+ static void ae7_post_dsp_asi_setup_ports(struct hda_codec *codec)
+ {
+ 	struct ca0132_spec *spec = codec->spec;
+-	const unsigned int target[] = { 0x0b, 0x04, 0x06, 0x0a, 0x0c, 0x11,
+-					0x12, 0x13, 0x14 };
+-	const unsigned int data[]   = { 0x12, 0x00, 0x48, 0x05, 0x5f, 0xff,
+-					0xff, 0xff, 0x7f };
++	static const unsigned int target[] = {
++		0x0b, 0x04, 0x06, 0x0a, 0x0c, 0x11, 0x12, 0x13, 0x14
++	};
++	static const unsigned int data[] = {
++		0x12, 0x00, 0x48, 0x05, 0x5f, 0xff, 0xff, 0xff, 0x7f
++	};
+ 	unsigned int i;
+ 
+ 	mutex_lock(&spec->chipio_mutex);
+-- 
+2.27.0
