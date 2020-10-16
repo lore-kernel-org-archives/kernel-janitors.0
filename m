@@ -1,27 +1,49 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 07 Oct 2020 03:04:41 +0000
-Subject: Re: [PATCH] scsi: pmcraid: Fix memory allocation in 'pmcraid_alloc_sglist()'
-Message-Id: <yq1r1qa68lk.fsf@ca-mkp.ca.oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Oct 2020 22:05:55 +0000
+Subject: [PATCH] drm/nouveau/bios/init: make two const arrays static, makes object smaller
+Message-Id: <20201016220555.686446-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200920075722.376644-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200920075722.376644-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Sun, 20 Sep 2020 09:57:22 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bvanassche@acm.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jejb@linux.ibm.com, martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-> When the scatter list is allocated in 'pmcraid_alloc_sglist()', the
-> corresponding pointer should be stored in 'scatterlist' within the
-> 'pmcraid_sglist' structure. Otherwise, 'scatterlist' is NULL.
->
-> This leads to a potential memory leak and NULL pointer dereference.
+Don't populate const arrays on the stack but instead make them
+static. Makes the object code smaller by 7 bytes.
 
-> Fixes: ed4414cef2ad ("scsi: pmcraid: Use sgl_alloc_order() and sgl_free_order()")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 104041	   8284	      0	 112325	  1b6c5	drm/nouveau/nvkm/subdev/bios/init.o
 
-This does indeed look odd. Bart?
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 103874	   8444	      0	 112318	  1b6be	drm/nouveau/nvkm/subdev/bios/init.o
 
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+index 9de74f41dcd2..dc8625eff20a 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+@@ -546,9 +546,9 @@ init_tmds_reg(struct nvbios_init *init, u8 tmds)
+ 	 * CR58 for CR57 = 0 to index a table of offsets to the basic
+ 	 * 0x6808b0 address, and then flip the offset by 8.
+ 	 */
+-	const int pramdac_offset[13] = {
++	static const int pramdac_offset[13] = {
+ 		0, 0, 0x8, 0, 0x2000, 0, 0, 0, 0x2008, 0, 0, 0, 0x2000 };
+-	const u32 pramdac_table[4] = {
++	static const u32 pramdac_table[4] = {
+ 		0x6808b0, 0x6808b8, 0x6828b0, 0x6828b8 };
+ 
+ 	if (tmds >= 0x80) {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
