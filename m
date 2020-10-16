@@ -1,34 +1,37 @@
-From: Nigel Christian <nigel.l.christian@gmail.com>
-Date: Sat, 31 Oct 2020 02:21:55 +0000
-Subject: [PATCH] media: ipu3-cio2: fix trivial style warning
-Message-Id: <20201031022155.GA32878@fedora-project>
+From: Bukar Mangora <bukarmangora@gmail.com>
+Date: Fri, 16 Oct 2020 10:05:12 +0000
+Subject: From Bukar Mangora, Hello Friend Please Treat Urgent
+Message-Id: <CAJLrak8LJGUrCYCypKMsMSAp+jV6vkrARpbMsOa2PB=_qUmbfw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: yong.zhi@intel.com, trivial@kernel.org
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Comment has 'the' repeated twice. Let's clean it up.
-This patch reduces checkpatch warnings for this file to nil.
+Good day my good friend.
+How are you doing today? It has been long i hear from you, what is
+going on your side? Today i am very much happy to inform you about my
+success in getting those inheritance funds transferred under the
+co-operation of a new partner from India Asia. He is a Canadian but
+based in India, but presently I'm in India for investment projects
+with my own share of the total sum of Millions of dollars. meanwhile,
+i didn't forget your past efforts and attempts to assist me in
+transferring those inheritance funds despite that it failed us
+somehow, i want you to contact my Secretary in Lom=C3=A9 Togo, his name is
+Mr. Paul Agwa, this is his email address (paulagwad@aol.com ), ask him
+to contact Ecobank were i kept the sum of $350,000.00, for your
+compensation, this compensation fund is for all the past efforts and
+attempts to assist me in the past transaction. I appreciated your
+efforts at that time very much.  so, feel free and contact my
+secretary, and instruct him where Ecobank will transfer the total sum
+of $350,000.00.
 
-Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
----
- drivers/media/pci/intel/ipu3/ipu3-cio2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please do let me know immediately Ecobank transfer the fund
+$350.000.00 into your own bank account, in the moment, I am too busy
+here because of the investment projects which i am having with my new
+partner at hand, so get in touch with Mr. Paul Agwa on his email
+address, he will contact Ecobank on your behalf without any delay.
+Stay safe of Covid 19.
 
-diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-index 4e598e937dfe..d4ff80ff7be0 100644
---- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-+++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-@@ -286,7 +286,7 @@ static s32 cio2_rx_timing(s32 a, s32 b, s64 freq, int def)
- 	return r;
- };
- 
--/* Calculate the the delay value for termination enable of clock lane HS Rx */
-+/* Calculate the delay value for termination enable of clock lane HS Rx */
- static int cio2_csi2_calc_timing(struct cio2_device *cio2, struct cio2_queue *q,
- 				 struct cio2_csi2_timing *timing)
- {
--- 
-2.28.0
+Best regards,
+Bukar Mangora.
