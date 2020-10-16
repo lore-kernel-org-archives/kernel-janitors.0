@@ -1,46 +1,43 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Fri, 30 Oct 2020 21:06:41 +0000
-Subject: Re: [PATCH] net: cls_api: remove unneeded local variable in tc_dump_chain()
-Message-Id: <20201030140641.4fbeb575@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Oct 2020 14:33:51 +0000
+Subject: [PATCH] lightnvm: fix out-of-bounds write to array devices->info[]
+Message-Id: <20201016143351.677352-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201028113533.26160-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201028113533.26160-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S .
- Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, Tom Rix <trix@redhat.com>, clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
+To: Matias Bjorling <mb@lightnvm.io>, =?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>, Jens Axboe <axboe@fb.com>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 28 Oct 2020 12:35:33 +0100 Lukas Bulwahn wrote:
-> make clang-analyzer on x86_64 defconfig caught my attention with:
-> 
-> net/sched/cls_api.c:2964:3: warning: Value stored to 'parent' is never read
->   [clang-analyzer-deadcode.DeadStores]
->                 parent = 0;
->                 ^
-> 
-> net/sched/cls_api.c:2977:4: warning: Value stored to 'parent' is never read
->   [clang-analyzer-deadcode.DeadStores]
->                         parent = q->handle;
->                         ^
-> 
-> Commit 32a4f5ecd738 ("net: sched: introduce chain object to uapi")
-> introduced tc_dump_chain() and this initial implementation already
-> contained these unneeded dead stores.
-> 
-> Simplify the code to make clang-analyzer happy.
-> 
-> As compilers will detect these unneeded assignments and optimize this
-> anyway, the resulting binary is identical before and after this change.
-> 
-> No functional change. No change in object code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on current master and next-20201028
-> 
-> Jamal, Cong, Jiri, please ack.
-> David, Jakub, please pick this minor non-urgent clean-up patch.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+There is an off-by-one array check that can lead to a out-of-bounds
+write to devices->info[i].  Fix this by checking by using >= rather
+than > for the size check. Also replace hard-coded array size limit
+with ARRAY_SIZE on the array.
+
+Addresses-Coverity: ("Out-of-bounds write")
+Fixes: cd9e9808d18f ("lightnvm: Support for Open-Channel SSDs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/lightnvm/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index fe78bf0fdce5..f9f5dd38c697 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -1311,8 +1311,9 @@ static long nvm_ioctl_get_devices(struct file *file, void __user *arg)
+ 		strlcpy(info->bmname, "gennvm", sizeof(info->bmname));
+ 		i++;
+ 
+-		if (i > 31) {
+-			pr_err("max 31 devices can be reported.\n");
++		if (i >= ARRAY_SIZE(devices->info)) {
++			pr_err("max %zd devices can be reported.\n",
++			       ARRAY_SIZE(devices->info));
+ 			break;
+ 		}
+ 	}
+-- 
+2.27.0
