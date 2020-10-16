@@ -1,25 +1,46 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Oct 2020 22:42:52 +0000
-Subject: Re: [PATCH 00/14] drop double zeroing
-Message-Id: <160262862433.3018.13907233755506910409.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Oct 2020 22:33:03 +0000
+Subject: [PATCH] staging: wfx: make a const array static, makes object smaller
+Message-Id: <20201016223303.687278-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, target-devel@vger.kernel.org, linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-serial@vger.kernel.org, linux-nfs@vger.kernel.org, linux-scsi@vger.kernel.org, Yossi Leybovich <sleybo@amazon.com>, linux-block@vger.kernel.org, rds-devel@oss.oracle.com
+To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 20 Sep 2020 13:26:12 +0200, Julia Lawall wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> sg_init_table zeroes its first argument, so the allocation of that argument
-> doesn't have to.
+Don't populate const array filter_ies on the stack but instead
+make it static. Makes the object code smaller by 261 bytes.
 
-Applied to 5.10/scsi-queue, thanks!
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
 
-[02/14] scsi: target: rd: Drop double zeroing
-        https://git.kernel.org/mkp/scsi/c/4b217e015b75
+After:
+   text	   data	    bss	    dec	    hex	filename
+  21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
 
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wfx/sta.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
+index 2320a81eae0b..196779a1b89a 100644
+--- a/drivers/staging/wfx/sta.c
++++ b/drivers/staging/wfx/sta.c
+@@ -63,7 +63,7 @@ void wfx_suspend_hot_dev(struct wfx_dev *wdev, enum sta_notify_cmd cmd)
+ 
+ static void wfx_filter_beacon(struct wfx_vif *wvif, bool filter_beacon)
+ {
+-	const struct hif_ie_table_entry filter_ies[] = {
++	static const struct hif_ie_table_entry filter_ies[] = {
+ 		{
+ 			.ie_id        = WLAN_EID_VENDOR_SPECIFIC,
+ 			.has_changed  = 1,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
