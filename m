@@ -1,24 +1,46 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 12 Oct 2020 14:24:42 +0000
-Subject: Re: [PATCH][next] io_uring: Fix sizeof() mismatch
-Message-Id: <871e585c-06ca-17cb-f082-fec576bb75e1@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Oct 2020 22:22:35 +0000
+Subject: [PATCH] regulator: lp872x: make a const array static, makes object smaller
+Message-Id: <20201016222235.686981-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201012140341.77412-1-colin.king@canonical.com>
-In-Reply-To: <20201012140341.77412-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/12/20 8:03 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An incorrect sizeof() is being used, sizeof(file_data->table) is not
-> correct, it should be sizeof(*file_data->table).
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, should be a no-op, which is why KASAN didn't complain in my
-testing. I'll queue this up, thanks.
+Don't populate const array lp872x_num_regulators  on the stack but
+instead make it static. Makes the object code smaller by 29 bytes.
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  18441	   4624	     64	  23129	   5a59	drivers/regulator/lp872x.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  18316	   4720	     64	  23100	   5a3c	drivers/regulator/lp872x.o
+
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/regulator/lp872x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/lp872x.c b/drivers/regulator/lp872x.c
+index 303d7e2dc838..e84be29533f4 100644
+--- a/drivers/regulator/lp872x.c
++++ b/drivers/regulator/lp872x.c
+@@ -892,7 +892,7 @@ static int lp872x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ 	struct lp872x *lp;
+ 	struct lp872x_platform_data *pdata;
+ 	int ret;
+-	const int lp872x_num_regulators[] = {
++	static const int lp872x_num_regulators[] = {
+ 		[LP8720] = LP8720_NUM_REGULATORS,
+ 		[LP8725] = LP8725_NUM_REGULATORS,
+ 	};
 -- 
-Jens Axboe
+2.27.0
