@@ -1,46 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 16 Oct 2020 22:33:03 +0000
-Subject: [PATCH] staging: wfx: make a const array static, makes object smaller
-Message-Id: <20201016223303.687278-1-colin.king@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 17 Oct 2020 00:11:44 +0000
+Subject: Re: [PATCH] staging: wfx: make a const array static, makes object smaller
+Message-Id: <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201016223303.687278-1-colin.king@canonical.com>
+In-Reply-To: <20201016223303.687278-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+To: Colin King <colin.king@canonical.com>, =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2020-10-16 at 23:33 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array filter_ies on the stack but instead
+> make it static. Makes the object code smaller by 261 bytes.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
 
-Don't populate const array filter_ies on the stack but instead
-make it static. Makes the object code smaller by 261 bytes.
+Thanks.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
+It's odd to me it's so large a change as it's only
+24 bytes of initialization. (3 entries, each 8 bytes)
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
+This line in the same function:
 
-(gcc version 10.2.0)
+		hif_set_beacon_filter_table(wvif, 3, filter_ies);
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wfx/sta.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/wfx/sta.c b/drivers/staging/wfx/sta.c
-index 2320a81eae0b..196779a1b89a 100644
---- a/drivers/staging/wfx/sta.c
-+++ b/drivers/staging/wfx/sta.c
-@@ -63,7 +63,7 @@ void wfx_suspend_hot_dev(struct wfx_dev *wdev, enum sta_notify_cmd cmd)
- 
- static void wfx_filter_beacon(struct wfx_vif *wvif, bool filter_beacon)
- {
--	const struct hif_ie_table_entry filter_ies[] = {
-+	static const struct hif_ie_table_entry filter_ies[] = {
- 		{
- 			.ie_id        = WLAN_EID_VENDOR_SPECIFIC,
- 			.has_changed  = 1,
--- 
-2.27.0
+might as well use ARRAY_SIZE(filter_ies) instead of 3
