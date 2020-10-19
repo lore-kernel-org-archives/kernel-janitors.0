@@ -1,37 +1,51 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 17 Oct 2020 00:11:44 +0000
-Subject: Re: [PATCH] staging: wfx: make a const array static, makes object smaller
-Message-Id: <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Mon, 19 Oct 2020 08:09:19 +0000
+Subject: RE: [PATCH] staging: wfx: make a const array static, makes object smaller
+Message-Id: <048fded745634e369fa2646f87a05ec4@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201016223303.687278-1-colin.king@canonical.com>
-In-Reply-To: <20201016223303.687278-1-colin.king@canonical.com>
+ <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
+In-Reply-To: <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Joe Perches' <joe@perches.com>, Colin King <colin.king@canonical.com>, =?iso-8859-1?Q?J=E9r=F4me_Pouiller?= <jerome.pouiller@silabs.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 2020-10-16 at 23:33 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+From: Joe Perches
+> Sent: 17 October 2020 01:12
 > 
-> Don't populate const array filter_ies on the stack but instead
-> make it static. Makes the object code smaller by 261 bytes.
+> On Fri, 2020-10-16 at 23:33 +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > Don't populate const array filter_ies on the stack but instead
+> > make it static. Makes the object code smaller by 261 bytes.
+> >
+> > Before:
+> >    text	   data	    bss	    dec	    hex	filename
+> >   21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
+> >
+> > After:
+> >    text	   data	    bss	    dec	    hex	filename
+> >   21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
 > 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
+> Thanks.
 > 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
+> It's odd to me it's so large a change as it's only
+> 24 bytes of initialization. (3 entries, each 8 bytes)
 
-Thanks.
+Perhaps the 'stack protector' crap?
 
-It's odd to me it's so large a change as it's only
-24 bytes of initialization. (3 entries, each 8 bytes)
+Interestingly, loading the data from the 'readonly' section
+is probably a data cache miss.
+Which might end up being slower than the extra code to
+update the on-stack data.
+The extra code might get prefetched...
 
-This line in the same function:
+	David
+ 
 
-		hif_set_beacon_filter_table(wvif, 3, filter_ies);
-
-might as well use ARRAY_SIZE(filter_ies) instead of 3
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
