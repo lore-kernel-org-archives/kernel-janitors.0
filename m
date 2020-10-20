@@ -1,31 +1,73 @@
-From: Jason Gunthorpe <jgg@nvidia.com>
-Date: Tue, 06 Oct 2020 19:57:08 +0000
-Subject: Re: [PATCH][next] RDMA/bnxt_re: fix sizeof mismatch for allocation of pbl_tbl.
-Message-Id: <20201006195708.GA165314@nvidia.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 20 Oct 2020 16:37:59 +0000
+Subject: [PATCH] sched/fair: check for idle core
+Message-Id: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006114700.537916-1-colin.king@canonical.com>
-In-Reply-To: <20201006114700.537916-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>, Doug Ledford <dledford@redhat.com>, Eddie Wai <eddie.wai@broadcom.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles.Muller@inria.fr
 
-On Tue, Oct 06, 2020 at 12:47:00PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An incorrect sizeof is being used, u64 * is not correct, it should be
-> just u64 for a table of umem_pgs number of u64 items in the pbl_tbl.
-> Use the idiom sizeof(*pbl_tbl) to get the object type without the need
-> to explicitly use u64.
-> 
-> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-> Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On a thread wakeup, the change [1] from runnable load average to load
+average for comparing candidate cores means that recent short-running
+daemons on the core where a thread ran previously can be considered to
+have a higher load than the core performing the wakeup, even when the
+core where the thread ran previously is currently idle.  This can
+cause a thread to migrate, taking the place of some other thread that
+is about to wake up, and so on.  To avoid unnecessary migrations,
+extend wake_affine_idle to check whether the core where the thread
+previously ran is currently idle, and if so return that core as the
+target.
 
-Applied to for-next, thanks
+[1] commit 11f10e5420f6ce ("sched/fair: Use load instead of runnable
+load in wakeup path")
 
-Jason
+This particularly has an impact when using passive (intel_cpufreq)
+power management, where kworkers run every 0.004 seconds on all cores,
+increasing the likelihood that an idle core will be considered to have
+a load.
+
+The following numbers were obtained with the benchmarking tool
+hyperfine (https://github.com/sharkdp/hyperfine) on the NAS parallel
+benchmarks (https://www.nas.nasa.gov/publications/npb.html).  The
+tests were run on an 80-core Intel(R) Xeon(R) CPU E7-8870 v4 @
+2.10GHz.  Active (intel_pstate) and passive (intel_cpufreq) power
+management were used.  Times are in seconds.  All experiments use all
+160 hardware threads.
+
+	v5.9/active		v5.9+patch/active
+bt.C.c	24.725724+-0.962340	23.349608+-1.607214
+lu.C.x	29.105952+-4.804203	25.249052+-5.561617
+sp.C.x	31.220696+-1.831335	30.227760+-2.429792
+ua.C.x	26.606118+-1.767384	25.778367+-1.263850
+
+	v5.9/passive		v5.9+patch/passive
+bt.C.c	25.330360+-1.028316	23.544036+-1.020189
+lu.C.x	35.872659+-4.872090	23.719295+-3.883848
+sp.C.x	32.141310+-2.289541	29.125363+-0.872300
+ua.C.x	29.024597+-1.667049	25.728888+-1.539772
+
+On the smaller data sets (A and B) and on the other NAS benchmarks
+there is no impact on performance.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ kernel/sched/fair.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index aa4c6227cd6d..9b23dad883ee 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5804,6 +5804,9 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ 	if (sync && cpu_rq(this_cpu)->nr_running = 1)
+ 		return this_cpu;
+ 
++	if (available_idle_cpu(prev_cpu))
++		return prev_cpu;
++
+ 	return nr_cpumask_bits;
+ }
+ 
