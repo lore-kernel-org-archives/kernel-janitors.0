@@ -1,83 +1,52 @@
-From: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Date: Tue, 20 Oct 2020 17:10:07 +0000
-Subject: Re: [PATCH] media: staging: rkisp1: rsz: make const array static, makes object smaller
-Message-Id: <cec23fd3-15c1-8e52-3f4d-300d6149d89c@collabora.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Tue, 20 Oct 2020 21:53:04 +0000
+Subject: RE: [PATCH] media: staging: rkisp1: rsz: make const array static, makes object smaller
+Message-Id: <c4cc1bd62e52419eb00631e539a6e703@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201020144655.53251-1-colin.king@canonical.com>
  <d5663dec063440129bf6c373aa252d51@AcuMS.aculab.com>
-In-Reply-To: <d5663dec063440129bf6c373aa252d51@AcuMS.aculab.com>
+ <cec23fd3-15c1-8e52-3f4d-300d6149d89c@collabora.com>
+In-Reply-To: <cec23fd3-15c1-8e52-3f4d-300d6149d89c@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Laight <David.Laight@ACULAB.COM>, 'Colin King' <colin.king@canonical.com>, Helen Koike <helen.koike@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: 'Dafna Hirschfeld' <dafna.hirschfeld@collabora.com>, 'Colin King' <colin.king@canonical.com>, Helen Koike <helen.koike@collabora.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-
-
-Am 20.10.20 um 17:29 schrieb David Laight:
-> From: Colin King
->> Sent: 20 October 2020 15:47
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Don't populate the const array dev_names on the stack but instead it
->> static. Makes the object code smaller by 15 bytes.
->>
->> Before:
->>     text	   data	    bss	    dec	    hex	filename
->>    17091	   2648	     64	  19803	   4d5b	media/rkisp1/rkisp1-resizer.o
->>
->> After:
->>     text	   data	    bss	    dec	    hex	filename
->>    17012	   2712	     64	  19788	   4d4c	media/rkisp1/rkisp1-resizer.o
->>
->> (gcc version 10.2.0)
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   drivers/staging/media/rkisp1/rkisp1-resizer.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/staging/media/rkisp1/rkisp1-resizer.c b/drivers/staging/media/rkisp1/rkisp1-
->> resizer.c
->> index 1687d82e6c68..7ca5b47c5bf5 100644
->> --- a/drivers/staging/media/rkisp1/rkisp1-resizer.c
->> +++ b/drivers/staging/media/rkisp1/rkisp1-resizer.c
->> @@ -763,8 +763,10 @@ static void rkisp1_rsz_unregister(struct rkisp1_resizer *rsz)
->>
->>   static int rkisp1_rsz_register(struct rkisp1_resizer *rsz)
->>   {
->> -	const char * const dev_names[] = {RKISP1_RSZ_MP_DEV_NAME,
->> -					  RKISP1_RSZ_SP_DEV_NAME};
->> +	static const char * const dev_names[] = {
->> +		RKISP1_RSZ_MP_DEV_NAME,
->> +		RKISP1_RSZ_SP_DEV_NAME
->> +	};
->>   	struct media_pad *pads = rsz->pads;
->>   	struct v4l2_subdev *sd = &rsz->sd;
->>   	int ret;
-> 
-> Don't look at what that code is actually doing....
-> It is rather horrid.
-> rkisp1_rsz_register() is called for each entry in an array (twice).
-> The array index is written into rsz->id.
-> The value is then used to select one of the two strings.
-> But rsz->id is actually an enum type.
-
-Hi,
-Is it that bad to use enum as an array index?
-we use it in many places in the driver.
-
-Thanks,
-Dafna
-
-> 
-> rkisp1_rsz_register() should probably just be called twice with some
-> extra parameters.
-> 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+RnJvbTogRGFmbmEgSGlyc2NoZmVsZA0KPiBTZW50OiAyMCBPY3RvYmVyIDIwMjAgMTg6MTANCj4g
+DQo+IEFtIDIwLjEwLjIwIHVtIDE3OjI5IHNjaHJpZWIgRGF2aWQgTGFpZ2h0Og0KPiA+IEZyb206
+IENvbGluIEtpbmcNCj4gPj4gU2VudDogMjAgT2N0b2JlciAyMDIwIDE1OjQ3DQo+ID4+DQo+ID4+
+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+ID4+DQou
+Li4NCj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3Ax
+LXJlc2l6ZXIuYyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3AxLQ0KPiA+PiBy
+ZXNpemVyLmMNCj4gPj4gaW5kZXggMTY4N2Q4MmU2YzY4Li43Y2E1YjQ3YzViZjUgMTAwNjQ0DQo+
+ID4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3AxLXJlc2l6ZXIuYw0K
+PiA+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvcmtpc3AxL3JraXNwMS1yZXNpemVyLmMN
+Cj4gPj4gQEAgLTc2Myw4ICs3NjMsMTAgQEAgc3RhdGljIHZvaWQgcmtpc3AxX3Jzel91bnJlZ2lz
+dGVyKHN0cnVjdCBya2lzcDFfcmVzaXplciAqcnN6KQ0KPiA+Pg0KPiA+PiAgIHN0YXRpYyBpbnQg
+cmtpc3AxX3Jzel9yZWdpc3RlcihzdHJ1Y3Qgcmtpc3AxX3Jlc2l6ZXIgKnJzeikNCj4gPj4gICB7
+DQo+ID4+IC0JY29uc3QgY2hhciAqIGNvbnN0IGRldl9uYW1lc1tdID0ge1JLSVNQMV9SU1pfTVBf
+REVWX05BTUUsDQo+ID4+IC0JCQkJCSAgUktJU1AxX1JTWl9TUF9ERVZfTkFNRX07DQo+ID4+ICsJ
+c3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBkZXZfbmFtZXNbXSA9IHsNCj4gPj4gKwkJUktJU1Ax
+X1JTWl9NUF9ERVZfTkFNRSwNCj4gPj4gKwkJUktJU1AxX1JTWl9TUF9ERVZfTkFNRQ0KPiA+PiAr
+CX07DQo+ID4+ICAgCXN0cnVjdCBtZWRpYV9wYWQgKnBhZHMgPSByc3otPnBhZHM7DQo+ID4+ICAg
+CXN0cnVjdCB2NGwyX3N1YmRldiAqc2QgPSAmcnN6LT5zZDsNCj4gPj4gICAJaW50IHJldDsNCj4g
+Pg0KPiA+IERvbid0IGxvb2sgYXQgd2hhdCB0aGF0IGNvZGUgaXMgYWN0dWFsbHkgZG9pbmcuLi4u
+DQo+ID4gSXQgaXMgcmF0aGVyIGhvcnJpZC4NCj4gPiBya2lzcDFfcnN6X3JlZ2lzdGVyKCkgaXMg
+Y2FsbGVkIGZvciBlYWNoIGVudHJ5IGluIGFuIGFycmF5ICh0d2ljZSkuDQo+ID4gVGhlIGFycmF5
+IGluZGV4IGlzIHdyaXR0ZW4gaW50byByc3otPmlkLg0KPiA+IFRoZSB2YWx1ZSBpcyB0aGVuIHVz
+ZWQgdG8gc2VsZWN0IG9uZSBvZiB0aGUgdHdvIHN0cmluZ3MuDQo+ID4gQnV0IHJzei0+aWQgaXMg
+YWN0dWFsbHkgYW4gZW51bSB0eXBlLg0KPiANCj4gSGksDQo+IElzIGl0IHRoYXQgYmFkIHRvIHVz
+ZSBlbnVtIGFzIGFuIGFycmF5IGluZGV4Pw0KPiB3ZSB1c2UgaXQgaW4gbWFueSBwbGFjZXMgaW4g
+dGhlIGRyaXZlci4NCg0KWW91J2Qgbm9ybWFsbHkgdXNlIGEgY29uc3RhbnQgZnJvbSB0aGUgZW51
+bSB0byBzaXplIHRoZSBhcnJheSBkZWZpbml0aW9uLg0KSW4gdGhpcyBjYXNlIHlvdSd2ZSBhbiBl
+bnVtLCBhbiBhcnJheSBbMl0gYW5kIHRoZSBkZXZfbmFtZXNbXQ0KYWxsIG9mIHdoaWNoIGhhdmUg
+dG8gbWF0Y2ggJ2J5IG1hZ2ljJy4NCg0KVGhlcmUgaXMgYSBsb29wIHRoYXQgaGFsZiBpbXBsaWVz
+IHlvdSBtaWdodCBhZGQgYSB0aGlyZCB0eXBlLg0KYnV0IHRoZW4gdGhlIGZvbGxvd2luZyBjb2Rl
+IG9ubHkgd29ya3MgZm9yIHRoZSB0d28gdHlwZXMuDQpZb3UndmUgY29tcGxleCBlcnJvciByZWNv
+dmVyeSBpbiBjYXNlIG9uZSBvZiB0aGUgY2FsbHMgdG8gDQpya2lzcDFfcnN6X3JlZ2lzdGVyKCkg
+ZmFpbHMgLSBidXQgc2luY2UgdGhlcmUgY2FuIG9ubHkgZXZlcg0KYmUgdHdvIGNhbGxzIHRoZSBj
+b2RlIGNvdWxkIGJlIG11Y2ggc2ltcGxlci4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRk
+cmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBN
+SzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg=
