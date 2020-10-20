@@ -1,62 +1,82 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 20 Oct 2020 15:42:03 +0000
-Subject: [PATCH] can: isotp: make const array static, makes object smaller
-Message-Id: <20201020154203.54711-1-colin.king@canonical.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Tue, 20 Oct 2020 15:52:32 +0000
+Subject: Re: [PATCH] can: isotp: make const array static, makes object smaller
+Message-Id: <84468e24-899c-6dac-5349-da6613c3eb98@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="tJG8cfsxoLOlGC1Y1hfR0tNaUE9sTYVnB"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+References: <20201020154203.54711-1-colin.king@canonical.com>
+In-Reply-To: <20201020154203.54711-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>, Oliver Hartkopp <socketcan@hartkopp.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--tJG8cfsxoLOlGC1Y1hfR0tNaUE9sTYVnB
+Content-Type: multipart/mixed; boundary="tumPUlKtpQx75xVhhXq0eeC7YAM9A2EQ0";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Colin King <colin.king@canonical.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <84468e24-899c-6dac-5349-da6613c3eb98@pengutronix.de>
+Subject: Re: [PATCH] can: isotp: make const array static, makes object smaller
+References: <20201020154203.54711-1-colin.king@canonical.com>
+In-Reply-To: <20201020154203.54711-1-colin.king@canonical.com>
 
-Don't populate the const array plen on the stack but instead it
-static. Makes the object code smaller by 926 bytes.
+--tumPUlKtpQx75xVhhXq0eeC7YAM9A2EQ0
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  26531	   1943	     64	  28538	   6f7a	net/can/isotp.o
+On 10/20/20 5:42 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Don't populate the const array plen on the stack but instead it
+> static. Makes the object code smaller by 926 bytes.
+>=20
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   26531	   1943	     64	  28538	   6f7a	net/can/isotp.o
+>=20
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   25509	   2039	     64	  27612	   6bdc	net/can/isotp.o
+>=20
+> (gcc version 10.2.0)
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  25509	   2039	     64	  27612	   6bdc	net/can/isotp.o
+applied to linux-can/testing.
 
-(gcc version 10.2.0)
+Thanks,
+Marc
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/can/isotp.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
 
-diff --git a/net/can/isotp.c b/net/can/isotp.c
-index 4c2062875893..3fd714f81875 100644
---- a/net/can/isotp.c
-+++ b/net/can/isotp.c
-@@ -252,14 +252,16 @@ static void isotp_rcv_skb(struct sk_buff *skb, struct sock *sk)
- 
- static u8 padlen(u8 datalen)
- {
--	const u8 plen[] = {8, 8, 8, 8, 8, 8, 8, 8, 8,		/* 0 - 8 */
--			   12, 12, 12, 12,			/* 9 - 12 */
--			   16, 16, 16, 16,			/* 13 - 16 */
--			   20, 20, 20, 20,			/* 17 - 20 */
--			   24, 24, 24, 24,			/* 21 - 24 */
--			   32, 32, 32, 32, 32, 32, 32, 32,	/* 25 - 32 */
--			   48, 48, 48, 48, 48, 48, 48, 48,	/* 33 - 40 */
--			   48, 48, 48, 48, 48, 48, 48, 48};	/* 41 - 48 */
-+	static const u8 plen[] = {
-+		8, 8, 8, 8, 8, 8, 8, 8, 8,	/* 0 - 8 */
-+		12, 12, 12, 12,			/* 9 - 12 */
-+		16, 16, 16, 16,			/* 13 - 16 */
-+		20, 20, 20, 20,			/* 17 - 20 */
-+		24, 24, 24, 24,			/* 21 - 24 */
-+		32, 32, 32, 32, 32, 32, 32, 32,	/* 25 - 32 */
-+		48, 48, 48, 48, 48, 48, 48, 48,	/* 33 - 40 */
-+		48, 48, 48, 48, 48, 48, 48, 48	/* 41 - 48 */
-+	};
- 
- 	if (datalen > 48)
- 		return 64;
--- 
-2.27.0
+
+--tumPUlKtpQx75xVhhXq0eeC7YAM9A2EQ0--
+
+--tJG8cfsxoLOlGC1Y1hfR0tNaUE9sTYVnB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAl+PB8AACgkQqclaivrt
+76nH/Qf9H4/fOWvnpPiH+Zwsx6UlqqnrDA+fdj82eTRlv+qSnIcMZDuuYwanVCsF
+GWxkDJo+DgRGv0blQEGyQXhHAMZ6BY6ymLDMAMX/0U24Ehyc4MQJgFb8xOjBcXVm
+7Uy4y/QKCzXKzzRjWbGapSHNGg/WO/bhQZgjECc3BqSyeTZQ91kF7lBgYKyKFRNb
+7g9/ire+mwOY8sOPiptdlrm08wGsW12E7rqiqfJPA6j46U7+/9FMlRJJassLyYTt
+5XPJlsFY7CZas3/GSCXTWXhQISFXD7yRH0ahWRhJ4dv1cTFNll61BNH3Mlo8OIon
+OSi+2u1JSjpaZR4rTtxtJw4STHKK8g==
+=A1ER
+-----END PGP SIGNATURE-----
+
+--tJG8cfsxoLOlGC1Y1hfR0tNaUE9sTYVnB--
