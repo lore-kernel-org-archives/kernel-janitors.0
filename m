@@ -1,44 +1,52 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 30 Oct 2020 06:33:02 +0000
-Subject: Re: new TODO list item
-Message-Id: <d9e3c0f2-a2ea-a279-9df4-0c8a908bba14@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 20 Oct 2020 14:19:36 +0000
+Subject: [PATCH] cifs: make const array static, makes object smaller
+Message-Id: <20201020141936.52272-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200421081257.GA131897@infradead.org>
-In-Reply-To: <20200421081257.GA131897@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 21/04/2020 à 10:12, Christoph Hellwig a écrit :
-> Hi Janitors,
-> 
-> if someone feels like helping with a fairly trivial legacy API, the
-> wrappers in include/linux/pci-dma-compat.h should go away.  This is
-> mostly trivially scriptable, except for dma_alloc_coherent, where
-> the GFP_ATOMIC passed by pci_alloc_consistent should usually be replaced
-> with GFP_KERNEL when not calling from an atomic context.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi,
-just a small update on the work on progress:
+Don't populate const array smb3_create_tag_posix on the stack but
+instead make it static. Makes the object code smaller by 50 bytes.
 
-https://elixir.bootlin.com/linux/v5.8/A/ident/pci_alloc_consistent
-    --> 88 files
-https://elixir.bootlin.com/linux/v5.9/A/ident/pci_alloc_consistent
-    --> 62 files
-https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_alloc_consistent
-    --> 32 files
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 150184	  47167	      0	 197351	  302e7	fs/cifs/smb2pdu.o
 
-https://elixir.bootlin.com/linux/v5.8/A/ident/pci_zalloc_consistent
-    --> 26 files
-https://elixir.bootlin.com/linux/v5.9/A/ident/pci_zalloc_consistent
-    --> 19 files
-https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_zalloc_consistent
-    --> 11 files
+After:
+    text	   data	    bss	    dec	    hex	filename
+ 150070	  47231	      0	 197301	  302b5	fs/cifs/smb2pdu.o
 
+(gcc version 10.2.0)
 
-None of the drivers/media/pci/* patches has been accepted yet.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/smb2pdu.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-
-CJ
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index d504bc296349..be8696abd871 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1971,9 +1971,11 @@ smb2_parse_contexts(struct TCP_Server_Info *server,
+ 	unsigned int next;
+ 	unsigned int remaining;
+ 	char *name;
+-	const char smb3_create_tag_posix[] = {0x93, 0xAD, 0x25, 0x50, 0x9C,
+-					0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
+-					0xDE, 0x96, 0x8B, 0xCD, 0x7C};
++	static const char smb3_create_tag_posix[] = {
++		0x93, 0xAD, 0x25, 0x50, 0x9C,
++		0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
++		0xDE, 0x96, 0x8B, 0xCD, 0x7C
++	};
+ 
+ 	*oplock = 0;
+ 	data_offset = (char *)rsp + le32_to_cpu(rsp->CreateContextsOffset);
+-- 
+2.27.0
