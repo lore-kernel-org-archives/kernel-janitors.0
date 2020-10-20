@@ -1,21 +1,65 @@
-From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-Date: Tue, 20 Oct 2020 14:29:10 +0000
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 20 Oct 2020 16:55:38 +0000
 Subject: Re: [PATCH] cifs: make const array static, makes object smaller
-Message-Id: <87mu0hezt5.fsf@suse.com>
+Message-Id: <CAH2r5muM5K802hub3WYJYcC5Mqi8K2S2HJa1hgW_mo+oW0toMA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201020141936.52272-1-colin.king@canonical.com>
 In-Reply-To: <20201020141936.52272-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
+added Aurelien's Reviewed-by and merged into cifs-2.6.git for-next
 
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+On Tue, Oct 20, 2020 at 9:22 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate const array smb3_create_tag_posix on the stack but
+> instead make it static. Makes the object code smaller by 50 bytes.
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>  150184   47167       0  197351   302e7 fs/cifs/smb2pdu.o
+>
+> After:
+>     text           data     bss     dec     hex filename
+>  150070   47231       0  197301   302b5 fs/cifs/smb2pdu.o
+>
+> (gcc version 10.2.0)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/cifs/smb2pdu.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index d504bc296349..be8696abd871 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -1971,9 +1971,11 @@ smb2_parse_contexts(struct TCP_Server_Info *server,
+>         unsigned int next;
+>         unsigned int remaining;
+>         char *name;
+> -       const char smb3_create_tag_posix[] = {0x93, 0xAD, 0x25, 0x50, 0x9C,
+> -                                       0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
+> -                                       0xDE, 0x96, 0x8B, 0xCD, 0x7C};
+> +       static const char smb3_create_tag_posix[] = {
+> +               0x93, 0xAD, 0x25, 0x50, 0x9C,
+> +               0xB4, 0x11, 0xE7, 0xB4, 0x23, 0x83,
+> +               0xDE, 0x96, 0x8B, 0xCD, 0x7C
+> +       };
+>
+>         *oplock = 0;
+>         data_offset = (char *)rsp + le32_to_cpu(rsp->CreateContextsOffset);
+> --
+> 2.27.0
+>
+
 
 -- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg, DE
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah HRB 247165 (AG München)
+Thanks,
+
+Steve
