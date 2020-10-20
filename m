@@ -1,50 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 20 Oct 2020 14:46:55 +0000
-Subject: [PATCH] media: staging: rkisp1: rsz: make const array static, makes object smaller
-Message-Id: <20201020144655.53251-1-colin.king@canonical.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Tue, 20 Oct 2020 15:29:46 +0000
+Subject: RE: [PATCH] media: staging: rkisp1: rsz: make const array static, makes object smaller
+Message-Id: <d5663dec063440129bf6c373aa252d51@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201020144655.53251-1-colin.king@canonical.com>
+In-Reply-To: <20201020144655.53251-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Helen Koike <helen.koike@collabora.com>, Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Colin King' <colin.king@canonical.com>, Helen Koike <helen.koike@collabora.com>, Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate the const array dev_names on the stack but instead it
-static. Makes the object code smaller by 15 bytes.
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  17091	   2648	     64	  19803	   4d5b	media/rkisp1/rkisp1-resizer.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  17012	   2712	     64	  19788	   4d4c	media/rkisp1/rkisp1-resizer.o
-
-(gcc version 10.2.0)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/media/rkisp1/rkisp1-resizer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/rkisp1/rkisp1-resizer.c b/drivers/staging/media/rkisp1/rkisp1-resizer.c
-index 1687d82e6c68..7ca5b47c5bf5 100644
---- a/drivers/staging/media/rkisp1/rkisp1-resizer.c
-+++ b/drivers/staging/media/rkisp1/rkisp1-resizer.c
-@@ -763,8 +763,10 @@ static void rkisp1_rsz_unregister(struct rkisp1_resizer *rsz)
- 
- static int rkisp1_rsz_register(struct rkisp1_resizer *rsz)
- {
--	const char * const dev_names[] = {RKISP1_RSZ_MP_DEV_NAME,
--					  RKISP1_RSZ_SP_DEV_NAME};
-+	static const char * const dev_names[] = {
-+		RKISP1_RSZ_MP_DEV_NAME,
-+		RKISP1_RSZ_SP_DEV_NAME
-+	};
- 	struct media_pad *pads = rsz->pads;
- 	struct v4l2_subdev *sd = &rsz->sd;
- 	int ret;
--- 
-2.27.0
+RnJvbTogQ29saW4gS2luZw0KPiBTZW50OiAyMCBPY3RvYmVyIDIwMjAgMTU6NDcNCj4gDQo+IEZy
+b206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBEb24n
+dCBwb3B1bGF0ZSB0aGUgY29uc3QgYXJyYXkgZGV2X25hbWVzIG9uIHRoZSBzdGFjayBidXQgaW5z
+dGVhZCBpdA0KPiBzdGF0aWMuIE1ha2VzIHRoZSBvYmplY3QgY29kZSBzbWFsbGVyIGJ5IDE1IGJ5
+dGVzLg0KPiANCj4gQmVmb3JlOg0KPiAgICB0ZXh0CSAgIGRhdGEJICAgIGJzcwkgICAgZGVjCSAg
+ICBoZXgJZmlsZW5hbWUNCj4gICAxNzA5MQkgICAyNjQ4CSAgICAgNjQJICAxOTgwMwkgICA0ZDVi
+CW1lZGlhL3JraXNwMS9ya2lzcDEtcmVzaXplci5vDQo+IA0KPiBBZnRlcjoNCj4gICAgdGV4dAkg
+ICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgMTcwMTIJICAgMjcx
+MgkgICAgIDY0CSAgMTk3ODgJICAgNGQ0YwltZWRpYS9ya2lzcDEvcmtpc3AxLXJlc2l6ZXIubw0K
+PiANCj4gKGdjYyB2ZXJzaW9uIDEwLjIuMCkNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9zdGFn
+aW5nL21lZGlhL3JraXNwMS9ya2lzcDEtcmVzaXplci5jIHwgNiArKysrLS0NCj4gIDEgZmlsZSBj
+aGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL3JraXNwMS9ya2lzcDEtcmVzaXplci5jIGIvZHJpdmVy
+cy9zdGFnaW5nL21lZGlhL3JraXNwMS9ya2lzcDEtDQo+IHJlc2l6ZXIuYw0KPiBpbmRleCAxNjg3
+ZDgyZTZjNjguLjdjYTViNDdjNWJmNSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL21l
+ZGlhL3JraXNwMS9ya2lzcDEtcmVzaXplci5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRp
+YS9ya2lzcDEvcmtpc3AxLXJlc2l6ZXIuYw0KPiBAQCAtNzYzLDggKzc2MywxMCBAQCBzdGF0aWMg
+dm9pZCBya2lzcDFfcnN6X3VucmVnaXN0ZXIoc3RydWN0IHJraXNwMV9yZXNpemVyICpyc3opDQo+
+IA0KPiAgc3RhdGljIGludCBya2lzcDFfcnN6X3JlZ2lzdGVyKHN0cnVjdCBya2lzcDFfcmVzaXpl
+ciAqcnN6KQ0KPiAgew0KPiAtCWNvbnN0IGNoYXIgKiBjb25zdCBkZXZfbmFtZXNbXSA9IHtSS0lT
+UDFfUlNaX01QX0RFVl9OQU1FLA0KPiAtCQkJCQkgIFJLSVNQMV9SU1pfU1BfREVWX05BTUV9Ow0K
+PiArCXN0YXRpYyBjb25zdCBjaGFyICogY29uc3QgZGV2X25hbWVzW10gPSB7DQo+ICsJCVJLSVNQ
+MV9SU1pfTVBfREVWX05BTUUsDQo+ICsJCVJLSVNQMV9SU1pfU1BfREVWX05BTUUNCj4gKwl9Ow0K
+PiAgCXN0cnVjdCBtZWRpYV9wYWQgKnBhZHMgPSByc3otPnBhZHM7DQo+ICAJc3RydWN0IHY0bDJf
+c3ViZGV2ICpzZCA9ICZyc3otPnNkOw0KPiAgCWludCByZXQ7DQoNCkRvbid0IGxvb2sgYXQgd2hh
+dCB0aGF0IGNvZGUgaXMgYWN0dWFsbHkgZG9pbmcuLi4uDQpJdCBpcyByYXRoZXIgaG9ycmlkLg0K
+cmtpc3AxX3Jzel9yZWdpc3RlcigpIGlzIGNhbGxlZCBmb3IgZWFjaCBlbnRyeSBpbiBhbiBhcnJh
+eSAodHdpY2UpLg0KVGhlIGFycmF5IGluZGV4IGlzIHdyaXR0ZW4gaW50byByc3otPmlkLg0KVGhl
+IHZhbHVlIGlzIHRoZW4gdXNlZCB0byBzZWxlY3Qgb25lIG9mIHRoZSB0d28gc3RyaW5ncy4NCkJ1
+dCByc3otPmlkIGlzIGFjdHVhbGx5IGFuIGVudW0gdHlwZS4NCg0Kcmtpc3AxX3Jzel9yZWdpc3Rl
+cigpIHNob3VsZCBwcm9iYWJseSBqdXN0IGJlIGNhbGxlZCB0d2ljZSB3aXRoIHNvbWUNCmV4dHJh
+IHBhcmFtZXRlcnMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUs
+IEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJl
+Z2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo
