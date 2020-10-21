@@ -1,75 +1,47 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Oct 2020 11:59:45 +0000
-Subject: Re: [PATCH] cpufreq: Avoid configuring old governors as default with intel_pstate
-Message-Id: <CAJZ5v0gt42=KRbKzRp7H6RrRdpxY-T_X_L9JjcMB+9VrvKAdvw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Oct 2020 13:11:33 +0000
+Subject: [PATCH][next] afs: fix a dereference on pointer cell before cell is null checked
+Message-Id: <20201021131133.128016-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
- <34115486.YmRjPRKJaA@kreacher> <20201022120213.GG2611@hirez.programming.kicks-ass.net>
- <8312288.dAKoTdFk2S@kreacher> <20201023061703.jjpmoeq7wzwqtsid@vireshk-i7>
-In-Reply-To: <20201023061703.jjpmoeq7wzwqtsid@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Peter Zijlstra <peterz@infradead.org>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 8:17 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 22-10-20, 18:23, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Subject: [PATCH] cpufreq: Avoid configuring old governors as default with intel_pstate
-> >
-> > Commit 33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by
-> > default without HWP") was meant to cause intel_pstate without HWP
-> > to be used in the passive mode with the schedutil governor on top of
-> > it by default, but it missed the case in which either "ondemand" or
-> > "conservative" was selected as the default governor in the existing
-> > kernel config, in which case the previous old governor configuration
-> > would be used, causing the default legacy governor to be used on top
-> > of intel_pstate instead of schedutil.
-> >
-> > Address this by preventing "ondemand" and "conservative" from being
-> > configured as the default cpufreq governor in the case when schedutil
-> > is the default choice for the default governor setting.
-> >
-> > [Note that the default cpufreq governor can still be set via the
-> >  kernel command line if need be and that choice is not limited,
-> >  so if anyone really wants to use one of the legacy governors by
-> >  default, it can be achieved this way.]
-> >
-> > Fixes: 33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by default without HWP")
-> > Cc: 5.8+ <stable@vger.kernel.org> # 5.8+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/cpufreq/Kconfig |    2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > Index: linux-pm/drivers/cpufreq/Kconfig
-> > =================================> > --- linux-pm.orig/drivers/cpufreq/Kconfig
-> > +++ linux-pm/drivers/cpufreq/Kconfig
-> > @@ -71,6 +71,7 @@ config CPU_FREQ_DEFAULT_GOV_USERSPACE
-> >
-> >  config CPU_FREQ_DEFAULT_GOV_ONDEMAND
-> >       bool "ondemand"
-> > +     depends on !SMP || !X86_INTEL_PSTATE
-> >       select CPU_FREQ_GOV_ONDEMAND
-> >       select CPU_FREQ_GOV_PERFORMANCE
-> >       help
-> > @@ -83,6 +84,7 @@ config CPU_FREQ_DEFAULT_GOV_ONDEMAND
-> >
-> >  config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
-> >       bool "conservative"
-> > +     depends on !SMP || !X86_INTEL_PSTATE
->
-> While reading this first it felt like a SMP platforms related problem
-> (which I was surprised about), and then I understood what you are
-> doing.
->
-> I wonder if rewriting it this way makes it more readable with same
-> result eventually.
->
->         depends on !(X86_INTEL_PSTATE && SMP)
+From: Colin Ian King <colin.king@canonical.com>
 
-Agreed, will update.
+Currently the assignment of debug_id dereferences pointer cell before
+cell has been null checked.  Fix this by removing debug_id and use
+cell->debug_id after cell has been null checked.
 
-Thanks!
+Addresses-Coverity: ("Dereference before null check")
+Fixes: dca54a7bbb8c ("afs: Add tracing for cell refcount and active user count")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/afs/cell.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index 52233fa6195f..4449ff100a3c 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -589,7 +589,6 @@ struct afs_cell *afs_use_cell(struct afs_cell *cell, enum afs_cell_trace reason)
+  */
+ void afs_unuse_cell(struct afs_net *net, struct afs_cell *cell, enum afs_cell_trace reason)
+ {
+-	unsigned int debug_id = cell->debug_id;
+ 	time64_t now, expire_delay;
+ 	int u, a;
+ 
+@@ -606,7 +605,7 @@ void afs_unuse_cell(struct afs_net *net, struct afs_cell *cell, enum afs_cell_tr
+ 
+ 	u = atomic_read(&cell->ref);
+ 	a = atomic_dec_return(&cell->active);
+-	trace_afs_cell(debug_id, u, a, reason);
++	trace_afs_cell(cell->debug_id, u, a, reason);
+ 	WARN_ON(a = 0);
+ 	if (a = 1)
+ 		/* 'cell' may now be garbage collected. */
+-- 
+2.27.0
