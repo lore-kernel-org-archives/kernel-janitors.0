@@ -1,91 +1,104 @@
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 21 Oct 2020 12:27:34 +0000
+From: Mel Gorman <mgorman@suse.de>
+Date: Wed, 21 Oct 2020 12:28:11 +0000
 Subject: Re: [PATCH] sched/fair: check for idle core
-Message-Id: <CAKfTPtBhLLSjqAAbN7jO0vDi6Tr8J4CnoggM2DuBU98i9oCmpA@mail.gmail.com>
+Message-Id: <20201021122811.GD32041@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr> <CAKfTPtB41JopBq0CZVvo16N1u+2Smmc1TamJXkbTVj-pRJeHzA@mail.gmail.com>
-In-Reply-To: <CAKfTPtB41JopBq0CZVvo16N1u+2Smmc1TamJXkbTVj-pRJeHzA@mail.gmail.com>
+References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
+ <20201021112038.GC32041@suse.de>
+ <alpine.DEB.2.22.394.2010211336410.8475@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2010211336410.8475@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel <linux-kernel@vger.kernel.org>, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>
 
-On Wed, 21 Oct 2020 at 09:29, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> Hi Julia,
->
-> On Tue, 20 Oct 2020 at 19:21, Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> >
-> > On a thread wakeup, the change [1] from runnable load average to load
-> > average for comparing candidate cores means that recent short-running
-> > daemons on the core where a thread ran previously can be considered to
-> > have a higher load than the core performing the wakeup, even when the
-> > core where the thread ran previously is currently idle.  This can
-> > cause a thread to migrate, taking the place of some other thread that
-> > is about to wake up, and so on.  To avoid unnecessary migrations,
-> > extend wake_affine_idle to check whether the core where the thread
-> > previously ran is currently idle, and if so return that core as the
-> > target.
-> >
-> > [1] commit 11f10e5420f6ce ("sched/fair: Use load instead of runnable
-> > load in wakeup path")
-> >
-> > This particularly has an impact when using passive (intel_cpufreq)
-> > power management, where kworkers run every 0.004 seconds on all cores,
-> > increasing the likelihood that an idle core will be considered to have
-> > a load.
-> >
-> > The following numbers were obtained with the benchmarking tool
-> > hyperfine (https://github.com/sharkdp/hyperfine) on the NAS parallel
-> > benchmarks (https://www.nas.nasa.gov/publications/npb.html).  The
-> > tests were run on an 80-core Intel(R) Xeon(R) CPU E7-8870 v4 @
-> > 2.10GHz.  Active (intel_pstate) and passive (intel_cpufreq) power
-> > management were used.  Times are in seconds.  All experiments use all
-> > 160 hardware threads.
-> >
-> >         v5.9/active             v5.9+patch/active
-> > bt.C.c  24.725724+-0.962340     23.349608+-1.607214
-> > lu.C.x  29.105952+-4.804203     25.249052+-5.561617
-> > sp.C.x  31.220696+-1.831335     30.227760+-2.429792
-> > ua.C.x  26.606118+-1.767384     25.778367+-1.263850
-> >
-> >         v5.9/passive            v5.9+patch/passive
-> > bt.C.c  25.330360+-1.028316     23.544036+-1.020189
-> > lu.C.x  35.872659+-4.872090     23.719295+-3.883848
-> > sp.C.x  32.141310+-2.289541     29.125363+-0.872300
-> > ua.C.x  29.024597+-1.667049     25.728888+-1.539772
-> >
-> > On the smaller data sets (A and B) and on the other NAS benchmarks
-> > there is no impact on performance.
-> >
+On Wed, Oct 21, 2020 at 01:56:55PM +0200, Julia Lawall wrote:
+> > I suspect that the benefit of this patch is due to avoiding the overhead
+> > of wake_affine_weight() check because the following check exists in
+> > select_idle_sibling
+> 
+> I'm running 160 threads on 160 cores (80 physical cores).  All of the
+> threads are thus best off to just stay where they are.  If one thread
+> moves to the socket of prev, then they will be displacing other threads
+> that also expect to return to where they were previously located.
+> 
+> You can see this in the traces shown here:
+> 
+> https://pages.lip6.fr/Julia.Lawall/uas.pdf
+> 
 
-A fix tag is missing
-Fixes: 11f10e5420f6 ("sched/fair: Use load instead of runnable load in
-wakeup path")
+This is an important point -- almost all CPUs are commonly active and the
+search for an idle CPU is going to be difficult given that it is inherently
+race-prone. In this case, you're right, it may indeed be better off to just
+leave the task where it is if the prev CPU is idle. Not only does it avoid
+the wake_affine_weight cost, it avoids a useless search of idle siblings.
 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
-> Reviewed-by Vincent Guittot <vincent.guittot@linaro.org>
->
+However, there is alsoo the important case where a machine is only
+partially or lightly utilised. In that case, a cross-node migration
+may be beneficial as the wakee may need to access data in the wakers
+cache or memory local to the waker (no guarantee, the waker/wakee could
+be completely independent but the scheduler cannot tell). In the low
+utilisation case, select_idle_sibling is also likely to be less expensive.
+
+Leaving a task on a remote node because the prev CPU was idle is an
+important semantic change in the behaviour of the scheduler when there is
+spare idle capacity in either domain. It's non-obvious from the changelog
+and the patch itself that this change of behaviour happens.
+
+> Prior to 5.8, my machine was using intel_pstate and had few background
+> tasks.  Thus the problem wasn't visible in practice.  Starting with 5.8
+> the kernel decided that intel_cpufreq would be more appropriate, which
+> introduced kworkers every 0.004 seconds on all cores.  In the graphs for
+> early versions, sometimes the whole benchmark runs with the threads just
+> staying on their cores, or a few migrations.  Starting with 5.8, after 5
+> seconds where there are a number of synchronizations, all of the threads
+> move around between all of the cores.  Typically, one bad placement leads
+> to 10-15 threads moving around, until one ends up on the idle core where
+> the original thread was intended to be.
+> 
+
+And this is an issue but I don't think the fix is avoiding cross-node
+migrations entirely if the prev CPU happened to be idle because cache
+lines will have to be bounced and/or remote data be accessed.  At minimum,
+the low utilisation case should be considered and the changelog justify
+why avoiding cross-node wakeups is still appropriate when the waker CPU
+has plenty of idle CPUs.
+
 > >
-> > ---
-> >  kernel/sched/fair.c |    3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index aa4c6227cd6d..9b23dad883ee 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5804,6 +5804,9 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
-> >         if (sync && cpu_rq(this_cpu)->nr_running = 1)
-> >                 return this_cpu;
-> >
-> > +       if (available_idle_cpu(prev_cpu))
-> > +               return prev_cpu;
-> > +
-> >         return nr_cpumask_bits;
-> >  }
-> >
-> >
+> >         /*
+> >          * If the previous CPU is cache affine and idle, don't be stupid:
+> >          */
+> >         if (prev != target && cpus_share_cache(prev, target) &&
+> >             (available_idle_cpu(prev) || sched_idle_cpu(prev)))
+> >                 return prev;
+> 
+> This isn't triggered in the problematic case, because the problematic case
+> is where the prev core and the waker core are on different sockets.
+> 
+
+I simply wanted to highlight the fact it checks whether caches are shared
+or not as that is also taken into account in select_idle_sibling for
+example.
+
+> To my understanding, when the runnable load was used and prev was idle,
+> wake_affine_weight would fail, and then wake_affine would return prev.
+> With the load average, in the case where there is a thread on the waker
+> core and there has recently been a daemon on the prev core, the comparison
+> between the cores is a bit random.  The patch thus tries to restore the
+> previous behavior.
+> 
+
+I think wake_affine_weight() is a bit random anyway simply because it picks
+a CPU that select_idle_sibling ignores in a lot of cases and in others
+simply stacks the wakee on top of the waker. Every so often I think that
+it should simply be ripped out because the scheduler avoids stacking on
+the wakeup paths unless there is no other choice in which case the task
+might as well remain on prev anyway. Maybe it made more sense when there
+was an effort to detect when task stacking is appropriate but right now,
+wake_affine_weight() is basically a random migration generator -- leave
+it to the load balancer to figure out placement decisions based on load.
+
+-- 
+Mel Gorman
+SUSE Labs
