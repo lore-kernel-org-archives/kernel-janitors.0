@@ -1,46 +1,36 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 11 Oct 2020 10:34:58 +0000
-Subject: [PATCH 5/5] net/tls: use semicolons rather than commas to separate statements
-Message-Id: <1602412498-32025-6-git-send-email-Julia.Lawall@inria.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Oct 2020 13:23:26 +0000
+Subject: [PATCH][next] ext4: remove redundant assignment of variable ex
+Message-Id: <20201021132326.148052-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Pismenny <borisp@nvidia.com>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Aviad Yehezkel <aviadye@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+From: Colin Ian King <colin.king@canonical.com>
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+Variable ex is assigned a variable that is not being read, the assignment
+is redundant and can be removed.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/tls/tls_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/extents.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index 002b0859fed5..8d93cea99f2c 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -869,7 +869,7 @@ static int __init tls_register(void)
- 
- 	tls_sw_proto_ops = inet_stream_ops;
- 	tls_sw_proto_ops.splice_read = tls_sw_splice_read;
--	tls_sw_proto_ops.sendpage_locked   = tls_sw_sendpage_locked,
-+	tls_sw_proto_ops.sendpage_locked   = tls_sw_sendpage_locked;
- 
- 	tls_device_init();
- 	tcp_register_ulp(&tcp_tls_ulp_ops);
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 6b33b9c86b00..80fac488769c 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -5993,7 +5993,6 @@ int ext4_ext_replay_set_iblocks(struct inode *inode)
+ 			kfree(path);
+ 			break;
+ 		}
+-		ex = path2[path2->p_depth].p_ext;
+ 		for (i = 0; i <= max(path->p_depth, path2->p_depth); i++) {
+ 			cmp1 = cmp2 = 0;
+ 			if (i <= path->p_depth)
+-- 
+2.27.0
