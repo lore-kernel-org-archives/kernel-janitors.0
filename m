@@ -1,19 +1,19 @@
 From: Julia Lawall <julia.lawall@inria.fr>
-Date: Wed, 21 Oct 2020 13:24:48 +0000
+Date: Wed, 21 Oct 2020 13:48:59 +0000
 Subject: Re: [PATCH] sched/fair: check for idle core
-Message-Id: <alpine.DEB.2.22.394.2010211522340.57356@hadrien>
+Message-Id: <alpine.DEB.2.22.394.2010211547190.57356@hadrien>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-389467810-1603286689=:57356"
+Content-Type: multipart/mixed; boundary="8323329-484522562-1603288140=:57356"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr> <20201021112038.GC32041@suse.de> <20201021122532.GA30733@vingu-book> <20201021124700.GE32041@suse.de> <alpine.DEB.2.22.394.2010211452100.8475@hadrien> <20201021131827.GF32041@suse.de>
 In-Reply-To: <20201021131827.GF32041@suse.de>
 To: Mel Gorman <mgorman@suse.de>
-Cc: Julia Lawall <julia.lawall@inria.fr>, Vincent Guittot <vincent.guittot@linaro.org>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>
+Cc: Julia Lawall <julia.lawall@inria.fr>, Vincent Guittot <vincent.guittot@linaro.org>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles.Muller@inria.fr
 
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-389467810-1603286689=:57356
+--8323329-484522562-1603288140=:57356
 Content-Type: text/plain; charset="iso-8859-15"
 Content-Transfer-Encoding: quoted-printable
 
@@ -70,12 +70,9 @@ hat
 > wakee moving to a CPU local to the waker which is not equivalent to the
 > original behaviour.
 
-But it is equal to the original behavior in the idle prev case if you go
-back to the runnable load average days...
-
-The problem seems impossible to solve, because there is no way to know by
-looking only at prev and this whether the thread would prefer to stay
-where it was or go to the waker.
+Could it be possible to check p->recent_used_cpu?  If that is prev (or on
+the same socket?), then prev could be a good choice.  If that is on the
+same socket as the waker, then maybe the waker would be better.
 
 julia
---8323329-389467810-1603286689=:57356--
+--8323329-484522562-1603288140=:57356--
