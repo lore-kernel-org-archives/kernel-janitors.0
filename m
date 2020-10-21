@@ -1,57 +1,110 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Wed, 21 Oct 2020 12:56:06 +0000
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed, 21 Oct 2020 13:10:26 +0000
 Subject: Re: [PATCH] sched/fair: check for idle core
-Message-Id: <alpine.DEB.2.22.394.2010211452100.8475@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1257254928-1603284967=:8475"
+Message-Id: <20201021131026.GY2651@hirez.programming.kicks-ass.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr> <20201021112038.GC32041@suse.de> <20201021122532.GA30733@vingu-book> <20201021124700.GE32041@suse.de>
-In-Reply-To: <20201021124700.GE32041@suse.de>
-To: Mel Gorman <mgorman@suse.de>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Julia Lawall <Julia.Lawall@inria.fr>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles.Muller@inria.fr
+References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
+ <20201021112038.GC32041@suse.de>
+ <alpine.DEB.2.22.394.2010211336410.8475@hadrien>
+ <20201021121950.GF2628@hirez.programming.kicks-ass.net>
+In-Reply-To: <20201021121950.GF2628@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, viresh.kumar@linaro.org, srinivas.pandruvada@linux.intel.com
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Oct 21, 2020 at 02:19:50PM +0200, Peter Zijlstra wrote:
+> On Wed, Oct 21, 2020 at 01:56:55PM +0200, Julia Lawall wrote:
+> > Prior to 5.8, my machine was using intel_pstate and had few background
+> > tasks.  Thus the problem wasn't visible in practice.  Starting with 5.8
+> > the kernel decided that intel_cpufreq would be more appropriate, which
+> > introduced kworkers every 0.004 seconds on all cores.
+> 
+> That still doesn't make any sense. Are you running the legacy on-demand
+> thing or something?
+> 
+> Rafael, Srinivas, Viresh, how come it defaults to that?
 
---8323329-1257254928-1603284967=:8475
-Content-Type: text/plain; charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+Does we want something like this?
 
+---
+ arch/x86/configs/i386_defconfig   | 3 +--
+ arch/x86/configs/x86_64_defconfig | 3 +--
+ drivers/cpufreq/Kconfig           | 7 +++++--
+ 3 files changed, 7 insertions(+), 6 deletions(-)
 
-
-On Wed, 21 Oct 2020, Mel Gorman wrote:
-
-> On Wed, Oct 21, 2020 at 02:25:32PM +0200, Vincent Guittot wrote:
-> > > I see Vincent already agreed with the patch so I could be wrong.  Vin=
-cent,
-> > > did I miss something stupid?
-> >
-> > This patch fixes the problem that we don't favor anymore the prev_cpu w=
-hen it is idle since
-> > commit 11f10e5420f6ce because load is not null when cpu is idle whereas=
- runnable_load was
-> > And this is important because this will=A0then decide in which LLC we w=
-ill looks for a cpu
-> >
->
-> Ok, that is understandable but I'm still concerned that the fix simply
-> trades one problem for another by leaving related tasks remote to each
-> other and increasing cache misses and remote data accesses.
->
-> wake_affine_weight is a giant pain because really we don't care about the
-> load on the waker CPU or its available, we care about whether it has idle
-> siblings that can be found quickly. As tempting as ripping it out is,
-> it never happened because sometimes it makes the right decision.
-
-My goal was to restore the previous behavior, when runnable load was used.
-The patch removing the use of runnable load (11f10e5420f6) presented it
-basically as that load balancing was using it, so wakeup should use it
-too, and any way it didn't matter because idle CPUS were checked for
-anyway.
-
-Is your point of view that the proposed change is overkill?  Or is it that
-the original behavior was not desirable?
-
-thanks,
-julia
---8323329-1257254928-1603284967=:8475--
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index 78210793d357..c343ad459737 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -41,8 +41,7 @@ CONFIG_PM_DEBUG=y
+ CONFIG_PM_TRACE_RTC=y
+ CONFIG_ACPI_DOCK=y
+ CONFIG_ACPI_BGRT=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y
+ CONFIG_X86_ACPI_CPUFREQ=y
+ CONFIG_EFI_VARS=y
+ CONFIG_KPROBES=y
+diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
+index 9936528e1939..23e1ea85c1ec 100644
+--- a/arch/x86/configs/x86_64_defconfig
++++ b/arch/x86/configs/x86_64_defconfig
+@@ -38,8 +38,7 @@ CONFIG_PM_DEBUG=y
+ CONFIG_PM_TRACE_RTC=y
+ CONFIG_ACPI_DOCK=y
+ CONFIG_ACPI_BGRT=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y
+ CONFIG_X86_ACPI_CPUFREQ=y
+ CONFIG_IA32_EMULATION=y
+ CONFIG_EFI_VARS=y
+diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+index 2c7171e0b001..8dfca6e9b836 100644
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -37,8 +37,7 @@ config CPU_FREQ_STAT
+ choice
+ 	prompt "Default CPUFreq governor"
+ 	default CPU_FREQ_DEFAULT_GOV_USERSPACE if ARM_SA1100_CPUFREQ || ARM_SA1110_CPUFREQ
+-	default CPU_FREQ_DEFAULT_GOV_SCHEDUTIL if ARM64 || ARM
+-	default CPU_FREQ_DEFAULT_GOV_SCHEDUTIL if X86_INTEL_PSTATE && SMP
++	default CPU_FREQ_DEFAULT_GOV_SCHEDUTIL if SMP
+ 	default CPU_FREQ_DEFAULT_GOV_PERFORMANCE
+ 	help
+ 	  This option sets which CPUFreq governor shall be loaded at
+@@ -71,6 +70,7 @@ config CPU_FREQ_DEFAULT_GOV_USERSPACE
+ 
+ config CPU_FREQ_DEFAULT_GOV_ONDEMAND
+ 	bool "ondemand"
++	depends on !SMP
+ 	select CPU_FREQ_GOV_ONDEMAND
+ 	select CPU_FREQ_GOV_PERFORMANCE
+ 	help
+@@ -83,6 +83,7 @@ config CPU_FREQ_DEFAULT_GOV_ONDEMAND
+ 
+ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
+ 	bool "conservative"
++	depends on !SMP
+ 	select CPU_FREQ_GOV_CONSERVATIVE
+ 	select CPU_FREQ_GOV_PERFORMANCE
+ 	help
+@@ -144,6 +145,7 @@ config CPU_FREQ_GOV_USERSPACE
+ 
+ config CPU_FREQ_GOV_ONDEMAND
+ 	tristate "'ondemand' cpufreq policy governor"
++	depends on !SMP
+ 	select CPU_FREQ_GOV_COMMON
+ 	help
+ 	  'ondemand' - This driver adds a dynamic cpufreq policy governor.
+@@ -163,6 +165,7 @@ config CPU_FREQ_GOV_ONDEMAND
+ config CPU_FREQ_GOV_CONSERVATIVE
+ 	tristate "'conservative' cpufreq governor"
+ 	depends on CPU_FREQ
++	depends on !SMP
+ 	select CPU_FREQ_GOV_COMMON
+ 	help
+ 	  'conservative' - this driver is rather similar to the 'ondemand'
