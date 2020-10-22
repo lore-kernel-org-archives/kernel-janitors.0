@@ -1,38 +1,54 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 02 Oct 2020 11:55:51 +0000
-Subject: Re: [PATCH 06/18] hwrng: iproc-rng200 - use semicolons rather than commas to separate statements
-Message-Id: <20201002115551.GK1205@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2020 07:04:51 +0000
+Subject: [PATCH] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
+Message-Id: <20201022070451.GA2817669@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-7-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Scott Branden <sbranden@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 27, 2020 at 09:12:16PM +0200, Julia Lawall wrote:
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/char/hw_random/iproc-rng200.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+These functions should return zero on success.  Non-zero returns are
+treated as error.  On some paths, this doesn't matter but in
+nvmem_cell_read() a non-zero return would be passed to ERR_PTR() and
+lead to an Oops.
 
-Patch applied.  Thanks.
+Fixes: d6c3029f32f7 ("rtc: pcf2127: add support for accessing internal static RAM")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/rtc/rtc-pcf2127.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
+index 07a5630ec841..4d9711d51f8f 100644
+--- a/drivers/rtc/rtc-pcf2127.c
++++ b/drivers/rtc/rtc-pcf2127.c
+@@ -243,10 +243,8 @@ static int pcf2127_nvmem_read(void *priv, unsigned int offset,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_bulk_read(pcf2127->regmap, PCF2127_REG_RAM_RD_CMD,
+-			       val, bytes);
+-
+-	return ret ?: bytes;
++	return regmap_bulk_read(pcf2127->regmap, PCF2127_REG_RAM_RD_CMD,
++				val, bytes);
+ }
+ 
+ static int pcf2127_nvmem_write(void *priv, unsigned int offset,
+@@ -261,10 +259,8 @@ static int pcf2127_nvmem_write(void *priv, unsigned int offset,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_bulk_write(pcf2127->regmap, PCF2127_REG_RAM_WRT_CMD,
+-				val, bytes);
+-
+-	return ret ?: bytes;
++	return regmap_bulk_write(pcf2127->regmap, PCF2127_REG_RAM_WRT_CMD,
++				 val, bytes);
+ }
+ 
+ /* watchdog driver */
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.28.0
