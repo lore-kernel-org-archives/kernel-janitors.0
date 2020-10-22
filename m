@@ -1,56 +1,54 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 22 Oct 2020 15:25:14 +0000
+From: A L <mail@lechevalier.se>
+Date: Thu, 22 Oct 2020 15:45:11 +0000
 Subject: Re: default cpufreq gov, was: [PATCH] sched/fair: check for idle core
-Message-Id: <20201022152514.GJ2611@hirez.programming.kicks-ass.net>
+Message-Id: <c232b2.c086afce.17550fc4644@lechevalier.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
- <34115486.YmRjPRKJaA@kreacher>
- <20201022120213.GG2611@hirez.programming.kicks-ass.net>
- <1790766.jaFeG3T87Z@kreacher>
- <20201022122949.GW2628@hirez.programming.kicks-ass.net>
- <20201022145250.GK32041@suse.de>
-In-Reply-To: <20201022145250.GK32041@suse.de>
+References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr> <34115486.YmRjPRKJaA@kreacher> <20201022120213.GG2611@hirez.programming.kicks-ass.net> <1790766.jaFeG3T87Z@kreacher> <20201022122949.GW2628@hirez.programming.kicks-ass.net>
+In-Reply-To: <20201022122949.GW2628@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mel Gorman <mgorman@suse.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Giovanni Gherdovich <ggherdovich@suse.com>, Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
 
-On Thu, Oct 22, 2020 at 03:52:50PM +0100, Mel Gorman wrote:
 
-> There are some questions
-> currently on whether schedutil is good enough when HWP is not available.
 
-Srinivas and Rafael will know better, but Intel does run a lot of tests
-and IIRC it was found that schedutil was on-par for !HWP. That was the
-basis for commit:
+---- From: Peter Zijlstra <peterz@infradead.org> -- Sent: 2020-10-22 - 14:29 ----
 
-  33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by default without HWP")
+> On Thu, Oct 22, 2020 at 02:19:29PM +0200, Rafael J. Wysocki wrote:
+>> > However I do want to retire ondemand, conservative and also very much
+>> > intel_pstate/active mode.
+>> 
+>> I agree in general, but IMO it would not be prudent to do that without making
+>> schedutil provide the same level of performance in all of the relevant use
+>> cases.
+> 
+> Agreed; I though to have understood we were there already.
 
-But now it turns out that commit results in running intel_pstate-passive
-on ondemand, which is quite horrible.
+Hi, 
 
-> There was some evidence (I don't have the data, Giovanni was looking into
-> it) that HWP was a requirement to make schedutil work well.
 
-That seems to be the question; Rafael just said the opposite.
+Currently schedutil does not populate all stats like ondemand does, which can be a problem for some monitoring software. 
 
-> For distros, switching to schedutil by default would be nice because
-> frequency selection state would follow the task instead of being per-cpu
-> and we could stop worrying about different HWP implementations but it's
+On my AMD 3000G CPU with kernel-5.9.1:
 
-s/HWP/cpufreq-governors/ ? But yes.
 
-> not at the point where the switch is advisable. I would expect hard data
-> before switching the default and still would strongly advise having a
-> period of time where we can fall back when someone inevitably finds a
-> new corner case or exception.
+grep. /sys/devices/system/cpu/cpufreq/policy0/stats/*
 
-Which is why I advocated to make it 'difficult' to use the old ones and
-only later remove them.
+With ondemand:
+time_in_state:3900000 145179
+time_in_state:1600000 9588482
+total_trans:177565
+trans_table:   From  :    To
+trans_table:         :   3900000   1600000
+trans_table:  3900000:         0     88783
+trans_table:  1600000:     88782         0
 
-> For reference, SLUB had the same problem for years. It was switched
-> on by default in the kernel config but it was a long time before
-> SLUB was generally equivalent to SLAB in terms of performance.
+With schedutil only two file exists:
+reset:<empty>
+total_trans:216609 
 
-I remember :-)
+
+I'd really like to have these stats populated with schedutil, if that's possible.
+
+Thanks. 
