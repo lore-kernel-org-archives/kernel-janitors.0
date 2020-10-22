@@ -1,53 +1,39 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 27 Oct 2020 11:48:33 +0000
-Subject: Re: default cpufreq gov, was: [PATCH] sched/fair: check for idle core
-Message-Id: <20201027114822.vsh7vpwfnh2tvmpz@vireshk-i7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2020 07:06:59 +0000
+Subject: [PATCH] hwmon: (pmbus/max20730) delete some dead code
+Message-Id: <20201022070659.GA2817762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
- <20201022071145.GM2628@hirez.programming.kicks-ass.net>
- <20201022104703.nw45dwor6wfn4ity@vireshk-i7>
- <34115486.YmRjPRKJaA@kreacher>
- <20201022120213.GG2611@hirez.programming.kicks-ass.net>
- <20201027111133.ajlxn5lbnfeocfgb@e107158-lin>
- <jhjlffrq58y.mognet@arm.com>
- <20201027114214.irsgdlfvyo46jpww@e107158-lin>
-In-Reply-To: <20201027114214.irsgdlfvyo46jpww@e107158-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Qais Yousef <qais.yousef@arm.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com
+To: Guenter Roeck <linux@roeck-us.net>, Ugur Usug <Ugur.Usug@maximintegrated.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 27-10-20, 11:42, Qais Yousef wrote:
-> On 10/27/20 11:26, Valentin Schneider wrote:
-> > 
-> > On 27/10/20 11:11, Qais Yousef wrote:
-> > > On 10/22/20 14:02, Peter Zijlstra wrote:
-> > >> However I do want to retire ondemand, conservative and also very much
-> > >> intel_pstate/active mode. I also have very little sympathy for
-> > >> userspace.
-> > >
-> > > Userspace is useful for testing and sanity checking. Not sure if people use it
-> > > to measure voltage/current at each frequency to generate
-> > > dynamic-power-coefficient for their platform. Lukasz, Dietmar?
-> > >
-> > 
-> > It's valuable even just for cpufreq sanity checking - we have that test
-> > that goes through increasing frequencies and asserts the work done is
-> > monotonically increasing. This has been quite useful in the past to detect
-> > broken bits.
-> > 
-> > That *should* still be totally doable with any other governor by using the
-> > scaling_{min, max}_freq sysfs interface.
-> 
-> True. This effectively makes every governor a potential user space governor.
-> 
-> /me not sure to be happy or grumpy about it
+The debugfs_create_dir() function never returns NULL.  Normal users are
+not supposed to check the return value so the correct fix is just to
+delete this check.
 
-Userspace governor should be kept as is, it is very effective to get
-unnecessary governor code out of the path when testing basic
-functioning of the hardware/driver. It is quite useful when things
-don't work as expected.
+In the case where the debugfs_create_dir() fails, the function returns
+NULL.  The other debugfs function check for NULL directory and handle
+it.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hwmon/pmbus/max20730.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/max20730.c b/drivers/hwmon/pmbus/max20730.c
+index be83b98411c7..00fea16acab4 100644
+--- a/drivers/hwmon/pmbus/max20730.c
++++ b/drivers/hwmon/pmbus/max20730.c
+@@ -328,8 +328,6 @@ static int max20730_init_debugfs(struct i2c_client *client,
+ 		return -ENOENT;
+ 
+ 	max20730_dir = debugfs_create_dir(client->name, debugfs);
+-	if (!max20730_dir)
+-		return -ENOENT;
+ 
+ 	for (i = 0; i < MAX20730_DEBUGFS_NUM_ENTRIES; ++i)
+ 		psu->debugfs_entries[i] = i;
 -- 
-viresh
+2.28.0
