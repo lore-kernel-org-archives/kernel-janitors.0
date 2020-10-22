@@ -1,52 +1,46 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Tue, 20 Oct 2020 21:53:04 +0000
-Subject: RE: [PATCH] media: staging: rkisp1: rsz: make const array static, makes object smaller
-Message-Id: <c4cc1bd62e52419eb00631e539a6e703@AcuMS.aculab.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2020 07:07:39 +0000
+Subject: [PATCH net] mISDN: hfcpci: Fix a use after free in hfcmulti_tx()
+Message-Id: <20201022070739.GB2817762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201020144655.53251-1-colin.king@canonical.com>
- <d5663dec063440129bf6c373aa252d51@AcuMS.aculab.com>
- <cec23fd3-15c1-8e52-3f4d-300d6149d89c@collabora.com>
-In-Reply-To: <cec23fd3-15c1-8e52-3f4d-300d6149d89c@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dafna Hirschfeld' <dafna.hirschfeld@collabora.com>, 'Colin King' <colin.king@canonical.com>, Helen Koike <helen.koike@collabora.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-RnJvbTogRGFmbmEgSGlyc2NoZmVsZA0KPiBTZW50OiAyMCBPY3RvYmVyIDIwMjAgMTg6MTANCj4g
-DQo+IEFtIDIwLjEwLjIwIHVtIDE3OjI5IHNjaHJpZWIgRGF2aWQgTGFpZ2h0Og0KPiA+IEZyb206
-IENvbGluIEtpbmcNCj4gPj4gU2VudDogMjAgT2N0b2JlciAyMDIwIDE1OjQ3DQo+ID4+DQo+ID4+
-IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+ID4+DQou
-Li4NCj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3Ax
-LXJlc2l6ZXIuYyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3AxLQ0KPiA+PiBy
-ZXNpemVyLmMNCj4gPj4gaW5kZXggMTY4N2Q4MmU2YzY4Li43Y2E1YjQ3YzViZjUgMTAwNjQ0DQo+
-ID4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9ya2lzcDEvcmtpc3AxLXJlc2l6ZXIuYw0K
-PiA+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvcmtpc3AxL3JraXNwMS1yZXNpemVyLmMN
-Cj4gPj4gQEAgLTc2Myw4ICs3NjMsMTAgQEAgc3RhdGljIHZvaWQgcmtpc3AxX3Jzel91bnJlZ2lz
-dGVyKHN0cnVjdCBya2lzcDFfcmVzaXplciAqcnN6KQ0KPiA+Pg0KPiA+PiAgIHN0YXRpYyBpbnQg
-cmtpc3AxX3Jzel9yZWdpc3RlcihzdHJ1Y3Qgcmtpc3AxX3Jlc2l6ZXIgKnJzeikNCj4gPj4gICB7
-DQo+ID4+IC0JY29uc3QgY2hhciAqIGNvbnN0IGRldl9uYW1lc1tdID0ge1JLSVNQMV9SU1pfTVBf
-REVWX05BTUUsDQo+ID4+IC0JCQkJCSAgUktJU1AxX1JTWl9TUF9ERVZfTkFNRX07DQo+ID4+ICsJ
-c3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBkZXZfbmFtZXNbXSA9IHsNCj4gPj4gKwkJUktJU1Ax
-X1JTWl9NUF9ERVZfTkFNRSwNCj4gPj4gKwkJUktJU1AxX1JTWl9TUF9ERVZfTkFNRQ0KPiA+PiAr
-CX07DQo+ID4+ICAgCXN0cnVjdCBtZWRpYV9wYWQgKnBhZHMgPSByc3otPnBhZHM7DQo+ID4+ICAg
-CXN0cnVjdCB2NGwyX3N1YmRldiAqc2QgPSAmcnN6LT5zZDsNCj4gPj4gICAJaW50IHJldDsNCj4g
-Pg0KPiA+IERvbid0IGxvb2sgYXQgd2hhdCB0aGF0IGNvZGUgaXMgYWN0dWFsbHkgZG9pbmcuLi4u
-DQo+ID4gSXQgaXMgcmF0aGVyIGhvcnJpZC4NCj4gPiBya2lzcDFfcnN6X3JlZ2lzdGVyKCkgaXMg
-Y2FsbGVkIGZvciBlYWNoIGVudHJ5IGluIGFuIGFycmF5ICh0d2ljZSkuDQo+ID4gVGhlIGFycmF5
-IGluZGV4IGlzIHdyaXR0ZW4gaW50byByc3otPmlkLg0KPiA+IFRoZSB2YWx1ZSBpcyB0aGVuIHVz
-ZWQgdG8gc2VsZWN0IG9uZSBvZiB0aGUgdHdvIHN0cmluZ3MuDQo+ID4gQnV0IHJzei0+aWQgaXMg
-YWN0dWFsbHkgYW4gZW51bSB0eXBlLg0KPiANCj4gSGksDQo+IElzIGl0IHRoYXQgYmFkIHRvIHVz
-ZSBlbnVtIGFzIGFuIGFycmF5IGluZGV4Pw0KPiB3ZSB1c2UgaXQgaW4gbWFueSBwbGFjZXMgaW4g
-dGhlIGRyaXZlci4NCg0KWW91J2Qgbm9ybWFsbHkgdXNlIGEgY29uc3RhbnQgZnJvbSB0aGUgZW51
-bSB0byBzaXplIHRoZSBhcnJheSBkZWZpbml0aW9uLg0KSW4gdGhpcyBjYXNlIHlvdSd2ZSBhbiBl
-bnVtLCBhbiBhcnJheSBbMl0gYW5kIHRoZSBkZXZfbmFtZXNbXQ0KYWxsIG9mIHdoaWNoIGhhdmUg
-dG8gbWF0Y2ggJ2J5IG1hZ2ljJy4NCg0KVGhlcmUgaXMgYSBsb29wIHRoYXQgaGFsZiBpbXBsaWVz
-IHlvdSBtaWdodCBhZGQgYSB0aGlyZCB0eXBlLg0KYnV0IHRoZW4gdGhlIGZvbGxvd2luZyBjb2Rl
-IG9ubHkgd29ya3MgZm9yIHRoZSB0d28gdHlwZXMuDQpZb3UndmUgY29tcGxleCBlcnJvciByZWNv
-dmVyeSBpbiBjYXNlIG9uZSBvZiB0aGUgY2FsbHMgdG8gDQpya2lzcDFfcnN6X3JlZ2lzdGVyKCkg
-ZmFpbHMgLSBidXQgc2luY2UgdGhlcmUgY2FuIG9ubHkgZXZlcg0KYmUgdHdvIGNhbGxzIHRoZSBj
-b2RlIGNvdWxkIGJlIG11Y2ggc2ltcGxlci4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRk
-cmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBN
-SzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg=
+This frees "*sp" before dereferencing it to get "len = (*sp)->len;".
+
+Fixes: af69fb3a8ffa ("Add mISDN HFC multiport driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 7013a3f08429..ce6c160e0df4 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -2152,16 +2152,14 @@ hfcmulti_tx(struct hfc_multi *hc, int ch)
+ 		HFC_wait_nodebug(hc);
+ 	}
+ 
++	len = (*sp)->len;
+ 	dev_kfree_skb(*sp);
+ 	/* check for next frame */
+-	if (bch && get_next_bframe(bch)) {
+-		len = (*sp)->len;
++	if (bch && get_next_bframe(bch))
+ 		goto next_frame;
+-	}
+-	if (dch && get_next_dframe(dch)) {
+-		len = (*sp)->len;
++
++	if (dch && get_next_dframe(dch))
+ 		goto next_frame;
+-	}
+ 
+ 	/*
+ 	 * now we have no more data, so in case of transparent,
+-- 
+2.28.0
