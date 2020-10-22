@@ -1,51 +1,48 @@
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date: Thu, 08 Oct 2020 09:38:04 +0000
-Subject: Re: [PATCH v2] staging: vchiq: Fix list_for_each exit tests
-Message-Id: <ba10795b535daf1b430db97d3b1388c7407f0058.camel@suse.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-bJZNEHK0zokYDxMMYOJM"
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu, 22 Oct 2020 12:02:13 +0000
+Subject: default cpufreq gov, was: [PATCH] sched/fair: check for idle core
+Message-Id: <20201022120213.GG2611@hirez.programming.kicks-ass.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006134748.GA2076872@mwanda>
-In-Reply-To: <20201006134748.GA2076872@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Jamal Shareef <jamal.k.shareef@gmail.com>
-
-
---=-bJZNEHK0zokYDxMMYOJM
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2020-10-06 at 16:47 +0300, Dan Carpenter wrote:
-> After a list_for_each_entry() loop, the list iterator is always non-NULL
-> so these conditions don't work.  If the "waiter" is not found then this
-> results in an out of bounds access.
->=20
-> I have fixed it by introducing a new "found" variable.  In one case, I
-> used an else statement for readability.
->=20
-> Fixes: 46e4b9ec4fa4 ("staging: vchiq_arm: use list_for_each_entry when ac=
-cessing bulk_waiter_list")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-
---=-bJZNEHK0zokYDxMMYOJM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
+ <20201022071145.GM2628@hirez.programming.kicks-ass.net>
+ <20201022104703.nw45dwor6wfn4ity@vireshk-i7>
+ <34115486.YmRjPRKJaA@kreacher>
+In-Reply-To: <34115486.YmRjPRKJaA@kreacher>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com
 
------BEGIN PGP SIGNATURE-----
+On Thu, Oct 22, 2020 at 01:45:25PM +0200, Rafael J. Wysocki wrote:
+> On Thursday, October 22, 2020 12:47:03 PM CEST Viresh Kumar wrote:
+> > On 22-10-20, 09:11, Peter Zijlstra wrote:
+> > > Well, but we need to do something to force people onto schedutil,
+> > > otherwise we'll get more crap like this thread.
+> > > 
+> > > Can we take the choice away? Only let Kconfig select which governors are
+> > > available and then set the default ourselves? I mean, the end goal being
+> > > to not have selectable governors at all, this seems like a good step
+> > > anyway.
+> > 
+> > Just to clarify and complete the point a bit here, the users can still
+> > pass the default governor from cmdline using
+> > cpufreq.default_governor=, which will take precedence over the one the
+> > below code is playing with. And later once the kernel is up, they can
+> > still choose a different governor from userspace.
+> 
+> Right.
+> 
+> Also some people simply set "performance" as the default governor and then
+> don't touch cpufreq otherwise (the idea is to get everything to the max
+> freq right away and stay in that mode forever).  This still needs to be
+> possible IMO.
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl9+3fwACgkQlfZmHno8
-x/577Qf/daJSMYN1mVGd6kbFmgeUNSamil+eQQmoE3RQSpYvT4Z7pCUFg7RggER3
-0aRrcagMt0mZ2qrQdr+CEEMz2Xx9nK9s/bn1HX1QqyTpitm3zDCIDqlpqLBy8bBU
-tI8Ba6sFktxj4wS4bahtGG8vQvYQDu9shuip+8jUDNqLj9ufp6rhMpDuiyPfXrKj
-4IMs8tohRI6eED/MvLrTqg6hjjZOPYDH7brsszdoJqf4OjPA7Od9VkErR439zkaZ
-G5REV/XkIShJo5IOf+toT6IAEl7eDR8xzKr2goe7hN+miLVoKtd22uM05NWINBnI
-uavRa8OK57hu/cZVUcEB2PgavmZjBA==
-=45fL
------END PGP SIGNATURE-----
+Performance/powersave make sense to keep.
 
---=-bJZNEHK0zokYDxMMYOJM--
+However I do want to retire ondemand, conservative and also very much
+intel_pstate/active mode. I also have very little sympathy for
+userspace.
+
+We should start by making it hard to use them and eventually just delete
+them outright.
