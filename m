@@ -1,65 +1,79 @@
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 22 Oct 2020 15:55:24 +0000
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 Oct 2020 15:55:27 +0000
 Subject: Re: default cpufreq gov, was: [PATCH] sched/fair: check for idle core
-Message-Id: <CAKfTPtDUMdxWSKQgyjPCn+D-zYzpfgMEy0WYGAQzhcr1jnAX7w@mail.gmail.com>
+Message-Id: <CAJZ5v0hcUq1F4mXDtg9=Co90o-DwtZAN7_bMZfesgM6aoZ+aCg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
  <34115486.YmRjPRKJaA@kreacher> <20201022120213.GG2611@hirez.programming.kicks-ass.net>
  <1790766.jaFeG3T87Z@kreacher> <20201022122949.GW2628@hirez.programming.kicks-ass.net>
- <c232b2.c086afce.17550fc4644@lechevalier.se>
-In-Reply-To: <c232b2.c086afce.17550fc4644@lechevalier.se>
+ <20201022145250.GK32041@suse.de> <20201022152514.GJ2611@hirez.programming.kicks-ass.net>
+In-Reply-To: <20201022152514.GJ2611@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: A L <mail@lechevalier.se>
-Cc: Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel <linux-kernel@vger.kernel.org>, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mel Gorman <mgorman@suse.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Giovanni Gherdovich <ggherdovich@suse.com>, Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
 
-On Thu, 22 Oct 2020 at 17:45, A L <mail@lechevalier.se> wrote:
+On Thu, Oct 22, 2020 at 5:25 PM Peter Zijlstra <peterz@infradead.org> wrote:
 >
+> On Thu, Oct 22, 2020 at 03:52:50PM +0100, Mel Gorman wrote:
 >
+> > There are some questions
+> > currently on whether schedutil is good enough when HWP is not available.
 >
-> ---- From: Peter Zijlstra <peterz@infradead.org> -- Sent: 2020-10-22 - 14:29 ----
+> Srinivas and Rafael will know better, but Intel does run a lot of tests
+> and IIRC it was found that schedutil was on-par for !HWP. That was the
+> basis for commit:
 >
-> > On Thu, Oct 22, 2020 at 02:19:29PM +0200, Rafael J. Wysocki wrote:
-> >> > However I do want to retire ondemand, conservative and also very much
-> >> > intel_pstate/active mode.
-> >>
-> >> I agree in general, but IMO it would not be prudent to do that without making
-> >> schedutil provide the same level of performance in all of the relevant use
-> >> cases.
-> >
-> > Agreed; I though to have understood we were there already.
+>   33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by default without HWP")
 >
-> Hi,
->
->
-> Currently schedutil does not populate all stats like ondemand does, which can be a problem for some monitoring software.
->
-> On my AMD 3000G CPU with kernel-5.9.1:
->
->
-> grep. /sys/devices/system/cpu/cpufreq/policy0/stats/*
->
-> With ondemand:
-> time_in_state:3900000 145179
-> time_in_state:1600000 9588482
-> total_trans:177565
-> trans_table:   From  :    To
-> trans_table:         :   3900000   1600000
-> trans_table:  3900000:         0     88783
-> trans_table:  1600000:     88782         0
->
-> With schedutil only two file exists:
-> reset:<empty>
-> total_trans:216609
->
->
-> I'd really like to have these stats populated with schedutil, if that's possible.
+> But now it turns out that commit results in running intel_pstate-passive
+> on ondemand, which is quite horrible.
 
-Your problem might have been fixed with
-commit 96f60cddf7a1 ("cpufreq: stats: Enable stats for fast-switch as well")
+It doesn't in general.  AFAICS this happens only if "ondemand" was
+selected as the default governor in the old kernel config, which
+should not be the common case.
 
+But I do agree that this needs to be avoided.
 
+> > There was some evidence (I don't have the data, Giovanni was looking into
+> > it) that HWP was a requirement to make schedutil work well.
 >
-> Thanks.
+> That seems to be the question; Rafael just said the opposite.
+
+I'm not aware of any data like that.
+
+HWP should not be required and it should always be possible to make an
+HWP system run without HWP (except for those with exotic BIOS
+configs).  However, schedutil should work without HWP as well as (or
+better than) the "ondemand" and "conservative" governors on top of the
+same driver (whatever it is) and it should work as well as (or better
+than) "raw" HWP (so to speak) on top of intel_pstate in the passive
+mode with HWP enabled (before 5.9 it couldn't work in that
+configuration at all and now it can do that, which I guess may be
+regarded as an improvement).
+
+> > For distros, switching to schedutil by default would be nice because
+> > frequency selection state would follow the task instead of being per-cpu
+> > and we could stop worrying about different HWP implementations but it's
 >
+> s/HWP/cpufreq-governors/ ? But yes.
+
+Well, different HWP implementations in different processor generations
+may be a concern as well in general.
+
+> > not at the point where the switch is advisable. I would expect hard data
+> > before switching the default and still would strongly advise having a
+> > period of time where we can fall back when someone inevitably finds a
+> > new corner case or exception.
+>
+> Which is why I advocated to make it 'difficult' to use the old ones and
+> only later remove them.
+
+Slightly less convenient may be sufficient IMV.
+
+> > For reference, SLUB had the same problem for years. It was switched
+> > on by default in the kernel config but it was a long time before
+> > SLUB was generally equivalent to SLAB in terms of performance.
+>
+> I remember :-)
