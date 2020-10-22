@@ -1,56 +1,64 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 11 Oct 2020 20:05:32 +0000
-Subject: Re: [PATCH 4/5] net/ipv6: use semicolons rather than commas to separate statements
-Message-Id: <CAHC9VhQfDueBs_nahF2xxP8bof2yH1p4PPXwfxh4xnmQeEF4XA@mail.gmail.com>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Thu, 22 Oct 2020 12:35:03 +0000
+Subject: =?UTF-8?Q?Re=3A_Coccinelle=3A_Checking_the_influence_of_=E2?= =?UTF-8?Q?=80=9CGrep_query=E2=80=9D?=
+Message-Id: <alpine.DEB.2.22.394.2010221434210.5113@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-24693990-1603370104=:5113"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr> <1602412498-32025-5-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1602412498-32025-5-git-send-email-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <78f8b08754dde286adf7e11e1eeb3bb8ad500d8b.camel@web.de>
+ <acaed49b9195d47e252a0b67551f87e96324d004.camel@web.de>
+In-Reply-To: <acaed49b9195d47e252a0b67551f87e96324d004.camel@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Coccinelle <cocci@systeme.lip6.fr>
 
-On Sun, Oct 11, 2020 at 7:18 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-24693990-1603370104=:5113
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+
+
+On Thu, 22 Oct 2020, Markus Elfring wrote:
+
+> > A disjunction is applied by this script for the semantic patch language.
+> > This construct uses short-circuit evaluation. It has got the consequence
+> > that the last element of the specified condition will only be checked
+> > if all previous parts did not match. Such a technical detail leads to
+> > a recommended ordering of condition parts if you would like to care for
+> > optimal run time characteristics of SmPL code.
 >
-> Replace commas with semicolons.  Commas introduce unnecessary
-> variability in the code structure and are hard to see.  What is done
-> is essentially described by the following Coccinelle semantic patch
-> (http://coccinelle.lip6.fr/):
+> I imagine that such information can trigger further software evolution
+> at more places.
 >
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
 >
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> > +++ b/scripts/coccinelle/iterators/for_each_child.cocci
 >
-> ---
->  net/ipv6/calipso.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The software “Coccinelle 1.0.8-00177-g28737419” displays the following data.
+>
+> elfring@Sonne:~/Projekte/Linux/next-patched> spatch -D patch --parse-cocci
+> scripts/coccinelle/iterators/for_each_child.cocci
+> …
+> Grep query
+> for_each_node_with_property || for_each_node_by_type || for_each_node_by_name ||
+> for_each_matching_node_and_match || for_each_matching_node ||
+> for_each_compatible_node || for_each_child_of_node ||
+> for_each_available_child_of_node
+>
+>
+> I suggest to take another closer look at the presented ordering for
+> these identifiers.
+> It deviates from the proposed listing for the SmPL disjunction.
+> Now I am curious if this difference can be meaningful.
+>
+> If the exact “grep” is performed, it might happen that short-circuit evaluation
+> would be applied also by the corresponding software component (or known tool).
+> Will any adjustments become relevant then accordingly?
 
-Thanks Julia.
+It doesn't matter.  The purpose is just to select files that are relevent
+for consideration.  If a file is selected for two reasons instead of one
+reason, it doesn't matter; it's still selected.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-> index 8d3f66c310db..78f766019b7e 100644
-> --- a/net/ipv6/calipso.c
-> +++ b/net/ipv6/calipso.c
-> @@ -761,7 +761,7 @@ static int calipso_genopt(unsigned char *buf, u32 start, u32 buf_len,
->         calipso[1] = len - 2;
->         *(__be32 *)(calipso + 2) = htonl(doi_def->doi);
->         calipso[6] = (len - CALIPSO_HDR_LEN) / 4;
-> -       calipso[7] = secattr->attr.mls.lvl,
-> +       calipso[7] = secattr->attr.mls.lvl;
->         crc = ~crc_ccitt(0xffff, calipso, len);
->         calipso[8] = crc & 0xff;
->         calipso[9] = (crc >> 8) & 0xff;
-
--- 
-paul moore
-www.paul-moore.com
+julia
+--8323329-24693990-1603370104=:5113--
