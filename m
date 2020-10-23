@@ -1,35 +1,36 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 12 Oct 2020 09:26:42 +0000
-Subject: Re: [PATCH 7/8] ASoC: madera: use semicolons rather than commas to separate statements
-Message-Id: <20201012092642.GZ10899@ediswmail.ad.cirrus.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 11:22:12 +0000
+Subject: [PATCH net] net: hns3: clean up a return in hclge_tm_bp_setup()
+Message-Id: <20201023112212.GA282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602407979-29038-1-git-send-email-Julia.Lawall@inria.fr>
- <1602407979-29038-8-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1602407979-29038-8-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: alsa-devel@alsa-project.org, Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Salil Mehta <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, Yonglong Liu <liuyonglong@huawei.com>, Yufeng Mo <moyufeng@huawei.com>, Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>, Guangbin Huang <huangguangbin2@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Oct 11, 2020 at 11:19:38AM +0200, Julia Lawall wrote:
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
+Smatch complains that "ret" might be uninitialized if we don't enter
+the loop.  We do always enter the loop so it's a false positive, but
+it's cleaner to just return a literal zero and that silences the
+warning as well.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Charles
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 15f69fa86323..e8495f58a1a8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1373,7 +1373,7 @@ static int hclge_tm_bp_setup(struct hclge_dev *hdev)
+ 			return ret;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ int hclge_pause_setup_hw(struct hclge_dev *hdev, bool init)
+-- 
+2.28.0
