@@ -1,32 +1,38 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Wed, 14 Oct 2020 00:44:46 +0000
-Subject: Re: [PATCH 10/18] clk: meson: use semicolons rather than commas to separate statements
-Message-Id: <160263628656.310579.10860580831866859265@swboyd.mtv.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 11:34:01 +0000
+Subject: [PATCH] drm/i915: Fix a crash in shmem_pin_map() error handling
+Message-Id: <20201023113401.GG282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: Valdis =?utf-8?q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Christoph Hellwig <hch@lst.de>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Quoting Julia Lawall (2020-09-27 12:12:20)
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
+There is a signedness bug in shmem_pin_map() error handling because "i"
+is unsigned.  The "while (--i >= 0)" will loop forever until the system
+crashes.
 
-Applied to clk-next
+Fixes: bfed6708d6c9 ("drm/i915: use vmap in shmem_pin_map")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/gt/shmem_utils.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gt/shmem_utils.c b/drivers/gpu/drm/i915/gt/shmem_utils.c
+index f011ea42487e..7eb542018219 100644
+--- a/drivers/gpu/drm/i915/gt/shmem_utils.c
++++ b/drivers/gpu/drm/i915/gt/shmem_utils.c
+@@ -52,8 +52,9 @@ struct file *shmem_create_from_object(struct drm_i915_gem_object *obj)
+ void *shmem_pin_map(struct file *file)
+ {
+ 	struct page **pages;
+-	size_t n_pages, i;
++	size_t n_pages;
+ 	void *vaddr;
++	int i;
+ 
+ 	n_pages = file->f_mapping->host->i_size >> PAGE_SHIFT;
+ 	pages = kvmalloc_array(n_pages, sizeof(*pages), GFP_KERNEL);
+-- 
+2.28.0
