@@ -1,21 +1,37 @@
-From: Ying Chongan <info@controlypotencia.com>
-Date: Fri, 16 Oct 2020 06:15:31 +0000
-Subject: Investment opportunity
-Message-Id: <1ed057f44934e8312e38f0dfa044ca97@controlypotencia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 11:22:32 +0000
+Subject: [PATCH] ext4: Fix an IS_ERR() vs NULL check
+Message-Id: <20201023112232.GB282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <31272036.208601.1572910158293.JavaMail.cash@webmail.isd.co.kr>
-In-Reply-To: <31272036.208601.1572910158293.JavaMail.cash@webmail.isd.co.kr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Greetings,
+The ext4_find_extent() function never returns NULL, it returns error
+pointers.
 
-This email is for an opportunity to invest in any lucrative business in 
-your country.
+Fixes: 44059e503b03 ("ext4: fast commit recovery path")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/ext4/extents.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-We offer a quick loan at low interest rate, if you are interested, 
-please reply to yingchongan@gmail.com for more details.
-
-Sincerely: Ying Chongan
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 6b33b9c86b00..a19d0e3a4126 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -5820,8 +5820,8 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+ 	int ret;
+ 
+ 	path = ext4_find_extent(inode, start, NULL, 0);
+-	if (!path)
+-		return -EINVAL;
++	if (IS_ERR(path))
++		return PTR_ERR(path);
+ 	ex = path[path->p_depth].p_ext;
+ 	if (!ex) {
+ 		ret = -EFSCORRUPTED;
+-- 
+2.28.0
