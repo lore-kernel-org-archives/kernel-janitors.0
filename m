@@ -1,88 +1,65 @@
-From: Walter Harms <wharms@bfs.de>
-Date: Thu, 29 Oct 2020 08:21:57 +0000
-Subject: AW: [PATCH 2/2] usb: typec: stusb160x: fix some signedness bugs
-Message-Id: <f843e2866d6f421d83b4455582809a95@bfs.de>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Fri, 23 Oct 2020 15:15:56 +0000
+Subject: [PATCH v2] cpufreq: Avoid configuring old governors as default with intel_pstate
+Message-Id: <9382251.a2nkXps1mP@kreacher>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023112412.GD282278@mwanda>,<625bf21d-e3bb-f952-9368-d93bee05a461@st.com>
-In-Reply-To: <625bf21d-e3bb-f952-9368-d93bee05a461@st.com>
+References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr> <20201022120213.GG2611@hirez.programming.kicks-ass.net> <8312288.dAKoTdFk2S@kreacher>
+In-Reply-To: <8312288.dAKoTdFk2S@kreacher>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amelie DELAUNAY <amelie.delaunay@st.com>, Dan Carpenter <dan.carpenter@oracle.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>
+Cc: Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
 
-this is much better to read
-________________________________________
-Von: Amelie DELAUNAY [amelie.delaunay@st.com]
-Gesendet: Mittwoch, 28. Oktober 2020 13:26
-An: Dan Carpenter; Heikki Krogerus
-Cc: Greg Kroah-Hartman; linux-usb@vger.kernel.org; kernel-janitors@vger.kernel.org
-Betreff: Re: [PATCH 2/2] usb: typec: stusb160x: fix some signedness bugs
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Hi Dan,
+Commit 33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by
+default without HWP") was meant to cause intel_pstate to be used
+in the passive mode with the schedutil governor on top of it, but
+it missed the case in which either "ondemand" or "conservative"
+was selected as the default governor in the existing kernel config,
+in which case the previous old governor configuration would be used,
+causing the default legacy governor to be used on top of intel_pstate
+instead of schedutil.
 
-On 10/23/20 1:24 PM, Dan Carpenter wrote:
-> These variables are enums but in this situation GCC will treat them as
-> unsigned so the conditions are never true.
->
-> Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/usb/typec/stusb160x.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
-> index f7369e371dd4..da7f1957bcb3 100644
-> --- a/drivers/usb/typec/stusb160x.c
-> +++ b/drivers/usb/typec/stusb160x.c
-> @@ -545,7 +545,7 @@ static int stusb160x_get_fw_caps(struct stusb160x *chip,
->       ret = fwnode_property_read_string(fwnode, "power-role", &cap_str);
->       if (!ret) {
->               chip->port_type = typec_find_port_power_role(cap_str);
-> -             if (chip->port_type < 0) {
-> +             if ((int)chip->port_type < 0) {
->                       ret = chip->port_type;
->                       return ret;
->               }
+Address this by preventing "ondemand" and "conservative" from being
+configured as the default cpufreq governor in the case when schedutil
+is the default choice for the default governor setting.
 
-I was preparing a patch for this one, and it uses the ret instead of the
-cast:
-        ret = fwnode_property_read_string(fwnode, "power-role", &cap_str);
-        if (!ret) {
-                ret = typec_find_port_power_role(cap_str);
-                if (ret < 0)
-                        return ret;
-                chip->port_type = ret;
+[Note that the default cpufreq governor can still be set via the
+ kernel command line if need be and that choice is not limited,
+ so if anyone really wants to use one of the legacy governors by
+ default, it can be achieved this way.]
 
-        }
+Fixes: 33aa46f252c7 ("cpufreq: intel_pstate: Use passive mode by default without HWP")
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Cc: 5.8+ <stable@vger.kernel.org> # 5.8+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> @@ -567,9 +567,10 @@ static int stusb160x_get_fw_caps(struct stusb160x *chip,
->       if (!ret) {
->               chip->pwr_opmode = typec_find_pwr_opmode(cap_str);
->               /* Power delivery not yet supported */
-> -             if (chip->pwr_opmode < 0 ||
-> +             if ((int)chip->pwr_opmode < 0 ||
->                   chip->pwr_opmode == TYPEC_PWR_MODE_PD) {
-> -                     ret = chip->pwr_opmode < 0 ? chip->pwr_opmode : -EINVAL;
-> +                     ret = (int)chip->pwr_opmode < 0 ? chip->pwr_opmode :
-> +                                                       -EINVAL;
->                       dev_err(chip->dev, "bad power operation mode: %d\n",
->                               chip->pwr_opmode);
->                       return ret;
->
+The v2 addresses a review comment from Viresh regarding of the expression format
+and adds a missing Reported-by for Julia.
 
-        if (!ret) {
-                ret = typec_find_pwr_opmode(cap_str);
-                /* Power delivery not yet supported */
-                if (ret < 0 || ret == TYPEC_PWR_MODE_PD) {
-                        dev_err(chip->dev, "bad power operation mode: %d\n", ret);
-                        return -EINVAL;
-                }
-                chip->pwr_opmode = ret;
-        }
+---
+ drivers/cpufreq/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
-
-So, which fix sounds better ? IMHO using ret make the code more readable.
-
-Regards,
-Amelie
+Index: linux-pm/drivers/cpufreq/Kconfig
+=================================--- linux-pm.orig/drivers/cpufreq/Kconfig
++++ linux-pm/drivers/cpufreq/Kconfig
+@@ -71,6 +71,7 @@ config CPU_FREQ_DEFAULT_GOV_USERSPACE
+ 
+ config CPU_FREQ_DEFAULT_GOV_ONDEMAND
+ 	bool "ondemand"
++	depends on !(X86_INTEL_PSTATE && SMP)
+ 	select CPU_FREQ_GOV_ONDEMAND
+ 	select CPU_FREQ_GOV_PERFORMANCE
+ 	help
+@@ -83,6 +84,7 @@ config CPU_FREQ_DEFAULT_GOV_ONDEMAND
+ 
+ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
+ 	bool "conservative"
++	depends on !(X86_INTEL_PSTATE && SMP)
+ 	select CPU_FREQ_GOV_CONSERVATIVE
+ 	select CPU_FREQ_GOV_PERFORMANCE
+ 	help
