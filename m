@@ -1,25 +1,37 @@
-From: =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
-Date: Sat, 31 Oct 2020 21:41:49 +0000
-Subject: Re: [PATCH] MIPS: Kconfig: fix a few trivial spelling mistakes
-Message-Id: <CAAdtpL7cbAVqr4HZU37O++T=Rwyfumq8omkmPCoLKr6h0Uorzg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 11:23:47 +0000
+Subject: [PATCH 1/2] usb: typec: stusb160x: fix an IS_ERR() vs NULL check in probe
+Message-Id: <20201023112347.GC282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201027183430.56772-1-colin.king@canonical.com>
-In-Reply-To: <20201027183430.56772-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Jiri Kosina <trivial@kernel.org>, "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 9:01 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are a few spelling mistakes in the Kconfig, fix these.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/mips/Kconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+The typec_register_port() function doesn't return error pointers, it
+returns error pointers.
 
-Reviewed-by: Philippe Mathieu-Daud=C3=A9 <f4bug@amsat.org>
+Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/typec/stusb160x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+index ce0bd7b3ad88..f7369e371dd4 100644
+--- a/drivers/usb/typec/stusb160x.c
++++ b/drivers/usb/typec/stusb160x.c
+@@ -729,8 +729,8 @@ static int stusb160x_probe(struct i2c_client *client)
+ 	}
+ 
+ 	chip->port = typec_register_port(chip->dev, &chip->capability);
+-	if (!chip->port) {
+-		ret = -ENODEV;
++	if (IS_ERR(chip->port)) {
++		ret = PTR_ERR(chip->port);
+ 		goto all_reg_disable;
+ 	}
+ 
+-- 
+2.28.0
