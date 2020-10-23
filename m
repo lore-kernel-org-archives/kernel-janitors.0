@@ -1,61 +1,48 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Date: Thu, 29 Oct 2020 02:37:16 +0000
-Subject: Re: [PATCH] agp: amd64: remove unneeded initialization
-Message-Id: <20201029023716.GB2316@Ryzen-9-3900X.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 11:24:12 +0000
+Subject: [PATCH 2/2] usb: typec: stusb160x: fix some signedness bugs
+Message-Id: <20201023112412.GD282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201028133106.5420-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201028133106.5420-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Nick Desaulniers <ndesaulniers@google.com>, Tom Rix <trix@redhat.com>, clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 02:31:06PM +0100, Lukas Bulwahn wrote:
-> make clang-analyzer on x86_64 defconfig caught my attention with:
-> 
->   drivers/char/agp/amd64-agp.c:336:2: warning: \
->   Value stored to 'i' is never read [clang-analyzer-deadcode.DeadStores]
->           i = 0;
->           ^
-> 
-> Remove this unneeded initialization to make clang-analyzer happy.
-> 
-> Commit a32073bffc65 ("x86_64: Clean and enhance up K8 northbridge access
-> code") refactored cache_nbs() and introduced this unneeded dead-store
-> initialization.
-> 
-> As compilers will detect this unneeded assignment and optimize this anyway,
-> the resulting binary is identical before and after this change.
-> 
-> No functional change. No change in binary code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+These variables are enums but in this situation GCC will treat them as
+unsigned so the conditions are never true.
 
-Seems obvious :)
+Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/typec/stusb160x.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-
-> ---
-> applies cleanly on current master and next-20201028
-> 
-> David, please pick this minor non-urgent clean-up patch.
-> 
->  drivers/char/agp/amd64-agp.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
-> index b40edae32817..0413b3136541 100644
-> --- a/drivers/char/agp/amd64-agp.c
-> +++ b/drivers/char/agp/amd64-agp.c
-> @@ -333,7 +333,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
->  	if (!amd_nb_has_feature(AMD_NB_GART))
->  		return -ENODEV;
->  
-> -	i = 0;
->  	for (i = 0; i < amd_nb_num(); i++) {
->  		struct pci_dev *dev = node_to_amd_nb(i)->misc;
->  		if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+index f7369e371dd4..da7f1957bcb3 100644
+--- a/drivers/usb/typec/stusb160x.c
++++ b/drivers/usb/typec/stusb160x.c
+@@ -545,7 +545,7 @@ static int stusb160x_get_fw_caps(struct stusb160x *chip,
+ 	ret = fwnode_property_read_string(fwnode, "power-role", &cap_str);
+ 	if (!ret) {
+ 		chip->port_type = typec_find_port_power_role(cap_str);
+-		if (chip->port_type < 0) {
++		if ((int)chip->port_type < 0) {
+ 			ret = chip->port_type;
+ 			return ret;
+ 		}
+@@ -567,9 +567,10 @@ static int stusb160x_get_fw_caps(struct stusb160x *chip,
+ 	if (!ret) {
+ 		chip->pwr_opmode = typec_find_pwr_opmode(cap_str);
+ 		/* Power delivery not yet supported */
+-		if (chip->pwr_opmode < 0 ||
++		if ((int)chip->pwr_opmode < 0 ||
+ 		    chip->pwr_opmode = TYPEC_PWR_MODE_PD) {
+-			ret = chip->pwr_opmode < 0 ? chip->pwr_opmode : -EINVAL;
++			ret = (int)chip->pwr_opmode < 0 ? chip->pwr_opmode :
++							  -EINVAL;
+ 			dev_err(chip->dev, "bad power operation mode: %d\n",
+ 				chip->pwr_opmode);
+ 			return ret;
+-- 
+2.28.0
