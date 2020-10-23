@@ -1,99 +1,50 @@
-From: "heming.zhao@suse.com" <heming.zhao@suse.com>
-Date: Sat, 03 Oct 2020 15:57:41 +0000
-Subject: Re: [PATCH] md-cluster: Fix potential error pointer dereference in resize_bitmaps()
-Message-Id: <33855895-3493-267b-fe86-f3fa472580a0@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Oct 2020 12:08:53 +0000
+Subject: [PATCH net] vhost_vdpa: Return -EFUALT if copy_from_user() fails
+Message-Id: <20201023120853.GI282278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200804101645.GB392148@mwanda>
- <824849e0-c98d-1f22-817c-7a76d3ee22b1@cloud.ionos.com>
- <20200804111549.GN5493@kadam>
- <CAPhsuW4EKCMhL0T=1iMbVYrh1azZOD-jQ-vXDMmZ5cy2m-oW4g@mail.gmail.com>
-In-Reply-To: <CAPhsuW4EKCMhL0T=1iMbVYrh1azZOD-jQ-vXDMmZ5cy2m-oW4g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Song Liu <song@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, Shaohua Li <shli@fb.com>, NeilBrown <neilb@suse.com>, linux-raid <linux-raid@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Song,
+The copy_to/from_user() functions return the number of bytes which we
+weren't able to copy but the ioctl should return -EFAULT if they fail.
 
-I just found this mail, and I send a similar patch on 2020-9-27.
-From my thinking, Guoqing's patch for fixing memory leak is enough.
+Fixes: a127c5bbb6a8 ("vhost-vdpa: fix backend feature ioctls")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/vhost/vdpa.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-the resize_bitmaps() work flow:
-- first use update_bitmap_size() to broadcast BITMAP_RESIZE
-  to all nodes, and waiting for the other nodes ack.
-- then in for loop, by holding bitmap00x lock to update not booted
-  slot's bitmap info.
-
-the bitmap in for() is temporary, it should be safely freed on every
-time of end for().
-
-Thanks.
-
-On 8/6/20 8:20 AM, Song Liu wrote:
-> On Tue, Aug 4, 2020 at 4:16 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> On Tue, Aug 04, 2020 at 12:40:18PM +0200, Guoqing Jiang wrote:
->>>
->>>
->>> On 8/4/20 12:16 PM, Dan Carpenter wrote:
->>>> The error handling calls md_bitmap_free(bitmap) which checks for NULL
->>>> but will Oops if we pass an error pointer.  Let's set "bitmap" to NULL
->>>> on this error path.
->>>>
->>>> Fixes: afd756286083 ("md-cluster/raid10: resize all the bitmaps before start reshape")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>> ---
->>>>    drivers/md/md-cluster.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
->>>> index 73fd50e77975..d50737ec4039 100644
->>>> --- a/drivers/md/md-cluster.c
->>>> +++ b/drivers/md/md-cluster.c
->>>> @@ -1139,6 +1139,7 @@ static int resize_bitmaps(struct mddev *mddev, sector_t newsize, sector_t oldsiz
->>>>              bitmap = get_bitmap_from_slot(mddev, i);
->>>>              if (IS_ERR(bitmap)) {
->>>>                      pr_err("can't get bitmap from slot %d\n", i);
->>>> +                   bitmap = NULL;
->>>>                      goto out;
->>>>              }
->>>>              counts = &bitmap->counts;
->>>
->>> Thanks for the catch, Reviewed-by: Guoqing Jiang
->>> <guoqing.jiang@cloud.ionos.com>
->>>
->>> BTW, seems there could be memory leak in the function since it keeps
->>> allocate bitmap
->>> in the loop ..., will send a format patch.
->>>
->>>
->>> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
->>> index 73fd50e77975..89d7b32489d8 100644
->>> --- a/drivers/md/md-cluster.c
->>> +++ b/drivers/md/md-cluster.c
->>> @@ -1165,6 +1165,8 @@ static int resize_bitmaps(struct mddev *mddev,
->>> sector_t newsize, sector_t oldsiz
->>>                           * can't resize bitmap
->>>                           */
->>>                          goto out;
->>> +
->>> +               md_bitmap_free(bitmap);
->>
->> Hm...  I'm now not at all certain my patch is correct.  Although it's
->> obviously harmless and fixes an Oops.  I had thought that that the call
->> to update_bitmap_size(mddev, oldsize) would free the rest of the loop.
->>
->> I really suspect adding a free like you're suggesting will break the
->> success path.
->>
->> I'm not familiar with this code at all.
-> 
-> Thanks Dan and Guoqing. I applied Dans' patch to md-next.
-> 
-> I think we are leaking bitmap in resize_bitmaps(). But we gonna need
-> more complex fix than the md_bitmap_free() above.
-> 
-> Thanks,
-> Song
-> 
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 62a9bb0efc55..c94a97b6bd6d 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -428,12 +428,11 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+ 	void __user *argp = (void __user *)arg;
+ 	u64 __user *featurep = argp;
+ 	u64 features;
+-	long r;
++	long r = 0;
+ 
+ 	if (cmd = VHOST_SET_BACKEND_FEATURES) {
+-		r = copy_from_user(&features, featurep, sizeof(features));
+-		if (r)
+-			return r;
++		if (copy_from_user(&features, featurep, sizeof(features)))
++			return -EFAULT;
+ 		if (features & ~VHOST_VDPA_BACKEND_FEATURES)
+ 			return -EOPNOTSUPP;
+ 		vhost_set_backend_features(&v->vdev, features);
+@@ -476,7 +475,8 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+ 		break;
+ 	case VHOST_GET_BACKEND_FEATURES:
+ 		features = VHOST_VDPA_BACKEND_FEATURES;
+-		r = copy_to_user(featurep, &features, sizeof(features));
++		if (copy_to_user(featurep, &features, sizeof(features)))
++			r = -EFAULT;
+ 		break;
+ 	default:
+ 		r = vhost_dev_ioctl(&v->vdev, cmd, argp);
