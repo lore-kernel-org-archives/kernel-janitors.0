@@ -1,69 +1,39 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 23 Oct 2020 05:23:12 +0000
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri, 23 Oct 2020 07:03:10 +0000
 Subject: Re: default cpufreq gov, was: [PATCH] sched/fair: check for idle core
-Message-Id: <20201023051112.7p4qgr2opyoyeep4@vireshk-i7>
+Message-Id: <20201023070310.GK2611@hirez.programming.kicks-ass.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
  <34115486.YmRjPRKJaA@kreacher>
  <20201022120213.GG2611@hirez.programming.kicks-ass.net>
  <1790766.jaFeG3T87Z@kreacher>
  <20201022122949.GW2628@hirez.programming.kicks-ass.net>
- <c232b2.c086afce.17550fc4644@lechevalier.se>
- <CAKfTPtDUMdxWSKQgyjPCn+D-zYzpfgMEy0WYGAQzhcr1jnAX7w@mail.gmail.com>
-In-Reply-To: <CAKfTPtDUMdxWSKQgyjPCn+D-zYzpfgMEy0WYGAQzhcr1jnAX7w@mail.gmail.com>
+ <20201022145250.GK32041@suse.de>
+ <20201022152514.GJ2611@hirez.programming.kicks-ass.net>
+ <1603397435.16275.45.camel@suse.com>
+In-Reply-To: <1603397435.16275.45.camel@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: A L <mail@lechevalier.se>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel <linux-kernel@vger.kernel.org>, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>
+To: Giovanni Gherdovich <ggherdovich@suse.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mel Gorman <mgorman@suse.de>, Viresh Kumar <viresh.kumar@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com, Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>, thomas.lendacky@amd.com, puwen@hygon.cn, yazen.ghannam@amd.com, kim.phillips@amd.com, suravee.suthikulpanit@amd.com
 
-On 22-10-20, 17:55, Vincent Guittot wrote:
-> On Thu, 22 Oct 2020 at 17:45, A L <mail@lechevalier.se> wrote:
-> >
-> >
-> >
-> > ---- From: Peter Zijlstra <peterz@infradead.org> -- Sent: 2020-10-22 - 14:29 ----
-> >
-> > > On Thu, Oct 22, 2020 at 02:19:29PM +0200, Rafael J. Wysocki wrote:
-> > >> > However I do want to retire ondemand, conservative and also very much
-> > >> > intel_pstate/active mode.
-> > >>
-> > >> I agree in general, but IMO it would not be prudent to do that without making
-> > >> schedutil provide the same level of performance in all of the relevant use
-> > >> cases.
-> > >
-> > > Agreed; I though to have understood we were there already.
-> >
-> > Hi,
-> >
-> >
-> > Currently schedutil does not populate all stats like ondemand does, which can be a problem for some monitoring software.
-> >
-> > On my AMD 3000G CPU with kernel-5.9.1:
-> >
-> >
-> > grep. /sys/devices/system/cpu/cpufreq/policy0/stats/*
-> >
-> > With ondemand:
-> > time_in_state:3900000 145179
-> > time_in_state:1600000 9588482
-> > total_trans:177565
-> > trans_table:   From  :    To
-> > trans_table:         :   3900000   1600000
-> > trans_table:  3900000:         0     88783
-> > trans_table:  1600000:     88782         0
-> >
-> > With schedutil only two file exists:
-> > reset:<empty>
-> > total_trans:216609
-> >
-> >
-> > I'd really like to have these stats populated with schedutil, if that's possible.
-> 
-> Your problem might have been fixed with
-> commit 96f60cddf7a1 ("cpufreq: stats: Enable stats for fast-switch as well")
+On Thu, Oct 22, 2020 at 10:10:35PM +0200, Giovanni Gherdovich wrote:
+> * for the AMD EPYC machines we haven't yet implemented frequency invariant
+>   accounting, which might explain why schedutil looses to ondemand on all
+>   the benchmarks.
 
-Thanks Vincent. Right, I have already fixed that for everyone.
+Right, I poked the AMD people on that a few times, but nothing seems to
+be forthcoming :/ Tom, any way you could perhaps expedite the matter?
 
--- 
-viresh
+In particular we're looking for some X86_VENDOR_AMD/HYGON code to run in
+
+  arch/x86/kernel/smpboot.c:init_freq_invariance()
+
+The main issue is finding a 'max' frequency that is not the absolute max
+turbo boost (this could result in not reaching it very often) but also
+not too low such that we're always clipping.
+
+And while we're here, IIUC AMD is still using acpi_cpufreq, but AFAIK
+the chips have a CPPC interface which could be used instead. Is there
+any progress on that?
