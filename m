@@ -1,26 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 07 Oct 2020 15:34:49 +0000
-Subject: Re: [PATCH] ALSA: bebob: potential info leak in hwdep_read()
-Message-Id: <s5h4kn6123q.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Oct 2020 12:21:13 +0000
+Subject: [PATCH] vsock: ratelimit unknown ioctl error message
+Message-Id: <20201023122113.35517-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201007074928.GA2529578@mwanda>
-In-Reply-To: <20201007074928.GA2529578@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Stefano Garzarella <sgarzare@redhat.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 07 Oct 2020 09:49:28 +0200,
-Dan Carpenter wrote:
-> 
-> The "count" variable needs to be capped on every path so that we don't
-> copy too much information to the user.
-> 
-> Fixes: 618eabeae711 ("ALSA: bebob: Add hwdep interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied now.  Thanks.
+When exercising the kernel with stress-ng with some ioctl tests the
+"Unknown ioctl" error message is spamming the kernel log at a high
+rate. Rate limit this message to reduce the noise.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/vmw_vsock/af_vsock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 9e93bc201cc0..b8feb9223454 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -2072,7 +2072,7 @@ static long vsock_dev_do_ioctl(struct file *filp,
+ 		break;
+ 
+ 	default:
+-		pr_err("Unknown ioctl %d\n", cmd);
++		pr_err_ratelimited("Unknown ioctl %d\n", cmd);
+ 		retval = -EINVAL;
+ 	}
+ 
+-- 
+2.27.0
