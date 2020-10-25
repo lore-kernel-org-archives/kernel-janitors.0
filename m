@@ -1,52 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Oct 2020 11:22:46 +0000
-Subject: Re: [PATCH] hw_random : platform_get_irq() already prints an error
-Message-Id: <20201027112246.GS1042@kadam>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Sun, 25 Oct 2020 18:56:54 +0000
+Subject: =?UTF-8?Q?Re=3A_=5BCocci=5D_Coccinelle=3A_null=3A_Optimise_disj?= =?UTF-8?Q?unctions_in_SmPL_script_
+Message-Id: <alpine.DEB.2.22.394.2010251955280.2714@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201018054912.GA76941@fedora-thirty-three>
-In-Reply-To: <20201018054912.GA76941@fedora-thirty-three>
+References: <0d1575b0-ab37-663e-2464-278fd76280b5@web.de>
+ <alpine.DEB.2.22.394.2010251924290.2714@hadrien>
+ <8f58a94e-b093-a587-c56a-a0ea0fc1f3ea@web.de>
+In-Reply-To: <8f58a94e-b093-a587-c56a-a0ea0fc1f3ea@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-On Sun, Oct 18, 2020 at 01:49:12AM -0400, Nigel Christian wrote:
-> coccicheck
-> drivers/char//hw_random/imx-rngc.c:256:2-9: line 256 is redundant because platform_get_irq() already prints an error
-> 
-> Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
-> ---
->  drivers/char/hw_random/imx-rngc.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
-> index 61c844baf26e..69f13ff1bbec 100644
-> --- a/drivers/char/hw_random/imx-rngc.c
-> +++ b/drivers/char/hw_random/imx-rngc.c
-> @@ -253,7 +253,6 @@ static int imx_rngc_probe(struct platform_device *pdev)
->  
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq <= 0) {
-            ^^^^^^^^
-This check is wrong.  It should be:
 
-	if (irq < 0) {
 
-The platform_get_irq() function will never return zero.  But say it
-did return a zero then that means that "return irq;" is returning
-success which would be a bug.
+On Sun, 25 Oct 2020, Markus Elfring wrote:
 
-> -		dev_err(&pdev->dev, "Couldn't get irq %d\n", irq);
->  		return irq;
->  	}
+> >> This analysis result indicates a clear ranking for such function calls.
+> >> Thus reorder the SmPL disjunction items according to their usage incidence.
+> >
+> > Did you actually test this before and after the change and see a
+> > difference in performance?
+>
+> Would you become interested to configure a representative test environment
+> for safe comparisons of corresponding run time characteristics
+> of the affected software?
 
-The patch introduces a new checkpatch warning because now there is only
-one statement in the if statment block.  (Patches shouldn't introduce
-checkpatch warnings).  It should be:
+In what sense could the comparison possibly be unsafe?
 
-	irq = platform_get_irq(pdev, 0);
-	if (irq < 0)
-		return irq;
+Just use time and run spatch on whatever machine you want.  It's not that
+complicated.
 
-regards,
-dan carpenter
+> > On my laptop, I see absolutely no difference,
+> > for the patch mode and for the context mode.
+>
+> Does such information trigger a desire to clarify involved aspects in more detail?
+
+Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+
+julia
