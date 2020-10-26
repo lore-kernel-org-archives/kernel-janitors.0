@@ -1,50 +1,75 @@
-From: Saeed Mahameed <saeed@kernel.org>
-Date: Tue, 06 Oct 2020 23:20:57 +0000
-Subject: Re: [PATCH][next] net/mlx5: Fix uininitialized pointer read on pointer attr
-Message-Id: <bc6d5d6ad5b3254d8e14997341995036f56e374d.camel@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Oct 2020 08:00:59 +0000
+Subject: [PATCH 1/2 net] devlink: Fix some error codes
+Message-Id: <20201026080059.GA1628785@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201006181243.546661-1-colin.king@canonical.com>
-In-Reply-To: <20201006181243.546661-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@nvidia.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2020-10-06 at 19:12 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the error exit path err_free kfree's attr. In the case
-> where
-> flow and parse_attr failed to be allocated this return path will free
-> the uninitialized pointer attr, which is not correct.  In the other
-> case where attr fails to allocate attr does not need to be freed. So
-> in both error exits via err_free attr should not be freed, so remove
-> it.
-> 
-> Addresses-Coverity: ("Uninitialized pointer read")
-> Fixes: ff7ea04ad579 ("net/mlx5e: Fix potential null pointer
-> dereference")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> index a0c356987e1a..e3a968e9e2a0 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> @@ -4569,7 +4569,6 @@ mlx5e_alloc_flow(struct mlx5e_priv *priv, int
-> attr_size,
->  err_free:
->  	kfree(flow);
->  	kvfree(parse_attr);
-> -	kfree(attr);
->  	return err;
->  }
->  
+These paths don't set the error codes.  It's especially important in
+devlink_nl_region_notify_build() where it leads to a NULL dereference in
+the caller.
 
-Applied to net-next-mlx5,
+Fixes: 544e7c33ec2f ("net: devlink: Add support for port regions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ net/core/devlink.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-Thanks.
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index a578634052a3..925da7c0fcf3 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -4213,10 +4213,12 @@ static int devlink_nl_region_fill(struct sk_buff *msg, struct devlink *devlink,
+ 	if (err)
+ 		goto nla_put_failure;
+ 
+-	if (region->port)
+-		if (nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX,
+-				region->port->index))
++	if (region->port) {
++		err = nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX,
++				  region->port->index);
++		if (err)
+ 			goto nla_put_failure;
++	}
+ 
+ 	err = nla_put_string(msg, DEVLINK_ATTR_REGION_NAME, region->ops->name);
+ 	if (err)
+@@ -4265,10 +4267,12 @@ devlink_nl_region_notify_build(struct devlink_region *region,
+ 	if (err)
+ 		goto out_cancel_msg;
+ 
+-	if (region->port)
+-		if (nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX,
+-				region->port->index))
++	if (region->port) {
++		err = nla_put_u32(msg, DEVLINK_ATTR_PORT_INDEX,
++				  region->port->index);
++		if (err)
+ 			goto out_cancel_msg;
++	}
+ 
+ 	err = nla_put_string(msg, DEVLINK_ATTR_REGION_NAME,
+ 			     region->ops->name);
+@@ -4962,10 +4966,12 @@ static int devlink_nl_cmd_region_read_dumpit(struct sk_buff *skb,
+ 	if (err)
+ 		goto nla_put_failure;
+ 
+-	if (region->port)
+-		if (nla_put_u32(skb, DEVLINK_ATTR_PORT_INDEX,
+-				region->port->index))
++	if (region->port) {
++		err = nla_put_u32(skb, DEVLINK_ATTR_PORT_INDEX,
++				  region->port->index);
++		if (err)
+ 			goto nla_put_failure;
++	}
+ 
+ 	err = nla_put_string(skb, DEVLINK_ATTR_REGION_NAME, region_name);
+ 	if (err)
+-- 
+2.28.0
