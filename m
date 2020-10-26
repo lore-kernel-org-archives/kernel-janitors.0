@@ -1,38 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Oct 2020 11:48:08 +0000
-Subject: [PATCH] drm/virtio: Fix a double free in virtio_gpu_cmd_map()
-Message-Id: <20201030114808.GD3251003@mwanda>
+Date: Mon, 26 Oct 2020 08:01:27 +0000
+Subject: [PATCH 2/2 net] devlink: Unlock on error in dumpit()
+Message-Id: <20201026080127.GB1628785@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20201026080059.GA1628785@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gurchetan Singh <gurchetansingh@chromium.org>
+To: Jiri Pirko <jiri@nvidia.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is freed both here and in the caller (virtio_gpu_vram_map()) so
-it's a double free.  The correct place is only in the caller.
+This needs to unlock before returning.
 
-Fixes: 16845c5d5409 ("drm/virtio: implement blob resources: implement vram object")
+Fixes: 544e7c33ec2f ("net: devlink: Add support for port regions")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/core/devlink.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 72586cd8cc4c..3f200306c9d7 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -1212,10 +1212,8 @@ int virtio_gpu_cmd_map(struct virtio_gpu_device *vgdev,
- 	struct virtio_gpu_resp_map_info *resp_buf;
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 039f7bd8bf28..8b0e1c318e8d 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -4919,8 +4919,10 @@ static int devlink_nl_cmd_region_read_dumpit(struct sk_buff *skb,
+ 		index = nla_get_u32(info->attrs[DEVLINK_ATTR_PORT_INDEX]);
  
- 	resp_buf = kzalloc(sizeof(*resp_buf), GFP_KERNEL);
--	if (!resp_buf) {
--		virtio_gpu_array_put_free(objs);
-+	if (!resp_buf)
- 		return -ENOMEM;
--	}
+ 		port = devlink_port_get_by_index(devlink, index);
+-		if (!port)
+-			return -ENODEV;
++		if (!port) {
++			err = -ENODEV;
++			goto out_unlock;
++		}
+ 	}
  
- 	cmd_p = virtio_gpu_alloc_cmd_resp
- 		(vgdev, virtio_gpu_cmd_resource_map_cb, &vbuf, sizeof(*cmd_p),
+ 	region_name = nla_data(attrs[DEVLINK_ATTR_REGION_NAME]);
 -- 
 2.28.0
