@@ -1,23 +1,38 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 29 Oct 2020 12:04:42 +0000
-Subject: Re: [PATCH] x86/unwind: remove unneeded initialization
-Message-Id: <20201029120442.GP2628@hirez.programming.kicks-ass.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Oct 2020 09:49:05 +0000
+Subject: [PATCH resend] drm/v3d: Fix double free in v3d_submit_cl_ioctl()
+Message-Id: <20201026094905.GA1634423@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201028122102.24202-1-lukas.bulwahn@gmail.com>
- <a28022479f594650a6d98adac3c4a6f0@bfs.de>
-In-Reply-To: <a28022479f594650a6d98adac3c4a6f0@bfs.de>
+In-Reply-To: <20191024205306.GA14416@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Walter Harms <wharms@bfs.de>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@redhat.com>, "x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "clang-built-linux@googlegroups.com" <clang-built-linux@googlegroups.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-safety@lists.elisa.tech" <linux-safety@lists.elisa.tech>
+To: Eric Anholt <eric@anholt.duckdns.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Thu, Oct 29, 2020 at 11:49:50AM +0000, Walter Harms wrote:
-> this looks like a reimplementation of bsearch()
-> perhaps the maintainer can add a comment why the 
-> kernel implementation is not suitable here ?
+Originally this error path used to leak "bin" but then we accidentally
+applied two separate commits to fix it and ended up with a double free.
 
-If you look carefully it doesn't do an exact match, which is what
-bsearch() does.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Resending a year later because it was confusing at the time who should
+apply this and it fell through the cracks.  For some reason the kbuild
+bot flagged it as a new warning so it showed up on my radar again.
 
-bsearch() also isn't stable in the precense of duplicates.
+ drivers/gpu/drm/v3d/v3d_gem.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index 549dde83408b..37515e47b47e 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 		ret = v3d_job_init(v3d, file_priv, &bin->base,
+ 				   v3d_job_free, args->in_sync_bcl);
+ 		if (ret) {
+-			kfree(bin);
+ 			v3d_job_put(&render->base);
+ 			kfree(bin);
+ 			return ret;
+-- 
+2.20.1
