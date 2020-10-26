@@ -1,28 +1,28 @@
-From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Date: Fri, 23 Oct 2020 13:56:41 +0000
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Date: Mon, 26 Oct 2020 10:50:44 +0000
 Subject: Re: [PATCH 1/2] usb: typec: stusb160x: fix an IS_ERR() vs NULL check in probe
-Message-Id: <60829133-4154-4109-5d07-a5adf923b135@gmail.com>
+Message-Id: <20201026105044.GA1442058@kuha.fi.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201023112347.GC282278@mwanda>
 In-Reply-To: <20201023112347.GC282278@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amelie Delaunay <amelie.delaunay@st.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello!
-
-On 10/23/20 2:23 PM, Dan Carpenter wrote:
-
+On Fri, Oct 23, 2020 at 02:23:47PM +0300, Dan Carpenter wrote:
 > The typec_register_port() function doesn't return error pointers, it
-
-   s/error/NULL/, maybe? :-)
-
 > returns error pointers.
 > 
 > Fixes: da0cb6310094 ("usb: typec: add support for STUSB160x Type-C controller family")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+You do need to fix the commit message like Sergei pointed out.
+Otherwise, FWIW:
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
 >  drivers/usb/typec/stusb160x.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -42,5 +42,10 @@ On 10/23/20 2:23 PM, Dan Carpenter wrote:
 >  		goto all_reg_disable;
 >  	}
 >  
+> -- 
+> 2.28.0
 
-MBR, Sergei
+thanks,
+
+-- 
+heikki
