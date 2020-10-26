@@ -1,38 +1,61 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 01 Oct 2020 08:19:58 +0000
-Subject: Re: [PATCH -next for tip:x86/pti] x86/tlb: drop unneeded local vars in enable_l1d_flush_for_task()
-Message-Id: <20201001081958.GO2628@hirez.programming.kicks-ass.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Oct 2020 09:46:48 +0000
+Subject: Re: [PATCH] drm/v3d: Fix double free in v3d_submit_cl_ioctl()
+Message-Id: <20201026094648.GH18329@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200928124457.27289-1-lukas.bulwahn@gmail.com>
- <20200929071211.GJ2628@hirez.programming.kicks-ass.net>
- <20200929083709.GC2651@hirez.programming.kicks-ass.net>
- <87eemji887.fsf@nanos.tec.linutronix.de>
- <20200930170316.GB2628@hirez.programming.kicks-ass.net>
- <87blhni1pg.fsf@nanos.tec.linutronix.de>
- <20200930183552.GG2628@hirez.programming.kicks-ass.net>
- <87k0wbgd2s.fsf@nanos.tec.linutronix.de>
- <19f57cbe-ba33-17d5-440c-2765e670782f@amazon.com>
-In-Reply-To: <19f57cbe-ba33-17d5-440c-2765e670782f@amazon.com>
+References: <20191024205306.GA14416@mwanda>
+ <20191025090956.0bd40095@canb.auug.org.au>
+In-Reply-To: <20191025090956.0bd40095@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Singh, Balbir" <sblbir@amazon.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "clang-built-linux@googlegroups.com" <clang-built-linux@googlegroups.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-safety@lists.elisa.tech" <linux-safety@lists.elisa.tech>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Eric Anholt <eric@anholt.duckdns.org>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+On Fri, Oct 25, 2019 at 09:09:56AM +1100, Stephen Rothwell wrote:
+> Hi Dan,
+> 
+> On Thu, 24 Oct 2019 23:53:06 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > Originally this error path used to leak "bin" but then we accidentally
+> > applied two separate commits to fix it and ended up with a double free.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > Hi Stephen,
+> > 
+> > I think this one is actually just a linux-next issue and the Fixes tag
+> > would point to commit f8593384f83f ("Merge remote-tracking branch
+> > 'drm/drm-next'").
+> > 
+> > The original commits are 0d352a3a8a1f ("drm/v3d: don't leak bin job if
+> > v3d_job_init fails.") and commit 29cd13cfd762 ("drm/v3d: Fix memory leak
+> > in v3d_submit_cl_ioctl").
+> > 
+> > I'm not totally sure how you guys address this normally but presumably
+> > you are experts at dealing with merge issues.  :)
+> > 
+> >  drivers/gpu/drm/v3d/v3d_gem.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> > index 549dde83408b..37515e47b47e 100644
+> > --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> > +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> > @@ -568,7 +568,6 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+> >  		ret = v3d_job_init(v3d, file_priv, &bin->base,
+> >  				   v3d_job_free, args->in_sync_bcl);
+> >  		if (ret) {
+> > -			kfree(bin);
+> >  			v3d_job_put(&render->base);
+> >  			kfree(bin);
+> >  			return ret;
+> 
+> I will just apply this as part of the drm tree merge until Dave merges
+> the drm-misc-fixes tree and fixes this up.
+> 
 
-Your MUA is having trouble wrapping text at 78 chars.
+It turns out that Dave never fixed it.  Let me resend.
 
-On Thu, Oct 01, 2020 at 09:49:30AM +1000, Singh, Balbir wrote:
-
-> So this is the change I am playing with, I don't like the idea of
-> killing the task, but it's better than silently not flushing, I guess
-> system administrators will learn with time not to correctly the
-> affinity of tasks flushing L1D. For the affinity bits, not being able
-> to change the affinity is better, but not being able to provide
-> feedback on as to why is a bit weird as well, but I wonder if there
-> are other cases where we might want to lock the affinity of a task for
-> it's lifetime.
-
-You can't really do that, hot-unplug can (and will) destroy any affinity
-setting, and if the task/admin wants to recover it needs to be able to
-re-set affinity after that.
+regards,
+dan carpenter
