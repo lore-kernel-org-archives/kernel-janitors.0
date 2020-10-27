@@ -1,54 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Oct 2020 07:04:51 +0000
-Subject: [PATCH] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
-Message-Id: <20201022070451.GA2817669@mwanda>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Tue, 27 Oct 2020 11:32:32 +0000
+Subject: Re: [PATCH] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
+Message-Id: <160379780345.96488.3985201259905259323.b4-ty@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201022070451.GA2817669@mwanda>
+In-Reply-To: <20201022070451.GA2817669@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, kernel-janitors@vger.kernel.org, linux-rtc@vger.kernel.org
 
-These functions should return zero on success.  Non-zero returns are
-treated as error.  On some paths, this doesn't matter but in
-nvmem_cell_read() a non-zero return would be passed to ERR_PTR() and
-lead to an Oops.
+On Thu, 22 Oct 2020 10:04:51 +0300, Dan Carpenter wrote:
+> These functions should return zero on success.  Non-zero returns are
+> treated as error.  On some paths, this doesn't matter but in
+> nvmem_cell_read() a non-zero return would be passed to ERR_PTR() and
+> lead to an Oops.
 
-Fixes: d6c3029f32f7 ("rtc: pcf2127: add support for accessing internal static RAM")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/rtc/rtc-pcf2127.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-index 07a5630ec841..4d9711d51f8f 100644
---- a/drivers/rtc/rtc-pcf2127.c
-+++ b/drivers/rtc/rtc-pcf2127.c
-@@ -243,10 +243,8 @@ static int pcf2127_nvmem_read(void *priv, unsigned int offset,
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_bulk_read(pcf2127->regmap, PCF2127_REG_RAM_RD_CMD,
--			       val, bytes);
--
--	return ret ?: bytes;
-+	return regmap_bulk_read(pcf2127->regmap, PCF2127_REG_RAM_RD_CMD,
-+				val, bytes);
- }
- 
- static int pcf2127_nvmem_write(void *priv, unsigned int offset,
-@@ -261,10 +259,8 @@ static int pcf2127_nvmem_write(void *priv, unsigned int offset,
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_bulk_write(pcf2127->regmap, PCF2127_REG_RAM_WRT_CMD,
--				val, bytes);
--
--	return ret ?: bytes;
-+	return regmap_bulk_write(pcf2127->regmap, PCF2127_REG_RAM_WRT_CMD,
-+				 val, bytes);
- }
- 
- /* watchdog driver */
+[1/1] rtc: pcf2127: fix pcf2127_nvmem_read/write() returns
+      commit: ba1c30bf3f2536f248d262c6f257b5a787305991
+
+Best regards,
 -- 
-2.28.0
+Alexandre Belloni <alexandre.belloni@bootlin.com>
