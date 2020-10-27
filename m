@@ -1,63 +1,53 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 16 Oct 2020 09:49:03 +0000
-Subject: Re: [PATCH] vfio/fsl-mc: fix the return of the uninitialized variable ret
-Message-Id: <556df27a-d4aa-ccbf-7559-52b7c0e05c0f@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 27 Oct 2020 18:34:30 +0000
+Subject: [PATCH] MIPS: Kconfig: fix a few trivial spelling mistakes
+Message-Id: <20201027183430.56772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201015122226.485911-1-colin.king@canonical.com>
- <20201015125211.3ff46dc1@w520.home>
- <65c7ffdb-fa92-102d-d7d1-29bb7d39fcb7@oss.nxp.com>
-In-Reply-To: <65c7ffdb-fa92-102d-d7d1-29bb7d39fcb7@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Diana Craciun OSS <diana.craciun@oss.nxp.com>, Alex Williamson <alex.williamson@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>, Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Jiri Kosina <trivial@kernel.org>, linux-mips@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16/10/2020 10:26, Diana Craciun OSS wrote:
-> On 10/15/2020 9:52 PM, Alex Williamson wrote:
->> On Thu, 15 Oct 2020 13:22:26 +0100
->> Colin King <colin.king@canonical.com> wrote:
->>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently the success path in function vfio_fsl_mc_reflck_attach is
->>> returning an uninitialized value in variable ret. Fix this by setting
->>> this to zero to indicate success.
->>>
->>> Addresses-Coverity: ("Uninitialized scalar variable")
->>> Fixes: f2ba7e8c947b ("vfio/fsl-mc: Added lock support in preparation
->>> for interrupt handling")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>   drivers/vfio/fsl-mc/vfio_fsl_mc.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
->>> b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
->>> index 80fc7f4ed343..42a5decb78d1 100644
->>> --- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
->>> +++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
->>> @@ -84,6 +84,7 @@ static int vfio_fsl_mc_reflck_attach(struct
->>> vfio_fsl_mc_device *vdev)
->>>           vfio_fsl_mc_reflck_get(cont_vdev->reflck);
->>>           vdev->reflck = cont_vdev->reflck;
->>>           vfio_device_put(device);
->>> +        ret = 0;
->>>       }
->>>     unlock:
->>
->> Looks correct to me, unless Diana would rather set the initial value to
->> zero instead.  Thanks,
->>
->> Alex
->>
-> 
-> 
-> I prefer to initialize the variable to 0 when it's defined. I'll send a
-> patch for it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yep, works for me.
+There are a few spelling mistakes in the Kconfig, fix these.
 
-> 
-> Thanks,
-> Diana
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 2000bb2b0220..ddaff19a9580 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2645,7 +2645,7 @@ config WAR_R4600_V1_INDEX_ICACHEOP
+ #  18. The CACHE instructions Hit_Writeback_Invalidate_D, Hit_Writeback_D,
+ #      Hit_Invalidate_D and Create_Dirty_Excl_D should only be
+ #      executed if there is no other dcache activity. If the dcache is
+-#      accessed for another instruction immeidately preceding when these
++#      accessed for another instruction immediately preceding when these
+ #      cache instructions are executing, it is possible that the dcache
+ #      tag match outputs used by these cache instructions will be
+ #      incorrect. These cache instructions should be preceded by at least
+@@ -3086,7 +3086,7 @@ config MIPS_O32_FP64_SUPPORT
+ 
+ 	  Although binutils currently supports use of this flag the details
+ 	  concerning its effect upon the O32 ABI in userland are still being
+-	  worked on. In order to avoid userland becoming dependant upon current
++	  worked on. In order to avoid userland becoming dependent upon current
+ 	  behaviour before the details have been finalised, this option should
+ 	  be considered experimental and only enabled by those working upon
+ 	  said details.
+@@ -3124,7 +3124,7 @@ choice
+ 
+ 		    objcopy --update-section .appended_dtb=<filename>.dtb vmlinux
+ 
+-		  This is meant as a backward compatiblity convenience for those
++		  This is meant as a backward compatibility convenience for those
+ 		  systems with a bootloader that can't be upgraded to accommodate
+ 		  the documented boot protocol using a device tree.
+ 
+-- 
+2.27.0
