@@ -1,48 +1,64 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Oct 2020 17:52:09 +0000
-Subject: Re: [PATCH] staging: wfx: make a const array static, makes object smaller
-Message-Id: <18f2f9d4-5199-d6d0-f4f5-c17d609a44a7@wanadoo.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 28 Oct 2020 12:21:02 +0000
+Subject: [PATCH] x86/unwind: remove unneeded initialization
+Message-Id: <20201028122102.24202-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201016223303.687278-1-colin.king@canonical.com>
- <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
-In-Reply-To: <09cd7e609324d460afdf14829baf3c2f1a9cb9cd.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, Colin King <colin.king@canonical.com>, =?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Le 17/10/2020 à 02:11, Joe Perches a écrit :
-> On Fri, 2020-10-16 at 23:33 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Don't populate const array filter_ies on the stack but instead
->> make it static. Makes the object code smaller by 261 bytes.
->>
->> Before:
->>     text	   data	    bss	    dec	    hex	filename
->>    21674	   3166	    448	  25288	   62c8	drivers/staging/wfx/sta.o
->>
->> After:
->>     text	   data	    bss	    dec	    hex	filename
->>    21349	   3230	    448	  25027	   61c3	drivers/staging/wfx/sta.o
-> 
-> Thanks.
-> 
-> It's odd to me it's so large a change as it's only
-> 24 bytes of initialization. (3 entries, each 8 bytes)
-> 
+make clang-analyzer on x86_64 defconfig caught my attention with:
 
-The function looks small.
-Maybe it is inlined by gcc in each of the 3 callers?
+  arch/x86/kernel/unwind_orc.c:38:7: warning: Value stored to 'mid' during
+  its initialization is never read [clang-analyzer-deadcode.DeadStores]
+          int *mid = first, *found = first;
+               ^
 
-CJ
+Commit ee9f8fce9964 ("x86/unwind: Add the ORC unwinder") introduced
+__orc_find() with this unneeded dead-store initialization.
 
-> This line in the same function:
-> 
-> 		hif_set_beacon_filter_table(wvif, 3, filter_ies);
-> 
-> might as well use ARRAY_SIZE(filter_ies) instead of 3
-> 
-> 
-> 
+Put the variable in local scope and initialize only once the value is
+needed to make clang-analyzer happy.
+
+As compilers will detect this unneeded assignment and optimize this
+anyway, the resulting object code is effectively identical before and
+after this change.
+
+No functional change. Effectively, no change to object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201028
+
+Josh, please ack.
+Ingo, Borislav, please pick this minor non-urgent clean-up patch.
+
+ arch/x86/kernel/unwind_orc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 6a339ce328e0..5c64eed08257 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -35,7 +35,7 @@ static struct orc_entry *__orc_find(int *ip_table, struct orc_entry *u_table,
+ {
+ 	int *first = ip_table;
+ 	int *last = ip_table + num_entries - 1;
+-	int *mid = first, *found = first;
++	int *found = first;
+ 
+ 	if (!num_entries)
+ 		return NULL;
+@@ -47,7 +47,7 @@ static struct orc_entry *__orc_find(int *ip_table, struct orc_entry *u_table,
+ 	 * ignored when they conflict with a real entry.
+ 	 */
+ 	while (first <= last) {
+-		mid = first + ((last - first) / 2);
++		int *mid = first + ((last - first) / 2);
+ 
+ 		if (orc_ip(mid) <= ip) {
+ 			found = mid;
+-- 
+2.17.1
