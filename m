@@ -1,46 +1,61 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sun, 11 Oct 2020 10:34:55 +0000
-Subject: [PATCH 2/5] mac80211: use semicolons rather than commas to separate statements
-Message-Id: <1602412498-32025-3-git-send-email-Julia.Lawall@inria.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 28 Oct 2020 13:05:41 +0000
+Subject: [PATCH] kernel/hung_task.c: make type annotations consistent
+Message-Id: <20201028130541.20320-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1602412498-32025-1-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, Joe Perches <joe@perches.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Andrey Ignatov <rdna@fb.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Replace commas with semicolons.  Commas introduce unnecessary
-variability in the code structure and are hard to see.  What is done
-is essentially described by the following Coccinelle semantic patch
-(http://coccinelle.lip6.fr/):
+Commit 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+removed various __user annotations from function signatures as part of its
+refactoring.
 
-// <smpl>
-@@ expression e1,e2; @@
-e1
--,
-+;
-e2
-... when any
-// </smpl>
+It also removed the __user annotation for proc_dohung_task_timeout_secs()
+at its declaration in ./sched/sysctl.h, but not at its definition in
+./kernel/hung_task.c.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Hence, sparse complains:
 
+  kernel/hung_task.c:271:5: error: \
+  symbol 'proc_dohung_task_timeout_secs' redeclared with different type \
+  (incompatible argument 3 (different address spaces))
+
+Adjust the annotation at the definition fitting to that refactoring to make
+sparse happy again, which also resolves this warning from sparse:
+
+  kernel/hung_task.c:277:52: warning: incorrect type in argument 3 \
+    (different address spaces)
+  kernel/hung_task.c:277:52:    expected void *
+  kernel/hung_task.c:277:52:    got void [noderef] __user *buffer
+
+No functional change. No change in object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- net/mac80211/debugfs_sta.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+applies cleanly on current master and next-20201028
 
-diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
-index 829dcad69c2c..6a51b8b58f9e 100644
---- a/net/mac80211/debugfs_sta.c
-+++ b/net/mac80211/debugfs_sta.c
-@@ -274,7 +274,7 @@ static ssize_t sta_aql_read(struct file *file, char __user *userbuf,
- 		"Q limit[low/high]: VO: %u/%u VI: %u/%u BE: %u/%u BK: %u/%u\n",
- 		q_depth[0], q_depth[1], q_depth[2], q_depth[3],
- 		q_limit_l[0], q_limit_h[0], q_limit_l[1], q_limit_h[1],
--		q_limit_l[2], q_limit_h[2], q_limit_l[3], q_limit_h[3]),
-+		q_limit_l[2], q_limit_h[2], q_limit_l[3], q_limit_h[3]);
+Christoph, can I get quick ack from you on a fix to your refactoring?
+Andrew, please pick this minor non-urgent clean-up patch.
+
+ kernel/hung_task.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index a672db830a94..bb2e3e15c84c 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -269,8 +269,7 @@ static long hung_timeout_jiffies(unsigned long last_checked,
+  * Process updating of timeout sysctl
+  */
+ int proc_dohung_task_timeout_secs(struct ctl_table *table, int write,
+-				  void __user *buffer,
+-				  size_t *lenp, loff_t *ppos)
++				  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret;
  
- 	rv = simple_read_from_buffer(userbuf, count, ppos, buf, p - buf);
- 	kfree(buf);
+-- 
+2.17.1
