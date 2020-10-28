@@ -1,43 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 02 Oct 2020 20:55:15 +0000
-Subject: Re: [PATCH] ASoC: wm8523: Fix a typo in a comment
-Message-Id: <160167211500.21762.1306114025374461159.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 28 Oct 2020 12:43:16 +0000
+Subject: [PATCH][next] drm/amd/pm: fix out-of-bound read on pptable->SkuReserved
+Message-Id: <20201028124316.109886-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201002165908.637809-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201002165908.637809-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, tiwai@suse.com, perex@perex.cz
-Cc: patches@opensource.cirrus.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2 Oct 2020 18:59:08 +0200, Christophe JAILLET wrote:
-> It is likely that this header file is about the WM8523.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+A recent change added two uint16_t elements to PPTable_t and reduced the
+uint32_t array down to 8 elements. This results in the dev_info printing
+of pptable->SkuReserved[8] accessing a value that is out-of-range on
+array SkuReserved.  The array has been shrunk by 1 element, so remove
+this extraneous dev_info message.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: 1dc3c5a95b08 ("drm/amd/pm: update driver if file for sienna cichlid")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: wm8523: Fix a typo in a comment
-      commit: 98bd2b506a309faca2f5a8388dadfc983123e14a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
+index fa3842f460fc..0600befc6e4c 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
+@@ -2279,7 +2279,6 @@ static void sienna_cichlid_dump_pptable(struct smu_context *smu)
+ 	dev_info(smu->adev->dev, "SkuReserved[5] = 0x%x\n", pptable->SkuReserved[5]);
+ 	dev_info(smu->adev->dev, "SkuReserved[6] = 0x%x\n", pptable->SkuReserved[6]);
+ 	dev_info(smu->adev->dev, "SkuReserved[7] = 0x%x\n", pptable->SkuReserved[7]);
+-	dev_info(smu->adev->dev, "SkuReserved[8] = 0x%x\n", pptable->SkuReserved[8]);
+ 
+ 	dev_info(smu->adev->dev, "GamingClk[0] = 0x%x\n", pptable->GamingClk[0]);
+ 	dev_info(smu->adev->dev, "GamingClk[1] = 0x%x\n", pptable->GamingClk[1]);
+-- 
+2.27.0
