@@ -1,21 +1,89 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Date: Fri, 30 Oct 2020 03:27:09 +0000
-Subject: RE: [PATCH] clk: imx: remove redundant assignment to pointer np
-Message-Id: <VI1PR04MB497592A661D76BFE9F04606180150@VI1PR04MB4975.eurprd04.prod.outlook.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 28 Oct 2020 11:35:33 +0000
+Subject: [PATCH] net: cls_api: remove unneeded local variable in tc_dump_chain()
+Message-Id: <20201028113533.26160-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029224007.390762-1-colin.king@canonical.com>
-In-Reply-To: <20201029224007.390762-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, Tom Rix <trix@redhat.com>, clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-PiBGcm9tOiBDb2xpbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IEZy
-aWRheSwgT2N0b2JlciAzMCwgMjAyMCA2OjQwIEFNDQo+IA0KPiBQb2ludGVyIG5wIGlzIGJlaW5n
-IGluaXRpYWxpemVkIHdpdGggYSB2YWx1ZSB0aGF0IGlzIG5ldmVyIHJlYWQgYW5kIGl0IGlzIGJl
-aW5nDQo+IHVwZGF0ZWQgd2l0aCBhIHZhbHVlIGxhdGVyIG9uLiBUaGUgaW5pdGlhbGl6YXRpb24g
-aXMgcmVkdW5kYW50IGFuZCBjYW4gYmUNCj4gcmVtb3ZlZC4NCj4gDQo+IEFkZHJlc3Nlcy1Db3Zl
-cml0eTogKCJVbnVzZWQgdmFsdWUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8
-Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpSZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxh
-aXNoZW5nLmRvbmdAbnhwLmNvbT4NCg0KUmVnYXJkcw0KQWlzaGVuZw0K
+make clang-analyzer on x86_64 defconfig caught my attention with:
+
+net/sched/cls_api.c:2964:3: warning: Value stored to 'parent' is never read
+  [clang-analyzer-deadcode.DeadStores]
+                parent = 0;
+                ^
+
+net/sched/cls_api.c:2977:4: warning: Value stored to 'parent' is never read
+  [clang-analyzer-deadcode.DeadStores]
+                        parent = q->handle;
+                        ^
+
+Commit 32a4f5ecd738 ("net: sched: introduce chain object to uapi")
+introduced tc_dump_chain() and this initial implementation already
+contained these unneeded dead stores.
+
+Simplify the code to make clang-analyzer happy.
+
+As compilers will detect these unneeded assignments and optimize this
+anyway, the resulting binary is identical before and after this change.
+
+No functional change. No change in object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201028
+
+Jamal, Cong, Jiri, please ack.
+David, Jakub, please pick this minor non-urgent clean-up patch.
+
+ net/sched/cls_api.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/net/sched/cls_api.c b/net/sched/cls_api.c
+index faeabff283a2..8ce830ca5f92 100644
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -2940,7 +2940,6 @@ static int tc_dump_chain(struct sk_buff *skb, struct netlink_callback *cb)
+ 	struct tcf_chain *chain;
+ 	long index_start;
+ 	long index;
+-	u32 parent;
+ 	int err;
+ 
+ 	if (nlmsg_len(cb->nlh) < sizeof(*tcm))
+@@ -2955,13 +2954,6 @@ static int tc_dump_chain(struct sk_buff *skb, struct netlink_callback *cb)
+ 		block = tcf_block_refcnt_get(net, tcm->tcm_block_index);
+ 		if (!block)
+ 			goto out;
+-		/* If we work with block index, q is NULL and parent value
+-		 * will never be used in the following code. The check
+-		 * in tcf_fill_node prevents it. However, compiler does not
+-		 * see that far, so set parent to zero to silence the warning
+-		 * about parent being uninitialized.
+-		 */
+-		parent = 0;
+ 	} else {
+ 		const struct Qdisc_class_ops *cops;
+ 		struct net_device *dev;
+@@ -2971,13 +2963,11 @@ static int tc_dump_chain(struct sk_buff *skb, struct netlink_callback *cb)
+ 		if (!dev)
+ 			return skb->len;
+ 
+-		parent = tcm->tcm_parent;
+-		if (!parent) {
++		if (!tcm->tcm_parent)
+ 			q = dev->qdisc;
+-			parent = q->handle;
+-		} else {
++		else
+ 			q = qdisc_lookup(dev, TC_H_MAJ(tcm->tcm_parent));
+-		}
++
+ 		if (!q)
+ 			goto out;
+ 		cops = q->ops->cl_ops;
+-- 
+2.17.1
