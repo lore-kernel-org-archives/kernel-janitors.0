@@ -1,48 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Oct 2020 11:34:50 +0000
-Subject: [PATCH 1/2] vfio/fsl-mc: return -EFAULT if copy_to_user() fails
-Message-Id: <20201023113450.GH282278@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Oct 2020 22:40:07 +0000
+Subject: [PATCH] clk: imx: remove redundant assignment to pointer np
+Message-Id: <20201029224007.390762-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Diana Craciun <diana.craciun@oss.nxp.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Cornelia Huck <cohuck@redhat.com>, Bharat Bhushan <Bharat.Bhushan@nxp.com>, Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The copy_to_user() function returns the number of bytes remaining to be
-copied, but this code should return -EFAULT.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: df747bcd5b21 ("vfio/fsl-mc: Implement VFIO_DEVICE_GET_REGION_INFO ioctl call")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Pointer np is being initialized with a value that is never read
+and it is being updated with a value later on. The initialization
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/vfio/fsl-mc/vfio_fsl_mc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-index 0113a980f974..21f22e3da11f 100644
---- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-+++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-@@ -248,7 +248,9 @@ static long vfio_fsl_mc_ioctl(void *device_data, unsigned int cmd,
- 		info.size = vdev->regions[info.index].size;
- 		info.flags = vdev->regions[info.index].flags;
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 12ce4770f702..3cb2bc46eae0 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -425,7 +425,7 @@ static struct clk **uart_clks[ARRAY_SIZE(uart_clk_ids) + 1];
+ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
++	struct device_node *np;
+ 	void __iomem *anatop_base, *ccm_base;
+ 	int i;
  
--		return copy_to_user((void __user *)arg, &info, minsz);
-+		if (copy_to_user((void __user *)arg, &info, minsz))
-+			return -EFAULT;
-+		return 0;
- 	}
- 	case VFIO_DEVICE_GET_IRQ_INFO:
- 	{
-@@ -267,7 +269,9 @@ static long vfio_fsl_mc_ioctl(void *device_data, unsigned int cmd,
- 		info.flags = VFIO_IRQ_INFO_EVENTFD;
- 		info.count = 1;
- 
--		return copy_to_user((void __user *)arg, &info, minsz);
-+		if (copy_to_user((void __user *)arg, &info, minsz))
-+			return -EFAULT;
-+		return 0;
- 	}
- 	case VFIO_DEVICE_SET_IRQS:
- 	{
 -- 
-2.28.0
+2.27.0
