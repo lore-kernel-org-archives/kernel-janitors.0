@@ -1,38 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 24 Oct 2020 13:47:52 +0000
-Subject: Re: [PATCH] drm/i915: Fix a crash in shmem_pin_map() error handling
-Message-Id: <20201024134752.GF18329@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Oct 2020 22:24:07 +0000
+Subject: [PATCH][next] nl80211/cfg80211: fix potential infinite loop
+Message-Id: <20201029222407.390218-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023113401.GG282278@mwanda>
- <20201023121941.GB18499@lst.de>
-In-Reply-To: <20201023121941.GB18499@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: dri-devel@lists.freedesktop.org, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Tova Mussai <tova.mussai@intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 02:19:41PM +0200, Christoph Hellwig wrote:
-> > diff --git a/drivers/gpu/drm/i915/gt/shmem_utils.c b/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > index f011ea42487e..7eb542018219 100644
-> > --- a/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > +++ b/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > @@ -52,8 +52,9 @@ struct file *shmem_create_from_object(struct drm_i915_gem_object *obj)
-> >  void *shmem_pin_map(struct file *file)
-> >  {
-> >  	struct page **pages;
-> > -	size_t n_pages, i;
-> > +	size_t n_pages;
-> >  	void *vaddr;
-> > +	int i;
-> >  
-> >  	n_pages = file->f_mapping->host->i_size >> PAGE_SHIFT;
-> >  	pages = kvmalloc_array(n_pages, sizeof(*pages), GFP_KERNEL);
-> 
-> This assumes we never have more than INT_MAX worth of pages before
-> a failure. 
+From: Colin Ian King <colin.king@canonical.com>
 
-Doh.  Yeah.  My bad.
+The for-loop iterates with a u8 loop counter and compares this
+with the loop upper limit of request->n_ssids which is an int type.
+There is a potential infinite loop if n_ssids is larger than the
+u8 loop counter, so fix this by making the loop counter an int.
 
-regards,
-dan carpenter
+Addresses-Coverity: ("Infinite loop")
+Fixes: c8cb5b854b40 ("nl80211/cfg80211: support 6 GHz scanning")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/wireless/scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index 8d0e49c46db3..3409f37d838b 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -694,7 +694,7 @@ static  void cfg80211_scan_req_add_chan(struct cfg80211_scan_request *request,
+ static bool cfg80211_find_ssid_match(struct cfg80211_colocated_ap *ap,
+ 				     struct cfg80211_scan_request *request)
+ {
+-	u8 i;
++	int i;
+ 	u32 s_ssid;
+ 
+ 	for (i = 0; i < request->n_ssids; i++) {
+-- 
+2.27.0
