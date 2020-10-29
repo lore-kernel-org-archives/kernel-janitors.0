@@ -1,49 +1,48 @@
-From: Julia Lawall <julia.lawall@inria.fr>
-Date: Tue, 27 Oct 2020 12:03:35 +0000
-Subject: =?UTF-8?Q?Re=3A_=5BCocci=5D_Coccinelle=3A_Checking_the_relevanc?= =?UTF-8?Q?e_of_parentheses_in_=E2=
-Message-Id: <alpine.DEB.2.22.394.2010271303190.2847@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-410386229-1603800215=:2847"
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 29 Oct 2020 11:44:25 +0000
+Subject: [PATCH] MAINTAINERS: rectify DELL WMI SYSMAN DRIVERS section
+Message-Id: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <78f8b08754dde286adf7e11e1eeb3bb8ad500d8b.camel@web.de>
- <acaed49b9195d47e252a0b67551f87e96324d004.camel@web.de>
- <45310257-201a-40ea-348f-b8e909c3775c@web.de>
- <alpine.DEB.2.22.394.2010271155330.2847@hadrien>
- <bfb3e786-a64f-ecaf-eb37-8bd6b53cf38a@web.de>
-In-Reply-To: <bfb3e786-a64f-ecaf-eb37-8bd6b53cf38a@web.de>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Michal Marek <michal.lkml@markovi.net>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Divya Bharathi <divya.bharathi@dell.com>, Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org
+Cc: Mario Limonciello <mario.limonciello@dell.com>, Prasanth KSR <prasanth.ksr@dell.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit e8a60aa7404b ("platform/x86: Introduce support for Systems
+Management Driver over WMI for Dell Systems") added a new section
+DELL WMI SYSMAN DRIVERS in MAINTAINERS, but slipped in a typo.
 
---8323329-410386229-1603800215=:2847
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
+  warning: no file matches    F:    drivers/platform/x86/dell-wmi-syman/*
 
+Point the file entry to the right location and add an entry for its
+Documentation while at it.
 
-On Tue, 27 Oct 2020, Markus Elfring wrote:
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Divya, please ack.
 
-> >> … git grep -l -w \( -e for_each_node_by_type … -e for_each_node_with_property \) -- '*.c'
-> >>
-> >>
-> >> How do you think about to omit these parentheses here?
-> >
-> > Does it make a difference?
->
-> I find that it can be nicer to avoid the passing of unnecessary characters.
->
-> * The compilation of the affected OCaml source files can eventually benefit
->   from another bit of clean-up, can't it?
+Hans, please pick this minor non-urgent patch into your -next x86 platform
+driver tree on top of commit mentioned above.
 
-I have no idea what this means.
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-julia
-
-> * The called software components do also not need to fiddle with such extra data then.
->
-> Regards,
-> Markus
->
---8323329-410386229-1603800215=:2847--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b8a905354ee9..a0a86daa9c51 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4974,7 +4974,8 @@ M:	Mario Limonciello <mario.limonciello@dell.com>
+ M:	Prasanth Ksr <prasanth.ksr@dell.com>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+-F:	drivers/platform/x86/dell-wmi-syman/*
++F:	Documentation/ABI/testing/sysfs-class-firmware-attributes
++F:	drivers/platform/x86/dell-wmi-sysman/
+ 
+ DELL WMI NOTIFICATIONS DRIVER
+ M:	Matthew Garrett <mjg59@srcf.ucam.org>
+-- 
+2.17.1
