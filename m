@@ -1,13 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Oct 2020 14:30:02 +0000
-Subject: [PATCH][next] SFH: fix error return check for -ERESTARTSYS
-Message-Id: <20201030143002.535531-1-colin.king@canonical.com>
+From: Walter Harms <wharms@bfs.de>
+Date: Fri, 30 Oct 2020 14:40:16 +0000
+Subject: AW: [PATCH][next] SFH: fix error return check for -ERESTARTSYS
+Message-Id: <7f7ed9ecdd05422ab83e0c08918063bc@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201030143002.535531-1-colin.king@canonical.com>
+In-Reply-To: <20201030143002.535531-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nehal Shah <nehal-bakulchandra.shah@amd.com>, Sandeep Singh <sandeep.singh@amd.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Nehal Shah <nehal-bakulchandra.shah@amd.com>, Sandeep Singh <sandeep.singh@amd.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+nit picking:
+i would  without "else" to improve readability:
+
+       if (ret == -ERESTARTSYS)
+                 return -ERESTARTSYS;
+
+        if (ret < 0)
+              return -ETIMEDOUT;
+
+          return 0;
+
+jm2c
+ wh
+________________________________________
+Von: Colin King <colin.king@canonical.com>
+Gesendet: Freitag, 30. Oktober 2020 15:30:02
+An: Nehal Shah; Sandeep Singh; Jiri Kosina; Benjamin Tissoires; linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+Betreff: [PATCH][next] SFH: fix error return check for -ERESTARTSYS
 
 From: Colin Ian King <colin.king@canonical.com>
 
@@ -28,18 +50,18 @@ index a471079a3bd0..4f989483aa03 100644
 --- a/drivers/hid/amd-sfh-hid/amd_sfh_hid.c
 +++ b/drivers/hid/amd-sfh-hid/amd_sfh_hid.c
 @@ -88,10 +88,10 @@ static int amdtp_wait_for_response(struct hid_device *hid)
- 		ret = wait_event_interruptible_timeout(hid_data->hid_wait,
- 						       cli_data->request_done[i],
- 						       msecs_to_jiffies(AMD_SFH_RESPONSE_TIMEOUT));
--	if (ret < 0)
--		return -ETIMEDOUT;
--	else if (ret = -ERESTARTSYS)
-+	if (ret = -ERESTARTSYS)
- 		return -ERESTARTSYS;
-+	else if (ret < 0)
-+		return -ETIMEDOUT;
- 	else
- 		return 0;
+                ret = wait_event_interruptible_timeout(hid_data->hid_wait,
+                                                       cli_data->request_done[i],
+                                                       msecs_to_jiffies(AMD_SFH_RESPONSE_TIMEOUT));
+-       if (ret < 0)
+-               return -ETIMEDOUT;
+-       else if (ret == -ERESTARTSYS)
++       if (ret == -ERESTARTSYS)
+                return -ERESTARTSYS;
++       else if (ret < 0)
++               return -ETIMEDOUT;
+        else
+                return 0;
  }
--- 
+--
 2.27.0
