@@ -1,55 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 07 Oct 2020 12:16:28 +0000
-Subject: [PATCH] media: m88rs6000t: avoid potential out-of-bounds reads on arrays
-Message-Id: <20201007121628.20676-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Oct 2020 11:52:30 +0000
+Subject: [PATCH] media: rc: validate that "rc_proto" is reasonable
+Message-Id: <20201030115230.GF3251003@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, "nibble . max" <nibble.max@gmail.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sean Young <sean@mess.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Smatch complains that "rc_proto" comes from the user and it can result
+in shift wrapping in ir_raw_encode_scancode()
 
-There a 3 array for-loops that don't check the upper bounds of the
-index into arrays and this may lead to potential out-of-bounds
-reads.  Fix this by adding array size upper bounds checks to be
-full safe.
+    drivers/media/rc/rc-ir-raw.c:526 ir_raw_encode_scancode()
+    error: undefined (user controlled) shift '1 << protocol'
 
-Addresses-Coverity: ("Out-of-bounds read")
-Fixes: 333829110f1d ("[media] m88rs6000t: add new dvb-s/s2 tuner for integrated chip M88RS6000")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is true, but I reviewed the surrounding code and it appears
+harmless.  Anyway, let's verify that "rc_proto" is valid as a kernel
+hardenning measure.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/tuners/m88rs6000t.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/rc/lirc_dev.c | 3 ++-
+ include/uapi/linux/lirc.h   | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
-index b3505f402476..8647c50b66e5 100644
---- a/drivers/media/tuners/m88rs6000t.c
-+++ b/drivers/media/tuners/m88rs6000t.c
-@@ -525,7 +525,7 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
- 	PGA2_cri = PGA2_GC >> 2;
- 	PGA2_crf = PGA2_GC & 0x03;
+diff --git a/include/uapi/linux/lirc.h b/include/uapi/linux/lirc.h
+index f99d9dcae667..c1eb960adde3 100644
+--- a/include/uapi/linux/lirc.h
++++ b/include/uapi/linux/lirc.h
+@@ -226,6 +226,7 @@ enum rc_proto {
+ 	RC_PROTO_RCMM24		= 25,
+ 	RC_PROTO_RCMM32		= 26,
+ 	RC_PROTO_XBOX_DVD	= 27,
++	RC_PROTO_MAX		= RC_PROTO_XBOX_DVD,
+ };
  
--	for (i = 0; i <= RF_GC; i++)
-+	for (i = 0; i <= RF_GC && i < ARRAY_SIZE(RFGS); i++)
- 		RFG += RFGS[i];
+ #endif
+diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+index 220363b9a868..116daf90c858 100644
+--- a/drivers/media/rc/lirc_dev.c
++++ b/drivers/media/rc/lirc_dev.c
+@@ -263,7 +263,8 @@ static ssize_t lirc_transmit(struct file *file, const char __user *buf,
+ 			goto out_unlock;
+ 		}
  
- 	if (RF_GC = 0)
-@@ -537,12 +537,12 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
- 	if (RF_GC = 3)
- 		RFG += 100;
- 
--	for (i = 0; i <= IF_GC; i++)
-+	for (i = 0; i <= IF_GC && i < ARRAY_SIZE(IFGS); i++)
- 		IFG += IFGS[i];
- 
- 	TIAG = TIA_GC * TIA_GS;
- 
--	for (i = 0; i <= BB_GC; i++)
-+	for (i = 0; i <= BB_GC && i < ARRAY_SIZE(BBGS); i++)
- 		BBG += BBGS[i];
- 
- 	PGA2G = PGA2_cri * PGA2_cri_GS + PGA2_crf * PGA2_crf_GS;
+-		if (scan.flags || scan.keycode || scan.timestamp) {
++		if (scan.flags || scan.keycode || scan.timestamp ||
++		    scan.rc_proto > RC_PROTO_MAX) {
+ 			ret = -EINVAL;
+ 			goto out_unlock;
+ 		}
 -- 
-2.27.0
+2.28.0
