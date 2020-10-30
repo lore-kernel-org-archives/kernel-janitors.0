@@ -1,36 +1,91 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Oct 2020 11:46:20 +0000
-Subject: [PATCH] ext4: silence an uninitialized variable warning
-Message-Id: <20201030114620.GB3251003@mwanda>
+Date: Fri, 30 Oct 2020 10:39:18 +0000
+Subject: [bug report] chelsio/chtls: Fix panic when listen on multiadapter
+Message-Id: <20201030103918.GA3241259@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complains that "i" can be uninitialized if we don't enter the
-loop.  I don't know if it's possible but we may as well silence this
-warning.
+Hello Vinay Kumar Yadav,
 
-Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/ext4/mballoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 9819f22c410b: "chelsio/chtls: Fix panic when listen on
+multiadapter" from Oct 19, 2020, leads to the following static
+checker warning:
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 85abbfb98cbe..9e8faf851c59 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -5167,7 +5167,7 @@ static ext4_fsblk_t ext4_mb_new_blocks_simple(handle_t *handle,
- 	struct super_block *sb = ar->inode->i_sb;
- 	ext4_group_t group;
- 	ext4_grpblk_t blkoff;
--	int  i;
-+	int i = 0;
- 	ext4_fsblk_t goal, block;
- 	struct ext4_super_block *es = EXT4_SB(sb)->s_es;
- 
--- 
-2.28.0
+	drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c:137 chtls_find_netdev()
+	warn: 'ndev' held on error path.
+
+drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
+    92  static struct net_device *chtls_find_netdev(struct chtls_dev *cdev,
+    93                                              struct sock *sk)
+    94  {
+    95          struct adapter *adap = pci_get_drvdata(cdev->pdev);
+    96          struct net_device *ndev = cdev->ports[0];
+                                   ^^^^^^^^^^^^^^^^^^^^^
+
+The reference counting in this function is pretty confusing.  I would
+have expected it to take a dev_hold() reference on all paths before
+returning.
+
+No dev_hold() here, though.
+
+    97  #if IS_ENABLED(CONFIG_IPV6)
+    98          struct net_device *temp;
+    99          int addr_type;
+   100  #endif
+   101          int i;
+   102  
+   103          switch (sk->sk_family) {
+   104          case PF_INET:
+   105                  if (likely(!inet_sk(sk)->inet_rcv_saddr))
+   106                          return ndev;
+   107                  ndev = __ip_dev_find(&init_net, inet_sk(sk)->inet_rcv_saddr, false);
+
+__ip_dev_find call dev_hold()
+
+   108                  break;
+   109  #if IS_ENABLED(CONFIG_IPV6)
+   110          case PF_INET6:
+   111                  addr_type = ipv6_addr_type(&sk->sk_v6_rcv_saddr);
+   112                  if (likely(addr_type = IPV6_ADDR_ANY))
+   113                          return ndev;
+   114  
+   115                  for_each_netdev_rcu(&init_net, temp) {
+   116                          if (ipv6_chk_addr(&init_net, (struct in6_addr *)
+   117                                            &sk->sk_v6_rcv_saddr, temp, 1)) {
+   118                                  ndev = temp;
+
+No dev_hold().
+
+   119                                  break;
+   120                          }
+   121                  }
+   122          break;
+   123  #endif
+   124          default:
+   125                  return NULL;
+   126          }
+   127  
+   128          if (!ndev)
+   129                  return NULL;
+   130  
+   131          if (is_vlan_dev(ndev))
+   132                  ndev = vlan_dev_real_dev(ndev);
+   133  
+   134          for_each_port(adap, i)
+   135                  if (cdev->ports[i] = ndev)
+   136                          return ndev;
+                                ^^^^^^^^^^^
+We're holding dev_hold() for ipv4 but not for ipv6.
+
+   137          return NULL;
+                ^^^^^^^^^^^^
+Smatch complains that if we hit this for ipv4 then we're leaking a
+dev_hold() reference.
+
+   138  }
+
+regards,
+dan carpenter
