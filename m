@@ -1,39 +1,44 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 27 Oct 2020 03:13:04 +0000
-Subject: Re: [PATCH] sched/fair: check for idle core
-Message-Id: <20201027030104.fkklavfx5igdy62p@vireshk-i7>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 30 Oct 2020 06:33:02 +0000
+Subject: Re: new TODO list item
+Message-Id: <d9e3c0f2-a2ea-a279-9df4-0c8a908bba14@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1603211879-1064-1-git-send-email-Julia.Lawall@inria.fr>
- <34115486.YmRjPRKJaA@kreacher>
- <20201023061246.irzbrl62baoawmqv@vireshk-i7>
- <2251006.PXaUfaNY4o@kreacher>
-In-Reply-To: <2251006.PXaUfaNY4o@kreacher>
+References: <20200421081257.GA131897@infradead.org>
+In-Reply-To: <20200421081257.GA131897@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>, Julia Lawall <julia.lawall@inria.fr>, Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>, linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, Gilles Muller <Gilles.Muller@inria.fr>, srinivas.pandruvada@linux.intel.com, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On 23-10-20, 17:06, Rafael J. Wysocki wrote:
-> On Friday, October 23, 2020 8:12:46 AM CEST Viresh Kumar wrote:
-> > On 22-10-20, 13:45, Rafael J. Wysocki wrote:
-> > > On Thursday, October 22, 2020 12:47:03 PM CEST Viresh Kumar wrote:
-> > > > And I am not really sure why we always wanted this backup performance
-> > > > governor to be there unless the said governors are built as module.
-> > > 
-> > > Apparently, some old drivers had problems with switching frequencies fast enough
-> > > for ondemand to be used with them and the fallback was for those cases.  AFAICS.
-> > 
-> > Do we still need this ?
+Le 21/04/2020 à 10:12, Christoph Hellwig a écrit :
+> Hi Janitors,
 > 
-> For the reasonably modern hardware, I don't think so.
+> if someone feels like helping with a fairly trivial legacy API, the
+> wrappers in include/linux/pci-dma-compat.h should go away.  This is
+> mostly trivially scriptable, except for dma_alloc_coherent, where
+> the GFP_ATOMIC passed by pci_alloc_consistent should usually be replaced
+> with GFP_KERNEL when not calling from an atomic context.
 > 
-> > Or better ask those platforms to individually
-> > enable both of them.
-> 
-> Bu who knows what they are? :-)
 
-I was planning to break them and let them complain :)
+Hi,
+just a small update on the work on progress:
 
--- 
-viresh
+https://elixir.bootlin.com/linux/v5.8/A/ident/pci_alloc_consistent
+    --> 88 files
+https://elixir.bootlin.com/linux/v5.9/A/ident/pci_alloc_consistent
+    --> 62 files
+https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_alloc_consistent
+    --> 32 files
+
+https://elixir.bootlin.com/linux/v5.8/A/ident/pci_zalloc_consistent
+    --> 26 files
+https://elixir.bootlin.com/linux/v5.9/A/ident/pci_zalloc_consistent
+    --> 19 files
+https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_zalloc_consistent
+    --> 11 files
+
+
+None of the drivers/media/pci/* patches has been accepted yet.
+
+
+CJ
