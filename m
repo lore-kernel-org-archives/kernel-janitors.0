@@ -1,40 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 08 Oct 2020 15:44:07 +0000
-Subject: [PATCH] power: supply: Fix sizeof() mismatch
-Message-Id: <20201008154407.102824-1-colin.king@canonical.com>
+From: Liliane Abel <k.griest01@gmail.com>
+Date: Fri, 30 Oct 2020 14:52:29 +0000
+Subject: 
+Message-Id: <CALz1HNtvik3eiVPf7Yt2uL4_LZijhsk4Wv8-MSsH5t0kwxjpZg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Rhyland Klein <rklein@nvidia.com>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dearest
 
-An incorrect sizeof() is being used, sizeof(psy->supplied_from) is not
-correct, it should be sizeof(*psy->supplied_from).  This bug did not
-cause any issues because it just so happens the sizes are the same.
+Greeting my dear, I am Liliane Abel by name, The only daughter of late
+Mr.Benson Abel. My father is one of the top Politician in our country
+and my mother is a farmers and cocoa merchant when they were both
+alive. After the death of my mother, long ago, my father was
+controlling their business until he was poisoned by his business
+associates which he suffered and died.
 
-Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-Fixes: f6e0b081fb30 ("power_supply: Populate supplied_from hierarchy from the device tree")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/power_supply_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 38e3aa642131..50f323740c74 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -261,7 +261,8 @@ static int power_supply_check_supplies(struct power_supply *psy)
- 		return 0;
- 
- 	/* All supplies found, allocate char ** array for filling */
--	psy->supplied_from = devm_kzalloc(&psy->dev, sizeof(psy->supplied_from),
-+	psy->supplied_from = devm_kzalloc(&psy->dev,
-+					  sizeof(*psy->supplied_from),
- 					  GFP_KERNEL);
- 	if (!psy->supplied_from)
- 		return -ENOMEM;
--- 
-2.27.0
+Before the death of my father, He told me about (two million five
+hundred thousand united states dollars) which he deposited in the bank
+in Lome-Togo, It was the money he intended to transfer overseas for
+investment before he was poisoned. He also instructed me that I should
+seek for foreign partners in any country of my choice who will assist
+me transfer this money in overseas account where the money will be
+wisely invested.
+I am seeking for your kind assistance in the following ways:  (1) to
+provide a safe bank account into where the money will be transferred
+for investment. (2) To serve as a guardian of this fund since I am a
+girl of 19 years old. (3) To make arrangement for me to come over to
+your country to further my education. This is my reason for writing to
+you. Please if you are willing to assist me I will offer you 25% of
+the total money. Reply if  you are interested
+Best regards.
+Liliane Abel.
