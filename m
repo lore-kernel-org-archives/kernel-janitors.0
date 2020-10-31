@@ -1,25 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 05 Oct 2020 04:48:28 +0000
-Subject: Re: [PATCH 04/14] dmaengine: sh: drop double zeroing
-Message-Id: <20201005044819.GJ2968@vkoul-mobl>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Sat, 31 Oct 2020 02:21:55 +0000
+Subject: [PATCH] media: ipu3-cio2: fix trivial style warning
+Message-Id: <20201031022155.GA32878@fedora-project>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1600601186-7420-1-git-send-email-Julia.Lawall@inria.fr>
- <1600601186-7420-5-git-send-email-Julia.Lawall@inria.fr>
-In-Reply-To: <1600601186-7420-5-git-send-email-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>, kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: yong.zhi@intel.com, trivial@kernel.org
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 20-09-20, 13:26, Julia Lawall wrote:
-> sg_init_table zeroes its first argument, so the allocation of that argument
-> doesn't have to.
-> 
-> the semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
+Comment has 'the' repeated twice. Let's clean it up.
+This patch reduces checkpatch warnings for this file to nil.
 
-Applied, thanks
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+index 4e598e937dfe..d4ff80ff7be0 100644
+--- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
++++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+@@ -286,7 +286,7 @@ static s32 cio2_rx_timing(s32 a, s32 b, s64 freq, int def)
+ 	return r;
+ };
+ 
+-/* Calculate the the delay value for termination enable of clock lane HS Rx */
++/* Calculate the delay value for termination enable of clock lane HS Rx */
+ static int cio2_csi2_calc_timing(struct cio2_device *cio2, struct cio2_queue *q,
+ 				 struct cio2_csi2_timing *timing)
+ {
 -- 
-~Vinod
+2.28.0
