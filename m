@@ -1,48 +1,70 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 09 Nov 2020 12:22:50 +0000
-Subject: [PATCH] MAINTAINERS: assign ./fs/tracefs to TRACING
-Message-Id: <20201109122250.31915-1-lukas.bulwahn@gmail.com>
+From: Sean Young <sean@mess.org>
+Date: Sun, 01 Nov 2020 11:04:52 +0000
+Subject: Re: [PATCH] media: rc: validate that "rc_proto" is reasonable
+Message-Id: <20201101110452.GA8281@gofer.mess.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201030115230.GF3251003@mwanda>
+In-Reply-To: <20201030115230.GF3251003@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-A check with ./scripts/get_maintainer.pl --letters -f fs/tracefs/ shows
-that the tracefs is not assigned to the TRACING section in MAINTAINERS.
+Hi Dan,
 
-Add the file pattern for the TRACING section to rectify that.
+On Fri, Oct 30, 2020 at 02:52:30PM +0300, Dan Carpenter wrote:
+> Smatch complains that "rc_proto" comes from the user and it can result
+> in shift wrapping in ir_raw_encode_scancode()
+> 
+>     drivers/media/rc/rc-ir-raw.c:526 ir_raw_encode_scancode()
+>     error: undefined (user controlled) shift '1 << protocol'
+> 
+> This is true, but I reviewed the surrounding code and it appears
+> harmless.  Anyway, let's verify that "rc_proto" is valid as a kernel
+> hardenning measure.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on v5.10-rc3 and next-20201109
+It would mean that suddenly an invalid rc proto could become valid; also
+like you say, this is a good hardening measure.
 
-Steven, Ingo, please pick this minor non-urgent clean-up patch.
+Good catch, thank you.
 
+Regards,
 
-By the way, I am wondering if the git tree is still up to date?
+Sean
 
-It says for TRACING:
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
-But I assume commits now actually travel through:
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cba8ddf87a08..f0ba51f2c759 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17823,6 +17823,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
- F:	Documentation/trace/ftrace.rst
- F:	arch/*/*/*/ftrace.h
- F:	arch/*/kernel/ftrace.c
-+F:	fs/tracefs/
- F:	include/*/ftrace.h
- F:	include/linux/trace*.h
- F:	include/trace/
--- 
-2.17.1
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/media/rc/lirc_dev.c | 3 ++-
+>  include/uapi/linux/lirc.h   | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/lirc.h b/include/uapi/linux/lirc.h
+> index f99d9dcae667..c1eb960adde3 100644
+> --- a/include/uapi/linux/lirc.h
+> +++ b/include/uapi/linux/lirc.h
+> @@ -226,6 +226,7 @@ enum rc_proto {
+>  	RC_PROTO_RCMM24		= 25,
+>  	RC_PROTO_RCMM32		= 26,
+>  	RC_PROTO_XBOX_DVD	= 27,
+> +	RC_PROTO_MAX		= RC_PROTO_XBOX_DVD,
+>  };
+>  
+>  #endif
+> diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+> index 220363b9a868..116daf90c858 100644
+> --- a/drivers/media/rc/lirc_dev.c
+> +++ b/drivers/media/rc/lirc_dev.c
+> @@ -263,7 +263,8 @@ static ssize_t lirc_transmit(struct file *file, const char __user *buf,
+>  			goto out_unlock;
+>  		}
+>  
+> -		if (scan.flags || scan.keycode || scan.timestamp) {
+> +		if (scan.flags || scan.keycode || scan.timestamp ||
+> +		    scan.rc_proto > RC_PROTO_MAX) {
+>  			ret = -EINVAL;
+>  			goto out_unlock;
+>  		}
+> -- 
+> 2.28.0
