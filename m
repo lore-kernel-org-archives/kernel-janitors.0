@@ -1,59 +1,85 @@
-From: Tom Rix <trix@redhat.com>
-Date: Mon, 16 Nov 2020 15:27:11 +0000
-Subject: Re: [PATCH] x86/cpu: remove needless definition for !CONFIG_X86_32
-Message-Id: <ef9fc100-78f9-4b8a-7c28-d413db041c1d@redhat.com>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Sun, 01 Nov 2020 02:52:15 +0000
+Subject: [PATCH] Bluetooth: hci_qca: resolve various warnings
+Message-Id: <20201101025215.GA4828@fedora-project>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201116094218.10508-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201116094218.10508-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: marcel@holtmann.org, johan.hedberg@gmail.com
+Cc: kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org
 
+Use template string as opposed to function name. Add a blank
+line after declaration to improve readability. Replace symbolic
+permissions with octal values. Use usleep_range for small msec
+values due to the fact that msleep() less than 20ms may have
+unexpected behavior/sleep longer. This patch removes all
+checkpatch warnings.
 
-On 11/16/20 1:42 AM, Lukas Bulwahn wrote:
-> The function flag_is_changeable_p() is used in:
->
->   - have_cpuid_p() for its CONFIG_X86_32 definition
->   - identify_cpu_without_cpuid() within its CONFIG_X86_32 ifdef-block
+- https://lkml.org/lkml/2016/8/2/1945
+- Documentation/timers/timers-howto.rst
 
-This looks fine.
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/bluetooth/hci_qca.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Reviewed-by: Tom Rix <trix@redhat.com>
-
-a bit of cleanup, identify_cpu_without_cpuid() be moved into the main CONFIG_X86_32 ifdef with stub for x86_64.
-
->
-> So, there is no need to define flag_is_changeable_p() if !CONFIG_X86_32.
-> Simply remove this needless definition.
->
-> This was discovered with make CC=clang W=1:
->
->   arch/x86/kernel/cpu/common.c:283:19:
->     warning: unused function 'flag_is_changeable_p' [-Wunused-function]
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on current master and next-20201116
->
-> Thomas, Boris, please pick this minor non-urgent patch.
->
->  arch/x86/kernel/cpu/common.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 35ad8480c464..b89dbc7ccb0c 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -280,10 +280,6 @@ static int __init x86_serial_nr_setup(char *s)
->  }
->  __setup("serialnumber", x86_serial_nr_setup);
->  #else
-> -static inline int flag_is_changeable_p(u32 flag)
-> -{
-> -	return 1;
-> -}
->  static inline void squash_the_stupid_serial_number(struct cpuinfo_x86 *c)
->  {
->  }
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 2d3f1f179a1e..22da59d8f471 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -555,7 +555,7 @@ static int qca_open(struct hci_uart *hu)
+ 	struct qca_serdev *qcadev;
+ 	struct qca_data *qca;
+ 
+-	BT_DBG("hu %p qca_open", hu);
++	BT_DBG("hu %p %s", hu, __func__);
+ 
+ 	if (!hci_uart_has_flow_control(hu))
+ 		return -EOPNOTSUPP;
+@@ -631,7 +631,7 @@ static void qca_debugfs_init(struct hci_dev *hdev)
+ 	ibs_dir = debugfs_create_dir("ibs", hdev->debugfs);
+ 
+ 	/* read only */
+-	mode = S_IRUGO;
++	mode = 0444;
+ 	debugfs_create_u8("tx_ibs_state", mode, ibs_dir, &qca->tx_ibs_state);
+ 	debugfs_create_u8("rx_ibs_state", mode, ibs_dir, &qca->rx_ibs_state);
+ 	debugfs_create_u64("ibs_sent_sleeps", mode, ibs_dir,
+@@ -658,7 +658,7 @@ static void qca_debugfs_init(struct hci_dev *hdev)
+ 	debugfs_create_u32("vote_off_ms", mode, ibs_dir, &qca->vote_off_ms);
+ 
+ 	/* read/write */
+-	mode = S_IRUGO | S_IWUSR;
++	mode = 0644;
+ 	debugfs_create_u32("wake_retrans", mode, ibs_dir, &qca->wake_retrans);
+ 	debugfs_create_u32("tx_idle_delay", mode, ibs_dir,
+ 			   &qca->tx_idle_delay);
+@@ -1215,6 +1215,7 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
+ 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
+ 	if (IS_ERR(qca->rx_skb)) {
+ 		int err = PTR_ERR(qca->rx_skb);
++
+ 		bt_dev_err(hu->hdev, "Frame reassembly failed (%d)", err);
+ 		qca->rx_skb = NULL;
+ 		return err;
+@@ -1302,7 +1303,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 
+ 	/* Give the controller time to process the request */
+ 	if (qca_is_wcn399x(qca_soc_type(hu)))
+-		msleep(10);
++		usleep_range(1000, 10000);
+ 	else
+ 		msleep(300);
+ 
+@@ -1350,7 +1351,7 @@ static int qca_send_power_pulse(struct hci_uart *hu, bool on)
+ 	if (on)
+ 		msleep(100);
+ 	else
+-		msleep(10);
++		usleep_range(1000, 10000);
+ 
+ 	return 0;
+ }
+-- 
+2.28.0
