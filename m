@@ -1,16 +1,24 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 25 Nov 2020 18:29:28 +0000
-Subject: Re: [PATCH] dma-mapping: fix an uninitialized pointer read due to typo in argp assignment
-Message-Id: <20201125182928.GA10377@lst.de>
+From: Shawn Guo <shawnguo@kernel.org>
+Date: Sun, 01 Nov 2020 09:27:06 +0000
+Subject: Re: [PATCH] clk: imx: remove redundant assignment to pointer np
+Message-Id: <20201101092705.GO31601@dragon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201125135535.1880307-1-colin.king@canonical.com>
- <1b430a80dec14cb9aa612ff7e5dddac4@hisilicon.com>
-In-Reply-To: <1b430a80dec14cb9aa612ff7e5dddac4@hisilicon.com>
+References: <20201029224007.390762-1-colin.king@canonical.com>
+In-Reply-To: <20201029224007.390762-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Colin King <colin.king@canonical.com>, Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
+To: Colin King <colin.king@canonical.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org
 
-Ooops, that was my edit.  I'll make sure to fold the fix into the
-original commit.
+On Thu, Oct 29, 2020 at 10:40:07PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer np is being initialized with a value that is never read
+> and it is being updated with a value later on. The initialization
+> is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied, thanks.
