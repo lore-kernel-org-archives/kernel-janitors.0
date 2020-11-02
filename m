@@ -1,49 +1,44 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sun, 29 Nov 2020 22:04:11 +0000
-Subject: Re: [PATCH] drm/kmb: Remove an unnecessary NULL check
-Message-Id: <20201129220411.GG1162850@ravnborg.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 02 Nov 2020 07:56:55 +0000
+Subject: [PATCH] usb: misc: brcmstb-usb-pinmap: Fix an IS_ERR() vs NULL check
+Message-Id: <20201102075655.GA4163205@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201117072137.GB1111239@mwanda>
- <BY5PR11MB4182EBE4FD5F42AC625945998CFF0@BY5PR11MB4182.namprd11.prod.outlook.com>
- <20201120082146.GA314029@ravnborg.org>
- <460740bc-ffb8-91c1-47ec-94a38dd2308d@suse.de>
- <BY5PR11MB4182170E428502EF005B27E48CFF0@BY5PR11MB4182.namprd11.prod.outlook.com>
-In-Reply-To: <BY5PR11MB4182170E428502EF005B27E48CFF0@BY5PR11MB4182.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Chrisanthus, Anitha" <anitha.chrisanthus@intel.com>
-Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Dea,
- Edmund J" <edmund.j.dea@intel.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Thomas Zimmermann <tzimmermann@suse.de>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Al Cooper <alcooperx@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Anitha,
+The devm_ioremap() function doesn't return error pointers, it returns
+NULL on error.
 
-On Fri, Nov 20, 2020 at 05:28:59PM +0000, Chrisanthus, Anitha wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Thomas Zimmermann <tzimmermann@suse.de>
-> > Sent: Friday, November 20, 2020 12:34 AM
-> > To: Sam Ravnborg <sam@ravnborg.org>; Chrisanthus, Anitha
-> > <anitha.chrisanthus@intel.com>
-> > Cc: David Airlie <airlied@linux.ie>; Dea, Edmund J <edmund.j.dea@intel.com>;
-> > kernel-janitors@vger.kernel.org; dri-devel@lists.freedesktop.org; Dan
-> > Carpenter <dan.carpenter@oracle.com>
-> > Subject: Re: [PATCH] drm/kmb: Remove an unnecessary NULL check
-> > 
-> > Hi
-> > 
-> > Am 20.11.20 um 09:21 schrieb Sam Ravnborg:
-> > > Hi Anitha.
-> > >
-> > > On Fri, Nov 20, 2020 at 01:19:06AM +0000, Chrisanthus, Anitha wrote:
-> > >> Looks good to me.
-> > >
-> > > Can we get either an "Acked-by:" or "Reviewed-by:"?
-> > > Then we can use this while applying.
-> Sorry, forgot that.
-> Reviewed-by: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
+Fixes: 517c4c44b323 ("usb: Add driver to allow any GPIO to be used for 7211 USB signals")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The commit original commit "usb: Add driver to allow any GPIO to ..."
+has a bad subsystem prefix.  This is a common anti-pattern for new
+drivers.  (Although less common after I started whinging to everyone
+about it).  It means that the first person to fix a bug in the driver
+has to imagine what the original author wanted.  Sometimes people get
+annoyed which prefix we pick for them.
 
-Thanks, patch is now pushed to drm-misc-next.
+ drivers/usb/misc/brcmstb-usb-pinmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	Sam
+diff --git a/drivers/usb/misc/brcmstb-usb-pinmap.c b/drivers/usb/misc/brcmstb-usb-pinmap.c
+index 02144c39aaba..2326e60545f7 100644
+--- a/drivers/usb/misc/brcmstb-usb-pinmap.c
++++ b/drivers/usb/misc/brcmstb-usb-pinmap.c
+@@ -277,8 +277,8 @@ static int __init brcmstb_usb_pinmap_probe(struct platform_device *pdev)
+ 	pdata->out_pins = (struct out_pin *)(pdata->in_pins + in_count);
+ 
+ 	pdata->regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (IS_ERR(pdata->regs))
+-		return PTR_ERR(pdata->regs);
++	if (!pdata->regs)
++		return -ENOMEM;
+ 	platform_set_drvdata(pdev, pdata);
+ 
+ 	err = parse_pins(&pdev->dev, dn, pdata);
+-- 
+2.28.0
