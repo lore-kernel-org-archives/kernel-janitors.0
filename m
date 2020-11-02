@@ -1,24 +1,38 @@
-From: Gerd Hoffmann <kraxel@redhat.com>
-Date: Fri, 06 Nov 2020 08:25:05 +0000
-Subject: Re: [PATCH] drm/virtio: Fix a double free in virtio_gpu_cmd_map()
-Message-Id: <20201106082505.oieppl6xpc3cng7q@sirius.home.kraxel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Nov 2020 12:06:14 +0000
+Subject: [PATCH] mm/process_vm_access: remove redundant initialization of iov_r
+Message-Id: <20201102120614.694917-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201030114808.GD3251003@mwanda>
-In-Reply-To: <20201030114808.GD3251003@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gurchetan Singh <gurchetansingh@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 02:48:08PM +0300, Dan Carpenter wrote:
-> This is freed both here and in the caller (virtio_gpu_vram_map()) so
-> it's a double free.  The correct place is only in the caller.
-> 
-> Fixes: 16845c5d5409 ("drm/virtio: implement blob resources: implement vram object")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed to drm-misc-next.
+The pointer iov_r is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-thanks,
-  Gerd
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/process_vm_access.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
+index 702250f148e7..4bcc11958089 100644
+--- a/mm/process_vm_access.c
++++ b/mm/process_vm_access.c
+@@ -260,7 +260,7 @@ static ssize_t process_vm_rw(pid_t pid,
+ 	struct iovec iovstack_l[UIO_FASTIOV];
+ 	struct iovec iovstack_r[UIO_FASTIOV];
+ 	struct iovec *iov_l = iovstack_l;
+-	struct iovec *iov_r = iovstack_r;
++	struct iovec *iov_r;
+ 	struct iov_iter iter;
+ 	ssize_t rc;
+ 	int dir = vm_write ? WRITE : READ;
+-- 
+2.27.0
