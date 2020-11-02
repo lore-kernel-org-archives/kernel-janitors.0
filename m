@@ -1,37 +1,38 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 20 Nov 2020 19:10:06 +0000
-Subject: Re: [PATCH][next] octeontx2-pf: Fix unintentional sign extension issue
-Message-Id: <160589940695.22082.5686784886721691946.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Nov 2020 13:46:01 +0000
+Subject: [PATCH] octeontx2-pf: Fix sizeof() mismatch
+Message-Id: <20201102134601.698436-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118130520.460365-1-colin.king@canonical.com>
-In-Reply-To: <20201118130520.460365-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, kuba@kernel.org, naveenm@marvell.com, tduszynski@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+An incorrect sizeof() is being used, sizeof(u64 *) is not correct,
+it should be sizeof(*sq->sqb_ptrs).
 
-On Wed, 18 Nov 2020 13:05:20 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The shifting of the u16 result from ntohs(proto) by 16 bits to the
-> left will be promoted to a 32 bit signed int and then sign-extended
-> to a u64.  In the event that the top bit of the return from ntohs(proto)
-> is set then all then all the upper 32 bits of a 64 bit long end up as
-> also being set because of the sign-extension. Fix this by casting to
-> a u64 long before the shift.
-> 
-> [...]
+Fixes: caa2da34fd25 ("octeontx2-pf: Initialize and config queues")
+Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [next] octeontx2-pf: Fix unintentional sign extension issue
-    https://git.kernel.org/netdev/net-next/c/583b273dea75
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index fc765e86988e..9f3d6715748e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -1239,7 +1239,7 @@ int otx2_sq_aura_pool_init(struct otx2_nic *pfvf)
+ 
+ 		sq = &qset->sq[qidx];
+ 		sq->sqb_count = 0;
+-		sq->sqb_ptrs = kcalloc(num_sqbs, sizeof(u64 *), GFP_KERNEL);
++		sq->sqb_ptrs = kcalloc(num_sqbs, sizeof(*sq->sqb_ptrs), GFP_KERNEL);
+ 		if (!sq->sqb_ptrs)
+ 			return -ENOMEM;
+ 
+-- 
+2.27.0
