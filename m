@@ -1,7 +1,7 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 03 Nov 2020 09:36:01 +0000
+Date: Tue, 03 Nov 2020 09:36:23 +0000
 Subject: Re: [PATCH] MAINTAINERS: rectify DELL WMI SYSMAN DRIVERS section
-Message-Id: <0eea5f3d-b3bc-e3b4-1b7f-d6528f33bd44@redhat.com>
+Message-Id: <a3fe61e9-c126-2d38-6ca1-accbcdea91ad@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
@@ -27,6 +27,23 @@ On 10/29/20 12:44 PM, Lukas Bulwahn wrote:
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+This time with content, sorry for the empty mail.
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
 
 > ---
 > Divya, please ack.
