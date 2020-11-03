@@ -1,31 +1,61 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 11 Nov 2020 10:54:45 +0000
-Subject: Re: [PATCH][next] Bluetooth: btrtl: fix incorrect skb allocation failure check
-Message-Id: <0DA7A8C1-07AA-4342-A16A-FEB5C5825C76@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2020 10:17:35 +0000
+Subject: [PATCH] platform/x86: dell-wmi-sysman: fix init_bios_attributes() error handling
+Message-Id: <20201103101735.GB1127762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201110123915.3356601-1-colin.king@canonical.com>
-In-Reply-To: <20201110123915.3356601-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Divya Bharathi <divya.bharathi@dell.com>
+Cc: Mark Gross <mgross@linux.intel.com>, Prasanth KSR <prasanth.ksr@dell.com>, Mario Limonciello <mario.limonciello@dell.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Calling release_attributes_data() while holding the "wmi_priv.mutex"
+will lead to a dead lock.  The other problem is that if kzalloc() fails
+then this should return -ENOMEM but currently it returns success.
 
-> Currently the check for a failed bt_skb_alloc allocation is incorrectly
-> checking using IS_ERR and this can lead to a null pointer dereference. Fix
-> this by checking for a null pointer return using the !skb idiom.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: 1996d9cad6ad ("Bluetooth: btrtl: Ask 8821C to drop old firmware")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/btrtl.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: e8a60aa7404b ("platform/x86: Introduce support for Systems Management Driver over WMI for Dell Systems")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The "platform/x86: Introduce support ... " commit doesn't use the patch
+prefix which the driver will use going forward.  That means that whoever
+fixes the first bug has to pick the patch prefix and sometimes people
+are not happy with that.
 
-patch has been applied to bluetooth-next tree.
+ drivers/platform/x86/dell-wmi-sysman/sysman.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Regards
-
-Marcel
+diff --git a/drivers/platform/x86/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell-wmi-sysman/sysman.c
+index 3842575a6c18..055556d5c70d 100644
+--- a/drivers/platform/x86/dell-wmi-sysman/sysman.c
++++ b/drivers/platform/x86/dell-wmi-sysman/sysman.c
+@@ -443,8 +443,10 @@ static int init_bios_attributes(int attr_type, const char *guid)
+ 
+ 		/* build attribute */
+ 		attr_name_kobj = kzalloc(sizeof(*attr_name_kobj), GFP_KERNEL);
+-		if (!attr_name_kobj)
++		if (!attr_name_kobj) {
++			retval = -ENOMEM;
+ 			goto err_attr_init;
++		}
+ 
+ 		attr_name_kobj->kset = tmp_set;
+ 
+@@ -486,13 +488,13 @@ static int init_bios_attributes(int attr_type, const char *guid)
+ 		elements = obj ? obj->package.elements : NULL;
+ 	}
+ 
+-	goto out;
++	mutex_unlock(&wmi_priv.mutex);
++	return 0;
+ 
+ err_attr_init:
++	mutex_unlock(&wmi_priv.mutex);
+ 	release_attributes_data();
+ 	kfree(obj);
+-out:
+-	mutex_unlock(&wmi_priv.mutex);
+ 	return retval;
+ }
+ 
+-- 
+2.28.0
