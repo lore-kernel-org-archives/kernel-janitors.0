@@ -1,37 +1,36 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 20 Nov 2020 19:10:07 +0000
-Subject: Re: [PATCH][next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
-Message-Id: <160589940705.22082.10268101858431094788.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2020 10:16:23 +0000
+Subject: [PATCH] iommu: fix a check in iommu_check_bind_data()
+Message-Id: <20201103101623.GA1127762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118143803.463297-1-colin.king@canonical.com>
-In-Reply-To: <20201118143803.463297-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, davem@davemloft.net, kuba@kernel.org, naveenm@marvell.com, sbhatta@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Jacob Pan <jacob.pan.linux@gmail.com>
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>, iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
-Hello:
+The "data->flags" variable is a u64 so if one of the high 32 bits is
+set the original code will allow it, but it should be rejected.  The
+fix is to declare "mask" as a u64 instead of a u32.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Fixes: d90573812eea ("iommu/uapi: Handle data and argsz filled by users")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/iommu/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, 18 Nov 2020 14:38:03 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to pc_delete_flow can kfree the iter object, so the following
-> dev_err message that accesses iter->entry can accessmemory that has
-> just been kfree'd.  Fix this by adding a temporary variable 'entry'
-> that has a copy of iter->entry and also use this when indexing into
-> the array mcam->entry2target_pffunc[]. Also print the unsigned value
-> using the %u format specifier rather than %d.
-> 
-> [...]
-
-Here is the summary with links:
-  - [next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
-    https://git.kernel.org/netdev/net-next/c/76483980174c
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 8c470f451a32..b53446bb8c6b 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -2071,7 +2071,7 @@ EXPORT_SYMBOL_GPL(iommu_uapi_cache_invalidate);
+ 
+ static int iommu_check_bind_data(struct iommu_gpasid_bind_data *data)
+ {
+-	u32 mask;
++	u64 mask;
+ 	int i;
+ 
+ 	if (data->version != IOMMU_GPASID_BIND_VERSION_1)
+-- 
+2.28.0
