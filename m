@@ -1,72 +1,53 @@
-From: Mao Wenan <wenan.mao@linux.alibaba.com>
-Date: Mon, 09 Nov 2020 16:26:40 +0000
-Subject: Re: [PATCH net v2] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <302ad089-9e82-1856-0652-b92251c14e37@linux.alibaba.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 03 Nov 2020 06:07:33 +0000
+Subject: [PATCH] MAINTAINERS: assign mediatek headers to Mediatek SoC support
+Message-Id: <20201103060733.25729-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
- <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
- <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
- <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
- <CANn89i+oS75TVKBDOBrr7Ff55Uctq4_HUcM_05Ed8kUL1HkHLw@mail.gmail.com>
- <CANn89iJ5kuEfKAJoWxM9MWV5X6nHXzbtcBkh1OBTak-Y6SzbPQ@mail.gmail.com>
- <CANn89iLhCjh7ZQRanVEj6Sytzn6LhFOb9Xo7O=teLHPouoeopw@mail.gmail.com>
-In-Reply-To: <CANn89iLhCjh7ZQRanVEj6Sytzn6LhFOb9Xo7O=teLHPouoeopw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Eric Dumazet <edumazet@google.com>
-Cc: David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>
 
-CgrlnKggMjAyMC8xMS85IOS4i+WNiDEwOjAxLCBFcmljIER1bWF6ZXQg5YaZ6YGTOgo+IE9uIE1v
-biwgTm92IDksIDIwMjAgYXQgMTI6NDEgUE0gRXJpYyBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUu
-Y29tPiB3cm90ZToKPj4KPj4gUGFja2V0ZHJpbGwgdGVzdCB3b3VsZCBiZSA6Cj4+Cj4+IC8vIEZv
-cmNlIHN5bmNvb2tpZXMKPj4gYHN5c2N0bCAtcSBuZXQuaXB2NC50Y3Bfc3luY29va2llcz0yYAo+
-Pgo+PiAgICAgIDAgc29ja2V0KC4uLiwgU09DS19TVFJFQU0sIElQUFJPVE9fVENQKSA9IDMKPj4g
-ICAgICswIHNldHNvY2tvcHQoMywgU09MX1NPQ0tFVCwgU09fUkVVU0VBRERSLCBbMV0sIDQpID0g
-MAo+PiAgICAgKzAgc2V0c29ja29wdCgzLCBTT0xfU09DS0VULCBTT19SQ1ZCVUYsIFsyMDQ4XSwg
-NCkgPSAwCj4+ICAgICArMCBiaW5kKDMsIC4uLiwgLi4uKSA9IDAKPj4gICAgICswIGxpc3Rlbigz
-LCAxKSA9IDAKPj4KPj4gKzAgPCBTIDA6MCgwKSB3aW4gMzI3OTIgPG1zcyAxMDAwLHNhY2tPSyxU
-UyB2YWwgMTAwIGVjciAwLG5vcCx3c2NhbGUgNz4KPj4gICAgICswID4gUy4gMDowKDApIGFjayAx
-IDxtc3MgMTQ2MCxzYWNrT0ssVFMgdmFsIDQwMDAgZWNyIDEwMCxub3Asd3NjYWxlIDA+Cj4+ICAg
-ICsuMSA8IC4gMToxKDApIGFjayAxIHdpbiAxMDI0IDxub3Asbm9wLFRTIHZhbCAyMDAgZWNyIDQw
-MDA+Cj4+ICAgICArMCBhY2NlcHQoMywgLi4uLCAuLi4pID0gNAo+PiArMCAleyBhc3NlcnQgdGNw
-aV9zbmRfd3NjYWxlID0gMCwgdGNwaV9zbmRfd3NjYWxlIH0lCj4+Cj4gCj4gQWxzbywgcGxlYXNl
-IGFkZCB0byB5b3VyIG5leHQgc3VibWlzc2lvbiBhbiBhcHByb3ByaWF0ZSBGaXhlczogdGFnIDoK
-PiAKPiBGaXhlczogZTg4YzY0ZjBhNDI1ICgidGNwOiBhbGxvdyBlZmZlY3RpdmUgcmVkdWN0aW9u
-IG9mIFRDUCdzCj4gcmN2LWJ1ZmZlciB2aWEgc2V0c29ja29wdCIpCgpPSywgdGhhbmtzLCBJIGNh
-biByZXByb2R1Y2Ugd3NjYWxlPTAgd2l0aCB5b3VyIHBhY2tldGRyaWxsLCBhbmQgSSB3aWxsIApz
-ZW5kIHYzIHdpdGggdGhlIGZpeGVzIHRhZy4KCj4gCj4+IE9uIE1vbiwgTm92IDksIDIwMjAgYXQg
-MTI6MDIgUE0gRXJpYyBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUuY29tPiB3cm90ZToKPj4+Cj4+
-PiBPbiBNb24sIE5vdiA5LCAyMDIwIGF0IDExOjEyIEFNIE1hbyBXZW5hbiA8d2VuYW4ubWFvQGxp
-bnV4LmFsaWJhYmEuY29tPiB3cm90ZToKPj4+Pgo+Pj4+Cj4+Pj4KPj4+PiDlnKggMjAyMC8xMS85
-IOS4i+WNiDU6NTYsIEVyaWMgRHVtYXpldCDlhpnpgZM6Cj4+Pj4+IE9uIE1vbiwgTm92IDksIDIw
-MjAgYXQgMTA6MzMgQU0gTWFvIFdlbmFuIDx3ZW5hbi5tYW9AbGludXguYWxpYmFiYS5jb20+IHdy
-b3RlOgo+Pj4+Pj4KPj4+Pj4+IFdoZW4gbmV0LmlwdjQudGNwX3N5bmNvb2tpZXM9MSBhbmQgc3lu
-IGZsb29kIGlzIGhhcHBlbmVkLAo+Pj4+Pj4gY29va2llX3Y0X2NoZWNrIG9yIGNvb2tpZV92Nl9j
-aGVjayB0cmllcyB0byByZWRvIHdoYXQKPj4+Pj4+IHRjcF92NF9zZW5kX3N5bmFjayBvciB0Y3Bf
-djZfc2VuZF9zeW5hY2sgZGlkLAo+Pj4+Pj4gcnNrX3dpbmRvd19jbGFtcCB3aWxsIGJlIGNoYW5n
-ZWQgaWYgU09DS19SQ1ZCVUYgaXMgc2V0LAo+Pj4+Pj4gd2hpY2ggd2lsbCBtYWtlIHJjdl93c2Nh
-bGUgaXMgZGlmZmVyZW50LCB0aGUgY2xpZW50Cj4+Pj4+PiBzdGlsbCBvcGVyYXRlcyB3aXRoIGlu
-aXRpYWwgd2luZG93IHNjYWxlIGFuZCBjYW4gb3ZlcnNob3QKPj4+Pj4+IGdyYW50ZWQgd2luZG93
-LCB0aGUgY2xpZW50IHVzZSB0aGUgaW5pdGlhbCBzY2FsZSBidXQgbG9jYWwKPj4+Pj4+IHNlcnZl
-ciB1c2UgbmV3IHNjYWxlIHRvIGFkdmVydGlzZSB3aW5kb3cgdmFsdWUsIGFuZCBzZXNzaW9uCj4+
-Pj4+PiB3b3JrIGFibm9ybWFsbHkuCj4+Pj4+Cj4+Pj4+IFdoYXQgaXMgbm90IHdvcmtpbmcgZXhh
-Y3RseSA/Cj4+Pj4+Cj4+Pj4+IFNlbmRpbmcgYSAnYmlnIHdzY2FsZScgc2hvdWxkIG5vdCByZWFs
-bHkgbWF0dGVyLCB1bmxlc3MgcGVyaGFwcyB0aGVyZQo+Pj4+PiBpcyBhIGJ1Z2d5IHN0YWNrIGF0
-IHRoZSByZW1vdGUgZW5kID8KPj4+PiAxKWluIHRjcF92NF9zZW5kX3N5bmFjaywgaWYgU09fUkNW
-QlVGIGlzIHNldCBhbmQKPj4+PiB0Y3BfZnVsbF9zcGFjZShzayllNTM1LCBwYXNzIHJlcS0+cnNr
-X3dpbmRvd19jbGFtcGU1MzUgdG8KPj4+PiB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LCByY3Zf
-d3NjYWxlIHdpbGwgYmUgemVybywgYW5kIHNlbmQgdG8gY2xpZW50LAo+Pj4+IHRoZSBjbGllbnQg
-Y29uc2lkZXIgd3NjYWxlIGlzIDA7Cj4+Pj4gMil3aGVuIGFjayBpcyBiYWNrIGZyb20gY2xpZW50
-LCBpZiB0aGVyZSBpcyBubyB0aGlzIHBhdGNoLAo+Pj4+IHJlcS0+cnNrX3dpbmRvd19jbGFtcCBp
-cyAwLCBhbmQgcGFzcyB0byB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LAo+Pj4+IHdzY2FsZSB3
-aWxsIGJlIDcsIHRoaXMgbmV3IHJjdl93c2NhbGUgaXMgbm8gd2F5IHRvIGFkdmVydGlzZSB0byBj
-bGllbnQuCj4+Pj4gMylpZiBzZXJ2ZXIgc2VuZCByY3Zfd2luZCB0byBjbGllbnQgd2l0aCB3aW5k
-b3djLCBpdCBjb25zaWRlciB0aGUgcmVhbAo+Pj4+IHdpbmRvdyBpcyA2MyoyXjeANjQsIGJ1dCBj
-bGllbnQgY29uc2lkZXIgdGhlIHNlcnZlciB3aW5kb3cgaXMgb25seQo+Pj4+IDYzKjJeMGMsIGl0
-IGNhbid0IHNlbmQgYmlnIHBhY2tldCB0byBzZXJ2ZXIsIGFuZCB0aGUgc2VuZC1xIG9mIGNsaWVu
-dAo+Pj4+IGlzIGZ1bGwuCj4+Pj4KPj4+Cj4+PiBJIHNlZSwgcGxlYXNlIGNoYW5nZSB5b3VyIHBh
-dGNoZXMgc28gdGhhdCB0Y3BfZnVsbF9zcGFjZSgpIGlzIHVzZWQgX29uY2VfCj4+Pgo+Pj4gbGlz
-dGVuZXIgc2tfcmN2YnVmIGNhbiBjaGFuZ2UgdW5kZXIgdXMuCj4+Pgo+Pj4gSSByZWFsbHkgaGF2
-ZSBubyBpZGVhIGhvdyB3aW5kb3cgY2FuIGJlIHNldCB0byA2Mywgc28gcGxlYXNlIHNlbmQgdXMK
-Pj4+IHRoZSBwYWNrZXRkcmlsbCB0ZXN0IG9uY2UgeW91IGhhdmUgaXQu
+./include/soc/mediatek/smi.h and ./include/linux/soc/mediatek/infracfg.h
+are currently not assigned to a specific section in MAINTAINERS.
+
+./include/soc/mediatek/smi.h is the header file for definitions in
+./drivers/memory/mtk-smi.c, which is assigned to the section ARM/Mediatek
+SoC support in MAINTAINERS.
+
+./include/linux/soc/mediatek/infracfg.h is the header file for definitions
+in ./drivers/soc/mediatek/mtk-infracfg.c, which is assigned to the section
+ARM/Mediatek SoC support in MAINTAINERS.
+
+Hence, assign those header files to ARM/Mediatek SoC support as well.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Matthias, please pick this minor non-urgent cleanup patch.
+
+This patch is part of an initial experiment to assign all files to
+specific sections in MAINTAINERS. At the moment, about 3200 files are
+currently not assigned to specific sections and maintainers.
+
+If you think these cleanup patch cause more churn than value, please let
+me know. Thanks.
+
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b4197e9da495..1703c7d2e146 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2066,6 +2066,8 @@ F:	arch/arm/boot/dts/mt8*
+ F:	arch/arm/mach-mediatek/
+ F:	arch/arm64/boot/dts/mediatek/
+ F:	drivers/soc/mediatek/
++F:	include/linux/soc/mediatek/infracfg.h
++F:	include/soc/mediatek/smi.h
+ N:	mtk
+ N:	mt[678]
+ K:	mediatek
+-- 
+2.17.1
