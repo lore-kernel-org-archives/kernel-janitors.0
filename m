@@ -1,66 +1,69 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 02 Nov 2020 09:37:02 +0000
-Subject: [PATCH] MAINTAINERS: replace non-matching patterns for loongson{2,3}
-Message-Id: <20201102093702.15512-1-lukas.bulwahn@gmail.com>
+From: Liu Shixin <liushixin2@huawei.com>
+Date: Wed, 04 Nov 2020 09:34:31 +0000
+Subject: [PATCH v2] fs/binfmt_elf: free interpreter in load_elf_binary
+Message-Id: <20201104093431.178880-1-liushixin2@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
+In-Reply-To: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Keguang Zhang <keguang.zhang@gmail.com>, Huacai Chen <chenhc@lemote.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@linux-mips.org
-Cc: Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liu Shixin <liushixin2@huawei.com>
 
-Commit ffe1f9356fbe ("MAINTAINERS: Add Loongson-2/Loongson-3 maintainers")
-adds quite generic file entries for drivers/*/*loongson{2,3}* and
-drivers/*/*/*loongson{2,3}* to be informed on changes to all loongson{2,3}
-files in drivers.
+The file interpreter is allocated in load_elf_binary, but not freed
+in the case interp_elf_ex is NULL.
+Add a label “out_allow_write_access” so that the interpreter
+will be appropriately released in this case.
 
-However, only the pattern 'drivers/*/*loongson2*' matches to one file in
-the repository, i.e., drivers/cpufreq/loongson2_cpufreq.c; all other
-patterns have no file matches.
+This memory leak is catched when kmemleak is enabled in kernel,
+the report looks like below:
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+unreferenced object 0xffff8b6e9fd41400 (size 488):
+  comm "service", pid 4095, jiffies 4300970844 (age 49.618s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    e0 08 be b9 6e 8b ff ff 00 13 04 b7 6e 8b ff ff  ....n.......n...
+  backtrace:
+    [<00000000eacadaa2>] kmem_cache_alloc+0x164/0x320
+    [<0000000090fb7bf2>] __alloc_file+0x2a/0x140
+    [<00000000ff8fab86>] alloc_empty_file+0x4b/0x100
+    [<000000003ab9b00d>] path_openat+0x4a/0xe20
+    [<0000000027e3a067>] do_filp_open+0xb9/0x150
+    [<000000000edebcac>] do_open_execat+0xa6/0x250
+    [<000000008845564e>] open_exec+0x31/0x60
+    [<00000000e6e6e1ca>] load_elf_binary+0x1dd/0x1b60
+    [<000000004515d8f0>] do_execveat_common.isra.39+0xaa0/0x1000
+    [<000000002ca5e83f>] __x64_sys_execve+0x37/0x40
+    [<00000000beb519e4>] do_syscall_64+0x56/0xa0
+    [<000000009cf54d51>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-  warning: no file matches    F:    drivers/*/*/*loongson2*
-  warning: no file matches    F:    drivers/*/*/*loongson3*
-  warning: no file matches    F:    drivers/*/*loongson3*
-
-As in the last two and half years, no further files and drivers have
-showed up to match those patterns, just name the one file that matches
-explicitly and delete the others without a match.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 0693ffebcfe5 ("fs/binfmt_elf.c: allocate less for static executable")
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 ---
-applies cleanly on current master and next-20201102
+ fs/binfmt_elf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Keguang, Huacai, Jiaxun, please ack.
-
-Thomas, please pick this minor non-urgent cleanup patch.
-
- MAINTAINERS | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b4197e9da495..fc08f628e196 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11719,8 +11719,7 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/include/asm/mach-loongson2ef/
- F:	arch/mips/loongson2ef/
--F:	drivers/*/*/*loongson2*
--F:	drivers/*/*loongson2*
-+F:	drivers/cpufreq/loongson2_cpufreq.c
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index fa50e8936f5f..28e75cb45b26 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -907,7 +907,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		interp_elf_ex = kmalloc(sizeof(*interp_elf_ex), GFP_KERNEL);
+ 		if (!interp_elf_ex) {
+ 			retval = -ENOMEM;
+-			goto out_free_ph;
++			goto out_allow_write_access;
+ 		}
  
- MIPS/LOONGSON64 ARCHITECTURE
- M:	Huacai Chen <chenhc@lemote.com>
-@@ -11729,8 +11728,6 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/include/asm/mach-loongson64/
- F:	arch/mips/loongson64/
--F:	drivers/*/*/*loongson3*
--F:	drivers/*/*loongson3*
- F:	drivers/irqchip/irq-loongson*
- F:	drivers/platform/mips/cpu_hwmon.c
- 
+ 		/* Get the exec headers */
+@@ -1316,6 +1316,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ out_free_dentry:
+ 	kfree(interp_elf_ex);
+ 	kfree(interp_elf_phdata);
++out_allow_write_access:
+ 	allow_write_access(interpreter);
+ 	if (interpreter)
+ 		fput(interpreter);
 -- 
-2.17.1
+2.25.1
