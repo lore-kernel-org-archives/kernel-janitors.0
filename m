@@ -1,37 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Nov 2020 10:08:50 +0000
-Subject: [PATCH] soc: aspeed: Fix a reference leak in aspeed_socinfo_init()
-Message-Id: <20201113100850.GA168908@mwanda>
+From: Liu Shixin <liushixin2@huawei.com>
+Date: Wed, 04 Nov 2020 09:33:39 +0000
+Subject: [PATCH] fs/binfmt_elf: free interpreter in load_elf_binary
+Message-Id: <20201104093339.178724-1-liushixin2@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
+In-Reply-To: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joel Stanley <joel@jms.id.au>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Tom Rix <trix@redhat.com>, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liu Shixin <liushixin2@huawei.com>
 
-This needs to call of_node_put(np) before returning if of_iomap() fails.
+The file interpreter is allocated in load_elf_binary, but not freed
+in the case interp_elf_ex is NULL.
+Add a label “out_allow_write_access” so that the interpreter
+will be appropriately released in this case.
 
-Fixes: e0218dca5787 ("soc: aspeed: Add soc info driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This memory leak is catched when kmemleak is enabled in kernel,
+the report looks like below:
+
+unreferenced object 0xffff8b6e9fd41400 (size 488):
+  comm "service", pid 4095, jiffies 4300970844 (age 49.618s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    e0 08 be b9 6e 8b ff ff 00 13 04 b7 6e 8b ff ff  ....n.......n...
+  backtrace:
+    [<00000000eacadaa2>] kmem_cache_alloc+0x164/0x320
+    [<0000000090fb7bf2>] __alloc_file+0x2a/0x140
+    [<00000000ff8fab86>] alloc_empty_file+0x4b/0x100
+    [<000000003ab9b00d>] path_openat+0x4a/0xe20
+    [<0000000027e3a067>] do_filp_open+0xb9/0x150
+    [<000000000edebcac>] do_open_execat+0xa6/0x250
+    [<000000008845564e>] open_exec+0x31/0x60
+    [<00000000e6e6e1ca>] load_elf_binary+0x1dd/0x1b60
+    [<000000004515d8f0>] do_execveat_common.isra.39+0xaa0/0x1000
+    [<000000002ca5e83f>] __x64_sys_execve+0x37/0x40
+    [<00000000beb519e4>] do_syscall_64+0x56/0xa0
+    [<000000009cf54d51>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: 0693ffebcfe5 ("fs/binfmt_elf.c: allocate less for static executable")
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 ---
- drivers/soc/aspeed/aspeed-socinfo.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/binfmt_elf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/aspeed/aspeed-socinfo.c b/drivers/soc/aspeed/aspeed-socinfo.c
-index 20a1d4aeb051..773930e0cb10 100644
---- a/drivers/soc/aspeed/aspeed-socinfo.c
-+++ b/drivers/soc/aspeed/aspeed-socinfo.c
-@@ -74,8 +74,10 @@ static int __init aspeed_socinfo_init(void)
- 	}
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index fa50e8936f5f..28e75cb45b26 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -907,7 +907,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		interp_elf_ex = kmalloc(sizeof(*interp_elf_ex), GFP_KERNEL);
+ 		if (!interp_elf_ex) {
+ 			retval = -ENOMEM;
+-			goto out_free_ph;
++			goto out_allow_write_access;
+ 		}
  
- 	reg = of_iomap(np, 0);
--	if (!reg)
-+	if (!reg) {
-+		of_node_put(np);
- 		return -ENODEV;
-+	}
- 	siliconid = readl(reg);
- 	iounmap(reg);
- 
+ 		/* Get the exec headers */
+@@ -1316,6 +1316,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ out_free_dentry:
+ 	kfree(interp_elf_ex);
+ 	kfree(interp_elf_phdata);
++out_allow_write_access:
+ 	allow_write_access(interpreter);
+ 	if (interpreter)
+ 		fput(interpreter);
 -- 
-2.28.0
+2.25.1
