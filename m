@@ -1,38 +1,79 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Sat, 14 Nov 2020 20:32:34 +0000
-Subject: Re: [PATCH] clk: remove unneeded dead-store initialization
-Message-Id: <160538595432.60232.9813667976586248163@swboyd.mtv.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Nov 2020 12:51:54 +0000
+Subject: [PATCH] ASoC: qcom: common: Fix refcounting in qcom_snd_parse_of()
+Message-Id: <20201105125154.GA176426@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106094820.30167-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201106094820.30167-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Cc: Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org
+To: Patrick Lai <plai@codeaurora.org>, Dinghao Liu <dinghao.liu@zju.edu.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-Quoting Lukas Bulwahn (2020-11-06 01:48:20)
-> make clang-analyzer on x86_64 defconfig caught my attention with:
-> 
->   drivers/clk/clk.c:423:19:
->   warning: Value stored to 'parent' during its initialization is never read
->   [clang-analyzer-deadcode.DeadStores]
->           struct clk_core *parent = ERR_PTR(-ENOENT);
->                            ^
-> 
-> Commit fc0c209c147f ("clk: Allow parents to be specified without string
-> names") introduced clk_core_fill_parent_index() with this unneeded
-> dead-store initialization.
-> 
-> So, simply remove this unneeded dead-store initialization to make
-> clang-analyzer happy.
-> 
-> As compilers will detect this unneeded assignment and optimize this anyway,
-> the resulting object code is identical before and after this change.
-> 
-> No functional change. No change to object code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+There are two issues in this function.
 
-Applied to clk-next
+1) We can't drop the refrences on "cpu", "codec" and "platform" before
+   we take the reference.  This doesn't cause a problem on the first
+   iteration because those pointers start as NULL so the of_node_put()
+   is a no-op.  But on the subsequent iterations, it will lead to a use
+   after free.
+
+2) If the devm_kzalloc() allocation failed then the code returned
+   directly instead of cleaning up.
+
+Fixes: c1e6414cdc37 ("ASoC: qcom: common: Fix refcount imbalance on error")
+Fixes: 1e36ea360ab9 ("ASoC: qcom: common: use modern dai_link style")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/qcom/common.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
+index 54660f126d09..09af00700700 100644
+--- a/sound/soc/qcom/common.c
++++ b/sound/soc/qcom/common.c
+@@ -58,7 +58,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 		dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
+ 		if (!dlc) {
+ 			ret = -ENOMEM;
+-			goto err;
++			goto err_put_np;
+ 		}
+ 
+ 		link->cpus	= &dlc[0];
+@@ -70,7 +70,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 		ret = of_property_read_string(np, "link-name", &link->name);
+ 		if (ret) {
+ 			dev_err(card->dev, "error getting codec dai_link name\n");
+-			goto err;
++			goto err_put_np;
+ 		}
+ 
+ 		cpu = of_get_child_by_name(np, "cpu");
+@@ -130,8 +130,10 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 		} else {
+ 			/* DPCM frontend */
+ 			dlc = devm_kzalloc(dev, sizeof(*dlc), GFP_KERNEL);
+-			if (!dlc)
+-				return -ENOMEM;
++			if (!dlc) {
++				ret = -ENOMEM;
++				goto err;
++			}
+ 
+ 			link->codecs	 = dlc;
+ 			link->num_codecs = 1;
+@@ -158,10 +160,11 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 
+ 	return 0;
+ err:
+-	of_node_put(np);
+ 	of_node_put(cpu);
+ 	of_node_put(codec);
+ 	of_node_put(platform);
++err_put_np:
++	of_node_put(np);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(qcom_snd_parse_of);
+-- 
+2.28.0
