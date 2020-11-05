@@ -1,63 +1,42 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Fri, 27 Nov 2020 09:34:21 +0000
-Subject: [PATCH] net/ipv6: propagate user pointer annotation
-Message-Id: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Nov 2020 11:50:19 +0000
+Subject: [PATCH][next] hwmon: corsair-psu: fix unintentional sign extension issue
+Message-Id: <20201105115019.41735-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Wilken Gottwalt <wilken.gottwalt@posteo.net>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-For IPV6_2292PKTOPTIONS, do_ipv6_getsockopt() stores the user pointer
-optval in the msg_control field of the msghdr.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hence, sparse rightfully warns at ./net/ipv6/ipv6_sockglue.c:1151:33:
+The shifting of the u8 integer data[3] by 24 bits to the left will
+be promoted to a 32 bit signed int and then sign-extended to a
+long. In the event that the top bit of data[3] is set then all
+then all the upper 32 bits of a 64 bit long end up as also being
+set because of the sign-extension. Fix this by casting data[3] to
+a long before the shift.
 
-  warning: incorrect type in assignment (different address spaces)
-      expected void *msg_control
-      got char [noderef] __user *optval
-
-Since commit 1f466e1f15cf ("net: cleanly handle kernel vs user buffers for
-->msg_control"), user pointers shall be stored in the msg_control_user
-field, and kernel pointers in the msg_control field. This allows to
-propagate __user annotations nicely through this struct.
-
-Store optval in msg_control_user to properly record and propagate the
-memory space annotation of this pointer.
-
-Note that msg_control_is_user is set to true, so the key invariant, i.e.,
-use msg_control_user if and only if msg_control_is_user is true, holds.
-
-The msghdr is further used in the six alternative put_cmsg() calls, with
-msg_control_is_user being true, put_cmsg() picks msg_control_user
-preserving the __user annotation and passes that properly to
-copy_to_user().
-
-No functional change. No change in object code.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Addresses-Coverity: ("Unintended sign extension")
+Fixes: ce15cd2cee8b ("hwmon: add Corsair PSU HID controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Christoph, please review and ack.
-
-David, Alexey, Hideaki-san, Jakub,
-  please pick this minor non-urgent clean-up patch.
-
- net/ipv6/ipv6_sockglue.c | 2 +-
+ drivers/hwmon/corsair-psu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-index 43a894bf9a1b..a6804a7e34c1 100644
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -1148,7 +1148,7 @@ static int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
- 		if (sk->sk_type != SOCK_STREAM)
- 			return -ENOPROTOOPT;
- 
--		msg.msg_control = optval;
-+		msg.msg_control_user = optval;
- 		msg.msg_controllen = len;
- 		msg.msg_flags = flags;
- 		msg.msg_control_is_user = true;
+diff --git a/drivers/hwmon/corsair-psu.c b/drivers/hwmon/corsair-psu.c
+index e92d0376e7ac..5d19a888231a 100644
+--- a/drivers/hwmon/corsair-psu.c
++++ b/drivers/hwmon/corsair-psu.c
+@@ -241,7 +241,7 @@ static int corsairpsu_get_value(struct corsairpsu_data *priv, u8 cmd, u8 rail, l
+ 	 * the LINEAR11 conversion are the watts values which are about 1200 for the strongest psu
+ 	 * supported (HX1200i)
+ 	 */
+-	tmp = (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
++	tmp = ((long)data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
+ 	switch (cmd) {
+ 	case PSU_CMD_IN_VOLTS:
+ 	case PSU_CMD_IN_AMPS:
 -- 
-2.17.1
+2.27.0
