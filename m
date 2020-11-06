@@ -1,28 +1,55 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 27 Nov 2020 06:27:05 +0000
-Subject: Re: [PATCH] crypto: marvell/octeontx - Use dma_set_mask_and_coherent to simplify code
-Message-Id: <20201127062705.GH11448@gondor.apana.org.au>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 06 Nov 2020 03:40:05 +0000
+Subject: [PATCH] printk: remove unneeded dead-store assignment
+Message-Id: <20201106034005.18822-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201121074916.1322898-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201121074916.1322898-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com, davem@davemloft.net, lbartosik@marvell.com, akpm@linux-foundation.org, hannes@cmpxchg.org, longman@redhat.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Sat, Nov 21, 2020 at 08:49:16AM +0100, Christophe JAILLET wrote:
-> 'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
-> an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/marvell/octeontx/otx_cptpf_main.c | 10 ++--------
->  drivers/crypto/marvell/octeontx/otx_cptvf_main.c | 10 ++--------
->  2 files changed, 4 insertions(+), 16 deletions(-)
+make clang-analyzer on x86_64 defconfig caught my attention with:
 
-Patch applied.  Thanks.
+  kernel/printk/printk_ringbuffer.c:885:3: warning:
+  Value stored to 'desc' is never read [clang-analyzer-deadcode.DeadStores]
+                desc = to_desc(desc_ring, head_id);
+                ^
+
+Commit b6cf8b3f3312 ("printk: add lockless ringbuffer") introduced
+desc_reserve() with this unneeded dead-store assignment.
+
+As discussed with John Ogness privately, this is probably just some minor
+left-over from previous iterations of the ringbuffer implementation. So,
+simply remove this unneeded dead assignment to make clang-analyzer happy.
+
+As compilers will detect this unneeded assignment and optimize this anyway,
+the resulting object code is identical before and after this change.
+
+No functional change. No change to object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201105
+
+John, please ack.
+Petr, please pick this minor non-urgent clean-up patch.
+
+ kernel/printk/printk_ringbuffer.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index 6b1525685277..74e25a1704f2 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -882,8 +882,6 @@ static bool desc_reserve(struct printk_ringbuffer *rb, unsigned long *id_out)
+ 	head_id = atomic_long_read(&desc_ring->head_id); /* LMM(desc_reserve:A) */
+ 
+ 	do {
+-		desc = to_desc(desc_ring, head_id);
+-
+ 		id = DESC_ID(head_id + 1);
+ 		id_prev_wrap = DESC_ID_PREV_WRAP(desc_ring, id);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
