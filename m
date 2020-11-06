@@ -1,31 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 25 Nov 2020 20:59:16 +0000
-Subject: Re: [PATCH][next] drm/mcde: fix masking and bitwise-or on variable val
-Message-Id: <CACRpkdbh_d14y2a3zA2HZvfx1hSWw8wQBQ7WZGgp2f4wqzdwkw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 06 Nov 2020 21:55:18 +0000
+Subject: [PATCH] hfsplus: remove pr_err message on ENOSPC file extend error
+Message-Id: <20201106215518.390664-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201124121528.395681-1-colin.king@canonical.com>
-In-Reply-To: <20201124121528.395681-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Sam Ravnborg <sam@ravnborg.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 1:15 PM Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The masking of val with ~MCDE_CRX1_CLKSEL_MASK is currently being
-> ignored because there seems to be a missing bitwise-or of val in the
-> following statement.  Fix this by replacing the assignment of val
-> with a bitwise-or.
->
-> Addresses-Coverity: ("Unused valued")
-> Fixes: d795fd322063 ("drm/mcde: Support DPI output")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Currently ENOSPC errors that are triggered from extending a file
+are spamming the kernel log with messages.  Since ENOSPC is being
+returned there is enough information to userspace to inform why
+the extend is failing and the error message is unnecessary and
+just more logging noise.  This is particularly noticeable when
+exercising a full hfs filesystem with stress-ng file stress tests.
 
-Nice catch!
-Patch applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/hfsplus/extents.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index a930ddd15681..6cc30482c82c 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -446,13 +446,9 @@ int hfsplus_file_extend(struct inode *inode, bool zeroout)
+ 	int res;
+ 
+ 	if (sbi->alloc_file->i_size * 8 <
+-	    sbi->total_blocks - sbi->free_blocks + 8) {
++	    sbi->total_blocks - sbi->free_blocks + 8)
+ 		/* extend alloc file */
+-		pr_err("extend alloc file! (%llu,%u,%u)\n",
+-		       sbi->alloc_file->i_size * 8,
+-		       sbi->total_blocks, sbi->free_blocks);
+ 		return -ENOSPC;
+-	}
+ 
+ 	mutex_lock(&hip->extents_lock);
+ 	if (hip->alloc_blocks = hip->first_blocks)
+-- 
+2.28.0
