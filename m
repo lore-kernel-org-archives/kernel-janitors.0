@@ -1,84 +1,75 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Mon, 09 Nov 2020 11:12:59 +0000
-Subject: Re: [PATCH] platform/x86: dell-wmi-sysman: fix init_bios_attributes() error handling
-Message-Id: <a4f6be26-1270-8923-c8c4-a68b1d680414@redhat.com>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Date: Fri, 06 Nov 2020 20:33:16 +0000
+Subject: Re: [PATCH] net/sunrpc: clean up error checking in proc_do_xprt()
+Message-Id: <20201106203316.GA26028@fieldses.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201103101735.GB1127762@mwanda>
-In-Reply-To: <20201103101735.GB1127762@mwanda>
+References: <031F93AC-744F-4E02-9948-1C1F5939714B@gmail.com>
+ <20201027141758.GA3488087@mwanda>
+In-Reply-To: <20201027141758.GA3488087@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Divya Bharathi <divya.bharathi@dell.com>
-Cc: Mark Gross <mgross@linux.intel.com>, Prasanth KSR <prasanth.ksr@dell.com>, Mario Limonciello <mario.limonciello@dell.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Artur Molchanov <arturmolchanov@gmail.com>, Anna Schumaker <anna.schumaker@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>
 
-Hi,
-
-On 11/3/20 11:17 AM, Dan Carpenter wrote:
-> Calling release_attributes_data() while holding the "wmi_priv.mutex"
-> will lead to a dead lock.  The other problem is that if kzalloc() fails
-> then this should return -ENOMEM but currently it returns success.
+On Tue, Oct 27, 2020 at 05:17:58PM +0300, Dan Carpenter wrote:
+> There are three changes but none of them should affect run time:
 > 
-> Fixes: e8a60aa7404b ("platform/x86: Introduce support for Systems Management Driver over WMI for Dell Systems")
+> 1)  You can't write to this file because the permissions are 0444.  But
+>     it sort of looked like you could do a write and it would result in
+>     a read.  Then it looked like proc_sys_call_handler() just ignored
+>     it.  Which is confusing.  It's more clear if the "write" just
+>     returns zero.
+> 2)  The "lenp" pointer is never NULL so that check can be removed.
+> 3)  In the original code, the "if (*lenp < 0)" check didn't work because
+>     "*lenp" is unsigned.  Fortunately, the memory_read_from_buffer()
+>     call will never fail in this context so it doesn't affect runtime.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-
 > ---
-> The "platform/x86: Introduce support ... " commit doesn't use the patch
-> prefix which the driver will use going forward.  That means that whoever
-> fixes the first bug has to pick the patch prefix and sometimes people
-> are not happy with that.
+>  net/sunrpc/sysctl.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 > 
->  drivers/platform/x86/dell-wmi-sysman/sysman.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell-wmi-sysman/sysman.c
-> index 3842575a6c18..055556d5c70d 100644
-> --- a/drivers/platform/x86/dell-wmi-sysman/sysman.c
-> +++ b/drivers/platform/x86/dell-wmi-sysman/sysman.c
-> @@ -443,8 +443,10 @@ static int init_bios_attributes(int attr_type, const char *guid)
+> diff --git a/net/sunrpc/sysctl.c b/net/sunrpc/sysctl.c
+> index a18b36b5422d..04526bab4a06 100644
+> --- a/net/sunrpc/sysctl.c
+> +++ b/net/sunrpc/sysctl.c
+> @@ -63,19 +63,19 @@ static int proc_do_xprt(struct ctl_table *table, int write,
+>  			void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	char tmpbuf[256];
+> -	size_t len;
+> +	ssize_t len;
 >  
->  		/* build attribute */
->  		attr_name_kobj = kzalloc(sizeof(*attr_name_kobj), GFP_KERNEL);
-> -		if (!attr_name_kobj)
-> +		if (!attr_name_kobj) {
-> +			retval = -ENOMEM;
->  			goto err_attr_init;
-> +		}
+> -	if ((*ppos && !write) || !*lenp) {
+> -		*lenp = 0;
+> +	*lenp = 0;
+> +
+> +	if (write || *ppos)
+>  		return 0;
+> -	}
+> +
+>  	len = svc_print_xprts(tmpbuf, sizeof(tmpbuf));
+> -	*lenp = memory_read_from_buffer(buffer, *lenp, ppos, tmpbuf, len);
+> +	len = memory_read_from_buffer(buffer, *lenp, ppos, tmpbuf, len);
+
+Except now we're passing *lenp = 0, that can't be right.
+
+Though I actually kind of prefer this to Colin King's patch which just
+casts (*lenp) in the comparison below.
+
+--b.
+
+> +	if (len < 0)
+> +		return len;
 >  
->  		attr_name_kobj->kset = tmp_set;
->  
-> @@ -486,13 +488,13 @@ static int init_bios_attributes(int attr_type, const char *guid)
->  		elements = obj ? obj->package.elements : NULL;
->  	}
->  
-> -	goto out;
-> +	mutex_unlock(&wmi_priv.mutex);
-> +	return 0;
->  
->  err_attr_init:
-> +	mutex_unlock(&wmi_priv.mutex);
->  	release_attributes_data();
->  	kfree(obj);
-> -out:
-> -	mutex_unlock(&wmi_priv.mutex);
->  	return retval;
+> -	if (*lenp < 0) {
+> -		*lenp = 0;
+> -		return -EINVAL;
+> -	}
+> +	*lenp = len;
+>  	return 0;
 >  }
 >  
-> 
+> -- 
+> 2.28.0
