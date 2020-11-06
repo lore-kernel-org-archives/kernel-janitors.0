@@ -1,48 +1,24 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 22 Nov 2020 17:39:43 +0000
-Subject: [PATCH] ath11k: Fix an error handling path
-Message-Id: <20201122173943.1366167-1-christophe.jaillet@wanadoo.fr>
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Fri, 06 Nov 2020 08:25:05 +0000
+Subject: Re: [PATCH] drm/virtio: Fix a double free in virtio_gpu_cmd_map()
+Message-Id: <20201106082505.oieppl6xpc3cng7q@sirius.home.kraxel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201030114808.GD3251003@mwanda>
+In-Reply-To: <20201030114808.GD3251003@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, gseset@codeaurora.org, mkenna@codeaurora.org, slakkavalli@datto.com, gsamin@codeaurora.org, pradeepc@codeaurora.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, ath11k@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Gurchetan Singh <gurchetansingh@chromium.org>
 
-If 'kzalloc' fails, we must return an error code.
+On Fri, Oct 30, 2020 at 02:48:08PM +0300, Dan Carpenter wrote:
+> This is freed both here and in the caller (virtio_gpu_vram_map()) so
+> it's a double free.  The correct place is only in the caller.
+> 
+> Fixes: 16845c5d5409 ("drm/virtio: implement blob resources: implement vram object")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-While at it, remove a useless initialization of 'err' which could hide the
-issue.
+Pushed to drm-misc-next.
 
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/ath/ath11k/qmi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
-index c2b165158225..99a88ca83dea 100644
---- a/drivers/net/wireless/ath/ath11k/qmi.c
-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
-@@ -1585,15 +1585,17 @@ static int ath11k_qmi_fw_ind_register_send(struct ath11k_base *ab)
- 	struct qmi_wlanfw_ind_register_resp_msg_v01 *resp;
- 	struct qmi_handle *handle = &ab->qmi.handle;
- 	struct qmi_txn txn;
--	int ret = 0;
-+	int ret;
- 
- 	req = kzalloc(sizeof(*req), GFP_KERNEL);
- 	if (!req)
- 		return -ENOMEM;
- 
- 	resp = kzalloc(sizeof(*resp), GFP_KERNEL);
--	if (!resp)
-+	if (!resp) {
-+		ret = -ENOMEM;
- 		goto resp_out;
-+	}
- 
- 	req->client_id_valid = 1;
- 	req->client_id = QMI_WLANFW_CLIENT_ID;
--- 
-2.27.0
+thanks,
+  Gerd
