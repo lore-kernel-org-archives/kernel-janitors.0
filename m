@@ -1,24 +1,30 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 26 Nov 2020 17:06:57 +0000
-Subject: Re: [PATCH] dma-mapping: Fix sizeof() mismatch on tsk allocation
-Message-Id: <20201126170657.GA21791@lst.de>
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Date: Fri, 06 Nov 2020 10:49:15 +0000
+Subject: Re: [PATCH] MIPS: Kconfig: fix a few trivial spelling mistakes
+Message-Id: <20201106104915.GB9806@alpha.franken.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201125140523.1880669-1-colin.king@canonical.com>
- <a6c5e5ed9a66485da301c1e91b56ccc7@hisilicon.com>
- <20201125182941.GB10377@lst.de>
- <cf79f1ba-aeba-6237-81c8-ca7efc1425e2@canonical.com>
-In-Reply-To: <cf79f1ba-aeba-6237-81c8-ca7efc1425e2@canonical.com>
+References: <20201027183430.56772-1-colin.king@canonical.com>
+In-Reply-To: <20201027183430.56772-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>
+To: Colin King <colin.king@canonical.com>
+Cc: Jiri Kosina <trivial@kernel.org>, linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 25, 2020 at 06:49:19PM +0000, Colin Ian King wrote:
-> On 25/11/2020 18:29, Christoph Hellwig wrote:
-> > I'll fold this one in as well.
-> > 
-> OK, so two SoB's disappear?
+On Tue, Oct 27, 2020 at 06:34:30PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are a few spelling mistakes in the Kconfig, fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  arch/mips/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Yes, and are replaced by an annotation about folded fixes, just like
-for all kinds of other commits.
+applied to mips-next.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
