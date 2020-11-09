@@ -1,59 +1,48 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Wed, 18 Nov 2020 13:55:25 +0000
-Subject: Re: [PATCH][next] drm/selftests/test-drm_dp_mst_helper: fix memory leak allocated to 'out'
-Message-Id: <20201118135525.GT1869941@dell>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 09 Nov 2020 13:38:59 +0000
+Subject: re: net: dsa: hellcreek: Add support for hardware timestamping
+Message-Id: <7c4b526c-b229-acdf-d22a-2bf4a206be5b@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118134901.461841-1-colin.king@canonical.com>
-In-Reply-To: <20201118134901.461841-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kamil Alkhouri <kamil.alkhouri@hs-offenburg.de>, Kurt Kanzenbach <kurt@linutronix.de>, Richard Cochran <richardcochran@gmail.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, ivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Wed, 18 Nov 2020, Colin King wrote:
+Hi
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when txmsg fails to allocate then there is a leak on 'out'. Fix
-> this by setting result to false and exiting via the clean up exit path.
-> Note since txmsg is NULL at this point, the kfree of txmsg is a no-op.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 09234b88ef55 ("drm/selftests/test-drm_dp_mst_helper: Move 'sideband_msg_req_encode_decode' onto the heap")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Static analysis on linux-next with Coverity has detected a potential
+null pointer dereference issue on the following commit:
 
-This is fixed in my local branch.
+commit f0d4ba9eff75a79fccb7793f4d9f12303d458603
+Author: Kamil Alkhouri <kamil.alkhouri@hs-offenburg.de>
+Date:   Tue Nov 3 08:10:58 2020 +0100
 
-Looks like the wrong version of the patch was sent/applied.
+    net: dsa: hellcreek: Add support for hardware timestamping
 
-Either way, thanks for the fix Colin.
+The analysis is as follows:
 
-Reviewed-by: Lee Jones <lee.jones@linaro.org>
+323                /* Get nanoseconds from ptp packet */
+324                type = SKB_PTP_TYPE(skb);
 
-> diff --git a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
-> index 6b4759ed6bfd..dbac073ed385 100644
-> --- a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
-> +++ b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
-> @@ -131,8 +131,10 @@ sideband_msg_req_encode_decode(struct drm_dp_sideband_msg_req_body *in)
->  		return false;
->  
->  	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
-> -	if (!txmsg)
-> -		return false;
-> +	if (!txmsg) {
-> +		result = false;
-> +		goto out;
-> +	}
->  
->  	drm_dp_encode_sideband_req(in, txmsg);
->  	ret = drm_dp_decode_sideband_req(txmsg, out);
+   4. returned_null: ptp_parse_header returns NULL (checked 10 out of 12
+times).
+   5. var_assigned: Assigning: hdr = NULL return value from
+ptp_parse_header.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+325                hdr  = ptp_parse_header(skb, type);
+
+   Dereference null return value (NULL_RETURNS)
+   6. dereference: Dereferencing a pointer that might be NULL hdr when
+calling hellcreek_get_reserved_field.
+
+326                ns   = hellcreek_get_reserved_field(hdr);
+327                hellcreek_clear_reserved_field(hdr);
+
+This issue can only occur if the type & PTP_CLASS_PMASK is not one of
+PTP_CLASS_IPV4, PTP_CLASS_IPV6 or PTP_CLASS_L2.  I'm not sure if this is
+a possibility or not, but I'm assuming that it would be useful to
+perform the null check just in case, but I'm not sure how this affects
+the hw timestamping code in this function.
+
+Colin
