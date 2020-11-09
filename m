@@ -1,45 +1,45 @@
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Date: Mon, 30 Nov 2020 15:53:14 +0000
-Subject: Re: [PATCH] printk: remove obsolete dead assignment
-Message-Id: <X8UVamNsa+8fwnAL@jagdpanzerIV.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Nov 2020 11:12:25 +0000
+Subject: [PATCH][next] drm/kmb: fix spelling mistakes in drm_info and drm_dbg messages
+Message-Id: <20201109111225.1485190-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201130124915.7573-1-lukas.bulwahn@gmail.com>
- <X8URvRhAB2AE4DZT@alley>
-In-Reply-To: <X8URvRhAB2AE4DZT@alley>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Petr Mladek <pmladek@suse.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Edmund Dea <edmund.j.dea@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On (20/11/30 16:37), Petr Mladek wrote:
-> On Mon 2020-11-30 13:49:15, Lukas Bulwahn wrote:
-[..]
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index f279d4fbd9dd..6e4e38b7cd91 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -741,7 +741,6 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
-> >  			if (LOG_FACILITY(u) != 0)
-> >  				facility = LOG_FACILITY(u);
-> >  			endp++;
-> > -			len -= endp - line;
-> >  			line = endp;
-> >  		}
-> >  	}
-> 
-> Yup, it was used to write the trailing '\0'. But it is done earlier
-> now. So, it is not longer needed.
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> 
-> Best Regards,
-> Petr
-> 
-> PS: I'll give it few days just in case anyone else would want to
-> review it. I'll push it then unless anyone complains.
+From: Colin Ian King <colin.king@canonical.com>
 
-FWIW, looks good to me
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+There are two spelling mistakes of the word sync in drm_info
+and drm_dbg messages. Fix these.
 
-	-ss
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/kmb/kmb_crtc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/kmb/kmb_crtc.c b/drivers/gpu/drm/kmb/kmb_crtc.c
+index dd54b03f7f84..44327bc629ca 100644
+--- a/drivers/gpu/drm/kmb/kmb_crtc.c
++++ b/drivers/gpu/drm/kmb/kmb_crtc.c
+@@ -77,7 +77,7 @@ static void kmb_crtc_set_mode(struct drm_crtc *crtc)
+ 	/* Initialize mipi */
+ 	kmb_dsi_mode_set(kmb->kmb_dsi, m, kmb->sys_clk_mhz);
+ 	drm_info(dev,
+-		 "vfp= %d vbp= %d vsyc_len=%d hfp=%d hbp=%d hsync_len=%d\n",
++		 "vfp= %d vbp= %d vsync_len=%d hfp=%d hbp=%d hsync_len=%d\n",
+ 		 m->crtc_vsync_start - m->crtc_vdisplay,
+ 		 m->crtc_vtotal - m->crtc_vsync_end,
+ 		 m->crtc_vsync_end - m->crtc_vsync_start,
+@@ -94,7 +94,7 @@ static void kmb_crtc_set_mode(struct drm_crtc *crtc)
+ 	vm.hback_porch = 0;
+ 	vm.hsync_len = 28;
+ 
+-	drm_dbg(dev, "%s : %dactive height= %d vbp=%d vfp=%d vsync-w=%d h-active=%d h-bp=%d h-fp=%d hysnc-l=%d",
++	drm_dbg(dev, "%s : %dactive height= %d vbp=%d vfp=%d vsync-w=%d h-active=%d h-bp=%d h-fp=%d hsync-l=%d",
+ 		__func__, __LINE__,
+ 			m->crtc_vdisplay, vm.vback_porch, vm.vfront_porch,
+ 			vm.vsync_len, m->crtc_hdisplay, vm.hback_porch,
+-- 
+2.28.0
