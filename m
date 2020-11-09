@@ -1,84 +1,72 @@
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 09 Nov 2020 14:01:27 +0000
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Mon, 09 Nov 2020 16:26:40 +0000
 Subject: Re: [PATCH net v2] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <CANn89iLhCjh7ZQRanVEj6Sytzn6LhFOb9Xo7O=teLHPouoeopw@mail.gmail.com>
+Message-Id: <302ad089-9e82-1856-0652-b92251c14e37@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
  <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
  <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
- <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com> <CANn89i+oS75TVKBDOBrr7Ff55Uctq4_HUcM_05Ed8kUL1HkHLw@mail.gmail.com>
+ <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
+ <CANn89i+oS75TVKBDOBrr7Ff55Uctq4_HUcM_05Ed8kUL1HkHLw@mail.gmail.com>
  <CANn89iJ5kuEfKAJoWxM9MWV5X6nHXzbtcBkh1OBTak-Y6SzbPQ@mail.gmail.com>
-In-Reply-To: <CANn89iJ5kuEfKAJoWxM9MWV5X6nHXzbtcBkh1OBTak-Y6SzbPQ@mail.gmail.com>
+ <CANn89iLhCjh7ZQRanVEj6Sytzn6LhFOb9Xo7O=teLHPouoeopw@mail.gmail.com>
+In-Reply-To: <CANn89iLhCjh7ZQRanVEj6Sytzn6LhFOb9Xo7O=teLHPouoeopw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Mao Wenan <wenan.mao@linux.alibaba.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Eric Dumazet <edumazet@google.com>
 Cc: David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 12:41 PM Eric Dumazet <edumazet@google.com> wrote:
->
-> Packetdrill test would be :
->
-> // Force syncookies
-> `sysctl -q net.ipv4.tcp_syncookies=2`
->
->     0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
->    +0 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
->    +0 setsockopt(3, SOL_SOCKET, SO_RCVBUF, [2048], 4) = 0
->    +0 bind(3, ..., ...) = 0
->    +0 listen(3, 1) = 0
->
-> +0 < S 0:0(0) win 32792 <mss 1000,sackOK,TS val 100 ecr 0,nop,wscale 7>
->    +0 > S. 0:0(0) ack 1 <mss 1460,sackOK,TS val 4000 ecr 100,nop,wscale 0>
->   +.1 < . 1:1(0) ack 1 win 1024 <nop,nop,TS val 200 ecr 4000>
->    +0 accept(3, ..., ...) = 4
-> +0 %{ assert tcpi_snd_wscale == 0, tcpi_snd_wscale }%
->
-
-Also, please add to your next submission an appropriate Fixes: tag :
-
-Fixes: e88c64f0a425 ("tcp: allow effective reduction of TCP's
-rcv-buffer via setsockopt")
-
-> On Mon, Nov 9, 2020 at 12:02 PM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > On Mon, Nov 9, 2020 at 11:12 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
-> > >
-> > >
-> > >
-> > > 在 2020/11/9 下午5:56, Eric Dumazet 写道:
-> > > > On Mon, Nov 9, 2020 at 10:33 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
-> > > >>
-> > > >> When net.ipv4.tcp_syncookies=1 and syn flood is happened,
-> > > >> cookie_v4_check or cookie_v6_check tries to redo what
-> > > >> tcp_v4_send_synack or tcp_v6_send_synack did,
-> > > >> rsk_window_clamp will be changed if SOCK_RCVBUF is set,
-> > > >> which will make rcv_wscale is different, the client
-> > > >> still operates with initial window scale and can overshot
-> > > >> granted window, the client use the initial scale but local
-> > > >> server use new scale to advertise window value, and session
-> > > >> work abnormally.
-> > > >
-> > > > What is not working exactly ?
-> > > >
-> > > > Sending a 'big wscale' should not really matter, unless perhaps there
-> > > > is a buggy stack at the remote end ?
-> > > 1)in tcp_v4_send_synack, if SO_RCVBUF is set and
-> > > tcp_full_space(sk)=65535, pass req->rsk_window_clamp=65535 to
-> > > tcp_select_initial_window, rcv_wscale will be zero, and send to client,
-> > > the client consider wscale is 0;
-> > > 2)when ack is back from client, if there is no this patch,
-> > > req->rsk_window_clamp is 0, and pass to tcp_select_initial_window,
-> > > wscale will be 7, this new rcv_wscale is no way to advertise to client.
-> > > 3)if server send rcv_wind to client with window=63, it consider the real
-> > > window is 63*2^7=8064, but client consider the server window is only
-> > > 63*2^0=63, it can't send big packet to server, and the send-q of client
-> > > is full.
-> > >
-> >
-> > I see, please change your patches so that tcp_full_space() is used _once_
-> >
-> > listener sk_rcvbuf can change under us.
-> >
-> > I really have no idea how window can be set to 63, so please send us
-> > the packetdrill test once you have it.
+CgrlnKggMjAyMC8xMS85IOS4i+WNiDEwOjAxLCBFcmljIER1bWF6ZXQg5YaZ6YGTOgo+IE9uIE1v
+biwgTm92IDksIDIwMjAgYXQgMTI6NDEgUE0gRXJpYyBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUu
+Y29tPiB3cm90ZToKPj4KPj4gUGFja2V0ZHJpbGwgdGVzdCB3b3VsZCBiZSA6Cj4+Cj4+IC8vIEZv
+cmNlIHN5bmNvb2tpZXMKPj4gYHN5c2N0bCAtcSBuZXQuaXB2NC50Y3Bfc3luY29va2llcz0yYAo+
+Pgo+PiAgICAgIDAgc29ja2V0KC4uLiwgU09DS19TVFJFQU0sIElQUFJPVE9fVENQKSA9IDMKPj4g
+ICAgICswIHNldHNvY2tvcHQoMywgU09MX1NPQ0tFVCwgU09fUkVVU0VBRERSLCBbMV0sIDQpID0g
+MAo+PiAgICAgKzAgc2V0c29ja29wdCgzLCBTT0xfU09DS0VULCBTT19SQ1ZCVUYsIFsyMDQ4XSwg
+NCkgPSAwCj4+ICAgICArMCBiaW5kKDMsIC4uLiwgLi4uKSA9IDAKPj4gICAgICswIGxpc3Rlbigz
+LCAxKSA9IDAKPj4KPj4gKzAgPCBTIDA6MCgwKSB3aW4gMzI3OTIgPG1zcyAxMDAwLHNhY2tPSyxU
+UyB2YWwgMTAwIGVjciAwLG5vcCx3c2NhbGUgNz4KPj4gICAgICswID4gUy4gMDowKDApIGFjayAx
+IDxtc3MgMTQ2MCxzYWNrT0ssVFMgdmFsIDQwMDAgZWNyIDEwMCxub3Asd3NjYWxlIDA+Cj4+ICAg
+ICsuMSA8IC4gMToxKDApIGFjayAxIHdpbiAxMDI0IDxub3Asbm9wLFRTIHZhbCAyMDAgZWNyIDQw
+MDA+Cj4+ICAgICArMCBhY2NlcHQoMywgLi4uLCAuLi4pID0gNAo+PiArMCAleyBhc3NlcnQgdGNw
+aV9zbmRfd3NjYWxlID0gMCwgdGNwaV9zbmRfd3NjYWxlIH0lCj4+Cj4gCj4gQWxzbywgcGxlYXNl
+IGFkZCB0byB5b3VyIG5leHQgc3VibWlzc2lvbiBhbiBhcHByb3ByaWF0ZSBGaXhlczogdGFnIDoK
+PiAKPiBGaXhlczogZTg4YzY0ZjBhNDI1ICgidGNwOiBhbGxvdyBlZmZlY3RpdmUgcmVkdWN0aW9u
+IG9mIFRDUCdzCj4gcmN2LWJ1ZmZlciB2aWEgc2V0c29ja29wdCIpCgpPSywgdGhhbmtzLCBJIGNh
+biByZXByb2R1Y2Ugd3NjYWxlPTAgd2l0aCB5b3VyIHBhY2tldGRyaWxsLCBhbmQgSSB3aWxsIApz
+ZW5kIHYzIHdpdGggdGhlIGZpeGVzIHRhZy4KCj4gCj4+IE9uIE1vbiwgTm92IDksIDIwMjAgYXQg
+MTI6MDIgUE0gRXJpYyBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUuY29tPiB3cm90ZToKPj4+Cj4+
+PiBPbiBNb24sIE5vdiA5LCAyMDIwIGF0IDExOjEyIEFNIE1hbyBXZW5hbiA8d2VuYW4ubWFvQGxp
+bnV4LmFsaWJhYmEuY29tPiB3cm90ZToKPj4+Pgo+Pj4+Cj4+Pj4KPj4+PiDlnKggMjAyMC8xMS85
+IOS4i+WNiDU6NTYsIEVyaWMgRHVtYXpldCDlhpnpgZM6Cj4+Pj4+IE9uIE1vbiwgTm92IDksIDIw
+MjAgYXQgMTA6MzMgQU0gTWFvIFdlbmFuIDx3ZW5hbi5tYW9AbGludXguYWxpYmFiYS5jb20+IHdy
+b3RlOgo+Pj4+Pj4KPj4+Pj4+IFdoZW4gbmV0LmlwdjQudGNwX3N5bmNvb2tpZXM9MSBhbmQgc3lu
+IGZsb29kIGlzIGhhcHBlbmVkLAo+Pj4+Pj4gY29va2llX3Y0X2NoZWNrIG9yIGNvb2tpZV92Nl9j
+aGVjayB0cmllcyB0byByZWRvIHdoYXQKPj4+Pj4+IHRjcF92NF9zZW5kX3N5bmFjayBvciB0Y3Bf
+djZfc2VuZF9zeW5hY2sgZGlkLAo+Pj4+Pj4gcnNrX3dpbmRvd19jbGFtcCB3aWxsIGJlIGNoYW5n
+ZWQgaWYgU09DS19SQ1ZCVUYgaXMgc2V0LAo+Pj4+Pj4gd2hpY2ggd2lsbCBtYWtlIHJjdl93c2Nh
+bGUgaXMgZGlmZmVyZW50LCB0aGUgY2xpZW50Cj4+Pj4+PiBzdGlsbCBvcGVyYXRlcyB3aXRoIGlu
+aXRpYWwgd2luZG93IHNjYWxlIGFuZCBjYW4gb3ZlcnNob3QKPj4+Pj4+IGdyYW50ZWQgd2luZG93
+LCB0aGUgY2xpZW50IHVzZSB0aGUgaW5pdGlhbCBzY2FsZSBidXQgbG9jYWwKPj4+Pj4+IHNlcnZl
+ciB1c2UgbmV3IHNjYWxlIHRvIGFkdmVydGlzZSB3aW5kb3cgdmFsdWUsIGFuZCBzZXNzaW9uCj4+
+Pj4+PiB3b3JrIGFibm9ybWFsbHkuCj4+Pj4+Cj4+Pj4+IFdoYXQgaXMgbm90IHdvcmtpbmcgZXhh
+Y3RseSA/Cj4+Pj4+Cj4+Pj4+IFNlbmRpbmcgYSAnYmlnIHdzY2FsZScgc2hvdWxkIG5vdCByZWFs
+bHkgbWF0dGVyLCB1bmxlc3MgcGVyaGFwcyB0aGVyZQo+Pj4+PiBpcyBhIGJ1Z2d5IHN0YWNrIGF0
+IHRoZSByZW1vdGUgZW5kID8KPj4+PiAxKWluIHRjcF92NF9zZW5kX3N5bmFjaywgaWYgU09fUkNW
+QlVGIGlzIHNldCBhbmQKPj4+PiB0Y3BfZnVsbF9zcGFjZShzayllNTM1LCBwYXNzIHJlcS0+cnNr
+X3dpbmRvd19jbGFtcGU1MzUgdG8KPj4+PiB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LCByY3Zf
+d3NjYWxlIHdpbGwgYmUgemVybywgYW5kIHNlbmQgdG8gY2xpZW50LAo+Pj4+IHRoZSBjbGllbnQg
+Y29uc2lkZXIgd3NjYWxlIGlzIDA7Cj4+Pj4gMil3aGVuIGFjayBpcyBiYWNrIGZyb20gY2xpZW50
+LCBpZiB0aGVyZSBpcyBubyB0aGlzIHBhdGNoLAo+Pj4+IHJlcS0+cnNrX3dpbmRvd19jbGFtcCBp
+cyAwLCBhbmQgcGFzcyB0byB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LAo+Pj4+IHdzY2FsZSB3
+aWxsIGJlIDcsIHRoaXMgbmV3IHJjdl93c2NhbGUgaXMgbm8gd2F5IHRvIGFkdmVydGlzZSB0byBj
+bGllbnQuCj4+Pj4gMylpZiBzZXJ2ZXIgc2VuZCByY3Zfd2luZCB0byBjbGllbnQgd2l0aCB3aW5k
+b3djLCBpdCBjb25zaWRlciB0aGUgcmVhbAo+Pj4+IHdpbmRvdyBpcyA2MyoyXjeANjQsIGJ1dCBj
+bGllbnQgY29uc2lkZXIgdGhlIHNlcnZlciB3aW5kb3cgaXMgb25seQo+Pj4+IDYzKjJeMGMsIGl0
+IGNhbid0IHNlbmQgYmlnIHBhY2tldCB0byBzZXJ2ZXIsIGFuZCB0aGUgc2VuZC1xIG9mIGNsaWVu
+dAo+Pj4+IGlzIGZ1bGwuCj4+Pj4KPj4+Cj4+PiBJIHNlZSwgcGxlYXNlIGNoYW5nZSB5b3VyIHBh
+dGNoZXMgc28gdGhhdCB0Y3BfZnVsbF9zcGFjZSgpIGlzIHVzZWQgX29uY2VfCj4+Pgo+Pj4gbGlz
+dGVuZXIgc2tfcmN2YnVmIGNhbiBjaGFuZ2UgdW5kZXIgdXMuCj4+Pgo+Pj4gSSByZWFsbHkgaGF2
+ZSBubyBpZGVhIGhvdyB3aW5kb3cgY2FuIGJlIHNldCB0byA2Mywgc28gcGxlYXNlIHNlbmQgdXMK
+Pj4+IHRoZSBwYWNrZXRkcmlsbCB0ZXN0IG9uY2UgeW91IGhhdmUgaXQu
