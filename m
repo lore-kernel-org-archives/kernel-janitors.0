@@ -1,61 +1,72 @@
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 09 Nov 2020 09:56:33 +0000
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Mon, 09 Nov 2020 10:12:40 +0000
 Subject: Re: [PATCH net v2] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
+Message-Id: <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com> <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
-In-Reply-To: <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
+References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
+ <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
+ <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
+In-Reply-To: <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mao Wenan <wenan.mao@linux.alibaba.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Eric Dumazet <edumazet@google.com>
 Cc: David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 10:33 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
->
-> When net.ipv4.tcp_syncookies=1 and syn flood is happened,
-> cookie_v4_check or cookie_v6_check tries to redo what
-> tcp_v4_send_synack or tcp_v6_send_synack did,
-> rsk_window_clamp will be changed if SOCK_RCVBUF is set,
-> which will make rcv_wscale is different, the client
-> still operates with initial window scale and can overshot
-> granted window, the client use the initial scale but local
-> server use new scale to advertise window value, and session
-> work abnormally.
-
-What is not working exactly ?
-
-Sending a 'big wscale' should not really matter, unless perhaps there
-is a buggy stack at the remote end ?
-
->
-> Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
-> ---
->  v2: fix for ipv6.
->  net/ipv4/syncookies.c | 4 ++++
->  net/ipv6/syncookies.c | 5 +++++
->  2 files changed, 9 insertions(+)
->
-> diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
-> index 6ac473b..57ce317 100644
-> --- a/net/ipv4/syncookies.c
-> +++ b/net/ipv4/syncookies.c
-> @@ -427,6 +427,10 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
->
->         /* Try to redo what tcp_v4_send_synack did. */
->         req->rsk_window_clamp = tp->window_clamp ? :dst_metric(&rt->dst, RTAX_WINDOW);
-> +       /* limit the window selection if the user enforce a smaller rx buffer */
-> +       if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
-> +           (req->rsk_window_clamp > tcp_full_space(sk) || req->rsk_window_clamp = 0))
-> +               req->rsk_window_clamp = tcp_full_space(sk);
-
-This seems not needed to me.
-
-We call tcp_select_initial_window() with tcp_full_space(sk) passed as
-the 2nd parameter.
-
-tcp_full_space(sk) will then apply :
-
-space = min(*window_clamp, space);
-
-Please cook a packetdrill test to demonstrate what you are seeing ?
+CgrlnKggMjAyMC8xMS85IOS4i+WNiDU6NTYsIEVyaWMgRHVtYXpldCDlhpnpgZM6Cj4gT24gTW9u
+LCBOb3YgOSwgMjAyMCBhdCAxMDozMyBBTSBNYW8gV2VuYW4gPHdlbmFuLm1hb0BsaW51eC5hbGli
+YWJhLmNvbT4gd3JvdGU6Cj4+Cj4+IFdoZW4gbmV0LmlwdjQudGNwX3N5bmNvb2tpZXM9MSBhbmQg
+c3luIGZsb29kIGlzIGhhcHBlbmVkLAo+PiBjb29raWVfdjRfY2hlY2sgb3IgY29va2llX3Y2X2No
+ZWNrIHRyaWVzIHRvIHJlZG8gd2hhdAo+PiB0Y3BfdjRfc2VuZF9zeW5hY2sgb3IgdGNwX3Y2X3Nl
+bmRfc3luYWNrIGRpZCwKPj4gcnNrX3dpbmRvd19jbGFtcCB3aWxsIGJlIGNoYW5nZWQgaWYgU09D
+S19SQ1ZCVUYgaXMgc2V0LAo+PiB3aGljaCB3aWxsIG1ha2UgcmN2X3dzY2FsZSBpcyBkaWZmZXJl
+bnQsIHRoZSBjbGllbnQKPj4gc3RpbGwgb3BlcmF0ZXMgd2l0aCBpbml0aWFsIHdpbmRvdyBzY2Fs
+ZSBhbmQgY2FuIG92ZXJzaG90Cj4+IGdyYW50ZWQgd2luZG93LCB0aGUgY2xpZW50IHVzZSB0aGUg
+aW5pdGlhbCBzY2FsZSBidXQgbG9jYWwKPj4gc2VydmVyIHVzZSBuZXcgc2NhbGUgdG8gYWR2ZXJ0
+aXNlIHdpbmRvdyB2YWx1ZSwgYW5kIHNlc3Npb24KPj4gd29yayBhYm5vcm1hbGx5Lgo+IAo+IFdo
+YXQgaXMgbm90IHdvcmtpbmcgZXhhY3RseSA/Cj4gCj4gU2VuZGluZyBhICdiaWcgd3NjYWxlJyBz
+aG91bGQgbm90IHJlYWxseSBtYXR0ZXIsIHVubGVzcyBwZXJoYXBzIHRoZXJlCj4gaXMgYSBidWdn
+eSBzdGFjayBhdCB0aGUgcmVtb3RlIGVuZCA/CjEpaW4gdGNwX3Y0X3NlbmRfc3luYWNrLCBpZiBT
+T19SQ1ZCVUYgaXMgc2V0IGFuZCAKdGNwX2Z1bGxfc3BhY2Uoc2spZTUzNSwgcGFzcyByZXEtPnJz
+a193aW5kb3dfY2xhbXBlNTM1IHRvIAp0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LCByY3Zfd3Nj
+YWxlIHdpbGwgYmUgemVybywgYW5kIHNlbmQgdG8gY2xpZW50LCAKdGhlIGNsaWVudCBjb25zaWRl
+ciB3c2NhbGUgaXMgMDsKMil3aGVuIGFjayBpcyBiYWNrIGZyb20gY2xpZW50LCBpZiB0aGVyZSBp
+cyBubyB0aGlzIHBhdGNoLCAKcmVxLT5yc2tfd2luZG93X2NsYW1wIGlzIDAsIGFuZCBwYXNzIHRv
+IHRjcF9zZWxlY3RfaW5pdGlhbF93aW5kb3csIAp3c2NhbGUgd2lsbCBiZSA3LCB0aGlzIG5ldyBy
+Y3Zfd3NjYWxlIGlzIG5vIHdheSB0byBhZHZlcnRpc2UgdG8gY2xpZW50LgozKWlmIHNlcnZlciBz
+ZW5kIHJjdl93aW5kIHRvIGNsaWVudCB3aXRoIHdpbmRvd2MsIGl0IGNvbnNpZGVyIHRoZSByZWFs
+CndpbmRvdyBpcyA2MyoyXjeANjQsIGJ1dCBjbGllbnQgY29uc2lkZXIgdGhlIHNlcnZlciB3aW5k
+b3cgaXMgb25seSAKNjMqMl4wYywgaXQgY2FuJ3Qgc2VuZCBiaWcgcGFja2V0IHRvIHNlcnZlciwg
+YW5kIHRoZSBzZW5kLXEgb2YgY2xpZW50CmlzIGZ1bGwuCgoKPiAKPj4KPj4gU2lnbmVkLW9mZi1i
+eTogTWFvIFdlbmFuIDx3ZW5hbi5tYW9AbGludXguYWxpYmFiYS5jb20+Cj4+IC0tLQo+PiAgIHYy
+OiBmaXggZm9yIGlwdjYuCj4+ICAgbmV0L2lwdjQvc3luY29va2llcy5jIHwgNCArKysrCj4+ICAg
+bmV0L2lwdjYvc3luY29va2llcy5jIHwgNSArKysrKwo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgOSBp
+bnNlcnRpb25zKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9uZXQvaXB2NC9zeW5jb29raWVzLmMgYi9u
+ZXQvaXB2NC9zeW5jb29raWVzLmMKPj4gaW5kZXggNmFjNDczYi4uNTdjZTMxNyAxMDA2NDQKPj4g
+LS0tIGEvbmV0L2lwdjQvc3luY29va2llcy5jCj4+ICsrKyBiL25ldC9pcHY0L3N5bmNvb2tpZXMu
+Ywo+PiBAQCAtNDI3LDYgKzQyNywxMCBAQCBzdHJ1Y3Qgc29jayAqY29va2llX3Y0X2NoZWNrKHN0
+cnVjdCBzb2NrICpzaywgc3RydWN0IHNrX2J1ZmYgKnNrYikKPj4KPj4gICAgICAgICAgLyogVHJ5
+IHRvIHJlZG8gd2hhdCB0Y3BfdjRfc2VuZF9zeW5hY2sgZGlkLiAqLwo+PiAgICAgICAgICByZXEt
+PnJza193aW5kb3dfY2xhbXAgPSB0cC0+d2luZG93X2NsYW1wID8gOmRzdF9tZXRyaWMoJnJ0LT5k
+c3QsIFJUQVhfV0lORE9XKTsKPj4gKyAgICAgICAvKiBsaW1pdCB0aGUgd2luZG93IHNlbGVjdGlv
+biBpZiB0aGUgdXNlciBlbmZvcmNlIGEgc21hbGxlciByeCBidWZmZXIgKi8KPj4gKyAgICAgICBp
+ZiAoc2stPnNrX3VzZXJsb2NrcyAmIFNPQ0tfUkNWQlVGX0xPQ0sgJiYKPj4gKyAgICAgICAgICAg
+KHJlcS0+cnNrX3dpbmRvd19jbGFtcCA+IHRjcF9mdWxsX3NwYWNlKHNrKSB8fCByZXEtPnJza193
+aW5kb3dfY2xhbXAgPSAwKSkKPj4gKyAgICAgICAgICAgICAgIHJlcS0+cnNrX3dpbmRvd19jbGFt
+cCA9IHRjcF9mdWxsX3NwYWNlKHNrKTsKPiAKPiBUaGlzIHNlZW1zIG5vdCBuZWVkZWQgdG8gbWUu
+Cj4gCj4gV2UgY2FsbCB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93KCkgd2l0aCB0Y3BfZnVsbF9z
+cGFjZShzaykgcGFzc2VkIGFzCj4gdGhlIDJuZCBwYXJhbWV0ZXIuCj4gCj4gdGNwX2Z1bGxfc3Bh
+Y2Uoc2spIHdpbGwgdGhlbiBhcHBseSA6Cj4gCj4gc3BhY2UgPSBtaW4oKndpbmRvd19jbGFtcCwg
+c3BhY2UpOwoKaWYgY29va2llX3Y0X2NoZWNrIHBhc3Mgd2luZG93X2NsYW1wPTAgdG8gdGNwX3Nl
+bGVjdF9pbml0aWFsX3dpbmRvdywgaXQgCndpbGwgc2V0IHdpbmRvd19jbGFtcCB0byBtYXggdmFs
+dWUuCigqd2luZG93X2NsYW1wKSA9IChVMTZfTUFYIDw8IFRDUF9NQVhfV1NDQUxFKTsKCmJ1dCBz
+cGFjZSB3aWxsIGZldGNoIGZyb20gc3lzY3RsX3JtZW1fbWF4IGFuZCBzeXNjdGxfdGNwX3JtZW1b
+Ml0gd2hpY2ggCmlzIGFsc28gYmlnIHZhbHVlLgpzcGFjZSA9IG1heF90KHUzMiwgc3BhY2UsIHNv
+Y2tfbmV0KHNrKS0+aXB2NC5zeXNjdGxfdGNwX3JtZW1bMl0pOwpzcGFjZSA9IG1heF90KHUzMiwg
+c3BhY2UsIHN5c2N0bF9ybWVtX21heCk7CgpUaGVuLHNwYWNlID0gbWluKCp3aW5kb3dfY2xhbXAs
+IHNwYWNlKSBpcyBhIGJpZyB2YWx1ZSwgbGVhZCB3c2NhbGUgdG8gNywKaXMgZGlmZmVyZW50IGZy
+b20gdGNwX3Y0X3NlbmRfc3luYWNrLgoKCj4gCj4gUGxlYXNlIGNvb2sgYSBwYWNrZXRkcmlsbCB0
+ZXN0IHRvIGRlbW9uc3RyYXRlIHdoYXQgeW91IGFyZSBzZWVpbmcgPwo+IApJIGhhdmUgcmVhbCBl
+bnZpcm9ubWVudCBhbmQgcmVwcm9kdWNlIHRoaXMgY2FzZSwgdGhpcyBwYXRjaCBjYW4gZml4IAp0
+aGF0LCBpIHdpbGwgdHJ5IHRvIHVzZSBwYWNrZXRkcmlsbCB3aXRoIHN5biBjb29raWVzIGFuZCBz
+eW4gZmxvb2QgaGFwcGVuLgo=
