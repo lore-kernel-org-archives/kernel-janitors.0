@@ -1,34 +1,42 @@
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-Date: Tue, 10 Nov 2020 11:58:15 +0000
-Subject: Re: [PATCH v2] clk: hisilicon: Free clk_data and unmap region obtained by of_iomap
-Message-Id: <3252231f-dfb9-789f-e164-11d0e579defe@huawei.com>
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Mon, 09 Nov 2020 09:20:14 +0000
+Subject: [PATCH] net: Update window_clamp if SOCK_RCVBUF is set
+Message-Id: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201109180920.43193-1-gengdongjiu@huawei.com>
- <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
-In-Reply-To: <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
 
-CgpPbiAyMDIwLzExLzEwIDE6NTQsIE1hcmt1cyBFbGZyaW5nIHdyb3RlOgo+IOKApgo+PiArKysg
-Yi9kcml2ZXJzL2Nsay9oaXNpbGljb24vY2xrLWhpMzYyMC5jCj4g4oCmCj4+IEBAIC00NzgsNiAr
-NDc4LDEwIEBAIHN0YXRpYyB2b2lkIF9faW5pdCBoaTM2MjBfbW1jX2Nsa19pbml0KHN0cnVjdCBk
-ZXZpY2Vfbm9kZSAqbm9kZSkKPj4KPj4gIAljbGtfZGF0YS0+Y2xrX251bSA9IG51bTsKPj4gIAlv
-Zl9jbGtfYWRkX3Byb3ZpZGVyKG5vZGUsIG9mX2Nsa19zcmNfb25lY2VsbF9nZXQsIGNsa19kYXRh
-KTsKPj4gK2ZyZWVfY2xrX2RhdGE6Cj4+ICsJa2ZyZWUoY2xrX2RhdGEpOwo+IOKApgo+IAo+ICog
-U2hvdWxkIGFueSBzeXN0ZW0gcmVzb3VyY2VzIGJlIGtlcHQgYWxsb2NhdGVkIGlmIHRoZSBleGVj
-dXRpb24KPiAgIG9mIHRoaXMgZnVuY3Rpb24gaW1wbGVtZW50YXRpb24gc3VjY2VlZGVkPwo+IAo+
-ICogSG93IGRvIHlvdSB0aGluayBhYm91dCB0byBhZGQgdGhlIHN0YXRlbWVudCDigJxyZXR1cm47
-4oCdCj4gICBhZnRlciB0aGUgY2FsbCBvZiB0aGUgZnVuY3Rpb24g4oCcb2ZfY2xrX2FkZF9wcm92
-aWRlcuKAnT8KPiAKPiAqIFNob3VsZCBhbm90aGVyIHJldHVybiB2YWx1ZSBiZSBhbHNvIGNoZWNr
-ZWQgaGVyZT8KCnN1cmUuCgo+IAo+ICAgU2VlIGFsc286Cj4gICBodHRwczovL2dpdC5rZXJuZWwu
-b3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9kcml2
-ZXJzL2Nsay9jbGsuYz9pZPgzOTRmMjMyYjFlYWI2NDljZTJkZjVjNWYxNWIwZTUyOGM5MjA5MSNu
-NDQxNAo+ICAgaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuMTAtcmMyL3NvdXJj
-ZS9kcml2ZXJzL2Nsay9jbGsuYyNMNDQxNAo+IAo+ICogV291bGQgeW91IGxpa2UgdG8gdXNlIHRo
-ZSBmdW5jdGlvbiDigJxvZl9jbGtfYWRkX2h3X3Byb3ZpZGVy4oCdIGluc3RlYWQ/CgogICAgSG93
-IGFib3V0IHdlIHN0aWxsIHVzZSBvZl9jbGtfYWRkX3Byb3ZpZGVyKCk/IEl0IGRvZXNuJ3Qgc2Vl
-bSB0byBtYWtlIGRpZmZlcmVuY2UgdXNpbmcgb2ZfY2xrX2FkZF9od19wcm92aWRlcigpLgoKPiAK
-PiBSZWdhcmRzLAo+IE1hcmt1cw==
+When net.ipv4.tcp_syncookies=1 and syn flood is happened,
+cookie_v4_check tries to redo what tcp_v4_send_synack did,
+rsk_window_clamp will be changed if SOCK_RCVBUF is set
+by user, which will make rcv_wscale is different, the client
+still operates with initial window scale and can overshot
+granted window, the client use the initial scale but local
+server use new scale to advertise window value, and session
+work abnormally.
+
+Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
+---
+ net/ipv4/syncookies.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
+index 6ac473b..57ce317 100644
+--- a/net/ipv4/syncookies.c
++++ b/net/ipv4/syncookies.c
+@@ -427,6 +427,10 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
+ 
+ 	/* Try to redo what tcp_v4_send_synack did. */
+ 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(&rt->dst, RTAX_WINDOW);
++	/* limit the window selection if the user enforce a smaller rx buffer */
++	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
++	    (req->rsk_window_clamp > tcp_full_space(sk) || req->rsk_window_clamp = 0))
++		req->rsk_window_clamp = tcp_full_space(sk);
+ 
+ 	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
+ 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
+-- 
+1.8.3.1
