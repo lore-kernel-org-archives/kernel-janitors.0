@@ -1,44 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 16 Nov 2020 23:33:15 +0000
-Subject: Re: [PATCH] ASoC: qcom: sc7180: initialize the "no_headphone" variable
-Message-Id: <160556956526.29683.11951945809418219234.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Nov 2020 12:52:15 +0000
+Subject: [PATCH][next] mptcp: fix a dereference of pointer before msk is null checked.
+Message-Id: <20201109125215.2080172-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201116125950.GA44063@mwanda>
-In-Reply-To: <20201116125950.GA44063@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>, xuyuqing <xuyuqing@huaqin.corp-partner.google.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: Mat Martineau <mathew.j.martineau@linux.intel.com>, Matthieu Baerts <matthieu.baerts@tessares.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Geliang Tang <geliangtang@gmail.com>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, mptcp@lists.01.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 16 Nov 2020 15:59:50 +0300, Dan Carpenter wrote:
-> The "no_headphone" variable is never set to "false" so it could be
-> uninitialized.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+Currently the assignment of pointer net from the sock_net(sk) call
+is potentially dereferencing a null pointer sk. sk points to the
+same location as pointer msk and msk is being null checked after
+the sock_net call.  Fix this by calling sock_net after the null
+check on pointer msk.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 00cfd77b9063 ("mptcp: retransmit ADD_ADDR when timeout")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/mptcp/pm_netlink.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: qcom: sc7180: initialize the "no_headphone" variable
-      commit: 7141f25f14e03a0b049ffb2010b12abf652a10f3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index ed60538df7b2..e76879ea5a30 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -206,13 +206,15 @@ static void mptcp_pm_add_timer(struct timer_list *timer)
+ 	struct mptcp_pm_add_entry *entry = from_timer(entry, timer, add_timer);
+ 	struct mptcp_sock *msk = entry->sock;
+ 	struct sock *sk = (struct sock *)msk;
+-	struct net *net = sock_net(sk);
++	struct net *net;
+ 
+ 	pr_debug("msk=%p", msk);
+ 
+ 	if (!msk)
+ 		return;
+ 
++	net = sock_net(sk);
++
+ 	if (inet_sk_state_load(sk) = TCP_CLOSE)
+ 		return;
+ 
+-- 
+2.28.0
