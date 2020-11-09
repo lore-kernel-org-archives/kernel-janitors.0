@@ -1,23 +1,90 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue, 10 Nov 2020 16:54:01 +0000
-Subject: Re: [PATCH][next] sched/debug: fix memory corruption caused by multiple small reads of flags
-Message-Id: <20201110165401.GN2594@hirez.programming.kicks-ass.net>
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Mon, 09 Nov 2020 17:17:56 +0000
+Subject: [PATCH net v4] net: Update window_clamp if SOCK_RCVBUF is set
+Message-Id: <1604942276-92635-1-git-send-email-wenan.mao@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029151103.373410-1-colin.king@canonical.com>
-In-Reply-To: <20201029151103.373410-1-colin.king@canonical.com>
+References: <CANn89iLVWFgDvkUygK8Sh_H7=qFmuZKo1h=aoq+F57J28r4EUA@mail.gmail.com>
+In-Reply-To: <CANn89iLVWFgDvkUygK8Sh_H7=qFmuZKo1h=aoq+F57J28r4EUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <valentin.schneider@arm.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
 
-On Thu, Oct 29, 2020 at 03:11:03PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Reading /proc/sys/kernel/sched_domain/cpu*/domain0/flags mutliple times
-> with small reads causes oopses with slub corruption issues because the kfree is
-> free'ing an offset from a previous allocation. Fix this by adding in a new
-> pointer 'buf' for the allocation and kfree and use the temporary pointer tmp
-> to handle memory copies of the buf offsets.
+When net.ipv4.tcp_syncookies=1 and syn flood is happened,
+cookie_v4_check or cookie_v6_check tries to redo what
+tcp_v4_send_synack or tcp_v6_send_synack did,
+rsk_window_clamp will be changed if SOCK_RCVBUF is set,
+which will make rcv_wscale is different, the client
+still operates with initial window scale and can overshot
+granted window, the client use the initial scale but local
+server use new scale to advertise window value, and session
+work abnormally.
 
-Thanks!
+Fixes: e88c64f0a425 ("tcp: allow effective reduction of TCP's rcv-buffer via setsockopt")
+Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
+---
+ v4: change fixes tag format, and delay the actual call to
+ tcp_full_space().
+ v3: add local variable full_space, add fixes tag.
+ v2: fix for ipv6.
+ net/ipv4/syncookies.c | 8 +++++++-
+ net/ipv6/syncookies.c | 9 ++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
+index 6ac473b..8784e1f 100644
+--- a/net/ipv4/syncookies.c
++++ b/net/ipv4/syncookies.c
+@@ -327,6 +327,7 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
+ 	struct inet_request_sock *ireq;
+ 	struct tcp_request_sock *treq;
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	int full_space;
+ 	const struct tcphdr *th = tcp_hdr(skb);
+ 	__u32 cookie = ntohl(th->ack_seq) - 1;
+ 	struct sock *ret = sk;
+@@ -427,8 +428,13 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
+ 
+ 	/* Try to redo what tcp_v4_send_synack did. */
+ 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(&rt->dst, RTAX_WINDOW);
++	/* limit the window selection if the user enforce a smaller rx buffer */
++	full_space = tcp_full_space(sk);
++	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
++	    (req->rsk_window_clamp > full_space || req->rsk_window_clamp = 0))
++		req->rsk_window_clamp = full_space;
+ 
+-	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
++	tcp_select_initial_window(sk, full_space, req->mss,
+ 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
+ 				  ireq->wscale_ok, &rcv_wscale,
+ 				  dst_metric(&rt->dst, RTAX_INITRWND));
+diff --git a/net/ipv6/syncookies.c b/net/ipv6/syncookies.c
+index e796a64..798ede8 100644
+--- a/net/ipv6/syncookies.c
++++ b/net/ipv6/syncookies.c
+@@ -132,6 +132,7 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
+ 	struct tcp_request_sock *treq;
+ 	struct ipv6_pinfo *np = inet6_sk(sk);
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	int full_space;
+ 	const struct tcphdr *th = tcp_hdr(skb);
+ 	__u32 cookie = ntohl(th->ack_seq) - 1;
+ 	struct sock *ret = sk;
+@@ -241,7 +242,13 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
+ 	}
+ 
+ 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(dst, RTAX_WINDOW);
+-	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
++	/* limit the window selection if the user enforce a smaller rx buffer */
++	full_space = tcp_full_space(sk);
++	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
++	    (req->rsk_window_clamp > full_space || req->rsk_window_clamp = 0))
++		req->rsk_window_clamp = full_space;
++
++	tcp_select_initial_window(sk, full_space, req->mss,
+ 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
+ 				  ireq->wscale_ok, &rcv_wscale,
+ 				  dst_metric(dst, RTAX_INITRWND));
+-- 
+1.8.3.1
