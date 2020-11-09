@@ -1,37 +1,63 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 26 Nov 2020 18:25:20 +0000
-Subject: Re: [PATCH] crypto: qat - Use dma_set_mask_and_coherent to simplify code
-Message-Id: <f8d556f4-75da-7daf-a4af-8335788ff4a1@wanadoo.fr>
+From: Mao Wenan <wenan.mao@linux.alibaba.com>
+Date: Mon, 09 Nov 2020 09:33:37 +0000
+Subject: [PATCH net v2] net: Update window_clamp if SOCK_RCVBUF is set
+Message-Id: <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201121071359.1320167-1-christophe.jaillet@wanadoo.fr>
- <20201126120408.GA21666@silpixa00400314>
-In-Reply-To: <20201126120408.GA21666@silpixa00400314>
+References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
+In-Reply-To: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
 
-Le 26/11/2020 à 13:04, Giovanni Cabiddu a écrit :
-> Hi Christophe,
-> 
-> On Sat, Nov 21, 2020 at 07:13:59AM +0000, Christophe JAILLET wrote:
->> 'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
->> an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
->>
->> While at it, also remove some unless extra () in the 32 bits case.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Instead of returning -EFAULT, we could also propagate the error returned
->> by dma_set_mask_and_coherent()
-> I'm going to re-submit implementing the comment above and also including
-> qat_4xxx.
-> 
-> Regards,
-> 
+When net.ipv4.tcp_syncookies=1 and syn flood is happened,
+cookie_v4_check or cookie_v6_check tries to redo what
+tcp_v4_send_synack or tcp_v6_send_synack did,
+rsk_window_clamp will be changed if SOCK_RCVBUF is set,
+which will make rcv_wscale is different, the client
+still operates with initial window scale and can overshot
+granted window, the client use the initial scale but local
+server use new scale to advertise window value, and session
+work abnormally.
 
-Sure,
-sorry for missing this one.
+Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
+---
+ v2: fix for ipv6.
+ net/ipv4/syncookies.c | 4 ++++
+ net/ipv6/syncookies.c | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-CJ
+diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
+index 6ac473b..57ce317 100644
+--- a/net/ipv4/syncookies.c
++++ b/net/ipv4/syncookies.c
+@@ -427,6 +427,10 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
+ 
+ 	/* Try to redo what tcp_v4_send_synack did. */
+ 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(&rt->dst, RTAX_WINDOW);
++	/* limit the window selection if the user enforce a smaller rx buffer */
++	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
++	    (req->rsk_window_clamp > tcp_full_space(sk) || req->rsk_window_clamp = 0))
++		req->rsk_window_clamp = tcp_full_space(sk);
+ 
+ 	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
+ 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
+diff --git a/net/ipv6/syncookies.c b/net/ipv6/syncookies.c
+index e796a64..c041360 100644
+--- a/net/ipv6/syncookies.c
++++ b/net/ipv6/syncookies.c
+@@ -241,6 +241,11 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
+ 	}
+ 
+ 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(dst, RTAX_WINDOW);
++	/* limit the window selection if the user enforce a smaller rx buffer */
++	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
++	    (req->rsk_window_clamp > tcp_full_space(sk) || req->rsk_window_clamp = 0))
++		req->rsk_window_clamp = tcp_full_space(sk);
++
+ 	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
+ 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
+ 				  ireq->wscale_ok, &rcv_wscale,
+-- 
+1.8.3.1
