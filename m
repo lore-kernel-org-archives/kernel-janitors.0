@@ -1,81 +1,55 @@
-From: Mao Wenan <wenan.mao@linux.alibaba.com>
-Date: Mon, 09 Nov 2020 10:19:31 +0000
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 09 Nov 2020 11:02:27 +0000
 Subject: Re: [PATCH net v2] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <e5b2727f-af0d-3f38-e0c4-1768c3fe415d@linux.alibaba.com>
+Message-Id: <CANn89i+oS75TVKBDOBrr7Ff55Uctq4_HUcM_05Ed8kUL1HkHLw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1604913614-19432-1-git-send-email-wenan.mao@linux.alibaba.com>
  <1604914417-24578-1-git-send-email-wenan.mao@linux.alibaba.com>
- <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com>
- <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
+ <CANn89iKiNdtxaL_yMF6=_8=m001vXVaxvECMGbAiXTYZjfj3oQ@mail.gmail.com> <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
 In-Reply-To: <3b92167c-201c-e85d-822d-06f0c9ac508c@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mao Wenan <wenan.mao@linux.alibaba.com>
 Cc: David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-CgrlnKggMjAyMC8xMS85IOS4i+WNiDY6MTIsIE1hbyBXZW5hbiDlhpnpgZM6Cj4gCj4gCj4g5Zyo
-IDIwMjAvMTEvOSDkuIvljYg1OjU2LCBFcmljIER1bWF6ZXQg5YaZ6YGTOgo+PiBPbiBNb24sIE5v
-diA5LCAyMDIwIGF0IDEwOjMzIEFNIE1hbyBXZW5hbiAKPj4gPHdlbmFuLm1hb0BsaW51eC5hbGli
-YWJhLmNvbT4gd3JvdGU6Cj4+Pgo+Pj4gV2hlbiBuZXQuaXB2NC50Y3Bfc3luY29va2llcz0xIGFu
-ZCBzeW4gZmxvb2QgaXMgaGFwcGVuZWQsCj4+PiBjb29raWVfdjRfY2hlY2sgb3IgY29va2llX3Y2
-X2NoZWNrIHRyaWVzIHRvIHJlZG8gd2hhdAo+Pj4gdGNwX3Y0X3NlbmRfc3luYWNrIG9yIHRjcF92
-Nl9zZW5kX3N5bmFjayBkaWQsCj4+PiByc2tfd2luZG93X2NsYW1wIHdpbGwgYmUgY2hhbmdlZCBp
-ZiBTT0NLX1JDVkJVRiBpcyBzZXQsCj4+PiB3aGljaCB3aWxsIG1ha2UgcmN2X3dzY2FsZSBpcyBk
-aWZmZXJlbnQsIHRoZSBjbGllbnQKPj4+IHN0aWxsIG9wZXJhdGVzIHdpdGggaW5pdGlhbCB3aW5k
-b3cgc2NhbGUgYW5kIGNhbiBvdmVyc2hvdAo+Pj4gZ3JhbnRlZCB3aW5kb3csIHRoZSBjbGllbnQg
-dXNlIHRoZSBpbml0aWFsIHNjYWxlIGJ1dCBsb2NhbAo+Pj4gc2VydmVyIHVzZSBuZXcgc2NhbGUg
-dG8gYWR2ZXJ0aXNlIHdpbmRvdyB2YWx1ZSwgYW5kIHNlc3Npb24KPj4+IHdvcmsgYWJub3JtYWxs
-eS4KPj4KPj4gV2hhdCBpcyBub3Qgd29ya2luZyBleGFjdGx5ID8KPj4KPj4gU2VuZGluZyBhICdi
-aWcgd3NjYWxlJyBzaG91bGQgbm90IHJlYWxseSBtYXR0ZXIsIHVubGVzcyBwZXJoYXBzIHRoZXJl
-Cj4+IGlzIGEgYnVnZ3kgc3RhY2sgYXQgdGhlIHJlbW90ZSBlbmQgPwo+IDEpaW4gdGNwX3Y0X3Nl
-bmRfc3luYWNrLCBpZiBTT19SQ1ZCVUYgaXMgc2V0IGFuZCAKPiB0Y3BfZnVsbF9zcGFjZShzayll
-NTM1LCBwYXNzIHJlcS0+cnNrX3dpbmRvd19jbGFtcGU1MzUgdG8gCj4gdGNwX3NlbGVjdF9pbml0
-aWFsX3dpbmRvdywgcmN2X3dzY2FsZSB3aWxsIGJlIHplcm8sIGFuZCBzZW5kIHRvIGNsaWVudCwg
-Cj4gdGhlIGNsaWVudCBjb25zaWRlciB3c2NhbGUgaXMgMDsKPiAyKXdoZW4gYWNrIGlzIGJhY2sg
-ZnJvbSBjbGllbnQsIGlmIHRoZXJlIGlzIG5vIHRoaXMgcGF0Y2gsIAo+IHJlcS0+cnNrX3dpbmRv
-d19jbGFtcCBpcyAwLCBhbmQgcGFzcyB0byB0Y3Bfc2VsZWN0X2luaXRpYWxfd2luZG93LCAKPiB3
-c2NhbGUgd2lsbCBiZSA3LCB0aGlzIG5ldyByY3Zfd3NjYWxlIGlzIG5vIHdheSB0byBhZHZlcnRp
-c2UgdG8gY2xpZW50Lgo+IDMpaWYgc2VydmVyIHNlbmQgcmN2X3dpbmQgdG8gY2xpZW50IHdpdGgg
-d2luZG93YywgaXQgY29uc2lkZXIgdGhlIHJlYWwKPiB3aW5kb3cgaXMgNjMqMl43gDY0LCBidXQg
-Y2xpZW50IGNvbnNpZGVyIHRoZSBzZXJ2ZXIgd2luZG93IGlzIG9ubHkgCj4gNjMqMl4wYywgaXQg
-Y2FuJ3Qgc2VuZCBiaWcgcGFja2V0IHRvIHNlcnZlciwgYW5kIHRoZSBzZW5kLXEgb2YgY2xpZW50
-Cj4gaXMgZnVsbC4KPiAKPiAKPj4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBNYW8gV2VuYW4gPHdl
-bmFuLm1hb0BsaW51eC5hbGliYWJhLmNvbT4KPj4+IC0tLQo+Pj4gwqAgdjI6IGZpeCBmb3IgaXB2
-Ni4KPj4+IMKgIG5ldC9pcHY0L3N5bmNvb2tpZXMuYyB8IDQgKysrKwo+Pj4gwqAgbmV0L2lwdjYv
-c3luY29va2llcy5jIHwgNSArKysrKwo+Pj4gwqAgMiBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlv
-bnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvbmV0L2lwdjQvc3luY29va2llcy5jIGIvbmV0L2lw
-djQvc3luY29va2llcy5jCj4+PiBpbmRleCA2YWM0NzNiLi41N2NlMzE3IDEwMDY0NAo+Pj4gLS0t
-IGEvbmV0L2lwdjQvc3luY29va2llcy5jCj4+PiArKysgYi9uZXQvaXB2NC9zeW5jb29raWVzLmMK
-Pj4+IEBAIC00MjcsNiArNDI3LDEwIEBAIHN0cnVjdCBzb2NrICpjb29raWVfdjRfY2hlY2soc3Ry
-dWN0IHNvY2sgKnNrLCAKPj4+IHN0cnVjdCBza19idWZmICpza2IpCj4+Pgo+Pj4gwqDCoMKgwqDC
-oMKgwqDCoCAvKiBUcnkgdG8gcmVkbyB3aGF0IHRjcF92NF9zZW5kX3N5bmFjayBkaWQuICovCj4+
-PiDCoMKgwqDCoMKgwqDCoMKgIHJlcS0+cnNrX3dpbmRvd19jbGFtcCA9IHRwLT53aW5kb3dfY2xh
-bXAgPyAKPj4+IDpkc3RfbWV0cmljKCZydC0+ZHN0LCBSVEFYX1dJTkRPVyk7Cj4+PiArwqDCoMKg
-wqDCoMKgIC8qIGxpbWl0IHRoZSB3aW5kb3cgc2VsZWN0aW9uIGlmIHRoZSB1c2VyIGVuZm9yY2Ug
-YSBzbWFsbGVyIAo+Pj4gcnggYnVmZmVyICovCj4+PiArwqDCoMKgwqDCoMKgIGlmIChzay0+c2tf
-dXNlcmxvY2tzICYgU09DS19SQ1ZCVUZfTE9DSyAmJgo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-IChyZXEtPnJza193aW5kb3dfY2xhbXAgPiB0Y3BfZnVsbF9zcGFjZShzaykgfHwgCj4+PiByZXEt
-PnJza193aW5kb3dfY2xhbXAgPSAwKSkKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHJlcS0+cnNrX3dpbmRvd19jbGFtcCA9IHRjcF9mdWxsX3NwYWNlKHNrKTsKPj4KPj4gVGhpcyBz
-ZWVtcyBub3QgbmVlZGVkIHRvIG1lLgo+Pgo+PiBXZSBjYWxsIHRjcF9zZWxlY3RfaW5pdGlhbF93
-aW5kb3coKSB3aXRoIHRjcF9mdWxsX3NwYWNlKHNrKSBwYXNzZWQgYXMKPj4gdGhlIDJuZCBwYXJh
-bWV0ZXIuCj4+Cj4+IHRjcF9mdWxsX3NwYWNlKHNrKSB3aWxsIHRoZW4gYXBwbHkgOgo+Pgo+PiBz
-cGFjZSA9IG1pbigqd2luZG93X2NsYW1wLCBzcGFjZSk7Cj4gCj4gaWYgY29va2llX3Y0X2NoZWNr
-IHBhc3Mgd2luZG93X2NsYW1wPTAgdG8gdGNwX3NlbGVjdF9pbml0aWFsX3dpbmRvdywgaXQgCj4g
-d2lsbCBzZXQgd2luZG93X2NsYW1wIHRvIG1heCB2YWx1ZS4KPiAoKndpbmRvd19jbGFtcCkgPSAo
-VTE2X01BWCA8PCBUQ1BfTUFYX1dTQ0FMRSk7Cgp3aW5kb3dfY2xhbXA9MCBpcyBmcm9tCnJlcS0+
-cnNrX3dpbmRvd19jbGFtcCA9IHRwLT53aW5kb3dfY2xhbXAgPyA6ZHN0X21ldHJpYyhkc3QsIFJU
-QVhfV0lORE9XKTsKCmFuZCBpZiBTT19SQ1ZCVUYgaXMgc2V0IGFuZCBlcXVhbCB0byA2NTUzNSxy
-ZXEtPnJza193aW5kb3dfY2xhbXAgd2lsbCBiZSAKNjU1MzUuCnJlcS0+cnNrX3dpbmRvd19jbGFt
-cCA9IHRjcF9mdWxsX3NwYWNlKHNrKTsKCj4gCj4gYnV0IHNwYWNlIHdpbGwgZmV0Y2ggZnJvbSBz
-eXNjdGxfcm1lbV9tYXggYW5kIHN5c2N0bF90Y3Bfcm1lbVsyXSB3aGljaCAKPiBpcyBhbHNvIGJp
-ZyB2YWx1ZS4KPiBzcGFjZSA9IG1heF90KHUzMiwgc3BhY2UsIHNvY2tfbmV0KHNrKS0+aXB2NC5z
-eXNjdGxfdGNwX3JtZW1bMl0pOwo+IHNwYWNlID0gbWF4X3QodTMyLCBzcGFjZSwgc3lzY3RsX3Jt
-ZW1fbWF4KTsKPiAKPiBUaGVuLHNwYWNlID0gbWluKCp3aW5kb3dfY2xhbXAsIHNwYWNlKSBpcyBh
-IGJpZyB2YWx1ZSwgbGVhZCB3c2NhbGUgdG8gNywKPiBpcyBkaWZmZXJlbnQgZnJvbSB0Y3BfdjRf
-c2VuZF9zeW5hY2suCj4gCj4gCj4+Cj4+IFBsZWFzZSBjb29rIGEgcGFja2V0ZHJpbGwgdGVzdCB0
-byBkZW1vbnN0cmF0ZSB3aGF0IHlvdSBhcmUgc2VlaW5nID8KPj4KPiBJIGhhdmUgcmVhbCBlbnZp
-cm9ubWVudCBhbmQgcmVwcm9kdWNlIHRoaXMgY2FzZSwgdGhpcyBwYXRjaCBjYW4gZml4IAo+IHRo
-YXQsIGkgd2lsbCB0cnkgdG8gdXNlIHBhY2tldGRyaWxsIHdpdGggc3luIGNvb2tpZXMgYW5kIHN5
-biBmbG9vZCBoYXBwZW4u
+On Mon, Nov 9, 2020 at 11:12 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
+>
+>
+>
+> 在 2020/11/9 下午5:56, Eric Dumazet 写道:
+> > On Mon, Nov 9, 2020 at 10:33 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
+> >>
+> >> When net.ipv4.tcp_syncookies=1 and syn flood is happened,
+> >> cookie_v4_check or cookie_v6_check tries to redo what
+> >> tcp_v4_send_synack or tcp_v6_send_synack did,
+> >> rsk_window_clamp will be changed if SOCK_RCVBUF is set,
+> >> which will make rcv_wscale is different, the client
+> >> still operates with initial window scale and can overshot
+> >> granted window, the client use the initial scale but local
+> >> server use new scale to advertise window value, and session
+> >> work abnormally.
+> >
+> > What is not working exactly ?
+> >
+> > Sending a 'big wscale' should not really matter, unless perhaps there
+> > is a buggy stack at the remote end ?
+> 1)in tcp_v4_send_synack, if SO_RCVBUF is set and
+> tcp_full_space(sk)=65535, pass req->rsk_window_clamp=65535 to
+> tcp_select_initial_window, rcv_wscale will be zero, and send to client,
+> the client consider wscale is 0;
+> 2)when ack is back from client, if there is no this patch,
+> req->rsk_window_clamp is 0, and pass to tcp_select_initial_window,
+> wscale will be 7, this new rcv_wscale is no way to advertise to client.
+> 3)if server send rcv_wind to client with window=63, it consider the real
+> window is 63*2^7=8064, but client consider the server window is only
+> 63*2^0=63, it can't send big packet to server, and the send-q of client
+> is full.
+>
+
+I see, please change your patches so that tcp_full_space() is used _once_
+
+listener sk_rcvbuf can change under us.
+
+I really have no idea how window can be set to 63, so please send us
+the packetdrill test once you have it.
