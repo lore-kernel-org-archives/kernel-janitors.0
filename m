@@ -1,54 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Nov 2020 07:23:40 +0000
-Subject: [PATCH] media: saa7146: fix array overflow in vidioc_s_audio()
-Message-Id: <20201117072340.GD1111239@mwanda>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 09 Nov 2020 12:22:50 +0000
+Subject: [PATCH] MAINTAINERS: assign ./fs/tracefs to TRACING
+Message-Id: <20201109122250.31915-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-The "a->index" value comes from the user via the ioctl.  The problem is
-that the shift can wrap resulting in setting "mxb->cur_audinput" to an
-invalid value, which later results in an array overflow.
+A check with ./scripts/get_maintainer.pl --letters -f fs/tracefs/ shows
+that the tracefs is not assigned to the TRACING section in MAINTAINERS.
 
-Fixes: 6680427791c9 ("[media] mxb: fix audio handling")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add the file pattern for the TRACING section to rectify that.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/pci/saa7146/mxb.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+applies cleanly on v5.10-rc3 and next-20201109
 
-diff --git a/drivers/media/pci/saa7146/mxb.c b/drivers/media/pci/saa7146/mxb.c
-index 129a1f8ebe1a..73fc901ecf3d 100644
---- a/drivers/media/pci/saa7146/mxb.c
-+++ b/drivers/media/pci/saa7146/mxb.c
-@@ -641,16 +641,17 @@ static int vidioc_s_audio(struct file *file, void *fh, const struct v4l2_audio *
- 	struct mxb *mxb = (struct mxb *)dev->ext_priv;
- 
- 	DEB_D("VIDIOC_S_AUDIO %d\n", a->index);
--	if (mxb_inputs[mxb->cur_input].audioset & (1 << a->index)) {
--		if (mxb->cur_audinput != a->index) {
--			mxb->cur_audinput = a->index;
--			tea6420_route(mxb, a->index);
--			if (mxb->cur_audinput = 0)
--				mxb_update_audmode(mxb);
--		}
--		return 0;
-+	if (a->index >= 32 ||
-+	    !(mxb_inputs[mxb->cur_input].audioset & (1 << a->index)))
-+		return -EINVAL;
-+
-+	if (mxb->cur_audinput != a->index) {
-+		mxb->cur_audinput = a->index;
-+		tea6420_route(mxb, a->index);
-+		if (mxb->cur_audinput = 0)
-+			mxb_update_audmode(mxb);
- 	}
--	return -EINVAL;
-+	return 0;
- }
- 
- #ifdef CONFIG_VIDEO_ADV_DEBUG
+Steven, Ingo, please pick this minor non-urgent clean-up patch.
+
+
+By the way, I am wondering if the git tree is still up to date?
+
+It says for TRACING:
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+
+But I assume commits now actually travel through:
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cba8ddf87a08..f0ba51f2c759 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17823,6 +17823,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+ F:	Documentation/trace/ftrace.rst
+ F:	arch/*/*/*/ftrace.h
+ F:	arch/*/kernel/ftrace.c
++F:	fs/tracefs/
+ F:	include/*/ftrace.h
+ F:	include/linux/trace*.h
+ F:	include/trace/
 -- 
-2.29.2
+2.17.1
