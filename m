@@ -1,25 +1,45 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Tue, 03 Nov 2020 13:56:25 +0000
-Subject: Re: [PATCH] iommu: fix a check in iommu_check_bind_data()
-Message-Id: <20201103135625.GK22888@8bytes.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Nov 2020 22:10:48 +0000
+Subject: [PATCH][V2] PCI: Fix a potential uninitentional integer overflow issue
+Message-Id: <20201110221048.3411288-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201103101623.GA1127762@mwanda>
-In-Reply-To: <20201103101623.GA1127762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>, Jacob Pan <jacob.pan.linux@gmail.com>, kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Stephen Bates <sbates@raithlin.com>, Alex Williamson <alex.williamson@redhat.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Logan Gunthorpe <logang@deltatee.com>, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 01:16:23PM +0300, Dan Carpenter wrote:
-> The "data->flags" variable is a u64 so if one of the high 32 bits is
-> set the original code will allow it, but it should be rejected.  The
-> fix is to declare "mask" as a u64 instead of a u32.
-> 
-> Fixes: d90573812eea ("iommu/uapi: Handle data and argsz filled by users")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/iommu/iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for v5.10, thanks.
+The shift of 1 by align_order is evaluated using 32 bit arithmetic
+and the result is assigned to a resource_size_t type variable that
+is a 64 bit unsigned integer on 64 bit platforms. Fix an overflow
+before widening issue by making the 1 a ULL.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 07d8d7e57c28 ("PCI: Make specifying PCI devices in kernel parameters reusable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Use ULL instead of BIT_ULL(), fix spelling mistake and capitalize first
+    word of patch subject.
+
+---
+ drivers/pci/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 3ef63a101fa1..248044a7ef8c 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6214,7 +6214,7 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 			if (align_order = -1)
+ 				align = PAGE_SIZE;
+ 			else
+-				align = 1 << align_order;
++				align = 1ULL << align_order;
+ 			break;
+ 		} else if (ret < 0) {
+ 			pr_err("PCI: Can't parse resource_alignment parameter: %s\n",
+-- 
+2.28.0
