@@ -1,93 +1,32 @@
-From: Mao Wenan <wenan.mao@linux.alibaba.com>
-Date: Tue, 10 Nov 2020 00:16:31 +0000
-Subject: [PATCH net v5] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <1604967391-123737-1-git-send-email-wenan.mao@linux.alibaba.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Nov 2020 07:32:52 +0000
+Subject: Re: [PATCH net v5] net: Update window_clamp if SOCK_RCVBUF is set
+Message-Id: <CANn89iL6UW9mG6hW7f3Yv+32Pe_i9F-5cQhfo2uV68wdcgSuZA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CANn89i+ABLMJTEKat=9=qujNwe0BFavphzqYc1CQGtrdkwUnXg@mail.gmail.com>
-In-Reply-To: <CANn89i+ABLMJTEKat=9=qujNwe0BFavphzqYc1CQGtrdkwUnXg@mail.gmail.com>
+ <1604967391-123737-1-git-send-email-wenan.mao@linux.alibaba.com>
+In-Reply-To: <1604967391-123737-1-git-send-email-wenan.mao@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mao Wenan <wenan.mao@linux.alibaba.com>
+To: Mao Wenan <wenan.mao@linux.alibaba.com>
+Cc: David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-When net.ipv4.tcp_syncookies=1 and syn flood is happened,
-cookie_v4_check or cookie_v6_check tries to redo what
-tcp_v4_send_synack or tcp_v6_send_synack did,
-rsk_window_clamp will be changed if SOCK_RCVBUF is set,
-which will make rcv_wscale is different, the client
-still operates with initial window scale and can overshot
-granted window, the client use the initial scale but local
-server use new scale to advertise window value, and session
-work abnormally.
+On Tue, Nov 10, 2020 at 1:16 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
+>
+> When net.ipv4.tcp_syncookies=1 and syn flood is happened,
+> cookie_v4_check or cookie_v6_check tries to redo what
+> tcp_v4_send_synack or tcp_v6_send_synack did,
+> rsk_window_clamp will be changed if SOCK_RCVBUF is set,
+> which will make rcv_wscale is different, the client
+> still operates with initial window scale and can overshot
+> granted window, the client use the initial scale but local
+> server use new scale to advertise window value, and session
+> work abnormally.
+>
+> Fixes: e88c64f0a425 ("tcp: allow effective reduction of TCP's rcv-buffer via setsockopt")
+> Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
 
-Fixes: e88c64f0a425 ("tcp: allow effective reduction of TCP's rcv-buffer via setsockopt")
-Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>
----
- v5: fix variable to adapat to Christmas tree format.
- v4: change fixes tag format, and delay the actual call to
-     tcp_full_space().
- v3: add local variable full_space, add fixes tag.
- v2: fix for ipv6.
- net/ipv4/syncookies.c |  9 +++++++--
- net/ipv6/syncookies.c | 10 ++++++++--
- 2 files changed, 15 insertions(+), 4 deletions(-)
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 
-diff --git a/net/ipv4/syncookies.c b/net/ipv4/syncookies.c
-index 6ac473b..00dc3f9 100644
---- a/net/ipv4/syncookies.c
-+++ b/net/ipv4/syncookies.c
-@@ -331,7 +331,7 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
- 	__u32 cookie = ntohl(th->ack_seq) - 1;
- 	struct sock *ret = sk;
- 	struct request_sock *req;
--	int mss;
-+	int full_space, mss;
- 	struct rtable *rt;
- 	__u8 rcv_wscale;
- 	struct flowi4 fl4;
-@@ -427,8 +427,13 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb)
- 
- 	/* Try to redo what tcp_v4_send_synack did. */
- 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(&rt->dst, RTAX_WINDOW);
-+	/* limit the window selection if the user enforce a smaller rx buffer */
-+	full_space = tcp_full_space(sk);
-+	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
-+	    (req->rsk_window_clamp > full_space || req->rsk_window_clamp = 0))
-+		req->rsk_window_clamp = full_space;
- 
--	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
-+	tcp_select_initial_window(sk, full_space, req->mss,
- 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
- 				  ireq->wscale_ok, &rcv_wscale,
- 				  dst_metric(&rt->dst, RTAX_INITRWND));
-diff --git a/net/ipv6/syncookies.c b/net/ipv6/syncookies.c
-index e796a64..9b6cae1 100644
---- a/net/ipv6/syncookies.c
-+++ b/net/ipv6/syncookies.c
-@@ -136,7 +136,7 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
- 	__u32 cookie = ntohl(th->ack_seq) - 1;
- 	struct sock *ret = sk;
- 	struct request_sock *req;
--	int mss;
-+	int full_space, mss;
- 	struct dst_entry *dst;
- 	__u8 rcv_wscale;
- 	u32 tsoff = 0;
-@@ -241,7 +241,13 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
- 	}
- 
- 	req->rsk_window_clamp = tp->window_clamp ? :dst_metric(dst, RTAX_WINDOW);
--	tcp_select_initial_window(sk, tcp_full_space(sk), req->mss,
-+	/* limit the window selection if the user enforce a smaller rx buffer */
-+	full_space = tcp_full_space(sk);
-+	if (sk->sk_userlocks & SOCK_RCVBUF_LOCK &&
-+	    (req->rsk_window_clamp > full_space || req->rsk_window_clamp = 0))
-+		req->rsk_window_clamp = full_space;
-+
-+	tcp_select_initial_window(sk, full_space, req->mss,
- 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
- 				  ireq->wscale_ok, &rcv_wscale,
- 				  dst_metric(dst, RTAX_INITRWND));
--- 
-1.8.3.1
+Thanks !
