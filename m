@@ -1,61 +1,65 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 16 Nov 2020 09:17:36 +0000
-Subject: Re: [PATCH] MAINTAINERS: rectify file patterns for NETFILTER
-Message-Id: <20201116091736.GA32490@salvia>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Wed, 11 Nov 2020 04:55:38 +0000
+Subject: [PATCH][v2] Bluetooth: hci_qca: resolve various warnings
+Message-Id: <20201111045538.GA90261@fedora-project>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201109091942.32280-1-lukas.bulwahn@gmail.com>
- <d03c87f9fcc4bb68c148cfad12cafef5f2385eef.camel@perches.com>
-In-Reply-To: <d03c87f9fcc4bb68c148cfad12cafef5f2385eef.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: marcel@holtmann.org
+Cc: johan.hedberg@gmail.com, kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org
 
-Hi Lukas,
+Replace symbolic permissions with octal values. Use usleep_range
+for small msec values due to the fact that msleep() less than 
+20ms may have unexpected behavior/sleep longer.
 
-On Sun, Nov 15, 2020 at 07:58:33PM -0800, Joe Perches wrote:
-> On Mon, 2020-11-09 at 10:19 +0100, Lukas Bulwahn wrote:
-> > The two file patterns in the NETFILTER section:
-> > 
-> >   F:      include/linux/netfilter*
-> >   F:      include/uapi/linux/netfilter*
-> > 
-> > intended to match the directories:
-> > 
-> >   ./include{/uapi}/linux/netfilter_{arp,bridge,ipv4,ipv6}
-> > 
-> > A quick check with ./scripts/get_maintainer.pl --letters -f will show that
-> > they are not matched, though, because this pattern only matches files, but
-> > not directories.
-> > 
-> > Rectify the patterns to match the intended directories.
-> []
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> []
-> > @@ -12139,10 +12139,10 @@ W:	http://www.nftables.org/
-> >  Q:	http://patchwork.ozlabs.org/project/netfilter-devel/list/
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf.git
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git
-> > -F:	include/linux/netfilter*
-> > +F:	include/linux/netfilter*/
-> >  F:	include/linux/netfilter/
-> 
-> This line could be deleted or perhaps moved up one line above
-> 
-> F:	include/linux/netfilter/
-> F:	include/linux/netfilter*/
-> 
-> (as the second line already matches the first line's files too)
-> 
-> >  F:	include/net/netfilter/
-> > -F:	include/uapi/linux/netfilter*
-> > +F:	include/uapi/linux/netfilter*/
-> >  F:	include/uapi/linux/netfilter/
-> 
-> same here.
-> 
-> >  F:	net/*/netfilter.c
-> >  F:	net/*/netfilter/
+- https://lkml.org/lkml/2016/8/2/1945
+- Documentation/timers/timers-howto.rst
 
-Please, send a v2 to address this feedback. Thank you.
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/bluetooth/hci_qca.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 2d3f1f179a1e..039fb117bd8f 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -631,7 +631,7 @@ static void qca_debugfs_init(struct hci_dev *hdev)
+ 	ibs_dir = debugfs_create_dir("ibs", hdev->debugfs);
+ 
+ 	/* read only */
+-	mode = S_IRUGO;
++	mode = 0444;
+ 	debugfs_create_u8("tx_ibs_state", mode, ibs_dir, &qca->tx_ibs_state);
+ 	debugfs_create_u8("rx_ibs_state", mode, ibs_dir, &qca->rx_ibs_state);
+ 	debugfs_create_u64("ibs_sent_sleeps", mode, ibs_dir,
+@@ -658,7 +658,7 @@ static void qca_debugfs_init(struct hci_dev *hdev)
+ 	debugfs_create_u32("vote_off_ms", mode, ibs_dir, &qca->vote_off_ms);
+ 
+ 	/* read/write */
+-	mode = S_IRUGO | S_IWUSR;
++	mode = 0644;
+ 	debugfs_create_u32("wake_retrans", mode, ibs_dir, &qca->wake_retrans);
+ 	debugfs_create_u32("tx_idle_delay", mode, ibs_dir,
+ 			   &qca->tx_idle_delay);
+@@ -1302,7 +1302,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 
+ 	/* Give the controller time to process the request */
+ 	if (qca_is_wcn399x(qca_soc_type(hu)))
+-		msleep(10);
++		usleep_range(1000, 10000);
+ 	else
+ 		msleep(300);
+ 
+@@ -1350,7 +1350,7 @@ static int qca_send_power_pulse(struct hci_uart *hu, bool on)
+ 	if (on)
+ 		msleep(100);
+ 	else
+-		msleep(10);
++		usleep_range(1000, 10000);
+ 
+ 	return 0;
+ }
+-- 
+2.28.0
