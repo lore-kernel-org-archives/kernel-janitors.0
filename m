@@ -1,7 +1,7 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Thu, 12 Nov 2020 19:26:01 +0000
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Thu, 12 Nov 2020 20:12:57 +0000
 Subject: Re: [PATCH] USB: storage: avoid use of uninitialized values in error path
-Message-Id: <20201112192601.GC287229@rowland.harvard.edu>
+Message-Id: <20201112201257.GA1665022@ubuntu-m3-large-x86>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201112191255.13372-1-lukas.bulwahn@gmail.com>
 In-Reply-To: <20201112191255.13372-1-lukas.bulwahn@gmail.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org
+Cc: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, Tom Rix <trix@redhat.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org
 
 On Thu, Nov 12, 2020 at 08:12:55PM +0100, Lukas Bulwahn wrote:
 > When usb_stor_bulk_transfer_sglist() returns with USB_STOR_XFER_ERROR, it
@@ -50,6 +50,12 @@ On Thu, Nov 12, 2020 at 08:12:55PM +0100, Lukas Bulwahn wrote:
 > Link: https://lore.kernel.org/linux-usb/alpine.DEB.2.21.2011112146110.13119@felia/
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Assuming that setting it to zero is okay (sounds like it is based on the
+other thread), this is a reasonable fix.
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+
 > ---
 > applies cleanly on current master and next-20201112
 > 
@@ -94,5 +100,6 @@ On Thu, Nov 12, 2020 at 08:12:55PM +0100, Lukas Bulwahn wrote:
 >  }
 >  
 >  /*
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> -- 
+> 2.17.1
+> 
