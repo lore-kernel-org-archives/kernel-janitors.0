@@ -1,72 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 24 Nov 2020 16:36:52 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: fix spelling mistake "smu_state_memroy_block" -> "smu_state_memory_bl
-Message-Id: <CADnq5_OHzmR4SE4GXukZX2Z2byqYkMRy-G2EXUTvz+yuwsE6fw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2020 10:12:41 +0000
+Subject: [PATCH] ALSA: firewire: Clean up a locking issue in copy_resp_to_buf()
+Message-Id: <20201113101241.GB168908@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201123105417.198314-1-colin.king@canonical.com>
- <DM6PR12MB26197807564F833B9A2E18E8E4FB0@DM6PR12MB2619.namprd12.prod.outlook.com>
-In-Reply-To: <DM6PR12MB26197807564F833B9A2E18E8E4FB0@DM6PR12MB2619.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Quan, Evan" <Evan.Quan@amd.com>
-Cc: "Gui, Jack" <Jack.Gui@amd.com>, David Airlie <airlied@linux.ie>, "Wang,
- Kevin(Yang)" <Kevin1.Wang@amd.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, "Deucher,
- Alexander" <Alexander.Deucher@amd.com>, Colin King <colin.king@canonical.com>, "Koenig, Christian" <Christian.Koenig@amd.com>
+To: Clemens Ladisch <clemens@ladisch.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-Applied.  Thanks!
+The spin_lock/unlock_irq() functions cannot be nested.  The problem is
+that presumably we would want the IRQs to be re-enabled on the second
+call the spin_unlock_irq() but instead it will be enabled at the first
+call so IRQs will be enabled earlier than expected.
 
-Alex
+In this situation the copy_resp_to_buf() function is only called from
+one function and it is called with IRQs disabled.  We can just use
+the regular spin_lock/unlock() functions.
 
-On Mon, Nov 23, 2020 at 7:42 PM Quan, Evan <Evan.Quan@amd.com> wrote:
->
-> [AMD Official Use Only - Internal Distribution Only]
->
-> Reviewed-by: Evan Quan <evan.quan@amd.com>
->
-> -----Original Message-----
-> From: Colin King <colin.king@canonical.com>
-> Sent: Monday, November 23, 2020 6:54 PM
-> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Quan, Evan <Evan.Quan@amd.com>; Wang, Kevin(Yang) <Kevin1.Wang@amd.com>; Gui, Jack <Jack.Gui@amd.com>; amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] drm/amd/powerplay: fix spelling mistake "smu_state_memroy_block" -> "smu_state_memory_block"
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The struct name smu_state_memroy_block contains a spelling mistake, rename it to smu_state_memory_block
->
-> Fixes: 8554e67d6e22 ("drm/amd/powerplay: implement power_dpm_state sys interface for SMU11")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h b/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-> index 7550757cc059..a559ea2204c1 100644
-> --- a/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-> +++ b/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-> @@ -99,7 +99,7 @@ struct smu_state_display_block {
->  bool              enable_vari_bright;
->  };
->
-> -struct smu_state_memroy_block {
-> +struct smu_state_memory_block {
->  bool              dll_off;
->  uint8_t                 m3arb;
->  uint8_t                 unused[3];
-> @@ -146,7 +146,7 @@ struct smu_power_state {
->  struct smu_state_validation_block             validation;
->  struct smu_state_pcie_block                   pcie;
->  struct smu_state_display_block                display;
-> -struct smu_state_memroy_block                 memory;
-> +struct smu_state_memory_block                 memory;
->  struct smu_state_software_algorithm_block     software;
->  struct smu_uvd_clocks                         uvd_clocks;
->  struct smu_hw_power_state                     hardware;
-> --
-> 2.28.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Fixes: 555e8a8f7f14 ("ALSA: fireworks: Add command/response functionality into hwdep interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/firewire/fireworks/fireworks_transaction.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/firewire/fireworks/fireworks_transaction.c b/sound/firewire/fireworks/fireworks_transaction.c
+index 0f533f5bd960..9f8c53b39f95 100644
+--- a/sound/firewire/fireworks/fireworks_transaction.c
++++ b/sound/firewire/fireworks/fireworks_transaction.c
+@@ -123,7 +123,7 @@ copy_resp_to_buf(struct snd_efw *efw, void *data, size_t length, int *rcode)
+ 	t = (struct snd_efw_transaction *)data;
+ 	length = min_t(size_t, be32_to_cpu(t->length) * sizeof(u32), length);
+ 
+-	spin_lock_irq(&efw->lock);
++	spin_lock(&efw->lock);
+ 
+ 	if (efw->push_ptr < efw->pull_ptr)
+ 		capacity = (unsigned int)(efw->pull_ptr - efw->push_ptr);
+@@ -190,7 +190,7 @@ handle_resp_for_user(struct fw_card *card, int generation, int source,
+ 
+ 	copy_resp_to_buf(efw, data, length, rcode);
+ end:
+-	spin_unlock_irq(&instances_lock);
++	spin_unlock(&instances_lock);
+ }
+ 
+ static void
+-- 
+2.28.0
