@@ -1,46 +1,46 @@
-From: Nigel Christian <nigel.l.christian@gmail.com>
-Date: Sat, 14 Nov 2020 05:55:40 +0000
-Subject: Re: [PATCH] memory: tegra20-emc: remove redundant error message
-Message-Id: <20201114055540.GA5516@fedora-project>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 13 Nov 2020 13:50:12 +0000
+Subject: [PATCH] ipv6: remove unused function ipv6_skb_idev()
+Message-Id: <20201113135012.32499-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201114051219.GA4746@fedora-project>
- <1ab114f2-b63e-464d-2022-6571fbf02511@gmail.com>
-In-Reply-To: <1ab114f2-b63e-464d-2022-6571fbf02511@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: krzk@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Sat, Nov 14, 2020 at 08:33:47AM +0300, Dmitry Osipenko wrote:
-> 14.11.2020 08:12, Nigel Christian пишет:
-> > There is no need for dev_err() since irq already prints an error. 
-> > Eliminate unnecessary curly braces for single statement block.
-> > 
-> > Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
-> > ---
-> >  drivers/memory/tegra/tegra20-emc.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-> > index 5e10aa97809f..181a360d7d6b 100644
-> > --- a/drivers/memory/tegra/tegra20-emc.c
-> > +++ b/drivers/memory/tegra/tegra20-emc.c
-> > @@ -959,10 +959,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
-> >  	int irq, err;
-> >  
-> >  	irq = platform_get_irq(pdev, 0);
-> > -	if (irq < 0) {
-> > -		dev_err(&pdev->dev, "please update your device tree\n");
-> > +	if (irq < 0)
-> >  		return irq;
-> > -	}
-> >  
-> >  	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
-> >  	if (!emc)
-> > 
-> 
-> This message has a special purpose, it shouldn't be removed. Please
-> always check what auto-generated patches actually do.
+Commit bdb7cc643fc9 ("ipv6: Count interface receive statistics on the
+ingress netdev") removed all callees for ipv6_skb_idev(). Hence, since
+then, ipv6_skb_idev() is unused and make CC=clang W=1 warns:
 
-Apologies, understood. Thank you for your time.
+  net/ipv6/exthdrs.c:909:33:
+    warning: unused function 'ipv6_skb_idev' [-Wunused-function]
+
+So, remove this unused function and a -Wunused-function warning.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Alexey, Hideaki-san, please ack.
+
+David, Jakub, please pick this minor non-urgent clean-up patch.
+
+ net/ipv6/exthdrs.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/net/ipv6/exthdrs.c b/net/ipv6/exthdrs.c
+index 374105e4394f..584d1b06eb90 100644
+--- a/net/ipv6/exthdrs.c
++++ b/net/ipv6/exthdrs.c
+@@ -906,10 +906,6 @@ void ipv6_exthdrs_exit(void)
+ /*
+  * Note: we cannot rely on skb_dst(skb) before we assign it in ip6_route_input().
+  */
+-static inline struct inet6_dev *ipv6_skb_idev(struct sk_buff *skb)
+-{
+-	return skb_dst(skb) ? ip6_dst_idev(skb_dst(skb)) : __in6_dev_get(skb->dev);
+-}
+ 
+ static inline struct net *ipv6_skb_net(struct sk_buff *skb)
+ {
+-- 
+2.17.1
