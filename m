@@ -1,71 +1,40 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 03 Nov 2020 09:36:23 +0000
-Subject: Re: [PATCH] MAINTAINERS: rectify DELL WMI SYSMAN DRIVERS section
-Message-Id: <a3fe61e9-c126-2d38-6ca1-accbcdea91ad@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2020 10:14:19 +0000
+Subject: [PATCH] clk: qcom: lpass-sc7180: Clean up on error in lpass_sc7180_init()
+Message-Id: <20201113101419.GC168908@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201029114425.22520-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Divya Bharathi <divya.bharathi@dell.com>, platform-driver-x86@vger.kernel.org
-Cc: Mario Limonciello <mario.limonciello@dell.com>, Prasanth KSR <prasanth.ksr@dell.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>, Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Clean up the first driver if the second driver can't be registered.
 
-On 10/29/20 12:44 PM, Lukas Bulwahn wrote:
-> Commit e8a60aa7404b ("platform/x86: Introduce support for Systems
-> Management Driver over WMI for Dell Systems") added a new section
-> DELL WMI SYSMAN DRIVERS in MAINTAINERS, but slipped in a typo.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches    F:    drivers/platform/x86/dell-wmi-syman/*
-> 
-> Point the file entry to the right location and add an entry for its
-> Documentation while at it.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 4ee9fe3e292b ("clk: qcom: lpass-sc7180: Disentangle the two clock devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/qcom/lpasscorecc-sc7180.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-This time with content, sorry for the empty mail.
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-> ---
-> Divya, please ack.
-> 
-> Hans, please pick this minor non-urgent patch into your -next x86 platform
-> driver tree on top of commit mentioned above.
-> 
->  MAINTAINERS | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b8a905354ee9..a0a86daa9c51 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4974,7 +4974,8 @@ M:	Mario Limonciello <mario.limonciello@dell.com>
->  M:	Prasanth Ksr <prasanth.ksr@dell.com>
->  L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
-> -F:	drivers/platform/x86/dell-wmi-syman/*
-> +F:	Documentation/ABI/testing/sysfs-class-firmware-attributes
-> +F:	drivers/platform/x86/dell-wmi-sysman/
->  
->  DELL WMI NOTIFICATIONS DRIVER
->  M:	Matthew Garrett <mjg59@srcf.ucam.org>
-> 
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 1a3925badd7c..9081649f476f 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -491,7 +491,13 @@ static int __init lpass_sc7180_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	return platform_driver_register(&lpass_hm_sc7180_driver);
++	ret = platform_driver_register(&lpass_hm_sc7180_driver);
++	if (ret) {
++		platform_driver_unregister(&lpass_core_cc_sc7180_driver);
++		return ret;
++	}
++
++	return 0;
+ }
+ subsys_initcall(lpass_sc7180_init);
+ 
+-- 
+2.28.0
