@@ -1,52 +1,54 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date: Wed, 25 Nov 2020 12:16:57 +0000
-Subject: Re: [PATCH] leds: lp50xx: Fix an error handling path in 'lp50xx_probe_dt()'
-Message-Id: <20201125121657.GH1008337@kuha.fi.intel.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 13 Nov 2020 08:12:48 +0000
+Subject: [PATCH] dmaengine: ioatdma: remove unused function missed during dma_v2 removal
+Message-Id: <20201113081248.26416-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200922210515.385099-1-christophe.jaillet@wanadoo.fr>
- <20200923133510.GJ4282@kadam>
- <faa49efc-5ba5-b6bd-b486-2f7c4611219b@wanadoo.fr>
- <20200924064932.GP18329@kadam>
- <20200928115301.GB3987353@kuha.fi.intel.com>
- <20201125104629.GE25562@amd>
-In-Reply-To: <20201125104629.GE25562@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, dmurphy@ti.com, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Maciej Sosnowski <maciej.sosnowski@intel.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org
+Cc: Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Wed, Nov 25, 2020 at 11:46:29AM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > > > > I have been trying to teach Smatch to understand reference counting so
-> > > > > it can discover these kinds of bugs automatically.
-> > > > > 
-> > > > > I don't know how software_node_get_next_child() can work when it doesn't
-> > > > > call kobject_get().  This sort of bug would have been caught in testing
-> > > > > because it affects the success path so I must be reading the code wrong.
-> > > > > 
-> > > > 
-> > > > I had the same reading of the code and thought that I was missing something
-> > > > somewhere.
-> > > > 
-> > > > There is the same question about 'acpi_get_next_subnode' which is also a
-> > > > '.get_next_child_node' function, without any ref counting, if I'm correct.
-> > > > 
-> > > 
-> > > Yeah, but there aren't any ->get/put() ops for the acpi_get_next_subnode()
-> > > stuff so it's not a problem.  (Presumably there is some other sort of
-> > > refcounting policy there).
-> > 
-> > OK, so I guess we need to make software_node_get_next_child()
-> > mimic the behaviour of of_get_next_available_child(), and not
-> > acpi_get_next_subnode(). Does the attached patch work?
-> 
-> Does not sound unreasonable. Did it get solved, somehow?
+Commit 7f832645d0e5 ("dmaengine: ioatdma: remove ioatdma v2 registration")
+missed to remove dca2_tag_map_valid() during its removal. Hence, since
+then, dca2_tag_map_valid() is unused and make CC=clang W=1 warns:
 
-Has anybody tested my patch?
+  drivers/dma/ioat/dca.c:44:19:
+    warning: unused function 'dca2_tag_map_valid' [-Wunused-function]
 
-thanks,
+So, remove this unused function and get rid of a -Wused-function warning.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201112
+
+Maciej, please ack.
+
+Vinod, Dan, please pick this minor non-urgent clean-up patch.
+
+ drivers/dma/ioat/dca.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/dma/ioat/dca.c b/drivers/dma/ioat/dca.c
+index 0be385587c4c..289c59ed74b9 100644
+--- a/drivers/dma/ioat/dca.c
++++ b/drivers/dma/ioat/dca.c
+@@ -40,16 +40,6 @@
+ #define DCA2_TAG_MAP_BYTE3 0x82
+ #define DCA2_TAG_MAP_BYTE4 0x82
+ 
+-/* verify if tag map matches expected values */
+-static inline int dca2_tag_map_valid(u8 *tag_map)
+-{
+-	return ((tag_map[0] = DCA2_TAG_MAP_BYTE0) &&
+-		(tag_map[1] = DCA2_TAG_MAP_BYTE1) &&
+-		(tag_map[2] = DCA2_TAG_MAP_BYTE2) &&
+-		(tag_map[3] = DCA2_TAG_MAP_BYTE3) &&
+-		(tag_map[4] = DCA2_TAG_MAP_BYTE4));
+-}
+-
+ /*
+  * "Legacy" DCA systems do not implement the DCA register set in the
+  * I/OAT device.  Software needs direct support for their tag mappings.
 -- 
-heikki
+2.17.1
