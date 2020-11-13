@@ -1,24 +1,49 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Date: Sun, 01 Nov 2020 09:27:06 +0000
-Subject: Re: [PATCH] clk: imx: remove redundant assignment to pointer np
-Message-Id: <20201101092705.GO31601@dragon>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 13 Nov 2020 17:20:12 +0000
+Subject: [PATCH] futex: remove unused empty compat_exit_robust_list()
+Message-Id: <20201113172012.27221-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201029224007.390762-1-colin.king@canonical.com>
-In-Reply-To: <20201029224007.390762-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Thu, Oct 29, 2020 at 10:40:07PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer np is being initialized with a value that is never read
-> and it is being updated with a value later on. The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Commit ba31c1a48538 ("futex: Move futex exit handling into futex code")
+introduced compat_exit_robust_list() with a full-fledged implementation for
+CONFIG_COMPAT, and an empty-body function for !CONFIG_COMPAT.
+However, compat_exit_robust_list() is only used in futex_mm_release() under
+ifdef CONFIG_COMPAT.
 
-Applied, thanks.
+Hence for !CONFIG_COMPAT, make CC=clang W=1 warns:
+
+  kernel/futex.c:314:20:
+    warning: unused function 'compat_exit_robust_list' [-Wunused-function]
+
+There is no need to declare the unused empty function for !CONFIG_COMPAT.
+Simply, remove it to address the -Wunused-function warning.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201113
+
+Thomas, please pick this minor non-urgent clean-up patch.
+
+ kernel/futex.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 00259c7e288e..c47d1015d759 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -310,8 +310,6 @@ static inline bool should_fail_futex(bool fshared)
+ 
+ #ifdef CONFIG_COMPAT
+ static void compat_exit_robust_list(struct task_struct *curr);
+-#else
+-static inline void compat_exit_robust_list(struct task_struct *curr) { }
+ #endif
+ 
+ /*
+-- 
+2.17.1
