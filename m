@@ -1,64 +1,72 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Fri, 27 Nov 2020 11:25:53 +0000
-Subject: RE: [PATCH] x86/cpu: correct values for GDT_ENTRY_INIT
-Message-Id: <b4d2750b3d094aac858118aef611a135@AcuMS.aculab.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2020 10:16:31 +0000
+Subject: [PATCH] dmaengine: fix error codes in channel_register()
+Message-Id: <20201113101631.GE168908@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201126115459.28980-1-lukas.bulwahn@gmail.com>
- <947b02eb-536f-16a0-fbb1-87b62ab8c13e@citrix.com>
- <CAKXUXMybmC=JE3uDnekAuHfRUZcrzSLJ04xB3nR=3BqHCsNVqA@mail.gmail.com>
- <CALCETrUyoaJyJ8mGpq9bdanKKfHgjg_1B=N0rtmuHCmCP9Q9=g@mail.gmail.com>
- <3d9f41b1-9687-4aae-ad7d-2e38a33132ba@citrix.com>
-In-Reply-To: <3d9f41b1-9687-4aae-ad7d-2e38a33132ba@citrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Andrew Cooper' <andrew.cooper3@citrix.com>, Andy Lutomirski <luto@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>, Akinobu Mita <akinobu.mita@gmail.com>, Joerg Roedel <jroedel@suse.de>, "H . Peter Anvin" <hpa@zytor.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-RnJvbTogQW5kcmV3IENvb3Blcg0KPiBTZW50OiAyNiBOb3ZlbWJlciAyMDIwIDIzOjUyDQo+IA0K
-PiBPbiAyNi8xMS8yMDIwIDE5OjE1LCBBbmR5IEx1dG9taXJza2kgd3JvdGU6DQo+ID4gT24gVGh1
-LCBOb3YgMjYsIDIwMjAgYXQgMTE6MDcgQU0gTHVrYXMgQnVsd2FobiA8bHVrYXMuYnVsd2FobkBn
-bWFpbC5jb20+IHdyb3RlOg0KPiA+PiBPbiBUaHUsIE5vdiAyNiwgMjAyMCBhdCA2OjE2IFBNIEFu
-ZHJldyBDb29wZXIgPGFuZHJldy5jb29wZXIzQGNpdHJpeC5jb20+IHdyb3RlOg0KPiA+Pj4gT24g
-MjYvMTEvMjAyMCAxMTo1NCwgTHVrYXMgQnVsd2FobiB3cm90ZToNCj4gPj4+PiBDb21taXQgMWU1
-ZGUxODI3OGU2ICgieDg2OiBJbnRyb2R1Y2UgR0RUX0VOVFJZX0lOSVQoKSIpIHVuaW50ZW50aW9u
-YWxseQ0KPiA+Pj4+IHRyYW5zZm9ybWVkIGEgZmV3IDB4ZmZmZiB2YWx1ZXMgdG8gMHhmZmZmZiAo
-bm90ZTogZml2ZSB0aW1lcyAiZiIgaW5zdGVhZCBvZg0KPiA+Pj4+IGZvdXIpIGFzIHBhcnQgb2Yg
-dGhlIHJlZmFjdG9yaW5nLg0KPiA+Pj4gVGhlIHRyYW5zZm9ybWF0aW9uIGluIHRoYXQgY2hhbmdl
-IGlzIGNvcnJlY3QuDQo+ID4+Pg0KPiA+Pj4gU2VnbWVudCBiYXNlcyBhcmUgMjAgYml0cyB3aWRl
-IGluIHg4NiwNCj4gDQo+IEkgb2YgY291cnNlIG1lYW50IHNlZ21lbnQgbGltaXRzIGhlcmUsIHJh
-dGhlciB0aGFuIGJhc2VzLg0KPiANCj4gPj4+IERvZXM6DQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdp
-dCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Rlc2NfZGVmcy5oDQo+ID4+PiBiL2FyY2gveDg2L2lu
-Y2x1ZGUvYXNtL2Rlc2NfZGVmcy5oDQo+ID4+PiBpbmRleCBmN2U3MDk5YWY1OTUuLjk1NjFmM2M2
-NmU5ZSAxMDA2NDQNCj4gPj4+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Rlc2NfZGVmcy5o
-DQo+ID4+PiArKysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9kZXNjX2RlZnMuaA0KPiA+Pj4gQEAg
-LTIyLDcgKzIyLDcgQEAgc3RydWN0IGRlc2Nfc3RydWN0IHsNCj4gPj4+DQo+ID4+PiAgI2RlZmlu
-ZSBHRFRfRU5UUllfSU5JVChmbGFncywgYmFzZSwgbGltaXQpICAgICAgICAgICAgICAgICAgICAg
-XA0KPiA+Pj4gICAgICAgICB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFwNCj4gPj4+IC0gICAgICAgICAgICAgICAubGltaXQwICAgICAgICAg
-PSAodTE2KSAobGltaXQpLCAgICAgICAgICAgICAgICBcDQo+ID4+PiArICAgICAgICAgICAgICAg
-LmxpbWl0MCAgICAgICAgID0gKHUxNikgKGxpbWl0KSAmIDB4RkZGRiwgICAgICAgXA0KPiA+Pj4g
-ICAgICAgICAgICAgICAgIC5saW1pdDEgICAgICAgICA9ICgobGltaXQpID4+IDE2KSAmIDB4MEYs
-ICAgICAgIFwNCj4gPj4+ICAgICAgICAgICAgICAgICAuYmFzZTAgICAgICAgICAgPSAodTE2KSAo
-YmFzZSksICAgICAgICAgICAgICAgICBcDQo+ID4+PiAgICAgICAgICAgICAgICAgLmJhc2UxICAg
-ICAgICAgID0gKChiYXNlKSA+PiAxNikgJiAweEZGLCAgICAgICAgXA0KPiA+Pj4NCj4gPj4+IGZp
-eCB0aGUgd2FybmluZz8NCj4gPj4+DQo+ID4+IFRoYW5rcywgSSB3aWxsIHRyeSB0aGF0IG91dCwg
-YW5kIHRyeSBjb21waWxpbmcgYSAzMi1iaXQga2VybmVsIGFzIHdlbGwuDQo+ID4gWW91IHNob3Vs
-ZCBhbHNvIHRyeSBjb21wYXJpbmcgdGhlIG9iamR1bXAgb3V0cHV0IGJlZm9yZSBhbmQgYWZ0ZXIg
-eW91cg0KPiA+IHBhdGNoLiAgb2JqZHVtcCAtRCB3aWxsIHByb2R1Y2UgYml6YXJyZSBvdXRwdXQg
-YnV0IHNob3VsZCB3b3JrLg0KPiANCj4gRXhwYW5kaW5nIG9uIHRoaXMgYSBsaXR0bGUsIGlmIHRo
-YXQgZG9lcyBpbmRlZWQgZml4IHRoZSBzcGFyc2Ugd2FybmluZywNCj4gdGhlbiBJJ2QgbWFrZSBh
-biBhcmd1bWVudCBmb3IgdGhpcyBiZWluZyBhIGJ1ZyBpbiBzcGFyc2UuwqAgRXhwbGljaXRseQ0K
-PiBjYXN0aW5nIHRvIHUxNiBpcyBzZW1hbnRpY2FsbHkgYW5kIGludGVudGlvbmFsbHkgaWRlbnRp
-Y2FsIHRvICYgMHhmZmZmLg0KDQpFdmVuIHRoZSAodTE2KSBjYXN0IGlzIHBvaW50bGVzcy4NCkkg
-ZG9uJ3QgdGhpbmsgdGhlIGN1cnJlbnQgdmVyc2lvbnMgb2YgZ2NjIGFyZSBhcyBzdHVwaWQgYXMg
-b2xkIG9uZXMsDQpidXQgSSBoYXZlIHNlZW46DQoJKmNwID0gKGNoYXIpKHggJiAweGZmKTsNCmdl
-bmVyYXRlIGNvZGUgdGhhdCBtYXNrcyB3aXRoIDB4ZmYsIG1hc2tzIHdpdGggMHhmZiBhZ2FpbiwN
-CmFuZCB0aGVuIGRvZXMgYSBieXRlIHN0b3JlLg0KDQpJIGhhdmUgYSBzdHJvbmcgZGlzbGlrZSBv
-ZiB0aGUgdXNlIG9mIGludGVnZXIgY2FzdHMgdG8gc2lsZW5jZQ0KY29tcGlsZXIgd2FybmluZ3Mu
-DQpDYXN0cyBzaG91bGQgYmUgcmFyZSBiZWNhdXNlIHRoZXkgY2FuIGhpZGUgdmVyeSBuYXN0eSBi
-dWdzLg0KQWx0aG91Z2ggdGhlICdwb2ludGVyIHRvIGludGVnZXIgb2YgZGlmZmVyZW50IHNpemUn
-IHdhcm5pbmcNCmRvZXMgcGljayB1cCBtb3N0IG9mIHRoZSBiYWQgb25lcy4NCg0KCURhdmlkDQoN
-Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
-LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
-YWxlcykNCg=
+The error codes were not set on some of these error paths.
+
+Also the error handling was more confusing than it needed to be so I
+cleaned it up and shuffled it around a bit.
+
+Fixes: d2fb0a043838 ("dmaengine: break out channel registration")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/dma/dmaengine.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index 7974fa0400d8..962cbb5e5f7f 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -1039,16 +1039,15 @@ static int get_dma_id(struct dma_device *device)
+ static int __dma_async_device_channel_register(struct dma_device *device,
+ 					       struct dma_chan *chan)
+ {
+-	int rc = 0;
++	int rc;
+ 
+ 	chan->local = alloc_percpu(typeof(*chan->local));
+ 	if (!chan->local)
+-		goto err_out;
++		return -ENOMEM;
+ 	chan->dev = kzalloc(sizeof(*chan->dev), GFP_KERNEL);
+ 	if (!chan->dev) {
+-		free_percpu(chan->local);
+-		chan->local = NULL;
+-		goto err_out;
++		rc = -ENOMEM;
++		goto err_free_local;
+ 	}
+ 
+ 	/*
+@@ -1061,7 +1060,8 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 	if (chan->chan_id < 0) {
+ 		pr_err("%s: unable to alloc ida for chan: %d\n",
+ 		       __func__, chan->chan_id);
+-		goto err_out;
++		rc = chan->chan_id;
++		goto err_free_dev;
+ 	}
+ 
+ 	chan->dev->device.class = &dma_devclass;
+@@ -1082,9 +1082,10 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 	mutex_lock(&device->chan_mutex);
+ 	ida_free(&device->chan_ida, chan->chan_id);
+ 	mutex_unlock(&device->chan_mutex);
+- err_out:
+-	free_percpu(chan->local);
++ err_free_dev:
+ 	kfree(chan->dev);
++ err_free_local:
++	free_percpu(chan->local);
+ 	return rc;
+ }
+ 
+-- 
+2.28.0
