@@ -1,41 +1,41 @@
-From: Diana Craciun OSS <diana.craciun@oss.nxp.com>
-Date: Tue, 03 Nov 2020 12:03:08 +0000
-Subject: Re: [PATCH 2/2] vfio/fsl-mc: prevent underflow in vfio_fsl_mc_mmap()
-Message-Id: <de18ce14-9138-dcc4-253f-fa50d63b3ae2@oss.nxp.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Nov 2020 12:37:45 +0000
+Subject: [PATCH][next] drm/kmb: fix potential integer overflow on multiplication
+Message-Id: <20201113123745.36799-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023112947.GF282278@mwanda>
-In-Reply-To: <20201023112947.GF282278@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Edmund Dea <edmund.j.dea@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Diana Craciun <diana.craciun@oss.nxp.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-On 10/23/2020 2:29 PM, Dan Carpenter wrote:
-> My static analsysis tool complains that the "index" can be negative.
-> There are some checks in do_mmap() which try to prevent underflows but
-> I don't know if they are sufficient for this situation.  Either way,
-> making "index" unsigned is harmless so let's do it just to be safe.
-> 
-> Fixes: 67247289688d ("vfio/fsl-mc: Allow userspace to MMAP fsl-mc device MMIO regions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/vfio/fsl-mc/vfio_fsl_mc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> index 21f22e3da11f..f27e25112c40 100644
-> --- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> +++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> @@ -472,7 +472,7 @@ static int vfio_fsl_mc_mmap(void *device_data, struct vm_area_struct *vma)
->   {
->   	struct vfio_fsl_mc_device *vdev = device_data;
->   	struct fsl_mc_device *mc_dev = vdev->mc_dev;
-> -	int index;
-> +	unsigned int index;
->   
->   	index = vma->vm_pgoff >> (VFIO_FSL_MC_OFFSET_SHIFT - PAGE_SHIFT);
->   
-> 
+There is a potential integer overflow when multiplying various sized
+integers that are cast to u32 integers using u32 multiplication and
+then assigning the result to a u64. Fix this by casting MIPI_TX_BPP
+to a u64 to force the multiplication to use u64 math and hence avoid
+any potential overflows.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 98521f4d4b4c ("drm/kmb: Mipi DSI part of the display driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/kmb/kmb_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/kmb/kmb_dsi.c b/drivers/gpu/drm/kmb/kmb_dsi.c
+index 4b5d82af84b3..6c3081356bd9 100644
+--- a/drivers/gpu/drm/kmb/kmb_dsi.c
++++ b/drivers/gpu/drm/kmb/kmb_dsi.c
+@@ -1369,7 +1369,7 @@ int kmb_dsi_mode_set(struct kmb_dsi *kmb_dsi, struct drm_display_mode *mode,
+ 	 */
+ 	data_rate = ((((u32)mode->crtc_vtotal *	(u32)mode->crtc_htotal) *
+ 			(u32)(drm_mode_vrefresh(mode)) *
+-			MIPI_TX_BPP) / mipi_tx_init_cfg.active_lanes) /	1000000;
++			(u64)MIPI_TX_BPP) / mipi_tx_init_cfg.active_lanes) / 1000000;
+ 
+ 	dev_dbg(kmb_dsi->dev, "data_rate=%u active_lanes=%d\n",
+ 		(u32)data_rate, mipi_tx_init_cfg.active_lanes);
+-- 
+2.28.0
