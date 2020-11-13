@@ -1,47 +1,41 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 17 Nov 2020 11:50:16 +0000
-Subject: Re: [PATCH] mmc: host: Kconfig: fix spelling mistake "hardare" -> "hardware"
-Message-Id: <CAPDyKFpwFTEPLHZC9uT9mff64Axo-2bBjGVv4TGEcV4pGwWmig@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Nov 2020 12:01:21 +0000
+Subject: [PATCH][next] drm/kmb: fix array out-of-bounds writes to kmb->plane_status[]
+Message-Id: <20201113120121.33212-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201114120819.416311-1-colin.king@canonical.com>
-In-Reply-To: <20201114120819.416311-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Edmund Dea <edmund.j.dea@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 14 Nov 2020 at 13:08, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the Kconfig file. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for next, thanks!
+Writes to elements in the kmb->plane_status array in function
+kmb_plane_atomic_disable are overrunning the array when plane_id is
+more than 1 because currently the array is KMB_MAX_PLANES elements
+in size and this is currently #defined as 1.  Fix this by defining
+KMB_MAX_PLANES to 4.
 
-Kind regards
-Uffe
+Addresses-Coverity: ("Out-of-bounds write")
+Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/kmb/kmb_plane.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 310e546e5898..7324a61d7416 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -664,7 +664,7 @@ config MMC_S3C_PIO
->  config MMC_S3C_DMA
->         bool "Use DMA transfers only"
->         help
-> -         Use DMA to transfer data between memory and the hardare.
-> +         Use DMA to transfer data between memory and the hardware.
->
->           Currently, the DMA support in this driver seems to not be
->           working properly and needs to be debugged before this
-> --
-> 2.28.0
->
+diff --git a/drivers/gpu/drm/kmb/kmb_plane.h b/drivers/gpu/drm/kmb/kmb_plane.h
+index 486490f7a3ec..6f43a7ae3de6 100644
+--- a/drivers/gpu/drm/kmb/kmb_plane.h
++++ b/drivers/gpu/drm/kmb/kmb_plane.h
+@@ -43,7 +43,7 @@ enum layer_id {
+ 	/* KMB_MAX_PLANES */
+ };
+ 
+-#define KMB_MAX_PLANES 1
++#define KMB_MAX_PLANES 4
+ 
+ enum sub_plane_id {
+ 	Y_PLANE,
+-- 
+2.28.0
