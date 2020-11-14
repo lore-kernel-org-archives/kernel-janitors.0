@@ -1,43 +1,50 @@
-From: Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Date: Thu, 26 Nov 2020 14:01:49 +0000
-Subject: Re: [PATCH][next] scsi: pm8001: remove space in a debug message
-Message-Id: <CAMGffEnNkj4GkM-Er-MDuUQiFdZCBD-Bzb1_pGGXazfH=NkCtQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Nov 2020 12:12:27 +0000
+Subject: [PATCH] crypto: fix a couple of spelling mistakes in Kconfig files
+Message-Id: <20201114121227.416572-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201124093828.307709-1-colin.king@canonical.com>
-In-Reply-To: <20201124093828.307709-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Corentin Labbe <clabbe.montjoie@gmail.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 10:38 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are two words that need separating with a space in a
-> pm8001_dbg message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Thanks
-> ---
->  drivers/scsi/pm8001/pm8001_hwi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
-> index 08d6cc9b50db..c8d4d87c5473 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.c
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.c
-> @@ -1031,7 +1031,7 @@ pm8001_chip_soft_rst(struct pm8001_hba_info *pm8001_ha)
->         regVal = pm8001_cr32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK);
->         pm8001_cw32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK, regVal3);
->         pm8001_dbg(pm8001_ha, INIT,
-> -                  "GSM 0x700048 - Write Data Parity Check Enableis set to = 0x%x\n",
-> +                  "GSM 0x700048 - Write Data Parity Check Enable is set to = 0x%x\n",
->                    pm8001_cr32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK));
->
->         /* step 13: bring the IOP and AAP1 out of reset */
-> --
-> 2.29.2
->
+From: Colin Ian King <colin.king@canonical.com>
+
+There are a couple of spelling mistakes in two crypto Kconfig files.
+Fix these.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/Kconfig           | 2 +-
+ drivers/crypto/allwinner/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index 37da0c070a88..129bbdc4993b 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -648,7 +648,7 @@ choice
+ 	default CRYPTO_DEV_QCE_ENABLE_ALL
+ 	depends on CRYPTO_DEV_QCE
+ 	help
+-	  This option allows to choose whether to build support for all algorihtms
++	  This option allows to choose whether to build support for all algorithms
+ 	  (default), hashes-only, or skciphers-only.
+ 
+ 	  The QCE engine does not appear to scale as well as the CPU to handle
+diff --git a/drivers/crypto/allwinner/Kconfig b/drivers/crypto/allwinner/Kconfig
+index 0cdfe0e8cc66..180c8a9db819 100644
+--- a/drivers/crypto/allwinner/Kconfig
++++ b/drivers/crypto/allwinner/Kconfig
+@@ -43,7 +43,7 @@ config CRYPTO_DEV_SUN8I_CE
+ 	depends on CRYPTO_DEV_ALLWINNER
+ 	depends on PM
+ 	help
+-	  Select y here to have support for the crypto Engine availlable on
++	  Select y here to have support for the crypto Engine available on
+ 	  Allwinner SoC H2+, H3, H5, H6, R40 and A64.
+ 	  The Crypto Engine handle AES/3DES ciphers in ECB/CBC mode.
+ 
+-- 
+2.28.0
