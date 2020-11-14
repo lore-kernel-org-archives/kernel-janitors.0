@@ -1,28 +1,37 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Date: Fri, 27 Nov 2020 13:05:21 +0000
-Subject: Re: [PATCH] RDMA/mlx5: Fix a error code in devx_umem_reg_cmd_alloc()
-Message-Id: <20201127130521.GV5487@ziepe.ca>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Sat, 14 Nov 2020 05:12:19 +0000
+Subject: [PATCH] memory: tegra20-emc: remove redundant error message
+Message-Id: <20201114051219.GA4746@fedora-project>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201127074349.GA7391@mwanda>
-In-Reply-To: <20201127074349.GA7391@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: krzk@kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 10:43:49AM +0300, Dan Carpenter wrote:
-> This code returns PTR_ERR(NULL) which is zero or success but it should
-> return -ENOMEM.
-> 
-> Fixes: 878f7b31c3a7 ("RDMA/mlx5: Use ib_umem_find_best_pgsz() for devx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/hw/mlx5/devx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There is no need for dev_err() since irq already prints an error. 
+Eliminate unnecessary curly braces for single statement block.
 
-Not quite, it is worse, cmd->in is never NULL in the first place
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/memory/tegra/tegra20-emc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-https://lore.kernel.org/linux-rdma/0-v1-4d05ccc1c223+173-devx_err_ptr_jgg@nvidia.com/
-
-Jason
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 5e10aa97809f..181a360d7d6b 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -959,10 +959,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	int irq, err;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "please update your device tree\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc)
+-- 
+2.28.0
