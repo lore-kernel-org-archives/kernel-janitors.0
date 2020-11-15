@@ -1,8 +1,10 @@
 From: "Investment  Corporate" <financialcapability6@gmail.com>
-Date: Wed, 11 Nov 2020 07:24:35 +0000
+Date: Sun, 15 Nov 2020 16:44:10 +0000
 Subject: Corporate and Personal Loan *
-Message-Id: <202011110724.0AB7NxBP024859@oa.trendtek.com.tw>
+Message-Id: <202011151644.0AFGi9oZ032322@oa.trendtek.com.tw>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <202011110724.0AB7NxBP024859@oa.trendtek.com.tw>
+In-Reply-To: <202011110724.0AB7NxBP024859@oa.trendtek.com.tw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
