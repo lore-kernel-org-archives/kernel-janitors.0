@@ -1,53 +1,39 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 30 Nov 2020 02:20:34 +0000
-Subject: Re: [PATCH] vdpa: ifcvf: Use dma_set_mask_and_coherent to simplify code
-Message-Id: <4576b2bb-d4d3-6413-c2cb-54e7d781eebf@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Nov 2020 12:59:50 +0000
+Subject: [PATCH] ASoC: qcom: sc7180: initialize the "no_headphone" variable
+Message-Id: <20201116125950.GA44063@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201129125434.1462638-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201129125434.1462638-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mst@redhat.com, lingshan.zhu@intel.com, eli@mellanox.com, parav@mellanox.com
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Patrick Lai <plai@codeaurora.org>, xuyuqing <xuyuqing@huaqin.corp-partner.google.com>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
+The "no_headphone" variable is never set to "false" so it could be
+uninitialized.
 
-On 2020/11/29 下午8:54, Christophe JAILLET wrote:
-> 'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
-> an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
->
-> While at it, fix a typo (s/confiugration/configuration)
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Fixes: e936619b7ce7 ("ASoC: qcom: sc7180: Modify machine driver for sound card")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Apparently we recently turned off uninitialized variable warnings by
+default in commit 78a5255ffb6a ("Stop the ad-hoc games with
+-Wno-maybe-initialized")
 
+ sound/soc/qcom/sc7180.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-
->   drivers/vdpa/ifcvf/ifcvf_main.c | 11 ++---------
->   1 file changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
-> index 8b4028556cb6..fa1af301cf55 100644
-> --- a/drivers/vdpa/ifcvf/ifcvf_main.c
-> +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
-> @@ -417,16 +417,9 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   		return ret;
->   	}
->   
-> -	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
->   	if (ret) {
-> -		IFCVF_ERR(pdev, "No usable DMA confiugration\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-> -	if (ret) {
-> -		IFCVF_ERR(pdev,
-> -			  "No usable coherent DMA confiugration\n");
-> +		IFCVF_ERR(pdev, "No usable DMA configuration\n");
->   		return ret;
->   	}
->   
+diff --git a/sound/soc/qcom/sc7180.c b/sound/soc/qcom/sc7180.c
+index e2e6567566af..de70fa792aea 100644
+--- a/sound/soc/qcom/sc7180.c
++++ b/sound/soc/qcom/sc7180.c
+@@ -316,7 +316,7 @@ static int sc7180_snd_platform_probe(struct platform_device *pdev)
+ 	struct snd_soc_dai_link *link;
+ 	int ret;
+ 	int i;
+-	bool no_headphone;
++	bool no_headphone = false;
+ 
+ 	/* Allocate the private data */
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+-- 
+2.29.2
