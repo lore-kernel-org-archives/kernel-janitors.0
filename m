@@ -1,28 +1,50 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 24 Nov 2020 03:57:59 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: Fix memory leak on lcb_context
-Message-Id: <160618683552.24173.1098115721701350297.b4-ty@oracle.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 16 Nov 2020 07:00:35 +0000
+Subject: [PATCH] scsi: sd: remove obsolete variable in sd_remove()
+Message-Id: <20201116070035.11870-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118141314.462471-1-colin.king@canonical.com>
-In-Reply-To: <20201118141314.462471-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, James Smart <james.smart@broadcom.com>, Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, "Martin K . Petersen" <martin.petersen@oracle.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, linux-scsi@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Wed, 18 Nov 2020 14:13:14 +0000, Colin King wrote:
+Commit 140ea3bbf39a ("sd: use __register_blkdev to avoid a modprobe for an
+unregistered dev_t") removed blk_register_region(devt, ...) in sd_remove()
+and since then, devt is unused in sd_remove().
 
-> Currently there is an error return path that neglects to free the
-> allocation for lcb_context.  Fix this by adding a new error free
-> exit path that kfree's lcb_context before returning.  Use this new
-> kfree exit path in another exit error path that also kfree's the same
-> object, allowing a line of code to be removed.
+Hence, make W=1 warns:
 
-Applied to 5.11/scsi-queue, thanks!
+  drivers/scsi/sd.c:3516:8:
+      warning: variable 'devt' set but not used [-Wunused-but-set-variable]
 
-[1/1] scsi: lpfc: Fix memory leak on lcb_context
-      https://git.kernel.org/mkp/scsi/c/14c1dd950411
+Simply remove this obsolete variable.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201113
+
+Christoph, Hannes, please ack.
+
+Martin, James, please pick this minor non-urgent clean-up patch.
+
+ drivers/scsi/sd.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 106a9cda0eb7..82d0cb97b758 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3513,10 +3513,8 @@ static int sd_probe(struct device *dev)
+ static int sd_remove(struct device *dev)
+ {
+ 	struct scsi_disk *sdkp;
+-	dev_t devt;
+ 
+ 	sdkp = dev_get_drvdata(dev);
+-	devt = disk_devt(sdkp->disk);
+ 	scsi_autopm_get_device(sdkp->device);
+ 
+ 	async_synchronize_full_domain(&scsi_sd_pm_domain);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
