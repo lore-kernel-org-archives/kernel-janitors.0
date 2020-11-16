@@ -1,45 +1,44 @@
-From: Nicolas Pitre <nico@fluxnic.net>
-Date: Thu, 26 Nov 2020 22:27:32 +0000
-Subject: Re: [PATCH] cramfs: Kconfig: Fix spelling mistake "adresssed" -> "addressed"
-Message-Id: <64s43648-2182-3n94-5ssr-9943o794r97q@syhkavp.arg>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Nov 2020 11:03:16 +0000
+Subject: [PATCH][next] drm/atomic: avoid null pointer dereference on pointer crtc
+Message-Id: <20201116110316.269934-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201126222405.12772-1-colin.king@canonical.com>
-In-Reply-To: <20201126222405.12772-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 26 Nov 2020, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig help text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Since moving to the new debug helper functions we now have a debug message
+that dereferences crtc to print a kernel debug message when crtc is null
+and so this debug message will now cause a null pointer dereference. Since
+this is a debug message it probably is just simplest to fix this by just
+removing the debug message altogether.
 
-Acked-by: Nicolas Pitre <nico@fluxnic.net>
+Addresses-Coverity: ("Dereference after null check")
+Fixes: e3aae683e861 ("drm: convert drm_atomic_uapi.c to new debug helpers")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_atomic_uapi.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-
-> ---
->  fs/cramfs/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/cramfs/Kconfig b/fs/cramfs/Kconfig
-> index d98cef0dbb6b..a8af8c6ac15d 100644
-> --- a/fs/cramfs/Kconfig
-> +++ b/fs/cramfs/Kconfig
-> @@ -38,7 +38,7 @@ config CRAMFS_MTD
->  	default y if !CRAMFS_BLOCKDEV
->  	help
->  	  This option allows the CramFs driver to load data directly from
-> -	  a linear adressed memory range (usually non volatile memory
-> +	  a linear addressed memory range (usually non volatile memory
->  	  like flash) instead of going through the block device layer.
->  	  This saves some memory since no intermediate buffering is
->  	  necessary.
-> -- 
-> 2.29.2
-> 
-> 
+diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+index 9df7f2a170e3..3fd84590560a 100644
+--- a/drivers/gpu/drm/drm_atomic_uapi.c
++++ b/drivers/gpu/drm/drm_atomic_uapi.c
+@@ -338,11 +338,6 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ 			       "Link [CONNECTOR:%d:%s] state %p to [CRTC:%d:%s]\n",
+ 			       connector->base.id, connector->name,
+ 			       conn_state, crtc->base.id, crtc->name);
+-	} else {
+-		drm_dbg_atomic(crtc->dev,
+-			       "Link [CONNECTOR:%d:%s] state %p to [NOCRTC]\n",
+-			       connector->base.id, connector->name,
+-			       conn_state);
+ 	}
+ 
+ 	return 0;
+-- 
+2.28.0
