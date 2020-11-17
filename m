@@ -1,48 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Nov 2020 08:06:09 +0000
-Subject: Re: [linux-safety] [PATCH] taskstats: remove unneeded dead assignment
-Message-Id: <20201110080609.GD29398@kadam>
+Date: Tue, 17 Nov 2020 07:24:01 +0000
+Subject: [PATCH] hwmon: (applesmc) Fix smc_sane() function
+Message-Id: <20201117072401.GE1111239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106062210.27920-1-lukas.bulwahn@gmail.com>
- <6ab2415b-0642-16ee-4be0-c909e07e7565@codethink.co.uk>
- <alpine.DEB.2.21.2011061126130.20338@felia>
- <aea9d12d-88ee-f262-4328-03993521668f@codethink.co.uk>
-In-Reply-To: <aea9d12d-88ee-f262-4328-03993521668f@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Balbir Singh <bsingharora@gmail.com>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org
+To: Henrik Rydberg <rydberg@bitmath.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Brad Campbell <brad@fnarfbargle.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 12:04:53PM +0000, Sudip Mukherjee wrote:
-> Hi Lukas,
-> 
-> On 06/11/2020 10:31, Lukas Bulwahn wrote:
-> > 
-> > 
-> > On Fri, 6 Nov 2020, Sudip Mukherjee wrote:
-> > 
-> >> Hi Lukas,
-> >>
-> 
-> <snip>
-> 
-> > 
-> > I did not try but I bet (a beverage of your choice) that the object code
-> > remains the same also for your suggested patch. Try to disprove my claim 
-> > and possibly earn yourself a beverage when we meet...
-> 
-> Lets decide which beverage.. ;-)
-> 
-> Using gcc-7.2.0 for MIPS:
-> 
-> original:- ab81d3305d578c2568fbc73aad2f9e61  kernel/taskstats.o
-> After your change:- ab81d3305d578c2568fbc73aad2f9e61  kernel/taskstats.o
-> After my change:- 0acae2c8d72abd3e15bf805fccdca711  kernel/taskstats.o
+This test is reversed so the function will return without sending
+the APPLESMC_READ_CMD or completing the rest of the function.
 
-I'm surprised the line numbers from the printks aren't affecting it...
+Fixes: 4d64bb4ba5ec ("hwmon: (applesmc) Re-work SMC comms")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hwmon/applesmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I personally prefer Lukas's patch.  "rc" should be function scope...
-
-regards,
-dan carpenter
+diff --git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
+index 79b498f816fe..289b39537683 100644
+--- a/drivers/hwmon/applesmc.c
++++ b/drivers/hwmon/applesmc.c
+@@ -227,7 +227,7 @@ static int smc_sane(void)
+ 	int ret;
+ 
+ 	ret = wait_status(0, SMC_STATUS_BUSY);
+-	if (!ret)
++	if (ret)
+ 		return ret;
+ 	ret = send_command(APPLESMC_READ_CMD);
+ 	if (ret)
+-- 
+2.29.2
