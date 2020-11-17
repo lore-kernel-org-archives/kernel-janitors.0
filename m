@@ -1,35 +1,40 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 11 Nov 2020 01:48:32 +0000
-Subject: Re: [PATCH][next] net: dsa: fix unintended sign extension on a u16 left shift
-Message-Id: <20201110174832.437b4951@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Nov 2020 07:21:37 +0000
+Subject: [PATCH] drm/kmb: Remove an unnecessary NULL check
+Message-Id: <20201117072137.GB1111239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201109124008.2079873-1-colin.king@canonical.com>
-        <87y2jar76v.fsf@kurt>
-In-Reply-To: <87y2jar76v.fsf@kurt>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kurt Kanzenbach <kurt@linutronix.de>, Colin King <colin.king@canonical.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Edmund Dea <edmund.j.dea@intel.com>, dri-devel@lists.freedesktop.org
 
-On Mon, 09 Nov 2020 14:27:52 +0100 Kurt Kanzenbach wrote:
-> On Mon Nov 09 2020, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The left shift of u16 variable high is promoted to the type int and
-> > then sign extended to a 64 bit u64 value.  If the top bit of high is
-> > set then the upper 32 bits of the result end up being set by the
-> > sign extension. Fix this by explicitly casting the value in high to
-> > a u64 before left shifting by 16 places.
-> >
-> > Also, remove the initialisation of variable value to 0 at the start
-> > of each loop iteration as the value is never read and hence the
-> > assignment it is redundant.
-> >
-> > Addresses-Coverity: ("Unintended sign extension")
-> > Fixes: e4b27ebc780f ("net: dsa: Add DSA driver for Hirschmann Hellcreek switches")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
-> 
-> Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+The NULL checking isn't done consistently in this function and it leads
+to a static checker warning:
 
-Applied, thanks!
+    drivers/gpu/drm/kmb/kmb_drv.c:561 kmb_pm_suspend()
+    error: we previously assumed 'drm' could be null (see line 559)
+
+Fortunately "drm" cannot be NULL at this point so the check can just be
+removed.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/kmb/kmb_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
+index 8c43b136765c..5ff392644603 100644
+--- a/drivers/gpu/drm/kmb/kmb_drv.c
++++ b/drivers/gpu/drm/kmb/kmb_drv.c
+@@ -557,7 +557,7 @@ MODULE_DEVICE_TABLE(of, kmb_of_match);
+ static int __maybe_unused kmb_pm_suspend(struct device *dev)
+ {
+ 	struct drm_device *drm = dev_get_drvdata(dev);
+-	struct kmb_drm_private *kmb = drm ? to_kmb(drm) : NULL;
++	struct kmb_drm_private *kmb = to_kmb(drm);
+ 
+ 	drm_kms_helper_poll_disable(drm);
+ 
+-- 
+2.28.0
