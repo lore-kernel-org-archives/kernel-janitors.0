@@ -1,35 +1,46 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 20 Nov 2020 19:10:07 +0000
-Subject: Re: [PATCH][next] octeontx2-af: Fix return of uninitialized variable err
-Message-Id: <160589940700.22082.1258915221742899209.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Nov 2020 07:21:03 +0000
+Subject: [PATCH] drm/kmb: Fix possible oops in probe error handling
+Message-Id: <20201117072103.GA1111239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118132502.461098-1-colin.king@canonical.com>
-In-Reply-To: <20201118132502.461098-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, davem@davemloft.net, kuba@kernel.org, naveenm@marvell.com, vattunuru@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
+Cc: David Airlie <airlied@linux.ie>, Edmund Dea <edmund.j.dea@intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>
 
-Hello:
+If kmb_dsi_init() fails the error handling will dereference an error
+pointer which will cause an Oops.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/kmb/kmb_drv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Wed, 18 Nov 2020 13:25:02 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the variable err may be uninitialized if several of the if
-> statements are not executed in function nix_tx_vtag_decfg and a garbage
-> value in err is returned.  Fix this by initialized ret at the start of
-> the function.
-> 
-> [...]
-
-Here is the summary with links:
-  - [next] octeontx2-af: Fix return of uninitialized variable err
-    https://git.kernel.org/netdev/net-next/c/dd6028a3cb5d
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
+index a31a840ce634..8c43b136765c 100644
+--- a/drivers/gpu/drm/kmb/kmb_drv.c
++++ b/drivers/gpu/drm/kmb/kmb_drv.c
+@@ -504,7 +504,7 @@ static int kmb_probe(struct platform_device *pdev)
+ 	if (IS_ERR(kmb->kmb_dsi)) {
+ 		drm_err(&kmb->drm, "failed to initialize DSI\n");
+ 		ret = PTR_ERR(kmb->kmb_dsi);
+-		goto err_free1;
++		goto err_clear_drvdata;
+ 	}
+ 
+ 	kmb->kmb_dsi->dev = &dsi_pdev->dev;
+@@ -540,8 +540,9 @@ static int kmb_probe(struct platform_device *pdev)
+ 	drm_crtc_cleanup(&kmb->crtc);
+ 	drm_mode_config_cleanup(&kmb->drm);
+  err_free1:
+-	dev_set_drvdata(dev, NULL);
+ 	kmb_dsi_host_unregister(kmb->kmb_dsi);
++ err_clear_drvdata:
++	dev_set_drvdata(dev, NULL);
+ 
+ 	return ret;
+ }
+-- 
+2.28.0
