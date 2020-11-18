@@ -1,33 +1,44 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 13 Nov 2020 17:38:12 +0000
-Subject: Re: [PATCH] ALSA: firewire: Clean up a locking issue in copy_resp_to_buf()
-Message-Id: <s5hv9e9dunv.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Nov 2020 13:37:44 +0000
+Subject: [PATCH][next] scsi: lpfc: remove dead code on second !ndlp check
+Message-Id: <20201118133744.461385-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201113101241.GB168908@mwanda>
-In-Reply-To: <20201113101241.GB168908@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 13 Nov 2020 11:12:41 +0100,
-Dan Carpenter wrote:
-> 
-> The spin_lock/unlock_irq() functions cannot be nested.  The problem is
-> that presumably we would want the IRQs to be re-enabled on the second
-> call the spin_unlock_irq() but instead it will be enabled at the first
-> call so IRQs will be enabled earlier than expected.
-> 
-> In this situation the copy_resp_to_buf() function is only called from
-> one function and it is called with IRQs disabled.  We can just use
-> the regular spin_lock/unlock() functions.
-> 
-> Fixes: 555e8a8f7f14 ("ALSA: fireworks: Add command/response functionality into hwdep interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied now with Cc to stable.
+Currently there is a null check on the pointer ndlp that exits via
+error path issue_ct_rsp_exit followed by another null check on the
+same pointer that is almost identical to the previous null check
+stanza and yet can never can be reached because the previous check
+exited via issue_ct_rsp_exit. This is deadcode and can be removed.
 
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_bsg.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Takashi
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index 35f4998504c1..41e3657c2d8d 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -1526,12 +1526,6 @@ lpfc_issue_ct_rsp(struct lpfc_hba *phba, struct bsg_job *job, uint32_t tag,
+ 			goto issue_ct_rsp_exit;
+ 		}
+ 
+-		/* Check if the ndlp is active */
+-		if (!ndlp) {
+-			rc = IOCB_ERROR;
+-			goto issue_ct_rsp_exit;
+-		}
+-
+ 		/* get a refernece count so the ndlp doesn't go away while
+ 		 * we respond
+ 		 */
+-- 
+2.28.0
