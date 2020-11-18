@@ -1,47 +1,56 @@
-From: "Chen, Guchun" <Guchun.Chen@amd.com>
-Date: Wed, 25 Nov 2020 15:10:03 +0000
-Subject: RE: [PATCH][next] drm/amdgpu: Fix sizeof() mismatch in bps_bo kmalloc_array creation
-Message-Id: <CY4PR12MB128722A6BE94EFC4739FB964F1FA0@CY4PR12MB1287.namprd12.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Nov 2020 14:13:14 +0000
+Subject: [PATCH][next] scsi: lpfc: Fix memory leak on lcb_context
+Message-Id: <20201118141314.462471-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201125141806.1881036-1-colin.king@canonical.com>
-In-Reply-To: <20201125141806.1881036-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "Zhou1,
- Tao" <Tao.Zhou1@amd.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-W0FNRCBQdWJsaWMgVXNlXQ0KDQpSZXZpZXdlZC1ieTogR3VjaHVuIENoZW4gPGd1Y2h1bi5jaGVu
-QGFtZC5jb20+DQoNClJlZ2FyZHMsDQpHdWNodW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCkZyb206IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4gDQpTZW50OiBX
-ZWRuZXNkYXksIE5vdmVtYmVyIDI1LCAyMDIwIDEwOjE4IFBNDQpUbzogRGV1Y2hlciwgQWxleGFu
-ZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPjsgS29lbmlnLCBDaHJpc3RpYW4gPENocmlz
-dGlhbi5Lb2VuaWdAYW1kLmNvbT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT47IERh
-bmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IFpob3UxLCBUYW8gPFRhby5aaG91MUBhbWQu
-Y29tPjsgQ2hlbiwgR3VjaHVuIDxHdWNodW4uQ2hlbkBhbWQuY29tPjsgYW1kLWdmeEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmc7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCkNjOiBrZXJu
-ZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-DQpTdWJqZWN0OiBbUEFUQ0hdW25leHRdIGRybS9hbWRncHU6IEZpeCBzaXplb2YoKSBtaXNtYXRj
-aCBpbiBicHNfYm8ga21hbGxvY19hcnJheSBjcmVhdGlvbg0KDQpGcm9tOiBDb2xpbiBJYW4gS2lu
-ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpBbiBpbmNvcnJlY3Qgc2l6ZW9mKCkgaXMg
-YmVpbmcgdXNlZCwgc2l6ZW9mKCgqZGF0YSktPmJwc19ibykgaXMgbm90IGNvcnJlY3QsIGl0IHNo
-b3VsZCBiZSBzaXplb2YoKigqZGF0YSktPmJwc19ibykuICBJdCBqdXN0IHNvIGhhcHBlbnMgdG8g
-d29yayBiZWNhdXNlIHRoZSBzaXplcyBhcmUgdGhlIHNhbWUuICBGaXggaXQuDQoNCkFkZHJlc3Nl
-cy1Db3Zlcml0eTogKCJTaXplb2Ygbm90IHBvcnRhYmxlIChTSVpFT0ZfTUlTTUFUQ0gpIikNCkZp
-eGVzOiA1Mjc4YTE1OWNmMzUgKCJkcm0vYW1kZ3B1OiBzdXBwb3J0IHJlc2VydmUgYmFkIHBhZ2Ug
-Zm9yIHZpcnQgKHYzKSIpDQpTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2lu
-Z0BjYW5vbmljYWwuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
-X3ZpcnQuYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRp
-b24oLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92
-aXJ0LmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdmlydC5jDQppbmRleCAy
-ZDUxYjc2OTRkMWYuLmRmMTVkMzNlM2M1YyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9h
-bWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMNCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1
-L2FtZGdwdV92aXJ0LmMNCkBAIC0yODMsNyArMjgzLDcgQEAgc3RhdGljIGludCBhbWRncHVfdmly
-dF9pbml0X3Jhc19lcnJfaGFuZGxlcl9kYXRhKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2KQ0K
-IAkJcmV0dXJuIC1FTk9NRU07DQogDQogCWJwcyA9IGttYWxsb2NfYXJyYXkoYWxpZ25fc3BhY2Us
-IHNpemVvZigoKmRhdGEpLT5icHMpLCBHRlBfS0VSTkVMKTsNCi0JYnBzX2JvID0ga21hbGxvY19h
-cnJheShhbGlnbl9zcGFjZSwgc2l6ZW9mKCgqZGF0YSktPmJwc19ibyksIEdGUF9LRVJORUwpOw0K
-KwlicHNfYm8gPSBrbWFsbG9jX2FycmF5KGFsaWduX3NwYWNlLCBzaXplb2YoKigqZGF0YSktPmJw
-c19ibyksIA0KK0dGUF9LRVJORUwpOw0KIA0KIAlpZiAoIWJwcyB8fCAhYnBzX2JvKSB7DQogCQlr
-ZnJlZShicHMpOw0KLS0NCjIuMjkuMg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently there is an error return path that neglects to free the
+allocation for lcb_context.  Fix this by adding a new error free
+exit path that kfree's lcb_context before returning.  Use this new
+kfree exit path in another exit error path that also kfree's the same
+object, allowing a line of code to be removed.
+
+Addresses-Coverity: ("Resource leak")
+Fixes: 4430f7fd09ec ("scsi: lpfc: Rework locations of ndlp reference taking")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_els.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 03f47d1b21fe..0d3271b4c130 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -6515,18 +6515,20 @@ lpfc_els_rcv_lcb(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
+ 	lcb_context->ndlp = lpfc_nlp_get(ndlp);
+ 	if (!lcb_context->ndlp) {
+ 		rjt_err = LSRJT_UNABLE_TPC;
+-		goto rjt;
++		goto rjt_free;
+ 	}
+ 
+ 	if (lpfc_sli4_set_beacon(vport, lcb_context, state)) {
+ 		lpfc_printf_vlog(ndlp->vport, KERN_ERR, LOG_TRACE_EVENT,
+ 				 "0193 failed to send mail box");
+-		kfree(lcb_context);
+ 		lpfc_nlp_put(ndlp);
+ 		rjt_err = LSRJT_UNABLE_TPC;
+-		goto rjt;
++		goto rjt_free;
+ 	}
+ 	return 0;
++
++rjt_free:
++	kfree(lcb_context);
+ rjt:
+ 	memset(&stat, 0, sizeof(stat));
+ 	stat.un.b.lsRjtRsnCode = rjt_err;
+-- 
+2.28.0
