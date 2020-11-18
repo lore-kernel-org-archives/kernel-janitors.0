@@ -1,62 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 Nov 2020 09:58:39 +0000
-Subject: [bug report] octeontx2-af: Add mbox messages to install and delete MCAM rules
-Message-Id: <20201127095839.GA10400@mwanda>
+From: Julia Lawall <julia.lawall@inria.fr>
+Date: Wed, 18 Nov 2020 13:15:53 +0000
+Subject: Re: [Cocci] [PATCH v2] coccinelle: locks: Add balancedlock.cocci script
+Message-Id: <alpine.DEB.2.22.394.2011181413280.2641@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-1777813137-1605705354=:2641"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+References: <20201118080242.t6u6lchj5ww2fac4@adolin>
+ <62af4a93-dbc3-8aa0-6924-4dc479001d34@web.de>
+In-Reply-To: <62af4a93-dbc3-8aa0-6924-4dc479001d34@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-Hello Subbaraya Sundeep,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This is a semi-automatic email about new static checker warnings.
+--8323329-1777813137-1605705354=:2641
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The patch 55307fcb9258: "octeontx2-af: Add mbox messages to install 
-and delete MCAM rules" from Nov 15, 2020, leads to the following 
-Smatch complaint:
+> > +++ b/scripts/coccinelle/locks/balancedlock.cocci
+> …
+> > +//# False positives may be generated due to locks released within a nested
+> > +//# function call or a goto block.
+> > +///
+> > +// Confidence: Moderate
+>
+> How good does such information fit together?
+>
 
-    drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c:1001 npc_install_flow()
-    error: we previously assumed 'def_ucast_rule' could be null (see line 975)
+What kind of response do you expect?  There are some concerns, so it's not
+High confidence.  It works pretty well so it's not low confidence.  So
+it's moderate confidence.  What else is there to say?
 
-drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-   974	
-   975		if (def_ucast_rule)
-                    ^^^^^^^^^^^^^^
-This can be NULL
+> …
+> >+ (
+> > +mutex_lock@p(E);
+> > +|
+> > +read_lock@p(E);
+> > +|
+> …
+>
+> Why did you not reorder the elements of such a SmPL disjunctions according to
+> an usage incidence (which can be determined by another SmPL script like
+> “report_lock_calls.cocci”)?
 
-   976			missing_features = (def_ucast_rule->features ^ features) &
-   977						def_ucast_rule->features;
-   978	
-   979		if (req->default_rule && req->append) {
-   980			/* add to default rule */
-   981			if (missing_features)
-   982				npc_update_flow(rvu, entry, missing_features,
-   983						&def_ucast_rule->packet,
-   984						&def_ucast_rule->mask,
-   985						&dummy, req->intf);
-   986			enable = rvu_npc_write_default_rule(rvu, blkaddr,
-   987							    nixlf, target,
-   988							    pfvf->nix_rx_intf, entry,
-   989							    &entry_index);
-   990			installed_features = req->features | missing_features;
-   991		} else if (req->default_rule && !req->append) {
-   992			/* overwrite default rule */
-   993			enable = rvu_npc_write_default_rule(rvu, blkaddr,
-   994							    nixlf, target,
-   995							    pfvf->nix_rx_intf, entry,
-   996							    &entry_index);
-   997		} else if (msg_from_vf) {
-   998			/* normal rule - include default rule also to it for VF */
-   999			npc_update_flow(rvu, entry, missing_features,
-  1000					&def_ucast_rule->packet, &def_ucast_rule->mask,
-                                        ^^^^^^^^^^^^^^^^^        ^^^^^^^^^^^^^^^
-Unchecked dereferences.  The other paths check if "missing_features" is
-true.
+I don't recall ever seeing any evidence that it has an impact for function
+calls.  Furthermore, the numbers will change over time.  So why change it?
 
-  1001					&dummy, req->intf);
-  1002			installed_features = req->features | missing_features;
-  1003		}
+> …
+> > +msg = "This code segment might have an unbalanced lock."
+> > +coccilib.org.print_todo(j0[0], msg)
+>
+> Please pass the string literal directly.
+>
+> +coccilib.org.print_todo(j0[0], "This code segment might have an unbalanced lock.")
 
-regards,
-dan carpenter
+The code is fine as it is.
+
+julia
+--8323329-1777813137-1605705354=:2641--
