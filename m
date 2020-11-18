@@ -1,56 +1,43 @@
-From: "Paraschiv, Andra-Irina" <andraprs@amazon.com>
-Date: Mon, 02 Nov 2020 08:28:47 +0000
-Subject: Re: [bug report] nitro_enclaves: Add logic for setting an enclave vCPU
-Message-Id: <46fba46c-e196-1ee7-e27c-66ccfccd28c1@amazon.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Nov 2020 13:49:01 +0000
+Subject: [PATCH][next] drm/selftests/test-drm_dp_mst_helper: fix memory leak allocated to 'out'
+Message-Id: <20201118134901.461841-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201030113033.GA3251003@mwanda>
-In-Reply-To: <20201030113033.GA3251003@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Lyude Paul <lyude@redhat.com>, Lee Jones <lee.jones@linaro.org>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-CgpPbiAwMi8xMS8yMDIwIDA4OjIwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+IE9uIEZyaSwgT2N0
-IDMwLCAyMDIwIGF0IDA1OjIzOjE4UE0gKzAyMDAsIFBhcmFzY2hpdiwgQW5kcmEtSXJpbmEgd3Jv
-dGU6Cj4+Cj4+IE9uIDMwLzEwLzIwMjAgMTM6MzAsIERhbiBDYXJwZW50ZXIgd3JvdGU6Cj4+PiBI
-ZWxsbyBBbmRyYSBQYXJhc2NoaXYsCj4+Pgo+Pj4gVGhlIHBhdGNoIGZmOGE0ZDNlM2E5OTogIm5p
-dHJvX2VuY2xhdmVzOiBBZGQgbG9naWMgZm9yIHNldHRpbmcgYW4KPj4+IGVuY2xhdmUgdkNQVSIg
-ZnJvbSBTZXAgMjEsIDIwMjAsIGxlYWRzIHRvIHRoZSBmb2xsb3dpbmcgc3RhdGljCj4+PiBjaGVj
-a2VyIHdhcm5pbmc6Cj4+Pgo+Pj4gICAgICAgICAgIGRyaXZlcnMvdmlydC9uaXRyb19lbmNsYXZl
-cy9uZV9taXNjX2Rldi5jOjQ3MSBuZV9kb25hdGVkX2NwdSgpCj4+PiAgICAgICAgICAgZXJyb3I6
-IHBhc3NpbmcgdW50cnVzdGVkIGRhdGEgJ2NwdScgdG8gJ2NwdW1hc2tfdGVzdF9jcHUoKScKPj4+
-Cj4+PiBkcml2ZXJzL3ZpcnQvbml0cm9fZW5jbGF2ZXMvbmVfbWlzY19kZXYuYwo+Pj4gICAgIDEw
-OTMgICAgICAgICAgc3dpdGNoIChjbWQpIHsKPj4+ICAgICAxMDk0ICAgICAgICAgIGNhc2UgTkVf
-QUREX1ZDUFU6IHsKPj4+ICAgICAxMDk1ICAgICAgICAgICAgICAgICAgaW50IHJjID0gLUVJTlZB
-TDsKPj4+ICAgICAxMDk2ICAgICAgICAgICAgICAgICAgdTMyIHZjcHVfaWQgPSAwOwo+Pj4gICAg
-IDEwOTcKPj4+ICAgICAxMDk4ICAgICAgICAgICAgICAgICAgaWYgKGNvcHlfZnJvbV91c2VyKCZ2
-Y3B1X2lkLCAodm9pZCBfX3VzZXIgKilhcmcsIHNpemVvZih2Y3B1X2lkKSkpCj4+PiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeXl5eXl5eXgo+Pj4KPj4+ICAg
-ICAxMDk5ICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVGQVVMVDsKPj4+ICAgICAx
-MTAwCj4+PiAgICAgMTEwMSAgICAgICAgICAgICAgICAgIG11dGV4X2xvY2soJm5lX2VuY2xhdmUt
-PmVuY2xhdmVfaW5mb19tdXRleCk7Cj4+PiAgICAgMTEwMgo+Pj4gICAgIDExMDMgICAgICAgICAg
-ICAgICAgICBpZiAobmVfZW5jbGF2ZS0+c3RhdGUgIT0gTkVfU1RBVEVfSU5JVCkgewo+Pj4gICAg
-IDExMDQgICAgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnJfcmF0ZWxpbWl0ZWQobmVfbWlz
-Y19kZXYudGhpc19kZXZpY2UsCj4+PiAgICAgMTEwNSAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAiRW5jbGF2ZSBpcyBub3QgaW4gaW5pdCBzdGF0ZVxuIik7Cj4+
-PiAgICAgMTEwNgo+Pj4gICAgIDExMDcgICAgICAgICAgICAgICAgICAgICAgICAgIG11dGV4X3Vu
-bG9jaygmbmVfZW5jbGF2ZS0+ZW5jbGF2ZV9pbmZvX211dGV4KTsKPj4+ICAgICAxMTA4Cj4+PiAg
-ICAgMTEwOSAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1ORV9FUlJfTk9UX0lOX0lO
-SVRfU1RBVEU7Cj4+PiAgICAgMTExMCAgICAgICAgICAgICAgICAgIH0KPj4+ICAgICAxMTExCj4+
-PiAgICAgMTExMiAgICAgICAgICAgICAgICAgIGlmICh2Y3B1X2lkID49IChuZV9lbmNsYXZlLT5u
-cl9wYXJlbnRfdm1fY29yZXMgKgo+Pj4gICAgIDExMTMgICAgICAgICAgICAgICAgICAgICAgbmVf
-ZW5jbGF2ZS0+bnJfdGhyZWFkc19wZXJfY29yZSkpIHsKPj4+Cj4+PiBUbyBwcmV2ZW50IGEgYnVm
-ZmVyIG92ZXJmbG93IHZjcHVfaWQgaGFzIHRvIGJlIGxlc3MgdGhhbiAibnJfY3B1X2lkcyIuCj4+
-PiBJcyAibmVfZW5jbGF2ZS0+bnJfcGFyZW50X3ZtX2NvcmVzICogbmVfZW5jbGF2ZS0+bnJfdGhy
-ZWFkc19wZXJfY29yZSIKPj4+IDw9IG5yX2NwdV9pZHM/ICBJZiBzbyB0aGVuIGl0J3MgZmluZS4K
-Pj4gSGkgRGFuLAo+Pgo+PiBUaGFua3MgZm9yIHJlYWNoaW5nIG91dCB3aXRoIHJlZ2FyZCB0byB0
-aGlzIHJlcG9ydGVkIGlzc3VlIGZyb20gdGhlIHN0YXRpYwo+PiBhbmFseXNpcy4KPj4KPj4gIm5y
-X2NwdV9pZHMiIGlzIHVzZWQgd2hlbiB0aGUgbnVtYmVyIG9mIGNvcmVzIGlzIGluaXRpYWxpemVk
-LCBzbyBpdCBzaG91bGQKPj4gYmUgZmluZS4gTGV0IG1lIGtub3cgaWYgSSBtaXNzIHNvbWV0aGlu
-ZyBhbmQgYSBjaGVjayBoYXMgdG8gYmUgYWRkZWQgdG8KPj4gZGlyZWN0bHkgY29tcGFyZSB0byAi
-bnJfY3B1X2lkcyIuCj4gWWVhaC4gIFRoYXQgd29ya3MuICBUaGFua3MgZm9yIHRha2luZyBhIGxv
-b2sgYXQgdGhpcy4KPgoKT2ssIHRoYW5rcyBmb3IgdGhlIGZvbGxvdy11cC4KCkFuZHJhCgoKCkFt
-YXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgKFJvbWFuaWEpIFMuUi5MLiByZWdpc3RlcmVkIG9mZmlj
-ZTogMjdBIFNmLiBMYXphciBTdHJlZXQsIFVCQzUsIGZsb29yIDIsIElhc2ksIElhc2kgQ291bnR5
-LCA3MDAwNDUsIFJvbWFuaWEuIFJlZ2lzdGVyZWQgaW4gUm9tYW5pYS4gUmVnaXN0cmF0aW9uIG51
-bWJlciBKMjIvMjYyMS8yMDA1Lgo
+From: Colin Ian King <colin.king@canonical.com>
+
+Currently when txmsg fails to allocate then there is a leak on 'out'. Fix
+this by setting result to false and exiting via the clean up exit path.
+Note since txmsg is NULL at this point, the kfree of txmsg is a no-op.
+
+Addresses-Coverity: ("Resource leak")
+Fixes: 09234b88ef55 ("drm/selftests/test-drm_dp_mst_helper: Move 'sideband_msg_req_encode_decode' onto the heap")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
+index 6b4759ed6bfd..dbac073ed385 100644
+--- a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
++++ b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
+@@ -131,8 +131,10 @@ sideband_msg_req_encode_decode(struct drm_dp_sideband_msg_req_body *in)
+ 		return false;
+ 
+ 	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
+-	if (!txmsg)
+-		return false;
++	if (!txmsg) {
++		result = false;
++		goto out;
++	}
+ 
+ 	drm_dp_encode_sideband_req(in, txmsg);
+ 	ret = drm_dp_decode_sideband_req(txmsg, out);
+-- 
+2.28.0
