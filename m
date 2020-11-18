@@ -1,60 +1,51 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 18 Nov 2020 09:39:51 +0000
-Subject: Re: [PATCH net] vhost_vdpa: Return -EFUALT if copy_from_user() fails
-Message-Id: <4ac146a2-a3db-abc7-73a0-98f71119de3d@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Nov 2020 14:38:03 +0000
+Subject: [PATCH][next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
+Message-Id: <20201118143803.463297-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023120853.GI282278@mwanda>
- <20201023113326-mutt-send-email-mst@kernel.org>
- <4485cc8d-ac69-c725-8493-eda120e29c41@redhat.com>
- <e7242333-b364-c2d8-53f5-1f688fc4d0b5@redhat.com>
- <20201118035912-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20201118035912-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, kuba@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Naveen Mamindlapalli <naveenm@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2020/11/18 下午4:59, Michael S. Tsirkin wrote:
-> On Wed, Nov 18, 2020 at 02:08:17PM +0800, Jason Wang wrote:
->> On 2020/10/26 上午10:59, Jason Wang wrote:
->>> On 2020/10/23 下午11:34, Michael S. Tsirkin wrote:
->>>> On Fri, Oct 23, 2020 at 03:08:53PM +0300, Dan Carpenter wrote:
->>>>> The copy_to/from_user() functions return the number of bytes which we
->>>>> weren't able to copy but the ioctl should return -EFAULT if they fail.
->>>>>
->>>>> Fixes: a127c5bbb6a8 ("vhost-vdpa: fix backend feature ioctls")
->>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>> Acked-by: Michael S. Tsirkin <mst@redhat.com>
->>>> Needed for stable I guess.
->>>
->>> Agree.
->>>
->>> Acked-by: Jason Wang <jasowang@redhat.com>
->>
->> Hi Michael.
->>
->> I don't see this in your tree, please consider to merge.
->>
->> Thanks
->>
-> I do see it there:
->
-> commit 7922460e33c81f41e0d2421417228b32e6fdbe94
-> Author: Dan Carpenter <dan.carpenter@oracle.com>
-> Date:   Fri Oct 23 15:08:53 2020 +0300
->
->      vhost_vdpa: Return -EFAULT if copy_from_user() fails
->      
-> the reason you can't find it is probably because I fixed up
-> a typo in the subject.
+The call to pc_delete_flow can kfree the iter object, so the following
+dev_err message that accesses iter->entry can accessmemory that has
+just been kfree'd.  Fix this by adding a temporary variable 'entry'
+that has a copy of iter->entry and also use this when indexing into
+the array mcam->entry2target_pffunc[]. Also print the unsigned value
+using the %u format specifier rather than %d.
 
+Addresses-Coverity: ("Read from pointer after free")
+Fixes: 55307fcb9258 ("octeontx2-af: Add mbox messages to install and delete MCAM rules")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/mlx5/mem.c                       | 2 +-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 8 +++++---
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-I see that.
-
-Thanks
-
-
->
->
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+index 4ddfdff33a61..14832b66d1fe 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+@@ -1218,11 +1218,13 @@ int rvu_mbox_handler_npc_delete_flow(struct rvu *rvu,
+ 	mutex_unlock(&mcam->lock);
+ 
+ 	list_for_each_entry_safe(iter, tmp, &del_list, list) {
++		u16 entry = iter->entry;
++
+ 		/* clear the mcam entry target pcifunc */
+-		mcam->entry2target_pffunc[iter->entry] = 0x0;
++		mcam->entry2target_pffunc[entry] = 0x0;
+ 		if (npc_delete_flow(rvu, iter, pcifunc))
+-			dev_err(rvu->dev, "rule deletion failed for entry:%d",
+-				iter->entry);
++			dev_err(rvu->dev, "rule deletion failed for entry:%u",
++				entry);
+ 	}
+ 
+ 	return 0;
+-- 
+2.28.0
