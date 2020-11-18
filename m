@@ -1,53 +1,39 @@
-From: Nicolas Pitre <npitre@baylibre.com>
-Date: Tue, 24 Nov 2020 15:48:00 +0000
-Subject: Re: [PATCH][next] i3c/master: Fix uninitialized variable next_addr
-Message-Id: <nycvar.YSQ.7.78.906.2011241046530.2184@knanqh.ubzr>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 18 Nov 2020 06:08:17 +0000
+Subject: Re: [PATCH net] vhost_vdpa: Return -EFUALT if copy_from_user() fails
+Message-Id: <e7242333-b364-c2d8-53f5-1f688fc4d0b5@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201124123504.396249-1-colin.king@canonical.com>
-In-Reply-To: <20201124123504.396249-1-colin.king@canonical.com>
+References: <20201023120853.GI282278@mwanda>
+ <20201023113326-mutt-send-email-mst@kernel.org>
+ <4485cc8d-ac69-c725-8493-eda120e29c41@redhat.com>
+In-Reply-To: <4485cc8d-ac69-c725-8493-eda120e29c41@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-i3c@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <bbrezillon@kernel.org>
-
-On Tue, 24 Nov 2020, Colin King wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable next_addr is not initialized and is being used in a call
-> to i3c_master_get_free_addr as a starting point to find the next address.
-> Fix this by initializing next_addr to 0 to avoid an uninitialized garbage
-> starting address from being used.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 9ad9a52cce28 ("i3c/master: introduce the mipi-i3c-hci driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Acked-by: Nicolas Pitre <npitre@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Michael S. Tsirkin" <mst@redhat.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, kuba@kernel.org
 
 
+On 2020/10/26 上午10:59, Jason Wang wrote:
+>
+> On 2020/10/23 下午11:34, Michael S. Tsirkin wrote:
+>> On Fri, Oct 23, 2020 at 03:08:53PM +0300, Dan Carpenter wrote:
+>>> The copy_to/from_user() functions return the number of bytes which we
+>>> weren't able to copy but the ioctl should return -EFAULT if they fail.
+>>>
+>>> Fixes: a127c5bbb6a8 ("vhost-vdpa: fix backend feature ioctls")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> Acked-by: Michael S. Tsirkin <mst@redhat.com>
+>> Needed for stable I guess.
+>
+>
+> Agree.
+>
+> Acked-by: Jason Wang <jasowang@redhat.com>
 
 
+Hi Michael.
 
-> ---
->  drivers/i3c/master/mipi-i3c-hci/cmd_v1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
-> index 6dd234a82892..d97c3175e0e2 100644
-> --- a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
-> +++ b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
-> @@ -293,7 +293,7 @@ static int hci_cmd_v1_daa(struct i3c_hci *hci)
->  {
->  	struct hci_xfer *xfer;
->  	int ret, dat_idx = -1;
-> -	u8 next_addr;
-> +	u8 next_addr = 0;
->  	u64 pid;
->  	unsigned int dcr, bcr;
->  	DECLARE_COMPLETION_ONSTACK(done);
-> -- 
-> 2.29.2
-> 
-> 
+I don't see this in your tree, please consider to merge.
+
+Thanks
