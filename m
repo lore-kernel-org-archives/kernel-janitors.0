@@ -1,51 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 18 Nov 2020 14:38:03 +0000
-Subject: [PATCH][next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
-Message-Id: <20201118143803.463297-1-colin.king@canonical.com>
+From: patchwork-bot+netdevbpf@kernel.org
+Date: Fri, 20 Nov 2020 19:10:07 +0000
+Subject: Re: [PATCH][next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
+Message-Id: <160589940705.22082.10268101858431094788.git-patchwork-notify@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201118143803.463297-1-colin.king@canonical.com>
+In-Reply-To: <20201118143803.463297-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Naveen Mamindlapalli <naveenm@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, davem@davemloft.net, kuba@kernel.org, naveenm@marvell.com, sbhatta@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello:
 
-The call to pc_delete_flow can kfree the iter object, so the following
-dev_err message that accesses iter->entry can accessmemory that has
-just been kfree'd.  Fix this by adding a temporary variable 'entry'
-that has a copy of iter->entry and also use this when indexing into
-the array mcam->entry2target_pffunc[]. Also print the unsigned value
-using the %u format specifier rather than %d.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-Addresses-Coverity: ("Read from pointer after free")
-Fixes: 55307fcb9258 ("octeontx2-af: Add mbox messages to install and delete MCAM rules")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/mlx5/mem.c                       | 2 +-
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 8 +++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
+On Wed, 18 Nov 2020 14:38:03 +0000 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The call to pc_delete_flow can kfree the iter object, so the following
+> dev_err message that accesses iter->entry can accessmemory that has
+> just been kfree'd.  Fix this by adding a temporary variable 'entry'
+> that has a copy of iter->entry and also use this when indexing into
+> the array mcam->entry2target_pffunc[]. Also print the unsigned value
+> using the %u format specifier rather than %d.
+> 
+> [...]
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index 4ddfdff33a61..14832b66d1fe 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -1218,11 +1218,13 @@ int rvu_mbox_handler_npc_delete_flow(struct rvu *rvu,
- 	mutex_unlock(&mcam->lock);
- 
- 	list_for_each_entry_safe(iter, tmp, &del_list, list) {
-+		u16 entry = iter->entry;
-+
- 		/* clear the mcam entry target pcifunc */
--		mcam->entry2target_pffunc[iter->entry] = 0x0;
-+		mcam->entry2target_pffunc[entry] = 0x0;
- 		if (npc_delete_flow(rvu, iter, pcifunc))
--			dev_err(rvu->dev, "rule deletion failed for entry:%d",
--				iter->entry);
-+			dev_err(rvu->dev, "rule deletion failed for entry:%u",
-+				entry);
- 	}
- 
- 	return 0;
--- 
-2.28.0
+Here is the summary with links:
+  - [next] octeontx2-af: Fix access of iter->entry after iter object has been kfree'd
+    https://git.kernel.org/netdev/net-next/c/76483980174c
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
