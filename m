@@ -1,25 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Nov 2020 09:10:51 +0000
-Subject: Re: [PATCH] net/sunrpc: clean up error checking in proc_do_xprt()
-Message-Id: <20201109090950.GJ18329@kadam>
+Date: Fri, 20 Nov 2020 08:11:13 +0000
+Subject: [PATCH v2] drm/kmb: Fix possible oops in probe error handling
+Message-Id: <20201120081113.GL18329@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <031F93AC-744F-4E02-9948-1C1F5939714B@gmail.com>
- <20201027141758.GA3488087@mwanda>
- <20201106203316.GA26028@fieldses.org>
- <20201106205959.GB26028@fieldses.org>
-In-Reply-To: <20201106205959.GB26028@fieldses.org>
+In-Reply-To: <20201117072103.GA1111239@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, Artur Molchanov <arturmolchanov@gmail.com>, Anna Schumaker <anna.schumaker@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>
+To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
+Cc: David Airlie <airlied@linux.ie>, Edmund Dea <edmund.j.dea@intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>
 
-Bruce, thanks for catching my bug.
+If kmb_dsi_init() fails the "kmb->kmb_dsi" variable is an error pointer.
+The kernel will Oops when we pass it to kmb_dsi_host_unregister().
 
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: write a better commit message
 
-Do want me to do anything, because it seems like you already fixed my
-patch?
+ drivers/gpu/drm/kmb/kmb_drv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
+index a31a840ce634..8c43b136765c 100644
+--- a/drivers/gpu/drm/kmb/kmb_drv.c
++++ b/drivers/gpu/drm/kmb/kmb_drv.c
+@@ -504,7 +504,7 @@ static int kmb_probe(struct platform_device *pdev)
+ 	if (IS_ERR(kmb->kmb_dsi)) {
+ 		drm_err(&kmb->drm, "failed to initialize DSI\n");
+ 		ret = PTR_ERR(kmb->kmb_dsi);
+-		goto err_free1;
++		goto err_clear_drvdata;
+ 	}
+ 
+ 	kmb->kmb_dsi->dev = &dsi_pdev->dev;
+@@ -540,8 +540,9 @@ static int kmb_probe(struct platform_device *pdev)
+ 	drm_crtc_cleanup(&kmb->crtc);
+ 	drm_mode_config_cleanup(&kmb->drm);
+  err_free1:
+-	dev_set_drvdata(dev, NULL);
+ 	kmb_dsi_host_unregister(kmb->kmb_dsi);
++ err_clear_drvdata:
++	dev_set_drvdata(dev, NULL);
+ 
+ 	return ret;
+ }
+-- 
+2.28.0
