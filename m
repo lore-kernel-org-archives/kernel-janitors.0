@@ -1,42 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 18 Nov 2020 13:05:20 +0000
-Subject: [PATCH][next] octeontx2-pf: Fix unintentional sign extension issue
-Message-Id: <20201118130520.460365-1-colin.king@canonical.com>
+From: patchwork-bot+netdevbpf@kernel.org
+Date: Fri, 20 Nov 2020 19:10:06 +0000
+Subject: Re: [PATCH][next] octeontx2-pf: Fix unintentional sign extension issue
+Message-Id: <160589940695.22082.5686784886721691946.git-patchwork-notify@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201118130520.460365-1-colin.king@canonical.com>
+In-Reply-To: <20201118130520.460365-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Naveen Mamindlapalli <naveenm@marvell.com>, Tomasz Duszynski <tduszynski@marvell.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, kuba@kernel.org, naveenm@marvell.com, tduszynski@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello:
 
-The shifting of the u16 result from ntohs(proto) by 16 bits to the
-left will be promoted to a 32 bit signed int and then sign-extended
-to a u64.  In the event that the top bit of the return from ntohs(proto)
-is set then all then all the upper 32 bits of a 64 bit long end up as
-also being set because of the sign-extension. Fix this by casting to
-a u64 long before the shift.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-Addresses-Coverity: ("Unintended sign extension")
-Fixes: f0c2982aaf98 ("octeontx2-pf: Add support for SR-IOV management function")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 18 Nov 2020 13:05:20 +0000 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The shifting of the u16 result from ntohs(proto) by 16 bits to the
+> left will be promoted to a 32 bit signed int and then sign-extended
+> to a u64.  In the event that the top bit of the return from ntohs(proto)
+> is set then all then all the upper 32 bits of a 64 bit long end up as
+> also being set because of the sign-extension. Fix this by casting to
+> a u64 long before the shift.
+> 
+> [...]
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index 4c82f60f3cf3..634d60655a74 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -2084,7 +2084,7 @@ static int otx2_do_set_vf_vlan(struct otx2_nic *pf, int vf, u16 vlan, u8 qos,
- 	vtag_req->vtag_size = VTAGSIZE_T4;
- 	vtag_req->cfg_type = 0; /* tx vlan cfg */
- 	vtag_req->tx.cfg_vtag0 = 1;
--	vtag_req->tx.vtag0 = (ntohs(proto) << 16) | vlan;
-+	vtag_req->tx.vtag0 = ((u64)ntohs(proto) << 16) | vlan;
- 
- 	err = otx2_sync_mbox_msg(&pf->mbox);
- 	if (err)
--- 
-2.28.0
+Here is the summary with links:
+  - [next] octeontx2-pf: Fix unintentional sign extension issue
+    https://git.kernel.org/netdev/net-next/c/583b273dea75
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
