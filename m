@@ -1,28 +1,66 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 24 Nov 2020 03:58:01 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: remove dead code on second !ndlp check
-Message-Id: <160618683552.24173.9532956225953675883.b4-ty@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 21 Nov 2020 07:56:47 +0000
+Subject: [PATCH] crypto: cavium - Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20201121075647.1324006-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118133744.461385-1-colin.king@canonical.com>
-In-Reply-To: <20201118133744.461385-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, James Smart <james.smart@broadcom.com>, Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, gcherian@marvell.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 18 Nov 2020 13:37:44 +0000, Colin King wrote:
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-> Currently there is a null check on the pointer ndlp that exits via
-> error path issue_ct_rsp_exit followed by another null check on the
-> same pointer that is almost identical to the previous null check
-> stanza and yet can never can be reached because the previous check
-> exited via issue_ct_rsp_exit. This is deadcode and can be removed.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/cavium/cpt/cptpf_main.c | 10 ++--------
+ drivers/crypto/cavium/cpt/cptvf_main.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 16 deletions(-)
 
-Applied to 5.11/scsi-queue, thanks!
-
-[1/1] scsi: lpfc: Remove dead code on second !ndlp check
-      https://git.kernel.org/mkp/scsi/c/61795a5316ad
-
+diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
+index 781949027451..24d63bdc5dd2 100644
+--- a/drivers/crypto/cavium/cpt/cptpf_main.c
++++ b/drivers/crypto/cavium/cpt/cptpf_main.c
+@@ -569,15 +569,9 @@ static int cpt_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto cpt_err_disable_device;
+ 	}
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
+ 	if (err) {
+-		dev_err(dev, "Unable to get usable DMA configuration\n");
+-		goto cpt_err_release_regions;
+-	}
+-
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
+-	if (err) {
+-		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
++		dev_err(dev, "Unable to get usable 48-bit DMA configuration\n");
+ 		goto cpt_err_release_regions;
+ 	}
+ 
+diff --git a/drivers/crypto/cavium/cpt/cptvf_main.c b/drivers/crypto/cavium/cpt/cptvf_main.c
+index a15245992cf9..f016448e43bb 100644
+--- a/drivers/crypto/cavium/cpt/cptvf_main.c
++++ b/drivers/crypto/cavium/cpt/cptvf_main.c
+@@ -687,15 +687,9 @@ static int cptvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	/* Mark as VF driver */
+ 	cptvf->flags |= CPT_FLAG_VF_DRIVER;
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
+ 	if (err) {
+-		dev_err(dev, "Unable to get usable DMA configuration\n");
+-		goto cptvf_err_release_regions;
+-	}
+-
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
+-	if (err) {
+-		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
++		dev_err(dev, "Unable to get usable 48-bit DMA configuration\n");
+ 		goto cptvf_err_release_regions;
+ 	}
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.27.0
