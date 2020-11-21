@@ -1,101 +1,66 @@
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Fri, 13 Nov 2020 14:17:02 +0000
-Subject: Re: [PATCH] sysctl: move local variable in proc_do_large_bitmap() to proper scope
-Message-Id: <20201113141702.GI4332@42.do-not-panic.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 21 Nov 2020 07:49:16 +0000
+Subject: [PATCH] crypto: marvell/octeontx - Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20201121074916.1322898-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
- <e0cf83dc-2978-70ce-aeb2-37873cc81c03@redhat.com>
-In-Reply-To: <e0cf83dc-2978-70ce-aeb2-37873cc81c03@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Tom Rix <trix@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Kees Cook <keescook@chromium.org>, Iurii Zaikin <yzaikin@google.com>, linux-fsdevel@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com, herbert@gondor.apana.org.au, davem@davemloft.net, lbartosik@marvell.com, akpm@linux-foundation.org, hannes@cmpxchg.org, longman@redhat.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Nov 09, 2020 at 05:26:37PM -0800, Tom Rix wrote:
->=20
-> On 11/8/20 11:11 PM, Lukas Bulwahn wrote:
-> > make clang-analyzer caught my attention with:
-> >
-> >   kernel/sysctl.c:1511:4: warning: Value stored to 'first' is never rea=
-d \
-> >   [clang-analyzer-deadcode.DeadStores]
-> >                           first =3D 0;
-> >                           ^
-> >
-> > Commit 9f977fb7ae9d ("sysctl: add proc_do_large_bitmap") introduced
-> > proc_do_large_bitmap(), where the variable first is only effectively us=
-ed
-> > when write is false; when write is true, the variable first is only use=
-d in
-> > a dead assignment.
-> >
-> > So, simply remove this dead assignment and put the variable in local sc=
-ope.
-> >
-> > As compilers will detect this unneeded assignment and optimize this any=
-way,
-> > the resulting object code is identical before and after this change.
-> >
-> > No functional change. No change to object code.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > applies cleanly on v5.10-rc3 and next-20201106
-> >
-> > Luis, Kees, Iurii, please pick this minor non-urgent clean-up patch.
-> >
-> >  kernel/sysctl.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index ce75c67572b9..cc274a431d91 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table,=
- int write,
-> >  			 void *buffer, size_t *lenp, loff_t *ppos)
-> >  {
-> >  	int err =3D 0;
-> > -	bool first =3D 1;
-> >  	size_t left =3D *lenp;
-> >  	unsigned long bitmap_len =3D table->maxlen;
-> >  	unsigned long *bitmap =3D *(unsigned long **) table->data;
-> > @@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *tabl=
-e, int write,
-> >  			}
-> > =20
-> >  			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
-> > -			first =3D 0;
-> >  			proc_skip_char(&p, &left, '\n');
-> >  		}
-> >  		left +=3D skipped;
-> >  	} else {
-> >  		unsigned long bit_a, bit_b =3D 0;
-> > +		bool first =3D 1;
->=20
-> This looks fine, but while you are here how about setting, to match the t=
-ype
->=20
-> first =3D true
->=20
-> And then only clearing first once
->=20
-> if (!first) =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0
-> =A0 proc_put_char(&buffer, &left, ',');
->=20
-> else
->=20
-> =A0 first =3D false
->=20
-> Instead of at every loop iteraction
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-Thanks for your patch Lukas!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/marvell/octeontx/otx_cptpf_main.c | 10 ++--------
+ drivers/crypto/marvell/octeontx/otx_cptvf_main.c | 10 ++--------
+ 2 files changed, 4 insertions(+), 16 deletions(-)
 
-Agreed, please resend with that change as requested by Tom. And also
-please add Andrew Morton <akpm@linux-foundation.org> to your To address.
-
-  Luis
+diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_main.c b/drivers/crypto/marvell/octeontx/otx_cptpf_main.c
+index 34bb3063eb70..14a42559f81d 100644
+--- a/drivers/crypto/marvell/octeontx/otx_cptpf_main.c
++++ b/drivers/crypto/marvell/octeontx/otx_cptpf_main.c
+@@ -212,15 +212,9 @@ static int otx_cpt_probe(struct pci_dev *pdev,
+ 		goto err_disable_device;
+ 	}
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
+ 	if (err) {
+-		dev_err(dev, "Unable to get usable DMA configuration\n");
+-		goto err_release_regions;
+-	}
+-
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
+-	if (err) {
+-		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
++		dev_err(dev, "Unable to get usable 48-bit DMA configuration\n");
+ 		goto err_release_regions;
+ 	}
+ 
+diff --git a/drivers/crypto/marvell/octeontx/otx_cptvf_main.c b/drivers/crypto/marvell/octeontx/otx_cptvf_main.c
+index 228fe8e47e0e..c076d0b3ad5f 100644
+--- a/drivers/crypto/marvell/octeontx/otx_cptvf_main.c
++++ b/drivers/crypto/marvell/octeontx/otx_cptvf_main.c
+@@ -804,15 +804,9 @@ static int otx_cptvf_probe(struct pci_dev *pdev,
+ 		dev_err(dev, "PCI request regions failed 0x%x\n", err);
+ 		goto disable_device;
+ 	}
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
+ 	if (err) {
+-		dev_err(dev, "Unable to get usable DMA configuration\n");
+-		goto release_regions;
+-	}
+-
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
+-	if (err) {
+-		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
++		dev_err(dev, "Unable to get usable 48-bit DMA configuration\n");
+ 		goto release_regions;
+ 	}
+ 
+-- 
+2.27.0
