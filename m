@@ -1,42 +1,53 @@
-From: Petr Mladek <pmladek@suse.com>
-Date: Fri, 06 Nov 2020 12:57:49 +0000
-Subject: Re: [PATCH] printk: remove unneeded dead-store assignment
-Message-Id: <20201106125749.GU20201@alley>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 21 Nov 2020 09:51:27 +0000
+Subject: [PATCH] IB/qib: Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20201121095127.1335228-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106034005.18822-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201106034005.18822-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
+To: dennis.dalessandro@cornelisnetworks.com, mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri 2020-11-06 04:40:05, Lukas Bulwahn wrote:
-> make clang-analyzer on x86_64 defconfig caught my attention with:
-> 
->   kernel/printk/printk_ringbuffer.c:885:3: warning:
->   Value stored to 'desc' is never read [clang-analyzer-deadcode.DeadStores]
->                 desc = to_desc(desc_ring, head_id);
->                 ^
-> 
-> Commit b6cf8b3f3312 ("printk: add lockless ringbuffer") introduced
-> desc_reserve() with this unneeded dead-store assignment.
-> 
-> As discussed with John Ogness privately, this is probably just some minor
-> left-over from previous iterations of the ringbuffer implementation. So,
-> simply remove this unneeded dead assignment to make clang-analyzer happy.
-> 
-> As compilers will detect this unneeded assignment and optimize this anyway,
-> the resulting object code is identical before and after this change.
-> 
-> No functional change. No change to object code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-The patch is committed in printk/linux.git, branch for-5.10-trivial.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/qib/qib_pcie.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-It might still go into 5.10 when there is another important fix.
-Otherwise, it would need to wait for 5.11 merge window.
-
-Best Regards,
-Petr
+diff --git a/drivers/infiniband/hw/qib/qib_pcie.c b/drivers/infiniband/hw/qib/qib_pcie.c
+index 3dc6ce033319..2e07b3749b88 100644
+--- a/drivers/infiniband/hw/qib/qib_pcie.c
++++ b/drivers/infiniband/hw/qib/qib_pcie.c
+@@ -90,25 +90,18 @@ int qib_pcie_init(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto bail;
+ 	}
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (ret) {
+ 		/*
+ 		 * If the 64 bit setup fails, try 32 bit.  Some systems
+ 		 * do not setup 64 bit maps on systems with 2GB or less
+ 		 * memory installed.
+ 		 */
+-		ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (ret) {
+ 			qib_devinfo(pdev, "Unable to set DMA mask: %d\n", ret);
+ 			goto bail;
+ 		}
+-		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-	} else
+-		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (ret) {
+-		qib_early_err(&pdev->dev,
+-			      "Unable to set DMA consistent mask: %d\n", ret);
+-		goto bail;
+ 	}
+ 
+ 	pci_set_master(pdev);
+-- 
+2.27.0
