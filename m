@@ -1,46 +1,35 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 29 Nov 2020 08:22:15 +0000
-Subject: [PATCH] HID: elan: Fix some error handling path
-Message-Id: <20201129082215.1453257-1-christophe.jaillet@wanadoo.fr>
+Date: Sun, 22 Nov 2020 17:03:42 +0000
+Subject: [PATCH 1/2] ath10k: Fix an error handling path
+Message-Id: <20201122170342.1346011-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jikos@kernel.org, benjamin.tissoires@redhat.com, dinghao.liu@zju.edu.cn, neko@nya.ai
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, erik.stromdahl@gmail.com
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'input' is a managed resource allocated earlier in the function by:
-   input = devm_input_allocate_device(&hdev->dev);
+If 'ath10k_usb_create()' fails, we should release some resources and report
+an error instead of silently continuing.
 
-There is no need to explicitly free it. This would lead to a double
-reference decrement.
-
-Fixes: b7429ea53d6c ("HID: elan: Fix memleak in elan_input_configured")
-Fixes: 9a6a4193d65b ("HID: Add driver for USB ELAN Touchpad")
+Fixes: 4db66499df91 ("ath10k: add initial USB support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hid/hid-elan.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/ath/ath10k/usb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
-index dae193749d44..8587f9d2fffb 100644
---- a/drivers/hid/hid-elan.c
-+++ b/drivers/hid/hid-elan.c
-@@ -188,7 +188,6 @@ static int elan_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 	ret = input_mt_init_slots(input, ELAN_MAX_FINGERS, INPUT_MT_POINTER);
- 	if (ret) {
- 		hid_err(hdev, "Failed to init elan MT slots: %d\n", ret);
--		input_free_device(input);
- 		return ret;
- 	}
+diff --git a/drivers/net/wireless/ath/ath10k/usb.c b/drivers/net/wireless/ath/ath10k/usb.c
+index 05a620ff6fe2..0b47c3a09794 100644
+--- a/drivers/net/wireless/ath/ath10k/usb.c
++++ b/drivers/net/wireless/ath/ath10k/usb.c
+@@ -997,6 +997,8 @@ static int ath10k_usb_probe(struct usb_interface *interface,
  
-@@ -200,7 +199,6 @@ static int elan_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 		hid_err(hdev, "Failed to register elan input device: %d\n",
- 			ret);
- 		input_mt_destroy_slots(input);
--		input_free_device(input);
- 		return ret;
- 	}
+ 	ar_usb = ath10k_usb_priv(ar);
+ 	ret = ath10k_usb_create(ar, interface);
++	if (ret)
++		goto err;
+ 	ar_usb->ar = ar;
  
+ 	ar->dev_id = product_id;
 -- 
 2.27.0
