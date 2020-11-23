@@ -1,69 +1,103 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sun, 15 Nov 2020 15:53:36 +0000
-Subject: [PATCH] tracing: clean up after filter logic rewriting
-Message-Id: <20201115155336.20248-1-lukas.bulwahn@gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Mon, 23 Nov 2020 22:24:07 +0000
+Subject: [RFC PATCH] Add a new "Frozen" status to MAINTAINERS subsystem entries
+Message-Id: <afd4d5199527b33c4c428090b8a3d360b9565549.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201119072957.108941-1-bernard@vivo.com>
+         <20201123214208.GB675342@ravnborg.org>
+In-Reply-To: <20201123214208.GB675342@ravnborg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Sam Ravnborg <sam@ravnborg.org>, Bernard Zhao <bernard@vivo.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
 
-The functions event_{set,clear,}_no_set_filter_flag were only used in
-replace_system_preds() [now, renamed to process_system_preds()].
+On Mon, 2020-11-23 at 22:42 +0100, Sam Ravnborg wrote:
+> For this old driver we should try to limit patches to bug fixing and
+> infrastructure updates.
 
-Commit 80765597bc58 ("tracing: Rewrite filter logic to be simpler and
-faster") removed the use of those functions in replace_system_preds().
+It might be useful to add a new "S:" entry type to these old drivers
+as supported/maintained/obsolete may not really be appropriate.
 
-Since then, the functions event_{set,clear,}_no_set_filter_flag were
-unused. Fortunately, make CC=clang W=1 indicates this with
--Wunused-function warnings on those three functions.
+How about something like "S: Frozen" and checkpatch could emit a
+message similar to the one for unnecessary changes to obsolete code?
 
-So, clean up these obsolete unused functions.
+So using the below would emit:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+$ ./scripts/checkpatch.pl -f drivers/gpu/drm/via/via_dma.c
+WARNING: drivers/gpu/drm/via/via_dma.c is marked as 'frozen' in the MAINTAINERS hierarchy.  No unnecessary modifications please.
+
+Maybe like the below (and fyi there's no additional git lookup overhead as
+the initial obsolete check already caches the git result).
+
 ---
-applies cleanly on current master and next-20201113
+ MAINTAINERS           | 10 +++++++++-
+ scripts/checkpatch.pl | 11 +++++++----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-Steven, please pick this minor non-urgent clean-up patch.
-
-It possible that there is even more clean up possible, e.g., removing
-some values from the whole enum, but I will keep that Steven to decide.
-
- kernel/trace/trace_events_filter.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 78a678eeb140..c4fb3ffe018f 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -1561,27 +1561,6 @@ static inline void event_clear_filter(struct trace_event_file *file)
- 	RCU_INIT_POINTER(file->filter, NULL);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5f10105cac6f..6374d29180b8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -88,7 +88,10 @@ Descriptions of section entries and preferred order
+ 	   Supported:	Someone is actually paid to look after this.
+ 	   Maintained:	Someone actually looks after it.
+ 	   Odd Fixes:	It has a maintainer but they don't have time to do
+-			much other than throw the odd patch in. See below..
++			much other than throw the odd patch in.
++	   Frozen:	Old code that should not be modified unless changes
++			are to correct actual defects or API infrastructure.
++			Cleanup/style changes are not generally accepted.
+ 	   Orphan:	No current maintainer [but maybe you could take the
+ 			role as you write your new code].
+ 	   Obsolete:	Old code. Something tagged obsolete generally means
+@@ -5718,6 +5721,11 @@ S:	Supported
+ T:	git git://anongit.freedesktop.org/drm/drm-misc
+ F:	drivers/gpu/drm/udl/
+ 
++DRM DRIVER FOR VIA
++L:	dri-devel@lists.freedesktop.org
++S:	Frozen
++F:	drivers/gpu/drm/via/
++
+ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+ M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+ M:	Melissa Wen <melissa.srw@gmail.com>
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index fdfd5ec09be6..79321cbfb761 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -902,8 +902,8 @@ sub seed_camelcase_file {
+ 
+ our %maintained_status = ();
+ 
+-sub is_maintained_obsolete {
+-	my ($filename) = @_;
++sub is_maintained {
++	my ($filename, $test) = @_;
+ 
+ 	return 0 if (!$tree || !(-e "$root/scripts/get_maintainer.pl"));
+ 
+@@ -911,7 +911,7 @@ sub is_maintained_obsolete {
+ 		$maintained_status{$filename} = `perl $root/scripts/get_maintainer.pl --status --nom --nol --nogit --nogit-fallback -f $filename 2>&1`;
+ 	}
+ 
+-	return $maintained_status{$filename} =~ /obsolete/i;
++	return $maintained_status{$filename} =~ /$test/i;
  }
  
--static inline void
--event_set_no_set_filter_flag(struct trace_event_file *file)
--{
--	file->flags |= EVENT_FILE_FL_NO_SET_FILTER;
--}
--
--static inline void
--event_clear_no_set_filter_flag(struct trace_event_file *file)
--{
--	file->flags &= ~EVENT_FILE_FL_NO_SET_FILTER;
--}
--
--static inline bool
--event_no_set_filter_flag(struct trace_event_file *file)
--{
--	if (file->flags & EVENT_FILE_FL_NO_SET_FILTER)
--		return true;
--
--	return false;
--}
--
- struct filter_list {
- 	struct list_head	list;
- 	struct event_filter	*filter;
--- 
-2.17.1
+ sub is_SPDX_License_valid {
+@@ -2633,9 +2633,12 @@ sub process {
+ 		}
+ 
+ 		if ($found_file) {
+-			if (is_maintained_obsolete($realfile)) {
++			if (is_maintained($realfile, "obsolete")) {
+ 				WARN("OBSOLETE",
+ 				     "$realfile is marked as 'obsolete' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
++			} elsif (is_maintained($realfile, "frozen")) {
++				WARN("FROZEN",
++				     "$realfile is marked as 'frozen' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
+ 			}
+ 			if ($realfile =~ m@^(?:drivers/net/|net/|drivers/staging/)@) {
+ 				$check = 1;
