@@ -1,27 +1,49 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 24 Nov 2020 03:58:00 +0000
-Subject: Re: [PATCH][next] scsi: lpfc: fix pointer defereference before it is null checked issue
-Message-Id: <160618683552.24173.13742714512709142456.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 23 Nov 2020 10:34:52 +0000
+Subject: [PATCH][next] net: hns3: fix spelling mistake "memroy" -> "memory"
+Message-Id: <20201123103452.197708-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201118131345.460631-1-colin.king@canonical.com>
-In-Reply-To: <20201118131345.460631-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, James Smart <james.smart@broadcom.com>, Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Dick Kennedy <dick.kennedy@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 18 Nov 2020 13:13:45 +0000, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There is a null check on pointer lpfc_cmd after the pointer has been
-> dereferenced when pointers rdata and ndlp are initialized at the start
-> of the function. Fix this by only assigning rdata and ndlp after the
-> pointer lpfc_cmd has been null checked.
+There are spelling mistakes in two dev_err messages. Fix them.
 
-Applied to 5.11/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] scsi: lpfc: Fix pointer defereference before it is null checked issue
-      https://git.kernel.org/mkp/scsi/c/1e7dddb2e76a
-
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 500cc19225f3..ca668a47121e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -9924,7 +9924,7 @@ static int hclge_dev_mem_map(struct hclge_dev *hdev)
+ 				       pci_resource_start(pdev, HCLGE_MEM_BAR),
+ 				       pci_resource_len(pdev, HCLGE_MEM_BAR));
+ 	if (!hw->mem_base) {
+-		dev_err(&pdev->dev, "failed to map device memroy\n");
++		dev_err(&pdev->dev, "failed to map device memory\n");
+ 		return -EFAULT;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 5d6b419b8a78..5b2f9a56f1d8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -2904,7 +2904,7 @@ static int hclgevf_dev_mem_map(struct hclgevf_dev *hdev)
+ 							  HCLGEVF_MEM_BAR),
+ 				       pci_resource_len(pdev, HCLGEVF_MEM_BAR));
+ 	if (!hw->mem_base) {
+-		dev_err(&pdev->dev, "failed to map device memroy\n");
++		dev_err(&pdev->dev, "failed to map device memory\n");
+ 		return -EFAULT;
+ 	}
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.28.0
