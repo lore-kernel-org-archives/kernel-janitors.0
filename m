@@ -1,36 +1,40 @@
-From: Will Deacon <will@kernel.org>
-Date: Tue, 17 Nov 2020 23:24:28 +0000
-Subject: Re: [PATCH] iommu/vt-d: include conditionally on CONFIG_INTEL_IOMMU_SVM
-Message-Id: <160565219047.2773717.5820442945194882017.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Nov 2020 12:35:04 +0000
+Subject: [PATCH][next] i3c/master: Fix uninitialized variable next_addr
+Message-Id: <20201124123504.396249-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201115205951.20698-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201115205951.20698-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Liu Yi L <yi.l.liu@intel.com>, David Woodhouse <dwmw2@infradead.org>, iommu@lists.linux-foundation.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>, catalin.marinas@arm.com, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, kernel-team@android.com
+To: Boris Brezillon <bbrezillon@kernel.org>, Nicolas Pitre <npitre@baylibre.com>, linux-i3c@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 15 Nov 2020 21:59:51 +0100, Lukas Bulwahn wrote:
-> Commit 6ee1b77ba3ac ("iommu/vt-d: Add svm/sva invalidate function")
-> introduced intel_iommu_sva_invalidate() when CONFIG_INTEL_IOMMU_SVM.
-> This function uses the dedicated static variable inv_type_granu_table
-> and functions to_vtd_granularity() and to_vtd_size().
-> 
-> These parts are unused when !CONFIG_INTEL_IOMMU_SVM, and hence,
-> make CC=clang W=1 warns with an -Wunused-function warning.
-> 
-> [...]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to arm64 (for-next/iommu/vt-d), thanks!
+The variable next_addr is not initialized and is being used in a call
+to i3c_master_get_free_addr as a starting point to find the next address.
+Fix this by initializing next_addr to 0 to avoid an uninitialized garbage
+starting address from being used.
 
-[1/1] iommu/vt-d: include conditionally on CONFIG_INTEL_IOMMU_SVM
-      https://git.kernel.org/arm64/c/68dd9d89eaf5
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 9ad9a52cce28 ("i3c/master: introduce the mipi-i3c-hci driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i3c/master/mipi-i3c-hci/cmd_v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
+diff --git a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
+index 6dd234a82892..d97c3175e0e2 100644
+--- a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
++++ b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
+@@ -293,7 +293,7 @@ static int hci_cmd_v1_daa(struct i3c_hci *hci)
+ {
+ 	struct hci_xfer *xfer;
+ 	int ret, dat_idx = -1;
+-	u8 next_addr;
++	u8 next_addr = 0;
+ 	u64 pid;
+ 	unsigned int dcr, bcr;
+ 	DECLARE_COMPLETION_ONSTACK(done);
 -- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+2.29.2
