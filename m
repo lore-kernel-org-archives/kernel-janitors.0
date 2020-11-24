@@ -1,21 +1,40 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Sat, 14 Nov 2020 17:04:13 +0000
-Subject: Re: [PATCH] clk: qcom: lpass-sc7180: Clean up on error in lpass_sc7180_init()
-Message-Id: <160537345343.60232.8506254322830181377@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Nov 2020 12:15:28 +0000
+Subject: [PATCH][next] drm/mcde: fix masking and bitwise-or on variable val
+Message-Id: <20201124121528.395681-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201113101419.GC168908@mwanda>
-In-Reply-To: <20201113101419.GC168908@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>, Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Dan Carpenter (2020-11-13 02:14:19)
-> Clean up the first driver if the second driver can't be registered.
-> 
-> Fixes: 4ee9fe3e292b ("clk: qcom: lpass-sc7180: Disentangle the two clock devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+The masking of val with ~MCDE_CRX1_CLKSEL_MASK is currently being
+ignored because there seems to be a missing bitwise-or of val in the
+following statement.  Fix this by replacing the assignment of val
+with a bitwise-or.
+
+Addresses-Coverity: ("Unused valued")
+Fixes: d795fd322063 ("drm/mcde: Support DPI output")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/mcde/mcde_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/mcde/mcde_display.c b/drivers/gpu/drm/mcde/mcde_display.c
+index d941026b940c..7c2e0b865441 100644
+--- a/drivers/gpu/drm/mcde/mcde_display.c
++++ b/drivers/gpu/drm/mcde/mcde_display.c
+@@ -738,7 +738,7 @@ static void mcde_configure_fifo(struct mcde *mcde, enum mcde_fifo fifo,
+ 	} else {
+ 		/* Use the MCDE clock for DSI */
+ 		val &= ~MCDE_CRX1_CLKSEL_MASK;
+-		val = MCDE_CRX1_CLKSEL_MCDECLK << MCDE_CRX1_CLKSEL_SHIFT;
++		val |= MCDE_CRX1_CLKSEL_MCDECLK << MCDE_CRX1_CLKSEL_SHIFT;
+ 	}
+ 	writel(val, mcde->regs + cr1);
+ 	spin_unlock(&mcde->fifo_crx1_lock);
+-- 
+2.29.2
