@@ -1,46 +1,85 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 16 Nov 2020 18:16:36 +0000
-Subject: [PATCH] net: wireless: make a const array static, makes object smaller
-Message-Id: <20201116181636.362729-1-colin.king@canonical.com>
+From: Bernard <bernard@vivo.com>
+Date: Tue, 24 Nov 2020 06:51:50 +0000
+Subject: =?UTF-8?B?UmU6W1JGQyBQQVRDSF0gQWRkIGEgbmV3ICJGcm96ZW4iIHN0YXR1cyB0byBNQUlOVEFJTkVSUyBzdWJzeXN0ZW0gZW
+Message-Id: <AAoACwDIDVz-8Zy3pozuG4px.3.1606200710396.Hmail.bernard@vivo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <afd4d5199527b33c4c428090b8a3d360b9565549.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate the const array bws on the stack but instead it
-static. Makes the object code smaller by 80 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  85694	  16865	   1216	 103775	  1955f	./net/wireless/reg.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  85518	  16961	   1216	 103695	  1950f	./net/wireless/reg.o
-
-(gcc version 10.2.0)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/wireless/reg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index a04fdfb35f07..c037960e5a1a 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1616,7 +1616,7 @@ static const struct ieee80211_reg_rule *
- __freq_reg_info(struct wiphy *wiphy, u32 center_freq, u32 min_bw)
- {
- 	const struct ieee80211_regdomain *regd = reg_get_regdomain(wiphy);
--	const u32 bws[] = {0, 1, 2, 4, 5, 8, 10, 16, 20};
-+	static const u32 bws[] = {0, 1, 2, 4, 5, 8, 10, 16, 20};
- 	const struct ieee80211_reg_rule *reg_rule;
- 	int i = ARRAY_SIZE(bws) - 1;
- 	u32 bw;
--- 
-2.28.0
+CkZyb206IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5jb20+CkRhdGU6IDIwMjAtMTEtMjQgMDY6
+MjQ6MDcKVG86ICBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+LEJlcm5hcmQgWmhhbyA8
+YmVybmFyZEB2aXZvLmNvbT4KQ2M6ICBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLEFuZHJl
+dyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+LExpbnVzIFRvcnZhbGRzIDx0b3J2
+YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZz4sa2VybmVsLWphbml0b3JzIDxrZXJuZWwtamFuaXRv
+cnNAdmdlci5rZXJuZWwub3JnPixHcmVnIEtIIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4K
+U3ViamVjdDogW1JGQyBQQVRDSF0gQWRkIGEgbmV3ICJGcm96ZW4iIHN0YXR1cyB0byBNQUlOVEFJ
+TkVSUyBzdWJzeXN0ZW0gZW50cmllcz5PbiBNb24sIDIwMjAtMTEtMjMgYXQgMjI6NDIgKzAxMDAs
+IFNhbSBSYXZuYm9yZyB3cm90ZToKPj4gRm9yIHRoaXMgb2xkIGRyaXZlciB3ZSBzaG91bGQgdHJ5
+IHRvIGxpbWl0IHBhdGNoZXMgdG8gYnVnIGZpeGluZyBhbmQKPj4gaW5mcmFzdHJ1Y3R1cmUgdXBk
+YXRlcy4KPgo+SXQgbWlnaHQgYmUgdXNlZnVsIHRvIGFkZCBhIG5ldyAiUzoiIGVudHJ5IHR5cGUg
+dG8gdGhlc2Ugb2xkIGRyaXZlcnMKPmFzIHN1cHBvcnRlZC9tYWludGFpbmVkL29ic29sZXRlIG1h
+eSBub3QgcmVhbGx5IGJlIGFwcHJvcHJpYXRlLgo+Cj5Ib3cgYWJvdXQgc29tZXRoaW5nIGxpa2Ug
+IlM6IEZyb3plbiIgYW5kIGNoZWNrcGF0Y2ggY291bGQgZW1pdCBhCj5tZXNzYWdlIHNpbWlsYXIg
+dG8gdGhlIG9uZSBmb3IgdW5uZWNlc3NhcnkgY2hhbmdlcyB0byBvYnNvbGV0ZSBjb2RlPwo+Cj5T
+byB1c2luZyB0aGUgYmVsb3cgd291bGQgZW1pdDoKPgo+JCAuL3NjcmlwdHMvY2hlY2twYXRjaC5w
+bCAtZiBkcml2ZXJzL2dwdS9kcm0vdmlhL3ZpYV9kbWEuYwo+V0FSTklORzogZHJpdmVycy9ncHUv
+ZHJtL3ZpYS92aWFfZG1hLmMgaXMgbWFya2VkIGFzICdmcm96ZW4nIGluIHRoZSBNQUlOVEFJTkVS
+UyBoaWVyYXJjaHkuICBObyB1bm5lY2Vzc2FyeSBtb2RpZmljYXRpb25zIHBsZWFzZS4KPgo+TWF5
+YmUgbGlrZSB0aGUgYmVsb3cgKGFuZCBmeWkgdGhlcmUncyBubyBhZGRpdGlvbmFsIGdpdCBsb29r
+dXAgb3ZlcmhlYWQgYXMKPnRoZSBpbml0aWFsIG9ic29sZXRlIGNoZWNrIGFscmVhZHkgY2FjaGVz
+IHRoZSBnaXQgcmVzdWx0KS4KPgo+LS0tCj4gTUFJTlRBSU5FUlMgICAgICAgICAgIHwgMTAgKysr
+KysrKysrLQo+IHNjcmlwdHMvY2hlY2twYXRjaC5wbCB8IDExICsrKysrKystLS0tCj4gMiBmaWxl
+cyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0
+IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUwo+aW5kZXggNWYxMDEwNWNhYzZmLi42Mzc0ZDI5
+MTgwYjggMTAwNjQ0Cj4tLS0gYS9NQUlOVEFJTkVSUwo+KysrIGIvTUFJTlRBSU5FUlMKPkBAIC04
+OCw3ICs4OCwxMCBAQCBEZXNjcmlwdGlvbnMgb2Ygc2VjdGlvbiBlbnRyaWVzIGFuZCBwcmVmZXJy
+ZWQgb3JkZXIKPiAJICAgU3VwcG9ydGVkOglTb21lb25lIGlzIGFjdHVhbGx5IHBhaWQgdG8gbG9v
+ayBhZnRlciB0aGlzLgo+IAkgICBNYWludGFpbmVkOglTb21lb25lIGFjdHVhbGx5IGxvb2tzIGFm
+dGVyIGl0Lgo+IAkgICBPZGQgRml4ZXM6CUl0IGhhcyBhIG1haW50YWluZXIgYnV0IHRoZXkgZG9u
+J3QgaGF2ZSB0aW1lIHRvIGRvCj4tCQkJbXVjaCBvdGhlciB0aGFuIHRocm93IHRoZSBvZGQgcGF0
+Y2ggaW4uIFNlZSBiZWxvdy4uCj4rCQkJbXVjaCBvdGhlciB0aGFuIHRocm93IHRoZSBvZGQgcGF0
+Y2ggaW4uCj4rCSAgIEZyb3plbjoJT2xkIGNvZGUgdGhhdCBzaG91bGQgbm90IGJlIG1vZGlmaWVk
+IHVubGVzcyBjaGFuZ2VzCj4rCQkJYXJlIHRvIGNvcnJlY3QgYWN0dWFsIGRlZmVjdHMgb3IgQVBJ
+IGluZnJhc3RydWN0dXJlLgo+KwkJCUNsZWFudXAvc3R5bGUgY2hhbmdlcyBhcmUgbm90IGdlbmVy
+YWxseSBhY2NlcHRlZC4KPiAJICAgT3JwaGFuOglObyBjdXJyZW50IG1haW50YWluZXIgW2J1dCBt
+YXliZSB5b3UgY291bGQgdGFrZSB0aGUKPiAJCQlyb2xlIGFzIHlvdSB3cml0ZSB5b3VyIG5ldyBj
+b2RlXS4KPiAJICAgT2Jzb2xldGU6CU9sZCBjb2RlLiBTb21ldGhpbmcgdGFnZ2VkIG9ic29sZXRl
+IGdlbmVyYWxseSBtZWFucwo+QEAgLTU3MTgsNiArNTcyMSwxMSBAQCBTOglTdXBwb3J0ZWQKPiBU
+OglnaXQgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvZHJtL2RybS1taXNjCj4gRjoJZHJp
+dmVycy9ncHUvZHJtL3VkbC8KPiAKPitEUk0gRFJJVkVSIEZPUiBWSUEKPitMOglkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4rUzoJRnJvemVuCj4rRjoJZHJpdmVycy9ncHUvZHJtL3Zp
+YS8KPisKPiBEUk0gRFJJVkVSIEZPUiBWSVJUVUFMIEtFUk5FTCBNT0RFU0VUVElORyAoVktNUykK
+PiBNOglSb2RyaWdvIFNpcXVlaXJhIDxyb2RyaWdvc2lxdWVpcmFtZWxvQGdtYWlsLmNvbT4KPiBN
+OglNZWxpc3NhIFdlbiA8bWVsaXNzYS5zcndAZ21haWwuY29tPgo+ZGlmZiAtLWdpdCBhL3Njcmlw
+dHMvY2hlY2twYXRjaC5wbCBiL3NjcmlwdHMvY2hlY2twYXRjaC5wbAo+aW5kZXggZmRmZDVlYzA5
+YmU2Li43OTMyMWNiZmI3NjEgMTAwNzU1Cj4tLS0gYS9zY3JpcHRzL2NoZWNrcGF0Y2gucGwKPisr
+KyBiL3NjcmlwdHMvY2hlY2twYXRjaC5wbAo+QEAgLTkwMiw4ICs5MDIsOCBAQCBzdWIgc2VlZF9j
+YW1lbGNhc2VfZmlsZSB7Cj4gCj4gb3VyICVtYWludGFpbmVkX3N0YXR1cyA9ICgpOwo+IAo+LXN1
+YiBpc19tYWludGFpbmVkX29ic29sZXRlIHsKPi0JbXkgKCRmaWxlbmFtZSkgPSBAXzsKPitzdWIg
+aXNfbWFpbnRhaW5lZCB7Cj4rCW15ICgkZmlsZW5hbWUsICR0ZXN0KSA9IEBfOwo+IAo+IAlyZXR1
+cm4gMCBpZiAoISR0cmVlIHx8ICEoLWUgIiRyb290L3NjcmlwdHMvZ2V0X21haW50YWluZXIucGwi
+KSk7Cj4gCj5AQCAtOTExLDcgKzkxMSw3IEBAIHN1YiBpc19tYWludGFpbmVkX29ic29sZXRlIHsK
+PiAJCSRtYWludGFpbmVkX3N0YXR1c3skZmlsZW5hbWV9ID0gYHBlcmwgJHJvb3Qvc2NyaXB0cy9n
+ZXRfbWFpbnRhaW5lci5wbCAtLXN0YXR1cyAtLW5vbSAtLW5vbCAtLW5vZ2l0IC0tbm9naXQtZmFs
+bGJhY2sgLWYgJGZpbGVuYW1lIDI+JjFgOwo+IAl9Cj4gCj4tCXJldHVybiAkbWFpbnRhaW5lZF9z
+dGF0dXN7JGZpbGVuYW1lfSA9fiAvb2Jzb2xldGUvaTsKPisJcmV0dXJuICRtYWludGFpbmVkX3N0
+YXR1c3skZmlsZW5hbWV9ID1+IC8kdGVzdC9pOwo+IH0KPiAKPiBzdWIgaXNfU1BEWF9MaWNlbnNl
+X3ZhbGlkIHsKPkBAIC0yNjMzLDkgKzI2MzMsMTIgQEAgc3ViIHByb2Nlc3Mgewo+IAkJfQo+IAo+
+IAkJaWYgKCRmb3VuZF9maWxlKSB7Cj4tCQkJaWYgKGlzX21haW50YWluZWRfb2Jzb2xldGUoJHJl
+YWxmaWxlKSkgewo+KwkJCWlmIChpc19tYWludGFpbmVkKCRyZWFsZmlsZSwgIm9ic29sZXRlIikp
+IHsKPiAJCQkJV0FSTigiT0JTT0xFVEUiLAo+IAkJCQkgICAgICIkcmVhbGZpbGUgaXMgbWFya2Vk
+IGFzICdvYnNvbGV0ZScgaW4gdGhlIE1BSU5UQUlORVJTIGhpZXJhcmNoeS4gIE5vIHVubmVjZXNz
+YXJ5IG1vZGlmaWNhdGlvbnMgcGxlYXNlLlxuIik7Cj4rCQkJfSBlbHNpZiAoaXNfbWFpbnRhaW5l
+ZCgkcmVhbGZpbGUsICJmcm96ZW4iKSkgewo+KwkJCQlXQVJOKCJGUk9aRU4iLAo+KwkJCQkgICAg
+ICIkcmVhbGZpbGUgaXMgbWFya2VkIGFzICdmcm96ZW4nIGluIHRoZSBNQUlOVEFJTkVSUyBoaWVy
+YXJjaHkuICBObyB1bm5lY2Vzc2FyeSBtb2RpZmljYXRpb25zIHBsZWFzZS5cbiIpOwo+IAkJCX0K
+PiAJCQlpZiAoJHJlYWxmaWxlID1+IG1AXig/OmRyaXZlcnMvbmV0L3xuZXQvfGRyaXZlcnMvc3Rh
+Z2luZy8pQCkgewo+IAkJCQkkY2hlY2sgPSAxOwoKSGk6CgpGb3IgbWUsIHRoaXMgc2VlbXMgdG8g
+YmUgYSBuaWNlIGlkZWEuCkFzIGEgIG5ld2NvbWVyIHRvIHRoZSBjb21tdW5pdHksIG1heWJlIEkg
+YW0gbm90IHN1cmUgd2hpY2ggZHJpdmVycyBhcmUgaG90IGFuZCB3aGljaCBvbmVzIGRvIG5vdCBu
+ZWVkIHRvbyBtdWNoIGF0dGVudGlvbi4KV2l0aCB0aGlzIHBhdGNoIHNjcmlwdCwgaXQgd2lsbCBn
+aXZlIHVzIGEgYmV0dGVyIGd1aWRlLgoKQlIvL0Jlcm5hcmQKPgoNCg0K
