@@ -1,43 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Nov 2020 18:14:35 +0000
-Subject: Re: [PATCH] ASoC: qcom: sc7180: Fix some indenting in sc7180_lpass_alloc_dma_channel()
-Message-Id: <160442726962.14840.1588435496192621655.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Nov 2020 09:38:28 +0000
+Subject: [PATCH][next] scsi: pm8001: remove space in a debug message
+Message-Id: <20201124093828.307709-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201103101853.GD1127762@mwanda>
-In-Reply-To: <20201103101853.GD1127762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Patrick Lai <plai@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 3 Nov 2020 13:18:53 +0300, Dan Carpenter wrote:
-> This code is correct, but it should be indented one more tab.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+There are two words that need separating with a space in a 
+pm8001_dbg message. Fix it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm8001_hwi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: qcom: sc7180: Fix some indenting in sc7180_lpass_alloc_dma_channel()
-      commit: 3d13ea9b8db71515d8f4795ec7a044e75999bd83
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index 08d6cc9b50db..c8d4d87c5473 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -1031,7 +1031,7 @@ pm8001_chip_soft_rst(struct pm8001_hba_info *pm8001_ha)
+ 	regVal = pm8001_cr32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK);
+ 	pm8001_cw32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK, regVal3);
+ 	pm8001_dbg(pm8001_ha, INIT,
+-		   "GSM 0x700048 - Write Data Parity Check Enableis set to = 0x%x\n",
++		   "GSM 0x700048 - Write Data Parity Check Enable is set to = 0x%x\n",
+ 		   pm8001_cr32(pm8001_ha, 2, GSM_WRITE_DATA_PARITY_CHECK));
+ 
+ 	/* step 13: bring the IOP and AAP1 out of reset */
+-- 
+2.29.2
