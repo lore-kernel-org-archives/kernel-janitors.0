@@ -1,48 +1,52 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 23 Nov 2020 10:54:17 +0000
-Subject: [PATCH] drm/amd/powerplay: fix spelling mistake "smu_state_memroy_block" -> "smu_state_memory_block"
-Message-Id: <20201123105417.198314-1-colin.king@canonical.com>
+From: "Quan, Evan" <Evan.Quan@amd.com>
+Date: Tue, 24 Nov 2020 00:42:51 +0000
+Subject: RE: [PATCH] drm/amd/powerplay: fix spelling mistake "smu_state_memroy_block" -> "smu_state_memory_bl
+Message-Id: <DM6PR12MB26197807564F833B9A2E18E8E4FB0@DM6PR12MB2619.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20180428222155.20242-1-colin.king@canonical.com>
-In-Reply-To: <20180428222155.20242-1-colin.king@canonical.com>
+References: <20201123105417.198314-1-colin.king@canonical.com>
+In-Reply-To: <20201123105417.198314-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>, Kevin Wang <kevin1.wang@amd.com>, Chengming Gui <Jack.Gui@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "Wang,
+ Kevin(Yang)" <Kevin1.Wang@amd.com>, "Gui, Jack" <Jack.Gui@amd.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The struct name smu_state_memroy_block contains a spelling mistake, rename
-it to smu_state_memory_block
-
-Fixes: 8554e67d6e22 ("drm/amd/powerplay: implement power_dpm_state sys interface for SMU11")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h b/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-index 7550757cc059..a559ea2204c1 100644
---- a/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-+++ b/drivers/gpu/drm/amd/pm/inc/amdgpu_smu.h
-@@ -99,7 +99,7 @@ struct smu_state_display_block {
- 	bool              enable_vari_bright;
- };
- 
--struct smu_state_memroy_block {
-+struct smu_state_memory_block {
- 	bool              dll_off;
- 	uint8_t                 m3arb;
- 	uint8_t                 unused[3];
-@@ -146,7 +146,7 @@ struct smu_power_state {
- 	struct smu_state_validation_block             validation;
- 	struct smu_state_pcie_block                   pcie;
- 	struct smu_state_display_block                display;
--	struct smu_state_memroy_block                 memory;
-+	struct smu_state_memory_block                 memory;
- 	struct smu_state_software_algorithm_block     software;
- 	struct smu_uvd_clocks                         uvd_clocks;
- 	struct smu_hw_power_state                     hardware;
--- 
-2.28.0
+W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEludGVybmFsIERpc3RyaWJ1dGlvbiBPbmx5XQ0KDQpS
+ZXZpZXdlZC1ieTogRXZhbiBRdWFuIDxldmFuLnF1YW5AYW1kLmNvbT4NCg0KLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCkZyb206IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNv
+bT4NClNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMjMsIDIwMjAgNjo1NCBQTQ0KVG86IERldWNoZXIs
+IEFsZXhhbmRlciA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47IEtvZW5pZywgQ2hyaXN0aWFu
+IDxDaHJpc3RpYW4uS29lbmlnQGFtZC5jb20+OyBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXgu
+aWU+OyBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+OyBRdWFuLCBFdmFuIDxFdmFuLlF1
+YW5AYW1kLmNvbT47IFdhbmcsIEtldmluKFlhbmcpIDxLZXZpbjEuV2FuZ0BhbWQuY29tPjsgR3Vp
+LCBKYWNrIDxKYWNrLkd1aUBhbWQuY29tPjsgYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7
+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCkNjOiBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBbUEFU
+Q0hdIGRybS9hbWQvcG93ZXJwbGF5OiBmaXggc3BlbGxpbmcgbWlzdGFrZSAic211X3N0YXRlX21l
+bXJveV9ibG9jayIgLT4gInNtdV9zdGF0ZV9tZW1vcnlfYmxvY2siDQoNCkZyb206IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClRoZSBzdHJ1Y3QgbmFtZSBzbXVf
+c3RhdGVfbWVtcm95X2Jsb2NrIGNvbnRhaW5zIGEgc3BlbGxpbmcgbWlzdGFrZSwgcmVuYW1lIGl0
+IHRvIHNtdV9zdGF0ZV9tZW1vcnlfYmxvY2sNCg0KRml4ZXM6IDg1NTRlNjdkNmUyMiAoImRybS9h
+bWQvcG93ZXJwbGF5OiBpbXBsZW1lbnQgcG93ZXJfZHBtX3N0YXRlIHN5cyBpbnRlcmZhY2UgZm9y
+IFNNVTExIikNClNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9u
+aWNhbC5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vYW1kL3BtL2luYy9hbWRncHVfc211Lmgg
+fCA0ICsrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygt
+KQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9wbS9pbmMvYW1kZ3B1X3NtdS5o
+IGIvZHJpdmVycy9ncHUvZHJtL2FtZC9wbS9pbmMvYW1kZ3B1X3NtdS5oDQppbmRleCA3NTUwNzU3
+Y2MwNTkuLmE1NTllYTIyMDRjMSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvcG0v
+aW5jL2FtZGdwdV9zbXUuaA0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9wbS9pbmMvYW1kZ3B1
+X3NtdS5oDQpAQCAtOTksNyArOTksNyBAQCBzdHJ1Y3Qgc211X3N0YXRlX2Rpc3BsYXlfYmxvY2sg
+ew0KIGJvb2wgICAgICAgICAgICAgIGVuYWJsZV92YXJpX2JyaWdodDsNCiB9Ow0KDQotc3RydWN0
+IHNtdV9zdGF0ZV9tZW1yb3lfYmxvY2sgew0KK3N0cnVjdCBzbXVfc3RhdGVfbWVtb3J5X2Jsb2Nr
+IHsNCiBib29sICAgICAgICAgICAgICBkbGxfb2ZmOw0KIHVpbnQ4X3QgICAgICAgICAgICAgICAg
+IG0zYXJiOw0KIHVpbnQ4X3QgICAgICAgICAgICAgICAgIHVudXNlZFszXTsNCkBAIC0xNDYsNyAr
+MTQ2LDcgQEAgc3RydWN0IHNtdV9wb3dlcl9zdGF0ZSB7DQogc3RydWN0IHNtdV9zdGF0ZV92YWxp
+ZGF0aW9uX2Jsb2NrICAgICAgICAgICAgIHZhbGlkYXRpb247DQogc3RydWN0IHNtdV9zdGF0ZV9w
+Y2llX2Jsb2NrICAgICAgICAgICAgICAgICAgIHBjaWU7DQogc3RydWN0IHNtdV9zdGF0ZV9kaXNw
+bGF5X2Jsb2NrICAgICAgICAgICAgICAgIGRpc3BsYXk7DQotc3RydWN0IHNtdV9zdGF0ZV9tZW1y
+b3lfYmxvY2sgICAgICAgICAgICAgICAgIG1lbW9yeTsNCitzdHJ1Y3Qgc211X3N0YXRlX21lbW9y
+eV9ibG9jayAgICAgICAgICAgICAgICAgbWVtb3J5Ow0KIHN0cnVjdCBzbXVfc3RhdGVfc29mdHdh
+cmVfYWxnb3JpdGhtX2Jsb2NrICAgICBzb2Z0d2FyZTsNCiBzdHJ1Y3Qgc211X3V2ZF9jbG9ja3Mg
+ICAgICAgICAgICAgICAgICAgICAgICAgdXZkX2Nsb2NrczsNCiBzdHJ1Y3Qgc211X2h3X3Bvd2Vy
+X3N0YXRlICAgICAgICAgICAgICAgICAgICAgaGFyZHdhcmU7DQotLQ0KMi4yOC4wDQoNCg=
