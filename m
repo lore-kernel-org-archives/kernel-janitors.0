@@ -1,25 +1,56 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 04 Nov 2020 01:52:43 +0000
-Subject: Re: [PATCH] octeontx2-pf: Fix sizeof() mismatch
-Message-Id: <20201103175243.1f167807@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 24 Nov 2020 10:40:30 +0000
+Subject: [PATCH] zlib: define get_unaligned16() only when used
+Message-Id: <20201124104030.903-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201102134601.698436-1-colin.king@canonical.com>
-In-Reply-To: <20201102134601.698436-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Mon,  2 Nov 2020 13:46:01 +0000 Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An incorrect sizeof() is being used, sizeof(u64 *) is not correct,
-> it should be sizeof(*sq->sqb_ptrs).
-> 
-> Fixes: caa2da34fd25 ("octeontx2-pf: Initialize and config queues")
-> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Since commit acaab7335bd6 ("lib/zlib: remove outdated and incorrect
+pre-increment optimization"), get_unaligned16() is only used when
+!CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS.
 
-Applied, but to net-next. The driver depends on 64BIT so this is
-harmless.
+Hence, make CC=clang W=1 warns:
+
+  lib/zlib_inflate/inffast.c:20:1:
+    warning: unused function 'get_unaligned16' [-Wunused-function]
+
+Define get_unaligned16() only when it is actually used.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201124
+
+Jann, please ack.
+Andrew, please pick this minor non-urgent clean-up patch.
+
+ lib/zlib_inflate/inffast.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/zlib_inflate/inffast.c b/lib/zlib_inflate/inffast.c
+index ed1f3df27260..ca66d9008228 100644
+--- a/lib/zlib_inflate/inffast.c
++++ b/lib/zlib_inflate/inffast.c
+@@ -15,7 +15,8 @@ union uu {
+ 	unsigned char b[2];
+ };
+ 
+-/* Endian independed version */
++#ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
++/* Endian independent version */
+ static inline unsigned short
+ get_unaligned16(const unsigned short *p)
+ {
+@@ -26,6 +27,7 @@ get_unaligned16(const unsigned short *p)
+ 	mm.b[1] = b[1];
+ 	return mm.us;
+ }
++#endif
+ 
+ /*
+    Decode literal, length, and distance codes and write out the resulting
+-- 
+2.17.1
