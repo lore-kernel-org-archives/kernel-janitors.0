@@ -1,57 +1,38 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Tue, 03 Nov 2020 18:19:02 +0000
-Subject: Re: [PATCH 1/2] vfio/fsl-mc: return -EFAULT if copy_to_user() fails
-Message-Id: <20201103111902.1ac78ae3@w520.home>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Nov 2020 13:55:35 +0000
+Subject: [PATCH] dma-mapping: fix an uninitialized pointer read due to typo in argp assignment
+Message-Id: <20201125135535.1880307-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201023113450.GH282278@mwanda>
-In-Reply-To: <20201023113450.GH282278@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Diana Craciun <diana.craciun@oss.nxp.com>, Cornelia Huck <cohuck@redhat.com>, Bharat Bhushan <Bharat.Bhushan@nxp.com>, Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Barry Song <song.bao.hua@hisilicon.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 23 Oct 2020 14:34:50 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The copy_to_user() function returns the number of bytes remaining to be
-> copied, but this code should return -EFAULT.
-> 
-> Fixes: df747bcd5b21 ("vfio/fsl-mc: Implement VFIO_DEVICE_GET_REGION_INFO ioctl call")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/vfio/fsl-mc/vfio_fsl_mc.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+The assignment of argp is currently using argp as the source because of
+a typo. Fix this by assigning it the value passed in arg instead.
 
-Applied this and the following patch to vfio for-linus branch with
-Diana's acks for v5.10.  Thanks,
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: bfd2defed94d ("dma-mapping: add benchmark support for streaming DMA APIs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/dma/map_benchmark.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alex
-
-
-> diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> index 0113a980f974..21f22e3da11f 100644
-> --- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> +++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
-> @@ -248,7 +248,9 @@ static long vfio_fsl_mc_ioctl(void *device_data, unsigned int cmd,
->  		info.size = vdev->regions[info.index].size;
->  		info.flags = vdev->regions[info.index].flags;
->  
-> -		return copy_to_user((void __user *)arg, &info, minsz);
-> +		if (copy_to_user((void __user *)arg, &info, minsz))
-> +			return -EFAULT;
-> +		return 0;
->  	}
->  	case VFIO_DEVICE_GET_IRQ_INFO:
->  	{
-> @@ -267,7 +269,9 @@ static long vfio_fsl_mc_ioctl(void *device_data, unsigned int cmd,
->  		info.flags = VFIO_IRQ_INFO_EVENTFD;
->  		info.count = 1;
->  
-> -		return copy_to_user((void __user *)arg, &info, minsz);
-> +		if (copy_to_user((void __user *)arg, &info, minsz))
-> +			return -EFAULT;
-> +		return 0;
->  	}
->  	case VFIO_DEVICE_SET_IRQS:
->  	{
+diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+index ca616b664f72..e1e37603d01b 100644
+--- a/kernel/dma/map_benchmark.c
++++ b/kernel/dma/map_benchmark.c
+@@ -192,7 +192,7 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long arg)
+ {
+ 	struct map_benchmark_data *map = file->private_data;
+-	void __user *argp = (void __user *)argp;
++	void __user *argp = (void __user *)arg;
+ 	u64 old_dma_mask;
+ 
+ 	int ret;
+-- 
+2.29.2
