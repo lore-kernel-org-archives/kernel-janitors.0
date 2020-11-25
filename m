@@ -1,47 +1,47 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Date: Wed, 25 Nov 2020 14:19:35 +0000
-Subject: Re: [PATCH][next] drm/amdgpu: Fix sizeof() mismatch in bps_bo kmalloc_array creation
-Message-Id: <88005778-a759-a3c8-a86d-070a51f04dc2@amd.com>
+From: "Chen, Guchun" <Guchun.Chen@amd.com>
+Date: Wed, 25 Nov 2020 15:10:03 +0000
+Subject: RE: [PATCH][next] drm/amdgpu: Fix sizeof() mismatch in bps_bo kmalloc_array creation
+Message-Id: <CY4PR12MB128722A6BE94EFC4739FB964F1FA0@CY4PR12MB1287.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201125141806.1881036-1-colin.king@canonical.com>
 In-Reply-To: <20201125141806.1881036-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Tao Zhou <tao.zhou1@amd.com>, Guchun Chen <guchun.chen@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, "Zhou1,
+ Tao" <Tao.Zhou1@amd.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Am 25.11.20 um 15:18 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> An incorrect sizeof() is being used, sizeof((*data)->bps_bo) is not
-> correct, it should be sizeof(*(*data)->bps_bo).  It just so happens
-> to work because the sizes are the same.  Fix it.
->
-> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
-> Fixes: 5278a159cf35 ("drm/amdgpu: support reserve bad page for virt (v3)")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_virt.c
-> index 2d51b7694d1f..df15d33e3c5c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> @@ -283,7 +283,7 @@ static int amdgpu_virt_init_ras_err_handler_data(stru=
-ct amdgpu_device *adev)
->   		return -ENOMEM;
->  =20
->   	bps =3D kmalloc_array(align_space, sizeof((*data)->bps), GFP_KERNEL);
-> -	bps_bo =3D kmalloc_array(align_space, sizeof((*data)->bps_bo), GFP_KERN=
-EL);
-> +	bps_bo =3D kmalloc_array(align_space, sizeof(*(*data)->bps_bo), GFP_KER=
-NEL);
->  =20
->   	if (!bps || !bps_bo) {
->   		kfree(bps);
+W0FNRCBQdWJsaWMgVXNlXQ0KDQpSZXZpZXdlZC1ieTogR3VjaHVuIENoZW4gPGd1Y2h1bi5jaGVu
+QGFtZC5jb20+DQoNClJlZ2FyZHMsDQpHdWNodW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCkZyb206IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4gDQpTZW50OiBX
+ZWRuZXNkYXksIE5vdmVtYmVyIDI1LCAyMDIwIDEwOjE4IFBNDQpUbzogRGV1Y2hlciwgQWxleGFu
+ZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPjsgS29lbmlnLCBDaHJpc3RpYW4gPENocmlz
+dGlhbi5Lb2VuaWdAYW1kLmNvbT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT47IERh
+bmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IFpob3UxLCBUYW8gPFRhby5aaG91MUBhbWQu
+Y29tPjsgQ2hlbiwgR3VjaHVuIDxHdWNodW4uQ2hlbkBhbWQuY29tPjsgYW1kLWdmeEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmc7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCkNjOiBrZXJu
+ZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+DQpTdWJqZWN0OiBbUEFUQ0hdW25leHRdIGRybS9hbWRncHU6IEZpeCBzaXplb2YoKSBtaXNtYXRj
+aCBpbiBicHNfYm8ga21hbGxvY19hcnJheSBjcmVhdGlvbg0KDQpGcm9tOiBDb2xpbiBJYW4gS2lu
+ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpBbiBpbmNvcnJlY3Qgc2l6ZW9mKCkgaXMg
+YmVpbmcgdXNlZCwgc2l6ZW9mKCgqZGF0YSktPmJwc19ibykgaXMgbm90IGNvcnJlY3QsIGl0IHNo
+b3VsZCBiZSBzaXplb2YoKigqZGF0YSktPmJwc19ibykuICBJdCBqdXN0IHNvIGhhcHBlbnMgdG8g
+d29yayBiZWNhdXNlIHRoZSBzaXplcyBhcmUgdGhlIHNhbWUuICBGaXggaXQuDQoNCkFkZHJlc3Nl
+cy1Db3Zlcml0eTogKCJTaXplb2Ygbm90IHBvcnRhYmxlIChTSVpFT0ZfTUlTTUFUQ0gpIikNCkZp
+eGVzOiA1Mjc4YTE1OWNmMzUgKCJkcm0vYW1kZ3B1OiBzdXBwb3J0IHJlc2VydmUgYmFkIHBhZ2Ug
+Zm9yIHZpcnQgKHYzKSIpDQpTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2lu
+Z0BjYW5vbmljYWwuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
+X3ZpcnQuYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRp
+b24oLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92
+aXJ0LmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdmlydC5jDQppbmRleCAy
+ZDUxYjc2OTRkMWYuLmRmMTVkMzNlM2M1YyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9h
+bWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMNCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1
+L2FtZGdwdV92aXJ0LmMNCkBAIC0yODMsNyArMjgzLDcgQEAgc3RhdGljIGludCBhbWRncHVfdmly
+dF9pbml0X3Jhc19lcnJfaGFuZGxlcl9kYXRhKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2KQ0K
+IAkJcmV0dXJuIC1FTk9NRU07DQogDQogCWJwcyA9IGttYWxsb2NfYXJyYXkoYWxpZ25fc3BhY2Us
+IHNpemVvZigoKmRhdGEpLT5icHMpLCBHRlBfS0VSTkVMKTsNCi0JYnBzX2JvID0ga21hbGxvY19h
+cnJheShhbGlnbl9zcGFjZSwgc2l6ZW9mKCgqZGF0YSktPmJwc19ibyksIEdGUF9LRVJORUwpOw0K
+KwlicHNfYm8gPSBrbWFsbG9jX2FycmF5KGFsaWduX3NwYWNlLCBzaXplb2YoKigqZGF0YSktPmJw
+c19ibyksIA0KK0dGUF9LRVJORUwpOw0KIA0KIAlpZiAoIWJwcyB8fCAhYnBzX2JvKSB7DQogCQlr
+ZnJlZShicHMpOw0KLS0NCjIuMjkuMg0K
