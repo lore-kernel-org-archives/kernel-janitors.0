@@ -1,38 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 25 Nov 2020 13:55:35 +0000
-Subject: [PATCH] dma-mapping: fix an uninitialized pointer read due to typo in argp assignment
-Message-Id: <20201125135535.1880307-1-colin.king@canonical.com>
+From: "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
+Date: Wed, 25 Nov 2020 18:22:24 +0000
+Subject: RE: [PATCH] dma-mapping: fix an uninitialized pointer read due to typo in argp assignment
+Message-Id: <1b430a80dec14cb9aa612ff7e5dddac4@hisilicon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201125135535.1880307-1-colin.king@canonical.com>
+In-Reply-To: <20201125135535.1880307-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Barry Song <song.bao.hua@hisilicon.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The assignment of argp is currently using argp as the source because of
-a typo. Fix this by assigning it the value passed in arg instead.
-
-Addresses-Coverity: ("Uninitialized pointer read")
-Fixes: bfd2defed94d ("dma-mapping: add benchmark support for streaming DMA APIs")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/dma/map_benchmark.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
-index ca616b664f72..e1e37603d01b 100644
---- a/kernel/dma/map_benchmark.c
-+++ b/kernel/dma/map_benchmark.c
-@@ -192,7 +192,7 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
- 		unsigned long arg)
- {
- 	struct map_benchmark_data *map = file->private_data;
--	void __user *argp = (void __user *)argp;
-+	void __user *argp = (void __user *)arg;
- 	u64 old_dma_mask;
- 
- 	int ret;
--- 
-2.29.2
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVy
+IDI2LCAyMDIwIDI6NTYgQU0NCj4gVG86IFNvbmcgQmFvIEh1YSAoQmFycnkgU29uZykgPHNvbmcu
+YmFvLmh1YUBoaXNpbGljb24uY29tPjsgQ2hyaXN0b3BoDQo+IEhlbGx3aWcgPGhjaEBsc3QuZGU+
+OyBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ow0KPiBSb2JpbiBN
+dXJwaHkgPHJvYmluLm11cnBoeUBhcm0uY29tPjsgaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlv
+bi5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBkbWEtbWFwcGluZzogZml4IGFu
+IHVuaW5pdGlhbGl6ZWQgcG9pbnRlciByZWFkIGR1ZSB0byB0eXBvIGluDQo+IGFyZ3AgYXNzaWdu
+bWVudA0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNv
+bT4NCj4gDQo+IFRoZSBhc3NpZ25tZW50IG9mIGFyZ3AgaXMgY3VycmVudGx5IHVzaW5nIGFyZ3Ag
+YXMgdGhlIHNvdXJjZSBiZWNhdXNlIG9mDQo+IGEgdHlwby4gRml4IHRoaXMgYnkgYXNzaWduaW5n
+IGl0IHRoZSB2YWx1ZSBwYXNzZWQgaW4gYXJnIGluc3RlYWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292
+ZXJpdHk6ICgiVW5pbml0aWFsaXplZCBwb2ludGVyIHJlYWQiKQ0KPiBGaXhlczogYmZkMmRlZmVk
+OTRkICgiZG1hLW1hcHBpbmc6IGFkZCBiZW5jaG1hcmsgc3VwcG9ydCBmb3Igc3RyZWFtaW5nDQo+
+IERNQSBBUElzIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCg0KQWNrZWQtYnk6IEJhcnJ5IFNvbmcgPHNvbmcuYmFvLmh1YUBoaXNp
+bGljb24uY29tPg0KDQo+IC0tLQ0KPiAga2VybmVsL2RtYS9tYXBfYmVuY2htYXJrLmMgfCAyICst
+DQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+
+IGRpZmYgLS1naXQgYS9rZXJuZWwvZG1hL21hcF9iZW5jaG1hcmsuYyBiL2tlcm5lbC9kbWEvbWFw
+X2JlbmNobWFyay5jDQo+IGluZGV4IGNhNjE2YjY2NGY3Mi4uZTFlMzc2MDNkMDFiIDEwMDY0NA0K
+PiAtLS0gYS9rZXJuZWwvZG1hL21hcF9iZW5jaG1hcmsuYw0KPiArKysgYi9rZXJuZWwvZG1hL21h
+cF9iZW5jaG1hcmsuYw0KPiBAQCAtMTkyLDcgKzE5Miw3IEBAIHN0YXRpYyBsb25nIG1hcF9iZW5j
+aG1hcmtfaW9jdGwoc3RydWN0IGZpbGUgKmZpbGUsDQo+IHVuc2lnbmVkIGludCBjbWQsDQo+ICAJ
+CXVuc2lnbmVkIGxvbmcgYXJnKQ0KPiAgew0KPiAgCXN0cnVjdCBtYXBfYmVuY2htYXJrX2RhdGEg
+Km1hcCA9IGZpbGUtPnByaXZhdGVfZGF0YTsNCj4gLQl2b2lkIF9fdXNlciAqYXJncCA9ICh2b2lk
+IF9fdXNlciAqKWFyZ3A7DQo+ICsJdm9pZCBfX3VzZXIgKmFyZ3AgPSAodm9pZCBfX3VzZXIgKilh
+cmc7DQo+ICAJdTY0IG9sZF9kbWFfbWFzazsNCj4gDQo+ICAJaW50IHJldDsNCj4gLS0NCj4gMi4y
+OS4yDQoNClRoYW5rcw0KQmFycnkNCg0K
