@@ -1,54 +1,51 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 29 Nov 2020 12:27:22 +0000
-Subject: Re: [PATCH NACK] media: saa7146: switch from 'pci_' to 'dma_' API
-Message-Id: <44336db8-2b17-1682-6c38-128ec7f8f7d1@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Nov 2020 11:49:32 +0000
+Subject: [PATCH][next] media: ov2740: fix dereference before null check on pointer nvm
+Message-Id: <20201126114932.1984730-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201129073803.1443174-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201129073803.1443174-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: hverkuil@xs4all.nl, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tianshu Qiu <tian.shu.qiu@intel.com>, Shawn Tu <shawnx.tu@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa <tfiga@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Qingwu Zhang <qingwu.zhang@intel.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 29/11/2020 à 08:38, Christophe JAILLET a écrit :
-> When memory is allocated in 'saa7146_vv_init()' GFP_KERNEL can be used
-> because this function already uses GFP_KERNEL and no lock is taken in the
-> between.
-> 
-> When memory is allocated in 'vbi_workaround()' GFP_KERNEL can be used
-> because it is only called from a .open function.
-> 
-> 
-> diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
-> index e936c56b0378..7b1840cad278 100644
-> --- a/drivers/media/common/saa7146/saa7146_fops.c
-> +++ b/drivers/media/common/saa7146/saa7146_fops.c
-> @@ -515,8 +515,8 @@ int saa7146_vv_init(struct saa7146_dev* dev, struct saa7146_ext_vv *ext_vv)
->   	dev->ext_vv_data = ext_vv;
->   
->   	vv->d_clipping.cpu_addr > -		pci_zalloc_consistent(dev->pci, SAA7146_CLIPPING_MEM,
-> -				      &vv->d_clipping.dma_handle);
-> +		dma_alloc_coherent(&dev->pci->dev, SAA7146_CLIPPING_MEM,
-> +				   &vv->d_clipping.dma_handle, GFP_);
- >
-> diff --git a/drivers/media/common/saa7146/saa7146_vbi.c b/drivers/media/common/saa7146/saa7146_vbi.c
-> index e1d369b976ed..e140d4a5aeb2 100644
-> --- a/drivers/media/common/saa7146/saa7146_vbi.c
-> +++ b/drivers/media/common/saa7146/saa7146_vbi.c
-> @@ -22,7 +22,7 @@ static int vbi_workaround(struct saa7146_dev *dev)
->   	   as specified. there is this workaround, but please
->   	   don't let me explain it. ;-) */
->   
-> -	cpu = pci_alloc_consistent(dev->pci, 4096, &dma_addr);
-> +	cpu = dma_alloc_coherent(&dev->pci->dev, 4096, &dma_addr, GFP_);
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch don't have 2 needed commit that got stucked on my machine.
-The analysis at the top of the patch description is fine, but the 
-corresponding s/GFP_/GFP_KERNEL/ are not part of the patch itself.
+Currently pointer nvm is being dereferenced before it is being null
+checked.  Fix this by moving the assignments of pointers client and
+ov2740 so that are after the null check hence avoiding any potential
+null pointer dereferences on pointer nvm.
 
-I'll send a v2.
+Fixes: 5e6fd339b68d ("media: ov2740: allow OTP data access during streaming")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/ov2740.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Sorry for the noise.
-
-CJ
+diff --git a/drivers/media/i2c/ov2740.c b/drivers/media/i2c/ov2740.c
+index 99016546cbec..b41a90c2aed5 100644
+--- a/drivers/media/i2c/ov2740.c
++++ b/drivers/media/i2c/ov2740.c
+@@ -600,8 +600,8 @@ static void ov2740_update_pad_format(const struct ov2740_mode *mode,
+ 
+ static int ov2740_load_otp_data(struct nvm_data *nvm)
+ {
+-	struct i2c_client *client = nvm->client;
+-	struct ov2740 *ov2740 = to_ov2740(i2c_get_clientdata(client));
++	struct i2c_client *client;
++	struct ov2740 *ov2740;
+ 	u32 isp_ctrl00 = 0;
+ 	u32 isp_ctrl01 = 0;
+ 	int ret;
+@@ -612,6 +612,9 @@ static int ov2740_load_otp_data(struct nvm_data *nvm)
+ 	if (nvm->nvm_buffer)
+ 		return 0;
+ 
++	client = nvm->client;
++	ov2740 = to_ov2740(i2c_get_clientdata(client));
++
+ 	nvm->nvm_buffer = kzalloc(CUSTOMER_USE_OTP_SIZE, GFP_KERNEL);
+ 	if (!nvm->nvm_buffer)
+ 		return -ENOMEM;
+-- 
+2.29.2
