@@ -1,74 +1,80 @@
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Date: Thu, 26 Nov 2020 17:16:33 +0000
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 26 Nov 2020 19:07:25 +0000
 Subject: Re: [PATCH] x86/cpu: correct values for GDT_ENTRY_INIT
-Message-Id: <947b02eb-536f-16a0-fbb1-87b62ab8c13e@citrix.com>
+Message-Id: <CAKXUXMybmC=JE3uDnekAuHfRUZcrzSLJ04xB3nR=3BqHCsNVqA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201126115459.28980-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201126115459.28980-1-lukas.bulwahn@gmail.com>
+References: <20201126115459.28980-1-lukas.bulwahn@gmail.com> <947b02eb-536f-16a0-fbb1-87b62ab8c13e@citrix.com>
+In-Reply-To: <947b02eb-536f-16a0-fbb1-87b62ab8c13e@citrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Joerg Roedel <jroedel@suse.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>, Akinobu Mita <akinobu.mita@gmail.com>, Joerg Roedel <jroedel@suse.de>, "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 26/11/2020 11:54, Lukas Bulwahn wrote:
-> Commit 1e5de18278e6 ("x86: Introduce GDT_ENTRY_INIT()") unintentionally
-> transformed a few 0xffff values to 0xfffff (note: five times "f" instead of
-> four) as part of the refactoring.
+On Thu, Nov 26, 2020 at 6:16 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>
+> On 26/11/2020 11:54, Lukas Bulwahn wrote:
+> > Commit 1e5de18278e6 ("x86: Introduce GDT_ENTRY_INIT()") unintentionally
+> > transformed a few 0xffff values to 0xfffff (note: five times "f" instead of
+> > four) as part of the refactoring.
+>
+> The transformation in that change is correct.
+>
+> Segment bases are 20 bits wide in x86, but the top nibble is folded into
+> the middle of the attributes, which is why the transformation also has
+> xfxx => x0xx for the attributes field.
+>
+> >
+> > A quick check with:
+> >
+> >   git show 1e5de18278e6 | grep "fffff"
+> >
+> > reveals all those 14 occurrences:
+> >
+> >     12 in ./arch/x86/kernel/cpu/common.c, and
+> >     2  in ./arch/x86/include/asm/lguest.h.
+> >
+> > The two occurrences in ./arch/x86/include/asm/lguest.h were deleted with
+> > commit ecda85e70277 ("x86/lguest: Remove lguest support").
+> > Correct the remaining twelve occurrences in ./arch/x86/kernel/cpu/common.c
+> > back to the original values in the source code before the refactoring.
+> >
+> > Commit 866b556efa12 ("x86/head/64: Install startup GDT") probably simply
+> > copied the required startup gdt information from
+> > ./arch/x86/kernel/cpu/common.c to ./arch/x86/kernel/head64.c.
+> > So, correct those three occurrences in ./arch/x86/kernel/head64.c as well.
+> >
+> > As this value is truncated anyway, the object code has not changed when
+> > introducing the mistake and is also not changed with this correction now.
+> >
+> > This was discovered with sparse, which warns with:
+> >
+> >   warning: cast truncates bits from constant value (fffff becomes ffff)
+>
+> Does:
+>
+> diff --git a/arch/x86/include/asm/desc_defs.h
+> b/arch/x86/include/asm/desc_defs.h
+> index f7e7099af595..9561f3c66e9e 100644
+> --- a/arch/x86/include/asm/desc_defs.h
+> +++ b/arch/x86/include/asm/desc_defs.h
+> @@ -22,7 +22,7 @@ struct desc_struct {
+>
+>  #define GDT_ENTRY_INIT(flags, base, limit)                     \
+>         {                                                       \
+> -               .limit0         = (u16) (limit),                \
+> +               .limit0         = (u16) (limit) & 0xFFFF,       \
+>                 .limit1         = ((limit) >> 16) & 0x0F,       \
+>                 .base0          = (u16) (base),                 \
+>                 .base1          = ((base) >> 16) & 0xFF,        \
+>
+> fix the warning?
+>
 
-The transformation in that change is correct.
+Thanks, I will try that out, and try compiling a 32-bit kernel as well.
 
-Segment bases are 20 bits wide in x86, but the top nibble is folded into
-the middle of the attributes, which is why the transformation also has
-xfxx => x0xx for the attributes field.
 
+> Changing the limit from 4G to 128M isn't going to be compatible with a
+> 32bit kernel trying to boot :).
 >
-> A quick check with:
->
->   git show 1e5de18278e6 | grep "fffff"
->
-> reveals all those 14 occurrences:
->
->     12 in ./arch/x86/kernel/cpu/common.c, and
->     2  in ./arch/x86/include/asm/lguest.h.
->
-> The two occurrences in ./arch/x86/include/asm/lguest.h were deleted with
-> commit ecda85e70277 ("x86/lguest: Remove lguest support").
-> Correct the remaining twelve occurrences in ./arch/x86/kernel/cpu/common.c
-> back to the original values in the source code before the refactoring.
->
-> Commit 866b556efa12 ("x86/head/64: Install startup GDT") probably simply
-> copied the required startup gdt information from
-> ./arch/x86/kernel/cpu/common.c to ./arch/x86/kernel/head64.c.
-> So, correct those three occurrences in ./arch/x86/kernel/head64.c as well.
->
-> As this value is truncated anyway, the object code has not changed when
-> introducing the mistake and is also not changed with this correction now.
->
-> This was discovered with sparse, which warns with:
->
->   warning: cast truncates bits from constant value (fffff becomes ffff)
-
-Does:
-
-diff --git a/arch/x86/include/asm/desc_defs.h
-b/arch/x86/include/asm/desc_defs.h
-index f7e7099af595..9561f3c66e9e 100644
---- a/arch/x86/include/asm/desc_defs.h
-+++ b/arch/x86/include/asm/desc_defs.h
-@@ -22,7 +22,7 @@ struct desc_struct {
- 
- #define GDT_ENTRY_INIT(flags, base, limit)                     \
-        {                                                       \
--               .limit0         = (u16) (limit),                \
-+               .limit0         = (u16) (limit) & 0xFFFF,       \
-                .limit1         = ((limit) >> 16) & 0x0F,       \
-                .base0          = (u16) (base),                 \
-                .base1          = ((base) >> 16) & 0xFF,        \
-
-fix the warning?
-
-Changing the limit from 4G to 128M isn't going to be compatible with a
-32bit kernel trying to boot :).
-
-~Andrew
+> ~Andrew
