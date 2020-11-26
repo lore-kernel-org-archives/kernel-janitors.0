@@ -1,21 +1,35 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 09 Nov 2020 09:46:53 +0000
-Subject: Re: [PATCH] auxdisplay: fix use after free in lcd2s_i2c_remove()
-Message-Id: <CANiq72m+_4K8RzR4JtdAq4o4uc_vBPmLZmgLiGB1jwd_FnjrZA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Nov 2020 22:40:29 +0000
+Subject: [PATCH] nvmet: Kconfig: Fix spelling mistake "incuding" -> "including"
+Message-Id: <20201126224029.13527-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106192415.GA2696904@mwanda>
-In-Reply-To: <20201106192415.GA2696904@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lars Poeschel <poeschel@lemonage.de>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>, linux-nvme@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 6, 2020 at 8:26 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The kfree() needs to be moved down a line to prevent a use after free.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Dan for catching this one up while in -next. I'll pick it up.
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-Cheers,
-Miguel
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvme/target/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
+index 8056955e652c..4be2ececbc45 100644
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -24,7 +24,7 @@ config NVME_TARGET_PASSTHRU
+ 	  This enables target side NVMe passthru controller support for the
+ 	  NVMe Over Fabrics protocol. It allows for hosts to manage and
+ 	  directly access an actual NVMe controller residing on the target
+-	  side, incuding executing Vendor Unique Commands.
++	  side, including executing Vendor Unique Commands.
+ 
+ 	  If unsure, say N.
+ 
+-- 
+2.29.2
