@@ -1,25 +1,35 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 01 Nov 2020 06:36:32 +0000
-Subject: Re: [PATCH] usb: core: ledtrig-usbport: use octal permission
-Message-Id: <20201101063632.GA432136@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 26 Nov 2020 22:46:02 +0000
+Subject: [PATCH] staging: most: Fix spelling mistake "tranceiver" -> "transceiver"
+Message-Id: <20201126224602.13878-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201031171930.GA21555@fedora-project>
-In-Reply-To: <20201031171930.GA21555@fedora-project>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nigel Christian <nigel.l.christian@gmail.com>
-Cc: lee.jones@linaro.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 31, 2020 at 01:19:30PM -0400, Nigel Christian wrote:
-> Change read/write for owner permission from symbolic to octal
-> to enhance readability. This patch reduces checkpatch warnings 
-> for this file to nil.
-> 
-> see: https://lkml.org/lkml/2016/8/2/1945
+From: Colin Ian King <colin.king@canonical.com>
 
-Please use lore.kernel.org links for mailing list stuff.
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/i2c/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/staging/most/i2c/Kconfig b/drivers/staging/most/i2c/Kconfig
+index 19a094b5bee0..ff64283cbad1 100644
+--- a/drivers/staging/most/i2c/Kconfig
++++ b/drivers/staging/most/i2c/Kconfig
+@@ -7,7 +7,7 @@ config MOST_I2C
+ 	tristate "I2C"
+ 	depends on I2C
+ 	help
+-	  Say Y here if you want to connect via I2C to network tranceiver.
++	  Say Y here if you want to connect via I2C to network transceiver.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called most_i2c.
+-- 
+2.29.2
