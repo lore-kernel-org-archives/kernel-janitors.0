@@ -1,74 +1,192 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Nov 2020 16:27:18 +0000
-Subject: [PATCH] media: atomisp: Fix a buffer overflow in debug code
-Message-Id: <20201120162718.GA3506662@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 27 Nov 2020 20:58:01 +0000
+Subject: [PATCH] media: ttpci: switch from 'pci_' to 'dma_' API
+Message-Id: <20201127205801.1436239-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Nathan Chancellor <natechancellor@gmail.com>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org
+To: mchehab@kernel.org, baijiaju@tsinghua.edu.cn, sean@mess.org, allen.lkml@gmail.com, gustavoars@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The "pad" variable is a user controlled string and we haven't properly
-clamped it at this point so the debug code could print from beyond the
-of the array.
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'av7110_attach()' GFP_KERNEL can be used
+because this flag is already used above in the same function and no lock is
+taken in the between.
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Not tested.
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/media/pci/ttpci/av7110.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
- .../media/atomisp/pci/atomisp_subdev.c        | 24 ++++++++++++-------
- 1 file changed, 16 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_subdev.c b/drivers/staging/media/atomisp/pci/atomisp_subdev.c
-index 52b9fb18c87f..dcc2dd981ca6 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_subdev.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_subdev.c
-@@ -349,12 +349,20 @@ static int isp_subdev_get_selection(struct v4l2_subdev *sd,
- 	return 0;
- }
+diff --git a/drivers/media/pci/ttpci/av7110.c b/drivers/media/pci/ttpci/av7110.c
+index 2f7069e19b78..d74ee0ecfb36 100644
+--- a/drivers/media/pci/ttpci/av7110.c
++++ b/drivers/media/pci/ttpci/av7110.c
+@@ -1250,7 +1250,8 @@ static void vpeirq(struct tasklet_struct *t)
+ 		return;
  
--static char *atomisp_pad_str[] = { "ATOMISP_SUBDEV_PAD_SINK",
--				   "ATOMISP_SUBDEV_PAD_SOURCE_CAPTURE",
--				   "ATOMISP_SUBDEV_PAD_SOURCE_VF",
--				   "ATOMISP_SUBDEV_PAD_SOURCE_PREVIEW",
--				   "ATOMISP_SUBDEV_PAD_SOURCE_VIDEO"
--				 };
-+static const char *atomisp_pad_str(unsigned int pad)
-+{
-+	static const char *const pad_str[] = {
-+		"ATOMISP_SUBDEV_PAD_SINK",
-+		"ATOMISP_SUBDEV_PAD_SOURCE_CAPTURE",
-+		"ATOMISP_SUBDEV_PAD_SOURCE_VF",
-+		"ATOMISP_SUBDEV_PAD_SOURCE_PREVIEW",
-+		"ATOMISP_SUBDEV_PAD_SOURCE_VIDEO",
-+	};
-+
-+	if (pad >= ARRAY_SIZE(pad_str))
-+		return "ATOMISP_INVALID_PAD";
-+	return pad_str[pad];
-+}
+ 	/* Ensure streamed PCI data is synced to CPU */
+-	pci_dma_sync_sg_for_cpu(budget->dev->pci, budget->pt.slist, budget->pt.nents, PCI_DMA_FROMDEVICE);
++	dma_sync_sg_for_cpu(&budget->dev->pci->dev, budget->pt.slist,
++			    budget->pt.nents, DMA_FROM_DEVICE);
  
- int atomisp_subdev_set_selection(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_pad_config *cfg,
-@@ -378,7 +386,7 @@ int atomisp_subdev_set_selection(struct v4l2_subdev *sd,
+ #if 0
+ 	/* track rps1 activity */
+@@ -2637,7 +2638,8 @@ static int av7110_attach(struct saa7146_dev* dev,
+ 	av7110->arm_thread = NULL;
  
- 	dev_dbg(isp->dev,
- 		"sel: pad %s tgt %s l %d t %d w %d h %d which %s f 0x%8.8x\n",
--		atomisp_pad_str[pad], target = V4L2_SEL_TGT_CROP
-+		atomisp_pad_str(pad), target = V4L2_SEL_TGT_CROP
- 		? "V4L2_SEL_TGT_CROP" : "V4L2_SEL_TGT_COMPOSE",
- 		r->left, r->top, r->width, r->height,
- 		which = V4L2_SUBDEV_FORMAT_TRY ? "V4L2_SUBDEV_FORMAT_TRY"
-@@ -612,7 +620,7 @@ void atomisp_subdev_set_ffmt(struct v4l2_subdev *sd,
- 	enum atomisp_input_stream_id stream_id;
+ 	/* allocate and init buffers */
+-	av7110->debi_virt = pci_alloc_consistent(pdev, 8192, &av7110->debi_bus);
++	av7110->debi_virt = dma_alloc_coherent(&pdev->dev, 8192,
++					       &av7110->debi_bus, GFP_KERNEL);
+ 	if (!av7110->debi_virt)
+ 		goto err_saa71466_vfree_4;
  
- 	dev_dbg(isp->dev, "ffmt: pad %s w %d h %d code 0x%8.8x which %s\n",
--		atomisp_pad_str[pad], ffmt->width, ffmt->height, ffmt->code,
-+		atomisp_pad_str(pad), ffmt->width, ffmt->height, ffmt->code,
- 		which = V4L2_SUBDEV_FORMAT_TRY ? "V4L2_SUBDEV_FORMAT_TRY"
- 		: "V4L2_SUBDEV_FORMAT_ACTIVE");
+@@ -2726,7 +2728,8 @@ static int av7110_attach(struct saa7146_dev* dev,
+ err_iobuf_vfree_6:
+ 	vfree(av7110->iobuf);
+ err_pci_free_5:
+-	pci_free_consistent(pdev, 8192, av7110->debi_virt, av7110->debi_bus);
++	dma_free_coherent(&pdev->dev, 8192, av7110->debi_virt,
++			  av7110->debi_bus);
+ err_saa71466_vfree_4:
+ 	if (av7110->grabbing)
+ 		saa7146_vfree_destroy_pgtable(pdev, av7110->grabbing, &av7110->pt);
+@@ -2779,8 +2782,8 @@ static int av7110_detach(struct saa7146_dev* saa)
+ 	av7110_av_exit(av7110);
+ 
+ 	vfree(av7110->iobuf);
+-	pci_free_consistent(saa->pci, 8192, av7110->debi_virt,
+-			    av7110->debi_bus);
++	dma_free_coherent(&saa->pci->dev, 8192, av7110->debi_virt,
++			  av7110->debi_bus);
+ 
+ 	i2c_del_adapter(&av7110->i2c_adap);
  
 -- 
-2.29.2
+2.27.0
