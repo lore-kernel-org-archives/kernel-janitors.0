@@ -1,51 +1,45 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 26 Nov 2020 11:49:32 +0000
-Subject: [PATCH][next] media: ov2740: fix dereference before null check on pointer nvm
-Message-Id: <20201126114932.1984730-1-colin.king@canonical.com>
+Date: Fri, 27 Nov 2020 13:28:32 +0000
+Subject: [PATCH][next] media: vidtv: fix a read from an object after it has been freed
+Message-Id: <20201127132832.15239-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tianshu Qiu <tian.shu.qiu@intel.com>, Shawn Tu <shawnx.tu@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa <tfiga@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Qingwu Zhang <qingwu.zhang@intel.com>, linux-media@vger.kernel.org
+To: "Daniel W . S . Almeida" <dwlsalmeida@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently pointer nvm is being dereferenced before it is being null
-checked.  Fix this by moving the assignments of pointers client and
-ov2740 so that are after the null check hence avoiding any potential
-null pointer dereferences on pointer nvm.
+Currently the call to vidtv_psi_pat_table_destroy frees the object
+m->si.pat however m->si.pat->num_pmt is being accessed after the
+free.  Fix this by destroying m->si.pat after the m->si.pmt_secs[]
+objects have been freed.
 
-Fixes: 5e6fd339b68d ("media: ov2740: allow OTP data access during streaming")
+Addresses-Coverity: ("Read from pointer after free")
+Fixes: 039b7caed173 ("media: vidtv: add a PID entry for the NIT table")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/ov2740.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/test-drivers/vidtv/vidtv_channel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2740.c b/drivers/media/i2c/ov2740.c
-index 99016546cbec..b41a90c2aed5 100644
---- a/drivers/media/i2c/ov2740.c
-+++ b/drivers/media/i2c/ov2740.c
-@@ -600,8 +600,8 @@ static void ov2740_update_pad_format(const struct ov2740_mode *mode,
- 
- static int ov2740_load_otp_data(struct nvm_data *nvm)
+diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers/media/test-drivers/vidtv/vidtv_channel.c
+index 8ad6c0744d36..7838e6272712 100644
+--- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
++++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
+@@ -504,11 +504,11 @@ void vidtv_channel_si_destroy(struct vidtv_mux *m)
  {
--	struct i2c_client *client = nvm->client;
--	struct ov2740 *ov2740 = to_ov2740(i2c_get_clientdata(client));
-+	struct i2c_client *client;
-+	struct ov2740 *ov2740;
- 	u32 isp_ctrl00 = 0;
- 	u32 isp_ctrl01 = 0;
- 	int ret;
-@@ -612,6 +612,9 @@ static int ov2740_load_otp_data(struct nvm_data *nvm)
- 	if (nvm->nvm_buffer)
- 		return 0;
+ 	u32 i;
  
-+	client = nvm->client;
-+	ov2740 = to_ov2740(i2c_get_clientdata(client));
+-	vidtv_psi_pat_table_destroy(m->si.pat);
+-
+ 	for (i = 0; i < m->si.pat->num_pmt; ++i)
+ 		vidtv_psi_pmt_table_destroy(m->si.pmt_secs[i]);
+ 
++	vidtv_psi_pat_table_destroy(m->si.pat);
 +
- 	nvm->nvm_buffer = kzalloc(CUSTOMER_USE_OTP_SIZE, GFP_KERNEL);
- 	if (!nvm->nvm_buffer)
- 		return -ENOMEM;
+ 	kfree(m->si.pmt_secs);
+ 	vidtv_psi_sdt_table_destroy(m->si.sdt);
+ 	vidtv_psi_nit_table_destroy(m->si.nit);
 -- 
 2.29.2
