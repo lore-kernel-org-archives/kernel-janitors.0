@@ -1,60 +1,64 @@
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Date: Thu, 26 Nov 2020 23:52:08 +0000
-Subject: Re: [PATCH] x86/cpu: correct values for GDT_ENTRY_INIT
-Message-Id: <3d9f41b1-9687-4aae-ad7d-2e38a33132ba@citrix.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Fri, 27 Nov 2020 11:25:53 +0000
+Subject: RE: [PATCH] x86/cpu: correct values for GDT_ENTRY_INIT
+Message-Id: <b4d2750b3d094aac858118aef611a135@AcuMS.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201126115459.28980-1-lukas.bulwahn@gmail.com>
  <947b02eb-536f-16a0-fbb1-87b62ab8c13e@citrix.com>
  <CAKXUXMybmC=JE3uDnekAuHfRUZcrzSLJ04xB3nR=3BqHCsNVqA@mail.gmail.com>
  <CALCETrUyoaJyJ8mGpq9bdanKKfHgjg_1B=N0rtmuHCmCP9Q9=g@mail.gmail.com>
-In-Reply-To: <CALCETrUyoaJyJ8mGpq9bdanKKfHgjg_1B=N0rtmuHCmCP9Q9=g@mail.gmail.com>
+ <3d9f41b1-9687-4aae-ad7d-2e38a33132ba@citrix.com>
+In-Reply-To: <3d9f41b1-9687-4aae-ad7d-2e38a33132ba@citrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Andy Lutomirski <luto@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>, Akinobu Mita <akinobu.mita@gmail.com>, Joerg Roedel <jroedel@suse.de>, "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: 'Andrew Cooper' <andrew.cooper3@citrix.com>, Andy Lutomirski <luto@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>, Akinobu Mita <akinobu.mita@gmail.com>, Joerg Roedel <jroedel@suse.de>, "H . Peter Anvin" <hpa@zytor.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 26/11/2020 19:15, Andy Lutomirski wrote:
-> On Thu, Nov 26, 2020 at 11:07 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> =
-wrote:
->> On Thu, Nov 26, 2020 at 6:16 PM Andrew Cooper <andrew.cooper3@citrix.com=
-> wrote:
->>> On 26/11/2020 11:54, Lukas Bulwahn wrote:
->>>> Commit 1e5de18278e6 ("x86: Introduce GDT_ENTRY_INIT()") unintentionally
->>>> transformed a few 0xffff values to 0xfffff (note: five times "f" inste=
-ad of
->>>> four) as part of the refactoring.
->>> The transformation in that change is correct.
->>>
->>> Segment bases are 20 bits wide in x86,
-
-I of course meant segment limits here, rather than bases.
-
->>> Does:
->>>
->>> diff --git a/arch/x86/include/asm/desc_defs.h
->>> b/arch/x86/include/asm/desc_defs.h
->>> index f7e7099af595..9561f3c66e9e 100644
->>> --- a/arch/x86/include/asm/desc_defs.h
->>> +++ b/arch/x86/include/asm/desc_defs.h
->>> @@ -22,7 +22,7 @@ struct desc_struct {
->>>
->>>  #define GDT_ENTRY_INIT(flags, base, limit)                     \
->>>         {                                                       \
->>> -               .limit0         =3D (u16) (limit),                \
->>> +               .limit0         =3D (u16) (limit) & 0xFFFF,       \
->>>                 .limit1         =3D ((limit) >> 16) & 0x0F,       \
->>>                 .base0          =3D (u16) (base),                 \
->>>                 .base1          =3D ((base) >> 16) & 0xFF,        \
->>>
->>> fix the warning?
->>>
->> Thanks, I will try that out, and try compiling a 32-bit kernel as well.
-> You should also try comparing the objdump output before and after your
-> patch.  objdump -D will produce bizarre output but should work.
-
-Expanding on this a little, if that does indeed fix the sparse warning,
-then I'd make an argument for this being a bug in sparse.=C2=A0 Explicitly
-casting to u16 is semantically and intentionally identical to & 0xffff.
-
-~Andrew
+RnJvbTogQW5kcmV3IENvb3Blcg0KPiBTZW50OiAyNiBOb3ZlbWJlciAyMDIwIDIzOjUyDQo+IA0K
+PiBPbiAyNi8xMS8yMDIwIDE5OjE1LCBBbmR5IEx1dG9taXJza2kgd3JvdGU6DQo+ID4gT24gVGh1
+LCBOb3YgMjYsIDIwMjAgYXQgMTE6MDcgQU0gTHVrYXMgQnVsd2FobiA8bHVrYXMuYnVsd2FobkBn
+bWFpbC5jb20+IHdyb3RlOg0KPiA+PiBPbiBUaHUsIE5vdiAyNiwgMjAyMCBhdCA2OjE2IFBNIEFu
+ZHJldyBDb29wZXIgPGFuZHJldy5jb29wZXIzQGNpdHJpeC5jb20+IHdyb3RlOg0KPiA+Pj4gT24g
+MjYvMTEvMjAyMCAxMTo1NCwgTHVrYXMgQnVsd2FobiB3cm90ZToNCj4gPj4+PiBDb21taXQgMWU1
+ZGUxODI3OGU2ICgieDg2OiBJbnRyb2R1Y2UgR0RUX0VOVFJZX0lOSVQoKSIpIHVuaW50ZW50aW9u
+YWxseQ0KPiA+Pj4+IHRyYW5zZm9ybWVkIGEgZmV3IDB4ZmZmZiB2YWx1ZXMgdG8gMHhmZmZmZiAo
+bm90ZTogZml2ZSB0aW1lcyAiZiIgaW5zdGVhZCBvZg0KPiA+Pj4+IGZvdXIpIGFzIHBhcnQgb2Yg
+dGhlIHJlZmFjdG9yaW5nLg0KPiA+Pj4gVGhlIHRyYW5zZm9ybWF0aW9uIGluIHRoYXQgY2hhbmdl
+IGlzIGNvcnJlY3QuDQo+ID4+Pg0KPiA+Pj4gU2VnbWVudCBiYXNlcyBhcmUgMjAgYml0cyB3aWRl
+IGluIHg4NiwNCj4gDQo+IEkgb2YgY291cnNlIG1lYW50IHNlZ21lbnQgbGltaXRzIGhlcmUsIHJh
+dGhlciB0aGFuIGJhc2VzLg0KPiANCj4gPj4+IERvZXM6DQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdp
+dCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Rlc2NfZGVmcy5oDQo+ID4+PiBiL2FyY2gveDg2L2lu
+Y2x1ZGUvYXNtL2Rlc2NfZGVmcy5oDQo+ID4+PiBpbmRleCBmN2U3MDk5YWY1OTUuLjk1NjFmM2M2
+NmU5ZSAxMDA2NDQNCj4gPj4+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2Rlc2NfZGVmcy5o
+DQo+ID4+PiArKysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9kZXNjX2RlZnMuaA0KPiA+Pj4gQEAg
+LTIyLDcgKzIyLDcgQEAgc3RydWN0IGRlc2Nfc3RydWN0IHsNCj4gPj4+DQo+ID4+PiAgI2RlZmlu
+ZSBHRFRfRU5UUllfSU5JVChmbGFncywgYmFzZSwgbGltaXQpICAgICAgICAgICAgICAgICAgICAg
+XA0KPiA+Pj4gICAgICAgICB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIFwNCj4gPj4+IC0gICAgICAgICAgICAgICAubGltaXQwICAgICAgICAg
+PSAodTE2KSAobGltaXQpLCAgICAgICAgICAgICAgICBcDQo+ID4+PiArICAgICAgICAgICAgICAg
+LmxpbWl0MCAgICAgICAgID0gKHUxNikgKGxpbWl0KSAmIDB4RkZGRiwgICAgICAgXA0KPiA+Pj4g
+ICAgICAgICAgICAgICAgIC5saW1pdDEgICAgICAgICA9ICgobGltaXQpID4+IDE2KSAmIDB4MEYs
+ICAgICAgIFwNCj4gPj4+ICAgICAgICAgICAgICAgICAuYmFzZTAgICAgICAgICAgPSAodTE2KSAo
+YmFzZSksICAgICAgICAgICAgICAgICBcDQo+ID4+PiAgICAgICAgICAgICAgICAgLmJhc2UxICAg
+ICAgICAgID0gKChiYXNlKSA+PiAxNikgJiAweEZGLCAgICAgICAgXA0KPiA+Pj4NCj4gPj4+IGZp
+eCB0aGUgd2FybmluZz8NCj4gPj4+DQo+ID4+IFRoYW5rcywgSSB3aWxsIHRyeSB0aGF0IG91dCwg
+YW5kIHRyeSBjb21waWxpbmcgYSAzMi1iaXQga2VybmVsIGFzIHdlbGwuDQo+ID4gWW91IHNob3Vs
+ZCBhbHNvIHRyeSBjb21wYXJpbmcgdGhlIG9iamR1bXAgb3V0cHV0IGJlZm9yZSBhbmQgYWZ0ZXIg
+eW91cg0KPiA+IHBhdGNoLiAgb2JqZHVtcCAtRCB3aWxsIHByb2R1Y2UgYml6YXJyZSBvdXRwdXQg
+YnV0IHNob3VsZCB3b3JrLg0KPiANCj4gRXhwYW5kaW5nIG9uIHRoaXMgYSBsaXR0bGUsIGlmIHRo
+YXQgZG9lcyBpbmRlZWQgZml4IHRoZSBzcGFyc2Ugd2FybmluZywNCj4gdGhlbiBJJ2QgbWFrZSBh
+biBhcmd1bWVudCBmb3IgdGhpcyBiZWluZyBhIGJ1ZyBpbiBzcGFyc2UuwqAgRXhwbGljaXRseQ0K
+PiBjYXN0aW5nIHRvIHUxNiBpcyBzZW1hbnRpY2FsbHkgYW5kIGludGVudGlvbmFsbHkgaWRlbnRp
+Y2FsIHRvICYgMHhmZmZmLg0KDQpFdmVuIHRoZSAodTE2KSBjYXN0IGlzIHBvaW50bGVzcy4NCkkg
+ZG9uJ3QgdGhpbmsgdGhlIGN1cnJlbnQgdmVyc2lvbnMgb2YgZ2NjIGFyZSBhcyBzdHVwaWQgYXMg
+b2xkIG9uZXMsDQpidXQgSSBoYXZlIHNlZW46DQoJKmNwID0gKGNoYXIpKHggJiAweGZmKTsNCmdl
+bmVyYXRlIGNvZGUgdGhhdCBtYXNrcyB3aXRoIDB4ZmYsIG1hc2tzIHdpdGggMHhmZiBhZ2FpbiwN
+CmFuZCB0aGVuIGRvZXMgYSBieXRlIHN0b3JlLg0KDQpJIGhhdmUgYSBzdHJvbmcgZGlzbGlrZSBv
+ZiB0aGUgdXNlIG9mIGludGVnZXIgY2FzdHMgdG8gc2lsZW5jZQ0KY29tcGlsZXIgd2FybmluZ3Mu
+DQpDYXN0cyBzaG91bGQgYmUgcmFyZSBiZWNhdXNlIHRoZXkgY2FuIGhpZGUgdmVyeSBuYXN0eSBi
+dWdzLg0KQWx0aG91Z2ggdGhlICdwb2ludGVyIHRvIGludGVnZXIgb2YgZGlmZmVyZW50IHNpemUn
+IHdhcm5pbmcNCmRvZXMgcGljayB1cCBtb3N0IG9mIHRoZSBiYWQgb25lcy4NCg0KCURhdmlkDQoN
+Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
+LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
+YWxlcykNCg=
