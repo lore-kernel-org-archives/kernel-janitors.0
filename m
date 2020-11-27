@@ -1,63 +1,63 @@
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Date: Fri, 13 Nov 2020 10:43:17 +0000
-Subject: Re: [PATCH] drm/udl: Fix missing error code in udl_handle_damage()
-Message-Id: <3c055831-29e4-e03e-c7cc-3acb791688c7@suse.de>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 27 Nov 2020 09:34:21 +0000
+Subject: [PATCH] net/ipv6: propagate user pointer annotation
+Message-Id: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201113101502.GD168908@mwanda>
-In-Reply-To: <20201113101502.GD168908@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Dave Airlie <airlied@redhat.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Gerd Hoffmann <kraxel@redhat.com>, Sean Paul <sean@poorly.run>, Emil Velikov <emil.velikov@collabora.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@lst.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hi
+For IPV6_2292PKTOPTIONS, do_ipv6_getsockopt() stores the user pointer
+optval in the msg_control field of the msghdr.
 
-Am 13.11.20 um 11:15 schrieb Dan Carpenter:
-> If udl_get_urb() fails then this should return a negative error code
-> but currently it returns success.
-> 
-> Fixes: 798ce3fe1c3a ("drm/udl: Begin/end access to imported buffers in damage-handler")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hence, sparse rightfully warns at ./net/ipv6/ipv6_sockglue.c:1151:33:
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+  warning: incorrect type in assignment (different address spaces)
+      expected void *msg_control
+      got char [noderef] __user *optval
 
-Thanks for the patch. As it has a Fixes tag, it's probably worth taking
-for silencing compiler warnings alone. I'll add it to the tree.
+Since commit 1f466e1f15cf ("net: cleanly handle kernel vs user buffers for
+->msg_control"), user pointers shall be stored in the msg_control_user
+field, and kernel pointers in the msg_control field. This allows to
+propagate __user annotations nicely through this struct.
 
-In practice, it doesn't really matter. udl_handle_damage() is running
-during the DRM commit phase and it's too late to handle errors. We could
-as well convert the the function to void.
+Store optval in msg_control_user to properly record and propagate the
+memory space annotation of this pointer.
 
-Best regards
-Thomas
+Note that msg_control_is_user is set to true, so the key invariant, i.e.,
+use msg_control_user if and only if msg_control_is_user is true, holds.
 
-> ---
->  drivers/gpu/drm/udl/udl_modeset.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
-> index 42eeba1dfdbf..9d34ec9d03f6 100644
-> --- a/drivers/gpu/drm/udl/udl_modeset.c
-> +++ b/drivers/gpu/drm/udl/udl_modeset.c
-> @@ -305,8 +305,10 @@ static int udl_handle_damage(struct drm_framebuffer *fb, int x, int y,
->  	vaddr = map.vaddr; /* TODO: Use mapping abstraction properly */
->  
->  	urb = udl_get_urb(dev);
-> -	if (!urb)
-> +	if (!urb) {
-> +		ret = -ENOMEM;
->  		goto out_drm_gem_shmem_vunmap;
-> +	}
->  	cmd = urb->transfer_buffer;
->  
->  	for (i = clip.y1; i < clip.y2; i++) {
-> 
+The msghdr is further used in the six alternative put_cmsg() calls, with
+msg_control_is_user being true, put_cmsg() picks msg_control_user
+preserving the __user annotation and passes that properly to
+copy_to_user().
 
+No functional change. No change in object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Christoph, please review and ack.
+
+David, Alexey, Hideaki-san, Jakub,
+  please pick this minor non-urgent clean-up patch.
+
+ net/ipv6/ipv6_sockglue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
+index 43a894bf9a1b..a6804a7e34c1 100644
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1148,7 +1148,7 @@ static int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
+ 		if (sk->sk_type != SOCK_STREAM)
+ 			return -ENOPROTOOPT;
+ 
+-		msg.msg_control = optval;
++		msg.msg_control_user = optval;
+ 		msg.msg_controllen = len;
+ 		msg.msg_flags = flags;
+ 		msg.msg_control_is_user = true;
 -- 
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
+2.17.1
