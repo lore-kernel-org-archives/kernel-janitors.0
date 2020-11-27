@@ -1,33 +1,35 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 11 Nov 2020 01:45:01 +0000
-Subject: Re: [PATCH net v5] net: Update window_clamp if SOCK_RCVBUF is set
-Message-Id: <20201110174501.703879e8@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Nov 2020 07:43:49 +0000
+Subject: [PATCH] RDMA/mlx5: Fix a error code in devx_umem_reg_cmd_alloc()
+Message-Id: <20201127074349.GA7391@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CANn89i+ABLMJTEKat=9=qujNwe0BFavphzqYc1CQGtrdkwUnXg@mail.gmail.com>
-        <1604967391-123737-1-git-send-email-wenan.mao@linux.alibaba.com>
-        <CANn89iL6UW9mG6hW7f3Yv+32Pe_i9F-5cQhfo2uV68wdcgSuZA@mail.gmail.com>
-In-Reply-To: <CANn89iL6UW9mG6hW7f3Yv+32Pe_i9F-5cQhfo2uV68wdcgSuZA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Dumazet <edumazet@google.com>
-Cc: Mao Wenan <wenan.mao@linux.alibaba.com>, David Miller <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 10 Nov 2020 08:32:52 +0100 Eric Dumazet wrote:
-> On Tue, Nov 10, 2020 at 1:16 AM Mao Wenan <wenan.mao@linux.alibaba.com> wrote:
-> > When net.ipv4.tcp_syncookies=1 and syn flood is happened,
-> > cookie_v4_check or cookie_v6_check tries to redo what
-> > tcp_v4_send_synack or tcp_v6_send_synack did,
-> > rsk_window_clamp will be changed if SOCK_RCVBUF is set,
-> > which will make rcv_wscale is different, the client
-> > still operates with initial window scale and can overshot
-> > granted window, the client use the initial scale but local
-> > server use new scale to advertise window value, and session
-> > work abnormally.
-> >
-> > Fixes: e88c64f0a425 ("tcp: allow effective reduction of TCP's rcv-buffer via setsockopt")
-> > Signed-off-by: Mao Wenan <wenan.mao@linux.alibaba.com>  
-> 
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
+This code returns PTR_ERR(NULL) which is zero or success but it should
+return -ENOMEM.
 
-Applied, thanks!
+Fixes: 878f7b31c3a7 ("RDMA/mlx5: Use ib_umem_find_best_pgsz() for devx")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/infiniband/hw/mlx5/devx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
+index 7c3eefba6197..0b87c74281d3 100644
+--- a/drivers/infiniband/hw/mlx5/devx.c
++++ b/drivers/infiniband/hw/mlx5/devx.c
+@@ -2107,7 +2107,7 @@ static int devx_umem_reg_cmd_alloc(struct mlx5_ib_dev *dev,
+ 		      ib_umem_num_dma_blocks(obj->umem, page_size));
+ 	cmd->in = uverbs_zalloc(attrs, cmd->inlen);
+ 	if (!cmd->in)
+-		return PTR_ERR(cmd->in);
++		return -ENOMEM;
+ 
+ 	umem = MLX5_ADDR_OF(create_umem_in, cmd->in, umem);
+ 	mtt = (__be64 *)MLX5_ADDR_OF(umem, umem, mtt);
+-- 
+2.29.2
