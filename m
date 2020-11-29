@@ -1,61 +1,46 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 09 Nov 2020 11:21:28 +0000
-Subject: Re: [PATCH] futex: Don't enable IRQs unconditionally in put_pi_state()
-Message-Id: <20201109112128.GF2594@hirez.programming.kicks-ass.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 29 Nov 2020 12:54:34 +0000
+Subject: [PATCH] vdpa: ifcvf: Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20201129125434.1462638-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106085205.GA1159983@mwanda>
-In-Reply-To: <20201106085205.GA1159983@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Darren Hart <dvhart@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mst@redhat.com, jasowang@redhat.com, lingshan.zhu@intel.com, eli@mellanox.com, parav@mellanox.com
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Nov 06, 2020 at 11:52:05AM +0300, Dan Carpenter wrote:
-> The exit_pi_state_list() function calls put_pi_state() with IRQs
-> disabled and is not expecting that IRQs will be enabled inside the
-> function.  Use the _irqsave() so that IRQs are restored to the original
-> state instead of enabled unconditionally.
-> 
-> Fixes: 153fbd1226fb ("futex: Fix more put_pi_state() vs. exit_pi_state_list() races")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis and not tested.  I am not very familiar
-> with futex code.
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-It it exceedingly rare if at all possible to trigger this, but yes, your
-patch is correct.
+While at it, fix a typo (s/confiugration/configuration)
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/vdpa/ifcvf/ifcvf_main.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-> 
->  kernel/futex.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/futex.c b/kernel/futex.c
-> index f8614ef4ff31..ca84745713bc 100644
-> --- a/kernel/futex.c
-> +++ b/kernel/futex.c
-> @@ -788,8 +788,9 @@ static void put_pi_state(struct futex_pi_state *pi_state)
->  	 */
->  	if (pi_state->owner) {
->  		struct task_struct *owner;
-> +		unsigned long flags;
->  
-> -		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
-> +		raw_spin_lock_irqsave(&pi_state->pi_mutex.wait_lock, flags);
->  		owner = pi_state->owner;
->  		if (owner) {
->  			raw_spin_lock(&owner->pi_lock);
-> @@ -797,7 +798,7 @@ static void put_pi_state(struct futex_pi_state *pi_state)
->  			raw_spin_unlock(&owner->pi_lock);
->  		}
->  		rt_mutex_proxy_unlock(&pi_state->pi_mutex, owner);
-> -		raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
-> +		raw_spin_unlock_irqrestore(&pi_state->pi_mutex.wait_lock, flags);
->  	}
->  
->  	if (current->pi_state_cache) {
-> -- 
-> 2.28.0
-> 
+diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
+index 8b4028556cb6..fa1af301cf55 100644
+--- a/drivers/vdpa/ifcvf/ifcvf_main.c
++++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+@@ -417,16 +417,9 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return ret;
+ 	}
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+ 	if (ret) {
+-		IFCVF_ERR(pdev, "No usable DMA confiugration\n");
+-		return ret;
+-	}
+-
+-	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (ret) {
+-		IFCVF_ERR(pdev,
+-			  "No usable coherent DMA confiugration\n");
++		IFCVF_ERR(pdev, "No usable DMA configuration\n");
+ 		return ret;
+ 	}
+ 
+-- 
+2.27.0
