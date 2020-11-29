@@ -1,105 +1,46 @@
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-Date: Mon, 09 Nov 2020 09:51:20 +0000
-Subject: Re: [PATCH] clk: hisilicon: Fix the memory leak issues
-Message-Id: <b6aedf2a-ed8a-938d-7962-34fd5c314f55@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 29 Nov 2020 08:22:15 +0000
+Subject: [PATCH] HID: elan: Fix some error handling path
+Message-Id: <20201129082215.1453257-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201106203525.9991-1-gengdongjiu@huawei.com>
- <30b24944-1315-b6de-5290-28b9d7842610@web.de>
-In-Reply-To: <30b24944-1315-b6de-5290-28b9d7842610@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jikos@kernel.org, benjamin.tissoires@redhat.com, dinghao.liu@zju.edu.cn, neko@nya.ai
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 2020/11/8 21:55, Markus Elfring wrote:
->> When return errors, …
-> 
-> I would find an other wording more appropriate for this change description.
-> 
-> 
->> …, so fix this issue.
-> 
-> I suggest to replace this information by an other imperative wording
-> and the tag “Fixes”.
+'input' is a managed resource allocated earlier in the function by:
+   input = devm_input_allocate_device(&hdev->dev);
 
-OK, done， I have submitted the version 2 patch
+There is no need to explicitly free it. This would lead to a double
+reference decrement.
 
-> 
-> 
-> …
->> +++ b/drivers/clk/hisilicon/clk-hi3620.c
->> @@ -463,12 +463,16 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
->>  	}
->>
->>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->> -	if (WARN_ON(!clk_data))
->> +	if (WARN_ON(!clk_data)) {
->> +		iounmap(base);
-> 
-> Can a statement like “goto unmap_io;” make sense here?
-OK， I have changed it.
+Fixes: b7429ea53d6c ("HID: elan: Fix memleak in elan_input_configured")
+Fixes: 9a6a4193d65b ("HID: Add driver for USB ELAN Touchpad")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/hid-elan.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> 
-> 
->>  		return;
->> +	}
->>
->>  	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
->> -	if (!clk_data->clks)
->> +	if (!clk_data->clks) {
-> 
-> How do you think about to add the function call “kfree(clk_data)” in this if branch?
-OK, I have changed it.
-
-> 
-> 
-> …
->> +++ b/drivers/clk/hisilicon/clk.c
-> …
->  	if (!base) {
->  		pr_err("%s: failed to map clock registers\n", __func__);
-> -		goto err;
-> +		return NULL;
-> 
-> 
->> @@ -69,8 +69,10 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->>  	}
->>
->>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->> -	if (!clk_data)
->> +	if (!clk_data) {
->> +		iounmap(base);
->>  		goto err;
-> 
-> Please use another jump target.
-OK, thanks, I have changed it.
-
-> 
-> 
->> @@ -82,6 +84,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
->>  	return clk_data;
->>  err_data:
->> +	iounmap(base);
->>  	kfree(clk_data);
->>  err:
->>  	return NULL;
-> 
-> I propose to apply the following code variant.
-OK, have modified.
-
-> 
-> 	return clk_data;
-> 
-> free_clk_data:
-> 	kfree(clk_data);
-> unmap_io:
-> 	iounmap(base);
-> 	return NULL;
-> 
-> 
-> Regards,
-> Markus
-> .
-> 
+diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
+index dae193749d44..8587f9d2fffb 100644
+--- a/drivers/hid/hid-elan.c
++++ b/drivers/hid/hid-elan.c
+@@ -188,7 +188,6 @@ static int elan_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 	ret = input_mt_init_slots(input, ELAN_MAX_FINGERS, INPUT_MT_POINTER);
+ 	if (ret) {
+ 		hid_err(hdev, "Failed to init elan MT slots: %d\n", ret);
+-		input_free_device(input);
+ 		return ret;
+ 	}
+ 
+@@ -200,7 +199,6 @@ static int elan_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 		hid_err(hdev, "Failed to register elan input device: %d\n",
+ 			ret);
+ 		input_mt_destroy_slots(input);
+-		input_free_device(input);
+ 		return ret;
+ 	}
+ 
+-- 
+2.27.0
