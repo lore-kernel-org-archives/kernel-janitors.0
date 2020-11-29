@@ -1,22 +1,319 @@
-From: "Andrew Jeffery" <andrew@aj.id.au>
-Date: Mon, 16 Nov 2020 04:22:55 +0000
-Subject: =?UTF-8?Q?Re:_[PATCH]_soc:_aspeed:_Fix_a_reference_leak_in_aspeed=5Fsoci?= =?UTF-8?Q?nfo=5Finit()?=
-Message-Id: <07558590-438a-4347-820e-c117b19dac20@www.fastmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 29 Nov 2020 07:38:03 +0000
+Subject: [PATCH] media: saa7146: switch from 'pci_' to 'dma_' API
+Message-Id: <20201129073803.1443174-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201113100850.GA168908@mwanda>
-In-Reply-To: <20201113100850.GA168908@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Joel Stanley <joel@jms.id.au>
-Cc: Tom Rix <trix@redhat.com>, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hverkuil@xs4all.nl, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+The wrappers in include/linux/pci-dma-compat.h should go away.
+
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
+
+When memory is allocated in 'saa7146_pgtable_alloc()' GFP_KERNEL can be
+used because the callers are either .buf_prepare functions or function that
+already use GFP_KERNEL (hidden in a 'vmalloc_32()' call).
+
+When memory is allocated in 'saa7146_init_one()' GFP_KERNEL can be used
+because it is probe function and no lock is taken in the between.
+
+When memory is allocated in 'saa7146_vv_init()' GFP_KERNEL can be used
+because this function already uses GFP_KERNEL and no lock is taken in the
+between.
+
+When memory is allocated in 'vbi_workaround()' GFP_KERNEL can be used
+because it is only called from a .open function.
 
 
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-On Fri, 13 Nov 2020, at 20:38, Dan Carpenter wrote:
-> This needs to call of_node_put(np) before returning if of_iomap() fails.
-> 
-> Fixes: e0218dca5787 ("soc: aspeed: Add soc info driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/media/common/saa7146/saa7146_core.c | 39 +++++++++++----------
+ drivers/media/common/saa7146/saa7146_fops.c |  7 ++--
+ drivers/media/common/saa7146/saa7146_vbi.c  |  6 ++--
+ 3 files changed, 28 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/media/common/saa7146/saa7146_core.c b/drivers/media/common/saa7146/saa7146_core.c
+index 21fb16cc5ca1..f2d13b71416c 100644
+--- a/drivers/media/common/saa7146/saa7146_core.c
++++ b/drivers/media/common/saa7146/saa7146_core.c
+@@ -177,7 +177,7 @@ void *saa7146_vmalloc_build_pgtable(struct pci_dev *pci, long length, struct saa
+ 		goto err_free_slist;
+ 
+ 	pt->nents = pages;
+-	slen = pci_map_sg(pci,pt->slist,pt->nents,PCI_DMA_FROMDEVICE);
++	slen = dma_map_sg(&pci->dev, pt->slist, pt->nents, DMA_FROM_DEVICE);
+ 	if (0 = slen)
+ 		goto err_free_pgtable;
+ 
+@@ -187,7 +187,7 @@ void *saa7146_vmalloc_build_pgtable(struct pci_dev *pci, long length, struct saa
+ 	return mem;
+ 
+ err_unmap_sg:
+-	pci_unmap_sg(pci, pt->slist, pt->nents, PCI_DMA_FROMDEVICE);
++	dma_unmap_sg(&pci->dev, pt->slist, pt->nents, DMA_FROM_DEVICE);
+ err_free_pgtable:
+ 	saa7146_pgtable_free(pci, pt);
+ err_free_slist:
+@@ -201,7 +201,7 @@ void *saa7146_vmalloc_build_pgtable(struct pci_dev *pci, long length, struct saa
+ 
+ void saa7146_vfree_destroy_pgtable(struct pci_dev *pci, void *mem, struct saa7146_pgtable *pt)
+ {
+-	pci_unmap_sg(pci, pt->slist, pt->nents, PCI_DMA_FROMDEVICE);
++	dma_unmap_sg(&pci->dev, pt->slist, pt->nents, DMA_FROM_DEVICE);
+ 	saa7146_pgtable_free(pci, pt);
+ 	kfree(pt->slist);
+ 	pt->slist = NULL;
+@@ -212,7 +212,7 @@ void saa7146_pgtable_free(struct pci_dev *pci, struct saa7146_pgtable *pt)
+ {
+ 	if (NULL = pt->cpu)
+ 		return;
+-	pci_free_consistent(pci, pt->size, pt->cpu, pt->dma);
++	dma_free_coherent(&pci->dev, pt->size, pt->cpu, pt->dma);
+ 	pt->cpu = NULL;
+ }
+ 
+@@ -221,7 +221,7 @@ int saa7146_pgtable_alloc(struct pci_dev *pci, struct saa7146_pgtable *pt)
+ 	__le32       *cpu;
+ 	dma_addr_t   dma_addr = 0;
+ 
+-	cpu = pci_alloc_consistent(pci, PAGE_SIZE, &dma_addr);
++	cpu = dma_alloc_coherent(&pci->dev, PAGE_SIZE, &dma_addr, GFP_KERNEL);
+ 	if (NULL = cpu) {
+ 		return -ENOMEM;
+ 	}
+@@ -412,18 +412,20 @@ static int saa7146_init_one(struct pci_dev *pci, const struct pci_device_id *ent
+ 	err = -ENOMEM;
+ 
+ 	/* get memory for various stuff */
+-	dev->d_rps0.cpu_addr = pci_zalloc_consistent(pci, SAA7146_RPS_MEM,
+-						     &dev->d_rps0.dma_handle);
++	dev->d_rps0.cpu_addr = dma_alloc_coherent(&pci->dev, SAA7146_RPS_MEM,
++						  &dev->d_rps0.dma_handle,
++						  GFP_KERNEL);
+ 	if (!dev->d_rps0.cpu_addr)
+ 		goto err_free_irq;
+ 
+-	dev->d_rps1.cpu_addr = pci_zalloc_consistent(pci, SAA7146_RPS_MEM,
+-						     &dev->d_rps1.dma_handle);
++	dev->d_rps1.cpu_addr = dma_alloc_coherent(&pci->dev, SAA7146_RPS_MEM,
++						  &dev->d_rps1.dma_handle,
++						  GFP_KERNEL);
+ 	if (!dev->d_rps1.cpu_addr)
+ 		goto err_free_rps0;
+ 
+-	dev->d_i2c.cpu_addr = pci_zalloc_consistent(pci, SAA7146_RPS_MEM,
+-						    &dev->d_i2c.dma_handle);
++	dev->d_i2c.cpu_addr = dma_alloc_coherent(&pci->dev, SAA7146_RPS_MEM,
++						 &dev->d_i2c.dma_handle, GFP_KERNEL);
+ 	if (!dev->d_i2c.cpu_addr)
+ 		goto err_free_rps1;
+ 
+@@ -471,14 +473,14 @@ static int saa7146_init_one(struct pci_dev *pci, const struct pci_device_id *ent
+ 	return err;
+ 
+ err_free_i2c:
+-	pci_free_consistent(pci, SAA7146_RPS_MEM, dev->d_i2c.cpu_addr,
+-			    dev->d_i2c.dma_handle);
++	dma_free_coherent(&pci->dev, SAA7146_RPS_MEM, dev->d_i2c.cpu_addr,
++			  dev->d_i2c.dma_handle);
+ err_free_rps1:
+-	pci_free_consistent(pci, SAA7146_RPS_MEM, dev->d_rps1.cpu_addr,
+-			    dev->d_rps1.dma_handle);
++	dma_free_coherent(&pci->dev, SAA7146_RPS_MEM, dev->d_rps1.cpu_addr,
++			  dev->d_rps1.dma_handle);
+ err_free_rps0:
+-	pci_free_consistent(pci, SAA7146_RPS_MEM, dev->d_rps0.cpu_addr,
+-			    dev->d_rps0.dma_handle);
++	dma_free_coherent(&pci->dev, SAA7146_RPS_MEM, dev->d_rps0.cpu_addr,
++			  dev->d_rps0.dma_handle);
+ err_free_irq:
+ 	free_irq(pci->irq, (void *)dev);
+ err_unmap:
+@@ -519,7 +521,8 @@ static void saa7146_remove_one(struct pci_dev *pdev)
+ 	free_irq(pdev->irq, dev);
+ 
+ 	for (p = dev_map; p->addr; p++)
+-		pci_free_consistent(pdev, SAA7146_RPS_MEM, p->addr, p->dma);
++		dma_free_coherent(&pdev->dev, SAA7146_RPS_MEM, p->addr,
++				  p->dma);
+ 
+ 	iounmap(dev->mem);
+ 	pci_release_region(pdev, 0);
+diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
+index e936c56b0378..7b1840cad278 100644
+--- a/drivers/media/common/saa7146/saa7146_fops.c
++++ b/drivers/media/common/saa7146/saa7146_fops.c
+@@ -515,8 +515,8 @@ int saa7146_vv_init(struct saa7146_dev* dev, struct saa7146_ext_vv *ext_vv)
+ 	dev->ext_vv_data = ext_vv;
+ 
+ 	vv->d_clipping.cpu_addr -		pci_zalloc_consistent(dev->pci, SAA7146_CLIPPING_MEM,
+-				      &vv->d_clipping.dma_handle);
++		dma_alloc_coherent(&dev->pci->dev, SAA7146_CLIPPING_MEM,
++				   &vv->d_clipping.dma_handle, GFP_);
+ 	if( NULL = vv->d_clipping.cpu_addr ) {
+ 		ERR("out of memory. aborting.\n");
+ 		kfree(vv);
+@@ -574,7 +574,8 @@ int saa7146_vv_release(struct saa7146_dev* dev)
+ 	DEB_EE("dev:%p\n", dev);
+ 
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+-	pci_free_consistent(dev->pci, SAA7146_CLIPPING_MEM, vv->d_clipping.cpu_addr, vv->d_clipping.dma_handle);
++	dma_free_coherent(&dev->pci->dev, SAA7146_CLIPPING_MEM,
++			  vv->d_clipping.cpu_addr, vv->d_clipping.dma_handle);
+ 	v4l2_ctrl_handler_free(&dev->ctrl_handler);
+ 	kfree(vv);
+ 	dev->vv_data = NULL;
+diff --git a/drivers/media/common/saa7146/saa7146_vbi.c b/drivers/media/common/saa7146/saa7146_vbi.c
+index e1d369b976ed..e140d4a5aeb2 100644
+--- a/drivers/media/common/saa7146/saa7146_vbi.c
++++ b/drivers/media/common/saa7146/saa7146_vbi.c
+@@ -22,7 +22,7 @@ static int vbi_workaround(struct saa7146_dev *dev)
+ 	   as specified. there is this workaround, but please
+ 	   don't let me explain it. ;-) */
+ 
+-	cpu = pci_alloc_consistent(dev->pci, 4096, &dma_addr);
++	cpu = dma_alloc_coherent(&dev->pci->dev, 4096, &dma_addr, GFP_);
+ 	if (NULL = cpu)
+ 		return -ENOMEM;
+ 
+@@ -123,12 +123,12 @@ static int vbi_workaround(struct saa7146_dev *dev)
+ 			/* stop rps1 for sure */
+ 			saa7146_write(dev, MC1, MASK_29);
+ 
+-			pci_free_consistent(dev->pci, 4096, cpu, dma_addr);
++			dma_free_coherent(&dev->pci->dev, 4096, cpu, dma_addr);
+ 			return -EINTR;
+ 		}
+ 	}
+ 
+-	pci_free_consistent(dev->pci, 4096, cpu, dma_addr);
++	dma_free_coherent(&dev->pci->dev, 4096, cpu, dma_addr);
+ 	return 0;
+ }
+ 
+-- 
+2.27.0
