@@ -1,103 +1,54 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 23 Nov 2020 22:24:07 +0000
-Subject: [RFC PATCH] Add a new "Frozen" status to MAINTAINERS subsystem entries
-Message-Id: <afd4d5199527b33c4c428090b8a3d360b9565549.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 29 Nov 2020 12:27:22 +0000
+Subject: Re: [PATCH NACK] media: saa7146: switch from 'pci_' to 'dma_' API
+Message-Id: <44336db8-2b17-1682-6c38-128ec7f8f7d1@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201119072957.108941-1-bernard@vivo.com>
-         <20201123214208.GB675342@ravnborg.org>
-In-Reply-To: <20201123214208.GB675342@ravnborg.org>
+References: <20201129073803.1443174-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201129073803.1443174-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sam Ravnborg <sam@ravnborg.org>, Bernard Zhao <bernard@vivo.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: hverkuil@xs4all.nl, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2020-11-23 at 22:42 +0100, Sam Ravnborg wrote:
-> For this old driver we should try to limit patches to bug fixing and
-> infrastructure updates.
+Le 29/11/2020 à 08:38, Christophe JAILLET a écrit :
+> When memory is allocated in 'saa7146_vv_init()' GFP_KERNEL can be used
+> because this function already uses GFP_KERNEL and no lock is taken in the
+> between.
+> 
+> When memory is allocated in 'vbi_workaround()' GFP_KERNEL can be used
+> because it is only called from a .open function.
+> 
+> 
+> diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
+> index e936c56b0378..7b1840cad278 100644
+> --- a/drivers/media/common/saa7146/saa7146_fops.c
+> +++ b/drivers/media/common/saa7146/saa7146_fops.c
+> @@ -515,8 +515,8 @@ int saa7146_vv_init(struct saa7146_dev* dev, struct saa7146_ext_vv *ext_vv)
+>   	dev->ext_vv_data = ext_vv;
+>   
+>   	vv->d_clipping.cpu_addr > -		pci_zalloc_consistent(dev->pci, SAA7146_CLIPPING_MEM,
+> -				      &vv->d_clipping.dma_handle);
+> +		dma_alloc_coherent(&dev->pci->dev, SAA7146_CLIPPING_MEM,
+> +				   &vv->d_clipping.dma_handle, GFP_);
+ >
+> diff --git a/drivers/media/common/saa7146/saa7146_vbi.c b/drivers/media/common/saa7146/saa7146_vbi.c
+> index e1d369b976ed..e140d4a5aeb2 100644
+> --- a/drivers/media/common/saa7146/saa7146_vbi.c
+> +++ b/drivers/media/common/saa7146/saa7146_vbi.c
+> @@ -22,7 +22,7 @@ static int vbi_workaround(struct saa7146_dev *dev)
+>   	   as specified. there is this workaround, but please
+>   	   don't let me explain it. ;-) */
+>   
+> -	cpu = pci_alloc_consistent(dev->pci, 4096, &dma_addr);
+> +	cpu = dma_alloc_coherent(&dev->pci->dev, 4096, &dma_addr, GFP_);
 
-It might be useful to add a new "S:" entry type to these old drivers
-as supported/maintained/obsolete may not really be appropriate.
+The patch don't have 2 needed commit that got stucked on my machine.
+The analysis at the top of the patch description is fine, but the 
+corresponding s/GFP_/GFP_KERNEL/ are not part of the patch itself.
 
-How about something like "S: Frozen" and checkpatch could emit a
-message similar to the one for unnecessary changes to obsolete code?
+I'll send a v2.
 
-So using the below would emit:
+Sorry for the noise.
 
-$ ./scripts/checkpatch.pl -f drivers/gpu/drm/via/via_dma.c
-WARNING: drivers/gpu/drm/via/via_dma.c is marked as 'frozen' in the MAINTAINERS hierarchy.  No unnecessary modifications please.
-
-Maybe like the below (and fyi there's no additional git lookup overhead as
-the initial obsolete check already caches the git result).
-
----
- MAINTAINERS           | 10 +++++++++-
- scripts/checkpatch.pl | 11 +++++++----
- 2 files changed, 16 insertions(+), 5 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5f10105cac6f..6374d29180b8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -88,7 +88,10 @@ Descriptions of section entries and preferred order
- 	   Supported:	Someone is actually paid to look after this.
- 	   Maintained:	Someone actually looks after it.
- 	   Odd Fixes:	It has a maintainer but they don't have time to do
--			much other than throw the odd patch in. See below..
-+			much other than throw the odd patch in.
-+	   Frozen:	Old code that should not be modified unless changes
-+			are to correct actual defects or API infrastructure.
-+			Cleanup/style changes are not generally accepted.
- 	   Orphan:	No current maintainer [but maybe you could take the
- 			role as you write your new code].
- 	   Obsolete:	Old code. Something tagged obsolete generally means
-@@ -5718,6 +5721,11 @@ S:	Supported
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- F:	drivers/gpu/drm/udl/
- 
-+DRM DRIVER FOR VIA
-+L:	dri-devel@lists.freedesktop.org
-+S:	Frozen
-+F:	drivers/gpu/drm/via/
-+
- DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
- M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
- M:	Melissa Wen <melissa.srw@gmail.com>
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index fdfd5ec09be6..79321cbfb761 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -902,8 +902,8 @@ sub seed_camelcase_file {
- 
- our %maintained_status = ();
- 
--sub is_maintained_obsolete {
--	my ($filename) = @_;
-+sub is_maintained {
-+	my ($filename, $test) = @_;
- 
- 	return 0 if (!$tree || !(-e "$root/scripts/get_maintainer.pl"));
- 
-@@ -911,7 +911,7 @@ sub is_maintained_obsolete {
- 		$maintained_status{$filename} = `perl $root/scripts/get_maintainer.pl --status --nom --nol --nogit --nogit-fallback -f $filename 2>&1`;
- 	}
- 
--	return $maintained_status{$filename} =~ /obsolete/i;
-+	return $maintained_status{$filename} =~ /$test/i;
- }
- 
- sub is_SPDX_License_valid {
-@@ -2633,9 +2633,12 @@ sub process {
- 		}
- 
- 		if ($found_file) {
--			if (is_maintained_obsolete($realfile)) {
-+			if (is_maintained($realfile, "obsolete")) {
- 				WARN("OBSOLETE",
- 				     "$realfile is marked as 'obsolete' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
-+			} elsif (is_maintained($realfile, "frozen")) {
-+				WARN("FROZEN",
-+				     "$realfile is marked as 'frozen' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
- 			}
- 			if ($realfile =~ m@^(?:drivers/net/|net/|drivers/staging/)@) {
- 				$check = 1;
+CJ
