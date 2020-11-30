@@ -1,51 +1,46 @@
-From: Alan Cooper <alcooperx@gmail.com>
-Date: Tue, 03 Nov 2020 19:53:58 +0000
-Subject: Re: [PATCH] usb: misc: brcmstb-usb-pinmap: Fix an IS_ERR() vs NULL check
-Message-Id: <CAOGqxeXtpet0AxmKwkwdjWs4j8_-Lc0jkpahDsAvAcbD0dc1TQ@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 30 Nov 2020 12:49:15 +0000
+Subject: [PATCH] printk: remove obsolete dead assignment
+Message-Id: <20201130124915.7573-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201102075655.GA4163205@mwanda>
-In-Reply-To: <20201102075655.GA4163205@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Florian Fainelli <f.fainelli@gmail.com>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, USB list <linux-usb@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Mon, Nov 2, 2020 at 2:57 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The devm_ioremap() function doesn't return error pointers, it returns
-> NULL on error.
->
-> Fixes: 517c4c44b323 ("usb: Add driver to allow any GPIO to be used for 7211 USB signals")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The commit original commit "usb: Add driver to allow any GPIO to ..."
-> has a bad subsystem prefix.  This is a common anti-pattern for new
-> drivers.  (Although less common after I started whinging to everyone
-> about it).  It means that the first person to fix a bug in the driver
-> has to imagine what the original author wanted.  Sometimes people get
-> annoyed which prefix we pick for them.
->
->  drivers/usb/misc/brcmstb-usb-pinmap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/misc/brcmstb-usb-pinmap.c b/drivers/usb/misc/brcmstb-usb-pinmap.c
-> index 02144c39aaba..2326e60545f7 100644
-> --- a/drivers/usb/misc/brcmstb-usb-pinmap.c
-> +++ b/drivers/usb/misc/brcmstb-usb-pinmap.c
-> @@ -277,8 +277,8 @@ static int __init brcmstb_usb_pinmap_probe(struct platform_device *pdev)
->         pdata->out_pins = (struct out_pin *)(pdata->in_pins + in_count);
->
->         pdata->regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
-> -       if (IS_ERR(pdata->regs))
-> -               return PTR_ERR(pdata->regs);
-> +       if (!pdata->regs)
-> +               return -ENOMEM;
->         platform_set_drvdata(pdev, pdata);
->
->         err = parse_pins(&pdev->dev, dn, pdata);
-> --
-> 2.28.0
->
+Commit 849f3127bb46 ("switch /dev/kmsg to ->write_iter()") refactored
+devkmsg_write() and left over a dead assignment on the variable 'len'.
 
-Acked-by: Al Cooper <alcooperx@gmail.com> # prefix change noted
+Hence, make clang-analyzer warns:
+
+  kernel/printk/printk.c:744:4: warning: Value stored to 'len' is never read
+    [clang-analyzer-deadcode.DeadStores]
+                          len -= endp - line;
+                          ^
+
+Simply remove this obsolete dead assignment here.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201130
+
+Petr, please pick this minor non-urgent clean-up patch.
+
+ kernel/printk/printk.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index f279d4fbd9dd..6e4e38b7cd91 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -741,7 +741,6 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
+ 			if (LOG_FACILITY(u) != 0)
+ 				facility = LOG_FACILITY(u);
+ 			endp++;
+-			len -= endp - line;
+ 			line = endp;
+ 		}
+ 	}
+-- 
+2.17.1
