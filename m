@@ -1,34 +1,42 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Tue, 22 Dec 2020 01:40:06 +0000
-Subject: Re: [PATCH net] atm: idt77252: call pci_disable_device() on error path
-Message-Id: <160860120699.2677.5928345202899803037.git-patchwork-notify@kernel.org>
+From: Brother Matthew De Angelis <matthew.v.deangelis@gmail.com>
+Date: Tue, 01 Dec 2020 21:49:15 +0000
+Subject: [PATCH] Staging: rtl8723bs/core fix brace coding style issue in rtw_ioctl_set.c.
+Message-Id: <20201201214915.GA397311@a>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X93dmC4NX0vbTpGp@mwanda>
-In-Reply-To: <X93dmC4NX0vbTpGp@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: 3chas3@gmail.com, chas@cmf.nrl.navy.mil, davem@davemloft.net, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hello:
+Fix a brace warning found by the checkpatch.pl tool at line 178.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+WARNING: braces {} are not necessary for any arm of this statement.
 
-On Sat, 19 Dec 2020 14:01:44 +0300 you wrote:
-> This error path needs to disable the pci device before returning.
-> 
-> Fixes: ede58ef28e10 ("atm: remove deprecated use of pci api")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/atm/idt77252.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Brother Matthew De Angelis <matthew.v.deangelis@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_ioctl_set.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Here is the summary with links:
-  - [net] atm: idt77252: call pci_disable_device() on error path
-    https://git.kernel.org/netdev/net/c/8df66af5c1e5
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
+index 3adeca6f20ec..a7aa689ef4d4 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
+@@ -175,11 +175,10 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
+ 
+ 
+ 	DBG_871X("Set BSSID under fw_state = 0x%08x\n", get_fwstate(pmlmepriv));
+-	if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY) = true) {
++	if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY) = true)
+ 		goto handle_tkip_countermeasure;
+-	} else if (check_fwstate(pmlmepriv, _FW_UNDER_LINKING) = true) {
++	else if (check_fwstate(pmlmepriv, _FW_UNDER_LINKING) = true)
+ 		goto release_mlme_lock;
+-	}
+ 
+ 	if (check_fwstate(pmlmepriv, _FW_LINKED|WIFI_ADHOC_MASTER_STATE) = true) {
+ 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("set_bssid: _FW_LINKED||WIFI_ADHOC_MASTER_STATE\n"));
+-- 
+2.25.1
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+My apologies, I meant to sent this. 
+Would a patch like this be worth Greg's time?
