@@ -1,35 +1,118 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Wed, 16 Dec 2020 19:20:07 +0000
-Subject: Re: [PATCH] net: mscc: ocelot: Fix a resource leak in the error handling path of the probe function
-Message-Id: <160814640705.4483.2350966398303153186.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Dec 2020 07:02:54 +0000
+Subject: [PATCH] bus: mhi: core: Fix error handling in mhi_register_controller()
+Message-Id: <X8XqbtkPpEKSfFi2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201213114838.126922-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201213114838.126922-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: UNGLinuxDriver@microchip.com, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com, alexandre.belloni@bootlin.com, davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bhaumik Bhatt <bbhatt@codeaurora.org>
+Cc: Hemant Kumar <hemantk@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Siddartha Mohanadoss <smohanad@codeaurora.org>, Loic Poulain <loic.poulain@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
+There are a few problems with the error handling in this function.  They
+mostly center around the alloc_ordered_workqueue() allocation.
+1) If that allocation fails or if the kcalloc() prior to it fails then
+it leads to a NULL dereference when we call
+destroy_workqueue(mhi_cntrl->hiprio_wq).
+2) The error code is not set.
+3) The "mhi_cntrl->mhi_cmd" allocation is not freed.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+The error handling was slightly confusing and I re-ordered it to be in
+the exact mirror/reverse order of how things were allocated.  I changed
+the label names to say what the goto does instead of describing where
+the goto comes from.
 
-On Sun, 13 Dec 2020 12:48:38 +0100 you wrote:
-> In case of error after calling 'ocelot_init()', it must be undone by a
-> corresponding 'ocelot_deinit()' call, as already done in the remove
-> function.
-> 
-> Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Fixes: 8f7039787687 ("bus: mhi: core: Move to using high priority workqueue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/bus/mhi/core/init.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-Here is the summary with links:
-  - net: mscc: ocelot: Fix a resource leak in the error handling path of the probe function
-    https://git.kernel.org/netdev/net/c/f87675b836b3
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
+index 96cde9c0034c..f0697f433c2f 100644
+--- a/drivers/bus/mhi/core/init.c
++++ b/drivers/bus/mhi/core/init.c
+@@ -871,7 +871,7 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 				     sizeof(*mhi_cntrl->mhi_cmd), GFP_KERNEL);
+ 	if (!mhi_cntrl->mhi_cmd) {
+ 		ret = -ENOMEM;
+-		goto error_alloc_cmd;
++		goto err_free_event;
+ 	}
+ 
+ 	INIT_LIST_HEAD(&mhi_cntrl->transition_list);
+@@ -886,7 +886,8 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 				("mhi_hiprio_wq", WQ_MEM_RECLAIM | WQ_HIGHPRI);
+ 	if (!mhi_cntrl->hiprio_wq) {
+ 		dev_err(mhi_cntrl->cntrl_dev, "Failed to allocate workqueue\n");
+-		goto error_alloc_cmd;
++		ret = -ENOMEM;
++		goto err_free_cmd;
+ 	}
+ 
+ 	mhi_cmd = mhi_cntrl->mhi_cmd;
+@@ -932,7 +933,7 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 	ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs,
+ 			   SOC_HW_VERSION_OFFS, &soc_info);
+ 	if (ret)
+-		goto error_alloc_dev;
++		goto err_destroy_wq;
+ 
+ 	mhi_cntrl->family_number = (soc_info & SOC_HW_VERSION_FAM_NUM_BMSK) >>
+ 					SOC_HW_VERSION_FAM_NUM_SHFT;
+@@ -946,7 +947,7 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 	mhi_cntrl->index = ida_alloc(&mhi_controller_ida, GFP_KERNEL);
+ 	if (mhi_cntrl->index < 0) {
+ 		ret = mhi_cntrl->index;
+-		goto error_ida_alloc;
++		goto err_destroy_wq;
+ 	}
+ 
+ 	/* Register controller with MHI bus */
+@@ -954,7 +955,7 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 	if (IS_ERR(mhi_dev)) {
+ 		dev_err(mhi_cntrl->cntrl_dev, "Failed to allocate MHI device\n");
+ 		ret = PTR_ERR(mhi_dev);
+-		goto error_alloc_dev;
++		goto err_ida_free;
+ 	}
+ 
+ 	mhi_dev->dev_type = MHI_DEVICE_CONTROLLER;
+@@ -967,7 +968,7 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 
+ 	ret = device_add(&mhi_dev->dev);
+ 	if (ret)
+-		goto error_add_dev;
++		goto err_release_dev;
+ 
+ 	mhi_cntrl->mhi_dev = mhi_dev;
+ 
+@@ -975,19 +976,17 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
+ 
+ 	return 0;
+ 
+-error_add_dev:
++err_release_dev:
+ 	put_device(&mhi_dev->dev);
+-
+-error_alloc_dev:
++err_ida_free:
+ 	ida_free(&mhi_controller_ida, mhi_cntrl->index);
+-
+-error_ida_alloc:
++err_destroy_wq:
++	destroy_workqueue(mhi_cntrl->hiprio_wq);
++err_free_cmd:
+ 	kfree(mhi_cntrl->mhi_cmd);
+-
+-error_alloc_cmd:
+-	vfree(mhi_cntrl->mhi_chan);
++err_free_event:
+ 	kfree(mhi_cntrl->mhi_event);
+-	destroy_workqueue(mhi_cntrl->hiprio_wq);
++	vfree(mhi_cntrl->mhi_chan);
+ 
+ 	return ret;
+ }
+-- 
+2.29.2
