@@ -1,26 +1,31 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Sat, 05 Dec 2020 08:31:04 +0000
-Subject: Re: [PATCH] pcmcia/electra_cf: Fix some return values in 'electra_cf_probe()' in case of error
-Message-Id: <X8tFSNBqbAY7caYN@light.dominikbrodowski.net>
+From: =?UTF-8?Q? "Diego_S=C3=A1nchez" ?= <diego.sanchez@boldwhite24.com>
+Date: Tue, 01 Dec 2020 08:45:55 +0000
+Subject: Disinfection
+Message-Id: <20201201074501-0.1.2k.ad28.0.ybfifzlybw@boldwhite24.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200617195326.732863-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200617195326.732863-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, olof@lixom.net, hch@lst.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Am Wed, Jun 17, 2020 at 09:53:26PM +0200 schrieb Christophe JAILLET:
-> 'status' is known to be 0 at this point. It must be set to a meaningful
-> value in order to return an error code if one of the 'of_get_property()'
-> call fails.
-> 
-> Return -EINVAL in such a case.
-> 
-> Fixes: 2b571a066a2f("pcmcia: CompactFlash driver for PA Semi Electra boards")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Good morning,
 
-Applied to pcmcia-next. Thanks!
+looking for companies interested in raising additional capital by diversify=
+ing their offer in soaps, liquids and gels for hand disinfection and cosmet=
+ics for body and hair care.
 
-	Dominik
+The distribution of innovative products corresponding to the current prefer=
+ences of customers in the field of hygiene and preventive healthcare allows=
+ our partners to gain new markets and achieve better economic results.
+
+In addition to products with bactericidal action, our range includes shower=
+ gels, shampoos and hair conditioners, as well as efficient, concentrated d=
+etergents.
+
+The versatility (suitable for all skin types) combined with an affordable p=
+rice means that customers make an informed choice of a product among others=
+ available on the market.
+
+Are you interested in cooperation?
+
+Diego S=C3=A1nchez
