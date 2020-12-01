@@ -1,60 +1,52 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 14 Dec 2020 09:54:24 +0000
-Subject: [PATCH v2] scsi: sd: remove obsolete variable in sd_remove()
-Message-Id: <20201214095424.12479-1-lukas.bulwahn@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 01 Dec 2020 21:01:47 +0000
+Subject: [PATCH] misc: genwqe: Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20201201210147.7917-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: haver@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Commit 140ea3bbf39a ("sd: use __register_blkdev to avoid a modprobe for an
-unregistered dev_t") removed blk_register_region(devt, ...) in sd_remove()
-and since then, devt is unused in sd_remove().
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-Hence, make W=1 warns:
-
-  drivers/scsi/sd.c:3516:8:
-      warning: variable 'devt' set but not used [-Wunused-but-set-variable]
-
-Simply remove this obsolete variable.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-applies cleanly on current master and next-20201113, next-20201211
+ drivers/misc/genwqe/card_base.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-The patch was submitted for inclusion in scsi:
-
-  https://lore.kernel.org/lkml/20201116070035.11870-1-lukas.bulwahn@gmail.com/
-
-v1 -> v2:
-
-Christoph and Nathan reviewed, and I added the tags here.
-Martin asked the patch to go through block.
-
-Jens, can you please pick this minor non-urgent clean-up patch?
-
- drivers/scsi/sd.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 679c2c025047..21675a98620d 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3510,10 +3510,8 @@ static int sd_probe(struct device *dev)
- static int sd_remove(struct device *dev)
- {
- 	struct scsi_disk *sdkp;
--	dev_t devt;
+diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
+index c9b886618071..2e1befbd1ad9 100644
+--- a/drivers/misc/genwqe/card_base.c
++++ b/drivers/misc/genwqe/card_base.c
+@@ -1089,24 +1089,9 @@ static int genwqe_pci_setup(struct genwqe_dev *cd)
+ 	}
  
- 	sdkp = dev_get_drvdata(dev);
--	devt = disk_devt(sdkp->disk);
- 	scsi_autopm_get_device(sdkp->device);
- 
- 	async_synchronize_full_domain(&scsi_sd_pm_domain);
+ 	/* check for 64-bit DMA address supported (DAC) */
+-	if (!pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64))) {
+-		err = pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(64));
+-		if (err) {
+-			dev_err(&pci_dev->dev,
+-				"err: DMA64 consistent mask error\n");
+-			err = -EIO;
+-			goto out_release_resources;
+-		}
+ 	/* check for 32-bit DMA address supported (SAC) */
+-	} else if (!pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32))) {
+-		err = pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pci_dev->dev,
+-				"err: DMA32 consistent mask error\n");
+-			err = -EIO;
+-			goto out_release_resources;
+-		}
+-	} else {
++	if (dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(64)) ||
++	    dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(32))) {
+ 		dev_err(&pci_dev->dev,
+ 			"err: neither DMA32 nor DMA64 supported\n");
+ 		err = -EIO;
 -- 
-2.17.1
+2.27.0
