@@ -1,53 +1,55 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 07 Dec 2020 13:06:17 +0000
-Subject: Re: [PATCH] signal: propagate __user annotations properly
-Message-Id: <CAKXUXMyC163hWT-bf=Nbw3KQspYWo_oTCNBYH-Di5ky+NU190A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Dec 2020 14:27:54 +0000
+Subject: Re: [PATCH] media: rockchip: rkisp1: remove some dead code
+Message-Id: <20201201142754.GI2767@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201207123610.18246-1-lukas.bulwahn@gmail.com> <20201207130449.nbt23aholqebbvux@wittgenstein>
-In-Reply-To: <20201207130449.nbt23aholqebbvux@wittgenstein>
+References: <X8TrSj3PbqVtN5XQ@mwanda>
+ <a6d9660f-84ec-317d-c3aa-9b3bda595d49@collabora.com>
+In-Reply-To: <a6d9660f-84ec-317d-c3aa-9b3bda595d49@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Christian Brauner <christian@brauner.io>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>, David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Serge Hallyn <serge@hallyn.com>, Aleksa Sarai <cyphar@cyphar.com>, kernel-janitors@vger.kernel.org
+To: Helen Koike <helen.koike@collabora.com>
+Cc: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, Heiko Stuebner <heiko@sntech.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-On Mon, Dec 7, 2020 at 2:04 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Mon, Dec 07, 2020 at 01:36:10PM +0100, Lukas Bulwahn wrote:
-> > Commit 3eb39f47934f ("signal: add pidfd_send_signal() syscall") introduced
-> > copy_siginfo_from_user_any(), but missed to add the __user annotation to
-> > the user pointer that is passed as second argument.
-> >
-> > Hence, when copy_siginfo_from_user_any() calls copy_siginfo_from_user(),
-> > sparse warns:
-> >
-> >   kernel/signal.c:3716:46: warning: incorrect type in argument 2 (different address spaces)
-> >   kernel/signal.c:3716:46:    expected struct siginfo const [noderef] [usertype] __user *from
-> >   kernel/signal.c:3716:46:    got struct siginfo [usertype] *info
-> >
-> > And when pidfd_send_signal() calls copy_siginfo_from_user_any(), sparse
-> > warns as well:
-> >
-> >   kernel/signal.c:3776:58: warning: incorrect type in argument 2 (different address spaces)
-> >   kernel/signal.c:3776:58:    expected struct siginfo [usertype] *info
-> >   kernel/signal.c:3776:58:    got struct siginfo [noderef] [usertype] __user *info
-> >
-> > Add the __user annotation to repair this chain of propagating __user
-> > annotations.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Mon, Nov 30, 2020 at 11:20:05AM -0300, Helen Koike wrote:
+> Hi Dan,
+> 
+> Thank you for your patch.
+> 
+> On 11/30/20 9:53 AM, Dan Carpenter wrote:
+> > The debugfs_create_dir() function never returns NULLs.  It's not supposed
+> > to checked for errors in the normal case and there is no need to check
+> > in this function so let's just delete this dead code.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > ---
-> > applies cleanly on current master (v5.10-rc7) and next-20201204
-> >
-> > Christian, please pick this minor non-urgent clean-up patch.
->
-> Thanks for the patch. Unfortunately I already picked up Jann's patch who
-> sent it yesterday or this morning:
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/commit/?h=pidfd
->
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > index 9af137e4967f..68da1eed753d 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > @@ -430,10 +430,6 @@ static void rkisp1_debug_init(struct rkisp1_device *rkisp1)
+> >  	struct rkisp1_debug *debug = &rkisp1->debug;
+> >  
+> >  	debug->debugfs_dir = debugfs_create_dir(RKISP1_DRIVER_NAME, NULL);
+> > -	if (!debug->debugfs_dir) {
+> > -		dev_dbg(rkisp1->dev, "failed to create debugfs directory\n");
+> > -		return;
+> > -	}
+> 
+> I was taking a look at the debugfs_create_dir() code, and I saw it can
+> return ERR_PTR(), so ideally we should check for errors with IS_ERR() / PTR_ERR().
 
-Thanks for letting me know and good to know that Jann is tracking
-those sparse warnings as well :)
+Debugfs functions aren't meant to be error checked in the normal case.
+There are some drivers which dereference the dentry pointer so those
+need to check it but that's not very common and isn't the case here.
 
-Lukas
+I'm really sure this must be documented somewhere but I can't find it
+at all.  :P  But look at commit 057e212eae72 ("media: usb: uvc: no need
+to check return value of debugfs_create functions") for example.
+
+regards,
+dan carpenter
