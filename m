@@ -1,7 +1,7 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Tue, 01 Dec 2020 13:47:25 +0000
+Date: Tue, 01 Dec 2020 13:49:48 +0000
 Subject: Re: [PATCH] bus: mhi: core: Fix error handling in mhi_register_controller()
-Message-Id: <20201201133525.GB9748@work>
+Message-Id: <20201201133748.GC9748@work>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <X8XqbtkPpEKSfFi2@mwanda>
 In-Reply-To: <X8XqbtkPpEKSfFi2@mwanda>
@@ -28,9 +28,7 @@ On Tue, Dec 01, 2020 at 10:02:54AM +0300, Dan Carpenter wrote:
 > Fixes: 8f7039787687 ("bus: mhi: core: Move to using high priority workqueue")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Good find... Thanks for the patch, Dan!
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Applied to mhi-next!
 
 Thanks,
 Mani
