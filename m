@@ -1,40 +1,16 @@
-From: Andi Shyti <andi.shyti@intel.com>
-Date: Thu, 03 Dec 2020 11:12:24 +0000
-Subject: Re: [PATCH] drm/i915: Check the correct variable
-Message-Id: <X8jH5D//XHDsXKtQ@intel.intel>
+From: Christoph Hellwig <hch@lst.de>
+Date: Tue, 01 Dec 2020 14:43:45 +0000
+Subject: Re: [PATCH] net/ipv6: propagate user pointer annotation
+Message-Id: <20201201144345.GA14319@lst.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ilneOcJAjwqU4t@mwanda>
-In-Reply-To: <X8ilneOcJAjwqU4t@mwanda>
+References: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+Looks good,
 
-> There is a copy and paste bug in this code.  It's supposed to check
-> "obj2" instead of checking "obj" a second time.
-> 
-> Fixes: 80f0b679d6f0 ("drm/i915: Add an implementation for i915_gem_ww_ctx locking, v2.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/i915/selftests/i915_gem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/i915/selftests/i915_gem.c
-> index 23a6132c5f4e..412e21604a05 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
-> @@ -211,8 +211,8 @@ static int igt_gem_ww_ctx(void *arg)
->  		return PTR_ERR(obj);
->  
->  	obj2 = i915_gem_object_create_internal(i915, PAGE_SIZE);
-> -	if (IS_ERR(obj)) {
-> -		err = PTR_ERR(obj);
-> +	if (IS_ERR(obj2)) {
-> +		err = PTR_ERR(obj2);
-
-Reviewed-by: Andi Shyti <andi.shyti@intel.com>
-
-Thanks,
-Andi
+Reviewed-by: Christoph Hellwig <hch@lst.de>
