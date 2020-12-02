@@ -1,33 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Dec 2020 14:44:07 +0000
-Subject: [PATCH] x86/platform/uv: Fix an error code in uv_hubs_init()
-Message-Id: <X8eoN/jMAJb3H3iv@mwanda>
+From: Borislav Petkov <bp@suse.de>
+Date: Wed, 02 Dec 2020 19:51:31 +0000
+Subject: Re: [PATCH] x86/platform/uv: Fix an error code in uv_hubs_init()
+Message-Id: <20201202195131.GD25881@zn.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X8eoN/jMAJb3H3iv@mwanda>
+In-Reply-To: <X8eoN/jMAJb3H3iv@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Justin Ernst <justin.ernst@hpe.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <mgross@linux.intel.com>, Borislav Petkov <bp@suse.de>, Steve Wahl <steve.wahl@hpe.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Justin Ernst <justin.ernst@hpe.com>, Hans de Goede <hdegoede@redhat.com>, Mark Gross <mgross@linux.intel.com>, Steve Wahl <steve.wahl@hpe.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Return -ENOMEM on allocation failure instead of returning success.
+On Wed, Dec 02, 2020 at 05:44:07PM +0300, Dan Carpenter wrote:
+> Return -ENOMEM on allocation failure instead of returning success.
 
-Fixes: 4fc2cf1f2daf ("x86/platform/uv: Add new uv_sysfs platform driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/platform/x86/uv_sysfs.c | 1 +
- 1 file changed, 1 insertion(+)
+s/success/random stack memory contents/
 
-diff --git a/drivers/platform/x86/uv_sysfs.c b/drivers/platform/x86/uv_sysfs.c
-index 54c342579f1c..e17ce8c4cdad 100644
---- a/drivers/platform/x86/uv_sysfs.c
-+++ b/drivers/platform/x86/uv_sysfs.c
-@@ -248,6 +248,7 @@ static int uv_hubs_init(void)
- 		uv_hubs[i] = kzalloc(sizeof(*uv_hubs[i]), GFP_KERNEL);
- 		if (!uv_hubs[i]) {
- 			i--;
-+			ret = -ENOMEM;
- 			goto err_hubs;
- 		}
- 
 -- 
-2.29.2
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
