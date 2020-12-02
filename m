@@ -1,32 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 17 Dec 2020 06:45:42 +0000
-Subject: Re: [PATCH][next] ath11k: add missing null check on allocated skb
-Message-Id: <20201217064542.EEE98C433C6@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Dec 2020 14:44:07 +0000
+Subject: [PATCH] x86/platform/uv: Fix an error code in uv_hubs_init()
+Message-Id: <X8eoN/jMAJb3H3iv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201214232417.84556-1-colin.king@canonical.com>
-In-Reply-To: <20201214232417.84556-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Carl Huang <cjhuang@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Justin Ernst <justin.ernst@hpe.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <mgross@linux.intel.com>, Borislav Petkov <bp@suse.de>, Steve Wahl <steve.wahl@hpe.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Return -ENOMEM on allocation failure instead of returning success.
 
-> Currently the null check on a newly allocated skb is missing and
-> this can lead to a null pointer dereference is the allocation fails.
-> Fix this by adding a null check and returning -ENOMEM.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: 43ed15e1ee01 ("ath11k: put hw to DBS using WMI_PDEV_SET_HW_MODE_CMDID")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 4fc2cf1f2daf ("x86/platform/uv: Add new uv_sysfs platform driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/x86/uv_sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied to ath-current branch of ath.git, thanks.
-
-292bff9480c8 ath11k: add missing null check on allocated skb
-
+diff --git a/drivers/platform/x86/uv_sysfs.c b/drivers/platform/x86/uv_sysfs.c
+index 54c342579f1c..e17ce8c4cdad 100644
+--- a/drivers/platform/x86/uv_sysfs.c
++++ b/drivers/platform/x86/uv_sysfs.c
+@@ -248,6 +248,7 @@ static int uv_hubs_init(void)
+ 		uv_hubs[i] = kzalloc(sizeof(*uv_hubs[i]), GFP_KERNEL);
+ 		if (!uv_hubs[i]) {
+ 			i--;
++			ret = -ENOMEM;
+ 			goto err_hubs;
+ 		}
+ 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20201214232417.84556-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
