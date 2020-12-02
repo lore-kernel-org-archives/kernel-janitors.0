@@ -1,7 +1,7 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 02 Dec 2020 15:54:53 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 02 Dec 2020 17:19:24 +0000
 Subject: Re: [PATCH] ASoC: codecs: lpass-va-macro: remove some dead code
-Message-Id: <7e06abb2-a969-aa1a-6adc-6cdd72e3355c@linaro.org>
+Message-Id: <160692956495.33960.17489548804315513103.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <X8c5gjZO7YN/CFsq@mwanda>
 In-Reply-To: <X8c5gjZO7YN/CFsq@mwanda>
@@ -9,50 +9,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Thanks Dan for the patch!
-
-Do you use any tools to do this checks?
-
-
-On 02/12/2020 06:51, Dan Carpenter wrote:
+On Wed, 2 Dec 2020 09:51:46 +0300, Dan Carpenter wrote:
 > The "decimator" variable is in the 0-7 range and it's unsigned so there
 > is no need to check for negative values.
-> 
-> Fixes: 908e6b1df26e ("ASoC: codecs: lpass-va-macro: Add support to VA Macro")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Applied to
 
-> ---
->   sound/soc/codecs/lpass-va-macro.c | 15 ++++-----------
->   1 file changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
-> index 3e6bbef26dcb..91e6890d6efc 100644
-> --- a/sound/soc/codecs/lpass-va-macro.c
-> +++ b/sound/soc/codecs/lpass-va-macro.c
-> @@ -844,17 +844,10 @@ static int va_macro_hw_params(struct snd_pcm_substream *substream,
->   
->   	for_each_set_bit(decimator, &va->active_ch_mask[dai->id],
->   			 VA_MACRO_DEC_MAX) {
-> -		if (decimator >= 0) {
-> -			tx_fs_reg = CDC_VA_TX0_TX_PATH_CTL +
-> -				    VA_MACRO_TX_PATH_OFFSET * decimator;
-> -			snd_soc_component_update_bits(component, tx_fs_reg,
-> -						0x0F, tx_fs_rate);
-> -		} else {
-> -			dev_err(va_dev,
-> -				"%s: ERROR: Invalid decimator: %d\n",
-> -				__func__, decimator);
-> -			return -EINVAL;
-> -		}
-> +		tx_fs_reg = CDC_VA_TX0_TX_PATH_CTL +
-> +			    VA_MACRO_TX_PATH_OFFSET * decimator;
-> +		snd_soc_component_update_bits(component, tx_fs_reg, 0x0F,
-> +					      tx_fs_rate);
->   	}
->   	return 0;
->   }
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: lpass-va-macro: remove some dead code
+      commit: 4d638b9cc79eff11bad13fb3715c0ef38a9edaec
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
