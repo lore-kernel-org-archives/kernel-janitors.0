@@ -1,36 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Dec 2020 13:36:31 +0000
-Subject: Re: [PATCH] media: cec: fix trivial style warnings
-Message-Id: <20201218133631.GL2809@kadam>
+Date: Wed, 02 Dec 2020 06:45:31 +0000
+Subject: [PATCH] pstore: Tidy up an error check
+Message-Id: <X8c4C2q6qaZ8qX6L@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201218063117.GA80700@fedora>
- <20201218101630.GM2831@kadam>
- <20201218123558.GA4088@fedora>
-In-Reply-To: <20201218123558.GA4088@fedora>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nigel Christian <nigel.l.christian@gmail.com>
-Cc: hverkuil-cisco@xs4all.nl, mchehab@kernel.org, sakari.ailus@linux.intel.com, gustavoars@kernel.org, linux-media@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 18, 2020 at 07:35:58AM -0500, Nigel Christian wrote:
-> On Fri, Dec 18, 2020 at 01:16:30PM +0300, Dan Carpenter wrote:
-> > On Fri, Dec 18, 2020 at 01:31:17AM -0500, Nigel Christian wrote:
-> > > Comment has 'then' repeated twice. Let's clean it up.
-> > > Use unsigned int to maintain naming consistency.
-> > > 
-> > 
-> > Do you use a tool to find the double "then then"?
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> 
-> Started working on nodejs script to run the 'checkpatch.pl -f'
-> on directories and filter the output by command line arg.
+The crypto_alloc_comp() function never returns NULL, it returns error
+pointers on error.
 
-Ah...  I didn't realize that checkpatch could find this sort of thing.
-Thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/pstore/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 36714df37d5d..b7a2a2a31dee 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -315,7 +315,7 @@ static void allocate_buf_for_compression(void)
+ 	}
+ 
+ 	ctx = crypto_alloc_comp(zbackend->name, 0, 0);
+-	if (IS_ERR_OR_NULL(ctx)) {
++	if (IS_ERR(ctx)) {
+ 		kfree(buf);
+ 		pr_err("crypto_alloc_comp('%s') failed: %ld\n", zbackend->name,
+ 		       PTR_ERR(ctx));
+-- 
+2.29.2
