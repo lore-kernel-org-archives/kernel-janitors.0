@@ -1,24 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 09 Dec 2020 16:57:50 +0000
-Subject: Re: [PATCH] scsi: mpt3sas: Signedness bug in _base_get_diag_triggers()
-Message-Id: <yq1mtymrk6v.fsf@ca-mkp.ca.oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Dec 2020 06:44:43 +0000
+Subject: [PATCH] vhost_vdpa: return -EFAULT if copy_to_user() fails
+Message-Id: <X8c32z5EtDsMyyIL@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9DZH37bYPHwSQRP@mwanda>
-In-Reply-To: <X9DZH37bYPHwSQRP@mwanda> (Dan Carpenter's message of "Wed, 9 Dec
-        2020 17:03:11 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Sreekanth Reddy <sreekanth.reddy@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
+The copy_to_user() function returns the number of bytes remaining to be
+copied but this should return -EFAULT to the user.
 
-Dan,
+Fixes: 1b48dc03e575 ("vhost: vdpa: report iova range")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/vhost/vdpa.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> The "trigger_flags" variable needs to be signed for the error checking
-> to work.
-
-Applied to 5.11/scsi-staging, thanks!
-
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index d6a37b66770b..ef688c8c0e0e 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -344,7 +344,9 @@ static long vhost_vdpa_get_iova_range(struct vhost_vdpa *v, u32 __user *argp)
+ 		.last = v->range.last,
+ 	};
+ 
+-	return copy_to_user(argp, &range, sizeof(range));
++	if (copy_to_user(argp, &range, sizeof(range)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
