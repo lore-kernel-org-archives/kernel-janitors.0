@@ -1,38 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Dec 2020 17:56:00 +0000
-Subject: [PATCH] file: remove redundant assignment to variable err
-Message-Id: <20201204175600.1147876-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Dec 2020 06:43:49 +0000
+Subject: [PATCH] Staging: comedi: Return -EFAULT if copy_to_user() fails
+Message-Id: <X8c3pfwFy2jpy4BP@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ian Abbott <abbotti@mev.co.uk>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: devel@driverdev.osuosl.org, Xin Tan <tanxin.ctf@gmail.com>, Xiyu Yang <xiyuyang19@fudan.edu.cn>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, B K Karthik <bkkarthik@pesu.pes.edu>, Daniel Jordan <daniel.m.jordan@oracle.com>, Michel Lespinasse <walken@google.com>, Divyansh Kamboj <kambojdivyansh2000@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Return -EFAULT on error instead of the number of bytes remaining to be
+copied.
 
-The variable err is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: bac42fb21259 ("comedi: get rid of compat_alloc_user_space() mess in COMEDI_CMD{,TEST} compat")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Al, this goes through your tree.
 
-diff --git a/fs/file.c b/fs/file.c
-index 412033d8cfdf..5d1d1b2a5c97 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1086,7 +1086,7 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
+ drivers/staging/comedi/comedi_fops.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+index d99231c737fb..80d74cce2a01 100644
+--- a/drivers/staging/comedi/comedi_fops.c
++++ b/drivers/staging/comedi/comedi_fops.c
+@@ -2987,7 +2987,9 @@ static int put_compat_cmd(struct comedi32_cmd_struct __user *cmd32,
+ 	v32.chanlist_len = cmd->chanlist_len;
+ 	v32.data = ptr_to_compat(cmd->data);
+ 	v32.data_len = cmd->data_len;
+-	return copy_to_user(cmd32, &v32, sizeof(v32));
++	if (copy_to_user(cmd32, &v32, sizeof(v32)))
++		return -EFAULT;
++	return 0;
+ }
  
- static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
- {
--	int err = -EBADF;
-+	int err;
- 	struct file *file;
- 	struct files_struct *files = current->files;
- 
+ /* Handle 32-bit COMEDI_CMD ioctl. */
 -- 
 2.29.2
