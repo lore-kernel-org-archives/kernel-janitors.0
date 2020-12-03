@@ -1,25 +1,40 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Thu, 03 Dec 2020 18:55:47 +0000
-Subject: Re: [PATCH net] chelsio/chtls: fix a double free in chtls_setkey()
-Message-Id: <20201203105547.13364c00@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 08:39:48 +0000
+Subject: [PATCH] mtd: rawnand: meson: Fix a resource leak in init
+Message-Id: <X8ikVCnUsfTpffFB@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ilb6PtBRLWiSHp@mwanda>
-In-Reply-To: <X8ilb6PtBRLWiSHp@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ayush Sawal <ayush.sawal@chelsio.com>, Atul Gupta <atul.gupta@chelsio.com>, Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liang Yang <liang.yang@amlogic.com>
+Cc: kernel-janitors@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Yixun Lan <yixun.lan@amlogic.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
 
-On Thu, 3 Dec 2020 11:44:31 +0300 Dan Carpenter wrote:
-> The "skb" is freed by the transmit code in cxgb4_ofld_send() and we
-> shouldn't use it again.  But in the current code, if we hit an error
-> later on in the function then the clean up code will call kfree_skb(skb)
-> and so it causes a double free.
-> 
-> Set the "skb" to NULL and that makes the kfree_skb() a no-op.
-> 
-> Fixes: d25f2f71f653 ("crypto: chtls - Program the TLS session Key")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Call clk_disable_unprepare(nfc->phase_rx) if the clk_set_rate() function
+fails to avoid a resource leak.
 
-Applied, thanks!
+Fixes: 8fae856c5350 ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/nand/raw/meson_nand.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+index a76afea6ea77..817bddccb775 100644
+--- a/drivers/mtd/nand/raw/meson_nand.c
++++ b/drivers/mtd/nand/raw/meson_nand.c
+@@ -1044,9 +1044,12 @@ static int meson_nfc_clk_init(struct meson_nfc *nfc)
+ 
+ 	ret = clk_set_rate(nfc->device_clk, 24000000);
+ 	if (ret)
+-		goto err_phase_rx;
++		goto err_disable_rx;
+ 
+ 	return 0;
++
++err_disable_rx:
++	clk_disable_unprepare(nfc->phase_rx);
+ err_phase_rx:
+ 	clk_disable_unprepare(nfc->phase_tx);
+ err_phase_tx:
+-- 
+2.29.2
