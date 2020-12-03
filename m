@@ -1,32 +1,64 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 10 Dec 2020 18:01:36 +0000
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_cxl=3a_Reduce_scope_for_the_variable_?= =?UTF-8?B?4oCcbW3igJ0gaW4gY3hsbG
-Message-Id: <6da89e4e-1f29-0dde-ad5b-a168f4cc1e85@wanadoo.fr>
+From: Bingbu Cao <bingbu.cao@linux.intel.com>
+Date: Thu, 03 Dec 2020 02:43:29 +0000
+Subject: Re: [PATCH][next] media: ov2740: fix dereference before null check on pointer nvm
+Message-Id: <9d6ef10c-a575-c79b-5ac4-3313bc96e89e@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5cee2b25-71e0-15aa-fba6-12211b8308aa@web.de>
- <X9I1GLYCkw/q/xMu@kroah.com> <507d607a-0551-ec11-e1dc-5b9c96a361cb@web.de>
-In-Reply-To: <507d607a-0551-ec11-e1dc-5b9c96a361cb@web.de>
+References: <20201126114932.1984730-1-colin.king@canonical.com>
+In-Reply-To: <20201126114932.1984730-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Shawn Tu <shawnx.tu@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa <tfiga@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Qingwu Zhang <qingwu.zhang@intel.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 10/12/2020 à 17:04, Markus Elfring a écrit :
->>> A local variable was used only within an if branch.
->>> Thus move the definition for the variable “mm” into the corresponding
->>> code block.
->>
->> You did nothing here except add a checkpatch warning :(
+Hi, Colin
+
+Thanks for your patch.
+
+On 11/26/20 7:49 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> elfring@Sonne:~/Projekte/Linux/next-patched> scripts/checkpatch.pl /home/elfring/Projekte/Bau/Linux/scripts/Coccinelle/tuning1/next/20201204/Flicken/0001-cxl-Reduce-scope-for-the-variable-mm-in-cxllib_get_P.patch
-> total: 0 errors, 0 warnings, 16 lines checked
+> Currently pointer nvm is being dereferenced before it is being null
+> checked.  Fix this by moving the assignments of pointers client and
+> ov2740 so that are after the null check hence avoiding any potential
+> null pointer dereferences on pointer nvm.
 > 
-> Regards,
-> Markus
+> Fixes: 5e6fd339b68d ("media: ov2740: allow OTP data access during streaming")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/media/i2c/ov2740.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov2740.c b/drivers/media/i2c/ov2740.c
+> index 99016546cbec..b41a90c2aed5 100644
+> --- a/drivers/media/i2c/ov2740.c
+> +++ b/drivers/media/i2c/ov2740.c
+> @@ -600,8 +600,8 @@ static void ov2740_update_pad_format(const struct ov2740_mode *mode,
+>  
+>  static int ov2740_load_otp_data(struct nvm_data *nvm)
+>  {
+> -	struct i2c_client *client = nvm->client;
+> -	struct ov2740 *ov2740 = to_ov2740(i2c_get_clientdata(client));
+> +	struct i2c_client *client;
+> +	struct ov2740 *ov2740;
+>  	u32 isp_ctrl00 = 0;
+>  	u32 isp_ctrl01 = 0;
+>  	int ret;
+> @@ -612,6 +612,9 @@ static int ov2740_load_otp_data(struct nvm_data *nvm)
+>  	if (nvm->nvm_buffer)
+>  		return 0;
+>  
+> +	client = nvm->client;
+> +	ov2740 = to_ov2740(i2c_get_clientdata(client));
+> +
+>  	nvm->nvm_buffer = kzalloc(CUSTOMER_USE_OTP_SIZE, GFP_KERNEL);
+>  	if (!nvm->nvm_buffer)
+>  		return -ENOMEM;
 > 
 
-Maybe:
-    script/checkpatch.pl -f drivers/misc/cxl/cxllib.c
+Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
 
-?
+
+-- 
+Best regards,
+Bingbu Cao
