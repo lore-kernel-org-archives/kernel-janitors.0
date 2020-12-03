@@ -1,90 +1,78 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 10 Dec 2020 18:22:00 +0000
-Subject: Re: [PATCH] checkpatch: Fix "Missing a blank line after declarations" test on patches
-Message-Id: <f748fbd5-f646-caa9-aec1-52ba882f9665@wanadoo.fr>
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Thu, 03 Dec 2020 10:10:09 +0000
+Subject: Re: [PATCH] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
+Message-Id: <54f36c62-10bf-8736-39ce-27ece097d9de@proxmox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201210175235.65657-1-christophe.jaillet@wanadoo.fr>
- <c0382efac23a4fb18f31974b80f25558cada7243.camel@perches.com>
-In-Reply-To: <c0382efac23a4fb18f31974b80f25558cada7243.camel@perches.com>
+References: <20200928091300.GD377727@mwanda>
+In-Reply-To: <20200928091300.GD377727@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, apw@canonical.com, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dan.carpenter@oracle.com
+Cc: James.Bottomley@suse.de, jayamohank@HDRedirect-LB5-1afb6e2973825a56.elb.us-east-1.amazonaws.com, jejb@linux.ibm.com, jitendra.bhivare@broadcom.com, kernel-janitors@vger.kernel.org, ketan.mukadam@broadcom.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, martin.petersen@oracle.com, subbu.seetharaman@broadcom.com, stable@vger.kernel.org
 
-Le 10/12/2020 à 19:13, Joe Perches a écrit :
-> On Thu, 2020-12-10 at 18:52 +0100, Christophe JAILLET wrote:
->> "Missing a blank line after declarations" is not triggered on patches.
+> The be_fill_queue() function can only fail when "eq_vaddress" is NULL
+> and since it's non-NULL here that means the function call can't fail.
+> But imagine if it could, then in that situation we would want to store
+> the "paddr" so that dma memory can be released.
 > 
-> That's not true.
-> It does work on any patch that does a new function addition.
-> There are some patch context complications here when lines are
-> added and removed such that '+' add, '-' delete, and ' ' context
-> testing isn't always obvious.
-> 
-> So, the code was intentionally limited to just new functions.
-> 
-> If there are simple ways to avoid false positives, great, but I
-> believe it's not trivial.
-> 
->> Tweak the regex to match such cases.
-> 
-> Please send multiple patch examples of different forms where it
-> does not work.
-> 
->> This patch is mostly a PoC. I don't know enough about checkpatch.pl to be
->> sure that the fix is the right thing to do.
->> At least, it works for me :)
-> 
-> Always a starting point...
-> 
->>
->> The [\+ ] is taken from the test just above.
->>
->> I also wonder if there is a missing ^ in the last test:
->>    (($prevline =~ /[\+ ](\s+)\S/) && $sline =~ /^[\+ ]$1\S/))
->>                    ^
->>                    |___ here
-> 
-> 
-> 
-> 
+> Fixes: bfead3b2cb46 ("[SCSI] be2iscsi: Adding msix and mcc_rings V3")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Dec 2020 14:14:07 +0100
+This came in here through the stable 5.4 tree with v5.4.74, and we have some
+users of ours report that it results in kernel oopses and delayed boot on their
+HP DL 380 Gen 9 (and other Gen 9, FWICT) servers:
 
-A local variable was used only within an if branch.
-Thus move the definition for the variable “mm” into the corresponding
-code block.
+> systemd-udevd   D    0   501      1 0x80000000
+> Call Trace:
+>  __schedule+0x2e6/0x6f0
+>  schedule+0x33/0xa0
+>  schedule_timeout+0x205/0x330
+>  wait_for_completion+0xb7/0x140
+>  ? wake_up_q+0x80/0x80
+>  __flush_work+0x131/0x1e0
+>  ? worker_detach_from_pool+0xb0/0xb0
+>  work_on_cpu+0x6d/0x90
+>  ? workqueue_congested+0x80/0x80
+>  ? pci_device_shutdown+0x60/0x60
+>  pci_device_probe+0x190/0x1b0
+>  really_probe+0x1c8/0x3e0
+>  driver_probe_device+0xbb/0x100
+>  device_driver_attach+0x58/0x60
+>  __driver_attach+0x8f/0x150
+>  ? device_driver_attach+0x60/0x60
+>  bus_for_each_dev+0x79/0xc0
+>  ? kmem_cache_alloc_trace+0x1a0/0x230
+>  driver_attach+0x1e/0x20
+>  bus_add_driver+0x154/0x1f0
+>  ? 0xffffffffc0453000
+>  driver_register+0x70/0xc0
+>  ? 0xffffffffc0453000
+>  __pci_register_driver+0x57/0x60
+>  beiscsi_module_init+0x62/0x1000 [be2iscsi]
+>  do_one_initcall+0x4a/0x1fa
+>  ? _cond_resched+0x19/0x30
+>  ? kmem_cache_alloc_trace+0x1a0/0x230
+>  do_init_module+0x60/0x230
+>  load_module+0x231b/0x2590
+>  __do_sys_finit_module+0xbd/0x120
+>  ? __do_sys_finit_module+0xbd/0x120
+>  __x64_sys_finit_module+0x1a/0x20
+>  do_syscall_64+0x57/0x190
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x7f00aca06f59
+> Code: Bad RIP value.
+> RSP: 002b:00007ffc14380858 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> RAX: ffffffffffffffda RBX: 0000558c726262e0 RCX: 00007f00aca06f59
+> RDX: 0000000000000000 RSI: 00007f00ac90bcad RDI: 000000000000000e
+> RBP: 00007f00ac90bcad R08: 0000000000000000 R09: 0000000000000000
+> R10: 000000000000000e R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000558c725f6030 R14: 0000000000020000 R15: 0000558c726262e0
 
-This issue was detected by using the Coccinelle software.
+Blacklisting the be2iscsi module or reverting this commit helps, I did not get
+around to look further into the mechanics at play and figured you would be
+faster at that, or that this info at least helps someone else when searching
+for the same symptoms.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
-  drivers/misc/cxl/cxllib.c | 4 +---
-  1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/misc/cxl/cxllib.c b/drivers/misc/cxl/cxllib.c
-index 2a1783f32254..53b919856426 100644
---- a/drivers/misc/cxl/cxllib.c
-+++ b/drivers/misc/cxl/cxllib.c
-@@ -170,8 +170,6 @@ int cxllib_get_PE_attributes(struct task_struct *task,
-  			     unsigned long translation_mode,
-  			     struct cxllib_pe_attributes *attr)
-  {
--	struct mm_struct *mm = NULL;
--
-  	if (translation_mode != CXL_TRANSLATED_MODE &&
-  		translation_mode != CXL_REAL_MODE)
-  		return -EINVAL;
-@@ -182,7 +180,7 @@ int cxllib_get_PE_attributes(struct task_struct *task,
-  				true);
-  	attr->lpid = mfspr(SPRN_LPID);
-  	if (task) {
--		mm = get_task_mm(task);
-+		struct mm_struct *mm = get_task_mm(task);
-  		if (mm = NULL)
-  			return -EINVAL;
-  		/*
---
-2.29.2
+cheers,
+Thomas
