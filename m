@@ -1,26 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 09 Dec 2020 17:23:16 +0000
-Subject: Re: [PATCH] scsi: qla4xxx: remove redundant assignment to variable rval
-Message-Id: <160753457756.14816.15596316150027507404.b4-ty@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 08:44:31 +0000
+Subject: [PATCH net] chelsio/chtls: fix a double free in chtls_setkey()
+Message-Id: <X8ilb6PtBRLWiSHp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204191810.1150995-1-colin.king@canonical.com>
-In-Reply-To: <20201204191810.1150995-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nilesh Javali <njavali@marvell.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Manish Rangankar <mrangankar@marvell.com>, Colin King <colin.king@canonical.com>, linux-scsi@vger.kernel.org, GR-QLogic-Storage-Upstream@marvell.com
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ayush Sawal <ayush.sawal@chelsio.com>, Atul Gupta <atul.gupta@chelsio.com>
+Cc: Vinay Kumar Yadav <vinay.yadav@chelsio.com>, Rohit Maheshwari <rohitm@chelsio.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 4 Dec 2020 19:18:10 +0000, Colin King wrote:
+The "skb" is freed by the transmit code in cxgb4_ofld_send() and we
+shouldn't use it again.  But in the current code, if we hit an error
+later on in the function then the clean up code will call kfree_skb(skb)
+and so it causes a double free.
 
-> The variable rval is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+Set the "skb" to NULL and that makes the kfree_skb() a no-op.
 
-Applied to 5.11/scsi-queue, thanks!
+Fixes: d25f2f71f653 ("crypto: chtls - Program the TLS session Key")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1/1] scsi: qla4xxx: remove redundant assignment to variable rval
-      https://git.kernel.org/mkp/scsi/c/3a5b9fa2cc5f
-
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
+index 62c829023da5..a4fb463af22a 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_hw.c
+@@ -391,6 +391,7 @@ int chtls_setkey(struct chtls_sock *csk, u32 keylen,
+ 	csk->wr_unacked += DIV_ROUND_UP(len, 16);
+ 	enqueue_wr(csk, skb);
+ 	cxgb4_ofld_send(csk->egress_dev, skb);
++	skb = NULL;
+ 
+ 	chtls_set_scmd(csk);
+ 	/* Clear quiesce for Rx key */
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
