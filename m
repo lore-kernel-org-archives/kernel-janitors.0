@@ -1,55 +1,33 @@
-From: Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Date: Sun, 20 Dec 2020 13:30:27 +0000
-Subject: Re: [PATCH] hwrng: ingenic - Fix a resource leak in an error handling path
-Message-Id: <c5bb8f9a-c4a7-7ecb-eccb-a31abc7316a2@wanyeetech.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 08:41:35 +0000
+Subject: [PATCH 2/2] usb: mtu3: mtu3_debug: remove an unused struct member
+Message-Id: <X8ikv1QA3Do50D+R@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201219075207.176279-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201219075207.176279-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mpm@selenic.com, herbert@gondor.apana.org.au, aric.pzqi@ingenic.com
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-Hi Christophe,
+The "nregs" member is not used.  The code uses the "regset.nregs"
+struct member instead.
 
-On 2020/12/19 下午3:52, Christophe JAILLET wrote:
-> In case of error, we should call 'clk_disable_unprepare()' to undo a
-> previous 'clk_prepare_enable()' call, as already done in the remove
-> function.
->
-> Fixes: 406346d22278 ("hwrng: ingenic - Add hardware TRNG for Ingenic X1830")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/char/hw_random/ingenic-trng.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/mtu3/mtu3_debug.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-Thanks for fixing it, and apologize for my carelessness.
-
-Tested-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-
-
-> diff --git a/drivers/char/hw_random/ingenic-trng.c b/drivers/char/hw_random/ingenic-trng.c
-> index 954a8411d67d..0eb80f786f4d 100644
-> --- a/drivers/char/hw_random/ingenic-trng.c
-> +++ b/drivers/char/hw_random/ingenic-trng.c
-> @@ -113,13 +113,17 @@ static int ingenic_trng_probe(struct platform_device *pdev)
->   	ret = hwrng_register(&trng->rng);
->   	if (ret) {
->   		dev_err(&pdev->dev, "Failed to register hwrng\n");
-> -		return ret;
-> +		goto err_unprepare_clk;
->   	}
->   
->   	platform_set_drvdata(pdev, trng);
->   
->   	dev_info(&pdev->dev, "Ingenic DTRNG driver registered\n");
->   	return 0;
-> +
-> +err_unprepare_clk:
-> +	clk_disable_unprepare(trng->clk);
-> +	return ret;
->   }
->   
->   static int ingenic_trng_remove(struct platform_device *pdev)
+diff --git a/drivers/usb/mtu3/mtu3_debug.h b/drivers/usb/mtu3/mtu3_debug.h
+index 3084c46017c3..9a36134b322d 100644
+--- a/drivers/usb/mtu3/mtu3_debug.h
++++ b/drivers/usb/mtu3/mtu3_debug.h
+@@ -19,7 +19,6 @@ struct ssusb_mtk;
+ struct mtu3_regset {
+ 	char name[MTU3_DEBUGFS_NAME_LEN];
+ 	struct debugfs_regset32 regset;
+-	size_t nregs;
+ };
+ 
+ struct mtu3_file_map {
+-- 
+2.29.2
