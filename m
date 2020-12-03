@@ -1,46 +1,36 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 Dec 2020 19:10:03 +0000
-Subject: Re: [PATCH] MAINTAINERS: include governors into CPU IDLE TIME MANAGEMENT FRAMEWORK
-Message-Id: <CAJZ5v0gC_SLBvSsGC=1OJ-uNEVPC=JLwELEZKj=LKoQkoOuEkQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 08:41:13 +0000
+Subject: [PATCH 1/2] usb: mtu3: fix memory corruption in mtu3_debugfs_regset()
+Message-Id: <X8ikqc4Mo2/0G72j@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217071501.31267-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201217071501.31267-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Linux PM <linux-pm@vger.kernel.org>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-On Thu, Dec 17, 2020 at 8:16 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> The current pattern in the file entry does not make the files in the
-> governors subdirectory to be a part of the CPU IDLE TIME MANAGEMENT
-> FRAMEWORK.
->
-> Adjust the file pattern to include files in governors.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on current master and next-20201215
->
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 952731d1e43c..ac679aa00e0d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4596,7 +4596,7 @@ B:        https://bugzilla.kernel.org
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
->  F:     Documentation/admin-guide/pm/cpuidle.rst
->  F:     Documentation/driver-api/pm/cpuidle.rst
-> -F:     drivers/cpuidle/*
-> +F:     drivers/cpuidle/
->  F:     include/linux/cpuidle.h
->
->  CPU POWER MONITORING SUBSYSTEM
-> --
+This code is using the wrong sizeof() so it does not allocate enough
+memory.  It allocates 32 bytes but 72 are required.  That will lead to
+memory corruption.
 
-Applied as 5.11-rc material, thanks!
+Fixes: ae07809255d3 ("usb: mtu3: add debugfs interface files")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/mtu3/mtu3_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
+diff --git a/drivers/usb/mtu3/mtu3_debugfs.c b/drivers/usb/mtu3/mtu3_debugfs.c
+index fdeade6254ae..7537bfd651af 100644
+--- a/drivers/usb/mtu3/mtu3_debugfs.c
++++ b/drivers/usb/mtu3/mtu3_debugfs.c
+@@ -127,7 +127,7 @@ static void mtu3_debugfs_regset(struct mtu3 *mtu, void __iomem *base,
+ 	struct debugfs_regset32 *regset;
+ 	struct mtu3_regset *mregs;
+ 
+-	mregs = devm_kzalloc(mtu->dev, sizeof(*regset), GFP_KERNEL);
++	mregs = devm_kzalloc(mtu->dev, sizeof(*mregs), GFP_KERNEL);
+ 	if (!mregs)
+ 		return;
+ 
+-- 
+2.29.2
