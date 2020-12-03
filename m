@@ -1,78 +1,89 @@
-From: Thomas Lamprecht <t.lamprecht@proxmox.com>
-Date: Thu, 03 Dec 2020 10:10:09 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 12:03:08 +0000
 Subject: Re: [PATCH] scsi: be2iscsi: Fix a theoretical leak in beiscsi_create_eqs()
-Message-Id: <54f36c62-10bf-8736-39ce-27ece097d9de@proxmox.com>
+Message-Id: <20201203120308.GM2789@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200928091300.GD377727@mwanda>
-In-Reply-To: <20200928091300.GD377727@mwanda>
+ <54f36c62-10bf-8736-39ce-27ece097d9de@proxmox.com>
+In-Reply-To: <54f36c62-10bf-8736-39ce-27ece097d9de@proxmox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
+To: Thomas Lamprecht <t.lamprecht@proxmox.com>
 Cc: James.Bottomley@suse.de, jayamohank@HDRedirect-LB5-1afb6e2973825a56.elb.us-east-1.amazonaws.com, jejb@linux.ibm.com, jitendra.bhivare@broadcom.com, kernel-janitors@vger.kernel.org, ketan.mukadam@broadcom.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, martin.petersen@oracle.com, subbu.seetharaman@broadcom.com, stable@vger.kernel.org
 
-> The be_fill_queue() function can only fail when "eq_vaddress" is NULL
-> and since it's non-NULL here that means the function call can't fail.
-> But imagine if it could, then in that situation we would want to store
-> the "paddr" so that dma memory can be released.
+On Thu, Dec 03, 2020 at 11:10:09AM +0100, Thomas Lamprecht wrote:
+> > The be_fill_queue() function can only fail when "eq_vaddress" is NULL
+> > and since it's non-NULL here that means the function call can't fail.
+> > But imagine if it could, then in that situation we would want to store
+> > the "paddr" so that dma memory can be released.
+> > 
+> > Fixes: bfead3b2cb46 ("[SCSI] be2iscsi: Adding msix and mcc_rings V3")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Fixes: bfead3b2cb46 ("[SCSI] be2iscsi: Adding msix and mcc_rings V3")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This came in here through the stable 5.4 tree with v5.4.74, and we have some
+> users of ours report that it results in kernel oopses and delayed boot on their
+> HP DL 380 Gen 9 (and other Gen 9, FWICT) servers:
+> 
 
-This came in here through the stable 5.4 tree with v5.4.74, and we have some
-users of ours report that it results in kernel oopses and delayed boot on their
-HP DL 380 Gen 9 (and other Gen 9, FWICT) servers:
+Thanks for the report Thomas.  I see the bug in my patch:
 
-> systemd-udevd   D    0   501      1 0x80000000
-> Call Trace:
->  __schedule+0x2e6/0x6f0
->  schedule+0x33/0xa0
->  schedule_timeout+0x205/0x330
->  wait_for_completion+0xb7/0x140
->  ? wake_up_q+0x80/0x80
->  __flush_work+0x131/0x1e0
->  ? worker_detach_from_pool+0xb0/0xb0
->  work_on_cpu+0x6d/0x90
->  ? workqueue_congested+0x80/0x80
->  ? pci_device_shutdown+0x60/0x60
->  pci_device_probe+0x190/0x1b0
->  really_probe+0x1c8/0x3e0
->  driver_probe_device+0xbb/0x100
->  device_driver_attach+0x58/0x60
->  __driver_attach+0x8f/0x150
->  ? device_driver_attach+0x60/0x60
->  bus_for_each_dev+0x79/0xc0
->  ? kmem_cache_alloc_trace+0x1a0/0x230
->  driver_attach+0x1e/0x20
->  bus_add_driver+0x154/0x1f0
->  ? 0xffffffffc0453000
->  driver_register+0x70/0xc0
->  ? 0xffffffffc0453000
->  __pci_register_driver+0x57/0x60
->  beiscsi_module_init+0x62/0x1000 [be2iscsi]
->  do_one_initcall+0x4a/0x1fa
->  ? _cond_resched+0x19/0x30
->  ? kmem_cache_alloc_trace+0x1a0/0x230
->  do_init_module+0x60/0x230
->  load_module+0x231b/0x2590
->  __do_sys_finit_module+0xbd/0x120
->  ? __do_sys_finit_module+0xbd/0x120
->  __x64_sys_finit_module+0x1a/0x20
->  do_syscall_64+0x57/0x190
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x7f00aca06f59
-> Code: Bad RIP value.
-> RSP: 002b:00007ffc14380858 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> RAX: ffffffffffffffda RBX: 0000558c726262e0 RCX: 00007f00aca06f59
-> RDX: 0000000000000000 RSI: 00007f00ac90bcad RDI: 000000000000000e
-> RBP: 00007f00ac90bcad R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000000000000e R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000558c725f6030 R14: 0000000000020000 R15: 0000558c726262e0
+drivers/scsi/be2iscsi/be_main.c
+  3008                  eq_for_mcc = 1;
+  3009          else
+  3010                  eq_for_mcc = 0;
+  3011          for (i = 0; i < (phba->num_cpus + eq_for_mcc); i++) {
+  3012                  eq = &phwi_context->be_eq[i].q;
+  3013                  mem = &eq->dma_mem;
+  3014                  phwi_context->be_eq[i].phba = phba;
+  3015                  eq_vaddress = dma_alloc_coherent(&phba->pcidev->dev,
+  3016                                                     num_eq_pages * PAGE_SIZE,
+  3017                                                     &paddr, GFP_KERNEL);
+  3018                  if (!eq_vaddress) {
+  3019                          ret = -ENOMEM;
+  3020                          goto create_eq_error;
+  3021                  }
+  3022  
+  3023                  mem->dma = paddr;
+                        ^^^^^^^^^^^^^^^^
+I moved this assignment ahead of the call to be_fill_queue().
 
-Blacklisting the be2iscsi module or reverting this commit helps, I did not get
-around to look further into the mechanics at play and figured you would be
-faster at that, or that this info at least helps someone else when searching
-for the same symptoms.
+  3024                  mem->va = eq_vaddress;
+  3025                  ret = be_fill_queue(eq, phba->params.num_eq_entries,
+  3026                                      sizeof(struct be_eq_entry), eq_vaddress);
+  3027                  if (ret) {
+  3028                          beiscsi_log(phba, KERN_ERR, BEISCSI_LOG_INIT,
+  3029                                      "BM_%d : be_fill_queue Failed for EQ\n");
+  3030                          goto create_eq_error;
+  3031                  }
 
-cheers,
-Thomas
+
+drivers/scsi/be2iscsi/be_main.c
+  2978  static int be_fill_queue(struct be_queue_info *q,
+  2979                  u16 len, u16 entry_size, void *vaddress)
+  2980  {
+  2981          struct be_dma_mem *mem = &q->dma_mem;
+  2982  
+  2983          memset(q, 0, sizeof(*q));
+                ^^^^^^^^^^^^^^^^^^^^^^^
+But the first thing that it does is it overwrites it with zeros.
+
+  2984          q->len = len;
+  2985          q->entry_size = entry_size;
+  2986          mem->size = len * entry_size;
+  2987          mem->va = vaddress;
+
+It also overwrites the "mem->va = eq_vaddress;" assignment as well, but
+but it sets that back again here...
+
+  2988          if (!mem->va)
+  2989                  return -ENOMEM;
+  2990          memset(mem->va, 0, mem->size);
+  2991          return 0;
+  2992  }
+
+I will just revert my patch.  This code is messy but it works so far as
+I can see.
+
+regards,
+dan carpenter
