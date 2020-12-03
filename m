@@ -1,71 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Dec 2020 08:40:48 +0000
-Subject: [PATCH] gma500: clean up error handling in init
-Message-Id: <X8ikkAqZfnDO2lu6@mwanda>
+From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date: Thu, 03 Dec 2020 09:45:46 +0000
+Subject: Re: [PATCH] gma500: clean up error handling in init
+Message-Id: <CAMeQTsZYx7KB2mUfv7uwOJ+FJ5-UUj-YH7m7y0bTB-LsPm4xvw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X8ikkAqZfnDO2lu6@mwanda>
+In-Reply-To: <X8ikkAqZfnDO2lu6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
 
-The main problem with this error handling was that it didn't clean up if
-i2c_add_numbered_adapter() failed.  This code is pretty old, and doesn't
-match with today's checkpatch.pl standards so I took the opportunity to
-tidy it up a bit.  I changed the NULL comparison, and removed the
-WARNING message if kzalloc() fails and updated the label names.
+On Thu, Dec 3, 2020 at 9:41 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The main problem with this error handling was that it didn't clean up if
+> i2c_add_numbered_adapter() failed.  This code is pretty old, and doesn't
+> match with today's checkpatch.pl standards so I took the opportunity to
+> tidy it up a bit.  I changed the NULL comparison, and removed the
+> WARNING message if kzalloc() fails and updated the label names.
 
-Fixes: 1b082ccf5901 ("gma500: Add Oaktrail support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Thanks! Looks good.
 
-diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
-index e28107061148..fc9a34ed58bd 100644
---- a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
-+++ b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
-@@ -279,11 +279,8 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
- 	hdmi_dev = pci_get_drvdata(dev);
- 
- 	i2c_dev = kzalloc(sizeof(struct hdmi_i2c_dev), GFP_KERNEL);
--	if (i2c_dev = NULL) {
--		DRM_ERROR("Can't allocate interface\n");
--		ret = -ENOMEM;
--		goto exit;
--	}
-+	if (!i2c_dev)
-+		return -ENOMEM;
- 
- 	i2c_dev->adap = &oaktrail_hdmi_i2c_adapter;
- 	i2c_dev->status = I2C_STAT_INIT;
-@@ -300,16 +297,23 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
- 			  oaktrail_hdmi_i2c_adapter.name, hdmi_dev);
- 	if (ret) {
- 		DRM_ERROR("Failed to request IRQ for I2C controller\n");
--		goto err;
-+		goto free_dev;
- 	}
- 
- 	/* Adapter registration */
- 	ret = i2c_add_numbered_adapter(&oaktrail_hdmi_i2c_adapter);
--	return ret;
-+	if (ret) {
-+		DRM_ERROR("Failed to add I2C adapter\n");
-+		goto free_irq;
-+	}
- 
--err:
-+	return 0;
-+
-+free_irq:
-+	free_irq(dev->irq, hdmi_dev);
-+free_dev:
- 	kfree(i2c_dev);
--exit:
-+
- 	return ret;
- }
- 
--- 
-2.29.2
+I'll apply this to drm-misc-next
+
+-Patrik
+
+>
+> Fixes: 1b082ccf5901 ("gma500: Add Oaktrail support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
+> index e28107061148..fc9a34ed58bd 100644
+> --- a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
+> +++ b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
+> @@ -279,11 +279,8 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
+>         hdmi_dev = pci_get_drvdata(dev);
+>
+>         i2c_dev = kzalloc(sizeof(struct hdmi_i2c_dev), GFP_KERNEL);
+> -       if (i2c_dev = NULL) {
+> -               DRM_ERROR("Can't allocate interface\n");
+> -               ret = -ENOMEM;
+> -               goto exit;
+> -       }
+> +       if (!i2c_dev)
+> +               return -ENOMEM;
+>
+>         i2c_dev->adap = &oaktrail_hdmi_i2c_adapter;
+>         i2c_dev->status = I2C_STAT_INIT;
+> @@ -300,16 +297,23 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
+>                           oaktrail_hdmi_i2c_adapter.name, hdmi_dev);
+>         if (ret) {
+>                 DRM_ERROR("Failed to request IRQ for I2C controller\n");
+> -               goto err;
+> +               goto free_dev;
+>         }
+>
+>         /* Adapter registration */
+>         ret = i2c_add_numbered_adapter(&oaktrail_hdmi_i2c_adapter);
+> -       return ret;
+> +       if (ret) {
+> +               DRM_ERROR("Failed to add I2C adapter\n");
+> +               goto free_irq;
+> +       }
+>
+> -err:
+> +       return 0;
+> +
+> +free_irq:
+> +       free_irq(dev->irq, hdmi_dev);
+> +free_dev:
+>         kfree(i2c_dev);
+> -exit:
+> +
+>         return ret;
+>  }
+>
+> --
+> 2.29.2
+>
