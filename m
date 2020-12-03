@@ -1,24 +1,71 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 10 Dec 2020 01:08:08 +0000
-Subject: Re: [PATCH] Input: fix spelling mistake "theses" -> "these" in Kconfig
-Message-Id: <X9F0+B9EwXtJBBS6@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Dec 2020 08:40:48 +0000
+Subject: [PATCH] gma500: clean up error handling in init
+Message-Id: <X8ikkAqZfnDO2lu6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204193635.1152241-1-colin.king@canonical.com>
-In-Reply-To: <20201204193635.1152241-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
 
-On Fri, Dec 04, 2020 at 07:36:35PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig help text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The main problem with this error handling was that it didn't clean up if
+i2c_add_numbered_adapter() failed.  This code is pretty old, and doesn't
+match with today's checkpatch.pl standards so I took the opportunity to
+tidy it up a bit.  I changed the NULL comparison, and removed the
+WARNING message if kzalloc() fails and updated the label names.
 
-Applied, thank you.
+Fixes: 1b082ccf5901 ("gma500: Add Oaktrail support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
+index e28107061148..fc9a34ed58bd 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
++++ b/drivers/gpu/drm/gma500/oaktrail_hdmi_i2c.c
+@@ -279,11 +279,8 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
+ 	hdmi_dev = pci_get_drvdata(dev);
+ 
+ 	i2c_dev = kzalloc(sizeof(struct hdmi_i2c_dev), GFP_KERNEL);
+-	if (i2c_dev = NULL) {
+-		DRM_ERROR("Can't allocate interface\n");
+-		ret = -ENOMEM;
+-		goto exit;
+-	}
++	if (!i2c_dev)
++		return -ENOMEM;
+ 
+ 	i2c_dev->adap = &oaktrail_hdmi_i2c_adapter;
+ 	i2c_dev->status = I2C_STAT_INIT;
+@@ -300,16 +297,23 @@ int oaktrail_hdmi_i2c_init(struct pci_dev *dev)
+ 			  oaktrail_hdmi_i2c_adapter.name, hdmi_dev);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to request IRQ for I2C controller\n");
+-		goto err;
++		goto free_dev;
+ 	}
+ 
+ 	/* Adapter registration */
+ 	ret = i2c_add_numbered_adapter(&oaktrail_hdmi_i2c_adapter);
+-	return ret;
++	if (ret) {
++		DRM_ERROR("Failed to add I2C adapter\n");
++		goto free_irq;
++	}
+ 
+-err:
++	return 0;
++
++free_irq:
++	free_irq(dev->irq, hdmi_dev);
++free_dev:
+ 	kfree(i2c_dev);
+-exit:
++
+ 	return ret;
+ }
+ 
 -- 
-Dmitry
+2.29.2
