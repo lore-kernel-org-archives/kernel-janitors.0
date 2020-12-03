@@ -1,32 +1,36 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Date: Tue, 08 Dec 2020 04:14:56 +0000
-Subject: Re: [PATCH 1/2] usb: mtu3: fix memory corruption in mtu3_debugfs_regset()
-Message-Id: <1607400896.23328.7.camel@mhfsdcap03>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 Dec 2020 17:43:16 +0000
+Subject: [PATCH][next] wilc1000: remove redundant assignment to pointer vif
+Message-Id: <20201203174316.1071446-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ikqc4Mo2/0G72j@mwanda>
-In-Reply-To: <X8ikqc4Mo2/0G72j@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDIwLTEyLTAzIGF0IDExOjQxICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGlzIGNvZGUgaXMgdXNpbmcgdGhlIHdyb25nIHNpemVvZigpIHNvIGl0IGRvZXMgbm90IGFs
-bG9jYXRlIGVub3VnaA0KPiBtZW1vcnkuICBJdCBhbGxvY2F0ZXMgMzIgYnl0ZXMgYnV0IDcyIGFy
-ZSByZXF1aXJlZC4gIFRoYXQgd2lsbCBsZWFkIHRvDQo+IG1lbW9yeSBjb3JydXB0aW9uLg0KPiAN
-Cj4gRml4ZXM6IGFlMDc4MDkyNTVkMyAoInVzYjogbXR1MzogYWRkIGRlYnVnZnMgaW50ZXJmYWNl
-IGZpbGVzIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
-cmFjbGUuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL210dTMvbXR1M19kZWJ1Z2ZzLmMgfCAy
-ICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9tdHUzL210dTNfZGVidWdmcy5jIGIvZHJpdmVy
-cy91c2IvbXR1My9tdHUzX2RlYnVnZnMuYw0KPiBpbmRleCBmZGVhZGU2MjU0YWUuLjc1MzdiZmQ2
-NTFhZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy91c2IvbXR1My9tdHUzX2RlYnVnZnMuYw0KPiAr
-KysgYi9kcml2ZXJzL3VzYi9tdHUzL210dTNfZGVidWdmcy5jDQo+IEBAIC0xMjcsNyArMTI3LDcg
-QEAgc3RhdGljIHZvaWQgbXR1M19kZWJ1Z2ZzX3JlZ3NldChzdHJ1Y3QgbXR1MyAqbXR1LCB2b2lk
-IF9faW9tZW0gKmJhc2UsDQo+ICAJc3RydWN0IGRlYnVnZnNfcmVnc2V0MzIgKnJlZ3NldDsNCj4g
-IAlzdHJ1Y3QgbXR1M19yZWdzZXQgKm1yZWdzOw0KPiAgDQo+IC0JbXJlZ3MgPSBkZXZtX2t6YWxs
-b2MobXR1LT5kZXYsIHNpemVvZigqcmVnc2V0KSwgR0ZQX0tFUk5FTCk7DQo+ICsJbXJlZ3MgPSBk
-ZXZtX2t6YWxsb2MobXR1LT5kZXYsIHNpemVvZigqbXJlZ3MpLCBHRlBfS0VSTkVMKTsNCj4gIAlp
-ZiAoIW1yZWdzKQ0KPiAgCQlyZXR1cm47DQo+ICBBY2tlZC1ieTogQ2h1bmZlbmcgWXVuIDxjaHVu
-ZmVuZy55dW5AbWVkaWF0ZWsuY29tPg0KDQpUaGFua3MNCg0KDQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The assignment to pointer vif is redundant as the assigned value
+is never read, hence it can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/microchip/wilc1000/wlan.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wireless/microchip/wilc1000/wlan.c b/drivers/net/wireless/microchip/wilc1000/wlan.c
+index 993ea7c03429..c12f27be9f79 100644
+--- a/drivers/net/wireless/microchip/wilc1000/wlan.c
++++ b/drivers/net/wireless/microchip/wilc1000/wlan.c
+@@ -685,7 +685,6 @@ int wilc_wlan_handle_txq(struct wilc *wilc, u32 *txq_count)
+ 			if (!tqe_q[ac])
+ 				continue;
+ 
+-			vif = tqe_q[ac]->vif;
+ 			ac_exist = 1;
+ 			for (k = 0; (k < num_pkts_to_add[ac]) &&
+ 			     (!max_size_over) && tqe_q[ac]; k++) {
+-- 
+2.29.2
