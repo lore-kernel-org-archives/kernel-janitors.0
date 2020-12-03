@@ -1,53 +1,39 @@
-From: Helen Koike <helen.koike@collabora.com>
-Date: Tue, 01 Dec 2020 14:39:41 +0000
-Subject: Re: [PATCH v2] media: rockchip: rkisp1: remove useless debugfs checks
-Message-Id: <17d5555c-1f95-159b-f5db-cd3db0704a6c@collabora.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 03 Dec 2020 17:51:42 +0000
+Subject: [PATCH][next] rtw88: coex: fix missing unitialization of variable 'interval'
+Message-Id: <20201203175142.1071738-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201201143058.GJ2767@kadam>
-In-Reply-To: <20201201143058.GJ2767@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, Heiko Stuebner <heiko@sntech.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Yan-Hsuan Chuang <tony0620emma@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Ping-Ke Shih <pkshih@realtek.com>, Ching-Te Ku <ku920601@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the variable 'interval' is not initialized and is only set
+to 1 when oex_stat->bt_418_hid_existi is true.  Fix this by inintializing
+variable interval to 0 (which I'm assuming is the intended default).
 
-On 12/1/20 11:30 AM, Dan Carpenter wrote:
-> The debugfs_create_dir() function never returns NULLs so this code will
-> never be executed.  It's not intended that callers will check for
-> debugfs errors in the normal case and it's not necessary in this driver,
-> so we can just delete this code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Uninitalized scalar variable")
+Fixes: 5b2e9a35e456 ("rtw88: coex: add feature to enhance HID coexistence performance")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtw88/coex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since the debugfs_create_*() functions already check the parent
-with IS_ERR(), this looks good to me.
-
-Acked-by: Helen Koike <helen.koike@collabora.com>
-
-Thanks
-Helen
-
-> ---
-> v2: Fix subject
-> 
->  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> index 9af137e4967f..68da1eed753d 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> @@ -430,10 +430,6 @@ static void rkisp1_debug_init(struct rkisp1_device *rkisp1)
->  	struct rkisp1_debug *debug = &rkisp1->debug;
->  
->  	debug->debugfs_dir = debugfs_create_dir(RKISP1_DRIVER_NAME, NULL);
-> -	if (!debug->debugfs_dir) {
-> -		dev_dbg(rkisp1->dev, "failed to create debugfs directory\n");
-> -		return;
-> -	}
->  	debugfs_create_ulong("data_loss", 0444, debug->debugfs_dir,
->  			     &debug->data_loss);
->  	debugfs_create_ulong("outform_size_err", 0444,  debug->debugfs_dir,
-> 
+diff --git a/drivers/net/wireless/realtek/rtw88/coex.c b/drivers/net/wireless/realtek/rtw88/coex.c
+index c704c6885a18..24530cafcba7 100644
+--- a/drivers/net/wireless/realtek/rtw88/coex.c
++++ b/drivers/net/wireless/realtek/rtw88/coex.c
+@@ -2051,7 +2051,7 @@ static void rtw_coex_action_bt_a2dp_hid(struct rtw_dev *rtwdev)
+ 	struct rtw_coex_dm *coex_dm = &coex->dm;
+ 	struct rtw_efuse *efuse = &rtwdev->efuse;
+ 	struct rtw_chip_info *chip = rtwdev->chip;
+-	u8 table_case, tdma_case, interval;
++	u8 table_case, tdma_case, interval = 0;
+ 	u32 slot_type = 0;
+ 	bool is_toggle_table = false;
+ 
+-- 
+2.29.2
