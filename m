@@ -1,45 +1,77 @@
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 08 Dec 2020 12:34:13 +0000
-Subject: Re: [PATCH] ceph: remove redundant assignment to variable i
-Message-Id: <58d2f1c5a9ce13f8aecda76604cca35c5165c66d.camel@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Dec 2020 14:57:23 +0000
+Subject: [bug report] regulator: da9121: Add support for device variants via devicetree
+Message-Id: <X8pOUyVj5Q8iQYJI@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204185421.1149669-1-colin.king@canonical.com>
-In-Reply-To: <20201204185421.1149669-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2020-12-04 at 18:54 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable i is being initialized with a value that is never read
-> and it is being updated later with a new value in a for-loop.  The
-> initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/ceph/mds_client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 8f1d7500a7ec..b70937caa7a7 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1243,7 +1243,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
->  {
->  	struct ceph_msg *msg;
->  	struct ceph_mds_session_head *h;
-> -	int i = -1;
-> +	int i;
->  	int extra_bytes = 0;
->  	int metadata_key_count = 0;
->  	struct ceph_options *opt = mdsc->fsc->client->options;
+Hello Adam Ward,
 
-Meh, ok. Merged into ceph-client/testing branch. It should make v5.11.
+The patch 46c413d5bb23: "regulator: da9121: Add support for device
+variants via devicetree" from Nov 30, 2020, leads to the following
+static checker warning:
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+	drivers/regulator/da9121-regulator.c:383 da9121_of_parse_cb()
+	warn: array off by one? 'da9121_matches[pdata->num_buck]'
+
+drivers/regulator/da9121-regulator.c
+   348  static int da9121_of_parse_cb(struct device_node *np,
+   349                                  const struct regulator_desc *desc,
+   350                                  struct regulator_config *config)
+   351  {
+   352          struct da9121 *chip = config->driver_data;
+   353          struct da9121_pdata *pdata;
+   354          struct gpio_desc *ena_gpiod;
+   355  
+   356          if (chip->pdata = NULL) {
+   357                  pdata = devm_kzalloc(chip->dev, sizeof(*pdata), GFP_KERNEL);
+   358                  if (!pdata)
+   359                          return -ENOMEM;
+   360          } else {
+   361                  pdata = chip->pdata;
+   362          }
+   363  
+   364          pdata->num_buck++;
+   365  
+   366          if (pdata->num_buck > variant_parameters[chip->variant_id].num_bucks) {
+                                    ^^
+Smatch is complaining that this sort of looks like it should be >instead of >.  This looks true to me as well, but I'm not positive
+enough to actually send a patch.  :P
+
+   367                  dev_err(chip->dev, "Error: excessive regulators for device\n");
+   368                  return -ENODEV;
+   369          }
+   370  
+   371          ena_gpiod = fwnode_gpiod_get_index(of_fwnode_handle(np), "enable", 0,
+   372                                                  GPIOD_OUT_HIGH |
+   373                                                  GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+   374                                                  "da9121-enable");
+   375          if (!IS_ERR(ena_gpiod))
+   376                  config->ena_gpiod = ena_gpiod;
+   377  
+   378          if (variant_parameters[chip->variant_id].num_bucks = 2) {
+   379                  uint32_t ripple_cancel;
+   380                  uint32_t ripple_reg;
+   381                  int ret;
+   382  
+   383                  if (of_property_read_u32(da9121_matches[pdata->num_buck].of_node,
+                                                                ^^^^^^^^^^^^^^^
+We know that .num_bucks is 2 here so if ->num_buck is = to that then
+this is one element beyond the end of the array.
+
+   384                                  "dlg,ripple-cancel", &ripple_cancel)) {
+   385                          if (pdata->num_buck > 1)
+   386                                  ripple_reg = DA9xxx_REG_BUCK_BUCK2_7;
+   387                          else
+   388                                  ripple_reg = DA9121_REG_BUCK_BUCK1_7;
+   389  
+   390                          ret = regmap_update_bits(chip->regmap, ripple_reg,
+   391                                  DA9xxx_MASK_BUCK_BUCKx_7_CHx_RIPPLE_CANCEL,
+   392                                  ripple_cancel);
+   393                          if (ret < 0)
+
+regards,
+dan carpenter
