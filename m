@@ -1,29 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 09 Dec 2020 07:04:20 +0000
-Subject: Re: [PATCH] ath11k: unlock on error path in ath11k_mac_op_add_interface()
-Message-Id: <20201209070420.4F4C5C433ED@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 19:18:10 +0000
+Subject: [PATCH] scsi: qla4xxx: remove redundant assignment to variable rval
+Message-Id: <20201204191810.1150995-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X85sVGVP/0XvlrEJ@mwanda>
-In-Reply-To: <X85sVGVP/0XvlrEJ@mwanda>
+References: <MW2PR07MB40429AAD3AC7C40972012788E3140@MW2PR07MB4042.namprd07.prod.outlook.com>
+In-Reply-To: <MW2PR07MB40429AAD3AC7C40972012788E3140@MW2PR07MB4042.namprd07.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ritesh Singh <ritesi@codeaurora.org>, Maharaja Kennadyrajan <mkenna@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nilesh Javali <njavali@marvell.com>, Manish Rangankar <mrangankar@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> These error paths need to drop the &ar->conf_mutex before returning.
-> 
-> Fixes: 690ace20ff79 ("ath11k: peer delete synchronization with firmware")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The variable rval is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla4xxx/ql4_nx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-59ec8e2fa5aa ath11k: unlock on error path in ath11k_mac_op_add_interface()
-
+diff --git a/drivers/scsi/qla4xxx/ql4_nx.c b/drivers/scsi/qla4xxx/ql4_nx.c
+index fd30fbd0d33c..e6e35e6958f6 100644
+--- a/drivers/scsi/qla4xxx/ql4_nx.c
++++ b/drivers/scsi/qla4xxx/ql4_nx.c
+@@ -1767,7 +1767,7 @@ qla4_82xx_start_firmware(struct scsi_qla_host *ha, uint32_t image_start)
+ 
+ int qla4_82xx_try_start_fw(struct scsi_qla_host *ha)
+ {
+-	int rval = QLA_ERROR;
++	int rval;
+ 
+ 	/*
+ 	 * FW Load priority:
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/X85sVGVP/0XvlrEJ@mwanda/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
