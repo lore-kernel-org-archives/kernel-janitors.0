@@ -1,33 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Dec 2020 08:41:35 +0000
-Subject: [PATCH 2/2] usb: mtu3: mtu3_debug: remove an unused struct member
-Message-Id: <X8ikv1QA3Do50D+R@mwanda>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Date: Fri, 04 Dec 2020 02:07:56 +0000
+Subject: Re: [PATCH 2/2] usb: mtu3: mtu3_debug: remove an unused struct member
+Message-Id: <1607047676.7284.18.camel@mhfsdcap03>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X8ikv1QA3Do50D+R@mwanda>
+In-Reply-To: <X8ikv1QA3Do50D+R@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-The "nregs" member is not used.  The code uses the "regset.nregs"
-struct member instead.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/usb/mtu3/mtu3_debug.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/usb/mtu3/mtu3_debug.h b/drivers/usb/mtu3/mtu3_debug.h
-index 3084c46017c3..9a36134b322d 100644
---- a/drivers/usb/mtu3/mtu3_debug.h
-+++ b/drivers/usb/mtu3/mtu3_debug.h
-@@ -19,7 +19,6 @@ struct ssusb_mtk;
- struct mtu3_regset {
- 	char name[MTU3_DEBUGFS_NAME_LEN];
- 	struct debugfs_regset32 regset;
--	size_t nregs;
- };
- 
- struct mtu3_file_map {
--- 
-2.29.2
+T24gVGh1LCAyMDIwLTEyLTAzIGF0IDExOjQxICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGUgIm5yZWdzIiBtZW1iZXIgaXMgbm90IHVzZWQuICBUaGUgY29kZSB1c2VzIHRoZSAicmVn
+c2V0Lm5yZWdzIg0KPiBzdHJ1Y3QgbWVtYmVyIGluc3RlYWQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
+OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IC0tLQ0KPiAgZHJp
+dmVycy91c2IvbXR1My9tdHUzX2RlYnVnLmggfCAxIC0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGRl
+bGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvbXR1My9tdHUzX2RlYnVn
+LmggYi9kcml2ZXJzL3VzYi9tdHUzL210dTNfZGVidWcuaA0KPiBpbmRleCAzMDg0YzQ2MDE3YzMu
+LjlhMzYxMzRiMzIyZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy91c2IvbXR1My9tdHUzX2RlYnVn
+LmgNCj4gKysrIGIvZHJpdmVycy91c2IvbXR1My9tdHUzX2RlYnVnLmgNCj4gQEAgLTE5LDcgKzE5
+LDYgQEAgc3RydWN0IHNzdXNiX210azsNCj4gIHN0cnVjdCBtdHUzX3JlZ3NldCB7DQo+ICAJY2hh
+ciBuYW1lW01UVTNfREVCVUdGU19OQU1FX0xFTl07DQo+ICAJc3RydWN0IGRlYnVnZnNfcmVnc2V0
+MzIgcmVnc2V0Ow0KPiAtCXNpemVfdCBucmVnczsNCj4gIH07DQpBY2tlZC1ieTogQ2h1bmZlbmcg
+WXVuIDxjaHVuZmVuZy55dW5AbWVkaWF0ZWsuY29tPg0KDQpUaGFua3MgYSBsb3QNCg0KPiAgDQo+
+ICBzdHJ1Y3QgbXR1M19maWxlX21hcCB7DQoNCg=
