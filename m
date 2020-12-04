@@ -1,39 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 03 Dec 2020 17:51:42 +0000
-Subject: [PATCH][next] rtw88: coex: fix missing unitialization of variable 'interval'
-Message-Id: <20201203175142.1071738-1-colin.king@canonical.com>
+From: Pkshih <pkshih@realtek.com>
+Date: Fri, 04 Dec 2020 02:57:36 +0000
+Subject: Re: [PATCH][next] rtw88: coex: fix missing unitialization of variable 'interval'
+Message-Id: <1607050654.5824.0.camel@realtek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201203175142.1071738-1-colin.king@canonical.com>
+In-Reply-To: <20201203175142.1071738-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yan-Hsuan Chuang <tony0620emma@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Ping-Ke Shih <pkshih@realtek.com>, Ching-Te Ku <ku920601@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "tony0620emma@gmail.com" <tony0620emma@gmail.com>, "colin.king@canonical.com" <colin.king@canonical.com>, DeanKu <ku920601@realtek.com>, "kuba@kernel.org" <kuba@kernel.org>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the variable 'interval' is not initialized and is only set
-to 1 when oex_stat->bt_418_hid_existi is true.  Fix this by inintializing
-variable interval to 0 (which I'm assuming is the intended default).
-
-Addresses-Coverity: ("Uninitalized scalar variable")
-Fixes: 5b2e9a35e456 ("rtw88: coex: add feature to enhance HID coexistence performance")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtw88/coex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw88/coex.c b/drivers/net/wireless/realtek/rtw88/coex.c
-index c704c6885a18..24530cafcba7 100644
---- a/drivers/net/wireless/realtek/rtw88/coex.c
-+++ b/drivers/net/wireless/realtek/rtw88/coex.c
-@@ -2051,7 +2051,7 @@ static void rtw_coex_action_bt_a2dp_hid(struct rtw_dev *rtwdev)
- 	struct rtw_coex_dm *coex_dm = &coex->dm;
- 	struct rtw_efuse *efuse = &rtwdev->efuse;
- 	struct rtw_chip_info *chip = rtwdev->chip;
--	u8 table_case, tdma_case, interval;
-+	u8 table_case, tdma_case, interval = 0;
- 	u32 slot_type = 0;
- 	bool is_toggle_table = false;
- 
--- 
-2.29.2
+T24gVGh1LCAyMDIwLTEyLTAzIGF0IDE3OjUxICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gQ3Vy
+cmVudGx5IHRoZSB2YXJpYWJsZSAnaW50ZXJ2YWwnIGlzIG5vdCBpbml0aWFsaXplZCBhbmQgaXMg
+b25seSBzZXQNCj4gdG8gMSB3aGVuIG9leF9zdGF0LT5idF80MThfaGlkX2V4aXN0aSBpcyB0cnVl
+LsKgwqBGaXggdGhpcyBieSBpbmludGlhbGl6aW5nDQo+IHZhcmlhYmxlIGludGVydmFsIHRvIDAg
+KHdoaWNoIEknbSBhc3N1bWluZyBpcyB0aGUgaW50ZW5kZWQgZGVmYXVsdCkuDQo+IA0KPiBBZGRy
+ZXNzZXMtQ292ZXJpdHk6ICgiVW5pbml0YWxpemVkIHNjYWxhciB2YXJpYWJsZSIpDQo+IEZpeGVz
+OiA1YjJlOWEzNWU0NTYgKCJydHc4ODogY29leDogYWRkIGZlYXR1cmUgdG8gZW5oYW5jZSBISUQg
+Y29leGlzdGVuY2UNCj4gcGVyZm9ybWFuY2UiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4g
+S2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpUaGFua3MgZm9yIHlvdXIgZml4Lg0K
+DQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+DQoNCj4gLS0tDQo+
+IMKgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9jb2V4LmMgfCAyICstDQo+IMKg
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9jb2V4LmMNCj4gYi9k
+cml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg4L2NvZXguYw0KPiBpbmRleCBjNzA0YzY4
+ODVhMTguLjI0NTMwY2FmY2JhNyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
+cmVhbHRlay9ydHc4OC9jb2V4LmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRl
+ay9ydHc4OC9jb2V4LmMNCj4gQEAgLTIwNTEsNyArMjA1MSw3IEBAIHN0YXRpYyB2b2lkIHJ0d19j
+b2V4X2FjdGlvbl9idF9hMmRwX2hpZChzdHJ1Y3QgcnR3X2Rldg0KPiAqcnR3ZGV2KQ0KPiDCoAlz
+dHJ1Y3QgcnR3X2NvZXhfZG0gKmNvZXhfZG0gPSAmY29leC0+ZG07DQo+IMKgCXN0cnVjdCBydHdf
+ZWZ1c2UgKmVmdXNlID0gJnJ0d2Rldi0+ZWZ1c2U7DQo+IMKgCXN0cnVjdCBydHdfY2hpcF9pbmZv
+ICpjaGlwID0gcnR3ZGV2LT5jaGlwOw0KPiAtCXU4IHRhYmxlX2Nhc2UsIHRkbWFfY2FzZSwgaW50
+ZXJ2YWw7DQo+ICsJdTggdGFibGVfY2FzZSwgdGRtYV9jYXNlLCBpbnRlcnZhbCA9IDA7DQo+IMKg
+CXUzMiBzbG90X3R5cGUgPSAwOw0KPiDCoAlib29sIGlzX3RvZ2dsZV90YWJsZSA9IGZhbHNlOw0K
+PiDCoA0KPiAtLcKgDQo+IDIuMjkuMg0KPiANCj4gDQo+IC0tLS0tLVBsZWFzZSBjb25zaWRlciB0
+aGUgZW52aXJvbm1lbnQgYmVmb3JlIHByaW50aW5nIHRoaXMgZS1tYWlsLg0KDQoNCg=
