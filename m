@@ -1,49 +1,35 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 16 Dec 2020 11:55:19 +0000
-Subject: NAK: [PATCH] wilc1000: fix spelling mistake in Kconfig "devision" -> "division"
-Message-Id: <3ae68497-ddee-c494-cb4a-66dda7818806@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 19:34:11 +0000
+Subject: [PATCH] remoteproc: fix spelling mistake "Peripherial" -> "Peripherial" in Kconfig
+Message-Id: <20201204193411.1152006-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201216115425.12745-1-colin.king@canonical.com>
-In-Reply-To: <20201216115425.12745-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, Kalle Valo <kvalo@codeaurora.org>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16/12/2020 11:54, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig help text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/ni/Kconfig                 | 2 +-
->  drivers/net/wireless/microchip/wilc1000/Kconfig | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
-> index 01229190132d..dcfbfa516e67 100644
-> --- a/drivers/net/ethernet/ni/Kconfig
-> +++ b/drivers/net/ethernet/ni/Kconfig
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  #
-> -# National Instuments network device configuration
-> +# National Instruments network device configuration
->  #
->  
->  config NET_VENDOR_NI
-> diff --git a/drivers/net/wireless/microchip/wilc1000/Kconfig b/drivers/net/wireless/microchip/wilc1000/Kconfig
-> index 80c92e8bf8a5..7f15e42602dd 100644
-> --- a/drivers/net/wireless/microchip/wilc1000/Kconfig
-> +++ b/drivers/net/wireless/microchip/wilc1000/Kconfig
-> @@ -44,4 +44,4 @@ config WILC1000_HW_OOB_INTR
->  	  chipset. This OOB interrupt is intended to provide a faster interrupt
->  	  mechanism for SDIO host controllers that don't support SDIO interrupt.
->  	  Select this option If the SDIO host controller in your platform
-> -	  doesn't support SDIO time devision interrupt.
-> +	  doesn't support SDIO time division interrupt.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Messed this up. V2 coming soon.
+There is a spelling mistake in the Kconfig help text. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/remoteproc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index d99548fb5dde..d45be05640ea 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -183,7 +183,7 @@ config QCOM_Q6V5_PAS
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+-	  Say y here to support the TrustZone based Peripherial Image Loader
++	  Say y here to support the TrustZone based Peripheral Image Loader
+ 	  for the Qualcomm Hexagon v5 based remote processors. This is commonly
+ 	  used to control subsystems such as ADSP, Compute and Sensor.
+ 
+-- 
+2.29.2
