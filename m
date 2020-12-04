@@ -1,44 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Dec 2020 18:17:41 +0000
-Subject: Re: [PATCH] ASoC: Intel: fix error code cnl_set_dsp_D0()
-Message-Id: <160796986130.45789.8331512610981299314.b4-ty@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 18:54:21 +0000
+Subject: [PATCH] ceph: remove redundant assignment to variable i
+Message-Id: <20201204185421.1149669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9NEvCzuN+IObnTN@mwanda>
-In-Reply-To: <X9NEvCzuN+IObnTN@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 11 Dec 2020 13:06:52 +0300, Dan Carpenter wrote:
-> Return -ETIMEDOUT if the dsp boot times out instead of returning
-> success.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+The variable i is being initialized with a value that is never read
+and it is being updated later with a new value in a for-loop.  The
+initialization is redundant and can be removed.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ceph/mds_client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: Intel: fix error code cnl_set_dsp_D0()
-      commit: f373a811fd9a69fc8bafb9bcb41d2cfa36c62665
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 8f1d7500a7ec..b70937caa7a7 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1243,7 +1243,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+ {
+ 	struct ceph_msg *msg;
+ 	struct ceph_mds_session_head *h;
+-	int i = -1;
++	int i;
+ 	int extra_bytes = 0;
+ 	int metadata_key_count = 0;
+ 	struct ceph_options *opt = mdsc->fsc->client->options;
+-- 
+2.29.2
