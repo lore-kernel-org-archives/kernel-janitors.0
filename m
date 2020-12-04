@@ -1,34 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 07 Dec 2020 16:35:02 +0000
-Subject: Re: [PATCH][next] rtw88: coex: fix missing unitialization of variable 'interval'
-Message-Id: <20201207163502.ABA94C43461@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 17:38:33 +0000
+Subject: [PATCH][next] media: rcar-vin: fix return, use ret instead of zero
+Message-Id: <20201204173833.1146570-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201203175142.1071738-1-colin.king@canonical.com>
-In-Reply-To: <20201203175142.1071738-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Yan-Hsuan Chuang <tony0620emma@gmail.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Ping-Ke Shih <pkshih@realtek.com>, Ching-Te Ku <ku920601@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the variable 'interval' is not initialized and is only set
-> to 1 when oex_stat->bt_418_hid_existi is true.  Fix this by inintializing
-> variable interval to 0 (which I'm assuming is the intended default).
-> 
-> Addresses-Coverity: ("Uninitalized scalar variable")
-> Fixes: 5b2e9a35e456 ("rtw88: coex: add feature to enhance HID coexistence performance")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Currently the return error code is in ret is being assigned but not
+used. It and should be returned by the return statement and currently
+just 0 is being returned. Fix this.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Addresses-Coverity: ("Unused value")
+Fixes: b9ad52aafe38 ("media: rcar-vin: Rework parallel firmware parsing")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-88c15a6fbd94 rtw88: coex: fix missing unitialization of variable 'interval'
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 98bff765b02e..e48d666f2c63 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -654,7 +654,7 @@ static int rvin_parallel_parse_of(struct rvin_dev *vin)
+ out:
+ 	fwnode_handle_put(fwnode);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int rvin_parallel_init(struct rvin_dev *vin)
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20201203175142.1071738-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
