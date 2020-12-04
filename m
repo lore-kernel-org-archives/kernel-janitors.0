@@ -1,35 +1,38 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Dec 2020 11:40:51 +0000
-Subject: [PATCH] tracing: fix spelling mistake in Kconfig "infinit" -> "infinite"
-Message-Id: <20201216114051.12056-1-colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 17:56:00 +0000
+Subject: [PATCH] file: remove redundant assignment to variable err
+Message-Id: <20201204175600.1147876-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+The variable err is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/Kconfig | 2 +-
+ fs/file.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index d5a19413d4f8..2c22444d5b9b 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -545,7 +545,7 @@ config KPROBE_EVENTS_ON_NOTRACE
- 	  using kprobe events.
+diff --git a/fs/file.c b/fs/file.c
+index 412033d8cfdf..5d1d1b2a5c97 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1086,7 +1086,7 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
  
- 	  If kprobes can use ftrace instead of breakpoint, ftrace related
--	  functions are protected from kprobe-events to prevent an infinit
-+	  functions are protected from kprobe-events to prevent an infinite
- 	  recursion or any unexpected execution path which leads to a kernel
- 	  crash.
+ static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
+ {
+-	int err = -EBADF;
++	int err;
+ 	struct file *file;
+ 	struct files_struct *files = current->files;
  
 -- 
 2.29.2
