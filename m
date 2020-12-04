@@ -1,34 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Dec 2020 10:13:21 +0000
-Subject: [PATCH] ASoC: fsl: imx-hdmi: Fix an uninitialized return in probe
-Message-Id: <X9NGQaF4pmK8oUAF@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 04 Dec 2020 19:22:50 +0000
+Subject: [PATCH] firmware: fix a spelling mistake "managament" -> "management" in Kconfig
+Message-Id: <20201204192250.1151316-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, Xiubo Li <Xiubo.Lee@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The "ret" variable should be set to a negative error code but
-currently it returns uninitialized stack data.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 6a5f850aa83a ("ASoC: fsl: Add imx-hdmi machine driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a spelling mistake in the Kconfig help text. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/fsl/imx-hdmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/imx-hdmi.c b/sound/soc/fsl/imx-hdmi.c
-index 2c2a76a71940..ede4a9ad1054 100644
---- a/sound/soc/fsl/imx-hdmi.c
-+++ b/sound/soc/fsl/imx-hdmi.c
-@@ -164,6 +164,7 @@ static int imx_hdmi_probe(struct platform_device *pdev)
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 3315e3c21586..3f14dffb9669 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -51,7 +51,7 @@ config ARM_SCPI_PROTOCOL
+ 	  provides a mechanism for inter-processor communication between SCP
+ 	  and AP.
  
- 	if ((hdmi_out && hdmi_in) || (!hdmi_out && !hdmi_in)) {
- 		dev_err(&pdev->dev, "Invalid HDMI DAI link\n");
-+		ret = -EINVAL;
- 		goto fail;
- 	}
- 
+-	  SCP controls most of the power managament on the Application
++	  SCP controls most of the power management on the Application
+ 	  Processors. It offers control and management of: the core/cluster
+ 	  power states, various power domain DVFS including the core/cluster,
+ 	  certain system clocks configuration, thermal sensors and many
 -- 
 2.29.2
