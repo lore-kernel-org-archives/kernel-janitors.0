@@ -1,36 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Dec 2020 11:58:08 +0000
-Subject: [PATCH][V2] wilc1000: fix spelling mistake in Kconfig "devision" -> "division"
-Message-Id: <20201216115808.12987-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Dec 2020 12:13:04 +0000
+Subject: [PATCH 1/2] interconnect: imx: Add a missing of_node_put after of_device_is_available
+Message-Id: <20201206121304.29381-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: georgi.djakov@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, aisheng.dong@nxp.com, weiyongjun1@huawei.com, krzk@kernel.org, leonard.crestez@nxp.com, liushixin2@huawei.com, abailon@baylibre.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add an 'of_node_put()' call when a tested device node is not available.
 
-There is a spelling mistake in the Kconfig help text. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+ drivers/interconnect/imx/imx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-V2: remove another fix from the patch
-
----
- drivers/net/wireless/microchip/wilc1000/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/microchip/wilc1000/Kconfig b/drivers/net/wireless/microchip/wilc1000/Kconfig
-index 80c92e8bf8a5..7f15e42602dd 100644
---- a/drivers/net/wireless/microchip/wilc1000/Kconfig
-+++ b/drivers/net/wireless/microchip/wilc1000/Kconfig
-@@ -44,4 +44,4 @@ config WILC1000_HW_OOB_INTR
- 	  chipset. This OOB interrupt is intended to provide a faster interrupt
- 	  mechanism for SDIO host controllers that don't support SDIO interrupt.
- 	  Select this option If the SDIO host controller in your platform
--	  doesn't support SDIO time devision interrupt.
-+	  doesn't support SDIO time division interrupt.
+diff --git a/drivers/interconnect/imx/imx.c b/drivers/interconnect/imx/imx.c
+index 41dba7090c2a..e398ebf1dbba 100644
+--- a/drivers/interconnect/imx/imx.c
++++ b/drivers/interconnect/imx/imx.c
+@@ -99,6 +99,7 @@ static int imx_icc_node_init_qos(struct icc_provider *provider,
+ 		if (!dn || !of_device_is_available(dn)) {
+ 			dev_warn(dev, "Missing property %s, skip scaling %s\n",
+ 				 adj->phandle_name, node->name);
++			of_node_put(dn);
+ 			return 0;
+ 		}
+ 
 -- 
-2.29.2
+2.27.0
