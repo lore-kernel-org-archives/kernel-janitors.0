@@ -1,115 +1,64 @@
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 18 Dec 2020 02:38:58 +0000
-Subject: Re: [PATCH 3/3] cifs: Re-indent cifs_swn_reconnect()
-Message-Id: <CAH2r5mvvevajfzFrj0Q2GGDYV1en8aupf8RM_23hA1qa23RLbg@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 07 Dec 2020 12:37:20 +0000
+Subject: [PATCH] bpf: propagate __user annotations properly
+Message-Id: <20201207123720.19111-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9s6nGDLt4xreaYN@mwanda> <X9s7By4IDIcG4D+w@mwanda>
-In-Reply-To: <X9s7By4IDIcG4D+w@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, Samuel Cabrero <scabrero@suse.de>, CIFS <linux-cifs@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-tentatively merged these three into cifs-2.6.git for-next pending testing
+__htab_map_lookup_and_delete_batch() stores a user pointer in the local
+variable ubatch and uses that in copy_{from,to}_user(), but ubatch misses a
+__user annotation.
 
-On Thu, Dec 17, 2020 at 5:04 AM Dan Carpenter via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> This code is slightly nicer if we flip the cifs_sockaddr_equal()
-> around and pull all the code in one tab.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/cifs/cifs_swn.c | 64 ++++++++++++++++++++++++----------------------
->  1 file changed, 33 insertions(+), 31 deletions(-)
->
-> diff --git a/fs/cifs/cifs_swn.c b/fs/cifs/cifs_swn.c
-> index 91163d3cf8b7..d35f599aa00e 100644
-> --- a/fs/cifs/cifs_swn.c
-> +++ b/fs/cifs/cifs_swn.c
-> @@ -484,41 +484,43 @@ static int cifs_swn_reconnect(struct cifs_tcon *tcon, struct sockaddr_storage *a
->
->         /* Store the reconnect address */
->         mutex_lock(&tcon->ses->server->srv_mutex);
-> -       if (!cifs_sockaddr_equal(&tcon->ses->server->dstaddr, addr)) {
-> -               ret = cifs_swn_store_swn_addr(addr, &tcon->ses->server->dstaddr,
-> -                               &tcon->ses->server->swn_dstaddr);
-> -               if (ret < 0) {
-> -                       cifs_dbg(VFS, "%s: failed to store address: %d\n", __func__, ret);
-> -                       goto unlock;
-> -               }
-> -               tcon->ses->server->use_swn_dstaddr = true;
-> +       if (cifs_sockaddr_equal(&tcon->ses->server->dstaddr, addr))
-> +               goto unlock;
->
-> -               /*
-> -                * Unregister to stop receiving notifications for the old IP address.
-> -                */
-> -               ret = cifs_swn_unregister(tcon);
-> -               if (ret < 0) {
-> -                       cifs_dbg(VFS, "%s: Failed to unregister for witness notifications: %d\n",
-> -                                       __func__, ret);
-> -                       goto unlock;
-> -               }
-> +       ret = cifs_swn_store_swn_addr(addr, &tcon->ses->server->dstaddr,
-> +                                     &tcon->ses->server->swn_dstaddr);
-> +       if (ret < 0) {
-> +               cifs_dbg(VFS, "%s: failed to store address: %d\n", __func__, ret);
-> +               goto unlock;
-> +       }
-> +       tcon->ses->server->use_swn_dstaddr = true;
->
-> -               /*
-> -                * And register to receive notifications for the new IP address now that we have
-> -                * stored the new address.
-> -                */
-> -               ret = cifs_swn_register(tcon);
-> -               if (ret < 0) {
-> -                       cifs_dbg(VFS, "%s: Failed to register for witness notifications: %d\n",
-> -                                       __func__, ret);
-> -                       goto unlock;
-> -               }
-> +       /*
-> +        * Unregister to stop receiving notifications for the old IP address.
-> +        */
-> +       ret = cifs_swn_unregister(tcon);
-> +       if (ret < 0) {
-> +               cifs_dbg(VFS, "%s: Failed to unregister for witness notifications: %d\n",
-> +                        __func__, ret);
-> +               goto unlock;
-> +       }
->
-> -               spin_lock(&GlobalMid_Lock);
-> -               if (tcon->ses->server->tcpStatus != CifsExiting)
-> -                       tcon->ses->server->tcpStatus = CifsNeedReconnect;
-> -               spin_unlock(&GlobalMid_Lock);
-> +       /*
-> +        * And register to receive notifications for the new IP address now that we have
-> +        * stored the new address.
-> +        */
-> +       ret = cifs_swn_register(tcon);
-> +       if (ret < 0) {
-> +               cifs_dbg(VFS, "%s: Failed to register for witness notifications: %d\n",
-> +                        __func__, ret);
-> +               goto unlock;
->         }
-> +
-> +       spin_lock(&GlobalMid_Lock);
-> +       if (tcon->ses->server->tcpStatus != CifsExiting)
-> +               tcon->ses->server->tcpStatus = CifsNeedReconnect;
-> +       spin_unlock(&GlobalMid_Lock);
-> +
->  unlock:
->         mutex_unlock(&tcon->ses->server->srv_mutex);
->
-> --
-> 2.29.2
->
->
+So, sparse warns in the various assignments and uses of ubatch:
 
+  kernel/bpf/hashtab.c:1415:24: warning: incorrect type in initializer
+    (different address spaces)
+  kernel/bpf/hashtab.c:1415:24:    expected void *ubatch
+  kernel/bpf/hashtab.c:1415:24:    got void [noderef] __user *
 
+  kernel/bpf/hashtab.c:1444:46: warning: incorrect type in argument 2
+    (different address spaces)
+  kernel/bpf/hashtab.c:1444:46:    expected void const [noderef] __user *from
+  kernel/bpf/hashtab.c:1444:46:    got void *ubatch
+
+  kernel/bpf/hashtab.c:1608:16: warning: incorrect type in assignment
+    (different address spaces)
+  kernel/bpf/hashtab.c:1608:16:    expected void *ubatch
+  kernel/bpf/hashtab.c:1608:16:    got void [noderef] __user *
+
+  kernel/bpf/hashtab.c:1609:26: warning: incorrect type in argument 1
+    (different address spaces)
+  kernel/bpf/hashtab.c:1609:26:    expected void [noderef] __user *to
+  kernel/bpf/hashtab.c:1609:26:    got void *ubatch
+
+Add the __user annotation to repair this chain of propagating __user
+annotations in __htab_map_lookup_and_delete_batch().
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master (v5.10-rc7) and next-20201204
+
+BPF maintainers, please pick this minor non-urgent clean-up patch.
+
+ kernel/bpf/hashtab.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index fe7a0733a63a..76c791def033 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -1412,7 +1412,7 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
+ 	void *keys = NULL, *values = NULL, *value, *dst_key, *dst_val;
+ 	void __user *uvalues = u64_to_user_ptr(attr->batch.values);
+ 	void __user *ukeys = u64_to_user_ptr(attr->batch.keys);
+-	void *ubatch = u64_to_user_ptr(attr->batch.in_batch);
++	void __user *ubatch = u64_to_user_ptr(attr->batch.in_batch);
+ 	u32 batch, max_count, size, bucket_size;
+ 	struct htab_elem *node_to_free = NULL;
+ 	u64 elem_map_flags, map_flags;
 -- 
-Thanks,
-
-Steve
+2.17.1
