@@ -1,40 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Dec 2020 08:39:48 +0000
-Subject: [PATCH] mtd: rawnand: meson: Fix a resource leak in init
-Message-Id: <X8ikVCnUsfTpffFB@mwanda>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Mon, 07 Dec 2020 11:09:25 +0000
+Subject: Re: [PATCH] mtd: rawnand: meson: Fix a resource leak in init
+Message-Id: <20201207110926.7951-1-miquel.raynal@bootlin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <X8ikVCnUsfTpffFB@mwanda>
+References: <X8ikVCnUsfTpffFB@mwanda>
+In-Reply-To: <X8ikVCnUsfTpffFB@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liang Yang <liang.yang@amlogic.com>
-Cc: kernel-janitors@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Yixun Lan <yixun.lan@amlogic.com>, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Liang Yang <liang.yang@amlogic.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Vignesh Raghavendra <vigneshr@ti.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-amlogic@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
 
-Call clk_disable_unprepare(nfc->phase_rx) if the clk_set_rate() function
-fails to avoid a resource leak.
+On Thu, 2020-12-03 at 08:39:48 UTC, Dan Carpenter wrote:
+> Call clk_disable_unprepare(nfc->phase_rx) if the clk_set_rate() function
+> fails to avoid a resource leak.
+> 
+> Fixes: 8fae856c5350 ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 8fae856c5350 ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/mtd/nand/raw/meson_nand.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-index a76afea6ea77..817bddccb775 100644
---- a/drivers/mtd/nand/raw/meson_nand.c
-+++ b/drivers/mtd/nand/raw/meson_nand.c
-@@ -1044,9 +1044,12 @@ static int meson_nfc_clk_init(struct meson_nfc *nfc)
- 
- 	ret = clk_set_rate(nfc->device_clk, 24000000);
- 	if (ret)
--		goto err_phase_rx;
-+		goto err_disable_rx;
- 
- 	return 0;
-+
-+err_disable_rx:
-+	clk_disable_unprepare(nfc->phase_rx);
- err_phase_rx:
- 	clk_disable_unprepare(nfc->phase_tx);
- err_phase_tx:
--- 
-2.29.2
+Miquel
