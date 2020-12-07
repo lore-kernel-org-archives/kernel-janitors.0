@@ -1,22 +1,48 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 21 Dec 2020 14:38:47 +0000
-Subject: Re: [PATCH] dmaengine: milbeaut-xdmac: Fix a resource leak in the error handling path of the probe f
-Message-Id: <20201221142647.GE3323@vkoul-mobl>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Dec 2020 16:12:31 +0000
+Subject: [PATCH] net: sched: fix spelling mistake in Kconfig "trys" -> "tries"
+Message-Id: <20201207161231.173234-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201219132800.183254-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201219132800.183254-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.j.williams@intel.com, jaswinder.singh@linaro.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 19-12-20, 14:28, Christophe JAILLET wrote:
-> 'disable_xdmac()' should be called in the error handling path of the
-> probe function to undo a previous 'enable_xdmac()' call, as already
-> done in the remove function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+There is a spelling mistake in the Kconfig help text. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/nfc/Kconfig   | 2 +-
+ net/sched/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/nfc/Kconfig b/net/nfc/Kconfig
+index 9b27599870e3..96b91674dd37 100644
+--- a/net/nfc/Kconfig
++++ b/net/nfc/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
+-# NFC sybsystem configuration
++# NFC subsystem configuration
+ #
+ 
+ menuconfig NFC
+diff --git a/net/sched/Kconfig b/net/sched/Kconfig
+index a3b37d88800e..8a4542387bbd 100644
+--- a/net/sched/Kconfig
++++ b/net/sched/Kconfig
+@@ -281,7 +281,7 @@ config NET_SCH_CHOKE
+ 	help
+ 	  Say Y here if you want to use the CHOKe packet scheduler (CHOose
+ 	  and Keep for responsive flows, CHOose and Kill for unresponsive
+-	  flows). This is a variation of RED which trys to penalize flows
++	  flows). This is a variation of RED which tries to penalize flows
+ 	  that monopolize the queue.
+ 
+ 	  To compile this code as a module, choose M here: the
 -- 
-~Vinod
+2.29.2
