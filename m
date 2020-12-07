@@ -1,13 +1,15 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 07 Dec 2020 15:38:59 +0000
+Date: Mon, 07 Dec 2020 15:50:04 +0000
 Subject: [PATCH] arch: fix spelling mistakes in Kconfig
-Message-Id: <20201207153859.171441-1-colin.king@canonical.com>
+Message-Id: <20201207155004.171962-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201207153859.171441-1-colin.king@canonical.com>
+In-Reply-To: <20201207153859.171441-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
