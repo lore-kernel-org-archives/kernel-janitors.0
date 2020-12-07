@@ -1,70 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 09 Dec 2020 19:42:02 +0000
-Subject: [PATCH] mmc: owl-mmc: Fix a resource leak in an error handling path and in the remove function
-Message-Id: <20201209194202.54099-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Dec 2020 15:51:06 +0000
+Subject: [PATCH] ixp4xx: fix spelling mistake in Kconfig "Devce" -> "Device"
+Message-Id: <20201207155106.172057-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ulf.hansson@linaro.org, afaerber@suse.de, manivannan.sadhasivam@linaro.org
-Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'dma_request_chan()' calls should be balanced by a corresponding
-'dma_release_channel()' call.
+From: Colin Ian King <colin.king@canonical.com>
 
-Add the missing call both in the error handling path of the probe function
-and in the remove function.
+There is spelling mistake in the prompt text in the Kconfig. Fix it.
 
-Fixes: ff65ffe46d28 ("mmc: Add Actions Semi Owl SoCs SD/MMC driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mmc/host/owl-mmc.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/mach-ixp4xx/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/owl-mmc.c b/drivers/mmc/host/owl-mmc.c
-index 53b81582f1af..5490962dc8e5 100644
---- a/drivers/mmc/host/owl-mmc.c
-+++ b/drivers/mmc/host/owl-mmc.c
-@@ -640,7 +640,7 @@ static int owl_mmc_probe(struct platform_device *pdev)
- 	owl_host->irq = platform_get_irq(pdev, 0);
- 	if (owl_host->irq < 0) {
- 		ret = -EINVAL;
--		goto err_free_host;
-+		goto err_release_channel;
- 	}
+diff --git a/arch/arm/mach-ixp4xx/Kconfig b/arch/arm/mach-ixp4xx/Kconfig
+index f7211b57b1e7..7cf06c4fd8e7 100644
+--- a/arch/arm/mach-ixp4xx/Kconfig
++++ b/arch/arm/mach-ixp4xx/Kconfig
+@@ -7,7 +7,7 @@ comment "IXP4xx Platforms"
  
- 	ret = devm_request_irq(&pdev->dev, owl_host->irq, owl_irq_handler,
-@@ -648,19 +648,21 @@ static int owl_mmc_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq %d\n",
- 			owl_host->irq);
--		goto err_free_host;
-+		goto err_release_channel;
- 	}
- 
- 	ret = mmc_add_host(mmc);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to add host\n");
--		goto err_free_host;
-+		goto err_release_channel;
- 	}
- 
- 	dev_dbg(&pdev->dev, "Owl MMC Controller Initialized\n");
- 
- 	return 0;
- 
-+err_release_channel:
-+	dma_release_channel(owl_host->dma);
- err_free_host:
- 	mmc_free_host(mmc);
- 
-@@ -674,6 +676,7 @@ static int owl_mmc_remove(struct platform_device *pdev)
- 
- 	mmc_remove_host(mmc);
- 	disable_irq(owl_host->irq);
-+	dma_release_channel(owl_host->dma);
- 	mmc_free_host(mmc);
- 
- 	return 0;
+ config MACH_IXP4XX_OF
+ 	bool
+-	prompt "Devce Tree IXP4xx boards"
++	prompt "Device Tree IXP4xx boards"
+ 	default y
+ 	select ARM_APPENDED_DTB # Old Redboot bootloaders deployed
+ 	select I2C
 -- 
-2.27.0
+2.29.2
