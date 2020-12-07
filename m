@@ -1,27 +1,41 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 14 Dec 2020 13:41:16 +0000
-Subject: Re: [PATCH] mfd: wm831x-auxadc: Prevent use after free in wm831x_auxadc_read_irq()
-Message-Id: <20201214134116.GC9673@ediswmail.ad.cirrus.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Dec 2020 14:54:46 +0000
+Subject: [PATCH][next] block/rnbd: fix a null pointer dereference on dev->blk_symlink_name
+Message-Id: <20201207145446.169978-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9dTjo3VQIMJP6O9@mwanda>
-In-Reply-To: <X9dTjo3VQIMJP6O9@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>, patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>, Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 02:59:10PM +0300, Dan Carpenter wrote:
-> The "req" struct is always added to the "wm831x->auxadc_pending" list,
-> but it's only removed from the list on the success path.  If a failure
-> occurs then the "req" struct is freed but it's still on the list,
-> leading to a use after free.
-> 
-> Fixes: 78bb3688ea18 ("mfd: Support multiple active WM831x AUXADC conversions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Currently in the case where dev->blk_symlink_name fails to be allocates
+the error return path attempts to set an end-of-string character to
+the unallocated dev->blk_symlink_name causing a null pointer dereference
+error. Fix this by returning with an explicity ENOMEM error (which also
+is missing in the original code as was not initialized).
 
-Thanks,
-Charles
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 1eb54f8f5dd8 ("block/rnbd: client: sysfs interface functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/rnbd/rnbd-clt-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/rnbd/rnbd-clt-sysfs.c b/drivers/block/rnbd/rnbd-clt-sysfs.c
+index c3c96a567568..a7caeedeb198 100644
+--- a/drivers/block/rnbd/rnbd-clt-sysfs.c
++++ b/drivers/block/rnbd/rnbd-clt-sysfs.c
+@@ -499,7 +499,7 @@ static int rnbd_clt_add_dev_symlink(struct rnbd_clt_dev *dev)
+ 	dev->blk_symlink_name = kzalloc(len, GFP_KERNEL);
+ 	if (!dev->blk_symlink_name) {
+ 		rnbd_clt_err(dev, "Failed to allocate memory for blk_symlink_name\n");
+-		goto out_err;
++		return -ENOMEM;
+ 	}
+ 
+ 	ret = rnbd_clt_get_path_name(dev, dev->blk_symlink_name,
+-- 
+2.29.2
