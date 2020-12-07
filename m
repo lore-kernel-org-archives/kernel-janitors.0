@@ -1,39 +1,155 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Dec 2020 06:43:49 +0000
-Subject: [PATCH] Staging: comedi: Return -EFAULT if copy_to_user() fails
-Message-Id: <X8c3pfwFy2jpy4BP@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 07 Dec 2020 16:33:36 +0000
+Subject: Re: [PATCH] mwl8k: switch from 'pci_' to 'dma_' API
+Message-Id: <20201207163336.044DEC433ED@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201129150844.1466214-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201129150844.1466214-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ian Abbott <abbotti@mev.co.uk>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: devel@driverdev.osuosl.org, Xin Tan <tanxin.ctf@gmail.com>, Xiyu Yang <xiyuyang19@fudan.edu.cn>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, B K Karthik <bkkarthik@pesu.pes.edu>, Daniel Jordan <daniel.m.jordan@oracle.com>, Michel Lespinasse <walken@google.com>, Divyansh Kamboj <kambojdivyansh2000@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: buytenh@wantstofly.org, davem@davemloft.net, kuba@kernel.org, gustavoars@kernel.org, allen.lkml@gmail.com, romain.perier@gmail.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Return -EFAULT on error instead of the number of bytes remaining to be
-copied.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Fixes: bac42fb21259 ("comedi: get rid of compat_alloc_user_space() mess in COMEDI_CMD{,TEST} compat")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Hi Al, this goes through your tree.
+> he wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below and has been
+> hand modified to replace GFP_ with a correct flag.
+> It has been compile tested.
+> 
+> When memory is allocated in 'mwl8k_rxq_init()' and 'mwl8k_txq_init()'
+> GFP_KERNEL can be used because this flag is already used in a 'kcalloc()'
+> call, just a few line below.
+> 
+> When memory is allocated in 'mwl8k_firmware_load_success()' GFP_KERNEL can
+> be used because this flag is already used within 'ieee80211_register_hw()'
+> which is called just a few line below.
+> 
+> @@
+> @@
+> -    PCI_DMA_BIDIRECTIONAL
+> +    DMA_BIDIRECTIONAL
+> 
+> @@
+> @@
+> -    PCI_DMA_TODEVICE
+> +    DMA_TO_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_FROMDEVICE
+> +    DMA_FROM_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_NONE
+> +    DMA_NONE
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_alloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_zalloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_free_consistent(e1, e2, e3, e4)
+> +    dma_free_coherent(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_single(e1, e2, e3, e4)
+> +    dma_map_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_single(e1, e2, e3, e4)
+> +    dma_unmap_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4, e5;
+> @@
+> -    pci_map_page(e1, e2, e3, e4, e5)
+> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_page(e1, e2, e3, e4)
+> +    dma_unmap_page(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_sg(e1, e2, e3, e4)
+> +    dma_map_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_sg(e1, e2, e3, e4)
+> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
+> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
+> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_dma_mapping_error(e1, e2)
+> +    dma_mapping_error(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_consistent_dma_mask(e1, e2)
+> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
- drivers/staging/comedi/comedi_fops.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index d99231c737fb..80d74cce2a01 100644
---- a/drivers/staging/comedi/comedi_fops.c
-+++ b/drivers/staging/comedi/comedi_fops.c
-@@ -2987,7 +2987,9 @@ static int put_compat_cmd(struct comedi32_cmd_struct __user *cmd32,
- 	v32.chanlist_len = cmd->chanlist_len;
- 	v32.data = ptr_to_compat(cmd->data);
- 	v32.data_len = cmd->data_len;
--	return copy_to_user(cmd32, &v32, sizeof(v32));
-+	if (copy_to_user(cmd32, &v32, sizeof(v32)))
-+		return -EFAULT;
-+	return 0;
- }
- 
- /* Handle 32-bit COMEDI_CMD ioctl. */
+01b660b87ebe mwl8k: switch from 'pci_' to 'dma_' API
+
 -- 
-2.29.2
+https://patchwork.kernel.org/project/linux-wireless/patch/20201129150844.1466214-1-christophe.jaillet@wanadoo.fr/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
