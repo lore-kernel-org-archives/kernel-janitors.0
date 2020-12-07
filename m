@@ -1,35 +1,40 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Thu, 17 Dec 2020 19:00:07 +0000
-Subject: Re: [PATCH net] qlcnic: Fix error code in probe
-Message-Id: <160823160779.4885.3716002123828693484.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Dec 2020 14:45:03 +0000
+Subject: [PATCH][next] seg6: fix unintentional integer overflow on left shift
+Message-Id: <20201207144503.169679-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9nHbMqEyI/xPfGd@mwanda>
-In-Reply-To: <X9nHbMqEyI/xPfGd@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: shshaikh@marvell.com, sony.chacko@qlogic.com, manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, kuba@kernel.org, sucheta.chakraborty@qlogic.com, sritej.velaga@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, Andrea Mayer <andrea.mayer@uniroma2.it>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Shifting the integer value 1 is evaluated using 32-bit arithmetic
+and then used in an expression that expects a unsigned long value
+leads to a potential integer overflow. Fix this by using the BIT
+macro to perform the shift to avoid the overflow.
 
-On Wed, 16 Dec 2020 11:38:04 +0300 you wrote:
-> Return -EINVAL if we can't find the correct device.  Currently it
-> returns success.
-> 
-> Fixes: 13159183ec7a ("qlcnic: 83xx base driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c | 1 +
->  1 file changed, 1 insertion(+)
+Addresses-Coverity: ("Uninitentional integer overflow")
+Fixes: 964adce526a4 ("seg6: improve management of behavior attributes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/seg6_local.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [net] qlcnic: Fix error code in probe
-    https://git.kernel.org/netdev/net/c/0d52848632a3
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
+index b07f7c1c82a4..d68de8cd1207 100644
+--- a/net/ipv6/seg6_local.c
++++ b/net/ipv6/seg6_local.c
+@@ -1366,7 +1366,7 @@ static void __destroy_attrs(unsigned long parsed_attrs, int max_parsed,
+ 	 * attribute; otherwise, we call the destroy() callback.
+ 	 */
+ 	for (i = 0; i < max_parsed; ++i) {
+-		if (!(parsed_attrs & (1 << i)))
++		if (!(parsed_attrs & BIT(i)))
+ 			continue;
+ 
+ 		param = &seg6_action_params[i];
+-- 
+2.29.2
