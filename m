@@ -1,67 +1,56 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 11 Dec 2020 19:29:19 +0000
-Subject: Re: [PATCH v2] block: drop dead assignments in loop_init()
-Message-Id: <511d884a-ed95-5e9f-0fea-b859355a6c7f@kernel.dk>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 07 Dec 2020 12:36:10 +0000
+Subject: [PATCH] signal: propagate __user annotations properly
+Message-Id: <20201207123610.18246-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201211184604.27646-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201211184604.27646-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org
-Cc: Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org
+To: Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org
+Cc: Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>, David Howells <dhowells@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Serge Hallyn <serge@hallyn.com>, Aleksa Sarai <cyphar@cyphar.com>, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On 12/11/20 11:46 AM, Lukas Bulwahn wrote:
-> Commit 8410d38c2552 ("loop: use __register_blkdev to allocate devices on
-> demand") simplified loop_init(); so computing the range of the block region
-> is not required anymore and can be dropped.
-> 
-> Drop dead assignments in loop_init().
-> 
-> As compilers will detect these unneeded assignments and optimize this,
-> the resulting object code is identical before and after this change.
-> 
-> No functional change. No change in object code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> v1 -> v2:
->   - replaced if block with ternary operator after Julia's style comment
-> 
-> Christoph, please ack.
-> 
-> Jens, please pick this minor non-urgent clean-up patch on your
-> block -next tree on top of Christoph's commit above.
-> 
->  drivers/block/loop.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index d2ce1ddc192d..10c7c154c114 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -2304,7 +2304,6 @@ MODULE_ALIAS("devname:loop-control");
->  static int __init loop_init(void)
->  {
->  	int i, nr;
-> -	unsigned long range;
->  	struct loop_device *lo;
->  	int err;
->  
-> @@ -2341,13 +2340,7 @@ static int __init loop_init(void)
->  	 * /dev/loop-control interface, or be instantiated by accessing
->  	 * a 'dead' device node.
->  	 */
-> -	if (max_loop) {
-> -		nr = max_loop;
-> -		range = max_loop << part_shift;
-> -	} else {
-> -		nr = CONFIG_BLK_DEV_LOOP_MIN_COUNT;
-> -		range = 1UL << MINORBITS;
-> -	}
-> +	nr = max_loop ? max_loop : CONFIG_BLK_DEV_LOOP_MIN_COUNT;
+Commit 3eb39f47934f ("signal: add pidfd_send_signal() syscall") introduced
+copy_siginfo_from_user_any(), but missed to add the __user annotation to
+the user pointer that is passed as second argument.
 
-I greatly prefer an if/else to ternary, it's a lot easier to read imho.
+Hence, when copy_siginfo_from_user_any() calls copy_siginfo_from_user(),
+sparse warns:
 
+  kernel/signal.c:3716:46: warning: incorrect type in argument 2 (different address spaces)
+  kernel/signal.c:3716:46:    expected struct siginfo const [noderef] [usertype] __user *from
+  kernel/signal.c:3716:46:    got struct siginfo [usertype] *info
+
+And when pidfd_send_signal() calls copy_siginfo_from_user_any(), sparse
+warns as well:
+
+  kernel/signal.c:3776:58: warning: incorrect type in argument 2 (different address spaces)
+  kernel/signal.c:3776:58:    expected struct siginfo [usertype] *info
+  kernel/signal.c:3776:58:    got struct siginfo [noderef] [usertype] __user *info
+
+Add the __user annotation to repair this chain of propagating __user
+annotations.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master (v5.10-rc7) and next-20201204
+
+Christian, please pick this minor non-urgent clean-up patch.
+
+ kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5736c55aaa1a..e969b3bc815f 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3701,7 +3701,7 @@ static bool access_pidfd_pidns(struct pid *pid)
+ 	return true;
+ }
+ 
+-static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo, siginfo_t *info)
++static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo, siginfo_t __user *info)
+ {
+ #ifdef CONFIG_COMPAT
+ 	/*
 -- 
-Jens Axboe
+2.17.1
