@@ -1,36 +1,32 @@
-From: <Ajay.Kathat@microchip.com>
-Date: Fri, 04 Dec 2020 06:39:53 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 07 Dec 2020 16:34:34 +0000
 Subject: Re: [PATCH][next] wilc1000: remove redundant assignment to pointer vif
-Message-Id: <1cef50d3-dfd4-9b0d-67f3-4cd1eee2192e@microchip.com>
+Message-Id: <20201207163434.8D3C9C433ED@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201203174316.1071446-1-colin.king@canonical.com>
 In-Reply-To: <20201203174316.1071446-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, Claudiu.Beznea@microchip.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAzLzEyLzIwIDExOjEzIHBtLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBFWFRFUk5BTCBF
-TUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBr
-bm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xp
-bi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgYXNzaWdubWVudCB0byBwb2ludGVyIHZp
-ZiBpcyByZWR1bmRhbnQgYXMgdGhlIGFzc2lnbmVkIHZhbHVlDQo+IGlzIG5ldmVyIHJlYWQsIGhl
-bmNlIGl0IGNhbiBiZSByZW1vdmVkLg0KPiANCj4gQWRkcmVzc2VzLUNvdmVyaXR5OiAoIlVudXNl
-ZCB2YWx1ZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNh
-bm9uaWNhbC5jb20+DQoNClRoYW5rcy4NCg0KQWNrZWQtYnk6IEFqYXkgU2luZ2ggPGFqYXkua2F0
-aGF0QG1pY3JvY2hpcC5jb20+DQoNCj4gLS0tDQo+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9taWNy
-b2NoaXAvd2lsYzEwMDAvd2xhbi5jIHwgMSAtDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBkZWxldGlv
-bigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21pY3JvY2hpcC93
-aWxjMTAwMC93bGFuLmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9taWNyb2NoaXAvd2lsYzEwMDAv
-d2xhbi5jDQo+IGluZGV4IDk5M2VhN2MwMzQyOS4uYzEyZjI3YmU5Zjc5IDEwMDY0NA0KPiAtLS0g
-YS9kcml2ZXJzL25ldC93aXJlbGVzcy9taWNyb2NoaXAvd2lsYzEwMDAvd2xhbi5jDQo+ICsrKyBi
-L2RyaXZlcnMvbmV0L3dpcmVsZXNzL21pY3JvY2hpcC93aWxjMTAwMC93bGFuLmMNCj4gQEAgLTY4
-NSw3ICs2ODUsNiBAQCBpbnQgd2lsY193bGFuX2hhbmRsZV90eHEoc3RydWN0IHdpbGMgKndpbGMs
-IHUzMiAqdHhxX2NvdW50KQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIXRxZV9xW2Fj
-XSkNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsNCj4gDQo+IC0g
-ICAgICAgICAgICAgICAgICAgICAgIHZpZiA9IHRxZV9xW2FjXS0+dmlmOw0KPiAgICAgICAgICAg
-ICAgICAgICAgICAgICBhY19leGlzdCA9IDE7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGZv
-ciAoayA9IDA7IChrIDwgbnVtX3BrdHNfdG9fYWRkW2FjXSkgJiYNCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAoIW1heF9zaXplX292ZXIpICYmIHRxZV9xW2FjXTsgaysrKSB7DQo+IC0t
-DQo+IDIuMjkuMg0KPiA
+Colin King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignment to pointer vif is redundant as the assigned value
+> is never read, hence it can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Ajay Singh <ajay.kathat@microchip.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+9b0467ed9a7d wilc1000: remove redundant assignment to pointer vif
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20201203174316.1071446-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
