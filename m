@@ -1,32 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 16 Dec 2020 11:01:08 +0000
-Subject: Re: [PATCH 2/2] ath11k: Fix ath11k_pci_fix_l1ss()
-Message-Id: <878s9yxbez.fsf@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Dec 2020 17:55:44 +0000
+Subject: [PATCH] regulator: da9121: Potential Oops in da9121_assign_chip_model()
+Message-Id: <X85soGKnWAjPUA7a@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9nGDHiTh+Z+asDy@mwanda>
-In-Reply-To: <X9nGDHiTh+Z+asDy@mwanda> (Dan Carpenter's message of "Wed, 16
- Dec 2020 11:32:12 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-wireless@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>, kernel-janitors@vger.kernel.org, ath11k@lists.infradead.org
+To: Support Opensource <support.opensource@diasemi.com>, Adam Ward <Adam.Ward.opensource@diasemi.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+There is a missing "return ret;" on this error path so we call
+"da9121_check_device_type(i2c, chip);" which will end up dereferencing
+"chip->regmap" and lead to an Oops.
 
-> All these conditions are reversed so presumably most of the function is
-> dead code.
->
-> Fixes: 0699940755e9 ("ath11k: pci: fix L1ss clock unstable problem")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: c860476b9e3a ("regulator: da9121: Add device variant regmaps")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/regulator/da9121-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-And this caused a spurious warning:
-
-[   95.734922] ath11k_pci 0000:06:00.0: failed to set sysclk: 0
-
-I'll update the commit log.
-
+diff --git a/drivers/regulator/da9121-regulator.c b/drivers/regulator/da9121-regulator.c
+index db1c2cc838bc..e4fc3a7cd5d8 100644
+--- a/drivers/regulator/da9121-regulator.c
++++ b/drivers/regulator/da9121-regulator.c
+@@ -915,6 +915,7 @@ static int da9121_assign_chip_model(struct i2c_client *i2c,
+ 		ret = PTR_ERR(chip->regmap);
+ 		dev_err(chip->dev, "Failed to configure a register map: %d\n",
+ 			ret);
++		return ret;
+ 	}
+ 
+ 	ret = da9121_check_device_type(i2c, chip);
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
