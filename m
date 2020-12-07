@@ -1,28 +1,48 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 03 Dec 2020 20:45:01 +0000
-Subject: Re: [PATCH] scsi: be2iscsi: revert "Fix a theoretical leak in beiscsi_create_eqs()"
-Message-Id: <160702820882.27665.13232983618301808305.b4-ty@oracle.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 07 Dec 2020 12:41:41 +0000
+Subject: [PATCH] x86: ia32_setup_rt_frame(): propagate __user annotations properly
+Message-Id: <20201207124141.21859-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8jXkt6eThjyVP1v@mwanda>
-In-Reply-To: <X8jXkt6eThjyVP1v@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Lamprecht <t.lamprecht@proxmox.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, jejb@linux.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org, jitendra.bhivare@broadcom.com, linux-scsi@vger.kernel.org, jayamohank@hdredirect-lb5-1afb6e2973825a56.elb.us-east-1.amazonaws.com, James.Bottomley@suse.de, ketan.mukadam@broadcom.com, Greg KH <greg@kroah.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Thu, 3 Dec 2020 15:18:26 +0300, Dan Carpenter wrote:
+Commit 57d563c82925 ("x86: ia32_setup_rt_frame(): consolidate uaccess
+areas") dropped a __user annotation in a cast when refactoring __put_user()
+to unsafe_put_user().
 
-> My patch caused kernel Oopses and delays in boot.  Revert it.
-> 
-> The problem was that I moved the "mem->dma = paddr;" before the call to
-> be_fill_queue().  But the first thing that the be_fill_queue() function
-> does is memset the whole struct to zero which overwrites the assignment.
+Hence, since then, sparse warns in arch/x86/ia32/ia32_signal.c:350:9:
 
-Added Cc: stable and applied to 5.10/scsi-fixes, thanks!
+  warning: cast removes address space '__user' of expression
+  warning: incorrect type in argument 1 (different address spaces)
+    expected void const volatile [noderef] __user *ptr
+    got unsigned long long [usertype] *
 
-[1/1] scsi: be2iscsi: revert "Fix a theoretical leak in beiscsi_create_eqs()"
-      https://git.kernel.org/mkp/scsi/c/eeaf06af6f87
+Add the __user annotation to restore the propagation of address spaces.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master (v5.10-rc7) and next-20201204
+
+Thomas, Ingo, Boris, please pick this minor non-urgent clean-up patch.
+
+ arch/x86/ia32/ia32_signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index 81cf22398cd1..5e3d9b7fd5fb 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -347,7 +347,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	 */
+ 	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
+ 	unsafe_put_sigcontext32(&frame->uc.uc_mcontext, fp, regs, set, Efault);
+-	unsafe_put_user(*(__u64 *)set, (__u64 *)&frame->uc.uc_sigmask, Efault);
++	unsafe_put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask, Efault);
+ 	user_access_end();
+ 
+ 	if (__copy_siginfo_to_user32(&frame->info, &ksig->info))
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
