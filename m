@@ -1,25 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 17 Dec 2020 22:00:55 +0000
-Subject: Re: [PATCH] timekeeping: Fix spelling mistake in Kconfig "fullfill" -> "fulfill"
-Message-Id: <CACRpkdZeQyPyvHqrQy_W3pbn-9-rn8YNYiDmR72xqxVhdpeTBg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 07 Dec 2020 15:38:59 +0000
+Subject: [PATCH] arch: fix spelling mistakes in Kconfig
+Message-Id: <20201207153859.171441-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217171705.57586-1-colin.king@canonical.com>
-In-Reply-To: <20201217171705.57586-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 6:17 PM Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the Kconfig help text. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There are a few spelling mistakes in the Kconfig comments and help
+text. Fix these.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/arch/Kconfig b/arch/Kconfig
+index f7f246e68ff5..a52f8e8d16ad 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -261,7 +261,7 @@ config ARCH_HAS_SET_DIRECT_MAP
+ 
+ #
+ # Select if the architecture provides the arch_dma_set_uncached symbol to
+-# either provide an uncached segement alias for a DMA allocation, or
++# either provide an uncached segment alias for a DMA allocation, or
+ # to remap the page tables in place.
+ #
+ config ARCH_HAS_DMA_SET_UNCACHED
+@@ -314,14 +314,14 @@ config ARCH_32BIT_OFF_T
+ config HAVE_ASM_MODVERSIONS
+ 	bool
+ 	help
+-	  This symbol should be selected by an architecure if it provides
++	  This symbol should be selected by an architecture if it provides
+ 	  <asm/asm-prototypes.h> to support the module versioning for symbols
+ 	  exported from assembly code.
+ 
+ config HAVE_REGS_AND_STACK_ACCESS_API
+ 	bool
+ 	help
+-	  This symbol should be selected by an architecure if it supports
++	  This symbol should be selected by an architecture if it supports
+ 	  the API needed to access registers and stack entries from pt_regs,
+ 	  declared in asm/ptrace.h
+ 	  For example the kprobes-based event tracer needs this API.
+@@ -336,7 +336,7 @@ config HAVE_RSEQ
+ config HAVE_FUNCTION_ARG_ACCESS_API
+ 	bool
+ 	help
+-	  This symbol should be selected by an architecure if it supports
++	  This symbol should be selected by an architecture if it supports
+ 	  the API needed to access function arguments from pt_regs,
+ 	  declared in asm/ptrace.h
+ 
+-- 
+2.29.2
