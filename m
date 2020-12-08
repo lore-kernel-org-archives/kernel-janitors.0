@@ -1,42 +1,52 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Date: Tue, 08 Dec 2020 01:50:02 +0000
+From: Vinod Koul <vkoul@kernel.org>
+Date: Tue, 08 Dec 2020 12:58:11 +0000
 Subject: Re: [PATCH][next] drm/mediatek: avoid dereferencing a null hdmi_phy on an error message
-Message-Id: <1607392202.23328.1.camel@mhfsdcap03>
+Message-Id: <20201208125549.GG8403@vkoul-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201207150937.170435-1-colin.king@canonical.com>
-In-Reply-To: <20201207150937.170435-1-colin.king@canonical.com>
+ <1607392202.23328.1.camel@mhfsdcap03>
+In-Reply-To: <1607392202.23328.1.camel@mhfsdcap03>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, chunhui dai <chunhui.dai@mediatek.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, Vinod Koul <vkoul@kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, chunhui dai <chunhui.dai@mediatek.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kishon Vijay Abraham I <kishon@ti.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Colin King <colin.king@canonical.com>, linux-arm-kernel@lists.infradead.org
 
-T24gTW9uLCAyMDIwLTEyLTA3IGF0IDE1OjA5ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gQ3Vy
-cmVudGx5IHRoZXJlIGlzIGEgbnVsbCBwb2ludGVyIGNoZWNrIGZvciBoZG1pX3BoeSB0aGF0IGlt
-cGxpZXMgaXQNCj4gbWF5IGJlIG51bGwsIGhvd2V2ZXIgYSBkZXZfZXJyIG1lc3NhZ2VzIGRlcmVm
-ZXJlbmNlcyB0aGlzIHBvdGVudGlhbCBudWxsDQo+IHBvaW50ZXIuICBBdm9pZCBhIG51bGwgcG9p
-bnRlciBkZXJlZmVyZW5jZSBieSBvbmx5IGVtaXR0aW5nIHRoZSBkZXZfZXJyDQo+IG1lc3NhZ2Ug
-aWYgaGRtaV9waHkgaXMgbm9uLW51bGwuICBJdCBpcyBhIG1vb3QgcG9pbnQgaWYgdGhlIGVycm9y
-IG1lc3NhZ2UNCj4gbmVlZHMgdG8gYmUgcHJpbnRlZCBhdCBhbGwsIGJ1dCBzaW5jZSB0aGlzIGlz
-IGEgcmVsYXRpdmVseSBuZXcgcGllY2Ugb2YNCj4gY29kZSBpdCBtYXkgYmUgdXNlZnVsIHRvIGtl
-ZXAgdGhlIG1lc3NhZ2UgaW4gZm9yIHRoZSBtb21lbnQgaW4gY2FzZSB0aGVyZQ0KPiBhcmUgdW5m
-b3JzZWVuIGVycm9ycyB0aGF0IG5lZWQgdG8gYmUgcmVwb3J0ZWQuDQo+IA0KPiBBZGRyZXNzZXMt
-Q292ZXJpdHk6ICgiRGVyZWZlcmVuY2UgYWZ0ZXIgbnVsbCBjaGVjayIpDQo+IEZpeGVzOiBiZTI4
-YjY1MDdjNDYgKCJkcm0vbWVkaWF0ZWs6IHNlcGFyYXRlIGhkbWkgcGh5IHRvIGRpZmZlcmVudCBm
-aWxlIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25p
-Y2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3BoeS9tZWRpYXRlay9waHktbXRrLWhkbWkuYyB8
-IDUgKysrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkvbWVkaWF0ZWsvcGh5LW10ay1oZG1p
-LmMgYi9kcml2ZXJzL3BoeS9tZWRpYXRlay9waHktbXRrLWhkbWkuYw0KPiBpbmRleCBjNWM2MWY1
-YTllYTAuLjUxODQwNTQ3ODNjNyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waHkvbWVkaWF0ZWsv
-cGh5LW10ay1oZG1pLmMNCj4gKysrIGIvZHJpdmVycy9waHkvbWVkaWF0ZWsvcGh5LW10ay1oZG1p
-LmMNCj4gQEAgLTg0LDggKzg0LDkgQEAgbXRrX2hkbWlfcGh5X2Rldl9nZXRfb3BzKGNvbnN0IHN0
-cnVjdCBtdGtfaGRtaV9waHkgKmhkbWlfcGh5KQ0KPiAgCSAgICBoZG1pX3BoeS0+Y29uZi0+aGRt
-aV9waHlfZGlzYWJsZV90bWRzKQ0KPiAgCQlyZXR1cm4gJm10a19oZG1pX3BoeV9kZXZfb3BzOw0K
-PiAgDQo+IC0JZGV2X2VycihoZG1pX3BoeS0+ZGV2LCAiRmFpbGVkIHRvIGdldCBkZXYgb3BzIG9m
-IHBoeVxuIik7DQo+IC0JCXJldHVybiBOVUxMOw0KPiArCWlmIChoZG1pX3BoeSkNCj4gKwkJZGV2
-X2VycihoZG1pX3BoeS0+ZGV2LCAiRmFpbGVkIHRvIGdldCBkZXYgb3BzIG9mIHBoeVxuIik7DQo+
-ICsJCQlyZXR1cm4gTlVMTDsNCmluZGVudGF0aW9uOiBvbmUgdGFiIGJlZm9yZSByZXR1cm4NCg0K
-VGhhbmtzDQoNCj4gIH0NCj4gIA0KPiAgc3RhdGljIHZvaWQgbXRrX2hkbWlfcGh5X2Nsa19nZXRf
-ZGF0YShzdHJ1Y3QgbXRrX2hkbWlfcGh5ICpoZG1pX3BoeSwNCg0K
+On 08-12-20, 09:50, Chunfeng Yun wrote:
+> On Mon, 2020-12-07 at 15:09 +0000, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Currently there is a null pointer check for hdmi_phy that implies it
+> > may be null, however a dev_err messages dereferences this potential null
+> > pointer.  Avoid a null pointer dereference by only emitting the dev_err
+> > message if hdmi_phy is non-null.  It is a moot point if the error message
+> > needs to be printed at all, but since this is a relatively new piece of
+> > code it may be useful to keep the message in for the moment in case there
+> > are unforseen errors that need to be reported.
+> > 
+> > Addresses-Coverity: ("Dereference after null check")
+> > Fixes: be28b6507c46 ("drm/mediatek: separate hdmi phy to different file")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/phy/mediatek/phy-mtk-hdmi.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/phy/mediatek/phy-mtk-hdmi.c b/drivers/phy/mediatek/phy-mtk-hdmi.c
+> > index c5c61f5a9ea0..5184054783c7 100644
+> > --- a/drivers/phy/mediatek/phy-mtk-hdmi.c
+> > +++ b/drivers/phy/mediatek/phy-mtk-hdmi.c
+> > @@ -84,8 +84,9 @@ mtk_hdmi_phy_dev_get_ops(const struct mtk_hdmi_phy *hdmi_phy)
+> >  	    hdmi_phy->conf->hdmi_phy_disable_tmds)
+> >  		return &mtk_hdmi_phy_dev_ops;
+> >  
+> > -	dev_err(hdmi_phy->dev, "Failed to get dev ops of phy\n");
+> > -		return NULL;
+> > +	if (hdmi_phy)
+> > +		dev_err(hdmi_phy->dev, "Failed to get dev ops of phy\n");
+> > +			return NULL;
+> indentation: one tab before return
+
+I have applied this and fixed the indent while applying
+
+-- 
+~Vinod
