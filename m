@@ -1,36 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Dec 2020 08:41:13 +0000
-Subject: [PATCH 1/2] usb: mtu3: fix memory corruption in mtu3_debugfs_regset()
-Message-Id: <X8ikqc4Mo2/0G72j@mwanda>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Date: Tue, 08 Dec 2020 04:14:56 +0000
+Subject: Re: [PATCH 1/2] usb: mtu3: fix memory corruption in mtu3_debugfs_regset()
+Message-Id: <1607400896.23328.7.camel@mhfsdcap03>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X8ikqc4Mo2/0G72j@mwanda>
+In-Reply-To: <X8ikqc4Mo2/0G72j@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-This code is using the wrong sizeof() so it does not allocate enough
-memory.  It allocates 32 bytes but 72 are required.  That will lead to
-memory corruption.
-
-Fixes: ae07809255d3 ("usb: mtu3: add debugfs interface files")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/usb/mtu3/mtu3_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/mtu3/mtu3_debugfs.c b/drivers/usb/mtu3/mtu3_debugfs.c
-index fdeade6254ae..7537bfd651af 100644
---- a/drivers/usb/mtu3/mtu3_debugfs.c
-+++ b/drivers/usb/mtu3/mtu3_debugfs.c
-@@ -127,7 +127,7 @@ static void mtu3_debugfs_regset(struct mtu3 *mtu, void __iomem *base,
- 	struct debugfs_regset32 *regset;
- 	struct mtu3_regset *mregs;
- 
--	mregs = devm_kzalloc(mtu->dev, sizeof(*regset), GFP_KERNEL);
-+	mregs = devm_kzalloc(mtu->dev, sizeof(*mregs), GFP_KERNEL);
- 	if (!mregs)
- 		return;
- 
--- 
-2.29.2
+T24gVGh1LCAyMDIwLTEyLTAzIGF0IDExOjQxICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGlzIGNvZGUgaXMgdXNpbmcgdGhlIHdyb25nIHNpemVvZigpIHNvIGl0IGRvZXMgbm90IGFs
+bG9jYXRlIGVub3VnaA0KPiBtZW1vcnkuICBJdCBhbGxvY2F0ZXMgMzIgYnl0ZXMgYnV0IDcyIGFy
+ZSByZXF1aXJlZC4gIFRoYXQgd2lsbCBsZWFkIHRvDQo+IG1lbW9yeSBjb3JydXB0aW9uLg0KPiAN
+Cj4gRml4ZXM6IGFlMDc4MDkyNTVkMyAoInVzYjogbXR1MzogYWRkIGRlYnVnZnMgaW50ZXJmYWNl
+IGZpbGVzIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
+cmFjbGUuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL210dTMvbXR1M19kZWJ1Z2ZzLmMgfCAy
+ICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9tdHUzL210dTNfZGVidWdmcy5jIGIvZHJpdmVy
+cy91c2IvbXR1My9tdHUzX2RlYnVnZnMuYw0KPiBpbmRleCBmZGVhZGU2MjU0YWUuLjc1MzdiZmQ2
+NTFhZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy91c2IvbXR1My9tdHUzX2RlYnVnZnMuYw0KPiAr
+KysgYi9kcml2ZXJzL3VzYi9tdHUzL210dTNfZGVidWdmcy5jDQo+IEBAIC0xMjcsNyArMTI3LDcg
+QEAgc3RhdGljIHZvaWQgbXR1M19kZWJ1Z2ZzX3JlZ3NldChzdHJ1Y3QgbXR1MyAqbXR1LCB2b2lk
+IF9faW9tZW0gKmJhc2UsDQo+ICAJc3RydWN0IGRlYnVnZnNfcmVnc2V0MzIgKnJlZ3NldDsNCj4g
+IAlzdHJ1Y3QgbXR1M19yZWdzZXQgKm1yZWdzOw0KPiAgDQo+IC0JbXJlZ3MgPSBkZXZtX2t6YWxs
+b2MobXR1LT5kZXYsIHNpemVvZigqcmVnc2V0KSwgR0ZQX0tFUk5FTCk7DQo+ICsJbXJlZ3MgPSBk
+ZXZtX2t6YWxsb2MobXR1LT5kZXYsIHNpemVvZigqbXJlZ3MpLCBHRlBfS0VSTkVMKTsNCj4gIAlp
+ZiAoIW1yZWdzKQ0KPiAgCQlyZXR1cm47DQo+ICBBY2tlZC1ieTogQ2h1bmZlbmcgWXVuIDxjaHVu
+ZmVuZy55dW5AbWVkaWF0ZWsuY29tPg0KDQpUaGFua3MNCg0KDQo
