@@ -1,30 +1,32 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 03 Dec 2020 16:01:31 +0000
-Subject: Re: [PATCH net] rtw88: debug: Fix uninitialized memory in debugfs code
-Message-Id: <20201203160131.4B12AC43462@smtp.codeaurora.org>
+From: Petr Mladek <pmladek@suse.com>
+Date: Tue, 08 Dec 2020 16:00:31 +0000
+Subject: Re: [PATCH] printk: remove obsolete dead assignment
+Message-Id: <X8+jHx7sRlroUM8u@alley>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ilOfVz3pf0T5ec@mwanda>
-In-Reply-To: <X8ilOfVz3pf0T5ec@mwanda>
+References: <20201130124915.7573-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20201130124915.7573-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yan-Hsuan Chuang <tony0620emma@gmail.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Brian Norris <briannorris@chromium.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, Nathan Chancellor <natechancellor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> This code does not ensure that the whole buffer is initialized and none
-> of the callers check for errors so potentially none of the buffer is
-> initialized.  Add a memset to eliminate this bug.
+On Mon 2020-11-30 13:49:15, Lukas Bulwahn wrote:
+> Commit 849f3127bb46 ("switch /dev/kmsg to ->write_iter()") refactored
+> devkmsg_write() and left over a dead assignment on the variable 'len'.
 > 
-> Fixes: e3037485c68e ("rtw88: new Realtek 802.11ac driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Hence, make clang-analyzer warns:
+> 
+>   kernel/printk/printk.c:744:4: warning: Value stored to 'len' is never read
+>     [clang-analyzer-deadcode.DeadStores]
+>                           len -= endp - line;
+>                           ^
+> 
+> Simply remove this obsolete dead assignment here.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Patch applied to wireless-drivers.git, thanks.
+The patch is committed in printk/linux.git, branch for-5.11.
 
-74a8c816fa8f rtw88: debug: Fix uninitialized memory in debugfs code
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/X8ilOfVz3pf0T5ec@mwanda/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Best Regards,
+Petr
