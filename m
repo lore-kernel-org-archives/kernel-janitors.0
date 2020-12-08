@@ -1,35 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Dec 2020 19:22:50 +0000
-Subject: [PATCH] firmware: fix a spelling mistake "managament" -> "management" in Kconfig
-Message-Id: <20201204192250.1151316-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 08 Dec 2020 20:35:27 +0000
+Subject: [PATCH] mmc: mxs-mmc: Fix a resource leak in an error handling path in 'mxs_mmc_probe()'
+Message-Id: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ulf.hansson@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, wsa+renesas@sang-engineering.com, peter.ujfalusi@ti.com, dianders@chromium.org, cjb@laptop.org
+Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If 'mmc_of_parse()' fails, we must undo the previous 'dma_request_chan()'
+call.
 
-There is a spelling mistake in the Kconfig help text. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: abd37cccd47f ("mmc: mxs: use mmc_gpio_get_ro for detecting read-only status")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/Kconfig | 2 +-
+I'm not 100% sure of the Fixes tag, but it seems to be the root cause. The
+erroneous 'out_clk_disable' has then been kept around in the following
+commits
+---
+ drivers/mmc/host/mxs-mmc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 3315e3c21586..3f14dffb9669 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -51,7 +51,7 @@ config ARM_SCPI_PROTOCOL
- 	  provides a mechanism for inter-processor communication between SCP
- 	  and AP.
+diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+index 56bbc6cd9c84..947581de7860 100644
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -628,7 +628,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
  
--	  SCP controls most of the power managament on the Application
-+	  SCP controls most of the power management on the Application
- 	  Processors. It offers control and management of: the core/cluster
- 	  power states, various power domain DVFS including the core/cluster,
- 	  certain system clocks configuration, thermal sensors and many
+ 	ret = mmc_of_parse(mmc);
+ 	if (ret)
+-		goto out_clk_disable;
++		goto out_free_dma;
+ 
+ 	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+ 
 -- 
-2.29.2
+2.27.0
