@@ -1,37 +1,37 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Tue, 01 Dec 2020 21:00:06 +0000
-Subject: Re: [PATCH] net/ipv6: propagate user pointer annotation
-Message-Id: <160685640652.20133.12792277369637209995.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2020 06:55:24 +0000
+Subject: [PATCH] kexec: Fix error code in kexec_calculate_store_digests()
+Message-Id: <X9B03LFICh/QykQ6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201127093421.21673-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: hch@lst.de, davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
+Return -ENOMEM on allocation failure instead of returning success.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Fixes: a43cac0d9dc2 ("kexec: split kexec_file syscall code to kexec_file.c")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/kexec_file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Fri, 27 Nov 2020 10:34:21 +0100 you wrote:
-> For IPV6_2292PKTOPTIONS, do_ipv6_getsockopt() stores the user pointer
-> optval in the msg_control field of the msghdr.
-> 
-> Hence, sparse rightfully warns at ./net/ipv6/ipv6_sockglue.c:1151:33:
-> 
->   warning: incorrect type in assignment (different address spaces)
->       expected void *msg_control
->       got char [noderef] __user *optval
-> 
-> [...]
-
-Here is the summary with links:
-  - net/ipv6: propagate user pointer annotation
-    https://git.kernel.org/netdev/net-next/c/9e39394faef6
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b02086d70492..9570f380a825 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -735,8 +735,10 @@ static int kexec_calculate_store_digests(struct kimage *image)
+ 
+ 	sha_region_sz = KEXEC_SEGMENT_MAX * sizeof(struct kexec_sha_region);
+ 	sha_regions = vzalloc(sha_region_sz);
+-	if (!sha_regions)
++	if (!sha_regions) {
++		ret = -ENOMEM;
+ 		goto out_free_desc;
++	}
+ 
+ 	desc->tfm   = tfm;
+ 
+-- 
+2.29.2
