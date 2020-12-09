@@ -1,32 +1,46 @@
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Date: Thu, 03 Dec 2020 13:30:05 +0000
-Subject: Re: [PATCH] media: vidtv: fix use after free in vidtv_channel_si_destroy()
-Message-Id: <2213CCBF-DD8A-4897-9CF7-3FBFA8520979@getmailspring.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2020 06:54:09 +0000
+Subject: [PATCH] ASoC: wm_adsp: remove "ctl" from list on error in wm_adsp_create_control()
+Message-Id: <X9B0keV/02wrx9Xs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ilBh7cBIqSpP6Y@mwanda>
-In-Reply-To: <X8ilBh7cBIqSpP6Y@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "=?utf-8?Q?linux-media=40vger.kernel.org?=" <linux-media@vger.kernel.org>, "=?utf-8?Q?kernel-janitors=40vger.kernel.org?=" <kernel-janitors@vger.kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: alsa-devel@alsa-project.org, Adam Brickman <Adam.Brickman@cirrus.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, David Rhodes <david.rhodes@cirrus.com>, Mark Brown <broonie@kernel.org>, Luo Meng <luomeng12@huawei.com>, James Schulman <james.schulman@cirrus.com>, Vlad Karpovich <Vlad.Karpovich@cirrus.com>
 
-Hi Dan,
+The error handling frees "ctl" but it's still on the "dsp->ctl_list"
+list so that could result in a use after free.  Remove it from the list
+before returning.
 
-> This code frees "m->si.pat" and then dereferences it on the next line.
-> 
-> Fixes: 039b7caed173 ("media: vidtv: add a PID entry for the NIT table")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> drivers/media/test-drivers/vidtv/vidtv_channel.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
+Fixes: 2323736dca72 ("ASoC: wm_adsp: Add basic support for rev 1 firmware file format")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/codecs/wm_adsp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-
-IIRC there has been a similar patch [1] that has already been accepted
-by Mauro..
-
-
-[1]: https://patchwork.linuxtv.org/project/linux-media/patch/20201127132832.15239-1-colin.king@canonical.com/
-
--- thanks
--- Daniel
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index e61d00486c65..dec8716aa8ef 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -1519,7 +1519,7 @@ static int wm_adsp_create_control(struct wm_adsp *dsp,
+ 	ctl_work = kzalloc(sizeof(*ctl_work), GFP_KERNEL);
+ 	if (!ctl_work) {
+ 		ret = -ENOMEM;
+-		goto err_ctl_cache;
++		goto err_list_del;
+ 	}
+ 
+ 	ctl_work->dsp = dsp;
+@@ -1529,7 +1529,8 @@ static int wm_adsp_create_control(struct wm_adsp *dsp,
+ 
+ 	return 0;
+ 
+-err_ctl_cache:
++err_list_del:
++	list_del(&ctl->list);
+ 	kfree(ctl->cache);
+ err_ctl_subname:
+ 	kfree(ctl->subname);
+-- 
+2.29.2
