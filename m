@@ -1,28 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Dec 2020 18:37:39 +0000
-Subject: Re: [PATCH] ASoC: codecs: lpass-va-macro: remove some dead code
-Message-Id: <20201202183739.GP2767@kadam>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 09 Dec 2020 07:46:58 +0000
+Subject: [PATCH] media: MAINTAINERS: correct entry in Amlogic GE2D driver section
+Message-Id: <20201209074658.11557-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8c5gjZO7YN/CFsq@mwanda>
- <7e06abb2-a969-aa1a-6adc-6cdd72e3355c@linaro.org>
-In-Reply-To: <7e06abb2-a969-aa1a-6adc-6cdd72e3355c@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+To: Neil Armstrong <narmstrong@baylibre.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc: Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, linux-kernel@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 03:54:53PM +0000, Srinivas Kandagatla wrote:
-> Thanks Dan for the patch!
-> 
-> Do you use any tools to do this checks?
-> 
+Commit aa821b2b9269 ("media: MAINTAINERS: Add myself as maintainer of the
+Amlogic GE2D driver") introduced a new MAINTAINERS section, but the file
+entry points to the wrong location.
 
-Yeah.  This was a Smatch warning:
+Hence, ./scripts/get_maintainer.pl --self-test=patterns warns:
 
-sound/soc/codecs/lpass-va-macro.c:847 va_macro_hw_params() warn: always true condition '(decimator >= 0) => (0-u32max >= 0)'
+  warning: no file matches    F:    drivers/media/meson/ge2d/
 
-But every static checker will complain about these.
+Adjust the entry to the actual location of the driver.
 
-regards,
-dan carpenter
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies on next-20201208, not on current master
+
+Neil, please ack.
+Hans, Mauro, please pick this minor non-urgent fix-up for your -next tree.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b20babb9f7b..d66bf50fc640 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11520,7 +11520,7 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Supported
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/amlogic,axg-ge2d.yaml
+-F:	drivers/media/meson/ge2d/
++F:	drivers/media/platform/meson/ge2d/
+ 
+ MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+ M:	Liang Yang <liang.yang@amlogic.com>
+-- 
+2.17.1
