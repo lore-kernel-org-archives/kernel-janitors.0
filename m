@@ -1,35 +1,40 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 18 Dec 2020 15:20:06 +0000
-Subject: Re: [PATCH][next] selftests/bpf: fix spelling mistake "tranmission" -> "transmission"
-Message-Id: <160830480683.29956.13434774651778716031.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2020 06:50:34 +0000
+Subject: [PATCH 1/2] media: camss: Fix signedness bug in video_enum_fmt()
+Message-Id: <X9BzujGgPAM/s+rG@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201214223539.83168-1-colin.king@canonical.com>
-In-Reply-To: <20201214223539.83168-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com, shuah@kernel.org, andrii@kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Robert Foss <robert.foss@linaro.org>, Andrey Konovalov <andrey.konovalov@linaro.org>
+Cc: Todor Tomov <todor.too@gmail.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
+This test has a problem because we want to know if "k" is -1 or a
+positive value less than "f->index".  But the "f->index" variable is a
+u32 so if "k = -1" then -1 gets type promoted to UINT_MAX which is
+larger than "f->index".  I've added an explicit test to check for -1.
 
-This patch was applied to bpf/bpf.git (refs/heads/master):
+Fixes: a3d412d4b9f3 ("media: Revert "media: camss: Make use of V4L2_CAP_IO_MC"")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I could equally well have casted "k < (int)f->index" but I feel like
+this is more explicit and readable.
 
-On Mon, 14 Dec 2020 22:35:39 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two spelling mistakes in output messages. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/testing/selftests/bpf/xdpxceiver.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/qcom/camss/camss-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [next] selftests/bpf: fix spelling mistake "tranmission" -> "transmission"
-    https://git.kernel.org/bpf/bpf/c/e79bb299ccad
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
+index bd9334af1c73..2fa3214775d5 100644
+--- a/drivers/media/platform/qcom/camss/camss-video.c
++++ b/drivers/media/platform/qcom/camss/camss-video.c
+@@ -579,7 +579,7 @@ static int video_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ 			break;
+ 	}
+ 
+-	if (k < f->index)
++	if (k = -1 || k < f->index)
+ 		/*
+ 		 * All the unique pixel formats matching the arguments
+ 		 * have been enumerated (k >= 0 and f->index > 0), or
+-- 
+2.29.2
