@@ -1,41 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Dec 2020 06:54:51 +0000
-Subject: [PATCH] ASoC: max98390: Fix error codes in max98390_dsm_init()
-Message-Id: <X9B0uz4svyNTqeMb@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 09 Dec 2020 15:19:16 +0000
+Subject: Re: [PATCH] ASoC: max98390: Fix error codes in max98390_dsm_init()
+Message-Id: <160752715603.48520.1121347336816974781.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X9B0uz4svyNTqeMb@mwanda>
+In-Reply-To: <X9B0uz4svyNTqeMb@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Steve Lee <steves.lee@maximintegrated.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+To: Steve Lee <steves.lee@maximintegrated.com>, Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>
 
-These error paths return success but they should return -EINVAL.
+On Wed, 9 Dec 2020 09:54:51 +0300, Dan Carpenter wrote:
+> These error paths return success but they should return -EINVAL.
 
-Fixes: 97ed3e509ee6 ("ASoC: max98390: Fix potential crash during param fw loading")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- sound/soc/codecs/max98390.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to
 
-diff --git a/sound/soc/codecs/max98390.c b/sound/soc/codecs/max98390.c
-index ff5cc9bbec29..bb736c44e68a 100644
---- a/sound/soc/codecs/max98390.c
-+++ b/sound/soc/codecs/max98390.c
-@@ -784,6 +784,7 @@ static int max98390_dsm_init(struct snd_soc_component *component)
- 	if (fw->size < MAX98390_DSM_PARAM_MIN_SIZE) {
- 		dev_err(component->dev,
- 			"param fw is invalid.\n");
-+		ret = -EINVAL;
- 		goto err_alloc;
- 	}
- 	dsm_param = (char *)fw->data;
-@@ -794,6 +795,7 @@ static int max98390_dsm_init(struct snd_soc_component *component)
- 		fw->size < param_size + MAX98390_DSM_PAYLOAD_OFFSET) {
- 		dev_err(component->dev,
- 			"param fw is invalid.\n");
-+		ret = -EINVAL;
- 		goto err_alloc;
- 	}
- 	regmap_write(max98390->regmap, MAX98390_R203A_AMP_EN, 0x80);
--- 
-2.29.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: max98390: Fix error codes in max98390_dsm_init()
+      commit: 3cea33b6f2d7782d1be17c71509986f33ee93541
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
