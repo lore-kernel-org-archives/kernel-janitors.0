@@ -1,30 +1,34 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Mon, 07 Dec 2020 18:06:28 +0000
-Subject: Re: [PATCH] arch: fix spelling mistakes in Kconfig
-Message-Id: <da56a602-7d36-e141-04dc-799f7a0fa04a@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2020 06:52:19 +0000
+Subject: [PATCH] block/rnbd-clt: Fix error code in rnbd_clt_add_dev_symlink()
+Message-Id: <X9B0IyxwbBDq+cSS@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201207155004.171962-1-colin.king@canonical.com>
-In-Reply-To: <20201207155004.171962-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Danil Kipnis <danil.kipnis@cloud.ionos.com>, Md Haris Iqbal <haris.iqbal@cloud.ionos.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, Jens Axboe <axboe@kernel.dk>, Lutz Pogrell <lutz.pogrell@cloud.ionos.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12/7/20 7:50 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are a few spelling mistakes in the Kconfig comments and help
-> text. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+The "ret" variable should be set to -ENOMEM but it returns uninitialized
+stack data.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: 64e8a6ece1a5 ("block/rnbd-clt: Dynamically alloc buffer for pathname & blk_symlink_name")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/block/rnbd/rnbd-clt-sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks.
-
+diff --git a/drivers/block/rnbd/rnbd-clt-sysfs.c b/drivers/block/rnbd/rnbd-clt-sysfs.c
+index c3c96a567568..a5cd47b82b40 100644
+--- a/drivers/block/rnbd/rnbd-clt-sysfs.c
++++ b/drivers/block/rnbd/rnbd-clt-sysfs.c
+@@ -499,6 +499,7 @@ static int rnbd_clt_add_dev_symlink(struct rnbd_clt_dev *dev)
+ 	dev->blk_symlink_name = kzalloc(len, GFP_KERNEL);
+ 	if (!dev->blk_symlink_name) {
+ 		rnbd_clt_err(dev, "Failed to allocate memory for blk_symlink_name\n");
++		ret = -ENOMEM;
+ 		goto out_err;
+ 	}
+ 
 -- 
-~Randy
+2.29.2
