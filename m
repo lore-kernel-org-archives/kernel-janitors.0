@@ -1,61 +1,32 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 10 Dec 2020 21:55:40 +0000
-Subject: Re: [PATCH] coresight: cti: =?utf-8?Q?Redu?= =?utf-8?Q?ce_scope_for_the_variable_=E2=80=9Ccs=5Ffwnod
-Message-Id: <20201210215540.GA1860012@xps15>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 10 Dec 2020 18:01:36 +0000
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_cxl=3a_Reduce_scope_for_the_variable_?= =?UTF-8?B?4oCcbW3igJ0gaW4gY3hsbG
+Message-Id: <6da89e4e-1f29-0dde-ad5b-a168f4cc1e85@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c1b09b27-9012-324f-28d0-ba820dc468a5@web.de>
-In-Reply-To: <c1b09b27-9012-324f-28d0-ba820dc468a5@web.de>
+References: <5cee2b25-71e0-15aa-fba6-12211b8308aa@web.de>
+ <X9I1GLYCkw/q/xMu@kroah.com> <507d607a-0551-ec11-e1dc-5b9c96a361cb@web.de>
+In-Reply-To: <507d607a-0551-ec11-e1dc-5b9c96a361cb@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "Suzuki K. Poulose" <suzuki.poulose@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Leo Yan <leo.yan@linaro.org>, linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 09, 2020 at 09:42:20PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 9 Dec 2020 21:34:48 +0100
+Le 10/12/2020 à 17:04, Markus Elfring a écrit :
+>>> A local variable was used only within an if branch.
+>>> Thus move the definition for the variable “mm” into the corresponding
+>>> code block.
+>>
+>> You did nothing here except add a checkpatch warning :(
 > 
-> A local variable was used only within an else branch.
-> Thus move the definition for the variable “cs_fwnode” into
-> the corresponding code block.
+> elfring@Sonne:~/Projekte/Linux/next-patched> scripts/checkpatch.pl /home/elfring/Projekte/Bau/Linux/scripts/Coccinelle/tuning1/next/20201204/Flicken/0001-cxl-Reduce-scope-for-the-variable-mm-in-cxllib_get_P.patch
+> total: 0 errors, 0 warnings, 16 lines checked
 > 
-> This issue was detected by using the Coccinelle software.
+> Regards,
+> Markus
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/hwtracing/coresight/coresight-cti-platform.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> index 98f830c6ed50..ccef04f27f12 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> @@ -343,7 +343,6 @@ static int cti_plat_create_connection(struct device *dev,
->  {
->  	struct cti_trig_con *tc = NULL;
->  	int cpuid = -1, err = 0;
-> -	struct fwnode_handle *cs_fwnode = NULL;
->  	struct coresight_device *csdev = NULL;
->  	const char *assoc_name = "unknown";
->  	char cpu_name_str[16];
-> @@ -397,8 +396,9 @@ static int cti_plat_create_connection(struct device *dev,
->  		assoc_name = cpu_name_str;
->  	} else {
->  		/* associated device ? */
-> -		cs_fwnode = fwnode_find_reference(fwnode,
-> -						  CTI_DT_CSDEV_ASSOC, 0);
-> +		struct fwnode_handle *cs_fwnode = fwnode_find_reference(fwnode,
-> +									CTI_DT_CSDEV_ASSOC,
-> +									0);
 
-I have applied your patch.
+Maybe:
+    script/checkpatch.pl -f drivers/misc/cxl/cxllib.c
 
-Thanks,
-Mathieu
-
->  		if (!IS_ERR(cs_fwnode)) {
->  			assoc_name = cti_plat_get_csdev_or_node_name(cs_fwnode,
->  								     &csdev);
-> --
-> 2.29.2
-> 
+?
