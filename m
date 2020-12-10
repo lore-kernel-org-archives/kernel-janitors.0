@@ -1,57 +1,37 @@
-From: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
-Date: Mon, 28 Dec 2020 02:26:33 +0000
-Subject: RE: regmap: debugfs: fix a memory leak when calling regmap_attach_dev
-Message-Id: <PH0PR11MB50770B63B8BFB8B7DAD615C195D90@PH0PR11MB5077.namprd11.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 10 Dec 2020 14:49:32 +0000
+Subject: [PATCH 2/2] video: fbdev: Fix a dev_err format specifier
+Message-Id: <20201210144932.64436-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201225122613.3810458-1-xiaolei.wang@windriver.com>
- <737e8b89-5748-2ef5-5294-8e65421931b9@web.de>
- <PH0PR11MB507734E4DF73DF015AD601EB95DA0@PH0PR11MB5077.namprd11.prod.outlook.com>
- <46e289a6-49ab-a627-dab1-56a8b0587c08@web.de>
-In-Reply-To: <46e289a6-49ab-a627-dab1-56a8b0587c08@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+To: daniel.vetter@ffwll.ch, grandmaster@al2klimov.de
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-PiBEbyB5b3UgbWVhbiBzbz8NCj4NCj4gY29tbWl0Og0KPiAgICAgICAgICA5Yjk0N2ExM2U3ZjYg
-KCJyZWdtYXA6IHVzZSBkZWJ1Z2ZzIGV2ZW4gd2hlbiBubyBkZXZpY2UiKQ0KDQo+IFBsZWFzZSB0
-YWtlIGFub3RoZXIgbG9vayBhdCBrbm93biBpbmZvcm1hdGlvbiBzb3VyY2VzLg0KDQo+IGh0dHBz
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4
-LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2lk
-PWY4MzhmOGQyYjY5NGNmOWQ1MjRkYzQ0MjNlOWRkMmRiMTM4OTJmM2Yjbjg5DQo+IGh0dHBzOi8v
-Z2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4Lmdp
-dC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2lkPWY4
-MzhmOGQyYjY5NGNmOWQ1MjRkYzQ0MjNlOWRkMmRiMTM4OTJmM2YjbjEyMQ0KDQoNCg0KPiBXaGlj
-aCBvbmUgZG8geW91IG1lYW4gYnkgImFub3RoZXIgbnVsbCBwb2ludCI/DQoNCkhvdyBkbyB5b3Ug
-dGhpbmsgYWJvdXQgdG8gY2hlY2sgaWYgY2FsbHMgb2YgdGhlIGZ1bmN0aW9uIOKAnGthc3ByaW50
-ZuKAnSBzdWNjZWVkZWQgaGVyZT8NCmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y1
-LjEwLjMvc291cmNlL2xpYi9rYXNwcmludGYuYyNMNTMNCg0KV2lsbCBhbnkgbW9yZSBleGNlcHRp
-b24gaGFuZGxpbmcgYmVjb21lIHJlbGV2YW50IGFsc28gZm9yIHRoZSBpbXBsZW1lbnRhdGlvbiBv
-ZiB0aGUgZnVuY3Rpb24g4oCccmVnbWFwX2RlYnVnZnNfaW5pdOKAnT8NCg0KDQotLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTWFya3VzIEVsZnJpbmcgPE1hcmt1cy5FbGZyaW5nQHdl
-Yi5kZT4gDQpTZW50OiBTdW5kYXksIERlY2VtYmVyIDI3LCAyMDIwIDk6NDAgUE0NClRvOiBXYW5n
-LCBYaWFvbGVpIDxYaWFvbGVpLldhbmdAd2luZHJpdmVyLmNvbT47IGtlcm5lbC1qYW5pdG9yc0B2
-Z2VyLmtlcm5lbC5vcmcNCkNjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBHcmVnIEty
-b2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgTWFyayBCcm93biA8YnJv
-b25pZUBrZXJuZWwub3JnPjsgUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbEBrZXJuZWwub3JnPg0K
-U3ViamVjdDogUmU6IHJlZ21hcDogZGVidWdmczogZml4IGEgbWVtb3J5IGxlYWsgd2hlbiBjYWxs
-aW5nIHJlZ21hcF9hdHRhY2hfZGV2DQoNCj4gRG8geW91IG1lYW4gc28/DQo+DQo+IGNvbW1pdDoN
-Cj4gICAgICAgICAgOWI5NDdhMTNlN2Y2ICgicmVnbWFwOiB1c2UgZGVidWdmcyBldmVuIHdoZW4g
-bm8gZGV2aWNlIikNCg0KPiBQbGVhc2UgdGFrZSBhbm90aGVyIGxvb2sgYXQga25vd24gaW5mb3Jt
-YXRpb24gc291cmNlcy4NCg0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
-a2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mv
-c3VibWl0dGluZy1wYXRjaGVzLnJzdD9pZD1mODM4ZjhkMmI2OTRjZjlkNTI0ZGM0NDIzZTlkZDJk
-YjEzODkyZjNmI244OQ0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2Vy
-bmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3Vi
-bWl0dGluZy1wYXRjaGVzLnJzdD9pZD1mODM4ZjhkMmI2OTRjZjlkNTI0ZGM0NDIzZTlkZDJkYjEz
-ODkyZjNmI24xMjENCg0KPiBXaGljaCBvbmUgZG8geW91IG1lYW4gYnkgImFub3RoZXIgbnVsbCBw
-b2ludCI/DQoNCj4gSG93IGRvIHlvdSB0aGluayBhYm91dCB0byBjaGVjayBpZiBjYWxscyBvZiB0
-aGUgZnVuY3Rpb24g4oCca2FzcHJpbnRm4oCdIHN1Y2NlZWRlZCBoZXJlPw0KPiBodHRwczovL2Vs
-aXhpci5ib290bGluLmNvbS9saW51eC92NS4xMC4zL3NvdXJjZS9saWIva2FzcHJpbnRmLmMjTDUz
-DQoNCj4gV2lsbCBhbnkgbW9yZSBleGNlcHRpb24gaGFuZGxpbmcgYmVjb21lIHJlbGV2YW50IGFs
-c28gZm9yIHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rpb24g4oCccmVnbWFwX2RlYnVn
-ZnNfaW5pdOKAnT8NCg0KVGhhbmtzIGZvciB5b3VyIHN1Z2dlc3Rpb24sIEkgd2lsbCBtb2RpZnkg
-dGhlIGNvbW1pdCBsb2cgYW5kIGFkZCBhbm90aGVyIG51bGwgcG9pbnQgY2hlY2sgdG9nZXRoZXIg
-d2l0aCBjb3JyZXNwb25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZw0KDQoNClJlZ2FyZHMsDQpYaWFv
-bGVpIA0K
+'phys_addr' is of type 'dma_addr_t'.
+Use '%pad' instead of '%x' to print this variable in an error message.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/video/fbdev/ep93xx-fb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/ep93xx-fb.c b/drivers/video/fbdev/ep93xx-fb.c
+index 80a70e5796b8..6b5a63b80ffa 100644
+--- a/drivers/video/fbdev/ep93xx-fb.c
++++ b/drivers/video/fbdev/ep93xx-fb.c
+@@ -436,9 +436,8 @@ static int ep93xxfb_alloc_videomem(struct fb_info *info)
+ 	 * least.
+ 	 */
+ 	if (check_screenpage_bug && phys_addr & (1 << 27)) {
+-		dev_err(info->dev, "ep93xx framebuffer bug. phys addr (0x%x) "
+-			"has bit 27 set: cannot init framebuffer\n",
+-			phys_addr);
++		dev_err(info->dev, "ep93xx framebuffer bug. phys addr (%pad) has bit 27 set: cannot init framebuffer\n",
++			&phys_addr);
+ 
+ 		dma_free_coherent(info->dev, fb_size, virt_addr, phys_addr);
+ 		return -ENOMEM;
+-- 
+2.27.0
