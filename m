@@ -1,49 +1,52 @@
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Wed, 02 Dec 2020 09:14:41 +0000
-Subject: Re: [PATCH] vhost_vdpa: return -EFAULT if copy_to_user() fails
-Message-Id: <20201202091441.sjds7e42j5ivdcfi@steredhat>
+From: Jan Kara <jack@suse.cz>
+Date: Thu, 10 Dec 2020 16:04:19 +0000
+Subject: Re: [PATCH] ext4: Fix an IS_ERR() vs NULL check
+Message-Id: <20201210160419.GA31725@quack2.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8c32z5EtDsMyyIL@mwanda>
-In-Reply-To: <X8c32z5EtDsMyyIL@mwanda>
+References: <20201023112232.GB282278@mwanda>
+In-Reply-To: <20201023112232.GB282278@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 09:44:43AM +0300, Dan Carpenter wrote:
->The copy_to_user() function returns the number of bytes remaining to be
->copied but this should return -EFAULT to the user.
->
->Fixes: 1b48dc03e575 ("vhost: vdpa: report iova range")
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->---
-> drivers/vhost/vdpa.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri 23-10-20 14:22:32, Dan Carpenter wrote:
+> The ext4_find_extent() function never returns NULL, it returns error
+> pointers.
+> 
+> Fixes: 44059e503b03 ("ext4: fast commit recovery path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+I think this fix has fallen through the cracks? It looks good to me so feel
+free to add:
 
->
->diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
->index d6a37b66770b..ef688c8c0e0e 100644
->--- a/drivers/vhost/vdpa.c
->+++ b/drivers/vhost/vdpa.c
->@@ -344,7 +344,9 @@ static long vhost_vdpa_get_iova_range(struct vhost_vdpa *v, u32 __user *argp)
-> 		.last = v->range.last,
-> 	};
->
->-	return copy_to_user(argp, &range, sizeof(range));
->+	if (copy_to_user(argp, &range, sizeof(range)))
->+		return -EFAULT;
->+	return 0;
-> }
->
-> static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
->-- 
->2.29.2
->
->_______________________________________________
->Virtualization mailing list
->Virtualization@lists.linux-foundation.org
->https://lists.linuxfoundation.org/mailman/listinfo/virtualization
->
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/extents.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 6b33b9c86b00..a19d0e3a4126 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -5820,8 +5820,8 @@ int ext4_ext_replay_update_ex(struct inode *inode, ext4_lblk_t start,
+>  	int ret;
+>  
+>  	path = ext4_find_extent(inode, start, NULL, 0);
+> -	if (!path)
+> -		return -EINVAL;
+> +	if (IS_ERR(path))
+> +		return PTR_ERR(path);
+>  	ex = path[path->p_depth].p_ext;
+>  	if (!ex) {
+>  		ret = -EFSCORRUPTED;
+> -- 
+> 2.28.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
