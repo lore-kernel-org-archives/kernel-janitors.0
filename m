@@ -1,35 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Dec 2020 19:36:35 +0000
-Subject: [PATCH] Input: fix spelling mistake "theses" -> "these" in Kconfig
-Message-Id: <20201204193635.1152241-1-colin.king@canonical.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Thu, 10 Dec 2020 01:08:08 +0000
+Subject: Re: [PATCH] Input: fix spelling mistake "theses" -> "these" in Kconfig
+Message-Id: <X9F0+B9EwXtJBBS6@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201204193635.1152241-1-colin.king@canonical.com>
+In-Reply-To: <20201204193635.1152241-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Dec 04, 2020 at 07:36:35PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the Kconfig help text. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+Applied, thank you.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/input/mouse/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/input/mouse/Kconfig b/drivers/input/mouse/Kconfig
-index d8b6a5dab190..63c9cda555c3 100644
---- a/drivers/input/mouse/Kconfig
-+++ b/drivers/input/mouse/Kconfig
-@@ -372,7 +372,7 @@ config MOUSE_VSXXXAA
- 	select SERIO
- 	help
- 	  Say Y (or M) if you want to use a DEC VSXXX-AA (hockey
--	  puck) or a VSXXX-GA (rectangular) mouse. Theses mice are
-+	  puck) or a VSXXX-GA (rectangular) mouse. These mice are
- 	  typically used on DECstations or VAXstations, but can also
- 	  be used on any box capable of RS232 (with some adaptor
- 	  described in the source file). This driver also works with the
 -- 
-2.29.2
+Dmitry
