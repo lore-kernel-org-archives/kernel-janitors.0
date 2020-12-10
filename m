@@ -1,43 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 09 Dec 2020 15:19:16 +0000
-Subject: Re: [PATCH] ASoC: max98390: Fix error codes in max98390_dsm_init()
-Message-Id: <160752715603.48520.1121347336816974781.b4-ty@kernel.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Thu, 10 Dec 2020 15:10:35 +0000
+Subject: Re: [PATCH] mmc: atmel-mci: =?utf-8?Q?Redu?= =?utf-8?Q?ce_scope_for_the_variable_=E2=80=9Cslot?= =?u
+Message-Id: <20201210151035.GC1578121@piout.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9B0uz4svyNTqeMb@mwanda>
-In-Reply-To: <X9B0uz4svyNTqeMb@mwanda>
+References: <466b4c6d-032f-fbcc-58ac-75f6f39d734f@web.de>
+In-Reply-To: <466b4c6d-032f-fbcc-58ac-75f6f39d734f@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Lee <steves.lee@maximintegrated.com>, Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Takashi Iwai <tiwai@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, 9 Dec 2020 09:54:51 +0300, Dan Carpenter wrote:
-> These error paths return success but they should return -EINVAL.
+Hello,
 
-Applied to
+On 10/12/2020 16:01:44+0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 10 Dec 2020 15:56:13 +0100
+> 
+> A local variable was used only within an if branch.
+> Thus move the definition for the variable “slot” into the corresponding
+> code block.
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+What is the improvement here?
 
-Thanks!
+This makes the code harder to read.
 
-[1/1] ASoC: max98390: Fix error codes in max98390_dsm_init()
-      commit: 3cea33b6f2d7782d1be17c71509986f33ee93541
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mmc/host/atmel-mci.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+> index 444bd3a0a922..6a0d999ee82e 100644
+> --- a/drivers/mmc/host/atmel-mci.c
+> +++ b/drivers/mmc/host/atmel-mci.c
+> @@ -1558,7 +1558,6 @@ static void atmci_request_end(struct atmel_mci *host, struct mmc_request *mrq)
+>  	__releases(&host->lock)
+>  	__acquires(&host->lock)
+>  {
+> -	struct atmel_mci_slot	*slot = NULL;
+>  	struct mmc_host		*prev_mmc = host->cur_slot->mmc;
+> 
+>  	WARN_ON(host->cmd || host->data);
+> @@ -1579,8 +1578,9 @@ static void atmci_request_end(struct atmel_mci *host, struct mmc_request *mrq)
+>  	host->cur_slot->mrq = NULL;
+>  	host->mrq = NULL;
+>  	if (!list_empty(&host->queue)) {
+> -		slot = list_entry(host->queue.next,
+> -				struct atmel_mci_slot, queue_node);
+> +		struct atmel_mci_slot *slot = list_entry(host->queue.next,
+> +							 struct atmel_mci_slot,
+> +							 queue_node);
+>  		list_del(&slot->queue_node);
+>  		dev_vdbg(&host->pdev->dev, "list not empty: %s is next\n",
+>  				mmc_hostname(slot->mmc));
+> --
+> 2.29.2
+> 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
