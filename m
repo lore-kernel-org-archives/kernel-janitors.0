@@ -1,59 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Thu, 10 Dec 2020 09:33:29 +0000
-Subject: Re: [PATCH] dmaengine: =?utf-8?Q?sf-pdma?= =?utf-8?Q?=3A_Reduce_scope_for_the_variable_=E2=80=9Cvd?=
-Message-Id: <20201210092129.GO8403@vkoul-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Dec 2020 10:13:21 +0000
+Subject: [PATCH] ASoC: fsl: imx-hdmi: Fix an uninitialized return in probe
+Message-Id: <X9NGQaF4pmK8oUAF@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cd695d1-c081-1d95-de7b-9747e9a76de2@web.de>
-In-Reply-To: <8cd695d1-c081-1d95-de7b-9747e9a76de2@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Green Wan <green.wan@sifive.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Timur Tabi <timur@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, Xiubo Li <Xiubo.Lee@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
 
-On 09-12-20, 21:00, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 9 Dec 2020 20:55:05 +0100
-> 
-> A local variable was used only within an else branch.
-> Thus move the definition for the variable “vd” into the corresponding
-> code block.
-> 
-> This issue was detected by using the Coccinelle software.
+The "ret" variable should be set to a negative error code but
+currently it returns uninitialized stack data.
 
-And what was the issue detected...?
+Fixes: 6a5f850aa83a ("ASoC: fsl: Add imx-hdmi machine driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/fsl/imx-hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I feel this is fine and patch below does not add much value..
-
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/dma/sf-pdma/sf-pdma.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/sf-pdma/sf-pdma.c b/drivers/dma/sf-pdma/sf-pdma.c
-> index c4c4e8575764..c66da79a1b34 100644
-> --- a/drivers/dma/sf-pdma/sf-pdma.c
-> +++ b/drivers/dma/sf-pdma/sf-pdma.c
-> @@ -164,7 +164,6 @@ static void sf_pdma_free_chan_resources(struct dma_chan *dchan)
->  static size_t sf_pdma_desc_residue(struct sf_pdma_chan *chan,
->  				   dma_cookie_t cookie)
->  {
-> -	struct virt_dma_desc *vd = NULL;
->  	struct pdma_regs *regs = &chan->regs;
->  	unsigned long flags;
->  	u64 residue = 0;
-> @@ -180,7 +179,7 @@ static size_t sf_pdma_desc_residue(struct sf_pdma_chan *chan,
->  	if (cookie = tx->cookie) {
->  		residue = readq(regs->residue);
->  	} else {
-> -		vd = vchan_find_desc(&chan->vchan, cookie);
-> +		struct virt_dma_desc *vd = vchan_find_desc(&chan->vchan, cookie);
->  		if (!vd)
->  			goto out;
-> 
-> --
-> 2.29.2
-
+diff --git a/sound/soc/fsl/imx-hdmi.c b/sound/soc/fsl/imx-hdmi.c
+index 2c2a76a71940..ede4a9ad1054 100644
+--- a/sound/soc/fsl/imx-hdmi.c
++++ b/sound/soc/fsl/imx-hdmi.c
+@@ -164,6 +164,7 @@ static int imx_hdmi_probe(struct platform_device *pdev)
+ 
+ 	if ((hdmi_out && hdmi_in) || (!hdmi_out && !hdmi_in)) {
+ 		dev_err(&pdev->dev, "Invalid HDMI DAI link\n");
++		ret = -EINVAL;
+ 		goto fail;
+ 	}
+ 
 -- 
-~Vinod
+2.29.2
