@@ -1,35 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Dec 2020 10:05:50 +0000
-Subject: [PATCH] drm/panel: khadas: Fix error code in khadas_ts050_panel_add()
-Message-Id: <X9NEfmgGilaXJs2R@mwanda>
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Fri, 11 Dec 2020 11:01:57 +0000
+Subject: Re: [PATCH] drm/panel: khadas: Fix error code in khadas_ts050_panel_add()
+Message-Id: <20201211110157.GA527186@ravnborg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X9NEfmgGilaXJs2R@mwanda>
+In-Reply-To: <X9NEfmgGilaXJs2R@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
 
-There is a copy and paste bug so it didn't return the correct error
-code.
+Hi Dan,
 
-Fixes: b215212117f7 ("drm: panel: add Khadas TS050 panel driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/panel/panel-khadas-ts050.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I assume your nice tooling found this buggy.
+Nice!
 
-diff --git a/drivers/gpu/drm/panel/panel-khadas-ts050.c b/drivers/gpu/drm/panel/panel-khadas-ts050.c
-index 87aa2cc8ec2a..8f6ac1a40c31 100644
---- a/drivers/gpu/drm/panel/panel-khadas-ts050.c
-+++ b/drivers/gpu/drm/panel/panel-khadas-ts050.c
-@@ -786,7 +786,7 @@ static int khadas_ts050_panel_add(struct khadas_ts050_panel *khadas_ts050)
- 	khadas_ts050->enable_gpio = devm_gpiod_get(dev, "enable",
- 						   GPIOD_OUT_HIGH);
- 	if (IS_ERR(khadas_ts050->enable_gpio))
--		return dev_err_probe(dev, PTR_ERR(khadas_ts050->reset_gpio),
-+		return dev_err_probe(dev, PTR_ERR(khadas_ts050->enable_gpio),
- 				     "failed to get enable gpio");
- 
- 	drm_panel_init(&khadas_ts050->base, &khadas_ts050->link->dev,
--- 
-2.29.2
+On Fri, Dec 11, 2020 at 01:05:50PM +0300, Dan Carpenter wrote:
+> There is a copy and paste bug so it didn't return the correct error
+> code.
+> 
+> Fixes: b215212117f7 ("drm: panel: add Khadas TS050 panel driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+
+Neil, I assume you will take this via next-fixes, which I think is the
+right tree at the moment.
+
+	Sam
