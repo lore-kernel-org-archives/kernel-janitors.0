@@ -1,45 +1,64 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 13 Dec 2020 13:23:03 +0000
-Subject: Re: [PATCH] iio: sx9310: Off by one in sx9310_read_thresh()
-Message-Id: <20201213132303.4b362987@archlinux>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 11 Dec 2020 18:46:04 +0000
+Subject: [PATCH v2] block: drop dead assignments in loop_init()
+Message-Id: <20201211184604.27646-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8XqwK0z//8sSWJR@mwanda>
-In-Reply-To: <X8XqwK0z//8sSWJR@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Boyd <swboyd@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Daniel Campello <campello@chromium.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Douglas Anderson <dianders@chromium.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Tue, 1 Dec 2020 10:03:28 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Commit 8410d38c2552 ("loop: use __register_blkdev to allocate devices on
+demand") simplified loop_init(); so computing the range of the block region
+is not required anymore and can be dropped.
 
-> This > should be >= to prevent reading one element beyond the end of
-> the sx9310_pthresh_codes[] array.
-> 
-> Fixes: ad2b473e2ba3 ("iio: sx9310: Support setting proximity thresholds")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied to the fixes-togreg branch of iio.git which won't go anywhere now
-until after rc1 (and is based on the stuff queued up for the merge window)
+Drop dead assignments in loop_init().
 
-thanks,
+As compilers will detect these unneeded assignments and optimize this,
+the resulting object code is identical before and after this change.
 
-Jonathan
+No functional change. No change in object code.
 
-> ---
->  drivers/iio/proximity/sx9310.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/proximity/sx9310.c b/drivers/iio/proximity/sx9310.c
-> index a2f820997afc..62eacb22e9bc 100644
-> --- a/drivers/iio/proximity/sx9310.c
-> +++ b/drivers/iio/proximity/sx9310.c
-> @@ -601,7 +601,7 @@ static int sx9310_read_thresh(struct sx9310_data *data,
->  		return ret;
->  
->  	regval = FIELD_GET(SX9310_REG_PROX_CTRL8_9_PTHRESH_MASK, regval);
-> -	if (regval > ARRAY_SIZE(sx9310_pthresh_codes))
-> +	if (regval >= ARRAY_SIZE(sx9310_pthresh_codes))
->  		return -EINVAL;
->  
->  	*val = sx9310_pthresh_codes[regval];
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+v1 -> v2:
+  - replaced if block with ternary operator after Julia's style comment
+
+Christoph, please ack.
+
+Jens, please pick this minor non-urgent clean-up patch on your
+block -next tree on top of Christoph's commit above.
+
+ drivers/block/loop.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index d2ce1ddc192d..10c7c154c114 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -2304,7 +2304,6 @@ MODULE_ALIAS("devname:loop-control");
+ static int __init loop_init(void)
+ {
+ 	int i, nr;
+-	unsigned long range;
+ 	struct loop_device *lo;
+ 	int err;
+ 
+@@ -2341,13 +2340,7 @@ static int __init loop_init(void)
+ 	 * /dev/loop-control interface, or be instantiated by accessing
+ 	 * a 'dead' device node.
+ 	 */
+-	if (max_loop) {
+-		nr = max_loop;
+-		range = max_loop << part_shift;
+-	} else {
+-		nr = CONFIG_BLK_DEV_LOOP_MIN_COUNT;
+-		range = 1UL << MINORBITS;
+-	}
++	nr = max_loop ? max_loop : CONFIG_BLK_DEV_LOOP_MIN_COUNT;
+ 
+ 	err = misc_register(&loop_misc);
+ 	if (err < 0)
+-- 
+2.17.1
