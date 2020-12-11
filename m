@@ -1,32 +1,35 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 18 Dec 2020 21:21:19 +0000
-Subject: Re: [PATCH] Bluetooth: btqcomsmd: Fix a resource leak in error handling paths in the probe function
-Message-Id: <53063008-8797-4395-B9D1-9D56D2D0D54C@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Dec 2020 10:13:57 +0000
+Subject: [PATCH] hugetlb: Fix an error code in hugetlb_reserve_pages()
+Message-Id: <X9NGZWnZl5/Mt99R@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201212094658.83861-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201212094658.83861-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: agross@kernel.org, bjorn.andersson@linaro.org, Johan Hedberg <johan.hedberg@gmail.com>, MSM <linux-arm-msm@vger.kernel.org>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mike Kravetz <mike.kravetz@oracle.com>, Mina Almasry <almasrymina@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Preserve the error code from region_add() instead of returning success.
 
-> Some resource should be released in the error handling path of the probe
-> function, as already done in the remove function.
-> 
-> The remove function was fixed in commit 5052de8deff5 ("soc: qcom: smd:
-> Transition client drivers from smd to rpmsg")
-> 
-> Fixes: 1511cc750c3d ("Bluetooth: Introduce Qualcomm WCNSS SMD based HCI driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> drivers/bluetooth/btqcomsmd.c | 27 +++++++++++++++++++--------
-> 1 file changed, 19 insertions(+), 8 deletions(-)
+Fixes: 0db9d74ed884 ("hugetlb: disable region_add file_region coalescing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Untested.
 
-patch has been applied to bluetooth-next tree.
+ mm/hugetlb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards
-
-Marcel
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 1f3bf1710b66..ac2e48b9f1d7 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5113,6 +5113,7 @@ int hugetlb_reserve_pages(struct inode *inode,
+ 
+ 		if (unlikely(add < 0)) {
+ 			hugetlb_acct_memory(h, -gbl_reserve);
++			ret = add;
+ 			goto out_put_pages;
+ 		} else if (unlikely(chg > add)) {
+ 			/*
+-- 
+2.29.2
