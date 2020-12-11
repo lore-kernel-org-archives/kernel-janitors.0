@@ -1,42 +1,57 @@
-From: Robert Foss <robert.foss@linaro.org>
-Date: Wed, 09 Dec 2020 10:56:38 +0000
-Subject: Re: [PATCH 2/2] media: camss: missing error code in msm_video_register()
-Message-Id: <CAG3jFytWd3p3sBoC8PLUES-SJFu=DxQWED9jGmLO7zCaCXdRFg@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 11 Dec 2020 18:12:36 +0000
+Subject: [PATCH] block: drop dead assignments in loop_init()
+Message-Id: <20201211181236.25755-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9BzujGgPAM/s+rG@mwanda> <X9Bz8pRFNhR2x11I@mwanda>
-In-Reply-To: <X9Bz8pRFNhR2x11I@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Todor Tomov <todor.too@gmail.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hansverk@cisco.com>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Thanks for submitting this Dan.
+Commit 8410d38c2552 ("loop: use __register_blkdev to allocate devices on
+demand") simplified loop_init(); so computing the range of the block region
+is not required anymore and can be dropped.
 
-Reviewed-by: Robert Foss <robert.foss@linaro.org>
+Drop dead assignments in loop_init().
 
-On Wed, 9 Dec 2020 at 07:51, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This error path returns success but it should return -EINVAL.
->
-> Fixes: cba3819d1e93 ("media: camss: Format configuration per hardware version")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/media/platform/qcom/camss/camss-video.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-> index 2fa3214775d5..97cea7c4d769 100644
-> --- a/drivers/media/platform/qcom/camss/camss-video.c
-> +++ b/drivers/media/platform/qcom/camss/camss-video.c
-> @@ -961,6 +961,7 @@ int msm_video_register(struct camss_video *video, struct v4l2_device *v4l2_dev,
->                         video->nformats = ARRAY_SIZE(formats_rdi_8x96);
->                 }
->         } else {
-> +               ret = -EINVAL;
->                 goto error_video_register;
->         }
->
-> --
-> 2.29.2
->
+As compilers will detect these unneeded assignments and optimize this,
+the resulting object code is identical before and after this change.
+
+No functional change. No change in object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Christoph, please ack.
+
+Jens, please pick this minor non-urgent clean-up patch on your
+block -next tree on top of Christoph's commit above.
+
+ drivers/block/loop.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index d2ce1ddc192d..eed4bc5ef5c5 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -2304,7 +2304,6 @@ MODULE_ALIAS("devname:loop-control");
+ static int __init loop_init(void)
+ {
+ 	int i, nr;
+-	unsigned long range;
+ 	struct loop_device *lo;
+ 	int err;
+ 
+@@ -2343,10 +2342,8 @@ static int __init loop_init(void)
+ 	 */
+ 	if (max_loop) {
+ 		nr = max_loop;
+-		range = max_loop << part_shift;
+ 	} else {
+ 		nr = CONFIG_BLK_DEV_LOOP_MIN_COUNT;
+-		range = 1UL << MINORBITS;
+ 	}
+ 
+ 	err = misc_register(&loop_misc);
+-- 
+2.17.1
