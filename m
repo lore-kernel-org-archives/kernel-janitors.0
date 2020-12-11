@@ -1,37 +1,35 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Wed, 16 Dec 2020 19:50:47 +0000
-Subject: Re: [PATCH] net: allwinner: Fix some resources leak in the error handling path of the probe and in t
-Message-Id: <160814824770.18857.16417410441229264372.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Dec 2020 10:05:50 +0000
+Subject: [PATCH] drm/panel: khadas: Fix error code in khadas_ts050_panel_add()
+Message-Id: <X9NEfmgGilaXJs2R@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: song.bao.hua@hisilicon.com, jernej.skrabec@siol.net, f.fainelli@gmail.com, leon@kernel.org, timur@kernel.org, netdev@vger.kernel.org, wangyunjian@huawei.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mripard@kernel.org, wens@csie.org, kuba@kernel.org, sr@denx.de, davem@davemloft.net, linux-arm-kernel@lists.infradead.org, hkallweit1@gmail.com
+To: Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
 
-Hello:
+There is a copy and paste bug so it didn't return the correct error
+code.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Fixes: b215212117f7 ("drm: panel: add Khadas TS050 panel driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/panel/panel-khadas-ts050.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, 14 Dec 2020 21:21:17 +0100 you wrote:
-> 'irq_of_parse_and_map()' should be balanced by a corresponding
-> 'irq_dispose_mapping()' call. Otherwise, there is some resources leaks.
-> 
-> Add such a call in the error handling path of the probe function and in the
-> remove function.
-> 
-> Fixes: 492205050d77 ("net: Add EMAC ethernet driver found on Allwinner A10 SoC's")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
-
-Here is the summary with links:
-  - net: allwinner: Fix some resources leak in the error handling path of the probe and in the remove function
-    https://git.kernel.org/netdev/net/c/322e53d1e252
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/gpu/drm/panel/panel-khadas-ts050.c b/drivers/gpu/drm/panel/panel-khadas-ts050.c
+index 87aa2cc8ec2a..8f6ac1a40c31 100644
+--- a/drivers/gpu/drm/panel/panel-khadas-ts050.c
++++ b/drivers/gpu/drm/panel/panel-khadas-ts050.c
+@@ -786,7 +786,7 @@ static int khadas_ts050_panel_add(struct khadas_ts050_panel *khadas_ts050)
+ 	khadas_ts050->enable_gpio = devm_gpiod_get(dev, "enable",
+ 						   GPIOD_OUT_HIGH);
+ 	if (IS_ERR(khadas_ts050->enable_gpio))
+-		return dev_err_probe(dev, PTR_ERR(khadas_ts050->reset_gpio),
++		return dev_err_probe(dev, PTR_ERR(khadas_ts050->enable_gpio),
+ 				     "failed to get enable gpio");
+ 
+ 	drm_panel_init(&khadas_ts050->base, &khadas_ts050->link->dev,
+-- 
+2.29.2
