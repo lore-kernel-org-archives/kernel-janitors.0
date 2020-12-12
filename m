@@ -1,69 +1,29 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sat, 12 Dec 2020 05:13:02 +0000
-Subject: [PATCH v3] block: drop dead assignments in loop_init()
-Message-Id: <20201212051302.26008-1-lukas.bulwahn@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Sat, 12 Dec 2020 18:19:12 +0000
+Subject: Re: [PATCH v3] block: drop dead assignments in loop_init()
+Message-Id: <c064e9b2-f366-a70e-2016-333be8f03334@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201212051302.26008-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20201212051302.26008-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org
+Cc: Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org
 
-Commit 8410d38c2552 ("loop: use __register_blkdev to allocate devices on
-demand") simplified loop_init(); so computing the range of the block region
-is not required anymore and can be dropped.
+On 12/11/20 10:13 PM, Lukas Bulwahn wrote:
+> Commit 8410d38c2552 ("loop: use __register_blkdev to allocate devices on
+> demand") simplified loop_init(); so computing the range of the block region
+> is not required anymore and can be dropped.
+> 
+> Drop dead assignments in loop_init().
+> 
+> As compilers will detect these unneeded assignments and optimize this,
+> the resulting object code is identical before and after this change.
+> 
+> No functional change. No change in object code.
 
-Drop dead assignments in loop_init().
+Applied, thanks.
 
-As compilers will detect these unneeded assignments and optimize this,
-the resulting object code is identical before and after this change.
-
-No functional change. No change in object code.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-v1 -> v2:
-  - replaced if block with ternary operator after Julia's style comment
-
-v2 -> v3:
-  - use if instead of ternary following Jens' preference
-
-Christoph, please ack.
-
-Jens, please pick this minor non-urgent clean-up patch on your
-block -next tree on top of Christoph's commit above.
-
-
- drivers/block/loop.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index d2ce1ddc192d..e5ff328f0917 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2304,7 +2304,6 @@ MODULE_ALIAS("devname:loop-control");
- static int __init loop_init(void)
- {
- 	int i, nr;
--	unsigned long range;
- 	struct loop_device *lo;
- 	int err;
- 
-@@ -2341,13 +2340,10 @@ static int __init loop_init(void)
- 	 * /dev/loop-control interface, or be instantiated by accessing
- 	 * a 'dead' device node.
- 	 */
--	if (max_loop) {
-+	if (max_loop)
- 		nr = max_loop;
--		range = max_loop << part_shift;
--	} else {
-+	else
- 		nr = CONFIG_BLK_DEV_LOOP_MIN_COUNT;
--		range = 1UL << MINORBITS;
--	}
- 
- 	err = misc_register(&loop_misc);
- 	if (err < 0)
 -- 
-2.17.1
+Jens Axboe
