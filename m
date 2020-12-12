@@ -1,44 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Dec 2020 10:07:59 +0000
-Subject: [PATCH] ASoC: cs42l56: fix up error handling in probe
-Message-Id: <X9NE/9nK9/TuxuL+@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Dec 2020 16:06:14 +0000
+Subject: [PATCH 2/2] dmaengine: fsldma: Fix a resource leak in an error handling path of the probe function
+Message-Id: <20201212160614.92576-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Schulman <james.schulman@cirrus.com>, Brian Austin <brian.austin@cirrus.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, David Rhodes <david.rhodes@cirrus.com>
+To: leoyang.li@nxp.com, zw@zh-kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, iws@ovro.caltech.edu
+Cc: linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-There are two issues with this code.  The first error path forgot to set
-the error code and instead returns success.  The second error path
-doesn't clean up.
+In case of error, the previous 'fsl_dma_chan_probe()' calls must be undone
+by some 'fsl_dma_chan_remove()', as already done in the remove function.
 
-Fixes: 272b5edd3b8f ("ASoC: Add support for CS42L56 CODEC")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It was added in the remove function in commit 77cd62e8082b ("fsldma: allow
+Freescale Elo DMA driver to be compiled as a module")
+
+Fixes: d3f620b2c4fe ("fsldma: simplify IRQ probing and handling")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/cs42l56.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Patch provided as-is.
+I don't have the configuration to compile test this patch
+---
+ drivers/dma/fsldma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index bb9599cc832b..c44a5cdb796e 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1250,6 +1250,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 		dev_err(&i2c_client->dev,
- 			"CS42L56 Device ID (%X). Expected %X\n",
- 			devid, CS42L56_DEVID);
-+		ret = -EINVAL;
- 		goto err_enable;
- 	}
- 	alpha_rev = reg & CS42L56_AREV_MASK;
-@@ -1307,7 +1308,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 	ret =  devm_snd_soc_register_component(&i2c_client->dev,
- 			&soc_component_dev_cs42l56, &cs42l56_dai, 1);
- 	if (ret < 0)
--		return ret;
-+		goto err_enable;
+diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
+index 554f70a0c18c..f8459cc5315d 100644
+--- a/drivers/dma/fsldma.c
++++ b/drivers/dma/fsldma.c
+@@ -1214,6 +1214,7 @@ static int fsldma_of_probe(struct platform_device *op)
+ {
+ 	struct fsldma_device *fdev;
+ 	struct device_node *child;
++	unsigned int i;
+ 	int err;
  
+ 	fdev = kzalloc(sizeof(*fdev), GFP_KERNEL);
+@@ -1292,6 +1293,10 @@ static int fsldma_of_probe(struct platform_device *op)
  	return 0;
  
+ out_free_fdev:
++	for (i = 0; i < FSL_DMA_MAX_CHANS_PER_DEVICE; i++) {
++		if (fdev->chan[i])
++			fsl_dma_chan_remove(fdev->chan[i]);
++	}
+ 	irq_dispose_mapping(fdev->irq);
+ 	iounmap(fdev->regs);
+ out_free:
 -- 
-2.29.2
+2.27.0
