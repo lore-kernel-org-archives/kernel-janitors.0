@@ -1,56 +1,41 @@
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=  <niklas.soderlund@ragnatech.se>
-Date: Fri, 04 Dec 2020 21:04:29 +0000
-Subject: Re: [PATCH][next] media: rcar-vin: fix return, use ret instead of zero
-Message-Id: <20201204210429.GB2018713@oden.dyn.berto.se>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Dec 2020 18:20:05 +0000
+Subject: [PATCH] net: bcmgenet: Fix a resource leak in an error handling path in the probe functin
+Message-Id: <20201212182005.120437-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204173833.1146570-1-colin.king@canonical.com>
-In-Reply-To: <20201204173833.1146570-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: opendmb@gmail.com, f.fainelli@gmail.com, davem@davemloft.net, kuba@kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Colin,
+If the 'register_netdev()' call fails, we must undo a previous
+'bcmgenet_mii_init()' call.
 
-Thanks for catching this!
+Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The missing 'bcmgenet_mii_exit()' call is added here, instead of in the
+error handling path in order to avoid some goto spaghetti code.
+---
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 2020-12-04 17:38:33 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the return error code is in ret is being assigned but not
-> used. It and should be returned by the return statement and currently
-> just 0 is being returned. Fix this.
->=20
-> Addresses-Coverity: ("Unused value")
-> Fixes: b9ad52aafe38 ("media: rcar-vin: Rework parallel firmware parsing")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/=
-platform/rcar-vin/rcar-core.c
-> index 98bff765b02e..e48d666f2c63 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -654,7 +654,7 @@ static int rvin_parallel_parse_of(struct rvin_dev *vi=
-n)
->  out:
->  	fwnode_handle_put(fwnode);
-> =20
-> -	return 0;
-> +	return ret;
->  }
-> =20
->  static int rvin_parallel_init(struct rvin_dev *vin)
-> --=20
-> 2.29.2
->=20
-
---=20
-Regards,
-Niklas S=F6derlund
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index be85dad2e3bc..fcca023f22e5 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -4069,8 +4069,10 @@ static int bcmgenet_probe(struct platform_device *pdev)
+ 	clk_disable_unprepare(priv->clk);
+ 
+ 	err = register_netdev(dev);
+-	if (err)
++	if (err) {
++		bcmgenet_mii_exit(dev);
+ 		goto err;
++	}
+ 
+ 	return err;
+ 
+-- 
+2.27.0
