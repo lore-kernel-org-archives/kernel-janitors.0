@@ -1,70 +1,37 @@
-From: Helen Koike <helen.koike@collabora.com>
-Date: Tue, 01 Dec 2020 14:38:33 +0000
-Subject: Re: [PATCH] media: rockchip: rkisp1: remove some dead code
-Message-Id: <cedd1dd1-36c5-ff63-4092-e5f6b40e6286@collabora.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Dec 2020 12:28:18 +0000
+Subject: [PATCH] clk: s2mps11: Fix a resource leak in error handling paths in the probe function
+Message-Id: <20201212122818.86195-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8TrSj3PbqVtN5XQ@mwanda>
- <a6d9660f-84ec-317d-c3aa-9b3bda595d49@collabora.com>
- <20201201142754.GI2767@kadam>
-In-Reply-To: <20201201142754.GI2767@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, Heiko Stuebner <heiko@sntech.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: krzk@kernel.org, b.zolnierkie@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, yadi.brar@samsung.com, mturquette@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
+Some resource should be released in the error handling path of the probe
+function, as already done in the remove function.
 
-On 12/1/20 11:27 AM, Dan Carpenter wrote:
-> On Mon, Nov 30, 2020 at 11:20:05AM -0300, Helen Koike wrote:
->> Hi Dan,
->>
->> Thank you for your patch.
->>
->> On 11/30/20 9:53 AM, Dan Carpenter wrote:
->>> The debugfs_create_dir() function never returns NULLs.  It's not supposed
->>> to checked for errors in the normal case and there is no need to check
->>> in this function so let's just delete this dead code.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> ---
->>>  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 4 ----
->>>  1 file changed, 4 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
->>> index 9af137e4967f..68da1eed753d 100644
->>> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
->>> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
->>> @@ -430,10 +430,6 @@ static void rkisp1_debug_init(struct rkisp1_device *rkisp1)
->>>  	struct rkisp1_debug *debug = &rkisp1->debug;
->>>  
->>>  	debug->debugfs_dir = debugfs_create_dir(RKISP1_DRIVER_NAME, NULL);
->>> -	if (!debug->debugfs_dir) {
->>> -		dev_dbg(rkisp1->dev, "failed to create debugfs directory\n");
->>> -		return;
->>> -	}
->>
->> I was taking a look at the debugfs_create_dir() code, and I saw it can
->> return ERR_PTR(), so ideally we should check for errors with IS_ERR() / PTR_ERR().
-> 
-> Debugfs functions aren't meant to be error checked in the normal case.
-> There are some drivers which dereference the dentry pointer so those
-> need to check it but that's not very common and isn't the case here.
+The remove function was fixed in commit bf416bd45738 ("clk: s2mps11: Add
+missing of_node_put and of_clk_del_provider")
 
-right, I just saw the functions in inode.c already checks the parent with
-IS_ERR(). the debugfs_create_*() function calls start_creating() which
-already checks the parent.
+Fixes: 7cc560dea415 ("clk: s2mps11: Add support for s2mps11")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-s2mps11.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-ok, fair enough, I'll ack v2.
-
-Regards,
-Helen
-
-> 
-> I'm really sure this must be documented somewhere but I can't find it
-> at all.  :P  But look at commit 057e212eae72 ("media: usb: uvc: no need
-> to check return value of debugfs_create functions") for example.
-> 
-> regards,
-> dan carpenter
-> 
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index aa21371f9104..a3e883a9f406 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -195,6 +195,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	return ret;
+ 
+ err_reg:
++	of_node_put(s2mps11_clks[0].clk_np);
+ 	while (--i >= 0)
+ 		clkdev_drop(s2mps11_clks[i].lookup);
+ 
+-- 
+2.27.0
