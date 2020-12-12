@@ -1,52 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 15 Dec 2020 14:49:46 +0000
-Subject: [PATCH] net/mlx5: fix spelling mistake in Kconfig "accelaration" -> "acceleration"
-Message-Id: <20201215144946.204104-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Dec 2020 16:25:35 +0000
+Subject: [PATCH] dmaengine: owl-dma: Fix a resource leak in the remove function
+Message-Id: <20201212162535.95727-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: vkoul@kernel.org, dan.j.williams@intel.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+A 'dma_pool_destroy()' call is missing in the remove function.
+Add it.
 
-There are some spelling mistakes in the Kconfig. Fix these.
+This call is already made in the error handling path of the probe function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 47e20577c24d ("dmaengine: Add Actions Semi Owl family S900 DMA driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/dma/owl-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-index 6e4d7bb7fea2..bcdee9dc4aa2 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
-@@ -149,14 +149,14 @@ config MLX5_IPSEC
- 	IPsec support for the Connect-X family.
+diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
+index 9fede32641e9..04202d75f4ee 100644
+--- a/drivers/dma/owl-dma.c
++++ b/drivers/dma/owl-dma.c
+@@ -1245,6 +1245,7 @@ static int owl_dma_remove(struct platform_device *pdev)
+ 	owl_dma_free(od);
  
- config MLX5_EN_IPSEC
--	bool "IPSec XFRM cryptography-offload accelaration"
-+	bool "IPSec XFRM cryptography-offload acceleration"
- 	depends on MLX5_CORE_EN
- 	depends on XFRM_OFFLOAD
- 	depends on INET_ESP_OFFLOAD || INET6_ESP_OFFLOAD
- 	depends on MLX5_FPGA_IPSEC || MLX5_IPSEC
- 	default n
- 	help
--	  Build support for IPsec cryptography-offload accelaration in the NIC.
-+	  Build support for IPsec cryptography-offload acceleration in the NIC.
- 	  Note: Support for hardware with this capability needs to be selected
- 	  for this option to become available.
+ 	clk_disable_unprepare(od->clk);
++	dma_pool_destroy(od->lli_pool);
  
-@@ -192,7 +192,7 @@ config MLX5_TLS
- config MLX5_EN_TLS
- 	bool
- 	help
--	Build support for TLS cryptography-offload accelaration in the NIC.
-+	Build support for TLS cryptography-offload acceleration in the NIC.
- 	Note: Support for hardware with this capability needs to be selected
- 	for this option to become available.
- 
+ 	return 0;
+ }
 -- 
-2.29.2
+2.27.0
