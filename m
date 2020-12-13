@@ -1,37 +1,87 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Dec 2020 10:55:54 +0000
-Subject: [PATCH] nvmem: core: Fix a resource leak on error in nvmem_add_cells_from_of()
-Message-Id: <X93cOvjVvzfig1Pu@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 13 Dec 2020 15:11:05 +0000
+Subject: [PATCH] staging: spmi: hisi-spmi-controller: Fix some error handling paths
+Message-Id: <20201213151105.137731-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mchehab+huawei@kernel.org, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This doesn't call of_node_put() on the error path so it leads to a
-memory leak.
+IN the probe function, if an error occurs after calling
+'spmi_controller_alloc()', it must be undone by a corresponding
+'spmi_controller_put() call.
 
-Fixes: 0749aa25af82 ("nvmem: core: fix regression in of_nvmem_cell_get()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the remove function, use 'spmi_controller_put(ctrl)' instead of
+'kfree(ctrl)'.
+
+While a it fix an error message
+(s/spmi_add_controller/spmi_controller_add/)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The kfree_const() could just be replaced with kfree().  Someone got over
-excited converting things from kfree() to kfree_const().
+ .../staging/hikey9xx/hisi-spmi-controller.c   | 21 +++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
- drivers/nvmem/core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 177f5bf27c6d..68ae6f24b57f 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -713,6 +713,7 @@ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
- 				cell->name, nvmem->stride);
- 			/* Cells already added will be freed later. */
- 			kfree_const(cell->name);
-+			of_node_put(cell->np);
- 			kfree(cell);
- 			return -EINVAL;
- 		}
+diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+index 861aedd5de48..0d42bc65f39b 100644
+--- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
++++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
+@@ -278,21 +278,24 @@ static int spmi_controller_probe(struct platform_device *pdev)
+ 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!iores) {
+ 		dev_err(&pdev->dev, "can not get resource!\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_put_controller;
+ 	}
+ 
+ 	spmi_controller->base = devm_ioremap(&pdev->dev, iores->start,
+ 					     resource_size(iores));
+ 	if (!spmi_controller->base) {
+ 		dev_err(&pdev->dev, "can not remap base addr!\n");
+-		return -EADDRNOTAVAIL;
++		ret = -EADDRNOTAVAIL;
++		goto err_put_controller;
+ 	}
+ 
+ 	ret = of_property_read_u32(pdev->dev.of_node, "spmi-channel",
+ 				   &spmi_controller->channel);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "can not get channel\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_put_controller;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, spmi_controller);
+@@ -309,9 +312,15 @@ static int spmi_controller_probe(struct platform_device *pdev)
+ 	ctrl->write_cmd = spmi_write_cmd;
+ 
+ 	ret = spmi_controller_add(ctrl);
+-	if (ret)
+-		dev_err(&pdev->dev, "spmi_add_controller failed with error %d!\n", ret);
++	if (ret) {
++		dev_err(&pdev->dev, "spmi_controller_add failed with error %d!\n", ret);
++		goto err_put_controller;
++	}
++
++	return 0;
+ 
++err_put_controller:
++	spmi_controller_put(ctrl);
+ 	return ret;
+ }
+ 
+@@ -320,7 +329,7 @@ static int spmi_del_controller(struct platform_device *pdev)
+ 	struct spmi_controller *ctrl = platform_get_drvdata(pdev);
+ 
+ 	spmi_controller_remove(ctrl);
+-	kfree(ctrl);
++	spmi_controller_put(ctrl);
+ 	return 0;
+ }
+ 
 -- 
-2.29.2
+2.27.0
