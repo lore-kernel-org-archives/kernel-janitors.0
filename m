@@ -1,25 +1,35 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 08 Dec 2020 04:52:57 +0000
-Subject: Re: [PATCH][next] scsi: pm8001: remove space in a debug message
-Message-Id: <160740315201.1143.13169163294791547714.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Dec 2020 22:28:13 +0000
+Subject: [PATCH][next] usb: cdnsp: fix spelling mistake "delagete" -> "delegate"
+Message-Id: <20201214222813.82727-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201124093828.307709-1-colin.king@canonical.com>
-In-Reply-To: <20201124093828.307709-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.ibm.com>, Jack Wang <jinpu.wang@cloud.ionos.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pawel Laszczak <pawell@cadence.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 24 Nov 2020 09:38:28 +0000, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> There are two words that need separating with a space in a
-> pm8001_dbg message. Fix it.
+There is a spelling mistake in a trace message. Fix it.
 
-Applied to 5.11/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/cdnsp-ep0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] scsi: pm8001: remove space in a debug message
-      https://git.kernel.org/mkp/scsi/c/c6131854e28a
-
+diff --git a/drivers/usb/cdns3/cdnsp-ep0.c b/drivers/usb/cdns3/cdnsp-ep0.c
+index d55b59ed7381..b6a06e6210ba 100644
+--- a/drivers/usb/cdns3/cdnsp-ep0.c
++++ b/drivers/usb/cdns3/cdnsp-ep0.c
+@@ -45,7 +45,7 @@ static int cdnsp_ep0_delegate_req(struct cdnsp_device *pdev,
+ {
+ 	int ret;
+ 
+-	trace_cdnsp_ep0_request("delagete");
++	trace_cdnsp_ep0_request("delegate");
+ 
+ 	spin_unlock(&pdev->lock);
+ 	ret = pdev->gadget_driver->setup(&pdev->gadget, ctrl);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
