@@ -1,41 +1,35 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 22 Dec 2020 15:08:22 +0000
-Subject: Re: [PATCH 0/2] drm/amd/display: Adjustments for dc_create()
-Message-Id: <CADnq5_PVm+04LqPJoQ6mPHf0YM6jEeR_Xh_Bkap7Nuw+Fo6sgw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Dec 2020 11:52:58 +0000
+Subject: [PATCH] fs/adfs: bigdir: Fix another error code in adfs_fplus_read()
+Message-Id: <X9dSGhuIWbOfmp7I@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <98e71ee7-1eb9-ada8-a438-703be03e96d1@web.de>
-In-Reply-To: <98e71ee7-1eb9-ada8-a438-703be03e96d1@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Aric Cyr <aric.cyr@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Leo Li <sunpeng.li@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Chiawen Huang <chiawen.huang@amd.com>, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Aurabindo Pillai <aurabindo.pillai@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Yongqiang Sun <yongqiang.sun@amd.com>, Harry Wentland <harry.wentland@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Anthony Koo <Anthony.Koo@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Alvin Lee <alvin.lee2@amd.com>
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Dec 20, 2020 at 6:10 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 19 Dec 2020 18:30:56 +0100
->
-> Two update suggestions were taken into account
-> from static source code analysis.
->
+This should return -EINVAL if the checkbyte is wrong instead of success.
 
-Applied.  Thanks!
+Fixes: d79288b4f61b ("fs/adfs: bigdir: calculate and validate directory checkbyte")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Sorry for not catching this one last time.  :/
 
-Alex
+ fs/adfs/dir_fplus.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-> Markus Elfring (2):
->   Return directly after a failed kzalloc()
->   Use common error handling code
->
->  drivers/gpu/drm/amd/display/dc/core/dc.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
->
-> --
-> 2.29.2
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/fs/adfs/dir_fplus.c b/fs/adfs/dir_fplus.c
+index 4a15924014da..a5e47c94a5b9 100644
+--- a/fs/adfs/dir_fplus.c
++++ b/fs/adfs/dir_fplus.c
+@@ -143,6 +143,7 @@ static int adfs_fplus_read(struct super_block *sb, u32 indaddr,
+ 
+ 	if (adfs_fplus_checkbyte(dir) != t->bigdircheckbyte) {
+ 		adfs_error(sb, "dir %06x checkbyte mismatch\n", indaddr);
++		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+-- 
+2.29.2
