@@ -1,86 +1,65 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Thu, 03 Dec 2020 19:07:04 +0000
-Subject: Re: [RFC PATCH] checkpatch: correctly detect lines of help text
-Message-Id: <35b5a3fd-7b15-1173-b64a-b20839706527@infradead.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 14 Dec 2020 20:21:17 +0000
+Subject: [PATCH] net: allwinner: Fix some resources leak in the error handling path of the probe and in the r
+Message-Id: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <133ac827-c0d2-c5c7-39d8-7d2c17de7c76@fau.de>
- <8436bc4191d92af283ea6aa7ca450e36da653e2e.camel@perches.com>
- <16f0bfd4-61ca-48d8-c9ab-10bfc9a233ad@infradead.org>
- <a83033e9fcc706be129e9c4c0d30a0542f13d406.camel@perches.com>
- <7a81a3c0-2734-4799-5b34-0a6279c1e59d@infradead.org>
- <40543766190a1d5e054e6573ae00112467acf964.camel@perches.com>
-In-Reply-To: <40543766190a1d5e054e6573ae00112467acf964.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, Nicolai Fischer <nicolai.fischer@fau.de>, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Cc: apw@canonical.com, johannes.czekay@fau.de, kernel-janitors <kernel-janitors@vger.kernel.org>, linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@i4.cs.fau.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davem@davemloft.net, kuba@kernel.org, mripard@kernel.org, wens@csie.org, jernej.skrabec@siol.net, timur@kernel.org, song.bao.hua@hisilicon.com, f.fainelli@gmail.com, leon@kernel.org, hkallweit1@gmail.com, wangyunjian@huawei.com, sr@denx.de
+Cc: netdev@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 12/3/20 11:04 AM, Joe Perches wrote:
-> On Thu, 2020-12-03 at 10:31 -0800, Randy Dunlap wrote:
->> On 12/3/20 9:58 AM, Joe Perches wrote:
->>> On Wed, 2020-12-02 at 10:59 -0800, Randy Dunlap wrote:
->>>
->>>> There are also large hunks of block/Kconfig and drivers/hid/Kconfig
->>>> that don't use any indentation for help text...
->>>> in case that matters here.
->>>
->>> Maybe something like this could help.
->>>
->>> Indent the unindented help blocks by 2 spaces and reflow where appropriate.
->>>
->>> ---
->>>  block/Kconfig       | 105 +++++-----
->>>  drivers/hid/Kconfig | 549 +++++++++++++++++++++++++++-------------------------
->>>  2 files changed, 335 insertions(+), 319 deletions(-)
->>
->>
->> LGTM. Thanks.
-> 
-> btw: there appears to be ~750 help sections in Kconfig files
-> that do not use 2 space indentation for the help content vs
-> the ~14000 help sections that do use 2 space indentation.
-> 
-> Maybe there's some value in standardizing on the 2 space style.
+'irq_of_parse_and_map()' should be balanced by a corresponding
+'irq_dispose_mapping()' call. Otherwise, there is some resources leaks.
 
-coding-style.rst implies to mean that we have already done that:
+Add such a call in the error handling path of the probe function and in the
+remove function.
 
-For all of the Kconfig* configuration files throughout the source tree,
-the indentation is somewhat different.  Lines under a ``config`` definition
-are indented with one tab, while help text is indented an additional two
-spaces.
+Fixes: 492205050d77 ("net: Add EMAC ethernet driver found on Allwinner A10 SoC's")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Please, carefully check the remove function, I'm not always confident by
+the correct order when releasing resources. This is sometimes tricky.
+---
+ drivers/net/ethernet/allwinner/sun4i-emac.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-
-> 
-> A trivial script to show the sections that don't use 2 spaces:
-> 
-> $ git grep -n -A1 -P "^\s*help\s*$" -- '*/Kconfig*' |
->   grep -v '^--$' |
->   perl -e 'while (<>) {
->     my $line1 = $_;
->     my $line2 = <>;
-> 
->     my $l1 = $line1;
->     my $l2 = $line2;
-> 
->     chomp($l1);
->     chomp($l2);
-> 
->     $l1 =~ s/^.*:\d+:(\s*).*/$1/;
->     $l2 =~ s/^.*-\d+-(\s*).*/$1/;
-> 
->     if ("$l1  " ne "$l2") {
-> 	print "$line1";
-> 	print "$line2";
->     }
-> }'
-> 
-> Change the ne to eq to see the matches.
-> 
-> For instance, a head -50 of the above is:
-> 
-[snip]
-
-thanks.
+diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
+index 862ea44beea7..5ed80d9a6b9f 100644
+--- a/drivers/net/ethernet/allwinner/sun4i-emac.c
++++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
+@@ -828,13 +828,13 @@ static int emac_probe(struct platform_device *pdev)
+ 	db->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(db->clk)) {
+ 		ret = PTR_ERR(db->clk);
+-		goto out_iounmap;
++		goto out_dispose_mapping;
+ 	}
+ 
+ 	ret = clk_prepare_enable(db->clk);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Error couldn't enable clock (%d)\n", ret);
+-		goto out_iounmap;
++		goto out_dispose_mapping;
+ 	}
+ 
+ 	ret = sunxi_sram_claim(&pdev->dev);
+@@ -893,6 +893,8 @@ static int emac_probe(struct platform_device *pdev)
+ 	sunxi_sram_release(&pdev->dev);
+ out_clk_disable_unprepare:
+ 	clk_disable_unprepare(db->clk);
++out_dispose_mapping:
++	irq_dispose_mapping(ndev->irq);
+ out_iounmap:
+ 	iounmap(db->membase);
+ out:
+@@ -911,6 +913,7 @@ static int emac_remove(struct platform_device *pdev)
+ 	unregister_netdev(ndev);
+ 	sunxi_sram_release(&pdev->dev);
+ 	clk_disable_unprepare(db->clk);
++	irq_dispose_mapping(ndev->irq);
+ 	iounmap(db->membase);
+ 	free_netdev(ndev);
+ 
 -- 
-~Randy
+2.27.0
