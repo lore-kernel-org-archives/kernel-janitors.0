@@ -1,35 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 14 Dec 2020 22:28:13 +0000
-Subject: [PATCH][next] usb: cdnsp: fix spelling mistake "delagete" -> "delegate"
-Message-Id: <20201214222813.82727-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Dec 2020 11:54:47 +0000
+Subject: [PATCH] media: allegro: Fix use after free on error
+Message-Id: <X9dShwq8PrThDpn9@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pawel Laszczak <pawell@cadence.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Tretter <m.tretter@pengutronix.de>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chuhong Yuan <hslester96@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The "channel" is added to the "dev->channels" but then if
+v4l2_m2m_ctx_init() fails then we free "channel" but it's still on the
+list so it could lead to a use after free.  Let's not add it to the
+list until after v4l2_m2m_ctx_init() succeeds.
 
-There is a spelling mistake in a trace message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: cc62c74749a3 ("media: allegro: add missed checks in allegro_open()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/usb/cdns3/cdnsp-ep0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From static analysis.  Not tested.
 
-diff --git a/drivers/usb/cdns3/cdnsp-ep0.c b/drivers/usb/cdns3/cdnsp-ep0.c
-index d55b59ed7381..b6a06e6210ba 100644
---- a/drivers/usb/cdns3/cdnsp-ep0.c
-+++ b/drivers/usb/cdns3/cdnsp-ep0.c
-@@ -45,7 +45,7 @@ static int cdnsp_ep0_delegate_req(struct cdnsp_device *pdev,
- {
- 	int ret;
+ drivers/staging/media/allegro-dvt/allegro-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
+index 9f718f43282b..640451134072 100644
+--- a/drivers/staging/media/allegro-dvt/allegro-core.c
++++ b/drivers/staging/media/allegro-dvt/allegro-core.c
+@@ -2483,8 +2483,6 @@ static int allegro_open(struct file *file)
+ 	INIT_LIST_HEAD(&channel->buffers_reference);
+ 	INIT_LIST_HEAD(&channel->buffers_intermediate);
  
--	trace_cdnsp_ep0_request("delagete");
-+	trace_cdnsp_ep0_request("delegate");
+-	list_add(&channel->list, &dev->channels);
+-
+ 	channel->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, channel,
+ 						allegro_queue_init);
  
- 	spin_unlock(&pdev->lock);
- 	ret = pdev->gadget_driver->setup(&pdev->gadget, ctrl);
+@@ -2493,6 +2491,7 @@ static int allegro_open(struct file *file)
+ 		goto error;
+ 	}
+ 
++	list_add(&channel->list, &dev->channels);
+ 	file->private_data = &channel->fh;
+ 	v4l2_fh_add(&channel->fh);
+ 
 -- 
 2.29.2
