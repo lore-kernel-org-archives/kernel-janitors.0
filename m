@@ -1,34 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 17 Dec 2020 06:48:41 +0000
-Subject: Re: [PATCH 1/2] ath11k: Fix error code in ath11k_core_suspend()
-Message-Id: <20201217064841.3188EC43462@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Dec 2020 23:40:15 +0000
+Subject: [PATCH][next] netfilter: nftables: fix incorrect increment of loop counter
+Message-Id: <20201214234015.85072-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9nF17L2/EKOSbn/@mwanda>
-In-Reply-To: <X9nF17L2/EKOSbn/@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Carl Huang <cjhuang@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The "if (!ret)" condition is inverted and it should be "if (ret)".  It means
-> that we return success when we had intended to return an error code. This also
-> caused a spurious warning even when the suspend was successful:
-> 
-> [  297.186612] ath11k_pci 0000:06:00.0: failed to suspend hif: 0
-> 
-> Fixes: d1b0c33850d2 ("ath11k: implement suspend for QCA6390 PCI devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The intention of the err_expr cleanup path is to iterate over the
+allocated expr_array objects and free them, starting from i - 1 and
+working down to the start of the array. Currently the loop counter
+is being incremented instead of decremented and also the index i is
+being used instead of k, repeatedly destroying the same expr_array
+element.  Fix this by decrementing k and using k as the index into
+expr_array.
 
-2 patches applied to ath-current branch of ath.git, thanks.
+Addresses-Coverity: ("Infinite loop")
+Fixes: 8cfd9b0f8515 ("netfilter: nftables: generalize set expressions support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_tables_api.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-9b09456258ea ath11k: Fix error code in ath11k_core_suspend()
-30d085039314 ath11k: Fix ath11k_pci_fix_l1ss()
-
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 8d5aa0ac45f4..4186b1e52d58 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -5254,8 +5254,8 @@ static int nft_set_elem_expr_clone(const struct nft_ctx *ctx,
+ 	return 0;
+ 
+ err_expr:
+-	for (k = i - 1; k >= 0; k++)
+-		nft_expr_destroy(ctx, expr_array[i]);
++	for (k = i - 1; k >= 0; k--)
++		nft_expr_destroy(ctx, expr_array[k]);
+ 
+ 	return -ENOMEM;
+ }
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/X9nF17L2/EKOSbn/@mwanda/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
