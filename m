@@ -1,43 +1,44 @@
-From: "Rojewski, Cezary" <cezary.rojewski@intel.com>
-Date: Mon, 14 Dec 2020 09:08:44 +0000
-Subject: RE: [PATCH] ASoC: Intel: fix error code cnl_set_dsp_D0()
-Message-Id: <b3df1e4d04c84b02939321c6994ec978@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Dec 2020 18:17:41 +0000
+Subject: Re: [PATCH] ASoC: Intel: fix error code cnl_set_dsp_D0()
+Message-Id: <160796986130.45789.8331512610981299314.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <X9NEvCzuN+IObnTN@mwanda>
 In-Reply-To: <X9NEvCzuN+IObnTN@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Singh, 
- Guneshwor O" <guneshwor.o.singh@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Guneshwor Singh <guneshwor.o.singh@intel.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Jie Yang <yang.jie@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 2020-12-11 11:06 AM, Dan Carpenter wrote:
+On Fri, 11 Dec 2020 13:06:52 +0300, Dan Carpenter wrote:
 > Return -ETIMEDOUT if the dsp boot times out instead of returning
 > success.
-> 
-> Fixes: cb6a55284629 ("ASoC: Intel: cnl: Add sst library functions for cnl platform")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
-> 
->   sound/soc/intel/skylake/cnl-sst.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/intel/skylake/cnl-sst.c b/sound/soc/intel/skylake/cnl-sst.c
-> index fcd8dff27ae8..1275c149acc0 100644
-> --- a/sound/soc/intel/skylake/cnl-sst.c
-> +++ b/sound/soc/intel/skylake/cnl-sst.c
-> @@ -224,6 +224,7 @@ static int cnl_set_dsp_D0(struct sst_dsp *ctx, unsigned int core_id)
->   				"dsp boot timeout, status=%#x error=%#x\n",
->   				sst_dsp_shim_read(ctx, CNL_ADSP_FW_STATUS),
->   				sst_dsp_shim_read(ctx, CNL_ADSP_ERROR_CODE));
-> +			ret = -ETIMEDOUT;
->   			goto err;
->   		}
->   	} else {
-> 
 
-Thanks for the patch, Dan.
+Applied to
 
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: Intel: fix error code cnl_set_dsp_D0()
+      commit: f373a811fd9a69fc8bafb9bcb41d2cfa36c62665
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
