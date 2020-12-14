@@ -1,38 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Dec 2020 18:04:59 +0000
-Subject: [PATCH] net: brcmfmac: remove redundant assignment to pointer 'entry'
-Message-Id: <20201204180459.1148257-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 14 Dec 2020 08:45:03 +0000
+Subject: [PATCH] trace: drop unneeded assignment in ring_buffer_resize()
+Message-Id: <20201214084503.3079-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-hsien Lin <chi-hsien.lin@infineon.com>, Wright Feng <wright.feng@infineon.com>, Chung-hsien Hsu <chung-hsien.hsu@infineon.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Qiujun Huang <hqjagain@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Since commit 0a1754b2a97e ("ring-buffer: Return 0 on success from
+ring_buffer_resize()"), computing the size is not needed anymore.
 
-The pointer 'entry' is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+Drop unneeded assignment in ring_buffer_resize().
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/ring_buffer.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-index 437e83ea8902..19b0f318f93e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-@@ -746,7 +746,7 @@ brcmf_fws_macdesc_lookup(struct brcmf_fws_info *fws, u8 *ea)
- static struct brcmf_fws_mac_descriptor*
- brcmf_fws_macdesc_find(struct brcmf_fws_info *fws, struct brcmf_if *ifp, u8 *da)
- {
--	struct brcmf_fws_mac_descriptor *entry = &fws->desc.other;
-+	struct brcmf_fws_mac_descriptor *entry;
- 	bool multicast;
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 91db9d032a0c..95ecfb107e3e 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1974,8 +1974,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 	if (nr_pages < 2)
+ 		nr_pages = 2;
  
- 	multicast = is_multicast_ether_addr(da);
+-	size = nr_pages * BUF_PAGE_SIZE;
+-
+ 	/* prevent another thread from changing buffer sizes */
+ 	mutex_lock(&buffer->mutex);
+ 
 -- 
-2.29.2
+2.17.1
