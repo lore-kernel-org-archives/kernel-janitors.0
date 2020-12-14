@@ -1,32 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Dec 2020 07:05:36 +0000
-Subject: Re: mmc: atmel-mci: Reduce =?utf-8?Q?scope?= =?utf-8?Q?_for_the_variable_=E2=80=9Cslot=E2=80=9D?= in
-Message-Id: <20201214070536.GB2809@kadam>
+Date: Mon, 14 Dec 2020 11:56:52 +0000
+Subject: [PATCH] dmaengine: dw-edma: Fix use after free in dw_edma_alloc_chunk()
+Message-Id: <X9dTBFrUPEvvW7qc@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <466b4c6d-032f-fbcc-58ac-75f6f39d734f@web.de>
- <20201210151035.GC1578121@piout.net> <20201211083731.GP2789@kadam>
- <e7910b04-4c4a-567b-d87d-d12352a48cfc@web.de>
-In-Reply-To: <e7910b04-4c4a-567b-d87d-d12352a48cfc@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Colin Ian King <colin.king@canonical.com>, linux-arm-kernel@lists.infradead.org
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 10:08:54AM +0100, Markus Elfring wrote:
-> > This makes it hard to review any patches or follow discussion...
-> 
-> You shared also special software development opinions about extra variable
-> initialisations occasionally, didn't you?
+If the dw_edma_alloc_burst() function fails then we free "chunk" but
+it's still on the "desc->chunk->list" list so it will lead to a use
+after free.  Also the "->chunks_alloc" count is incremented when it
+shouldn't be.
 
-I generally put everything at the top of the function...  I don't have
-a well developed philosophy for when variables should be declared with
-a smaller scope.
+In current kernels small allocations are guaranteed to succeed and
+dw_edma_alloc_burst() can't fail so this will not actually affect
+runtime.
 
-	int ret;  <-- this should always be function scope
+Fixes: e63d79d1ffcd ("dmaengine: Add Synopsys eDMA IP core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Based on static analysis.  Not tested.
 
-Probably the other people are right that making scopes shorter is more
-important when the function is very long.
+ drivers/dma/dw-edma/dw-edma-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
+index b971505b8715..08d71dafa001 100644
+--- a/drivers/dma/dw-edma/dw-edma-core.c
++++ b/drivers/dma/dw-edma/dw-edma-core.c
+@@ -86,12 +86,12 @@ static struct dw_edma_chunk *dw_edma_alloc_chunk(struct dw_edma_desc *desc)
+ 
+ 	if (desc->chunk) {
+ 		/* Create and add new element into the linked list */
+-		desc->chunks_alloc++;
+-		list_add_tail(&chunk->list, &desc->chunk->list);
+ 		if (!dw_edma_alloc_burst(chunk)) {
+ 			kfree(chunk);
+ 			return NULL;
+ 		}
++		desc->chunks_alloc++;
++		list_add_tail(&chunk->list, &desc->chunk->list);
+ 	} else {
+ 		/* List head */
+ 		chunk->burst = NULL;
+-- 
+2.29.2
