@@ -1,27 +1,46 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Thu, 17 Dec 2020 17:52:21 +0000
-Subject: Re: [PATCH] xtensa: fix spelling mistake in Kconfig "wont" -> "won't"
-Message-Id: <CAMo8Bf+Q3BQjjc2N=ykZy7KJ4-CYY+qpDFZmJFe1_wuxAsL2cQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Dec 2020 22:35:39 +0000
+Subject: [PATCH][next] selftests/bpf: fix spelling mistake "tranmission" -> "transmission"
+Message-Id: <20201214223539.83168-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217172427.58009-1-colin.king@canonical.com>
-In-Reply-To: <20201217172427.58009-1-colin.king@canonical.com>
+References: <20200826085907.43095-1-colin.king@canonical.com>
+In-Reply-To: <20200826085907.43095-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Zankel <chris@zankel.net>, "open list:TENSILICA XTENSA PORT (xtensa)" <linux-xtensa@linux-xtensa.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Shuah Khan <shuah@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 9:24 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the Kconfig help text. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/xtensa/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks. Applied to my xtensa tree.
+There are two spelling mistakes in output messages. Fix these.
 
--- Max
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/bpf/xdpxceiver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/xdpxceiver.c b/tools/testing/selftests/bpf/xdpxceiver.c
+index 014dedaa4dd2..1e722ee76b1f 100644
+--- a/tools/testing/selftests/bpf/xdpxceiver.c
++++ b/tools/testing/selftests/bpf/xdpxceiver.c
+@@ -715,7 +715,7 @@ static void worker_pkt_dump(void)
+ 		int payload = *((uint32_t *)(pkt_buf[iter]->payload + PKT_HDR_SIZE));
+ 
+ 		if (payload = EOT) {
+-			ksft_print_msg("End-of-tranmission frame received\n");
++			ksft_print_msg("End-of-transmission frame received\n");
+ 			fprintf(stdout, "---------------------------------------\n");
+ 			break;
+ 		}
+@@ -747,7 +747,7 @@ static void worker_pkt_validate(void)
+ 			}
+ 
+ 			if (payloadseqnum = EOT) {
+-				ksft_print_msg("End-of-tranmission frame received: PASS\n");
++				ksft_print_msg("End-of-transmission frame received: PASS\n");
+ 				sigvar = 1;
+ 				break;
+ 			}
+-- 
+2.29.2
