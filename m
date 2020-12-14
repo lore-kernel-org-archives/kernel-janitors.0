@@ -1,37 +1,39 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Wed, 16 Dec 2020 19:10:06 +0000
-Subject: Re: [PATCH] net: bcmgenet: Fix a resource leak in an error handling path in the probe functin
-Message-Id: <160814580681.32605.12840907282791661711.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 14 Dec 2020 23:24:17 +0000
+Subject: [PATCH][next] ath11k: add missing null check on allocated skb
+Message-Id: <20201214232417.84556-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201212182005.120437-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201212182005.120437-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: opendmb@gmail.com, f.fainelli@gmail.com, davem@davemloft.net, kuba@kernel.org, bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Carl Huang <cjhuang@codeaurora.org>, ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Currently the null check on a newly allocated skb is missing and
+this can lead to a null pointer dereference is the allocation fails.
+Fix this by adding a null check and returning -ENOMEM.
 
-On Sat, 12 Dec 2020 19:20:05 +0100 you wrote:
-> If the 'register_netdev()' call fails, we must undo a previous
-> 'bcmgenet_mii_init()' call.
-> 
-> Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The missing 'bcmgenet_mii_exit()' call is added here, instead of in the
-> error handling path in order to avoid some goto spaghetti code.
-> 
-> [...]
+Addresses-Coverity: ("Dereference null return")
+Fixes: 43ed15e1ee01 ("ath11k: put hw to DBS using WMI_PDEV_SET_HW_MODE_CMDID")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/wmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Here is the summary with links:
-  - net: bcmgenet: Fix a resource leak in an error handling path in the probe functin
-    https://git.kernel.org/netdev/net/c/4375ada01963
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
+index da4b546b62cb..c869ff479212 100644
+--- a/drivers/net/wireless/ath/ath11k/wmi.c
++++ b/drivers/net/wireless/ath/ath11k/wmi.c
+@@ -3460,6 +3460,8 @@ int ath11k_wmi_set_hw_mode(struct ath11k_base *ab,
+ 	len = sizeof(*cmd);
+ 
+ 	skb = ath11k_wmi_alloc_skb(wmi_ab, len);
++	if (!skb)
++		return -ENOMEM;
+ 	cmd = (struct wmi_pdev_set_hw_mode_cmd_param *)skb->data;
+ 
+ 	cmd->tlv_header = FIELD_PREP(WMI_TLV_TAG, WMI_TAG_PDEV_SET_HW_MODE_CMD) |
+-- 
+2.29.2
