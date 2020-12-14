@@ -1,44 +1,60 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 07 Dec 2020 15:26:58 +0000
-Subject: [PATCH] hwmon: pmbus: correct title underline length
-Message-Id: <20201207152658.32444-1-lukas.bulwahn@gmail.com>
+Date: Mon, 14 Dec 2020 09:54:24 +0000
+Subject: [PATCH v2] scsi: sd: remove obsolete variable in sd_remove()
+Message-Id: <20201214095424.12479-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Commit b722d7b9e4da ("hwmon: (pmbus) Driver for Delta power supplies
-Q54SJ108A2") provides new documentation for DELTA Q54SJ108A2NC* drivers,
-but the title underline was too short.
+Commit 140ea3bbf39a ("sd: use __register_blkdev to avoid a modprobe for an
+unregistered dev_t") removed blk_register_region(devt, ...) in sd_remove()
+and since then, devt is unused in sd_remove().
 
-make htmldocs warns:
+Hence, make W=1 warns:
 
-  Documentation/hwmon/q54sj108a2.rst:4: WARNING: Title underline too short.
+  drivers/scsi/sd.c:3516:8:
+      warning: variable 'devt' set but not used [-Wunused-but-set-variable]
 
-Adjust the title underline to the correct length.
+Simply remove this obsolete variable.
 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-applies on next-20201207 and the hwmon -next tree
+applies cleanly on current master and next-20201113, next-20201211
 
-Guenter, Jean, please pick this minor doc fix on your -next tree.
+The patch was submitted for inclusion in scsi:
 
- Documentation/hwmon/q54sj108a2.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  https://lore.kernel.org/lkml/20201116070035.11870-1-lukas.bulwahn@gmail.com/
 
-diff --git a/Documentation/hwmon/q54sj108a2.rst b/Documentation/hwmon/q54sj108a2.rst
-index fabce671985a..035312d25c34 100644
---- a/Documentation/hwmon/q54sj108a2.rst
-+++ b/Documentation/hwmon/q54sj108a2.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0-or-later
+v1 -> v2:
+
+Christoph and Nathan reviewed, and I added the tags here.
+Martin asked the patch to go through block.
+
+Jens, can you please pick this minor non-urgent clean-up patch?
+
+ drivers/scsi/sd.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 679c2c025047..21675a98620d 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3510,10 +3510,8 @@ static int sd_probe(struct device *dev)
+ static int sd_remove(struct device *dev)
+ {
+ 	struct scsi_disk *sdkp;
+-	dev_t devt;
  
- Kernel driver q54sj108a2
--==========+============
+ 	sdkp = dev_get_drvdata(dev);
+-	devt = disk_devt(sdkp->disk);
+ 	scsi_autopm_get_device(sdkp->device);
  
- Supported chips:
- 
+ 	async_synchronize_full_domain(&scsi_sd_pm_domain);
 -- 
 2.17.1
