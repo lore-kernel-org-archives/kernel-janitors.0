@@ -1,35 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 04 Dec 2020 19:34:11 +0000
-Subject: [PATCH] remoteproc: fix spelling mistake "Peripherial" -> "Peripherial" in Kconfig
-Message-Id: <20201204193411.1152006-1-colin.king@canonical.com>
+Date: Tue, 15 Dec 2020 13:00:16 +0000
+Subject: [PATCH] mailbox: fix spelling mistake in Kconfig "Intergrated" -> "Integrated"
+Message-Id: <20201215130016.200851-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+There is a spelling mistake in the Kconfig, fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/remoteproc/Kconfig | 2 +-
+ drivers/mailbox/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index d99548fb5dde..d45be05640ea 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -183,7 +183,7 @@ config QCOM_Q6V5_PAS
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
- 	help
--	  Say y here to support the TrustZone based Peripherial Image Loader
-+	  Say y here to support the TrustZone based Peripheral Image Loader
- 	  for the Qualcomm Hexagon v5 based remote processors. This is commonly
- 	  used to control subsystems such as ADSP, Compute and Sensor.
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index f4abe3529acd..68de2c6af727 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -78,7 +78,7 @@ config OMAP_MBOX_KFIFO_SIZE
+ 	  module parameter).
  
+ config ROCKCHIP_MBOX
+-	bool "Rockchip Soc Intergrated Mailbox Support"
++	bool "Rockchip Soc Integrated Mailbox Support"
+ 	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	help
+ 	  This driver provides support for inter-processor communication
 -- 
 2.29.2
