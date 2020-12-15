@@ -1,65 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 14 Dec 2020 20:21:17 +0000
-Subject: [PATCH] net: allwinner: Fix some resources leak in the error handling path of the probe and in the r
-Message-Id: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
+From: Maxime Ripard <maxime@cerno.tech>
+Date: Tue, 15 Dec 2020 08:56:55 +0000
+Subject: Re: [PATCH] net: allwinner: Fix some resources leak in the error handling path of the probe and in t
+Message-Id: <20201215085655.ddacjfvogc3e33vz@gilmour>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="tgnffsnu3i7wc524"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, kuba@kernel.org, mripard@kernel.org, wens@csie.org, jernej.skrabec@siol.net, timur@kernel.org, song.bao.hua@hisilicon.com, f.fainelli@gmail.com, leon@kernel.org, hkallweit1@gmail.com, wangyunjian@huawei.com, sr@denx.de
-Cc: netdev@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201214202117.146293-1-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: song.bao.hua@hisilicon.com, jernej.skrabec@siol.net, f.fainelli@gmail.com, leon@kernel.org, timur@kernel.org, netdev@vger.kernel.org, wangyunjian@huawei.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, wens@csie.org, kuba@kernel.org, sr@denx.de, davem@davemloft.net, linux-arm-kernel@lists.infradead.org, hkallweit1@gmail.com
 
-'irq_of_parse_and_map()' should be balanced by a corresponding
-'irq_dispose_mapping()' call. Otherwise, there is some resources leaks.
 
-Add such a call in the error handling path of the probe function and in the
-remove function.
+--tgnffsnu3i7wc524
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 492205050d77 ("net: Add EMAC ethernet driver found on Allwinner A10 SoC's")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Please, carefully check the remove function, I'm not always confident by
-the correct order when releasing resources. This is sometimes tricky.
----
- drivers/net/ethernet/allwinner/sun4i-emac.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
-index 862ea44beea7..5ed80d9a6b9f 100644
---- a/drivers/net/ethernet/allwinner/sun4i-emac.c
-+++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
-@@ -828,13 +828,13 @@ static int emac_probe(struct platform_device *pdev)
- 	db->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(db->clk)) {
- 		ret = PTR_ERR(db->clk);
--		goto out_iounmap;
-+		goto out_dispose_mapping;
- 	}
- 
- 	ret = clk_prepare_enable(db->clk);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Error couldn't enable clock (%d)\n", ret);
--		goto out_iounmap;
-+		goto out_dispose_mapping;
- 	}
- 
- 	ret = sunxi_sram_claim(&pdev->dev);
-@@ -893,6 +893,8 @@ static int emac_probe(struct platform_device *pdev)
- 	sunxi_sram_release(&pdev->dev);
- out_clk_disable_unprepare:
- 	clk_disable_unprepare(db->clk);
-+out_dispose_mapping:
-+	irq_dispose_mapping(ndev->irq);
- out_iounmap:
- 	iounmap(db->membase);
- out:
-@@ -911,6 +913,7 @@ static int emac_remove(struct platform_device *pdev)
- 	unregister_netdev(ndev);
- 	sunxi_sram_release(&pdev->dev);
- 	clk_disable_unprepare(db->clk);
-+	irq_dispose_mapping(ndev->irq);
- 	iounmap(db->membase);
- 	free_netdev(ndev);
- 
--- 
-2.27.0
+On Mon, Dec 14, 2020 at 09:21:17PM +0100, Christophe JAILLET wrote:
+> 'irq_of_parse_and_map()' should be balanced by a corresponding
+> 'irq_dispose_mapping()' call. Otherwise, there is some resources leaks.
+
+Do you have a source to back that? It's not clear at all from the
+documentation for those functions, and couldn't find any user calling it
+=66rom the ten-or-so random picks I took.
+
+Maxime
+
+--tgnffsnu3i7wc524
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX9h6VwAKCRDj7w1vZxhR
+xQ9UAQC+Z7aCLxnq7/YwPgDoj5mZh+XwHfGuD6zuXikKqa8zEQEAyScyReA2IHvf
+/sJz8uc1BMRoj6wBip9nfzA/vv1QFA4=
+=+jO3
+-----END PGP SIGNATURE-----
+
+--tgnffsnu3i7wc524--
