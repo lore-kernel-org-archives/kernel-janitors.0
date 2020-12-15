@@ -1,63 +1,41 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 07 Dec 2020 20:44:09 +0000
-Subject: Re: [PATCH][next] seg6: fix unintentional integer overflow on left shift
-Message-Id: <b969c10e-d5eb-6056-ddcd-9ae70846eb4a@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Dec 2020 00:00:33 +0000
+Subject: [PATCH][next] net: hns3: fix expression that is currently always true
+Message-Id: <20201215000033.85383-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201207144503.169679-1-colin.king@canonical.com>
- <20201207205926.6222eca38744c43632248a41@uniroma2.it>
-In-Reply-To: <20201207205926.6222eca38744c43632248a41@uniroma2.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrea Mayer <andrea.mayer@uniroma2.it>
-Cc: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Salsano <stefano.salsano@uniroma2.it>, Paolo Lungaroni <paolo.lungaroni@cnit.it>, Ahmed Abdelsalam <ahabdels.dev@gmail.com>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, Jian Shen <shenjian15@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/12/2020 19:59, Andrea Mayer wrote:
-> On Mon,  7 Dec 2020 14:45:03 +0000
-> Colin King <colin.king@canonical.com> wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Shifting the integer value 1 is evaluated using 32-bit arithmetic
->> and then used in an expression that expects a unsigned long value
->> leads to a potential integer overflow. Fix this by using the BIT
->> macro to perform the shift to avoid the overflow.
->>
->> Addresses-Coverity: ("Uninitentional integer overflow")
->> Fixes: 964adce526a4 ("seg6: improve management of behavior attributes")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  net/ipv6/seg6_local.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
->> index b07f7c1c82a4..d68de8cd1207 100644
->> --- a/net/ipv6/seg6_local.c
->> +++ b/net/ipv6/seg6_local.c
->> @@ -1366,7 +1366,7 @@ static void __destroy_attrs(unsigned long parsed_attrs, int max_parsed,
->>  	 * attribute; otherwise, we call the destroy() callback.
->>  	 */
->>  	for (i = 0; i < max_parsed; ++i) {
->> -		if (!(parsed_attrs & (1 << i)))
->> +		if (!(parsed_attrs & BIT(i)))
->>  			continue;
->>  
->>  		param = &seg6_action_params[i];
->> -- 
->> 2.29.2
->>
-> 
-> Hi Colin,
-> thanks for the fix. I've just given a look a the whole seg6_local.c code and I
-> found that such issues is present in other parts of the code.
-> 
-> If we agree, I can make a fix which explicitly eliminates the several (1 << i)
-> in favor of BIT(i).
+From: Colin Ian King <colin.king@canonical.com>
 
-Sounds good to me.
+The ||  condition in hdev->fd_active_type != HCLGE_FD_ARFS_ACTIVE ||
+hdev->fd_active_type != HCLGE_FD_RULE_NONE will always be true because
+hdev->fd_active_type cannot be equal to two different values at the same
+time. The expression is always true which is not correct. Fix this by
+replacing || with && to correct the logic in the expression.
 
-Colin
+Addresses-Coverity: ("Constant expression result")
+Fixes: 0205ec041ec6 ("net: hns3: add support for hw tc offload of tc flower")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Andrea
-> 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 7a164115c845..e6f37f91c489 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -6485,7 +6485,7 @@ static int hclge_add_fd_entry_by_arfs(struct hnae3_handle *handle, u16 queue_id,
+ 	 * arfs should not work
+ 	 */
+ 	spin_lock_bh(&hdev->fd_rule_lock);
+-	if (hdev->fd_active_type != HCLGE_FD_ARFS_ACTIVE ||
++	if (hdev->fd_active_type != HCLGE_FD_ARFS_ACTIVE &&
+ 	    hdev->fd_active_type != HCLGE_FD_RULE_NONE) {
+ 		spin_unlock_bh(&hdev->fd_rule_lock);
+ 		return -EOPNOTSUPP;
+-- 
+2.29.2
