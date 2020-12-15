@@ -1,32 +1,51 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 07 Dec 2020 16:36:30 +0000
-Subject: Re: brcmfmac: remove redundant assignment to pointer 'entry'
-Message-Id: <20201207163630.A8692C43465@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 15 Dec 2020 20:46:59 +0000
+Subject: [PATCH V2] irqdomain: Add documentation for irq_create_of_mapping()
+Message-Id: <20201215204659.148709-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204180459.1148257-1-colin.king@canonical.com>
-In-Reply-To: <20201204180459.1148257-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-hsien Lin <chi-hsien.lin@infineon.com>, Wright Feng <wright.feng@infineon.com>, Chung-hsien Hsu <chung-hsien.hsu@infineon.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: maz@kernel.org, tglx@linutronix.de, mripard@kernel.org, dan.carpenter@oracle.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Colin King <colin.king@canonical.com> wrote:
+Add a description for 'irq_create_of_mapping()' and make explicit the fact
+that the resources allocated by this function can be freed by calling
+'irq_dispose_mapping()' when needed (i.e. error handling path, remove
+function, ...)
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer 'entry' is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The wording can certainly be improved.
 
-Patch applied to wireless-drivers-next.git, thanks.
+My goal is only to make clear if patches such as:
+   https://lore.kernel.org/lkml/20201214202117.146293-1-christophe.jaillet@wanadoo.fr/
+are needed or not.
 
-871a825c3902 brcmfmac: remove redundant assignment to pointer 'entry'
+v2: Fix typo and improve style
+---
+ kernel/irq/irqdomain.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 6aacd342cd14..d761ece8d43e 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -858,6 +858,15 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ }
+ EXPORT_SYMBOL_GPL(irq_create_fwspec_mapping);
+ 
++/**
++ * irq_create_of_mapping() - Map an interrupt
++ * @irq_data: Structure of_phandle_args returned by a previous
++ *            of_irq_parse_xxx() call.
++ *
++ * The resources allocated by this function should be freed by
++ * calling irq_dispose_mapping() when the mapping is not useful
++ * anymore.
++ */
+ unsigned int irq_create_of_mapping(struct of_phandle_args *irq_data)
+ {
+ 	struct irq_fwspec fwspec;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20201204180459.1148257-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
