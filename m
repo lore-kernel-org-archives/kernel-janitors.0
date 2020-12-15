@@ -1,39 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 08 Dec 2020 20:35:27 +0000
-Subject: [PATCH] mmc: mxs-mmc: Fix a resource leak in an error handling path in 'mxs_mmc_probe()'
-Message-Id: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Dec 2020 14:54:40 +0000
+Subject: [PATCH] drivers: base: Kconfig: fix spelling mistake "heterogenous" -> "heterogeneous"
+Message-Id: <20201215145440.204362-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ulf.hansson@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, wsa+renesas@sang-engineering.com, peter.ujfalusi@ti.com, dianders@chromium.org, cjb@laptop.org
-Cc: kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If 'mmc_of_parse()' fails, we must undo the previous 'dma_request_chan()'
-call.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: abd37cccd47f ("mmc: mxs: use mmc_gpio_get_ro for detecting read-only status")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in the Kconfig help text. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-I'm not 100% sure of the Fixes tag, but it seems to be the root cause. The
-erroneous 'out_clk_disable' has then been kept around in the following
-commits
----
- drivers/mmc/host/mxs-mmc.c | 2 +-
+ drivers/base/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-index 56bbc6cd9c84..947581de7860 100644
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -628,7 +628,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 040be48ce046..324aa03fed3c 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -161,7 +161,7 @@ config HMEM_REPORTING
+ 	default n
+ 	depends on NUMA
+ 	help
+-	  Enable reporting for heterogenous memory access attributes under
++	  Enable reporting for heterogeneous memory access attributes under
+ 	  their non-uniform memory nodes.
  
- 	ret = mmc_of_parse(mmc);
- 	if (ret)
--		goto out_clk_disable;
-+		goto out_free_dma;
- 
- 	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
- 
+ source "drivers/base/test/Kconfig"
 -- 
-2.27.0
+2.29.2
