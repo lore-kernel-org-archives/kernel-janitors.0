@@ -1,49 +1,52 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 18 Dec 2020 17:46:36 +0000
-Subject: [PATCH] soc: ti: pm33xx: Fix some resource leak in the error handling paths of the probe function
-Message-Id: <20201218174636.172239-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Dec 2020 14:49:46 +0000
+Subject: [PATCH] net/mlx5: fix spelling mistake in Kconfig "accelaration" -> "acceleration"
+Message-Id: <20201215144946.204104-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ssantosh@kernel.org, tony@atomide.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'am33xx_pm_rtc_setup()' allocates some resources that must be freed on the
-error. Commit 2152fbbd47c0 ("soc: ti: pm33xx: Simplify RTC usage to prepare
-to drop platform data") has introduced the use of these resources but has
-only updated the remove function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix the error handling path of the probe function now.
+There are some spelling mistakes in the Kconfig. Fix these.
 
-Fixes: 2152fbbd47c0 ("soc: ti: pm33xx: Simplify RTC usage to prepare to drop platform data")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/soc/ti/pm33xx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index 64f3e3105540..7bab4bbaf02d 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -535,7 +535,7 @@ static int am33xx_pm_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
+index 6e4d7bb7fea2..bcdee9dc4aa2 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
+@@ -149,14 +149,14 @@ config MLX5_IPSEC
+ 	IPsec support for the Connect-X family.
  
- 	ret = am33xx_push_sram_idle();
- 	if (ret)
--		goto err_free_sram;
-+		goto err_unsetup_rtc;
+ config MLX5_EN_IPSEC
+-	bool "IPSec XFRM cryptography-offload accelaration"
++	bool "IPSec XFRM cryptography-offload acceleration"
+ 	depends on MLX5_CORE_EN
+ 	depends on XFRM_OFFLOAD
+ 	depends on INET_ESP_OFFLOAD || INET6_ESP_OFFLOAD
+ 	depends on MLX5_FPGA_IPSEC || MLX5_IPSEC
+ 	default n
+ 	help
+-	  Build support for IPsec cryptography-offload accelaration in the NIC.
++	  Build support for IPsec cryptography-offload acceleration in the NIC.
+ 	  Note: Support for hardware with this capability needs to be selected
+ 	  for this option to become available.
  
- 	am33xx_pm_set_ipc_ops();
+@@ -192,7 +192,7 @@ config MLX5_TLS
+ config MLX5_EN_TLS
+ 	bool
+ 	help
+-	Build support for TLS cryptography-offload accelaration in the NIC.
++	Build support for TLS cryptography-offload acceleration in the NIC.
+ 	Note: Support for hardware with this capability needs to be selected
+ 	for this option to become available.
  
-@@ -575,6 +575,9 @@ static int am33xx_pm_probe(struct platform_device *pdev)
- err_pm_runtime_disable:
- 	pm_runtime_disable(dev);
- 	wkup_m3_ipc_put(m3_ipc);
-+err_unsetup_rtc:
-+	iounmap(rtc_base_virt);
-+	clk_put(rtc_fck);
- err_free_sram:
- 	am33xx_pm_free_sram();
- 	pm33xx_dev = NULL;
 -- 
-2.27.0
+2.29.2
