@@ -1,64 +1,36 @@
-From: Bingbu Cao <bingbu.cao@linux.intel.com>
-Date: Thu, 03 Dec 2020 02:43:29 +0000
-Subject: Re: [PATCH][next] media: ov2740: fix dereference before null check on pointer nvm
-Message-Id: <9d6ef10c-a575-c79b-5ac4-3313bc96e89e@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 11:58:08 +0000
+Subject: [PATCH][V2] wilc1000: fix spelling mistake in Kconfig "devision" -> "division"
+Message-Id: <20201216115808.12987-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201126114932.1984730-1-colin.king@canonical.com>
-In-Reply-To: <20201126114932.1984730-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Shawn Tu <shawnx.tu@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa <tfiga@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Qingwu Zhang <qingwu.zhang@intel.com>, linux-media@vger.kernel.org
+To: Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi, Colin
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your patch.
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-On 11/26/20 7:49 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointer nvm is being dereferenced before it is being null
-> checked.  Fix this by moving the assignments of pointers client and
-> ov2740 so that are after the null check hence avoiding any potential
-> null pointer dereferences on pointer nvm.
-> 
-> Fixes: 5e6fd339b68d ("media: ov2740: allow OTP data access during streaming")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/i2c/ov2740.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov2740.c b/drivers/media/i2c/ov2740.c
-> index 99016546cbec..b41a90c2aed5 100644
-> --- a/drivers/media/i2c/ov2740.c
-> +++ b/drivers/media/i2c/ov2740.c
-> @@ -600,8 +600,8 @@ static void ov2740_update_pad_format(const struct ov2740_mode *mode,
->  
->  static int ov2740_load_otp_data(struct nvm_data *nvm)
->  {
-> -	struct i2c_client *client = nvm->client;
-> -	struct ov2740 *ov2740 = to_ov2740(i2c_get_clientdata(client));
-> +	struct i2c_client *client;
-> +	struct ov2740 *ov2740;
->  	u32 isp_ctrl00 = 0;
->  	u32 isp_ctrl01 = 0;
->  	int ret;
-> @@ -612,6 +612,9 @@ static int ov2740_load_otp_data(struct nvm_data *nvm)
->  	if (nvm->nvm_buffer)
->  		return 0;
->  
-> +	client = nvm->client;
-> +	ov2740 = to_ov2740(i2c_get_clientdata(client));
-> +
->  	nvm->nvm_buffer = kzalloc(CUSTOMER_USE_OTP_SIZE, GFP_KERNEL);
->  	if (!nvm->nvm_buffer)
->  		return -ENOMEM;
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+V2: remove another fix from the patch
 
+---
+ drivers/net/wireless/microchip/wilc1000/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/wireless/microchip/wilc1000/Kconfig b/drivers/net/wireless/microchip/wilc1000/Kconfig
+index 80c92e8bf8a5..7f15e42602dd 100644
+--- a/drivers/net/wireless/microchip/wilc1000/Kconfig
++++ b/drivers/net/wireless/microchip/wilc1000/Kconfig
+@@ -44,4 +44,4 @@ config WILC1000_HW_OOB_INTR
+ 	  chipset. This OOB interrupt is intended to provide a faster interrupt
+ 	  mechanism for SDIO host controllers that don't support SDIO interrupt.
+ 	  Select this option If the SDIO host controller in your platform
+-	  doesn't support SDIO time devision interrupt.
++	  doesn't support SDIO time division interrupt.
 -- 
-Best regards,
-Bingbu Cao
+2.29.2
