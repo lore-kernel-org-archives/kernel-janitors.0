@@ -1,62 +1,41 @@
-From: Andrey Konovalov <andrey.konovalov@linaro.org>
-Date: Wed, 09 Dec 2020 22:04:41 +0000
-Subject: Re: [PATCH 1/2] media: camss: Fix signedness bug in video_enum_fmt()
-Message-Id: <b9ee71b9-8e70-f0e6-faa2-8af9c55eb781@linaro.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 12:36:04 +0000
+Subject: [PATCH][next] octeontx2-af: Fix undetected unmap PF error check
+Message-Id: <20201216123604.15369-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9BzujGgPAM/s+rG@mwanda>
- <CAG3jFyt_sj91k89U2qPKZbzRO4+Miox-7dBf2CMEnjDmTAJ5Aw@mail.gmail.com>
-In-Reply-To: <CAG3jFyt_sj91k89U2qPKZbzRO4+Miox-7dBf2CMEnjDmTAJ5Aw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Robert Foss <robert.foss@linaro.org>, Todor Tomov <todor.too@gmail.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, George Cherian <george.cherian@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch!
+Currently the check for an unmap PF error is always going to be false
+because intr_val is a 32 bit int and is being bit-mask checked against
+1ULL << 32.  Fix this by making intr_val a u64 to match the type at it
+is copied from, namely npa_event_context->npa_af_rvu_ge.
 
-Reviewed-by: Andrey Konovalov <andrey.konovalov@linaro.org>
+Addresses-Coverity: ("Operands don't affect result")
+Fixes: f1168d1e207c ("octeontx2-af: Add devlink health reporters for NPA")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Andrey
-
-On 09.12.2020 13:55, Robert Foss wrote:
-> Hey Dan,
-> 
-> Thank you for submitting this.
-> 
-> Reviewed-by: Robert Foss <robert.foss@linaro.org>
-> 
-> On Wed, 9 Dec 2020 at 07:50, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> This test has a problem because we want to know if "k" is -1 or a
->> positive value less than "f->index".  But the "f->index" variable is a
->> u32 so if "k = -1" then -1 gets type promoted to UINT_MAX which is
->> larger than "f->index".  I've added an explicit test to check for -1.
->>
->> Fixes: a3d412d4b9f3 ("media: Revert "media: camss: Make use of V4L2_CAP_IO_MC"")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> I could equally well have casted "k < (int)f->index" but I feel like
->> this is more explicit and readable.
->>
->>   drivers/media/platform/qcom/camss/camss-video.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
->> index bd9334af1c73..2fa3214775d5 100644
->> --- a/drivers/media/platform/qcom/camss/camss-video.c
->> +++ b/drivers/media/platform/qcom/camss/camss-video.c
->> @@ -579,7 +579,7 @@ static int video_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
->>                          break;
->>          }
->>
->> -       if (k < f->index)
->> +       if (k = -1 || k < f->index)
->>                  /*
->>                   * All the unique pixel formats matching the arguments
->>                   * have been enumerated (k >= 0 and f->index > 0), or
->> --
->> 2.29.2
->>
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+index 3f9d0ab6d5ae..bc0e4113370e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+@@ -275,7 +275,8 @@ static int rvu_npa_report_show(struct devlink_fmsg *fmsg, void *ctx,
+ 			       enum npa_af_rvu_health health_reporter)
+ {
+ 	struct rvu_npa_event_ctx *npa_event_context;
+-	unsigned int intr_val, alloc_dis, free_dis;
++	unsigned int alloc_dis, free_dis;
++	u64 intr_val;
+ 	int err;
+ 
+ 	npa_event_context = ctx;
+-- 
+2.29.2
