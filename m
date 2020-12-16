@@ -1,30 +1,31 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Date: Thu, 17 Dec 2020 17:17:11 +0000
-Subject: Re: [PATCH] ARM: sti: Fix spelling mistake in Kconfig "targetted" -> "targeted"
-Message-Id: <d53e1ba7-9403-db77-e8a3-72ce41c8f89e@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Dec 2020 08:32:52 +0000
+Subject: [PATCH] Input: da7280 - delete a stray tab
+Message-Id: <X9nGNJjFi9AaBBwX@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217171331.57376-1-colin.king@canonical.com>
-In-Reply-To: <20201217171331.57376-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Russell King <linux@armlinux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Support Opensource <support.opensource@diasemi.com>, Roy Im <roy.im.opensource@diasemi.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SGkgQ29saW4NCg0KT24gMTIvMTcvMjAgNjoxMyBQTSwgQ29saW4gS2luZyB3cm90ZToNCj4gRnJv
-bTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4NCj4gVGhlcmUg
-aXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIHRoZSBLY29uZmlnIGhlbHAgdGV4dC4gRml4IGl0Lg0K
-Pg0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwu
-Y29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtL21hY2gtc3RpL0tjb25maWcgfCAyICstDQo+ICAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL21hY2gtc3RpL0tjb25maWcgYi9hcmNoL2FybS9tYWNoLXN0aS9LY29uZmln
-DQo+IGluZGV4IGIyZDQ1Y2YxMGEzYy4uNzQ2NDBiYmFlYmE2IDEwMDY0NA0KPiAtLS0gYS9hcmNo
-L2FybS9tYWNoLXN0aS9LY29uZmlnDQo+ICsrKyBiL2FyY2gvYXJtL21hY2gtc3RpL0tjb25maWcN
-Cj4gQEAgLTUwLDcgKzUwLDcgQEAgY29uZmlnIFNPQ19TVElINDA3DQo+ICAJc2VsZWN0IFNUSUg0
-MDdfUkVTRVQNCj4gIAloZWxwDQo+ICAJICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgU1RNaWNy
-b2VsZWN0cm9uaWNzIERpZ2l0YWwgQ29uc3VtZXINCj4gLQkgIEVsZWN0cm9uaWNzIGZhbWlseSBT
-dGlINDA3IHBhcnRzLCB0YXJnZXR0ZWQgYXQgc2V0LXRvcC1ib3gNCj4gKwkgIEVsZWN0cm9uaWNz
-IGZhbWlseSBTdGlINDA3IHBhcnRzLCB0YXJnZXRlZCBhdCBzZXQtdG9wLWJveA0KPiAgCSAgYW5k
-IG90aGVyIGRpZ2l0YWwgYXVkaW8vdmlkZW8gYXBwbGljYXRpb25zIHVzaW5nIEZsYXR0ZW5lZCBE
-ZXZpY2UNCj4gIAkgIFRyZWVzLg0KPiAgDQoNClJldmlld2VkLWJ5OiBQYXRyaWNlIENob3RhcmQg
-PHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw0KDQpQYXRyaWNlDQo
+This line is indented one tab too far.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/input/misc/da7280.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
+index 37568b00873d..fe06693579ca 100644
+--- a/drivers/input/misc/da7280.c
++++ b/drivers/input/misc/da7280.c
+@@ -863,7 +863,7 @@ static void da7280_parse_properties(struct device *dev,
+ 		gpi_str3[7] = '0' + i;
+ 		haptics->gpi_ctl[i].polarity = 0;
+ 		error = device_property_read_string(dev, gpi_str3, &str);
+-			haptics->gpi_ctl[i].polarity +		haptics->gpi_ctl[i].polarity  				da7280_haptic_of_gpi_pol_str(dev, str);
+ 	}
+ 
+-- 
+2.29.2
