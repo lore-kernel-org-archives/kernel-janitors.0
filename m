@@ -1,35 +1,42 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Sat, 05 Dec 2020 23:20:24 +0000
-Subject: Re: [PATCH] net: fix spelling mistake "wil" -> "will" in Kconfig
-Message-Id: <160721042413.21881.7276554148145917327.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 11:26:08 +0000
+Subject: [PATCH] ASoC: atmel: fix spelling mistake in Kconfig "programable" -> "programmable"
+Message-Id: <20201216112608.11385-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201204194549.1153063-1-colin.king@canonical.com>
-In-Reply-To: <20201204194549.1153063-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+There are a couple of spelling mistakes in the Kconfig help text. Fix them.
 
-On Fri,  4 Dec 2020 19:45:49 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig help text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/atmel/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here is the summary with links:
-  - net: fix spelling mistake "wil" -> "will" in Kconfig
-    https://git.kernel.org/netdev/net-next/c/00649542f1ba
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index 142373ec411a..9fe9471f4514 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -143,7 +143,7 @@ config SND_MCHP_SOC_SPDIFTX
+ 	  - sama7g5
+ 
+ 	  This S/PDIF TX driver is compliant with IEC-60958 standard and
+-	  includes programable User Data and Channel Status fields.
++	  includes programmable User Data and Channel Status fields.
+ 
+ config SND_MCHP_SOC_SPDIFRX
+ 	tristate "Microchip ASoC driver for boards using S/PDIF RX"
+@@ -157,5 +157,5 @@ config SND_MCHP_SOC_SPDIFRX
+ 	  - sama7g5
+ 
+ 	  This S/PDIF RX driver is compliant with IEC-60958 standard and
+-	  includes programable User Data and Channel Status fields.
++	  includes programmable User Data and Channel Status fields.
+ endif
+-- 
+2.29.2
