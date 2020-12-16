@@ -1,43 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Dec 2020 16:05:16 +0000
-Subject: [PATCH 1/2] dmaengine: fsldma: Fix a resource leak in the remove function
-Message-Id: <20201212160516.92515-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 12:25:13 +0000
+Subject: [PATCH][next] NFSv4.2: fix error return on memory allocation failure
+Message-Id: <20201216122513.15004-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: leoyang.li@nxp.com, zw@zh-kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, timur@freescale.com
-Cc: linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna.schumaker@netapp.com>, Frank van der Linden <fllinden@amazon.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-A 'irq_dispose_mapping()' call is missing in the remove function.
-Add it.
+From: Colin Ian King <colin.king@canonical.com>
 
-This is needed to undo the 'irq_of_parse_and_map() call from the probe
-function and already part of the error handling path of the probe function.
+Currently when an alloc_page fails the error return is not set in
+variable err and a garbage initialized value is returned. Fix this
+by setting err to -ENOMEM before taking the error return path.
 
-It was added in the probe function only in commit d3f620b2c4fe ("fsldma:
-simplify IRQ probing and handling")
-
-Fixes: 77cd62e8082b ("fsldma: allow Freescale Elo DMA driver to be compiled as a module")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: a1f26739ccdc ("NFSv4.2: improve page handling for GETXATTR")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Patch provided as-is.
-I don't have the configuration to compile test this patch
----
- drivers/dma/fsldma.c | 1 +
+ fs/nfs/nfs42proc.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
-index 0feb323bae1e..554f70a0c18c 100644
---- a/drivers/dma/fsldma.c
-+++ b/drivers/dma/fsldma.c
-@@ -1314,6 +1314,7 @@ static int fsldma_of_remove(struct platform_device *op)
- 		if (fdev->chan[i])
- 			fsl_dma_chan_remove(fdev->chan[i]);
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index b9836e2ce4a2..f3fd935620fc 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -1301,6 +1301,7 @@ ssize_t nfs42_proc_getxattr(struct inode *inode, const char *name,
+ 		pages[i] = alloc_page(GFP_KERNEL);
+ 		if (!pages[i]) {
+ 			np = i + 1;
++			err = -ENOMEM;
+ 			goto out;
+ 		}
  	}
-+	irq_dispose_mapping(fdev->irq);
- 
- 	iounmap(fdev->regs);
- 	kfree(fdev);
 -- 
-2.27.0
+2.29.2
