@@ -1,87 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 13 Dec 2020 15:11:05 +0000
-Subject: [PATCH] staging: spmi: hisi-spmi-controller: Fix some error handling paths
-Message-Id: <20201213151105.137731-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 11:54:25 +0000
+Subject: [PATCH] wilc1000: fix spelling mistake in Kconfig "devision" -> "division"
+Message-Id: <20201216115425.12745-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab+huawei@kernel.org, gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Ajay Singh <ajay.kathat@microchip.com>, Claudiu Beznea <claudiu.beznea@microchip.com>, Kalle Valo <kvalo@codeaurora.org>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-IN the probe function, if an error occurs after calling
-'spmi_controller_alloc()', it must be undone by a corresponding
-'spmi_controller_put() call.
+From: Colin Ian King <colin.king@canonical.com>
 
-In the remove function, use 'spmi_controller_put(ctrl)' instead of
-'kfree(ctrl)'.
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-While a it fix an error message
-(s/spmi_add_controller/spmi_controller_add/)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../staging/hikey9xx/hisi-spmi-controller.c   | 21 +++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/ni/Kconfig                 | 2 +-
+ drivers/net/wireless/microchip/wilc1000/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/hikey9xx/hisi-spmi-controller.c b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-index 861aedd5de48..0d42bc65f39b 100644
---- a/drivers/staging/hikey9xx/hisi-spmi-controller.c
-+++ b/drivers/staging/hikey9xx/hisi-spmi-controller.c
-@@ -278,21 +278,24 @@ static int spmi_controller_probe(struct platform_device *pdev)
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!iores) {
- 		dev_err(&pdev->dev, "can not get resource!\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_put_controller;
- 	}
+diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
+index 01229190132d..dcfbfa516e67 100644
+--- a/drivers/net/ethernet/ni/Kconfig
++++ b/drivers/net/ethernet/ni/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
+-# National Instuments network device configuration
++# National Instruments network device configuration
+ #
  
- 	spmi_controller->base = devm_ioremap(&pdev->dev, iores->start,
- 					     resource_size(iores));
- 	if (!spmi_controller->base) {
- 		dev_err(&pdev->dev, "can not remap base addr!\n");
--		return -EADDRNOTAVAIL;
-+		ret = -EADDRNOTAVAIL;
-+		goto err_put_controller;
- 	}
- 
- 	ret = of_property_read_u32(pdev->dev.of_node, "spmi-channel",
- 				   &spmi_controller->channel);
- 	if (ret) {
- 		dev_err(&pdev->dev, "can not get channel\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_put_controller;
- 	}
- 
- 	platform_set_drvdata(pdev, spmi_controller);
-@@ -309,9 +312,15 @@ static int spmi_controller_probe(struct platform_device *pdev)
- 	ctrl->write_cmd = spmi_write_cmd;
- 
- 	ret = spmi_controller_add(ctrl);
--	if (ret)
--		dev_err(&pdev->dev, "spmi_add_controller failed with error %d!\n", ret);
-+	if (ret) {
-+		dev_err(&pdev->dev, "spmi_controller_add failed with error %d!\n", ret);
-+		goto err_put_controller;
-+	}
-+
-+	return 0;
- 
-+err_put_controller:
-+	spmi_controller_put(ctrl);
- 	return ret;
- }
- 
-@@ -320,7 +329,7 @@ static int spmi_del_controller(struct platform_device *pdev)
- 	struct spmi_controller *ctrl = platform_get_drvdata(pdev);
- 
- 	spmi_controller_remove(ctrl);
--	kfree(ctrl);
-+	spmi_controller_put(ctrl);
- 	return 0;
- }
- 
+ config NET_VENDOR_NI
+diff --git a/drivers/net/wireless/microchip/wilc1000/Kconfig b/drivers/net/wireless/microchip/wilc1000/Kconfig
+index 80c92e8bf8a5..7f15e42602dd 100644
+--- a/drivers/net/wireless/microchip/wilc1000/Kconfig
++++ b/drivers/net/wireless/microchip/wilc1000/Kconfig
+@@ -44,4 +44,4 @@ config WILC1000_HW_OOB_INTR
+ 	  chipset. This OOB interrupt is intended to provide a faster interrupt
+ 	  mechanism for SDIO host controllers that don't support SDIO interrupt.
+ 	  Select this option If the SDIO host controller in your platform
+-	  doesn't support SDIO time devision interrupt.
++	  doesn't support SDIO time division interrupt.
 -- 
-2.27.0
+2.29.2
