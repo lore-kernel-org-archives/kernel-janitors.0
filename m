@@ -1,31 +1,35 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 02 Dec 2020 18:32:12 +0000
-Subject: Re: [PATCH 1/2] ath10k: Fix an error handling path
-Message-Id: <20201202183212.13942C43462@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 11:36:08 +0000
+Subject: [PATCH] powerpc/44x: fix spelling mistake in Kconfig "varients" -> "variants"
+Message-Id: <20201216113608.11812-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201122170342.1346011-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201122170342.1346011-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, kuba@kernel.org, erik.stromdahl@gmail.com, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Christophe Leroy <christophe.leroy@c-s.fr>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If 'ath10k_usb_create()' fails, we should release some resources and report
-> an error instead of silently continuing.
-> 
-> Fixes: 4db66499df91 ("ath10k: add initial USB support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-2 patches applied to ath-next branch of ath.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/powerpc/platforms/44x/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ed3573bc3943 ath10k: Fix an error handling path
-6364e693f4a7 ath10k: Release some resources in an error handling path
-
+diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
+index 78ac6d67a935..71068d89fcaa 100644
+--- a/arch/powerpc/platforms/44x/Kconfig
++++ b/arch/powerpc/platforms/44x/Kconfig
+@@ -5,7 +5,7 @@ config PPC_47x
+ 	select MPIC
+ 	help
+ 	  This option enables support for the 47x family of processors and is
+-	  not currently compatible with other 44x or 46x varients
++	  not currently compatible with other 44x or 46x variants
+ 
+ config BAMBOO
+ 	bool "Bamboo"
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20201122170342.1346011-1-christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.29.2
