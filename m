@@ -1,98 +1,63 @@
-From: Orson Zhai <orsonzhai@gmail.com>
-Date: Sun, 20 Dec 2020 02:05:09 +0000
-Subject: Re: [PATCH] mmc: sdhci-sprd: Fix some resource leaks in the remove function
-Message-Id: <CA+H2tpHQvnmv_rCby0CUP3nnFXFg75fVEVQYRHJTW9Ebpfc7Gg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Dec 2020 08:32:12 +0000
+Subject: [PATCH 2/2] ath11k: Fix ath11k_pci_fix_l1ss()
+Message-Id: <X9nGDHiTh+Z+asDy@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
- <CA+H2tpGkv0sPQ2e6OfUVuW2xFx-KSpZy_vYY3TG_9JBWvFZxAA@mail.gmail.com> <83712f89-deb7-b266-8e8a-99f0df4c6782@wanadoo.fr>
-In-Reply-To: <83712f89-deb7-b266-8e8a-99f0df4c6782@wanadoo.fr>
+In-Reply-To: <X9nF17L2/EKOSbn/@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>, Baolin Wang <baolin.wang7@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, linux-mmc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, billows.wu@unisoc.com, Wu Hongtao <wuht06@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, Carl Huang <cjhuang@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
 
-On Fri, Dec 18, 2020 at 9:46 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 17/12/2020 à 23:55, Orson Zhai a écrit :
-> > + cc: Billows
-> >
-> > Hi Christophe,
-> > On Fri, Dec 18, 2020 at 4:50 AM Christophe JAILLET
-> > <christophe.jaillet@wanadoo.fr> wrote:
-> >>
-> >> 'sdhci_remove_host()' and 'sdhci_pltfm_free()' should be used in place of
-> >> 'mmc_remove_host()' and 'mmc_free_host()'.
-> >>
-> >> This avoids some resource leaks, is more in line with the error handling
-> >> path of the probe function, and is more consistent with other drivers.
-> >>
-> >> Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >> Other adjustment may be needed.
-> >> I'm not sure at all of the 0 passed to 'sdhci_remove_host()'. Some drivers
-> >> pass 0, some have some more complicated computation.
-> >> ---
-> >>   drivers/mmc/host/sdhci-sprd.c | 6 +++---
-> >>   1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> >> index f85171edabeb..5dc36efff47f 100644
-> >> --- a/drivers/mmc/host/sdhci-sprd.c
-> >> +++ b/drivers/mmc/host/sdhci-sprd.c
-> >> @@ -708,14 +708,14 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
-> >>   {
-> >>          struct sdhci_host *host = platform_get_drvdata(pdev);
-> >>          struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-> >> -       struct mmc_host *mmc = host->mmc;
-> >>
-> >> -       mmc_remove_host(mmc);
-> >> +       sdhci_remove_host(host, 0);
-> >> +
-> >>          clk_disable_unprepare(sprd_host->clk_sdio);
-> >>          clk_disable_unprepare(sprd_host->clk_enable);
-> >>          clk_disable_unprepare(sprd_host->clk_2x_enable);
-> >>
-> >> -       mmc_free_host(mmc);
-> >> +       sdhci_pltfm_free(pdev);
-> >
-> > I saw a lot of drivers also use mmc_free_host().
-> > Do you have patches elsewhere to clean them?
-> >
->
-> As far as I can see, all drivers that use 'mmc_free_host' also use
-> 'mmc_alloc_host'. (based on 5.10.1 and unless error)
->
-> The only exception is 'sdhci-sprd.c'.
->
-> So no, I don't plan any other clean-up.
->
->
->
-> To spot it, I run one of my own cocci script which compare functions
-> called in the remove function and in the error handling path of the probe.
->
-> So I caught this one because 'mmc_free_host' is used in the porbe and
-> 'sdhci_pltfm_free' in the remove function.
+All these conditions are reversed so presumably most of the function is
+dead code.
 
-Thanks for the clarification.
+Fixes: 0699940755e9 ("ath11k: pci: fix L1ss clock unstable problem")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/wireless/ath/ath11k/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Acked-by: Orson Zhai <orson.zhai@gmail.com>
-
->
->
-> CJ
->
-> > Thanks,
-> > -Orson
-> >
-> >>
-> >>          return 0;
-> >>   }
-> >> --
-> >> 2.27.0
-> >>
-> >
->
+diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+index 857647aa57c8..9f9a824a4c2d 100644
+--- a/drivers/net/wireless/ath/ath11k/pci.c
++++ b/drivers/net/wireless/ath/ath11k/pci.c
+@@ -274,7 +274,7 @@ static int ath11k_pci_fix_l1ss(struct ath11k_base *ab)
+ 				      PCIE_QSERDES_COM_SYSCLK_EN_SEL_REG,
+ 				      PCIE_QSERDES_COM_SYSCLK_EN_SEL_VAL,
+ 				      PCIE_QSERDES_COM_SYSCLK_EN_SEL_MSK);
+-	if (!ret) {
++	if (ret) {
+ 		ath11k_warn(ab, "failed to set sysclk: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -283,7 +283,7 @@ static int ath11k_pci_fix_l1ss(struct ath11k_base *ab)
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG1_REG,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG1_VAL,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG_MSK);
+-	if (!ret) {
++	if (ret) {
+ 		ath11k_warn(ab, "failed to set dtct config1 error: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -292,7 +292,7 @@ static int ath11k_pci_fix_l1ss(struct ath11k_base *ab)
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG2_REG,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG2_VAL,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG_MSK);
+-	if (!ret) {
++	if (ret) {
+ 		ath11k_warn(ab, "failed to set dtct config2: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -301,7 +301,7 @@ static int ath11k_pci_fix_l1ss(struct ath11k_base *ab)
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG4_REG,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG4_VAL,
+ 				      PCIE_USB3_PCS_MISC_OSC_DTCT_CONFIG_MSK);
+-	if (!ret) {
++	if (ret) {
+ 		ath11k_warn(ab, "failed to set dtct config4: %d\n", ret);
+ 		return ret;
+ 	}
+-- 
+2.29.2
