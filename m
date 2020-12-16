@@ -1,54 +1,35 @@
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Sun, 13 Dec 2020 22:22:35 +0000
-Subject: Re: [PATCH] mtd: remove redundant assignment to pointer eb
-Message-Id: <CAFLxGvy9LzJmNshqkxoC_kuVLJztgBDhfYPjkBUWtwd1-9UY-Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Dec 2020 11:28:59 +0000
+Subject: [PATCH] ASoC: codecs: fix spelling mistake in Kconfig "comunicate" -> "communicate"
+Message-Id: <20201216112859.11564-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20200911102321.22515-1-colin.king@canonical.com>
- <20200911175514.766eeaf1@xps13>
-In-Reply-To: <20200911175514.766eeaf1@xps13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 5:59 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->
-> Hi Colin,
->
-> Colin King <colin.king@canonical.com> wrote on Fri, 11 Sep 2020
-> 11:23:21 +0100:
->
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Pointer eb is being assigned a value that is never read, the assignment
-> > is redundant and can be removed.
-> >
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/mtd/mtdswap.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-> > index 58eefa43af14..795dec4483c2 100644
-> > --- a/drivers/mtd/mtdswap.c
-> > +++ b/drivers/mtd/mtdswap.c
-> > @@ -1053,7 +1053,6 @@ static int mtdswap_writesect(struct mtd_blktrans_dev *dev,
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > -     eb = d->eb_data + (newblock / d->pages_per_eblk);
-> >       d->page_data[page] = newblock;
-> >
-> >       return 0;
->
-> Yes it looks unused but perhaps it helps to catch the logic here. This
-> is not a strong disagreement but I'd keep it this way. Let's see what
-> other maintainers think.
+From: Colin Ian King <colin.king@canonical.com>
 
-This looks like dead code, let's rip it out.
+There is a spelling mistake in the Kconfig help text. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index ba4eb54aafcb..9bf6bfdaf11e 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -457,7 +457,7 @@ config SND_SOC_ADAU7118_HW
+ 	help
+ 	  Enable support for the Analog Devices ADAU7118 8 Channel PDM-to-I2S/TDM
+ 	  Converter. In this mode, the device works in standalone mode which
+-	  means that there is no bus to comunicate with it. Stereo mode is not
++	  means that there is no bus to communicate with it. Stereo mode is not
+ 	  supported in this mode.
+ 
+ 	  To compile this driver as a module, choose M here: the module
 -- 
-Thanks,
-//richard
+2.29.2
