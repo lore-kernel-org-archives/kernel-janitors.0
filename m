@@ -1,35 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Dec 2020 17:24:27 +0000
-Subject: [PATCH] xtensa: fix spelling mistake in Kconfig "wont" -> "won't"
-Message-Id: <20201217172427.58009-1-colin.king@canonical.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Thu, 17 Dec 2020 17:52:21 +0000
+Subject: Re: [PATCH] xtensa: fix spelling mistake in Kconfig "wont" -> "won't"
+Message-Id: <CAMo8Bf+Q3BQjjc2N=ykZy7KJ4-CYY+qpDFZmJFe1_wuxAsL2cQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201217172427.58009-1-colin.king@canonical.com>
+In-Reply-To: <20201217172427.58009-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, linux-xtensa@linux-xtensa.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Chris Zankel <chris@zankel.net>, "open list:TENSILICA XTENSA PORT (xtensa)" <linux-xtensa@linux-xtensa.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Dec 17, 2020 at 9:24 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in the Kconfig help text. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  arch/xtensa/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+Thanks. Applied to my xtensa tree.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/xtensa/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index 37ce1489364e..97beddc9d645 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -467,7 +467,7 @@ config INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX
- 	  then enter your normal kernel breakpoints once the MMU was mapped
- 	  to the kernel mappings (0XC0000000).
- 
--	  This unfortunately won't work for U-Boot and likely also wont
-+	  This unfortunately won't work for U-Boot and likely also won't
- 	  work for using KEXEC to have a hot kernel ready for doing a
- 	  KDUMP.
- 
--- 
-2.29.2
+-- Max
