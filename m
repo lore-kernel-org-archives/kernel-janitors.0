@@ -1,35 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Dec 2020 17:13:31 +0000
-Subject: [PATCH] ARM: sti: Fix spelling mistake in Kconfig "targetted" -> "targeted"
-Message-Id: <20201217171331.57376-1-colin.king@canonical.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Date: Thu, 17 Dec 2020 17:17:11 +0000
+Subject: Re: [PATCH] ARM: sti: Fix spelling mistake in Kconfig "targetted" -> "targeted"
+Message-Id: <d53e1ba7-9403-db77-e8a3-72ce41c8f89e@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201217171331.57376-1-colin.king@canonical.com>
+In-Reply-To: <20201217171331.57376-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrice Chotard <patrice.chotard@st.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Russell King <linux@armlinux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in the Kconfig help text. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/arm/mach-sti/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
-index b2d45cf10a3c..74640bbaeba6 100644
---- a/arch/arm/mach-sti/Kconfig
-+++ b/arch/arm/mach-sti/Kconfig
-@@ -50,7 +50,7 @@ config SOC_STIH407
- 	select STIH407_RESET
- 	help
- 	  This enables support for STMicroelectronics Digital Consumer
--	  Electronics family StiH407 parts, targetted at set-top-box
-+	  Electronics family StiH407 parts, targeted at set-top-box
- 	  and other digital audio/video applications using Flattened Device
- 	  Trees.
- 
--- 
-2.29.2
+SGkgQ29saW4NCg0KT24gMTIvMTcvMjAgNjoxMyBQTSwgQ29saW4gS2luZyB3cm90ZToNCj4gRnJv
+bTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4NCj4gVGhlcmUg
+aXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIHRoZSBLY29uZmlnIGhlbHAgdGV4dC4gRml4IGl0Lg0K
+Pg0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwu
+Y29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtL21hY2gtc3RpL0tjb25maWcgfCAyICstDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtL21hY2gtc3RpL0tjb25maWcgYi9hcmNoL2FybS9tYWNoLXN0aS9LY29uZmln
+DQo+IGluZGV4IGIyZDQ1Y2YxMGEzYy4uNzQ2NDBiYmFlYmE2IDEwMDY0NA0KPiAtLS0gYS9hcmNo
+L2FybS9tYWNoLXN0aS9LY29uZmlnDQo+ICsrKyBiL2FyY2gvYXJtL21hY2gtc3RpL0tjb25maWcN
+Cj4gQEAgLTUwLDcgKzUwLDcgQEAgY29uZmlnIFNPQ19TVElINDA3DQo+ICAJc2VsZWN0IFNUSUg0
+MDdfUkVTRVQNCj4gIAloZWxwDQo+ICAJICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgU1RNaWNy
+b2VsZWN0cm9uaWNzIERpZ2l0YWwgQ29uc3VtZXINCj4gLQkgIEVsZWN0cm9uaWNzIGZhbWlseSBT
+dGlINDA3IHBhcnRzLCB0YXJnZXR0ZWQgYXQgc2V0LXRvcC1ib3gNCj4gKwkgIEVsZWN0cm9uaWNz
+IGZhbWlseSBTdGlINDA3IHBhcnRzLCB0YXJnZXRlZCBhdCBzZXQtdG9wLWJveA0KPiAgCSAgYW5k
+IG90aGVyIGRpZ2l0YWwgYXVkaW8vdmlkZW8gYXBwbGljYXRpb25zIHVzaW5nIEZsYXR0ZW5lZCBE
+ZXZpY2UNCj4gIAkgIFRyZWVzLg0KPiAgDQoNClJldmlld2VkLWJ5OiBQYXRyaWNlIENob3RhcmQg
+PHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw0KDQpQYXRyaWNlDQo
