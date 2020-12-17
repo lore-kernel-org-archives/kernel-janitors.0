@@ -1,34 +1,83 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 06 Dec 2020 12:13:22 +0000
-Subject: [PATCH 2/2] interconnect: imx: Remove a useless test
-Message-Id: <20201206121322.29434-1-christophe.jaillet@wanadoo.fr>
+Date: Thu, 17 Dec 2020 12:17:25 +0000
+Subject: [PATCH] media: venus: core: Fix a resource leak in error handling paths of the probe function
+Message-Id: <20201217121725.156649-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: georgi.djakov@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, aisheng.dong@nxp.com, weiyongjun1@huawei.com, krzk@kernel.org, leonard.crestez@nxp.com, liushixin2@huawei.com, abailon@baylibre.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+To: stanimir.varbanov@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org, georgi.djakov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'dn' can't be NULL here, it is tested just the line above.
-Remove this useless test.
+Add 2 missing 'icc_put()' calls in the error handling path of the probe
+function, as already done in the remove function.
 
+Fixes: 32f0a6ddc8c9 ("media: venus: Use on-chip interconnect API")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/interconnect/imx/imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/qcom/venus/core.c | 31 +++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/interconnect/imx/imx.c b/drivers/interconnect/imx/imx.c
-index e398ebf1dbba..c770951a909c 100644
---- a/drivers/interconnect/imx/imx.c
-+++ b/drivers/interconnect/imx/imx.c
-@@ -96,7 +96,7 @@ static int imx_icc_node_init_qos(struct icc_provider *provider,
- 			return -ENODEV;
- 		}
- 		/* Allow scaling to be disabled on a per-node basis */
--		if (!dn || !of_device_is_available(dn)) {
-+		if (!of_device_is_available(dn)) {
- 			dev_warn(dev, "Missing property %s, skip scaling %s\n",
- 				 adj->phandle_name, node->name);
- 			of_node_put(dn);
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index bdd293faaad0..2e6ce215740b 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -200,27 +200,35 @@ static int venus_probe(struct platform_device *pdev)
+ 		return PTR_ERR(core->video_path);
+ 
+ 	core->cpucfg_path = of_icc_get(dev, "cpu-cfg");
+-	if (IS_ERR(core->cpucfg_path))
+-		return PTR_ERR(core->cpucfg_path);
++	if (IS_ERR(core->cpucfg_path)) {
++		ret = PTR_ERR(core->cpucfg_path);
++		goto err_video_path_put;
++	}
+ 
+ 	core->irq = platform_get_irq(pdev, 0);
+-	if (core->irq < 0)
+-		return core->irq;
++	if (core->irq < 0) {
++		ret = core->irq;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	core->res = of_device_get_match_data(dev);
+-	if (!core->res)
+-		return -ENODEV;
++	if (!core->res) {
++		ret = -ENODEV;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	mutex_init(&core->pm_lock);
+ 
+ 	core->pm_ops = venus_pm_get(core->res->hfi_version);
+-	if (!core->pm_ops)
+-		return -ENODEV;
++	if (!core->pm_ops) {
++		ret = -ENODEV;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	if (core->pm_ops->core_get) {
+ 		ret = core->pm_ops->core_get(dev);
+ 		if (ret)
+-			return ret;
++			goto err_cpucfg_path_put;
+ 	}
+ 
+ 	ret = dma_set_mask_and_coherent(dev, core->res->dma_mask);
+@@ -305,6 +313,11 @@ static int venus_probe(struct platform_device *pdev)
+ err_core_put:
+ 	if (core->pm_ops->core_put)
+ 		core->pm_ops->core_put(dev);
++err_cpucfg_path_put:
++	icc_put(core->cpucfg_path);
++err_video_path_put:
++	icc_put(core->video_path);
++
+ 	return ret;
+ }
+ 
 -- 
 2.27.0
