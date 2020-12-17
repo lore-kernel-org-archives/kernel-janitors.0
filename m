@@ -1,41 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Dec 2020 12:36:04 +0000
-Subject: [PATCH][next] octeontx2-af: Fix undetected unmap PF error check
-Message-Id: <20201216123604.15369-1-colin.king@canonical.com>
+From: George Cherian <gcherian@marvell.com>
+Date: Thu, 17 Dec 2020 05:24:34 +0000
+Subject: RE: [PATCH][next] octeontx2-af: Fix undetected unmap PF error check
+Message-Id: <BYAPR18MB2679726F785B910EA9325ADCC5C40@BYAPR18MB2679.namprd18.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201216123604.15369-1-colin.king@canonical.com>
+In-Reply-To: <20201216123604.15369-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, George Cherian <george.cherian@marvell.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Sunil Kovvuri Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>, Jerin Jacob Kollanukkaran <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the check for an unmap PF error is always going to be false
-because intr_val is a 32 bit int and is being bit-mask checked against
-1ULL << 32.  Fix this by making intr_val a u64 to match the type at it
-is copied from, namely npa_event_context->npa_af_rvu_ge.
-
-Addresses-Coverity: ("Operands don't affect result")
-Fixes: f1168d1e207c ("octeontx2-af: Add devlink health reporters for NPA")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-index 3f9d0ab6d5ae..bc0e4113370e 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-@@ -275,7 +275,8 @@ static int rvu_npa_report_show(struct devlink_fmsg *fmsg, void *ctx,
- 			       enum npa_af_rvu_health health_reporter)
- {
- 	struct rvu_npa_event_ctx *npa_event_context;
--	unsigned int intr_val, alloc_dis, free_dis;
-+	unsigned int alloc_dis, free_dis;
-+	u64 intr_val;
- 	int err;
- 
- 	npa_event_context = ctx;
--- 
-2.29.2
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyA8Y29s
+aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDE2LCAy
+MDIwIDY6MDYgUE0NCj4gVG86IFN1bmlsIEtvdnZ1cmkgR291dGhhbSA8c2dvdXRoYW1AbWFydmVs
+bC5jb20+OyBMaW51IENoZXJpYW4NCj4gPGxjaGVyaWFuQG1hcnZlbGwuY29tPjsgR2VldGhhc293
+amFueWEgQWt1bGEgPGdha3VsYUBtYXJ2ZWxsLmNvbT47DQo+IEplcmluIEphY29iIEtvbGxhbnVr
+a2FyYW4gPGplcmluakBtYXJ2ZWxsLmNvbT47IERhdmlkIFMgLiBNaWxsZXINCj4gPGRhdmVtQGRh
+dmVtbG9mdC5uZXQ+OyBKYWt1YiBLaWNpbnNraSA8a3ViYUBrZXJuZWwub3JnPjsgR2VvcmdlDQo+
+IENoZXJpYW4gPGdjaGVyaWFuQG1hcnZlbGwuY29tPjsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZw0K
+PiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIG9jdGVvbnR4Mi1hZjogRml4IHVu
+ZGV0ZWN0ZWQgdW5tYXAgUEYgZXJyb3INCj4gY2hlY2sNCj4gDQo+IEZyb206IENvbGluIElhbiBL
+aW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBDdXJyZW50bHkgdGhlIGNoZWNr
+IGZvciBhbiB1bm1hcCBQRiBlcnJvciBpcyBhbHdheXMgZ29pbmcgdG8gYmUgZmFsc2UgYmVjYXVz
+ZQ0KPiBpbnRyX3ZhbCBpcyBhIDMyIGJpdCBpbnQgYW5kIGlzIGJlaW5nIGJpdC1tYXNrIGNoZWNr
+ZWQgYWdhaW5zdCAxVUxMIDw8IDMyLiAgRml4DQo+IHRoaXMgYnkgbWFraW5nIGludHJfdmFsIGEg
+dTY0IHRvIG1hdGNoIHRoZSB0eXBlIGF0IGl0IGlzIGNvcGllZCBmcm9tLCBuYW1lbHkNCj4gbnBh
+X2V2ZW50X2NvbnRleHQtPm5wYV9hZl9ydnVfZ2UuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6
+ICgiT3BlcmFuZHMgZG9uJ3QgYWZmZWN0IHJlc3VsdCIpDQo+IEZpeGVzOiBmMTE2OGQxZTIwN2Mg
+KCJvY3Rlb250eDItYWY6IEFkZCBkZXZsaW5rIGhlYWx0aCByZXBvcnRlcnMgZm9yIE5QQSIpDQo+
+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+
+DQpBY2tlZC1ieTogR2VvcmdlIENoZXJpYW4gPGdlb3JnZS5jaGVyaWFuQG1hcnZlbGwuY29tPg0K
+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWFydmVsbC9vY3Rlb250eDIvYWYvcnZ1
+X2RldmxpbmsuYyB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAx
+IGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWFy
+dmVsbC9vY3Rlb250eDIvYWYvcnZ1X2RldmxpbmsuYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0
+L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2dV9kZXZsaW5rLmMNCj4gaW5kZXggM2Y5ZDBhYjZkNWFl
+Li5iYzBlNDExMzM3MGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZl
+bGwvb2N0ZW9udHgyL2FmL3J2dV9kZXZsaW5rLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvbWFydmVsbC9vY3Rlb250eDIvYWYvcnZ1X2RldmxpbmsuYw0KPiBAQCAtMjc1LDcgKzI3NSw4
+IEBAIHN0YXRpYyBpbnQgcnZ1X25wYV9yZXBvcnRfc2hvdyhzdHJ1Y3QgZGV2bGlua19mbXNnDQo+
+ICpmbXNnLCB2b2lkICpjdHgsDQo+ICAJCQkgICAgICAgZW51bSBucGFfYWZfcnZ1X2hlYWx0aCBo
+ZWFsdGhfcmVwb3J0ZXIpICB7DQo+ICAJc3RydWN0IHJ2dV9ucGFfZXZlbnRfY3R4ICpucGFfZXZl
+bnRfY29udGV4dDsNCj4gLQl1bnNpZ25lZCBpbnQgaW50cl92YWwsIGFsbG9jX2RpcywgZnJlZV9k
+aXM7DQo+ICsJdW5zaWduZWQgaW50IGFsbG9jX2RpcywgZnJlZV9kaXM7DQo+ICsJdTY0IGludHJf
+dmFsOw0KPiAgCWludCBlcnI7DQo+IA0KPiAgCW5wYV9ldmVudF9jb250ZXh0ID0gY3R4Ow0KPiAt
+LQ0KPiAyLjI5LjINCg0KUmVnYXJkcywNCi1HZW9yZ2UNCg=
