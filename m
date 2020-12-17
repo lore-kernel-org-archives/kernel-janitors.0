@@ -1,35 +1,25 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Dec 2020 17:17:05 +0000
-Subject: [PATCH] timekeeping: Fix spelling mistake in Kconfig "fullfill" -> "fulfill"
-Message-Id: <20201217171705.57586-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 17 Dec 2020 22:00:55 +0000
+Subject: Re: [PATCH] timekeeping: Fix spelling mistake in Kconfig "fullfill" -> "fulfill"
+Message-Id: <CACRpkdZeQyPyvHqrQy_W3pbn-9-rn8YNYiDmR72xqxVhdpeTBg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201217171705.57586-1-colin.king@canonical.com>
+In-Reply-To: <20201217171705.57586-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Dec 17, 2020 at 6:17 PM Colin King <colin.king@canonical.com> wrote:
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in the Kconfig help text. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/time/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 9a41848b6ebb..83e158d016ba 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -141,7 +141,7 @@ config CONTEXT_TRACKING_FORCE
- 	  dynticks working.
- 
- 	  This option stands for testing when an arch implements the
--	  context tracking backend but doesn't yet fullfill all the
-+	  context tracking backend but doesn't yet fulfill all the
- 	  requirements to make the full dynticks feature working.
- 	  Without the full dynticks, there is no way to test the support
- 	  for context tracking and the subsystems that rely on it: RCU
--- 
-2.29.2
+Yours,
+Linus Walleij
