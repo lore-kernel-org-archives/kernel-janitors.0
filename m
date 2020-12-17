@@ -1,44 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 30 Dec 2020 13:39:27 +0000
-Subject: Re: [PATCH v3] regmap: debugfs: Fix a memory leak when calling regmap_attach_dev
-Message-Id: <20201230133927.GD4428@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2Z2K0IlrPCVsbNpk"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 17 Dec 2020 20:42:36 +0000
+Subject: [PATCH] mmc: sdhci-sprd: Fix some resource leaks in the remove function
+Message-Id: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201229105046.41984-1-xiaolei.wang@windriver.com>
- <d516efdd-7e66-13fe-3798-cdea5ff012dc@web.de>
- <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
-In-Reply-To: <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
-To: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Lechner <david@lechnology.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+'sdhci_remove_host()' and 'sdhci_pltfm_free()' should be used in place of
+'mmc_remove_host()' and 'mmc_free_host()'.
 
---2Z2K0IlrPCVsbNpk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This avoids some resource leaks, is more in line with the error handling
+path of the probe function, and is more consistent with other drivers.
 
-On Wed, Dec 30, 2020 at 10:14:22AM +0000, Wang, Xiaolei wrote:
-> Hi Markus
->=20
-> Thank you very much, very good suggestion, do I need to re-send a patch t=
-o fix this problem, or modify the previous patch and send it again?
+Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Other adjustment may be needed.
+I'm not sure at all of the 0 passed to 'sdhci_remove_host()'. Some drivers
+pass 0, some have some more complicated computation.
+---
+ drivers/mmc/host/sdhci-sprd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Please feel free to ignore Markus.
-
---2Z2K0IlrPCVsbNpk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/sgw4ACgkQJNaLcl1U
-h9CyNwf9EDK99jUBj3cRoPF87/iQOCwAunHmFz4I5n9mpCIYg264KCgOLSqUCDM7
-U0sY5o0G3vxQqqoZsAMtTDgyTimscRCjXch3wrTrB7J8KJA1j8twUCYWtIpFECn3
-nQ2g2QtlMky581G8/SM7LieziVp+cY83eJS4f3R//dZBINmyQWLe1JYcB3MABkTd
-6Dov+4dn0msCL7xs65PYBz9HSVJX8z75uemS3bbJIYLUKiAuC0K1auOK6PxTOaBT
-P4K+quQ8zj/8UHDdBWIiIM+lF6lgaNrqr5V+v0EzV8TrCKBGBqaiyCx/lBDrpEKs
-NwT2skl91yKqscQpcc+EABdcC+OzFg==
-=Goo3
------END PGP SIGNATURE-----
-
---2Z2K0IlrPCVsbNpk--
+diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+index f85171edabeb..5dc36efff47f 100644
+--- a/drivers/mmc/host/sdhci-sprd.c
++++ b/drivers/mmc/host/sdhci-sprd.c
+@@ -708,14 +708,14 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
+ {
+ 	struct sdhci_host *host = platform_get_drvdata(pdev);
+ 	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+-	struct mmc_host *mmc = host->mmc;
+ 
+-	mmc_remove_host(mmc);
++	sdhci_remove_host(host, 0);
++
+ 	clk_disable_unprepare(sprd_host->clk_sdio);
+ 	clk_disable_unprepare(sprd_host->clk_enable);
+ 	clk_disable_unprepare(sprd_host->clk_2x_enable);
+ 
+-	mmc_free_host(mmc);
++	sdhci_pltfm_free(pdev);
+ 
+ 	return 0;
+ }
+-- 
+2.27.0
