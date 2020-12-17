@@ -1,26 +1,31 @@
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Date: Mon, 14 Dec 2020 09:24:15 +0000
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 17 Dec 2020 03:56:59 +0000
 Subject: Re: [PATCH] media: vsp1: Fix an error handling path in the probe function
-Message-Id: <592359b9-8e2a-6b5c-053f-ec16d9085b22@ideasonboard.com>
+Message-Id: <X9rXC3rKWfEJNP6z@pendragon.ideasonboard.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201212174119.120027-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20201212174119.120027-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, laurent.pinchart@ideasonboard.com, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: kieran.bingham+renesas@ideasonboard.com, mchehab@kernel.org, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hi Christophe,
 
-On 12/12/2020 17:41, Christophe JAILLET wrote:
+Thank you for the patch.
+
+On Sat, Dec 12, 2020 at 06:41:19PM +0100, Christophe JAILLET wrote:
 > A previous 'rcar_fcp_get()' call must be undone in the error handling path,
 > as already done in the remove function.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+> 
 > Fixes: 94fcdf829793 ("[media] v4l: vsp1: Add FCP support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and queued in my tree for v5.12.
+
 > ---
 >  drivers/media/platform/vsp1/vsp1_drv.c | 4 +++-
 >  1 file changed, 3 insertions(+), 1 deletion(-)
@@ -41,4 +46,8 @@ Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 >  
 >  	return ret;
 >  }
-> 
+
+-- 
+Regards,
+
+Laurent Pinchart
