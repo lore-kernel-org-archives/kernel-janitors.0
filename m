@@ -1,25 +1,39 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Tue, 08 Dec 2020 01:58:07 +0000
-Subject: Re: [PATCH] dpaa2-mac: Add a missing of_node_put after of_device_is_available
-Message-Id: <20201207175807.695fba40@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 17 Dec 2020 07:15:01 +0000
+Subject: [PATCH] MAINTAINERS: include governors into CPU IDLE TIME MANAGEMENT FRAMEWORK
+Message-Id: <20201217071501.31267-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201206151339.44306-1-christophe.jaillet@wanadoo.fr>
-        <20201207150457.arjw5geu2k6h2h2u@skbuf>
-In-Reply-To: <20201207150457.arjw5geu2k6h2h2u@skbuf>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ioana Ciornei <ioana.ciornei@nxp.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
+Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Mon, 7 Dec 2020 15:04:58 +0000 Ioana Ciornei wrote:
-> On Sun, Dec 06, 2020 at 04:13:39PM +0100, Christophe JAILLET wrote:
-> > Add an 'of_node_put()' call when a tested device node is not available.
-> > 
-> > Fixes:94ae899b2096 ("dpaa2-mac: add PCS support through the Lynx module")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>  
-> 
-> 
-> Reviewed-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+The current pattern in the file entry does not make the files in the
+governors subdirectory to be a part of the CPU IDLE TIME MANAGEMENT
+FRAMEWORK.
 
-Applied, thanks!
+Adjust the file pattern to include files in governors.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on current master and next-20201215
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 952731d1e43c..ac679aa00e0d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4596,7 +4596,7 @@ B:	https://bugzilla.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+ F:	Documentation/admin-guide/pm/cpuidle.rst
+ F:	Documentation/driver-api/pm/cpuidle.rst
+-F:	drivers/cpuidle/*
++F:	drivers/cpuidle/
+ F:	include/linux/cpuidle.h
+ 
+ CPU POWER MONITORING SUBSYSTEM
+-- 
+2.17.1
