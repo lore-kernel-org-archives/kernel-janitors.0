@@ -1,26 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 10 Dec 2020 14:47:52 +0000
-Subject: Re: [PATCH] cxl: Reduce scope =?utf-8?Q?fo?= =?utf-8?B?ciB0aGUgdmFyaWFibGUg4oCcbW3igJ0=?= in cxllib_
-Message-Id: <X9I1GLYCkw/q/xMu@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Dec 2020 11:04:59 +0000
+Subject: [PATCH] phy: cadence-torrent: Fix error code in cdns_torrent_phy_probe()
+Message-Id: <X9s7Wxq+b6ls0q7o@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5cee2b25-71e0-15aa-fba6-12211b8308aa@web.de>
-In-Reply-To: <5cee2b25-71e0-15aa-fba6-12211b8308aa@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Barrat <fbarrat@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kishon Vijay Abraham I <kishon@ti.com>, Swapnil Jakhade <sjakhade@cadence.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Yuti Amonkar <yamonkar@cadence.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 03:35:38PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 10 Dec 2020 14:14:07 +0100
-> 
-> A local variable was used only within an if branch.
-> Thus move the definition for the variable “mm” into the corresponding
-> code block.
+This error path should return -EINVAL, but currently it returns
+success.
 
-You did nothing here except add a checkpatch warning :(
+Fixes: d09945eacad0 ("phy: cadence-torrent: Check total lane count for all subnodes is within limit")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/phy/cadence/phy-cadence-torrent.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-dropped.
-
-greg k-h
+diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
+index f310e15d94cb..591a15834b48 100644
+--- a/drivers/phy/cadence/phy-cadence-torrent.c
++++ b/drivers/phy/cadence/phy-cadence-torrent.c
+@@ -2298,6 +2298,7 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
+ 
+ 	if (total_num_lanes > MAX_NUM_LANES) {
+ 		dev_err(dev, "Invalid lane configuration\n");
++		ret = -EINVAL;
+ 		goto put_lnk_rst;
+ 	}
+ 
+-- 
+2.29.2
