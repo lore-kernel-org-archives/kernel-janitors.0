@@ -1,25 +1,35 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Sat, 19 Dec 2020 23:53:37 +0000
-Subject: Re: [PATCH] clk: s2mps11: Fix a resource leak in error handling paths in the probe function
-Message-Id: <160842201799.1580929.7725454573395361171@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Dec 2020 17:13:31 +0000
+Subject: [PATCH] ARM: sti: Fix spelling mistake in Kconfig "targetted" -> "targeted"
+Message-Id: <20201217171331.57376-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201212122818.86195-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201212122818.86195-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, b.zolnierkie@samsung.com, krzk@kernel.org, mturquette@baylibre.com, mturquette@linaro.org, yadi.brar@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@st.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Christophe JAILLET (2020-12-12 04:28:18)
-> Some resource should be released in the error handling path of the probe
-> function, as already done in the remove function.
-> 
-> The remove function was fixed in commit bf416bd45738 ("clk: s2mps11: Add
-> missing of_node_put and of_clk_del_provider")
-> 
-> Fixes: 7cc560dea415 ("clk: s2mps11: Add support for s2mps11")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+There is a spelling mistake in the Kconfig help text. Fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/arm/mach-sti/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
+index b2d45cf10a3c..74640bbaeba6 100644
+--- a/arch/arm/mach-sti/Kconfig
++++ b/arch/arm/mach-sti/Kconfig
+@@ -50,7 +50,7 @@ config SOC_STIH407
+ 	select STIH407_RESET
+ 	help
+ 	  This enables support for STMicroelectronics Digital Consumer
+-	  Electronics family StiH407 parts, targetted at set-top-box
++	  Electronics family StiH407 parts, targeted at set-top-box
+ 	  and other digital audio/video applications using Flattened Device
+ 	  Trees.
+ 
+-- 
+2.29.2
