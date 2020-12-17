@@ -1,155 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 07 Dec 2020 16:33:36 +0000
-Subject: Re: [PATCH] mwl8k: switch from 'pci_' to 'dma_' API
-Message-Id: <20201207163336.044DEC433ED@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 17 Dec 2020 21:09:22 +0000
+Subject: [PATCH] mmc: usdhi6rol0: Fix a resource leak in the error handling path of the probe
+Message-Id: <20201217210922.165340-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201129150844.1466214-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201129150844.1466214-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: buytenh@wantstofly.org, davem@davemloft.net, kuba@kernel.org, gustavoars@kernel.org, allen.lkml@gmail.com, romain.perier@gmail.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jesper.nilsson@axis.com, lars.persson@axis.com, ulf.hansson@linaro.org, g.liakhovetski@gmx.de, chris@printf.net
+Cc: linux-arm-kernel@axis.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+A call to 'ausdhi6_dma_release()' to undo a previous call to
+'usdhi6_dma_request()' is missing in the error handling path of the probe
+function.
 
-> he wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'mwl8k_rxq_init()' and 'mwl8k_txq_init()'
-> GFP_KERNEL can be used because this flag is already used in a 'kcalloc()'
-> call, just a few line below.
-> 
-> When memory is allocated in 'mwl8k_firmware_load_success()' GFP_KERNEL can
-> be used because this flag is already used within 'ieee80211_register_hw()'
-> which is called just a few line below.
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+It is already present in the remove function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Fixes: 75fa9ea6e3c0 ("mmc: add a driver for the Renesas usdhi6rol0 SD/SDIO host controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mmc/host/usdhi6rol0.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-01b660b87ebe mwl8k: switch from 'pci_' to 'dma_' API
-
+diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+index e2d5112d809d..615f3d008af1 100644
+--- a/drivers/mmc/host/usdhi6rol0.c
++++ b/drivers/mmc/host/usdhi6rol0.c
+@@ -1858,10 +1858,12 @@ static int usdhi6_probe(struct platform_device *pdev)
+ 
+ 	ret = mmc_add_host(mmc);
+ 	if (ret < 0)
+-		goto e_clk_off;
++		goto e_release_dma;
+ 
+ 	return 0;
+ 
++e_release_dma:
++	usdhi6_dma_release(host);
+ e_clk_off:
+ 	clk_disable_unprepare(host->clk);
+ e_free_mmc:
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20201129150844.1466214-1-christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.27.0
