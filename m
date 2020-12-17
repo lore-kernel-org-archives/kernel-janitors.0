@@ -1,43 +1,35 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Fri, 11 Dec 2020 16:01:48 +0000
-Subject: Re: [PATCH] drm/panel: khadas: Fix error code in khadas_ts050_panel_add()
-Message-Id: <b6a872d0-7f2f-5ddd-b165-928c5e1a1b48@baylibre.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Dec 2020 17:24:27 +0000
+Subject: [PATCH] xtensa: fix spelling mistake in Kconfig "wont" -> "won't"
+Message-Id: <20201217172427.58009-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9NEfmgGilaXJs2R@mwanda> <20201211110157.GA527186@ravnborg.org>
-In-Reply-To: <20201211110157.GA527186@ravnborg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sam Ravnborg <sam@ravnborg.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, linux-xtensa@linux-xtensa.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi All,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 11/12/2020 12:01, Sam Ravnborg wrote:
-> Hi Dan,
-> 
-> I assume your nice tooling found this buggy.
-> Nice!
-> 
-> On Fri, Dec 11, 2020 at 01:05:50PM +0300, Dan Carpenter wrote:
->> There is a copy and paste bug so it didn't return the correct error
->> code.
->>
->> Fixes: b215212117f7 ("drm: panel: add Khadas TS050 panel driver")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks for the fix !
+There is a spelling mistake in the Kconfig help text. Fix it.
 
-> 
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> 
-> Neil, I assume you will take this via next-fixes, which I think is the
-> right tree at the moment.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/xtensa/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure, but seems drm-misc-next-fixes is out of sync with drm-misc-next right now,
-I'll apply it when it's sync'ed back.
-
-Neil
-
-> 
-> 	Sam
-> 
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index 37ce1489364e..97beddc9d645 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -467,7 +467,7 @@ config INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX
+ 	  then enter your normal kernel breakpoints once the MMU was mapped
+ 	  to the kernel mappings (0XC0000000).
+ 
+-	  This unfortunately won't work for U-Boot and likely also wont
++	  This unfortunately won't work for U-Boot and likely also won't
+ 	  work for using KEXEC to have a hot kernel ready for doing a
+ 	  KDUMP.
+ 
+-- 
+2.29.2
