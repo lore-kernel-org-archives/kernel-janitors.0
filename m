@@ -1,51 +1,49 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Dec 2020 16:06:14 +0000
-Subject: [PATCH 2/2] dmaengine: fsldma: Fix a resource leak in an error handling path of the probe function
-Message-Id: <20201212160614.92576-1-christophe.jaillet@wanadoo.fr>
+Date: Fri, 18 Dec 2020 17:46:36 +0000
+Subject: [PATCH] soc: ti: pm33xx: Fix some resource leak in the error handling paths of the probe function
+Message-Id: <20201218174636.172239-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: leoyang.li@nxp.com, zw@zh-kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, iws@ovro.caltech.edu
-Cc: linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: ssantosh@kernel.org, tony@atomide.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-In case of error, the previous 'fsl_dma_chan_probe()' calls must be undone
-by some 'fsl_dma_chan_remove()', as already done in the remove function.
+'am33xx_pm_rtc_setup()' allocates some resources that must be freed on the
+error. Commit 2152fbbd47c0 ("soc: ti: pm33xx: Simplify RTC usage to prepare
+to drop platform data") has introduced the use of these resources but has
+only updated the remove function.
 
-It was added in the remove function in commit 77cd62e8082b ("fsldma: allow
-Freescale Elo DMA driver to be compiled as a module")
+Fix the error handling path of the probe function now.
 
-Fixes: d3f620b2c4fe ("fsldma: simplify IRQ probing and handling")
+Fixes: 2152fbbd47c0 ("soc: ti: pm33xx: Simplify RTC usage to prepare to drop platform data")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Patch provided as-is.
-I don't have the configuration to compile test this patch
----
- drivers/dma/fsldma.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/soc/ti/pm33xx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
-index 554f70a0c18c..f8459cc5315d 100644
---- a/drivers/dma/fsldma.c
-+++ b/drivers/dma/fsldma.c
-@@ -1214,6 +1214,7 @@ static int fsldma_of_probe(struct platform_device *op)
- {
- 	struct fsldma_device *fdev;
- 	struct device_node *child;
-+	unsigned int i;
- 	int err;
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 64f3e3105540..7bab4bbaf02d 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -535,7 +535,7 @@ static int am33xx_pm_probe(struct platform_device *pdev)
  
- 	fdev = kzalloc(sizeof(*fdev), GFP_KERNEL);
-@@ -1292,6 +1293,10 @@ static int fsldma_of_probe(struct platform_device *op)
- 	return 0;
+ 	ret = am33xx_push_sram_idle();
+ 	if (ret)
+-		goto err_free_sram;
++		goto err_unsetup_rtc;
  
- out_free_fdev:
-+	for (i = 0; i < FSL_DMA_MAX_CHANS_PER_DEVICE; i++) {
-+		if (fdev->chan[i])
-+			fsl_dma_chan_remove(fdev->chan[i]);
-+	}
- 	irq_dispose_mapping(fdev->irq);
- 	iounmap(fdev->regs);
- out_free:
+ 	am33xx_pm_set_ipc_ops();
+ 
+@@ -575,6 +575,9 @@ static int am33xx_pm_probe(struct platform_device *pdev)
+ err_pm_runtime_disable:
+ 	pm_runtime_disable(dev);
+ 	wkup_m3_ipc_put(m3_ipc);
++err_unsetup_rtc:
++	iounmap(rtc_base_virt);
++	clk_put(rtc_fck);
+ err_free_sram:
+ 	am33xx_pm_free_sram();
+ 	pm33xx_dev = NULL;
 -- 
 2.27.0
