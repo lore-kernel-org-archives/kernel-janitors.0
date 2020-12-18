@@ -1,34 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Dec 2020 11:04:32 +0000
-Subject: [PATCH] ath11k: dp: clean up a variable name
-Message-Id: <X9s7QAHDM2OTIo3a@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 18 Dec 2020 09:05:27 +0000
+Subject: Re: [PATCH] ath11k: dp: clean up a variable name
+Message-Id: <20201218090527.A859DC43461@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X9s7QAHDM2OTIo3a@mwanda>
+In-Reply-To: <X9s7QAHDM2OTIo3a@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "&ar->ab->base_lock" and "&ab->base_lock" locks are the same lock
-but it's nicer to use the same name consistently everywhere.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/ath/ath11k/dp_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The "&ar->ab->base_lock" and "&ab->base_lock" locks are the same lock
+> but it's nicer to use the same name consistently everywhere.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
-index 205c0f1a40e9..1b6e663ae784 100644
---- a/drivers/net/wireless/ath/ath11k/dp_rx.c
-+++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
-@@ -1163,7 +1163,7 @@ int ath11k_dp_peer_rx_pn_replay_config(struct ath11k_vif *arvif,
- 		}
- 	}
- 
--	spin_unlock_bh(&ar->ab->base_lock);
-+	spin_unlock_bh(&ab->base_lock);
- 
- 	return ret;
- }
+Patch applied to ath-next branch of ath.git, thanks.
+
+abdcd4cbec42 ath11k: dp: clean up a variable name
+
 -- 
-2.29.2
+https://patchwork.kernel.org/project/linux-wireless/patch/X9s7QAHDM2OTIo3a@mwanda/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
