@@ -1,48 +1,47 @@
-From: Dave Young <dyoung@redhat.com>
-Date: Thu, 10 Dec 2020 02:05:08 +0000
-Subject: Re: [PATCH] kexec: Fix error code in kexec_calculate_store_digests()
-Message-Id: <20201210020508.GB2950@dhcp-128-65.nay.redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 19 Dec 2020 13:28:00 +0000
+Subject: [PATCH] dmaengine: milbeaut-xdmac: Fix a resource leak in the error handling path of the probe funct
+Message-Id: <20201219132800.183254-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X9B03LFICh/QykQ6@mwanda>
-In-Reply-To: <X9B03LFICh/QykQ6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: vkoul@kernel.org, dan.j.williams@intel.com, jaswinder.singh@linaro.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 12/08/20 at 10:55pm, Dan Carpenter wrote:
-> Return -ENOMEM on allocation failure instead of returning success.
-> 
-> Fixes: a43cac0d9dc2 ("kexec: split kexec_file syscall code to kexec_file.c")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  kernel/kexec_file.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index b02086d70492..9570f380a825 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -735,8 +735,10 @@ static int kexec_calculate_store_digests(struct kimage *image)
->  
->  	sha_region_sz = KEXEC_SEGMENT_MAX * sizeof(struct kexec_sha_region);
->  	sha_regions = vzalloc(sha_region_sz);
-> -	if (!sha_regions)
-> +	if (!sha_regions) {
-> +		ret = -ENOMEM;
->  		goto out_free_desc;
-> +	}
->  
->  	desc->tfm   = tfm;
->  
-> -- 
-> 2.29.2
-> 
+'disable_xdmac()' should be called in the error handling path of the
+probe function to undo a previous 'enable_xdmac()' call, as already
+done in the remove function.
 
-Good catch, thanks!
+Fixes: a6e9be055d47 ("dmaengine: milbeaut-xdmac: Add XDMAC driver for Milbeaut platforms")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Purely speculative
+---
+ drivers/dma/milbeaut-xdmac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Dave Young <dyoung@redhat.com>
-
-Thanks
-Dave
+diff --git a/drivers/dma/milbeaut-xdmac.c b/drivers/dma/milbeaut-xdmac.c
+index 584c931e807a..d29d01e730aa 100644
+--- a/drivers/dma/milbeaut-xdmac.c
++++ b/drivers/dma/milbeaut-xdmac.c
+@@ -350,7 +350,7 @@ static int milbeaut_xdmac_probe(struct platform_device *pdev)
+ 
+ 	ret = dma_async_device_register(ddev);
+ 	if (ret)
+-		return ret;
++		goto disable_xdmac;
+ 
+ 	ret = of_dma_controller_register(dev->of_node,
+ 					 of_dma_simple_xlate, mdev);
+@@ -363,6 +363,8 @@ static int milbeaut_xdmac_probe(struct platform_device *pdev)
+ 
+ unregister_dmac:
+ 	dma_async_device_unregister(ddev);
++disable_xdmac:
++	disable_xdmac(mdev);
+ 	return ret;
+ }
+ 
+-- 
+2.27.0
