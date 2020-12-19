@@ -1,36 +1,46 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Tue, 15 Dec 2020 04:00:07 +0000
-Subject: Re: [PATCH][next] net: hns3: fix expression that is currently always true
-Message-Id: <160800480755.12571.337817358900148497.git-patchwork-notify@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 19 Dec 2020 07:52:07 +0000
+Subject: [PATCH] hwrng: ingenic - Fix a resource leak in an error handling path
+Message-Id: <20201219075207.176279-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201215000033.85383-1-colin.king@canonical.com>
-In-Reply-To: <20201215000033.85383-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com, shenjian15@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mpm@selenic.com, herbert@gondor.apana.org.au, zhouyanjie@wanyeetech.com, aric.pzqi@ingenic.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello:
+In case of error, we should call 'clk_disable_unprepare()' to undo a
+previous 'clk_prepare_enable()' call, as already done in the remove
+function.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Fixes: 406346d22278 ("hwrng: ingenic - Add hardware TRNG for Ingenic X1830")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/char/hw_random/ingenic-trng.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-On Tue, 15 Dec 2020 00:00:33 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The ||  condition in hdev->fd_active_type != HCLGE_FD_ARFS_ACTIVE ||
-> hdev->fd_active_type != HCLGE_FD_RULE_NONE will always be true because
-> hdev->fd_active_type cannot be equal to two different values at the same
-> time. The expression is always true which is not correct. Fix this by
-> replacing || with && to correct the logic in the expression.
-> 
-> [...]
-
-Here is the summary with links:
-  - [next] net: hns3: fix expression that is currently always true
-    https://git.kernel.org/netdev/net-next/c/efd5a1584537
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/char/hw_random/ingenic-trng.c b/drivers/char/hw_random/ingenic-trng.c
+index 954a8411d67d..0eb80f786f4d 100644
+--- a/drivers/char/hw_random/ingenic-trng.c
++++ b/drivers/char/hw_random/ingenic-trng.c
+@@ -113,13 +113,17 @@ static int ingenic_trng_probe(struct platform_device *pdev)
+ 	ret = hwrng_register(&trng->rng);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register hwrng\n");
+-		return ret;
++		goto err_unprepare_clk;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, trng);
+ 
+ 	dev_info(&pdev->dev, "Ingenic DTRNG driver registered\n");
+ 	return 0;
++
++err_unprepare_clk:
++	clk_disable_unprepare(trng->clk);
++	return ret;
+ }
+ 
+ static int ingenic_trng_remove(struct platform_device *pdev)
+-- 
+2.27.0
