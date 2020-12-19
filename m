@@ -1,35 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Dec 2020 11:47:55 +0000
-Subject: [PATCH] um: fix spelling mistake in Kconfig "privleges" -> "privileges"
-Message-Id: <20201216114755.12461-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Dec 2020 10:55:54 +0000
+Subject: [PATCH] nvmem: core: Fix a resource leak on error in nvmem_add_cells_from_of()
+Message-Id: <X93cOvjVvzfig1Pu@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Brendan Higgins <brendanhiggins@google.com>, linux-um@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This doesn't call of_node_put() on the error path so it leads to a
+memory leak.
 
-There is a spelling mistake in the Kconfig help text. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 0749aa25af82 ("nvmem: core: fix regression in of_nvmem_cell_get()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/um/drivers/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The kfree_const() could just be replaced with kfree().  Someone got over
+excited converting things from kfree() to kfree_const().
 
-diff --git a/arch/um/drivers/Kconfig b/arch/um/drivers/Kconfig
-index 2e7b8e0e7194..58e3ffc17b7d 100644
---- a/arch/um/drivers/Kconfig
-+++ b/arch/um/drivers/Kconfig
-@@ -323,7 +323,7 @@ config UML_NET_SLIRP
- 	  frames.  In general, slirp allows the UML the same IP connectivity
- 	  to the outside world that the host user is permitted, and unlike
- 	  other transports, SLiRP works without the need of root level
--	  privleges, setuid binaries, or SLIP devices on the host.  This
-+	  privileges, setuid binaries, or SLIP devices on the host.  This
- 	  also means not every type of connection is possible, but most
- 	  situations can be accommodated with carefully crafted slirp
- 	  commands that can be passed along as part of the network device's
+ drivers/nvmem/core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 177f5bf27c6d..68ae6f24b57f 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -713,6 +713,7 @@ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
+ 				cell->name, nvmem->stride);
+ 			/* Cells already added will be freed later. */
+ 			kfree_const(cell->name);
++			of_node_put(cell->np);
+ 			kfree(cell);
+ 			return -EINVAL;
+ 		}
 -- 
 2.29.2
