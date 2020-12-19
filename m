@@ -1,35 +1,38 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Thu, 17 Dec 2020 19:00:07 +0000
-Subject: Re: [PATCH] net: nixge: fix spelling mistake in Kconfig: "Instuments" -> "Instruments"
-Message-Id: <160823160785.4885.7822597887930335390.git-patchwork-notify@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 19 Dec 2020 12:47:18 +0000
+Subject: [PATCH] dmaengine: mediatek: mtk-hsdma: Fix a resource leak in the error handling path of the probe 
+Message-Id: <20201219124718.182664-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201216120020.13149-1-colin.king@canonical.com>
-In-Reply-To: <20201216120020.13149-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sean.wang@mediatek.com, vkoul@kernel.org, dan.j.williams@intel.com, matthias.bgg@gmail.com
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello:
+'mtk_hsdma_hw_deinit()' should be called in the error handling path of the
+probe function to undo a previous 'mtk_hsdma_hw_init()' call, as already
+done in the remove function.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Fixes: 548c4597e984 ("dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT7622 and MT7623 SoC")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+'mtk_hsdma_hw_init()' can return an error code, it could be good to check
+it as well.
+---
+ drivers/dma/mediatek/mtk-hsdma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Wed, 16 Dec 2020 12:00:20 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/ni/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - net: nixge: fix spelling mistake in Kconfig: "Instuments" -> "Instruments"
-    https://git.kernel.org/netdev/net/c/38ba95a4ed24
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/dma/mediatek/mtk-hsdma.c b/drivers/dma/mediatek/mtk-hsdma.c
+index f133ae8dece1..6ad8afbb95f2 100644
+--- a/drivers/dma/mediatek/mtk-hsdma.c
++++ b/drivers/dma/mediatek/mtk-hsdma.c
+@@ -1007,6 +1007,7 @@ static int mtk_hsdma_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_free:
++	mtk_hsdma_hw_deinit(hsdma);
+ 	of_dma_controller_free(pdev->dev.of_node);
+ err_unregister:
+ 	dma_async_device_unregister(dd);
+-- 
+2.27.0
