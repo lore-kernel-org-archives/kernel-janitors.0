@@ -1,36 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 Dec 2020 16:25:35 +0000
-Subject: [PATCH] dmaengine: owl-dma: Fix a resource leak in the remove function
-Message-Id: <20201212162535.95727-1-christophe.jaillet@wanadoo.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 20 Dec 2020 09:50:10 +0000
+Subject: [PATCH] MAINTAINERS: mark dca driver orphan
+Message-Id: <20201220095010.20227-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vkoul@kernel.org, dan.j.williams@intel.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, Shuah Khan <shuah@kernel.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Gabriele Paoloni <gabriele.paoloni@intel.com>, intel-wired-lan@lists.osuosl.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-A 'dma_pool_destroy()' call is missing in the remove function.
-Add it.
+The dca driver did not have any maintainer section since its inclusion.
+As discussed with Dan Williams, there is no maintainer for this driver
+since the initial developers moved away.
 
-This call is already made in the error handling path of the probe function.
+Introduce a new DIRECT CACHE ACCESS (DCA) DRIVER section and mark the
+driver orphan.
 
-Fixes: 47e20577c24d ("dmaengine: Add Actions Semi Owl family S900 DMA driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/dma/owl-dma.c | 1 +
- 1 file changed, 1 insertion(+)
+applies cleanly on next-20201218 and current master
 
-diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
-index 9fede32641e9..04202d75f4ee 100644
---- a/drivers/dma/owl-dma.c
-+++ b/drivers/dma/owl-dma.c
-@@ -1245,6 +1245,7 @@ static int owl_dma_remove(struct platform_device *pdev)
- 	owl_dma_free(od);
+Dan, please pick this trivial clarification patch.
+
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f5eafee83bc6..c8cc5e1a759f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5223,6 +5223,11 @@ L:	linux-i2c@vger.kernel.org
+ S:	Maintained
+ F:	drivers/i2c/busses/i2c-diolan-u2c.c
  
- 	clk_disable_unprepare(od->clk);
-+	dma_pool_destroy(od->lli_pool);
- 
- 	return 0;
- }
++DIRECT CACHE ACCESS (DCA) DRIVER
++S:	Orphan
++F:	drivers/dca/
++F:	include/linux/dca.h
++
+ DIRECTORY NOTIFICATION (DNOTIFY)
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
 -- 
-2.27.0
+2.17.1
