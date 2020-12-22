@@ -1,34 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Dec 2020 11:01:44 +0000
-Subject: [PATCH net] atm: idt77252: call pci_disable_device() on error path
-Message-Id: <X93dmC4NX0vbTpGp@mwanda>
+From: patchwork-bot+netdevbpf@kernel.org
+Date: Tue, 22 Dec 2020 01:40:06 +0000
+Subject: Re: [PATCH net] atm: idt77252: call pci_disable_device() on error path
+Message-Id: <160860120699.2677.5928345202899803037.git-patchwork-notify@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X93dmC4NX0vbTpGp@mwanda>
+In-Reply-To: <X93dmC4NX0vbTpGp@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chas Williams <3chas3@gmail.com>
-Cc: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>, "David S. Miller" <davem@davemloft.net>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: 3chas3@gmail.com, chas@cmf.nrl.navy.mil, davem@davemloft.net, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This error path needs to disable the pci device before returning.
+Hello:
 
-Fixes: ede58ef28e10 ("atm: remove deprecated use of pci api")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/atm/idt77252.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net.git (refs/heads/master):
 
-diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
-index 65a3886f68c9..5f0472c18bcb 100644
---- a/drivers/atm/idt77252.c
-+++ b/drivers/atm/idt77252.c
-@@ -3607,7 +3607,7 @@ static int idt77252_init_one(struct pci_dev *pcidev,
- 
- 	if ((err = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32)))) {
- 		printk("idt77252: can't enable DMA for PCI device at %s\n", pci_name(pcidev));
--		return err;
-+		goto err_out_disable_pdev;
- 	}
- 
- 	card = kzalloc(sizeof(struct idt77252_dev), GFP_KERNEL);
--- 
-2.29.2
+On Sat, 19 Dec 2020 14:01:44 +0300 you wrote:
+> This error path needs to disable the pci device before returning.
+> 
+> Fixes: ede58ef28e10 ("atm: remove deprecated use of pci api")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/atm/idt77252.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [net] atm: idt77252: call pci_disable_device() on error path
+    https://git.kernel.org/netdev/net/c/8df66af5c1e5
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
