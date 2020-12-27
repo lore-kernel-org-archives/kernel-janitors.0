@@ -1,36 +1,55 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 14 Dec 2020 08:45:03 +0000
-Subject: [PATCH] trace: drop unneeded assignment in ring_buffer_resize()
-Message-Id: <20201214084503.3079-1-lukas.bulwahn@gmail.com>
+From: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
+Date: Sun, 27 Dec 2020 12:18:16 +0000
+Subject: RE: [PATCH] regmap: debugfs: fix a memory leak when calling regmap_attach_dev
+Message-Id: <PH0PR11MB507734E4DF73DF015AD601EB95DA0@PH0PR11MB5077.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201225122613.3810458-1-xiaolei.wang@windriver.com>
+ <737e8b89-5748-2ef5-5294-8e65421931b9@web.de>
+In-Reply-To: <737e8b89-5748-2ef5-5294-8e65421931b9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Qiujun Huang <hqjagain@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
 
-Since commit 0a1754b2a97e ("ring-buffer: Return 0 on success from
-ring_buffer_resize()"), computing the size is not needed anymore.
-
-Drop unneeded assignment in ring_buffer_resize().
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- kernel/trace/ring_buffer.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 91db9d032a0c..95ecfb107e3e 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1974,8 +1974,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 	if (nr_pages < 2)
- 		nr_pages = 2;
- 
--	size = nr_pages * BUF_PAGE_SIZE;
--
- 	/* prevent another thread from changing buffer sizes */
- 	mutex_lock(&buffer->mutex);
- 
--- 
-2.17.1
+SGkgTWFya3VzDQoNCj4gVGhpcyBzaG91bGQgYmUgY2F1c2VkIGJ5DQo+IGNvbW1pdCA8OWI5NDdh
+MTNlN2Y2PiAoIjxyZWdtYXA6IHVzZSBkZWJ1Z2ZzIGV2ZW4gd2hlbiBubyBkZXZpY2U+IikNCg0K
+PiBJIHN1Z2dlc3QgdG8gb21pdCBhbmdsZSBicmFja2V0cyBmcm9tIHN1Y2ggaW5mb3JtYXRpb24u
+DQoNCg0KPiAqIFdpbGwgYW5vdGhlciBpbXBlcmF0aXZlIHdvcmRpbmcgYmVjb21lIGhlbHBmdWwg
+Zm9yIHRoZSBjb21taXQgZGVzY3JpcHRpb24/DQoNCj4gKiBIb3cgZG8geW91IHRoaW5rIGFib3V0
+IHRvIGFkZCB0aGUgdGFnIOKAnEZpeGVz4oCdPw0KDQpEbyB5b3UgbWVhbiBzbz8NCg0KY29tbWl0
+Og0KICAgICAgICAgOWI5NDdhMTNlN2Y2ICgicmVnbWFwOiB1c2UgZGVidWdmcyBldmVuIHdoZW4g
+bm8gZGV2aWNlIikNCg0K4oCmDQo+ICsrKyBiL2RyaXZlcnMvYmFzZS9yZWdtYXAvcmVnbWFwLWRl
+YnVnZnMuYw0K4oCmDQo+IEBAIC01ODIsOCArNTgyLDEwIEBAIHZvaWQgcmVnbWFwX2RlYnVnZnNf
+aW5pdChzdHJ1Y3QgcmVnbWFwICptYXApDQo+ICAJCWRldm5hbWUgPSBkZXZfbmFtZShtYXAtPmRl
+dik7DQo+DQo+ICAJaWYgKG5hbWUpIHsNCj4gLQkJbWFwLT5kZWJ1Z2ZzX25hbWUgPSBrYXNwcmlu
+dGYoR0ZQX0tFUk5FTCwgIiVzLSVzIiwNCj4gKwkJaWYgKCFtYXAtPmRlYnVnZnNfbmFtZSkgew0K
+PiArCQkJbWFwLT5kZWJ1Z2ZzX25hbWUgPSBrYXNwcmludGYoR0ZQX0tFUk5FTCwgIiVzLSVzIiwN
+Cj4gIAkJCQkJICAgICAgZGV2bmFtZSwgbmFtZSk7DQo+ICsJCX0NCuKApg0KDQo+IEkgcHJvcG9z
+ZSB0byBhZGQgYW5vdGhlciBudWxsIHBvaW50ZXIgY2hlY2sgdG9nZXRoZXIgd2l0aCBjb3JyZXNw
+b25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZy4NCg0KV2hpY2ggb25lIGRvIHlvdSBtZWFuIGJ5ICJh
+bm90aGVyIG51bGwgcG9pbnQiPyBEbyB5b3UgbWVhbiB0aGF0IGlmIHRoZSBjYWxsICJyZWdtYXBf
+ZGVidWdmc19pbml0IiBmdW5jdGlvbiBpcyByZXBlYXRlZCwgaXQgcmV0dXJucyBkaXJlY3RseT8N
+Cg0KUmVnYXJkcywNClhpYW9sZWkNCg0KDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
+cm9tOiBNYXJrdXMgRWxmcmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPiANClNlbnQ6IFNhdHVy
+ZGF5LCBEZWNlbWJlciAyNiwgMjAyMCAxMDoxNiBQTQ0KVG86IFdhbmcsIFhpYW9sZWkgPFhpYW9s
+ZWkuV2FuZ0B3aW5kcml2ZXIuY29tPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0K
+Q2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3Jl
+Z2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+DQpTdWJqZWN0OiBSZTogW1BB
+VENIXSByZWdtYXA6IGRlYnVnZnM6IGZpeCBhIG1lbW9yeSBsZWFrIHdoZW4gY2FsbGluZyByZWdt
+YXBfYXR0YWNoX2Rldg0KDQo+IFRoaXMgc2hvdWxkIGJlIGNhdXNlZCBieQ0KPiBjb21taXQgPDli
+OTQ3YTEzZTdmNj4gKCI8cmVnbWFwOiB1c2UgZGVidWdmcyBldmVuIHdoZW4gbm8gZGV2aWNlPiIp
+DQoNCkkgc3VnZ2VzdCB0byBvbWl0IGFuZ2xlIGJyYWNrZXRzIGZyb20gc3VjaCBpbmZvcm1hdGlv
+bi4NCg0KDQoqIFdpbGwgYW5vdGhlciBpbXBlcmF0aXZlIHdvcmRpbmcgYmVjb21lIGhlbHBmdWwg
+Zm9yIHRoZSBjb21taXQgZGVzY3JpcHRpb24/DQoNCiogSG93IGRvIHlvdSB0aGluayBhYm91dCB0
+byBhZGQgdGhlIHRhZyDigJxGaXhlc+KAnT8NCg0KDQrigKYNCj4gKysrIGIvZHJpdmVycy9iYXNl
+L3JlZ21hcC9yZWdtYXAtZGVidWdmcy5jDQrigKYNCj4gQEAgLTU4Miw4ICs1ODIsMTAgQEAgdm9p
+ZCByZWdtYXBfZGVidWdmc19pbml0KHN0cnVjdCByZWdtYXAgKm1hcCkNCj4gIAkJZGV2bmFtZSA9
+IGRldl9uYW1lKG1hcC0+ZGV2KTsNCj4NCj4gIAlpZiAobmFtZSkgew0KPiAtCQltYXAtPmRlYnVn
+ZnNfbmFtZSA9IGthc3ByaW50ZihHRlBfS0VSTkVMLCAiJXMtJXMiLA0KPiArCQlpZiAoIW1hcC0+
+ZGVidWdmc19uYW1lKSB7DQo+ICsJCQltYXAtPmRlYnVnZnNfbmFtZSA9IGthc3ByaW50ZihHRlBf
+S0VSTkVMLCAiJXMtJXMiLA0KPiAgCQkJCQkgICAgICBkZXZuYW1lLCBuYW1lKTsNCj4gKwkJfQ0K
+4oCmDQoNCkkgcHJvcG9zZSB0byBhZGQgYW5vdGhlciBudWxsIHBvaW50ZXIgY2hlY2sgdG9nZXRo
+ZXIgd2l0aCBjb3JyZXNwb25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZy4NCg0KUmVnYXJkcywNCk1h
+cmt1cw0K
