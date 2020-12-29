@@ -1,55 +1,87 @@
-From: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
-Date: Sun, 27 Dec 2020 12:18:16 +0000
-Subject: RE: [PATCH] regmap: debugfs: fix a memory leak when calling regmap_attach_dev
-Message-Id: <PH0PR11MB507734E4DF73DF015AD601EB95DA0@PH0PR11MB5077.namprd11.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 29 Dec 2020 11:12:19 +0000
+Subject: [PATCH] habanalabs: Use 'dma_set_mask_and_coherent()' instead of hand-writing it
+Message-Id: <20201229111219.200668-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201225122613.3810458-1-xiaolei.wang@windriver.com>
- <737e8b89-5748-2ef5-5294-8e65421931b9@web.de>
-In-Reply-To: <737e8b89-5748-2ef5-5294-8e65421931b9@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+To: ogabbay@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, obitton@habana.ai, lee.jones@linaro.org, ttayar@habana.ai, fkassabri@habana.ai
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-SGkgTWFya3VzDQoNCj4gVGhpcyBzaG91bGQgYmUgY2F1c2VkIGJ5DQo+IGNvbW1pdCA8OWI5NDdh
-MTNlN2Y2PiAoIjxyZWdtYXA6IHVzZSBkZWJ1Z2ZzIGV2ZW4gd2hlbiBubyBkZXZpY2U+IikNCg0K
-PiBJIHN1Z2dlc3QgdG8gb21pdCBhbmdsZSBicmFja2V0cyBmcm9tIHN1Y2ggaW5mb3JtYXRpb24u
-DQoNCg0KPiAqIFdpbGwgYW5vdGhlciBpbXBlcmF0aXZlIHdvcmRpbmcgYmVjb21lIGhlbHBmdWwg
-Zm9yIHRoZSBjb21taXQgZGVzY3JpcHRpb24/DQoNCj4gKiBIb3cgZG8geW91IHRoaW5rIGFib3V0
-IHRvIGFkZCB0aGUgdGFnIOKAnEZpeGVz4oCdPw0KDQpEbyB5b3UgbWVhbiBzbz8NCg0KY29tbWl0
-Og0KICAgICAgICAgOWI5NDdhMTNlN2Y2ICgicmVnbWFwOiB1c2UgZGVidWdmcyBldmVuIHdoZW4g
-bm8gZGV2aWNlIikNCg0K4oCmDQo+ICsrKyBiL2RyaXZlcnMvYmFzZS9yZWdtYXAvcmVnbWFwLWRl
-YnVnZnMuYw0K4oCmDQo+IEBAIC01ODIsOCArNTgyLDEwIEBAIHZvaWQgcmVnbWFwX2RlYnVnZnNf
-aW5pdChzdHJ1Y3QgcmVnbWFwICptYXApDQo+ICAJCWRldm5hbWUgPSBkZXZfbmFtZShtYXAtPmRl
-dik7DQo+DQo+ICAJaWYgKG5hbWUpIHsNCj4gLQkJbWFwLT5kZWJ1Z2ZzX25hbWUgPSBrYXNwcmlu
-dGYoR0ZQX0tFUk5FTCwgIiVzLSVzIiwNCj4gKwkJaWYgKCFtYXAtPmRlYnVnZnNfbmFtZSkgew0K
-PiArCQkJbWFwLT5kZWJ1Z2ZzX25hbWUgPSBrYXNwcmludGYoR0ZQX0tFUk5FTCwgIiVzLSVzIiwN
-Cj4gIAkJCQkJICAgICAgZGV2bmFtZSwgbmFtZSk7DQo+ICsJCX0NCuKApg0KDQo+IEkgcHJvcG9z
-ZSB0byBhZGQgYW5vdGhlciBudWxsIHBvaW50ZXIgY2hlY2sgdG9nZXRoZXIgd2l0aCBjb3JyZXNw
-b25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZy4NCg0KV2hpY2ggb25lIGRvIHlvdSBtZWFuIGJ5ICJh
-bm90aGVyIG51bGwgcG9pbnQiPyBEbyB5b3UgbWVhbiB0aGF0IGlmIHRoZSBjYWxsICJyZWdtYXBf
-ZGVidWdmc19pbml0IiBmdW5jdGlvbiBpcyByZXBlYXRlZCwgaXQgcmV0dXJucyBkaXJlY3RseT8N
-Cg0KUmVnYXJkcywNClhpYW9sZWkNCg0KDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
-cm9tOiBNYXJrdXMgRWxmcmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPiANClNlbnQ6IFNhdHVy
-ZGF5LCBEZWNlbWJlciAyNiwgMjAyMCAxMDoxNiBQTQ0KVG86IFdhbmcsIFhpYW9sZWkgPFhpYW9s
-ZWkuV2FuZ0B3aW5kcml2ZXIuY29tPjsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0K
-Q2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3Jl
-Z2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
-OyBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+DQpTdWJqZWN0OiBSZTogW1BB
-VENIXSByZWdtYXA6IGRlYnVnZnM6IGZpeCBhIG1lbW9yeSBsZWFrIHdoZW4gY2FsbGluZyByZWdt
-YXBfYXR0YWNoX2Rldg0KDQo+IFRoaXMgc2hvdWxkIGJlIGNhdXNlZCBieQ0KPiBjb21taXQgPDli
-OTQ3YTEzZTdmNj4gKCI8cmVnbWFwOiB1c2UgZGVidWdmcyBldmVuIHdoZW4gbm8gZGV2aWNlPiIp
-DQoNCkkgc3VnZ2VzdCB0byBvbWl0IGFuZ2xlIGJyYWNrZXRzIGZyb20gc3VjaCBpbmZvcm1hdGlv
-bi4NCg0KDQoqIFdpbGwgYW5vdGhlciBpbXBlcmF0aXZlIHdvcmRpbmcgYmVjb21lIGhlbHBmdWwg
-Zm9yIHRoZSBjb21taXQgZGVzY3JpcHRpb24/DQoNCiogSG93IGRvIHlvdSB0aGluayBhYm91dCB0
-byBhZGQgdGhlIHRhZyDigJxGaXhlc+KAnT8NCg0KDQrigKYNCj4gKysrIGIvZHJpdmVycy9iYXNl
-L3JlZ21hcC9yZWdtYXAtZGVidWdmcy5jDQrigKYNCj4gQEAgLTU4Miw4ICs1ODIsMTAgQEAgdm9p
-ZCByZWdtYXBfZGVidWdmc19pbml0KHN0cnVjdCByZWdtYXAgKm1hcCkNCj4gIAkJZGV2bmFtZSA9
-IGRldl9uYW1lKG1hcC0+ZGV2KTsNCj4NCj4gIAlpZiAobmFtZSkgew0KPiAtCQltYXAtPmRlYnVn
-ZnNfbmFtZSA9IGthc3ByaW50ZihHRlBfS0VSTkVMLCAiJXMtJXMiLA0KPiArCQlpZiAoIW1hcC0+
-ZGVidWdmc19uYW1lKSB7DQo+ICsJCQltYXAtPmRlYnVnZnNfbmFtZSA9IGthc3ByaW50ZihHRlBf
-S0VSTkVMLCAiJXMtJXMiLA0KPiAgCQkJCQkgICAgICBkZXZuYW1lLCBuYW1lKTsNCj4gKwkJfQ0K
-4oCmDQoNCkkgcHJvcG9zZSB0byBhZGQgYW5vdGhlciBudWxsIHBvaW50ZXIgY2hlY2sgdG9nZXRo
-ZXIgd2l0aCBjb3JyZXNwb25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZy4NCg0KUmVnYXJkcywNCk1h
-cmt1cw0K
+Axe 'hl_pci_set_dma_mask()' and replace it with an equivalent
+'dma_set_mask_and_coherent()' call.
+
+This makes the code a bit less verbose.
+
+It also removes an erroneous comment, because 'hl_pci_set_dma_mask()' does
+not try to use a fall-back value.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/misc/habanalabs/common/pci.c | 42 ++++------------------------
+ 1 file changed, 6 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/misc/habanalabs/common/pci.c b/drivers/misc/habanalabs/common/pci.c
+index 923b2606e29f..eb8a784ba863 100644
+--- a/drivers/misc/habanalabs/common/pci.c
++++ b/drivers/misc/habanalabs/common/pci.c
+@@ -301,40 +301,6 @@ int hl_pci_set_outbound_region(struct hl_device *hdev,
+ 	return rc;
+ }
+ 
+-/**
+- * hl_pci_set_dma_mask() - Set DMA masks for the device.
+- * @hdev: Pointer to hl_device structure.
+- *
+- * This function sets the DMA masks (regular and consistent) for a specified
+- * value. If it doesn't succeed, it tries to set it to a fall-back value
+- *
+- * Return: 0 on success, non-zero for failure.
+- */
+-static int hl_pci_set_dma_mask(struct hl_device *hdev)
+-{
+-	struct pci_dev *pdev = hdev->pdev;
+-	int rc;
+-
+-	/* set DMA mask */
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+-	if (rc) {
+-		dev_err(hdev->dev,
+-			"Failed to set pci dma mask to %d bits, error %d\n",
+-			hdev->dma_mask, rc);
+-		return rc;
+-	}
+-
+-	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+-	if (rc) {
+-		dev_err(hdev->dev,
+-			"Failed to set pci consistent dma mask to %d bits, error %d\n",
+-			hdev->dma_mask, rc);
+-		return rc;
+-	}
+-
+-	return 0;
+-}
+-
+ /**
+  * hl_pci_init() - PCI initialization code.
+  * @hdev: Pointer to hl_device structure.
+@@ -371,9 +337,13 @@ int hl_pci_init(struct hl_device *hdev)
+ 		goto unmap_pci_bars;
+ 	}
+ 
+-	rc = hl_pci_set_dma_mask(hdev);
+-	if (rc)
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(hdev->dma_mask));
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to set dma mask to %d bits, error %d\n",
++			hdev->dma_mask, rc);
+ 		goto unmap_pci_bars;
++	}
+ 
+ 	return 0;
+ 
+-- 
+2.27.0
