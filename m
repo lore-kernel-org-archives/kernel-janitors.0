@@ -1,40 +1,47 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 11 Dec 2020 19:02:00 +0000
-Subject: Re: [PATCH] x86: ia32_setup_rt_frame(): propagate __user annotations properly
-Message-Id: <20201211190200.GF25974@zn.tnic>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 29 Dec 2020 08:51:03 +0000
+Subject: [PATCH] ASoC: Intel: common: Fix some typos
+Message-Id: <20201229085103.192715-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201207124141.21859-1-lukas.bulwahn@gmail.com>
- <20201211184715.GE25974@zn.tnic>
- <CAKXUXMzZ7ejn1JrznDP6d7dk8tSsTznBO+423NAwf_nYsix=_w@mail.gmail.com>
-In-Reply-To: <CAKXUXMzZ7ejn1JrznDP6d7dk8tSsTznBO+423NAwf_nYsix=_w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com, liam.r.girdwood@linux.intel.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 07:55:50PM +0100, Lukas Bulwahn wrote:
-> Yes, agree. Other maintainers noted that I should point out that the
-> patch is only a minor clean-up and it is not urgent to be considered.
-> 
-> So, I add this remark to make clear that it is not top priority to
-> apply just that the maintainers know.
-> 
-> You will sure review it eventually, and hopefully accept it then.
+s/apci/acpi/
 
-Well, after I review it, I probably should know what the priority is,
-right?
+Turn an ICL into a TGL because it is likely a cut'n'paste error
 
-> If that comment disturbs you, please ignore it.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/intel/common/soc-acpi-intel-ehl-match.c | 2 +-
+ sound/soc/intel/common/soc-acpi-intel-tgl-match.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I was just wondering why you're writing something which is not really
-needed. Notes under "---" are usually used to clarify aspects of the
-patch handling, versioning, etc.
-
-Thx.
-
+diff --git a/sound/soc/intel/common/soc-acpi-intel-ehl-match.c b/sound/soc/intel/common/soc-acpi-intel-ehl-match.c
+index badafc1d54d2..5c7a1214403d 100644
+--- a/sound/soc/intel/common/soc-acpi-intel-ehl-match.c
++++ b/sound/soc/intel/common/soc-acpi-intel-ehl-match.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * soc-apci-intel-ehl-match.c - tables and support for EHL ACPI enumeration.
++ * soc-acpi-intel-ehl-match.c - tables and support for EHL ACPI enumeration.
+  *
+  * Copyright (c) 2019, Intel Corporation.
+  *
+diff --git a/sound/soc/intel/common/soc-acpi-intel-tgl-match.c b/sound/soc/intel/common/soc-acpi-intel-tgl-match.c
+index 98196e9fad62..4933184df5f5 100644
+--- a/sound/soc/intel/common/soc-acpi-intel-tgl-match.c
++++ b/sound/soc/intel/common/soc-acpi-intel-tgl-match.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * soc-apci-intel-tgl-match.c - tables and support for ICL ACPI enumeration.
++ * soc-acpi-intel-tgl-match.c - tables and support for TGL ACPI enumeration.
+  *
+  * Copyright (c) 2019, Intel Corporation.
+  *
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+2.27.0
