@@ -1,24 +1,48 @@
-From: Bastien Nocera <hadess@hadess.net>
-Date: Fri, 04 Dec 2020 09:46:54 +0000
-Subject: Re: [PATCH] USB: apple-mfi-fastcharge: Fix use after free in probe
-Message-Id: <9d9568fe9e1d5c00eab345c212ad0fa8cbcbc350.camel@hadess.net>
+From: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
+Date: Wed, 30 Dec 2020 10:14:22 +0000
+Subject: RE: [PATCH v3] regmap: debugfs: Fix a memory leak when calling regmap_attach_dev
+Message-Id: <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X8ik4j8yJitVUyfU@mwanda>
-In-Reply-To: <X8ik4j8yJitVUyfU@mwanda>
+References: <20201229105046.41984-1-xiaolei.wang@windriver.com>
+ <d516efdd-7e66-13fe-3798-cdea5ff012dc@web.de>
+In-Reply-To: <d516efdd-7e66-13fe-3798-cdea5ff012dc@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Lucas Tanure <tanure@linux.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Lechner <david@lechnology.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, 2020-12-03 at 11:42 +0300, Dan Carpenter wrote:
-> This code frees "mfi" and then derefences it on the next line to get
-> the error code.
-> 
-> Fixes: b0eec52fbe63 ("USB: apple-mfi-fastcharge: Fix kfree after
-> failed kzalloc")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks for catching that.
-
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
+SGkgTWFya3VzDQoNClRoYW5rIHlvdSB2ZXJ5IG11Y2gsIHZlcnkgZ29vZCBzdWdnZXN0aW9uLCBk
+byBJIG5lZWQgdG8gcmUtc2VuZCBhIHBhdGNoIHRvIGZpeCB0aGlzIHByb2JsZW0sIG9yIG1vZGlm
+eSB0aGUgcHJldmlvdXMgcGF0Y2ggYW5kIHNlbmQgaXQgYWdhaW4/DQoNClRoYW5rcyANClhpYW9s
+ZWkNCg0K4oCmDQo+ICsrKyBiL2RyaXZlcnMvYmFzZS9yZWdtYXAvcmVnbWFwLWRlYnVnZnMuYw0K
+PiBAQCAtNTgyLDE4ICs1ODIsMjUgQEAgdm9pZCByZWdtYXBfZGVidWdmc19pbml0KHN0cnVjdCBy
+ZWdtYXAgKm1hcCkNCuKApg0KPiArCQkJbWFwLT5kZWJ1Z2ZzX25hbWUgPSBrYXNwcmludGYoR0ZQ
+X0tFUk5FTCwgIiVzLSVzIiwNCj4gIAkJCQkJICAgICAgZGV2bmFtZSwgbmFtZSk7DQoNCj4gSSBz
+dWdnZXN0IHRvIHJlY29uc2lkZXIgdGhlIGFsaWdubWVudCBmb3IgZnVuY3Rpb24gY2FsbCBwYXJh
+bWV0ZXJzIGZvciB0aGlzIHBhdGNoLg0KDQoNCuKApg0KPiArCQlpZiAoIW1hcC0+ZGVidWdmc19u
+YW1lKQ0KPiArCQkJa2ZyZWUobWFwLT5kZWJ1Z2ZzX25hbWUpOw0KDQo+IFN1Y2ggYSBudWxsIHBv
+aW50ZXIgY2hlY2sgaXMgcmVkdW5kYW50Lg0KDQo+IFNlZSBhbHNvOg0KPiBodHRwczovL2dpdC5r
+ZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJl
+ZS9zY3JpcHRzL2NvY2NpbmVsbGUvZnJlZS9pZm51bGxmcmVlLmNvY2NpP2lkPTEzOTcxMWYwMzNm
+NjM2Y2M3OGI2YWFmNzM2MzI1MjI0MWI5Njk4ZWYjbjINCg0KDQoNCg0KLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCkZyb206IE1hcmt1cyBFbGZyaW5nIDxNYXJrdXMuRWxmcmluZ0B3ZWIuZGU+
+IA0KU2VudDogV2VkbmVzZGF5LCBEZWNlbWJlciAzMCwgMjAyMCA1OjQ5IFBNDQpUbzogV2FuZywg
+WGlhb2xlaSA8WGlhb2xlaS5XYW5nQHdpbmRyaXZlci5jb20+OyBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnDQpDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgRGF2aWQgTGVj
+aG5lciA8ZGF2aWRAbGVjaG5vbG9neS5jb20+OyBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBs
+aW51eGZvdW5kYXRpb24ub3JnPjsgTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPjsgUmFm
+YWVsIEouIFd5c29ja2kgPHJhZmFlbEBrZXJuZWwub3JnPjsgSnVsaWEgTGF3YWxsIDxqdWxpYS5s
+YXdhbGxAbGlwNi5mcj4NClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjNdIHJlZ21hcDogZGVidWdmczog
+Rml4IGEgbWVtb3J5IGxlYWsgd2hlbiBjYWxsaW5nIHJlZ21hcF9hdHRhY2hfZGV2DQoNCuKApg0K
+PiArKysgYi9kcml2ZXJzL2Jhc2UvcmVnbWFwL3JlZ21hcC1kZWJ1Z2ZzLmMNCj4gQEAgLTU4Miwx
+OCArNTgyLDI1IEBAIHZvaWQgcmVnbWFwX2RlYnVnZnNfaW5pdChzdHJ1Y3QgcmVnbWFwICptYXAp
+DQrigKYNCj4gKwkJCW1hcC0+ZGVidWdmc19uYW1lID0ga2FzcHJpbnRmKEdGUF9LRVJORUwsICIl
+cy0lcyIsDQo+ICAJCQkJCSAgICAgIGRldm5hbWUsIG5hbWUpOw0KDQpJIHN1Z2dlc3QgdG8gcmVj
+b25zaWRlciB0aGUgYWxpZ25tZW50IGZvciBmdW5jdGlvbiBjYWxsIHBhcmFtZXRlcnMgZm9yIHRo
+aXMgcGF0Y2guDQoNCg0K4oCmDQo+ICsJCWlmICghbWFwLT5kZWJ1Z2ZzX25hbWUpDQo+ICsJCQlr
+ZnJlZShtYXAtPmRlYnVnZnNfbmFtZSk7DQoNClN1Y2ggYSBudWxsIHBvaW50ZXIgY2hlY2sgaXMg
+cmVkdW5kYW50Lg0KDQpTZWUgYWxzbzoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9s
+aW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL3NjcmlwdHMvY29jY2luZWxs
+ZS9mcmVlL2lmbnVsbGZyZWUuY29jY2k/aWQ9MTM5NzExZjAzM2Y2MzZjYzc4YjZhYWY3MzYzMjUy
+MjQxYjk2OThlZiNuMg0KDQpSZWdhcmRzLA0KTWFya3VzDQo
