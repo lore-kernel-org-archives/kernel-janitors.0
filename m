@@ -1,46 +1,56 @@
-From: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
-Date: Wed, 30 Dec 2020 12:37:35 +0000
-Subject: RE: [PATCH v3] regmap: debugfs: Fix a memory leak when calling regmap_attach_dev
-Message-Id: <PH0PR11MB507731B129639CED3B8C753595D70@PH0PR11MB5077.namprd11.prod.outlook.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 30 Dec 2020 12:50:44 +0000
+Subject: Re: [PATCH v3] regmap: debugfs: Fix a memory leak when calling regmap_attach_dev
+Message-Id: <X+x3pIanr18Ep4ga@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201229105046.41984-1-xiaolei.wang@windriver.com>
  <d516efdd-7e66-13fe-3798-cdea5ff012dc@web.de>
  <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
- <d463ff8b-306d-6f40-9115-1595d69edc95@web.de>
-In-Reply-To: <d463ff8b-306d-6f40-9115-1595d69edc95@web.de>
+ <1503f5fa-1ad6-7675-6e02-6dc1eb04c1de@web.de>
+In-Reply-To: <1503f5fa-1ad6-7675-6e02-6dc1eb04c1de@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Lechner <david@lechnology.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Xiaolei Wang <Xiaolei.Wang@windriver.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner <david@lechnology.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-SGkgTWFya3VzDQoNCj4gVGhhbmsgeW91IHZlcnkgbXVjaCwgdmVyeSBnb29kIHN1Z2dlc3Rpb24s
-DQoNCj4gVGhhbmtzIGZvciBhbm90aGVyIHBvc2l0aXZlIGZlZWRiYWNrLg0KDQoNCj4gZG8gSSBu
-ZWVkIHRvIHJlLXNlbmQgYSBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtLCBvciBtb2RpZnkgdGhl
-IHByZXZpb3VzIHBhdGNoIGFuZCBzZW5kIGl0IGFnYWluPw0KDQo+IFBsZWFzZSBjb252aW5jZSB0
-aGUgaW52b2x2ZWQgY29udHJpYnV0b3JzIHRvIGludGVncmF0ZSBhIGNvcnJlY3RlZCBwYXRjaCB2
-ZXJzaW9uLg0KDQpEbyB5b3UgbWVhbiB0aGF0IEkgc2hvdWxkIGNvcnJlY3QgdGhlIG9yaWdpbmFs
-IHBhdGNoIGFuZCBleHBsYWluIG15IGNoYW5nZXMgYW5kIHNlbmQgaXQgb3V0Pw0KDQo+ICogQmV0
-dGVyIGluZGVudGF0aW9uLg0KDQoqIOKApg0KPj4gKwkJaWYgKCFtYXAtPmRlYnVnZnNfbmFtZSkN
-Cj4+ICsJCQlrZnJlZShtYXAtPmRlYnVnZnNfbmFtZSk7DQoNCj4gIFdvdWxkIHRoaXMgcXVlc3Rp
-b25hYmxlIG51bGwgcG9pbnRlciBjaGVjayByZXN1bHQgaW4gYSBtZW1vcnkgbGVhaz8NCg0KaWYg
-KCFtYXAtPmRlYnVnZnNfbmFtZSkNCglrZnJlZShtYXAtPmRlYnVnZnNfbmFtZSk7DQoNClRoaXMg
-bnVsbCBwb2ludGVyIGNoZWNrIGlzIG5vdCBpbiB0aGUgbWVtb3J5IGxlYWsNCg0KVGhhbmtzDQp4
-aWFvbGVpDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTWFya3VzIEVsZnJpbmcg
-PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4gDQpTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDMwLCAy
-MDIwIDg6MDIgUE0NClRvOiBXYW5nLCBYaWFvbGVpIDxYaWFvbGVpLldhbmdAd2luZHJpdmVyLmNv
-bT47IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCkNjOiBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBEYXZpZCBMZWNobmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT47IEdyZWcg
-S3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBNYXJrIEJyb3duIDxi
-cm9vbmllQGtlcm5lbC5vcmc+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+
-OyBKdWxpYSBMYXdhbGwgPGp1bGlhLmxhd2FsbEBsaXA2LmZyPg0KU3ViamVjdDogUmU6IFtQQVRD
-SCB2M10gcmVnbWFwOiBkZWJ1Z2ZzOiBGaXggYSBtZW1vcnkgbGVhayB3aGVuIGNhbGxpbmcgcmVn
-bWFwX2F0dGFjaF9kZXYNCg0KPiBUaGFuayB5b3UgdmVyeSBtdWNoLCB2ZXJ5IGdvb2Qgc3VnZ2Vz
-dGlvbiwNCg0KVGhhbmtzIGZvciBhbm90aGVyIHBvc2l0aXZlIGZlZWRiYWNrLg0KDQoNCj4gZG8g
-SSBuZWVkIHRvIHJlLXNlbmQgYSBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtLCBvciBtb2RpZnkg
-dGhlIHByZXZpb3VzIHBhdGNoIGFuZCBzZW5kIGl0IGFnYWluPw0KDQpQbGVhc2UgY29udmluY2Ug
-dGhlIGludm9sdmVkIGNvbnRyaWJ1dG9ycyB0byBpbnRlZ3JhdGUgYSBjb3JyZWN0ZWQgcGF0Y2gg
-dmVyc2lvbi4NCg0KKiBCZXR0ZXIgaW5kZW50YXRpb24uDQoNCiog4oCmDQo+PiArCQlpZiAoIW1h
-cC0+ZGVidWdmc19uYW1lKQ0KPj4gKwkJCWtmcmVlKG1hcC0+ZGVidWdmc19uYW1lKTsNCg0KICBX
-b3VsZCB0aGlzIHF1ZXN0aW9uYWJsZSBudWxsIHBvaW50ZXIgY2hlY2sgcmVzdWx0IGluIGEgbWVt
-b3J5IGxlYWs/DQoNClJlZ2FyZHMsDQpNYXJrdXMNCg=
+On Wed, Dec 30, 2020 at 01:01:42PM +0100, Markus Elfring wrote:
+> > Thank you very much, very good suggestion,
+>=20
+> Thanks for another positive feedback.
+>=20
+>=20
+> > do I need to re-send a patch to fix this problem, or modify the previou=
+s patch and send it again?
+>=20
+> Please convince the involved contributors to integrate a corrected patch =
+version.
+>=20
+> * Better indentation.
+>=20
+> * =E2=80=A6
+> >> +		if (!map->debugfs_name)
+> >> +			kfree(map->debugfs_name);
+>=20
+>   Would this questionable null pointer check result in a memory leak?
+
+Hi,
+
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
