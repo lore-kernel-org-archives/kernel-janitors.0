@@ -1,56 +1,44 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 30 Dec 2020 12:50:44 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 30 Dec 2020 13:39:27 +0000
 Subject: Re: [PATCH v3] regmap: debugfs: Fix a memory leak when calling regmap_attach_dev
-Message-Id: <X+x3pIanr18Ep4ga@kroah.com>
+Message-Id: <20201230133927.GD4428@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="2Z2K0IlrPCVsbNpk"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20201229105046.41984-1-xiaolei.wang@windriver.com>
  <d516efdd-7e66-13fe-3798-cdea5ff012dc@web.de>
  <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
- <1503f5fa-1ad6-7675-6e02-6dc1eb04c1de@web.de>
-In-Reply-To: <1503f5fa-1ad6-7675-6e02-6dc1eb04c1de@web.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <PH0PR11MB5077EC74C0A81ABF8F082BC795D70@PH0PR11MB5077.namprd11.prod.outlook.com>
+To: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Lechner <david@lechnology.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+
+
+--2Z2K0IlrPCVsbNpk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Xiaolei Wang <Xiaolei.Wang@windriver.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner <david@lechnology.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Dec 30, 2020 at 01:01:42PM +0100, Markus Elfring wrote:
-> > Thank you very much, very good suggestion,
+On Wed, Dec 30, 2020 at 10:14:22AM +0000, Wang, Xiaolei wrote:
+> Hi Markus
 >=20
-> Thanks for another positive feedback.
->=20
->=20
-> > do I need to re-send a patch to fix this problem, or modify the previou=
-s patch and send it again?
->=20
-> Please convince the involved contributors to integrate a corrected patch =
-version.
->=20
-> * Better indentation.
->=20
-> * =E2=80=A6
-> >> +		if (!map->debugfs_name)
-> >> +			kfree(map->debugfs_name);
->=20
->   Would this questionable null pointer check result in a memory leak?
+> Thank you very much, very good suggestion, do I need to re-send a patch t=
+o fix this problem, or modify the previous patch and send it again?
 
-Hi,
+Please feel free to ignore Markus.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+--2Z2K0IlrPCVsbNpk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+-----BEGIN PGP SIGNATURE-----
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/sgw4ACgkQJNaLcl1U
+h9CyNwf9EDK99jUBj3cRoPF87/iQOCwAunHmFz4I5n9mpCIYg264KCgOLSqUCDM7
+U0sY5o0G3vxQqqoZsAMtTDgyTimscRCjXch3wrTrB7J8KJA1j8twUCYWtIpFECn3
+nQ2g2QtlMky581G8/SM7LieziVp+cY83eJS4f3R//dZBINmyQWLe1JYcB3MABkTd
+6Dov+4dn0msCL7xs65PYBz9HSVJX8z75uemS3bbJIYLUKiAuC0K1auOK6PxTOaBT
+P4K+quQ8zj/8UHDdBWIiIM+lF6lgaNrqr5V+v0EzV8TrCKBGBqaiyCx/lBDrpEKs
+NwT2skl91yKqscQpcc+EABdcC+OzFg==
+=Goo3
+-----END PGP SIGNATURE-----
 
-thanks,
-
-greg k-h's patch email bot
+--2Z2K0IlrPCVsbNpk--
