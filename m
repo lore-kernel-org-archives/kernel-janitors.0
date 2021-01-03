@@ -1,33 +1,44 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 08 Jan 2021 04:19:37 +0000
-Subject: Re: [PATCH v2] scsi: sd: remove obsolete variable in sd_remove()
-Message-Id: <161007949339.9892.18140869017043061616.b4-ty@oracle.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Sun, 03 Jan 2021 15:10:10 +0000
+Subject: Re: [PATCH] gpio: fix spelling mistake in Kconfig "supprot" -> "support"
+Message-Id: <CAMpxmJVQb0Rh2kkVwAgmEvFzxckTUr4HANp_XUkWq8EC88TV=A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201214095424.12479-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20201214095424.12479-1-lukas.bulwahn@gmail.com>
+References: <20201215105329.138193-1-colin.king@canonical.com>
+In-Reply-To: <20201215105329.138193-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 14 Dec 2020 10:54:24 +0100, Lukas Bulwahn wrote:
+On Tue, Dec 15, 2020 at 11:53 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in the Kconfig help text. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpio/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index c70f46e80a3b..f58e46ec1c96 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -666,7 +666,7 @@ config GPIO_WCD934X
+>         tristate "Qualcomm Technologies Inc WCD9340/WCD9341 gpio controller driver"
+>         depends on MFD_WCD934X && OF_GPIO
+>         help
+> -         This driver is to supprot GPIO block found on the Qualcomm Technologies
+> +         This driver is to support GPIO block found on the Qualcomm Technologies
+>          Inc WCD9340/WCD9341 Audio Codec.
+>
+>  config GPIO_XGENE
+> --
+> 2.29.2
+>
 
-> Commit 140ea3bbf39a ("sd: use __register_blkdev to avoid a modprobe for an
-> unregistered dev_t") removed blk_register_region(devt, ...) in sd_remove()
-> and since then, devt is unused in sd_remove().
-> 
-> Hence, make W=1 warns:
-> 
->   drivers/scsi/sd.c:3516:8:
->       warning: variable 'devt' set but not used [-Wunused-but-set-variable]
-> 
-> [...]
+Applied, thanks!
 
-Applied to 5.11/scsi-fixes, thanks!
-
-[1/1] scsi: sd: remove obsolete variable in sd_remove()
-      https://git.kernel.org/mkp/scsi/c/be2553358cd4
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Bart
