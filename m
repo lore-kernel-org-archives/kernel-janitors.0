@@ -1,44 +1,56 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Sun, 03 Jan 2021 15:10:10 +0000
-Subject: Re: [PATCH] gpio: fix spelling mistake in Kconfig "supprot" -> "support"
-Message-Id: <CAMpxmJVQb0Rh2kkVwAgmEvFzxckTUr4HANp_XUkWq8EC88TV=A@mail.gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 04 Jan 2021 16:59:53 +0000
+Subject: Re: [PATCH] sound: Convert strlcpy to strscpy when return value is unused
+Message-Id: <s5hturw7i46.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201215105329.138193-1-colin.king@canonical.com>
-In-Reply-To: <20201215105329.138193-1-colin.king@canonical.com>
+References: <58a84d03b714f71d231f9cac04af09a6b97c6f04.camel@perches.com>
+In-Reply-To: <58a84d03b714f71d231f9cac04af09a6b97c6f04.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>
 
-On Tue, Dec 15, 2020 at 11:53 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the Kconfig help text. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpio/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index c70f46e80a3b..f58e46ec1c96 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -666,7 +666,7 @@ config GPIO_WCD934X
->         tristate "Qualcomm Technologies Inc WCD9340/WCD9341 gpio controller driver"
->         depends on MFD_WCD934X && OF_GPIO
->         help
-> -         This driver is to supprot GPIO block found on the Qualcomm Technologies
-> +         This driver is to support GPIO block found on the Qualcomm Technologies
->          Inc WCD9340/WCD9341 Audio Codec.
->
->  config GPIO_XGENE
-> --
-> 2.29.2
->
+On Thu, 31 Dec 2020 20:04:50 +0100,
+Joe Perches wrote:
+> 
+> strlcpy is deprecated.  see: Documentation/process/deprecated.rst
+> 
+> Change the calls that do not use the strlcpy return value to the
+> preferred strscpy.
+> 
+> Done with cocci script:
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> 
+> -	strlcpy(
+> +	strscpy(
+> 	e1, e2, e3);
+> 
+> This cocci script leaves the instances where the return value is
+> used unchanged.
+> 
+> After this patch, sound/ has 3 uses of strlcpy() that need to be
+> manually inspected for conversion and changed one day.
+> 
+> $ git grep -w strlcpy sound/
+> sound/usb/card.c:               len = strlcpy(card->longname, s, sizeof(card->longname));
+> sound/usb/mixer.c:      return strlcpy(buf, p->name, buflen);
+> sound/usb/mixer.c:                      return strlcpy(buf, p->names[index], buflen);
+> 
+> Miscellenea:
+> 
+> o Remove trailing whitespace in conversion of sound/core/hwdep.c
+> 
+> Link: https://lore.kernel.org/lkml/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-Applied, thanks!
+Could you resubmit to alsa-devel ML?
 
-Bart
+
+thanks,
+
+Takashi
