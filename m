@@ -1,56 +1,39 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 25 Jan 2021 15:45:57 +0000
-Subject: Re: [PATCH] drm/amd/display: Fix a potential NULL dereference
-Message-Id: <CADnq5_MUs2fzVHTMo=zxtg8L7QaCvg0knJy=i2EuEj5r6uEuqA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Jan 2021 13:02:27 +0000
+Subject: [PATCH][next] cpufreq: powernow-k8: add null check to policy to avoid null pointer dereference
+Message-Id: <20210104130227.35354-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YA6FFK+F1XbGbYVJ@mwanda>
-In-Reply-To: <YA6FFK+F1XbGbYVJ@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Melissa Wen <melissa.srw@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Anson Jacob <anson.jacob@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, David Airlie <airlied@linux.ie>, Wyatt Wood <wyatt.wood@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Leo Li <sunpeng.li@amd.com>, Jaehyun Chung <jaehyun.chung@amd.com>, Aurabindo Pillai <aurabindo.pillai@amd.com>, Yongqiang Sun <yongqiang.sun@amd.com>, George Shen <george.shen@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Harry Wentland <harry.wentland@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Anthony Koo <Anthony.Koo@amd.com>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@nvidia.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 3:47 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The debug printk dereferences "link->link_enc" before we have ensured
-> that it is non-NULL.  Fix this potential NULL derefence by moving the
-> printk after the check.
->
-> Fixes: 1975b95ad4e7 ("drm/amd/display: Log link/connector info provided in BIOS object table")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  Thanks!
+Currently there is an unlikely case where cpufreq_cpu_get returns a
+null policy and this will cause a null pointer dereference later on.
+Fix this by adding a null check and adding an error return.
 
-Alex
+Addresses-Coverity: ("Dereference null return")
+Fixes: b43a7ffbf33b ("cpufreq: Notify all policy->cpus in cpufreq_notify_transition()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/cpufreq/powernow-k8.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> index c16af3983fdb..4d31b2fae1f9 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> @@ -1525,13 +1525,13 @@ static bool dc_link_construct(struct dc_link *link,
->         link->link_enc >                 link->dc->res_pool->funcs->link_enc_create(&enc_init_data);
->
-> -       DC_LOG_DC("BIOS object table - DP_IS_USB_C: %d", link->link_enc->features.flags.bits.DP_IS_USB_C);
-> -
->         if (!link->link_enc) {
->                 DC_ERROR("Failed to create link encoder!\n");
->                 goto link_enc_create_fail;
->         }
->
-> +       DC_LOG_DC("BIOS object table - DP_IS_USB_C: %d", link->link_enc->features.flags.bits.DP_IS_USB_C);
-> +
->         link->link_enc_hw_inst = link->link_enc->transmitter;
->
->         for (i = 0; i < 4; i++) {
-> --
-> 2.29.2
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
+index 0acc9e241cd7..c5368545ba1f 100644
+--- a/drivers/cpufreq/powernow-k8.c
++++ b/drivers/cpufreq/powernow-k8.c
+@@ -913,6 +913,8 @@ static int transition_frequency_fidvid(struct powernow_k8_data *data,
+ 	freqs.new = find_khz_freq_from_fid(fid);
+ 
+ 	policy = cpufreq_cpu_get(smp_processor_id());
++	if (!policy)
++		return 1;
+ 	cpufreq_cpu_put(policy);
+ 
+ 	cpufreq_freq_transition_begin(policy, &freqs);
+-- 
+2.29.2
