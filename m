@@ -1,41 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 25 Jan 2021 08:42:36 +0000
-Subject: [PATCH v2 2/2 net-next] net: mscc: ocelot: fix error code in mscc_ocelot_probe()
-Message-Id: <YA6EfL9tQWYU3dDn@mwanda>
+From: Saeed Mahameed <saeed@kernel.org>
+Date: Tue, 05 Jan 2021 21:07:44 +0000
+Subject: Re: [PATCH] net/mlx5: fix spelling mistake in Kconfig "accelaration" -> "acceleration"
+Message-Id: <a8c416b8c3ea6417e909b0dcfe0b6ace97f11053.camel@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <YA59en4lJCiYsPHv@mwanda>
+References: <20201215144946.204104-1-colin.king@canonical.com>
+In-Reply-To: <20201215144946.204104-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Probe should return an error code if platform_get_irq_byname() fails
-but it returns success instead.
+On Tue, 2020-12-15 at 14:49 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are some spelling mistakes in the Kconfig. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
 
-Fixes: 6c30384eb1de ("net: mscc: ocelot: register devlink ports")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: no change
-
- drivers/net/ethernet/mscc/ocelot_vsc7514.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mscc/ocelot_vsc7514.c b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-index 2c82ffe2c611..7e4c9b255124 100644
---- a/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-+++ b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-@@ -1307,8 +1307,10 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
- 		goto out_free_devlink;
- 
- 	irq_xtr = platform_get_irq_byname(pdev, "xtr");
--	if (irq_xtr < 0)
-+	if (irq_xtr < 0) {
-+		err = irq_xtr;
- 		goto out_free_devlink;
-+	}
- 
- 	err = devm_request_threaded_irq(&pdev->dev, irq_xtr, NULL,
- 					ocelot_xtr_irq_handler, IRQF_ONESHOT,
--- 
-2.29.2
+applied to net-next-mlx5,
+Thanks!
