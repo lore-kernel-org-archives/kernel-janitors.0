@@ -1,32 +1,40 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 15 Jan 2021 17:23:28 +0000
-Subject: Re: [PATCH] fs: anon_inodes: rephrase to appropriate kernel-doc
-Message-Id: <CAHC9VhSfn9Ux_KcDysAH_vOWhiS3TvPYcXYZLg_5pr9Vee0f2g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2021 13:19:14 +0000
+Subject: [PATCH] staging: vchiq: delete obselete comment
+Message-Id: <X/RnUjY3XkZohk7w@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210115120342.8849-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210115120342.8849-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Daniel Colascione <dancol@google.com>, Lokesh Gidra <lokeshgidra@google.com>, Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Amarjargal Gundjalam <amarjargal16@gmail.com>, Phil Elwell <phil@raspberrypi.com>
 
-On Fri, Jan 15, 2021 at 7:03 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit e7e832ce6fa7 ("fs: add LSM-supporting anon-inode interface") adds
-> more kerneldoc description, but also a few new warnings on
-> anon_inode_getfd_secure() due to missing parameter descriptions.
->
-> Rephrase to appropriate kernel-doc for anon_inode_getfd_secure().
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  fs/anon_inodes.c | 21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
+This comment describes a security problem which was fixed in commit
+1c954540c0eb ("staging: vchiq: avoid mixing kernel and user pointers").
+The bug is fixed now so the FIXME can be removed.
 
-Merged into selinux/next with the other related LSM/SELinux anon-inode
-patches, thank you!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 7 -------
+ 1 file changed, 7 deletions(-)
 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index f500a7043805..54770a9b4735 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -999,13 +999,6 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ 		userdata = &waiter->bulk_waiter;
+ 	}
+ 
+-	/*
+-	 * FIXME address space mismatch:
+-	 * args->data may be interpreted as a kernel pointer
+-	 * in create_pagelist() called from vchiq_bulk_transfer(),
+-	 * accessing kernel data instead of user space, based on the
+-	 * address.
+-	 */
+ 	status = vchiq_bulk_transfer(args->handle, NULL, args->data, args->size,
+ 				     userdata, args->mode, dir);
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.29.2
