@@ -1,40 +1,45 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Mon, 25 Jan 2021 16:14:09 +0000
-Subject: [PATCH] watch_queue: rectify kernel-doc for init_watch()
-Message-Id: <20210125161409.8478-1-lukas.bulwahn@gmail.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Tue, 05 Jan 2021 16:23:37 +0000
+Subject: Re: [PATCH] nvmem: core: Fix a resource leak on error in nvmem_add_cells_from_of()
+Message-Id: <83c3536c-424a-46fb-5fdc-993b1bbb1490@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <X93cOvjVvzfig1Pu@mwanda>
+In-Reply-To: <X93cOvjVvzfig1Pu@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The command './scripts/kernel-doc -none kernel/watch_queue.c'
-reported a mismatch in the kernel-doc of init_watch().
 
-Rectify the kernel-doc, such that no issues remain for watch_queue.c.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on v5.11-rc5 and next-20210122
+On 19/12/2020 10:55, Dan Carpenter wrote:
+> This doesn't call of_node_put() on the error path so it leads to a
+> memory leak.
+> 
+> Fixes: 0749aa25af82 ("nvmem: core: fix regression in of_nvmem_cell_get()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-David, please pick this minor kernel-doc fixup.
+Applied, thanks
 
- kernel/watch_queue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index 0ef8f65bd2d7..9c9eb20dd2c5 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -413,7 +413,7 @@ static void put_watch(struct watch *watch)
- }
- 
- /**
-- * init_watch_queue - Initialise a watch
-+ * init_watch - Initialise a watch
-  * @watch: The watch to initialise.
-  * @wqueue: The queue to assign.
-  *
--- 
-2.17.1
+--srini
+> ---
+> The kfree_const() could just be replaced with kfree().  Someone got over
+> excited converting things from kfree() to kfree_const().
+> 
+>   drivers/nvmem/core.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index 177f5bf27c6d..68ae6f24b57f 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -713,6 +713,7 @@ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
+>   				cell->name, nvmem->stride);
+>   			/* Cells already added will be freed later. */
+>   			kfree_const(cell->name);
+> +			of_node_put(cell->np);
+>   			kfree(cell);
+>   			return -EINVAL;
+>   		}
+> 
