@@ -1,35 +1,97 @@
-From: "Ms. Reem" <support@digitalsol.in>
-Date: Fri, 29 Jan 2021 23:00:27 +0000
-Subject: Re:read
-Message-Id: <E2673FFE-FCB3-4969-B70F-F16A2FB9787E@optinix.in>
+From: Oded Gabbay <oded.gabbay@gmail.com>
+Date: Tue, 05 Jan 2021 15:39:54 +0000
+Subject: Re: [PATCH] habanalabs: Use 'dma_set_mask_and_coherent()' instead of hand-writing it
+Message-Id: <CAFCwf125zxK5hWEcGKqLXcz4JnES666GT4FFcdLdzk4OHzv14Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201229111219.200668-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201229111219.200668-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ofir Bitton <obitton@habana.ai>, Lee Jones <lee.jones@linaro.org>, Tomer Tayar <ttayar@habana.ai>, farah kassabri <fkassabri@habana.ai>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello,
+On Tue, Dec 29, 2020 at 1:17 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Axe 'hl_pci_set_dma_mask()' and replace it with an equivalent
+> 'dma_set_mask_and_coherent()' call.
+>
+> This makes the code a bit less verbose.
+>
+> It also removes an erroneous comment, because 'hl_pci_set_dma_mask()' does
+> not try to use a fall-back value.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/misc/habanalabs/common/pci.c | 42 ++++------------------------
+>  1 file changed, 6 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/common/pci.c b/drivers/misc/habanalabs/common/pci.c
+> index 923b2606e29f..eb8a784ba863 100644
+> --- a/drivers/misc/habanalabs/common/pci.c
+> +++ b/drivers/misc/habanalabs/common/pci.c
+> @@ -301,40 +301,6 @@ int hl_pci_set_outbound_region(struct hl_device *hdev,
+>         return rc;
+>  }
+>
+> -/**
+> - * hl_pci_set_dma_mask() - Set DMA masks for the device.
+> - * @hdev: Pointer to hl_device structure.
+> - *
+> - * This function sets the DMA masks (regular and consistent) for a specified
+> - * value. If it doesn't succeed, it tries to set it to a fall-back value
+> - *
+> - * Return: 0 on success, non-zero for failure.
+> - */
+> -static int hl_pci_set_dma_mask(struct hl_device *hdev)
+> -{
+> -       struct pci_dev *pdev = hdev->pdev;
+> -       int rc;
+> -
+> -       /* set DMA mask */
+> -       rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+> -       if (rc) {
+> -               dev_err(hdev->dev,
+> -                       "Failed to set pci dma mask to %d bits, error %d\n",
+> -                       hdev->dma_mask, rc);
+> -               return rc;
+> -       }
+> -
+> -       rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+> -       if (rc) {
+> -               dev_err(hdev->dev,
+> -                       "Failed to set pci consistent dma mask to %d bits, error %d\n",
+> -                       hdev->dma_mask, rc);
+> -               return rc;
+> -       }
+> -
+> -       return 0;
+> -}
+> -
+>  /**
+>   * hl_pci_init() - PCI initialization code.
+>   * @hdev: Pointer to hl_device structure.
+> @@ -371,9 +337,13 @@ int hl_pci_init(struct hl_device *hdev)
+>                 goto unmap_pci_bars;
+>         }
+>
+> -       rc = hl_pci_set_dma_mask(hdev);
+> -       if (rc)
+> +       rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(hdev->dma_mask));
+> +       if (rc) {
+> +               dev_err(hdev->dev,
+> +                       "Failed to set dma mask to %d bits, error %d\n",
+> +                       hdev->dma_mask, rc);
+>                 goto unmap_pci_bars;
+> +       }
+>
+>         return 0;
+>
+> --
+> 2.27.0
+>
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
-
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
-
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
-
-Regards,
-Ms. Reem.
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+Applied to -next
+Oded
