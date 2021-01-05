@@ -1,54 +1,63 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Thu, 21 Jan 2021 09:12:27 +0000
-Subject: Re: [PATCH] drm/i915/dp: Fix a logical vs bitwise OR bug
-Message-Id: <87h7namz5w.fsf@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Date: Tue, 05 Jan 2021 12:39:52 +0000
+Subject: Re: [PATCH] mmc: sdhci-sprd: Fix some resource leaks in the remove function
+Message-Id: <1cfeeb62-8211-4a2a-0cf5-c3799d7ef42e@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAkaBa22zvbXKd4E@mwanda>
-In-Reply-To: <YAkaBa22zvbXKd4E@mwanda>
+References: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ankit Nautiyal <ankit.k.nautiyal@intel.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Lucas De Marchi <lucas.demarchi@intel.com>, Sean Paul <seanpaul@chromium.org>, Chris Wilson <chris@chris-wilson.co.uk>, intel-gfx@lists.freedesktop.org, Wambui Karuga <wambui.karugax@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, ulf.hansson@linaro.org, orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jan 2021, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This was supposed to be | instead of ||.
->
-> Fixes: 522508b665df ("drm/i915/display: Let PCON convert from RGB to YCbCr if it can")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 17/12/20 10:42 pm, Christophe JAILLET wrote:
+> 'sdhci_remove_host()' and 'sdhci_pltfm_free()' should be used in place of
+> 'mmc_remove_host()' and 'mmc_free_host()'.
+> 
+> This avoids some resource leaks, is more in line with the error handling
+> path of the probe function, and is more consistent with other drivers.
+> 
+> Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks, but we already have the fix [1] for this that I thought was
-pushed by now [2].
-
-Chris?
-
-
-BR,
-Jani.
-
-
-[1] http://lore.kernel.org/r/20201223103917.14687-1-chris@chris-wilson.co.uk
-[2] http://lore.kernel.org/r/161069893278.19482.3803444937046587332@build.alporthouse.com
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
 > ---
->  drivers/gpu/drm/i915/display/intel_dp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> index 8a00e609085f..9c6f427b2703 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> @@ -6955,8 +6955,8 @@ intel_dp_update_420(struct intel_dp *intel_dp)
->  							intel_dp->downstream_ports);
->  	rgb_to_ycbcr = drm_dp_downstream_rgb_to_ycbcr_conversion(intel_dp->dpcd,
->  								 intel_dp->downstream_ports,
-> -								 DP_DS_HDMI_BT601_RGB_YCBCR_CONV ||
-> -								 DP_DS_HDMI_BT709_RGB_YCBCR_CONV ||
-> +								 DP_DS_HDMI_BT601_RGB_YCBCR_CONV |
-> +								 DP_DS_HDMI_BT709_RGB_YCBCR_CONV |
->  								 DP_DS_HDMI_BT2020_RGB_YCBCR_CONV);
->  
->  	if (INTEL_GEN(i915) >= 11) {
+> Other adjustment may be needed.
+> I'm not sure at all of the 0 passed to 'sdhci_remove_host()'. Some drivers
+> pass 0, some have some more complicated computation.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+'0' means cleanup nicely. '1' (dead) means nothing works anymore, including
+interrupts, so give up on requests immediately.
+
+Either should work.  '0' is better unless your host controller really is
+dead, which is mostly not possible except for some legacy PCI devices.
+
+> ---
+>  drivers/mmc/host/sdhci-sprd.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> index f85171edabeb..5dc36efff47f 100644
+> --- a/drivers/mmc/host/sdhci-sprd.c
+> +++ b/drivers/mmc/host/sdhci-sprd.c
+> @@ -708,14 +708,14 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
+>  {
+>  	struct sdhci_host *host = platform_get_drvdata(pdev);
+>  	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> -	struct mmc_host *mmc = host->mmc;
+>  
+> -	mmc_remove_host(mmc);
+> +	sdhci_remove_host(host, 0);
+> +
+>  	clk_disable_unprepare(sprd_host->clk_sdio);
+>  	clk_disable_unprepare(sprd_host->clk_enable);
+>  	clk_disable_unprepare(sprd_host->clk_2x_enable);
+>  
+> -	mmc_free_host(mmc);
+> +	sdhci_pltfm_free(pdev);
+>  
+>  	return 0;
+>  }
+> 
