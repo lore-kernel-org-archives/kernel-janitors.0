@@ -1,61 +1,39 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 14 Jan 2021 17:05:30 +0000
-Subject: Re: [PATCH -next] fpga: dfl-pci: rectify ReST formatting
-Message-Id: <YAB52nrYo2MTdlzA@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2021 09:03:08 +0000
+Subject: [PATCH 3/3] powercap/drivers/dtpm: Fix an IS_ERR() vs NULL check
+Message-Id: <X/V8zHPwlGiSxq1M@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210111112113.27242-1-lukas.bulwahn@gmail.com>
- <X/x0j+hWRdJ6U/MG@kroah.com>
- <CAKXUXMzR2J895_+ZsRqcJ___Pu0HnRfiiFFrGfehQe8J4kQrgg@mail.gmail.com>
- <X/yVflU6ccIlAtgO@kroah.com>
- <YAB1G9e4lCaKq0sq@epycbox.lan>
-In-Reply-To: <YAB1G9e4lCaKq0sq@epycbox.lan>
+In-Reply-To: <X/V2k8dwaXJH6VFh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Wu Hao <hao.wu@intel.com>, Matthew Gerlach <matthew.gerlach@linux.intel.com>, linux-fpga@vger.kernel.org, Tom Rix <trix@redhat.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 08:45:15AM -0800, Moritz Fischer wrote:
-> Hi Greg,
-> 
-> On Mon, Jan 11, 2021 at 07:14:22PM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Jan 11, 2021 at 05:34:57PM +0100, Lukas Bulwahn wrote:
-> > > On Mon, Jan 11, 2021 at 4:52 PM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Jan 11, 2021 at 12:21:13PM +0100, Lukas Bulwahn wrote:
-> > > > > Commit fa41d10589be ("fpga: dfl-pci: locate DFLs by PCIe vendor specific
-> > > > > capability") provides documentation to the FPGA Device Feature List (DFL)
-> > > > > Framework Overview, but introduced new documentation warnings:
-> > > > >
-> > > > >   ./Documentation/fpga/dfl.rst:
-> > > > >     505: WARNING: Title underline too short.
-> > > > >     523: WARNING: Unexpected indentation.
-> > > > >     523: WARNING: Blank line required after table.
-> > > > >     524: WARNING: Block quote ends without a blank line; unexpected unindent.
-> > > > >
-> > > > > Rectify ReST formatting in ./Documentation/fpga/dfl.rst.
-> > > > >
-> > > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > >
-> > > 
-> > > > You forgot a Reported-by: tag for the person who notified you of this :(
-> > > 
-> > > Greg, would you believe that I run 'make htmldocs' on linux-next myself?
-> > 
-> > Sure, just seemed to match up with when Stephen reported this a few
-> > hours earlier...
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Are you waiting for a resend on this? Just asking because we got three
-> versions of this patch by now :)
-> 
-> I haven't re-sent this since you were already on the thread.
+The powercap_register_control_type() function never returns NULL, it
+returns error pointers on error so update this check.
 
-I'll just take this one, for some reason I thought Lukas was going to
-resend, my fault...
+Fixes: a20d0ef97abf ("powercap/drivers/dtpm: Add API for dynamic thermal power management")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/powercap/dtpm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/powercap/dtpm.c b/drivers/powercap/dtpm.c
+index 470a1182b868..5a51cd34a7e8 100644
+--- a/drivers/powercap/dtpm.c
++++ b/drivers/powercap/dtpm.c
+@@ -467,9 +467,9 @@ static int __init dtpm_init(void)
+ 	struct dtpm_descr **dtpm_descr;
+ 
+ 	pct = powercap_register_control_type(NULL, "dtpm", NULL);
+-	if (!pct) {
++	if (IS_ERR(pct)) {
+ 		pr_err("Failed to register control type\n");
+-		return -EINVAL;
++		return PTR_ERR(pct);
+ 	}
+ 
+ 	for_each_dtpm_table(dtpm_descr)
+-- 
+2.29.2
