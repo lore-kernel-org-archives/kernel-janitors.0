@@ -1,35 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 04 Jan 2021 13:05:13 +0000
-Subject: [PATCH][next] power: supply: max8997_charger: fix spelling mistake "diconnected" -> "disconnected"
-Message-Id: <20210104130513.35563-1-colin.king@canonical.com>
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Date: Wed, 06 Jan 2021 16:41:28 +0000
+Subject: Re: [PATCH][next] power: supply: max8997_charger: fix spelling mistake "diconnected" -> "disconnecte
+Message-Id: <20210106164128.bzgjjmwindeif5uj@earth.universe>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="e7yiclziilajll5w"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210104130513.35563-1-colin.king@canonical.com>
+In-Reply-To: <20210104130513.35563-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+--e7yiclziilajll5w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/max8997_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
-index 23df91ed2c72..321bd6b8ee41 100644
---- a/drivers/power/supply/max8997_charger.c
-+++ b/drivers/power/supply/max8997_charger.c
-@@ -124,7 +124,7 @@ static void max8997_battery_extcon_evt_worker(struct work_struct *work)
- 		dev_dbg(charger->dev, "USB CDP charger is connected\n");
- 		current_limit = 650000;
- 	} else {
--		dev_dbg(charger->dev, "USB charger is diconnected\n");
-+		dev_dbg(charger->dev, "USB charger is disconnected\n");
- 		current_limit = -1;
- 	}
- 
--- 
-2.29.2
+On Mon, Jan 04, 2021 at 01:05:13PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is a spelling mistake in a dev_dbg message. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/power/supply/max8997_charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
+y/max8997_charger.c
+> index 23df91ed2c72..321bd6b8ee41 100644
+> --- a/drivers/power/supply/max8997_charger.c
+> +++ b/drivers/power/supply/max8997_charger.c
+> @@ -124,7 +124,7 @@ static void max8997_battery_extcon_evt_worker(struct =
+work_struct *work)
+>  		dev_dbg(charger->dev, "USB CDP charger is connected\n");
+>  		current_limit =3D 650000;
+>  	} else {
+> -		dev_dbg(charger->dev, "USB charger is diconnected\n");
+> +		dev_dbg(charger->dev, "USB charger is disconnected\n");
+>  		current_limit =3D -1;
+>  	}
+> =20
+
+Thanks, queued.
+
+-- Sebastian
+
+--e7yiclziilajll5w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl/16C0ACgkQ2O7X88g7
++pqs4g//cJYftTes0OMiYJr8wVHkQ9Phzi6b+PRUKi6xs/EPB2IR0jO/XnW+E+rT
+xHTCIklbLQ/VDThj7uw2/SYsFSb/eT0KDAgZ8PJX8pz8aQ+SVSV+LPAvmVbpI46y
++75FNaNrQM25PiJT1zC72cxZwCx2X4ZdpzEoXL9/ctoyFL2fubfK+QxrTuWiVSEY
+Vu5/RJ4Hw86hX6sXLzb0wDuBzHaEly3g/yMISByvfoJ7hO1bhvCKD1/iY9sqqWsL
+n2Pg96WYHeyAbUCtwygO715zVBtMgH/pZJUhS+di9yujI1x3oFuSXAV3zZl/Hwae
+hER5dn0vUYbCI8VVohjD8iQb548L5emdzx6FgONgltSQGGTl+CJXhtlqZfl7URAv
+QG/EJ3918exK5x5uu4BeZgQa+84IqukOC9LQUgrCHqCAX/6kIVho3ly3IdS8VJys
+e48J9+3/pppCBm3mO074cN6XAM8MIcOU4M5/Sn1sfqsg0eFzqbfwPzODqqYwbYCg
+FzMLDKeqBxLFcnOPHEMDodCQ+j/E2HZwWJhj/i+54Dj6v+zJp2fjZ5aEwqqR/LZ1
+fgX3h9bkOVsDLVBW7eV7inbNJR5LEfd03pXR3VxYi9kNFPn58AQ+tKUFeriNoeQb
+xCY2w0WEnBS+ITf6E4Uht55MGmfvzuaKbHHKVjkOeBFPNMNwQWg=
+=t64x
+-----END PGP SIGNATURE-----
+
+--e7yiclziilajll5w--
