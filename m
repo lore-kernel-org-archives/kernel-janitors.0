@@ -1,23 +1,36 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 27 Jan 2021 16:47:16 +0000
-Subject: Re: [PATCH] hwmon: (aht10) Unlock on error in aht10_read_values()
-Message-Id: <20210127164716.GA144600@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2021 09:25:08 +0000
+Subject: [PATCH] crypto: keembay-ocs-hcu - Fix a WARN() message
+Message-Id: <X/WB9IlpyIi+5p5s@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBD5Ro549hMJSnW4@mwanda>
-In-Reply-To: <YBD5Ro549hMJSnW4@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Johannes Cornelis Draaijer <jcdra1@gmail.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniele Alessandrelli <daniele.alessandrelli@intel.com>
+Cc: Declan Murphy <declan.murphy@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 08:25:26AM +0300, Dan Carpenter wrote:
-> This error path needs to drop the lock before returning.
-> 
-> Fixes: afd018716398 ("hwmon: Add AHT10 Temperature and Humidity Sensor Driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The first argument to WARN() is a condition and the messages is the
+second argument is the string, so this WARN() will only display the
+__func__ part of the message.
 
-Applied.
+Fixes: ae832e329a8d ("crypto: keembay-ocs-hcu - Add HMAC support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/crypto/keembay/keembay-ocs-hcu-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Guenter
+diff --git a/drivers/crypto/keembay/keembay-ocs-hcu-core.c b/drivers/crypto/keembay/keembay-ocs-hcu-core.c
+index d547af047131..c4b97b4160e9 100644
+--- a/drivers/crypto/keembay/keembay-ocs-hcu-core.c
++++ b/drivers/crypto/keembay/keembay-ocs-hcu-core.c
+@@ -388,7 +388,7 @@ static int prepare_ipad(struct ahash_request *req)
+ 	 * longer keys are hashed by kmb_ocs_hcu_setkey()).
+ 	 */
+ 	if (ctx->key_len > rctx->blk_sz) {
+-		WARN("%s: Invalid key length in tfm context\n", __func__);
++		WARN(1, "%s: Invalid key length in tfm context\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 	memzero_explicit(&ctx->key[ctx->key_len],
+-- 
+2.29.2
