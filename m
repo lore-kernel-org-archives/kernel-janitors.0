@@ -1,28 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 27 Jan 2021 04:54:22 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: remove unnecessary NULL check
-Message-Id: <161172309263.28139.7036192153186894654.b4-ty@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2021 09:26:39 +0000
+Subject: [PATCH] io_uring: fix an IS_ERR() vs NULL check
+Message-Id: <X/WCTxIRT4SHLemV@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAkaaSrhn1mFqyHy@mwanda>
-In-Reply-To: <YAkaaSrhn1mFqyHy@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Nilesh Javali <njavali@marvell.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jan 2021 09:08:41 +0300, Dan Carpenter wrote:
+The alloc_fixed_file_ref_node() function never returns NULL, it returns
+error pointers on error.
 
-> The list iterator can't be NULL so this check is not required.  Removing
-> the check silences a Smatch warning about inconsistent NULL checking.
-> 
->     drivers/scsi/qla2xxx/qla_dfs.c:371 qla_dfs_tgt_counters_show()
->     error: we previously assumed 'fcport' could be null (see line 372)
+Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to 5.12/scsi-queue, thanks!
-
-[1/1] scsi: qla2xxx: remove unnecessary NULL check
-      https://git.kernel.org/mkp/scsi/c/c750a9c9c59a
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ca46f314640b..2234ce03034a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7255,8 +7255,8 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	if (!data)
+ 		return -ENXIO;
+ 	backup_node = alloc_fixed_file_ref_node(ctx);
+-	if (!backup_node)
+-		return -ENOMEM;
++	if (IS_ERR(backup_node))
++		return PTR_ERR(backup_node);
+ 
+ 	spin_lock_bh(&data->lock);
+ 	ref_node = data->node;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
