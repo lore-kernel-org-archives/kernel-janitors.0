@@ -1,40 +1,69 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 07 Jan 2021 16:39:24 +0000
-Subject: Re: [PATCH][V3] cpufreq: powernow-k8: pass policy rather than use cpufreq_cpu_get
-Message-Id: <CAJZ5v0gF9XRNnn+O+kCRFtas9sgrQgk8piF1OoHqmGhi66qZwg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2021 08:41:09 +0000
+Subject: [PATCH 2/3] powercap/drivers/dtpm: Fix some missing unlock bugs
+Message-Id: <X/V3pV//ui0rcxbs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210105101957.59072-1-colin.king@canonical.com> <20210105102101.y4jdqdmcru5ouec4@vireshk-i7>
-In-Reply-To: <20210105102101.y4jdqdmcru5ouec4@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>, Colin King <colin.king@canonical.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@nvidia.com>, Linux PM <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 5, 2021 at 11:22 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 05-01-21, 10:19, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently there is an unlikely case where cpufreq_cpu_get returns a
-> > null policy and this will cause a null pointer dereference later on.
-> > Fix this by passing the policy to transition_frequency_fidvid from the
-> > caller and hence eliminating the need for the cpufreq_cpu_get and
-> > cpufreq_cpu_put.  Thanks to Viresh Kumar for suggesting the fix.
-> >
-> > Addresses-Coverity: ("Dereference null return")
-> > Fixes: b43a7ffbf33b ("cpufreq: Notify all policy->cpus in cpufreq_notify_transition()")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >
-> > V2: pass the policy to transition_frequency_fidvid rather than add
-> >     a null pointer check on the return from a cpufreq_cpu_get call.
-> > V3: update subject line to match the fix
-> >
-> > ---
-> >  drivers/cpufreq/powernow-k8.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+We need to unlock on these paths before returning.
 
-Applied as 5.11-rc material, thanks!
+Fixes: a20d0ef97abf ("powercap/drivers/dtpm: Add API for dynamic thermal power management")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/powercap/dtpm.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/powercap/dtpm.c b/drivers/powercap/dtpm.c
+index d49df0569cd4..470a1182b868 100644
+--- a/drivers/powercap/dtpm.c
++++ b/drivers/powercap/dtpm.c
+@@ -147,13 +147,17 @@ static void __dtpm_add_power(struct dtpm *dtpm)
+  */
+ int dtpm_update_power(struct dtpm *dtpm, u64 power_min, u64 power_max)
+ {
++	int ret = 0;
++
+ 	mutex_lock(&dtpm_lock);
+ 
+ 	if (power_min = dtpm->power_min && power_max = dtpm->power_max)
+-		return 0;
++		goto unlock;
+ 
+-	if (power_max < power_min)
+-		return -EINVAL;
++	if (power_max < power_min) {
++		ret = -EINVAL;
++		goto unlock;
++	}
+ 
+ 	__dtpm_sub_power(dtpm);
+ 
+@@ -164,9 +168,10 @@ int dtpm_update_power(struct dtpm *dtpm, u64 power_min, u64 power_max)
+ 
+ 	__dtpm_add_power(dtpm);
+ 
++unlock:
+ 	mutex_unlock(&dtpm_lock);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+@@ -187,8 +192,10 @@ int dtpm_release_zone(struct powercap_zone *pcz)
+ 
+ 	mutex_lock(&dtpm_lock);
+ 
+-	if (!list_empty(&dtpm->children))
++	if (!list_empty(&dtpm->children)) {
++		mutex_unlock(&dtpm_lock);
+ 		return -EBUSY;
++	}
+ 
+ 	if (parent)
+ 		list_del(&dtpm->sibling);
+-- 
+2.29.2
