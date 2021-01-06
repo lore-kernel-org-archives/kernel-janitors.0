@@ -1,71 +1,63 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Wed, 06 Jan 2021 16:41:28 +0000
-Subject: Re: [PATCH][next] power: supply: max8997_charger: fix spelling mistake "diconnected" -> "disconnecte
-Message-Id: <20210106164128.bzgjjmwindeif5uj@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="e7yiclziilajll5w"
+From: Qinglang Miao <miaoqinglang@huawei.com>
+Date: Wed, 06 Jan 2021 09:46:22 +0000
+Subject: Re: [v2] net: qrtr: fix null pointer dereference in qrtr_ns_remove
+Message-Id: <1a736322-42ce-e803-f91c-dc7595acffdd@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210104130513.35563-1-colin.king@canonical.com>
-In-Reply-To: <20210104130513.35563-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210105055754.16486-1-miaoqinglang@huawei.com>
+ <4596fb37-5e74-5bf6-60e5-ded6fbb83969@web.de>
+ <fdea7394-3e4a-0afe-6b22-7e3a258f5607@huawei.com>
+ <b70726b8-0965-1fb9-2af1-2e05609905ea@web.de>
+In-Reply-To: <b70726b8-0965-1fb9-2af1-2e05609905ea@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, hulkci@huawei.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
 
 
---e7yiclziilajll5w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+在 2021/1/6 16:09, Markus Elfring 写道:
+>>>> A null-ptr-deref bug is reported by Hulk Robot like this:
+>>>
+>>> Can it be clearer to use the term “null pointer dereference” for the final commit message?
+>> This advice is too detailed for 'null-ptr-deref' is known as a general phrase
+> 
+> This key word was provided already by the referenced KASAN report.
+>
+Yep, you're right. 'null-ptr-deref' is not really proper here.
+> 
+>> like 'use-after-free' for kernel developer, I think.
+> I suggest to reconsider the use of abbreviations at some places.
+>  >
+>>>> Fix it by making …
+>>>
+>>> Would you like to replace this wording by the tag “Fixes”?
+>> Sorry, I didn't get your words.
+>>
+>> 'Fix it by' follows the solution
+> 
+> I propose to specify the desired adjustments without such a prefix
+> in the change description.
+Sorry, I can understand what you means, but I still disagree with this 
+one, for:
 
-On Mon, Jan 04, 2021 at 01:05:13PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There is a spelling mistake in a dev_dbg message. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/power/supply/max8997_charger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
-y/max8997_charger.c
-> index 23df91ed2c72..321bd6b8ee41 100644
-> --- a/drivers/power/supply/max8997_charger.c
-> +++ b/drivers/power/supply/max8997_charger.c
-> @@ -124,7 +124,7 @@ static void max8997_battery_extcon_evt_worker(struct =
-work_struct *work)
->  		dev_dbg(charger->dev, "USB CDP charger is connected\n");
->  		current_limit =3D 650000;
->  	} else {
-> -		dev_dbg(charger->dev, "USB charger is diconnected\n");
-> +		dev_dbg(charger->dev, "USB charger is disconnected\n");
->  		current_limit =3D -1;
->  	}
-> =20
+1. 'Fix it by' is everywhere in kernel commit message.
+2. I think adding it or not makes no change for understanding.
+3. I'm not sure this is an official proposal.
 
-Thanks, queued.
+> 
+> 
+>> In fact, I do considered using 'Fixes' on this one,
+> 
+> Thanks for such information.
+> 
+> 
+>> but it's hard to tell which specific commit brought this null pointer dereference.
+> 
+> This aspect is unfortunate here. >
+> Regards,
+> Markus
+> .
+> 
 
--- Sebastian
-
---e7yiclziilajll5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl/16C0ACgkQ2O7X88g7
-+pqs4g//cJYftTes0OMiYJr8wVHkQ9Phzi6b+PRUKi6xs/EPB2IR0jO/XnW+E+rT
-xHTCIklbLQ/VDThj7uw2/SYsFSb/eT0KDAgZ8PJX8pz8aQ+SVSV+LPAvmVbpI46y
-+75FNaNrQM25PiJT1zC72cxZwCx2X4ZdpzEoXL9/ctoyFL2fubfK+QxrTuWiVSEY
-Vu5/RJ4Hw86hX6sXLzb0wDuBzHaEly3g/yMISByvfoJ7hO1bhvCKD1/iY9sqqWsL
-n2Pg96WYHeyAbUCtwygO715zVBtMgH/pZJUhS+di9yujI1x3oFuSXAV3zZl/Hwae
-hER5dn0vUYbCI8VVohjD8iQb548L5emdzx6FgONgltSQGGTl+CJXhtlqZfl7URAv
-QG/EJ3918exK5x5uu4BeZgQa+84IqukOC9LQUgrCHqCAX/6kIVho3ly3IdS8VJys
-e48J9+3/pppCBm3mO074cN6XAM8MIcOU4M5/Sn1sfqsg0eFzqbfwPzODqqYwbYCg
-FzMLDKeqBxLFcnOPHEMDodCQ+j/E2HZwWJhj/i+54Dj6v+zJp2fjZ5aEwqqR/LZ1
-fgX3h9bkOVsDLVBW7eV7inbNJR5LEfd03pXR3VxYi9kNFPn58AQ+tKUFeriNoeQb
-xCY2w0WEnBS+ITf6E4Uht55MGmfvzuaKbHHKVjkOeBFPNMNwQWg=
-=t64x
------END PGP SIGNATURE-----
-
---e7yiclziilajll5w--
+Thanks anyway, I shall pay more attention to commit message. ;D
