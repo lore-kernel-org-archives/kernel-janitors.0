@@ -1,38 +1,65 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Sat, 16 Jan 2021 00:50:08 +0000
-Subject: Re: [PATCH] netxen_nic: switch from 'pci_' to 'dma_' API
-Message-Id: <161075820887.2945.292036690452256996.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Jan 2021 12:39:16 +0000
+Subject: [PATCH] octeontx2-af: fix memory leak of lmac and lmac->name
+Message-Id: <20210107123916.189748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210113202519.487672-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210113202519.487672-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: manishc@marvell.com, rahulv@marvell.com, GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Nithya Mani <nmani@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Currently the error return paths don't kfree lmac and lmac->name
+leading to some memory leaks.  Fix this by adding two error return
+paths that kfree these objects
 
-On Wed, 13 Jan 2021 21:25:18 +0100 you wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'netxen_get_minidump_template()' GFP_KERNEL can
-> be used because its only caller, ' netxen_setup_minidump(()' already uses
-> it and no lock is acquired in the between.
-> 
-> [...]
+Addresses-Coverity: ("Resource leak")
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-Here is the summary with links:
-  - netxen_nic: switch from 'pci_' to 'dma_' API
-    https://git.kernel.org/netdev/net-next/c/297af515d75f
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 1156c61f2e02..aa5da9691a1c 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -871,8 +871,10 @@ static int cgx_lmac_init(struct cgx *cgx)
+ 		if (!lmac)
+ 			return -ENOMEM;
+ 		lmac->name = kcalloc(1, sizeof("cgx_fwi_xxx_yyy"), GFP_KERNEL);
+-		if (!lmac->name)
+-			return -ENOMEM;
++		if (!lmac->name) {
++			err = -ENOMEM;
++			goto err_lmac_free;
++		}
+ 		sprintf(lmac->name, "cgx_fwi_%d_%d", cgx->cgx_id, i);
+ 		lmac->lmac_id = i;
+ 		lmac->cgx = cgx;
+@@ -883,7 +885,7 @@ static int cgx_lmac_init(struct cgx *cgx)
+ 						 CGX_LMAC_FWI + i * 9),
+ 				   cgx_fwi_event_handler, 0, lmac->name, lmac);
+ 		if (err)
+-			return err;
++			goto err_irq;
+ 
+ 		/* Enable interrupt */
+ 		cgx_write(cgx, lmac->lmac_id, CGXX_CMRX_INT_ENA_W1S,
+@@ -895,6 +897,12 @@ static int cgx_lmac_init(struct cgx *cgx)
+ 	}
+ 
+ 	return cgx_lmac_verify_fwi_version(cgx);
++
++err_irq:
++	kfree(lmac->name);
++err_lmac_free:
++	kfree(lmac);
++	return err;
+ }
+ 
+ static int cgx_lmac_exit(struct cgx *cgx)
+-- 
+2.29.2
