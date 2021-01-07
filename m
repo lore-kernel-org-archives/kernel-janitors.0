@@ -1,36 +1,81 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Wed, 13 Jan 2021 23:21:26 +0000
-Subject: Re: [PATCH for doc-next] doc/zh_CN: adjust table markup in mips/ingenic-tcu.rst
-Message-Id: <20210113162126.62e36bd3@lwn.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 07 Jan 2021 17:24:29 +0000
+Subject: Re: [PATCH] cpufreq: intel_pstate: remove obsolete functions
+Message-Id: <CAJZ5v0hv8zzwQm3SwD3V76n+NENKANwBVktETNt2vV+GdHSzPA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210113070023.25064-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210113070023.25064-1-lukas.bulwahn@gmail.com>
+References: <20201221051320.18391-1-lukas.bulwahn@gmail.com> <20201221222015.GA3389117@ubuntu-m3-large-x86>
+In-Reply-To: <20201221222015.GA3389117@ubuntu-m3-large-x86>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Yanteng Si <siyanteng@loongson.cn>, Harry Wei <harryxiyou@gmail.com>, Alex Shi <alex.shi@linux.alibaba.com>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM <linux-pm@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux@googlegroups.com, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 13 Jan 2021 08:00:23 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Mon, Dec 21, 2020 at 11:21 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Mon, Dec 21, 2020 at 06:13:20AM +0100, Lukas Bulwahn wrote:
+> > percent_fp() was used in intel_pstate_pid_reset(), which was removed in
+> > commit 9d0ef7af1f2d ("cpufreq: intel_pstate: Do not use PID-based P-state
+> > selection") and hence, percent_fp() is unused since then.
+> >
+> > percent_ext_fp() was last used in intel_pstate_update_perf_limits(), which
+> > was refactored in commit 1a4fe38add8b ("cpufreq: intel_pstate: Remove
+> > max/min fractions to limit performance"), and hence, percent_ext_fp() is
+> > unused since then.
+> >
+> > make CC=clang W=1 points us those unused functions:
+> >
+> > drivers/cpufreq/intel_pstate.c:79:23: warning: unused function 'percent_fp' [-Wunused-function]
+> > static inline int32_t percent_fp(int percent)
+> >                       ^
+> >
+> > drivers/cpufreq/intel_pstate.c:94:23: warning: unused function 'percent_ext_fp' [-Wunused-function]
+> > static inline int32_t percent_ext_fp(int percent)
+> >                       ^
+> >
+> > Remove those obsolete functions.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> > ---
+> > applies cleanly on current master and next-20201221
+> >
+> > Srinivas, Len, Rafael, Viresh, please pick this minor non-urgent cleanup patch.
+> >
+> >  drivers/cpufreq/intel_pstate.c | 10 ----------
+> >  1 file changed, 10 deletions(-)
+> >
+> > diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> > index 2a4db856222f..0e35dd247986 100644
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -76,11 +76,6 @@ static inline int ceiling_fp(int32_t x)
+> >       return ret;
+> >  }
+> >
+> > -static inline int32_t percent_fp(int percent)
+> > -{
+> > -     return div_fp(percent, 100);
+> > -}
+> > -
+> >  static inline u64 mul_ext_fp(u64 x, u64 y)
+> >  {
+> >       return (x * y) >> EXT_FRAC_BITS;
+> > @@ -91,11 +86,6 @@ static inline u64 div_ext_fp(u64 x, u64 y)
+> >       return div64_u64(x << EXT_FRAC_BITS, y);
+> >  }
+> >
+> > -static inline int32_t percent_ext_fp(int percent)
+> > -{
+> > -     return div_ext_fp(percent, 100);
+> > -}
+> > -
+> >  /**
+> >   * struct sample -   Store performance sample
+> >   * @core_avg_perf:   Ratio of APERF/MPERF which is the actual average
+> > --
 
-> Commit 419b1d4ed1cb ("doc/zh_CN: add mips ingenic-tcu.rst translation")
-> introduces a warning with make htmldocs:
-> 
->   ./Documentation/translations/zh_CN/mips/ingenic-tcu.rst:
->     61: WARNING: Malformed table. Text in column margin in table line 6.
-> 
-> Adjust the table markup to address this warning.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210113
-> 
-> Yanteng, please ack.
-> 
-> Jonathan, please pick this doc warning fixup on your -next tree. 
-
-Not waiting for the ack, I've applied this (with an added Fixes tag),
-thanks.
-
-jon
+Applied as 5.11-rc material, thanks!
