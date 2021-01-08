@@ -1,59 +1,35 @@
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Wed, 06 Jan 2021 03:35:53 +0000
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix null page reference in redirty_blocks
-Message-Id: <CACOAw_wCh_Zh83SgRU2z_NR1OztKZ4b85JFkxWWhV3D6TGQCew@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2021 13:16:31 +0000
+Subject: [bug report] net/mlx5: DR, Move STEv0 setters and getters
+Message-Id: <X/hbL24ZTflzKF09@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210105041630.1393157-1-daeho43@gmail.com>
- <dba4be04-70dd-d48b-391c-1f2355591097@web.de>
- <6c8e6561-8a5d-010f-3d7c-8c051b4027e6@huawei.com>
-In-Reply-To: <6c8e6561-8a5d-010f-3d7c-8c051b4027e6@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Daeho Jeong <daehojeong@google.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Markus Elfring <Markus.Elfring@web.de>, Colin Ian King <colin.king@canonical.com>, kernel-team@android.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Thanks for the notice~
+Hello Yevgeny Kliteynik,
 
-2021년 1월 6일 (수) 오전 10:04, Chao Yu <yuchao0@huawei.com>님이 작성:
->
-> Daeho,
->
-> FYI
->
-> https://www.spinics.net/lists/kernel/msg3595944.html
->
-> On 2021/1/5 20:04, Markus Elfring wrote:
-> >> Fixed null page reference when find_lock_page() fails in
-> >> redirty_blocks().
-> >
-> > I suggest to choose an other imperative wording for this change description.
-> >
-> > See also:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=36bbbd0e234d817938bdc52121a0f5473b3e58f5#n89
-> >
-> >
-> >> v2: changed error value and break the loop when error occurs
-> >
-> > I propose to use a return statement instead of a break in the second if branch
-> > for this function implementation.
-> >
-> > See also:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=36bbbd0e234d817938bdc52121a0f5473b3e58f5#n481
-> >
-> > Regards,
-> > Markus
-> >
-> >
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > .
-> >
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+The patch 6b93b400aa88: "net/mlx5: DR, Move STEv0 setters and
+getters" from Nov 19, 2020, leads to the following static checker
+warning:
+
+	drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste_v0.c:252 dr_ste_v0_get_miss_addr()
+	warn: potential shift truncation.  '0xff (0-255) << 26'
+
+drivers/net/ethernet/mellanox/mlx5/core/steering/dr_ste_v0.c
+   248  static u64 dr_ste_v0_get_miss_addr(u8 *hw_ste_p)
+   249  {
+   250          u64 index    251                  (MLX5_GET(ste_rx_steering_mult, hw_ste_p, miss_address_31_6) |
+   252                   MLX5_GET(ste_rx_steering_mult, hw_ste_p, miss_address_39_32) << 26);
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This is shifting a u32 value in the 0-255 range by << 26 which could
+result in shift wrapping.  "index" is a u64 but ORing two u32 values
+will result in a u32.
+
+   253  
+   254          return index << 6;
+   255  }
+
+regards,
+dan carpenter
