@@ -1,24 +1,23 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 08 Jan 2021 04:19:32 +0000
-Subject: Re: [PATCH] mpt3sas: fix spelling mistake in Kconfig: "compatiblity" -> "compatibility"
-Message-Id: <161007949338.9892.3713651202939171104.b4-ty@oracle.com>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 08 Jan 2021 11:12:11 +0000
+Subject: Looking for an archive of kernel-janitors
+Message-Id: <8f6ff1b65ca33284904005a4fdc7af2fbf151daa.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217172019.57768-1-colin.king@canonical.com>
-In-Reply-To: <20201217172019.57768-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.ibm.com>, Sreekanth Reddy <sreekanth.reddy@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, MPT-FusionLinux.pdl@broadcom.com, Sathya Prakash <sathya.prakash@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 17 Dec 2020 17:20:19 +0000, Colin King wrote:
+So it can be added to lore.kernel.org.
 
-> There is a spelling mistake in the Kconfig help text. Fix it.
+Anyone have one?
 
-Applied to 5.11/scsi-fixes, thanks!
+There is a specific archive format desired.
+see: https://korg.docs.kernel.org/lore.html
 
-[1/1] mpt3sas: fix spelling mistake in Kconfig: "compatiblity" -> "compatibility"
-      https://git.kernel.org/mkp/scsi/c/39718fe7adb1
+If you have an archive of this mailing list,
+please reply to this bugzilla:
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+https://bugzilla.kernel.org/show_bug.cgi?id!1087
+
+thanks.
