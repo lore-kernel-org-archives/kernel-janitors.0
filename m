@@ -1,38 +1,46 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 15 Jan 2021 01:30:11 +0000
-Subject: Re: [PATCH] mlxsw: pci: switch from 'pci_' to 'dma_' API
-Message-Id: <161067421177.20666.5506474617106384086.git-patchwork-notify@kernel.org>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 08 Jan 2021 07:39:32 +0000
+Subject: [PATCH for can-next] MAINTAINERS: adjust entry to tcan4x5x file split
+Message-Id: <20210108073932.20804-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210114084757.490540-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210114084757.490540-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
+Cc: Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>, Sriram Dash <sriram.dash@samsung.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hello:
+Commit 7813887ea972 ("can: tcan4x5x: rename tcan4x5x.c -> tcan4x5x-core.c")
+and commit 67def4ef8bb9 ("can: tcan4x5x: move regmap code into seperate
+file") split the file tcan4x5x.c into two files, but missed to adjust the
+TI TCAN4X5X DEVICE DRIVER section in MAINTAINERS.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-On Thu, 14 Jan 2021 09:47:57 +0100 you wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'mlxsw_pci_queue_init()' and
-> 'mlxsw_pci_fw_area_init()' GFP_KERNEL can be used because both functions
-> are already using this flag and no lock is acquired.
-> 
-> [...]
+  warning: no file matches    F:    drivers/net/can/m_can/tcan4x5x.c
 
-Here is the summary with links:
-  - mlxsw: pci: switch from 'pci_' to 'dma_' API
-    https://git.kernel.org/netdev/net-next/c/bb5c64c879e5
+Adjust the file entry in MAINTAINERS to the tcan4x5x file splitting.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210107, not for current master
+
+Marc, please pick this for your -next tree on top of the tcan4x5x cleanup.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8170b40d6236..0d75f07fc951 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17887,7 +17887,7 @@ M:	Dan Murphy <dmurphy@ti.com>
+ L:	linux-can@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+-F:	drivers/net/can/m_can/tcan4x5x.c
++F:	drivers/net/can/m_can/tcan4x5x*
+ 
+ TI TRF7970A NFC DRIVER
+ M:	Mark Greer <mgreer@animalcreek.com>
+-- 
+2.17.1
