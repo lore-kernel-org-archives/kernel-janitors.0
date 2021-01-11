@@ -1,26 +1,40 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Fri, 29 Jan 2021 02:33:43 +0000
-Subject: Re: [PATCH resend] e100: switch from 'pci_' to 'dma_' API
-Message-Id: <20210128183343.06762fc6@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Jan 2021 14:46:48 +0000
+Subject: [PATCH][next] platform/surface: fix potential integer overflow on shift of a int
+Message-Id: <20210111144648.20498-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128210736.749724-1-christophe.jaillet@wanadoo.fr>
-        <268fcfd4dbd929948e8cdb58457ede1efa3898c6.camel@intel.com>
-In-Reply-To: <268fcfd4dbd929948e8cdb58457ede1efa3898c6.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>
-Cc: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, "davem@davemloft.net" <davem@davemloft.net>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Brown, Aaron F" <aaron.f.brown@intel.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Mark Gross <mgross@linux.intel.com>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 28 Jan 2021 21:45:02 +0000 Nguyen, Anthony L wrote:
-> >  drivers/net/ethernet/intel/e100.c | 92 ++++++++++++++++-------------
-> 
-> My apologies, this patch slipped through the cracks for me. I will send
-> it in my next net-next 1GbE series or Jakub you can take it directly if
-> you'd like.
+From: Colin Ian King <colin.king@canonical.com>
 
-No preference but since I have to type a response either way let me say:
+The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
+arithmetic and then passed as a 64 bit function argument. In the case where
+func is 32 or more this can lead to an oveflow.  Avoid this by shifting
+using the BIT_ULL macro instead.
 
-Applied, thanks!
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: fc00bc8ac1da ("platform/surface: Add Surface ACPI Notify driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/surface/surface_acpi_notify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-;)
+diff --git a/drivers/platform/surface/surface_acpi_notify.c b/drivers/platform/surface/surface_acpi_notify.c
+index 8cd67a669c86..ef9c1f8e8336 100644
+--- a/drivers/platform/surface/surface_acpi_notify.c
++++ b/drivers/platform/surface/surface_acpi_notify.c
+@@ -188,7 +188,7 @@ static int san_acpi_notify_event(struct device *dev, u64 func,
+ 	union acpi_object *obj;
+ 	int status = 0;
+ 
+-	if (!acpi_check_dsm(san, &SAN_DSM_UUID, SAN_DSM_REVISION, 1 << func))
++	if (!acpi_check_dsm(san, &SAN_DSM_UUID, SAN_DSM_REVISION, BIT_ULL(func)))
+ 		return 0;
+ 
+ 	dev_dbg(dev, "notify event %#04llx\n", func);
+-- 
+2.29.2
