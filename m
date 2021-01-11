@@ -1,42 +1,83 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Fri, 29 Jan 2021 05:01:51 +0000
-Subject: [PATCH] block: drop removed argument from kernel-doc of blk_execute_rq()
-Message-Id: <20210129050151.26926-1-lukas.bulwahn@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Jan 2021 18:05:32 +0000
+Subject: Re: [PATCH] mmc: owl-mmc: Fix a resource leak in an error handling path and in the remove function
+Message-Id: <CAPDyKFqPnbig9s2h43c07c8tyDt12sFgDZFnQ+mfh=bbtdmRcg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20201209194202.54099-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201209194202.54099-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-Commit 684da7628d93 ("block: remove unnecessary argument from
-blk_execute_rq") changes the signature of blk_execute_rq(), but misses
-to adjust its kernel-doc.
+On Wed, 9 Dec 2020 at 20:42, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'dma_request_chan()' calls should be balanced by a corresponding
+> 'dma_release_channel()' call.
+>
+> Add the missing call both in the error handling path of the probe function
+> and in the remove function.
+>
+> Fixes: ff65ffe46d28 ("mmc: Add Actions Semi Owl SoCs SD/MMC driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hence, make htmldocs warns on ./block/blk-exec.c:78:
+Applied for next, thanks!
 
-  warning: Excess function parameter 'q' description in 'blk_execute_rq'
+Kind regards
+Uffe
 
-Drop removed argument from kernel-doc of blk_execute_rq() as well.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Jens, please pick this minor fix on your block-next tree.
-
- block/blk-exec.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/block/blk-exec.c b/block/blk-exec.c
-index 0ab873f10133..beae70a0e5e5 100644
---- a/block/blk-exec.c
-+++ b/block/blk-exec.c
-@@ -65,7 +65,6 @@ EXPORT_SYMBOL_GPL(blk_execute_rq_nowait);
- 
- /**
-  * blk_execute_rq - insert a request into queue for execution
-- * @q:		queue to insert the request in
-  * @bd_disk:	matching gendisk
-  * @rq:		request to insert
-  * @at_head:    insert request at head or tail of queue
--- 
-2.17.1
+> ---
+>  drivers/mmc/host/owl-mmc.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/owl-mmc.c b/drivers/mmc/host/owl-mmc.c
+> index 53b81582f1af..5490962dc8e5 100644
+> --- a/drivers/mmc/host/owl-mmc.c
+> +++ b/drivers/mmc/host/owl-mmc.c
+> @@ -640,7 +640,7 @@ static int owl_mmc_probe(struct platform_device *pdev)
+>         owl_host->irq = platform_get_irq(pdev, 0);
+>         if (owl_host->irq < 0) {
+>                 ret = -EINVAL;
+> -               goto err_free_host;
+> +               goto err_release_channel;
+>         }
+>
+>         ret = devm_request_irq(&pdev->dev, owl_host->irq, owl_irq_handler,
+> @@ -648,19 +648,21 @@ static int owl_mmc_probe(struct platform_device *pdev)
+>         if (ret) {
+>                 dev_err(&pdev->dev, "Failed to request irq %d\n",
+>                         owl_host->irq);
+> -               goto err_free_host;
+> +               goto err_release_channel;
+>         }
+>
+>         ret = mmc_add_host(mmc);
+>         if (ret) {
+>                 dev_err(&pdev->dev, "Failed to add host\n");
+> -               goto err_free_host;
+> +               goto err_release_channel;
+>         }
+>
+>         dev_dbg(&pdev->dev, "Owl MMC Controller Initialized\n");
+>
+>         return 0;
+>
+> +err_release_channel:
+> +       dma_release_channel(owl_host->dma);
+>  err_free_host:
+>         mmc_free_host(mmc);
+>
+> @@ -674,6 +676,7 @@ static int owl_mmc_remove(struct platform_device *pdev)
+>
+>         mmc_remove_host(mmc);
+>         disable_irq(owl_host->irq);
+> +       dma_release_channel(owl_host->dma);
+>         mmc_free_host(mmc);
+>
+>         return 0;
+> --
+> 2.27.0
+>
