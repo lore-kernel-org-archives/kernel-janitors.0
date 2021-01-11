@@ -1,97 +1,40 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Tue, 05 Jan 2021 15:39:54 +0000
-Subject: Re: [PATCH] habanalabs: Use 'dma_set_mask_and_coherent()' instead of hand-writing it
-Message-Id: <CAFCwf125zxK5hWEcGKqLXcz4JnES666GT4FFcdLdzk4OHzv14Q@mail.gmail.com>
+From: Mimi Zohar <zohar@linux.ibm.com>
+Date: Mon, 11 Jan 2021 13:46:40 +0000
+Subject: Re: [PATCH v2] evm: Fix memory leak in init_desc
+Message-Id: <31aed9f12482d1156c224c2cc5ac8afd81e8cb14.camel@linux.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201229111219.200668-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201229111219.200668-1-christophe.jaillet@wanadoo.fr>
+References: <20210110080253.32345-1-dinghao.liu@zju.edu.cn>
+         <7288d0ce-e900-d942-fb6b-eabb63649591@web.de>
+In-Reply-To: <7288d0ce-e900-d942-fb6b-eabb63649591@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ofir Bitton <obitton@habana.ai>, Lee Jones <lee.jones@linaro.org>, Tomer Tayar <ttayar@habana.ai>, farah kassabri <fkassabri@habana.ai>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Markus Elfring <Markus.Elfring@web.de>, Dinghao Liu <dinghao.liu@zju.edu.cn>, Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@nokia.com>, James Morris <jmorris@namei.org>, Kangjie Lu <kjlu@umn.edu>, "Serge E. Hallyn" <serge@hallyn.com>
 
-On Tue, Dec 29, 2020 at 1:17 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Axe 'hl_pci_set_dma_mask()' and replace it with an equivalent
-> 'dma_set_mask_and_coherent()' call.
->
-> This makes the code a bit less verbose.
->
-> It also removes an erroneous comment, because 'hl_pci_set_dma_mask()' does
-> not try to use a fall-back value.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/misc/habanalabs/common/pci.c | 42 ++++------------------------
->  1 file changed, 6 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/misc/habanalabs/common/pci.c b/drivers/misc/habanalabs/common/pci.c
-> index 923b2606e29f..eb8a784ba863 100644
-> --- a/drivers/misc/habanalabs/common/pci.c
-> +++ b/drivers/misc/habanalabs/common/pci.c
-> @@ -301,40 +301,6 @@ int hl_pci_set_outbound_region(struct hl_device *hdev,
->         return rc;
->  }
->
-> -/**
-> - * hl_pci_set_dma_mask() - Set DMA masks for the device.
-> - * @hdev: Pointer to hl_device structure.
-> - *
-> - * This function sets the DMA masks (regular and consistent) for a specified
-> - * value. If it doesn't succeed, it tries to set it to a fall-back value
-> - *
-> - * Return: 0 on success, non-zero for failure.
-> - */
-> -static int hl_pci_set_dma_mask(struct hl_device *hdev)
-> -{
-> -       struct pci_dev *pdev = hdev->pdev;
-> -       int rc;
-> -
-> -       /* set DMA mask */
-> -       rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
-> -       if (rc) {
-> -               dev_err(hdev->dev,
-> -                       "Failed to set pci dma mask to %d bits, error %d\n",
-> -                       hdev->dma_mask, rc);
-> -               return rc;
-> -       }
-> -
-> -       rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
-> -       if (rc) {
-> -               dev_err(hdev->dev,
-> -                       "Failed to set pci consistent dma mask to %d bits, error %d\n",
-> -                       hdev->dma_mask, rc);
-> -               return rc;
-> -       }
-> -
-> -       return 0;
-> -}
-> -
->  /**
->   * hl_pci_init() - PCI initialization code.
->   * @hdev: Pointer to hl_device structure.
-> @@ -371,9 +337,13 @@ int hl_pci_init(struct hl_device *hdev)
->                 goto unmap_pci_bars;
->         }
->
-> -       rc = hl_pci_set_dma_mask(hdev);
-> -       if (rc)
-> +       rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(hdev->dma_mask));
-> +       if (rc) {
-> +               dev_err(hdev->dev,
-> +                       "Failed to set dma mask to %d bits, error %d\n",
-> +                       hdev->dma_mask, rc);
->                 goto unmap_pci_bars;
-> +       }
->
->         return 0;
->
-> --
-> 2.27.0
->
+Hi Dinghao,
 
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
-Applied to -next
-Oded
+On Sun, 2021-01-10 at 11:50 +0100, Markus Elfring wrote:
+> > When kmalloc() fails, tmp_tfm allocated by
+> > crypto_alloc_shash() has not been freed, which
+> > leads to memleak.
+
+In the future, please conform to Documentation/process/submitting-
+patches.rst: 
+
+  - The body of the explanation, line wrapped at 75 columns, which will
+    be copied to the permanent changelog to describe this patch.
+
+> 
+> Do any Linux developers care for the following aspects?
+> 
+> * Imperative wordings for change descriptions
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id/f90100ace886895e4fbb2850b8d5e49d931ed6#n89
+> 
+> * Usage of the term “memory leak” (instead of an abbreviation)
+
+In general I agree, but this is a really small, obvious bug fix. 
+Assuming Dinghao is fine with my updating the patch description, I'll
+fix it.
+
+Mimi
