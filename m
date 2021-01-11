@@ -1,47 +1,34 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Jan 2021 13:39:29 +0000
-Subject: [PATCH] rapidio/tsi721: Use dma_set_mask_and_coherent to simplify code
-Message-Id: <20210117133929.563645-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Jan 2021 09:50:21 +0000
+Subject: [PATCH] ASoC: soc-pcm: Fix an uninitialized error code
+Message-Id: <X/wfXQFxeMLvpO+1@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mporter@kernel.crashing.org, alex.bou9@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, =?utf-8?B?5pyx54G/54G/?= <zhucancan@vivo.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
-an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
+The error path here doesn't set "ret" so it returns uninitialized data
+instead of a negative error code.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 2c1382840c19 ("ASoC: soc-pcm: disconnect BEs if the FE is not ready")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/rapidio/devices/tsi721.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ sound/soc/soc-pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rapidio/devices/tsi721.c b/drivers/rapidio/devices/tsi721.c
-index 4dd31dd9feea..1e296b4d7bf2 100644
---- a/drivers/rapidio/devices/tsi721.c
-+++ b/drivers/rapidio/devices/tsi721.c
-@@ -2836,19 +2836,12 @@ static int tsi721_probe(struct pci_dev *pdev,
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 481a4a25acb0..489697963dd3 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2443,6 +2443,7 @@ static int dpcm_run_update_startup(struct snd_soc_pcm_runtime *fe, int stream)
+ 		fe->dpcm[stream].state = SND_SOC_DPCM_STATE_CLOSE) {
+ 		dev_err(fe->dev, "ASoC: FE %s is not ready %d\n",
+ 			fe->dai_link->name, fe->dpcm[stream].state);
++		ret = -EINVAL;
+ 		goto disconnect;
  	}
  
- 	/* Configure DMA attributes. */
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
--		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
-+		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 		if (err) {
- 			tsi_err(&pdev->dev, "Unable to set DMA mask");
- 			goto err_unmap_bars;
- 		}
--
--		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)))
--			tsi_info(&pdev->dev, "Unable to set consistent DMA mask");
--	} else {
--		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
--		if (err)
--			tsi_info(&pdev->dev, "Unable to set consistent DMA mask");
- 	}
- 
- 	BUG_ON(!pci_is_pcie(pdev));
 -- 
-2.27.0
+2.29.2
