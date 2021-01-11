@@ -1,56 +1,54 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 11 Jan 2021 18:05:41 +0000
-Subject: Re: [PATCH] mmc: usdhi6rol0: Fix a resource leak in the error handling path of the probe
-Message-Id: <CAPDyKFo_dxAkUVZ0kj60OQeKoV8OeqWWQejh_NL0OcNjDLfA9Q@mail.gmail.com>
+Date: Mon, 11 Jan 2021 18:05:29 +0000
+Subject: Re: [PATCH] mmc: mxs-mmc: Fix a resource leak in an error handling path in 'mxs_mmc_probe()'
+Message-Id: <CAPDyKFpvjdbWnCD9KRnZAimc_X0CaYS9uCVceuEOX+7THifLpQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217210922.165340-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201217210922.165340-1-christophe.jaillet@wanadoo.fr>
+References: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson <lars.persson@axis.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Chris Ball <chris@printf.net>, linux-arm-kernel@axis.com, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, dl-linux-imx <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Chris Ball <cjb@laptop.org>, Fabio Estevam <festevam@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-On Thu, 17 Dec 2020 at 22:09, Christophe JAILLET
+On Tue, 8 Dec 2020 at 21:35, Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> A call to 'ausdhi6_dma_release()' to undo a previous call to
-> 'usdhi6_dma_request()' is missing in the error handling path of the probe
-> function.
+> If 'mmc_of_parse()' fails, we must undo the previous 'dma_request_chan()'
+> call.
 >
-> It is already present in the remove function.
->
-> Fixes: 75fa9ea6e3c0 ("mmc: add a driver for the Renesas usdhi6rol0 SD/SDIO host controller")
+> Fixes: abd37cccd47f ("mmc: mxs: use mmc_gpio_get_ro for detecting read-only status")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied for next, thanks!
+Applied for next (by dropping the fixes tag as it seems non-critical
+anyway), thanks!
 
 Kind regards
 Uffe
 
 
+
 > ---
->  drivers/mmc/host/usdhi6rol0.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> I'm not 100% sure of the Fixes tag, but it seems to be the root cause. The
+> erroneous 'out_clk_disable' has then been kept around in the following
+> commits
+> ---
+>  drivers/mmc/host/mxs-mmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-> index e2d5112d809d..615f3d008af1 100644
-> --- a/drivers/mmc/host/usdhi6rol0.c
-> +++ b/drivers/mmc/host/usdhi6rol0.c
-> @@ -1858,10 +1858,12 @@ static int usdhi6_probe(struct platform_device *pdev)
+> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> index 56bbc6cd9c84..947581de7860 100644
+> --- a/drivers/mmc/host/mxs-mmc.c
+> +++ b/drivers/mmc/host/mxs-mmc.c
+> @@ -628,7 +628,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
 >
->         ret = mmc_add_host(mmc);
->         if (ret < 0)
-> -               goto e_clk_off;
-> +               goto e_release_dma;
+>         ret = mmc_of_parse(mmc);
+>         if (ret)
+> -               goto out_clk_disable;
+> +               goto out_free_dma;
 >
->         return 0;
+>         mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
 >
-> +e_release_dma:
-> +       usdhi6_dma_release(host);
->  e_clk_off:
->         clk_disable_unprepare(host->clk);
->  e_free_mmc:
 > --
 > 2.27.0
 >
