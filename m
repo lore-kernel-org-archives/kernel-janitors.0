@@ -1,41 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Jan 2021 12:35:46 +0000
-Subject: [PATCH][next] ASoC: soc-pcm: Fix uninitialised return value in variable ret
-Message-Id: <20210108123546.19601-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 11 Jan 2021 16:35:51 +0000
+Subject: Re: [PATCH][next] ASoC: soc-pcm: Fix uninitialised return value in variable ret
+Message-Id: <20210111163551.GA33269@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="gBBFr7Ir9EOA20Yy"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, =?UTF-8?q?=E6=9C=B1=E7=81=BF=E7=81=BF?= <zhucancan@vivo.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210108123546.19601-1-colin.king@canonical.com>
+In-Reply-To: <20210108123546.19601-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, =?utf-8?B?5pyx54G/54G/?= <zhucancan@vivo.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently when attempting to start the BE fails because the
-FE is not started the error return variable ret is not initialized
-and garbage is returned.  Fix this by setting it to 0 so the
-caller does not report the error "ASoC: failed to shutdown some BEs"
-and because this failure path has already reported the reason for
-the early return.
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 2c1382840c19 ("ASoC: soc-pcm: disconnect BEs if the FE is not ready")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/soc-pcm.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Jan 08, 2021 at 12:35:46PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Currently when attempting to start the BE fails because the
+> FE is not started the error return variable ret is not initialized
+> and garbage is returned.  Fix this by setting it to 0 so the
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 481a4a25acb0..b787ce4ceb5a 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -2443,6 +2443,7 @@ static int dpcm_run_update_startup(struct snd_soc_pcm_runtime *fe, int stream)
- 		fe->dpcm[stream].state = SND_SOC_DPCM_STATE_CLOSE) {
- 		dev_err(fe->dev, "ASoC: FE %s is not ready %d\n",
- 			fe->dai_link->name, fe->dpcm[stream].state);
-+		ret = 0;
- 		goto disconnect;
- 	}
- 
--- 
-2.29.2
+This doesn't apply against current code, please check and resend.
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/8fmYACgkQJNaLcl1U
+h9Buowf/Z7C140455AraBh0sDuBCFIG9HvDvb3RUm0/Xt5lR91JwaVxdYRlBbjJ0
+dLSaYFh0GepPSHSAAn+AjVG5dN+26Lck2t/19LRscETOIZlqNwJ+YNY5f/FLJlau
+Fe7Z6qDaPUL/WgeDGaY1gqAsJpdVdfGP1ojKEXeqsKjyZnB35D7Ftt9Ouw/v5MPV
+V4z2ody8iK6SwNe/kIRIZndr8c2DOz3nodv0nBBuEn+18jdL1twh3CqqiL0eirCa
+nC9dqQWuy12SdRHWWv6w1M/lfWqVdZKhVO5/d/2jS2nGOr2bphnJ5/3Hy9ecbF5o
+TKGZIfArkmvxX+IAXxXeyPP85xKDBg==
+=RuRu
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
