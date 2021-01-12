@@ -1,51 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Jan 2021 17:58:12 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jan 2021 10:22:04 +0000
 Subject: Re: [PATCH][next] ASoC: soc-pcm: Fix uninitialised return value in variable ret
-Message-Id: <20210111175812.GK4728@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="yiup30KVCQiHUZFC"
+Message-Id: <20210112102204.GG5083@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210108123546.19601-1-colin.king@canonical.com>
  <20210111163551.GA33269@sirena.org.uk>
  <9bef4fe5-0eed-03f8-9505-909b669ba49b@canonical.com>
 In-Reply-To: <9bef4fe5-0eed-03f8-9505-909b669ba49b@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, =?utf-8?B?5pyx54G/54G/?= <zhucancan@vivo.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-
-
---yiup30KVCQiHUZFC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, =?utf-8?B?5pyx54G/54G/?= <zhucancan@vivo.com>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 
 On Mon, Jan 11, 2021 at 05:37:36PM +0000, Colin Ian King wrote:
 > On 11/01/2021 16:35, Mark Brown wrote:
-
+> > On Fri, Jan 08, 2021 at 12:35:46PM +0000, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> Currently when attempting to start the BE fails because the
+> >> FE is not started the error return variable ret is not initialized
+> >> and garbage is returned.  Fix this by setting it to 0 so the
+> > 
 > > This doesn't apply against current code, please check and resend.
-
+> > 
+> 
+> Current ASoC tree now has two commits:
+> 
+> commit 4eeed5f40354735c4e68e71904db528ed19c9cbb
+> Author: Souptick Joarder <jrdr.linux@gmail.com>
+> Date:   Sat Jan 9 09:15:01 2021 +0530
+> 
+>     ASoC: soc-pcm: return correct -ERRNO in failure path
+> 
+> commit e91b65b36fde0690f1c694f17dd1b549295464a7
+> Author: Dan Carpenter <dan.carpenter@oracle.com>
+> Date:   Mon Jan 11 12:50:21 2021 +0300
+> 
+>     ASoC: soc-pcm: Fix an uninitialized error code
+> 
 > ..both set ret to non-zero, which I believe will throw a subsequent
 > warning messagethat's not strictly related.
 
-> my fix was acked by zhucancan@vivo.com, so I'm now confused what is the
-> *correct* fix.
+My patch restored the original behavior.  And I think that errors should
+return error codes.  What you're saying is basically "Returning an error
+is a bug because it will trigger an error message in the caller".  So
+then we have to have a debate about printks as a layering violation.
 
-Quite probably yours in which case it'll need rebasing - IIRC I looked
-at the various patches at fairly separate times and didn't connect them,
-my workflow is based on queueing things for automated processing later
-so I won't always remember seeing something similar.
+I don't like error messages generally, because I think they make the
+code messy.  A lot of people put error messages for impossible things.
+Or if a kmalloc() fails or whatever.  There are too many error messages
+which people add in an auto-pilot way without considering whether it's
+necessary.
 
---yiup30KVCQiHUZFC
-Content-Type: application/pgp-signature; name="signature.asc"
+But some people think, and maybe they're correct, that it's best if
+every function in the call tree prints a message.  That way you can
+trace the error path easily.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/8kbQACgkQJNaLcl1U
-h9DAkwf+M1VbQOU/Iy6orX+mjHXlUnvmVyBAj7mzFuZiwwbG0+Eh3ZdHM1zNcNO4
-oLc75RxJJjJu4LVtwB2yNCi/ecE6wpn4RCQphOUqC0JceV7Fmv1g6DbgQm7FAEg6
-c51rug8SVBRaNw3MisdINNE6LOAuO7lRTJYzCINoei2Bc5VvhGva4E2mhnXvr7Ht
-o6T03efSI+GFHGtXt5UzmzwSJd55bx/I1hmzPSSkIgqLhgMsCiqEAm/ksQrUD7Hl
-cIZBh4puCJwHry9XMaqDK1FX8l4eg1Ey6suXcsBBvbsXUJG/C75zFr5rgLb38y0w
-yCqLHIaGdltiVwB+kQAZ/MXBZct/Dw==
-=6anD
------END PGP SIGNATURE-----
-
---yiup30KVCQiHUZFC--
+regards,
+dan carpenter
