@@ -1,50 +1,41 @@
-From: Saravana Kannan <saravanak@google.com>
-Date: Sun, 24 Jan 2021 08:56:42 +0000
-Subject: Re: [PATCH] driver core: Fix a reource leak in 'fw_devlink_create_devlink()'
-Message-Id: <CAGETcx-S1g2B0_twNm=Wy7xfLTpzptxH3KSjnJWSppx-qtfVhw@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 12 Jan 2021 06:39:30 +0000
+Subject: [PATCH -next] f2fs: docs: rectify the table header in sysfs-fs-f2fs
+Message-Id: <20210112063930.20525-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210124063253.720637-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210124063253.720637-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Sat, Jan 23, 2021 at 10:32 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> In 'fw_devlink_create_devlink()', all exit paths, successful or not,
-> release the reference taken on 'sup_dev'.
-> All but this one.
->
-> Use the existing error handling case to call the missing 'put_device()'.
->
-> Fixes: f9aa460672c9c ("driver core: Refactor fw_devlink feature")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Speculative and compile tested only
-> ---
->  drivers/base/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index e08d376631cc..8775717a6bf7 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1623,8 +1623,10 @@ static int fw_devlink_create_devlink(struct device *con,
->          * cycles. So cycle detection isn't necessary and shouldn't be
->          * done.
->          */
-> -       if (flags & DL_FLAG_SYNC_STATE_ONLY)
-> -               return -EAGAIN;
-> +       if (flags & DL_FLAG_SYNC_STATE_ONLY) {
-> +               ret = -EAGAIN;
-> +               goto out;
-> +       }
+Commit 969945899a35 ("f2fs: introduce sb_status sysfs node") documents the
+sb_status values in a table in ./Documentation/ABI/testing/sysfs-fs-f2fs,
+but the table header of the first column has a wrong length.
 
-If you check a few lines above, you'll notice that to get here sup_dev
-= NULL. So, this patch isn't needed. Thanks for reviewing the code
-though.
+Hence, make htmldocs warns:
 
--Saravana
+  Documentation/ABI/testing/sysfs-fs-f2fs:382: WARNING: Malformed table.
+
+Rectify the table header.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210112
+
+ Documentation/ABI/testing/sysfs-fs-f2fs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index e5918c93f3bf..362803901614 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -383,7 +383,7 @@ Date:		December 2020
+ Contact:	"Chao Yu" <yuchao0@huawei.com>
+ Description:	Show status of f2fs superblock in real time.
+ 
+-		===  =========== ================+		=== =========== ================ 		value  sb status macro       description
+ 		0x1    SBI_IS_DIRTY          dirty flag for checkpoint
+ 		0x2    SBI_IS_CLOSE          specify unmounting
+-- 
+2.17.1
