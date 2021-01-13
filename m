@@ -1,25 +1,46 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 23 Jan 2021 04:22:06 +0000
-Subject: Re: [PATCH][next] scsi: pm80xx: clean up indentation of a code block
-Message-Id: <161136635065.28733.14242971487719093075.b4-ty@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Jan 2021 08:16:21 +0000
+Subject: [PATCH] platform/surface: aggregator: prevent information leak in ssam_cdev_request()
+Message-Id: <X/6sVaewHLPzv00U@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210115095824.9170-1-colin.king@canonical.com>
-In-Reply-To: <20210115095824.9170-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jack Wang <jinpu.wang@cloud.ionos.com>, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Maximilian Luz <luzmaximilian@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <mgross@linux.intel.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 15 Jan 2021 09:58:24 +0000, Colin King wrote:
+If copy_struct_from_user() fails at the start of the function then this
+function calls put_user(rsp.length, &r->response.length) before
+"rsp.length" is set to zero.  That is a potential security issue because
+it discloses kernel stack data to user space.
 
-> A block of code is indented one level too deeply, clean this
-> up.
+Fixes: 178f6ab77e61 ("platform/surface: Add Surface Aggregator user-space interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/surface/surface_aggregator_cdev.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied to 5.12/scsi-queue, thanks!
-
-[1/1] scsi: pm80xx: clean up indentation of a code block
-      https://git.kernel.org/mkp/scsi/c/7b382122d276
-
+diff --git a/drivers/platform/surface/surface_aggregator_cdev.c b/drivers/platform/surface/surface_aggregator_cdev.c
+index 340d15b148b9..05e9eb118d76 100644
+--- a/drivers/platform/surface/surface_aggregator_cdev.c
++++ b/drivers/platform/surface/surface_aggregator_cdev.c
+@@ -67,7 +67,7 @@ static long ssam_cdev_request(struct ssam_cdev *cdev, unsigned long arg)
+ 	struct ssam_cdev_request __user *r;
+ 	struct ssam_cdev_request rqst;
+ 	struct ssam_request spec;
+-	struct ssam_response rsp;
++	struct ssam_response rsp = {};
+ 	const void __user *plddata;
+ 	void __user *rspdata;
+ 	int status = 0, ret = 0, tmp;
+@@ -96,8 +96,6 @@ static long ssam_cdev_request(struct ssam_cdev *cdev, unsigned long arg)
+ 		spec.flags |= SSAM_REQUEST_UNSEQUENCED;
+ 
+ 	rsp.capacity = rqst.response.length;
+-	rsp.length = 0;
+-	rsp.pointer = NULL;
+ 
+ 	/* Get request payload from user-space. */
+ 	if (spec.length) {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
