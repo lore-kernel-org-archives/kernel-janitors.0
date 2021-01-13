@@ -1,63 +1,46 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 20 Jan 2021 21:58:29 +0000
-Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake of function name
-Message-Id: <CADnq5_Oypeyaq8YSHgPhouJcp7t8aSxT1Z0YxraWQV6aJm9uYQ@mail.gmail.com>
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 13 Jan 2021 20:01:37 +0000
+Subject: Re: new TODO list item
+Message-Id: <df8bd5f1-fdd0-97be-4fc7-d003faf83af6@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210120092624.13061-1-colin.king@canonical.com>
- <a06aeb18-b02d-41cd-f717-6ff30ea48bb4@amd.com>
-In-Reply-To: <a06aeb18-b02d-41cd-f717-6ff30ea48bb4@amd.com>
+References: <20200421081257.GA131897@infradead.org>
+In-Reply-To: <20200421081257.GA131897@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Harry Wentland <harry.wentland@amd.com>
-Cc: Leo Li <sunpeng.li@amd.com>, kernel-janitors@vger.kernel.org, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Colin King <colin.king@canonical.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-Alex
+  Le 21/04/2020 à 10:12, Christoph Hellwig a écrit :
+> Hi Janitors,
+>
+> if someone feels like helping with a fairly trivial legacy API, the
+> wrappers in include/linux/pci-dma-compat.h should go away.  This is
+> mostly trivially scriptable, except for dma_alloc_coherent, where
+> the GFP_ATOMIC passed by pci_alloc_consistent should usually be replaced
+> with GFP_KERNEL when not calling from an atomic context.
+>
 
-On Wed, Jan 20, 2021 at 9:46 AM Harry Wentland <harry.wentland@amd.com> wrote:
->
-> On 2021-01-20 4:26 a.m., Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->
-> Harry
->
-> > There are two spelling mistakes of the function name, fix this
-> > by using __func__ instead of a hard coded name string.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/gpu/drm/amd/display/dc/core/dc_link.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > index c16af3983fdb..91d4130cd2cb 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-> > @@ -1602,7 +1602,7 @@ static bool dc_link_construct(struct dc_link *link,
-> >
-> >       link->psr_settings.psr_version = DC_PSR_VERSION_UNSUPPORTED;
-> >
-> > -     DC_LOG_DC("BIOS object table - dc_link_contruct finished successfully.\n");
-> > +     DC_LOG_DC("BIOS object table - %s finished successfully.\n", __func__);
-> >       return true;
-> >   device_tag_fail:
-> >       link->link_enc->funcs->destroy(&link->link_enc);
-> > @@ -1619,7 +1619,7 @@ static bool dc_link_construct(struct dc_link *link,
-> >               link->hpd_gpio = NULL;
-> >       }
-> >
-> > -     DC_LOG_DC("BIOS object table - dc_link_contruct failed.\n");
-> > +     DC_LOG_DC("BIOS object table - %s failed.\n", __func__);
-> >       kfree(info);
-> >
-> >       return false;
-> >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+  Hi,
+  just a small update on the work on progress:
+
+  https://elixir.bootlin.com/linux/v5.8/A/ident/pci_alloc_consistent
+      --> 88 files
+  https://elixir.bootlin.com/linux/v5.9/A/ident/pci_alloc_consistent
+      --> 62 files
+  https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_alloc_consistent
+      --> 32 files
+  https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_alloc_consistent
+      --> 20 files
+
+  https://elixir.bootlin.com/linux/v5.8/A/ident/pci_zalloc_consistent
+      --> 26 files
+  https://elixir.bootlin.com/linux/v5.9/A/ident/pci_zalloc_consistent
+      --> 19 files
+  https://elixir.bootlin.com/linux/v5.10-rc1/A/ident/pci_zalloc_consistent
+      --> 11 files
+  https://elixir.bootlin.com/linux/v5.11-rc1/A/ident/pci_zalloc_consistent
+      --> 4 files
+
+
+  CJ
