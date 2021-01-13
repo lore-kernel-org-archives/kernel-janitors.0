@@ -1,61 +1,49 @@
-From: Melissa Wen <melissa.srw@gmail.com>
-Date: Fri, 15 Jan 2021 20:58:38 +0000
-Subject: Re: [PATCH][next] drm/vkms: Fix missing kmalloc allocation failure check
-Message-Id: <20210115205838.7hff6mmyyl55pgek@smtp.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 13 Jan 2021 07:00:23 +0000
+Subject: [PATCH for doc-next] doc/zh_CN: adjust table markup in mips/ingenic-tcu.rst
+Message-Id: <20210113070023.25064-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210115130911.71073-1-colin.king@canonical.com>
- <CACAkLuqG+4cq9w9=JEjB-5KPcxu==2+Sen6GMknM495vELgEFA@mail.gmail.com>
-In-Reply-To: <CACAkLuqG+4cq9w9=JEjB-5KPcxu==2+Sen6GMknM495vELgEFA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sumera Priyadarsini <sylphrenadin@gmail.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Colin King <colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jonathan Corbet <corbet@lwn.net>, Yanteng Si <siyanteng@loongson.cn>, Harry Wei <harryxiyou@gmail.com>, Alex Shi <alex.shi@linux.alibaba.com>, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On 01/15, Sumera Priyadarsini wrote:
-> On Fri, Jan 15, 2021 at 6:39 PM Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the kmalloc allocation for config is not being null
-> > checked and could potentially lead to a null pointer dereference.
-> > Fix this by adding the missing null check.
-> >
-> > Addresses-Coverity: ("Dereference null return value")
-> > Fixes: 2df7af93fdad ("drm/vkms: Add vkms_config type")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Good catch, thank you!
-> 
-> Reviewed-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+Commit 419b1d4ed1cb ("doc/zh_CN: add mips ingenic-tcu.rst translation")
+introduces a warning with make htmldocs:
 
-Applied to drm-misc-next.
+  ./Documentation/translations/zh_CN/mips/ingenic-tcu.rst:
+    61: WARNING: Malformed table. Text in column margin in table line 6.
 
-Thanks,
-Melissa Wen
-> > ---
-> >  drivers/gpu/drm/vkms/vkms_drv.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> > index 708f7f54001d..2173b82606f6 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> > @@ -188,7 +188,11 @@ static int vkms_create(struct vkms_config *config)
-> >
-> >  static int __init vkms_init(void)
-> >  {
-> > -       struct vkms_config *config = kmalloc(sizeof(*config), GFP_KERNEL);
-> > +       struct vkms_config *config;
-> > +
-> > +       config = kmalloc(sizeof(*config), GFP_KERNEL);
-> > +       if (!config)
-> > +               return -ENOMEM;
-> >
-> >         default_config = config;
-> >
-> > --
-> > 2.29.2
-> >
-> regards,
-> Sumera
+Adjust the table markup to address this warning.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210113
+
+Yanteng, please ack.
+
+Jonathan, please pick this doc warning fixup on your -next tree. 
+
+ Documentation/translations/zh_CN/mips/ingenic-tcu.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/translations/zh_CN/mips/ingenic-tcu.rst b/Documentation/translations/zh_CN/mips/ingenic-tcu.rst
+index 72b5d409ed89..9324a0a26430 100644
+--- a/Documentation/translations/zh_CN/mips/ingenic-tcu.rst
++++ b/Documentation/translations/zh_CN/mips/ingenic-tcu.rst
+@@ -53,14 +53,14 @@
+ 
+ TCU硬件的功能分布在多个驱动程序：
+ 
+-======         ==+=======      ================= 时钟                drivers/clk/ingenic/tcu.c
+ 中断                drivers/irqchip/irq-ingenic-tcu.c
+ 定时器              drivers/clocksource/ingenic-timer.c
+ OST                 drivers/clocksource/ingenic-ost.c
+ 脉冲宽度调制器      drivers/pwm/pwm-jz4740.c
+ 看门狗              drivers/watchdog/jz4740_wdt.c
+-======         ==+=======      ================= 
+ 因为可以从相同的寄存器控制属于不同驱动程序和框架的TCU的各种功能，所以
+ 所有这些驱动程序都通过相同的控制总线通用接口访问它们的寄存器。
+-- 
+2.17.1
