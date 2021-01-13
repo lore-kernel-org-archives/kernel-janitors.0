@@ -1,41 +1,49 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Thu, 21 Jan 2021 10:09:05 +0000
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/dp: Fix a logical vs bitwise OR bug
-Message-Id: <87eeiemwji.fsf@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Jan 2021 10:05:17 +0000
+Subject: [PATCH][next] media: i2c: fix spelling mistakes: "enpoint" -> "endpoint"
+Message-Id: <20210113100517.10959-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAkaBa22zvbXKd4E@mwanda> <87h7namz5w.fsf@intel.com>
- <161122078664.32666.16504061212673044761@build.alporthouse.com>
-In-Reply-To: <161122078664.32666.16504061212673044761@build.alporthouse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>, Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org, Lucas De Marchi <lucas.demarchi@intel.com>, Sean Paul <seanpaul@chromium.org>, Wambui Karuga <wambui.karugax@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, =?UTF-8?q?K=C3=A9vin=20L=27h=C3=B4pital?= <kevin.lhopital@bootlin.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 21 Jan 2021, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> Quoting Jani Nikula (2021-01-21 09:12:27)
->> On Thu, 21 Jan 2021, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > This was supposed to be | instead of ||.
->> >
->> > Fixes: 522508b665df ("drm/i915/display: Let PCON convert from RGB to YCbCr if it can")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> 
->> Thanks, but we already have the fix [1] for this that I thought was
->> pushed by now [2].
->> 
->> Chris?
->
-> 6b20b734bbf1 ("drm/i915/display: Bitwise or the conversion colour specifier together")
-> in
->   remotes/drm-intel/drm-intel-next
->   remotes/drm-intel/for-linux-next
-> should be visible.
+From: Colin Ian King <colin.king@canonical.com>
 
-Oh, it totally is. Where's my brown paper bag when I need it?
+There are two spelling mistakes in dev_err messages. Fix these.
 
-BR,
-Jani.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/ov5648.c | 2 +-
+ drivers/media/i2c/ov8865.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/media/i2c/ov5648.c b/drivers/media/i2c/ov5648.c
+index 609aa67b54ce..46ad0a539853 100644
+--- a/drivers/media/i2c/ov5648.c
++++ b/drivers/media/i2c/ov5648.c
+@@ -2453,7 +2453,7 @@ static int ov5648_probe(struct i2c_client *client)
+ 
+ 	handle = fwnode_graph_get_next_endpoint(dev_fwnode(dev), NULL);
+ 	if (!handle) {
+-		dev_err(dev, "unable to find enpoint node\n");
++		dev_err(dev, "unable to find endpoint node\n");
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+index fda5a55979aa..fd5be8ef079c 100644
+--- a/drivers/media/i2c/ov8865.c
++++ b/drivers/media/i2c/ov8865.c
+@@ -2799,7 +2799,7 @@ static int ov8865_probe(struct i2c_client *client)
+ 
+ 	handle = fwnode_graph_get_next_endpoint(dev_fwnode(dev), NULL);
+ 	if (!handle) {
+-		dev_err(dev, "unable to find enpoint node\n");
++		dev_err(dev, "unable to find endpoint node\n");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.29.2
