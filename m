@@ -1,33 +1,65 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Fri, 08 Jan 2021 02:42:38 +0000
-Subject: Re: [PATCH] octeontx2-af: fix memory leak of lmac and lmac->name
-Message-Id: <20210107184238.36841971@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 14 Jan 2021 07:08:17 +0000
+Subject: [PATCH] mm: memblock: remove return value of memblock_free_all()
+Message-Id: <20210114070817.GA2868715@AD01715016>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210107123916.189748-1-colin.king@canonical.com>
-        <CA+sq2CcPRuQijfOFA74KrNF9E5tj-QqH_0nNC21fT=rqkuuCcw@mail.gmail.com>
-In-Reply-To: <CA+sq2CcPRuQijfOFA74KrNF9E5tj-QqH_0nNC21fT=rqkuuCcw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "David S . Miller" <davem@davemloft.net>, Nithya Mani <nmani@marvell.com>, Linux Netdev List <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: rppt@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 7 Jan 2021 22:31:30 +0530 Sunil Kovvuri wrote:
-> On Thu, Jan 7, 2021 at 6:11 PM Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the error return paths don't kfree lmac and lmac->name
-> > leading to some memory leaks.  Fix this by adding two error return
-> > paths that kfree these objects
-> >
-> > Addresses-Coverity: ("Resource leak")
-> > Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Thanks for the fix, looks good to me.
+No one checks the return value of memblock_free_all().
+Make the return value void.
 
-Consider venturing an Acked-by tag in the future so it can be recorded 
-in git.
+memblock_free_all() is used on mem_init() for each
+architecture, and the total count of freed pages will be added
+to _totalram_pages variable by calling totalram_pages_add().
 
-Applied, thanks!
+so do not need to return total count of freed pages.
+
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ include/linux/memblock.h | 2 +-
+ mm/memblock.c            | 6 +-----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 9c5cc95c7cee..076fda398dff 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -117,7 +117,7 @@ int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
+ int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
+ 
+-unsigned long memblock_free_all(void);
++void memblock_free_all(void);
+ void reset_node_managed_pages(pg_data_t *pgdat);
+ void reset_all_zones_managed_pages(void);
+ void memblock_enforce_memory_reserved_overlap(void);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 40ca30bfa387..2a2b1fe4b659 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -2074,10 +2074,8 @@ void __init reset_all_zones_managed_pages(void)
+ 
+ /**
+  * memblock_free_all - release free pages to the buddy allocator
+- *
+- * Return: the number of pages actually released.
+  */
+-unsigned long __init memblock_free_all(void)
++void __init memblock_free_all(void)
+ {
+ 	unsigned long pages;
+ 
+@@ -2086,8 +2084,6 @@ unsigned long __init memblock_free_all(void)
+ 
+ 	pages = free_low_memory_core_early();
+ 	totalram_pages_add(pages);
+-
+-	return pages;
+ }
+ 
+ #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+-- 
+2.25.1
