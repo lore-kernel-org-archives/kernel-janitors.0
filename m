@@ -1,45 +1,55 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Sun, 31 Jan 2021 07:36:04 +0000
-Subject: [PATCH for -next] docs: drop removed pti_intel_mid from driver-api index
-Message-Id: <20210131073604.7643-1-lukas.bulwahn@gmail.com>
+Date: Fri, 15 Jan 2021 11:43:29 +0000
+Subject: [PATCH] drm/dp_helper: tweak kerneldoc to address warning
+Message-Id: <20210115114329.27152-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Uma Shankar <uma.shankar@intel.com>, Jani Nikula <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org
+Cc: linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Commit 8ba59e9dee31 ("misc: pti: Remove driver for deprecated platform")
-removed ./Documentation/driver-api/pti_intel_mid.rst, but missed to remove
-it from the index at ./Documentation/driver-api/index.rst.
+Commit 07c9b8634fb6 ("drm/dp_helper: Add helpers to configure PCONs
+RGB-YCbCr Conversion") introduces a warning with make htmldocs in
+./drivers/gpu/drm/drm_dp_helper.c:965 for
+drm_dp_downstream_rgb_to_ycbcr_conversion():
 
-Hence, make htmldocs warns:
+  warning: Excess function parameter 'colorspc' description
+  warning: Function parameter or member 'color_spc' not described
 
-  WARNING: toctree contains reference to nonexisting document
-    'driver-api/pti_intel_mid'
+Tweak the kerneldoc for drm_dp_downstream_rgb_to_ycbcr_conversion().
 
-Remove pti_intel_mid from driver-api index.
-
+Fixes: 07c9b8634fb6 ("drm/dp_helper: Add helpers to configure PCONs RGB-YCbCr Conversion")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-applies cleanly on next-20210129
+applies cleanly on next-20210115
 
-Greg, please pick this minor fixup on top of the commit above.
+Jani, please pick this minor doc warning fixup.
 
- Documentation/driver-api/index.rst | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/drm_dp_helper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 9d9af54d68c5..66c4c01eeec6 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -93,7 +93,6 @@ available subsections can be seen below.
-    pps
-    ptp
-    phy/index
--   pti_intel_mid
-    pwm
-    pldmfw/index
-    rfkill
+diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+index 3ecde451f523..d60e94ac6fdd 100644
+--- a/drivers/gpu/drm/drm_dp_helper.c
++++ b/drivers/gpu/drm/drm_dp_helper.c
+@@ -954,7 +954,7 @@ EXPORT_SYMBOL(drm_dp_downstream_444_to_420_conversion);
+  *                                               RGB->YCbCr conversion capability
+  * @dpcd: DisplayPort configuration data
+  * @port_cap: downstream facing port capabilities
+- * @colorspc: Colorspace for which conversion cap is sought
++ * @color_spc: Colorspace for which conversion cap is sought
+  *
+  * Returns: whether the downstream facing port can convert RGB->YCbCr for a given
+  * colorspace.
+@@ -3134,7 +3134,7 @@ int drm_dp_pcon_pps_override_param(struct drm_dp_aux *aux, u8 pps_param[6])
+ }
+ EXPORT_SYMBOL(drm_dp_pcon_pps_override_param);
+ 
+-/*
++/**
+  * drm_dp_pcon_convert_rgb_to_ycbcr() - Configure the PCon to convert RGB to Ycbcr
+  * @aux: displayPort AUX channel
+  * @color_spc: Color-space/s for which conversion is to be enabled, 0 for disable.
 -- 
 2.17.1
