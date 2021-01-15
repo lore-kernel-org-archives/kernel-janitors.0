@@ -1,59 +1,37 @@
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 28 Jan 2021 13:15:31 +0000
-Subject: Re: [PATCH][next] media: uvcvideo: Fix memory leak when gpiod_to_irq fails
-Message-Id: <CANiDSCs2WrwSHdiazPhvGtnXOvtRMsaZvMUFrpE5T5cOufnPWA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Jan 2021 15:41:51 +0000
+Subject: [PATCH][next] ALSA: usb-audio: remove initialization of param_period_time_if_needed
+Message-Id: <20210115154151.75022-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128131054.637715-1-colin.king@canonical.com>
-In-Reply-To: <20210128131054.637715-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Alexander Tsoy <alexander@tsoy.me>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks a lot for the patch. It is definitely a bug.
+Variable param_period_time_if_needed is being initialized with a value
+that is never read, the assignment is redundant and can be removed.
 
-On Thu, Jan 28, 2021 at 2:10 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently when the call to gpiod_to_irq fails the error return
-> path does not kfree the recently allocated object 'unit'. Fix this
-> by kfree'ing it before returning.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 1abc122a0977..56f867790ef1 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1543,6 +1543,7 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->                 if (irq != EPROBE_DEFER)
->                         dev_err(&dev->udev->dev,
->                                 "No IRQ for privacy GPIO (%d)\n", irq);
-> +               kfree(unit);
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Wouldn't it be better to swap the order of the resource handling?
-
-1st: gpiod_to_irq
-2nd: uvc_alloc_entity
-
-Thanks
-
->                 return irq;
->         }
->
-> --
-> 2.29.2
->
-
-
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index f71965bf815f..ed654338f6b7 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -934,7 +934,7 @@ static int setup_hw_info(struct snd_pcm_runtime *runtime, struct snd_usb_substre
+ {
+ 	const struct audioformat *fp;
+ 	unsigned int pt, ptmin;
+-	int param_period_time_if_needed = -1;
++	int param_period_time_if_needed;
+ 	int err;
+ 
+ 	runtime->hw.formats = subs->formats;
 -- 
-Ricardo Ribalda
+2.29.2
