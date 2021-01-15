@@ -1,29 +1,43 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sat, 02 Jan 2021 22:08:56 +0000
-Subject: Re: [PATCH] hwrng: ingenic - Fix a resource leak in an error handling path
-Message-Id: <20210102220856.GQ12767@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 15 Jan 2021 13:09:11 +0000
+Subject: [PATCH][next] drm/vkms: Fix missing kmalloc allocation failure check
+Message-Id: <20210115130911.71073-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201219075207.176279-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201219075207.176279-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: mpm@selenic.com, zhouyanjie@wanyeetech.com, aric.pzqi@ingenic.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Melissa Wen <melissa.srw@gmail.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Sumera Priyadarsini <sylphrenadin@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Dec 19, 2020 at 08:52:07AM +0100, Christophe JAILLET wrote:
-> In case of error, we should call 'clk_disable_unprepare()' to undo a
-> previous 'clk_prepare_enable()' call, as already done in the remove
-> function.
-> 
-> Fixes: 406346d22278 ("hwrng: ingenic - Add hardware TRNG for Ingenic X1830")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/char/hw_random/ingenic-trng.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Currently the kmalloc allocation for config is not being null
+checked and could potentially lead to a null pointer dereference.
+Fix this by adding the missing null check.
+
+Addresses-Coverity: ("Dereference null return value")
+Fixes: 2df7af93fdad ("drm/vkms: Add vkms_config type")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/vkms/vkms_drv.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 708f7f54001d..2173b82606f6 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -188,7 +188,11 @@ static int vkms_create(struct vkms_config *config)
+ 
+ static int __init vkms_init(void)
+ {
+-	struct vkms_config *config = kmalloc(sizeof(*config), GFP_KERNEL);
++	struct vkms_config *config;
++
++	config = kmalloc(sizeof(*config), GFP_KERNEL);
++	if (!config)
++		return -ENOMEM;
+ 
+ 	default_config = config;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.29.2
