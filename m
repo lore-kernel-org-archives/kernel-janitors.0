@@ -1,7 +1,7 @@
-From: Ido Schimmel <idosch@idosch.org>
-Date: Thu, 14 Jan 2021 09:47:07 +0000
+From: patchwork-bot+netdevbpf@kernel.org
+Date: Fri, 15 Jan 2021 01:30:11 +0000
 Subject: Re: [PATCH] mlxsw: pci: switch from 'pci_' to 'dma_' API
-Message-Id: <20210114094707.GA1979201@shredder.lan>
+Message-Id: <161067421177.20666.5506474617106384086.git-patchwork-notify@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210114084757.490540-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20210114084757.490540-1-christophe.jaillet@wanadoo.fr>
@@ -11,7 +11,11 @@ Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 09:47:57AM +0100, Christophe JAILLET wrote:
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Thu, 14 Jan 2021 09:47:57 +0100 you wrote:
 > The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
 > The patch has been generated with the coccinelle script below and has been
@@ -22,24 +26,13 @@ On Thu, Jan 14, 2021 at 09:47:57AM +0100, Christophe JAILLET wrote:
 > 'mlxsw_pci_fw_area_init()' GFP_KERNEL can be used because both functions
 > are already using this flag and no lock is acquired.
 > 
-> When memory is allocated in 'mlxsw_pci_mbox_alloc()' GFP_KERNEL can be used
-> because it is only called from the probe function and no lock is acquired
-> in the between.
-> The call chain is:
->   --> mlxsw_pci_probe()
->     --> mlxsw_pci_cmd_init()
->       --> mlxsw_pci_mbox_alloc()
-> 
-> While at it, also replace the 'dma_set_mask/dma_set_coherent_mask' sequence
-> by a less verbose 'dma_set_mask_and_coherent() call.
+> [...]
 
-[...]
+Here is the summary with links:
+  - mlxsw: pci: switch from 'pci_' to 'dma_' API
+    https://git.kernel.org/netdev/net-next/c/bb5c64c879e5
 
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-For net-next:
-
-Tested-by: Ido Schimmel <idosch@nvidia.com>
-
-Thanks
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
