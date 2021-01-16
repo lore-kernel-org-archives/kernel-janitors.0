@@ -1,34 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Jan 2021 09:36:17 +0000
-Subject: [PATCH] Input: sur40 - Fix an error code in sur40_probe()
-Message-Id: <YBKFkbATXa5fA3xj@mwanda>
+From: Hongwei Qin <glqinhongwei@gmail.com>
+Date: Sat, 16 Jan 2021 18:34:10 +0000
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gSW4gdGhlIGN1cnJlbnQgaW1wbGVtZW50YXRpb24sIHNob3VsZF9jaA==?= =?UTF-8?B?ZWNrX
+Message-Id: <CAKvRR0QXuETjF3zMb_CBPhGt9h_WeYp8y3TVL7fK4FvS8hqQqA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1610817523-6789-1-git-send-email-glqinhongwei@gmail.com> <40f475e1-2352-5bc5-3823-ddc40de3299e@web.de>
+In-Reply-To: <40f475e1-2352-5bc5-3823-ddc40de3299e@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <keescook@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Florian Echtler <floe@butterbrot.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 
-If v4l2_ctrl_handler_setup() fails then probe() should return an error
-code instead of returning success.
+Hi Makus,
+My apology for sending to the wrong mail list. Please ignore this
+email. I'll reformat it and send it to the fio maillist.
 
-Fixes: cee1e3e2ef39 ("media: add video control handlers using V4L2 control framework")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/input/touchscreen/sur40.c | 1 +
- 1 file changed, 1 insertion(+)
+Regards,
+Hongwei
 
-diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
-index 620cdd7d214a..12f2562b0141 100644
---- a/drivers/input/touchscreen/sur40.c
-+++ b/drivers/input/touchscreen/sur40.c
-@@ -787,6 +787,7 @@ static int sur40_probe(struct usb_interface *interface,
- 		dev_err(&interface->dev,
- 			"Unable to register video controls.");
- 		v4l2_ctrl_handler_free(&sur40->hdl);
-+		error = sur40->hdl.error;
- 		goto err_unreg_v4l2;
- 	}
- 
--- 
-2.29.2
+On Sun, Jan 17, 2021 at 2:10 AM Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> > This patch addresses the issue by not checking td->bytes_done in should_check_rate.
+>
+> I suggest to improve the change description.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id94330a437a573cfdf848f6743b1ed169242c8a#n89
+>
+> Please choose a succinct patch subject.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id94330a437a573cfdf848f6743b1ed169242c8a#n569
+>
+>
+> > +++ b/fio.h
+>
+> Do you refer to a header file from a special repository here?
+> https://github.com/axboe/fio/blame/4008b7fc8e2bff60a4e98de0005e6bc71b1a8641/fio.h#L765
+>
+> Regards,
+> Markus
