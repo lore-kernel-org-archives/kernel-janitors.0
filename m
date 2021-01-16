@@ -1,38 +1,44 @@
-From: Hongwei Qin <glqinhongwei@gmail.com>
-Date: Sat, 16 Jan 2021 18:34:10 +0000
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gSW4gdGhlIGN1cnJlbnQgaW1wbGVtZW50YXRpb24sIHNob3VsZF9jaA==?= =?UTF-8?B?ZWNrX
-Message-Id: <CAKvRR0QXuETjF3zMb_CBPhGt9h_WeYp8y3TVL7fK4FvS8hqQqA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 16 Jan 2021 21:21:46 +0000
+Subject: [PATCH] media: cx25821: Fix a bug when reallocating some dma memory
+Message-Id: <20210116212146.555745-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1610817523-6789-1-git-send-email-glqinhongwei@gmail.com> <40f475e1-2352-5bc5-3823-ddc40de3299e@web.de>
-In-Reply-To: <40f475e1-2352-5bc5-3823-ddc40de3299e@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+To: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, vaibhavgupta40@gmail.com, tglx@linutronix.de
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Makus,
-My apology for sending to the wrong mail list. Please ignore this
-email. I'll reformat it and send it to the fio maillist.
+This function looks like a realloc.
 
-Regards,
-Hongwei
+However, if 'risc->cpu != NULL', the memory will be freed, but never
+reallocated with the bigger 'size'.
+Explicitly set 'risc->cpu' to NULL, so that the reallocation is
+correctly performed a few lines below.
 
-On Sun, Jan 17, 2021 at 2:10 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> > This patch addresses the issue by not checking td->bytes_done in should_check_rate.
->
-> I suggest to improve the change description.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id94330a437a573cfdf848f6743b1ed169242c8a#n89
->
-> Please choose a succinct patch subject.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id94330a437a573cfdf848f6743b1ed169242c8a#n569
->
->
-> > +++ b/fio.h
->
-> Do you refer to a header file from a special repository here?
-> https://github.com/axboe/fio/blame/4008b7fc8e2bff60a4e98de0005e6bc71b1a8641/fio.h#L765
->
-> Regards,
-> Markus
+Fixes: 5ede94c70553 ("[media] cx25821: remove bogus btcx_risc dependency)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Completly speculative and untested.
+---
+ drivers/media/pci/cx25821/cx25821-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
+index 6f8ffab8840f..22e47dd74df4 100644
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -976,8 +976,10 @@ int cx25821_riscmem_alloc(struct pci_dev *pci,
+ 	__le32 *cpu;
+ 	dma_addr_t dma = 0;
+ 
+-	if (NULL != risc->cpu && risc->size < size)
++	if (NULL != risc->cpu && risc->size < size) {
+ 		pci_free_consistent(pci, risc->size, risc->cpu, risc->dma);
++		risc->cpu = NULL;
++	}
+ 	if (NULL = risc->cpu) {
+ 		cpu = pci_zalloc_consistent(pci, size, &dma);
+ 		if (NULL = cpu)
+-- 
+2.27.0
