@@ -1,61 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 25 Jan 2021 08:47:12 +0000
-Subject: [PATCH] drm/i915/gem: Fix oops in error handling code
-Message-Id: <YA6FkPn5S4ZDUGxq@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Jan 2021 13:39:29 +0000
+Subject: [PATCH] rapidio/tsi721: Use dma_set_mask_and_coherent to simplify code
+Message-Id: <20210117133929.563645-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Wambui Karuga <wambui.karugax@gmail.com>
+To: mporter@kernel.crashing.org, alex.bou9@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This code will Oops when it tries to i915_gem_object_free(obj) because
-"obj" is an error pointer.
+'pci_set_dma_mask()' + 'pci_set_consistent_dma_mask()' can be replaced by
+an equivalent 'dma_set_mask_and_coherent()' which is much less verbose.
 
-Fixes: 97d553963250 ("drm/i915/region: convert object_create into object_init")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_stolen.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/rapidio/devices/tsi721.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_stolen.c b/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
-index 551935348ad8..a1e197a6e999 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
-@@ -753,22 +753,18 @@ i915_gem_object_create_stolen_for_preallocated(struct drm_i915_private *i915,
- 	mutex_lock(&i915->mm.stolen_lock);
- 	ret = drm_mm_reserve_node(&i915->mm.stolen, stolen);
- 	mutex_unlock(&i915->mm.stolen_lock);
--	if (ret) {
--		obj = ERR_PTR(ret);
-+	if (ret)
- 		goto err_free;
--	}
- 
- 	obj = i915_gem_object_alloc();
- 	if (!obj) {
--		obj = ERR_PTR(-ENOMEM);
-+		ret = -ENOMEM;
- 		goto err_stolen;
+diff --git a/drivers/rapidio/devices/tsi721.c b/drivers/rapidio/devices/tsi721.c
+index 4dd31dd9feea..1e296b4d7bf2 100644
+--- a/drivers/rapidio/devices/tsi721.c
++++ b/drivers/rapidio/devices/tsi721.c
+@@ -2836,19 +2836,12 @@ static int tsi721_probe(struct pci_dev *pdev,
  	}
  
- 	ret = __i915_gem_object_create_stolen(mem, obj, stolen);
--	if (ret) {
--		obj = ERR_PTR(ret);
-+	if (ret)
- 		goto err_object_free;
--	}
+ 	/* Configure DMA attributes. */
+-	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
+-		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			tsi_err(&pdev->dev, "Unable to set DMA mask");
+ 			goto err_unmap_bars;
+ 		}
+-
+-		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)))
+-			tsi_info(&pdev->dev, "Unable to set consistent DMA mask");
+-	} else {
+-		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-		if (err)
+-			tsi_info(&pdev->dev, "Unable to set consistent DMA mask");
+ 	}
  
- 	i915_gem_object_set_cache_coherency(obj, I915_CACHE_NONE);
- 	return obj;
-@@ -779,7 +775,7 @@ i915_gem_object_create_stolen_for_preallocated(struct drm_i915_private *i915,
- 	i915_gem_stolen_remove_node(i915, stolen);
- err_free:
- 	kfree(stolen);
--	return obj;
-+	return ERR_PTR(ret);
- }
- 
- bool i915_gem_object_is_stolen(const struct drm_i915_gem_object *obj)
+ 	BUG_ON(!pci_is_pcie(pdev));
 -- 
-2.29.2
+2.27.0
