@@ -1,61 +1,53 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Wed, 13 Jan 2021 09:25:56 +0000
-Subject: Re: [PATCH][next] platform/surface: fix potential integer overflow on shift of a int
-Message-Id: <e4092c8d-8857-ad95-065b-f72e774dfbb6@redhat.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 18 Jan 2021 08:00:04 +0000
+Subject: [PATCH for bpf-next] docs: bpf: add minimal markup to address doc warning
+Message-Id: <20210118080004.6367-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210111144648.20498-1-colin.king@canonical.com>
-In-Reply-To: <20210111144648.20498-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Maximilian Luz <luzmaximilian@gmail.com>, Mark Gross <mgross@linux.intel.com>, platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brendan Jackman <jackmanb@google.com>, Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>, netdev@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hi,
+Commit 91c960b00566 ("bpf: Rename BPF_XADD and prepare to encode other
+atomics in .imm") modified the BPF documentation, but missed some ReST
+markup.
 
-On 1/11/21 3:46 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then passed as a 64 bit function argument. In the case where
-> func is 32 or more this can lead to an oveflow.  Avoid this by shifting
-> using the BIT_ULL macro instead.
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: fc00bc8ac1da ("platform/surface: Add Surface ACPI Notify driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hence, make htmldocs warns on Documentation/networking/filter.rst:1053:
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+  WARNING: Inline emphasis start-string without end-string.
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
+Add some minimal markup to address this warning.
 
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210118
 
-Regards,
+Brendan, please ack.
 
-Hans
+Alexei, please pick this minor cleanup patch on your bpf-next.
 
-> ---
->  drivers/platform/surface/surface_acpi_notify.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/surface/surface_acpi_notify.c b/drivers/platform/surface/surface_acpi_notify.c
-> index 8cd67a669c86..ef9c1f8e8336 100644
-> --- a/drivers/platform/surface/surface_acpi_notify.c
-> +++ b/drivers/platform/surface/surface_acpi_notify.c
-> @@ -188,7 +188,7 @@ static int san_acpi_notify_event(struct device *dev, u64 func,
->  	union acpi_object *obj;
->  	int status = 0;
->  
-> -	if (!acpi_check_dsm(san, &SAN_DSM_UUID, SAN_DSM_REVISION, 1 << func))
-> +	if (!acpi_check_dsm(san, &SAN_DSM_UUID, SAN_DSM_REVISION, BIT_ULL(func)))
->  		return 0;
->  
->  	dev_dbg(dev, "notify event %#04llx\n", func);
-> 
+ Documentation/networking/filter.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/networking/filter.rst b/Documentation/networking/filter.rst
+index f6d8f90e9a56..45f6fde1776c 100644
+--- a/Documentation/networking/filter.rst
++++ b/Documentation/networking/filter.rst
+@@ -1048,12 +1048,12 @@ Unlike classic BPF instruction set, eBPF has generic load/store operations::
+ Where size is one of: BPF_B or BPF_H or BPF_W or BPF_DW.
+ 
+ It also includes atomic operations, which use the immediate field for extra
+-encoding.
++encoding::
+ 
+    .imm = BPF_ADD, .code = BPF_ATOMIC | BPF_W  | BPF_STX: lock xadd *(u32 *)(dst_reg + off16) += src_reg
+    .imm = BPF_ADD, .code = BPF_ATOMIC | BPF_DW | BPF_STX: lock xadd *(u64 *)(dst_reg + off16) += src_reg
+ 
+-The basic atomic operations supported are:
++The basic atomic operations supported are::
+ 
+     BPF_ADD
+     BPF_AND
+-- 
+2.17.1
