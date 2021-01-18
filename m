@@ -1,30 +1,35 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 25 Jan 2021 13:51:19 +0000
-Subject: Re: [PATCH v2 1/2] ALSA: oxfw: remove an unnecessary condition in hwdep_read()
-Message-Id: <s5him7l3z1k.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Jan 2021 11:13:46 +0000
+Subject: [PATCH][next] scsi: ibmvfc: Fix spelling mistake "succeded" -> "succeeded"
+Message-Id: <20210118111346.70798-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210122071354.GI20820@kadam>
-	<YA6ntkBxT/4DJ4YK@mwanda>
-In-Reply-To: <YA6ntkBxT/4DJ4YK@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Tyrel Datwyler <tyreld@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, "James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 25 Jan 2021 12:12:54 +0100,
-Dan Carpenter wrote:
-> 
-> Smatch complains that "count" isn't clamped properly and
-> "oxfw->dev_lock_changed" is false then it leads to an information
-> leak.  But it turns out that "oxfw->dev_lock_changed" is always
-> set and the condition can be removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: this version just removes the condition
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied now.  Thanks.
+There is a spelling mistake in a ibmvfc_dbg debug message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/ibmvscsi/ibmvfc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index 1db9e04f1ad3..755313b766b9 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -4808,7 +4808,7 @@ static void ibmvfc_channel_setup_done(struct ibmvfc_event *evt)
+ 
+ 	switch (mad_status) {
+ 	case IBMVFC_MAD_SUCCESS:
+-		ibmvfc_dbg(vhost, "Channel Setup succeded\n");
++		ibmvfc_dbg(vhost, "Channel Setup succeeded\n");
+ 		flags = be32_to_cpu(setup->flags);
+ 		vhost->do_enquiry = 0;
+ 		active_queues = be32_to_cpu(setup->num_scsi_subq_channels);
+-- 
+2.29.2
