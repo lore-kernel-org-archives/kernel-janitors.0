@@ -1,54 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Jan 2021 18:05:53 +0000
-Subject: Re: [PATCH resend] sound: Convert strlcpy to strscpy when return value is unused
-Message-Id: <s5hmtxkzkou.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Jan 2021 14:48:03 +0000
+Subject: [PATCH net] net: dsa: b53: fix an off by one in checking "vlan->vid"
+Message-Id: <YAbxI97Dl/pmBy5V@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <22b393d1790bb268769d0bab7bacf0866dcb0c14.camel@perches.com>
-In-Reply-To: <22b393d1790bb268769d0bab7bacf0866dcb0c14.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: alsa-devel <alsa-devel@alsa-project.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Julia Lawall <Julia.Lawall@inria.fr>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 04 Jan 2021 18:17:34 +0100,
-Joe Perches wrote:
-> 
-> strlcpy is deprecated.  see: Documentation/process/deprecated.rst
-> 
-> Change the calls that do not use the strlcpy return value to the
-> preferred strscpy.
-> 
-> Done with cocci script:
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> 
-> -	strlcpy(
-> +	strscpy(
-> 	e1, e2, e3);
-> 
-> This cocci script leaves the instances where the return value is
-> used unchanged.
-> 
-> After this patch, sound/ has 3 uses of strlcpy() that need to be
-> manually inspected for conversion and changed one day.
-> 
-> $ git grep -w strlcpy sound/
-> sound/usb/card.c:               len = strlcpy(card->longname, s, sizeof(card->longname));
-> sound/usb/mixer.c:      return strlcpy(buf, p->name, buflen);
-> sound/usb/mixer.c:                      return strlcpy(buf, p->names[index], buflen);
-> 
-> Miscellenea:
-> 
-> o Remove trailing whitespace in conversion of sound/core/hwdep.c
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+The > comparison should be >= to prevent accessing one element beyond
+the end of the dev->vlans[] array in the caller function, b53_vlan_add().
+The "dev->vlans" array is allocated in the b53_switch_init() function
+and it has "dev->num_vlans" elements.
 
-Applied now.  Thanks.
+Fixes: a2482d2ce349 ("net: dsa: b53: Plug in VLAN support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/dsa/b53/b53_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Takashi
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 288b5a5c3e0d..95c7fa171e35 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1404,7 +1404,7 @@ int b53_vlan_prepare(struct dsa_switch *ds, int port,
+ 	    !(vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED))
+ 		return -EINVAL;
+ 
+-	if (vlan->vid_end > dev->num_vlans)
++	if (vlan->vid_end >= dev->num_vlans)
+ 		return -ERANGE;
+ 
+ 	b53_enable_vlan(dev, true, ds->vlan_filtering);
+-- 
+2.29.2
