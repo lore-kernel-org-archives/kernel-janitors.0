@@ -1,87 +1,46 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Fri, 15 Jan 2021 14:32:55 +0000
-Subject: Re: [PATCH][next] power: supply: cpcap-charger: Fix power_supply_put on null battery pointer
-Message-Id: <20210115143255.ornoji7wr232topr@earth.universe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="u7krr22x5oqasrjc"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Jan 2021 14:53:35 +0000
+Subject: [PATCH net-next] net: dsa: Fix off by one in dsa_loop_port_vlan_add()
+Message-Id: <YAbyb5kBJQlpYCs2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210115131524.71339-1-colin.king@canonical.com>
- <YAGXgWeWvy/0FyqN@atomide.com>
-In-Reply-To: <YAGXgWeWvy/0FyqN@atomide.com>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Colin King <colin.king@canonical.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "; Andrew Lunn" <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The > comparison is intended to be >= to prevent reading beyond the
+end of the ps->vlans[] array.  It doesn't affect run time though because
+the ps->vlans[] array has VLAN_N_VID (4096) elements and the vlan->vid
+cannot be > 4094 because it is checked earlier.
 
---u7krr22x5oqasrjc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not 100% sure where this is checked but the other code has comments
+and assumptions that say that it is and Smatch says that it is.  If I
+had to guess, I would say that the check is in the nla policy.
 
-Hi,
+[NL80211_ATTR_VLAN_ID] = NLA_POLICY_RANGE(NLA_U16, 1, VLAN_N_VID - 2),
 
-On Fri, Jan 15, 2021 at 03:24:17PM +0200, Tony Lindgren wrote:
-> * Colin King <colin.king@canonical.com> [210115 13:15]:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > Currently if the pointer battery is null there is a null pointer
-> > dereference on the call to power_supply_put.  Fix this by only
-> > performing the put if battery is not null.
-> >=20
-> > Addresses-Coverity: ("Dereference after null check")
-> > Fixes: 4bff91bb3231 ("power: supply: cpcap-charger: Fix missing power_s=
-upply_put()")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->=20
-> Oopsie, thanks for fixing it:
->=20
-> Acked-by: Tony Lindgren <tony@atomide.com>
+This patch is against linux-next.  I could re-write it against net if
+you want.  Another option would be to just delete the sanity check.
 
-Thanks, queued.
+ drivers/net/dsa/dsa_loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- Sebastian
-
-> >  drivers/power/supply/cpcap-charger.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/suppl=
-y/cpcap-charger.c
-> > index 823d666f09e0..641dcad1133f 100644
-> > --- a/drivers/power/supply/cpcap-charger.c
-> > +++ b/drivers/power/supply/cpcap-charger.c
-> > @@ -300,8 +300,9 @@ cpcap_charger_get_bat_const_charge_voltage(struct c=
-pcap_charger_ddata *ddata)
-> >  				&prop);
-> >  		if (!error)
-> >  			voltage =3D prop.intval;
-> > +
-> > +		power_supply_put(battery);
-> >  	}
-> > -	power_supply_put(battery);
-> > =20
-> >  	return voltage;
-> >  }
-> > --=20
-> > 2.29.2
-> >=20
-
---u7krr22x5oqasrjc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmABp48ACgkQ2O7X88g7
-+po0jxAAh7jfrbid8B+lxearz9t9C+okKFY4PfYtDMOOzoomxqzZ0NSjbRTsScrU
-HBDqwOkt25UmllTEIBm6fn+LYn4ND8O2Ur2GyuLMjVB4a1j6qs76Ha3sA3o2E6Zk
-z7VNlkGyejQFgsBOUGekvdlr+LSxSelj8vtY8VbeQczHt5SFQ5eqx2YSDgzpX15W
-aL3h3Xlq2SodQtb6QJ833y1p1XsxjrJAxBGATI/Ry1LWRdNCkq4VtQNP49n2JGzL
-2fV2GJ03tKYDrRq2E9Pbm4b7p6nALi3QwpYNJoqdSU4cHcIX4oq4p6in1/JOU2hL
-TnUIPXXLO1uUQr5/HpbOyUbPfhFW3hzKecr+KmGKjjG52vga4Ws1OQUPRKnA3kwe
-GEEqDNCpDF7Eo4Z5UfQybVBIJyr72bffvjtd6gQgkPpYCdR9hmXumZFBkMYifJBC
-dGNaOQzQSztTLGTpiEhIDufpPvDNnQvpWQ6Qz4mdCldmyygC8CHogptacuZPKaV7
-qMwiN3vwtAw9vpMRIx7gYXZfS4+IeNrMh98xO2Ks8GyH1EX/uMFB+rPjiifMyy4N
-25LZdChqJe+cDDiZ7UW6euABvOd+AbP5DBKHSLoxXDQ2QIgFR58TtCR8YurVOUrM
-rzpmqDr9AhzCB7S/3v80ouzcayieGIxMEP81GWRdIpuFzGd1yOg=
-=nwqI
------END PGP SIGNATURE-----
-
---u7krr22x5oqasrjc--
+diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
+index 5f69216376fe..8c283f59158b 100644
+--- a/drivers/net/dsa/dsa_loop.c
++++ b/drivers/net/dsa/dsa_loop.c
+@@ -207,7 +207,7 @@ static int dsa_loop_port_vlan_add(struct dsa_switch *ds, int port,
+ 	struct mii_bus *bus = ps->bus;
+ 	struct dsa_loop_vlan *vl;
+ 
+-	if (vlan->vid > ARRAY_SIZE(ps->vlans))
++	if (vlan->vid >= ARRAY_SIZE(ps->vlans))
+ 		return -ERANGE;
+ 
+ 	/* Just do a sleeping operation to make lockdep checks effective */
+-- 
+2.29.2
