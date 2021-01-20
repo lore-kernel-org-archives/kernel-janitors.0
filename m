@@ -1,26 +1,43 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Mon, 04 Jan 2021 10:18:20 +0000
-Subject: Re: [PATCH] mtd: remove redundant assignment to pointer eb
-Message-Id: <20210104101821.2969-1-miquel.raynal@bootlin.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jan 2021 09:59:13 +0000
+Subject: [PATCH] ASoC: topology: Fix memory corruption in soc_tplg_denum_create_values()
+Message-Id: <YAf+8QZoOv+ct526@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20200911102321.22515-1-colin.king@canonical.com>
-References: <20200911102321.22515-1-colin.king@canonical.com>
-In-Reply-To: <20200911102321.22515-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On Fri, 2020-09-11 at 10:23:21 UTC, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer eb is being assigned a value that is never read, the assignment
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The allocation uses sizeof(u32) when it should use sizeof(unsigned long)
+so it leads to memory corruption later in the function when the data is
+initialized.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+Fixes: 5aebe7c7f9c2 ("ASoC: topology: fix endianness issues")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis, not from testing.  Obviously we don't
+want memory corruption, so my patch is an improvement.  But I feel like
+a better approach might be to change the type of dvalues[] to u32.  I
+took the less risky approach because I'm not an expert and can't test
+it.  But if someone else can take a look at it, then I'll redo the
+patch.
 
-Miquel
+ sound/soc/soc-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 950c45008e24..37a5d73e643b 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -902,7 +902,7 @@ static int soc_tplg_denum_create_values(struct soc_tplg *tplg, struct soc_enum *
+ 		return -EINVAL;
+ 
+ 	se->dobj.control.dvalues = devm_kcalloc(tplg->dev, le32_to_cpu(ec->items),
+-					   sizeof(u32),
++					   sizeof(*se->dobj.control.dvalues),
+ 					   GFP_KERNEL);
+ 	if (!se->dobj.control.dvalues)
+ 		return -ENOMEM;
+-- 
+2.29.2
