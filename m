@@ -1,25 +1,47 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 29 Jan 2021 19:01:48 +0000
-Subject: Re: [PATCH] scsi: lpfc: Fix ancient double free
-Message-Id: <161194526371.12948.12096807116592012381.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Jan 2021 09:26:24 +0000
+Subject: [PATCH][next] drm/amd/display: Fix spelling mistake of function name
+Message-Id: <20210120092624.13061-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YA6E8rO51hE56SVw@mwanda>
-In-Reply-To: <YA6E8rO51hE56SVw@mwanda>
+References: <20191109194923.231655-1-colin.king@canonical.com>
+In-Reply-To: <20191109194923.231655-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, James Smart <james.smart@broadcom.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, Dick Kennedy <dick.kennedy@broadcom.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, James Bottomley <James.Bottomley@steeleye.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 25 Jan 2021 11:44:34 +0300, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> The "pmb" pointer is freed at the start of the function and then freed
-> again in the error handling code.
+There are two spelling mistakes of the function name, fix this
+by using __func__ instead of a hard coded name string.
 
-Applied to 5.12/scsi-queue, thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] scsi: lpfc: Fix ancient double free
-      https://git.kernel.org/mkp/scsi/c/0be310979e5e
-
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index c16af3983fdb..91d4130cd2cb 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -1602,7 +1602,7 @@ static bool dc_link_construct(struct dc_link *link,
+ 
+ 	link->psr_settings.psr_version = DC_PSR_VERSION_UNSUPPORTED;
+ 
+-	DC_LOG_DC("BIOS object table - dc_link_contruct finished successfully.\n");
++	DC_LOG_DC("BIOS object table - %s finished successfully.\n", __func__);
+ 	return true;
+ device_tag_fail:
+ 	link->link_enc->funcs->destroy(&link->link_enc);
+@@ -1619,7 +1619,7 @@ static bool dc_link_construct(struct dc_link *link,
+ 		link->hpd_gpio = NULL;
+ 	}
+ 
+-	DC_LOG_DC("BIOS object table - dc_link_contruct failed.\n");
++	DC_LOG_DC("BIOS object table - %s failed.\n", __func__);
+ 	kfree(info);
+ 
+ 	return false;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
