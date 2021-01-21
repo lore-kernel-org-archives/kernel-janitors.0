@@ -1,46 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 05 Jan 2021 16:07:17 +0000
-Subject: Re: [PATCH] regmap: debugfs: Fix a reversed if statement in regmap_debugfs_init()
-Message-Id: <160986283724.50112.3615715959178419195.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Jan 2021 06:07:01 +0000
+Subject: [PATCH] drm/i915/dp: Fix a logical vs bitwise OR bug
+Message-Id: <YAkaBa22zvbXKd4E@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X/RQpfAwRdLg0GqQ@mwanda>
-In-Reply-To: <X/RQpfAwRdLg0GqQ@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Xiaolei Wang <xiaolei.wang@windriver.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Ankit Nautiyal <ankit.k.nautiyal@intel.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Lucas De Marchi <lucas.demarchi@intel.com>, Sean Paul <seanpaul@chromium.org>, intel-gfx@lists.freedesktop.org, Wambui Karuga <wambui.karugax@gmail.com>
 
-On Tue, 5 Jan 2021 14:42:29 +0300, Dan Carpenter wrote:
-> This code will leak "map->debugfs_name" because the if statement is
-> reversed so it only frees NULL pointers instead of non-NULL.  In
-> fact the if statement is not required and should just be removed
-> because kfree() accepts NULL pointers.
+This was supposed to be | instead of ||.
 
-Applied to
+Fixes: 522508b665df ("drm/i915/display: Let PCON convert from RGB to YCbCr if it can")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/display/intel_dp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
-
-Thanks!
-
-[1/1] regmap: debugfs: Fix a reversed if statement in regmap_debugfs_init()
-      commit: f6bcb4c7f366905b66ce8ffca7190118244bb642
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index 8a00e609085f..9c6f427b2703 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -6955,8 +6955,8 @@ intel_dp_update_420(struct intel_dp *intel_dp)
+ 							intel_dp->downstream_ports);
+ 	rgb_to_ycbcr = drm_dp_downstream_rgb_to_ycbcr_conversion(intel_dp->dpcd,
+ 								 intel_dp->downstream_ports,
+-								 DP_DS_HDMI_BT601_RGB_YCBCR_CONV ||
+-								 DP_DS_HDMI_BT709_RGB_YCBCR_CONV ||
++								 DP_DS_HDMI_BT601_RGB_YCBCR_CONV |
++								 DP_DS_HDMI_BT709_RGB_YCBCR_CONV |
+ 								 DP_DS_HDMI_BT2020_RGB_YCBCR_CONV);
+ 
+ 	if (INTEL_GEN(i915) >= 11) {
+-- 
+2.29.2
