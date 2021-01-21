@@ -1,42 +1,40 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 23 Jan 2021 09:20:51 +0000
-Subject: Re: [PATCH] MAINTAINERS: adjust to clang-version.sh removal
-Message-Id: <20210123092051.GT2696@kadam>
+Date: Thu, 21 Jan 2021 06:09:54 +0000
+Subject: [PATCH 1/2] ALSA: oxfw: fix info leak in hwdep_read()
+Message-Id: <YAkassrrWUtsW6aZ@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210121160115.4676-1-lukas.bulwahn@gmail.com>
- <CA+icZUV3p+yQYXn=iVseNNQwUSvoMwztLxNDOFpdFb731kDOJg@mail.gmail.com>
- <20210122123354.GR2696@kadam>
- <CA+icZUXxJnhXwiFAJ+f23xWLq-t6ZmF6X_wJPNaEoCVqjP4N=A@mail.gmail.com>
-In-Reply-To: <CA+icZUXxJnhXwiFAJ+f23xWLq-t6ZmF6X_wJPNaEoCVqjP4N=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>, Clang-Built-Linux ML <clang-built-linux@googlegroups.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-In networking then they want you to say which tree it applies to, but
-it's not as simple as saying "net" vs "net-next".  If it's a bugfix then
-you should write that against "net" but if it's a clean up or a fix to a
-recent change then it should be written against "net-next".
+If "count" is too large and "oxfw->dev_lock_changed" is false then this
+will copy beyond the end of the struct to user space.
 
-Also linux-next is not necessarily the same thing as net-next.
-Networking patches should be written against either net or net-next, not
-linux-next.
+Fixes: 8985f4ac1c42 ("ALSA: oxfw: Add hwdep interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/firewire/oxfw/oxfw-hwdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BPF tried to implement similar rules to they're not big enough to impose
-their own rules.  It's quite a big headache to try to figure out which
-tree to use if you're like me and have no clue about bpf.
-
-Anyway, the point of the net vs net-next is that devs are supposed to
-figure out the exact tree and they're supposed to only write net-next if
-it doesn't apply to net.
-
-It's not clear to me the value of putting linux-next in the subject.
-Doesn't everyone develop against the latest devel tree?  Certainly I
-can't imagine any maintainers doing extra work to try figure out the
-date of the linux-next release.  Surely, they just say "Doesn't apply to
-foo-tree.  Resend if necessary."  That's the fastest and easiest
-response when patches don't apply.
-
-regards,
-dan carpente
+diff --git a/sound/firewire/oxfw/oxfw-hwdep.c b/sound/firewire/oxfw/oxfw-hwdep.c
+index 9e1b3e151bad..ca5477eeb663 100644
+--- a/sound/firewire/oxfw/oxfw-hwdep.c
++++ b/sound/firewire/oxfw/oxfw-hwdep.c
+@@ -35,12 +35,12 @@ static long hwdep_read(struct snd_hwdep *hwdep, char __user *buf,  long count,
+ 	}
+ 
+ 	memset(&event, 0, sizeof(event));
++	count = min_t(long, count, sizeof(event.lock_status));
+ 	if (oxfw->dev_lock_changed) {
+ 		event.lock_status.type = SNDRV_FIREWIRE_EVENT_LOCK_STATUS;
+ 		event.lock_status.status = (oxfw->dev_lock_count > 0);
+ 		oxfw->dev_lock_changed = false;
+ 
+-		count = min_t(long, count, sizeof(event.lock_status));
+ 	}
+ 
+ 	spin_unlock_irq(&oxfw->lock);
+-- 
+2.29.2
