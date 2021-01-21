@@ -1,26 +1,48 @@
-From: Petr Mladek <pmladek@suse.com>
-Date: Tue, 26 Jan 2021 10:27:50 +0000
-Subject: Re: [PATCH] printk: rectify kernel-doc for prb_rec_init_wr()
-Message-Id: <YA/upguVH/Jj0GJz@localhost.localdomain>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 21 Jan 2021 16:01:15 +0000
+Subject: [PATCH] MAINTAINERS: adjust to clang-version.sh removal
+Message-Id: <20210121160115.4676-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210125081748.19903-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210125081748.19903-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>, clang-built-linux@googlegroups.com, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Mon 2021-01-25 09:17:48, Lukas Bulwahn wrote:
-> The command 'find ./kernel/printk/ | xargs ./scripts/kernel-doc -none'
-> reported a mismatch with the kernel-doc of prb_rec_init_wr().
-> 
-> Rectify the kernel-doc, such that no issues remain for ./kernel/printk/.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Commit 6c8ad4427f6e ("kbuild: check the minimum compiler version in
+Kconfig") removed ./scripts/clang-version.sh and moved its content to
+./scripts/cc-version.sh.
 
-The patch has been committed into printk/linux.git, branch
-printk-rework.
+Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Best Regards,
-Petr
+  warning: no file matches    F:    scripts/clang-version.sh
+
+The CLANG/LLVM BUILD SUPPORT section in MAINTAINERS intends to track
+changes in ./scripts/clang-version.sh; as the file is removed, track
+changes in ./scripts/cc-version.sh instead now.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210121
+
+Masahiro-san, please pick this quick fix-up patch.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e5d7cf38ec82..aafbea806a82 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4355,8 +4355,8 @@ B:	https://github.com/ClangBuiltLinux/linux/issues
+ C:	irc://chat.freenode.net/clangbuiltlinux
+ F:	Documentation/kbuild/llvm.rst
+ F:	include/linux/compiler-clang.h
++F:	scripts/cc-version.sh
+ F:	scripts/clang-tools/
+-F:	scripts/clang-version.sh
+ F:	scripts/lld-version.sh
+ K:	\b(?i:clang|llvm)\b
+ 
+-- 
+2.17.1
