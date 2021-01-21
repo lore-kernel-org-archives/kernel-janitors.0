@@ -1,69 +1,187 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 29 Jan 2021 19:28:42 +0000
-Subject: Re: [PATCH][next] drm/amdgpu: Fix memory leak of object caps on error return paths
-Message-Id: <CADnq5_O2MKy7jPc2o7u8H-VsDxweumxGHc7oBprg7ZyP_BMu2w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Jan 2021 06:44:00 +0000
+Subject: [PATCH v2] media: zr364xx: fix memory leaks in probe()
+Message-Id: <YAkisFB1Ly0e2pPe@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210129120759.375725-1-colin.king@canonical.com>
-In-Reply-To: <20210129120759.375725-1-colin.king@canonical.com>
+In-Reply-To: <196887f5-677f-0aeb-5f5c-fb4a918d6128@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Leo Liu <leo.liu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Antoine Jacquet <royale@zerezo.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 7:08 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently there are three error return paths that don't kfree object
-> caps.  Fix this by performing the allocation of caps after the checks
-> and error return paths to avoid the premature allocation and memory
-> leaking.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 555fc7fbb2a2 ("drm/amdgpu: add INFO ioctl support for querying video caps")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Syzbot discovered that the probe error handling doesn't clean up the
+resources allocated in zr364xx_board_init().  There are several
+related bugs in this code so I have re-written the error handling.
 
-Applied.  Thanks!
+1)  Introduce a new function zr364xx_board_uninit() which cleans up
+    the resources in zr364xx_board_init().
+2)  In zr364xx_board_init() if the call to zr364xx_start_readpipe()
+    fails then release the "cam->buffer.frame[i].lpvbits" memory
+    before returning.  This way every function either allocates
+    everything successfully or it cleans up after itself.
+3)  Re-write the probe function so that each failure path goto frees
+    the most recent allocation.  That way we don't free anything
+    before it has been allocated and we can also verify that
+    everything is freed.
+4)  Originally, in the probe function the "cam->v4l2_dev.release"
+    pointer was set to "zr364xx_release" near the start but I moved
+    that assignment to the end, after everything had succeeded.  The
+    release function was never actually called during the probe cleanup
+    process, but with this change I wanted to make it clear that we
+    don't want to call zr364xx_release() until everything is
+    allocated successfully.
 
-Alex
+Next I re-wrote the zr364xx_release() function.  Ideally this would
+have been a simple matter of copy and pasting the cleanup code from
+probe and adding an additional call to video_unregister_device().  But
+there are a couple quirks to note.
 
+1)  The probe function does not call videobuf_mmap_free() and I don't
+    know where the videobuf_mmap is allocated.  I left the code as-is to
+    avoid introducing a bug in code I don't understand.
+2)  The zr364xx_board_uninit() has a call to zr364xx_stop_readpipe()
+    which is a change from the original behavior with regards to
+    unloading the driver.  Calling zr364xx_stop_readpipe() on a stopped
+    pipe is not a problem so this is safe and is potentially a bugfix.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-> index 84b666fcfaf6..730f4ac7487b 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-> @@ -988,10 +988,6 @@ int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
->                 struct drm_amdgpu_info_video_caps *caps;
->                 int r;
->
-> -               caps = kzalloc(sizeof(*caps), GFP_KERNEL);
-> -               if (!caps)
-> -                       return -ENOMEM;
-> -
->                 switch (info->video_cap.type) {
->                 case AMDGPU_INFO_VIDEO_CAPS_DECODE:
->                         r = amdgpu_asic_query_video_codecs(adev, false, &codecs);
-> @@ -1009,6 +1005,11 @@ int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
->                                       info->video_cap.type);
->                         return -EINVAL;
->                 }
-> +
-> +               caps = kzalloc(sizeof(*caps), GFP_KERNEL);
-> +               if (!caps)
-> +                       return -ENOMEM;
-> +
->                 for (i = 0; i < codecs->codec_count; i++) {
->                         int idx = codecs->codec_array[i].codec_type;
->
-> --
-> 2.29.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Reported-by: syzbot+b4d54814b339b5c6bbd4@syzkaller.appspotmail.com
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+v2: The first version introduced a double call of video_unregister_device()
+    in the unload path.
+
+ drivers/media/usb/zr364xx/zr364xx.c | 49 ++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
+index 1e1c6b4d1874..d29b861367ea 100644
+--- a/drivers/media/usb/zr364xx/zr364xx.c
++++ b/drivers/media/usb/zr364xx/zr364xx.c
+@@ -1181,15 +1181,11 @@ static int zr364xx_open(struct file *file)
+ 	return err;
+ }
+ 
+-static void zr364xx_release(struct v4l2_device *v4l2_dev)
++static void zr364xx_board_uninit(struct zr364xx_camera *cam)
+ {
+-	struct zr364xx_camera *cam -		container_of(v4l2_dev, struct zr364xx_camera, v4l2_dev);
+ 	unsigned long i;
+ 
+-	v4l2_device_unregister(&cam->v4l2_dev);
+-
+-	videobuf_mmap_free(&cam->vb_vidq);
++	zr364xx_stop_readpipe(cam);
+ 
+ 	/* release sys buffers */
+ 	for (i = 0; i < FRAMES; i++) {
+@@ -1200,9 +1196,19 @@ static void zr364xx_release(struct v4l2_device *v4l2_dev)
+ 		cam->buffer.frame[i].lpvbits = NULL;
+ 	}
+ 
+-	v4l2_ctrl_handler_free(&cam->ctrl_handler);
+ 	/* release transfer buffer */
+ 	kfree(cam->pipe->transfer_buffer);
++}
++
++static void zr364xx_release(struct v4l2_device *v4l2_dev)
++{
++	struct zr364xx_camera *cam +		container_of(v4l2_dev, struct zr364xx_camera, v4l2_dev);
++
++	videobuf_mmap_free(&cam->vb_vidq);
++	v4l2_ctrl_handler_free(&cam->ctrl_handler);
++	zr364xx_board_uninit(cam);
++	v4l2_device_unregister(&cam->v4l2_dev);
+ 	kfree(cam);
+ }
+ 
+@@ -1376,11 +1382,14 @@ static int zr364xx_board_init(struct zr364xx_camera *cam)
+ 	/* start read pipe */
+ 	err = zr364xx_start_readpipe(cam);
+ 	if (err)
+-		goto err_free;
++		goto err_free_frames;
+ 
+ 	DBG(": board initialized\n");
+ 	return 0;
+ 
++err_free_frames:
++	for (i = 0; i < FRAMES; i++)
++		vfree(cam->buffer.frame[i].lpvbits);
+ err_free:
+ 	kfree(cam->pipe->transfer_buffer);
+ 	cam->pipe->transfer_buffer = NULL;
+@@ -1409,12 +1418,10 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 	if (!cam)
+ 		return -ENOMEM;
+ 
+-	cam->v4l2_dev.release = zr364xx_release;
+ 	err = v4l2_device_register(&intf->dev, &cam->v4l2_dev);
+ 	if (err < 0) {
+ 		dev_err(&udev->dev, "couldn't register v4l2_device\n");
+-		kfree(cam);
+-		return err;
++		goto free_cam;
+ 	}
+ 	hdl = &cam->ctrl_handler;
+ 	v4l2_ctrl_handler_init(hdl, 1);
+@@ -1423,7 +1430,7 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 	if (hdl->error) {
+ 		err = hdl->error;
+ 		dev_err(&udev->dev, "couldn't register control\n");
+-		goto fail;
++		goto unregister;
+ 	}
+ 	/* save the init method used by this camera */
+ 	cam->method = id->driver_info;
+@@ -1496,7 +1503,7 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 	if (!cam->read_endpoint) {
+ 		err = -ENOMEM;
+ 		dev_err(&intf->dev, "Could not find bulk-in endpoint\n");
+-		goto fail;
++		goto unregister;
+ 	}
+ 
+ 	/* v4l */
+@@ -1507,10 +1514,11 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 
+ 	/* load zr364xx board specific */
+ 	err = zr364xx_board_init(cam);
+-	if (!err)
+-		err = v4l2_ctrl_handler_setup(hdl);
+ 	if (err)
+-		goto fail;
++		goto unregister;
++	err = v4l2_ctrl_handler_setup(hdl);
++	if (err)
++		goto board_uninit;
+ 
+ 	spin_lock_init(&cam->slock);
+ 
+@@ -1525,16 +1533,21 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 	err = video_register_device(&cam->vdev, VFL_TYPE_VIDEO, -1);
+ 	if (err) {
+ 		dev_err(&udev->dev, "video_register_device failed\n");
+-		goto fail;
++		goto free_handler;
+ 	}
++	cam->v4l2_dev.release = zr364xx_release;
+ 
+ 	dev_info(&udev->dev, DRIVER_DESC " controlling device %s\n",
+ 		 video_device_node_name(&cam->vdev));
+ 	return 0;
+ 
+-fail:
++free_handler:
+ 	v4l2_ctrl_handler_free(hdl);
++board_uninit:
++	zr364xx_board_uninit(cam);
++unregister:
+ 	v4l2_device_unregister(&cam->v4l2_dev);
++free_cam:
+ 	kfree(cam);
+ 	return err;
+ }
+-- 
+2.29.2
