@@ -1,36 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 21 Jan 2021 06:08:05 +0000
-Subject: [PATCH can tree] can: dev: prevent potential information leak in can_fill_info()
-Message-Id: <YAkaRdRJncsJO8Ve@mwanda>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Thu, 21 Jan 2021 07:37:20 +0000
+Subject: Re: [PATCH can tree] can: dev: prevent potential information leak in can_fill_info()
+Message-Id: <20210121073720.zlskqgitnod3w6hf@hardanger.blackshift.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="sif3h2wey4pwemlu"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YAkaRdRJncsJO8Ve@mwanda>
+In-Reply-To: <YAkaRdRJncsJO8Ve@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "bec" struct isn't necessarily always initialized.  For example,
-the mcp251xfd_get_berr_counter() function doesn't initialize anything
-if the interface is down.
 
-Fixes: 52c793f24054 ("can: netlink support for bus-error reporting and counters")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/can/dev/netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--sif3h2wey4pwemlu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
-index 3ae884cdf677..7a1ff6fcbb8f 100644
---- a/drivers/net/can/dev/netlink.c
-+++ b/drivers/net/can/dev/netlink.c
-@@ -263,7 +263,7 @@ static int can_fill_info(struct sk_buff *skb, const struct net_device *dev)
- {
- 	struct can_priv *priv = netdev_priv(dev);
- 	struct can_ctrlmode cm = {.flags = priv->ctrlmode};
--	struct can_berr_counter bec;
-+	struct can_berr_counter bec = {};
- 	enum can_state state = priv->state;
- 
- 	if (priv->do_get_state)
--- 
-2.29.2
+Hey Dan,
+
+On Thu, Jan 21, 2021 at 09:08:05AM +0300, Dan Carpenter wrote:
+> The "bec" struct isn't necessarily always initialized.  For example,
+> the mcp251xfd_get_berr_counter() function doesn't initialize anything
+> if the interface is down.
+>=20
+> Fixes: 52c793f24054 ("can: netlink support for bus-error reporting and co=
+unters")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Thanks for the patch. As this is a fix, I've backported it to net/master, w=
+hich
+is before the split of the dev.c into separate files. Applied to
+linux-can/testing.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--sif3h2wey4pwemlu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAmAJLykACgkQqclaivrt
+76kByAf/dri0xzZQz/DzfMzagXjus6P5AAV6R3awzjWURGIXH1NwljIAeHn/Swt6
++zHwRZInKI8d0c9puZ1KPOUjebA9tQXB9ghni2PfPSQL6RMrpBpG+MnXdF1nH+kc
+T5rIZ75ehwTkkmXx7iFMTEh41+jeTgqBFtwmMK64GKSmxv/0ex6crCsFBT7YXdW7
+DbXFoTVIGJI9qfw5aTb+j4U/fepo+iR3dmurG9Cvc9PmqYgEAFYrufqYitNR4bPb
+LGNsCxjJWJWnFrkE02Sq/ZIl8vATYDmAGKyJrcHStUDChmvF4v8CREROnXrl1zKD
+tJXn1a5Yb5bxoxsRoX0PBY3tbTxNKw==
+=e/IK
+-----END PGP SIGNATURE-----
+
+--sif3h2wey4pwemlu--
