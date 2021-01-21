@@ -1,20 +1,20 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 21 Jan 2021 16:22:01 +0000
+Date: Thu, 21 Jan 2021 16:25:51 +0000
 Subject: Re: [PATCH] MAINTAINERS: adjust to clang-version.sh removal
-Message-Id: <CAKXUXMyrZ7oaA2K5vBkG4uVMbjDBg0yHrQwiJNGCnXq_ZBhmLg@mail.gmail.com>
+Message-Id: <CAKXUXMyrE6OPmn8ETKqRJ9DOaeRO_n3=uUP3vhjAnqmUGmqdYA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210121160115.4676-1-lukas.bulwahn@gmail.com> <CA+icZUV3p+yQYXn=iVseNNQwUSvoMwztLxNDOFpdFb731kDOJg@mail.gmail.com>
-In-Reply-To: <CA+icZUV3p+yQYXn=iVseNNQwUSvoMwztLxNDOFpdFb731kDOJg@mail.gmail.com>
+References: <20210121160115.4676-1-lukas.bulwahn@gmail.com> <20210121161640.GA1101379@ubuntu-m3-large-x86>
+In-Reply-To: <20210121161640.GA1101379@ubuntu-m3-large-x86>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>, Clang-Built-Linux ML <clang-built-linux@googlegroups.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, clang-built-linux <clang-built-linux@googlegroups.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 21, 2021 at 5:16 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On Thu, Jan 21, 2021 at 5:16 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
-> On Thu, Jan 21, 2021 at 5:01 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
+> On Thu, Jan 21, 2021 at 05:01:15PM +0100, Lukas Bulwahn wrote:
 > > Commit 6c8ad4427f6e ("kbuild: check the minimum compiler version in
 > > Kconfig") removed ./scripts/clang-version.sh and moved its content to
 > > ./scripts/cc-version.sh.
@@ -28,26 +28,33 @@ On Thu, Jan 21, 2021 at 5:16 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
 > > changes in ./scripts/cc-version.sh instead now.
 > >
 > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > applies cleanly on next-20210121
+> >
+> > Masahiro-san, please pick this quick fix-up patch.
 >
-> Good catch, Lukas.
+> Masahiro cannot pick this up because the patch to add clang-version.sh
+> to MAINTAINERS is in mmotm.
 >
-> As a tipp:
-> Next time you can pass '--subject-prefix="PATCH next-YYYYMMDD"' when
-> doing 'git format-patch ...' (or whatever you use to generate the
-> patch).
+> I think the better solution is for Andrew to drop the current version of
+>
+> maintainers-add-a-couple-more-files-to-the-clang-llvm-section.patch
+>
+> and pick up the second one I sent, which allows us to deal with this:
+>
+> https://lore.kernel.org/lkml/20210114171629.592007-1-natechancellor@gmail.com/
+>
+> I am not sure it is right for us to maintain cc-version.sh but I am open
+> to it if Masahiro agrees.
 >
 
-Thanks for the hint.
+Okay, I did not see in linux-next that both changes are coming into
+linux-next through to different trees.
 
-> Cannot say if we can add a "Fixes:" tag with commit hash-id of
-> "kbuild: check the minimum compiler version in Kconfig" - this missed
-> that move.
-> Maybe Masahiro does a respin and can fold this into above commit?
-> That's not my decision.
->
-> Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
->
+Nathan, I guess if you send a follow-up patch to Andrew that is the
+best way to handle it, or we wait until both trees land in mainline,
+and then just provide a quick fix like this afterwards.
 
-...and thanks for the review.
+So, Masahiro-san, no need to pick this patch here.
 
 Lukas
