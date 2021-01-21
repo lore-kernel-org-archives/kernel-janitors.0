@@ -1,33 +1,40 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Mon, 18 Jan 2021 06:55:36 +0000
-Subject: Re: [PATCH v2 1/2] cpufreq: brcmstb-avs-cpufreq: Fix some resource leaks in the error handling path 
-Message-Id: <20210118065421.x5s54evpafq73ouk@vireshk-i7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Jan 2021 06:10:47 +0000
+Subject: [PATCH] ALSA: fireface: fix info leak in hwdep_read()
+Message-Id: <YAka5xudQNQgRkuC@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210117142635.568686-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210117142635.568686-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: f.fainelli@gmail.com, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, rjw@rjwysocki.net, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, mmayer@broadcom.com, linux-arm-kernel@lists.infradead.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-On 17-01-21, 15:26, Christophe JAILLET wrote:
-> If 'cpufreq_register_driver()' fails, we must release the resources
-> allocated in 'brcm_avs_prepare_init()' as already done in the remove
-> function.
-> 
-> To do that, introduce a new function 'brcm_avs_prepare_uninit()' in order
-> to avoid code duplication. This also makes the code more readable (IMHO).
-> 
-> Fixes: de322e085995 ("cpufreq: brcmstb-avs-cpufreq: AVS CPUfreq driver for Broadcom STB SoCs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v1->v2: be less verbose when writing the error handling path of the probe
-> ---
->  drivers/cpufreq/brcmstb-avs-cpufreq.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
+If "ff->dev_lock_changed" has not changed and "count" is too large then
+this will copy data beyond the end of the struct to user space.
 
-Applied both patches. Thanks.
+Fixes: f656edd5fb33 ("ALSA: fireface: add hwdep interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/firewire/fireface/ff-hwdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/sound/firewire/fireface/ff-hwdep.c b/sound/firewire/fireface/ff-hwdep.c
+index 4b2e0dff5ddb..b84dde609a03 100644
+--- a/sound/firewire/fireface/ff-hwdep.c
++++ b/sound/firewire/fireface/ff-hwdep.c
+@@ -35,12 +35,12 @@ static long hwdep_read(struct snd_hwdep *hwdep, char __user *buf,  long count,
+ 	}
+ 
+ 	memset(&event, 0, sizeof(event));
++	count = min_t(long, count, sizeof(event.lock_status));
+ 	if (ff->dev_lock_changed) {
+ 		event.lock_status.type = SNDRV_FIREWIRE_EVENT_LOCK_STATUS;
+ 		event.lock_status.status = (ff->dev_lock_count > 0);
+ 		ff->dev_lock_changed = false;
+ 
+-		count = min_t(long, count, sizeof(event.lock_status));
+ 	}
+ 
+ 	spin_unlock_irq(&ff->lock);
 -- 
-viresh
+2.29.2
