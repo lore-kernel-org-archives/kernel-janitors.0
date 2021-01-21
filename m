@@ -1,49 +1,45 @@
-From: =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?=  <amadeuszx.slawinski@linux.intel.com>
-Date: Wed, 20 Jan 2021 12:55:55 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 21 Jan 2021 00:05:34 +0000
 Subject: Re: [PATCH] ASoC: topology: Fix memory corruption in soc_tplg_denum_create_values()
-Message-Id: <5d5cce3b-916a-97ba-1c13-7ba5eba9bf38@linux.intel.com>
+Message-Id: <161118753484.45718.1419483152294927470.b4-ty@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <YAf+8QZoOv+ct526@mwanda>
 In-Reply-To: <YAf+8QZoOv+ct526@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On 1/20/2021 10:59 AM, Dan Carpenter wrote:
+On Wed, 20 Jan 2021 12:59:13 +0300, Dan Carpenter wrote:
 > The allocation uses sizeof(u32) when it should use sizeof(unsigned long)
 > so it leads to memory corruption later in the function when the data is
 > initialized.
-> 
-> Fixes: 5aebe7c7f9c2 ("ASoC: topology: fix endianness issues")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis, not from testing.  Obviously we don't
-> want memory corruption, so my patch is an improvement.  But I feel like
-> a better approach might be to change the type of dvalues[] to u32.  I
-> took the less risky approach because I'm not an expert and can't test
-> it.  But if someone else can take a look at it, then I'll redo the
-> patch.
-> 
->   sound/soc/soc-topology.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-> index 950c45008e24..37a5d73e643b 100644
-> --- a/sound/soc/soc-topology.c
-> +++ b/sound/soc/soc-topology.c
-> @@ -902,7 +902,7 @@ static int soc_tplg_denum_create_values(struct soc_tplg *tplg, struct soc_enum *
->   		return -EINVAL;
->   
->   	se->dobj.control.dvalues = devm_kcalloc(tplg->dev, le32_to_cpu(ec->items),
-> -					   sizeof(u32),
-> +					   sizeof(*se->dobj.control.dvalues),
->   					   GFP_KERNEL);
->   	if (!se->dobj.control.dvalues)
->   		return -ENOMEM;
-> 
 
-Looks good to me. And yes as we store already parsed value, dvalues 
-could be changed to u32, but I would still change the sizeof as you did 
-above.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: topology: Fix memory corruption in soc_tplg_denum_create_values()
+      commit: 543466ef3571069b8eb13a8ff7c7cfc8d8a75c43
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
