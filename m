@@ -1,25 +1,56 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 29 Jan 2021 19:01:49 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: fix some memory corruption
-Message-Id: <161194526370.12948.16367434867317799791.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Jan 2021 14:52:35 +0000
+Subject: [PATCH][next] vpda: Fix memory leaks of msg on error return paths
+Message-Id: <20210122145235.209121-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YA6E0geUlL9Hs04A@mwanda>
-In-Reply-To: <YA6E0geUlL9Hs04A@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nilesh Javali <njavali@marvell.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Himanshu Madhani <himanshu.madhani@oracle.com>, Saurav Kashyap <skashyap@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, "James E.J. Bottomley" <jejb@linux.ibm.com>
+To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Parav Pandit <parav@nvidia.com>, Eli Cohen <elic@nvidia.com>, virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 25 Jan 2021 11:44:02 +0300, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This was supposed to be "data" instead of "&data".  The current code
-> will corrupt the stack.
+There are two error return paths that neglect to free the allocated
+object msg that lead to memory leaks. Fix this by adding an error
+exit path that frees msg.
 
-Applied to 5.12/scsi-queue, thanks!
+Addresses-Coverity: ("Resource leak")
+Fixes: 39502d042a70 ("vdpa: Enable user to query vdpa device info")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/vdpa/vdpa.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-[1/1] scsi: qla2xxx: fix some memory corruption
-      https://git.kernel.org/mkp/scsi/c/bc2b4e680231
-
+diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+index 9700a0adcca0..eb1f5a514103 100644
+--- a/drivers/vdpa/vdpa.c
++++ b/drivers/vdpa/vdpa.c
+@@ -540,13 +540,15 @@ static int vdpa_nl_cmd_dev_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 	if (!dev) {
+ 		mutex_unlock(&vdpa_dev_mutex);
+ 		NL_SET_ERR_MSG_MOD(info->extack, "device not found");
+-		return -ENODEV;
++		err = -ENODEV;
++		goto err;
+ 	}
+ 	vdev = container_of(dev, struct vdpa_device, dev);
+ 	if (!vdev->mdev) {
+ 		mutex_unlock(&vdpa_dev_mutex);
+ 		put_device(dev);
+-		return -EINVAL;
++		err = -EINVAL;
++		goto err;
+ 	}
+ 	err = vdpa_dev_fill(vdev, msg, info->snd_portid, info->snd_seq, 0, info->extack);
+ 	if (!err)
+@@ -554,6 +556,7 @@ static int vdpa_nl_cmd_dev_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 	put_device(dev);
+ 	mutex_unlock(&vdpa_dev_mutex);
+ 
++err:
+ 	if (err)
+ 		nlmsg_free(msg);
+ 	return err;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
