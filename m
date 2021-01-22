@@ -1,48 +1,41 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Fri, 29 Jan 2021 04:08:49 +0000
-Subject: [PATCH] platform/x86: thinkpad_acpi: rectify length of title underline
-Message-Id: <20210129040849.26740-1-lukas.bulwahn@gmail.com>
+Date: Fri, 22 Jan 2021 11:16:06 +0000
+Subject: [PATCH for device-mapper/for-next] dm integrity: follow ReST formatting
+Message-Id: <20210122111606.24999-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nitin Joshi <njoshi1@lenovo.com>, Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Cc: linux-doc@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet <corbet@lwn.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Alasdair Kergon <agk@redhat.com>
 
-Commit d7cbe2773aed ("platform/x86: thinkpad_acpi: set keyboard language")
-adds information on keyboard setting to the thinkpad documentation, but
-made the subsection title underline too short.
+Commit 61b8b2a834bf ("dm integrity: introduce the "fix_hmac" argument")
+adds some new part to dm-integrity.rst, but this causes make htmldocs warn:
 
-Hence, make htmldocs warns:
+  dm-integrity.rst:192: WARNING: Unexpected indentation.
+  dm-integrity.rst:193: WARNING: Block quote ends without a blank line; \
+    unexpected unindent.
 
-  Documentation/admin-guide/laptops/thinkpad-acpi.rst:1472: \
-    WARNING: Title underline too short.
-
-Rectify length of subsection title underline.
+Make dm-integrity.rst follow ReST formatting.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-applies cleanly on next-20210128
+Mike, please pick this quick documentation fix in your for-next branch.
 
-Nitin, please ack.
+ Documentation/admin-guide/device-mapper/dm-integrity.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hans, please pick this minor fixup for your platform/x86 -next tree.
-
- Documentation/admin-guide/laptops/thinkpad-acpi.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/laptops/thinkpad-acpi.rst b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
-index b1188f05a99a..0e4c5bb7fb70 100644
---- a/Documentation/admin-guide/laptops/thinkpad-acpi.rst
-+++ b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
-@@ -1469,7 +1469,7 @@ Sysfs notes
+diff --git a/Documentation/admin-guide/device-mapper/dm-integrity.rst b/Documentation/admin-guide/device-mapper/dm-integrity.rst
+index 39a9fdc9f6ab..ef762857da95 100644
+--- a/Documentation/admin-guide/device-mapper/dm-integrity.rst
++++ b/Documentation/admin-guide/device-mapper/dm-integrity.rst
+@@ -188,6 +188,7 @@ fix_padding
  
- 
- Setting keyboard language
---------------------
-+-------------------------
- 
- sysfs: keyboard_lang
- 
+ fix_hmac
+ 	Improve security of internal_hash and journal_mac:
++
+ 	- the section number is mixed to the mac, so that an attacker can't
+ 	  copy sectors from one journal section to another journal section
+ 	- the superblock is protected by journal_mac
 -- 
 2.17.1
