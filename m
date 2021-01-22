@@ -1,63 +1,40 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Date: Tue, 05 Jan 2021 12:39:52 +0000
-Subject: Re: [PATCH] mmc: sdhci-sprd: Fix some resource leaks in the remove function
-Message-Id: <1cfeeb62-8211-4a2a-0cf5-c3799d7ef42e@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Jan 2021 15:01:13 +0000
+Subject: [PATCH] staging: gasket: Fix sizeof() in gasket_handle_ioctl()
+Message-Id: <YAroue0qiuf35rkS@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201217204236.163446-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, ulf.hansson@linaro.org, orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rob Springer <rspringer@google.com>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Joseph <jnjoseph@google.com>, Simon Que <sque@chromium.org>, Richard Yeh <rcy@google.com>, Todd Poynor <toddpoynor@google.com>
 
-On 17/12/20 10:42 pm, Christophe JAILLET wrote:
-> 'sdhci_remove_host()' and 'sdhci_pltfm_free()' should be used in place of
-> 'mmc_remove_host()' and 'mmc_free_host()'.
-> 
-> This avoids some resource leaks, is more in line with the error handling
-> path of the probe function, and is more consistent with other drivers.
-> 
-> Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The "gasket_dev->num_page_tables" variable is an int but this is copying
+sizeof(u64).  On 32 bit systems this would end up disclosing a kernel
+pointer to user space, but on 64 bit it copies zeroes from a struct
+hole.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is an API change.  Please review this carefully!  Another potential
+fix would be to make ->num_page_tables a long instead of an int.
 
-> ---
-> Other adjustment may be needed.
-> I'm not sure at all of the 0 passed to 'sdhci_remove_host()'. Some drivers
-> pass 0, some have some more complicated computation.
+ drivers/staging/gasket/gasket_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-'0' means cleanup nicely. '1' (dead) means nothing works anymore, including
-interrupts, so give up on requests immediately.
-
-Either should work.  '0' is better unless your host controller really is
-dead, which is mostly not possible except for some legacy PCI devices.
-
-> ---
->  drivers/mmc/host/sdhci-sprd.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index f85171edabeb..5dc36efff47f 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -708,14 +708,14 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
->  {
->  	struct sdhci_host *host = platform_get_drvdata(pdev);
->  	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-> -	struct mmc_host *mmc = host->mmc;
->  
-> -	mmc_remove_host(mmc);
-> +	sdhci_remove_host(host, 0);
-> +
->  	clk_disable_unprepare(sprd_host->clk_sdio);
->  	clk_disable_unprepare(sprd_host->clk_enable);
->  	clk_disable_unprepare(sprd_host->clk_2x_enable);
->  
-> -	mmc_free_host(mmc);
-> +	sdhci_pltfm_free(pdev);
->  
->  	return 0;
->  }
-> 
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index e3047d36d8db..c4abac35c1ca 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -318,7 +318,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
+ 	case GASKET_IOCTL_NUMBER_PAGE_TABLES:
+ 		trace_gasket_ioctl_integer_data(gasket_dev->num_page_tables);
+ 		if (copy_to_user(argp, &gasket_dev->num_page_tables,
+-				 sizeof(uint64_t)))
++				 sizeof(gasket_dev->num_page_tables)))
+ 			retval = -EFAULT;
+ 		else
+ 			retval = 0;
+-- 
+2.29.2
