@@ -1,71 +1,42 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Sat, 23 Jan 2021 02:38:41 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 23 Jan 2021 09:20:51 +0000
 Subject: Re: [PATCH] MAINTAINERS: adjust to clang-version.sh removal
-Message-Id: <CA+icZUXxJnhXwiFAJ+f23xWLq-t6ZmF6X_wJPNaEoCVqjP4N=A@mail.gmail.com>
+Message-Id: <20210123092051.GT2696@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210121160115.4676-1-lukas.bulwahn@gmail.com>
- <CA+icZUV3p+yQYXn=iVseNNQwUSvoMwztLxNDOFpdFb731kDOJg@mail.gmail.com> <20210122123354.GR2696@kadam>
-In-Reply-To: <20210122123354.GR2696@kadam>
+ <CA+icZUV3p+yQYXn=iVseNNQwUSvoMwztLxNDOFpdFb731kDOJg@mail.gmail.com>
+ <20210122123354.GR2696@kadam>
+ <CA+icZUXxJnhXwiFAJ+f23xWLq-t6ZmF6X_wJPNaEoCVqjP4N=A@mail.gmail.com>
+In-Reply-To: <CA+icZUXxJnhXwiFAJ+f23xWLq-t6ZmF6X_wJPNaEoCVqjP4N=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sedat Dilek <sedat.dilek@gmail.com>
 Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>, Clang-Built-Linux ML <clang-built-linux@googlegroups.com>, Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 1:34 PM Dan Carpenter <dan.carpenter@oracle.com> wr=
-ote:
->
-> On Thu, Jan 21, 2021 at 05:15:56PM +0100, Sedat Dilek wrote:
-> > On Thu, Jan 21, 2021 at 5:01 PM Lukas Bulwahn <lukas.bulwahn@gmail.com>=
- wrote:
-> > >
-> > > Commit 6c8ad4427f6e ("kbuild: check the minimum compiler version in
-> > > Kconfig") removed ./scripts/clang-version.sh and moved its content to
-> > > ./scripts/cc-version.sh.
-> > >
-> > > Since then, ./scripts/get_maintainer.pl --self-test=3Dpatterns compla=
-ins:
-> > >
-> > >   warning: no file matches    F:    scripts/clang-version.sh
-> > >
-> > > The CLANG/LLVM BUILD SUPPORT section in MAINTAINERS intends to track
-> > > changes in ./scripts/clang-version.sh; as the file is removed, track
-> > > changes in ./scripts/cc-version.sh instead now.
-> > >
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> >
-> > Good catch, Lukas.
-> >
-> > As a tipp:
-> > Next time you can pass '--subject-prefix=3D"PATCH next-YYYYMMDD"' when
-> > doing 'git format-patch ...' (or whatever you use to generate the
-> > patch).
->
-> I've never seen anyone use this prefix before.
->
-> What does the date really help?  In staging, we apply everything on top
-> of staging-next and if it doesn't apply then we don't investigate, we
-> just say "doesn't apply.  resend if needed".
->
-> We may as well just say [PATCH linux-next].  No one is ever going to
-> look up the date if it doesn't apply to the latest linux-next.
->
+In networking then they want you to say which tree it applies to, but
+it's not as simple as saying "net" vs "net-next".  If it's a bugfix then
+you should write that against "net" but if it's a clean up or a fix to a
+recent change then it should be written against "net-next".
 
-Is there an official rule to label patches for Linux-next?
+Also linux-next is not necessarily the same thing as net-next.
+Networking patches should be written against either net or net-next, not
+linux-next.
 
-Usually - when I was more active on Linux-next development - folks add
-a "PATCH -next" to the subject.
-Of course, this needs additionally a hint in the patch/commit message
-against which Linux-next release it is applicable.
-Linux-next releases are highly dynamic - a patch might be applicable
-to one single "-next" release.
-Git trees come and go - are resetted to an older version of a Git tree.
+BPF tried to implement similar rules to they're not big enough to impose
+their own rules.  It's quite a big headache to try to figure out which
+tree to use if you're like me and have no clue about bpf.
 
-As LKML is CCed - think of the hundreds and thousands of patches
-coming in daily.
-So a more meaningful subject can give a first orientation.
-That was my point.
+Anyway, the point of the net vs net-next is that devs are supposed to
+figure out the exact tree and they're supposed to only write net-next if
+it doesn't apply to net.
 
-My =E2=82=AC0,02.
+It's not clear to me the value of putting linux-next in the subject.
+Doesn't everyone develop against the latest devel tree?  Certainly I
+can't imagine any maintainers doing extra work to try figure out the
+date of the linux-next release.  Surely, they just say "Doesn't apply to
+foo-tree.  Resend if necessary."  That's the fastest and easiest
+response when patches don't apply.
 
-- Sedat -
+regards,
+dan carpente
