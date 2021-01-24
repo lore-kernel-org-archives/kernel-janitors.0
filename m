@@ -1,39 +1,46 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 24 Jan 2021 07:56:37 +0000
-Subject: [PATCH] iwlwifi: mvm: Fix an error handling path in 'ebu_dma_start()'
-Message-Id: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Jan 2021 08:09:50 +0000
+Subject: Re: [PATCH] iwlwifi: mvm: Fix an error handling path in 'ebu_dma_start()'
+Message-Id: <b7f265f3-0ce2-4e46-c0a2-e43edf0e20a7@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: luciano.coelho@intel.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, mordechay.goodstein@intel.com, johannes.berg@intel.com, sara.sharon@intel.com, nathan.errera@intel.com, Dan1.Halperin@intel.com, emmanuel.grumbach@intel.com, naftali.goldstein@intel.com, netdev@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If the 'cmd_ver' check fails, we must release some memory as already done
-in all the other error handling paths of this function.
+Le 24/01/2021 à 08:56, Christophe JAILLET a écrit :
+> If the 'cmd_ver' check fails, we must release some memory as already done
+> in all the other error handling paths of this function.
+> 
+> Fixes: 9e3c39361a30 ("iwlwifi: mvm: support new KEK KCK api")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> index c025188fa9bc..2fb897cbfca6 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> @@ -810,8 +810,10 @@ static int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
+>   						WOWLAN_KEK_KCK_MATERIAL,
+>   						IWL_FW_CMD_VER_UNKNOWN);
+>   		if (WARN_ON(cmd_ver != 2 && cmd_ver != 3 &&
+> -			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN))
+> -			return -EINVAL;
+> +			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN)) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+>   		if (cmd_ver = 3)
+>   			cmd_size = sizeof(struct iwl_wowlan_kek_kck_material_cmd_v3);
+>   		else
+> 
 
-Fixes: 9e3c39361a30 ("iwlwifi: mvm: support new KEK KCK api")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+NACK.
+I'll resend with the correct subject.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-index c025188fa9bc..2fb897cbfca6 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-@@ -810,8 +810,10 @@ static int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
- 						WOWLAN_KEK_KCK_MATERIAL,
- 						IWL_FW_CMD_VER_UNKNOWN);
- 		if (WARN_ON(cmd_ver != 2 && cmd_ver != 3 &&
--			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN))
--			return -EINVAL;
-+			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN)) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		if (cmd_ver = 3)
- 			cmd_size = sizeof(struct iwl_wowlan_kek_kck_material_cmd_v3);
- 		else
--- 
-2.27.0
+CJ
