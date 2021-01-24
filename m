@@ -1,38 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Jan 2021 16:22:02 +0000
-Subject: [PATCH] libertas: remove redundant initialization of variable ret
-Message-Id: <20210128162202.642848-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Jan 2021 08:11:07 +0000
+Subject: [PATCH v2] iwlwifi: mvm: Fix an error handling path in 'iwl_mvm_wowlan_config_key_params()'
+Message-Id: <20210124081107.732360-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: luciano.coelho@intel.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, mordechay.goodstein@intel.com, johannes.berg@intel.com, sara.sharon@intel.com, nathan.errera@intel.com, Dan1.Halperin@intel.com, emmanuel.grumbach@intel.com, naftali.goldstein@intel.com, netdev@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+If the 'cmd_ver' check fails, we must release some memory as already done
+in all the other error handling paths of this function.
 
-The variable ret is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 9e3c39361a30 ("iwlwifi: mvm: support new KEK KCK api")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/marvell/libertas/if_sdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1->v2: Fix the subject
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
-index 44fbd0acb87a..a63c5e622ee3 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -981,7 +981,7 @@ static int if_sdio_host_to_card(struct lbs_private *priv,
- 
- static int if_sdio_enter_deep_sleep(struct lbs_private *priv)
- {
--	int ret = -1;
-+	int ret;
- 	struct cmd_header cmd;
- 
- 	memset(&cmd, 0, sizeof(cmd));
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index c025188fa9bc..2fb897cbfca6 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -810,8 +810,10 @@ static int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
+ 						WOWLAN_KEK_KCK_MATERIAL,
+ 						IWL_FW_CMD_VER_UNKNOWN);
+ 		if (WARN_ON(cmd_ver != 2 && cmd_ver != 3 &&
+-			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN))
+-			return -EINVAL;
++			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN)) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 		if (cmd_ver = 3)
+ 			cmd_size = sizeof(struct iwl_wowlan_kek_kck_material_cmd_v3);
+ 		else
 -- 
-2.29.2
+2.27.0
