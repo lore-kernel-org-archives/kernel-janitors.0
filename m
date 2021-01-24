@@ -1,46 +1,44 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 24 Jan 2021 08:09:50 +0000
-Subject: Re: [PATCH] iwlwifi: mvm: Fix an error handling path in 'ebu_dma_start()'
-Message-Id: <b7f265f3-0ce2-4e46-c0a2-e43edf0e20a7@wanadoo.fr>
+Date: Sun, 24 Jan 2021 06:32:53 +0000
+Subject: [PATCH] driver core: Fix a reource leak in 'fw_devlink_create_devlink()'
+Message-Id: <20210124063253.720637-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: luciano.coelho@intel.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, mordechay.goodstein@intel.com, johannes.berg@intel.com, sara.sharon@intel.com, nathan.errera@intel.com, Dan1.Halperin@intel.com, emmanuel.grumbach@intel.com, naftali.goldstein@intel.com, netdev@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@linuxfoundation.org, rafael@kernel.org, saravanak@google.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Le 24/01/2021 à 08:56, Christophe JAILLET a écrit :
-> If the 'cmd_ver' check fails, we must release some memory as already done
-> in all the other error handling paths of this function.
-> 
-> Fixes: 9e3c39361a30 ("iwlwifi: mvm: support new KEK KCK api")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> index c025188fa9bc..2fb897cbfca6 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> @@ -810,8 +810,10 @@ static int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
->   						WOWLAN_KEK_KCK_MATERIAL,
->   						IWL_FW_CMD_VER_UNKNOWN);
->   		if (WARN_ON(cmd_ver != 2 && cmd_ver != 3 &&
-> -			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN))
-> -			return -EINVAL;
-> +			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN)) {
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
->   		if (cmd_ver = 3)
->   			cmd_size = sizeof(struct iwl_wowlan_kek_kck_material_cmd_v3);
->   		else
-> 
+In 'fw_devlink_create_devlink()', all exit paths, successful or not,
+release the reference taken on 'sup_dev'.
+All but this one.
 
-NACK.
-I'll resend with the correct subject.
+Use the existing error handling case to call the missing 'put_device()'.
 
-CJ
+Fixes: f9aa460672c9c ("driver core: Refactor fw_devlink feature")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Speculative and compile tested only
+---
+ drivers/base/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index e08d376631cc..8775717a6bf7 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1623,8 +1623,10 @@ static int fw_devlink_create_devlink(struct device *con,
+ 	 * cycles. So cycle detection isn't necessary and shouldn't be
+ 	 * done.
+ 	 */
+-	if (flags & DL_FLAG_SYNC_STATE_ONLY)
+-		return -EAGAIN;
++	if (flags & DL_FLAG_SYNC_STATE_ONLY) {
++		ret = -EAGAIN;
++		goto out;
++	}
+ 
+ 	/*
+ 	 * If we can't find the supplier device from its fwnode, it might be
+-- 
+2.27.0
