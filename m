@@ -1,37 +1,39 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 28 Jan 2021 20:51:35 +0000
-Subject: Re: [PATCH] staging: net: wimax: i2400m: fw: remove redundant initialization of variable result
-Message-Id: <4feb2701856a0a05ce22f27adf1ade679695cfe5.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Jan 2021 07:56:37 +0000
+Subject: [PATCH] iwlwifi: mvm: Fix an error handling path in 'ebu_dma_start()'
+Message-Id: <20210124075637.732126-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128173703.645328-1-colin.king@canonical.com>
-In-Reply-To: <20210128173703.645328-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: luciano.coelho@intel.com, kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, mordechay.goodstein@intel.com, johannes.berg@intel.com, sara.sharon@intel.com, nathan.errera@intel.com, Dan1.Halperin@intel.com, emmanuel.grumbach@intel.com, naftali.goldstein@intel.com, netdev@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 2021-01-28 at 17:37 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The variable result is being initialized with a value that is never
-> read and it is being updated later with a new value.  The initialization
-> is redundant and can be removed.
+If the 'cmd_ver' check fails, we must release some memory as already done
+in all the other error handling paths of this function.
 
-Isn't WIMAX dead?  Shouldn't it be marked ORPHAN in MAINTAINERS?
+Fixes: 9e3c39361a30 ("iwlwifi: mvm: support new KEK KCK api")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-diff --git a/MAINTAINERS b/MAINTAINERS
-index caac09a3c5c9..922afd393cb6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19201,6 +19201,10 @@ S:     Supported
- W:	https://wireless.wiki.kernel.org/en/users/Drivers/wil6210
- F:	drivers/net/wireless/ath/wil6210/
-=20
-+WIMAX
-+S:	Orphan
-+F:	drivers/staging/wimax/
-+
- WINBOND CIR DRIVER
- M:	David H=E4rdeman <david@hardeman.nu>
- S:	Maintained
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index c025188fa9bc..2fb897cbfca6 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -810,8 +810,10 @@ static int iwl_mvm_wowlan_config_key_params(struct iwl_mvm *mvm,
+ 						WOWLAN_KEK_KCK_MATERIAL,
+ 						IWL_FW_CMD_VER_UNKNOWN);
+ 		if (WARN_ON(cmd_ver != 2 && cmd_ver != 3 &&
+-			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN))
+-			return -EINVAL;
++			    cmd_ver != IWL_FW_CMD_VER_UNKNOWN)) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 		if (cmd_ver = 3)
+ 			cmd_size = sizeof(struct iwl_wowlan_kek_kck_material_cmd_v3);
+ 		else
+-- 
+2.27.0
