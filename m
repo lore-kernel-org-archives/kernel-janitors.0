@@ -1,51 +1,41 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Tue, 19 Jan 2021 04:33:36 +0000
-Subject: Re: [PATCH] net/qla3xxx: switch from 'pci_' to 'dma_' API
-Message-Id: <20210118203336.6e7170a1@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Jan 2021 07:09:23 +0000
+Subject: [PATCH] dmaengine: ti: k3-udma: Fix a resource leak in an error handling path
+Message-Id: <20210124070923.724479-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210117081542.560021-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210117081542.560021-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peter.ujfalusi@gmail.com, dan.j.williams@intel.com, vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, 17 Jan 2021 09:15:42 +0100 Christophe JAILLET wrote:
-> @@ -2525,9 +2519,8 @@ static int ql_alloc_net_req_rsp_queues(struct ql3_adapter *qdev)
->  	wmb();
->  
->  	qdev->req_q_virt_addr > -	    pci_alloc_consistent(qdev->pdev,
-> -				 (size_t) qdev->req_q_size,
-> -				 &qdev->req_q_phy_addr);
-> +	    dma_alloc_coherent(&qdev->pdev->dev, (size_t)qdev->req_q_size,
-> +			       &qdev->req_q_phy_addr, GFP_KERNEL);
->  
->  	if ((qdev->req_q_virt_addr = NULL) ||
->  	    LS_64BITS(qdev->req_q_phy_addr) & (qdev->req_q_size - 1)) {
-> @@ -2536,16 +2529,14 @@ static int ql_alloc_net_req_rsp_queues(struct ql3_adapter *qdev)
->  	}
->  
->  	qdev->rsp_q_virt_addr > -	    pci_alloc_consistent(qdev->pdev,
-> -				 (size_t) qdev->rsp_q_size,
-> -				 &qdev->rsp_q_phy_addr);
-> +	    dma_alloc_coherent(&qdev->pdev->dev, (size_t)qdev->rsp_q_size,
-> +			       &qdev->rsp_q_phy_addr, GFP_KERNEL);
->  
->  	if ((qdev->rsp_q_virt_addr = NULL) ||
->  	    LS_64BITS(qdev->rsp_q_phy_addr) & (qdev->rsp_q_size - 1)) {
->  		netdev_err(qdev->ndev, "rspQ allocation failed\n");
-> -		pci_free_consistent(qdev->pdev, (size_t) qdev->req_q_size,
-> -				    qdev->req_q_virt_addr,
-> -				    qdev->req_q_phy_addr);
-> +		dma_free_coherent(&qdev->pdev->dev, (size_t)qdev->req_q_size,
-> +				  qdev->req_q_virt_addr, qdev->req_q_phy_addr);
->  		return -ENOMEM;
->  	}
+In 'dma_pool_create()', we return -ENOMEM, but don't release the resources
+already allocated, as in all the other error handling paths.
 
-Something to follow up on - the error handling in this function looks
-pretty sketchy. Looks like if the buffer was allocated but these
-alignment conditions trigger the buffer is not freed. Happens both for
-req and rsp buffer.
+Go to 'err_res_free' instead of returning directly.
 
-Applied, thanks!
+Fixes: 017794739702 ("dmaengine: ti: k3-udma: Initial support for K3 BCDMA")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is not even compile tested.
+I don't have the needed configuration.
+---
+ drivers/dma/ti/k3-udma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+index 8e3fd1119a77..96ad21869ba7 100644
+--- a/drivers/dma/ti/k3-udma.c
++++ b/drivers/dma/ti/k3-udma.c
+@@ -2447,7 +2447,8 @@ static int bcdma_alloc_chan_resources(struct dma_chan *chan)
+ 			dev_err(ud->ddev.dev,
+ 				"Descriptor pool allocation failed\n");
+ 			uc->use_dma_pool = false;
+-			return -ENOMEM;
++			ret = -ENOMEM;
++			goto err_res_free;
+ 		}
+ 
+ 		uc->use_dma_pool = true;
+-- 
+2.27.0
