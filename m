@@ -1,56 +1,61 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 04 Jan 2021 16:59:53 +0000
-Subject: Re: [PATCH] sound: Convert strlcpy to strscpy when return value is unused
-Message-Id: <s5hturw7i46.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:47:12 +0000
+Subject: [PATCH] drm/i915/gem: Fix oops in error handling code
+Message-Id: <YA6FkPn5S4ZDUGxq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <58a84d03b714f71d231f9cac04af09a6b97c6f04.camel@perches.com>
-In-Reply-To: <58a84d03b714f71d231f9cac04af09a6b97c6f04.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>, Matthew Auld <matthew.auld@intel.com>, Wambui Karuga <wambui.karugax@gmail.com>
 
-On Thu, 31 Dec 2020 20:04:50 +0100,
-Joe Perches wrote:
-> 
-> strlcpy is deprecated.  see: Documentation/process/deprecated.rst
-> 
-> Change the calls that do not use the strlcpy return value to the
-> preferred strscpy.
-> 
-> Done with cocci script:
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> 
-> -	strlcpy(
-> +	strscpy(
-> 	e1, e2, e3);
-> 
-> This cocci script leaves the instances where the return value is
-> used unchanged.
-> 
-> After this patch, sound/ has 3 uses of strlcpy() that need to be
-> manually inspected for conversion and changed one day.
-> 
-> $ git grep -w strlcpy sound/
-> sound/usb/card.c:               len = strlcpy(card->longname, s, sizeof(card->longname));
-> sound/usb/mixer.c:      return strlcpy(buf, p->name, buflen);
-> sound/usb/mixer.c:                      return strlcpy(buf, p->names[index], buflen);
-> 
-> Miscellenea:
-> 
-> o Remove trailing whitespace in conversion of sound/core/hwdep.c
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+This code will Oops when it tries to i915_gem_object_free(obj) because
+"obj" is an error pointer.
 
-Could you resubmit to alsa-devel ML?
+Fixes: 97d553963250 ("drm/i915/region: convert object_create into object_init")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/gem/i915_gem_stolen.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-
-thanks,
-
-Takashi
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_stolen.c b/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
+index 551935348ad8..a1e197a6e999 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_stolen.c
+@@ -753,22 +753,18 @@ i915_gem_object_create_stolen_for_preallocated(struct drm_i915_private *i915,
+ 	mutex_lock(&i915->mm.stolen_lock);
+ 	ret = drm_mm_reserve_node(&i915->mm.stolen, stolen);
+ 	mutex_unlock(&i915->mm.stolen_lock);
+-	if (ret) {
+-		obj = ERR_PTR(ret);
++	if (ret)
+ 		goto err_free;
+-	}
+ 
+ 	obj = i915_gem_object_alloc();
+ 	if (!obj) {
+-		obj = ERR_PTR(-ENOMEM);
++		ret = -ENOMEM;
+ 		goto err_stolen;
+ 	}
+ 
+ 	ret = __i915_gem_object_create_stolen(mem, obj, stolen);
+-	if (ret) {
+-		obj = ERR_PTR(ret);
++	if (ret)
+ 		goto err_object_free;
+-	}
+ 
+ 	i915_gem_object_set_cache_coherency(obj, I915_CACHE_NONE);
+ 	return obj;
+@@ -779,7 +775,7 @@ i915_gem_object_create_stolen_for_preallocated(struct drm_i915_private *i915,
+ 	i915_gem_stolen_remove_node(i915, stolen);
+ err_free:
+ 	kfree(stolen);
+-	return obj;
++	return ERR_PTR(ret);
+ }
+ 
+ bool i915_gem_object_is_stolen(const struct drm_i915_gem_object *obj)
+-- 
+2.29.2
