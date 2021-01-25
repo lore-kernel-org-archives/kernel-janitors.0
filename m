@@ -1,68 +1,55 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Thu, 28 Jan 2021 09:56:00 +0000
-Subject: Re: [PATCH] USB: serial: mos7720: Fix error code in mos7720_write()
-Message-Id: <YBKKMK9UfRjB52sW@hovoldconsulting.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:48:30 +0000
+Subject: [PATCH] drm/i915/gvt: fix uninitialized return in intel_gvt_update_reg_whitelist()
+Message-Id: <YA6F3oF8mRaNQWjb@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBKFW60qMJbtjvum@mwanda>
-In-Reply-To: <YBKFW60qMJbtjvum@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org, Zhi Wang <zhi.a.wang@intel.com>
 
-On Thu, Jan 28, 2021 at 12:35:23PM +0300, Dan Carpenter wrote:
-> This code should return -ENOMEM if the kmalloc() fails but instead
-> it returns success.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The first error path is probably wrong as well?
-> 
-> drivers/usb/serial/mos7720.c
->   1077          /* try to find a free urb in the list */
->   1078          urb = NULL;
->   1079  
->   1080          for (i = 0; i < NUM_URBS; ++i) {
->   1081                  if (mos7720_port->write_urb_pool[i] &&
->   1082                      mos7720_port->write_urb_pool[i]->status != -EINPROGRESS) {
->   1083                          urb = mos7720_port->write_urb_pool[i];
->   1084                          dev_dbg(&port->dev, "URB:%d\n", i);
->   1085                          break;
->   1086                  }
->   1087          }
->   1088  
->   1089          if (urb = NULL) {
->   1090                  dev_dbg(&port->dev, "%s - no more free urbs\n", __func__);
->   1091                  goto exit;
-> 
-> Should return -ENODEV?
+Smatch found an uninitialized variable bug in this code:
 
-No, this bit is correct (modulo the missing locking and reliance on the
-URB status). When there are no free URBs we want the tty layer to
-retry later.
+    drivers/gpu/drm/i915/gvt/cmd_parser.c:3191 intel_gvt_update_reg_whitelist()
+    error: uninitialized symbol 'ret'.
 
->   1092          }
-> 
->  drivers/usb/serial/mos7720.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
-> index ed347a6d50ba..aa55169796a3 100644
-> --- a/drivers/usb/serial/mos7720.c
-> +++ b/drivers/usb/serial/mos7720.c
-> @@ -1094,8 +1094,10 @@ static int mos7720_write(struct tty_struct *tty, struct usb_serial_port *port,
->  	if (urb->transfer_buffer = NULL) {
->  		urb->transfer_buffer = kmalloc(URB_TRANSFER_BUFFER_SIZE,
->  					       GFP_ATOMIC);
-> -		if (!urb->transfer_buffer)
-> +		if (!urb->transfer_buffer) {
-> +			bytes_sent = -ENOMEM;
->  			goto exit;
-> +		}
->  	}
->  	transfer_size = min(count, URB_TRANSFER_BUFFER_SIZE);
+The first thing that Smatch complains about is that "ret" isn't set if
+we don't enter the "for_each_engine(engine, &dev_priv->gt, id) {" loop.
+Presumably we always have at least one engine so that's a false
+positive.
 
-Now applied, thanks.
+But it's definitely a bug to not set "ret" if i915_gem_object_pin_map()
+fails.
 
-Johan
+Let's fix the bug and silence the false positive.
+
+Fixes: 493f30cd086e ("drm/i915/gvt: parse init context to update cmd accessible reg whitelist")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/i915/gvt/cmd_parser.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.c b/drivers/gpu/drm/i915/gvt/cmd_parser.c
+index 7fb91de06557..d54ea0e4681d 100644
+--- a/drivers/gpu/drm/i915/gvt/cmd_parser.c
++++ b/drivers/gpu/drm/i915/gvt/cmd_parser.c
+@@ -3103,7 +3103,7 @@ void intel_gvt_update_reg_whitelist(struct intel_vgpu *vgpu)
+ 	struct intel_vgpu_submission *s = &vgpu->submission;
+ 	struct i915_request *requests[I915_NUM_ENGINES] = {};
+ 	bool is_ctx_pinned[I915_NUM_ENGINES] = {};
+-	int ret;
++	int ret = 0;
+ 
+ 	if (gvt->is_reg_whitelist_updated)
+ 		return;
+@@ -3157,6 +3157,7 @@ void intel_gvt_update_reg_whitelist(struct intel_vgpu *vgpu)
+ 		if (IS_ERR(vaddr)) {
+ 			gvt_err("failed to pin init ctx obj, ring=%d, err=%lx\n",
+ 				id, PTR_ERR(vaddr));
++			ret = PTR_ERR(vaddr);
+ 			goto out;
+ 		}
+ 
+-- 
+2.29.2
