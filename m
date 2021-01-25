@@ -1,33 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 23 Jan 2021 04:22:04 +0000
-Subject: Re: [PATCH] scsi: pm80xx: switch from 'pci_' to 'dma_' API
-Message-Id: <161136635065.28733.5978048378954329099.b4-ty@oracle.com>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Mon, 25 Jan 2021 01:41:41 +0000
+Subject: [PATCH] btrfs: remove repeated word
+Message-Id: <20210125014141.GA10137@fedora>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210117132445.562552-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210117132445.562552-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.ibm.com, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jinpu.wang@cloud.ionos.com
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 17 Jan 2021 14:24:45 +0100, Christophe JAILLET wrote:
+Comment for processed extent end of range has an
+unnecessary "in". Eradicate it.
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
-> 
-> When memory is allocated in 'pm8001_init_ccb_tag()' GFP_KERNEL can be used
-> because this function already uses this flag a few lines above.
-> 
-> [...]
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ fs/btrfs/extent_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 5.12/scsi-queue, thanks!
-
-[1/1] scsi: pm80xx: switch from 'pci_' to 'dma_' API
-      https://git.kernel.org/mkp/scsi/c/8e60a7deca3d
-
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 7f689ad7709c..2dc98eeb3c93 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2775,7 +2775,7 @@ struct processed_extent {
+ 	struct btrfs_inode *inode;
+ 	/* Start of the range in @inode */
+ 	u64 start;
+-	/* End of the range in in @inode */
++	/* End of the range in @inode */
+ 	u64 end;
+ 	bool uptodate;
+ };
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
