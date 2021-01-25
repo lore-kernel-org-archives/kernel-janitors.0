@@ -1,54 +1,41 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 11 Jan 2021 18:05:29 +0000
-Subject: Re: [PATCH] mmc: mxs-mmc: Fix a resource leak in an error handling path in 'mxs_mmc_probe()'
-Message-Id: <CAPDyKFpvjdbWnCD9KRnZAimc_X0CaYS9uCVceuEOX+7THifLpQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:42:36 +0000
+Subject: [PATCH v2 2/2 net-next] net: mscc: ocelot: fix error code in mscc_ocelot_probe()
+Message-Id: <YA6EfL9tQWYU3dDn@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201208203527.49262-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YA59en4lJCiYsPHv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, dl-linux-imx <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Chris Ball <cjb@laptop.org>, Fabio Estevam <festevam@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 8 Dec 2020 at 21:35, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If 'mmc_of_parse()' fails, we must undo the previous 'dma_request_chan()'
-> call.
->
-> Fixes: abd37cccd47f ("mmc: mxs: use mmc_gpio_get_ro for detecting read-only status")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Probe should return an error code if platform_get_irq_byname() fails
+but it returns success instead.
 
-Applied for next (by dropping the fixes tag as it seems non-critical
-anyway), thanks!
+Fixes: 6c30384eb1de ("net: mscc: ocelot: register devlink ports")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: no change
 
-Kind regards
-Uffe
+ drivers/net/ethernet/mscc/ocelot_vsc7514.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-
-> ---
-> I'm not 100% sure of the Fixes tag, but it seems to be the root cause. The
-> erroneous 'out_clk_disable' has then been kept around in the following
-> commits
-> ---
->  drivers/mmc/host/mxs-mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-> index 56bbc6cd9c84..947581de7860 100644
-> --- a/drivers/mmc/host/mxs-mmc.c
-> +++ b/drivers/mmc/host/mxs-mmc.c
-> @@ -628,7 +628,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
->
->         ret = mmc_of_parse(mmc);
->         if (ret)
-> -               goto out_clk_disable;
-> +               goto out_free_dma;
->
->         mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
->
-> --
-> 2.27.0
->
+diff --git a/drivers/net/ethernet/mscc/ocelot_vsc7514.c b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+index 2c82ffe2c611..7e4c9b255124 100644
+--- a/drivers/net/ethernet/mscc/ocelot_vsc7514.c
++++ b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
+@@ -1307,8 +1307,10 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 		goto out_free_devlink;
+ 
+ 	irq_xtr = platform_get_irq_byname(pdev, "xtr");
+-	if (irq_xtr < 0)
++	if (irq_xtr < 0) {
++		err = irq_xtr;
+ 		goto out_free_devlink;
++	}
+ 
+ 	err = devm_request_threaded_irq(&pdev->dev, irq_xtr, NULL,
+ 					ocelot_xtr_irq_handler, IRQF_ONESHOT,
+-- 
+2.29.2
