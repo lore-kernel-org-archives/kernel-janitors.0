@@ -1,29 +1,34 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 14 Jan 2021 06:47:36 +0000
-Subject: Re: [PATCH] crypto: keembay-ocs-hcu - Fix a WARN() message
-Message-Id: <20210114064736.GJ12584@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:44:02 +0000
+Subject: [PATCH] scsi: qla2xxx: fix some memory corruption
+Message-Id: <YA6E0geUlL9Hs04A@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X/WB9IlpyIi+5p5s@mwanda>
-In-Reply-To: <X/WB9IlpyIi+5p5s@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniele Alessandrelli <daniele.alessandrelli@intel.com>, Declan Murphy <declan.murphy@intel.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nilesh Javali <njavali@marvell.com>
+Cc: GR-QLogic-Storage-Upstream@marvell.com, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@oracle.com>, Saurav Kashyap <skashyap@marvell.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 06, 2021 at 12:25:08PM +0300, Dan Carpenter wrote:
-> The first argument to WARN() is a condition and the messages is the
-> second argument is the string, so this WARN() will only display the
-> __func__ part of the message.
-> 
-> Fixes: ae832e329a8d ("crypto: keembay-ocs-hcu - Add HMAC support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/keembay/keembay-ocs-hcu-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This was supposed to be "data" instead of "&data".  The current code
+will corrupt the stack.
 
-Patch applied.  Thanks.
+Fixes: dbf1f53cfd23 ("scsi: qla2xxx: Implementation to get and manage host, target stats and initiator port")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/qla2xxx/qla_bsg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index e45da05383cd..bee8cf9f8123 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -2667,7 +2667,7 @@ qla2x00_get_tgt_stats(struct bsg_job *bsg_job)
+ 
+ 		bsg_reply->reply_payload_rcv_len  			sg_copy_from_buffer(bsg_job->reply_payload.sg_list,
+-					    bsg_job->reply_payload.sg_cnt, &data,
++					    bsg_job->reply_payload.sg_cnt, data,
+ 					    sizeof(struct ql_vnd_tgt_stats_resp));
+ 
+ 		bsg_reply->result = DID_OK;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.29.2
