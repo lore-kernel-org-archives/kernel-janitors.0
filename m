@@ -1,41 +1,41 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 28 Jan 2021 20:51:29 +0000
-Subject: Re: [PATCH][next] mm/zswap: fix potential uninitialized pointer read on tmp
-Message-Id: <20210128125129.27dd2042b8d04b28c45ad7c0@linux-foundation.org>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Mon, 25 Jan 2021 08:17:48 +0000
+Subject: [PATCH] printk: rectify kernel-doc for prb_rec_init_wr()
+Message-Id: <20210125081748.19903-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128141728.639030-1-colin.king@canonical.com>
-	<2dee1f77-863b-e7aa-a3d2-bb4591d4f720@suse.cz>
-In-Reply-To: <2dee1f77-863b-e7aa-a3d2-bb4591d4f720@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Colin King <colin.king@canonical.com>, Seth Jennings <sjenning@redhat.com>, Dan Streetman <ddstreet@ieee.org>, Vitaly Wool <vitaly.wool@konsulko.com>, Tian Tao <tiantao6@hisilicon.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Thu, 28 Jan 2021 16:18:23 +0100 Vlastimil Babka <vbabka@suse.cz> wrote:
+The command 'find ./kernel/printk/ | xargs ./scripts/kernel-doc -none'
+reported a mismatch with the kernel-doc of prb_rec_init_wr().
 
-> On 1/28/21 3:17 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > In the case where zpool_can_sleep_mapped(pool) returns 0
-> > then tmp is not allocated and tmp is then an uninitialized
-> > pointer. Later if entry is null, tmp is freed, hence free'ing
-> > an uninitialized pointer. Fix this by ensuring tmp is initialized
-> > to NULL.
-> > 
-> > Addresses-Coverity: ("Uninitialized pointer read")
-> > Fixes: 908aa806dba0 ("mm/zswap: fix potential memory leak")
-> 
-> That's a linux-next hash, patch is in mmotm [1] *) You know what it means...
-> 
-> *) actually it's not there, yet it is in -next. What's going on?
-> 
-> [1]
-> https://ozlabs.org/~akpm/mmotm/broken-out/mm-zswap-fix-potential-memory-leak.patch
+Rectify the kernel-doc, such that no issues remain for ./kernel/printk/.
 
-The containing file was renamed to
-https://ozlabs.org/~akpm/mmotm/broken-out/mm-zswap-add-the-flag-can_sleep_mapped-fix-2.patch,
-since it's a fix against mm-zswap-add-the-flag-can_sleep_mapped.patch.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on v5.11-rc5 and next-20210122
 
-And this patch's containing file will of course be
-mm-zswap-add-the-flag-can_sleep_mapped-fix-3.patch.
+John, please ack.
+Petr, please pick this minor typo fixup.
+
+ kernel/printk/printk_ringbuffer.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk_ringbuffer.h b/kernel/printk/printk_ringbuffer.h
+index 5dc9d022db07..73cc80e01cef 100644
+--- a/kernel/printk/printk_ringbuffer.h
++++ b/kernel/printk/printk_ringbuffer.h
+@@ -287,7 +287,7 @@ _DEFINE_PRINTKRB(name, descbits, avgtextbits, &_##name##_text[0])
+ /* Writer Interface */
+ 
+ /**
+- * prb_rec_init_wd() - Initialize a buffer for writing records.
++ * prb_rec_init_wr() - Initialize a buffer for writing records.
+  *
+  * @r:             The record to initialize.
+  * @text_buf_size: The needed text buffer size.
+-- 
+2.17.1
