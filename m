@@ -1,57 +1,60 @@
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-Date: Tue, 26 Jan 2021 05:09:01 +0000
-Subject: Re: [PATCH] drm/i915/gvt: fix uninitialized return in intel_gvt_update_reg_whitelist()
-Message-Id: <20210126050901.GF1538@zhen-hp.sh.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="/WwmFnJnmDyWGHa4"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:44:34 +0000
+Subject: [PATCH] scsi: lpfc: Fix ancient double free
+Message-Id: <YA6E8rO51hE56SVw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YA6F3oF8mRaNQWjb@mwanda>
- <161156789392.31416.7341729779003502151@build.alporthouse.com>
-In-Reply-To: <161156789392.31416.7341729779003502151@build.alporthouse.com>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Zhi Wang <zhi.a.wang@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org, Dan Carpenter <dan.carpenter@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: James Smart <james.smart@broadcom.com>
+Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@steeleye.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The "pmb" pointer is freed at the start of the function and then freed
+again in the error handling code.
 
---/WwmFnJnmDyWGHa4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 92d7f7b0cde3 ("[SCSI] lpfc: NPIV: add NPIV support on top of SLI-3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-On 2021.01.25 09:44:53 +0000, Chris Wilson wrote:
-> Quoting Dan Carpenter (2021-01-25 08:48:30)
-> > Smatch found an uninitialized variable bug in this code:
-> >=20
-> >     drivers/gpu/drm/i915/gvt/cmd_parser.c:3191 intel_gvt_update_reg_whi=
-telist()
-> >     error: uninitialized symbol 'ret'.
-> >=20
-> > The first thing that Smatch complains about is that "ret" isn't set if
-> > we don't enter the "for_each_engine(engine, &dev_priv->gt, id) {" loop.
-> > Presumably we always have at least one engine so that's a false
-> > positive.
-> >=20
-> > But it's definitely a bug to not set "ret" if i915_gem_object_pin_map()
-> > fails.
->=20
-> True.
-> =20
-> > Let's fix the bug and silence the false positive.
-> >=20
-> > Fixes: 493f30cd086e ("drm/i915/gvt: parse init context to update cmd ac=
-cessible reg whitelist")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-
-Thanks, Dan & Chris! Queued this up.
-
---/WwmFnJnmDyWGHa4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCYA+j6AAKCRCxBBozTXgY
-J5cJAJ9sFEZY0fDpLiQtUxokU7lBHau3GQCePa3i/LHx5XYBX6y/5g6zbXsx+DQ=
-=ooGI
------END PGP SIGNATURE-----
-
---/WwmFnJnmDyWGHa4--
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index f890b5b7e6ca..48ca4a612f80 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -1155,13 +1155,14 @@ lpfc_mbx_cmpl_local_config_link(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
+ 	struct lpfc_vport *vport = pmb->vport;
+ 	LPFC_MBOXQ_t *sparam_mb;
+ 	struct lpfc_dmabuf *sparam_mp;
++	u16 status = pmb->u.mb.mbxStatus;
+ 	int rc;
+ 
+-	if (pmb->u.mb.mbxStatus)
+-		goto out;
+-
+ 	mempool_free(pmb, phba->mbox_mem_pool);
+ 
++	if (status)
++		goto out;
++
+ 	/* don't perform discovery for SLI4 loopback diagnostic test */
+ 	if ((phba->sli_rev = LPFC_SLI_REV4) &&
+ 	    !(phba->hba_flag & HBA_FCOE_MODE) &&
+@@ -1224,12 +1225,10 @@ lpfc_mbx_cmpl_local_config_link(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
+ 
+ out:
+ 	lpfc_printf_vlog(vport, KERN_ERR, LOG_TRACE_EVENT,
+-			 "0306 CONFIG_LINK mbxStatus error x%x "
+-			 "HBA state x%x\n",
+-			 pmb->u.mb.mbxStatus, vport->port_state);
+-sparam_out:
+-	mempool_free(pmb, phba->mbox_mem_pool);
++			 "0306 CONFIG_LINK mbxStatus error x%x HBA state x%x\n",
++			 status, vport->port_state);
+ 
++sparam_out:
+ 	lpfc_linkdown(phba);
+ 
+ 	lpfc_printf_vlog(vport, KERN_ERR, LOG_TRACE_EVENT,
+-- 
+2.29.2
