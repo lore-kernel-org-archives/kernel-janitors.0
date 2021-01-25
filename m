@@ -1,37 +1,41 @@
-From: Bruce Fields <bfields@fieldses.org>
-Date: Thu, 28 Jan 2021 18:50:42 +0000
-Subject: Re: [PATCH][next] nfsd: fix check of statid returned from call to find_stateid_by_type
-Message-Id: <20210128185042.GB29887@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jan 2021 08:46:19 +0000
+Subject: [PATCH] drm/amdgpu: fix bitwise vs logical negate
+Message-Id: <YA6FW84XDSakXqNb@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128144935.640026-1-colin.king@canonical.com>
- <793C88A3-B117-4138-B74A-845E0BD383C9@oracle.com>
- <20210128153456.GI2696@kadam>
- <80ACEDFA-B496-44E0-AABB-BD4A7826516B@oracle.com>
-In-Reply-To: <80ACEDFA-B496-44E0-AABB-BD4A7826516B@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Colin King <colin.king@canonical.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alex Deucher <alexander.deucher@amd.com>, Aaron Liu <aaron.liu@amd.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, Liu ChengZhe <ChengZhe.Liu@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Jiansong Chen <Jiansong.Chen@amd.com>, Likun Gao <Likun.Gao@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>
 
-On Thu, Jan 28, 2021 at 03:53:36PM +0000, Chuck Lever wrote:
-> > On Jan 28, 2021, at 10:34 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > Fixes tags are used for a lot of different things:
-> > 1)  If there is a fixes tag, then you can tell it does *NOT* have to
-> >    be back ported because the original commit is not in the stable
-> >    tree.  It saves time for the stable maintainers.
-> > 2)  Metrics to figure out how quickly we are fixing bugs.
-> > 3)  Sometimes the Fixes tag helps because we want to review the original
-> >    patch to see what the intent was.
-> > 
-> > All sorts of stuff.  Etc.
-> 
-> Yep, I'm a fan of all that. I just want to avoid poking the stable
-> automation bear when it's unnecessary.
+There was a mixup between logical and bitwise negate so it just sets
+"data1" and "data2" to zero.
 
-I've routinely had patches with Fixes: lines referencing other queued-up
-patches, and I didn't get any stable mail about it.
+Fixes: 3c9a7b7d6e75 ("drm/amdgpu: update mmhub mgcg&ls for mmhub_v2_3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/amdgpu/mmhub_v2_3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-100% not something to worry about.
-
---b.
+diff --git a/drivers/gpu/drm/amd/amdgpu/mmhub_v2_3.c b/drivers/gpu/drm/amd/amdgpu/mmhub_v2_3.c
+index 1961745e89c7..ab9be5ad5a5f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mmhub_v2_3.c
++++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v2_3.c
+@@ -531,12 +531,12 @@ mmhub_v2_3_update_medium_grain_light_sleep(struct amdgpu_device *adev,
+ 
+ 	if (enable && (adev->cg_flags & AMD_CG_SUPPORT_MC_LS)) {
+ 		data &= ~MM_ATC_L2_CGTT_CLK_CTRL__MGLS_OVERRIDE_MASK;
+-		data1 &= !(DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_MASK |
++		data1 &= ~(DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_MASK |
+ 			DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_WRITE_MASK |
+ 			DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_READ_MASK |
+ 			DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_RETURN_MASK |
+ 			DAGB0_WR_CGTT_CLK_CTRL__LS_OVERRIDE_REGISTER_MASK);
+-		data2 &= !(DAGB0_RD_CGTT_CLK_CTRL__LS_OVERRIDE_MASK |
++		data2 &= ~(DAGB0_RD_CGTT_CLK_CTRL__LS_OVERRIDE_MASK |
+ 			DAGB0_RD_CGTT_CLK_CTRL__LS_OVERRIDE_WRITE_MASK |
+ 			DAGB0_RD_CGTT_CLK_CTRL__LS_OVERRIDE_READ_MASK |
+ 			DAGB0_RD_CGTT_CLK_CTRL__LS_OVERRIDE_RETURN_MASK |
+-- 
+2.29.2
