@@ -1,22 +1,37 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Date: Wed, 20 Jan 2021 18:32:41 +0000
-Subject: Re: [PATCH] soc: qcom: socinfo: Fix an off by one in qcom_show_pmic_model()
-Message-Id: <161116756167.3661239.9611045261884718600@swboyd.mtv.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Jan 2021 10:26:54 +0000
+Subject: [PATCH] USB: serial: mos7840: fix error code in mos7840_write()
+Message-Id: <YA/ubifCUlJXxG5g@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAf+o85Z9lgkq3Nw@mwanda>
-In-Reply-To: <YAf+o85Z9lgkq3Nw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Gross <agross@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>, Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Paul B Schroeder <pschroeder@uplogix.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2021-01-20 01:57:55)
-> These need to be < ARRAY_SIZE() instead of <= ARRAY_SIZE() to prevent
-> accessing one element beyond the end of the array.
-> 
-> Fixes: e9247e2ce577 ("soc: qcom: socinfo: fix printing of pmic_model")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+This should return -ENOMEM instead of 0 if the kmalloc() fails.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Fixes: 3f5429746d91 ("USB: Moschip 7840 USB-Serial Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/serial/mos7840.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index 23f91d658cb4..30c25ef0dacd 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -883,8 +883,10 @@ static int mos7840_write(struct tty_struct *tty, struct usb_serial_port *port,
+ 	if (urb->transfer_buffer = NULL) {
+ 		urb->transfer_buffer = kmalloc(URB_TRANSFER_BUFFER_SIZE,
+ 					       GFP_ATOMIC);
+-		if (!urb->transfer_buffer)
++		if (!urb->transfer_buffer) {
++			bytes_sent = -ENOMEM;
+ 			goto exit;
++		}
+ 	}
+ 	transfer_size = min(count, URB_TRANSFER_BUFFER_SIZE);
+ 
+-- 
+2.29.2
