@@ -1,27 +1,86 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Wed, 20 Jan 2021 03:35:48 +0000
-Subject: Re: [PATCH net] net: dsa: b53: fix an off by one in checking "vlan->vid"
-Message-Id: <20210119193548.515ab674@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 27 Jan 2021 20:17:32 +0000
+Subject: [PATCH] media: venus: core: Fix some resource leaks in the error path of 'venus_probe()'
+Message-Id: <20210127201732.743938-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAbxI97Dl/pmBy5V@mwanda>
-        <44c35bd8-b7c3-49be-3a67-e9b1c8a02617@gmail.com>
-In-Reply-To: <44c35bd8-b7c3-49be-3a67-e9b1c8a02617@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: stanimir.varbanov@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org, georgi.djakov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 19 Jan 2021 09:14:03 -0800 Florian Fainelli wrote:
-> On 1/19/2021 6:48 AM, Dan Carpenter wrote:
-> > The > comparison should be >= to prevent accessing one element beyond
-> > the end of the dev->vlans[] array in the caller function, b53_vlan_add().
-> > The "dev->vlans" array is allocated in the b53_switch_init() function
-> > and it has "dev->num_vlans" elements.
-> > 
-> > Fixes: a2482d2ce349 ("net: dsa: b53: Plug in VLAN support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
-> 
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+If an error occurs after a successful 'of_icc_get()' call, it must be
+undone by a corresponding 'icc_put()' call.
 
-Applied, thanks!
+Add it in the error handling path of the probe function as already done in
+the remove function.
+
+Fixes: 32f0a6ddc8c9 ("media: venus: Use on-chip interconnect API")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/qcom/venus/core.c | 31 +++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 0bde19edac86..8fd5da941067 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -200,27 +200,35 @@ static int venus_probe(struct platform_device *pdev)
+ 		return PTR_ERR(core->video_path);
+ 
+ 	core->cpucfg_path = of_icc_get(dev, "cpu-cfg");
+-	if (IS_ERR(core->cpucfg_path))
+-		return PTR_ERR(core->cpucfg_path);
++	if (IS_ERR(core->cpucfg_path)) {
++		ret = PTR_ERR(core->cpucfg_path);
++		goto err_video_path_put;
++	}
+ 
+ 	core->irq = platform_get_irq(pdev, 0);
+-	if (core->irq < 0)
+-		return core->irq;
++	if (core->irq < 0) {
++		ret = core->irq;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	core->res = of_device_get_match_data(dev);
+-	if (!core->res)
+-		return -ENODEV;
++	if (!core->res) {
++		ret = -ENODEV;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	mutex_init(&core->pm_lock);
+ 
+ 	core->pm_ops = venus_pm_get(core->res->hfi_version);
+-	if (!core->pm_ops)
+-		return -ENODEV;
++	if (!core->pm_ops) {
++		ret = -ENODEV;
++		goto err_cpucfg_path_put;
++	}
+ 
+ 	if (core->pm_ops->core_get) {
+ 		ret = core->pm_ops->core_get(dev);
+ 		if (ret)
+-			return ret;
++			goto err_cpucfg_path_put;
+ 	}
+ 
+ 	ret = dma_set_mask_and_coherent(dev, core->res->dma_mask);
+@@ -305,6 +313,11 @@ static int venus_probe(struct platform_device *pdev)
+ err_core_put:
+ 	if (core->pm_ops->core_put)
+ 		core->pm_ops->core_put(dev);
++err_cpucfg_path_put:
++	icc_put(core->cpucfg_path);
++err_video_path_put:
++	icc_put(core->video_path);
++
+ 	return ret;
+ }
+ 
+-- 
+2.27.0
