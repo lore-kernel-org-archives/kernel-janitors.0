@@ -1,55 +1,34 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Fri, 15 Jan 2021 11:43:29 +0000
-Subject: [PATCH] drm/dp_helper: tweak kerneldoc to address warning
-Message-Id: <20210115114329.27152-1-lukas.bulwahn@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jan 2021 05:25:59 +0000
+Subject: [PATCH] crypto: octeontx2 - fix signedness bug in cptvf_register_interrupts()
+Message-Id: <YBD5Z11GeYlJGuTh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Uma Shankar <uma.shankar@intel.com>, Jani Nikula <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org
-Cc: linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Boris Brezillon <bbrezillon@kernel.org>
+Cc: Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Suheil Chandran <schandran@marvell.com>, Lukasz Bartosik <lbartosik@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Commit 07c9b8634fb6 ("drm/dp_helper: Add helpers to configure PCONs
-RGB-YCbCr Conversion") introduces a warning with make htmldocs in
-./drivers/gpu/drm/drm_dp_helper.c:965 for
-drm_dp_downstream_rgb_to_ycbcr_conversion():
+The "num_vec" has to be signed for the error handling to work.
 
-  warning: Excess function parameter 'colorspc' description
-  warning: Function parameter or member 'color_spc' not described
-
-Tweak the kerneldoc for drm_dp_downstream_rgb_to_ycbcr_conversion().
-
-Fixes: 07c9b8634fb6 ("drm/dp_helper: Add helpers to configure PCONs RGB-YCbCr Conversion")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 19d8e8c7be15 ("crypto: octeontx2 - add virtual function driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-applies cleanly on next-20210115
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jani, please pick this minor doc warning fixup.
-
- drivers/gpu/drm/drm_dp_helper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index 3ecde451f523..d60e94ac6fdd 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -954,7 +954,7 @@ EXPORT_SYMBOL(drm_dp_downstream_444_to_420_conversion);
-  *                                               RGB->YCbCr conversion capability
-  * @dpcd: DisplayPort configuration data
-  * @port_cap: downstream facing port capabilities
-- * @colorspc: Colorspace for which conversion cap is sought
-+ * @color_spc: Colorspace for which conversion cap is sought
-  *
-  * Returns: whether the downstream facing port can convert RGB->YCbCr for a given
-  * colorspace.
-@@ -3134,7 +3134,7 @@ int drm_dp_pcon_pps_override_param(struct drm_dp_aux *aux, u8 pps_param[6])
- }
- EXPORT_SYMBOL(drm_dp_pcon_pps_override_param);
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+index 9663be38ee40..47f378731024 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+@@ -34,7 +34,7 @@ static void cptvf_disable_pfvf_mbox_intrs(struct otx2_cptvf_dev *cptvf)
+ static int cptvf_register_interrupts(struct otx2_cptvf_dev *cptvf)
+ {
+ 	int ret, irq;
+-	u32 num_vec;
++	int num_vec;
  
--/*
-+/**
-  * drm_dp_pcon_convert_rgb_to_ycbcr() - Configure the PCon to convert RGB to Ycbcr
-  * @aux: displayPort AUX channel
-  * @color_spc: Color-space/s for which conversion is to be enabled, 0 for disable.
+ 	num_vec = pci_msix_vec_count(cptvf->pdev);
+ 	if (num_vec <= 0)
 -- 
-2.17.1
+2.29.2
