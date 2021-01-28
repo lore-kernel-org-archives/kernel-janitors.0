@@ -1,28 +1,58 @@
-From: Arnd Bergmann <arnd@kernel.org>
-Date: Tue, 05 Jan 2021 14:19:58 +0000
-Subject: Re: [PATCH] staging: vchiq: delete obselete comment
-Message-Id: <CAK8P3a2dGXh8VOdiG38hbJH9oFFUTE8P4p+53yOnh=tw+JoD2g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jan 2021 09:36:52 +0000
+Subject: [PATCH] mtd: parser_imagetag: fix error codes in bcm963xx_parse_imagetag_partitions()
+Message-Id: <YBKFtNaFHGYBj+u4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <X/RnUjY3XkZohk7w@mwanda>
-In-Reply-To: <X/RnUjY3XkZohk7w@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: driverdevel <devel@driverdev.osuosl.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcelo Diop-Gonzalez <marcgonzalez@google.com>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Amarjargal Gundjalam <amarjargal16@gmail.com>, Phil Elwell <phil@raspberrypi.com>, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Vignesh Raghavendra <vigneshr@ti.com>, Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Jonas Gorski <jonas.gorski@gmail.com>
 
-On Tue, Jan 5, 2021 at 2:19 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This comment describes a security problem which was fixed in commit
-> 1c954540c0eb ("staging: vchiq: avoid mixing kernel and user pointers").
-> The bug is fixed now so the FIXME can be removed.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If the kstrtouint() calls fail, then this should return a negative
+error code but it currently returns success.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: dd84cb022b31 ("mtd: bcm63xxpart: move imagetag parsing to its own parser")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mtd/parsers/parser_imagetag.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-There is still another sparse warning for a remaining __user address
-space mismatch in the driver, but this one seems to be fixed as you
-say. Thanks for the fix!
-
-      Arnd
+diff --git a/drivers/mtd/parsers/parser_imagetag.c b/drivers/mtd/parsers/parser_imagetag.c
+index d69607b48227..fab0949aabba 100644
+--- a/drivers/mtd/parsers/parser_imagetag.c
++++ b/drivers/mtd/parsers/parser_imagetag.c
+@@ -83,6 +83,7 @@ static int bcm963xx_parse_imagetag_partitions(struct mtd_info *master,
+ 			pr_err("invalid rootfs address: %*ph\n",
+ 				(int)sizeof(buf->flash_image_start),
+ 				buf->flash_image_start);
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 
+@@ -92,6 +93,7 @@ static int bcm963xx_parse_imagetag_partitions(struct mtd_info *master,
+ 			pr_err("invalid kernel address: %*ph\n",
+ 				(int)sizeof(buf->kernel_address),
+ 				buf->kernel_address);
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 
+@@ -100,6 +102,7 @@ static int bcm963xx_parse_imagetag_partitions(struct mtd_info *master,
+ 			pr_err("invalid kernel length: %*ph\n",
+ 				(int)sizeof(buf->kernel_length),
+ 				buf->kernel_length);
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 
+@@ -108,6 +111,7 @@ static int bcm963xx_parse_imagetag_partitions(struct mtd_info *master,
+ 			pr_err("invalid total length: %*ph\n",
+ 				(int)sizeof(buf->total_length),
+ 				buf->total_length);
++			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 
+-- 
+2.29.2
